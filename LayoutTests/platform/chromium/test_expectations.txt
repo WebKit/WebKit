@@ -1230,20 +1230,12 @@ BUGCR3244 WIN LINUX LEOPARD : svg/as-background-image/svg-as-background-6.html =
 BUGCR3244 SNOWLEOPARD RELEASE : svg/as-background-image/svg-as-background-6.html = FAIL
 BUGCR3244 SNOWLEOPARD DEBUG : svg/as-background-image/svg-as-background-6.html = FAIL CRASH
 
-// Our gradients are wrong here.
-BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
-
 // Probably need to change the test upstream to describe it better and use no
 // hard coded numbers. Or, like most other SVG content we can ignore the
 // platform specific differences and update the expectations if they are
 // reasonable.
 BUGCR19897 LINUX WIN : svg/custom/getscreenctm-in-mixed-content2.xhtml = FAIL
 
-BUGCR10306 LINUX : svg/carto.net/combobox.svg = FAIL
-
-// Linux pixeltest failure: slightly different shade of composited
-// alpha in bottom group.
-BUGCR10310 LINUX : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = FAIL
 
 // -----------------------------------------------------------------
 // Accessibility layout tests
