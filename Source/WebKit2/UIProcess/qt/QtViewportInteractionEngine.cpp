@@ -125,6 +125,7 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport
     , m_suspendCount(0)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
+    , m_zoomedToArea(false)
     , m_scaleAnimation(new ScaleAnimation(this))
     , m_pinchStartScale(-1)
 {
@@ -363,13 +364,20 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     if (scrollAnimationActive() || scaleAnimationActive())
         return;
 
-    const int margin = 10; // We want at least a little bit or margin.
+    const int margin = 10; // We want at least a little bit of margin.
     QRectF endArea = itemRectFromCSS(targetArea.adjusted(-margin, -margin, margin, margin));
 
     const QRectF viewportRect = m_viewport->boundingRect();
 
     qreal targetCSSScale = cssScaleFromItem(viewportRect.size().width() / endArea.size().width());
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(qMin(targetCSSScale, qreal(2.5))));
+
+    // Zoom back out on a second double click, but still center on the new touch point.
+    if (m_zoomedToArea) {
+        m_zoomedToArea = false;
+        endItemScale = 1.0;
+    } else
+        m_zoomedToArea = true;
 
     // We want to end up with the target area filling the whole width of the viewport (if possible),
     // and centralized vertically where the user requested zoom. Thus our hotspot is the center of
@@ -525,6 +533,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
         return;
 
     m_hadUserInteraction = true;
+    m_zoomedToArea = false;
 
     m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 

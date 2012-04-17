@@ -145,6 +145,7 @@ private:
     OwnPtr<ViewportUpdateDeferrer> m_touchUpdateDeferrer;
 
     bool m_hadUserInteraction;
+    bool m_zoomedToArea;
 
     class ScaleAnimation : public QVariantAnimation {
     public:
