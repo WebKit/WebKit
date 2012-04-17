@@ -1,5 +1,11 @@
 2012-04-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Attempt to fix Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-04-17  Filip Pizlo  <fpizlo@apple.com>
+
         It should be possible to create an inheritorID for the global this object without crashing
         https://bugs.webkit.org/show_bug.cgi?id=84200
         <rdar://problem/11251082>
