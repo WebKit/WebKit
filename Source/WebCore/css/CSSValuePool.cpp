@@ -134,7 +134,7 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& 
     return value;
 }
 
-PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& string, StyleSheetInternal* contextStyleSheet)
+PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& string)
 {
     // Just wipe out the cache and start rebuilding if it gets too big.
     const int maximumFontFaceCacheSize = 128;
@@ -143,7 +143,7 @@ PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& s
 
     RefPtr<CSSValueList>& value = m_fontFaceValueCache.add(string, 0).iterator->second;
     if (!value)
-        value = CSSParser::parseFontFaceValue(string, contextStyleSheet);
+        value = CSSParser::parseFontFaceValue(string);
     return value;
 }
 

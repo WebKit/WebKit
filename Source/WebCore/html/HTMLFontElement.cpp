@@ -177,7 +177,7 @@ void HTMLFontElement::collectStyleForAttribute(Attribute* attr, StylePropertySet
     } else if (attr->name() == colorAttr)
         addHTMLColorToStyle(style, CSSPropertyColor, attr->value());
     else if (attr->name() == faceAttr) {
-        if (RefPtr<CSSValueList> fontFaceValue = cssValuePool().createFontFaceValue(attr->value(), document()->elementSheet()->internal()))
+        if (RefPtr<CSSValueList> fontFaceValue = cssValuePool().createFontFaceValue(attr->value()))
             style->setProperty(CSSProperty(CSSPropertyFontFamily, fontFaceValue.release()));
     } else
         HTMLElement::collectStyleForAttribute(attr, style);

@@ -940,10 +940,10 @@ static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID prope
     return true;
 }
 
-PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string, StyleSheetInternal* contextStyleSheet)
+PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
 {
     RefPtr<StylePropertySet> dummyStyle = StylePropertySet::create();
-    if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, contextStyleSheet))
+    if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, 0))
         return 0;
     return static_pointer_cast<CSSValueList>(dummyStyle->getPropertyCSSValue(CSSPropertyFontFamily));
 }
