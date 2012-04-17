@@ -1245,8 +1245,6 @@ BUGCR10306 LINUX : svg/carto.net/combobox.svg = FAIL
 // alpha in bottom group.
 BUGCR10310 LINUX : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = FAIL
 
-BUGCR45747 : svg/text/text-fill-opacity.svg = PASS FAIL
-
 // -----------------------------------------------------------------
 // Accessibility layout tests
 //
