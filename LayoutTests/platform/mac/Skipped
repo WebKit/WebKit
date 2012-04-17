@@ -788,3 +788,7 @@ fast/css/align-positioned-object-on-resize.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=83618
 fast/dom/inline-event-attributes-release.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=84102
+fast/profiler/stop-profiling-after-setTimeout.html
+fast/profiler/dead-time.html
