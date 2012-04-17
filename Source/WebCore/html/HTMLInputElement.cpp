@@ -1759,6 +1759,13 @@ bool HTMLInputElement::supportsPlaceholder() const
     return m_inputType->supportsPlaceholder();
 }
 
+bool HTMLInputElement::isPlaceholderEmpty() const
+{
+    if (m_inputType->usesFixedPlaceholder())
+        return m_inputType->fixedPlaceholder().isEmpty();
+    return HTMLTextFormControlElement::isPlaceholderEmpty();
+}
+
 void HTMLInputElement::updatePlaceholderText()
 {
     return m_inputType->updatePlaceholderText();

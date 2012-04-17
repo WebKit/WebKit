@@ -87,6 +87,7 @@ public:
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
+    virtual bool isPlaceholderEmpty() const;
     virtual void updatePlaceholderText() = 0;
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
@@ -116,8 +117,6 @@ private:
     virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
     virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
-
-    bool isPlaceholderEmpty() const;
 
     // Returns true if user-editable value is empty. Used to check placeholder visibility.
     virtual bool isEmptyValue() const = 0;

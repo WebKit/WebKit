@@ -235,7 +235,14 @@ public:
     virtual bool isCheckable();
     virtual bool isSteppable() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
+    // If supportsPlaceholder() && !usesFixedPlaceholder(), it means a type
+    // supports the 'placeholder' attribute.
+    // If supportsPlaceholder() && usesFixedPlaceholder(), it means a type
+    // doesn't support the 'placeholder' attribute, but shows
+    // fixedPlaceholder() string as a placeholder.
     virtual bool supportsPlaceholder() const;
+    virtual bool usesFixedPlaceholder() const;
+    virtual String fixedPlaceholder();
     virtual void updatePlaceholderText();
     virtual void multipleAttributeChanged();
     virtual void disabledAttributeChanged();

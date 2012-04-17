@@ -393,7 +393,7 @@ void TextFieldInputType::updatePlaceholderText()
     if (!supportsPlaceholder())
         return;
     ExceptionCode ec = 0;
-    String placeholderText = element()->strippedPlaceholder();
+    String placeholderText = usesFixedPlaceholder() ? fixedPlaceholder() : element()->strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
             m_placeholder->parentNode()->removeChild(m_placeholder.get(), ec);
