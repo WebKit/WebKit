@@ -3300,8 +3300,6 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
 
 void CSSParser::parseFillRepeat(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
 {
-    CSSParserValue* value = m_valueList->current();
-
     int id = m_valueList->current()->id;
     if (id == CSSValueRepeatX) {
         m_implicitShorthand = true;
@@ -3324,23 +3322,21 @@ void CSSParser::parseFillRepeat(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& valu
         return;
     }
 
-    value = m_valueList->next();
+    CSSParserValue* value = m_valueList->next();
 
-    // First check for the comma.  If so, we are finished parsing this value or value pair.
-    if (isComma(value))
-        value = 0;
-
-    if (value)
-        id = m_valueList->current()->id;
-
-    if (value && (id == CSSValueRepeat || id == CSSValueNoRepeat || id == CSSValueRound || id == CSSValueSpace)) {
-        value2 = cssValuePool().createIdentifierValue(id);
-        m_valueList->next();
-    } else {
-        // If only one value was specified, value2 is the same as value1.
-        m_implicitShorthand = true;
-        value2 = cssValuePool().createIdentifierValue(static_cast<CSSPrimitiveValue*>(value1.get())->getIdent());
+    // Parse the second value if one is available
+    if (value && !isComma(value)) {
+        id = value->id;
+        if (id == CSSValueRepeat || id == CSSValueNoRepeat || id == CSSValueRound || id == CSSValueSpace) {
+            value2 = cssValuePool().createIdentifierValue(id);
+            m_valueList->next();
+            return;
+        }
     }
+
+    // If only one value was specified, value2 is the same as value1.
+    m_implicitShorthand = true;
+    value2 = cssValuePool().createIdentifierValue(static_cast<CSSPrimitiveValue*>(value1.get())->getIdent());
 }
 
 PassRefPtr<CSSValue> CSSParser::parseFillSize(CSSPropertyID propId, bool& allowComma)
