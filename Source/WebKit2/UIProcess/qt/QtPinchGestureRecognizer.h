@@ -32,10 +32,6 @@
 #include <QtCore/QList>
 #include <QtCore/QPointF>
 
-QT_BEGIN_NAMESPACE
-class QTouchEvent;
-QT_END_NAMESPACE
-
 namespace WebKit {
 
 class QtPinchGestureRecognizer : public QtGestureRecognizer {
@@ -51,32 +47,13 @@ public:
     };
 
     QtPinchGestureRecognizer(QtWebPageEventHandler*);
-    bool recognize(const QTouchEvent*);
-    void reset();
+    bool update(const QTouchEvent::TouchPoint& point1, const QTouchEvent::TouchPoint& point2);
+    void finish();
+    void cancel();
 
 private:
-    void initializeGesture(const QList<QTouchEvent::TouchPoint>& touchPoints);
-
-    TouchPointInformation m_point1;
-    TouchPointInformation m_point2;
+    qreal m_initialFingerDistance;
 };
-
-inline QtPinchGestureRecognizer::TouchPointInformation::TouchPointInformation()
-    : id(-1)
-{
-}
-
-inline QtPinchGestureRecognizer::TouchPointInformation::TouchPointInformation(const QTouchEvent::TouchPoint& touchPoint)
-    : id(touchPoint.id())
-    , initialScreenPosition(touchPoint.screenPos())
-    , initialPosition(touchPoint.pos())
-{
-}
-
-inline bool QtPinchGestureRecognizer::TouchPointInformation::isValid() const
-{
-    return id >= 0;
-}
 
 }
 

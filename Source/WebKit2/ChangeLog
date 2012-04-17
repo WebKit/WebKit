@@ -1,3 +1,54 @@
+2012-04-17  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Refactor the gesture recognizers
+        https://bugs.webkit.org/show_bug.cgi?id=83044
+
+        Reviewed by Kenneth Rohde Christiansen and Simon Hausmann.
+
+        This patch implements a simple decision tree in the web page event handler
+        on the basis of how many active touch points the current touch event has.
+
+        Active touch points are pressed, moved or stationary and the number of these
+        fully determine which gesture recognizer should be updated, cancelled or
+        finished.
+
+        This new structure makes the internal states of the pinch and pan gesture
+        recognizers independent from the event type, thus makes it possible to handle
+        the transitions between these gestures in one centralized place which reduces
+        code duplication and complexity and fixes some issues regarding incorrectly
+        handled transitions.
+
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::update):
+        (WebKit::QtPanGestureRecognizer::finish):
+        (WebKit):
+        (WebKit::QtPanGestureRecognizer::cancel):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        (QtPanGestureRecognizer):
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit):
+        (WebKit::QtPinchGestureRecognizer::update):
+        (WebKit::QtPinchGestureRecognizer::finish):
+        * UIProcess/qt/QtPinchGestureRecognizer.h:
+        (QtPinchGestureRecognizer):
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::withinDistance):
+        (WebKit::QtTapGestureRecognizer::update):
+        (WebKit::QtTapGestureRecognizer::cancel):
+        (WebKit):
+        (WebKit::QtTapGestureRecognizer::singleTapTimeout):
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+        (WebKit::QtTapGestureRecognizer::reset):
+        * UIProcess/qt/QtTapGestureRecognizer.h:
+        (QtTapGestureRecognizer):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::resetGestureRecognizers):
+        (QtWebPageEventHandler::doneWithTouchEvent):
+
 2012-04-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         REGRESSION(r113172) Wheel events are scrolling inversed.

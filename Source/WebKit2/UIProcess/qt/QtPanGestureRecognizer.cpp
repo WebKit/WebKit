@@ -27,7 +27,6 @@
 #include "QtPanGestureRecognizer.h"
 
 #include "QtWebPageEventHandler.h"
-#include <QTouchEvent>
 
 namespace WebKit {
 
@@ -37,71 +36,58 @@ QtPanGestureRecognizer::QtPanGestureRecognizer(QtWebPageEventHandler* eventHandl
     reset();
 }
 
-bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
+bool QtPanGestureRecognizer::update(const QTouchEvent::TouchPoint& touchPoint, qint64 eventTimestampMillis)
 {
     if (!interactionEngine())
         return false;
 
-    // Pan gesture always starts on TouchBegin unless the engine is suspended, or
-    // we ignored the event.
-    if (m_state == NoGesture && event->type() != QEvent::TouchBegin)
-        return false;
+    m_lastPosition = touchPoint.pos();
+    m_lastEventTimestampMillis = eventTimestampMillis;
 
-    // Having multiple touch points cancel the panning gesture.
-    if (event->touchPoints().size() > 1) {
-        if (m_state == GestureRecognized)
-            interactionEngine()->panGestureCancelled();
-        reset();
-        return false;
-    }
-
-    const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
-
-    switch (event->type()) {
-    case QEvent::TouchBegin:
-        ASSERT(m_state == NoGesture);
+    switch (m_state) {
+    case NoGesture:
         m_state = GestureRecognitionStarted;
-        m_firstPosition = touchPoint.screenPos();
-        m_touchBegin.reset(new QTouchEvent(*event));
+        m_firstScreenPosition = touchPoint.scenePos();
         interactionEngine()->cancelScrollAnimation();
         return false;
-    case QEvent::TouchUpdate: {
-        ASSERT(m_state != NoGesture);
-        if (m_state == GestureRecognitionStarted) {
-            // To start the gesture, the delta from start in screen coordinates
-            // must be bigger than the trigger threshold.
-            QPointF totalOffsetFromStart(touchPoint.screenPos() - m_firstPosition);
-            if (qAbs(totalOffsetFromStart.x()) < panningInitialTriggerDistanceThreshold && qAbs(totalOffsetFromStart.y()) < panningInitialTriggerDistanceThreshold)
-                return false;
+    case GestureRecognitionStarted: {
+        // To start the gesture, the delta from start in screen coordinates
+        // must be bigger than the trigger threshold.
+        QPointF totalOffsetFromStart(touchPoint.scenePos() - m_firstScreenPosition);
+        if (qAbs(totalOffsetFromStart.x()) < panningInitialTriggerDistanceThreshold && qAbs(totalOffsetFromStart.y()) < panningInitialTriggerDistanceThreshold)
+            return false;
 
-            m_state = GestureRecognized;
-            ASSERT(m_touchBegin);
-            interactionEngine()->panGestureStarted(touchPoint.pos(), event->timestamp());
-        }
-
-        ASSERT(m_state == GestureRecognized);
-        interactionEngine()->panGestureRequestUpdate(touchPoint.pos(), event->timestamp());
+        m_state = GestureRecognized;
+        interactionEngine()->panGestureStarted(touchPoint.pos(), eventTimestampMillis);
         return true;
     }
-    case QEvent::TouchEnd:
-        if (m_state == GestureRecognized) {
-            interactionEngine()->panGestureEnded(touchPoint.pos(), event->timestamp());
-            reset();
-            return true;
-        }
-        ASSERT(m_state == GestureRecognitionStarted);
-        reset();
-        return false;
+    case GestureRecognized:
+        interactionEngine()->panGestureRequestUpdate(touchPoint.pos(), eventTimestampMillis);
+        return true;
     default:
         ASSERT_NOT_REACHED();
     }
     return false;
 }
 
-void QtPanGestureRecognizer::reset()
+void QtPanGestureRecognizer::finish(const QTouchEvent::TouchPoint& touchPoint, qint64 eventTimestampMillis)
 {
-    QtGestureRecognizer::reset();
-    m_firstPosition = QPointF();
+    if (m_state == NoGesture)
+        return;
+
+    ASSERT(interactionEngine());
+    interactionEngine()->panGestureEnded(touchPoint.pos(), eventTimestampMillis);
+    reset();
+}
+
+void QtPanGestureRecognizer::cancel()
+{
+    if (m_state == NoGesture)
+        return;
+
+    interactionEngine()->panGestureEnded(m_lastPosition, m_lastEventTimestampMillis);
+    interactionEngine()->panGestureCancelled();
+    reset();
 }
 
 } // namespace WebKit

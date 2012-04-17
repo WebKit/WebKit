@@ -75,9 +75,11 @@ public:
     void cancelScrollAnimation();
 
     bool panGestureActive() const;
+
     void panGestureStarted(const QPointF& position, qint64 eventTimestampMillis);
     void panGestureRequestUpdate(const QPointF& position, qint64 eventTimestampMillis);
     void panGestureEnded(const QPointF& position, qint64 eventTimestampMillis);
+
     void panGestureCancelled();
 
     bool scaleAnimationActive() const;
@@ -87,6 +89,7 @@ public:
     void pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates);
     void pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();
+    void pinchGestureCancelled();
 
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
     void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);

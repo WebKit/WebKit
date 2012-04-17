@@ -579,6 +579,12 @@ void QtViewportInteractionEngine::pinchGestureEnded()
         m_scaleUpdateDeferrer.clear();
 }
 
+void QtViewportInteractionEngine::pinchGestureCancelled()
+{
+    m_pinchStartScale = -1;
+    m_scaleUpdateDeferrer.clear();
+}
+
 void QtViewportInteractionEngine::itemSizeChanged()
 {
     // FIXME: This needs to be done smarter. What happens if it resizes when we were interacting?

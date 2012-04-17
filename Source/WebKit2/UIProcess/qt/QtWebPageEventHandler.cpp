@@ -373,9 +373,9 @@ void QtWebPageEventHandler::handleTouchEvent(QTouchEvent* event)
 
 void QtWebPageEventHandler::resetGestureRecognizers()
 {
-    m_panGestureRecognizer.reset();
-    m_pinchGestureRecognizer.reset();
-    m_tapGestureRecognizer.reset();
+    m_panGestureRecognizer.cancel();
+    m_pinchGestureRecognizer.cancel();
+    m_tapGestureRecognizer.cancel();
 }
 
 static void setInputPanelVisible(bool visible)
@@ -472,16 +472,40 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
     if (m_interactionEngine->scaleAnimationActive())
         return;
 
-    m_panGestureRecognizer.recognize(ev);
-    m_pinchGestureRecognizer.recognize(ev);
+    const QList<QTouchEvent::TouchPoint>& touchPoints = ev->touchPoints();
+    const int touchPointCount = touchPoints.size();
+    qint64 eventTimestampMillis = ev->timestamp();
+    QList<QTouchEvent::TouchPoint> activeTouchPoints;
+    activeTouchPoints.reserve(touchPointCount);
+
+    for (int i = 0; i < touchPointCount; ++i) {
+        if (touchPoints[i].state() != Qt::TouchPointReleased)
+            activeTouchPoints << touchPoints[i];
+    }
+
+    const int activeTouchPointCount = activeTouchPoints.size();
+
+    if (!activeTouchPointCount) {
+        if (touchPointCount == 1)
+           // No active touch points, one finger released.
+           m_panGestureRecognizer.finish(touchPoints.first(), eventTimestampMillis);
+        else
+           m_pinchGestureRecognizer.finish();
+    } else if (activeTouchPointCount == 1) {
+        // If the pinch gesture recognizer was previously in active state the content might
+        // be out of valid zoom boundaries, thus we need to finish the pinch gesture here.
+        // This will resume the content to valid zoom levels before the pan gesture is started.
+        m_pinchGestureRecognizer.finish();
+        m_panGestureRecognizer.update(activeTouchPoints.first(), eventTimestampMillis);
+    } else if (activeTouchPointCount == 2) {
+        m_panGestureRecognizer.cancel();
+        m_pinchGestureRecognizer.update(activeTouchPoints.first(), activeTouchPoints.last());
+    }
 
     if (m_panGestureRecognizer.isRecognized() || m_pinchGestureRecognizer.isRecognized())
-        m_tapGestureRecognizer.reset();
-    else {
-        // Convert the event timestamp from second to millisecond.
-        qint64 eventTimestampMillis = static_cast<qint64>(event.timestamp() * 1000);
-        m_tapGestureRecognizer.recognize(ev, eventTimestampMillis);
-    }
+        m_tapGestureRecognizer.cancel();
+    else if (touchPointCount == 1)
+        m_tapGestureRecognizer.update(ev->type(), touchPoints.first());
 }
 #endif
 

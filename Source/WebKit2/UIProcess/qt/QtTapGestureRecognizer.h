@@ -47,8 +47,8 @@ namespace WebKit {
 class QtTapGestureRecognizer : public QObject, private QtGestureRecognizer {
 public:
     QtTapGestureRecognizer(QtWebPageEventHandler*);
-    bool recognize(const QTouchEvent*, qint64 eventTimestampMillis);
-    void reset();
+    bool update(QEvent::Type eventType, const QTouchEvent::TouchPoint&);
+    void cancel();
 
 protected:
     void timerEvent(QTimerEvent*);
@@ -56,11 +56,12 @@ protected:
     void tapAndHoldTimeout();
 
 private:
+    void reset();
     bool withinDistance(const QTouchEvent::TouchPoint&, int distance);
 
     QBasicTimer m_doubleTapTimer;
     QBasicTimer m_tapAndHoldTimer;
-    OwnPtr<QTouchEvent> m_lastTouchEvent;
+    QTouchEvent::TouchPoint m_lastTouchPoint;
 
     enum {
         Invalid,
