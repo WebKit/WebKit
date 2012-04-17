@@ -530,20 +530,14 @@ BUGWK82484 : fast/encoding/percent-escaping.html = TEXT
 BUGWK82484 : fast/loader/file-URL-with-port-number.html = TEXT
 BUGWK82484 : fast/loader/location-port.html = TEXT
 
-BUGWKGTK : accessibility/aria-checkbox-sends-notification.html = FAIL
 BUGWKGTK : accessibility/aria-hidden.html = FAIL
 BUGWKGTK : accessibility/aria-hidden-with-elements.html = FAIL
 BUGWKGTK : accessibility/aria-invalid.html = FAIL
-BUGWKGTK : accessibility/aria-labelledby-on-input.html = FAIL
 BUGWKGTK : accessibility/aria-labelledby-overrides-label.html = FAIL
-BUGWKGTK : accessibility/aria-labelledby-stay-within.html = FAIL
 BUGWKGTK : accessibility/aria-link-supports-press.html = FAIL
-BUGWKGTK : accessibility/aria-list-and-listitem.html = FAIL
-BUGWKGTK : accessibility/aria-option-role.html = FAIL
 BUGWKGTK : accessibility/aria-presentational-role.html = FAIL
 BUGWKGTK : accessibility/aria-readonly.html = FAIL
 BUGWKGTK : accessibility/aria-scrollbar-role.html = FAIL
-BUGWKGTK : accessibility/aria-tab-roles.html = FAIL
 BUGWKGTK : accessibility/aria-text-role.html = FAIL
 BUGWKGTK : accessibility/aria-used-on-image-maps.html = FAIL
 BUGWKGTK : accessibility/button-press-action.html = FAIL
@@ -552,31 +546,16 @@ BUGWKGTK : accessibility/editable-webarea-context-menu-point.html = FAIL
 BUGWKGTK : accessibility/ellipsis-text.html = FAIL
 BUGWKGTK : accessibility/iframe-bastardization.html = FAIL
 BUGWKGTK : accessibility/ignore-spacer-elements.html = FAIL
-BUGWKGTK : accessibility/image-link.html = FAIL
-BUGWKGTK : accessibility/image-map1.html = FAIL
-BUGWKGTK : accessibility/image-map2.html = FAIL
 BUGWKGTK : accessibility/inline-continuations.html = FAIL
-BUGWKGTK : accessibility/internal-link-anchors2.html = FAIL
 BUGWKGTK : accessibility/label-for-control-hittest.html = FAIL
 BUGWKGTK : accessibility/language-attribute.html = FAIL
-BUGWKGTK : accessibility/legend.html = FAIL
-BUGWKGTK : accessibility/lists.html = FAIL
 BUGWKGTK : accessibility/loading-iframe-sends-notification.html = FAIL
 BUGWKGTK : accessibility/loading-iframe-updates-axtree.html = FAIL
-BUGWKGTK : accessibility/notification-listeners.html = FAIL
 BUGWKGTK : accessibility/onclick-handlers.html = FAIL
 BUGWKGTK : accessibility/placeholder.html = FAIL
-BUGWKGTK : accessibility/plugin.html = FAIL
-BUGWKGTK : accessibility/radio-button-group-members.html = FAIL
 BUGWKGTK : accessibility/radio-button-title-label.html = FAIL
 BUGWKGTK : accessibility/secure-textfield-title-ui.html = FAIL
 BUGWKGTK : accessibility/selection-states.html = FAIL
-BUGWKGTK : accessibility/table-attributes.html = FAIL
-BUGWKGTK : accessibility/table-detection.html = FAIL
-BUGWKGTK : accessibility/table-one-cell.html = FAIL
-BUGWKGTK : accessibility/table-sections.html = FAIL
-BUGWKGTK : accessibility/table-with-aria-role.html = FAIL
-BUGWKGTK : accessibility/table-with-rules.html = FAIL
 BUGWKGTK : accessibility/textarea-insertion-point-line-number.html = FAIL
 BUGWKGTK : accessibility/textarea-line-for-index.html = FAIL
 BUGWKGTK : accessibility/textarea-selected-text-range.html = FAIL
@@ -1317,8 +1296,38 @@ BUGWKGTK : http/tests/local/fileapi/send-sliced-dragged-file.html = FAIL
 BUGWK70485 : fast/events/drag-selects-image.html = FAIL
 
 // Missing DRT AccessibilityController::addNotificationListener implementation
-BUGWK70606 : accessibility/menu-list-sends-change-notification.html = FAIL
-BUGWK70606 : accessibility/multiselect-list-reports-active-option.html = FAIL
+BUGWK70606 SKIP : accessibility/aria-checkbox-sends-notification.html = FAIL
+BUGWK70606 SKIP : accessibility/menu-list-sends-change-notification.html = FAIL
+BUGWK70606 SKIP : accessibility/multiselect-list-reports-active-option.html = FAIL
+BUGWK70606 SKIP : accessibility/notification-listeners.html = FAIL
+
+// ARIA Roles not being exposed for tab, tabpanel and tablist
+BUGWK84043 SKIP : accessibility/aria-tab-roles.html = FAIL
+
+// Image links not properly exposed
+BUGWK84044 SKIP : accessibility/image-link.html = FAIL
+
+// Expose title and alternative text for links in image maps
+BUGWK84045 SKIP : accessibility/image-map1.html = FAIL
+BUGWK84045 SKIP : accessibility/image-map2.html = FAIL
+
+// Properly expose <legend> elements to ATs
+BUGWK84137 SKIP : accessibility/legend.html = FAIL
+
+// Accessibility tests that should never be run for GTK due to be
+// written in a platform-specific way. They should either be moved to
+// the right platform or re-written in a more platform-agnostic way.
+BUGWKGTK SKIP WONTFIX : accessibility/aria-list-and-listitem.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/aria-option-role.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/internal-link-anchors2.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/radio-button-group-members.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/table-attributes.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/table-detection.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/table-one-cell.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/table-sections.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/table-with-aria-role.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/table-with-rules.html = FAIL
+BUGWKGTK SKIP WONTFIX : accessibility/plugin.html = FAIL
 
 BUGWK71022 : fast/canvas/canvas-composite-image.html = FAIL
 BUGWK71022 : fast/canvas/canvas-composite-canvas.html = FAIL
