@@ -10,7 +10,10 @@ contains(TEMPLATE, lib) {
        CONFIG -= hide_symbols
        CONFIG -= staticlib
        CONFIG += rpath
+       QMAKE_CXXFLAGS -= $$QMAKE_CXXFLAGS_HIDESYMS
+       QMAKE_CFLAGS -= $$QMAKE_CFLAGS_HIDESYMS
+       QMAKE_LFLAGS -= $$QMAKE_LFLAGS_HIDESYMS
+       QMAKE_OBJECTIVE_CFLAGS -= $$QMAKE_OBJECTIVE_CFLAGS_HIDESYMS
        DESTDIR = $${ROOT_BUILD_DIR}/lib
     }
 }
-

@@ -1,3 +1,24 @@
+2012-04-17  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt] Fix builds with force_static_libs_as_shared for non-linux builds.
+        https://bugs.webkit.org/show_bug.cgi?id=83035
+
+        Reviewed by Simon Hausmann.
+
+        The force_static_libs_as_shared feature for the Qt port will remove
+        hide_symbols from Qt's CONFIG in order to make them visible to other
+        libraries again.
+
+        Due to an evaluation order problem in qmake, the flags for the C++ compiler
+        that are set by adding hide_symbols to the CONFIG variables get applied
+        to qmake's C++ compiler flags directly and hence trying to remove these
+        later will not work and cause build failures when using the force_static_libs_as_shared
+        feature of the Qt port.
+
+        This is fixed by removing the flags that hide the exports from the compiler flags directly.
+
+        * qmake/mkspecs/features/force_static_libs_as_shared.prf:
+
 2012-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove CreateWebKitBuildDirectory step to fix Chromium Windows Perf bot
