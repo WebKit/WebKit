@@ -1,3 +1,16 @@
+2012-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        use after free in JSC::DFG::Node::op / JSC::DFG::ByteCodeParser::flushArgument
+        https://bugs.webkit.org/show_bug.cgi?id=83942
+        <rdar://problem/11247370>
+
+        Reviewed by Gavin Barraclough.
+        
+        Don't use references to the graph after resizing the graph.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushArgument):
+
 2012-04-16  Gavin Barraclough  <barraclough@apple.com>
 
         Array.prototype.toString should be generic

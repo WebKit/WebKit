@@ -371,8 +371,9 @@ private:
             // Emit a Flush regardless of whether we already flushed it.
             // This gives us guidance to see that the variable also needs to be flushed
             // for arguments, even if it already had to be flushed for other reasons.
-            addToGraph(Flush, OpInfo(node.variableAccessData()), nodeIndex);
-            return node.variableAccessData();
+            VariableAccessData* variableAccessData = node.variableAccessData();
+            addToGraph(Flush, OpInfo(variableAccessData), nodeIndex);
+            return variableAccessData;
         }
         
         VariableAccessData* variableAccessData = newVariableAccessData(operand);
