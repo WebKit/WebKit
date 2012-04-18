@@ -535,7 +535,10 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
     LayerRendererChromium::toGLMatrix(&glMatrix[0], projectionMatrix() * renderMatrix);
     GLC(context(), context()->uniformMatrix4fv(program->vertexShader().matrixLocation(), 1, false, &glMatrix[0]));
 
-    GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), quad->color().red() / 255.0, quad->color().green() / 255.0, quad->color().blue() / 255.0, quad->color().alpha() / 255.0));
+    const Color& color = quad->color();
+    float alpha = color.alpha() / 255.0;
+
+    GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (color.red() / 255.0) * alpha, (color.green() / 255.0) * alpha, (color.blue() / 255.0) * alpha, alpha));
 
     GLC(context(), context()->lineWidth(quad->width()));
 
@@ -624,8 +627,9 @@ void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
     tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
 
     const Color& color = quad->color();
+    float alpha = color.alpha() / 255.0;
 
-    GLC(context(), context()->uniform4f(solidColorProgram->fragmentShader().colorLocation(), color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0, color.alpha() / 255.0));
+    GLC(context(), context()->uniform4f(solidColorProgram->fragmentShader().colorLocation(), (color.red() / 255.0) * alpha, (color.green() / 255.0) * alpha, (color.blue() / 255.0) * alpha, alpha));
 
     float opacity = quad->opacity();
     drawTexturedQuad(tileTransform,
