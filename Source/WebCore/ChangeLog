@@ -1,3 +1,19 @@
+2012-04-18  Tim Horton  <timothy_horton@apple.com>
+
+        Crash in SVGTextLayoutAttributesBuilder::fillCharacterDataMap
+        https://bugs.webkit.org/show_bug.cgi?id=78949
+        <rdar://problem/10889440>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Invalidate the text positioning cache when the children of an SVGAElement change,
+        so that we regenerate the list the next time it's needed instead of using stale values.
+
+        Test: svg/text/text-positioning-remove-child-crash.svg
+
+        * rendering/svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::childrenChanged):
+
 2012-04-16  Adam Barth  <abarth@webkit.org>
 
         ContainerNode::insertedIntoDocument and removedFromDocument use weak iteration patterns
