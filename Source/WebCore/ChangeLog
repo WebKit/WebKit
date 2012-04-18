@@ -1,3 +1,20 @@
+2012-04-18  Philip Rogers  <pdr@google.com>
+
+        Skip building resources if SVGTRef is not in a document
+        https://bugs.webkit.org/show_bug.cgi?id=81473
+
+        Reviewed by Nikolas Zimmermann.
+
+        We can skip the building of pending resources in SVGTRef if we're not
+        yet in a document. This mirrors the nearly identical logic in
+        SVGUseElement::buildPendingResource() and
+        SVGFEImageElement::buildPendingResource().
+
+        Test: http/tests/svg/tref-adoptNode-crash.html
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::buildPendingResource):
+
 2012-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [Soup] DNS prefetching spams resolver, shoots self in the foot
