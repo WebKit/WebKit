@@ -133,21 +133,18 @@ PassRefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperati
 
     if (blendToPassthrough)
         return DropShadowFilterOperation::create(
-            WebCore::blend(m_x, 0, progress),
-            WebCore::blend(m_y, 0, progress),
+            WebCore::blend(m_location, IntPoint(), progress),
             WebCore::blend(m_stdDeviation, 0, progress),
             WebCore::blend(m_color, Color(Color::transparent), progress),
             m_type);
 
     const DropShadowFilterOperation* fromOp = static_cast<const DropShadowFilterOperation*>(from);
-    int fromX = fromOp ? fromOp->x() : 0;
-    int fromY = fromOp ? fromOp->y() : 0;
+    IntPoint fromLocation = fromOp ? fromOp->location() : IntPoint();
     int fromStdDeviation = fromOp ? fromOp->stdDeviation() : 0;
     Color fromColor = fromOp ? fromOp->color() : Color(Color::transparent);
     
     return DropShadowFilterOperation::create(
-        WebCore::blend(fromX, m_x, progress),
-        WebCore::blend(fromY, m_y, progress),
+        WebCore::blend(fromLocation, m_location, progress),
         WebCore::blend(fromStdDeviation, m_stdDeviation, progress),
         WebCore::blend(fromColor, m_color, progress), m_type);
 }

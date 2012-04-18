@@ -571,8 +571,8 @@ void CSSStyleSelector::applySVGProperty(CSSPropertyID id, CSSValue* value)
             if (!firstValue->isShadowValue())
                 return;
             ShadowValue* item = static_cast<ShadowValue*>(firstValue);
-            int x = item->x->computeLength<int>(style(), m_rootElementStyle);
-            int y = item->y->computeLength<int>(style(), m_rootElementStyle);
+            IntPoint location(item->x->computeLength<int>(style(), m_rootElementStyle),
+                              item->y->computeLength<int>(style(), m_rootElementStyle));
             int blur = item->blur ? item->blur->computeLength<int>(style(), m_rootElementStyle) : 0;
             Color color;
             if (item->color)
@@ -582,7 +582,7 @@ void CSSStyleSelector::applySVGProperty(CSSPropertyID id, CSSValue* value)
             ASSERT(!item->spread);
             ASSERT(!item->style);
 
-            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, 0, Normal, false, color.isValid() ? color : Color::transparent));
+            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(location, blur, 0, Normal, false, color.isValid() ? color : Color::transparent));
             svgstyle->setShadow(shadowData.release());
             return;
         }

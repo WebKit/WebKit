@@ -1169,10 +1169,10 @@ void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit &top, Lay
             continue;
         int blurAndSpread = shadow->blur() + shadow->spread();
 
-        top = min(top, shadow->y() - blurAndSpread);
-        right = max(right, shadow->x() + blurAndSpread);
-        bottom = max(bottom, shadow->y() + blurAndSpread);
-        left = min(left, shadow->x() - blurAndSpread);
+        top = min<LayoutUnit>(top, shadow->y() - blurAndSpread);
+        right = max<LayoutUnit>(right, shadow->x() + blurAndSpread);
+        bottom = max<LayoutUnit>(bottom, shadow->y() + blurAndSpread);
+        left = min<LayoutUnit>(left, shadow->x() - blurAndSpread);
     }
 }
 
@@ -1186,8 +1186,8 @@ void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, LayoutUnit
             continue;
         int blurAndSpread = shadow->blur() + shadow->spread();
 
-        left = min(left, shadow->x() - blurAndSpread);
-        right = max(right, shadow->x() + blurAndSpread);
+        left = min<LayoutUnit>(left, shadow->x() - blurAndSpread);
+        right = max<LayoutUnit>(right, shadow->x() + blurAndSpread);
     }
 }
 
@@ -1201,8 +1201,8 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
             continue;
         int blurAndSpread = shadow->blur() + shadow->spread();
 
-        top = min(top, shadow->y() - blurAndSpread);
-        bottom = max(bottom, shadow->y() + blurAndSpread);
+        top = min<LayoutUnit>(top, shadow->y() - blurAndSpread);
+        bottom = max<LayoutUnit>(bottom, shadow->y() + blurAndSpread);
     }
 }
 

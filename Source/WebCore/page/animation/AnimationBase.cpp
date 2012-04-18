@@ -135,8 +135,7 @@ static inline PassOwnPtr<ShadowData> blendFunc(const AnimationBase* anim, const 
     if (from->style() != to->style())
         return adoptPtr(new ShadowData(*to));
 
-    return adoptPtr(new ShadowData(blend(from->x(), to->x(), progress),
-                                   blend(from->y(), to->y(), progress), 
+    return adoptPtr(new ShadowData(blend(from->location(), to->location(), progress), 
                                    blend(from->blur(), to->blur(), progress),
                                    blend(from->spread(), to->spread(), progress),
                                    blendFunc(anim, from->style(), to->style(), progress),
@@ -494,11 +493,11 @@ static inline size_t shadowListLength(const ShadowData* shadow)
 
 static inline const ShadowData* shadowForBlending(const ShadowData* srcShadow, const ShadowData* otherShadow)
 {
-    DEFINE_STATIC_LOCAL(ShadowData, defaultShadowData, (0, 0, 0, 0, Normal, false, Color::transparent));
-    DEFINE_STATIC_LOCAL(ShadowData, defaultInsetShadowData, (0, 0, 0, 0, Inset, false, Color::transparent));
+    DEFINE_STATIC_LOCAL(ShadowData, defaultShadowData, (IntPoint(), 0, 0, Normal, false, Color::transparent));
+    DEFINE_STATIC_LOCAL(ShadowData, defaultInsetShadowData, (IntPoint(), 0, 0, Inset, false, Color::transparent));
 
-    DEFINE_STATIC_LOCAL(ShadowData, defaultWebKitBoxShadowData, (0, 0, 0, 0, Normal, true, Color::transparent));
-    DEFINE_STATIC_LOCAL(ShadowData, defaultInsetWebKitBoxShadowData, (0, 0, 0, 0, Inset, true, Color::transparent));
+    DEFINE_STATIC_LOCAL(ShadowData, defaultWebKitBoxShadowData, (IntPoint(), 0, 0, Normal, true, Color::transparent));
+    DEFINE_STATIC_LOCAL(ShadowData, defaultInsetWebKitBoxShadowData, (IntPoint(), 0, 0, Inset, true, Color::transparent));
 
     if (srcShadow)
         return srcShadow;

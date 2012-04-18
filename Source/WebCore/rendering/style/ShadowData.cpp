@@ -27,8 +27,7 @@ using namespace std;
 namespace WebCore {
 
 ShadowData::ShadowData(const ShadowData& o)
-    : m_x(o.m_x)
-    , m_y(o.m_y)
+    : m_location(o.m_location)
     , m_blur(o.m_blur)
     , m_spread(o.m_spread)
     , m_color(o.m_color)
@@ -44,8 +43,7 @@ bool ShadowData::operator==(const ShadowData& o) const
         || (m_next && o.m_next && *m_next != *o.m_next))
         return false;
     
-    return m_x == o.m_x
-        && m_y == o.m_y
+    return m_location == o.m_location
         && m_blur == o.m_blur
         && m_spread == o.m_spread
         && m_style == o.m_style
@@ -53,7 +51,7 @@ bool ShadowData::operator==(const ShadowData& o) const
         && m_isWebkitBoxShadow == o.m_isWebkitBoxShadow;
 }
 
-static inline void calculateShadowExtent(const ShadowData* shadow, int additionalOutlineSize, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
+static inline void calculateShadowExtent(const ShadowData* shadow, int additionalOutlineSize, int& shadowLeft, int& shadowRight, int& shadowTop, int& shadowBottom)
 {
     do {
         int blurAndSpread = shadow->blur() + shadow->spread() + additionalOutlineSize;
@@ -70,10 +68,10 @@ static inline void calculateShadowExtent(const ShadowData* shadow, int additiona
 
 void ShadowData::adjustRectForShadow(LayoutRect& rect, int additionalOutlineSize) const
 {
-    LayoutUnit shadowLeft = 0;
-    LayoutUnit shadowRight = 0;
-    LayoutUnit shadowTop = 0;
-    LayoutUnit shadowBottom = 0;
+    int shadowLeft = 0;
+    int shadowRight = 0;
+    int shadowTop = 0;
+    int shadowBottom = 0;
     calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
 
     rect.move(shadowLeft, shadowTop);
@@ -83,10 +81,10 @@ void ShadowData::adjustRectForShadow(LayoutRect& rect, int additionalOutlineSize
 
 void ShadowData::adjustRectForShadow(FloatRect& rect, int additionalOutlineSize) const
 {
-    LayoutUnit shadowLeft = 0;
-    LayoutUnit shadowRight = 0;
-    LayoutUnit shadowTop = 0;
-    LayoutUnit shadowBottom = 0;
+    int shadowLeft = 0;
+    int shadowRight = 0;
+    int shadowTop = 0;
+    int shadowBottom = 0;
     calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
 
     rect.move(shadowLeft, shadowTop);

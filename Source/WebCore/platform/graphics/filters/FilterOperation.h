@@ -338,18 +338,19 @@ private:
 
 class DropShadowFilterOperation : public FilterOperation {
 public:
-    static PassRefPtr<DropShadowFilterOperation> create(int x, int y, int stdDeviation, Color color, OperationType type)
+    static PassRefPtr<DropShadowFilterOperation> create(const IntPoint& location, int stdDeviation, Color color, OperationType type)
     {
-        return adoptRef(new DropShadowFilterOperation(x, y, stdDeviation, color, type));
+        return adoptRef(new DropShadowFilterOperation(location, stdDeviation, color, type));
     }
 
     virtual PassRefPtr<FilterOperation> clone() const
     {
-        return adoptRef(new DropShadowFilterOperation(m_x, m_y, m_stdDeviation, m_color, m_type));
+        return adoptRef(new DropShadowFilterOperation(m_location, m_stdDeviation, m_color, m_type));
     }
 
-    int x() const { return m_x; }
-    int y() const { return m_y; }
+    int x() const { return m_location.x(); }
+    int y() const { return m_location.y(); }
+    IntPoint location() const { return m_location; }
     int stdDeviation() const { return m_stdDeviation; }
     Color color() const { return m_color; }
 
@@ -365,20 +366,18 @@ private:
         if (!isSameType(o))
             return false;
         const DropShadowFilterOperation* other = static_cast<const DropShadowFilterOperation*>(&o);
-        return m_x == other->m_x && m_y == other->m_y && m_stdDeviation == other->m_stdDeviation && m_color == other->m_color;
+        return m_location == other->m_location && m_stdDeviation == other->m_stdDeviation && m_color == other->m_color;
     }
 
-    DropShadowFilterOperation(int x, int y, int stdDeviation, Color color, OperationType type)
+    DropShadowFilterOperation(const IntPoint& location, int stdDeviation, Color color, OperationType type)
         : FilterOperation(type)
-        , m_x(x)
-        , m_y(y)
+        , m_location(location)
         , m_stdDeviation(stdDeviation)
         , m_color(color)
     {
     }
 
-    int m_x; // FIXME: x and y should be Lengths?
-    int m_y;
+    IntPoint m_location; // FIXME: should location be in Lengths?
     int m_stdDeviation;
     Color m_color;
 };

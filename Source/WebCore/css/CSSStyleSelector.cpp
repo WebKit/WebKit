@@ -3450,7 +3450,7 @@ void CSSStyleSelector::applyProperty(CSSPropertyID id, CSSValue *value)
             else if (m_style)
                 color = m_style->color();
 
-            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent));
+            OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent));
             if (id == CSSPropertyTextShadow)
                 m_style->setTextShadow(shadowData.release(), i.index()); // add to the list if this is not the first entry
             else
@@ -5714,14 +5714,14 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
                 continue;
 
             ShadowValue* item = static_cast<ShadowValue*>(cssValue);
-            int x = item->x->computeLength<int>(style, rootStyle, zoomFactor);
-            int y = item->y->computeLength<int>(style, rootStyle, zoomFactor);
+            IntPoint location(item->x->computeLength<int>(style, rootStyle, zoomFactor),
+                              item->y->computeLength<int>(style, rootStyle, zoomFactor));
             int blur = item->blur ? item->blur->computeLength<int>(style, rootStyle, zoomFactor) : 0;
             Color color;
             if (item->color)
                 color = colorFromPrimitiveValue(item->color.get());
 
-            operations.operations().append(DropShadowFilterOperation::create(x, y, blur, color.isValid() ? color : Color::transparent, operationType));
+            operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparent, operationType));
             break;
         }
         case WebKitCSSFilterValue::UnknownFilterOperation:

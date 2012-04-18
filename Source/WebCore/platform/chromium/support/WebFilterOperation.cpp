@@ -50,7 +50,7 @@ PassRefPtr<WebCore::FilterOperation> WebBlurFilterOperation::toFilterOperation()
 
 PassRefPtr<WebCore::FilterOperation> WebDropShadowFilterOperation::toFilterOperation() const
 {
-    return DropShadowFilterOperation::create(x, y, stdDeviation, color, FilterOperation::DROP_SHADOW);
+    return DropShadowFilterOperation::create(IntPoint(x, y), stdDeviation, color, FilterOperation::DROP_SHADOW);
 }
 
 } // namespace WebKit

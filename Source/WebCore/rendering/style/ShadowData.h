@@ -40,18 +40,15 @@ class ShadowData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ShadowData()
-        : m_x(0)
-        , m_y(0)
-        , m_blur(0)
+        : m_blur(0)
         , m_spread(0)
         , m_style(Normal)
         , m_isWebkitBoxShadow(false)
     {
     }
 
-    ShadowData(LayoutUnit x, LayoutUnit y, int blur, int spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
-        : m_x(x)
-        , m_y(y)
+    ShadowData(const IntPoint& location, int blur, int spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
+        : m_location(location)
         , m_blur(blur)
         , m_spread(spread)
         , m_color(color)
@@ -68,8 +65,9 @@ public:
         return !(*this == o);
     }
     
-    LayoutUnit x() const { return m_x; }
-    LayoutUnit y() const { return m_y; }
+    int x() const { return m_location.x(); }
+    int y() const { return m_location.y(); }
+    IntPoint location() const { return m_location; }
     int blur() const { return m_blur; }
     int spread() const { return m_spread; }
     ShadowStyle style() const { return m_style; }
@@ -83,8 +81,7 @@ public:
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
 
 private:
-    LayoutUnit m_x;
-    LayoutUnit m_y;
+    IntPoint m_location;
     int m_blur;
     int m_spread;
     Color m_color;
