@@ -41,7 +41,7 @@ public:
     {
         return reinterpret_cast<Float64Array*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(Float64Array*);
+    inline static v8::Handle<v8::Object> wrap(Float64Array*, v8::Isolate* = 0);
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
@@ -50,7 +50,7 @@ private:
     static v8::Handle<v8::Object> wrapSlow(PassRefPtr<Float64Array>);
 };
 
-v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl)
+v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
@@ -58,7 +58,7 @@ v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl)
     return V8Float64Array::wrapSlow(impl);
 }
 
-v8::Handle<v8::Value> toV8(Float64Array*, v8::Isolate* isolate = 0);
+v8::Handle<v8::Value> toV8(Float64Array*, v8::Isolate* = 0);
 inline v8::Handle<v8::Value> toV8(PassRefPtr< Float64Array > impl, v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), isolate);

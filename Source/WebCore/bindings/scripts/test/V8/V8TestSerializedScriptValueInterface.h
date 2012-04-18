@@ -42,7 +42,7 @@ public:
     {
         return reinterpret_cast<TestSerializedScriptValueInterface*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestSerializedScriptValueInterface*);
+    inline static v8::Handle<v8::Object> wrap(TestSerializedScriptValueInterface*, v8::Isolate* = 0);
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
@@ -51,7 +51,7 @@ private:
     static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestSerializedScriptValueInterface>);
 };
 
-v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrap(TestSerializedScriptValueInterface* impl)
+v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrap(TestSerializedScriptValueInterface* impl, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
@@ -63,7 +63,7 @@ inline v8::Handle<v8::Value> toV8(TestSerializedScriptValueInterface* impl, v8::
 {
     if (!impl)
         return v8::Null();
-    return V8TestSerializedScriptValueInterface::wrap(impl);
+    return V8TestSerializedScriptValueInterface::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestSerializedScriptValueInterface > impl, v8::Isolate* isolate = 0)
 {
