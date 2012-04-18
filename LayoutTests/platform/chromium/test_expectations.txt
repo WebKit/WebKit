@@ -1749,7 +1749,7 @@ BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TE
 BUGCR118411 WIN LINUX : fast/repaint/focus-ring.html = IMAGE
 BUGCR118411 : fast/repaint/list-marker.html = IMAGE
 BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE PASS
-BUGCR118411 WIN DEBUG : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
+BUGWK84230 WIN MAC DEBUG : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
 // Fails on Snow Leopard - see BUGWK82954
 BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS FAIL
