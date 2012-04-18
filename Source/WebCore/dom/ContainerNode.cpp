@@ -849,16 +849,20 @@ void ContainerNode::insertedIntoTree(bool deep)
 {
     if (!deep)
         return;
+    forbidEventDispatch();
     for (Node* child = m_firstChild; child; child = child->nextSibling())
         child->insertedIntoTree(true);
+    allowEventDispatch();
 }
 
 void ContainerNode::removedFromTree(bool deep)
 {
     if (!deep)
         return;
+    forbidEventDispatch();
     for (Node* child = m_firstChild; child; child = child->nextSibling())
         child->removedFromTree(true);
+    allowEventDispatch();
 }
 
 void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

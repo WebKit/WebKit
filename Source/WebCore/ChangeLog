@@ -1,3 +1,28 @@
+2012-04-18  Adam Barth  <abarth@webkit.org>
+
+        ContainerNode::insertedIntoTree and removedFromTree use weak iteration patterns
+        https://bugs.webkit.org/show_bug.cgi?id=80570
+
+        Reviewed by Ryosuke Niwa.
+
+        These functions use weak iteration patterns, but as far as I can tell,
+        we never execute script below these functions.  This patch adds ASSERTs
+        to help us avoid adding events in the future.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertedIntoTree):
+        (WebCore::ContainerNode::removedFromTree):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadInternal):
+            - There's a somewhat complex call chain from insertedIntoTree into
+              HTMLMediaElement, and somewhat complex control flow below
+              loadInternal that eventually leads to the BeforeLoad event being
+              fired.  In studying this code, I don't see a way for the
+              BeforeLoad event to be fired during insertedIntoTree, but I've
+              added this assert here to make sure we don't call loadInternal
+              when we're not supposed to dispatch events.  This ASSERT should
+              help us catch these BeforeLoad errors more quickly.
+
 2012-04-18  Abhishek Arya  <inferno@chromium.org>
 
         Incorrect beforeChild parent calculation in RenderRubyBase::moveChildren.
