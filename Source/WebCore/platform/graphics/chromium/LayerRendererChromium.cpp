@@ -627,13 +627,13 @@ void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
     tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
 
     const Color& color = quad->color();
-    float alpha = color.alpha() / 255.0;
+    float opacity = quad->opacity();
+    float alpha = (color.alpha() / 255.0) * opacity;
 
     GLC(context(), context()->uniform4f(solidColorProgram->fragmentShader().colorLocation(), (color.red() / 255.0) * alpha, (color.green() / 255.0) * alpha, (color.blue() / 255.0) * alpha, alpha));
 
-    float opacity = quad->opacity();
     drawTexturedQuad(tileTransform,
-                     tileRect.width(), tileRect.height(), opacity, FloatQuad(),
+                     tileRect.width(), tileRect.height(), 1.0, FloatQuad(),
                      solidColorProgram->vertexShader().matrixLocation(),
                      -1, -1);
 }

@@ -1,3 +1,14 @@
+2012-04-18  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Solid color layers should respect opacity value.
+        https://bugs.webkit.org/show_bug.cgi?id=84197
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        (CCLayerTestCommon):
+
 2012-04-18  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call prefetchDNS directly
