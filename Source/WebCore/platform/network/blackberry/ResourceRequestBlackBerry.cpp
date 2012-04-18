@@ -190,6 +190,9 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
             }
         }
 
+        // When ResourceRequest is reused by CacheResourceLoader, page refreshing or redirection, its cookies may be dirtied. We won't use these cookies any more.
+        bool cookieHeaderMayBeDirty = isRedirect || cachePolicy() == WebCore::ReloadIgnoringCacheData || cachePolicy() == WebCore::ReturnCacheDataElseLoad;
+
         for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != httpHeaderFields().end(); ++it) {
             String key = it->first;
             String value = it->second;
@@ -198,14 +201,14 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
                 // We wo't use the old cookies of resourceRequest for new location because these cookies may be changed by redirection.
                 if (!equalIgnoringCase(key, "Cookie"))
                     platformRequest.addHeader(key.latin1().data(), value.latin1().data());
-                else if (!isRedirect)
+                else if (!cookieHeaderMayBeDirty)
                     platformRequest.addHeader(key.latin1().data(), value.containsOnlyLatin1() ? value.latin1().data() : value.utf8().data());
             }
         }
-       
-        // Redirection's response may add or update cookies, so we get cookies from CookieManager when redirection happens.
+
+        // If request's cookies may be dirty, they must be set again.
         // If there aren't cookies in the header list, we need trying to add cookies.
-        if (cookiesEnabled && (isRedirect || !httpHeaderFields().contains("Cookie")) && !url().isNull()) {
+        if (cookiesEnabled && (cookieHeaderMayBeDirty || !httpHeaderFields().contains("Cookie")) && !url().isNull()) {
             // Prepare a cookie header if there are cookies related to this url.
             String cookiePairs = cookieManager().getCookie(url(), WithHttpOnlyCookies);
             if (!cookiePairs.isEmpty())

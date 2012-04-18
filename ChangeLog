@@ -1,3 +1,13 @@
+2012-04-18  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] HTTP GET header has a "Cookie" when refreshing a page after cookies have been cleared.
+        https://bugs.webkit.org/show_bug.cgi?id=84223
+
+        Reviewed by George Staikos.
+
+        * ManualTests/blackberry/clear-cookie-refresh-result.php: Added.
+        * ManualTests/blackberry/clear-cookie-refresh.php: Added.
+
 2012-04-17  Yong Li  <yoli@rim.com>
 
         REGRESSION (r105453): Crash when handling touch events
