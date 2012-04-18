@@ -2228,7 +2228,7 @@ void WebPage::willPerformLoadDragDestinationAction()
     m_sandboxExtensionTracker.willPerformLoadDragDestinationAction(m_pendingDropSandboxExtension.release());
 }
 
-void WebPage::performUploadDragDestinationAction()
+void WebPage::mayPerformUploadDragDestinationAction()
 {
     for (size_t i = 0; i < m_pendingDropExtensionsForFileUpload.size(); i++)
         m_pendingDropExtensionsForFileUpload[i]->consumePermanently();

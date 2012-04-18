@@ -459,7 +459,7 @@ public:
     void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation);
 
     void willPerformLoadDragDestinationAction();
-    void performUploadDragDestinationAction();
+    void mayPerformUploadDragDestinationAction();
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();

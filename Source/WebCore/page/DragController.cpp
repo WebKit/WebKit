@@ -469,7 +469,6 @@ bool DragController::concludeEditDrag(DragData* dragData)
             return false;
 
         fileInput->receiveDroppedFiles(filenames);
-        m_client->willPerformDragDestinationAction(DragDestinationActionUpload, dragData);
         return true;
     }
 

@@ -1,3 +1,20 @@
+2012-04-18  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Sandbox violations prevent attaching files to gmail messages
+        https://bugs.webkit.org/show_bug.cgi?id=84263
+        <rdar://problem/11248260>
+
+        Reviewed by Oliver Hunt.
+
+        * WebProcess/WebCoreSupport/WebDragClient.cpp: (WebKit::WebDragClient::willPerformDragDestinationAction):
+        Prepare to the possibility that file data will be read. This needs to happen on every drop
+        with files, not just after event dispatch.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::mayPerformUploadDragDestinationAction):
+        * WebProcess/WebPage/WebPage.h:
+        Renamed performUploadDragDestinationAction to mayPerformUploadDragDestinationAction. We don't
+        know if an upload will actually happen, it's up to JavaScript code to decide.
+
 2012-04-18  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Clean-up WheelEvent Conversion.

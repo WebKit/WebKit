@@ -36,7 +36,6 @@ namespace WebCore {
         DragDestinationActionDHTML   = 1,
         DragDestinationActionEdit    = 2,
         DragDestinationActionLoad    = 4,
-        DragDestinationActionUpload  = 8,       // This value is not part of WebDragDestinationAction. File upload is always allowed.
         DragDestinationActionAny     = UINT_MAX
     } DragDestinationAction;
     

@@ -36,8 +36,8 @@ void WebDragClient::willPerformDragDestinationAction(DragDestinationAction actio
 {
     if (action == DragDestinationActionLoad)
         m_page->willPerformLoadDragDestinationAction();
-    else if (action == DragDestinationActionUpload)
-        m_page->performUploadDragDestinationAction();
+    else
+        m_page->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
 }
 
 void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)

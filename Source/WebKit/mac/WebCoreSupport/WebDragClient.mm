@@ -70,9 +70,6 @@ WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(WebCore::DragDat
 
 void WebDragClient::willPerformDragDestinationAction(WebCore::DragDestinationAction action, WebCore::DragData* dragData)
 {
-    // This action is used only by WebKit2. We want to avoid any unwanted side effects for the WebKit clients, therefore we avoid the delegate call.
-    if (action == DragDestinationActionUpload)
-        return;
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragDestinationAction:(WebDragDestinationAction)action forDraggingInfo:dragData->platformData()];
 }
 
