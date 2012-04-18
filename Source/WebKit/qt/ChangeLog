@@ -1,3 +1,13 @@
+2012-04-18  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Clean-up WheelEvent Conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=84243
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/WebEventConversion.cpp:
+        (WebCore::WebKitPlatformWheelEvent::applyDelta):
+
 2012-04-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Build fix with QT_NO_BEARERMANAGEMENT

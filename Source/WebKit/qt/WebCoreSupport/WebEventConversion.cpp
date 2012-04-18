@@ -178,27 +178,21 @@ private:
 
 void WebKitPlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
 {
-    // A delta that is not mod 120 indicates a device that is sending
-    // fine-resolution scroll events, so use the delta as number of wheel ticks
-    // and number of pixels to scroll.See also webkit.org/b/29601
-    bool fullTick = !(delta % 120);
-
     if (orientation == Qt::Horizontal) {
-        m_deltaX = (fullTick) ? delta / 120.0f : delta;
+        m_deltaX = delta;
         m_deltaY = 0;
     } else {
         m_deltaX = 0;
-        m_deltaY = (fullTick) ? delta / 120.0f : delta;
+        m_deltaY = delta;
     }
+    m_wheelTicksX = m_deltaX / 120.0f;
+    m_wheelTicksY = m_deltaY / 120.0f;
 
-    m_wheelTicksX = m_deltaX;
-    m_wheelTicksY = m_deltaY;
-
-    // Use the same single scroll step as QTextEdit
-    // (in QTextEditPrivate::init [h,v]bar->setSingleStep)
+    // Since we request the scroll delta by the pixel, convert the wheel delta to pixel delta using the standard scroll step.
+    // Use the same single scroll step as QTextEdit (in QTextEditPrivate::init [h,v]bar->setSingleStep)
     static const float cDefaultQtScrollStep = 20.f;
-    m_deltaX *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
-    m_deltaY *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
+    m_deltaX = m_wheelTicksX * QApplication::wheelScrollLines() * cDefaultQtScrollStep;
+    m_deltaY = m_wheelTicksY * QApplication::wheelScrollLines() * cDefaultQtScrollStep;
 }
 
 WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QGraphicsSceneWheelEvent* e)

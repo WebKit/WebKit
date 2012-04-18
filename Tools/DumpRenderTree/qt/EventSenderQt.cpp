@@ -69,8 +69,8 @@ EventSender::EventSender(QWebPage* parent)
     m_currentButton = 0;
     resetClickCount();
     m_page->view()->installEventFilter(this);
-    // So that we can match Scrollbar::pixelsPerLineStep() in WheelEventQt.cpp and
-    // pass fast/events/platform-wheelevent-in-scrolling-div.html
+    // This is a hack that works because we normally scroll 60 pixels (3*20) per tick, but Apple scrolls 120.
+    // But Apple also has a bug where they report lines instead of ticks in PlatformWheelEvent, making 2 lines = 40 pixels match.
     QApplication::setWheelScrollLines(2);
 }
 
@@ -199,22 +199,26 @@ void EventSender::mouseMoveTo(int x, int y)
 }
 
 #ifndef QT_NO_WHEELEVENT
-void EventSender::mouseScrollBy(int x, int y)
+void EventSender::mouseScrollBy(int ticksX, int ticksY)
 {
-    continuousMouseScrollBy((x*120), (y*120));
+    const int tickStep = QApplication::wheelScrollLines() * 20;
+    continuousMouseScrollBy((ticksX * tickStep), (ticksY * tickStep));
 }
 
 void EventSender::continuousMouseScrollBy(int x, int y)
 {
     // continuousMouseScrollBy() mimics devices that send fine-grained scroll events where the 'delta' specified is not the usual
     // multiple of 120. See http://doc.qt.nokia.com/4.6/qwheelevent.html#delta for a good explanation of this.
+
+    // A wheel delta of 120 (in 1/8 degrees) corresponds to one wheel tick, and we scroll tickStep pixels per wheel tick.
+    const int tickStep = QApplication::wheelScrollLines() * 20;
     if (x) {
         QEvent* event;
         if (isGraphicsBased()) {
             event = createGraphicsSceneWheelEvent(QEvent::GraphicsSceneWheel,
-                        m_mousePos, m_mousePos, x, Qt::NoModifier, Qt::Horizontal);
+                        m_mousePos, m_mousePos, (x * 120) / tickStep, Qt::NoModifier, Qt::Horizontal);
         } else
-            event = new QWheelEvent(m_mousePos, m_mousePos, x, m_mouseButtons, Qt::NoModifier, Qt::Horizontal);
+            event = new QWheelEvent(m_mousePos, m_mousePos, (x * 120) / tickStep, m_mouseButtons, Qt::NoModifier, Qt::Horizontal);
 
         sendOrQueueEvent(event);
     }
@@ -222,9 +226,9 @@ void EventSender::continuousMouseScrollBy(int x, int y)
         QEvent* event;
         if (isGraphicsBased()) {
             event = createGraphicsSceneWheelEvent(QEvent::GraphicsSceneWheel,
-                        m_mousePos, m_mousePos, y, Qt::NoModifier, Qt::Vertical);
+                        m_mousePos, m_mousePos, (y * 120) / tickStep, Qt::NoModifier, Qt::Vertical);
         } else
-            event = new QWheelEvent(m_mousePos, m_mousePos, y, m_mouseButtons, Qt::NoModifier, Qt::Vertical);
+            event = new QWheelEvent(m_mousePos, m_mousePos, (y * 120) / tickStep, m_mouseButtons, Qt::NoModifier, Qt::Vertical);
 
         sendOrQueueEvent(event);
     }

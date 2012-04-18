@@ -253,26 +253,21 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
     if (scrollAnimationActive() || scaleAnimationActive() || pinchGestureActive())
         return; // Ignore.
 
-    int delta = ev->delta();
 
-    // A delta that is not mod 120 indicates a device that is sending
-    // fine-resolution scroll events, so use the delta as number of wheel ticks
-    // and number of pixels to scroll. See also webkit.org/b/29601
-    bool fullTick = !(delta % 120);
-
+    // A normal scroll-tick should have a delta of 120 (1/8) degrees. Convert this to
+    // local standard scroll step of 3 lines of 20 pixels.
     static const int cDefaultQtScrollStep = 20;
     static const int wheelScrollLines = 3;
-    int scrollLines = (fullTick) ? wheelScrollLines * cDefaultQtScrollStep : 1;
+    const int wheelTick = wheelScrollLines * cDefaultQtScrollStep;
 
-    delta = (fullTick) ? delta / 120.0f : delta;
-    delta *= scrollLines;
+    int pixelDelta = ev->delta() * (wheelTick / 120.f);
 
     QPointF newPosition = m_viewport->contentPos();
 
     if (ev->orientation() == Qt::Horizontal)
-        newPosition.rx() -= delta;
+        newPosition.rx() -= pixelDelta;
     else
-        newPosition.ry() -= delta;
+        newPosition.ry() -= pixelDelta;
 
     QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentsScale());
 

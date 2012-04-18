@@ -133,26 +133,21 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e, const QTransf
     WebEvent::Modifiers modifiers           = modifiersForEvent(e->modifiers());
     double timestamp                        = currentTimeForEvent(e);
 
-    // A delta that is not mod 120 indicates a device that is sending
-    // fine-resolution scroll events, so use the delta as number of wheel ticks
-    // and number of pixels to scroll.See also webkit.org/b/29601
-    bool fullTick = !(e->delta() % 120);
-
     if (e->orientation() == Qt::Horizontal) {
-        deltaX = (fullTick) ? e->delta() / 120.0f : e->delta();
-        wheelTicksX = deltaX;
+        deltaX = e->delta();
+        wheelTicksX = deltaX / 120.0f;
     } else {
-        deltaY = (fullTick) ? e->delta() / 120.0f : e->delta();
-        wheelTicksY = deltaY;
+        deltaY = e->delta();
+        wheelTicksY = deltaY / 120.0f;
     }
 
-    // Use the same single scroll step as QTextEdit
-    // (in QTextEditPrivate::init [h,v]bar->setSingleStep)
+    // Since we report the scroll by the pixel, convert the delta to pixel distance using standard scroll step.
+    // Use the same single scroll step as QTextEdit (in QTextEditPrivate::init [h,v]bar->setSingleStep)
     static const float cDefaultQtScrollStep = 20.f;
     // ### FIXME: Default from QtGui. Should use Qt platform theme API once configurable.
     const int wheelScrollLines = 3;
-    deltaX *= (fullTick) ? wheelScrollLines * cDefaultQtScrollStep : 1;
-    deltaY *= (fullTick) ? wheelScrollLines * cDefaultQtScrollStep : 1;
+    deltaX = wheelTicksX * wheelScrollLines * cDefaultQtScrollStep;
+    deltaY = wheelTicksY * wheelScrollLines * cDefaultQtScrollStep;
 
     return WebWheelEvent(WebEvent::Wheel, fromItemTransform.map(e->posF()).toPoint(), e->globalPosF().toPoint(), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
 }
