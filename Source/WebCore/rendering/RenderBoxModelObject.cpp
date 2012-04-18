@@ -1910,8 +1910,8 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
                 path.addRect(outerBorder.rect());
 
             if (haveAllDoubleEdges) {
-                LayoutRect innerThirdRect = outerBorder.rect();
-                LayoutRect outerThirdRect = outerBorder.rect();
+                IntRect innerThirdRect = outerBorder.rect();
+                IntRect outerThirdRect = outerBorder.rect();
                 for (int side = BSTop; side <= BSLeft; ++side) {
                     int outerWidth;
                     int innerWidth;

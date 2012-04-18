@@ -72,7 +72,6 @@ public:
 
     int pixelSnappedOffsetLeft() const { return roundToInt(offsetLeft()); }
     int pixelSnappedOffsetTop() const { return roundToInt(offsetTop()); }
-    // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
     int pixelSnappedOffsetWidth() const;
     int pixelSnappedOffsetHeight() const;
 

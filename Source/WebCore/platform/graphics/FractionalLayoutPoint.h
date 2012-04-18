@@ -43,6 +43,7 @@ public:
     FractionalLayoutPoint(FractionalLayoutUnit x, FractionalLayoutUnit y) : m_x(x), m_y(y) { }
     FractionalLayoutPoint(const IntPoint& point) : m_x(point.x()), m_y(point.y()) { }
     explicit FractionalLayoutPoint(const FloatPoint& size) : m_x(size.x()), m_y(size.y()) { }
+    explicit FractionalLayoutPoint(const FractionalLayoutSize& size) : m_x(size.width()), m_y(size.height()) { }
 
     static FractionalLayoutPoint zero() { return FractionalLayoutPoint(); }
 

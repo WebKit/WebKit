@@ -83,7 +83,7 @@ public:
                            float& beginMaxW, float& endMaxW,
                            float& minW, float& maxW, bool& stripFrontSpaces);
 
-    virtual LayoutRect linesBoundingBox() const;
+    virtual IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
 
     FloatPoint firstRunOrigin() const;

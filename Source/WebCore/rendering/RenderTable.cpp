@@ -240,16 +240,16 @@ void RenderTable::computeLogicalWidth()
         }
 
         // Ensure we aren't bigger than our available width.
-        setLogicalWidth(min(availableContentLogicalWidth, maxPreferredLogicalWidth()));
+        setLogicalWidth(min<int>(availableContentLogicalWidth, maxPreferredLogicalWidth()));
     }
 
     // Ensure we aren't smaller than our min preferred width.
-    setLogicalWidth(max(logicalWidth(), minPreferredLogicalWidth()));
+    setLogicalWidth(max<int>(logicalWidth(), minPreferredLogicalWidth()));
 
     // Ensure we aren't smaller than our min-width style.
     Length styleMinLogicalWidth = style()->logicalMinWidth();
     if (styleMinLogicalWidth.isSpecified() && styleMinLogicalWidth.isPositive())
-        setLogicalWidth(max(logicalWidth(), convertStyleLogicalWidthToComputedWidth(styleMinLogicalWidth, availableLogicalWidth)));
+        setLogicalWidth(max<int>(logicalWidth(), convertStyleLogicalWidthToComputedWidth(styleMinLogicalWidth, availableLogicalWidth)));
 
     // Finally, with our true width determined, compute our margins for real.
     setMarginStart(0);
