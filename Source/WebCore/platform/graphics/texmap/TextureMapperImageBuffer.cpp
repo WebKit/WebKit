@@ -117,7 +117,7 @@ void BitmapTextureImageBuffer::applyFilters(const BitmapTexture& contentTexture,
 
     // The document parameter is only needed for CSS shaders.
     renderer->build(0 /*document */, filters);
-    renderer->prepare();
+    renderer->allocateBackingStoreIfNeeded();
     GraphicsContext* context = renderer->inputContext();
     context->drawImageBuffer(static_cast<const BitmapTextureImageBuffer&>(contentTexture).m_image.get(), ColorSpaceDeviceRGB, IntPoint::zero());
     renderer->apply();
