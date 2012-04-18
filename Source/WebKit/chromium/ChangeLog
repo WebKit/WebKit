@@ -1,3 +1,13 @@
+2012-04-18  Myles Maxfield  <mmaxfield@google.com>
+
+        Chromium compile of WebDatabase.cpp fails without SQL_DATABASE
+        https://bugs.webkit.org/show_bug.cgi?id=84212
+
+        Reviewed by Kentaro Hara.
+
+        * src/WebDatabase.cpp:
+        (WebCore::AbstractDatabase::isSyncDatabase):
+
 2012-04-18  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Turn on ENABLE_DATALIST for chromium

@@ -48,6 +48,7 @@ public:
     String displayName() const { return String(); }
     unsigned long long estimatedSize() const { return 0; }
     SecurityOrigin* securityOrigin() const { return 0; }
+    bool isSyncDatabase() const { return false; }
 };
 }
 #endif // !ENABLE(SQL_DATABASE)
