@@ -3673,8 +3673,10 @@ BUGWK82717 SNOWLEOPARD : storage/quota-tracking.html = PASS TIMEOUT
 BUGWK82717 SNOWLEOPARD : storage/executesql-accepts-only-one-statement.html = PASS TIMEOUT
 BUGWK82717 SNOWLEOPARD : storage/database-lock-after-reload.html = PASS TIMEOUT
 
-// This test depends on Worker behavior that is broken in DRT
-BUGWK82776 : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
+// These tests depends on Worker behavior that is broken in DRT
+BUGWK82776 SKIP : storage/indexeddb/dont-commit-on-blocked.html = PASS FAIL
+BUGWK82776 SKIP : storage/indexeddb/pending-version-change-stuck.html = PASS FAIL
+BUGWK82776 SKIP : storage/indexeddb/pending-version-change-stuck-works-with-terminate.html = PASS FAIL
 
 BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
 

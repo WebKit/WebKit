@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<script>
+
+description("Implicitly terminating worker with blocked setVersion call should allow later open calls to proceed");
+
+function test()
+{
+    removeVendorPrefixes();
+    dbname = self.location.pathname.substring(1 + self.location.pathname.lastIndexOf("/"));
+    evalAndLog("request = indexedDB.open(\"" + dbname + "\")");
+    request.onblocked = unexpectedBlockedCallback;
+    request.onerror = unexpectedErrorCallback;
+    if (self.location.search == "?second") {
+        request.onsuccess = function() {
+            testPassed("Open worked after page reload.");
+            finishJSTest();
+        };
+    } else {
+        request.onsuccess = startTheWorker;
+    }
+}
+
+function startTheWorker()
+{
+    var worker = startWorker("resources/pending-version-change-stuck.js?" + encodeURI(dbname));
+    worker.onerror = function(e) {
+        testFailed(e.message);
+        finishJSTest();
+    };
+    originalOnMessage = worker.onmessage;
+    worker.onmessage = function(event) {
+        if (event.data == "gotblocked")
+            self.location = self.location + "?second";
+        else
+            originalOnMessage(event);
+    };
+}
+
+test();
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
