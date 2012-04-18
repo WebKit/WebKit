@@ -66,13 +66,11 @@ private:
     RefPtr<CSSPrimitiveValue> m_colorWhite;
     RefPtr<CSSPrimitiveValue> m_colorBlack;
 
-    typedef HashMap<int, RefPtr<CSSPrimitiveValue> > IntegerValueCache;
-    RefPtr<CSSPrimitiveValue> m_pixelZero;
-    RefPtr<CSSPrimitiveValue> m_percentZero;
-    RefPtr<CSSPrimitiveValue> m_numberZero;
-    IntegerValueCache m_pixelValueCache;
-    IntegerValueCache m_percentValueCache;
-    IntegerValueCache m_numberValueCache;
+    static const int maximumCacheableIntegerValue = 255;
+
+    RefPtr<CSSPrimitiveValue> m_pixelValueCache[maximumCacheableIntegerValue + 1];
+    RefPtr<CSSPrimitiveValue> m_percentValueCache[maximumCacheableIntegerValue + 1];
+    RefPtr<CSSPrimitiveValue> m_numberValueCache[maximumCacheableIntegerValue + 1];
 
     typedef HashMap<AtomicString, RefPtr<CSSValueList> > FontFaceValueCache;
     FontFaceValueCache m_fontFaceValueCache;
