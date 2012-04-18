@@ -380,6 +380,21 @@ void CCThreadProxy::stop()
     m_started = false;
 }
 
+void CCThreadProxy::forceSerializeOnSwapBuffers()
+{
+    CCCompletionEvent completion;
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::forceSerializeOnSwapBuffersOnImplThread, AllowCrossThreadAccess(&completion)));
+    completion.wait();
+}
+
+void CCThreadProxy::forceSerializeOnSwapBuffersOnImplThread(CCCompletionEvent* completion)
+{
+    if (m_layerRendererInitialized)
+        m_layerTreeHostImpl->layerRenderer()->doNoOp();
+    completion->signal();
+}
+
+
 void CCThreadProxy::finishAllRenderingOnImplThread(CCCompletionEvent* completion)
 {
     TRACE_EVENT("CCThreadProxy::finishAllRenderingOnImplThread", this, 0);

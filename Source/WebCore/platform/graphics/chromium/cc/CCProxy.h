@@ -88,6 +88,10 @@ public:
     virtual void start() = 0; // Must be called before using the proxy.
     virtual void stop() = 0; // Must be called before deleting the proxy.
 
+    // Forces 3D commands on all contexts to wait for all previous SwapBuffers to finish before executing in the GPU
+    // process.
+    virtual void forceSerializeOnSwapBuffers() = 0;
+
     // Maximum number of sub-region texture updates supported for each commit.
     virtual size_t maxPartialTextureUpdates() const = 0;
 

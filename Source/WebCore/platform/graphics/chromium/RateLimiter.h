@@ -36,21 +36,27 @@ namespace WebCore {
 
 class GraphicsContext3D;
 
+class RateLimiterClient {
+public:
+    virtual void rateLimit() = 0;
+};
+
 // A class containing a timer, which calls rateLimitCHROMIUM on expiry
 class RateLimiter : public RefCounted<RateLimiter> {
 public:
-    static PassRefPtr<RateLimiter> create(GraphicsContext3D*);
+    static PassRefPtr<RateLimiter> create(GraphicsContext3D*, RateLimiterClient*);
     ~RateLimiter();
 
     void start();
     void stop();
 
 private:
-    explicit RateLimiter(GraphicsContext3D*);
+    RateLimiter(GraphicsContext3D*, RateLimiterClient*);
     RefPtr<GraphicsContext3D> m_context;
     bool m_contextSupportsRateLimitingExtension;
     Timer<RateLimiter> m_timer;
     void rateLimitContext(Timer<RateLimiter>*);
+    RateLimiterClient *m_client;
 };
 
 }

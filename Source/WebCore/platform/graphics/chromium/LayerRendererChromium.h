@@ -100,6 +100,7 @@ public:
     // waits for rendering to finish
     void finish();
 
+    void doNoOp();
     // puts backbuffer onscreen
     bool swapBuffers(const IntRect& subBuffer);
 

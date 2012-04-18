@@ -593,10 +593,17 @@ void CCLayerTreeHost::startRateLimiter(GraphicsContext3D* context)
     if (it != m_rateLimiters.end())
         it->second->start();
     else {
-        RefPtr<RateLimiter> rateLimiter = RateLimiter::create(context);
+        RefPtr<RateLimiter> rateLimiter = RateLimiter::create(context, this);
         m_rateLimiters.set(context, rateLimiter);
         rateLimiter->start();
     }
+}
+
+void CCLayerTreeHost::rateLimit()
+{
+    // Force a no-op command on the compositor context, so that any ratelimiting commands will wait for the compositing
+    // context, and therefore for the SwapBuffers.
+    m_proxy->forceSerializeOnSwapBuffers();
 }
 
 void CCLayerTreeHost::stopRateLimiter(GraphicsContext3D* context)

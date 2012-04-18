@@ -122,7 +122,7 @@ struct LayerRendererCapabilities {
     int maxTextureSize;
 };
 
-class CCLayerTreeHost {
+class CCLayerTreeHost : public RateLimiterClient {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHost);
 public:
     static PassOwnPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
@@ -214,6 +214,9 @@ public:
     void applyScrollAndScale(const CCScrollAndScaleSet&);
     void startRateLimiter(GraphicsContext3D*);
     void stopRateLimiter(GraphicsContext3D*);
+
+    // RateLimitClient implementation
+    virtual void rateLimit() OVERRIDE;
 
     bool bufferedUpdates();
     bool requestPartialTextureUpdate();

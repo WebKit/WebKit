@@ -282,6 +282,15 @@ void CCSingleThreadProxy::compositeImmediately()
     }
 }
 
+void CCSingleThreadProxy::forceSerializeOnSwapBuffers()
+{
+    {
+        DebugScopedSetImplThread impl;
+        if (m_layerRendererInitialized)
+            m_layerTreeHostImpl->layerRenderer()->doNoOp();
+    }
+}
+
 bool CCSingleThreadProxy::commitAndComposite()
 {
     ASSERT(CCProxy::isMainThread());

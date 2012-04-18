@@ -423,6 +423,12 @@ void LayerRendererChromium::beginDrawingFrame(CCRenderSurface* defaultRenderSurf
     GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 }
 
+void LayerRendererChromium::doNoOp()
+{
+    GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+    GLC(m_context.get(), m_context->flush());
+}
+
 void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass)
 {
     CCRenderSurface* renderSurface = renderPass->targetSurface();
