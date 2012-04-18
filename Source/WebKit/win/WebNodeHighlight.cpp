@@ -47,12 +47,17 @@ static ATOM registerOverlayClass();
 static LPCTSTR kWebNodeHighlightPointerProp = TEXT("WebNodeHighlightPointer");
 
 WebNodeHighlight::WebNodeHighlight(WebView* webView)
-    : m_inspectedWebView(webView)
-    , m_overlay(0)
+    : 
+#if ENABLE(INSPECTOR)    
+      m_inspectedWebView(webView),
+#endif // ENABLE(INSPECTOR)
+      m_overlay(0)
     , m_observedWindow(0)
     , m_showsWhileWebViewIsVisible(false)
 {
+#if ENABLE(INSPECTOR)
     m_inspectedWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&m_inspectedWebViewWindow));
+#endif // ENABLE(INSPECTOR)
 }
 
 WebNodeHighlight::~WebNodeHighlight()
@@ -158,8 +163,9 @@ void WebNodeHighlight::update()
     ::SelectObject(hdc, hbmp.get());
 
     GraphicsContext context(hdc);
-
+#if ENABLE(INSPECTOR)
     m_inspectedWebView->page()->inspectorController()->drawHighlight(context);
+#endif // ENABLE(INSPECTOR)
 
     BLENDFUNCTION bf;
     bf.BlendOp = AC_SRC_OVER;

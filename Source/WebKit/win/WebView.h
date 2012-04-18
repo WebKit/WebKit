@@ -704,7 +704,7 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE loadBackForwardListFromOtherView( 
         /* [in] */ IWebView *otherView);
-
+        
     virtual HRESULT STDMETHODCALLTYPE inspector(
         /* [retval][out] */ IWebInspector**);
 
@@ -1047,7 +1047,9 @@ protected:
     HWND m_viewWindow;
     WebFrame* m_mainFrame;
     WebCore::Page* m_page;
+#if ENABLE(INSPECTOR)
     WebInspectorClient* m_inspectorClient;
+#endif // ENABLE(INSPECTOR)
     
     RefPtr<RefCountedHBITMAP> m_backingStoreBitmap;
     SIZE m_backingStoreSize;
@@ -1064,7 +1066,9 @@ protected:
     COMPtr<IWebDownloadDelegate> m_downloadDelegate;
     COMPtr<IWebHistoryDelegate> m_historyDelegate;
     COMPtr<WebPreferences> m_preferences;
+#if ENABLE(INSPECTOR)
     COMPtr<WebInspector> m_webInspector;
+#endif // ENABLE(INSPECTOR)
     COMPtr<IWebGeolocationProvider> m_geolocationProvider;
 
     bool m_userAgentOverridden;

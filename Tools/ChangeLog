@@ -1,3 +1,21 @@
+2012-04-18  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: Disabling Inspector causes build failure on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=83557
+
+        Reviewed by Pavel Feldman.
+
+        The calls to inspector APIs are not put under ENABLE(INSPECTOR) guard.
+        This change brings all such API calls under the guard.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::showWebInspector):
+        (WTR::LayoutTestController::closeWebInspector):
+        (WTR::LayoutTestController::evaluateInWebInspector):
+        (WTR::LayoutTestController::setJavaScriptProfilingEnabled):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+
 2012-04-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] atk/textChangedNotifications API test fails
