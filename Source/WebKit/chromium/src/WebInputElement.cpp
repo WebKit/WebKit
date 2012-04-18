@@ -230,5 +230,4 @@ WebInputElement* toWebInputElement(WebElement* webElement)
 
     return static_cast<WebInputElement*>(webElement);
 }
-
 } // namespace WebKit

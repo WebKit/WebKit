@@ -50,7 +50,6 @@ private:
 };
 
 }  // namespace WebCore
-
 #endif  // ENABLE(DATALIST)
 
 #endif  // HTMLDataListElement_h

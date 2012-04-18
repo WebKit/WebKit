@@ -53,5 +53,4 @@ HTMLCollection* HTMLDataListElement::options()
 }
 
 }  // namespace WebCore
-
 #endif  // ENABLE(DATALIST)

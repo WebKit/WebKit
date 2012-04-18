@@ -7,7 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Labelable: button [object HTMLButtonElement]
 PASS element.labels.length is 1
 
-Unsupported: datalist [object HTMLUnknownElement]
+Not labelable: datalist [object HTMLDataListElement]
 PASS element.labels is undefined.
 PASS element.labels is not null
 

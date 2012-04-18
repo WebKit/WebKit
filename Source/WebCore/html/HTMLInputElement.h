@@ -368,5 +368,4 @@ private:
 };
 
 } //namespace
-
 #endif

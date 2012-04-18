@@ -1,3 +1,13 @@
+2012-04-18  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Turn on ENABLE_DATALIST for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=84118
+
+        Reviewed by Kent Tamura.
+
+        * features.gypi: Turn on ENABLE_DATALIST.
+        * src/WebInputElement.cpp: Touched to avoid build issues. No code change.
+
 2012-04-18  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] REGRESSION: Popup shrinks because of autocomplete
