@@ -1,3 +1,17 @@
+2012-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Full Screen mode does not preserve CALayer ordering after exiting.
+        https://bugs.webkit.org/show_bug.cgi?id=83931
+
+        Reviewed by Eric Carlson.
+
+        When swapping the placeholder and web views, use -[NSView addSubview:positioned:relativeTo:]
+        instead of -[NSView replaceSubview:with:], as the latter does not preserve the relative order
+        of the view's backing CALayers.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController _swapView:with:]):
+
 2012-04-18  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Sandbox violations prevent attaching files to gmail messages
