@@ -39,6 +39,8 @@
 #include "V8DOMWindow.h"
 #include "V8Proxy.h"
 
+#include <stdio.h>
+
 namespace WebCore {
 
 V8IsolatedContext* V8IsolatedContext::isolatedContext()
