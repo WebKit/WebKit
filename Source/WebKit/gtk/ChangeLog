@@ -1,3 +1,25 @@
+2012-04-18  Simon Pena  <spena@igalia.com>
+
+        [GTK] r114021 triggered media flakyness
+        https://bugs.webkit.org/show_bug.cgi?id=83874
+
+        Reviewed by Philippe Normand.
+
+        When the MediaPlaybackRequiresUserGesture setting was added, no gtk
+        API was implemented to access it.
+
+        This adds a property to gtk WebKit WebSettings, and connects it to
+        WebKit WebView, thus allowing clients to programmatically modify it.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        * webkit/webkitwebsettingsprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2012-04-17  Carlos Garnacho  <carlos@lanedo.com>
 
         [GTK] Enable back double buffering on WebKitWebView to fix flickering

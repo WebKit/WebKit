@@ -1,3 +1,17 @@
+2012-04-18  Simon Pena  <spena@igalia.com>
+
+        [GTK] r114021 triggered media flakyness
+        https://bugs.webkit.org/show_bug.cgi?id=83874
+
+        Reviewed by Philippe Normand.
+
+        Now that there is gtk API to update the
+        MediaPlaybackRequiresUserGesture property, set it to false from the
+        DumpRenderTree tool when resetting defaults to consistent values.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2012-04-18  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: Disabling Inspector causes build failure on Windows
