@@ -485,7 +485,14 @@ public:
     // Pixel snapped bounding box relative to the root.
     IntRect absoluteBoundingBox() const;
 
-    static IntRect calculateLayerBounds(const RenderLayer*, const RenderLayer* ancestorLayer, bool includeSelfTransform = true, bool includeLayerFilterOutsets = true);
+    enum CalculateLayerBoundsFlag {
+        IncludeSelfTransform = 1 << 0,
+        UseLocalClipRectIfPossible = 1 << 1,
+        IncludeLayerFilterOutsets = 1 << 2,
+        DefaultCalculateLayerBoundsFlags =  IncludeSelfTransform | UseLocalClipRectIfPossible | IncludeLayerFilterOutsets
+    };
+    typedef unsigned CalculateLayerBoundsFlags;
+    static IntRect calculateLayerBounds(const RenderLayer*, const RenderLayer* ancestorLayer, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags);
     
     void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
 

@@ -2983,7 +2983,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         LayoutPoint rootLayerOffset;
         convertToLayerCoords(rootLayer, rootLayerOffset);
         m_filterRepaintRect.move(rootLayerOffset.x(), rootLayerOffset.y());
-        LayoutRect filterPaintDirtyRect = filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, rootLayer, false, false), parentPaintDirtyRect, m_filterRepaintRect);
+        LayoutRect filterPaintDirtyRect = filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, rootLayer, 0), parentPaintDirtyRect, m_filterRepaintRect);
         m_filterRepaintRect = IntRect();
         // Rewire the old context to a memory buffer, so that we can capture the contents of the layer.
         // NOTE: We saved the old context in the "transparencyLayerContext" local variable, to be able to start a transparency layer
@@ -4100,7 +4100,7 @@ IntRect RenderLayer::absoluteBoundingBox() const
     return pixelSnappedIntRect(boundingBox(root()));
 }
 
-IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer, bool includeSelfTransform, bool includeLayerFilterOutsets)
+IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer, CalculateLayerBoundsFlags flags)
 {
     if (!layer->isSelfPaintingLayer())
         return IntRect();
@@ -4121,12 +4121,14 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
 
     LayoutRect unionBounds = boundingBoxRect;
 
-    LayoutRect localClipRect = layer->localClipRect();
-    if (localClipRect != PaintInfo::infiniteRect()) {
-        LayoutPoint ancestorRelOffset;
-        layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
-        localClipRect.moveBy(ancestorRelOffset);
-        return pixelSnappedIntRect(localClipRect);
+    if (flags & UseLocalClipRectIfPossible) {
+        LayoutRect localClipRect = layer->localClipRect();
+        if (localClipRect != PaintInfo::infiniteRect()) {
+            LayoutPoint ancestorRelOffset;
+            layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+            localClipRect.moveBy(ancestorRelOffset);
+            return pixelSnappedIntRect(localClipRect);
+        }
     }
 
     if (RenderLayer* reflection = layer->reflectionLayer()) {
@@ -4179,7 +4181,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     // FIXME: We can optimize the size of the composited layers, by not enlarging
     // filtered areas with the outsets if we know that the filter is going to render in hardware.
     // https://bugs.webkit.org/show_bug.cgi?id=81239
-    if (includeLayerFilterOutsets && layer->renderer()->style()->hasFilterOutsets()) {
+    if ((flags & IncludeLayerFilterOutsets) && layer->renderer()->style()->hasFilterOutsets()) {
         int topOutset;
         int rightOutset;
         int bottomOutset;
@@ -4188,11 +4190,9 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         unionBounds.move(-leftOutset, -topOutset);
         unionBounds.expand(leftOutset + rightOutset, topOutset + bottomOutset);
     }
-#else
-    UNUSED_PARAM(includeLayerFilterOutsets);
 #endif
 
-    if (includeSelfTransform && layer->paintsWithTransform(PaintBehaviorNormal)) {
+    if ((flags & IncludeSelfTransform) && layer->paintsWithTransform(PaintBehaviorNormal)) {
         TransformationMatrix* affineTrans = layer->transform();
         boundingBoxRect = affineTrans->mapRect(boundingBoxRect);
         unionBounds = affineTrans->mapRect(unionBounds);
