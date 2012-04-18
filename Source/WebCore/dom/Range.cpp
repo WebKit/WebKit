@@ -1037,11 +1037,15 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
     }
 
     bool collapsed = m_start == m_end;
+    RefPtr<Node> container;
     if (startIsText) {
-        RefPtr<Text> newText = toText(m_start.container())->splitText(m_start.offset(), ec);
+        container = m_start.container();
+        RefPtr<Text> newText = toText(container.get())->splitText(m_start.offset(), ec);
         if (ec)
             return;
-        m_start.container()->parentNode()->insertBefore(newNode.release(), newText.get(), ec);
+        
+        container = m_start.container();
+        container->parentNode()->insertBefore(newNode.release(), newText.get(), ec);
         if (ec)
             return;
 
@@ -1055,7 +1059,8 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
             lastChild = (newNodeType == Node::DOCUMENT_FRAGMENT_NODE) ? newNode->lastChild() : newNode;
 
         int startOffset = m_start.offset();
-        m_start.container()->insertBefore(newNode.release(), m_start.container()->childNode(startOffset), ec);
+        container = m_start.container();
+        container->insertBefore(newNode.release(), container->childNode(startOffset), ec);
         if (ec)
             return;
 
