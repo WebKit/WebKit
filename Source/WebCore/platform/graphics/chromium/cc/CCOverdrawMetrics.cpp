@@ -135,9 +135,9 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
 
     switch (metricsType) {
     case DrawingToScreen:
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.drawPixelCountOpaque", static_cast<int>(normalization * m_pixelsDrawnOpaque), 100, 1000000, 50);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.drawPixelCountTranslucent", static_cast<int>(normalization * m_pixelsDrawnTranslucent), 100, 1000000, 50);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.drawPixelCountCulled", static_cast<int>(normalization * m_pixelsCulledForDrawing), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountOpaque_Draw", static_cast<int>(normalization * m_pixelsDrawnOpaque), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountTranslucent_Draw", static_cast<int>(normalization * m_pixelsDrawnTranslucent), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountCulled_Draw", static_cast<int>(normalization * m_pixelsCulledForDrawing), 100, 1000000, 50);
 
         {
             TRACE_COUNTER_ID1("webkit", "DrawPixelsCulled", layerTreeHost, m_pixelsCulledForDrawing);
@@ -146,9 +146,9 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
         break;
     case UpdateAndCommit:
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountPainted", static_cast<int>(normalization * m_pixelsPainted), 100, 1000000, 50);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.uploadPixelCountOpaque", static_cast<int>(normalization * m_pixelsUploadedOpaque), 100, 1000000, 50);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.uploadPixelCountTranslucent", static_cast<int>(normalization * m_pixelsUploadedTranslucent), 100, 1000000, 50);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.uploadTileCountCulled", static_cast<int>(tileNormalization * m_tilesCulledForUpload), 100, 10000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountOpaque_Upload", static_cast<int>(normalization * m_pixelsUploadedOpaque), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountTranslucent_Upload", static_cast<int>(normalization * m_pixelsUploadedTranslucent), 100, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.tileCountCulled_Upload", static_cast<int>(tileNormalization * m_tilesCulledForUpload), 100, 10000000, 50);
 
         {
             TRACE_COUNTER_ID1("webkit", "UploadTilesCulled", layerTreeHost, m_tilesCulledForUpload);
