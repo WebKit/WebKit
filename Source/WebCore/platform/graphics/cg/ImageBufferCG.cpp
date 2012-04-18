@@ -436,23 +436,25 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-    RetainPtr<CGImageRef> image;
+
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
     ASSERT(uti);
-    RefPtr<ByteArray> arr;
+
+    RefPtr<ByteArray> premultipliedData;
+    RetainPtr<CGImageRef> image;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        arr = getPremultipliedImageData(IntRect(IntPoint(0, 0), logicalSize()));
+        premultipliedData = getPremultipliedImageData(IntRect(IntPoint(0, 0), logicalSize()));
+        if (!premultipliedData)
+            return "data:,";
 
-        unsigned char *data = arr->data();
+        unsigned char *data = premultipliedData->data();
         for (int i = 0; i < logicalSize().width() * logicalSize().height(); i++)
-            data[i * 4 + 3] = 255; // The image is already premultiplied, so we just need to make it opaque.
+            data[i * 4 + 3] = 255; // The data is premultiplied, we just need to make it opaque.
 
         RetainPtr<CGDataProviderRef> dataProvider;
-    
         dataProvider.adoptCF(CGDataProviderCreateWithData(0, data, 4 * logicalSize().width() * logicalSize().height(), 0));
-    
         if (!dataProvider)
             return "data:,";
 
