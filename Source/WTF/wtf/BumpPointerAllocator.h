@@ -26,7 +26,9 @@
 #ifndef BumpPointerAllocator_h
 #define BumpPointerAllocator_h
 
+#include <algorithm>
 #include <wtf/PageAllocation.h>
+#include <wtf/PageBlock.h>
 
 namespace WTF {
 
@@ -110,7 +112,7 @@ private:
         if (minimumCapacity < sizeof(BumpPointerPool))
             return 0;
 
-        size_t poolSize = MINIMUM_BUMP_POOL_SIZE;
+        size_t poolSize = std::max(static_cast<size_t>(MINIMUM_BUMP_POOL_SIZE), WTF::pageSize());
         while (poolSize < minimumCapacity) {
             poolSize <<= 1;
             // The following if check relies on MINIMUM_BUMP_POOL_SIZE being a power of 2!
