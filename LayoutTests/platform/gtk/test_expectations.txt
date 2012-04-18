@@ -361,6 +361,13 @@ BUGWK30724 DEBUG : fast/loader/opaque-base-url.html = CRASH
 
 BUGWK83881 : fast/dom/gc-11.html = CRASH
 
+BUGWK63611 DEBUG : editing/deleting/smart-delete-003.html = CRASH
+BUGWK63611 DEBUG : editing/deleting/smart-delete-004.html = CRASH
+BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-2.html = CRASH
+BUGWK63611 DEBUG : editing/pasteboard/paste-text-008.html = CRASH
+BUGWK63611 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
+BUGWK63611 DEBUG : editing/selection/directionality-after-undo-replace.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
