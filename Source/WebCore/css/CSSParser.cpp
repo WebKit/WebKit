@@ -6754,7 +6754,8 @@ PassRefPtr<CSSValue> CSSParser::parseImageSet(CSSParserValueList* valueList)
 
     RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create();
 
-    while (CSSParserValue* arg = functionArgs->current()) { 
+    CSSParserValue* arg = functionArgs->current();
+    while (arg) {
         if (arg->unit != CSSPrimitiveValue::CSS_URI)
             return 0;
 
