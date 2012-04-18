@@ -1,3 +1,17 @@
+2012-04-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] NRWT bails out if more than one X server runs on the machine
+        https://bugs.webkit.org/show_bug.cgi?id=84276
+
+        Reviewed by Dirk Pranke.
+
+        Set up GTK driver's Xvfb display number based on Xorg servers
+        currently running.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver._start):
+        (GtkDriver._start.x_filter):
+
 2012-04-18  Dirk Pranke  <dpranke@chromium.org>
 
         run-webkit-tests picked up an old crash log
