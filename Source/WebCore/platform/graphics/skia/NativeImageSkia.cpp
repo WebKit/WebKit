@@ -127,6 +127,11 @@ bool NativeImageSkia::shouldCacheResampling(const SkIRect& srcSubset,
     if (!isDataComplete())
         return false;
 
+    // If the destination bitmap is excessively large, we'll never allow caching.
+    static const unsigned long long kLargeBitmapSize = 4096ULL * 4096ULL;
+    if ((static_cast<unsigned long long>(destWidth) * static_cast<unsigned long long>(destHeight)) > kLargeBitmapSize)
+        return false;
+
     // If the destination bitmap is small, we'll always allow caching, since
     // there is not very much penalty for computing it and it may come in handy.
     static const int kSmallBitmapSize = 4096;
