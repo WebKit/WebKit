@@ -1,3 +1,18 @@
+2012-04-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] REGRESSION: Popup shrinks because of autocomplete
+        https://bugs.webkit.org/show_bug.cgi?id=84139
+        http://code.google.com/p/chromium/issues/detail?id=123432
+
+        Do not use the PopupContainer's frameRect() to update the popup client's window rect,
+        since PopupContainer is always positioned at (0, 0) inside the client's window rect,
+        and the latter one is positioned relative to the screen origin.
+
+        Reviewed by Kent Tamura.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::refreshAutofillPopup):
+
 2012-04-17  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] enable V8RecursionScope debug ASSERT()

@@ -407,7 +407,7 @@ void PopupContainer::showInRect(const IntRect& r, FrameView* v, int index)
     showPopup(v);
 }
 
-void PopupContainer::refresh(const IntRect& targetControlRect)
+IntRect PopupContainer::refresh(const IntRect& targetControlRect)
 {
     listBox()->setBaseWidth(max(m_originalFrameRect.width() - kBorderSize * 2, 0));
     listBox()->updateFromElement();
@@ -423,14 +423,9 @@ void PopupContainer::refresh(const IntRect& targetControlRect)
     if (size() != widgetRectInScreen.size())
         resize(widgetRectInScreen.size());
 
-    ChromeClientChromium* chromeClient = chromeClientChromium();
-    if (chromeClient) {
-        // Update the WebWidget location (which is relative to the screen origin).
-        if (widgetRectInScreen != chromeClient->windowRect())
-            chromeClient->setWindowRect(widgetRectInScreen);
-    }
-
     invalidate();
+
+    return widgetRectInScreen;
 }
 
 inline bool PopupContainer::isRTL() const

@@ -3064,16 +3064,11 @@ void WebViewImpl::refreshAutofillPopup()
         return;
     }
 
-    IntRect oldBounds = m_autofillPopup->frameRect();
-    m_autofillPopup->refresh(focusedWebCoreNode()->getPixelSnappedRect());
-    IntRect newBounds = m_autofillPopup->frameRect();
+    WebRect newWidgetRect = m_autofillPopup->refresh(focusedWebCoreNode()->getPixelSnappedRect());
     // Let's resize the backing window if necessary.
-    if (oldBounds != newBounds) {
-        WebPopupMenuImpl* popupMenu =
-            static_cast<WebPopupMenuImpl*>(m_autofillPopup->client());
-        if (popupMenu)
-            popupMenu->client()->setWindowRect(m_chromeClientImpl.rootViewToScreen(newBounds));
-    }
+    WebPopupMenuImpl* popupMenu = static_cast<WebPopupMenuImpl*>(m_autofillPopup->client());
+    if (popupMenu && popupMenu->client()->windowRect() != newWidgetRect)
+        popupMenu->client()->setWindowRect(newWidgetRect);
 }
 
 Node* WebViewImpl::focusedWebCoreNode()

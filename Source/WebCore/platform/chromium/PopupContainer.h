@@ -99,7 +99,7 @@ public:
     int selectedIndex() const;
 
     // Refresh the popup values from the PopupMenuClient.
-    void refresh(const IntRect& targetControlRect);
+    IntRect refresh(const IntRect& targetControlRect);
 
     // The menu per-item data.
     const WTF::Vector<PopupItem*>& popupData() const;
