@@ -813,6 +813,12 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         res, buildbot_output, regular_output, user = logging_run(['--additional-platform-directory', 'foo'])
         self.assertContainsLine(regular_output, '--additional-platform-directory=foo is ignored since it is not absolute\n')
 
+    def test_additional_expectations(self):
+        host = MockHost()
+        host.filesystem.write_text_file('/tmp/overrides.txt', 'BUGX : failures/unexpected/mismatch.html = IMAGE\n')
+        self.assertTrue(passing_run(['--additional-expectations', '/tmp/overrides.txt', 'failures/unexpected/mismatch.html'],
+                                     tests_included=True, host=host))
+
     def test_no_http_and_force(self):
         # See test_run_force, using --force raises an exception.
         # FIXME: We would like to check the warnings generated.

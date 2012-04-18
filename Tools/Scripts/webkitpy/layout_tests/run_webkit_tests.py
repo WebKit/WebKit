@@ -306,6 +306,9 @@ def parse_args(args=None):
             default=[], help="Additional directory where to look for test "
                  "baselines (will take precendence over platform baselines). "
                  "Specify multiple times to add multiple search path entries."),
+        optparse.make_option("--additional-expectations", action="append", default=[],
+            help="Path to a test_expectations file that will override previous expectations. "
+                 "Specify multiple times for multiple sets of overrides."),
         optparse.make_option("--no-show-results", action="store_false",
             default=True, dest="show_results",
             help="Don't launch a browser with results after the tests "

@@ -316,16 +316,17 @@ class ChromiumPort(Port):
         # FIXME: It seems bad that run_webkit_tests.py uses a hardcoded dummy
         # builder string instead of just using None.
         builder_name = self.get_option('builder_name', 'DUMMY_BUILDER_NAME')
+        base_overrides = super(ChromiumPort, self).test_expectations_overrides()
         if builder_name != 'DUMMY_BUILDER_NAME' and not '(deps)' in builder_name and not builder_name in self.try_builder_names:
-            return None
+            return base_overrides
 
         try:
             overrides_path = self.path_from_chromium_base('webkit', 'tools', 'layout_tests', 'test_expectations.txt')
-        except AssertionError:
-            return None
+        except AssertionError, e:
+            return base_overrides
         if not self._filesystem.exists(overrides_path):
-            return None
-        return self._filesystem.read_text_file(overrides_path)
+            return base_overrides
+        return self._filesystem.read_text_file(overrides_path) + (base_overrides or '')
 
     def repository_paths(self):
         repos = super(ChromiumPort, self).repository_paths()

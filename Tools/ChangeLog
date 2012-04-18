@@ -1,3 +1,27 @@
+2012-04-18  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: support additional test expectations files
+        https://bugs.webkit.org/show_bug.cgi?id=84222
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds an --additional-expectations flag that can be
+        used to point to more files that will override the default set
+        of expectations. This will allow us to remove the
+        'google_chrome' ports and eventually help to clean up override
+        handling in the chromium ports and unify expectations files and
+        Skipped files; this can also be used to specify overrides for
+        tests that run differently on a given machine.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.test_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.test_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_additional_expectations):
+
 2012-04-18  Jer Noble  <jer.noble@apple.com>
 
         Lion Production Test failing with error: "Failed to stop httpd: pid file still exists"

@@ -887,7 +887,13 @@ class Port(object):
         it is possible that you might need "downstream" expectations that
         temporarily override the "upstream" expectations until the port can
         sync up the two repos."""
-        return None
+        overrides = ''
+        for path in self.get_option('additional_expectations', []):
+            if self._filesystem.exists(self._filesystem.expanduser(path)):
+                overrides += self._filesystem.read_text_file(self._filesystem.expanduser(path))
+            else:
+                _log.warning("overrides path '%s' does not exist" % path)
+        return overrides or None
 
     def repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples of its depending code base.
