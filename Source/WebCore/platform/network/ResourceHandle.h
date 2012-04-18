@@ -104,7 +104,6 @@ public:
     static PassRefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
     static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    static void prepareForURL(const KURL&);
     static bool willLoadFromCache(ResourceRequest&, Frame*);
     static void cacheMetadata(const ResourceResponse&, const Vector<char>&);
 #if PLATFORM(MAC)

@@ -1,3 +1,37 @@
+2012-03-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Use the same DNS prefetching path than the other ports.
+        https://bugs.webkit.org/show_bug.cgi?id=80997
+
+        Reviewed by Martin Robinson.
+
+        This patch basically reverts r56128. There is no need to add an
+        special code path for GTK+ DNS pre-fetching because the main
+        reason to do that (some potential changes in libsoup) is not
+        going to happen. It also reduces the amount of DNS queries by
+        adding a NULL hostname check.
+
+        No need for new tests as this just moves code around.
+
+        * GNUmakefile.list.am:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * html/HTMLLinkElement.cpp:
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        * platform/network/DNS.h:
+        (WebCore):
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle):
+        * platform/network/chromium/DNSChromium.cpp:
+        * platform/network/soup/DNSSoup.cpp: restored.
+        (WebCore):
+        (WebCore::prefetchDNS):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+
 2012-04-09  Martin Robinson  <mrobinson@igalia.com>
 
         [soup] Crash while loading http://www.jusco.cn

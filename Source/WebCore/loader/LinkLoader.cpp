@@ -37,11 +37,11 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "ContainerNode.h"
+#include "DNS.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "LinkRelAttribute.h"
-#include "ResourceHandle.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -99,7 +99,7 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& ty
         // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
         // to complete that as URL <https://bugs.webkit.org/show_bug.cgi?id=48857>.
         if (settings && settings->dnsPrefetchingEnabled() && href.isValid() && !href.isEmpty())
-            ResourceHandle::prepareForURL(href);
+            prefetchDNS(href.host());
     }
 
 #if ENABLE(LINK_PREFETCH)

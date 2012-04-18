@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Collin Jackson  <collinj@webkit.org>
+ * Copyright (C) 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2009, 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +27,23 @@
 #include "config.h"
 #include "DNS.h"
 
-#include "PlatformSupport.h"
+#include "CString.h"
+#include "GOwnPtrSoup.h"
+#include "ResourceHandle.h"
 
 namespace WebCore {
 
 void prefetchDNS(const String& hostname)
 {
-    PlatformSupport::prefetchDNS(hostname);
+    if (hostname.isEmpty())
+        return;
+
+    String uri = "http://" + hostname;
+    GOwnPtr<SoupURI> soupURI(soup_uri_new(uri.utf8().data()));
+    if (!soupURI)
+        return;
+
+    soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupURI.get());
 }
 
-} // namespace WebCore
+}
