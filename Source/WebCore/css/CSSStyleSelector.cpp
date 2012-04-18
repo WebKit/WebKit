@@ -3566,6 +3566,8 @@ void CSSStyleSelector::applyProperty(CSSPropertyID id, CSSValue *value)
         return;
     case CSSPropertyWebkitLocale: {
         HANDLE_INHERIT_AND_INITIAL(locale, Locale);
+        if (!primitiveValue)
+            return;
         if (primitiveValue->getIdent() == CSSValueAuto)
             m_style->setLocale(nullAtom);
         else
