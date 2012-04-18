@@ -1,3 +1,18 @@
+2012-04-09  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Toggle buttons do not size appropriately in some themes
+        https://bugs.webkit.org/show_bug.cgi?id=82833
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Test: platform/gtk/fast/forms/large-toggle-elements.html
+
+        Instead of drawing a toggle button across the entire rectangle of
+        the WebCore control, draw a default-sized one cenetered in the rectangle.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::paintToggle): Draw default-sized toggles.
+
 2012-04-05  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Scrolling some iframes that are partially out of the viewport leads to repaint errors
