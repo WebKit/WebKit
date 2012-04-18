@@ -453,9 +453,9 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     int textX = 0;
     int maxWidth = 0;
     if (rightAligned)
-        maxWidth = rowRect.width() - max(0, m_popupClient->clientPaddingRight() - m_popupClient->clientInsetRight());
+        maxWidth = rowRect.width() - max<int>(0, m_popupClient->clientPaddingRight() - m_popupClient->clientInsetRight());
     else {
-        textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+        textX = max<int>(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
         maxWidth = rowRect.width() - textX;
     }
     // Prepare text to be drawn.
@@ -491,7 +491,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
 
     // We are using the left padding as the right padding includes room for the scroll-bar which
     // does not show in this case.
-    int rightPadding = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+    int rightPadding = max<int>(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
     int remainingWidth = rowRect.width() - rightPadding;
 
     // Draw the icon if applicable.
@@ -519,7 +519,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
 
     TextRun labelTextRun(itemLabel.characters(), itemLabel.length(), false, 0, 0, TextRun::AllowTrailingExpansion, style.textDirection(), style.hasTextDirectionOverride());
     if (rightAligned)
-        textX = max(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
+        textX = max<int>(0, m_popupClient->clientPaddingLeft() - m_popupClient->clientInsetLeft());
     else
         textX = remainingWidth - itemFont.width(labelTextRun);
 
@@ -848,9 +848,9 @@ void PopupListBox::layout()
 
         baseWidth = max(baseWidth, width);
         // FIXME: http://b/1210481 We should get the padding of individual option elements.
-        paddingWidth = max(paddingWidth,
+        paddingWidth = max<int>(paddingWidth,
             m_popupClient->clientPaddingLeft() + m_popupClient->clientPaddingRight());
-        lineEndPaddingWidth = max(lineEndPaddingWidth,
+        lineEndPaddingWidth = max<int>(lineEndPaddingWidth,
             isRightAligned ? m_popupClient->clientPaddingLeft() : m_popupClient->clientPaddingRight());
     }
 
