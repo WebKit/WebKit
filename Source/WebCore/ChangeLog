@@ -1,3 +1,18 @@
+2012-04-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Scrolling some iframes that are partially out of the viewport leads to repaint errors
+        https://bugs.webkit.org/show_bug.cgi?id=83309
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Test: platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html
+
+        The X11 backing store was not properly trimming the scroll region when it
+        was only a portion of the screen. This was hidden by subsequent repaints.
+
+        * platform/gtk/GtkWidgetBackingStoreX11.cpp:
+        (WebCore::WidgetBackingStore::scroll): Fix the calculation of the scrolling region.
+
 2012-04-18  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to layer tree information not updated when moving run-in children.
