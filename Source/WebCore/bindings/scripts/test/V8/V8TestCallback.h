@@ -52,6 +52,7 @@ public:
     virtual int customCallback(Class5* class5Param, Class6* class6Param);
     virtual bool callbackWithStringList(RefPtr<DOMStringList> listParam);
     virtual bool callbackWithBoolean(bool boolParam);
+    virtual bool callbackRequiresThisToPass(Class8* class8Param, ThisClass* thisClassParam);
 
 private:
     V8TestCallback(v8::Local<v8::Object>, ScriptExecutionContext*);

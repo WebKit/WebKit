@@ -35,9 +35,13 @@
 #include "webkit/WebKitDOMClass2Private.h"
 #include "webkit/WebKitDOMClass3.h"
 #include "webkit/WebKitDOMClass3Private.h"
+#include "webkit/WebKitDOMClass8.h"
+#include "webkit/WebKitDOMClass8Private.h"
 #include "webkit/WebKitDOMDOMStringList.h"
 #include "webkit/WebKitDOMDOMStringListPrivate.h"
 #include "webkit/WebKitDOMTestCallbackPrivate.h"
+#include "webkit/WebKitDOMThisClass.h"
+#include "webkit/WebKitDOMThisClassPrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
@@ -260,6 +264,33 @@ webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboo
     WebCore::JSMainThreadNullState state;
     WebCore::TestCallback* item = WebKit::core(self);
     gboolean result = item->callbackWithBoolean(boolParam);
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    return static_cast<gboolean>(0);
+#endif /* ENABLE(SQL_DATABASE) */
+}
+
+gboolean
+webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCallback* self, WebKitDOMClass8* class8Param, WebKitDOMThisClass* thisClassParam)
+{
+#if ENABLE(SQL_DATABASE)
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback* item = WebKit::core(self);
+    g_return_val_if_fail(class8Param, 0);
+    g_return_val_if_fail(thisClassParam, 0);
+    WebCore::Class8* convertedClass8Param = 0;
+    if (class8Param) {
+        convertedClass8Param = WebKit::core(class8Param);
+        g_return_val_if_fail(convertedClass8Param, 0);
+    }
+    WebCore::ThisClass* convertedThisClassParam = 0;
+    if (thisClassParam) {
+        convertedThisClassParam = WebKit::core(thisClassParam);
+        g_return_val_if_fail(convertedThisClassParam, 0);
+    }
+    gboolean result = item->callbackRequiresThisToPass(convertedClass8Param, convertedThisClassParam);
     return result;
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")

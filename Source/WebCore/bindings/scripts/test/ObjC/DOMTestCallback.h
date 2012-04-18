@@ -33,7 +33,9 @@
 @class DOMClass3;
 @class DOMClass5;
 @class DOMClass6;
+@class DOMClass8;
 @class DOMDOMStringList;
+@class DOMThisClass;
 @class NSString;
 
 @interface DOMTestCallback : DOMObject
@@ -44,6 +46,7 @@
 - (int)customCallback:(DOMClass5 *)class5Param class6Param:(DOMClass6 *)class6Param;
 - (BOOL)callbackWithStringList:(DOMDOMStringList *)listParam;
 - (BOOL)callbackWithBoolean:(BOOL)boolParam;
+- (BOOL)callbackRequiresThisToPass:(DOMClass8 *)class8Param thisClassParam:(DOMThisClass *)thisClassParam;
 @end
 
 #endif

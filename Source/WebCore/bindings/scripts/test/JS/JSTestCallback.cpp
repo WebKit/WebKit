@@ -26,7 +26,9 @@
 
 #include "JSClass1.h"
 #include "JSClass2.h"
+#include "JSClass8.h"
 #include "JSDOMStringList.h"
+#include "JSThisClass.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 
@@ -143,6 +145,29 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
 
     bool raisedException = false;
     m_data->invokeCallback(args, &raisedException);
+    return !raisedException;
+}
+
+bool JSTestCallback::callbackRequiresThisToPass(Class8* class8Param, ThisClass* thisClassParam)
+{
+    ASSERT(thisClassParam);
+
+    if (!canInvokeCallback())
+        return true;
+
+    RefPtr<JSTestCallback> protect(this);
+
+    JSLock lock(SilenceAssertionsOnly);
+
+    ExecState* exec = m_data->globalObject()->globalExec();
+    MarkedArgumentBuffer args;
+    args.append(toJS(exec, m_data->globalObject(), class8Param));
+    args.append(toJS(exec, m_data->globalObject(), thisClassParam));
+
+    bool raisedException = false;
+    JSValue jsthisClassParam = toJS(exec, m_data->globalObject(), thisClassParam);
+    m_data->invokeCallback(jsthisClassParam, args, &raisedException);
+
     return !raisedException;
 }
 

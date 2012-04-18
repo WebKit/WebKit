@@ -2685,14 +2685,24 @@ sub GenerateCallbackImplementation
             push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(");
 
             my @args = ();
+            my @argsCheck = ();
+            my $thisType = $function->signature->extendedAttributes->{"PassThisToCallback"};
             foreach my $param (@params) {
+                my $paramName = $param->name;
                 AddIncludesForTypeInImpl($param->type, 1);
-                push(@args, GetNativeType($param->type) . " " . $param->name);
+                push(@args, GetNativeType($param->type) . " " . $paramName);
+                if ($thisType and $thisType eq $param->type) {
+                    push(@argsCheck, <<END);
+    ASSERT(${paramName});
+
+END
+                }
             }
             push(@implContent, join(", ", @args));
             push(@implContent, ")\n");
 
             push(@implContent, "{\n");
+            push(@implContent, @argsCheck) if @argsCheck;
             push(@implContent, "    if (!canInvokeCallback())\n");
             push(@implContent, "        return true;\n\n");
             push(@implContent, "    RefPtr<$className> protect(this);\n\n");
@@ -2712,7 +2722,20 @@ sub GenerateCallbackImplementation
             }
 
             push(@implContent, "\n    bool raisedException = false;\n");
-            push(@implContent, "    m_data->invokeCallback(args, &raisedException);\n");
+            if ($thisType) {
+                foreach my $param (@params) {
+                    next if $param->type ne $thisType;
+                    my $paramName = $param->name;
+                    push(@implContent, <<END);
+    JSValue js${paramName} = toJS(exec, m_data->globalObject(), ${paramName});
+    m_data->invokeCallback(js${paramName}, args, &raisedException);
+
+END
+                    last;
+                }
+            } else {
+                push(@implContent, "    m_data->invokeCallback(args, &raisedException);\n");
+            }
             push(@implContent, "    return !raisedException;\n");
             push(@implContent, "}\n");
         }

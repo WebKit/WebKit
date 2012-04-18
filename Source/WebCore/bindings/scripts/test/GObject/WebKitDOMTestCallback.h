@@ -111,6 +111,18 @@ webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, 
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean boolParam);
 
+/**
+ * webkit_dom_test_callback_callback_requires_this_to_pass:
+ * @self: A #WebKitDOMTestCallback
+ * @class8Param: A #WebKitDOMClass8
+ * @thisClassParam: A #WebKitDOMThisClass
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean
+webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCallback* self, WebKitDOMClass8* class8Param, WebKitDOMThisClass* thisClassParam);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestCallback_h */

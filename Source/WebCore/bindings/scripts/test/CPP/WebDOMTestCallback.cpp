@@ -27,14 +27,18 @@
 #include "Class1.h"
 #include "Class2.h"
 #include "Class3.h"
+#include "Class8.h"
 #include "DOMStringList.h"
 #include "KURL.h"
 #include "TestCallback.h"
+#include "ThisClass.h"
 #include "WebDOMClass1.h"
 #include "WebDOMClass2.h"
 #include "WebDOMClass3.h"
+#include "WebDOMClass8.h"
 #include "WebDOMDOMStringList.h"
 #include "WebDOMString.h"
+#include "WebDOMThisClass.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
@@ -131,6 +135,14 @@ bool WebDOMTestCallback::callbackWithBoolean(bool boolParam)
         return false;
 
     return impl()->callbackWithBoolean(boolParam);
+}
+
+bool WebDOMTestCallback::callbackRequiresThisToPass(const WebDOMClass8& class8Param, const WebDOMThisClass& thisClassParam)
+{
+    if (!impl())
+        return false;
+
+    return impl()->callbackRequiresThisToPass(toWebCore(class8Param), toWebCore(thisClassParam));
 }
 
 WebCore::TestCallback* toWebCore(const WebDOMTestCallback& wrapper)
