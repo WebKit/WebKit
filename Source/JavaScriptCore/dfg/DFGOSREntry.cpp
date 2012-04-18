@@ -141,13 +141,11 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     dataLog("    OSR should succeed.\n");
 #endif
     
-#if USE(JSVALUE64)
     // 3) Perform data format conversions.
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
         if (entry->m_localsForcedDouble.get(local))
             *bitwise_cast<double*>(exec->registers() + local) = exec->registers()[local].jsValue().asNumber();
     }
-#endif
     
     // 4) Fix the call frame.
     
