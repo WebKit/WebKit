@@ -71,10 +71,6 @@ class TestRunner:
                     "Test is flaky in GTK Linux 32-bit Release bot",
                     82868,
                     ["/webkit2/WebKitWebView/resources"]),
-        SkippedTest("unittests/testatk",
-                    "Fails on all GTK bots",
-                    84010,
-                    ["/webkit/atk/textChangedNotifications"]),
     ]
 
     def __init__(self, options, tests=[]):

@@ -1,3 +1,13 @@
+2012-04-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] atk/textChangedNotifications API test fails
+        https://bugs.webkit.org/show_bug.cgi?id=84010
+
+        Unreviewed, unskipping test after bug being fixed by r114311.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip now passing test.
+
 2012-04-17  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Viewport metatag doesn't disable double-tap zoom
