@@ -169,6 +169,7 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyMarkerStart);
         if (value)
             return value->cssText();
+        return String();
     }
 #endif
     case CSSPropertyBorderRadius:
