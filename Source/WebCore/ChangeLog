@@ -1,3 +1,19 @@
+2012-04-18  Abhishek Arya  <inferno@chromium.org>
+
+        Incorrect beforeChild parent calculation in RenderRubyBase::moveChildren.
+        https://bugs.webkit.org/show_bug.cgi?id=80297
+
+        Reviewed by Julien Chaffraix.
+
+        beforeChild might share the same anonymous block parent with other previous
+        siblings. Before moving the children across ruby bases, we need to make sure
+        to split the tree across the beforeChild correctly.
+
+        Test: fast/ruby/ruby-text-before-child-split.html
+
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveChildren):
+
 2012-04-18  Philip Rogers  <pdr@google.com>
 
         Skip building resources if SVGTRef is not in a document

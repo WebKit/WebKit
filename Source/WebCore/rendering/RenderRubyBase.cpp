@@ -58,13 +58,9 @@ void RenderRubyBase::moveChildren(RenderRubyBase* toBase, RenderObject* beforeCh
     // This function removes all children that are before (!) beforeChild
     // and appends them to toBase.
     ASSERT_ARG(toBase, toBase);
-    
-    // First make sure that beforeChild (if set) is indeed a direct child of this.
-    // Inline children might be wrapped in an anonymous block if there's a continuation.
-    // Theoretically, in ruby bases, this can happen with only the first such a child,
-    // so it should be OK to just climb the tree.
-    while (beforeChild && beforeChild->parent() != this)
-        beforeChild = beforeChild->parent();
+
+    if (beforeChild && beforeChild->parent() != this)
+        beforeChild = splitAnonymousBlocksAroundChild(beforeChild);
 
     if (childrenInline())
         moveInlineChildren(toBase, beforeChild);
