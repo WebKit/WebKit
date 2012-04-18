@@ -97,11 +97,6 @@ void MediaPlayerPrivate::setCertificatePath(const String& caPath)
 
 MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     : m_webCorePlayer(player)
-#if USE(ACCELERATED_COMPOSITING)
-    , m_platformPlayer(new MMRPlayer(this, true))
-#else
-    , m_platformPlayer(new MMRPlayer(this, false))
-#endif
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_fullscreenWebPageClient(0)
@@ -115,6 +110,14 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_waitMetadataTimer(this, &MediaPlayerPrivate::waitMetadataTimerFired)
     , m_waitMetadataPopDialogCounter(0)
 {
+    void* tabId = 0;
+    if (frameView() && frameView()->hostWindow())
+        tabId = frameView()->hostWindow()->platformPageClient();
+#if USE(ACCELERATED_COMPOSITING)
+    m_platformPlayer = new MMRPlayer(this, tabId, true);
+#else
+    m_platformPlayer = new MMRPlayer(this, tabId, false);
+#endif
 }
 
 MediaPlayerPrivate::~MediaPlayerPrivate()
@@ -690,10 +693,8 @@ int MediaPlayerPrivate::showErrorDialog(MMRPlayer::Error type)
     }
 
     int rc = 0;
-    HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_webCorePlayer->mediaPlayerClient());
-    Document* topdoc = element->document()->topDocument();
-    if (topdoc->view() && topdoc->view()->hostWindow())
-        rc = topdoc->view()->hostWindow()->platformPageClient()->showAlertDialog(atype);
+    if (frameView() && frameView()->hostWindow())
+        rc = frameView()->hostWindow()->platformPageClient()->showAlertDialog(atype);
     return rc;
 }
 
@@ -719,6 +720,13 @@ BlackBerry::Platform::Graphics::Window* MediaPlayerPrivate::platformWindow()
 bool MediaPlayerPrivate::isFullscreen() const
 {
     return m_fullscreenWebPageClient;
+}
+
+bool MediaPlayerPrivate::isTabVisible() const
+{
+    if (frameView() && frameView()->hostWindow())
+        return frameView()->hostWindow()->platformPageClient()->isVisible();
+    return true;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

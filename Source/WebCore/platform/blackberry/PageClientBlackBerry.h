@@ -69,6 +69,7 @@ public:
     virtual WebCore::IntSize viewportSize() const = 0;
     virtual int showAlertDialog(BlackBerry::WebKit::WebPageClient::AlertType) = 0;
     virtual bool isActive() const = 0;
+    virtual bool isVisible() const = 0;
     virtual bool authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, WebCore::Credential&) = 0;
     virtual SaveCredentialType notifyShouldSaveCredential(bool) = 0;
 };

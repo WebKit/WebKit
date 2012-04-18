@@ -222,6 +222,7 @@ public:
     virtual bool lockOrientation(bool landscape) = 0;
     virtual void unlockOrientation() = 0;
     virtual bool isActive() const = 0;
+    virtual bool isVisible() const = 0;
     virtual void requestWebGLPermission(const WebString&) = 0;
 
     virtual void setToolTip(WebString) = 0;

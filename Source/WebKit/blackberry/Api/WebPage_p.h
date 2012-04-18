@@ -178,6 +178,7 @@ public:
     virtual double currentZoomFactor() const;
     virtual int showAlertDialog(WebPageClient::AlertType atype);
     virtual bool isActive() const;
+    virtual bool isVisible() const { return m_visible; }
     virtual bool authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, WebCore::Credential&);
     virtual SaveCredentialType notifyShouldSaveCredential(bool);
 

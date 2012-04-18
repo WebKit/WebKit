@@ -1,3 +1,17 @@
+2012-04-18  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Tab awareness for HTML5 concurrent audio
+        https://bugs.webkit.org/show_bug.cgi?id=82930
+        Support for concurrent HTML5 audio improvements being made in
+        the platform library, which need to be aware of tabs and tab
+        visibility. PR96004.
+
+        Reviewed by George Staikos.
+
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (BlackBerry::WebKit::WebPagePrivate::isVisible):
+
 2012-04-17  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Viewport metatag doesn't disable double-tap zoom
