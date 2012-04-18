@@ -187,7 +187,6 @@ static EncodedJSValue JSC_HOST_CALL constructJS##name##Array(ExecState* callFram
     return JSValue::encode(JS##name##Array::create(structure, callFrame->lexicalGlobalObject(), name##Array::create(length)));\
 }
 
-#if ENABLE(COMMANDLINE_TYPEDARRAYS)
 TYPED_ARRAY(Uint8, uint8_t);
 TYPED_ARRAY(Uint16, uint16_t);
 TYPED_ARRAY(Uint32, uint32_t);
@@ -196,7 +195,6 @@ TYPED_ARRAY(Int16, int16_t);
 TYPED_ARRAY(Int32, int32_t);
 TYPED_ARRAY(Float32, float);
 TYPED_ARRAY(Float64, double);
-#endif
 
 }
 

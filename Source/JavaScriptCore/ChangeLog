@@ -1,5 +1,17 @@
 2012-04-18  Filip Pizlo  <fpizlo@apple.com>
 
+        jsc command line should support typed arrays by default
+        https://bugs.webkit.org/show_bug.cgi?id=84298
+
+        Rubber stamped by Gavin Barraclough.
+
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+
+2012-04-18  Filip Pizlo  <fpizlo@apple.com>
+
         JSVALUE32_64 should be able to perform division on ARM without crashing, and variables
         forced double should not be scrambled when performing OSR entry
         https://bugs.webkit.org/show_bug.cgi?id=84272

@@ -195,7 +195,6 @@ protected:
         addFunction(globalData, "clearSamplingFlags", functionClearSamplingFlags, 1);
 #endif
         
-#if ENABLE(COMMANDLINE_TYPEDARRAYS)
         addConstructableFunction(globalData, "Uint8Array", constructJSUint8Array, 1);
         addConstructableFunction(globalData, "Uint16Array", constructJSUint16Array, 1);
         addConstructableFunction(globalData, "Uint32Array", constructJSUint32Array, 1);
@@ -204,7 +203,6 @@ protected:
         addConstructableFunction(globalData, "Int32Array", constructJSInt32Array, 1);
         addConstructableFunction(globalData, "Float32Array", constructJSFloat32Array, 1);
         addConstructableFunction(globalData, "Float64Array", constructJSFloat64Array, 1);
-#endif
 
         JSArray* array = constructEmptyArray(globalExec());
         for (size_t i = 0; i < arguments.size(); ++i)
