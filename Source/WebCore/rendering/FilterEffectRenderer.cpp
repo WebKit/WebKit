@@ -291,6 +291,11 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         }
     }
 
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+    removeCustomFilterClients();
+    m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
+#endif
+
     // If we didn't make any effects, tell our caller we are not valid
     if (!previousEffect)
         return false;
@@ -298,10 +303,6 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
     m_effects.first()->inputEffects().append(m_sourceGraphic);
     setMaxEffectRects(m_sourceDrawingRegion);
     
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-    removeCustomFilterClients();
-    m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
-#endif
     return true;
 }
 
