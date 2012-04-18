@@ -606,7 +606,12 @@ void RenderLayerBacking::updateInternalHierarchy()
 
 void RenderLayerBacking::updateDrawsContent()
 {
-    m_graphicsLayer->setDrawsContent(containsPaintedContent());
+    bool hasPaintedContent = containsPaintedContent();
+
+    // FIXME: we could refine this to only allocate backing for one of these layers if possible.
+    m_graphicsLayer->setDrawsContent(hasPaintedContent);
+    if (m_foregroundLayer)
+        m_foregroundLayer->setDrawsContent(hasPaintedContent);
 }
 
 // Return true if the layers changed.
