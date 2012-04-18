@@ -67,13 +67,13 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 
 v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Arguments& args)
 {
-    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
+    INC_STATS("DOM.DedicatedWorkerContext.postMessage");
     return handlePostMessageCallback(args, false);
 }
 
 v8::Handle<v8::Value> V8DedicatedWorkerContext::webkitPostMessageCallback(const v8::Arguments& args)
 {
-    INC_STATS(L"DOM.DedicatedWorkerContext.postMessage");
+    INC_STATS("DOM.DedicatedWorkerContext.postMessage");
     return handlePostMessageCallback(args, true);
 }
 

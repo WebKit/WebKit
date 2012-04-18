@@ -33,6 +33,7 @@
 
 #include "PlatformSupport.h"
 #include "SharedPersistent.h"
+#include "StatsCounter.h"
 #include "V8AbstractEventListener.h"
 #include "V8DOMWindowShell.h"
 #include "V8DOMWrapper.h"
@@ -46,7 +47,7 @@
 #include <wtf/text/TextPosition.h>
 
 #if defined(ENABLE_DOM_STATS_COUNTERS) && PLATFORM(CHROMIUM)
-#define INC_STATS(name) webkitPlatformSupport()->incrementStatsCounter(name)
+#define INC_STATS(name) StatsCounter::incrementStatsCounter(name)
 #else
 #define INC_STATS(name)
 #endif

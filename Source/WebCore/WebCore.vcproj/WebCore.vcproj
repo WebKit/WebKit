@@ -27798,6 +27798,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\StatsCounter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\StatsCounter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\SuddenTermination.h"
 				>
 			</File>
