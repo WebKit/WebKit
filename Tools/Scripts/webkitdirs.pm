@@ -1156,7 +1156,7 @@ sub determineIsChromiumNinja()
 
     my $hasUpToDateNinjabuild = 0;
     if (-e "out/$config/build.ninja") {
-        my $statNinja = stat("out/$config/build.ninja");
+        my $statNinja = stat("out/$config/build.ninja")->mtime;
 
         my $statXcode = 0;
         if (-e 'Source/WebKit/chromium/WebKit.xcodeproj') {
@@ -1165,7 +1165,7 @@ sub determineIsChromiumNinja()
 
         my $statMake = 0;
         if (-e 'Makefile.chromium') {
-          $statXcode = stat('Makefile.chromium')->mtime;
+          $statMake = stat('Makefile.chromium')->mtime;
         }
 
         $hasUpToDateNinjabuild = $statNinja > $statXcode && $statNinja > $statMake;

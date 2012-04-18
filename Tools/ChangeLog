@@ -1,3 +1,16 @@
+2012-04-17  Dirk Pranke  <dpranke@chromium.org>
+
+        build-webkit: make ninja work with chromium linux
+        https://bugs.webkit.org/show_bug.cgi?id=84213
+
+        Reviewed by Eric Seidel.
+
+        Fix typos so that build-webkit will use ninja to
+        build chromium if a build.ninja file exists and is up-to-date.
+
+        * Scripts/webkitdirs.pm:
+        (determineIsChromiumNinja):
+
 2012-04-17  Ojan Vafai  <ojan@chromium.org>
 
         Add caching to the flakiness dashboard json files
