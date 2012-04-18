@@ -1,3 +1,43 @@
+2012-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] DNS prefetching spams resolver, shoots self in the foot
+        https://bugs.webkit.org/show_bug.cgi?id=41630
+
+        Reviewed by Martin Robinson.
+
+        Added generic DNSResolveQueue class to throttle DNS
+        prefetches. It's an abstract refactoring of CFNET's
+        DNSResolveQueue. Platform specific methods implemented for soup
+        and CFNET backends.
+
+        No new tests required as we're just refactoring existing code to
+        be used by two different ports.
+
+        * CMakeLists.txt: added new file.
+        * GNUmakefile.list.am: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * platform/network/DNSResolveQueue.cpp: Added.
+        (WebCore):
+        (WebCore::DNSResolveQueue::add): adds a new host to be prefetched.
+        (WebCore::DNSResolveQueue::fired): by using a delay we coalesce
+        several prefetch requests and try to resolve them all here.
+        * platform/network/DNSResolveQueue.h: Added.
+        (WebCore):
+        (DNSResolveQueue): class that implements DNS prefetch
+        throttling using a template pattern.
+        (WebCore::DNSResolveQueue::shared):
+        (WebCore::DNSResolveQueue::decrementRequestCount):
+        * platform/network/cf/DNSCFNet.cpp:
+        (WebCore::DNSResolveQueue::platformProxyIsEnabledInSystemPreferences):
+        (WebCore::DNSResolveQueue::platformResolve):
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore):
+        (WebCore::DNSResolveQueue::platformProxyIsEnabledInSystemPreferences):
+        (WebCore::resolvedCallback):
+        (WebCore::DNSResolveQueue::platformResolve):
+        (WebCore::prefetchDNS):
+
 2012-03-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         Build error: DNSSoup.cpp:30: fatal error: CString.h: No such file or

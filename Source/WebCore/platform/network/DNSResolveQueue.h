@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2009, 2012 Igalia S.L.
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,47 +21,44 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DNS.h"
-#include "DNSResolveQueue.h"
+#ifndef DNSResolveQueue_h
+#define DNSResolveQueue_h
 
-#include "GOwnPtrSoup.h"
-#include "ResourceHandle.h"
-#include <wtf/MainThread.h>
-#include <wtf/text/CString.h>
+#include "Timer.h"
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-// There is no current reliable way to know if we're behind a proxy at
-// this level. We'll have to implement it in
-// SoupSession/SoupProxyURIResolver/GProxyResolver
-bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
-{
-    return false;
-}
+class DNSResolveQueue : public TimerBase {
 
-static void resolvedCallback(SoupAddress* soupAddress, guint status, void* userData)
-{
-    DNSResolveQueue::shared().decrementRequestCount();
-}
+public:
+    static DNSResolveQueue& shared()
+    {
+      DEFINE_STATIC_LOCAL(DNSResolveQueue, queue, ());
+      return queue;
+    }
 
-void DNSResolveQueue::platformResolve(const String& hostname)
-{
-    ASSERT(isMainThread());
+    void add(const String& hostname);
+    void decrementRequestCount()
+    {
+      atomicDecrement(&m_requestsInFlight);
+    }
 
-    soup_session_prefetch_dns(ResourceHandle::defaultSession(), hostname.utf8().data(), 0, resolvedCallback, 0);
-}
+private:
+    bool platformProxyIsEnabledInSystemPreferences();
+    void platformResolve(const String&);
 
-void prefetchDNS(const String& hostname)
-{
-    ASSERT(isMainThread());
-    if (hostname.isEmpty())
-        return;
+    void fired();
 
-    DNSResolveQueue::shared().add(hostname);
-}
+    HashSet<String> m_names;
+    int m_requestsInFlight;
+};
 
 }
+
+#endif // DNSResolveQueue_h

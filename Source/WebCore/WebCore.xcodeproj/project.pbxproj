@@ -5882,6 +5882,7 @@
 		ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED501DC50B249F2900AE18D9 /* EditorMac.mm */; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
+		F293B27E56C112F373FFF27E /* DNSResolveQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C60128060078BB70E367A95 /* DNSResolveQueue.cpp */; };
 		F316396B1329481A00A649CB /* InjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F31639691329481A00A649CB /* InjectedScriptManager.cpp */; };
 		F316396C1329481A00A649CB /* InjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F316396A1329481A00A649CB /* InjectedScriptManager.h */; };
 		F316396E1329487600A649CB /* JSInjectedScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F316396D1329487600A649CB /* JSInjectedScriptManager.cpp */; };
@@ -8828,6 +8829,7 @@
 		7AF11A5912E727490061F23C /* InspectorRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorRuntimeAgent.h; sourceTree = "<group>"; };
 		7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
 		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
+		7C60128060078BB70E367A95 /* DNSResolveQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNSResolveQueue.cpp; sourceTree = "<group>"; };
 		7E33CD00127F340D00BE8F17 /* PurgePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgePriority.h; sourceTree = "<group>"; };
 		7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SubresourceLoaderCF.cpp; path = cf/SubresourceLoaderCF.cpp; sourceTree = "<group>"; };
 		7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationCF.cpp; sourceTree = "<group>"; };
@@ -13052,6 +13054,7 @@
 		FA654A671108ABE2002615E0 /* mathattrs.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mathattrs.in; sourceTree = "<group>"; };
 		FA654A691108ABED002615E0 /* MathMLTextElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLTextElement.cpp; sourceTree = "<group>"; };
 		FA654A6A1108ABED002615E0 /* MathMLTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLTextElement.h; sourceTree = "<group>"; };
+		FA6E466FCD0418A9966A5B60 /* DNSResolveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNSResolveQueue.h; sourceTree = "<group>"; };
 		FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElement.cpp; sourceTree = "<group>"; };
 		FABE72EE1059C1EB00D999DD /* MathMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElement.h; sourceTree = "<group>"; };
 		FABE72EF1059C1EB00D999DD /* MathMLInlineContainerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLInlineContainerElement.cpp; sourceTree = "<group>"; };
@@ -15013,6 +15016,8 @@
 				51A052321058774F00CC9E95 /* CredentialStorage.cpp */,
 				51A052311058774F00CC9E95 /* CredentialStorage.h */,
 				B2F34FE50E82F81400F627CD /* DNS.h */,
+				7C60128060078BB70E367A95 /* DNSResolveQueue.cpp */,
+				FA6E466FCD0418A9966A5B60 /* DNSResolveQueue.h */,
 				514C765A0CE923A1007EF3CD /* FormData.cpp */,
 				514C765B0CE923A1007EF3CD /* FormData.h */,
 				085B92B80EFDE73D00E6123C /* FormDataBuilder.cpp */,
@@ -24927,6 +24932,7 @@
 				FD31609012B026F700C1A359 /* Distance.cpp in Sources */,
 				A1E1154413015C3D0054AC8C /* DistantLightSource.cpp in Sources */,
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
+				F293B27E56C112F373FFF27E /* DNSResolveQueue.cpp in Sources */,
 				A8185F3C09765766005826D9 /* Document.cpp in Sources */,
 				A3BB59F31457A40D00AC56FE /* DocumentEventQueue.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragment.cpp in Sources */,

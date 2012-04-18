@@ -120,10 +120,10 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.31/glib-2.31.2.tar.xz" version="2.31.2"
+    <branch module="/pub/GNOME/sources/glib/2.31/glib-2.31.8.tar.xz" version="2.31.8"
             repo="ftp.gnome.org"
-            hash="sha256:19d7921671a487c3c5759a57df7b8508afdbadd7764d62a47a82fff7b399032b"
-            md5sum="1cbdf314d7c87916a0c3dce83ac0285f"/>
+            hash="sha256:1ce3d275189000e1c50e92efcdb6447bc260b1e5c41699b7a1959e3e1928fbaa"
+            md5sum="6909664f29fae2f00cc3181c8c6a6aa7"/>
   </autotools>
 
   <autotools id="glib-networking">
@@ -152,9 +152,9 @@
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
-    <branch module="libsoup" version="2.37.2.1+git"
+    <branch module="libsoup" version="2.37.92"
             repo="git.gnome.org"
-            tag="5cbfc48caf76ced2e28ee06c9e40523273601dc6"/>
+            tag="afcff7115a6c36ca3de5bc88994174f5a0e01956"/>
   </autotools>
 
   <autotools id="fontconfig" autogen-sh="configure">

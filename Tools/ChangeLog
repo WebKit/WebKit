@@ -1,3 +1,15 @@
+2012-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Soup] DNS prefetching spams resolver, shoots self in the foot
+        https://bugs.webkit.org/show_bug.cgi?id=41630
+
+        Reviewed by Martin Robinson.
+
+        Bump libsoup and glib dependencies.
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2012-03-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Allow running run-gtk-tests during 'make distcheck'

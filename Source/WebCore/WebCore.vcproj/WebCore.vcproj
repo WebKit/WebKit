@@ -30381,6 +30381,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\DNSResolveQueue.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\DNSResolveQueue.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\FormData.cpp"
 					>
 				</File>
