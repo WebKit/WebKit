@@ -283,7 +283,7 @@ WebInspector.HeapSnapshotView.prototype = {
             return false;
         }
 
-        var current = this.dataGrid.children[0];
+        var current = this.dataGrid.rootNode().children[0];
         var depth = 0;
         var info = {};
 
@@ -356,7 +356,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
     refreshVisibleData: function()
     {
-        var child = this.dataGrid.children[0];
+        var child = this.dataGrid.rootNode().children[0];
         while (child) {
             child.refresh();
             child = child.traverseNextNode(false, null, true);

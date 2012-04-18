@@ -46,8 +46,8 @@ WebInspector.HeapSnapshotSortableDataGrid = function(columns, deferNodeContentCr
 WebInspector.HeapSnapshotSortableDataGrid.prototype = {
     dispose: function()
     {
-        for (var i = 0, l = this.children.length; i < l; ++i)
-            this.children[i].dispose();
+        for (var i = 0, l = this.rootNode().children.length; i < l; ++i)
+            this.rootNode().children[i].dispose();
     },
 
     resetSortingCache: function()
@@ -58,8 +58,8 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
 
     changeNameFilter: function(filter)
     {
-        var filter = filter.toLowerCase();
-        var children = this.children;
+        filter = filter.toLowerCase();
+        var children = this.rootNode().children;
         for (var i = 0, l = children.length; i < l; ++i) {
             var node = children[i];
             if (node.depth === 0)
@@ -107,7 +107,7 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
         var height = this.scrollContainer.offsetHeight;
         var visibleRowsCount = Math.round(height / rowHeight) + 1;
 
-        var children = this.children;
+        var children = this.rootNode().children;
 
         var i = 0;
         while (i < children.length) {
@@ -141,13 +141,13 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
     _performSorting: function(sortFunction)
     {
         this.recursiveSortingEnter();
-        var children = this.children;
-        this.removeChildren();
+        var children = this.rootNode().children;
+        this.rootNode().removeChildren();
         children.sort(sortFunction);
         for (var i = 0, l = children.length; i < l; ++i) {
             var child = children[i];
             var revealed = child.revealed;
-            this.appendChild(child);
+            this.rootNode().appendChild(child);
             child.revealed = revealed;
             if (child.expanded)
                 child.sort();
@@ -229,25 +229,24 @@ WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
                 }
             }
         }
-        nextStep(this, 0);
+        nextStep(this.rootNode(), 0);
     },
 
     setDataSource: function(snapshotView, snapshot, nodeIndex)
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
-        this.snapshotNodeIndex = nodeIndex || this.snapshot.rootNodeIndex;
-        this._provider = this._createProvider(snapshot, this.snapshotNodeIndex, this);
-        this.sort();
+        var fakeEdge = { nodeIndex: nodeIndex || this.snapshot.rootNodeIndex };
+        this.setRootNode(new WebInspector.HeapSnapshotObjectNode(this, false, fakeEdge, null));
+        this.rootNode().sort();
     },
 
     sortingChanged: function()
     {
-        this.sort();
+        this.rootNode().sort();
     }
 };
 
-MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotObjectNode.prototype, WebInspector.HeapSnapshotContainmentDataGrid.prototype);
 WebInspector.HeapSnapshotContainmentDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
 /**
@@ -280,7 +279,7 @@ WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
 
     reset: function()
     {
-        this.removeChildren();
+        this.rootNode().removeChildren();
         this.resetSortingCache();
     },
 }
@@ -331,12 +330,12 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         function aggregatesReceived(key, aggregates)
         {
             for (var constructor in aggregates)
-                this.appendChild(new WebInspector.HeapSnapshotConstructorNode(this, constructor, aggregates[constructor], key));
+                this.rootNode().appendChild(new WebInspector.HeapSnapshotConstructorNode(this, constructor, aggregates[constructor], key));
             this.sortingChanged();
         }
 
         this.dispose();
-        this.removeChildren();
+        this.rootNode().removeChildren();
         this.resetSortingCache();
 
         var key = this._profileIndex === -1 ? "allObjects" : this._minNodeId + ".." + this._maxNodeId;
@@ -413,7 +412,7 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
     {
         this.baseSnapshot = baseSnapshot;
         this.dispose();
-        this.removeChildren();
+        this.rootNode().removeChildren();
         this.resetSortingCache();
         if (this.baseSnapshot === this.snapshot) {
             this.dispatchEventToListeners("sorting complete");
@@ -440,7 +439,7 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
                 function addNodeIfNonZeroDiff(boundNode, zeroDiff)
                 {
                     if (!zeroDiff)
-                        this.appendChild(boundNode);
+                        this.rootNode().appendChild(boundNode);
                     if (!--nodeCount)
                         this.sortingChanged();
                 }
@@ -478,16 +477,16 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
-        this.snapshotNodeIndex = this.snapshot.rootNodeIndex;
-        this._provider = this._createProvider(snapshot, this.snapshotNodeIndex);
-        this.sort();
+
+        var fakeNode = { nodeIndex: this.snapshot.rootNodeIndex };
+        this.setRootNode(new WebInspector.HeapSnapshotDominatorObjectNode(this, fakeNode));
+        this.rootNode().sort();
     },
 
     sortingChanged: function()
     {
-        this.sort();
+        this.rootNode().sort();
     }
 };
 
-MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotDominatorObjectNode.prototype, WebInspector.HeapSnapshotDominatorsDataGrid.prototype);
 WebInspector.HeapSnapshotDominatorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;

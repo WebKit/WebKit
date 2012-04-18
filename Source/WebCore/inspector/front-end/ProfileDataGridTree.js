@@ -160,27 +160,21 @@ WebInspector.ProfileDataGridNode.prototype = {
 
     insertChild: function(/*ProfileDataGridNode*/ profileDataGridNode, index)
     {
-        var any = /** @type {*} */this;
-        var dataGrid = /** @type {WebInspector.DataGrid} */any;
-        WebInspector.DataGridNode.prototype.insertChild.call(dataGrid, profileDataGridNode, index);
+        WebInspector.DataGridNode.prototype.insertChild.call(this, profileDataGridNode, index);
 
         this.childrenByCallUID[profileDataGridNode.callUID] = profileDataGridNode;
     },
 
     removeChild: function(/*ProfileDataGridNode*/ profileDataGridNode)
     {
-        var any = /** @type {*} */this;
-        var dataGrid = /** @type {WebInspector.DataGrid} */any;
-        WebInspector.DataGridNode.prototype.removeChild.call(dataGrid, profileDataGridNode);
+        WebInspector.DataGridNode.prototype.removeChild.call(this, profileDataGridNode);
 
         delete this.childrenByCallUID[profileDataGridNode.callUID];
     },
 
     removeChildren: function(/*ProfileDataGridNode*/ profileDataGridNode)
     {
-        var any = /** @type {*} */this;
-        var dataGrid = /** @type {WebInspector.DataGrid} */any;
-        WebInspector.DataGridNode.prototype.removeChildren.call(dataGrid);
+        WebInspector.DataGridNode.prototype.removeChildren.call(this);
 
         this.childrenByCallUID = {};
     },

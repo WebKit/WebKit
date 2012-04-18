@@ -681,7 +681,7 @@ WebInspector.NetworkLogView.prototype = {
             if (!node) {
                 // Create the timeline tree element and graph.
                 node = this._createRequestGridNode(request);
-                this._dataGrid.appendChild(node);
+                this._dataGrid.rootNode().appendChild(node);
             }
             node.refreshRequest();
 
@@ -732,7 +732,7 @@ WebInspector.NetworkLogView.prototype = {
         this._requestGridNodes = {};
 
         if (this._dataGrid) {
-            this._dataGrid.removeChildren();
+            this._dataGrid.rootNode().removeChildren();
             this._updateDividersIfNeeded();
             this._updateSummaryBar();
         }

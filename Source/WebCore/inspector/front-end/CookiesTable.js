@@ -106,14 +106,14 @@ WebInspector.CookiesTable.prototype = {
 
     _rebuildTable: function()
     {
-        this._dataGrid.removeChildren();
+        this._dataGrid.rootNode().removeChildren();
         for (var i = 0; i < this._data.length; ++i) {
             var item = this._data[i];
             if (item.folderName) {
                 var groupData = [ item.folderName, "", "", "", "", this._totalSize(item.cookies), "", "" ];
                 var groupNode = new WebInspector.DataGridNode(groupData);
                 groupNode.selectable = true;
-                this._dataGrid.appendChild(groupNode);
+                this._dataGrid.rootNode().appendChild(groupNode);
                 groupNode.element.addStyleClass("row-group");
                 this._populateNode(groupNode, item.cookies);
                 groupNode.expand();

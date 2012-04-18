@@ -233,7 +233,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         }
 
         this._resources.sort(comparator);
-        this._dataGrid.removeChildren();
+        this._dataGrid.rootNode().removeChildren();
 
         var nodeToSelect;
         for (var i = 0; i < this._resources.length; ++i) {
@@ -245,15 +245,15 @@ WebInspector.ApplicationCacheItemsView.prototype = {
             var node = new WebInspector.DataGridNode(data);
             node.resource = resource;
             node.selectable = true;
-            this._dataGrid.appendChild(node);
+            this._dataGrid.rootNode().appendChild(node);
             if (resource === selectedResource) {
                 nodeToSelect = node;
                 nodeToSelect.selected = true;
             }
         }
 
-        if (!nodeToSelect && this._dataGrid.children.length)
-            this._dataGrid.children[0].selected = true;
+        if (!nodeToSelect && this._dataGrid.rootNode().children.length)
+            this._dataGrid.rootNode().children[0].selected = true;
     },
 
     _deleteButtonClicked: function(event)

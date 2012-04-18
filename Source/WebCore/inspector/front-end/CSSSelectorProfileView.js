@@ -146,18 +146,18 @@ WebInspector.CSSSelectorProfileView.prototype = {
 
     rebuildGridItems: function()
     {
-        this.dataGrid.removeChildren();
+        this.dataGrid.rootNode().removeChildren();
 
         var children = this.profile.children;
         var count = children.length;
 
         for (var index = 0; index < count; ++index)
-            this.dataGrid.appendChild(children[index]);
+            this.dataGrid.rootNode().appendChild(children[index]);
     },
 
     refreshData: function()
     {
-        var child = this.dataGrid.children[0];
+        var child = this.dataGrid.rootNode().children[0];
         while (child) {
             child.refresh();
             child = child.traverseNextNode(false, null, true);

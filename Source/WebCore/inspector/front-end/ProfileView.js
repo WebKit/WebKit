@@ -162,13 +162,13 @@ WebInspector.CPUProfileView.prototype = {
     {
         var selectedProfileNode = this.dataGrid.selectedNode ? this.dataGrid.selectedNode.profileNode : null;
 
-        this.dataGrid.removeChildren();
+        this.dataGrid.rootNode().removeChildren();
 
         var children = this.profileDataGridTree.children;
         var count = children.length;
 
         for (var index = 0; index < count; ++index)
-            this.dataGrid.appendChild(children[index]);
+            this.dataGrid.rootNode().appendChild(children[index]);
 
         if (selectedProfileNode)
             selectedProfileNode.selected = true;

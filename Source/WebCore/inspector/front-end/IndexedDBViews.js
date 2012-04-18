@@ -299,7 +299,7 @@ WebInspector.IDBDataView.prototype = {
                 var primaryKey = JSON.stringify(this._isIndex ? entries[i].primaryKey : entries[i].key);
                 var valueTitle = this._objectStore.name + "[" + primaryKey + "]";
                 var node = new WebInspector.IDBDataGridNode(valueTitle, data);
-                this._dataGrid.appendChild(node);
+                this._dataGrid.rootNode().appendChild(node);
             }
 
             this._pageBackButton.disabled = skipCount === 0;
@@ -325,7 +325,7 @@ WebInspector.IDBDataView.prototype = {
 
     clear: function()
     {
-        this._dataGrid.removeChildren();
+        this._dataGrid.rootNode().removeChildren();
         for (var i = 0; i < this._entries.length; ++i) {
             var value = this._entries[i].value;
             value.release();

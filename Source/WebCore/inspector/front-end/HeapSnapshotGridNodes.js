@@ -243,6 +243,9 @@ WebInspector.HeapSnapshotLazyGridNode.prototype.__proto__ = WebInspector.HeapSna
 WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
 {
     WebInspector.HeapSnapshotGridNode.call(this, tree, false);
+    // node is null for DataGrid root nodes.
+    if (!node)
+        return;
     this._name = node.name;
     this._type = node.type;
     this._distanceToWindow = node.distanceToWindow;
@@ -929,16 +932,3 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
 };
 
 WebInspector.HeapSnapshotDominatorObjectNode.prototype.__proto__ = WebInspector.HeapSnapshotGenericObjectNode.prototype;
-
-function MixInSnapshotNodeFunctions(sourcePrototype, targetPrototype)
-{
-    targetPrototype._childHashForEntity = sourcePrototype._childHashForEntity;
-    targetPrototype._childHashForNode = sourcePrototype._childHashForNode;
-    targetPrototype.comparator = sourcePrototype.comparator;
-    targetPrototype._createChildNode = sourcePrototype._createChildNode;
-    targetPrototype._createProvider = sourcePrototype._createProvider;
-    targetPrototype.dispose = sourcePrototype.dispose;
-    targetPrototype.populateChildren = sourcePrototype.populateChildren;
-    targetPrototype._saveChildren = sourcePrototype._saveChildren;
-    targetPrototype.sort = sourcePrototype.sort;
-}

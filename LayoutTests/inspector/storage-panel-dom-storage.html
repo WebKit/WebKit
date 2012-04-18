@@ -28,7 +28,7 @@ function test()
 
     function dumpDataGridContent(dataGrid)
     {
-        var nodes = dataGrid.children;
+        var nodes = dataGrid.rootNode().children;
         var rows = [];
         for (var i = 0; i < nodes.length; ++i) {
             var node = nodes[i];

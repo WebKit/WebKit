@@ -350,7 +350,7 @@ InspectorTest.clickShowMoreButton = function(buttonName, row, callback)
 InspectorTest.columnContents = function(column, row)
 {
     var result = [];
-    var parent = row || this._currentGrid();
+    var parent = row || this._currentGrid().rootNode();
     for (var node = parent.children[0]; node; node = node.traverseNextNode(true, parent, true)) {
         if (!node.selectable)
             continue;
@@ -476,7 +476,7 @@ InspectorTest.findButtonsNode = function(row, startNode)
 
 InspectorTest.findRow = function(columnIdentifier, matcher, parent)
 {
-    parent = parent || this._currentGrid();
+    parent = parent || this._currentGrid().rootNode();
     if (typeof matcher !== "function") {
         var value = matcher;
         matcher = function(x) { return x === value; };
@@ -490,7 +490,7 @@ InspectorTest.findRow = function(columnIdentifier, matcher, parent)
 
 InspectorTest.findRow2 = function(matcher, parent)
 {
-    parent = parent || this._currentGrid();
+    parent = parent || this._currentGrid().rootNode();
     for (var node = parent.children[0]; node; node = node.traverseNextNode(true, parent, true)) {
         if (matcher(node.data))
             return node;

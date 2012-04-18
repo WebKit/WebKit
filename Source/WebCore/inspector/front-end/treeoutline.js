@@ -195,33 +195,6 @@ TreeOutline.prototype.removeChildren = function()
     this.children = [];
 }
 
-TreeOutline.prototype.removeChildrenRecursive = function()
-{
-    var childrenToRemove = this.children;
-
-    var child = this.children[0];
-    while (child) {
-        if (child.children.length)
-            childrenToRemove = childrenToRemove.concat(child.children);
-        child = child.traverseNextTreeElement(false, this, true);
-    }
-
-    for (var i = 0; i < childrenToRemove.length; ++i) {
-        child = childrenToRemove[i];
-        child.deselect();
-        if (child.treeOutline)
-            child.treeOutline._forgetTreeElement(child);
-        child._detach();
-        child.children = [];
-        child.treeOutline = null;
-        child.parent = null;
-        child.nextSibling = null;
-        child.previousSibling = null;
-    }
-
-    this.children = [];
-}
-
 TreeOutline.prototype._rememberTreeElement = function(element)
 {
     if (!this._treeElementsMap.get(element.representedObject))
@@ -775,7 +748,6 @@ TreeElement.prototype.insertChild = TreeOutline.prototype.insertChild;
 TreeElement.prototype.removeChild = TreeOutline.prototype.removeChild;
 TreeElement.prototype.removeChildAtIndex = TreeOutline.prototype.removeChildAtIndex;
 TreeElement.prototype.removeChildren = TreeOutline.prototype.removeChildren;
-TreeElement.prototype.removeChildrenRecursive = TreeOutline.prototype.removeChildrenRecursive;
 
 TreeElement.prototype._attach = function()
 {

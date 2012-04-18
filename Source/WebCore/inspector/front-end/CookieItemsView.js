@@ -182,7 +182,7 @@ WebInspector.SimpleCookiesTable = function()
 WebInspector.SimpleCookiesTable.prototype = {
     setCookies: function(cookies)
     {
-        this._dataGrid.removeChildren();
+        this._dataGrid.rootNode().removeChildren();
         var addedCookies = {};
         for (var i = 0; i < cookies.length; ++i) {
             if (addedCookies[cookies[i].name])
@@ -194,9 +194,9 @@ WebInspector.SimpleCookiesTable.prototype = {
 
             var node = new WebInspector.DataGridNode(data, false);
             node.selectable = true;
-            this._dataGrid.appendChild(node);
+            this._dataGrid.rootNode().appendChild(node);
         }
-        this._dataGrid.children[0].selected = true;
+        this._dataGrid.rootNode().children[0].selected = true;
     }
 }
 
