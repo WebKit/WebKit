@@ -114,6 +114,15 @@ inline const char* useKindToString(UseKind useKind)
     }
 }
 
+inline bool isX86()
+{
+#if CPU(X86_64) || CPU(X86)
+    return true;
+#else
+    return false;
+#endif
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

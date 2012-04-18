@@ -1,3 +1,16 @@
+2012-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not attempt to get rare case counts for op_mod on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=84218
+
+        Reviewed by Geoff Garen.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::isX86):
+        (DFG):
+
 2012-04-17  Myles Maxfield  <mmaxfield@google.com>
 
         BumpPointerAllocator assumes page size is less than MINIMUM_BUMP_POOL_SIZE

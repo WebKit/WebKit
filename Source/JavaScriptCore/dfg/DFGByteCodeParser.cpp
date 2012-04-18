@@ -721,7 +721,15 @@ private:
 
     NodeIndex makeSafe(NodeIndex nodeIndex)
     {
-        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+        Node& node = m_graph[nodeIndex];
+        
+        bool likelyToTakeSlowCase;
+        if (!isX86() && node.op() == ArithMod)
+            likelyToTakeSlowCase = false;
+        else
+            likelyToTakeSlowCase = m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex);
+        
+        if (!likelyToTakeSlowCase
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return nodeIndex;
@@ -732,7 +740,7 @@ private:
         case ArithSub:
         case ArithNegate:
         case ValueAdd:
-        case ArithMod: // for ArithMode "MayOverflow" means we tried to divide by zero, or we saw double.
+        case ArithMod: // for ArithMod "MayOverflow" means we tried to divide by zero, or we saw double.
             m_graph[nodeIndex].mergeFlags(NodeMayOverflow);
             break;
             
