@@ -317,10 +317,8 @@ namespace JSC {
 
         // FIXME: Maybe SparseArrayValueMap should be put into its own JSCell?
         SparseArrayValueMap* m_sparseValueMap;
-        void* m_subclassData; // A JSArray subclass can use this to fill the vector lazily.
 
         static ptrdiff_t sparseValueMapOffset() { return OBJECT_OFFSETOF(JSArray, m_sparseValueMap); }
-        static ptrdiff_t subclassDataOffset() { return OBJECT_OFFSETOF(JSArray, m_subclassData); }
         static ptrdiff_t indexBiasOffset() { return OBJECT_OFFSETOF(JSArray, m_indexBias); }
     };
 

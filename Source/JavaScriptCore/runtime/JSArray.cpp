@@ -130,7 +130,6 @@ JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     , m_indexBias(0)
     , m_storage(0)
     , m_sparseValueMap(0)
-    , m_subclassData(0)
 {
 }
 
@@ -1808,16 +1807,6 @@ unsigned JSArray::compactForSorting(JSGlobalData& globalData)
     checkConsistency(SortConsistencyCheck);
 
     return numDefined;
-}
-
-void* JSArray::subclassData() const
-{
-    return m_subclassData;
-}
-
-void JSArray::setSubclassData(void* d)
-{
-    m_subclassData = d;
 }
 
 #if CHECK_ARRAY_CONSISTENCY

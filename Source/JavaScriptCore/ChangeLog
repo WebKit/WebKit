@@ -1,5 +1,25 @@
 2012-04-18  Benjamin Poulain  <bpoulain@apple.com>
 
+        Remove m_subclassData from JSArray, move the attribute to subclass as needed
+        https://bugs.webkit.org/show_bug.cgi?id=84249
+
+        Reviewed by Geoffrey Garen.
+
+        JSArray's m_subclassData is only used by WebCore's RuntimeArray. This patch moves
+        the attribute to RuntimeArray to avoid allocating memory for the pointer in the common
+        case.
+
+        This gives ~1% improvement in JSArray creation microbenchmark thanks to fewer allocations
+        of CopiedSpace.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSArray):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSArray.h:
+
+2012-04-18  Benjamin Poulain  <bpoulain@apple.com>
+
         replaceUsingStringSearch: delay the creation of the replace string until needed
         https://bugs.webkit.org/show_bug.cgi?id=83841
 

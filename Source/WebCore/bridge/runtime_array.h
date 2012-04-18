@@ -60,9 +60,9 @@ public:
     static bool deleteProperty(JSCell*, ExecState*, const Identifier &propertyName);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
     
-    unsigned getLength() const { return getConcreteArray()->getLength(); }
+    unsigned getLength() const { return m_array->getLength(); }
     
-    Bindings::Array* getConcreteArray() const { return static_cast<BindingsArray*>(subclassData()); }
+    Bindings::Array* getConcreteArray() const { return m_array; }
 
     static const ClassInfo s_info;
 
@@ -85,6 +85,8 @@ private:
     RuntimeArray(ExecState*, Structure*);
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     static JSValue indexGetter(ExecState*, JSValue, unsigned);
+
+    BindingsArray* m_array;
 };
     
 } // namespace JSC

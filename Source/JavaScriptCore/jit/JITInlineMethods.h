@@ -503,8 +503,7 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
     store32(Imm32(initialLength), Address(cellResult, JSArray::vectorLengthOffset()));
     store32(TrustedImm32(0), Address(cellResult, JSArray::indexBiasOffset()));
 
-    // Initialize the subclass data and the sparse value map.
-    storePtr(TrustedImmPtr(0), Address(cellResult, JSArray::subclassDataOffset()));
+    // Initialize the sparse value map.
     storePtr(TrustedImmPtr(0), Address(cellResult, JSArray::sparseValueMapOffset()));
 
         // Store the values we have.
