@@ -1,3 +1,15 @@
+2012-03-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        Build error: DNSSoup.cpp:30: fatal error: CString.h: No such file or
+        directory
+        https://bugs.webkit.org/show_bug.cgi?id=81093
+
+        Reviewed by Philippe Normand.
+
+        Fix build error introduced by r110669.
+
+        * platform/network/soup/DNSSoup.cpp:
+
 2012-03-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Use the same DNS prefetching path than the other ports.
