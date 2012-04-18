@@ -67,15 +67,16 @@ public:
     bool haveFilterEffect() const { return m_haveFilterEffect; }
     bool hasStartedFilterEffect() const { return m_savedGraphicsContext; }
 
-    const LayoutRect& prepareFilterEffect(RenderLayer*, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
+    bool prepareFilterEffect(RenderLayer*, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
     GraphicsContext* beginFilterEffect(GraphicsContext* oldContext);
     GraphicsContext* applyFilterEffect();
 
+    const LayoutRect& repaintRect() const { return m_repaintRect; }
 private:
     GraphicsContext* m_savedGraphicsContext;
     RenderLayer* m_renderLayer;
     LayoutPoint m_paintOffset;
-    LayoutRect m_dirtyRect;
+    LayoutRect m_repaintRect;
     bool m_haveFilterEffect;
 };
 
@@ -107,14 +108,15 @@ public:
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
     bool build(Document*, const FilterOperations&);
-    bool updateBackingStore(const FloatRect& filterRect);
+    bool updateBackingStoreRect(const FloatRect& filterRect);
+    void allocateBackingStoreIfNeeded();
     void clearIntermediateResults();
-    void prepare();
     void apply();
     
     IntRect outputRect() const { return lastEffect()->hasResult() ? lastEffect()->requestedRegionOfInputImageData(IntRect(m_filterRegion)) : IntRect(); }
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
+    LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
 private:
 #if ENABLE(CSS_SHADERS)
@@ -152,6 +154,11 @@ private:
     typedef Vector<RefPtr<CustomFilterProgram> > CustomFilterProgramList;
     CustomFilterProgramList m_cachedCustomFilterPrograms;
 #endif
+    
+    int m_topOutset;
+    int m_rightOutset;
+    int m_bottomOutset;
+    int m_leftOutset;
     
     bool m_graphicsBufferAttached;
     bool m_hasFilterThatMovesPixels;

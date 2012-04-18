@@ -2983,21 +2983,24 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
         LayoutPoint rootLayerOffset;
         convertToLayerCoords(rootLayer, rootLayerOffset);
         m_filterRepaintRect.move(rootLayerOffset.x(), rootLayerOffset.y());
-        LayoutRect filterPaintDirtyRect = filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, rootLayer, 0), parentPaintDirtyRect, m_filterRepaintRect);
-        m_filterRepaintRect = IntRect();
-        // Rewire the old context to a memory buffer, so that we can capture the contents of the layer.
-        // NOTE: We saved the old context in the "transparencyLayerContext" local variable, to be able to start a transparency layer
-        // on the original context and avoid duplicating "beginFilterEffect" after each transpareny layer call. Also, note that 
-        // beginTransparencyLayers will only create a single lazy transparency layer, even though it is called twice in this method.
-        context = filterPainter.beginFilterEffect(context);
-        
-        // Check that we didn't fail to allocate the graphics context for the offscreen buffer.
-        if (filterPainter.hasStartedFilterEffect()) {
-            paintDirtyRect = filterPaintDirtyRect;
-            // If the filter needs the full source image, we need to avoid using the clip rectangles.
-            // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
-            // Note that we will still apply the clipping on the final rendering of the filter.
-            useClipRect = !filter()->hasFilterThatMovesPixels();
+        if (filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, rootLayer, 0), parentPaintDirtyRect, m_filterRepaintRect)) {
+            // Now we know for sure, that the source image will be updated, so we can revert our tracking repaint rect back to zero.
+            m_filterRepaintRect = IntRect();
+
+            // Rewire the old context to a memory buffer, so that we can capture the contents of the layer.
+            // NOTE: We saved the old context in the "transparencyLayerContext" local variable, to be able to start a transparency layer
+            // on the original context and avoid duplicating "beginFilterEffect" after each transpareny layer call. Also, note that 
+            // beginTransparencyLayers will only create a single lazy transparency layer, even though it is called twice in this method.
+            context = filterPainter.beginFilterEffect(context);
+
+            // Check that we didn't fail to allocate the graphics context for the offscreen buffer.
+            if (filterPainter.hasStartedFilterEffect()) {
+                paintDirtyRect = filterPainter.repaintRect();
+                // If the filter needs the full source image, we need to avoid using the clip rectangles.
+                // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
+                // Note that we will still apply the clipping on the final rendering of the filter.
+                useClipRect = !filter()->hasFilterThatMovesPixels();
+            }
         }
     }
 #endif

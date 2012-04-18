@@ -86,6 +86,10 @@ static bool isCSSCustomFilterEnabled(Document* document)
 
 FilterEffectRenderer::FilterEffectRenderer(FilterEffectObserver* observer)
     : m_observer(observer)
+    , m_topOutset(0)
+    , m_rightOutset(0)
+    , m_bottomOutset(0)
+    , m_leftOutset(0)
     , m_graphicsBufferAttached(false)
     , m_hasFilterThatMovesPixels(false)
 {
@@ -114,6 +118,8 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
 #endif
 
     m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
+    if (m_hasFilterThatMovesPixels)
+        operations.getOutsets(m_topOutset, m_rightOutset, m_bottomOutset, m_leftOutset);
     m_effects.clear();
 
     RefPtr<FilterEffect> previousEffect;
@@ -306,7 +312,7 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
     return true;
 }
 
-bool FilterEffectRenderer::updateBackingStore(const FloatRect& filterRect)
+bool FilterEffectRenderer::updateBackingStoreRect(const FloatRect& filterRect)
 {
     if (!filterRect.isZero() && isFilterSizeValid(filterRect)) {
         FloatRect currentSourceRect = sourceImageRect();
@@ -331,17 +337,17 @@ void FilterEffectRenderer::removeCustomFilterClients()
 }
 #endif
 
-void FilterEffectRenderer::prepare()
+void FilterEffectRenderer::allocateBackingStoreIfNeeded()
 {
     // At this point the effect chain has been built, and the
     // source image sizes set. We just need to attach the graphic
     // buffer if we have not yet done so.
     if (!m_graphicsBufferAttached) {
         IntSize logicalSize(m_sourceDrawingRegion.width(), m_sourceDrawingRegion.height());
-        setSourceImage(ImageBuffer::create(logicalSize, 1, ColorSpaceDeviceRGB, renderingMode()));
+        if (!sourceImage() || sourceImage()->logicalSize() != logicalSize)
+            setSourceImage(ImageBuffer::create(logicalSize, 1, ColorSpaceDeviceRGB, renderingMode()));
         m_graphicsBufferAttached = true;
     }
-    clearIntermediateResults();
 }
 
 void FilterEffectRenderer::clearIntermediateResults()
@@ -356,30 +362,46 @@ void FilterEffectRenderer::apply()
     lastEffect()->apply();
 }
 
-const LayoutRect& FilterEffectRendererHelper::prepareFilterEffect(RenderLayer* renderLayer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
+LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)
+{
+    // The result of this function is the area in the "filterBoxRect" that needs to be repainted, so that we fully cover the "dirtyRect".
+    LayoutRect rectForRepaint = dirtyRect;
+    if (hasFilterThatMovesPixels()) {
+        // Note that the outsets are reversed here because we are going backwards -> we have the dirty rect and
+        // need to find out what is the rectangle that might influence the result inside that dirty rect.
+        rectForRepaint.move(-m_rightOutset, -m_bottomOutset);
+        rectForRepaint.expand(m_leftOutset + m_rightOutset, m_topOutset + m_bottomOutset);
+    }
+    rectForRepaint.intersect(filterBoxRect);
+    return rectForRepaint;
+}
+
+bool FilterEffectRendererHelper::prepareFilterEffect(RenderLayer* renderLayer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
     ASSERT(m_haveFilterEffect && renderLayer->filter());
     m_renderLayer = renderLayer;
-    m_dirtyRect = dirtyRect;
-    m_dirtyRect.intersect(filterBoxRect);
+    m_repaintRect = dirtyRect;
 
     FilterEffectRenderer* filter = renderLayer->filter();
-
-    // Some filters need the whole original area in order to recalculate correctly.
-    // Such filters include blur, drop-shadow and shaders. For that reason,
-    // we keep the whole image buffer in memory and repaint only dirty areas.
-    bool hasFilterThatMovesPixels = filter->hasFilterThatMovesPixels();
-    LayoutRect filterSourceRect = hasFilterThatMovesPixels ? filterBoxRect : m_dirtyRect;
+    LayoutRect filterSourceRect = filter->computeSourceImageRectForDirtyRect(filterBoxRect, dirtyRect);
     m_paintOffset = filterSourceRect.location();
-    filterSourceRect.setLocation(LayoutPoint());
 
-    bool hasUpdatedBackingStore = filter->updateBackingStore(filterSourceRect);
-    if (hasFilterThatMovesPixels)
-        m_dirtyRect.unite(hasUpdatedBackingStore ? filterBoxRect : layerRepaintRect);
+    if (filterSourceRect.isEmpty()) {
+        // The dirty rect is not in view, just bail out.
+        m_haveFilterEffect = false;
+        return false;
+    }
     
-    filter->prepare();
-    
-    return m_dirtyRect;
+    bool hasUpdatedBackingStore = filter->updateBackingStoreRect(filterSourceRect);
+    if (filter->hasFilterThatMovesPixels()) {
+        if (hasUpdatedBackingStore)
+            m_repaintRect = filterSourceRect;
+        else {
+            m_repaintRect.unite(layerRepaintRect);
+            m_repaintRect.intersect(filterSourceRect);
+        }
+    }
+    return true;
 }
    
 GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(GraphicsContext* oldContext)
@@ -387,6 +409,7 @@ GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(GraphicsContext* 
     ASSERT(m_renderLayer);
     
     FilterEffectRenderer* filter = m_renderLayer->filter();
+    filter->allocateBackingStoreIfNeeded();
     // Paint into the context that represents the SourceGraphic of the filter.
     GraphicsContext* sourceGraphicsContext = filter->inputContext();
     if (!sourceGraphicsContext || !isFilterSizeValid(filter->filterRegion())) {
@@ -400,8 +423,8 @@ GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(GraphicsContext* 
     // Translate the context so that the contents of the layer is captuterd in the offscreen memory buffer.
     sourceGraphicsContext->save();
     sourceGraphicsContext->translate(-m_paintOffset.x(), -m_paintOffset.y());
-    sourceGraphicsContext->clearRect(m_dirtyRect);
-    sourceGraphicsContext->clip(m_dirtyRect);
+    sourceGraphicsContext->clearRect(m_repaintRect);
+    sourceGraphicsContext->clip(m_repaintRect);
     
     return sourceGraphicsContext;
 }
