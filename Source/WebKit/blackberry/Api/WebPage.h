@@ -174,6 +174,7 @@ public:
     bool pinchZoomAboutPoint(double scale, int x, int y);
 
     bool isUserScalable() const;
+    void setUserScalable(bool);
     double currentScale() const;
     double initialScale() const;
     double zoomToFitScale() const;

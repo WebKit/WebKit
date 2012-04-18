@@ -1575,6 +1575,11 @@ bool WebPage::isUserScalable() const
     return d->isUserScalable();
 }
 
+void WebPage::setUserScalable(bool userScalable)
+{
+    d->setUserScalable(userScalable);
+}
+
 double WebPage::currentScale() const
 {
     return d->currentScale();
@@ -5687,9 +5692,6 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setDefaultTextEncodingName(webSettings->defaultTextEncodingName().impl());
     coreSettings->setDownloadableBinaryFontsEnabled(webSettings->downloadableBinaryFontsEnabled());
     coreSettings->setSpatialNavigationEnabled(m_webSettings->isSpatialNavigationEnabled());
-
-    // UserScalable should be reset by new settings.
-    setUserScalable(webSettings->isUserScalable());
 
     WebString stylesheetURL = webSettings->userStyleSheetString();
     if (stylesheetURL.isEmpty())

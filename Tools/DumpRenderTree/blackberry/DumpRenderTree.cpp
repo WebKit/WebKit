@@ -258,7 +258,6 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     settings->setFrameFlatteningEnabled(false);
     settings->setMaximumPagesInCache(0);
     settings->setPluginsEnabled(true);
-    settings->setUserScalable(true);
     // Apply new settings to current page, see more in the destructor of WebSettingsTransaction.
     WebSettingsTransaction webSettingTransaction(settings);
 
@@ -269,6 +268,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
 
     m_page->setVirtualViewportSize(800, 600);
     m_page->resetVirtualViewportOnCommitted(false);
+    m_page->setUserScalable(true);
     m_page->setJavaScriptCanAccessClipboard(true);
 
     if (WebCore::Page* page = DumpRenderTreeSupport::corePage(m_page)) {

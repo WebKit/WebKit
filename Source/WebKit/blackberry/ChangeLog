@@ -1,3 +1,27 @@
+2012-04-17  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Viewport metatag doesn't disable double-tap zoom
+        https://bugs.webkit.org/show_bug.cgi?id=84199
+
+        Reviewed by George Staikos.
+
+        PR: 148279
+        When we set "user-scalable=no" in viewport meta-tag and change any
+        other WebSettings, the WebPage can turn to be scalable.
+        This is a regression of the change master_32/SHA:fa0f8ee9. In that
+        change, we used setUserScalable(webSettings->isUserScalable())
+        in WebPagePrivate::didChangeSettings which was incorrect for non-DRT
+        case, as webSettings->isUserScalable() would always return true by
+        default.
+        Create a new API WebPage::setUserScalable which will be used in
+        DumpRenderTree.cpp.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setUserScalable):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebPage.h:
+
 2012-04-17  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Pattern matching should be applied to numbers

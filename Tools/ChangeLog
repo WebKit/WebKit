@@ -1,3 +1,16 @@
+2012-04-17  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Viewport metatag doesn't disable double-tap zoom
+        https://bugs.webkit.org/show_bug.cgi?id=84199
+
+        Reviewed by George Staikos.
+
+        Revert a part of the change master_32/SHA:fa0f8ee9 and use
+        WebPage::setUserScalable instead.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2012-04-17  Dirk Pranke  <dpranke@chromium.org>
 
         build-webkit: make ninja work with chromium linux
