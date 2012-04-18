@@ -1,3 +1,20 @@
+2012-04-18  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Minibrowser asserts on startup at QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
+        https://bugs.webkit.org/show_bug.cgi?id=84172
+
+        Reviewed by Simon Hausmann.
+
+        After the viewport computing refactor, ensureContentWithinViewportBoundary() can be called
+        with resumed page. QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
+        functionality does not necessarily require the page to be suspended. It's the caller's context
+        that determines whether the page needs to be suspended, so it's the caller's responsibility
+        to enforce the ASSERT().
+        Remove the invalid ASSERT on m_suspendCount at QtViewportInteractionEngine::ensureContentWithinViewportBoundary()
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+
 2012-04-17  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] USPS Shipping label prints without barcode

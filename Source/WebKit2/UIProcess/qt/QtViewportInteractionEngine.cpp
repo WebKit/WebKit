@@ -397,8 +397,6 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
 
 bool QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immediate)
 {
-    ASSERT(m_suspendCount);
-
     if (scrollAnimationActive() || scaleAnimationActive())
         return false;
 
