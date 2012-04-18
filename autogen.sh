@@ -20,4 +20,7 @@ autoreconf --verbose --install -I Source/autotools $ACLOCAL_FLAGS|| exit $?
 
 cd $ORIGDIR || exit 1
 
-$srcdir/configure $AUTOGEN_CONFIGURE_ARGS "$@" || exit $?
+if test -z "$NOCONFIGURE"; then
+    $srcdir/configure $AUTOGEN_CONFIGURE_ARGS "$@" || exit $?
+fi
+
