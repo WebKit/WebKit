@@ -61,6 +61,8 @@ bool canHandleOpcodes(CodeBlock* codeBlock)
 
 bool canCompileOpcodes(CodeBlock* codeBlock)
 {
+    if (!MacroAssembler::supportsFloatingPoint())
+        return false;
     return canHandleOpcodes<canCompileOpcode>(codeBlock);
 }
 
