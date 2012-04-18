@@ -1072,7 +1072,7 @@ class Port(object):
         """Returns the port's driver implementation."""
         raise NotImplementedError('Port._driver_class')
 
-    def _get_crash_log(self, name, pid, stdout, stderr):
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         name_str = name or '<unknown process name>'
         pid_str = str(pid or '<unknown>')
         stdout_lines = (stdout or '<empty>').decode('utf8', 'replace').splitlines()

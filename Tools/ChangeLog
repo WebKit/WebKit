@@ -1,5 +1,41 @@
 2012-04-18  Dirk Pranke  <dpranke@chromium.org>
 
+        run-webkit-tests picked up an old crash log
+        https://bugs.webkit.org/show_bug.cgi?id=84196
+
+        Reviewed by Ryosuke Niwa.
+
+        Modify the crash log-finding code so that we can
+        limit our search to logs newer than X - this prevents
+        us from finding old crash logs for a given process/pid
+        combination even when the PIDs might've wrapped.
+ 
+        Also fix a bug in filesystem_mock where files_under() would
+        return paths that didn't exist.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.find_newest_log):
+        (CrashLogs._find_newest_log_darwin):
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.test_find_log_darwin):
+        (CrashLogsTest.test_find_log_darwin.bad_read):
+        (CrashLogsTest):
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.files_under):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.run_test):
+
+2012-04-18  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: support additional test expectations files
         https://bugs.webkit.org/show_bug.cgi?id=84222
 

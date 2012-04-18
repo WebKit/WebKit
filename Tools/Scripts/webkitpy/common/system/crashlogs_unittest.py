@@ -100,9 +100,12 @@ class CrashLogsTest(unittest.TestCase):
         self.assertLinesEqual(log, mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28531)
         self.assertEqual(log, None)
+        log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0)
+        self.assertEqual(log, None)
 
-        errors = "ERROR: Failed to read '/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash': [Errno 2] /Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash: 'No such file or directory'\n"
-        log = crash_logs.find_newest_log("DumpRenderTree", 28530, include_errors=True)
-        self.assertLinesEqual(log, errors + mock_crash_report)
+        def bad_read(path):
+            raise IOError('No such file or directory')
+
+        filesystem.read_text_file = bad_read
         log = crash_logs.find_newest_log("DumpRenderTree", 28531, include_errors=True)
-        self.assertEqual(log, errors)
+        self.assertTrue('No such file or directory' in log)

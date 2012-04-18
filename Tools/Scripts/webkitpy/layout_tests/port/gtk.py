@@ -205,7 +205,7 @@ class GtkPort(WebKitPort):
         errors = [l.strip() for l in proc.stderr.readlines()]
         return (proc.stdout.read(), errors)
 
-    def _get_crash_log(self, name, pid, stdout, stderr):
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         pid_representation = str(pid or '<unknown>')
         log_directory = os.environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
         errors = []
@@ -222,7 +222,8 @@ class GtkPort(WebKitPort):
             if dumps:
                 # Get the most recent coredump matching the pid and/or process name.
                 coredump_path = list(reversed(sorted(dumps)))[0]
-                crash_log, errors = self._get_gdb_output(coredump_path)
+                if not newer_than or self._filesystem.mtime(coredump_path) > newer_than:
+                    crash_log, errors = self._get_gdb_output(coredump_path)
 
         stderr_lines = errors + (stderr or '<empty>').decode('utf8', 'ignore').splitlines()
         errors_str = '\n'.join(('STDERR: ' + l) for l in stderr_lines)

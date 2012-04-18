@@ -175,7 +175,7 @@ class MacPort(ApplePort):
     def release_http_lock(self):
         pass
 
-    def _get_crash_log(self, name, pid, stdout, stderr):
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         # Note that we do slow-spin here and wait, since it appears the time
         # ReportCrash takes to actually write and flush the file varies when there are
         # lots of simultaneous crashes going on.
@@ -187,7 +187,7 @@ class MacPort(ApplePort):
         _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
         deadline = now + 5 * int(self.get_option('child_processes'))
         while not crash_log and now <= deadline:
-            crash_log = crash_logs.find_newest_log(name, pid, include_errors=True)
+            crash_log = crash_logs.find_newest_log(name, pid, include_errors=True, newer_than=newer_than)
             if not crash_log or not [line for line in crash_log.splitlines() if not line.startswith('ERROR')]:
                 time.sleep(0.1)
                 now = time.time()

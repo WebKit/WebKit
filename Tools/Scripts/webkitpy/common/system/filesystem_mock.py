@@ -132,7 +132,7 @@ class MockFileSystem(object):
         file_filter = file_filter or filter_all
         files = []
         if self.isfile(path):
-            if file_filter(self, self.dirname(path), self.basename(path)):
+            if file_filter(self, self.dirname(path), self.basename(path)) and self.files[path] is not None:
                 files.append(path)
             return files
 
@@ -152,7 +152,7 @@ class MockFileSystem(object):
                 continue
 
             dirpath, basename = self._split(filename)
-            if file_filter(self, dirpath, basename):
+            if file_filter(self, dirpath, basename) and self.files[filename] is not None:
                 files.append(filename)
 
         return files

@@ -543,14 +543,14 @@ class WebKitDriver(Driver):
         return (None, block.content_hash)
 
     def run_test(self, driver_input):
+        start_time = time.time()
         if not self._server_process:
             self._start(driver_input.is_reftest or self._pixel_tests, [])
         self.error_from_test = str()
         self.err_seen_eof = False
 
         command = self._command_from_driver_input(driver_input)
-        start_time = time.time()
-        deadline = time.time() + int(driver_input.timeout) / 1000.0
+        deadline = start_time + int(driver_input.timeout) / 1000.0
 
         self._server_process.write(command)
         text, audio = self._read_first_block(deadline)  # First block is either text or audio
@@ -564,7 +564,8 @@ class WebKitDriver(Driver):
 
         crash_log = ''
         if self.has_crashed():
-            crash_log = self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, text, self.error_from_test)
+            crash_log = self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, text, self.error_from_test,
+                                                  newer_than=start_time)
 
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=self.has_crashed(), test_time=time.time() - start_time,

@@ -75,5 +75,8 @@ STDERR: <empty>""" % locals()
 
         port = self.make_port()
         port._get_gdb_output = mock_empty_crash_log
-        log = port._get_crash_log("DumpRenderTree", 28529, "", "")
+        log = port._get_crash_log("DumpRenderTree", 28529, "", "", newer_than=None)
+        self.assertLinesEqual(log, mock_empty_crash_log)
+
+        log = port._get_crash_log("DumpRenderTree", 28529, "", "", newer_than=0.0)
         self.assertLinesEqual(log, mock_empty_crash_log)
