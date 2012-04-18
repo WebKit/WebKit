@@ -1285,7 +1285,14 @@ BUGWK83717 LEOPARD : svg/custom/foreign-object-skew.svg = IMAGE
 
 BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
+// The ref test is failing? Very odd if so.
 BUGWK84203 : svg/transforms/transform-origin-css-property.xhtml = IMAGE
+
+// It is very hard to see why some of these are failing. The diff must be tiny in some cases.
+// Other fail intermittently in a way that is odd - clipping and masking should be stable.
+// It is probably a test design flaw.
+BUGWK84230 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE PASS
+BUGWK84230 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
 // -----------------------------------------------------------------
 // End SVG TESTS
@@ -1748,8 +1755,6 @@ BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TE
 // Producing incorrect results, or flakey after a Skia change
 BUGCR118411 WIN LINUX : fast/repaint/focus-ring.html = IMAGE
 BUGCR118411 : fast/repaint/list-marker.html = IMAGE
-BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE PASS
-BUGWK84230 WIN MAC DEBUG : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
 // Fails on Snow Leopard - see BUGWK82954
 BUGCR118411 SLOW : svg/hixie/perf/007.xml = PASS FAIL
