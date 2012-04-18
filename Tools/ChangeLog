@@ -1,3 +1,15 @@
+2012-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r114506.
+        http://trac.webkit.org/changeset/114506
+        https://bugs.webkit.org/show_bug.cgi?id=84254
+
+        Seems to be making gtk's DumpRenderTree crash occasionally
+        (Requested by tomz on #webkit).
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2012-04-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [CMake] Use jsc target instead of ONLY_BUILD_JAVASCRIPTCORE

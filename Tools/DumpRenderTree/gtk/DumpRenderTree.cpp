@@ -427,7 +427,6 @@ static void resetDefaultsToConsistentValues()
                  "enable-hyperlink-auditing", FALSE,
                  "editing-behavior", WEBKIT_EDITING_BEHAVIOR_UNIX,
                  "enable-fullscreen", TRUE,
-                 "media-playback-requires-user-gesture", FALSE,
                  NULL);
     webkit_web_view_set_settings(webView, settings);
     webkit_set_cache_model(WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER);

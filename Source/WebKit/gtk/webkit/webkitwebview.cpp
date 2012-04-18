@@ -3384,7 +3384,6 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setJavaEnabled(settingsPrivate->enableJavaApplet);
     coreSettings->setHyperlinkAuditingEnabled(settingsPrivate->enableHyperlinkAuditing);
     coreSettings->setDNSPrefetchingEnabled(settingsPrivate->enableDNSPrefetching);
-    coreSettings->setMediaPlaybackRequiresUserGesture(settingsPrivate->mediaPlaybackRequiresUserGesture);
 
 #if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable(settingsPrivate->enableHTML5Database);
@@ -3523,8 +3522,6 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setJavaEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-hyperlink-auditing"))
         settings->setHyperlinkAuditingEnabled(g_value_get_boolean(&value));
-    else if (name == g_intern_string("media-playback-requires-user-gesture"))
-        settings->setMediaPlaybackRequiresUserGesture(g_value_get_boolean(&value));
 
 #if ENABLE(SPELLCHECK)
     else if (name == g_intern_string("spell-checking-languages")) {
