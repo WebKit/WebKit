@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    table
+    {
+        border:solid black 1px;
+    }
+    td.fiftyPercent
+    {
+        width: 50%;
+    }
+</style> 
+</head>
+<body>
+<p>Test for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=84260">84260</a>: REGRESSION(102040): Auto-table layout with percent width doesn't shrink-to-fit content a cell with colspan</p>
+<p>For this test to pass, the table below should fit its content.</p>
+<table>
+    <tr>
+        <td class="fiftyPercent"></td><td class="fiftyPercent"></td>
+    </tr>
+    <tr>
+        <td colspan="2">Lorem</td>
+    </tr>
+</table>
+</body>
+</html>

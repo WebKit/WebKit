@@ -402,13 +402,23 @@ int AutoTableLayout::calcEffectiveLogicalWidth()
                 }
             } else if (allColsArePercent) {
                 // In this case, we just split the colspan's min amd max widths following the percentage.
+                int allocatedMinLogicalWidth = 0;
+                float allocatedMaxLogicalWidth = 0;
                 for (unsigned pos = effCol; pos < lastCol; ++pos) {
                     ASSERT(m_layoutStruct[pos].logicalWidth.isPercent() || m_layoutStruct[pos].effectiveLogicalWidth.isPercent());
                     // |allColsArePercent| means that either the logicalWidth *or* the effectiveLogicalWidth are percents, handle both of them here.
                     float percent = m_layoutStruct[pos].logicalWidth.isPercent() ? m_layoutStruct[pos].logicalWidth.percent() : m_layoutStruct[pos].effectiveLogicalWidth.percent();
-                    m_layoutStruct[pos].effectiveMinLogicalWidth = max(m_layoutStruct[pos].effectiveMinLogicalWidth, static_cast<int>(percent * cellMinLogicalWidth / totalPercent));
-                    m_layoutStruct[pos].effectiveMaxLogicalWidth = percent * cellMaxLogicalWidth / totalPercent;
+                    int columnMinLogicalWidth = static_cast<int>(percent * cellMinLogicalWidth / totalPercent);
+                    float columnMaxLogicalWidth = percent * cellMaxLogicalWidth / totalPercent;
+                    m_layoutStruct[pos].effectiveMinLogicalWidth = max(m_layoutStruct[pos].effectiveMinLogicalWidth, columnMinLogicalWidth);
+                    m_layoutStruct[pos].effectiveMaxLogicalWidth = columnMaxLogicalWidth;
+                    allocatedMinLogicalWidth += columnMinLogicalWidth;
+                    allocatedMaxLogicalWidth += columnMaxLogicalWidth;
                 }
+                ASSERT(allocatedMinLogicalWidth <= cellMinLogicalWidth);
+                ASSERT(allocatedMaxLogicalWidth <= cellMaxLogicalWidth);
+                cellMinLogicalWidth -= allocatedMinLogicalWidth;
+                cellMaxLogicalWidth -= allocatedMaxLogicalWidth;
             } else {
                 float remainingMaxLogicalWidth = spanMaxLogicalWidth;
                 int remainingMinLogicalWidth = spanMinLogicalWidth;
