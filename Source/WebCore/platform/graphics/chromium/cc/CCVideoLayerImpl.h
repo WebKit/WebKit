@@ -70,6 +70,8 @@ public:
     virtual void didReceiveFrame(); // Callable on impl thread.
     virtual void didUpdateMatrix(const float*); // Callable on impl thread.
 
+    virtual void didLoseContext() OVERRIDE;
+
     void setNeedsRedraw();
 
     static const float yuv2RGB[9];

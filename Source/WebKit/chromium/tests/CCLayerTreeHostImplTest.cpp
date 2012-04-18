@@ -1153,4 +1153,183 @@ TEST_F(CCLayerTreeHostImplTest, scrollbarLayerLostContext)
     }
 }
 
+// Fake WebGraphicsContext3D that will cause a failure if trying to use a
+// resource that wasn't created by it (resources created by
+// FakeWebGraphicsContext3D have an id of 1).
+class StrictWebGraphicsContext3D : public FakeWebGraphicsContext3D {
+public:
+    virtual WebGLId createBuffer() { return 2; }
+    virtual WebGLId createFramebuffer() { return 3; }
+    virtual WebGLId createProgram() { return 4; }
+    virtual WebGLId createRenderbuffer() { return 5; }
+    virtual WebGLId createShader(WGC3Denum) { return 6; }
+    virtual WebGLId createTexture() { return 7; }
+
+    virtual void deleteBuffer(WebGLId id)
+    {
+        if (id != 2)
+            ADD_FAILURE() << "Trying to delete buffer id " << id;
+    }
+
+    virtual void deleteFramebuffer(WebGLId id)
+    {
+        if (id != 3)
+            ADD_FAILURE() << "Trying to delete framebuffer id " << id;
+    }
+
+    virtual void deleteProgram(WebGLId id)
+    {
+        if (id != 4)
+            ADD_FAILURE() << "Trying to delete program id " << id;
+    }
+
+    virtual void deleteRenderbuffer(WebGLId id)
+    {
+        if (id != 5)
+            ADD_FAILURE() << "Trying to delete renderbuffer id " << id;
+    }
+
+    virtual void deleteShader(WebGLId id)
+    {
+        if (id != 6)
+            ADD_FAILURE() << "Trying to delete shader id " << id;
+    }
+
+    virtual void deleteTexture(WebGLId id)
+    {
+        if (id != 7)
+            ADD_FAILURE() << "Trying to delete texture id " << id;
+    }
+
+    virtual void bindBuffer(WGC3Denum, WebGLId id)
+    {
+        if (id != 2 && id)
+            ADD_FAILURE() << "Trying to bind buffer id " << id;
+    }
+
+    virtual void bindFramebuffer(WGC3Denum, WebGLId id)
+    {
+        if (id != 3 && id)
+            ADD_FAILURE() << "Trying to bind framebuffer id " << id;
+    }
+
+    virtual void useProgram(WebGLId id)
+    {
+        if (id != 4)
+            ADD_FAILURE() << "Trying to use program id " << id;
+    }
+
+    virtual void bindRenderbuffer(WGC3Denum, WebGLId id)
+    {
+        if (id != 5 && id)
+            ADD_FAILURE() << "Trying to bind renderbuffer id " << id;
+    }
+
+    virtual void attachShader(WebGLId program, WebGLId shader)
+    {
+        if ((program != 4) || (shader != 6))
+            ADD_FAILURE() << "Trying to attach shader id " << shader << " to program id " << program;
+    }
+
+    virtual void bindTexture(WGC3Denum, WebGLId id)
+    {
+        if (id != 7 && id)
+            ADD_FAILURE() << "Trying to bind texture id " << id;
+    }
+
+    static PassRefPtr<GraphicsContext3D> createGraphicsContext()
+    {
+        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new StrictWebGraphicsContext3D()), GraphicsContext3D::RenderDirectlyToHostWindow);
+    }
+};
+
+// Fake video frame that represents a 4x4 YUV video frame.
+class FakeVideoFrame: public WebVideoFrame {
+public:
+    FakeVideoFrame() { memset(m_data, 0x80, sizeof(m_data)); }
+    virtual ~FakeVideoFrame() { }
+    virtual Format format() const { return FormatYV12; }
+    virtual unsigned width() const { return 4; }
+    virtual unsigned height() const { return 4; }
+    virtual unsigned planes() const { return 3; }
+    virtual int stride(unsigned plane) const { return 4; }
+    virtual const void* data(unsigned plane) const { return m_data; }
+    virtual unsigned textureId() const { return 0; }
+    virtual unsigned textureTarget() const { return 0; }
+
+private:
+    char m_data[16];
+};
+
+// Fake video frame provider that always provides the same FakeVideoFrame.
+class FakeVideoFrameProvider: public WebVideoFrameProvider {
+public:
+    FakeVideoFrameProvider() : m_client(0) { }
+    virtual ~FakeVideoFrameProvider()
+    {
+        if (m_client)
+            m_client->stopUsingProvider();
+    }
+
+    virtual void setVideoFrameProviderClient(Client* client) { m_client = client; }
+    virtual WebVideoFrame* getCurrentFrame() { return &m_frame; }
+    virtual void putCurrentFrame(WebVideoFrame*) { }
+
+private:
+    FakeVideoFrame m_frame;
+    Client* m_client;
+};
+
+TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
+{
+    m_hostImpl->initializeLayerRenderer(createContext());
+    m_hostImpl->setViewportSize(IntSize(10, 10));
+
+    OwnPtr<CCLayerImpl> rootLayer(CCLayerImpl::create(0));
+    rootLayer->setBounds(IntSize(10, 10));
+    rootLayer->setAnchorPoint(FloatPoint(0, 0));
+
+    OwnPtr<CCTiledLayerImpl> tileLayer = CCTiledLayerImpl::create(1);
+    tileLayer->setBounds(IntSize(10, 10));
+    tileLayer->setAnchorPoint(FloatPoint(0, 0));
+    tileLayer->setContentBounds(IntSize(10, 10));
+    tileLayer->setDrawsContent(true);
+    tileLayer->setSkipsDraw(false);
+    OwnPtr<CCLayerTilingData> tilingData(CCLayerTilingData::create(IntSize(10, 10), CCLayerTilingData::NoBorderTexels));
+    tilingData->setBounds(IntSize(10, 10));
+    tileLayer->setTilingData(*tilingData);
+    tileLayer->pushTileProperties(0, 0, 1, IntRect(0, 0, 10, 10));
+    rootLayer->addChild(tileLayer.release());
+
+    OwnPtr<CCTextureLayerImpl> textureLayer = CCTextureLayerImpl::create(2);
+    textureLayer->setBounds(IntSize(10, 10));
+    textureLayer->setAnchorPoint(FloatPoint(0, 0));
+    textureLayer->setContentBounds(IntSize(10, 10));
+    textureLayer->setDrawsContent(true);
+    textureLayer->setTextureId(1);
+    rootLayer->addChild(textureLayer.release());
+
+    FakeVideoFrameProvider provider;
+    OwnPtr<CCVideoLayerImpl> videoLayer = CCVideoLayerImpl::create(3, &provider);
+    videoLayer->setBounds(IntSize(10, 10));
+    videoLayer->setAnchorPoint(FloatPoint(0, 0));
+    videoLayer->setContentBounds(IntSize(10, 10));
+    videoLayer->setDrawsContent(true);
+    rootLayer->addChild(videoLayer.release());
+
+    m_hostImpl->setRootLayer(rootLayer.release());
+
+    CCLayerTreeHostImpl::FrameData frame;
+    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+    m_hostImpl->drawLayers(frame);
+    m_hostImpl->swapBuffers();
+
+    // Lose the context, replacing it with a StrictWebGraphicsContext3D, that
+    // will warn if any resource from the previous context gets used.
+    m_hostImpl->initializeLayerRenderer(StrictWebGraphicsContext3D::createGraphicsContext());
+    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+    m_hostImpl->drawLayers(frame);
+    m_hostImpl->swapBuffers();
+}
+
 } // namespace

@@ -253,6 +253,12 @@ void CCVideoLayerImpl::didUpdateMatrix(const float matrix[16])
     setNeedsRedraw();
 }
 
+void CCVideoLayerImpl::didLoseContext()
+{
+    for (unsigned i = 0; i < MaxPlanes; ++i)
+        m_textures[i].m_texture.clear();
+}
+
 void CCVideoLayerImpl::setNeedsRedraw()
 {
     if (m_layerTreeHostImpl)

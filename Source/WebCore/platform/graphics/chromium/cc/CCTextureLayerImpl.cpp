@@ -105,6 +105,7 @@ void CCTextureLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 
 void CCTextureLayerImpl::didLoseContext()
 {
+    m_textureId = 0;
     if (m_ioSurfaceId) {
         // We don't have a valid texture ID in the new context; however,
         // the IOSurface is still valid.

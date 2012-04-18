@@ -235,6 +235,11 @@ Region CCTiledLayerImpl::visibleContentOpaqueRegion() const
     return m_tiler->opaqueRegionInLayerRect(visibleLayerRect());
 }
 
+void CCTiledLayerImpl::didLoseContext()
+{
+    m_tiler->reset();
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

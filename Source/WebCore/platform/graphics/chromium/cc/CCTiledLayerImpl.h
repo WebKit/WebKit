@@ -57,6 +57,7 @@ public:
     bool contentsSwizzled() const { return m_contentsSwizzled; }
 
     virtual Region visibleContentOpaqueRegion() const OVERRIDE;
+    virtual void didLoseContext() OVERRIDE;
 
     typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlpha> Program;
     // Shader program that swaps red and blue components of texture.
