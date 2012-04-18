@@ -1,5 +1,21 @@
 2012-04-18  Abhishek Arya  <inferno@chromium.org>
 
+        Crash due to layer tree information not updated when moving run-in children.
+        https://bugs.webkit.org/show_bug.cgi?id=81265
+
+        Reviewed by Julien Chaffraix.
+
+        We need to do a full removal as the run-in child is getting inserted into
+        the neighbouring block and |blockRunIn| is going to be destroyed later
+        in the function.
+
+        Test: fast/runin/run-in-layer-not-removed-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleRunInChild):
+
+2012-04-18  Abhishek Arya  <inferno@chromium.org>
+
         Crash in Text::splitText due to mutation events.
         https://bugs.webkit.org/show_bug.cgi?id=80828
 
