@@ -1,3 +1,15 @@
+2012-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Lion Production Test failing with error: "Failed to stop httpd: pid file still exists"
+        https://bugs.webkit.org/show_bug.cgi?id=84177
+
+        Reviewed by Dirk Pranke.
+
+        Try to delete the pid file left by Apache in the case it was killed forcefully.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd._stop_running_server):
+
 2012-04-18  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Clean-up WheelEvent Conversion.

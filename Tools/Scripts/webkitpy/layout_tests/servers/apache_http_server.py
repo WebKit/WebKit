@@ -137,6 +137,12 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         return int(self._filesystem.read_text_file(self._pid_file))
 
     def _stop_running_server(self):
+        # If apache was forcefully killed, the pid file will not have been deleted, so check
+        # that the process specified by the pid_file no longer exists before deleting the file.
+        if self._pid and not self._executive.check_running_pid(self._pid):
+            self._filesystem.remove(self._pid_file)
+            return
+
         retval, err = self._run(self._stop_cmd)
         if retval or len(err):
             raise http_server_base.ServerError('Failed to stop %s: %s' % (self._name, err))
