@@ -472,8 +472,8 @@ void RenderFrameSet::layout()
         setHeight(view()->viewHeight());
     }
 
-    size_t cols = frameSet()->totalCols();
-    size_t rows = frameSet()->totalRows();
+    unsigned cols = frameSet()->totalCols();
+    unsigned rows = frameSet()->totalRows();
 
     if (m_rows.m_sizes.size() != rows || m_cols.m_sizes.size() != cols) {
         m_rows.resize(rows);

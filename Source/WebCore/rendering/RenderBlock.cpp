@@ -5176,11 +5176,11 @@ void RenderBlock::adjustForColumns(LayoutSize& offset, const LayoutPoint& point)
     ColumnInfo* colInfo = columnInfo();
 
     LayoutUnit logicalLeft = logicalLeftOffsetForContent();
-    size_t colCount = columnCount(colInfo);
+    unsigned colCount = columnCount(colInfo);
     LayoutUnit colLogicalWidth = colInfo->desiredColumnWidth();
     LayoutUnit colLogicalHeight = colInfo->columnHeight();
 
-    for (size_t i = 0; i < colCount; ++i) {
+    for (unsigned i = 0; i < colCount; ++i) {
         // Compute the edges for a given column in the block progression direction.
         LayoutRect sliceRect = LayoutRect(logicalLeft, borderBefore() + paddingBefore() + i * colLogicalHeight, colLogicalWidth, colLogicalHeight);
         if (!isHorizontalWritingMode())
