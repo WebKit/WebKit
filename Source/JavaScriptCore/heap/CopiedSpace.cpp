@@ -27,6 +27,7 @@
 #include "CopiedSpace.h"
 
 #include "CopiedSpaceInlineMethods.h"
+#include "GCActivityCallback.h"
 
 namespace JSC {
 
@@ -51,6 +52,8 @@ void CopiedSpace::init()
 
 CheckedBoolean CopiedSpace::tryAllocateSlowCase(size_t bytes, void** outPtr)
 {
+    m_heap->activityCallback()->willAllocate();
+    
     if (isOversize(bytes))
         return tryAllocateOversize(bytes, outPtr);
     

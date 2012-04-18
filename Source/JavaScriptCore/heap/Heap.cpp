@@ -328,8 +328,8 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
     , m_lastGCLength(0)
+    , m_lastCodeDiscardTime(WTF::currentTime())
 {
-    (*m_activityCallback)();
     m_numberOfFreeBlocks = 0;
     m_blockFreeingThread = createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree");
     
@@ -783,10 +783,11 @@ void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
-    discardAllCompiledCode();
 
     collect(DoSweep);
 }
+
+static double minute = 60.0;
 
 void Heap::collect(SweepToggle sweepToggle)
 {
@@ -796,7 +797,13 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
+
     double lastGCStartTime = WTF::currentTime();
+    if (lastGCStartTime - m_lastCodeDiscardTime > minute) {
+        discardAllCompiledCode();
+        m_lastCodeDiscardTime = WTF::currentTime();
+    }
+
 #if ENABLE(GGC)
     bool fullGC = sweepToggle == DoSweep;
     if (!fullGC)
@@ -855,7 +862,7 @@ void Heap::collect(SweepToggle sweepToggle)
     m_lastGCLength = lastGCEndTime - lastGCStartTime;
     JAVASCRIPTCORE_GC_END();
 
-    (*m_activityCallback)();
+    m_activityCallback->didCollect();
 }
 
 void Heap::canonicalizeCellLivenessData()

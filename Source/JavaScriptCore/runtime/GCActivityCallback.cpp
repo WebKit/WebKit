@@ -42,7 +42,15 @@ DefaultGCActivityCallback::~DefaultGCActivityCallback()
 {
 }
 
-void DefaultGCActivityCallback::operator()()
+void DefaultGCActivityCallback::willAllocate()
+{
+}
+
+void DefaultGCActivityCallback::didCollect()
+{
+}
+
+void DefaultGCActivityCallback::didAbandonObjectGraph()
 {
 }
 

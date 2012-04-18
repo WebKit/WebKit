@@ -1,6 +1,7 @@
 #include "config.h"
 #include "MarkedAllocator.h"
 
+#include "GCActivityCallback.h"
 #include "Heap.h"
 
 namespace JSC {
@@ -40,6 +41,8 @@ void* MarkedAllocator::allocateSlowCase()
     m_heap->collectAllGarbage();
     ASSERT(m_heap->m_operationInProgress == NoOperation);
 #endif
+    
+    m_heap->activityCallback()->willAllocate();
     
     void* result = tryAllocate();
     

@@ -45,21 +45,24 @@
 namespace JSC {
 
 struct DefaultGCActivityCallbackPlatformData {
-    static void trigger(CFRunLoopTimerRef, void *info);
+    static void timerDidFire(CFRunLoopTimerRef, void *info);
 
     RetainPtr<CFRunLoopTimerRef> timer;
     RetainPtr<CFRunLoopRef> runLoop;
     CFRunLoopTimerContext context;
+    bool timerIsActive;
 };
 
+const double gcCPUBudget = 0.025;
+const double gcTimerIntervalMultiplier = 1.0 / gcCPUBudget;
 const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
+const CFTimeInterval hour = 60 * 60;
 
-void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef timer, void *info)
+void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void *info)
 {
     Heap* heap = static_cast<Heap*>(info);
     APIEntryShim shim(heap->globalData());
     heap->collectAllGarbage();
-    CFRunLoopTimerSetNextFireDate(timer, CFAbsoluteTimeGetCurrent() + decade);
 }
 
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
@@ -88,14 +91,41 @@ void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLo
     memset(&d->context, 0, sizeof(CFRunLoopTimerContext));
     d->context.info = heap;
     d->runLoop = runLoop;
-    d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::trigger, &d->context));
+    d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::timerDidFire, &d->context));
+    d->timerIsActive = false;
     CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
 }
 
-void DefaultGCActivityCallback::operator()()
+static void scheduleTimer(DefaultGCActivityCallbackPlatformData* d)
 {
-    CFTimeInterval triggerInterval = static_cast<Heap*>(d->context.info)->lastGCLength() * 100.0; 
+    if (d->timerIsActive)
+        return;
+    d->timerIsActive = true;
+    CFTimeInterval triggerInterval = static_cast<Heap*>(d->context.info)->lastGCLength() * gcTimerIntervalMultiplier; 
     CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + triggerInterval);
+}
+
+static void cancelTimer(DefaultGCActivityCallbackPlatformData* d)
+{
+    if (!d->timerIsActive)
+        return;
+    d->timerIsActive = false;
+    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + decade);
+}
+
+void DefaultGCActivityCallback::willAllocate()
+{
+    scheduleTimer(d.get());
+}
+
+void DefaultGCActivityCallback::didCollect()
+{
+    cancelTimer(d.get());
+}
+
+void DefaultGCActivityCallback::didAbandonObjectGraph()
+{
+    scheduleTimer(d.get());
 }
 
 void DefaultGCActivityCallback::synchronize()

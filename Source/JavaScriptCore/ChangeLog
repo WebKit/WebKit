@@ -1,3 +1,58 @@
+2012-04-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        GC activity timer should be tied to allocation, not collection
+        https://bugs.webkit.org/show_bug.cgi?id=83919
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSContextRef.cpp: Used the new didAbandonObjectGraph callback to indicate that now that we've 
+        released a global object, we're abandoning a potentially large number of objects that JSC might want 
+        to collect.
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateSlowCase): Added the call to timer's willAllocate function to indicate 
+        that we've hit a slow path and are allocating now, so schedule the timer.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::collectAllGarbage): Removed the call to discardAllCompiledCode because it was causing us to 
+        throw away too much code during our benchmarks (especially vp8, which is very large and thus has large 
+        amounts of compiled code).
+        (JSC::Heap::collect): Added the new call to didCollect at the conclusion of a collection so that we 
+        can cancel the timer if we no longer need to run a collection. Also added a check at the beginning of a 
+        collection to see if we should throw away our compiled code. Currently this is set to happen about once 
+        every minute.
+        * heap/Heap.h: Added field to keep track of the last time we threw away our compiled code.
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase): Added call to willAllocate on the allocation slow path, just like 
+        in CopiedSpace.
+        * runtime/GCActivityCallback.cpp: Added default stubs for non-CF platforms.
+        (JSC::DefaultGCActivityCallback::willAllocate):
+        (JSC):
+        (JSC::DefaultGCActivityCallback::didCollect):
+        (JSC::DefaultGCActivityCallback::didAbandonObjectGraph):
+        * runtime/GCActivityCallback.h: Added new functions to make JSC's GC timer less arcane. This includes replacing 
+        the operator () with willAllocate() and adding an explicit didCollect() to cancel the timer after a collection 
+        occurs rather than relying on the way the timer is invoked to cancel itself. Also added a callback for 
+        when somebody else (e.g. WebCore or the JSC API) to notify JSC that they have just abandoned an entire graph of 
+        objects and that JSC might want to clean them up.
+        (JSC::GCActivityCallback::~GCActivityCallback):
+        (JSC::GCActivityCallback::willAllocate):
+        (JSC::GCActivityCallback::didCollect):
+        (JSC::GCActivityCallback::didAbandonObjectGraph):
+        (JSC::GCActivityCallback::synchronize):
+        (DefaultGCActivityCallback):
+        * runtime/GCActivityCallbackCF.cpp: Re-wired all the run loop stuff to implement the aforementioned functions. 
+        We added a flag to check whether the timer was active because the call to CFRunLoopTimerSetNextFireDate actually 
+        turned out to be quite expensive (although Instruments couldn't tell us this).
+        (DefaultGCActivityCallbackPlatformData):
+        (JSC):
+        (JSC::DefaultGCActivityCallbackPlatformData::timerDidFire):
+        (JSC::DefaultGCActivityCallback::commonConstructor):
+        (JSC::scheduleTimer):
+        (JSC::cancelTimer):
+        (JSC::DefaultGCActivityCallback::willAllocate):
+        (JSC::DefaultGCActivityCallback::didCollect):
+        (JSC::DefaultGCActivityCallback::didAbandonObjectGraph):
+
 2012-04-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not attempt to get rare case counts for op_mod on ARM

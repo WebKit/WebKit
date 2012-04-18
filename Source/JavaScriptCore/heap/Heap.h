@@ -247,6 +247,7 @@ namespace JSC {
 
         JSGlobalData* m_globalData;
         double m_lastGCLength;
+        double m_lastCodeDiscardTime;
 
         DoublyLinkedList<FunctionExecutable> m_functions;
     };
