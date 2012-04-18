@@ -236,6 +236,11 @@ IntRect enclosedIntRect(const FloatRect& rect)
     return IntRect(x, y, width, height);
 }
 
+IntRect roundedIntRect(const FloatRect& rect)
+{
+    return IntRect(roundedIntPoint(rect.location()), roundedIntSize(rect.size()));
+}
+
 FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect)
 {
     if (srcRect.width() == 0 || srcRect.height() == 0)

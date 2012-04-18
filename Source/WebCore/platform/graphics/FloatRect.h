@@ -288,6 +288,8 @@ IntRect enclosingIntRect(const FloatRect&);
 // Returns a valid IntRect contained within the given FloatRect.
 IntRect enclosedIntRect(const FloatRect&);
 
+IntRect roundedIntRect(const FloatRect&);
+
 // Map rect r from srcRect to an equivalent rect in destRect.
 FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect);
 

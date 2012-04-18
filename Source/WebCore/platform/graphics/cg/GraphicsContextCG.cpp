@@ -1313,12 +1313,12 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     // we get the affine transform matrix and extract the scale.
 
     if (m_data->m_userToDeviceTransformKnownToBeIdentity)
-        return rect;
+        return roundedIntRect(rect);
 
     CGAffineTransform deviceMatrix = CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
     if (CGAffineTransformIsIdentity(deviceMatrix)) {
         m_data->m_userToDeviceTransformKnownToBeIdentity = true;
-        return rect;
+        return roundedIntRect(rect);
     }
 
     float deviceScaleX = sqrtf(deviceMatrix.a * deviceMatrix.a + deviceMatrix.b * deviceMatrix.b);
