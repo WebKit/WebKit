@@ -44,6 +44,10 @@ const int intMinForLayoutUnit = -intMaxForLayoutUnit;
 
 class FractionalLayoutUnit {
 public:
+    // FIXME: Ideally we would have size_t versions of the constructor and operators.
+    // However due to compiler and platform differences adding those are non-trivial.
+    // See https://bugs.webkit.org/show_bug.cgi?id=83848 for details.
+    
     FractionalLayoutUnit() : m_value(0) { }
     FractionalLayoutUnit(int value) { ASSERT(isInBounds(value)); m_value = value * kFixedPointDenominator; }
     FractionalLayoutUnit(unsigned short value) { ASSERT(isInBounds(value)); m_value = value * kFixedPointDenominator; }
