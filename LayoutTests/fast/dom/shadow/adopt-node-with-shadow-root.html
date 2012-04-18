@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+<object data="data:image/svg+xml;base64,PFNWR1Rlc3RDYXNlIGlkPSJzIj4=" id="root" onload="test()"/>
+<script>
+function test() {
+    var foreignDocument = document.getElementById('root').contentDocument;
+    shadow = new WebKitShadowRoot(foreignDocument.getElementById('s'));
+    shouldThrow("document.adoptNode(shadow)");
+    location.reload();
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
