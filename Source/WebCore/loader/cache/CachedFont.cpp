@@ -27,8 +27,7 @@
 #include "config.h"
 #include "CachedFont.h"
 
-// FIXME: This should really be a blacklist instead of a whitelist
-#if USE(CG) || PLATFORM(QT) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && (!OS(DARWIN) || USE(SKIA_ON_MAC_CHROMIUM))) || OS(WINCE) || PLATFORM(BLACKBERRY)
+#if !PLATFORM(WIN_CAIRO) && !PLATFORM(WX)
 #define STORE_FONT_CUSTOM_PLATFORM_DATA
 #endif
 
