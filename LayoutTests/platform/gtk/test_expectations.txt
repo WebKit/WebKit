@@ -249,10 +249,10 @@ BUGWKGTK SKIP : fast/regions/style-scoped-in-flow.html = FAIL
 BUGWKGTK SKIP : fast/dom/shadow = FAIL
 
 // CSS Regions support not yet enabled.
-BUGWK57312 : fast/regions = FAIL
+BUGWK57312 SKIP : fast/regions = FAIL
 
 // CSS Exclusions support not yet enabled.
-BUGWK57311 : fast/exclusions = FAIL
+BUGWK57311 SKIP : fast/exclusions = FAIL
 
 // CSS Filters is disabled
 BUGWKGTK SKIP : css3/filters = FAIL
@@ -320,9 +320,6 @@ BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
 BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
-
-// This test is crashing when run along with other tests on the release build.
-BUGWKGTK : fast/dynamic/layer-hit-test-crash.html = CRASH
 
 // Crashes on GStreamer side when loading one of the media elements of the test.
 BUGWK50155 : fast/events/tabindex-focus-blur-all.html = CRASH
@@ -421,6 +418,9 @@ BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/frameset-flattening-advanced.html = PASS TEXT
 BUGWK80129 : fast/frames/flattening/frameset-flattening-subframesets.html = PASS TEXT
+BUGWK80129 : fast/frames/flattening/iframe-flattening-offscreen.html = PASS TEXT
+BUGWK80129 : fast/frames/flattening/frameset-flattening-grid.html = TEXT PASS
+BUGWK80129 : fast/frames/flattening/iframe-flattening-out-of-view.html = TEXT PASS
 
 BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
 BUGWK79760 : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
@@ -634,10 +634,10 @@ BUGWK54136 : fast/html/keygen.html = FAIL
 BUGWK54136 : http/tests/misc/submit-post-keygen.html = FAIL
 
 // [GTK] GTK+ does not support hyphenation
-BUGWK44478 : fast/text/hyphenate-character.html = FAIL
-BUGWK44478 : fast/text/hyphens.html = FAIL
-BUGWK44478 : fast/text/hyphenate-first-word.html = FAIL
-BUGWK44478 : fast/text/hyphenate-locale.html = FAIL
+BUGWK44478 SKIP : fast/text/hyphenate-character.html = FAIL
+BUGWK44478 SKIP : fast/text/hyphens.html = FAIL
+BUGWK44478 SKIP : fast/text/hyphenate-first-word.html = FAIL
+BUGWK44478 SKIP : fast/text/hyphenate-locale.html = FAIL
 
 // This port doesn't support v8 i18n extension.
 BUGWKGTK : fast/js/i18n-bindings-locale.html = FAIL
@@ -1033,9 +1033,9 @@ BUGWK38437 : editing/pasteboard/5761530-1.html = FAIL
 BUGWKGTK : http/tests/loading/preload-slow-loading.php = FAIL
 
 // Need setPrinting.
-BUGWK20011 : printing/setPrinting.html = FAIL
-BUGWK20011 : printing/single-line-must-not-be-split-into-two-pages.html = FAIL
-BUGWK20011 : printing/width-overflow.html = FAIL
+BUGWK20011 SKIP : printing/setPrinting.html = FAIL
+BUGWK20011 SKIP : printing/single-line-must-not-be-split-into-two-pages.html = FAIL
+BUGWK20011 SKIP : printing/width-overflow.html = FAIL
 
 // Advanced credential handling
 BUGWKGTK : http/tests/security/401-logout/401-logout.php = FAIL
