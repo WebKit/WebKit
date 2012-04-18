@@ -1,3 +1,14 @@
+2012-04-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix crash in chromium.py after r114877.
+
+        Unreviewed, build fix.
+
+        Missed updating one call site for get_crash_log() :(.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.run_test):
+
 2012-04-18  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] NRWT bails out if more than one X server runs on the machine

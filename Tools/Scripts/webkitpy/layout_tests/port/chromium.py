@@ -601,7 +601,7 @@ class ChromiumDriver(Driver):
             crashed_process_name = self._port.driver_name()
             if self._proc:
                 crashed_pid = self._proc.pid
-            crash_log = self._port._get_crash_log(crashed_process_name, crashed_pid, text, error)
+            crash_log = self._port._get_crash_log(crashed_process_name, crashed_pid, text, error, newer_than=start_time)
             if text:
                 error = error + text
 
