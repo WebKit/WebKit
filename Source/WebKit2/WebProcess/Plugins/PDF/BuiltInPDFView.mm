@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "BuiltInPDFView.h"
+#import "config.h"
+#import "BuiltInPDFView.h"
 
-#include "PluginView.h"
-#include "ShareableBitmap.h"
-#include "WebEvent.h"
-#include "WebEventConversion.h"
-#include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSObjectRef.h>
-#include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptCore/JSStringRefCF.h>
-#include <WebCore/ArchiveResource.h>
-#include <WebCore/Chrome.h>
-#include <WebCore/DocumentLoader.h>
-#include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/GraphicsContext.h>
-#include <WebCore/HTTPHeaderMap.h>
-#include <WebCore/LocalizedStrings.h>
-#include <WebCore/Page.h>
-#include <WebCore/PluginData.h>
-#include <WebCore/RenderBoxModelObject.h>
-#include <WebCore/ScrollAnimator.h>
-#include <WebCore/ScrollbarTheme.h>
+#import "PDFKitImports.h"
+#import "PluginView.h"
+#import "ShareableBitmap.h"
+#import "WebEvent.h"
+#import "WebEventConversion.h"
+#import <JavaScriptCore/JSContextRef.h>
+#import <JavaScriptCore/JSObjectRef.h>
+#import <JavaScriptCore/JSStringRef.h>
+#import <JavaScriptCore/JSStringRefCF.h>
+#import <PDFKit/PDFKit.h>
+#import <WebCore/ArchiveResource.h>
+#import <WebCore/Chrome.h>
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/FocusController.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/GraphicsContext.h>
+#import <WebCore/HTTPHeaderMap.h>
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/Page.h>
+#import <WebCore/PluginData.h>
+#import <WebCore/RenderBoxModelObject.h>
+#import <WebCore/ScrollAnimator.h>
+#import <WebCore/ScrollbarTheme.h>
 
 using namespace WebCore;
 using namespace std;
@@ -283,8 +285,7 @@ void BuiltInPDFView::pdfDocumentDidLoad()
 {
     addArchiveResource();
 
-    RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithCFData(m_dataBuffer.get()));
-    m_pdfDocument.adoptCF(CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
+    m_pdfDocument.adoptNS([[pdfDocumentClass() alloc] initWithData:(NSData *)m_dataBuffer.get()]);
 
     calculateSizes();
     updateScrollbars();
@@ -292,7 +293,7 @@ void BuiltInPDFView::pdfDocumentDidLoad()
     controller()->invalidate(IntRect(0, 0, m_pluginSize.width(), m_pluginSize.height()));
 
     Vector<RetainPtr<CFStringRef> > scripts;
-    getAllScriptsInPDFDocument(m_pdfDocument.get(), scripts);
+    getAllScriptsInPDFDocument([m_pdfDocument.get() documentRef], scripts);
 
     size_t scriptCount = scripts.size();
     if (!scriptCount)
@@ -312,9 +313,9 @@ void BuiltInPDFView::pdfDocumentDidLoad()
 
 void BuiltInPDFView::calculateSizes()
 {
-    size_t pageCount = CGPDFDocumentGetNumberOfPages(m_pdfDocument.get());
+    size_t pageCount = CGPDFDocumentGetNumberOfPages([m_pdfDocument.get() documentRef]);
     for (size_t i = 0; i < pageCount; ++i) {
-        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(m_pdfDocument.get(), i + 1);
+        CGPDFPageRef pdfPage = CGPDFDocumentGetPage([m_pdfDocument.get() documentRef], i + 1);
         ASSERT(pdfPage);
 
         CGRect box = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
@@ -394,7 +395,7 @@ void BuiltInPDFView::paintContent(GraphicsContext* graphicsContext, const IntRec
         if (pageTop > contentRect.maxY())
             break;
         if (pageTop + pageBox.height() + extraOffsetForCenteringY + gutterHeight >= contentRect.y()) {
-            CGPDFPageRef pdfPage = CGPDFDocumentGetPage(m_pdfDocument.get(), i + 1);
+            CGPDFPageRef pdfPage = CGPDFDocumentGetPage([m_pdfDocument.get() documentRef], i + 1);
 
             graphicsContext->save();
             graphicsContext->translate(extraOffsetForCenteringX - pageBox.x(), -extraOffsetForCenteringY - pageBox.y() - pageBox.height());

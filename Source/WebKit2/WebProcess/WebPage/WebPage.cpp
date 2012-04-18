@@ -2797,8 +2797,8 @@ void WebPage::stopSpeaking()
 
 #endif
 
-#if USE(CG)
-static RetainPtr<CGPDFDocumentRef> pdfDocumentForPrintingFrame(Frame* coreFrame)
+#if PLATFORM(MAC)
+RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
 {
     Document* document = coreFrame->document();
     if (!document)
@@ -2813,7 +2813,7 @@ static RetainPtr<CGPDFDocumentRef> pdfDocumentForPrintingFrame(Frame* coreFrame)
 
     return pluginView->pdfDocumentForPrinting();
 }
-#endif // USE(CG)
+#endif // PLATFORM(MAC)
 
 void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 {
@@ -2825,10 +2825,10 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
     if (!coreFrame)
         return;
 
-#if USE(CG)
+#if PLATFORM(MAC)
     if (pdfDocumentForPrintingFrame(coreFrame))
         return;
-#endif // USE(CG)
+#endif // PLATFORM(MAC)
 
     if (!m_printContext)
         m_printContext = adoptPtr(new PrintContext(coreFrame));
@@ -2865,21 +2865,10 @@ void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printIn
         resultPageRects = m_printContext->pageRects();
         resultTotalScaleFactorForPrinting = m_printContext->computeAutomaticScaleFactor(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight)) * printInfo.pageSetupScaleFactor;
     }
-#if USE(CG)
-    else {
-        WebFrame* frame = WebProcess::shared().webFrame(frameID);
-        Frame* coreFrame = frame ? frame->coreFrame() : 0;
-        RetainPtr<CGPDFDocumentRef> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame) : 0;
-        if (pdfDocument && CGPDFDocumentAllowsPrinting(pdfDocument.get())) {
-            CFIndex pageCount = CGPDFDocumentGetNumberOfPages(pdfDocument.get());
-            IntRect pageRect(0, 0, ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
-            for (CFIndex i = 1; i <= pageCount; ++i) {
-                resultPageRects.append(pageRect);
-                pageRect.move(0, pageRect.height());
-            }
-        }
-    }
-#endif // USE(CG)
+#if PLATFORM(MAC)
+    else
+        computePagesForPrintingPDFDocument(frameID, printInfo, resultPageRects);
+#endif // PLATFORM(MAC)
 
     // If we're asked to print, we should actually print at least a blank page.
     if (resultPageRects.isEmpty())
@@ -2887,48 +2876,6 @@ void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printIn
 
     send(Messages::WebPageProxy::ComputedPagesCallback(resultPageRects, resultTotalScaleFactorForPrinting, callbackID));
 }
-
-#if USE(CG)
-static inline CGFloat roundCGFloat(CGFloat f)
-{
-    if (sizeof(CGFloat) == sizeof(float))
-        return roundf(static_cast<float>(f));
-    return static_cast<CGFloat>(round(f));
-}
-
-static void drawPDFPage(CGPDFDocumentRef pdfDocument, CFIndex pageIndex, CGContextRef context, CGFloat pageSetupScaleFactor, CGSize paperSize)
-{
-    CGContextSaveGState(context);
-
-    CGContextScaleCTM(context, pageSetupScaleFactor, pageSetupScaleFactor);
-
-    CGPDFPageRef page = CGPDFDocumentGetPage(pdfDocument, pageIndex + 1);
-    CGRect cropBox = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
-    if (CGRectIsEmpty(cropBox))
-        cropBox = CGRectIntersection(cropBox, CGPDFPageGetBoxRect(page, kCGPDFMediaBox));
-    else
-        cropBox = CGPDFPageGetBoxRect(page, kCGPDFMediaBox);
-
-    bool shouldRotate = (paperSize.width < paperSize.height) != (cropBox.size.width < cropBox.size.height);
-    if (shouldRotate)
-        swap(cropBox.size.width, cropBox.size.height);
-
-    // Center.
-    CGFloat widthDifference = paperSize.width / pageSetupScaleFactor - cropBox.size.width;
-    CGFloat heightDifference = paperSize.height / pageSetupScaleFactor - cropBox.size.height;
-    if (widthDifference || heightDifference)
-        CGContextTranslateCTM(context, roundCGFloat(widthDifference / 2), roundCGFloat(heightDifference / 2));
-
-    if (shouldRotate) {
-        CGContextRotateCTM(context, static_cast<CGFloat>(piOverTwoDouble));
-        CGContextTranslateCTM(context, 0, -cropBox.size.width);
-    }
-
-    CGContextDrawPDFPage(context, page);
-
-    CGContextRestoreGState(context);
-}
-#endif // USE(CG)
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
 void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const WebCore::IntRect& rect, uint64_t callbackID)
@@ -2939,12 +2886,11 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
     RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
 
     if (coreFrame) {
-#if !USE(CG)
-        UNUSED_PARAM(printInfo);
-
-        ASSERT(coreFrame->document()->printing());
-#else
+#if PLATFORM(MAC)
         ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame));
+#else
+        ASSERT(coreFrame->document()->printing());
+#endif
 
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
         RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
@@ -2954,22 +2900,13 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
         RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CGPDFContextBeginPage(context.get(), pageInfo.get());
 
-        if (RetainPtr<CGPDFDocumentRef> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
-            CFIndex pageCount = CGPDFDocumentGetNumberOfPages(pdfDocument.get());
-            IntSize paperSize(ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
-            IntRect pageRect(IntPoint(), paperSize);
-            for (CFIndex i = 0; i < pageCount; ++i) {
-                if (pageRect.intersects(rect)) {
-                    CGContextSaveGState(context.get());
-
-                    CGContextTranslateCTM(context.get(), pageRect.x() - rect.x(), pageRect.y() - rect.y());
-                    drawPDFPage(pdfDocument.get(), i, context.get(), printInfo.pageSetupScaleFactor, paperSize);
-
-                    CGContextRestoreGState(context.get());
-                }
-                pageRect.move(0, pageRect.height());
-            }
-        } else {
+#if PLATFORM(MAC)
+        if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
+            ASSERT(!m_printContext);
+            drawRectToPDFFromPDFDocument(context.get(), pdfDocument.get(), printInfo, rect);
+        } else
+#endif
+        {
             GraphicsContext ctx(context.get());
             ctx.scale(FloatSize(1, -1));
             ctx.translate(0, -rect.height());
@@ -2978,7 +2915,6 @@ void WebPage::drawRectToPDF(uint64_t frameID, const PrintInfo& printInfo, const 
 
         CGPDFContextEndPage(context.get());
         CGPDFContextClose(context.get());
-#endif
     }
 
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
@@ -2993,44 +2929,49 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
 
     if (coreFrame) {
 
-#if !USE(CG)
-        ASSERT(coreFrame->document()->printing());
-#else
+#if PLATFORM(MAC)
         ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame));
-
-        RetainPtr<CGPDFDocumentRef> pdfDocument = pdfDocumentForPrintingFrame(coreFrame);
+#else
+        ASSERT(coreFrame->document()->printing());
+#endif
 
         // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
         RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
 
-        CGRect mediaBox = m_printContext && m_printContext->pageCount() ? m_printContext->pageRect(0) : CGRectMake(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight);
+        CGRect mediaBox = (m_printContext && m_printContext->pageCount()) ? m_printContext->pageRect(0) : CGRectMake(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight);
         RetainPtr<CGContextRef> context(AdoptCF, CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
-        size_t pageCount = m_printContext ? m_printContext->pageCount() : CGPDFDocumentGetNumberOfPages(pdfDocument.get());
-        for (uint32_t page = first; page < first + count; ++page) {
-            if (page >= pageCount)
-                break;
 
-            RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            CGPDFContextBeginPage(context.get(), pageInfo.get());
+#if PLATFORM(MAC)
+        if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
+            ASSERT(!m_printContext);
+            drawPagesToPDFFromPDFDocument(context.get(), pdfDocument.get(), printInfo, first, count);
+        } else
+#endif
+        {
+            size_t pageCount = m_printContext->pageCount();
+            for (uint32_t page = first; page < first + count; ++page) {
+                if (page >= pageCount)
+                    break;
 
-            if (pdfDocument)
-                drawPDFPage(pdfDocument.get(), page, context.get(), printInfo.pageSetupScaleFactor, CGSizeMake(printInfo.availablePaperWidth, printInfo.availablePaperHeight));
-            else {
+                RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+                CGPDFContextBeginPage(context.get(), pageInfo.get());
+
                 GraphicsContext ctx(context.get());
                 ctx.scale(FloatSize(1, -1));
                 ctx.translate(0, -m_printContext->pageRect(page).height());
                 m_printContext->spoolPage(ctx, page, m_printContext->pageRect(page).width());
-            }
 
-            CGPDFContextEndPage(context.get());
+                CGPDFContextEndPage(context.get());
+            }
         }
         CGPDFContextClose(context.get());
-#endif
     }
 
     send(Messages::WebPageProxy::DataCallback(CoreIPC::DataReference(CFDataGetBytePtr(pdfPageData.get()), CFDataGetLength(pdfPageData.get())), callbackID));
 }
+
 #elif PLATFORM(GTK)
+
 void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID)
 {
     beginPrinting(frameID, printInfo);

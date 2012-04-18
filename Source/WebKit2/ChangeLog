@@ -1,3 +1,55 @@
+2012-04-17  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] USPS Shipping label prints without barcode
+        https://bugs.webkit.org/show_bug.cgi?id=84099
+        <rdar://problem/11133877>
+
+        Reviewed by Sam Weinig.
+
+        Use PDFDocuemnt instead of CGPDFDocument when printing PDFs, because PDFKit knows
+        how to draw PDF buttons, and CG does not.
+
+        * Shared/mac/PDFKitImports.h: Added.
+        * Shared/mac/PDFKitImports.mm: Added.
+        * UIProcess/API/mac/WKPrintingView.mm:
+        Moved code for dealing with dynamically loaded PDFKit from WKPrintingView, as we
+        now also need it elsewhere.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp: Rebamed to .mm.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h: Changed m_pdfDocument to PDFDocument.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.mm: Copied from Source/WebKit2/WebProcess/Plugins/PDF/BuiltInPDFView.cpp.
+        (WebKit::BuiltInPDFView::pdfDocumentDidLoad):
+        (WebKit::BuiltInPDFView::calculateSizes):
+        (WebKit::BuiltInPDFView::paintContent):
+        Changed m_pdfDocument to PDFDocument, and updated for the changes. We still use
+        CGPDF when drawing to screen though, because that doesn't affect USPS.
+
+        * WebProcess/Plugins/Plugin.h: (WebKit::Plugin::pdfDocumentForPrinting): Updated
+        the type, and changed ifsed from CG to MAC, as we're now fully dependent on Cocoa.
+
+        * WebProcess/Plugins/PluginView.h: (WebKit::PluginView::pdfDocumentForPrinting):
+        Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pdfDocumentForPrintingFrame):
+        (WebKit::WebPage::beginPrinting):
+        (WebKit::WebPage::computePagesForPrinting):
+        (WebKit::WebPage::drawRectToPDF):
+        (WebKit::WebPage::drawPagesToPDF):
+        * WebProcess/WebPage/WebPage.h:
+        Moved PDF document printing code to WebPageMac.mm, as it's now Objective C.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::computePagesForPrintingPDFDocument):
+        (WebKit::roundCGFloat):
+        (WebKit::drawPDFPage): While moving, also fixed a logic error in calculating the box
+        (it used to intersect with an empty box).
+        (WebKit::WebPage::drawRectToPDFFromPDFDocument):
+        (WebKit::WebPage::drawPagesToPDFFromPDFDocument):
+
 2012-04-17  Anders Carlsson  <andersca@apple.com>
 
         Need a client callback for when the user tires to interact with an already unresponsive page

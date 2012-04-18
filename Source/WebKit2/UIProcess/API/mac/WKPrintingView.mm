@@ -27,6 +27,7 @@
 #import "WKPrintingView.h"
 
 #import "Logging.h"
+#import "PDFKitImports.h"
 #import "PrintInfo.h"
 #import "WebData.h"
 #import "WebPageProxy.h"
@@ -409,33 +410,6 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     }
     ASSERT_NOT_REACHED();
     return 0; // Invalid page number.
-}
-
-static NSString *pdfKitFrameworkPath()
-{
-    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, NO) objectAtIndex:0];
-    return [systemLibraryPath stringByAppendingPathComponent:@"Frameworks/Quartz.framework/Frameworks/PDFKit.framework"];
-}
-
-static Class classFromPDFKit(NSString *className)
-{
-    static NSBundle *pdfKitBundle = [NSBundle bundleWithPath:pdfKitFrameworkPath()];
-    [pdfKitBundle load];
-    return [pdfKitBundle classNamed:className];
-}
-
-static Class pdfAnnotationLinkClass()
-{
-    static Class pdfAnnotationLinkClass = classFromPDFKit(@"PDFAnnotationLink");
-    ASSERT(pdfAnnotationLinkClass);
-    return pdfAnnotationLinkClass;
-}
-
-static Class pdfDocumentClass()
-{
-    static Class pdfDocumentClass = classFromPDFKit(@"PDFDocument");
-    ASSERT(pdfDocumentClass);
-    return pdfDocumentClass;
 }
 
 - (void)_drawPDFDocument:(PDFDocument *)pdfDocument page:(unsigned)page atPoint:(NSPoint)point

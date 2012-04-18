@@ -35,6 +35,8 @@
 
 #if PLATFORM(MAC)
 #include "LayerHostingContext.h"
+
+OBJC_CLASS PDFDocument;
 #endif
 
 struct NPObject;
@@ -223,8 +225,8 @@ public:
     virtual WebCore::Scrollbar* horizontalScrollbar() = 0;
     virtual WebCore::Scrollbar* verticalScrollbar() = 0;
 
-#if USE(CG)
-    virtual RetainPtr<CGPDFDocumentRef> pdfDocumentForPrinting() const { return 0; }
+#if PLATFORM(MAC)
+    virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
 #endif
 
 protected:
