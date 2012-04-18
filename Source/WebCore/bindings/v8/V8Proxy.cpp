@@ -239,13 +239,6 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
 
             // FIXME: We should change this to using window shells to match JSC.
             m_isolatedWorlds.set(worldID, isolatedContext);
-
-            // Setup context id for JS debugger.
-            if (!setInjectedScriptContextDebugId(isolatedContext->context())) {
-                m_isolatedWorlds.take(worldID);
-                delete isolatedContext;
-                return;
-            }
         }
         
         IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_isolatedWorldSecurityOrigins.find(worldID);
@@ -276,25 +269,6 @@ void V8Proxy::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOri
     IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
     if (iter != m_isolatedWorlds.end())
         iter->second->setSecurityOrigin(securityOrigin);
-}
-
-bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext)
-{
-    // Setup context id for JS debugger.
-    v8::Context::Scope contextScope(targetContext);
-    v8::Handle<v8::Context> context = windowShell()->context();
-    if (context.IsEmpty())
-        return false;
-    int debugId = contextDebugId(context);
-
-    char buffer[32];
-    if (debugId == -1)
-        snprintf(buffer, sizeof(buffer), "injected");
-    else
-        snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
-    targetContext->SetData(v8::String::New(buffer));
-
-    return true;
 }
 
 PassOwnPtr<v8::ScriptData> V8Proxy::precompileScript(v8::Handle<v8::String> code, CachedScript* cachedScript)
