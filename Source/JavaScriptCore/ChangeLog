@@ -1,3 +1,16 @@
+2012-04-18  Don Olmstead  <don.olmstead@am.sony.com> 
+
+        JavaScriptCore.gypi not current
+        https://bugs.webkit.org/show_bug.cgi?id=84224
+
+        Reviewed by Eric Seidel.
+
+        Updated JavaScriptCore.gypi to contain the latest sources. Removed os-win32 as it wasn't used. Also removed references to ICU files in the gypi file as ICU is most likely specified by the port itself.
+
+        Private and public header files were determined by looking at copy-files.cmd within Apple's Visual Studio directory.
+
+        * JavaScriptCore.gypi:
+
 2012-04-18  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove m_subclassData from JSArray, move the attribute to subclass as needed
