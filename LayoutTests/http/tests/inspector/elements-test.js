@@ -311,14 +311,14 @@ InspectorTest.dumpStyleTreeItem = function(treeItem, prefix, depth)
     }
 };
 
-InspectorTest.dumpElementsTree = function(rootNode)
+InspectorTest.dumpElementsTree = function(rootNode, depth)
 {
     function beautify(element)
     {
         return element.textContent.replace(/\u200b/g, "").replace(/\n/g, "").trim();
     }
 
-    function print(treeItem, prefix)
+    function print(treeItem, prefix, depth)
     {
         if (treeItem.listItemElement) {
             var expander;
@@ -332,23 +332,22 @@ InspectorTest.dumpElementsTree = function(rootNode)
 
             InspectorTest.addResult(prefix + expander + beautify(treeItem.listItemElement));
         }
-        
 
         if (!treeItem.expanded)
             return;
 
         var children = treeItem.children;
-        for (var i = 0; children && i < children.length - 1; ++i)
-            print(children[i], prefix + "    ");
+        for (var i = 0; depth && children && i < children.length - 1; ++i)
+            print(children[i], prefix + "    ", depth - 1);
 
         // Closing tag.
         if (children && children.length)
-            print(children[children.length - 1], prefix);
+            print(children[children.length - 1], prefix, depth);
     }
 
     WebInspector.panels.elements.treeOutline._updateModifiedNodes();
     var treeOutline = WebInspector.panels.elements.treeOutline;
-    print(rootNode ? treeOutline.findTreeElement(rootNode) : treeOutline, "");
+    print(rootNode ? treeOutline.findTreeElement(rootNode) : treeOutline, "", depth || 10000);
 };
 
 InspectorTest.expandElementsTree = function(callback)

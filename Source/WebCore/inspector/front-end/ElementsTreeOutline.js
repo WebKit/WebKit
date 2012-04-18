@@ -1846,6 +1846,13 @@ WebInspector.ElementsTreeUpdater.prototype = {
 
         for (var i = 0; i < this._recentlyModifiedNodes.length; ++i) {
             var parent = this._recentlyModifiedNodes[i].parent;
+
+            if (parent === this._treeOutline._rootDOMNode) {
+                // Document's children have changed, perform total update.
+                this._treeOutline.update();
+                return;
+            }
+
             var node = this._recentlyModifiedNodes[i].node;
 
             if (this._recentlyModifiedNodes[i].updated) {

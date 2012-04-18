@@ -1421,10 +1421,12 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
         return;
 
     ContainerNode* parent = node->parentNode();
-    int parentId = m_documentNodeToIdMap.get(parent);
+
     // If parent is not mapped yet -> ignore the event.
-    if (!parentId)
+    if (!m_documentNodeToIdMap.contains(parent))
         return;
+
+    int parentId = m_documentNodeToIdMap.get(parent);
 
     if (m_domListener)
         m_domListener->didRemoveDOMNode(node);
