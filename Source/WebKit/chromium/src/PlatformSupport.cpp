@@ -315,13 +315,6 @@ bool PlatformSupport::cookiesEnabled(const Document* document)
     return result;
 }
 
-// DNS ------------------------------------------------------------------------
-
-void PlatformSupport::prefetchDNS(const String& hostname)
-{
-    webKitPlatformSupport()->prefetchHostName(hostname);
-}
-
 // File ------------------------------------------------------------------------
 
 bool PlatformSupport::fileExists(const String& path)

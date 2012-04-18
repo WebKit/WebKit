@@ -26,13 +26,13 @@
 #include "config.h"
 #include "DNS.h"
 
-#include "PlatformSupport.h"
+#include <public/Platform.h>
 
 namespace WebCore {
 
 void prefetchDNS(const String& hostname)
 {
-    PlatformSupport::prefetchDNS(hostname);
+    WebKit::Platform::current()->prefetchHostName(hostname);
 }
 
 } // namespace WebCore

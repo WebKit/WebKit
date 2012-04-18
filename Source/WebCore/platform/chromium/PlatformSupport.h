@@ -125,9 +125,6 @@ public:
     static void deleteCookie(const Document*, const KURL&, const String& cookieName);
     static bool cookiesEnabled(const Document*);
 
-    // DNS ----------------------------------------------------------------
-    static void prefetchDNS(const String& hostname);
-
     // File ---------------------------------------------------------------
     static void revealFolderInOS(const String&);
     static bool fileExists(const String&);

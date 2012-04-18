@@ -1,3 +1,15 @@
+2012-04-18  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call prefetchDNS directly
+        https://bugs.webkit.org/show_bug.cgi?id=84262
+
+        Reviewed by Kentaro Hara.
+
+        Part of a series, see tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
 2012-04-18  Myles Maxfield  <mmaxfield@google.com>
 
         Chromium compile of WebDatabase.cpp fails without SQL_DATABASE
