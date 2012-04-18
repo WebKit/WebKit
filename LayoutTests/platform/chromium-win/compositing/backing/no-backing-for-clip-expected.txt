@@ -1,0 +1,42 @@
+This layer should not have backing store.
+This layer should not have backing store.
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 342.00 244.00)
+          (children 1
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (bounds 340.00 242.00)
+              (children 1
+                (GraphicsLayer
+                  (position 20.00 40.00)
+                  (bounds 320.00 182.00)
+                  (children 1
+                    (GraphicsLayer
+                      (position 1.00 1.00)
+                      (bounds 340.00 180.00)
+                      (children 1
+                        (GraphicsLayer
+                          (position 30.00 50.00)
+                          (bounds 100.00 100.00)
+                          (drawsContent 1)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
