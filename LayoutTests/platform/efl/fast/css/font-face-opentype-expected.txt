@@ -19,25 +19,24 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 770x37
           text run at (0,0) width 770: "Check if glyphs in Ahem.otf can be rendered correctly. If the test passes, you should see dozens of black square characters"
           text run at (0,18) width 43: "below:"
-      RenderBlock (anonymous) at (0,104) size 784x18
-        RenderInline {SPAN} at (0,0) size 394x19
-          RenderText {#text} at (0,0) size 394x19
-            text run at (0,0) width 394: "!\"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNO"
-        RenderText {#text} at (394,0) size 4x19
-          text run at (394,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 367x19
-          RenderText {#text} at (398,0) size 367x19
-            text run at (398,0) width 367: "PQRSTUVWXYZ[\\]^_`abcdefghijklmnoqrstuvwxyz{|}~"
+      RenderBlock (anonymous) at (0,104) size 784x32
+        RenderInline {SPAN} at (0,0) size 736x17
+          RenderText {#text} at (0,0) size 736x17
+            text run at (0,0) width 736: "!\"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNO"
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 736x17
+          RenderText {#text} at (0,16) size 736x17
+            text run at (0,16) width 736: "PQRSTUVWXYZ[\\]^_`abcdefghijklmnoqrstuvwxyz{|}~"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,138) size 784x36
+      RenderBlock {P} at (0,152) size 784x36
         RenderText {#text} at (0,0) size 744x37
           text run at (0,0) width 744: "Check if glyphs not in Ahem.otf can be rendered using a fallback font. If the test passes, you should see a single-quote"
           text run at (0,18) width 104: "character below:"
-      RenderBlock (anonymous) at (0,190) size 784x18
-        RenderInline {SPAN} at (0,0) size 3x19
-          RenderText {#text} at (0,0) size 3x19
-            text run at (0,0) width 3: "'"
+      RenderBlock (anonymous) at (0,204) size 784x16
+        RenderInline {SPAN} at (0,0) size 4x17
+          RenderText {#text} at (0,0) size 4x17
+            text run at (0,0) width 4: "'"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

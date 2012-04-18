@@ -39,9 +39,6 @@ BUGWK75568 : fast/clip/017.html = TEXT
 BUGWK75568 : fast/css/input-search-padding.html = TEXT
 BUGWK75568 : fast/css/invalidation-errors-2.html = TEXT
 BUGWK75568 : fast/css/invalidation-errors.html = TEXT
-BUGWK75568 : fast/css/line-height.html = TEXT
-BUGWK75568 : fast/css/nested-layers-with-hover.html = TEXT
-BUGWK75568 : fast/css/text-input-with-webkit-border-radius.html = TEXT
 BUGWK75568 : fast/dom/isindex-001.html = TEXT
 BUGWK75568 : fast/dom/isindex-002.html = TEXT
 BUGWK75568 : fast/dynamic/subtree-boundary-percent-height.html = TEXT
@@ -115,10 +112,6 @@ BUGWK75568 : fast/table/colspanMinWidth-vertical.html = TEXT
 BUGWK75568 : fast/table/colspanMinWidth.html = TEXT
 BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 
-// @font-face not working. Once working, need to generate results for
-BUGWK83264 : fast/css/font-face-synthetic-bold-italic.html = FAIL MISSING
-BUGWK83264 : fast/css/font-face-weight-matching.html = FAIL MISSING
-
 BUGWK83007 : fast/repaint/region-painting-invalidation.html = FAIL MISSING
 
 // Needs to have PNG generated, which currently fails for this case.
@@ -142,3 +135,5 @@ BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
+// Font feature settings is not implemented.
+BUGWK84239 : css3/font-feature-settings-rendering.html = FAIL
