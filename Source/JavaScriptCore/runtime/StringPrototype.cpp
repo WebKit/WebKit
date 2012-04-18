@@ -441,8 +441,9 @@ static NEVER_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSSt
     return JSValue::encode(jsSpliceSubstrings(exec, string, source, sourceRanges.data(), sourceRanges.size()));
 }
 
-static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSString* string, JSValue searchValue, JSValue replaceValue)
+static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSString* string, JSValue searchValue)
 {
+    JSValue replaceValue = exec->argument(1);
     UString replacementString;
     CallData callData;
     CallType callType = getCallData(replaceValue, callData);
@@ -625,7 +626,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
     return JSValue::encode(jsSpliceSubstringsWithSeparators(exec, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 
-static inline EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString* jsString, JSValue searchValue, JSValue replaceValue)
+static inline EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString* jsString, JSValue searchValue)
 {
     const UString& string = jsString->value(exec);
     UString searchString = searchValue.toUString(exec);
@@ -650,6 +651,7 @@ static inline EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString*
     if (matchStart == notFound)
         return JSValue::encode(jsString);
 
+    JSValue replaceValue = exec->argument(1);
     CallData callData;
     CallType callType = getCallData(replaceValue, callData);
     if (callType != CallTypeNone) {
@@ -685,11 +687,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
         return throwVMTypeError(exec);
     JSString* string = thisValue.toString(exec);
     JSValue searchValue = exec->argument(0);
-    JSValue replaceValue = exec->argument(1);
 
     if (searchValue.inherits(&RegExpObject::s_info))
-        return replaceUsingRegExpSearch(exec, string, searchValue, replaceValue);
-    return replaceUsingStringSearch(exec, string, searchValue, replaceValue);
+        return replaceUsingRegExpSearch(exec, string, searchValue);
+    return replaceUsingStringSearch(exec, string, searchValue);
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)

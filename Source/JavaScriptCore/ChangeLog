@@ -1,3 +1,18 @@
+2012-04-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        replaceUsingStringSearch: delay the creation of the replace string until needed
+        https://bugs.webkit.org/show_bug.cgi?id=83841
+
+        Reviewed by Geoffrey Garen.
+
+        We do not need to obtain the replaceValue until we have a match. By moving the intialization
+        of replaceValue when needed, we save a few instructions when there is no match.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+        (JSC::stringProtoFuncReplace):
+
 2012-04-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC activity timer should be tied to allocation, not collection
