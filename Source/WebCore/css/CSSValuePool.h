@@ -29,6 +29,7 @@
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSValueKeywords.h"
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -57,8 +58,7 @@ private:
     RefPtr<CSSInitialValue> m_implicitInitialValue;
     RefPtr<CSSInitialValue> m_explicitInitialValue;
 
-    typedef HashMap<int, RefPtr<CSSPrimitiveValue> > IdentifierValueCache;
-    IdentifierValueCache m_identifierValueCache;
+    RefPtr<CSSPrimitiveValue> m_identifierValueCache[numCSSValueKeywords];
 
     typedef HashMap<unsigned, RefPtr<CSSPrimitiveValue> > ColorValueCache;
     ColorValueCache m_colorValueCache;

@@ -57,11 +57,9 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(int ident)
     if (ident <= 0 || ident >= numCSSValueKeywords)
         return CSSPrimitiveValue::createIdentifier(ident);
 
-    RefPtr<CSSPrimitiveValue> dummyValue;
-    IdentifierValueCache::AddResult entry = m_identifierValueCache.add(ident, dummyValue);
-    if (entry.isNewEntry)
-        entry.iterator->second = CSSPrimitiveValue::createIdentifier(ident);
-    return entry.iterator->second;
+    if (!m_identifierValueCache[ident])
+        m_identifierValueCache[ident] = CSSPrimitiveValue::createIdentifier(ident);
+    return m_identifierValueCache[ident];
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
