@@ -29,8 +29,11 @@
        var results = document.getElementById("results");
 
        if (x.id == "x") {
-         results.innerText = "pass";
+         results.innerText = "Pass.";
        }
+
+       if (window.layoutTestController)
+         layoutTestController.dumpAsText();
      }
 
   </script>
@@ -39,8 +42,8 @@
   <h1>Testing hittest on a layer with null transform</h1>
   <p>https://bugs.webkit.org/show_bug.cgi?id=24252</p>
 
-  <p id="x">transformed element</p>
+  <p id="x">transformed element</p><br>
   
-  <p id="results">fail</p>
+  <p id="results">Fail!</p>
 </body>
 </html>

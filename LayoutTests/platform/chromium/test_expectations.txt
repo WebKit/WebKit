@@ -3626,8 +3626,6 @@ BUGWK82409 LINUX RELEASE : inspector/styles/css-live-edit.html = PASS TIMEOUT
 BUGWK82410 : css2.1/20110323/abspos-containing-block-initial-004b.htm = PASS IMAGE
 BUGWK82410 : css2.1/20110323/abspos-containing-block-initial-004d.htm = PASS IMAGE
 
-BUGWK82415 : transforms/no_transform_hit_testing.html = PASS IMAGE
-
 BUGWK82413 LINUX : fast/filesystem/workers/async-operations.html = PASS TIMEOUT
 BUGWK82413 MAC DEBUG : fast/filesystem/workers/async-operations.html = PASS TIMEOUT
 
