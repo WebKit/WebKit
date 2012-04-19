@@ -34,6 +34,15 @@
 
 namespace WebCore {
 
+class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {
+public:
+    explicit ShadowRootVector(ShadowTree* tree)
+    {
+        for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            append(root);
+    }
+};
+
 ShadowRootList::ShadowRootList()
 {
 }
@@ -65,32 +74,37 @@ ShadowRoot* ShadowRootList::popShadowRoot()
 
 void ShadowRootList::insertedIntoDocument()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->insertedIntoDocument();
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->insertedIntoDocument();
 }
 
 void ShadowRootList::removedFromDocument()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->removedFromDocument();
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->removedFromDocument();
 }
 
 void ShadowRootList::insertedIntoTree(bool deep)
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->insertedIntoTree(deep);
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->insertedIntoTree(deep);
 }
 
 void ShadowRootList::removedFromTree(bool deep)
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->removedFromTree(deep);
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->removedFromTree(deep);
 }
 
 void ShadowRootList::willRemove()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->willRemove();
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->willRemove();
 }
 
 void ShadowRootList::hostChildrenChanged()
