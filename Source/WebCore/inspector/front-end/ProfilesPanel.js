@@ -103,16 +103,16 @@ WebInspector.registerLinkifierPlugin(function(title)
  * @param {string} profileType
  * @param {string} title
  * @param {number} uid
+ * @param {number} maxJSObjectId
  * @param {boolean} isTemporary
  */
-WebInspector.ProfileHeader = function(profileType, title, uid, isTemporary)
+WebInspector.ProfileHeader = function(profileType, title, uid, maxJSObjectId, isTemporary)
 {
     this.typeId = profileType,
     this.title = title;
     this.uid = uid;
     this.isTemporary = isTemporary;
-
-    this.maxJSObjectId = 0;
+    this.maxJSObjectId = maxJSObjectId;
 }
 
 /**
@@ -847,7 +847,7 @@ WebInspector.ProfilesPanel.prototype = {
         this.getProfileType(profileType).setRecordingProfile(isProfiling);
         if (this.hasTemporaryProfile(profileType) !== isProfiling) {
             if (!this._temporaryRecordingProfile)
-                this._temporaryRecordingProfile = new WebInspector.ProfileHeader(profileType, WebInspector.UIString("Recording\u2026"), -1, true);
+                this._temporaryRecordingProfile = new WebInspector.ProfileHeader(profileType, WebInspector.UIString("Recording\u2026"), -1, -1, true);
             if (isProfiling) {
                 this.addProfileHeader(this._temporaryRecordingProfile);
                 if (profileType === WebInspector.CPUProfileType.TypeId)
@@ -864,6 +864,7 @@ WebInspector.ProfilesPanel.prototype = {
                 this._temporaryRecordingProfile = new WebInspector.ProfileHeader(
                     WebInspector.HeapSnapshotProfileType.TypeId,
                     WebInspector.UIString("Snapshotting\u2026"),
+                    -1,
                     -1,
                     true);
             }
@@ -906,7 +907,7 @@ WebInspector.ProfilerDispatcher.prototype = {
      */
     addProfileHeader: function(profile)
     {
-        this._profiler.addProfileHeader(new WebInspector.ProfileHeader(profile["typeId"], profile["title"], profile["uid"], false));
+        this._profiler.addProfileHeader(new WebInspector.ProfileHeader(profile["typeId"], profile["title"], profile["uid"], profile["maxJSObjectId"], false));
     },
 
     addHeapSnapshotChunk: function(uid, chunk)
