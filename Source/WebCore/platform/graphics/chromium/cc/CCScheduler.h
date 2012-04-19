@@ -76,6 +76,8 @@ public:
 
     virtual ~CCScheduler();
 
+    void setCanBeginFrame(bool);
+
     void setVisible(bool);
 
     void setNeedsCommit();

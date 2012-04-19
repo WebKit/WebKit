@@ -39,6 +39,7 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     , m_updateMoreResourcesPending(false)
     , m_insideVSync(false)
     , m_visible(false)
+    , m_canBeginFrame(false)
     , m_canDraw(true)
     , m_drawIfPossibleFailed(false)
     , m_contextState(CONTEXT_ACTIVE)
@@ -84,7 +85,7 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
             return ACTION_NONE;
         if (shouldDraw())
             return m_needsForcedRedraw ? ACTION_DRAW_FORCED : ACTION_DRAW_IF_POSSIBLE;
-        if (m_needsCommit && (m_visible || m_needsForcedCommit))
+        if (m_needsCommit && ((m_visible && m_canBeginFrame) || m_needsForcedCommit))
             return ACTION_BEGIN_FRAME;
         return ACTION_NONE;
 

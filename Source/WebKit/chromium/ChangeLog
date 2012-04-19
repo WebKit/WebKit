@@ -1,3 +1,18 @@
+2012-04-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add canBeginFrame state to CCSchedulerStateMachine to suppress initialization before our surface is available
+        https://bugs.webkit.org/show_bug.cgi?id=84301
+
+        Reviewed by Adrienne Walker.
+
+        Update unit tests for new canBeginFrame bit.
+
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::TEST):
+
 2012-04-18  David Reveman  <reveman@chromium.org>
 
         [Chromium] Solid color layers should respect opacity value.

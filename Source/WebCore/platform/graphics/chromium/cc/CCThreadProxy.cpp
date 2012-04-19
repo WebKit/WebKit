@@ -711,6 +711,7 @@ void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)
     const double displayRefreshInterval = 1.0 / 60.0;
     OwnPtr<CCFrameRateController> frameRateController = adoptPtr(new CCFrameRateController(CCDelayBasedTimeSource::create(displayRefreshInterval, CCProxy::implThread())));
     m_schedulerOnImplThread = CCScheduler::create(this, frameRateController.release());
+    m_schedulerOnImplThread->setCanBeginFrame(true); // FIXME: Set this when we actually can begin a frame.
     m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
 
     m_inputHandlerOnImplThread = CCInputHandler::create(m_layerTreeHostImpl.get());

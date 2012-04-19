@@ -75,6 +75,7 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
     {
         StateMachine state;
         state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
+        state.setCanBeginFrame(true);
         state.setNeedsRedraw(false);
         state.setNeedsCommit(false);
         state.setUpdateMoreResourcesPending(false);
@@ -89,10 +90,30 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
         EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
     }
 
+    // If commit requested but canBeginFrame is still false, do nothing.
+    {
+        StateMachine state;
+        state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
+        state.setNeedsRedraw(false);
+        state.setNeedsCommit(false);
+        state.setUpdateMoreResourcesPending(false);
+        state.setVisible(true);
+
+        EXPECT_FALSE(state.vsyncCallbackNeeded());
+
+        state.didLeaveVSync();
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+        EXPECT_FALSE(state.vsyncCallbackNeeded());
+        state.didEnterVSync();
+        EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+    }
+
+
     // If commit requested, begin a frame
     {
         StateMachine state;
         state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_IDLE);
+        state.setCanBeginFrame(true);
         state.setNeedsRedraw(false);
         state.setNeedsCommit(true);
         state.setUpdateMoreResourcesPending(false);
@@ -103,6 +124,7 @@ TEST(CCSchedulerStateMachineTest, TestNextActionBeginsFrameIfNeeded)
     // Begin the frame, make sure needsCommit and commitState update correctly.
     {
         StateMachine state;
+        state.setCanBeginFrame(true);
         state.setVisible(true);
         state.updateState(CCSchedulerStateMachine::ACTION_BEGIN_FRAME);
         EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS, state.commitState());
@@ -122,6 +144,7 @@ TEST(CCSchedulerStateMachineTest, TestSetForcedRedrawDoesNotSetsNormalRedraw)
 TEST(CCSchedulerStateMachineTest, TestFailedDrawSetsNeedsCommitAndDoesNotDrawAgain)
 {
     CCSchedulerStateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
     state.setNeedsRedraw();
     EXPECT_TRUE(state.redrawPending());
@@ -146,6 +169,7 @@ TEST(CCSchedulerStateMachineTest, TestFailedDrawSetsNeedsCommitAndDoesNotDrawAga
 TEST(CCSchedulerStateMachineTest, TestSetNeedsRedrawDuringFailedDrawDoesNotRemoveNeedsRedraw)
 {
     CCSchedulerStateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
     state.setNeedsRedraw();
     EXPECT_TRUE(state.redrawPending());
@@ -173,6 +197,7 @@ TEST(CCSchedulerStateMachineTest, TestSetNeedsRedrawDuringFailedDrawDoesNotRemov
 TEST(CCSchedulerStateMachineTest, TestCommitAfterFailedDrawAllowsDrawInSameFrame)
 {
     CCSchedulerStateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Start a commit.
@@ -212,6 +237,7 @@ TEST(CCSchedulerStateMachineTest, TestCommitAfterFailedDrawAllowsDrawInSameFrame
 TEST(CCSchedulerStateMachineTest, TestCommitAfterFailedAndSuccessfulDrawDoesNotAllowDrawInSameFrame)
 {
     CCSchedulerStateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Start a commit.
@@ -262,6 +288,7 @@ TEST(CCSchedulerStateMachineTest, TestCommitAfterFailedAndSuccessfulDrawDoesNotA
 TEST(CCSchedulerStateMachineTest, TestFailedDrawIsRetriedNextVSync)
 {
     CCSchedulerStateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Start a draw.
@@ -447,6 +474,7 @@ TEST(CCSchedulerStateMachineTest, TestCanRedrawWithWaitingForFirstDrawMakesProgr
 {
     StateMachine state;
     state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_WAITING_FOR_FIRST_DRAW);
+    state.setCanBeginFrame(true);
     state.setNeedsCommit(true);
     state.setNeedsRedraw(true);
     state.setUpdateMoreResourcesPending(false);
@@ -590,6 +618,7 @@ TEST(CCSchedulerStateMachineTest, TestUpdates_WithRedraw_OneRoundOfUpdates)
 TEST(CCSchedulerStateMachineTest, TestSetNeedsCommitIsNotLost)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setNeedsCommit(true);
     state.setVisible(true);
 
@@ -632,6 +661,7 @@ TEST(CCSchedulerStateMachineTest, TestSetNeedsCommitIsNotLost)
 TEST(CCSchedulerStateMachineTest, TestFullCycle)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Start clean and set commit.
@@ -679,6 +709,7 @@ TEST(CCSchedulerStateMachineTest, TestFullCycle)
 TEST(CCSchedulerStateMachineTest, TestFullCycleWithCommitRequestInbetween)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Start clean and set commit.
@@ -737,6 +768,7 @@ TEST(CCSchedulerStateMachineTest, TestRequestCommitInvisible)
 TEST(CCSchedulerStateMachineTest, TestGoesInvisibleMidCommit)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Start clean and set commit.
@@ -782,6 +814,7 @@ TEST(CCSchedulerStateMachineTest, TestGoesInvisibleMidCommit)
 TEST(CCSchedulerStateMachineTest, TestContextLostWhenCompletelyIdle)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     state.didLoseContext();
@@ -803,6 +836,7 @@ TEST(CCSchedulerStateMachineTest, TestContextLostWhenCompletelyIdle)
 TEST(CCSchedulerStateMachineTest, TestContextLostWhenIdleAndCommitRequestedWhileRecreating)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     state.didLoseContext();
@@ -838,6 +872,7 @@ TEST(CCSchedulerStateMachineTest, TestContextLostWhenIdleAndCommitRequestedWhile
 TEST(CCSchedulerStateMachineTest, TestContextLostWhileCommitInProgress)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Get a commit in flight.
@@ -878,6 +913,7 @@ TEST(CCSchedulerStateMachineTest, TestContextLostWhileCommitInProgress)
 TEST(CCSchedulerStateMachineTest, TestContextLostWhileCommitInProgressAndAnotherCommitRequested)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
 
     // Get a commit in flight.
@@ -956,6 +992,16 @@ TEST(CCSchedulerStateMachineTest, TestFinishAllRenderingWhileContextLost)
 TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenInvisibleAndForceCommit)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
+    state.setVisible(false);
+    state.setNeedsCommit(true);
+    state.setNeedsForcedCommit(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
+}
+
+TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenCanBeginFrameFalseAndForceCommit)
+{
+    StateMachine state;
     state.setVisible(true);
     state.setNeedsCommit(true);
     state.setNeedsForcedCommit(true);
@@ -965,6 +1011,7 @@ TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenInvisibleAndForceCommit)
 TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenCommitInProgress)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(false);
     state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS);
     state.setNeedsCommit(true);
@@ -986,6 +1033,7 @@ TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenCommitInProgress)
 TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenContextLost)
 {
     StateMachine state;
+    state.setCanBeginFrame(true);
     state.setVisible(true);
     state.setNeedsCommit(true);
     state.setNeedsForcedCommit(true);

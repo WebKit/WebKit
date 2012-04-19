@@ -44,6 +44,12 @@ CCScheduler::~CCScheduler()
     m_frameRateController->setActive(false);
 }
 
+void CCScheduler::setCanBeginFrame(bool can)
+{
+    m_stateMachine.setCanBeginFrame(can);
+    processScheduledActions();
+}
+
 void CCScheduler::setVisible(bool visible)
 {
     m_stateMachine.setVisible(visible);

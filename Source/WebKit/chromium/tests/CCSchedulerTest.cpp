@@ -102,6 +102,7 @@ TEST(CCSchedulerTest, RequestCommit)
     FakeCCSchedulerClient client;
     RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
+    scheduler->setCanBeginFrame(true);
     scheduler->setVisible(true);
 
     // SetNeedsCommit should begin the frame.
@@ -137,6 +138,7 @@ TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
     FakeCCSchedulerClient client;
     RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
+    scheduler->setCanBeginFrame(true);
     scheduler->setVisible(true);
 
     // SetNedsCommit should begin the frame.
@@ -206,6 +208,7 @@ TEST(CCSchedulerTest, RequestRedrawInsideDraw)
     RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
     client.setScheduler(scheduler.get());
+    scheduler->setCanBeginFrame(true);
     scheduler->setVisible(true);
 
     scheduler->setNeedsRedraw();
@@ -231,6 +234,7 @@ TEST(CCSchedulerTest, RequestRedrawInsideFailedDraw)
     RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
     client.setScheduler(scheduler.get());
+    scheduler->setCanBeginFrame(true);
     scheduler->setVisible(true);
     client.setDrawWillHappen(false);
 
@@ -302,6 +306,7 @@ TEST(CCSchedulerTest, RequestCommitInsideDraw)
     RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
     client.setScheduler(scheduler.get());
+    scheduler->setCanBeginFrame(true);
     scheduler->setVisible(true);
 
     scheduler->setNeedsRedraw();
@@ -328,6 +333,7 @@ TEST(CCSchedulerTest, RequestCommitInsideFailedDraw)
     RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
     client.setScheduler(scheduler.get());
+    scheduler->setCanBeginFrame(true);
     scheduler->setVisible(true);
     client.setDrawWillHappen(false);
 
@@ -369,6 +375,7 @@ TEST(CCSchedulerTest, NoBeginFrameWhenDrawFails)
     FakeCCFrameRateController* controllerPtr = controller.get();
     OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, controller.release());
     client.setScheduler(scheduler.get());
+    scheduler->setCanBeginFrame(true);
     scheduler->setVisible(true);
 
     EXPECT_EQ(0, controllerPtr->numFramesPending());

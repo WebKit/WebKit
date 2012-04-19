@@ -117,6 +117,9 @@ public:
     // from nextState. Indicates that the specific update request completed.
     void beginUpdateMoreResourcesComplete(bool morePending);
 
+    // Indicates whether we can successfully begin a frame at this time.
+    void setCanBeginFrame(bool can) { m_canBeginFrame = can; }
+
     // Indicates whether drawing would, at this time, make sense.
     // canDraw can be used to supress flashes or checkerboarding
     // when such behavior would be undesirable.
@@ -141,6 +144,7 @@ protected:
     bool m_updateMoreResourcesPending;
     bool m_insideVSync;
     bool m_visible;
+    bool m_canBeginFrame;
     bool m_canDraw;
     bool m_drawIfPossibleFailed;
     ContextState m_contextState;
