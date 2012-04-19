@@ -59,11 +59,6 @@ static const char pauseOnExceptionsState[] = "pauseOnExceptionsState";
 
 const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace-object-group";
 
-static bool asBool(const bool* const b)
-{
-    return b ? *b : false;
-}
-
 InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorDebuggerAgent>("Debugger", instrumentingAgents, inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
@@ -490,15 +485,15 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const
     }
 
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = scriptDebugServer().pauseOnExceptionsState();
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
+    if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
         if (previousPauseOnExceptionsState != ScriptDebugServer::DontPauseOnExceptions)
             scriptDebugServer().setPauseOnExceptionsState(ScriptDebugServer::DontPauseOnExceptions);
         muteConsole();
     }
 
-    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack, callFrameId, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), &result, wasThrown);
+    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, returnByValue ? *returnByValue : false, &result, wasThrown);
 
-    if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
+    if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
         unmuteConsole();
         if (scriptDebugServer().pauseOnExceptionsState() != previousPauseOnExceptionsState)
             scriptDebugServer().setPauseOnExceptionsState(previousPauseOnExceptionsState);
