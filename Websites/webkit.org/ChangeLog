@@ -1,3 +1,16 @@
+2012-04-19  Daniel Bates  <dbates@webkit.org>
+
+        Update Build Location notice on Mac debug instructions to reflect changes in Xcode 4.3.2
+        https://bugs.webkit.org/show_bug.cgi?id=84364
+
+        Reviewed by Eric Seidel.
+
+        As of Xcode 4.3.2, the build location "Locations Specified by Targets" has been renamed to
+        "Legacy".
+
+        * building/debug-mac-uiprocess.html:
+        * building/debug.html:
+
 2012-03-13  Rebecca Hauck  <rhauck@adobe.com>
 
         Working With Code > Installing Developer Tools needs to be updated with OS X Lion & App Store details
