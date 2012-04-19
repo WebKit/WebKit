@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageThread.h"
 
+#include "AutodrainedPool.h"
 #include "StorageTask.h"
 #include "StorageAreaSync.h"
 #include <wtf/MainThread.h>
@@ -64,8 +65,12 @@ void StorageThread::threadEntryPointCallback(void* thread)
 void StorageThread::threadEntryPoint()
 {
     ASSERT(!isMainThread());
-    while (OwnPtr<StorageTask> task = m_queue.waitForMessage())
+    AutodrainedPool pool;
+    
+    while (OwnPtr<StorageTask> task = m_queue.waitForMessage()) {
         task->performTask();
+        pool.cycle();
+    }
 }
 
 void StorageThread::scheduleTask(PassOwnPtr<StorageTask> task)
