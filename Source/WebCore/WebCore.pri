@@ -113,7 +113,12 @@ INCLUDEPATH += $$WEBCORE_GENERATED_SOURCES_DIR
 
 contains(DEFINES, ENABLE_XSLT=1) {
     contains(DEFINES, WTF_USE_LIBXML2=1) {
-        PKGCONFIG += libxslt
+        mac {
+            INCLUDEPATH += /usr/include/libxml2
+            LIBS += -lxml2 -lxslt
+        } else {
+            PKGCONFIG += libxslt
+        }
     } else {
         QT *= xmlpatterns
     }
