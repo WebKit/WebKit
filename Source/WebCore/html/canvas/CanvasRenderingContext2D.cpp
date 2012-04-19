@@ -949,10 +949,7 @@ void CanvasRenderingContext2D::stroke()
 
     if (!m_path.isEmpty()) {
         FloatRect dirtyRect = m_path.fastBoundingRect();
-        // Fast approximation of the stroke's bounding rect.
-        // This yields a slightly oversized rect but is very fast
-        // compared to Path::strokeBoundingRect().
-        dirtyRect.inflate(state().m_miterLimit + state().m_lineWidth);
+        inflateStrokeRect(dirtyRect);
 
         c->strokePath(m_path);
         didDraw(dirtyRect);
@@ -2102,12 +2099,11 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     FloatRect textRect = FloatRect(location.x() - fontMetrics.height() / 2, location.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
                                    width + fontMetrics.height(), fontMetrics.lineSpacing());
     if (!fill)
-        textRect.inflate(c->strokeThickness() / 2);
+        inflateStrokeRect(textRect);
 
 #if USE(CG)
     CanvasStyle* drawStyle = fill ? state().m_fillStyle.get() : state().m_strokeStyle.get();
     if (drawStyle->canvasGradient() || drawStyle->canvasPattern()) {
-        // FIXME: The rect is not big enough for miters on stroked text.
         IntRect maskRect = enclosingIntRect(textRect);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
@@ -2162,17 +2158,26 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     } else
         c->drawBidiText(font, textRun, location);
 
-    if (fill)
-        didDraw(textRect);
-    else {
-        // When stroking text, pointy miters can extend outside of textRect, so we
-        // punt and dirty the whole canvas.
-        didDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
-    }
+    didDraw(textRect);
 
 #if PLATFORM(QT)
     Font::setCodePath(oldCodePath);
 #endif
+}
+
+void CanvasRenderingContext2D::inflateStrokeRect(FloatRect& rect) const
+{
+    // Fast approximation of the stroke's bounding rect.
+    // This yields a slightly oversized rect but is very fast
+    // compared to Path::strokeBoundingRect().
+    static const float root2 = sqrt(2);
+    float delta = state().m_lineWidth / 2;
+    if (state().m_lineJoin == MiterJoin)
+        delta *= state().m_miterLimit;
+    else if (state().m_lineCap == SquareCap)
+        delta *= root2;
+
+    rect.inflate(delta);
 }
 
 const Font& CanvasRenderingContext2D::accessFont()
