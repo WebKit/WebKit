@@ -580,11 +580,6 @@ BUGWKGTK : fast/dom/HTMLDocument/hasFocus.html = FAIL
 BUGWKGTK : fast/dom/Window/window-onFocus.html = FAIL
 BUGWKGTK : fast/events/frame-tab-focus.html = FAIL
 
-// element.blur() and element.focus() does not seem to work always.
-BUGWKGTK : fast/forms/select-double-onchange.html = FAIL
-BUGWKGTK : fast/forms/select-script-onchange.html = FAIL
-BUGWKGTK : fast/html/tab-order.html = FAIL
-
 // Tests failing because of missing policy delegate callbacks.
 BUGWKGTK : fast/loader/onload-policy-ignore-for-frame.html = FAIL
 BUGWKGTK : fast/loader/policy-delegate-action-hit-test-zoomed.html = FAIL
@@ -830,9 +825,6 @@ BUGWK36627 : editing/selection/extend-after-mouse-selection.html = FAIL
 // Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 BUGWKGTK : fast/overflow/scrollbar-restored-and-then-locked.html = FAIL
 
-BUGWK37532 : fast/js/kde/string-1-n.html = FAIL
-BUGWK37534 : fast/js/kde/string-2-n.html = FAIL
-
 BUGWK83174 SKIP : inspector = FAIL
 BUGWK83174 SKIP : http/tests/inspector = FAIL
 BUGWK82886 SKIP : inspector/styles/override-screen-size.html = FAIL
@@ -1062,8 +1054,6 @@ BUGWKGTK : http/tests/local/drag-over-remote-content.html = FAIL
 BUGWKGTK : http/tests/security/drag-over-remote-content-iframe.html = FAIL
 BUGWKGTK : fast/events/drag-in-frames.html = FAIL
 BUGWKGTK : http/tests/misc/bubble-drag-events.html = FAIL
-BUGWKGTK : fast/events/content-changed-during-drop.html = FAIL
-BUGWKGTK : editing/pasteboard/drop-link.html = FAIL
 
 BUGWK52882 : http/tests/security/drag-drop-same-unique-origin.html = FAIL
 
