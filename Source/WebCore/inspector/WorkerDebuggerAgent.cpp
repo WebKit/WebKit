@@ -124,6 +124,16 @@ WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
     return m_scriptDebugServer;
 }
 
+void WorkerDebuggerAgent::muteConsole()
+{
+    // We don't need to mute console for workers.
+}
+
+void WorkerDebuggerAgent::unmuteConsole()
+{
+    // We don't need to mute console for workers.
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)

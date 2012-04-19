@@ -34,6 +34,7 @@
 
 #include "PageRuntimeAgent.h"
 
+#include "Console.h"
 #include "InspectorPageAgent.h"
 #include "Page.h"
 #include "ScriptState.h"
@@ -62,6 +63,16 @@ ScriptState* PageRuntimeAgent::scriptStateForFrameId(const String& frameId)
 ScriptState* PageRuntimeAgent::getDefaultInspectedState()
 {
     return mainWorldScriptState(m_inspectedPage->mainFrame());
+}
+
+void PageRuntimeAgent::muteConsole()
+{
+    Console::mute();
+}
+
+void PageRuntimeAgent::unmuteConsole()
+{
+    Console::unmute();
 }
 
 } // namespace WebCore
