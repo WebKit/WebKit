@@ -370,7 +370,7 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     // Zoom back out on a second double click, but still center on the new touch point.
     if (m_zoomedToArea) {
         m_zoomedToArea = false;
-        endItemScale = 1.0;
+        endItemScale = itemScaleFromCSS(m_minimumScale);
     } else
         m_zoomedToArea = true;
 

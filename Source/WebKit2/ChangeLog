@@ -1,3 +1,15 @@
+2012-04-19  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Zoom out on the second double click does not always scale right.
+        https://bugs.webkit.org/show_bug.cgi?id=84332
+
+        Reviewed by Simon Hausmann.
+
+        Zoom out to the minimum scale value instead of the fixed 1.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+
 2012-04-18  Jer Noble  <jer.noble@apple.com>
 
         Full Screen mode does not preserve CALayer ordering after exiting.
