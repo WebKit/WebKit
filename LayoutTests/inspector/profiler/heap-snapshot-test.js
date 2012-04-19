@@ -349,6 +349,8 @@ InspectorTest.clickShowMoreButton = function(buttonName, row, callback)
 
 InspectorTest.columnContents = function(column, row)
 {
+    // Make sure invisible nodes are removed from the view port.
+    this._currentGrid().updateVisibleNodes();
     var result = [];
     var parent = row || this._currentGrid().rootNode();
     for (var node = parent.children[0]; node; node = node.traverseNextNode(true, parent, true)) {

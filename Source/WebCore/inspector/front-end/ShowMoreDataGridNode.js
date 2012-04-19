@@ -76,6 +76,15 @@ WebInspector.ShowMoreDataGridNode.prototype = {
             cell = document.createElement("td");
             this._element.appendChild(cell);
         }
+    },
+
+    /**
+     * @override
+     * @return {number}
+     */
+    nodeHeight: function()
+    {
+        return 33;
     }
 };
 

@@ -1234,6 +1234,22 @@ WebInspector.DataGridNode.prototype = {
     },
 
     /**
+     * @return {number}
+     */
+    nodeHeight: function()
+    {
+        var rowHeight = 16;
+        if (!this.revealed)
+            return 0;
+        if (!this.expanded)
+            return rowHeight;
+        var result = rowHeight;
+        for (var i = 0; i < this.children.length; i++)
+            result += this.children[i].nodeHeight();
+        return result;
+    },
+
+    /**
      * @param {WebInspector.DataGridNode} child
      */
     appendChild: function(child)
@@ -1569,7 +1585,7 @@ WebInspector.DataGridNode.prototype = {
         if (previousNode && previousNode.element.parentNode && previousNode.element.nextSibling)
             nextNode = previousNode.element.nextSibling;
         if (!nextNode)
-            nextNode = this.dataGrid.dataTableBody.lastChild;
+            nextNode = this.dataGrid.dataTableBody.firstChild;
         this.dataGrid.dataTableBody.insertBefore(this.element, nextNode);
 
         if (this.expanded)
