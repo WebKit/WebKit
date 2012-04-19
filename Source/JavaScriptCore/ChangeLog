@@ -1,3 +1,14 @@
+2012-04-19  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to load from Float64 arrays on ARMv7 without crashing
+        https://bugs.webkit.org/show_bug.cgi?id=84361
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::storeDouble):
+
 2012-04-19  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [CMake] Build fix after r114575

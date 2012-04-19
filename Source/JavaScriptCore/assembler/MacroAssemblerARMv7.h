@@ -765,9 +765,10 @@ public:
 
     void loadDouble(BaseIndex address, FPRegisterID dest)
     {
-        UNUSED_PARAM(address);
-        UNUSED_PARAM(dest);
-        unreachableForPlatform();
+        move(address.index, addressTempRegister);
+        lshift32(TrustedImm32(address.scale), addressTempRegister);
+        add32(address.base, addressTempRegister);
+        loadDouble(Address(addressTempRegister, address.offset), dest);
     }
     
     void loadFloat(BaseIndex address, FPRegisterID dest)
@@ -813,7 +814,7 @@ public:
     void storeDouble(FPRegisterID src, BaseIndex address)
     {
         move(address.index, addressTempRegister);
-        mul32(TrustedImm32(1 << address.scale), addressTempRegister, addressTempRegister);
+        lshift32(TrustedImm32(address.scale), addressTempRegister);
         add32(address.base, addressTempRegister);
         storeDouble(src, Address(addressTempRegister, address.offset));
     }
