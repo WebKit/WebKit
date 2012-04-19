@@ -276,10 +276,15 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
         didReceiveData(identifier, 0, cachedResourceSize, 0);
 }
 
+static bool isErrorStatusCode(int statusCode)
+{
+    return statusCode >= 400;
+}
+
 void InspectorResourceAgent::didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
-    if (data && m_resourcesData->resourceType(requestId) == InspectorPageAgent::OtherResource)
+    if (data && (m_resourcesData->resourceType(requestId) == InspectorPageAgent::OtherResource || (m_resourcesData->resourceType(requestId) != InspectorPageAgent::DocumentResource && isErrorStatusCode(m_resourcesData->httpStatusCode(requestId)))))
         m_resourcesData->maybeAddResourceData(requestId, data, dataLength);
 
     m_frontend->dataReceived(requestId, currentTime(), dataLength, encodedDataLength);

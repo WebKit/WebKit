@@ -73,6 +73,9 @@ public:
         InspectorPageAgent::ResourceType type() const { return m_type; }
         void setType(InspectorPageAgent::ResourceType type) { m_type = type; }
 
+        int httpStatusCode() const { return m_httpStatusCode; }
+        void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
+
         String textEncodingName() const { return m_textEncodingName; }
         void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
 
@@ -99,6 +102,7 @@ public:
         RefPtr<SharedBuffer> m_dataBuffer;
         bool m_isContentPurged;
         InspectorPageAgent::ResourceType m_type;
+        int m_httpStatusCode;
 
         String m_textEncodingName;
         RefPtr<TextResourceDecoder> m_decoder;
@@ -115,6 +119,7 @@ public:
     void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&);
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
+    int httpStatusCode(const String& requestId);
     void setResourceContent(const String& requestId, const String& content);
     void maybeAddResourceData(const String& requestId, const char* data, int dataLength);
     void maybeDecodeDataToContent(const String& requestId);
