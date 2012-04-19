@@ -63,7 +63,7 @@ AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider
     , m_isPlaying(false)
 {
     // Use the optimal buffer size recommended by the audio backend.
-    m_callbackBufferSize = webKitPlatformSupport()->audioHardwareBufferSize();
+    m_callbackBufferSize = WebKit::Platform::current()->audioHardwareBufferSize();
 
     // Quick exit if the requested size is too large.
     ASSERT(m_callbackBufferSize + renderBufferSize <= fifoSize);
