@@ -1,5 +1,19 @@
 2012-04-18  Adam Barth  <abarth@webkit.org>
 
+        ContainerNode::willRemove uses a weak iteration pattern
+        https://bugs.webkit.org/show_bug.cgi?id=80530
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch moves ContainerNode::willRemove to using a better iteration
+        pattern in which we collect all the nodes we're planning to iterate
+        into a vector and then iterate over them.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::willRemove):
+
+2012-04-18  Adam Barth  <abarth@webkit.org>
+
         ContainerNode::insertedIntoTree and removedFromTree use weak iteration patterns
         https://bugs.webkit.org/show_bug.cgi?id=80570
 
