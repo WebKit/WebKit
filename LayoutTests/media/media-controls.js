@@ -32,7 +32,7 @@ function mediaControlsButtonCoordinates(element, id)
     return new Array(x, y);
 }
 
-function textTrackDisplayElement(parentElement, id)
+function textTrackDisplayElement(parentElement, id, cueNumber)
 {
     var textTrackContainerID = "-webkit-media-text-track-container";
     var containerElement = mediaControlsElement(internals.shadowRoot(parentElement).firstChild, "-webkit-media-text-track-container");
@@ -48,6 +48,14 @@ function textTrackDisplayElement(parentElement, id)
     var displayElement = mediaControlsElement(containerElement.firstChild, controlID);
     if (!displayElement)
         throw "No text track cue with display id '" + controlID + "' is currently visible";
+
+    if (cueNumber) {
+        for (i = 0; i < cueNumber; i++)
+            displayElement = displayElement.nextSibling;
+
+        if (!displayElement)
+            throw "There are not " + cueNumber + " text track cues visible";
+    }
 
     return displayElement;
 }

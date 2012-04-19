@@ -221,11 +221,21 @@ video::-webkit-media-text-track-container {
     text-decoration: none;
     pointer-events: none;
     -webkit-user-select: none;
+
+    -webkit-box-flex: 1;
+}
+
+video::-webkit-media-text-track-background {
+    display: inline;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 2px 2px;
+    white-space: pre-wrap;
 }
 
 video::-webkit-media-text-track-display {
-    display: inline;
-    background-color: rgba(0, 0, 0, 0.8);
+    position: absolute;
     color: rgba(255, 255, 255, 1);
-    padding: 0px 2px;
+
+    top: 100%;
+    -webkit-transform: translate(0%, -100%);
 }

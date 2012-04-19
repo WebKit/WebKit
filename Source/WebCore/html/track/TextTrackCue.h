@@ -120,7 +120,11 @@ private:
     TextTrackCue(ScriptExecutionContext*, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit);
 
     void parseSettings(const String&);
-    void determineDisplayParameters();
+
+    int calculateComputedLinePosition();
+    void calculateDisplayParameters();
+
+    std::pair<double, double> getPositionCoordinates();
 
     void cueWillChange();
     void cueDidChange();
@@ -136,11 +140,17 @@ private:
     double m_endTime;
     String m_content;
     int m_linePosition;
+    int m_computedLinePosition;
     int m_textPosition;
     int m_cueSize;
     int m_cueIndex;
 
-    enum WritingDirection { Horizontal, VerticalGrowingLeft, VerticalGrowingRight };
+    enum WritingDirection {
+        Horizontal,
+        VerticalGrowingLeft,
+        VerticalGrowingRight,
+        NumberOfWritingDirections
+    };
     WritingDirection m_writingDirection;
 
     enum Alignment { Start, Middle, End };
@@ -158,6 +168,18 @@ private:
 
     bool m_displayTreeShouldChange;
     RefPtr<HTMLDivElement> m_displayTree;
+
+    int m_displayDirection;
+
+    int m_displayWritingModeMap[NumberOfWritingDirections];
+    int m_displayWritingMode;
+
+    int m_displaySize;
+    int m_displayHeight;
+    int m_displayWidth;
+
+    double m_displayXPosition;
+    double m_displayYPosition;
 };
 
 } // namespace WebCore

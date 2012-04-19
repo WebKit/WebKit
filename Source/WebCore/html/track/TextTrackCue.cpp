@@ -49,6 +49,8 @@
 namespace WebCore {
 
 static const int invalidCueIndex = -1;
+static const int undefinedPosition = -1;
+static const int autoSize = 0;
 
 static const String& startKeyword()
 {
@@ -90,7 +92,8 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     , m_startTime(start)
     , m_endTime(end)
     , m_content(content)
-    , m_linePosition(-1)
+    , m_linePosition(undefinedPosition)
+    , m_computedLinePosition(undefinedPosition)
     , m_textPosition(50)
     , m_cueSize(100)
     , m_cueIndex(invalidCueIndex)
@@ -102,9 +105,22 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     , m_snapToLines(true)
     , m_displayTreeShouldChange(true)
     , m_displayTree(HTMLDivElement::create(static_cast<Document*>(context)))
+    , m_displayXPosition(undefinedPosition)
+    , m_displayYPosition(undefinedPosition)
 {
     ASSERT(m_scriptExecutionContext->isDocument());
+
+    // The text track cue writing directions are directly relatd to the
+    // block-flow element, which can be set through the CSS writing modes.
+    m_displayWritingModeMap[Horizontal] = CSSValueHorizontalTb;
+    m_displayWritingModeMap[VerticalGrowingLeft] = CSSValueVerticalLr;
+    m_displayWritingModeMap[VerticalGrowingRight] = CSSValueVerticalRl;
+
     parseSettings(settings);
+
+    // A text track cue has a text track cue computed line position whose value
+    // is defined in terms of the other aspects of the cue.
+    m_computedLinePosition = calculateComputedLinePosition();
 }
 
 TextTrackCue::~TextTrackCue()
@@ -235,13 +251,14 @@ void TextTrackCue::setLine(int position, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR;
         return;
     }
-    
+
     // Otherwise, set the text track cue line position to the new value.
     if (m_linePosition == position)
         return;
-    
+
     cueWillChange();
-    m_linePosition = position; 
+    m_linePosition = position;
+    m_computedLinePosition = calculateComputedLinePosition();
     cueDidChange();
 }
 
@@ -260,7 +277,7 @@ void TextTrackCue::setPosition(int position, ExceptionCode& ec)
         return;
     
     cueWillChange();
-    m_textPosition = position; 
+    m_textPosition = position;
     cueDidChange();
 }
 
@@ -396,22 +413,131 @@ void TextTrackCue::setIsActive(bool active)
     }
 }
 
-void TextTrackCue::determineDisplayParameters()
+int TextTrackCue::calculateComputedLinePosition()
+{
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#text-track-cue-computed-line-position
+
+    // If the text track cue line position is numeric, then that is the text
+    // track cue computed line position.
+    if (m_linePosition != undefinedPosition)
+        return m_linePosition;
+
+    // If the text track cue snap-to-lines flag of the text track cue is not
+    // set, the text track cue computed line position is the value 100;
+    if (!m_snapToLines)
+        return 100;
+
+    // Otherwise, it is the value returned by the following algorithm:
+
+    // FIXME(BUG 79751): Complete determination algorithm when it is actually
+    // used - when displaying a TextTrackCue having snap-to-lines flag set.
+
+    return 100;
+}
+
+void TextTrackCue::calculateDisplayParameters()
 {
     // FIXME(BUG 79749): Determine the text direction using the BIDI algorithm.
     // Steps 10.2, 10.3
+    m_displayDirection = CSSValueLtr;
 
-    // FIXME(BUG 79747): Determine the display parameters from the rules.
-    // Steps 10.1, 10.4 - 10.10
+    // 10.4 If the text track cue writing direction is horizontal, then let
+    // block-flow be 'tb'. Otherwise, if the text track cue writing direction is
+    // vertical growing left, then let block-flow be 'lr'. Otherwise, the text
+    // track cue writing direction is vertical growing right; let block-flow be
+    // 'rl'.
+
+    m_displayWritingMode = m_displayWritingModeMap[m_writingDirection];
+
+    // 10.5 Determine the value of maximum size for cue as per the appropriate
+    // rules from the following list:
+    int maximumSize = m_textPosition;
+    if ((m_writingDirection == Horizontal && m_cueAlignment == Start && m_displayDirection == CSSValueLtr)
+            || (m_writingDirection == Horizontal && m_cueAlignment == End && m_displayDirection == CSSValueRtl)
+            || (m_writingDirection == VerticalGrowingLeft && m_cueAlignment == Start)
+            || (m_writingDirection == VerticalGrowingRight && m_cueAlignment == End)) {
+        maximumSize = 100 - m_textPosition;
+    } else if ((m_writingDirection == Horizontal && m_cueAlignment == End && m_displayDirection == CSSValueLtr)
+            || (m_writingDirection == Horizontal && m_cueAlignment == Start && m_displayDirection == CSSValueRtl)
+            || (m_writingDirection == VerticalGrowingLeft && m_cueAlignment == End)
+            || (m_writingDirection == VerticalGrowingRight && m_cueAlignment == End)) {
+        maximumSize = m_textPosition;
+    } else if (m_cueAlignment == Middle) {
+        maximumSize = m_textPosition <= 50 ? m_textPosition : (100 - m_textPosition);
+        maximumSize = maximumSize * 2;
+    }
+
+    // 10.6 If the text track cue size is less than maximum size, then let size
+    // be text track cue size. Otherwise, let size be maximum size.
+    m_displaySize = std::min(m_cueSize, maximumSize);
+
+    // 10.7 If the text track cue writing direction is horizontal, then let
+    // width be 'size vw' and height be 'auto'. Otherwise, let width be 'auto'
+    // and height be 'size vh'. (These are CSS values used by the next section
+    // to set CSS properties for the rendering; 'vw' and 'vh' are CSS units.)
+    m_displayWidth = m_writingDirection == Horizontal ? m_displaySize : autoSize;
+    m_displayHeight = m_writingDirection == Horizontal ? autoSize : m_displaySize;
+
+    // 10.8 Determine the value of x-position or y-position for cue as per the
+    // appropriate rules from the following list:
+    if ((m_writingDirection == Horizontal && m_cueAlignment == Start && m_displayDirection == CSSValueLtr)
+            || (m_writingDirection == Horizontal && m_cueAlignment == End && m_displayDirection == CSSValueRtl)) {
+        m_displayXPosition = m_textPosition;
+    } else if ((m_writingDirection == Horizontal && m_cueAlignment == End && m_displayDirection == CSSValueLtr)
+            || (m_writingDirection == Horizontal && m_cueAlignment == Start && m_displayDirection == CSSValueRtl)) {
+        m_displayXPosition = 100 - m_textPosition;
+    }
+
+    if ((m_writingDirection == VerticalGrowingLeft && m_cueAlignment == Start)
+            || (m_writingDirection == VerticalGrowingRight && m_cueAlignment == Start)) {
+        m_displayYPosition = m_textPosition;
+    } else if ((m_writingDirection == VerticalGrowingLeft && m_cueAlignment == End)
+            || (m_writingDirection == VerticalGrowingRight && m_cueAlignment == End)) {
+        m_displayYPosition = 100 - m_textPosition;
+    }
+
+    if (m_writingDirection == Horizontal && m_cueAlignment == Middle) {
+        m_displayXPosition = m_textPosition - m_displaySize / 2;
+
+        if (m_displayDirection == CSSValueRtl)
+           m_displayXPosition = 100 - m_displayXPosition;
+    }
+
+    if ((m_writingDirection == VerticalGrowingLeft && m_cueAlignment == Middle)
+        || (m_writingDirection == VerticalGrowingRight && m_cueAlignment == Middle))
+        m_displayYPosition = m_textPosition - m_displaySize / 2;
+
+    // 10.9 Determine the value of whichever of x-position or y-position is not
+    // yet calculated for cue as per the appropriate rules from the following
+    // list:
+    if (m_snapToLines && m_displayYPosition == undefinedPosition && m_writingDirection == Horizontal)
+        m_displayYPosition = 0;
+
+    if (!m_snapToLines && m_writingDirection == Horizontal)
+        m_displayYPosition = m_computedLinePosition;
+
+    if (m_snapToLines && m_displayXPosition == undefinedPosition
+            && (m_writingDirection == VerticalGrowingLeft || m_writingDirection == VerticalGrowingRight))
+        m_displayXPosition = 0;
+
+    if (!m_snapToLines && (m_writingDirection == VerticalGrowingLeft || m_writingDirection == VerticalGrowingRight))
+        m_displayXPosition = m_computedLinePosition;
+
+    // 10.10 Let left be 'x-position vw' and top be 'y-position vh'.
+
+    // FIXME(Bug 79916): CSS top and left properties need to be applied.
 }
 
 PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
 {
+    DEFINE_STATIC_LOCAL(const AtomicString, trackBackgroundShadowPseudoId, ("-webkit-media-text-track-background"));
+    DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display"));
+
     if (!m_displayTreeShouldChange)
         return m_displayTree;
 
     // 10.1 - 10.10
-    determineDisplayParameters();
+    calculateDisplayParameters();
 
     // 10.11. Apply the terms of the CSS specifications to nodes within the
     // following constraints, thus obtaining a set of CSS boxes positioned
@@ -423,8 +549,13 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
     // The children of the nodes must be wrapped in an anonymous box whose
     // 'display' property has the value 'inline'. This is the WebVTT cue
     // background box.
-    m_displayTree->setShadowPseudoId(AtomicString("-webkit-media-text-track-display"), ASSERT_NO_EXCEPTION);
-    m_displayTree->appendChild(getCueAsHTML(), ASSERT_NO_EXCEPTION, true);
+    RefPtr<HTMLDivElement> cueBackgroundBox = HTMLDivElement::create(static_cast<Document*>(m_scriptExecutionContext));
+
+    cueBackgroundBox->setShadowPseudoId(trackBackgroundShadowPseudoId);
+    cueBackgroundBox->appendChild(getCueAsHTML(), ASSERT_NO_EXCEPTION, true);
+
+    m_displayTree->setShadowPseudoId(trackDisplayBoxShadowPseudoId, ASSERT_NO_EXCEPTION);
+    m_displayTree->appendChild(cueBackgroundBox, ASSERT_NO_EXCEPTION, true);
 
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose
@@ -440,11 +571,73 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
 
     // FIXME(BUG 79750, 79751): Steps 10.12 - 10.14
 
+    if (!m_snapToLines) {
+        std::pair<double, double> position = getPositionCoordinates();
+
+        // 10.13.1 Set up x and y:
+        m_displayTree->setInlineStyleProperty(CSSPropertyLeft, position.first, CSSPrimitiveValue::CSS_PERCENTAGE);
+        m_displayTree->setInlineStyleProperty(CSSPropertyTop, position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
+
+        // 10.13.2 Position the boxes in boxes such that the point x% along the
+        // width of the bounding box of the boxes in boxes is x% of the way
+        // across the width of the video's rendering area, and the point y%
+        // along the height of the bounding box of the boxes in boxes is y%
+        // of the way across the height of the video's rendering area, while
+        // maintaining the relative positions of the boxes in boxes to each
+        // other.
+        String translateX = "-" + String::number(position.first) + "%";
+        String translateY = "-" + String::number(position.second) + "%";
+        String webkitTransformTranslateValue = "translate(" + translateX + "," + translateY + ")";
+
+        m_displayTree->setInlineStyleProperty(CSSPropertyWebkitTransform,
+                                              webkitTransformTranslateValue);
+
+        m_displayTree->setInlineStyleProperty(CSSPropertyWhiteSpace,
+                                              CSSValuePre);
+    }
+
     m_displayTreeShouldChange = false;
 
     // 10.15. Let cue's text track cue display state have the CSS boxes in
     // boxes.
     return m_displayTree;
+}
+
+std::pair<double, double> TextTrackCue::getPositionCoordinates()
+{
+    std::pair<double, double> coordinates;
+
+    if (m_writingDirection == Horizontal && m_displayDirection == CSSValueLtr) {
+        coordinates.first = m_textPosition;
+        coordinates.second = m_computedLinePosition;
+
+        return coordinates;
+    }
+
+    if (m_writingDirection == Horizontal && m_displayDirection == CSSValueRtl) {
+        coordinates.first = 100 - m_textPosition;
+        coordinates.second = m_computedLinePosition;
+
+        return coordinates;
+    }
+
+    if (m_writingDirection == VerticalGrowingLeft) {
+        coordinates.first = 100 - m_computedLinePosition;
+        coordinates.second = m_textPosition;
+
+        return coordinates;
+    }
+
+    if (m_writingDirection == VerticalGrowingRight) {
+        coordinates.first = m_computedLinePosition;
+        coordinates.second = m_textPosition;
+
+        return coordinates;
+    }
+
+    ASSERT_NOT_REACHED();
+
+    return coordinates;
 }
 
 TextTrackCue::CueSetting TextTrackCue::settingName(const String& name)

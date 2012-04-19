@@ -1290,10 +1290,11 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         if (displayTree->hasChildNodes() && !contains(displayTree.get()))
             appendChild(displayTree, ASSERT_NO_EXCEPTION, true);
 
-        // The display tree of a cue is removed when the active flag of the cue is unset.
+        // Note: the display tree of a cue is removed when the active flag of the cue is unset.
 
-        // FIXME(BUG 79750): Render the TextTrackCue when snap-to-lines is set.
-        // FIXME(BUG 79751): Render the TextTrackCue when snap-to-lines is not set.
+        // FIXME(BUG 79751): Render the TextTrackCue when snap-to-lines is set.
+
+        // FIXME(BUG 84296): Implement overlapping detection for cue boxes when snap-to-lines is not set.
     }
 
     // 11. Return output.
