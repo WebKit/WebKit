@@ -9,6 +9,7 @@
                     { "name": "apple-xserve-8", "platform": "mac-snowleopard" },	
                     { "name": "apple-xserve-9", "platform": "mac-snowleopard" },	
                     { "name": "apple-macpro-7", "platform": "mac-snowleopard" },
+                    { "name": "apple-xserve-10", "platform": "mac-snowleopard" },
 
                     { "name": "apple-macpro-3", "platform": "mac-lion" },
                     { "name": "apple-macpro-4", "platform": "mac-lion" },
@@ -18,7 +19,6 @@
                     { "name": "apple-xserve-1", "platform": "mac-lion" },
                     { "name": "apple-xserve-2", "platform": "mac-lion" },
                     { "name": "apple-xserve-3", "platform": "mac-lion" },
-                    { "name": "apple-xserve-10", "platform": "mac-lion" },
                     { "name": "apple-xserve-11", "platform": "mac-lion" },
                     
                     { "name": "apple-windows-1", "platform": "win"},
@@ -81,7 +81,7 @@
                     { "name": "SnowLeopard Intel Debug (Build)", "type": "Build", "builddir": "snowleopard-intel-debug",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["snowleopard-intel-debug-tests", "snowleopard-intel-debug-tests-wk2"],
-                      "slavenames": ["apple-xserve-9"]
+                      "slavenames": ["apple-xserve-9", "apple-xserve-10"]
                     },
                     { "name": "SnowLeopard Intel Release (Tests)", "type": "Test", "builddir": "snowleopard-intel-release-tests",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
@@ -123,7 +123,7 @@
                     },
                     { "name": "Lion Release (Tests)", "type": "Test", "builddir": "lion-intel-release-tests",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-5", "apple-xserve-10"]
+                      "slavenames": ["apple-macpro-5"]
                     },
                     { "name": "Lion Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-release-tests-wk2",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],

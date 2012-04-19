@@ -1,3 +1,9 @@
+2012-04-19  Lucas Forschler  <lforschler@apple.com>
+
+        Move apple-xserve-10 from Lion Test to SnowLeopard Debug Build
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-04-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] dispatchDidCancelClientRedirect needs implementation
