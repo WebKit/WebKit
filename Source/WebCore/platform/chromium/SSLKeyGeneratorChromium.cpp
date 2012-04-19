@@ -31,8 +31,11 @@
 #include "config.h"
 #include "SSLKeyGenerator.h"
 
-#include "PlatformSupport.h"
 #include "PlatformString.h"
+
+#include <public/Platform.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
 
 namespace WebCore {
 
@@ -49,7 +52,9 @@ void getSupportedKeySizes(Vector<String>& sizes)
 
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const KURL& url)
 {
-    return PlatformSupport::signedPublicKeyAndChallengeString(keySizeIndex, challengeString, url);
+    return WebKit::Platform::current()->signedPublicKeyAndChallengeString(keySizeIndex,
+                                                                          WebKit::WebString(challengeString),
+                                                                          WebKit::WebURL(url));
 }
 
 } // namespace WebCore

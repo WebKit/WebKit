@@ -539,16 +539,6 @@ PassRefPtr<SerializedScriptValue> PlatformSupport::injectIDBKeyIntoSerializedVal
     return webKitPlatformSupport()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
-// Keygen ---------------------------------------------------------------------
-
-String PlatformSupport::signedPublicKeyAndChallengeString(
-    unsigned keySizeIndex, const String& challenge, const KURL& url)
-{
-    return webKitPlatformSupport()->signedPublicKeyAndChallengeString(keySizeIndex,
-                                                             WebString(challenge),
-                                                             WebURL(url));
-}
-
 // Language -------------------------------------------------------------------
 
 String PlatformSupport::computedDefaultLanguage()
