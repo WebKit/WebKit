@@ -180,11 +180,6 @@ Frame* callingOrEnteredFrame()
     return V8BindingState::Only()->activeFrame();
 }
 
-bool shouldAllowNavigation(Frame* frame)
-{
-    return V8BindingSecurity::shouldAllowNavigation(V8BindingState::Only(), frame);
-}
-
 KURL completeURL(const String& relativeURL)
 {
     return completeURL(V8BindingState::Only(), relativeURL);

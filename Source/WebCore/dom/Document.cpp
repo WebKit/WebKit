@@ -343,6 +343,34 @@ static bool disableRangeMutation(Page* page)
 #endif
 }
 
+static bool canAccessAncestor(const SecurityOrigin* activeSecurityOrigin, Frame* targetFrame)
+{
+    // targetFrame can be 0 when we're trying to navigate a top-level frame
+    // that has a 0 opener.
+    if (!targetFrame)
+        return false;
+
+    const bool isLocalActiveOrigin = activeSecurityOrigin->isLocal();
+    for (Frame* ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree()->parent()) {
+        Document* ancestorDocument = ancestorFrame->document();
+        // FIXME: Should be an ASSERT? Frames should alway have documents.
+        if (!ancestorDocument)
+            return true;
+
+        const SecurityOrigin* ancestorSecurityOrigin = ancestorDocument->securityOrigin();
+        if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin))
+            return true;
+        
+        // Allow file URL descendant navigation even when allowFileAccessFromFileURLs is false.
+        // FIXME: It's a bit strange to special-case local origins here. Should we be doing
+        // something more general instead?
+        if (isLocalActiveOrigin && ancestorSecurityOrigin->isLocal())
+            return true;
+    }
+
+    return false;
+}
+
 static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
 
 class DocumentWeakReference : public ThreadSafeRefCounted<DocumentWeakReference> {
@@ -2571,6 +2599,61 @@ void Document::disableEval()
         return;
 
     frame()->script()->disableEval();
+}
+
+bool Document::canNavigate(Frame* targetFrame)
+{
+    // The navigation change is safe if the active document is:
+    //   - in the same security origin as the target or one of the target's
+    //     ancestors.
+    //
+    // Or the target frame is:
+    //   - a top-level frame in the frame hierarchy and the active frame can
+    //     navigate the target frame's opener per above or it is the opener of
+    //     the target frame.
+
+    if (!m_frame)
+        return false;
+
+    // FIXME: Do we actually ever call this function without a targetFrame?
+    if (!targetFrame)
+        return true;
+
+    // Performance optimization.
+    // FIXME: Delete this code. It seems very unlikely that this affects performance.
+    if (m_frame == targetFrame)
+        return true;
+
+    // Let a document navigate window.top so that it can framebust.
+    if (!isSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree()->top())
+        return true;
+
+    // A sandboxed frame can only navigate itself and its descendants.
+    if (isSandboxed(SandboxNavigation) && !targetFrame->tree()->isDescendantOf(m_frame))
+        return false;
+
+    // Let a frame navigate its opener if the opener is a top-level window.
+    if (!targetFrame->tree()->parent() && m_frame->loader()->opener() == targetFrame)
+        return true;
+
+    // For top-level windows, check the opener.
+    // FIXME: Can this check be combined with the previous check?
+    if (!targetFrame->tree()->parent() && canAccessAncestor(securityOrigin(), targetFrame->loader()->opener()))
+        return true;
+
+    // In general, check the frame's ancestors.
+    if (canAccessAncestor(securityOrigin(), targetFrame))
+        return true;
+
+    Document* targetDocument = targetFrame->document();
+    // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
+    String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
+                     targetDocument->url().string() + " from frame with URL " + url().string() + ".\n";
+
+    // FIXME: should we print to the console of the activeFrame as well?
+    targetFrame->domWindow()->printErrorMessage(message);
+
+    return false;
 }
 
 CSSStyleSheet* Document::pageUserSheet()

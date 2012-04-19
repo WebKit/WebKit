@@ -4,6 +4,8 @@
         function loaded() 
         {
             document.getElementsByTagName('h4')[0].innerHTML = document.domain;
+            if (top.opener)
+                top.opener.postMessage("iframe-with-inner-frame-on-foreign-domain-LOADED", "*");
         }
     </script>
 </head>

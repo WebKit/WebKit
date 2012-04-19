@@ -212,7 +212,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
 
     formData->setIdentifier(generateFormDataIdentifier());
     String targetOrBaseTarget = copiedAttributes.target().isEmpty() ? document->baseTarget() : copiedAttributes.target();
-    RefPtr<FormState> formState = FormState::create(form, formValues, document->frame(), trigger);
+    RefPtr<FormState> formState = FormState::create(form, formValues, document, trigger);
     return adoptRef(new FormSubmission(copiedAttributes.method(), actionURL, targetOrBaseTarget, encodingType, formState.release(), formData.release(), boundary, lockHistory, event));
 }
 

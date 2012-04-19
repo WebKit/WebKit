@@ -766,7 +766,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     for (size_t i = 0; i < size; ++i)
         [dictionary setObject:textFieldValues[i].second forKey:textFieldValues[i].first];
 
-    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceFrame()), kit(formState->form()), dictionary, setUpPolicyListener(function).get());
+    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState->sourceDocument()->frame()), kit(formState->form()), dictionary, setUpPolicyListener(function).get());
 
     [dictionary release];
 }

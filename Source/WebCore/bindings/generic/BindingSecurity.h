@@ -32,6 +32,8 @@
 #define BindingSecurity_h
 
 #include "BindingSecurityBase.h"
+#include "DOMWindow.h"
+#include "Document.h"
 #include "Element.h"
 #include "Frame.h"
 #include "GenericBinding.h"
@@ -60,8 +62,6 @@ public:
     static bool allowPopUp(State<Binding>*);
     static bool allowSettingFrameSrcToJavascriptUrl(State<Binding>*, HTMLFrameElementBase*, const String& value);
     static bool allowSettingSrcToJavascriptURL(State<Binding>*, Element*, const String& name, const String& value);
-
-    static bool shouldAllowNavigation(State<Binding>*, Frame*);
 
 private:
     explicit BindingSecurity() {}
@@ -143,13 +143,6 @@ bool BindingSecurity<Binding>::allowSettingSrcToJavascriptURL(State<Binding>* st
     if ((element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src"))
         return allowSettingFrameSrcToJavascriptUrl(state, static_cast<HTMLFrameElementBase*>(element), value);
     return true;
-}
-
-template <class Binding>
-bool BindingSecurity<Binding>::shouldAllowNavigation(State<Binding>* state, Frame* frame)
-{
-    Frame* activeFrame = state->activeFrame();
-    return activeFrame && activeFrame->loader()->shouldAllowNavigation(frame);
 }
 
 }
