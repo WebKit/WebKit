@@ -548,7 +548,7 @@ void FrameLoaderClientEfl::dispatchDidReceiveServerRedirectForProvisionalLoad()
 
 void FrameLoaderClientEfl::dispatchDidCancelClientRedirect()
 {
-    notImplemented();
+    ewk_frame_redirect_cancelled(m_frame);
 }
 
 void FrameLoaderClientEfl::dispatchWillPerformClientRedirect(const KURL&, double, double)

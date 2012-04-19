@@ -1,3 +1,21 @@
+2012-04-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] dispatchDidCancelClientRedirect needs implementation
+        https://bugs.webkit.org/show_bug.cgi?id=83669
+
+        Reviewed by Antonio Gomes.
+
+        Catch the new ewk_frame "redirect,cancelled" signal in EFL's DRT and
+        and print out information that is expected by several test cases if
+        LayoutTestController's dumpFrameLoadCallback() returns true.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onFrameCreated):
+        (DumpRenderTreeChrome::onFrameRedirectCancelled):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-04-18  Hironori Bono  <hbono@chromium.org>
 
         Split SpellChecker::didCheck() to SpellChecker::didCheckSucceeded() and SpellChecker::didCheckCanceled()

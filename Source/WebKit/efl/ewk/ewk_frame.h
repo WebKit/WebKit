@@ -56,6 +56,7 @@
  *  - "mixedcontent,displayed", void: frame has loaded and displayed mixed content.
  *  - "mixedcontent,run", void: frame has loaded and run mixed content.
  *  - "navigation,first", void: first navigation was occurred.
+ *  - "redirect,cancelled", void: client redirect was cancelled.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
  *    there's a new resource request.
  *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will

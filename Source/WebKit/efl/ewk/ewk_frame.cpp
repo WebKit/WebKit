@@ -1203,6 +1203,19 @@ void ewk_frame_core_gone(Evas_Object* ewkFrame)
 
 /**
  * @internal
+ * Reports cancellation of a client redirect.
+ *
+ * @param ewkFrame Frame.
+ *
+ * Emits signal: "redirect,cancelled"
+ */
+void ewk_frame_redirect_cancelled(Evas_Object* ewkFrame)
+{
+    evas_object_smart_callback_call(ewkFrame, "redirect,cancelled", 0);
+}
+
+/**
+ * @internal
  * Reports a resource will be requested. User may override behavior of webkit by
  * changing values in @param request.
  *
