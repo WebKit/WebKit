@@ -34,6 +34,7 @@
 
 #include "PageDebuggerAgent.h"
 
+#include "Console.h"
 #include "PageScriptDebugServer.h"
 
 namespace WebCore {
@@ -66,6 +67,16 @@ void PageDebuggerAgent::stopListeningScriptDebugServer()
 PageScriptDebugServer& PageDebuggerAgent::scriptDebugServer()
 {
     return PageScriptDebugServer::shared();
+}
+
+void PageDebuggerAgent::muteConsole()
+{
+    Console::mute();
+}
+
+void PageDebuggerAgent::unmuteConsole()
+{
+    Console::unmute();
 }
 
 } // namespace WebCore

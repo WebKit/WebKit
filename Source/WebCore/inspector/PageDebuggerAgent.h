@@ -51,6 +51,8 @@ private:
     virtual void startListeningScriptDebugServer();
     virtual void stopListeningScriptDebugServer();
     virtual PageScriptDebugServer& scriptDebugServer();
+    virtual void muteConsole();
+    virtual void unmuteConsole();
 
     PageDebuggerAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
     Page* const m_inspectedPage;

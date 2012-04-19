@@ -61,7 +61,7 @@ public:
                   const String& expression,
                   const String* objectGroup,
                   const bool* includeCommandLineAPI,
-                  const bool* doNotPauseOnExceptions,
+                  const bool* doNotPauseOnExceptionsAndMuteConsole,
                   const String* frameId,
                   const bool* returnByValue,
                   RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
@@ -70,6 +70,7 @@ public:
                         const String& objectId,
                         const String& expression,
                         const RefPtr<InspectorArray>* optionalArguments,
+                        const bool* doNotPauseOnExceptionsAndMuteConsole,
                         const bool* returnByValue,
                         RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
                         TypeBuilder::OptOutput<bool>* wasThrown);
@@ -89,6 +90,8 @@ protected:
     InspectorRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
     virtual ScriptState* scriptStateForFrameId(const String& frameId) = 0;
     virtual ScriptState* getDefaultInspectedState() = 0;
+    virtual void muteConsole() = 0;
+    virtual void unmuteConsole() = 0;
 
 private:
     InjectedScriptManager* m_injectedScriptManager;

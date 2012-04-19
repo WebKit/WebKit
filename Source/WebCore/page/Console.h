@@ -81,6 +81,9 @@ public:
     void groupCollapsed(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void groupEnd();
 
+    static void mute();
+    static void unmute();
+
     static bool shouldPrintExceptions();
     static void setShouldPrintExceptions(bool);
 

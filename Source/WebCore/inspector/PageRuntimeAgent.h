@@ -54,6 +54,8 @@ private:
 
     virtual ScriptState* scriptStateForFrameId(const String& frameId);
     virtual ScriptState* getDefaultInspectedState();
+    virtual void muteConsole();
+    virtual void unmuteConsole();
     Page* m_inspectedPage;
     InspectorPageAgent* m_pageAgent;
 };
