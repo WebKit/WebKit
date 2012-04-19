@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x54
-  RenderBlock {HTML} at (0,0) size 800x54
-    RenderBody {BODY} at (8,8) size 784x38
-      RenderRuby (inline) {RUBY} at (0,0) size 784x10 [color=#FFFFFF]
+layer at (0,0) size 800x51
+  RenderBlock {HTML} at (0,0) size 800x51 [color=#FFFFFF]
+    RenderBody {BODY} at (8,8) size 784x35
+      RenderRuby (inline) {RUBY} at (0,0) size 784x10
         RenderRubyRun (anonymous) at (0,5) size 784x30
           RenderRubyText {RT} at (0,-5) size 784x5
             RenderText {#text} at (372,0) size 40x5
