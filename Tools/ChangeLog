@@ -1,3 +1,15 @@
+2012-04-19  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [GTK] 3 fast/ layout tests failing after upgrading libsoup to 2.37.92
+        https://bugs.webkit.org/show_bug.cgi?id=82484
+
+        Reviewed by Martin Robinson.
+
+        Bumping libsoup to version 2.38.1 which fixes the above WebKit bug.
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2012-04-19  Lucas Forschler  <lforschler@apple.com>
 
         Move apple-xserve-10 from Lion Test to SnowLeopard Debug Build

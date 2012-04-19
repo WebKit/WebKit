@@ -532,11 +532,6 @@ BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE FAIL
 
-// Started to fail after upgrading libsoup to 2.37.92
-BUGWK82484 : fast/encoding/percent-escaping.html = TEXT
-BUGWK82484 : fast/loader/file-URL-with-port-number.html = TEXT
-BUGWK82484 : fast/loader/location-port.html = TEXT
-
 BUGWKGTK : accessibility/aria-hidden.html = FAIL
 BUGWKGTK : accessibility/aria-hidden-with-elements.html = FAIL
 BUGWKGTK : accessibility/aria-invalid.html = FAIL
