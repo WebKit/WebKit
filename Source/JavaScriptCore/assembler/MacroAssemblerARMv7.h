@@ -995,8 +995,17 @@ public:
     {
         m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
         m_assembler.vmov(dest, fpTempRegisterAsSingle());
+        
+        Jump overflow = branch32(Equal, dest, TrustedImm32(0x7fffffff));
+        Jump success = branch32(GreaterThanOrEqual, dest, TrustedImm32(0));
+        overflow.link(this);
 
-        return branch32(branchType ? GreaterThanOrEqual : LessThan, dest, TrustedImm32(0));
+        if (branchType == BranchIfTruncateSuccessful)
+            return success;
+        
+        Jump failure = jump();
+        success.link(this);
+        return failure;
     }
 
     // Result is undefined if the value is outside of the integer range.

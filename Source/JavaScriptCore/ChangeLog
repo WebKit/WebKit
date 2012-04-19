@@ -1,3 +1,13 @@
+2012-04-19  Filip Pizlo  <fpizlo@apple.com>
+
+        MacroAssemblerARMv7::branchTruncateDoubleToUint32 should obey the overflow signal
+        https://bugs.webkit.org/show_bug.cgi?id=84401
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTruncateDoubleToUint32):
+
 2012-04-19  Don Olmstead  <don.olmstead@am.sony.com>
 
         KeywordLookupGenerator.py should take an output file as an argument
