@@ -1,3 +1,53 @@
+2012-04-18  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to accessing removed parent lineboxes when clearing selection.
+        https://bugs.webkit.org/show_bug.cgi?id=79264
+
+        Reviewed by Dave Hyatt.
+
+        Test: editing/selection/first-letter-selection-crash.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::setSelectionState):
+        1. No need of checking if we are being set to same selection state.
+        Now tested by setSelectionStateIfNeeded. Rename 's' with 'state' and
+        'cb' with 'containingBlock'.
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::setSelectionState):
+        1. Add check to canUpdateSelectionOnRootLineBoxes to make sure our
+        root line boxes are still valid before setting them.
+        2. No need of calling setSelectionState on containing block since our base
+        class call to RenderBox::setSelectionState covers it. Added a comment to indicate that.
+        3. Use m_inlineBoxWrapper variable directly to simplify the ifs.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canUpdateSelectionOnRootLineBoxes):
+        (WebCore): helper function to tell if we can update selection information
+        on our root line boxes. This returns false if our containing block is pending layout.
+        * rendering/RenderObject.h:
+        (RenderObject):
+        (WebCore::RenderObject::setSelectionStateIfNeeded):
+        (WebCore): helper to set selection state only if it is different from our
+        current selection state.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::setSelectionState):
+        1. Rename 's' to 'state', 'line' to 'root' and use m_inlineBoxWrapper directly
+        to simplify ifs.
+        2. Add check to canUpdateSelectionOnRootLineBoxes to make sure our
+        root line boxes are still valid before setting them.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setSelectionState):
+        1. Add check to canUpdateSelectionOnRootLineBoxes to make sure our
+        root line boxes are still valid before setting them.
+        2. Rename 'cb' to 'containingBlock', 'line' to 'root', move InlineTextBox
+        declaration to local.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setSelection): Replace all calls to setSelectionState
+        with setSelectionStateIfNeeded.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setSelectionState):
+        1. No need of checking if we are being set to same selection state.
+        Now tested by setSelectionStateIfNeeded.
+
 2012-04-18  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to floating object lists not properly being cleared

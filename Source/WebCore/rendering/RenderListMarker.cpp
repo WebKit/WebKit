@@ -1694,11 +1694,12 @@ IntRect RenderListMarker::getRelativeMarkerRect()
 
 void RenderListMarker::setSelectionState(SelectionState state)
 {
+    // The selection state for our containing block hierarchy is updated by the base class call.
     RenderBox::setSelectionState(state);
-    if (InlineBox* box = inlineBoxWrapper())
-        if (RootInlineBox* root = box->root())
+
+    if (m_inlineBoxWrapper && canUpdateSelectionOnRootLineBoxes())
+        if (RootInlineBox* root = m_inlineBoxWrapper->root())
             root->setHasSelectedChildren(state != SelectionNone);
-    containingBlock()->setSelectionState(state);
 }
 
 LayoutRect RenderListMarker::selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent)
