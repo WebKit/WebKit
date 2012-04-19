@@ -1,3 +1,19 @@
+2012-04-18  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to floating object lists not properly being cleared
+        https://bugs.webkit.org/show_bug.cgi?id=74056
+
+        Reviewed by David Hyatt.
+
+        Add a check to clearFloats() that determines when intruding floats
+        are being cleared and not re-added. In this condition, ensure
+        children with floats are also getting layout because they might
+        need to have the same intruding floats cleared from their floating
+        object lists also.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloats):
+
 2012-04-18  Abhishek Arya  <inferno@chromium.org>
 
         Crash in GenericEventQueue::~GenericEventQueue.
