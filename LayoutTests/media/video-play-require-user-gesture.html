@@ -7,11 +7,11 @@
         <script>
             var userGestureInitiated = 0;
             if (window.internals) 
-                window.internals.settings.setMediaPlaybackRequiresUserGesture(document, true);
+                window.internals.settings.setMediaPlaybackRequiresUserGesture(true);
 
             function cleanGestureRequirement() {
                 if (window.internals) 
-                    window.internals.settings.setMediaPlaybackRequiresUserGesture(document, false);
+                    window.internals.settings.setMediaPlaybackRequiresUserGesture(false);
             }
 
             function click()
