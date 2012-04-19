@@ -1,3 +1,21 @@
+2012-04-19  Andreas Kling  <kling@webkit.org>
+
+        [chromium] Add simplified API for iterating over a WebElement's attributes.
+        <http://webkit.org/b/84183>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add attributeCount(), attributeLocalName(index) and attributeValue(index) to the
+        WebElement API so that call sites currently using WebNamedNodeMap can be
+        converted, which will ultimately allow us to refactor WebCore::Attribute
+        on <http://webkit.org/b/83440>.
+
+        * public/WebElement.h:
+        * src/WebElement.cpp:
+        (WebKit::WebElement::attributeCount):
+        (WebKit::WebElement::attributeLocalName):
+        (WebKit::WebElement::attributeValue):
+
 2012-04-19  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call signedPublicKeyAndChallengeString directly
