@@ -709,8 +709,9 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
     if (m_removeOnly)
         return;
 
-    for (RefPtr<Node> next; node && node != pastEndNode; node = next.get()) {
-        next = node->traverseNextNode();
+    RefPtr<Node> node = startNode;
+    for (RefPtr<Node> next; node && node != pastEndNode; node = next) {
+         next = node->traverseNextNode();
 
         if (!node->renderer() || !node->rendererIsEditable())
             continue;
@@ -719,7 +720,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
             // This is a plaintext-only region. Only proceed if it's fully selected.
             // pastEndNode is the node after the last fully selected node, so if it's inside node then
             // node isn't fully selected.
-            if (pastEndNode && pastEndNode->isDescendantOf(node))
+            if (pastEndNode && pastEndNode->isDescendantOf(node.get()))
                 break;
             // Add to this element's inline style and skip over its contents.
             HTMLElement* element = toHTMLElement(node);
@@ -730,11 +731,11 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
             continue;
         }
         
-        if (isBlock(node))
+        if (isBlock(node.get()))
             continue;
         
         if (node->childNodeCount()) {
-            if (node->contains(pastEndNode) || containsNonEditableRegion(node) || !node->parentNode()->rendererIsEditable())
+            if (node->contains(pastEndNode.get()) || containsNonEditableRegion(node.get()) || !node->parentNode()->rendererIsEditable())
                 continue;
             if (editingIgnoresContent(node)) {
                 next = node->traverseNextSibling();
@@ -745,7 +746,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
         RefPtr<Node> runStart = node;
         RefPtr<Node> runEnd = node;
         Node* sibling = node->nextSibling();
-        while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode)
+        while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode.get())
                && (!isBlock(sibling) || sibling->hasTagName(brTag))
                && !containsNonEditableRegion(sibling)) {
             runEnd = sibling;
