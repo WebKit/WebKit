@@ -112,7 +112,7 @@ do
         let numTestsRun=$numTestsRun+1
         $jscCmd $preScript $jsTest $postScript 2>$actualErr > $actualOut
         JSC_RES=$?
-
+        
         if [ $JSC_RES -eq 0 ]
         then
             diff $actualOut $expectedOut > $diffOut
@@ -130,6 +130,8 @@ do
             then
                 testCrashed=1
                 echo "CRASHED"
+            else
+                echo "ERROR: $JSC_RES"
             fi
         fi
 

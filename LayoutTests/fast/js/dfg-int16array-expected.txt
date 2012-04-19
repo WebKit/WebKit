@@ -1,4 +1,4 @@
-This tests that int32 arrays work in the DFG.
+This tests that int16 arrays work in the DFG.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

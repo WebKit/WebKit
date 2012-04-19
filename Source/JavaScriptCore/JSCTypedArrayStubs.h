@@ -37,6 +37,7 @@
 #include <wtf/Uint16Array.h>
 #include <wtf/Uint32Array.h>
 #include <wtf/Uint8Array.h>
+#include <wtf/Uint8ClampedArray.h>
 
 namespace JSC {
     
@@ -188,6 +189,7 @@ static EncodedJSValue JSC_HOST_CALL constructJS##name##Array(ExecState* callFram
 }
 
 TYPED_ARRAY(Uint8, uint8_t);
+TYPED_ARRAY(Uint8Clamped, uint8_t);
 TYPED_ARRAY(Uint16, uint16_t);
 TYPED_ARRAY(Uint32, uint32_t);
 TYPED_ARRAY(Int8, int8_t);

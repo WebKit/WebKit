@@ -1,5 +1,20 @@
 2012-04-18  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC testing should have complete coverage over typed array types
+        https://bugs.webkit.org/show_bug.cgi?id=84302
+
+        Reviewed by Geoff Garen.
+        
+        Added Uint8ClampedArray to the set of typed arrays that are supported by jsc
+        command-line.
+
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+
+2012-04-18  Filip Pizlo  <fpizlo@apple.com>
+
         jsc command line should support typed arrays by default
         https://bugs.webkit.org/show_bug.cgi?id=84298
 

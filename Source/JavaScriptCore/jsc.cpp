@@ -196,6 +196,7 @@ protected:
 #endif
         
         addConstructableFunction(globalData, "Uint8Array", constructJSUint8Array, 1);
+        addConstructableFunction(globalData, "Uint8ClampedArray", constructJSUint8ClampedArray, 1);
         addConstructableFunction(globalData, "Uint16Array", constructJSUint16Array, 1);
         addConstructableFunction(globalData, "Uint32Array", constructJSUint32Array, 1);
         addConstructableFunction(globalData, "Int8Array", constructJSInt8Array, 1);

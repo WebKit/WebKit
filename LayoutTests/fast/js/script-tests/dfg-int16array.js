@@ -1,5 +1,5 @@
 description(
-"This tests that int32 arrays work in the DFG."
+"This tests that int16 arrays work in the DFG."
 );
 
 function getter1(a, b) {

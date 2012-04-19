@@ -1,3 +1,15 @@
+2012-04-18  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC testing should have complete coverage over typed array types
+        https://bugs.webkit.org/show_bug.cgi?id=84302
+
+        Reviewed by Geoff Garen.
+        
+        Made run-fast-jsc print something and a newline if jsc threw an exception or
+        otherwise returned with an error code, but did not crash.
+
+        * Scripts/run-fast-jsc:
+
 2012-04-18  Dirk Pranke  <dpranke@chromium.org>
 
         Fix crash in chromium.py after r114877.

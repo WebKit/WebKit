@@ -68,6 +68,7 @@ fast/js/dfg-array-length-dead
 fast/js/dfg-convert-this-dom-window
 fast/js/dfg-double-vote-fuzz
 fast/js/dfg-exception
+fast/js/dfg-float32array
 fast/js/dfg-get-by-val-clobber
 fast/js/dfg-get-by-val-getter-cse
 fast/js/dfg-getter-throw
@@ -87,6 +88,10 @@ fast/js/dfg-inline-new-array-buffer
 fast/js/dfg-inline-unused-this-method-check
 fast/js/dfg-inline-unused-this
 fast/js/dfg-inlining-reg-alloc
+fast/js/dfg-int16array
+fast/js/dfg-int32array-overflow-values
+fast/js/dfg-int32array
+fast/js/dfg-int8array
 fast/js/dfg-integer-optimization
 fast/js/dfg-intrinsic-osr-exit
 fast/js/dfg-intrinsic-unused-this-method-check
@@ -96,7 +101,11 @@ fast/js/dfg-multiply
 fast/js/dfg-other-branch
 fast/js/dfg-poison-fuzz
 fast/js/dfg-string-stricteq
+fast/js/dfg-uint16array
+fast/js/dfg-uint32array-overflow-values
 fast/js/dfg-uint32-to-number
+fast/js/dfg-uint8array
+fast/js/dfg-uint8clampedarray
 fast/js/dictionary-no-cache
 fast/js/dictionary-prototype-caching
 fast/js/do-while-semicolon
