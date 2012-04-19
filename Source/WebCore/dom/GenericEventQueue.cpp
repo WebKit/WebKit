@@ -31,8 +31,14 @@
 
 namespace WebCore {
 
-GenericEventQueue::GenericEventQueue()
-    : m_timer(this, &GenericEventQueue::timerFired)
+PassOwnPtr<GenericEventQueue> GenericEventQueue::create(EventTarget* owner)
+{
+    return adoptPtr(new GenericEventQueue(owner));
+}
+
+GenericEventQueue::GenericEventQueue(EventTarget* owner)
+    : m_owner(owner)
+    , m_timer(this, &GenericEventQueue::timerFired)
     , m_isClosed(false)
 {
 }
@@ -47,6 +53,9 @@ bool GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
         return false;
 
     ASSERT(event->target());
+    if (event->target() == m_owner)
+        event->setTarget(0);
+
     m_pendingEvents.append(event);
 
     if (!m_timer.isActive())
@@ -76,8 +85,10 @@ void GenericEventQueue::timerFired(Timer<GenericEventQueue>*)
     Vector<RefPtr<Event> > pendingEvents;
     m_pendingEvents.swap(pendingEvents);
 
-    for (unsigned i = 0; i < pendingEvents.size(); ++i)
-        pendingEvents[i]->target()->dispatchEvent(pendingEvents[i].release());
+    for (unsigned i = 0; i < pendingEvents.size(); ++i) {
+        EventTarget* target = pendingEvents[i]->target() ? pendingEvents[i]->target() : m_owner;
+        target->dispatchEvent(pendingEvents[i].release());
+    }
 }
 
 void GenericEventQueue::close()

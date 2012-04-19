@@ -1,3 +1,27 @@
+2012-04-18  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in GenericEventQueue::~GenericEventQueue.
+        https://bugs.webkit.org/show_bug.cgi?id=81976
+
+        Reviewed by Eric Carlson.
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::create):
+        (WebCore):
+        (WebCore::GenericEventQueue::GenericEventQueue):
+        (WebCore::GenericEventQueue::enqueueEvent):
+        (WebCore::GenericEventQueue::timerFired):
+        * dom/GenericEventQueue.h:
+        (GenericEventQueue):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
+        (WebCore::HTMLMediaElement::hasPendingActivity):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+
 2012-04-18  Jer Noble  <jer.noble@apple.com>
 
         Heap-use-after-free in WebCore::InlineFlowBox::deleteLine due to fullscreen issues.

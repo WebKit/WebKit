@@ -27,7 +27,9 @@
 #define GenericEventQueue_h
 
 #include "EventQueue.h"
+#include "EventTarget.h"
 #include "Timer.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -36,7 +38,8 @@ namespace WebCore {
 class GenericEventQueue : public EventQueue {
 
 public:
-    GenericEventQueue();
+    GenericEventQueue(EventTarget*);
+    static PassOwnPtr<GenericEventQueue> create(EventTarget*);
     virtual ~GenericEventQueue();
 
     // EventQueue
@@ -50,6 +53,7 @@ public:
 private:
     void timerFired(Timer<GenericEventQueue>*);
 
+    EventTarget* m_owner;
     Vector<RefPtr<Event> > m_pendingEvents;
     Timer<GenericEventQueue> m_timer;
 
