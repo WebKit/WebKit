@@ -74,6 +74,9 @@ bool RenderRubyRun::isEmpty() const
 RenderRubyText* RenderRubyRun::rubyText() const
 {
     RenderObject* child = firstChild();
+    // If in future it becomes necessary to support floating or positioned ruby text,
+    // layout will have to be changed to handle them properly.
+    ASSERT(!child || !child->isRubyText() || !child->isFloatingOrPositioned());
     return child && child->isRubyText() ? static_cast<RenderRubyText*>(child) : 0;
 }
 

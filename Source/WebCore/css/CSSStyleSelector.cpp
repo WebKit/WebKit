@@ -1954,6 +1954,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
             style->setDisplay(BLOCK);
         }
 
+        // Ruby text does not support float or position. This might change with evolution of the specification.
+        if (e && e->hasTagName(rtTag)) {
+            style->setPosition(StaticPosition);
+            style->setFloating(NoFloat);
+        }
+
         // Table headers with a text-align of auto will change the text-align to center.
         if (e && e->hasTagName(thTag) && style->textAlign() == TAAUTO)
             style->setTextAlign(CENTER);
