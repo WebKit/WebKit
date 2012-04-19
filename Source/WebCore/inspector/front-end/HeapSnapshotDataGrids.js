@@ -41,8 +41,9 @@ WebInspector.HeapSnapshotSortableDataGrid = function(columns)
 WebInspector.HeapSnapshotSortableDataGrid.prototype = {
     dispose: function()
     {
-        for (var i = 0, l = this.rootNode().children.length; i < l; ++i)
-            this.rootNode().children[i].dispose();
+        var children = this.topLevelNodes();
+        for (var i = 0, l = children.length; i < l; ++i)
+            children[i].dispose();
     },
 
     resetSortingCache: function()
@@ -51,7 +52,7 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
         delete this._lastSortAscending;
     },
 
-    nodesForNameFilter: function()
+    topLevelNodes: function()
     {
         return this.rootNode().children;
     },
@@ -59,7 +60,7 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
     changeNameFilter: function(filter)
     {
         filter = filter.toLowerCase();
-        var children = this.nodesForNameFilter();
+        var children = this.topLevelNodes();
         for (var i = 0, l = children.length; i < l; ++i) {
             var node = children[i];
             if (node.depth === 0)
@@ -160,7 +161,7 @@ WebInspector.HeapSnapshotViewportDataGrid = function(columns)
 }
 
 WebInspector.HeapSnapshotViewportDataGrid.prototype = {
-    nodesForNameFilter: function()
+    topLevelNodes: function()
     {
         return this._topLevelNodes;
     },
@@ -216,6 +217,12 @@ WebInspector.HeapSnapshotViewportDataGrid.prototype = {
     appendTopLevelNode: function(node)
     {
         this._topLevelNodes.push(node);
+    },
+
+    removeTopLevelNodes: function()
+    {
+        this.rootNode().removeChildren();
+        this._topLevelNodes = [];
     },
 
     _addPaddingRows: function(top, bottom)
@@ -429,7 +436,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         }
 
         this.dispose();
-        this.rootNode().removeChildren();
+        this.removeTopLevelNodes();
         this.resetSortingCache();
 
         var key = this._profileIndex === -1 ? "allObjects" : this._minNodeId + ".." + this._maxNodeId;
@@ -506,7 +513,7 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
     {
         this.baseSnapshot = baseSnapshot;
         this.dispose();
-        this.rootNode().removeChildren();
+        this.removeTopLevelNodes();
         this.resetSortingCache();
         if (this.baseSnapshot === this.snapshot) {
             this.dispatchEventToListeners("sorting complete");
