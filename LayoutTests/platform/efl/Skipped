@@ -1636,20 +1636,6 @@ printing/simultaneous-position-float-change.html
 # BUG: square button is not being drawn as a square
 fast/css/square-button-appearance.html
 
-# BUG: The whole file path is being shown in the console message instead of only the file name.
-http/tests/misc/image-blocked-src-change.html
-http/tests/misc/image-blocked-src-no-change.html
-http/tests/misc/unloadable-script.html
-http/tests/security/frame-loading-via-document-write.html
-http/tests/security/local-CSS-from-remote.html
-http/tests/security/local-JavaScript-from-remote.html
-http/tests/security/local-iFrame-from-remote.html
-http/tests/security/local-image-from-remote.html
-http/tests/security/local-video-poster-from-remote.html
-http/tests/security/local-video-source-from-remote.html
-http/tests/security/local-video-src-from-remote.html
-media/csp-blocks-video.html
-
 # BUG: Only works if --gui is passed (due to the current implementation of PlatformScreenEfl::screenRect).
 fast/media/invalid-lengths.html
 fast/media/matchmedium-query-api.html

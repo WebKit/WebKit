@@ -35,17 +35,37 @@
 #include <Evas.h>
 #include <cstdio>
 #include <cstdlib>
+#include <wtf/NotFound.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 
 static Ewk_View_Smart_Class gParentSmartClass = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
+static WTF::String urlSuitableForTestResult(const WTF::String& uriString)
+{
+    if (uriString.isEmpty() || !uriString.startsWith("file://"))
+        return uriString;
+
+    const size_t index = uriString.reverseFind('/');
+    return (index == WTF::notFound) ? uriString : uriString.substring(index + 1);
+}
+
 static void onConsoleMessage(Ewk_View_Smart_Data*, const char* message, unsigned int lineNumber, const char*)
 {
+    // Tests expect only the filename part of local URIs
+    WTF::String newMessage = message;
+    if (!newMessage.isEmpty()) {
+        const size_t fileProtocol = newMessage.find("file://");
+        if (fileProtocol != WTF::notFound)
+            newMessage = newMessage.left(fileProtocol) + urlSuitableForTestResult(newMessage.substring(fileProtocol));
+    }
+
     printf("CONSOLE MESSAGE: ");
     if (lineNumber)
         printf("line %u: ", lineNumber);
-    printf("%s\n", message);
+    printf("%s\n", newMessage.utf8().data());
 }
 
 static void onJavaScriptAlert(Ewk_View_Smart_Data*, Evas_Object*, const char* message)
