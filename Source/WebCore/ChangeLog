@@ -1,3 +1,45 @@
+2012-04-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Deal with DOM modifications when evaluating source elements.
+        https://bugs.webkit.org/show_bug.cgi?id=81163
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: media/video-beforeload-remove-source.html
+
+        * dom/ContainerNode.cpp: Make NodeVector and collectNodes public, renamed as getChildNodes.
+        (WebCore::ContainerNode::takeAllChildrenFrom): collectNodes -> getChildNodes.
+        (WebCore::ContainerNode::willRemove): collectNodes -> getChildNodes.
+        (WebCore::ContainerNode::willRemoveChildren): collectNodes -> getChildNodes.
+        (WebCore::ContainerNode::insertedIntoDocument): collectNodes -> getChildNodes.
+        (WebCore::ContainerNode::removedFromDocument): collectNodes -> getChildNodes.
+        * dom/ContainerNode.h:
+        (WebCore::getChildNodes):
+
+        * editing/ReplaceSelectionCommand.cpp: Remove unused NodeVector declaration.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): m_nextChildNodeToConsider and m_currentSourceNode
+            are now RefPtrs.
+        (WebCore::HTMLMediaElement::loadTimerFired): Protect HTMLMediaElement from being deleted during
+            a DOM modification during an event callback.
+        (WebCore::HTMLMediaElement::load): Ditto.
+        (WebCore::HTMLMediaElement::selectMediaResource): Set m_nextChildNodeToConsider to the first
+            child node, it will be the first node considered.
+        (WebCore::HTMLMediaElement::havePotentialSourceChild): m_nextChildNodeToConsider and m_currentSourceNode
+            are now RefPtrs.
+        (WebCore::HTMLMediaElement::selectNextSourceChild): Collect all child nodes in a vector before
+            looking for <source> nodes because 'beforeload' event handlers can mutate the DOM. Don't
+            use a <source> that is no longer a child node after 'beforeload'. Use 0 to represent the end
+            of the child node list because m_nextChildNodeToConsider is now a RefPtr so using the previous 
+            sentinel, "this", would cause a retain cycle.
+        (WebCore::HTMLMediaElement::sourceWasAdded):  m_nextChildNodeToConsider and m_currentSourceNode
+            are now RefPtrs.
+        (WebCore::HTMLMediaElement::sourceWillBeRemoved): Ditto.
+        (WebCore::HTMLMediaElement::getPluginProxyParams): Protect HTMLMediaElement from being deleted during
+            a DOM modification during an event callback.
+        * html/HTMLMediaElement.h:
+
 2012-04-18  Adam Barth  <abarth@webkit.org>
 
         ContainerNode::willRemove uses a weak iteration pattern

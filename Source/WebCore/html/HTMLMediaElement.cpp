@@ -192,8 +192,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_lastTimeUpdateEventWallTime(0)
     , m_lastTimeUpdateEventMovieTime(numeric_limits<float>::max())
     , m_loadState(WaitingForSource)
-    , m_currentSourceNode(0)
-    , m_nextChildNodeToConsider(0)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_proxyWidget(0)
 #endif
@@ -548,6 +546,8 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 
 void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 {
+    RefPtr<HTMLMediaElement> protect(this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
+
 #if ENABLE(VIDEO_TRACK)
     if (m_pendingLoadFlags & TextTrackResource)
         configureNewTextTracks();
@@ -604,6 +604,8 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
 
 void HTMLMediaElement::load(ExceptionCode& ec)
 {
+    RefPtr<HTMLMediaElement> protect(this); // loadInternal may result in a 'beforeload' event, which can make arbitrary DOM mutations.
+    
     LOG(Media, "HTMLMediaElement::load()");
 
     if (userGestureRequiredForLoad() && !ScriptController::processingUserGesture())
@@ -760,7 +762,7 @@ void HTMLMediaElement::selectMediaResource()
         // source element child in tree order.
         if (node) {
             mode = children;
-            m_nextChildNodeToConsider = 0;
+            m_nextChildNodeToConsider = node;
             m_currentSourceNode = 0;
         } else {
             // Otherwise the media element has neither a src attribute nor a source element 
@@ -2518,8 +2520,8 @@ bool HTMLMediaElement::havePotentialSourceChild()
 {
     // Stash the current <source> node and next nodes so we can restore them after checking
     // to see there is another potential.
-    HTMLSourceElement* currentSourceNode = m_currentSourceNode;
-    Node* nextNode = m_nextChildNodeToConsider;
+    RefPtr<HTMLSourceElement> currentSourceNode = m_currentSourceNode;
+    RefPtr<Node> nextNode = m_nextChildNodeToConsider;
 
     KURL nextURL = selectNextSourceChild(0, DoNothing);
 
@@ -2538,7 +2540,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
         LOG(Media, "HTMLMediaElement::selectNextSourceChild");
 #endif
 
-    if (m_nextChildNodeToConsider == sourceChildEndOfListValue()) {
+    if (!m_nextChildNodeToConsider) {
 #if !LOG_DISABLED
         if (shouldLog)
             LOG(Media, "HTMLMediaElement::selectNextSourceChild -> 0x0000, \"\"");
@@ -2651,20 +2653,20 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
         return;
     }
 
-    if (m_nextChildNodeToConsider != sourceChildEndOfListValue())
+    if (m_nextChildNodeToConsider)
         return;
     
     // 4.8.9.5, resource selection algorithm, source elements section:
-    // 20 - Wait until the node after pointer is a node other than the end of the list. (This step might wait forever.)
-    // 21 - Asynchronously await a stable state...
-    // 22 - Set the element's delaying-the-load-event flag back to true (this delays the load event again, in case 
+    // 21. Wait until the node after pointer is a node other than the end of the list. (This step might wait forever.)
+    // 22. Asynchronously await a stable state...
+    // 23. Set the element's delaying-the-load-event flag back to true (this delays the load event again, in case 
     // it hasn't been fired yet).
     setShouldDelayLoadEvent(true);
 
-    // 23 - Set the networkState back to NETWORK_LOADING.
+    // 24. Set the networkState back to NETWORK_LOADING.
     m_networkState = NETWORK_LOADING;
     
-    // 24 - Jump back to the find next candidate step above.
+    // 25. Jump back to the find next candidate step above.
     m_nextChildNodeToConsider = source;
     scheduleNextSourceChild();
 }
@@ -2686,8 +2688,8 @@ void HTMLMediaElement::sourceWillBeRemoved(HTMLSourceElement* source)
     if (source == m_nextChildNodeToConsider) {
         m_nextChildNodeToConsider = m_nextChildNodeToConsider->nextSibling();
         if (!m_nextChildNodeToConsider)
-            m_nextChildNodeToConsider = sourceChildEndOfListValue();
-        LOG(Media, "HTMLMediaElement::sourceRemoved - m_nextChildNodeToConsider set to %p", m_nextChildNodeToConsider);
+            m_nextChildNodeToConsider = 0;
+        LOG(Media, "HTMLMediaElement::sourceRemoved - m_nextChildNodeToConsider set to %p", m_nextChildNodeToConsider.get());
     } else if (source == m_currentSourceNode) {
         // Clear the current source node pointer, but don't change the movie as the spec says:
         // 4.8.8 - Dynamically modifying a source element and its attribute when the element is already 
@@ -3282,6 +3284,8 @@ void HTMLMediaElement::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
 
 void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Vector<String>& values)
 {
+    RefPtr<HTMLMediaElement> protect(this); // selectNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
+
     Frame* frame = document()->frame();
 
     if (isVideo()) {
