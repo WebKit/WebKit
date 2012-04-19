@@ -54,7 +54,7 @@ void RenderSVGResourceContainer::layout()
 {
     // Invalidate all resources if our layout changed.
     if (everHadLayout() && selfNeedsLayout())
-        removeAllClientsFromCache();
+        RenderSVGRoot::addResourceForClientInvalidation(this);
 
     RenderSVGHiddenContainer::layout();
 }

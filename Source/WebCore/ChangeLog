@@ -1,3 +1,27 @@
+2012-04-18  Stephen Chenney  <schenney@chromium.org>
+
+        SVG layout leaves objects still needing layout
+        https://bugs.webkit.org/show_bug.cgi?id=81006
+
+        Reviewed by Nikolas Zimmermann.
+
+        Change the layout of SVG objects such that resources that trigger
+        layout of other objects are handled in a distinct pass, and then
+        objects still requiring layout are laid out again.
+
+        Test: svg/custom/delete-text-innerText-crash.html
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::layout):
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::layout):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::addResourceForClientInvalidation):
+        (WebCore):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+
 2012-04-18  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to accessing removed parent lineboxes when clearing selection.
