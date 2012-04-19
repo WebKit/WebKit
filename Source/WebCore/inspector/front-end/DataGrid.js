@@ -241,6 +241,7 @@ WebInspector.DataGrid.prototype = {
     setRootNode: function(rootNode)
     {
         if (this._rootNode) {
+            this._rootNode.removeChildren();
             this._rootNode.dataGrid = null;
             this._rootNode._isRoot = false;
         }
