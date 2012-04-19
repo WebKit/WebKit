@@ -2307,18 +2307,19 @@ static inline bool isCommonAttributeSelectorAttribute(const QualifiedName& attri
 
 static inline bool containsUncommonAttributeSelector(const CSSSelector* selector)
 {
-    while (selector) {
+    for (; selector; selector = selector->tagHistory()) {
         // Allow certain common attributes (used in the default style) in the selectors that match the current element.
         if (selector->isAttributeSelector() && !isCommonAttributeSelectorAttribute(selector->attribute()))
             return true;
         if (selectorListContainsUncommonAttributeSelector(selector))
             return true;
-        if (selector->relation() != CSSSelector::SubSelector)
+        if (selector->relation() != CSSSelector::SubSelector) {
+            selector = selector->tagHistory();
             break;
-        selector = selector->tagHistory();
-    };
+        }
+    }
 
-    for (selector = selector->tagHistory(); selector; selector = selector->tagHistory()) {
+    for (; selector; selector = selector->tagHistory()) {
         if (selector->isAttributeSelector())
             return true;
         if (selectorListContainsUncommonAttributeSelector(selector))
