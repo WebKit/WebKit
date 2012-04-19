@@ -106,7 +106,7 @@ for (var si = 0; si < setters.length; ++si) {
         
         setter(a, b, c);
         safeSetter(checkA, b, c);
-        shouldBe("safeGetter(a, b, c)", "" + safeGetter(checkA, b, c));
+        shouldBe("safeGetter(a, " + b + ", " + c + ")", "" + safeGetter(checkA, b, c));
     }
 }
 
@@ -133,6 +133,6 @@ for (var gi = 0; gi < getters.length; ++gi) {
             c = -c;
         
         safeSetter(a, b, c);
-        shouldBe("getter(a, b, c)", "" + safeGetter(a, b, c));
+        shouldBe("getter(a, " + b + ", " + c + ")", "" + safeGetter(a, b, c));
     }
 }
