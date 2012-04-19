@@ -1,6 +1,24 @@
 2012-04-18  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to accessing removed parent lineboxes when clearing selection.
+        https://bugs.webkit.org/show_bug.cgi?id=81359
+
+        Reviewed by Eric Seidel.
+
+        Similar to r110323, adds the canUpdateSelectionOnRootLineBoxes
+        check to more places.
+
+        Test: editing/selection/clear-selection-crash.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canUpdateSelectionOnRootLineBoxes):
+        * rendering/RenderSelectionInfo.h:
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo):
+        (WebCore::RenderBlockSelectionInfo::RenderBlockSelectionInfo):
+
+2012-04-18  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to accessing removed parent lineboxes when clearing selection.
         https://bugs.webkit.org/show_bug.cgi?id=79264
 
         Reviewed by Dave Hyatt.
