@@ -1701,6 +1701,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     ret
 .exception:
     preserveReturnAddressAfterCall(t1) # This is really only needed on X86
+    loadi ArgumentCount + TagOffset[cfr], PC
     callSlowPath(_llint_throw_from_native_call)
     jmp _llint_throw_from_slow_path_trampoline
 end

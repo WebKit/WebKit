@@ -1530,6 +1530,9 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     ret
 .exception:
     preserveReturnAddressAfterCall(t1)
+    loadi ArgumentCount + TagOffset[cfr], PC
+    loadp CodeBlock[cfr], PB
+    loadp CodeBlock::m_instructions[PB], PB
     callSlowPath(_llint_throw_from_native_call)
     jmp _llint_throw_from_slow_path_trampoline
 end
