@@ -263,6 +263,10 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         this._highlightElement = this._highlightExpression(element);
 
+        /**
+         * @param {?RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
         function showObjectPopover(result, wasThrown)
         {
             if (!this._model.paused) {
@@ -276,7 +280,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         }
 
         var selectedCallFrame = this._model.selectedCallFrame;
-        selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, false, showObjectPopover.bind(this));
+        selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, true, false, showObjectPopover.bind(this));
     },
 
     _onHidePopover: function()

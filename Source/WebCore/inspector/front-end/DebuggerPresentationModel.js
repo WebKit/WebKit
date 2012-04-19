@@ -453,6 +453,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._executionLineLiveLocation.init();
     },
 
+    /**
+     * @return {?WebInspector.PresentationCallFrame}
+     */
     get selectedCallFrame()
     {
         return this._selectedCallFrame;
@@ -470,14 +473,14 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         /**
          * @param {?RuntimeAgent.RemoteObject} result
-         * @param {boolean} wasThrown
+         * @param {boolean=} wasThrown
          */
         function didEvaluate(result, wasThrown)
         {
             if (returnByValue)
-                callback(null, wasThrown, wasThrown ? null : result);
+                callback(null, !!wasThrown, wasThrown ? null : result);
             else
-                callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
+                callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
 
             if (objectGroup === "console")
                 this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame);

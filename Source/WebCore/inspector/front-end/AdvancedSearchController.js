@@ -450,7 +450,7 @@ WebInspector.SearchScope.prototype = {
     
     /**
      * @param {WebInspector.SearchConfig} searchConfig
-     * @return WebInspector.SearchResultsPane}
+     * @return {WebInspector.SearchResultsPane}
      */
     createSearchResultsPane: function(searchConfig) { }
 }
