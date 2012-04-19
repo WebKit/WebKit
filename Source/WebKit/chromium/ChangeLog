@@ -1,3 +1,46 @@
+2012-04-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Convert WebPluginContainerImpl over to use WebExternalTextureLayer
+        https://bugs.webkit.org/show_bug.cgi?id=84120
+
+        Reviewed by Adrienne Walker.
+
+        This ports WebPluginContainerImpl over to use WebExternalTextureLayer instead of directly using a *LayerChromium
+        type for better layering and code sharing. The changes to WebPluginContainerImpl are fairly straightforward.  In
+        addition to renames I also moved some state tracking into WPCI instead of having it exposed on the interface. I
+        also removed the WebExternalTextureLayerImpl intermediate class since it wasn't doing anything useful.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/WebContentLayer.cpp:
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebExternalTextureLayer::create):
+        (WebKit::WebExternalTextureLayer::setTextureId):
+        (WebKit::WebExternalTextureLayer::setIOSurfaceProperties):
+        (WebKit::WebExternalTextureLayer::setFlipped):
+        (WebKit::WebExternalTextureLayer::flipped):
+        (WebKit::WebExternalTextureLayer::setUVRect):
+        (WebKit::WebExternalTextureLayer::uvRect):
+        (WebKit::WebExternalTextureLayer::WebExternalTextureLayer):
+        * src/WebExternalTextureLayerImpl.cpp: Removed.
+        * src/WebExternalTextureLayerImpl.h: Removed.
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::invalidateRect):
+        (WebKit):
+        (WebKit::WebLayer::invalidate):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+        (WebKit::WebPluginContainerImpl::commitBackingTexture):
+        (WebKit::WebPluginContainerImpl::setOpaque):
+        (WebKit::WebPluginContainerImpl::platformLayer):
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        * src/WebPluginContainerImpl.h:
+        (WebCore):
+        (WebPluginContainerImpl):
+        * tests/WebExternalTextureLayerImplTest.cpp: Removed.
+        * tests/WebLayerTest.cpp:
+
 2012-04-18  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Simplify occlusion tracker API by passing layer iterator data

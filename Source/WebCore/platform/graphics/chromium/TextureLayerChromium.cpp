@@ -27,18 +27,18 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "PluginLayerChromium.h"
+#include "TextureLayerChromium.h"
 
 #include "cc/CCTextureLayerImpl.h"
 
 namespace WebCore {
 
-PassRefPtr<PluginLayerChromium> PluginLayerChromium::create()
+PassRefPtr<TextureLayerChromium> TextureLayerChromium::create()
 {
-    return adoptRef(new PluginLayerChromium);
+    return adoptRef(new TextureLayerChromium);
 }
 
-PluginLayerChromium::PluginLayerChromium()
+TextureLayerChromium::TextureLayerChromium()
     : LayerChromium()
     , m_textureId(0)
     , m_flipped(true)
@@ -47,42 +47,42 @@ PluginLayerChromium::PluginLayerChromium()
 {
 }
 
-PassOwnPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
+PassOwnPtr<CCLayerImpl> TextureLayerChromium::createCCLayerImpl()
 {
     return CCTextureLayerImpl::create(m_layerId);
 }
 
-void PluginLayerChromium::setTextureId(unsigned id)
+bool TextureLayerChromium::drawsContent() const
+{
+    return (m_textureId || m_ioSurfaceId) && LayerChromium::drawsContent();
+}
+
+void TextureLayerChromium::setTextureId(unsigned id)
 {
     m_textureId = id;
     setNeedsCommit();
 }
 
-void PluginLayerChromium::setFlipped(bool flipped)
+void TextureLayerChromium::setFlipped(bool flipped)
 {
     m_flipped = flipped;
     setNeedsCommit();
 }
 
-void PluginLayerChromium::setUVRect(const FloatRect& rect)
+void TextureLayerChromium::setUVRect(const FloatRect& rect)
 {
     m_uvRect = rect;
     setNeedsCommit();
 }
 
-void PluginLayerChromium::setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId)
+void TextureLayerChromium::setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId)
 {
     m_ioSurfaceSize = IntSize(width, height);
     m_ioSurfaceId = ioSurfaceId;
     setNeedsCommit();
 }
 
-uint32_t PluginLayerChromium::getIOSurfaceId() const
-{
-    return m_ioSurfaceId;
-}
-
-void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
+void TextureLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     LayerChromium::pushPropertiesTo(layer);
 

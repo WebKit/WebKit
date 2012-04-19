@@ -31,8 +31,10 @@
 #include "SkMatrix44.h"
 #include "TransformationMatrix.h"
 #include "WebLayerImpl.h"
-#include "platform/WebFloatPoint.h"
-#include "platform/WebSize.h"
+
+#include <public/WebFloatPoint.h>
+#include <public/WebFloatRect.h>
+#include <public/WebSize.h>
 
 #include <public/WebFilterOperations.h>
 
@@ -94,6 +96,11 @@ void WebLayer::assign(const WebLayer& other)
 bool WebLayer::equals(const WebLayer& n) const
 {
     return (m_private.get() == n.m_private.get());
+}
+
+void WebLayer::invalidateRect(const WebFloatRect& dirtyRect)
+{
+    m_private->setNeedsDisplayRect(dirtyRect);
 }
 
 void WebLayer::invalidate()

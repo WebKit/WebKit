@@ -30,8 +30,11 @@
 #include "WebFloatRect.h"
 #include "WebLayer.h"
 
+namespace WebCore {
+class TextureLayerChromium;
+}
+
 namespace WebKit {
-class WebExternalTextureLayerImpl;
 
 // This class represents a layer that renders a texture that is generated
 // externally (not managed by the WebLayerTreeView).
@@ -44,18 +47,15 @@ public:
     WEBKIT_EXPORT static WebExternalTextureLayer create();
 
     WebExternalTextureLayer() { }
-    WebExternalTextureLayer(const WebExternalTextureLayer& layer) : WebLayer(layer) { }
     virtual ~WebExternalTextureLayer() { }
-    WebExternalTextureLayer& operator=(const WebExternalTextureLayer& layer)
-    {
-        WebLayer::assign(layer);
-        return *this;
-    }
 
     // Sets the texture id that represents the layer, in the namespace of the
     // compositor context.
     WEBKIT_EXPORT void setTextureId(unsigned);
-    WEBKIT_EXPORT unsigned textureId() const;
+
+    // Sets the IO surface id that represents this layer. setTextureId() and setIOSurfaceProperties() are mutually
+    // exclusive - a layer can be either backed by a texture or an IO surface, but not both.
+    WEBKIT_EXPORT void setIOSurfaceProperties(const WebSize&, unsigned ioSurfaceId);
 
     // Sets whether or not the texture should be flipped in the Y direction when
     // rendered.
@@ -67,14 +67,9 @@ public:
     WEBKIT_EXPORT void setUVRect(const WebFloatRect&);
     WEBKIT_EXPORT WebFloatRect uvRect() const;
 
-    // Marks a region of the layer as needing a display. These regions are
-    // collected in a union until the display occurs.
-    WEBKIT_EXPORT void invalidateRect(const WebFloatRect&);
-
+private:
 #if WEBKIT_IMPLEMENTATION
-    WebExternalTextureLayer(const WTF::PassRefPtr<WebExternalTextureLayerImpl>&);
-    WebExternalTextureLayer& operator=(const WTF::PassRefPtr<WebExternalTextureLayerImpl>&);
-    operator WTF::PassRefPtr<WebExternalTextureLayerImpl>() const;
+    explicit WebExternalTextureLayer(PassRefPtr<WebCore::TextureLayerChromium>);
 #endif
 };
 

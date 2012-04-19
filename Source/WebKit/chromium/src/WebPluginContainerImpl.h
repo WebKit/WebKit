@@ -35,6 +35,7 @@
 #include "WebPluginContainer.h"
 #include "Widget.h"
 
+#include <public/WebExternalTextureLayer.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -48,7 +49,6 @@ class IntRect;
 class KeyboardEvent;
 class LayerChromium;
 class MouseEvent;
-class PluginLayerChromium;
 class ResourceError;
 class ResourceResponse;
 class WheelEvent;
@@ -173,7 +173,9 @@ private:
     Vector<WebPluginLoadObserver*> m_pluginLoadObservers;
 
 #if USE(ACCELERATED_COMPOSITING)
-    RefPtr<WebCore::PluginLayerChromium> m_platformLayer;
+    WebExternalTextureLayer m_layer;
+    unsigned m_textureId;
+    unsigned m_ioSurfaceId;
 #endif
 
     // The associated scrollbar group object, created lazily. Used for Pepper

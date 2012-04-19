@@ -535,8 +535,6 @@
                 'src/WebEntities.cpp',
                 'src/WebEntities.h',
                 'src/WebExternalTextureLayer.cpp',
-                'src/WebExternalTextureLayerImpl.cpp',
-                'src/WebExternalTextureLayerImpl.h',
                 'src/WebFileChooserCompletionImpl.cpp',
                 'src/WebFileChooserCompletionImpl.h',
                 'src/WebFileSystemCallbacksImpl.cpp',

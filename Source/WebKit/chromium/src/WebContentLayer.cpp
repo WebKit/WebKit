@@ -46,11 +46,6 @@ bool WebContentLayer::drawsContent() const
     return constUnwrap<WebContentLayerImpl>()->drawsContent();
 }
 
-void WebContentLayer::invalidateRect(const WebFloatRect& dirtyRect)
-{
-    unwrap<WebContentLayerImpl>()->setNeedsDisplayRect(dirtyRect);
-}
-
 WebContentLayer::WebContentLayer(const PassRefPtr<WebContentLayerImpl>& node)
     : WebLayer(node)
 {

@@ -130,7 +130,6 @@
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',
             'tests/WebCompositorInputHandlerImplTest.cpp',
-            'tests/WebExternalTextureLayerImplTest.cpp',
             'tests/WebFrameTest.cpp',
             'tests/WebGLLayerChromiumTest.cpp',
             'tests/WebLayerTest.cpp',

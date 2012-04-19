@@ -51,11 +51,6 @@ public:
     WEBKIT_EXPORT void setDrawsContent(bool);
     WEBKIT_EXPORT bool drawsContent() const;
 
-    // Sets a region of the layer as invalid, i.e. needs to update its content.
-    // The visible area of the dirty rect will be passed to one or more calls to
-    // WebContentLayerClient::paintContents before the compositing pass occurs.
-    WEBKIT_EXPORT void invalidateRect(const WebFloatRect&);
-
 #if WEBKIT_IMPLEMENTATION
     WebContentLayer(const WTF::PassRefPtr<WebContentLayerImpl>&);
     WebContentLayer& operator=(const WTF::PassRefPtr<WebContentLayerImpl>&);

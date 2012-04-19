@@ -160,7 +160,6 @@ TEST_F(WebLayerTest, Client)
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
     textureLayer.setTextureId(3);
     Mock::VerifyAndClearExpectations(&m_client);
-    EXPECT_EQ(3u, textureLayer.textureId());
 
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
     textureLayer.setFlipped(true);

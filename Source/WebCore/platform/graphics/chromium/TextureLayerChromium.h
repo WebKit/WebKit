@@ -24,8 +24,8 @@
  */
 
 
-#ifndef PluginLayerChromium_h
-#define PluginLayerChromium_h
+#ifndef TextureLayerChromium_h
+#define TextureLayerChromium_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -34,15 +34,16 @@
 namespace WebCore {
 
 // A Layer containing a the rendered output of a plugin instance.
-class PluginLayerChromium : public LayerChromium {
+class TextureLayerChromium : public LayerChromium {
 public:
-    static PassRefPtr<PluginLayerChromium> create();
+    static PassRefPtr<TextureLayerChromium> create();
 
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
 
+    virtual bool drawsContent() const OVERRIDE;
+
     // Code path for plugins which supply their own texture ID.
-    void setTextureId(unsigned textureId);
-    unsigned textureId() const { return m_textureId; }
+    void setTextureId(unsigned);
     void setFlipped(bool);
     bool flipped() const { return m_flipped; }
     void setUVRect(const FloatRect&);
@@ -50,12 +51,11 @@ public:
 
     // Code path for plugins which render via an IOSurface.
     void setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId);
-    uint32_t getIOSurfaceId() const;
 
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
 protected:
-    PluginLayerChromium();
+    TextureLayerChromium();
 
 private:
     unsigned m_textureId;

@@ -36,6 +36,7 @@ namespace WebCore { class LayerChromium; }
 namespace WebKit {
 class WebFilterOperations;
 struct WebFloatPoint;
+struct WebFloatRect;
 struct WebSize;
 
 class WebLayer {
@@ -54,6 +55,9 @@ public:
     WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void assign(const WebLayer&);
     WEBKIT_EXPORT bool equals(const WebLayer&) const;
+
+    // Sets a region of the layer as invalid, i.e. needs to update its content.
+    WEBKIT_EXPORT void invalidateRect(const WebFloatRect&);
 
     // Sets the entire layer as invalid, i.e. needs to update its content.
     WEBKIT_EXPORT void invalidate();
