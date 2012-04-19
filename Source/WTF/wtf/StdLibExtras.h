@@ -161,7 +161,7 @@ template<typename T> char (&ArrayLengthHelperFunction(T (&)[0]))[0];
 inline size_t roundUpToMultipleOf(size_t divisor, size_t x)
 {
     ASSERT(divisor && !(divisor & (divisor - 1)));
-    size_t remainderMask = divisor - 1; \
+    size_t remainderMask = divisor - 1;
     return (x + remainderMask) & ~remainderMask;
 }
 template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
