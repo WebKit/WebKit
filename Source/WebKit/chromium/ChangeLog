@@ -1,3 +1,20 @@
+2012-04-19  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out IDBCursor.advance for landing
+        https://bugs.webkit.org/show_bug.cgi?id=84280
+
+        Reviewed by Dimitri Glazkov.
+
+        Just a stub method so it can be implemented on chromium
+
+        * public/WebIDBCursor.h:
+        (WebKit::WebIDBCursor::advance):
+        * src/WebIDBCursorImpl.cpp:
+        (WebKit::WebIDBCursorImpl::advance):
+        (WebKit):
+        * src/WebIDBCursorImpl.h:
+        (WebIDBCursorImpl):
+
 2012-04-19  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call mimeRegistry directly
