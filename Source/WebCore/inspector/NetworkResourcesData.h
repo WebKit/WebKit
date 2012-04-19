@@ -67,11 +67,15 @@ public:
         String content() const { return m_content; }
         void setContent(const String&);
 
+        unsigned removeContent();
         bool isContentPurged() const { return m_isContentPurged; }
         unsigned purgeContent();
 
         InspectorPageAgent::ResourceType type() const { return m_type; }
         void setType(InspectorPageAgent::ResourceType type) { m_type = type; }
+
+        int httpStatusCode() const { return m_httpStatusCode; }
+        void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
 
         String textEncodingName() const { return m_textEncodingName; }
         void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
@@ -99,6 +103,7 @@ public:
         RefPtr<SharedBuffer> m_dataBuffer;
         bool m_isContentPurged;
         InspectorPageAgent::ResourceType m_type;
+        int m_httpStatusCode;
 
         String m_textEncodingName;
         RefPtr<TextResourceDecoder> m_decoder;
