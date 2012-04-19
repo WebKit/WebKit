@@ -359,7 +359,7 @@ void WebPluginContainerImpl::setBackingIOSurfaceId(int width,
     if (ioSurfaceId == m_ioSurfaceId)
         return;
 
-    m_layer.setIOSurfaceProperties(WebRect(width, height), ioSurfaceId);
+    m_layer.setIOSurfaceProperties(WebSize(width, height), ioSurfaceId);
 
     // If anyone of the IDs is zero we need to switch between hardware
     // and software compositing. This is done by triggering a style recalc
