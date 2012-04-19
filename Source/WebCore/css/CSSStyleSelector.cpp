@@ -2526,7 +2526,7 @@ void RuleSet::addRulesFromSheet(StyleSheetInternal* sheet, const MediaQueryEvalu
             const StyleRuleFontFace* fontFaceRule = static_cast<StyleRuleFontFace*>(rule);
             styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
             styleSelector->invalidateMatchedPropertiesCache();
-        } else if (rule->isKeyframesRule()) {
+        } else if (rule->isKeyframesRule() && styleSelector) {
             // FIXME (BUG 72462): We don't add @keyframe rules of scoped style sheets for the moment.
             if (scope)
                 continue;
