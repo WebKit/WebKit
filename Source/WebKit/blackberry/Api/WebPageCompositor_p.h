@@ -79,8 +79,6 @@ public:
     WebCore::LayerRenderingResults lastCompositingResults() const { return m_lastCompositingResults; }
     void setLastCompositingResults(const WebCore::LayerRenderingResults& results) { m_lastCompositingResults = results; }
 
-    double animationFrameTimestamp() const { return m_pendingAnimationFrame; }
-
     void releaseLayerResources();
 
     WebPagePrivate* page() const { return m_webPage; }
@@ -101,7 +99,6 @@ private:
     WebCore::IntRect m_layoutRectForCompositing;
     WebCore::IntSize m_contentsSizeForCompositing;
     WebCore::LayerRenderingResults m_lastCompositingResults;
-    double m_pendingAnimationFrame;
     bool m_drawsRootLayer;
 };
 

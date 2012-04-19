@@ -43,7 +43,6 @@ namespace WebKit {
 WebPageCompositorPrivate::WebPageCompositorPrivate(WebPagePrivate* page, WebPageCompositorClient* client)
     : m_client(client)
     , m_webPage(page)
-    , m_pendingAnimationFrame(0.0)
     , m_drawsRootLayer(false)
 {
     setOneShot(true); // one-shot animation client
@@ -118,8 +117,6 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
     if (!m_layerRenderer)
         return false;
 
-    m_pendingAnimationFrame = 0.0;
-
     bool shouldClear = drawsRootLayer();
     if (BackingStore* backingStore = m_webPage->m_backingStore)
         shouldClear = shouldClear || !backingStore->d->isOpenGLCompositing();
@@ -129,13 +126,8 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
     m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
 
     if (m_lastCompositingResults.needsAnimationFrame) {
-        // Using a timeout of 0 actually won't start a timer, it will send a message.
-        if (m_client)
-            m_pendingAnimationFrame = m_client->requestAnimationFrame();
-        else {
-            Platform::AnimationFrameRateController::instance()->addClient(this);
-            m_webPage->updateDelegatedOverlays();
-        }
+        Platform::AnimationFrameRateController::instance()->addClient(this);
+        m_webPage->updateDelegatedOverlays();
     }
 
     return true;

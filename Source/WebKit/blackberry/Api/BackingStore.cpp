@@ -1258,7 +1258,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
         // If there's a WebPageCompositorClient, let it schedule the blit.
         if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor()) {
             if (WebPageCompositorClient* client = compositor->client()) {
-                client->invalidate(compositor->animationFrameTimestamp());
+                client->invalidate(0);
                 return;
             }
         }
