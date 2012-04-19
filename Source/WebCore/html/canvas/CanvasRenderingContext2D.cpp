@@ -2170,7 +2170,7 @@ void CanvasRenderingContext2D::inflateStrokeRect(FloatRect& rect) const
     // Fast approximation of the stroke's bounding rect.
     // This yields a slightly oversized rect but is very fast
     // compared to Path::strokeBoundingRect().
-    static const float root2 = sqrt(2);
+    static const float root2 = sqrtf(2);
     float delta = state().m_lineWidth / 2;
     if (state().m_lineJoin == MiterJoin)
         delta *= state().m_miterLimit;
