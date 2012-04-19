@@ -53,7 +53,6 @@ void WebInspectorClient::closeInspectorFrontend()
 {
     if (m_page->inspector()) {
         m_page->inspector()->didClose();
-        m_page->inspector()->destroyInspectorPage();
     }
 }
 

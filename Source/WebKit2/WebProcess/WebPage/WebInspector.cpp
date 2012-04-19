@@ -102,6 +102,7 @@ void WebInspector::didLoadInspectorPage()
 void WebInspector::didClose()
 {
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
+    destroyInspectorPage();
 }
 
 void WebInspector::bringToFront()

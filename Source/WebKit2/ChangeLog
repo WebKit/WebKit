@@ -1,3 +1,18 @@
+2012-04-19  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        DevTools: assertion failure upon devtools window reopen.
+        https://bugs.webkit.org/show_bug.cgi?id=53493
+
+        Reviewed by Pavel Feldman.
+
+        The pointers pointed to by WebInspector must be reset explicitly
+        in WebInspector::didClose() method
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::closeInspectorFrontend):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::didClose):
+
 2012-04-19  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Zoom out on the second double click does not always scale right.
