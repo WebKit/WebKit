@@ -167,10 +167,12 @@ bool CookieManager::shouldRejectForSecurityReason(const ParsedCookie* cookie, co
     if (!cookie->domain().length())
         return true;
 
-    if (!cookie->hasDefaultDomain()) {
+    // If an explicitly specified value does not start with a dot, the user agent supplies. (RFC 2965 3.2.2)
+    // Domain: Defaults to the effective request-host. There is no dot at the beginning of request-host. (RFC 2965 3.3.1)
+    if (cookie->domain()[0] == '.') {
         // Check if the domain contains an embedded dot.
-        int dotPosition = cookie->domain().find(".", 1);
-        if (dotPosition == -1 || static_cast<unsigned int>(dotPosition) == cookie->domain().length()) {
+        size_t dotPosition = cookie->domain().find(".", 1);
+        if (dotPosition == notFound || dotPosition == cookie->domain().length()) {
             LOG_ERROR("Cookie %s is rejected because its domain does not contain an embedded dot.\n", cookie->toString().utf8().data());
             return true;
         }

@@ -68,10 +68,6 @@ public:
     const String& protocol() const { return m_protocol; }
     void setProtocol(const String& protocol) { m_protocol = protocol; }
 
-    // This is a special method used to set the domain to the request's url.
-    void setDefaultDomain(const KURL&);
-    bool hasDefaultDomain() const { return m_hasDefaultDomain; }
-
     double expiry() const { return m_expiry; }
     void setExpiry(const String&);
     void forceExpire() { m_isForceExpired  = true; }
@@ -110,7 +106,6 @@ private:
     // This is used for the LRU replacement policy.
     double m_lastAccessed;
 
-    bool m_hasDefaultDomain;
     bool m_isSecure;
     bool m_isHttpOnly;
     bool m_isSession;

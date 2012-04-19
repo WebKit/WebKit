@@ -41,7 +41,6 @@ ParsedCookie::ParsedCookie(double currentTime)
     : m_expiry(-1)
     , m_creationTime(currentTime)
     , m_lastAccessed(currentTime)
-    , m_hasDefaultDomain(false)
     , m_isSecure(false)
     , m_isHttpOnly(false)
     , m_isSession(true)
@@ -58,7 +57,6 @@ ParsedCookie::ParsedCookie(const String& name, const String& value, const String
     , m_expiry(expiry)
     , m_creationTime(creationTime)
     , m_lastAccessed(lastAccessed)
-    , m_hasDefaultDomain(false)
     , m_isSecure(isSecure)
     , m_isHttpOnly(isHttpOnly)
     , m_isSession(false)
@@ -75,7 +73,6 @@ ParsedCookie::ParsedCookie(const ParsedCookie* cookie)
     , m_expiry(cookie->m_expiry)
     , m_creationTime(cookie->m_creationTime)
     , m_lastAccessed(cookie->m_lastAccessed)
-    , m_hasDefaultDomain(cookie->m_hasDefaultDomain)
     , m_isSecure(cookie->m_isSecure)
     , m_isHttpOnly(cookie->m_isHttpOnly)
     , m_isSession(cookie->m_isSession)
@@ -130,12 +127,6 @@ void ParsedCookie::setMaxAge(const String& maxAge)
         m_expiry += currentTime();
     else
         m_expiry = 0;
-}
-
-void ParsedCookie::setDefaultDomain(const KURL& requestURL)
-{
-    setDomain(requestURL.host());
-    m_hasDefaultDomain = true;
 }
 
 bool ParsedCookie::hasExpired() const
