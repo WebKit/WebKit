@@ -40,7 +40,9 @@ WebInspector.ParsedURL = function(url)
     this.host = "";
     this.port = "";
     this.path = "";
+    this.queryParams = "";
     this.fragment = "";
+    this.folderPathComponents = "";
     this.lastPathComponent = "";
 
     // RegExp groups:
@@ -72,13 +74,15 @@ WebInspector.ParsedURL = function(url)
         // First cut the query params.
         var path = this.path;
         var indexOfQuery = path.indexOf("?");
-        if (indexOfQuery !== -1)
+        if (indexOfQuery !== -1) {
+            this.queryParams = path.substring(indexOfQuery + 1)
             path = path.substring(0, indexOfQuery);
+        }
 
         // Then take last path component.
         var lastSlashIndex = path.lastIndexOf("/");
         if (lastSlashIndex !== -1) {
-            this.firstPathComponents = path.substring(0, lastSlashIndex + 1);
+            this.folderPathComponents = path.substring(0, lastSlashIndex);
             this.lastPathComponent = path.substring(lastSlashIndex + 1);
         }
     }

@@ -157,7 +157,7 @@ InspectorTest.showScriptSourceOnScriptsPanel = function(panel, scriptName, callb
 {
     var uiSourceCodes = panel._presentationModel.uiSourceCodes();
     for (var i = 0; i < uiSourceCodes.length; ++i) {
-        if (uiSourceCodes[i].fileName === scriptName) {
+        if (uiSourceCodes[i].parsedURL.lastPathComponent === scriptName || uiSourceCodes[i].parsedURL.url === scriptName) {
             panel.showUISourceCode(uiSourceCodes[i]);
             var sourceFrame = panel.visibleView;
             if (sourceFrame.loaded)

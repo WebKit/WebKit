@@ -162,8 +162,17 @@ WebInspector.ScriptsNavigator.prototype = {
         var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
         if (!scriptTreeElement)
             return;
-        var scriptTitle = uiSourceCode.fileName || WebInspector.UIString("(program)");
-        scriptTreeElement.titleText = scriptTitle;
+
+        var titleText;
+        if (uiSourceCode.parsedURL.isValid) {
+            titleText = uiSourceCode.parsedURL.lastPathComponent;
+            if (uiSourceCode.parsedURL.queryParams)
+                titleText += "?" + uiSourceCode.parsedURL.queryParams;
+        } else if (uiSourceCode.parsedURL)
+            titleText = uiSourceCode.parsedURL.url;
+        else
+            titleText = WebInspector.UIString("(program)");
+        scriptTreeElement.titleText = titleText;
     },
 
     /**
@@ -427,7 +436,7 @@ WebInspector.ScriptsNavigator.prototype = {
             return this._snippetsTree;
         if (uiSourceCode.isSnippetEvaluation)
             return this._getOrCreateSnippetEvaluationsFolderTreeElement();
-        return this._getOrCreateScriptFolderTreeElement(uiSourceCode.isContentScript, uiSourceCode.domain, uiSourceCode.folderName);
+        return this._getOrCreateScriptFolderTreeElement(uiSourceCode.isContentScript, uiSourceCode.parsedURL.host, uiSourceCode.parsedURL.folderPathComponents);
     },
 
     /**
@@ -663,6 +672,7 @@ WebInspector.NavigatorFolderTreeElement = function(folderIdentifier, domain, fol
     var iconClass = this.isDomain ? "scripts-navigator-domain-tree-item" : "scripts-navigator-folder-tree-item";
     var title = this.isDomain ? domain : folderName.substring(1);
     WebInspector.BaseNavigatorTreeElement.call(this, title, [iconClass], true);
+    this.tooltip = folderName;
 }
 
 WebInspector.NavigatorFolderTreeElement.prototype = {

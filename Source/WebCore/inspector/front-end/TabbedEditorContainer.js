@@ -131,7 +131,18 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     _titleForFile: function(uiSourceCode)
     {
-        return uiSourceCode.displayName;
+        const maxDisplayNameLength = 30;
+        const minDisplayQueryParamLength = 5;
+
+        var parsedURL = uiSourceCode.parsedURL;
+        if (!parsedURL.isValid)
+            return parsedURL.url ? parsedURL.url.trimMiddle(maxDisplayNameLength) : WebInspector.UIString("(program)");
+
+        var maxDisplayQueryParamLength = Math.max(minDisplayQueryParamLength, maxDisplayNameLength - parsedURL.lastPathComponent.length);
+        var displayQueryParams = parsedURL.queryParams ? "?" + parsedURL.queryParams.trimEnd(maxDisplayQueryParamLength - 1) : "";
+        var displayLastPathComponent = parsedURL.lastPathComponent.trimMiddle(maxDisplayNameLength - displayQueryParams.length);
+        var displayName = displayLastPathComponent + displayQueryParams;
+        return displayName || WebInspector.UIString("(program)");
     },
 
     /**

@@ -361,7 +361,7 @@ WebInspector.SourceMapParser.prototype = {
         var baseHost = base.scheme + "://" + base.host + (base.port ? ":" + base.port : "");
         if (url[0] === "/")
             return baseHost + url;
-        return baseHost + base.firstPathComponents + url;
+        return baseHost + base.folderPathComponents + "/" + url;
     },
 
     _VLQ_BASE_SHIFT: 5,
