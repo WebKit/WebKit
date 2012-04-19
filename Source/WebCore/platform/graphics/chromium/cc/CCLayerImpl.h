@@ -33,6 +33,7 @@
 #include "Region.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
+#include "cc/CCInputHandler.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCRenderSurface.h"
 #include "cc/CCSharedQuadState.h"
@@ -199,6 +200,8 @@ public:
 
     void setDrawCheckerboardForMissingTiles(bool checkerboard) { m_drawCheckerboardForMissingTiles = checkerboard; }
     bool drawCheckerboardForMissingTiles() const { return m_drawCheckerboardForMissingTiles; }
+
+    CCInputHandlerClient::ScrollStatus tryScroll(const IntPoint& viewportPoint, CCInputHandlerClient::ScrollInputType) const;
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }

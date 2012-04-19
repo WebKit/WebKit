@@ -1,3 +1,38 @@
+2012-04-19  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Add tests for scrolling non-root layers in the compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=73350
+
+        Reviewed by James Robinson.
+
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::didScroll):
+        (WebKit):
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::CCLayerTreeHostImplTest::createScrollableLayer):
+        (CCLayerTreeHostImplTest):
+        (WebKitTests::CCLayerTreeHostImplTest::initializeLayerRendererAndDrawFrame):
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestOpacityChangeLayerDelegate::didScroll):
+        (WTF::MockContentLayerDelegate::paintContents):
+        (WTF::MockContentLayerDelegate::didScroll):
+        (CCLayerTreeHostTestScrollChildLayer):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::CCLayerTreeHostTestScrollChildLayer):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::beginTest):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::applyScrollAndScale):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::beginCommitOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestScrollChildLayer::afterTest):
+        (WTF):
+        (WTF::TEST_F):
+
 2012-04-19  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Stub out IDBCursor.advance for landing

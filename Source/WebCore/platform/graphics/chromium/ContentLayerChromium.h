@@ -46,6 +46,7 @@ class ContentLayerDelegate {
 public:
     virtual ~ContentLayerDelegate() { }
     virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
+    virtual void didScroll(const IntSize&) = 0;
 };
 
 // A Layer that requires a GraphicsContext to render its contents.
@@ -62,6 +63,8 @@ public:
     virtual void idleUpdate(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
 
     virtual void setOpaque(bool) OVERRIDE;
+
+    virtual void scrollBy(const IntSize&) OVERRIDE;
 
 protected:
     explicit ContentLayerChromium(ContentLayerDelegate*);
