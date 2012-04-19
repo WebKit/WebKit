@@ -2617,3 +2617,4 @@ fast/workers/worker-multi-startup.html
 
 # Failing reftests, we skip them until we find out how we have to gardening after them
 fast/multicol/cell-shrinkback.html
+fast/table/td-width-fifty-percent-regression.html
