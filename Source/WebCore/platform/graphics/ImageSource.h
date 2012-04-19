@@ -134,9 +134,9 @@ public:
     };
 
 #if USE(CG)
-    enum ShouldSkipMetaData {
-        DoNotSkipMetaData,
-        SkipMetaData
+    enum ShouldSkipMetadata {
+        DoNotSkipMetadata,
+        SkipMetadata
     };
 #endif
 
