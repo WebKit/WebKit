@@ -26,6 +26,7 @@
 
 #include "GraphicsContext.h"
 #include "RenderSVGContainer.h"
+#include "RenderSVGRoot.h"
 #include "SVGElement.h"
 #include "SVGMarkerElement.h"
 #include "SVGRenderSupport.h"
@@ -49,7 +50,7 @@ void RenderSVGResourceMarker::layout()
 {
     // Invalidate all resources if our layout changed.
     if (everHadLayout() && selfNeedsLayout())
-        removeAllClientsFromCache();
+        RenderSVGRoot::addResourceForClientInvalidation(this);
 
     // RenderSVGHiddenContainer overwrites layout(). We need the
     // layouting of RenderSVGContainer for calculating  local
