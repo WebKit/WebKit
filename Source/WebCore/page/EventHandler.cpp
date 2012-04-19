@@ -1746,6 +1746,13 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::Move;
     if (m_mousePressed)
         hitType |= HitTestRequest::Active;
+    else if (onlyUpdateScrollbars) {
+        // Mouse events should be treated as "read-only" if we're updating only scrollbars. This  
+        // means that :hover and :active freeze in the state they were in, rather than updating  
+        // for nodes the mouse moves while the window is not key (which will be the case if 
+        // onlyUpdateScrollbars is true). 
+        hitType |= HitTestRequest::ReadOnly;
+    }
 
 #if ENABLE(TOUCH_EVENTS)
     // Treat any mouse move events as readonly if the user is currently touching the screen.
