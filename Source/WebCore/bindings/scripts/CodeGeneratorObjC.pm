@@ -466,6 +466,11 @@ sub SkipAttribute
 
     return 1 if $codeGenerator->GetArrayType($attribute->signature->type);
 
+    # This is for DynamicsCompressorNode.idl
+    if ($attribute->signature->name eq "release") {
+        return 1;
+    }
+
     return 0;
 }
 
@@ -779,6 +784,7 @@ sub GenerateHeader
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
         foreach my $attribute (@{$dataNode->attributes}) {
+            next if SkipAttribute($attribute);
             my $attributeName = $attribute->signature->name;
 
             if ($attributeName eq "id" or $attributeName eq "hash" or $attributeName eq "description") {

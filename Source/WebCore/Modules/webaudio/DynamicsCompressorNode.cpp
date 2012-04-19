@@ -50,11 +50,15 @@ DynamicsCompressorNode::DynamicsCompressorNode(AudioContext* context, float samp
     m_knee = AudioParam::create("knee", 30, 0, 40);
     m_ratio = AudioParam::create("ratio", 12, 1, 20);
     m_reduction = AudioParam::create("reduction", 0, -20, 0);
+    m_attack = AudioParam::create("attack", 0.003, 0, 1);
+    m_release = AudioParam::create("release", 0.250, 0, 1);
 
     m_threshold->setContext(context);
     m_knee->setContext(context);
     m_ratio->setContext(context);
     m_reduction->setContext(context);
+    m_attack->setContext(context);
+    m_release->setContext(context);
 
     initialize();
 }
@@ -72,10 +76,14 @@ void DynamicsCompressorNode::process(size_t framesToProcess)
     float threshold = m_threshold->value();
     float knee = m_knee->value();
     float ratio = m_ratio->value();
+    float attack = m_attack->value();
+    float release = m_release->value();
 
     m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamThreshold, threshold);
     m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamKnee, knee);
     m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamRatio, ratio);
+    m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamAttack, attack);
+    m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamRelease, release);
 
     m_dynamicsCompressor->process(input(0)->bus(), outputBus, framesToProcess);
 

@@ -43,6 +43,16 @@ function runTest() {
         else
             testFailed("ratio attribute has incorrect default value.");
         
+        if (compressor.attack.value - 0.003 < 3e-8)
+            testPassed("attack attribute has correct default value.");
+        else
+            testFailed("attack attribute has incorrect default value.");
+
+        if (compressor.release.value - 0.25 < 3e-8)
+            testPassed("release attribute has correct default value.");
+        else
+            testFailed("release attribute has incorrect default value.");
+
     } catch(e) {
         testFailed("Exception thrown when accessing DynamicsCompressorNode attributes.");
     }
