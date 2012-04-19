@@ -142,6 +142,7 @@ String CSSImageSetValue::customCssText() const
 CSSImageSetValue::CSSImageSetValue(const CSSImageSetValue& cloneFrom)
     : CSSValueList(cloneFrom)
     , m_accessedBestFitImage(false)
+    , m_scaleFactor(1)
 {
     // Non-CSSValueList data is not accessible through CSS OM, no need to clone.
 }
