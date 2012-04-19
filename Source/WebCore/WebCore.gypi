@@ -6423,6 +6423,7 @@
             'inspector/front-end/Spectrum.js',
             'inspector/front-end/SplitView.js',
             'inspector/front-end/StatusBarButton.js',
+            'inspector/front-end/StylesPanel.js',
             'inspector/front-end/StylesSidebarPane.js',
             'inspector/front-end/TabbedEditorContainer.js',
             'inspector/front-end/TabbedPane.js',

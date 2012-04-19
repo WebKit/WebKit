@@ -248,6 +248,13 @@ modules = [
         ]
     },
     {
+        "target_name": "styles",
+        "dependencies": ["components"],
+        "sources": [
+            "StylesPanel.js",
+        ]
+    },
+    {
         "target_name": "extensions",
         "dependencies": ["components"],
         "sources": [

@@ -74445,6 +74445,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\StylesPanel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\StylesSidebarPane.js"
 					>
 				</File>

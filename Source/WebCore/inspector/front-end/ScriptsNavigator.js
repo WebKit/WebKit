@@ -170,7 +170,7 @@ WebInspector.ScriptsNavigator.prototype = {
                 titleText += "?" + uiSourceCode.parsedURL.queryParams;
         } else if (uiSourceCode.parsedURL)
             titleText = uiSourceCode.parsedURL.url;
-        else
+        if (!titleText)
             titleText = WebInspector.UIString("(program)");
         scriptTreeElement.titleText = titleText;
     },
@@ -794,12 +794,12 @@ WebInspector.ScriptsNavigatorController = function(panel, editorView, navigator,
     this._editorView.installResizer(this._navigatorSidebarResizeWidgetElement);
     this._navigator.view.element.appendChild(this._navigatorSidebarResizeWidgetElement);
 
-    this._navigatorShowHideButton = this._createNavigatorControlButton(WebInspector.UIString("Show scripts navigator"), "scripts-navigator-show-hide-button", this._toggleNavigator.bind(this));
+    this._navigatorShowHideButton = this._createNavigatorControlButton(WebInspector.UIString("Show navigator"), "scripts-navigator-show-hide-button", this._toggleNavigator.bind(this));
     this._navigatorShowHideButton.addStyleClass("toggled-on");
     this._navigatorShowHideButton.title = WebInspector.UIString("Hide scripts navigator");
     this._editorView.element.appendChild(this._navigatorShowHideButton);
 
-    this._navigatorPinButton = this._createNavigatorControlButton(WebInspector.UIString("Pin scripts navigator"), "scripts-navigator-pin-button", this._pinNavigator.bind(this));
+    this._navigatorPinButton = this._createNavigatorControlButton(WebInspector.UIString("Pin navigator"), "scripts-navigator-pin-button", this._pinNavigator.bind(this));
     this._navigatorPinButton.addStyleClass("hidden");
     this._navigator.view.element.appendChild(this._navigatorPinButton);
 
@@ -910,7 +910,7 @@ WebInspector.ScriptsNavigatorController.prototype = {
     {
         this._navigator.view.element.appendChild(this._navigatorShowHideButton);
         this._navigatorShowHideButton.addStyleClass("toggled-on");
-        this._navigatorShowHideButton.title = WebInspector.UIString("Hide scripts navigator");
+        this._navigatorShowHideButton.title = WebInspector.UIString("Hide navigator");
         this._navigator.focus();
         this._panel.registerShortcut(WebInspector.KeyboardShortcut.Keys.Esc.code, this._escDownWhileNavigatorOverlayOpen.bind(this));
     },
@@ -921,7 +921,7 @@ WebInspector.ScriptsNavigatorController.prototype = {
         WebInspector.settings.navigatorWasOnceHidden.set(true);
         this._editorView.element.appendChild(this._navigatorShowHideButton);
         this._navigatorShowHideButton.removeStyleClass("toggled-on");
-        this._navigatorShowHideButton.title = WebInspector.UIString("Show scripts navigator");
+        this._navigatorShowHideButton.title = WebInspector.UIString("Show navigator");
         this._panel.unregisterShortcut(WebInspector.KeyboardShortcut.Keys.Esc.code);
     }
 }

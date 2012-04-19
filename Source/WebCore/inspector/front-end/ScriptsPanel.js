@@ -65,7 +65,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
     const initialNavigatorWidth = 225;
     const minimalViewsContainerWidthPercent = 50;
     this.editorView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);
-    this.editorView.element.id = "scripts-editor-view";
     this.editorView.element.tabIndex = 0;
 
     this.editorView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
@@ -75,7 +74,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._navigator = new WebInspector.ScriptsNavigator();
     this._navigator.show(this.editorView.sidebarElement);
 
-    this._editorContainer = new WebInspector.TabbedEditorContainer(this);
+    this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedFiles");
     this._editorContainer.show(this.editorView.mainElement);
     WebInspector.OpenResourceDialog.install(this, this._presentationModel, this.editorView.mainElement);
 

@@ -53,6 +53,8 @@ var WebInspector = {
             this.panels.network = new WebInspector.NetworkPanel();
         if (hiddenPanels.indexOf("scripts") === -1)
             this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
+        if (hiddenPanels.indexOf("styles") === -1 && WebInspector.experimentsSettings.showStylesPanel.isEnabled())
+            this.panels.styles = new WebInspector.StylesPanel();
         if (hiddenPanels.indexOf("timeline") === -1)
             this.panels.timeline = new WebInspector.TimelinePanel();
         if (hiddenPanels.indexOf("profiles") === -1)
@@ -972,7 +974,7 @@ WebInspector._showAnchorLocation = function(anchor)
 
 WebInspector._showAnchorLocationInPanel = function(anchor, panel)
 {
-    if (!panel.canShowAnchorLocation(anchor))
+    if (!panel || !panel.canShowAnchorLocation(anchor))
         return false;
 
     // FIXME: support webkit-html-external-link links here.

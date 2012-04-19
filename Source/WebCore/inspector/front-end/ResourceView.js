@@ -193,6 +193,12 @@ WebInspector.EditableResourceSourceFrame.prototype = {
             WebInspector.ResourceSourceFrame.prototype._contentChanged.call(this, event);
     },
 
+    didEditContent: function(error, content)
+    {
+        WebInspector.SourceFrame.prototype.didEditContent.call(this, error, content);
+        this.dispatchEventToListeners(WebInspector.EditableResourceSourceFrame.Events.TextEdited, this);
+    },
+
     isDirty: function()
     {
         return this._resource.content !== this.textModel.text;

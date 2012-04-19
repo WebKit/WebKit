@@ -43,8 +43,9 @@ WebInspector.TabbedEditorContainerDelegate.prototype = {
  * @constructor
  * @extends {WebInspector.Object}
  * @param {WebInspector.TabbedEditorContainerDelegate} delegate
+ * @param {string} settingName
  */
-WebInspector.TabbedEditorContainer = function(delegate)
+WebInspector.TabbedEditorContainer = function(delegate, settingName)
 {
     this._delegate = delegate;
 
@@ -59,7 +60,7 @@ WebInspector.TabbedEditorContainer = function(delegate)
     this._files = {};
     this._loadedURLs = {};
 
-    this._previouslyViewedFilesSetting = WebInspector.settings.createSetting("previouslyViewedFiles", []);
+    this._previouslyViewedFilesSetting = WebInspector.settings.createSetting(settingName, []);
     this._history = new WebInspector.TabbedEditorContainer.History(this._previouslyViewedFilesSetting.get());
 }
 
