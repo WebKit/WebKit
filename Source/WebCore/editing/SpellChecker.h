@@ -81,7 +81,8 @@ public:
     bool isCheckable(Range*) const;
 
     void requestCheckingFor(PassRefPtr<SpellCheckRequest>);
-    void didCheck(int sequence, const Vector<TextCheckingResult>&);
+    void didCheckSucceeded(int sequence, const Vector<TextCheckingResult>&);
+    void didCheckCanceled(int sequence);
 
     int lastRequestSequence() const
     {
@@ -101,6 +102,7 @@ private:
     void timerFiredToProcessQueuedRequest(Timer<SpellChecker>*);
     void invokeRequest(PassRefPtr<SpellCheckRequest>);
     void enqueueRequest(PassRefPtr<SpellCheckRequest>);
+    void didCheck(int sequence, const Vector<TextCheckingResult>&);
 
     Frame* m_frame;
     int m_lastRequestSequence;

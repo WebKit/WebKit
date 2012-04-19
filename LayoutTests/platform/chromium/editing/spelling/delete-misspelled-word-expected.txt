@@ -1,0 +1,14 @@
+Test if Chrome spellchecks a word again when changing a misspelled word.To test manually, type a misspelled word "zz " and type a backspace key twice.This test succeeds when "z" is not marked as misspelled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS insertText("z"); insertText("z"); insertText(" "); internals.hasSpellingMarker(document, 0, 2) is true
+Enable asynchronous spellchecking, delete two characters, and insert a space
+PASS internals.hasSpellingMarker(document, 0, 1) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+z 
+
+

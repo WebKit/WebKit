@@ -51,7 +51,13 @@ static Vector<TextCheckingResult> toCoreResults(const WebVector<WebTextCheckingR
 
 void WebTextCheckingCompletionImpl::didFinishCheckingText(const WebVector<WebTextCheckingResult>& results)
 {
-    m_spellChecker->didCheck(m_identifier, toCoreResults(results));
+    m_spellChecker->didCheckSucceeded(m_identifier, toCoreResults(results));
+    delete this;
+}
+
+void WebTextCheckingCompletionImpl::didCancelCheckingText()
+{
+    m_spellChecker->didCheckCanceled(m_identifier);
     delete this;
 }
 

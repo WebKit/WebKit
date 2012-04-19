@@ -1,3 +1,23 @@
+2012-04-18  Hironori Bono  <hbono@chromium.org>
+
+        Split SpellChecker::didCheck() to SpellChecker::didCheckSucceeded() and SpellChecker::didCheckCanceled()
+        https://bugs.webkit.org/show_bug.cgi?id=83748
+
+        Reviewed by Ryosuke Niwa.
+
+        This change adds a new API WebTextCheckingCompletion::didCancelCheckingText(),
+        which encapsulates SpellChecker::didCheckCanceled() and implements it so
+        Chromium can use it.
+
+        * public/WebTextCheckingCompletion.h:
+        (WebKit::WebTextCheckingCompletion::didCancelCheckingText):
+        * src/WebTextCheckingCompletionImpl.cpp:
+        (WebKit::WebTextCheckingCompletionImpl::didFinishCheckingText):
+        (WebKit):
+        (WebKit::WebTextCheckingCompletionImpl::didCancelCheckingText):
+        * src/WebTextCheckingCompletionImpl.h:
+        (WebTextCheckingCompletionImpl):
+
 2012-04-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Convert WebPluginContainerImpl over to use WebExternalTextureLayer

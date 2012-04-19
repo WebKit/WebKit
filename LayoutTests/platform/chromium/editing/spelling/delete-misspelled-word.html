@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src=../../../../fast/js/resources/js-test-pre.js language="javascript" type="text/javascript"></script>
+<title>Testing moving cursor to a misspelled word</title> 
+</head> 
+<body>
+<div id="src" contenteditable="true" spellcheck="true"></div><br/>
+<script language="javascript">
+description('Test if Chrome spellchecks a word again when changing a misspelled word.' +
+            'To test manually, type a misspelled word "zz " and type a backspace key twice.' +
+            'This test succeeds when "z" is not marked as misspelled.');
+
+jsTestIsAsync = true;
+
+var node = document.getElementById('src');
+node.focus();
+function insertText(text) {
+    document.execCommand("InsertText", false, text);
+}
+shouldBeTrue('insertText("z"); insertText("z"); insertText(" "); internals.hasSpellingMarker(document, 0, 2)');
+
+debug('Enable asynchronous spellchecking, delete two characters, and insert a space');
+layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+internals.settings.setUnifiedTextCheckingEnabled(true);
+
+layoutTestController.execCommand("DeleteBackward");
+layoutTestController.execCommand("DeleteBackward");
+document.execCommand("InsertText", false, ' ');
+
+var retryCount = 10;
+function verifyMarker() {
+    var hasMarker = internals.hasSpellingMarker(document, 0, 1);
+    if (hasMarker && --retryCount > 0) {
+        window.setTimeout(verifyMarker, sleepPeriod);
+        return;
+    }
+    shouldBeFalse('internals.hasSpellingMarker(document, 0, 1)');
+    internals.settings.setUnifiedTextCheckingEnabled(false);
+    layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+    finishJSTest();
+}
+window.setTimeout(verifyMarker, 1);
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

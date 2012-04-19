@@ -1,3 +1,17 @@
+2012-04-18  Hironori Bono  <hbono@chromium.org>
+
+        Split SpellChecker::didCheck() to SpellChecker::didCheckSucceeded() and SpellChecker::didCheckCanceled()
+        https://bugs.webkit.org/show_bug.cgi?id=83748
+
+        Reviewed by Ryosuke Niwa.
+
+        This change replaces a call for SpellChecker::didCheck() with one for
+        SpellChecker::didCheckCenceled() because didCheck() has been split into
+        didCheckSucceeded() and didCheckCanceled().
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::requestCheckingOfText): Replaced didCheck with didCheckCanceled.
+
 2012-04-18  Dirk Pranke  <dpranke@chromium.org>
 
         Fix failure in test-webkitpy after r114583.
