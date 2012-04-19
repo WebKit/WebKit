@@ -48,7 +48,7 @@
                 video.src = findMediaFile("video", "../content/test");
                 video.play();
                 // Wait for end of first cue (no events should fire while track is disabled).
-                setTimeout(testHiddenAndShowing, 300);
+                setTimeout(testHiddenAndShowing, 400);
                 consoleWrite("++ 0 events expected while mode = TextTrack.DISABLED");
                 consoleWrite("");
             }
