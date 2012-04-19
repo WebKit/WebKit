@@ -449,17 +449,13 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
         if (!premultipliedData)
             return "data:,";
 
-        unsigned char *data = premultipliedData->data();
-        for (int i = 0; i < logicalSize().width() * logicalSize().height(); i++)
-            data[i * 4 + 3] = 255; // The data is premultiplied, we just need to make it opaque.
-
         RetainPtr<CGDataProviderRef> dataProvider;
-        dataProvider.adoptCF(CGDataProviderCreateWithData(0, data, 4 * logicalSize().width() * logicalSize().height(), 0));
+        dataProvider.adoptCF(CGDataProviderCreateWithData(0, premultipliedData->data(), 4 * logicalSize().width() * logicalSize().height(), 0));
         if (!dataProvider)
             return "data:,";
 
         image.adoptCF(CGImageCreate(logicalSize().width(), logicalSize().height(), 8, 32, 4 * logicalSize().width(),
-                                    deviceRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaLast,
+                                    deviceRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaNoneSkipLast,
                                     dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     } else if (m_resolutionScale == 1)
         image.adoptCF(copyNativeImage(CopyBackingStore));
