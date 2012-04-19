@@ -61,7 +61,6 @@
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 #include "platform/WebVector.h"
-#include <public/WebMimeRegistry.h>
 
 #if USE(CG)
 #include <CoreGraphics/CGContext.h>
@@ -102,6 +101,7 @@
 
 #include "Worker.h"
 #include "WorkerContextProxy.h"
+#include <public/WebMimeRegistry.h>
 #include <wtf/Assertions.h>
 
 // We are part of the WebKit implementation.
@@ -561,46 +561,6 @@ String PlatformSupport::computedDefaultLanguage()
 bool PlatformSupport::layoutTestMode()
 {
     return WebKit::layoutTestMode();
-}
-
-// MimeType -------------------------------------------------------------------
-
-bool PlatformSupport::isSupportedImageMIMEType(const String& mimeType)
-{
-    return webKitPlatformSupport()->mimeRegistry()->supportsImageMIMEType(mimeType)
-        != WebMimeRegistry::IsNotSupported;
-}
-
-bool PlatformSupport::isSupportedJavaScriptMIMEType(const String& mimeType)
-{
-    return webKitPlatformSupport()->mimeRegistry()->supportsJavaScriptMIMEType(mimeType)
-        != WebMimeRegistry::IsNotSupported;
-}
-
-bool PlatformSupport::isSupportedNonImageMIMEType(const String& mimeType)
-{
-    return webKitPlatformSupport()->mimeRegistry()->supportsNonImageMIMEType(mimeType)
-        != WebMimeRegistry::IsNotSupported;
-}
-
-String PlatformSupport::mimeTypeForExtension(const String& extension)
-{
-    return webKitPlatformSupport()->mimeRegistry()->mimeTypeForExtension(extension);
-}
-
-String PlatformSupport::wellKnownMimeTypeForExtension(const String& extension)
-{
-    return webKitPlatformSupport()->mimeRegistry()->wellKnownMimeTypeForExtension(extension);
-}
-
-String PlatformSupport::mimeTypeFromFile(const String& path)
-{
-    return webKitPlatformSupport()->mimeRegistry()->mimeTypeFromFile(path);
-}
-
-String PlatformSupport::preferredExtensionForMIMEType(const String& mimeType)
-{
-    return webKitPlatformSupport()->mimeRegistry()->preferredExtensionForMIMEType(mimeType);
 }
 
 // Plugin ---------------------------------------------------------------------

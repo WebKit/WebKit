@@ -1,5 +1,17 @@
 2012-04-19  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Call mimeRegistry directly
+        https://bugs.webkit.org/show_bug.cgi?id=84334
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::layoutTestMode):
+
+2012-04-19  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Call sampleGamepads directly
         https://bugs.webkit.org/show_bug.cgi?id=84339
 

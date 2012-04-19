@@ -32,26 +32,28 @@
 #include "MIMETypeRegistry.h"
 
 #include "MediaPlayer.h"
-#include "PlatformSupport.h"
 #include "PluginDataChromium.h"
+
+#include <public/Platform.h>
+#include <public/WebMimeRegistry.h>
 #include <wtf/text/CString.h>
 
 // NOTE: Unlike other ports, we don't use the shared implementation in
 // MIMETypeRegistry.cpp.  Instead, we need to route most functions via
-// the PlatformSupport to the embedder.
+// Platform.h to the embedder.
 
 namespace WebCore {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
-    return PlatformSupport::mimeTypeForExtension(ext);
+    return WebKit::Platform::current()->mimeRegistry()->mimeTypeForExtension(ext);
 }
 
 #if ENABLE(FILE_SYSTEM)
 String MIMETypeRegistry::getWellKnownMIMETypeForExtension(const String &ext)
 {
     // This method must be thread safe and should not consult the OS/registry.
-    return PlatformSupport::wellKnownMimeTypeForExtension(ext);
+    return WebKit::Platform::current()->mimeRegistry()->wellKnownMimeTypeForExtension(ext);
 }
 #endif
 
@@ -63,7 +65,7 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     // FIXME: Is this really necessary??
     String mimeType = type.substring(0, static_cast<unsigned>(type.find(';')));
 
-    String ext = PlatformSupport::preferredExtensionForMIMEType(type);
+    String ext = WebKit::Platform::current()->mimeRegistry()->preferredExtensionForMIMEType(type);
     if (!ext.isEmpty() && ext[0] == '.')
         ext = ext.substring(1);
 
@@ -89,7 +91,8 @@ String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 
 bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 { 
-    return PlatformSupport::isSupportedImageMIMEType(mimeType);
+    return WebKit::Platform::current()->mimeRegistry()->supportsImageMIMEType(mimeType)
+        != WebKit::WebMimeRegistry::IsNotSupported;
 }
 
 bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
@@ -110,12 +113,14 @@ bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeTyp
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
 {
-    return PlatformSupport::isSupportedJavaScriptMIMEType(mimeType);
+    return WebKit::Platform::current()->mimeRegistry()->supportsJavaScriptMIMEType(mimeType)
+        != WebKit::WebMimeRegistry::IsNotSupported;
 }
     
 bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 {
-    return PlatformSupport::isSupportedNonImageMIMEType(mimeType);
+    return WebKit::Platform::current()->mimeRegistry()->supportsNonImageMIMEType(mimeType)
+        != WebKit::WebMimeRegistry::IsNotSupported;
 }
 
 bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)

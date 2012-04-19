@@ -213,15 +213,6 @@ public:
     // Delta of memory usage growth (vs. last actualMemoryUsageMB()) to force GC when memory usage is high.
     static int highUsageDeltaMB();
 
-    // MimeType -----------------------------------------------------------
-    static bool isSupportedImageMIMEType(const String& mimeType);
-    static bool isSupportedJavaScriptMIMEType(const String& mimeType);
-    static bool isSupportedNonImageMIMEType(const String& mimeType);
-    static String mimeTypeForExtension(const String& fileExtension);
-    static String wellKnownMimeTypeForExtension(const String& fileExtension);
-    static String mimeTypeFromFile(const String& filePath);
-    static String preferredExtensionForMIMEType(const String& mimeType);
-
     // Plugin -------------------------------------------------------------
     static bool plugins(bool refresh, Vector<PluginInfo>*);
     static NPObject* pluginScriptableObject(Widget*);
