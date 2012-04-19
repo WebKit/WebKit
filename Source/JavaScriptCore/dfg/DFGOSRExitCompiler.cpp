@@ -74,7 +74,8 @@ void compileOSRExit(ExecState* exec)
     {
         AssemblyHelpers jit(globalData, codeBlock);
         OSRExitCompiler exitCompiler(jit);
-        
+
+        jit.jitAssertHasValidCallFrame();
         exitCompiler.compileExit(exit, recovery);
         
         LinkBuffer patchBuffer(*globalData, &jit, codeBlock);

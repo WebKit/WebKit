@@ -44,6 +44,7 @@ void JITCompiler::linkOSRExits()
     for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
         OSRExit& exit = codeBlock()->osrExit(i);
         exit.m_check.initialJump().link(this);
+        jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &globalData()->osrExitIndex);
         beginUninterruptedSequence();
         exit.m_check.switchToLateJump(jump());

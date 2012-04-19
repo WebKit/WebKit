@@ -140,6 +140,13 @@ void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
     checkCell.link(this);
 }
 #endif // USE(JSVALUE32_64)
+
+void AssemblyHelpers::jitAssertHasValidCallFrame()
+{
+    Jump checkCFR = branchTestPtr(Zero, GPRInfo::callFrameRegister, TrustedImm32(7));
+    breakpoint();
+    checkCFR.link(this);
+}
 #endif // DFG_ENABLE(JIT_ASSERT)
 
 } } // namespace JSC::DFG

@@ -1,5 +1,33 @@
 2012-04-19  Filip Pizlo  <fpizlo@apple.com>
 
+        It should be possible to perform debugCall on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=84381
+
+        Reviewed by Oliver Hunt.
+        
+        debugCall() was clobbering the argument to the call it was making, leading to a
+        corrupt ExecState*. This change fixes that issue by using a scratch register that
+        does not clobber arguments, and it also introduces more assertions that we have
+        a valid call frame.
+
+        * dfg/DFGAssemblyHelpers.cpp:
+        (DFG):
+        (JSC::DFG::AssemblyHelpers::jitAssertHasValidCallFrame):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::selectScratchGPR):
+        (AssemblyHelpers):
+        (JSC::DFG::AssemblyHelpers::debugCall):
+        (JSC::DFG::AssemblyHelpers::jitAssertHasValidCallFrame):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::selectScratchGPR):
+
+2012-04-19  Filip Pizlo  <fpizlo@apple.com>
+
         LLInt no-JIT fallback native call trampoline's exception handler incorrectly assumes that
         the PB/PC has been preserved
         https://bugs.webkit.org/show_bug.cgi?id=84367

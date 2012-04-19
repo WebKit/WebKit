@@ -931,6 +931,8 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
+    
+    m_jit.jitAssertHasValidCallFrame();
 
     ASSERT(m_arguments.size() == block.variablesAtHead.numberOfArguments());
     for (size_t i = 0; i < m_arguments.size(); ++i) {
