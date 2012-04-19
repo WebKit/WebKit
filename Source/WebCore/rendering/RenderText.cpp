@@ -199,12 +199,8 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         needsResetText = true;
     }
 
-    ETextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TTNONE;
-    ETextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TSNONE;
-    if (needsResetText || oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()) {
-        if (RefPtr<StringImpl> textToTransform = originalText())
-            setText(textToTransform.release(), true);
-    }
+    if (needsResetText || oldTransform != newStyle->textTransform() || oldSecurity != newStyle->textSecurity()) 
+        transformText();
 }
 
 void RenderText::removeAndDestroyTextBoxes()
@@ -223,6 +219,13 @@ void RenderText::removeAndDestroyTextBoxes()
     }
     deleteTextBoxes();
 }
+
+void RenderText::transformText()
+{
+    if (RefPtr<StringImpl> textToTransform = originalText())
+        setText(textToTransform.release(), true);
+}
++
 
 void RenderText::willBeDestroyed()
 {

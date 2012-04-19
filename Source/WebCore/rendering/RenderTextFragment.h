@@ -47,6 +47,9 @@ public:
 
     StringImpl* contentString() const { return m_contentString.get(); }
     virtual PassRefPtr<StringImpl> originalText() const;
+    virtual void setText(PassRefPtr<StringImpl>, bool force = false) OVERRIDE;
+
+    virtual void transformText() OVERRIDE;
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -54,7 +57,6 @@ protected:
 private:
     virtual void willBeDestroyed();
 
-    virtual void setTextInternal(PassRefPtr<StringImpl>);
     virtual UChar previousCharacter() const;
     RenderBlock* blockForAccompanyingFirstLetter() const;
 
