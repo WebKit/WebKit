@@ -75,7 +75,7 @@ void RenderTextFragment::willBeDestroyed()
     RenderText::willBeDestroyed();
 }
 
-+void RenderTextFragment::setText(PassRefPtr<StringImpl> text, bool force)
+void RenderTextFragment::setText(PassRefPtr<StringImpl> text, bool force)
 {
     RenderText::setText(text, force);
     m_start = 0;
@@ -87,6 +87,8 @@ void RenderTextFragment::willBeDestroyed()
         if (Node* t = node()) {
             ASSERT(!t->renderer());
             t->setRenderer(this);
+        }
+    }
 }
 
 void RenderTextFragment::transformText()

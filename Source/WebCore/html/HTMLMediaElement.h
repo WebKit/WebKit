@@ -495,7 +495,7 @@ private:
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
     RefPtr<TimeRanges> m_playedTimeRanges;
-    GenericEventQueue m_asyncEventQueue;
+    OwnPtr<GenericEventQueue> m_asyncEventQueue;
 
     float m_playbackRate;
     float m_defaultPlaybackRate;
@@ -522,9 +522,8 @@ private:
     // Loading state.
     enum LoadState { WaitingForSource, LoadingFromSrcAttr, LoadingFromSourceElement };
     LoadState m_loadState;
-    HTMLSourceElement* m_currentSourceNode;
-    Node* m_nextChildNodeToConsider;
-    Node* sourceChildEndOfListValue() { return static_cast<Node*>(this); }
+    RefPtr<HTMLSourceElement> m_currentSourceNode;
+    RefPtr<Node> m_nextChildNodeToConsider;
 
     OwnPtr<MediaPlayer> m_player;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

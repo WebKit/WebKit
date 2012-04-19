@@ -704,7 +704,7 @@ static bool containsNonEditableRegion(Node* node)
     return false;
 }
 
-void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* node, Node* pastEndNode)
+void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRefPtr<Node> startNode, PassRefPtr<Node> pastEndNode)
 {
     if (m_removeOnly)
         return;
@@ -723,7 +723,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
             if (pastEndNode && pastEndNode->isDescendantOf(node.get()))
                 break;
             // Add to this element's inline style and skip over its contents.
-            HTMLElement* element = toHTMLElement(node);
+            HTMLElement* element = toHTMLElement(node.get());
             RefPtr<StylePropertySet> inlineStyle = element->ensureInlineStyleDecl()->copy();
             inlineStyle->merge(style->style());
             setNodeAttribute(element, styleAttr, inlineStyle->asText());
@@ -737,7 +737,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
         if (node->childNodeCount()) {
             if (node->contains(pastEndNode.get()) || containsNonEditableRegion(node.get()) || !node->parentNode()->rendererIsEditable())
                 continue;
-            if (editingIgnoresContent(node)) {
+            if (editingIgnoresContent(node.get())) {
                 next = node->traverseNextSibling();
                 continue;
             }

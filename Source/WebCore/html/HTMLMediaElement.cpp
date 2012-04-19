@@ -2552,15 +2552,22 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
     KURL mediaURL;
     Node* node;
     HTMLSourceElement* source = 0;
+    String type;
     bool lookingForStartNode = m_nextChildNodeToConsider;
-    bool canUse = false;
+    bool canUseSourceElement = false;
+    bool okToLoadSourceURL;
 
-    for (node = firstChild(); !canUse && node; node = node->nextSibling()) {
+    NodeVector potentialSourceNodes;
+    getChildNodes(this, potentialSourceNodes);
+    for (unsigned i = 0; !canUseSourceElement && i < potentialSourceNodes.size(); ++i) {
+        node = potentialSourceNodes[i].get();
         if (lookingForStartNode && m_nextChildNodeToConsider != node)
             continue;
         lookingForStartNode = false;
-        
+
         if (!node->hasTagName(sourceTag))
+            continue;
+        if (node->parentNode() != this)
             continue;
 
         source = static_cast<HTMLSourceElement*>(node);
@@ -2595,34 +2602,41 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
         }
 
         // Is it safe to load this url?
-        if (!isSafeToLoadURL(mediaURL, actionIfInvalid) || !dispatchBeforeLoadEvent(mediaURL.string()))
+        okToLoadSourceURL = isSafeToLoadURL(mediaURL, actionIfInvalid) && dispatchBeforeLoadEvent(mediaURL.string());
+
+        // A 'beforeload' event handler can mutate the DOM, so check to see if the source element is still a child node.
+        if (node->parentNode() != this) {
+            LOG(Media, "HTMLMediaElement::selectNextSourceChild : 'beforeload' removed current element");
+            source = 0;
+            goto check_again;
+        }
+
+        if (!okToLoadSourceURL)
             goto check_again;
 
         // Making it this far means the <source> looks reasonable.
-        canUse = true;
+        canUseSourceElement = true;
 
 check_again:
-        if (!canUse && actionIfInvalid == Complain)
+        if (!canUseSourceElement && actionIfInvalid == Complain && source)
             source->scheduleErrorEvent();
     }
 
-    if (canUse) {
+    if (canUseSourceElement) {
         if (contentType)
             *contentType = ContentType(source->type());
         m_currentSourceNode = source;
         m_nextChildNodeToConsider = source->nextSibling();
-        if (!m_nextChildNodeToConsider)
-            m_nextChildNodeToConsider = sourceChildEndOfListValue();
     } else {
         m_currentSourceNode = 0;
-        m_nextChildNodeToConsider = sourceChildEndOfListValue();
+        m_nextChildNodeToConsider = 0;
     }
 
 #if !LOG_DISABLED
     if (shouldLog)
-        LOG(Media, "HTMLMediaElement::selectNextSourceChild -> %p, %s", m_currentSourceNode, canUse ? urlForLogging(mediaURL).utf8().data() : "");
+        LOG(Media, "HTMLMediaElement::selectNextSourceChild -> %p, %s", m_currentSourceNode.get(), canUseSourceElement ? urlForLogging(mediaURL).utf8().data() : "");
 #endif
-    return canUse ? mediaURL : KURL();
+    return canUseSourceElement ? mediaURL : KURL();
 }
 
 void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)

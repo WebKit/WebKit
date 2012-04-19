@@ -593,6 +593,11 @@ private:
         void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
 #endif
 
+        bool shouldPaint() const { return m_shouldPaint; }
+        void setShouldPaint(bool shouldPaint) { m_shouldPaint = shouldPaint; }
+        bool isDescendant() const { return m_isDescendant; }
+        void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
+
         RenderBox* m_renderer;
         RootInlineBox* m_originatingLine;
         LayoutRect m_frameRect;
