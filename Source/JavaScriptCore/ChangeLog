@@ -1,3 +1,14 @@
+2012-04-19  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [CMake] Build fix after r114575
+        https://bugs.webkit.org/show_bug.cgi?id=84322
+
+        Reviewed by Simon Hausmann.
+
+        Build fix, adding WTF when linking jsc shell.
+
+        * shell/CMakeLists.txt:
+
 2012-04-18  Filip Pizlo  <fpizlo@apple.com>
 
         JSC testing should have complete coverage over typed array types

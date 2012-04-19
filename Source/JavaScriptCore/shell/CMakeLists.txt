@@ -3,6 +3,7 @@ SET(JSC_SOURCES
 )
 
 SET(JSC_LIBRARIES
+    ${WTF_LIBRARY_NAME}
     ${JavaScriptCore_LIBRARY_NAME}
 )
 
