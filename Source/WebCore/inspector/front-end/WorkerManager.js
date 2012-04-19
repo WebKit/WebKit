@@ -98,7 +98,7 @@ WebInspector.WorkerManager._calculateWorkerInspectorTitle = function()
     var expression = "location.href";
     if (WebInspector.queryParamsObject["isSharedWorker"])
         expression += " + (this.name ? ' (' + this.name + ')' : '')";
-    RuntimeAgent.evaluate.invoke({expression:expression, doNotPauseOnExceptionsAndMuteConsole:true, returnByValue: true}, evalCallback.bind(this));
+    RuntimeAgent.evaluate.invoke({expression:expression, doNotPauseOnExceptions:true, returnByValue: true}, evalCallback.bind(this));
     
     /**
      * @param {?Protocol.Error} error

@@ -586,14 +586,14 @@ WebInspector.ConsoleView.prototype = {
      * @param {string} expression
      * @param {string} objectGroup
      * @param {boolean} includeCommandLineAPI
-     * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
+     * @param {boolean} doNotPauseOnExceptions
      * @param {boolean} returnByValue
      * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
      */
-    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, returnByValue, callback)
     {
         if (WebInspector.debuggerPresentationModel.selectedCallFrame) {
-            WebInspector.debuggerPresentationModel.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback);
+            WebInspector.debuggerPresentationModel.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, returnByValue, callback);
             return;
         }
 
@@ -620,7 +620,7 @@ WebInspector.ConsoleView.prototype = {
             else
                 callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
         }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentEvaluationContextId(), returnByValue, evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), returnByValue, evalCallback);
     },
 
     evaluateUsingTextPrompt: function(expression, showResultOnly)

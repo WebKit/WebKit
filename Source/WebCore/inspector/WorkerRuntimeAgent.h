@@ -52,8 +52,6 @@ private:
     WorkerRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, WorkerContext*);
     virtual ScriptState* scriptStateForFrameId(const String& frameId);
     virtual ScriptState* getDefaultInspectedState();
-    virtual void muteConsole();
-    virtual void unmuteConsole();
     WorkerContext* m_workerContext;
 };
 

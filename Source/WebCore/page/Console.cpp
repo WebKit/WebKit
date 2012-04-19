@@ -55,10 +55,6 @@
 
 namespace WebCore {
 
-namespace {
-    int muteCount = 0;
-}
-
 Console::Console(Frame* frame)
     : DOMWindowProperty(frame)
 {
@@ -132,6 +128,8 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     printf("%s %s:", sourceString, levelString);
 }
 
+void addMessage(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>);
+
 void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
 {
     addMessage(source, type, level, message, String(), 0, callStack);
@@ -139,10 +137,6 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
 
 void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
 {
-
-    if (muteCount && source != ConsoleAPIMessageSource)
-        return;
-
     Page* page = this->page();
     if (!page)
         return;
@@ -215,11 +209,6 @@ void Console::info(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallS
 void Console::log(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
     addMessage(LogMessageType, LogMessageLevel, arguments, callStack);
-}
-
-void Console::warn(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
-{
-    addMessage(LogMessageType, WarningMessageLevel, arguments, callStack);
 }
 
 void Console::dir(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
@@ -342,17 +331,9 @@ void Console::groupEnd()
     InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, EndGroupMessageType, LogMessageLevel, String(), String(), 0);
 }
 
-// static
-void Console::mute()
+void Console::warn(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    muteCount++;
-}
-
-// static
-void Console::unmute()
-{
-    ASSERT(muteCount > 0);
-    muteCount--;
+    addMessage(LogMessageType, WarningMessageLevel, arguments, callStack);
 }
 
 PassRefPtr<MemoryInfo> Console::memory() const

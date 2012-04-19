@@ -105,7 +105,6 @@ public:
                              const String& expression,
                              const String* objectGroup,
                              const bool* includeCommandLineAPI,
-                             const bool* doNotPauseOnExceptionsAndMuteConsole,
                              const bool* returnByValue,
                              RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
                              TypeBuilder::OptOutput<bool>* wasThrown);
@@ -125,8 +124,6 @@ protected:
 
     virtual void startListeningScriptDebugServer() = 0;
     virtual void stopListeningScriptDebugServer() = 0;
-    virtual void muteConsole() = 0;
-    virtual void unmuteConsole() = 0;
 
 private:
     void enable();

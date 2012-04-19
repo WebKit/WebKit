@@ -56,8 +56,6 @@ private:
     virtual void startListeningScriptDebugServer();
     virtual void stopListeningScriptDebugServer();
     virtual WorkerScriptDebugServer& scriptDebugServer();
-    virtual void muteConsole();
-    virtual void unmuteConsole();
 
     WorkerScriptDebugServer m_scriptDebugServer;
     WorkerContext* m_inspectedWorkerContext;

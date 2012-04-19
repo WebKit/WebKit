@@ -459,14 +459,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
-     * @param {string} code
-     * @param {string} objectGroup
-     * @param {boolean} includeCommandLineAPI
-     * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
-     * @param {boolean} returnByValue
      * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
      */
-    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
     {
         /**
          * @param {?RuntimeAgent.RemoteObject} result
@@ -483,7 +478,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame);
         }
 
-        this.selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, didEvaluate.bind(this));
+        this.selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));
     },
 
     /**
@@ -689,11 +684,10 @@ WebInspector.PresentationCallFrame.prototype = {
      * @param {string} code
      * @param {string} objectGroup
      * @param {boolean} includeCommandLineAPI
-     * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
      * @param {boolean} returnByValue
      * @param {function(?RuntimeAgent.RemoteObject, boolean=)=} callback
      */
-    evaluate: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    evaluate: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
     {
         /**
          * @this {WebInspector.PresentationCallFrame}
@@ -710,7 +704,7 @@ WebInspector.PresentationCallFrame.prototype = {
             }
             callback(result, wasThrown);
         }
-        DebuggerAgent.evaluateOnCallFrame(this._callFrame.callFrameId, code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, didEvaluateOnCallFrame.bind(this));
+        DebuggerAgent.evaluateOnCallFrame(this._callFrame.callFrameId, code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluateOnCallFrame.bind(this));
     },
 
     /**

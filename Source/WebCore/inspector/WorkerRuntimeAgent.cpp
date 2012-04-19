@@ -58,16 +58,6 @@ ScriptState* WorkerRuntimeAgent::getDefaultInspectedState()
     return scriptStateFromWorkerContext(m_workerContext);
 }
 
-void WorkerRuntimeAgent::muteConsole()
-{
-    // We don't need to mute console for workers.
-}
-
-void WorkerRuntimeAgent::unmuteConsole()
-{
-    // We don't need to mute console for workers.
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR) && ENABLE(WORKERS)
