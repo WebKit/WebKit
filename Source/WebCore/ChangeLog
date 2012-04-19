@@ -1,3 +1,25 @@
+2012-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Heap-use-after-free in WebCore::InlineFlowBox::deleteLine due to fullscreen issues.
+        https://bugs.webkit.org/show_bug.cgi?id=82055
+
+        Reviewed by David Hyatt.
+
+        No new tests; fixes fuzz test crasher which is not reproducible in DRT or WKTR.
+
+        When a RenderFullScreen object is inserted between a child and parent renderer, make sure the
+        parent renderer deletes its line boxes by calling setNeedsLayoutAndPrefWidthsRecalc().  This
+        forces its InlineBox renderers to be removed from the line boxes and their parents in the correct
+        order, fixing a double-delete crash.
+
+        The same is true when unwrapping the RenderFullScreen object, and when creating and inserting
+        the full screen placeholder.
+
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::wrapRenderer):
+        (RenderFullScreen::unwrapRenderer):
+        (RenderFullScreen::createPlaceholder):
+
 2012-04-18  Ken Buchanan  <kenrb@chromium.org>
 
         Assert failure from capitalized RenderTextFragment
