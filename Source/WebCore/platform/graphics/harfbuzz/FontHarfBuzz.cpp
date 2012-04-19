@@ -60,16 +60,6 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static void adjustTextRenderMode(SkPaint* paint, PlatformContextSkia* skiaContext)
-{
-    // Our layers only have a single alpha channel. This means that subpixel
-    // rendered text cannot be compositied correctly when the layer is
-    // collapsed. Therefore, subpixel text is disabled when we are drawing
-    // onto a layer or when the compositor is being used.
-    if (skiaContext->canvas()->isDrawingToLayer() || skiaContext->isDrawingToImageBuffer())
-        paint->setLCDRenderText(false);
-}
-
 void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
                       const GlyphBuffer& glyphBuffer,  int from, int numGlyphs,
                       const FloatPoint& point) const {
@@ -111,7 +101,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         SkPaint paint;
         gc->platformContext()->setupPaintForFilling(&paint);
         font->platformData().setupPaint(&paint);
-        adjustTextRenderMode(&paint, gc->platformContext());
+        gc->platformContext()->adjustTextRenderMode(&paint);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
         if (isVertical) {
@@ -133,7 +123,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         SkPaint paint;
         gc->platformContext()->setupPaintForStroking(&paint, 0, 0);
         font->platformData().setupPaint(&paint);
-        adjustTextRenderMode(&paint, gc->platformContext());
+        gc->platformContext()->adjustTextRenderMode(&paint);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
         if (textMode & TextModeFill) {
@@ -201,13 +191,13 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
 
         if (fill) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
-            adjustTextRenderMode(&fillPaint, gc->platformContext());
+            gc->platformContext()->adjustTextRenderMode(&fillPaint);
             canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, fillPaint);
         }
 
         if (stroke) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&strokePaint);
-            adjustTextRenderMode(&strokePaint, gc->platformContext());
+            gc->platformContext()->adjustTextRenderMode(&strokePaint);
             canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, strokePaint);
         }
     }

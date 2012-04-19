@@ -137,17 +137,6 @@ static void skiaDrawText(SkCanvas* canvas,
     }
 }
 
-// lifted from FontSkia.cpp
-static bool disableTextLCD(PlatformContextSkia* skiaContext)
-{
-    // Our layers only have a single alpha channel. This means that subpixel
-    // rendered text cannot be compositied correctly when the layer is
-    // collapsed. Therefore, subpixel text is disabled when we are drawing
-    // onto a layer or when the compositor is being used.
-    return skiaContext->canvas()->isDrawingToLayer()
-           || skiaContext->isDrawingToImageBuffer();
-}
-
 // Lookup the current system settings for font smoothing.
 // We cache these values for performance, but if the browser has away to be
 // notified when these change, we could re-query them at that time.
@@ -198,7 +187,7 @@ static void setupPaintForFont(SkPaint* paint, PlatformContextSkia* pcs,
     textFlags &= getDefaultGDITextFlags();
 
     // do this check after our switch on lfQuality
-    if (disableTextLCD(pcs)) {
+    if (!pcs->couldUseLCDRenderedText()) {
         textFlags &= ~SkPaint::kLCDRenderText_Flag;
         // If we *just* clear our request for LCD, then GDI seems to
         // sometimes give us AA text, and sometimes give us BW text. Since the

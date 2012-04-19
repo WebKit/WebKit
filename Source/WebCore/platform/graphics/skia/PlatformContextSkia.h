@@ -207,6 +207,10 @@ public:
     // For drawing operations that do not fill the entire rect.
     void didDrawBounded(const SkRect&, const SkPaint&);
 
+    // Turn off LCD text for the paint if not supported on this context.
+    void adjustTextRenderMode(SkPaint*);
+    bool couldUseLCDRenderedText();
+
 private:
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.

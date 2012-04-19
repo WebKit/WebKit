@@ -660,4 +660,26 @@ void PlatformContextSkia::didDrawBounded(const SkRect& rect, const SkPaint& pain
         m_opaqueRegion.didDrawBounded(this, m_opaqueRegionTransform, rect, paint);
 }
 
+void PlatformContextSkia::adjustTextRenderMode(SkPaint* paint)
+{
+    if (!paint->isLCDRenderText())
+        return;
+
+    paint->setLCDRenderText(couldUseLCDRenderedText());
+}
+
+bool PlatformContextSkia::couldUseLCDRenderedText()
+{
+    // Our layers only have a single alpha channel. This means that subpixel
+    // rendered text cannot be composited correctly when the layer is
+    // collapsed. Therefore, subpixel text is disabled when we are drawing
+    // onto a layer.
+    if (canvas()->isDrawingToLayer())
+        return false;
+
+    // If this text is not in an image buffer and so won't be externally
+    // composited, then subpixel antialiasing is fine.
+    return !isDrawingToImageBuffer();
+}
+
 } // namespace WebCore
