@@ -36,9 +36,9 @@ namespace WebCore {
 
 class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {
 public:
-    explicit ShadowRootVector(ShadowTree* tree)
+    explicit ShadowRootVector(ShadowRootList* list)
     {
-        for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
+        for (ShadowRoot* root = list->youngestShadowRoot(); root; root = root->olderShadowRoot())
             append(root);
     }
 };
