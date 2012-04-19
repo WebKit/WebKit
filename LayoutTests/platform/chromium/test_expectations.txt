@@ -853,7 +853,7 @@ BUGCR8941 SLOW WIN : http/tests/xmlhttprequest/web-apps/013.html = FAIL
 BUGCR8941 WIN : http/tests/xmlhttprequest/web-apps/012.html = FAIL
 
 // Has a 150ms setTimeout and seems racy
-BUGWK72402 MAC DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
+BUGWK72402 DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
 
 // Incrorect results, in incorrect international font metrics.
 BUGCR20521 WIN : fast/text/atsui-multiple-renderers.html = IMAGE+TEXT
@@ -3076,8 +3076,6 @@ BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html
 
 BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRASH
 
-BUGWK70837 : compositing/video/video-poster.html = PASS TIMEOUT TEXT
-
 BUGWK70866 LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT PASS
 BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS
@@ -3270,7 +3268,6 @@ BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = P
 
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
-BUGWK78175 LEOPARD SNOWLEOPARD : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
 
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
@@ -3681,10 +3678,6 @@ BUGWK82776 SKIP : storage/indexeddb/pending-version-change-stuck-works-with-term
 BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
 
 BUGCR121442 LINUX DEBUG : plugins/iframe-shims.html = CRASH TEXT PASS
-
-BUGWK82994 : compositing/reflections/backface-hidden-reflection.html = PASS CRASH
-
-BUGWK83019 WIN DEBUG : compositing/reflections/nested-reflection-transformed2.html = PASS CRASH
 
 BUGWK83185 MAC DEBUG : fast/writing-mode/relative-positioning-percentages.html = CRASH
 BUGWK83219 LION : fonts/cursive.html = PASS IMAGE+TEXT
