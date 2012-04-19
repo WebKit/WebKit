@@ -244,20 +244,20 @@ namespace WebCore {
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the
     // underlying buffer alive while the string is still live in the V8 engine.
-    inline v8::Local<v8::String> v8ExternalString(const String& string, v8::Isolate* isolate = 0)
+    inline v8::Local<v8::String> v8ExternalString(const String& string)
     {
         StringImpl* stringImpl = string.impl();
         if (!stringImpl)
             return v8::String::Empty();
 
-        V8BindingPerIsolateData* data = isolate ? static_cast<V8BindingPerIsolateData*>(isolate->GetData()) : V8BindingPerIsolateData::current();
+        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
         return data->stringCache()->v8ExternalString(stringImpl);
     }
 
     // Convert a string to a V8 string.
-    inline v8::Handle<v8::String> v8String(const String& string, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::String> v8String(const String& string)
     {
-        return v8ExternalString(string, isolate);
+        return v8ExternalString(string);
     }
 
     template<typename T>
@@ -396,19 +396,19 @@ namespace WebCore {
         return v8::String::NewUndetectable(fromWebCoreString(str), str.length());
     }
 
-    inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrNull(const String& str)
     {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str, isolate));
+        return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str));
     }
 
-    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str)
     {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str, isolate));
+        return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str));
     }
 
-    inline v8::Handle<v8::Value> v8StringOrFalse(const String& str, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrFalse(const String& str)
     {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::False()) : v8::Handle<v8::Value>(v8String(str, isolate));
+        return str.isNull() ? v8::Handle<v8::Value>(v8::False()) : v8::Handle<v8::Value>(v8String(str));
     }
 
     template <class T> v8::Handle<v8::Value> v8NumberArray(const Vector<T>& values)

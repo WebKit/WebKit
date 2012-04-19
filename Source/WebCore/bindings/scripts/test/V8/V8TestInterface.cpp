@@ -53,7 +53,7 @@ static v8::Handle<v8::Value> supplementalStr1AttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestInterface.supplementalStr1._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return v8String(TestSupplemental::supplementalStr1(imp), info.GetIsolate());
+    return v8String(TestSupplemental::supplementalStr1(imp));
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -64,7 +64,7 @@ static v8::Handle<v8::Value> supplementalStr2AttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestInterface.supplementalStr2._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return v8String(TestSupplemental::supplementalStr2(imp), info.GetIsolate());
+    return v8String(TestSupplemental::supplementalStr2(imp));
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
