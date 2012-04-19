@@ -1637,7 +1637,7 @@ public:
             selector->setEffectiveZoom(RenderStyle::initialZoom());
             selector->setZoom(RenderStyle::initialZoom());
         } else if (primitiveValue->getIdent() == CSSValueDocument) {
-            float docZoom = selector->document()->renderer()->style()->zoom();
+            float docZoom = selector->rootElementStyle() ? selector->rootElementStyle()->zoom() : RenderStyle::initialZoom();
             selector->setEffectiveZoom(docZoom);
             selector->setZoom(docZoom);
         } else if (primitiveValue->isPercentage()) {
