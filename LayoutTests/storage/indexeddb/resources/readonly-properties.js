@@ -23,8 +23,7 @@ function test()
     removeVendorPrefixes();
 
     name = "foo";
-    description = "My Test Database";
-    request = evalAndLog("indexedDB.open(name, description)");
+    request = evalAndLog("indexedDB.open(name)");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

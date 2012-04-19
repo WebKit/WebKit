@@ -16,7 +16,6 @@ function test()
     shouldBeTrue("typeof indexedDB.deleteDatabase === 'function'");
 
     name = 'storage/indexeddb/factory-basics';
-    description = "My Test Database";
 
     request = evalAndLog("indexedDB.getDatabaseNames()");
     request.onsuccess = getDatabaseNamesSuccess1;
@@ -30,7 +29,7 @@ function getDatabaseNamesSuccess1()
     shouldBeFalse("databaseNames.contains('" + name + "')");
     shouldBeFalse("databaseNames.contains('DATABASE THAT DOES NOT EXIST')");
 
-    request = evalAndLog("indexedDB.open(name, description)");
+    request = evalAndLog("indexedDB.open(name)");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

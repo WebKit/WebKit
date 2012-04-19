@@ -13,7 +13,7 @@ indexedDB.getDatabaseNames()
 databaseNames = event.target.result
 PASS databaseNames.contains('storage/indexeddb/factory-basics') is false
 PASS databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
-indexedDB.open(name, description)
+indexedDB.open(name)
 event.target.result.close()
 indexedDB.getDatabaseNames()
 databaseNames = event.target.result

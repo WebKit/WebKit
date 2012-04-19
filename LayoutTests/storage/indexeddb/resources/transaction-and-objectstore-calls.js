@@ -9,7 +9,7 @@ function test()
 {
     removeVendorPrefixes();
 
-    request = evalAndLog("indexedDB.open('transaction-and-objectstore-calls', 'description')");
+    request = evalAndLog("indexedDB.open('transaction-and-objectstore-calls')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
