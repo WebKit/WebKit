@@ -21,8 +21,6 @@ BUGWK57688 : fast/text/international/bidi-AN-after-empty-run.html = PASS TEXT
 BUGWK57688 : fast/text/international/bidi-CS-after-AN.html = PASS TEXT
 BUGWK57688 : fast/text/international/thai-line-breaks.html = PASS TEXT
 
-BUGWK58192 : plugins/npp-set-window-called-during-destruction.html = TEXT
-
 // Flaky tests when run multi-process
 BUGWK58192 : fast/dom/frame-loading-via-document-write.html = TEXT PASS
 BUGWK58192 : http/tests/appcache/fail-on-update-2.html = TEXT PASS
@@ -163,7 +161,6 @@ BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
-BUGWK75568 : animations/combo-transform-translate+scale.html = TEXT
 BUGWK75568 : editing/spelling/inline_spelling_markers.html = TEXT
 BUGWK75568 : fast/forms/form-element-geometry.html = TEXT
 BUGWK75568 : fast/forms/input-value.html = TEXT
@@ -235,9 +232,7 @@ BUGWK75568 : fast/forms/input-appearance-default-bkcolor.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-disabled.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-focus.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-height.html = TEXT
-BUGWK75568 : fast/forms/input-appearance-preventDefault.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-readonly.html = TEXT
-BUGWK75568 : fast/forms/input-appearance-selection.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-visibility.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-width.html = TEXT
 BUGWK75568 : fast/forms/input-baseline.html = TEXT
@@ -261,7 +256,6 @@ BUGWK75568 : fast/forms/placeholder-pseudo-style.html = TEXT
 BUGWK75568 : fast/forms/plaintext-mode-2.html = TEXT
 BUGWK75568 : fast/forms/search-cancel-button-style-sharing.html = TEXT
 BUGWK75568 : fast/forms/search-display-none-cancel-button.html = TEXT
-BUGWK75568 : fast/forms/search-rtl.html = TEXT
 BUGWK75568 : fast/forms/search-styled.html = TEXT
 BUGWK75568 : fast/forms/search-vertical-alignment.html = TEXT
 BUGWK75568 : fast/forms/searchfield-heights.html = TEXT
