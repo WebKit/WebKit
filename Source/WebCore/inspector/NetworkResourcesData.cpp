@@ -147,7 +147,6 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
     resourceData->setFrameId(frameId);
     resourceData->setUrl(response.url());
     resourceData->setDecoder(createOtherResourceTextDecoder(response.mimeType(), response.textEncodingName()));
-    resourceData->setHTTPStatusCode(response.httpStatusCode());
 }
 
 void NetworkResourcesData::setResourceType(const String& requestId, InspectorPageAgent::ResourceType type)
@@ -164,14 +163,6 @@ InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(const String
     if (!resourceData)
         return InspectorPageAgent::OtherResource;
     return resourceData->type();
-}
-
-int NetworkResourcesData::httpStatusCode(const String& requestId)
-{
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
-    if (!resourceData)
-        return 0;
-    return resourceData->httpStatusCode();
 }
 
 void NetworkResourcesData::setResourceContent(const String& requestId, const String& content)
