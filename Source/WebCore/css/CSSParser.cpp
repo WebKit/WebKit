@@ -3658,7 +3658,7 @@ bool CSSParser::parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, d
         return true;
     if (!isComma(v))
         return false;
-    v = args->next();
+    args->next();
     return true;
 }
 
