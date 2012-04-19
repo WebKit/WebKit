@@ -91,6 +91,16 @@ struct CCLayerIteratorValue {
     static const int LayerIndexRepresentingTargetRenderSurface = -1;
 };
 
+// The position of a layer iterator that is independent of its many template types.
+template <typename LayerType>
+struct CCLayerIteratorPosition {
+    bool representsTargetRenderSurface;
+    bool representsContributingRenderSurface;
+    bool representsItself;
+    LayerType* targetRenderSurfaceLayer;
+    LayerType* currentLayer;
+};
+
 // An iterator class for walking over layers in the RenderSurface-Layer tree.
 template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename IteratorActionType>
 class CCLayerIterator {
@@ -118,6 +128,17 @@ public:
     bool representsItself() const { return !representsTargetRenderSurface() && !representsContributingRenderSurface(); }
 
     LayerType* targetRenderSurfaceLayer() const { return getRawPtr((*m_renderSurfaceLayerList)[m_targetRenderSurfaceLayerIndex]); }
+
+    operator const CCLayerIteratorPosition<LayerType>() const
+    {
+        CCLayerIteratorPosition<LayerType> position;
+        position.representsTargetRenderSurface = representsTargetRenderSurface();
+        position.representsContributingRenderSurface = representsContributingRenderSurface();
+        position.representsItself = representsItself();
+        position.targetRenderSurfaceLayer = targetRenderSurfaceLayer();
+        position.currentLayer = currentLayer();
+        return position;
+    }
 
 private:
     CCLayerIterator(const LayerList* renderSurfaceLayerList, bool start)

@@ -132,6 +132,8 @@ struct CCOcclusionTrackerTestMainThreadTypes {
     typedef PassRefPtr<LayerChromium> PassLayerPtrType;
     typedef RefPtr<ContentLayerType> ContentLayerPtrType;
     typedef PassRefPtr<ContentLayerType> PassContentLayerPtrType;
+    typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> LayerIterator;
+    typedef CCOcclusionTracker OcclusionTrackerType;
 
     static PassLayerPtrType createLayer() { return LayerChromium::create(); }
     static PassContentLayerPtrType createContentLayer() { return adoptRef(new ContentLayerType()); }
@@ -145,6 +147,8 @@ struct CCOcclusionTrackerTestImplThreadTypes {
     typedef PassOwnPtr<CCLayerImpl> PassLayerPtrType;
     typedef OwnPtr<ContentLayerType> ContentLayerPtrType;
     typedef PassOwnPtr<ContentLayerType> PassContentLayerPtrType;
+    typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> LayerIterator;
+    typedef CCOcclusionTrackerImpl OcclusionTrackerType;
 
     static PassLayerPtrType createLayer() { return CCLayerImpl::create(nextCCLayerImplId++); }
     static PassContentLayerPtrType createContentLayer() { return adoptPtr(new ContentLayerType(nextCCLayerImplId++)); }
@@ -156,7 +160,9 @@ int CCOcclusionTrackerTestImplThreadTypes::nextCCLayerImplId = 0;
 template<typename Types, bool opaqueLayers>
 class CCOcclusionTrackerTest : public testing::Test {
 protected:
-    CCOcclusionTrackerTest() : testing::Test() { }
+    CCOcclusionTrackerTest()
+        : testing::Test()
+    { }
 
     virtual void runMyTest() = 0;
 
@@ -236,8 +242,7 @@ protected:
         return layer;
     }
 
-
-    TestContentLayerImpl* calcDrawEtc(TestContentLayerImpl* root)
+    void calcDrawEtc(TestContentLayerImpl* root)
     {
         ASSERT(root == m_root.get());
         Vector<CCLayerImpl*> dummyLayerList;
@@ -250,10 +255,10 @@ protected:
         m_renderSurfaceLayerListImpl.append(m_root.get());
 
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListImpl, dummyLayerList, 0, dummyMaxTextureSize);
-        return root;
+        m_layerIterator = m_layerIteratorBegin = Types::LayerIterator::begin(&m_renderSurfaceLayerListImpl);
     }
 
-    TestContentLayerChromium* calcDrawEtc(TestContentLayerChromium* root)
+    void calcDrawEtc(TestContentLayerChromium* root)
     {
         ASSERT(root == m_root.get());
         Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -266,7 +271,58 @@ protected:
         m_renderSurfaceLayerListChromium.append(m_root);
 
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListChromium, dummyLayerList, dummyMaxTextureSize);
-        return root;
+        m_layerIterator = m_layerIteratorBegin = Types::LayerIterator::begin(&m_renderSurfaceLayerListChromium);
+    }
+
+    void enterLayer(typename Types::LayerType* layer, typename Types::OcclusionTrackerType& occlusion)
+    {
+        ASSERT_EQ(layer, *m_layerIterator);
+        ASSERT_TRUE(m_layerIterator.representsItself());
+        occlusion.enterLayer(m_layerIterator);
+    }
+
+    void leaveLayer(typename Types::LayerType* layer, typename Types::OcclusionTrackerType& occlusion)
+    {
+        ASSERT_EQ(layer, *m_layerIterator);
+        ASSERT_TRUE(m_layerIterator.representsItself());
+        occlusion.leaveLayer(m_layerIterator);
+        ++m_layerIterator;
+    }
+
+    void visitLayer(typename Types::LayerType* layer, typename Types::OcclusionTrackerType& occlusion)
+    {
+        enterLayer(layer, occlusion);
+        leaveLayer(layer, occlusion);
+    }
+
+    void enterContributingSurface(typename Types::LayerType* layer, typename Types::OcclusionTrackerType& occlusion)
+    {
+        ASSERT_EQ(layer, *m_layerIterator);
+        ASSERT_TRUE(m_layerIterator.representsTargetRenderSurface());
+        occlusion.enterLayer(m_layerIterator);
+        occlusion.leaveLayer(m_layerIterator);
+        ++m_layerIterator;
+        ASSERT_TRUE(m_layerIterator.representsContributingRenderSurface());
+        occlusion.enterLayer(m_layerIterator);
+    }
+
+    void leaveContributingSurface(typename Types::LayerType* layer, typename Types::OcclusionTrackerType& occlusion)
+    {
+        ASSERT_EQ(layer, *m_layerIterator);
+        ASSERT_TRUE(m_layerIterator.representsContributingRenderSurface());
+        occlusion.leaveLayer(m_layerIterator);
+        ++m_layerIterator;
+    }
+
+    void visitContributingSurface(typename Types::LayerType* layer, typename Types::OcclusionTrackerType& occlusion)
+    {
+        enterContributingSurface(layer, occlusion);
+        leaveContributingSurface(layer, occlusion);
+    }
+
+    void resetLayerIterator()
+    {
+        m_layerIterator = m_layerIteratorBegin;
     }
 
     const TransformationMatrix identityMatrix;
@@ -308,6 +364,9 @@ private:
     typename Types::LayerPtrType m_root;
     Vector<RefPtr<LayerChromium> > m_renderSurfaceLayerListChromium;
     Vector<CCLayerImpl*> m_renderSurfaceLayerListImpl;
+    typename Types::LayerIterator m_layerIteratorBegin;
+    typename Types::LayerIterator m_layerIterator;
+    typename Types::LayerType* m_lastLayerVisited;
     Vector<RefPtr<LayerChromium> > m_replicaLayers;
 };
 
@@ -364,8 +423,9 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
+        this->visitLayer(layer, occlusion);
+        this->enterLayer(parent, occlusion);
+
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
@@ -416,8 +476,9 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
+        this->visitLayer(layer, occlusion);
+        this->enterLayer(parent, occlusion);
+
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
@@ -466,8 +527,9 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
+        this->visitLayer(layer, occlusion);
+        this->enterLayer(parent, occlusion);
+
         EXPECT_EQ_RECT(IntRect(50, 50, 50, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(50, 50, 50, 50), occlusion.occlusionInTargetSurface().bounds());
@@ -532,8 +594,8 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(child->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
+        this->visitLayer(layer, occlusion);
+        this->enterContributingSurface(child, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -554,9 +616,8 @@ protected:
         EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 71)));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.markOccludedBehindLayer(child);
-        occlusion.finishedTargetRenderSurface(child, child->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveContributingSurface(child, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -629,21 +690,21 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(-10, -10, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(child2);
+        this->visitLayer(child2, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 30, 60, 20), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(30, 30, 60, 20), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.enterTargetRenderSurface(child->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
+        this->visitLayer(layer, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+
+        this->enterContributingSurface(child, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 70)));
         EXPECT_FALSE(occlusion.occluded(child, IntRect(9, 430, 60, 70)));
@@ -685,10 +746,9 @@ protected:
         EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)).isEmpty());
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.markOccludedBehindLayer(child);
-        // |child2| should get merged with the surface we are leaving now
-        occlusion.finishedTargetRenderSurface(child, child->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        // Occlusion in |child2| should get merged with the |child| surface we are leaving now.
+        this->leaveContributingSurface(child, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
@@ -778,8 +838,8 @@ protected:
 
         IntRect clippedLayerInChild = layerTransform.mapRect(layer->visibleLayerRect());
 
-        occlusion.enterTargetRenderSurface(child->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
+        this->visitLayer(layer, occlusion);
+        this->enterContributingSurface(child, occlusion);
 
         EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
@@ -805,9 +865,8 @@ protected:
         EXPECT_FALSE(occlusion.unoccludedContentRect(child, clippedLayerInChild).isEmpty());
         clippedLayerInChild.move(0, -1);
 
-        occlusion.markOccludedBehindLayer(child);
-        occlusion.finishedTargetRenderSurface(child, child->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveContributingSurface(child, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
@@ -841,9 +900,9 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(child->renderSurface());
-        occlusion.markOccludedBehindLayer(layer2);
-        occlusion.markOccludedBehindLayer(layer1);
+        this->visitLayer(layer2, occlusion);
+        this->visitLayer(layer1, occlusion);
+        this->enterContributingSurface(child, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -862,9 +921,8 @@ protected:
         EXPECT_EQ_RECT(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(11, 430, 60, 70)));
         EXPECT_EQ_RECT(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)));
 
-        occlusion.markOccludedBehindLayer(child);
-        occlusion.finishedTargetRenderSurface(child, child->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveContributingSurface(child, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -930,8 +988,8 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(-20, -20, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(child2->renderSurface());
-        occlusion.markOccludedBehindLayer(layer2);
+        this->visitLayer(layer2, occlusion);
+        this->enterContributingSurface(child2, occlusion);
 
         EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -952,15 +1010,12 @@ protected:
         EXPECT_TRUE(occlusion.occluded(child2, IntRect(-10, 420, 70, 81)));
         occlusion.setLayerScissorRect(IntRect(-20, -20, 1000, 1000));
 
-        occlusion.markOccludedBehindLayer(child2);
-        occlusion.finishedTargetRenderSurface(child2, child2->renderSurface());
-
         // There is nothing above child2's surface in the z-order.
         EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2, false, IntRect(-10, 420, 70, 80)));
 
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-        occlusion.enterTargetRenderSurface(child1->renderSurface());
-        occlusion.markOccludedBehindLayer(layer1);
+        this->leaveContributingSurface(child2, occlusion);
+        this->visitLayer(layer1, occlusion);
+        this->enterContributingSurface(child1, occlusion);
 
         EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
@@ -973,13 +1028,11 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(-10, 430, 81, 70)));
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(-10, 430, 80, 71)));
 
-        occlusion.markOccludedBehindLayer(child1);
-        occlusion.finishedTargetRenderSurface(child1, child1->renderSurface());
-
         // child2's contents will occlude child1 below it.
         EXPECT_EQ_RECT(IntRect(-10, 430, 10, 70), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(-10, 430, 80, 70)));
 
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveContributingSurface(child1, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1049,8 +1102,8 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(-30, -30, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(child2->renderSurface());
-        occlusion.markOccludedBehindLayer(layer2);
+        this->visitLayer(layer2, occlusion);
+        this->enterLayer(child2, occlusion);
 
         EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1063,16 +1116,15 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child2, IntRect(-10, 420, 71, 80)));
         EXPECT_FALSE(occlusion.occluded(child2, IntRect(-10, 420, 70, 81)));
 
-        occlusion.markOccludedBehindLayer(child2);
-        occlusion.finishedTargetRenderSurface(child2, child2->renderSurface());
+        this->leaveLayer(child2, occlusion);
+        this->enterContributingSurface(child2, occlusion);
 
         // There is nothing above child2's surface in the z-order.
         EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2, false, IntRect(-10, 420, 70, 80)));
 
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-
-        occlusion.enterTargetRenderSurface(child1->renderSurface());
-        occlusion.markOccludedBehindLayer(layer1);
+        this->leaveContributingSurface(child2, occlusion);
+        this->visitLayer(layer1, occlusion);
+        this->enterContributingSurface(child1, occlusion);
 
         EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1085,15 +1137,13 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(420, -19, 80, 90)));
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(421, -20, 80, 90)));
 
-        occlusion.markOccludedBehindLayer(child1);
-        occlusion.finishedTargetRenderSurface(child1, child1->renderSurface());
-
         // child2's contents will occlude child1 below it.
         EXPECT_EQ_RECT(IntRect(420, -20, 80, 90), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(420, -20, 80, 90)));
         EXPECT_EQ_RECT(IntRect(490, -10, 10, 80), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(420, -10, 80, 90)));
         EXPECT_EQ_RECT(IntRect(420, -20, 70, 10), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(420, -20, 70, 90)));
 
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveContributingSurface(child1, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1146,8 +1196,8 @@ protected:
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
         typename Types::ContentLayerType* blurLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
-        typename Types::ContentLayerType* opacityLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
         typename Types::ContentLayerType* opaqueLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
+        typename Types::ContentLayerType* opacityLayer = this->createDrawingLayer(parent, layerTransform, FloatPoint(30, 30), IntSize(500, 500), true);
 
         FilterOperations filters;
         filters.operations().append(BlurFilterOperation::create(Length(10, WebCore::Percent), FilterOperation::BLUR));
@@ -1167,22 +1217,20 @@ protected:
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
         // Opacity layer won't contribute to occlusion.
-        occlusion.enterTargetRenderSurface(opacityLayer->renderSurface());
-        occlusion.markOccludedBehindLayer(opacityLayer);
-        occlusion.finishedTargetRenderSurface(opacityLayer, opacityLayer->renderSurface());
+        this->visitLayer(opacityLayer, occlusion);
+        this->enterContributingSurface(opacityLayer, occlusion);
 
         EXPECT_TRUE(occlusion.occlusionInScreenSpace().isEmpty());
         EXPECT_TRUE(occlusion.occlusionInTargetSurface().isEmpty());
 
         // And has nothing to contribute to its parent surface.
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveContributingSurface(opacityLayer, occlusion);
         EXPECT_TRUE(occlusion.occlusionInScreenSpace().isEmpty());
         EXPECT_TRUE(occlusion.occlusionInTargetSurface().isEmpty());
 
         // Opaque layer will contribute to occlusion.
-        occlusion.enterTargetRenderSurface(opaqueLayer->renderSurface());
-        occlusion.markOccludedBehindLayer(opaqueLayer);
-        occlusion.finishedTargetRenderSurface(opaqueLayer, opaqueLayer->renderSurface());
+        this->visitLayer(opaqueLayer, occlusion);
+        this->enterContributingSurface(opaqueLayer, occlusion);
 
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1190,25 +1238,26 @@ protected:
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // And it gets translated to the parent surface.
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveContributingSurface(opaqueLayer, occlusion);
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // The blur layer needs to throw away any occlusion from outside its subtree.
-        occlusion.enterTargetRenderSurface(blurLayer->renderSurface());
+        this->enterLayer(blurLayer, occlusion);
         EXPECT_TRUE(occlusion.occlusionInScreenSpace().isEmpty());
         EXPECT_TRUE(occlusion.occlusionInTargetSurface().isEmpty());
 
         // And it won't contribute to occlusion.
-        occlusion.markOccludedBehindLayer(blurLayer);
-        occlusion.finishedTargetRenderSurface(blurLayer, blurLayer->renderSurface());
+        this->leaveLayer(blurLayer, occlusion);
+        this->enterContributingSurface(blurLayer, occlusion);
         EXPECT_TRUE(occlusion.occlusionInScreenSpace().isEmpty());
         EXPECT_TRUE(occlusion.occlusionInTargetSurface().isEmpty());
 
-        // But the opaque layer's occlusion is preserved on the parent.
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        // But the opaque layer's occlusion is preserved on the parent. 
+        this->leaveContributingSurface(blurLayer, occlusion);
+        this->enterLayer(parent, occlusion);
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
@@ -1231,16 +1280,15 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
+        this->visitLayer(surface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->visitContributingSurface(surface, occlusion);
+        this->enterLayer(parent, occlusion);
 
         // The surface and replica should both be occluding the parent.
         EXPECT_EQ_RECT(IntRect(0, 100, 100, 100), occlusion.occlusionInTargetSurface().bounds());
@@ -1263,16 +1311,15 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
+        this->visitLayer(surface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->visitContributingSurface(surface, occlusion);
+        this->enterLayer(parent, occlusion);
 
         // The surface and replica should both be occluding the parent.
         EXPECT_EQ_RECT(IntRect(0, 100, 100, 70), occlusion.occlusionInTargetSurface().bounds());
@@ -1294,7 +1341,7 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(200, 100, 100, 100));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
@@ -1306,8 +1353,9 @@ protected:
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(200, 100, 100, 100)));
         occlusion.setLayerScissorRect(IntRect(200, 100, 100, 100));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1337,7 +1385,7 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(200, 100, 100, 100));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
@@ -1349,8 +1397,9 @@ protected:
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(200, 100, 100, 100)));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1380,15 +1429,16 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(100, 100, 100, 100));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 100, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(100, 100, 100, 100)));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1418,15 +1468,16 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(100, 100, 100, 100));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 100, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(100, 100, 100, 100)));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1456,15 +1507,16 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(50, 50, 200, 200));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(0, 100, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(100, 100, 100, 100)));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1498,15 +1550,16 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(50, 50, 200, 200));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(0, 100, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(100, 100, 100, 100)));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1540,15 +1593,16 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(500, 500, 100, 100));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 100, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 100, 100, 100)));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1582,15 +1636,16 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(500, 500, 100, 100));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(0, 100, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(layer, IntRect(100, 100, 100, 100)));
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 0, 100, 100)));
         EXPECT_TRUE(occlusion.occluded(parent, IntRect(0, 100, 100, 100)));
@@ -1622,7 +1677,7 @@ protected:
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         // This layer is translated when drawn into its target. So if the scissor rect given from the target surface
         // is not in that target space, then after translating these query rects into the target, they will fall outside
@@ -1646,7 +1701,7 @@ protected:
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(0, 0, 100, 100)));
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(100, 0, 100, 100)));
@@ -1661,8 +1716,9 @@ protected:
         EXPECT_FALSE(occlusion.occluded(layer, IntRect(200, 100, 100, 100)));
         occlusion.useDefaultLayerScissorRect();
 
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->leaveLayer(layer, occlusion);
+        this->visitContributingSurface(layer, occlusion);
+        this->enterLayer(parent, occlusion);
 
         EXPECT_TRUE(occlusion.occlusionInScreenSpace().bounds().isEmpty());
         EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1684,8 +1740,9 @@ protected:
             TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
             layer->setOpaqueContentsRect(IntRect(0, 0, 100, 100));
 
-            occlusion.enterTargetRenderSurface(parent->renderSurface());
-            occlusion.markOccludedBehindLayer(layer);
+            this->resetLayerIterator();
+            this->visitLayer(layer, occlusion);
+            this->enterLayer(parent, occlusion);
 
             EXPECT_EQ_RECT(IntRect(100, 100, 100, 100), occlusion.occlusionInScreenSpace().bounds());
             EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1699,8 +1756,9 @@ protected:
             TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
             layer->setOpaqueContentsRect(IntRect(20, 20, 180, 180));
 
-            occlusion.enterTargetRenderSurface(parent->renderSurface());
-            occlusion.markOccludedBehindLayer(layer);
+            this->resetLayerIterator();
+            this->visitLayer(layer, occlusion);
+            this->enterLayer(parent, occlusion);
 
             EXPECT_EQ_RECT(IntRect(120, 120, 180, 180), occlusion.occlusionInScreenSpace().bounds());
             EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1714,8 +1772,9 @@ protected:
             TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
             layer->setOpaqueContentsRect(IntRect(150, 150, 100, 100));
 
-            occlusion.enterTargetRenderSurface(parent->renderSurface());
-            occlusion.markOccludedBehindLayer(layer);
+            this->resetLayerIterator();
+            this->visitLayer(layer, occlusion);
+            this->enterLayer(parent, occlusion);
 
             EXPECT_EQ_RECT(IntRect(250, 250, 50, 50), occlusion.occlusionInScreenSpace().bounds());
             EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -1743,8 +1802,9 @@ protected:
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
+        this->enterLayer(layer, occlusion);
 
+        // The layer is rotated in 3d but without preserving 3d, so it only gets resized.
         EXPECT_EQ_RECT(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
     }
 };
@@ -1766,10 +1826,11 @@ protected:
         typename Types::LayerType* container = this->createLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
         typename Types::ContentLayerType* layer = this->createDrawingLayer(container, transform, FloatPoint(100, 100), IntSize(200, 200), true);
         container->setPreserves3D(true);
+        layer->setPreserves3D(true);
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
     }
@@ -1795,10 +1856,11 @@ protected:
         typename Types::LayerType* container = this->createLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(500, 500));
         typename Types::ContentLayerType* layer = this->createDrawingLayer(container, transform, FloatPoint(0, 0), IntSize(500, 500), true);
         container->setPreserves3D(true);
+        layer->setPreserves3D(true);
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
+        this->enterLayer(layer, occlusion);
 
         // The bottom 11 pixel rows of this layer remain visible inside the container, after translation to the target surface. When translated back,
         // this will include many more pixels but must include at least the bottom 11 rows.
@@ -1822,13 +1884,14 @@ protected:
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
         typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, transform, FloatPoint(0, 0), IntSize(100, 100), true);
         parent->setPreserves3D(true);
+        layer->setPreserves3D(true);
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
 
-        // This layer is entirely behind the camera and should not occlude.
-        occlusion.markOccludedBehindLayer(layer);
+        // The |layer| is entirely behind the camera and should not occlude.
+        this->visitLayer(layer, occlusion);
+        this->enterLayer(parent, occlusion);
         EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
         EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
     }
@@ -1850,14 +1913,15 @@ protected:
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
         typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, transform, FloatPoint(0, 0), IntSize(100, 100), true);
         parent->setPreserves3D(true);
+        layer->setPreserves3D(true);
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
 
         // This is very close to the camera, so pixels in its visibleLayerRect will actually go outside of the layer's clipRect.
         // Ensure that those pixels don't occlude things outside the clipRect.
-        occlusion.markOccludedBehindLayer(layer);
+        this->visitLayer(layer, occlusion);
+        this->enterLayer(parent, occlusion);
         EXPECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
         EXPECT_EQ(IntRect(0, 0, 100, 100), occlusion.occlusionInScreenSpace().bounds());
@@ -1877,6 +1941,7 @@ protected:
         typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
         typename Types::ContentLayerType* surfaceChild = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 300), true);
         typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
+        typename Types::ContentLayerType* parent2 = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false);
         typename Types::ContentLayerType* topmost = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(250, 0), IntSize(50, 300), true);
 
         addOpacityTransitionToController(*layer->layerAnimationController(), 10, 0, 1, false);
@@ -1889,26 +1954,29 @@ protected:
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(topmost);
+        this->visitLayer(topmost, occlusion);
+        this->enterLayer(parent2, occlusion);
         // This occlusion will affect all surfaces.
-        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent2, IntRect(0, 0, 300, 300)));
+        this->leaveLayer(parent2, occlusion);
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surfaceChild2);
-        EXPECT_EQ_RECT(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
-        occlusion.markOccludedBehindLayer(surfaceChild);
+        this->visitLayer(surfaceChild2, occlusion);
+        this->enterLayer(surfaceChild, occlusion);
+        EXPECT_EQ_RECT(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
+        this->leaveLayer(surfaceChild, occlusion);
+        this->enterLayer(surface, occlusion);
         EXPECT_EQ_RECT(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
-        occlusion.markOccludedBehindLayer(surface);
-        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        this->leaveLayer(surface, occlusion);
 
+        this->enterContributingSurface(surface, occlusion);
         // Occlusion within the surface is lost when leaving the animating surface.
         EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 300, 300)));
+        this->leaveContributingSurface(surface, occlusion);
 
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
-        // Occlusion is not added for the animating layer.
+        this->visitLayer(layer, occlusion);
+        this->enterLayer(parent, occlusion);
+
+        // Occlusion is not added for the animating |layer|.
         EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
@@ -1925,6 +1993,7 @@ protected:
         typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
         typename Types::ContentLayerType* surfaceChild = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 300), true);
         typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
+        typename Types::ContentLayerType* parent2 = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false);
         typename Types::ContentLayerType* topmost = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(250, 0), IntSize(50, 300), true);
 
         addOpacityTransitionToController(*layer->layerAnimationController(), 10, 1, 0, false);
@@ -1937,26 +2006,29 @@ protected:
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(topmost);
+        this->visitLayer(topmost, occlusion);
+        this->enterLayer(parent2, occlusion);
         // This occlusion will affect all surfaces.
         EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        this->leaveLayer(parent2, occlusion);
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surfaceChild2);
-        EXPECT_EQ_RECT(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
-        occlusion.markOccludedBehindLayer(surfaceChild);
+        this->visitLayer(surfaceChild2, occlusion);
+        this->enterLayer(surfaceChild, occlusion);
+        EXPECT_EQ_RECT(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
+        this->leaveLayer(surfaceChild, occlusion);
+        this->enterLayer(surface, occlusion);
         EXPECT_EQ_RECT(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
-        occlusion.markOccludedBehindLayer(surface);
-        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        this->leaveLayer(surface, occlusion);
 
+        this->enterContributingSurface(surface, occlusion);
         // Occlusion within the surface is lost when leaving the animating surface.
         EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 300, 300)));
+        this->leaveContributingSurface(surface, occlusion);
 
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(layer);
-        // Occlusion is not added for the animating layer.
+        this->visitLayer(layer, occlusion);
+        this->enterLayer(parent, occlusion);
+
+        // Occlusion is not added for the animating |layer|.
         EXPECT_EQ_RECT(IntRect(0, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
@@ -1992,22 +2064,22 @@ protected:
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(surface2->renderSurface());
-        occlusion.markOccludedBehindLayer(surface2);
-        occlusion.finishedTargetRenderSurface(surface2, surface2->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->visitLayer(surface2, occlusion);
+        this->enterContributingSurface(surface2, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
+        this->leaveContributingSurface(surface2, occlusion);
+        this->enterLayer(surfaceChild2, occlusion);
 
-        // The layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
+        // surfaceChild2 is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
         // It also means that things occluding in screen space (e.g. surface2) cannot occlude this layer.
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.unoccludedContentRect(surfaceChild2, IntRect(0, 0, 100, 300)));
         EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 50, 300)));
 
-        occlusion.markOccludedBehindLayer(surfaceChild2);
+        this->leaveLayer(surfaceChild2, occlusion);
+        this->enterLayer(surfaceChild, occlusion);
         EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 100, 300)));
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -2015,38 +2087,40 @@ protected:
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
         EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
 
-        // The surface child is occluded by the surfaceChild2, but is moving relative its target and the screen, so it
+        // The surfaceChild is occluded by the surfaceChild2, but is moving relative its target and the screen, so it
         // can't be occluded.
         EXPECT_EQ_RECT(IntRect(0, 0, 200, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 200, 300)));
         EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 50, 300)));
 
-        occlusion.markOccludedBehindLayer(surfaceChild);
-        // The layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
+        this->leaveLayer(surfaceChild, occlusion);
+        this->enterLayer(surface, occlusion);
+        // The surfaceChild is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
         EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
 
-        occlusion.markOccludedBehindLayer(surface);
-        // The layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
+        this->leaveLayer(surface, occlusion);
+        // The surface's owning layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
 
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
-
+        this->enterContributingSurface(surface, occlusion);
         // The contributing |surface| is animating so it can't be occluded.
         EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 300, 300)));
+        this->leaveContributingSurface(surface, occlusion);
 
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-        // The surface is moving in the screen and in its target, so all occlusion within the surface is lost when leaving it.
+        this->enterLayer(layer, occlusion);
+        // The |surface| is moving in the screen and in its target, so all occlusion within the surface is lost when leaving it.
         EXPECT_EQ_RECT(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+        this->leaveLayer(layer, occlusion);
 
-        occlusion.markOccludedBehindLayer(layer);
-        // The layer is animating in the screen and in its target, so no occlusion is added.
+        this->enterLayer(parent, occlusion);
+        // The |layer| is animating in the screen and in its target, so no occlusion is added.
         EXPECT_EQ_RECT(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
     }
 };
@@ -2072,10 +2146,8 @@ protected:
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(surface2->renderSurface());
-        occlusion.markOccludedBehindLayer(surface2);
-        occlusion.finishedTargetRenderSurface(surface2, surface2->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->visitLayer(surface2, occlusion);
+        this->visitContributingSurface(surface2, occlusion);
 
         EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -2086,10 +2158,8 @@ protected:
         occlusion.setOcclusionInScreenSpace(Region());
         occlusion.setOcclusionInTargetSurface(Region());
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->visitLayer(surface, occlusion);
+        this->visitContributingSurface(surface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -2112,10 +2182,8 @@ protected:
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        this->visitLayer(surface, occlusion);
+        this->visitContributingSurface(surface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 300, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -2140,24 +2208,22 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        // This occludes the replica, but not the surface itself.
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(topmost);
+        // |topmost| occludes the replica, but not the surface itself.
+        this->visitLayer(topmost, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 100, 100, 100), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 100, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
+        this->visitLayer(surface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        this->enterContributingSurface(surface, occlusion);
 
         // Surface is not occluded so it shouldn't think it is.
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
@@ -2180,24 +2246,22 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        // This occludes the surface, but not the entire surface's replica.
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(topmost);
+        // |topmost| occludes the surface, but not the entire surface's replica.
+        this->visitLayer(topmost, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 110), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 110), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
+        this->visitLayer(surface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 110), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        this->enterContributingSurface(surface, occlusion);
 
         // Surface is occluded, but only the top 10px of the replica.
         EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
@@ -2223,24 +2287,22 @@ protected:
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
         // These occlude the surface and replica differently, so we can test each one.
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(overReplica);
-        occlusion.markOccludedBehindLayer(overSurface);
+        this->visitLayer(overReplica, occlusion);
+        this->visitLayer(overSurface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 50, 200), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.enterTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
+        this->visitLayer(surface, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 200), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        this->enterContributingSurface(surface, occlusion);
 
         // Surface and replica are occluded different amounts.
         EXPECT_EQ_RECT(IntRect(40, 0, 60, 100), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
@@ -2265,18 +2327,15 @@ protected:
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(-100, -100, 1000, 1000));
 
-        // This occludes everything partially so we know occlusion is happening at all.
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(topmost);
+        // |topmost| occludes everything partially so we know occlusion is happening at all.
+        this->visitLayer(topmost, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.enterTargetRenderSurface(surfaceChild->renderSurface());
-
-        occlusion.markOccludedBehindLayer(surfaceChild);
+        this->visitLayer(surfaceChild, occlusion);
 
         // surfaceChild increases the occlusion in the screen by a narrow sliver.
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 60), occlusion.occlusionInScreenSpace().bounds());
@@ -2289,21 +2348,21 @@ protected:
         // mask to bounds, so it doesn't have a clipRect of its own. Thus the parent of |surfaceChild| exercises different code paths
         // as its parent does not have a clipRect.
 
-        occlusion.finishedTargetRenderSurface(surfaceChild, surfaceChild->renderSurface());
+        this->enterContributingSurface(surfaceChild, occlusion);
         // The surfaceChild's parent does not have a clipRect as it owns a render surface. Make sure the unoccluded rect
         // does not get clipped away inappropriately.
         EXPECT_EQ_RECT(IntRect(0, 40, 100, 10), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild, false, IntRect(0, 0, 100, 50)));
+        this->leaveContributingSurface(surfaceChild, occlusion);
 
         // When the surfaceChild's occlusion is transformed up to its parent, make sure it is not clipped away inappropriately also.
-        occlusion.leaveToTargetRenderSurface(surface->renderSurface());
+        this->enterLayer(surface, occlusion);
         EXPECT_EQ_RECT(IntRect(0, 0, 100, 60), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 10, 100, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+        this->leaveLayer(surface, occlusion);
 
-        occlusion.markOccludedBehindLayer(surface);
-
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        this->enterContributingSurface(surface, occlusion);
         // The surface's parent does have a clipRect as it is the root layer.
         EXPECT_EQ_RECT(IntRect(0, 50, 100, 50), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
     }
@@ -2327,18 +2386,17 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        // This occludes everything partially so we know occlusion is happening at all.
-        occlusion.enterTargetRenderSurface(parent->renderSurface());
-        occlusion.markOccludedBehindLayer(topmost);
+        // |topmost| occludes everything partially so we know occlusion is happening at all.
+        this->enterLayer(topmost, occlusion);
+        this->leaveLayer(topmost, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 80, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
         EXPECT_EQ_RECT(IntRect(0, 0, 80, 50), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        occlusion.enterTargetRenderSurface(surfaceChild->renderSurface());
         // surfaceChild is not opaque and does not occlude, so we have a non-empty unoccluded area on surface.
-        occlusion.markOccludedBehindLayer(surfaceChild);
+        this->visitLayer(surfaceChild, occlusion);
 
         EXPECT_EQ_RECT(IntRect(0, 0, 80, 50), occlusion.occlusionInScreenSpace().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
@@ -2349,14 +2407,13 @@ protected:
         // mask to bounds, so it doesn't have a clipRect of its own. Thus the parent of |surfaceChild| exercises different code paths
         // as its parent does not have a clipRect.
 
-        occlusion.finishedTargetRenderSurface(surfaceChild, surfaceChild->renderSurface());
+        this->enterContributingSurface(surfaceChild, occlusion);
         // The surfaceChild's parent does not have a clipRect as it owns a render surface.
         EXPECT_EQ_RECT(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild, false, IntRect(0, 0, 100, 100)));
+        this->leaveContributingSurface(surfaceChild, occlusion);
 
-        occlusion.leaveToTargetRenderSurface(surface->renderSurface());
-        occlusion.markOccludedBehindLayer(surface);
-
-        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        this->visitLayer(surface, occlusion);
+        this->enterContributingSurface(surface, occlusion);
         // The surface's parent does have a clipRect as it is the root layer.
         EXPECT_EQ_RECT(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
     }

@@ -53,7 +53,9 @@ private:
     IntRect m_scissorRectInScreen;
 };
 
-static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const TransformationMatrix& drawTransform, const IntRect& layerRect, float opacity, bool opaque, const IntRect& layerOpaqueRect)
+typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
+
+static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const TransformationMatrix& drawTransform, const IntRect& layerRect, float opacity, bool opaque, const IntRect& layerOpaqueRect, Vector<CCLayerImpl*>& surfaceLayerList)
 {
     OwnPtr<CCTiledLayerImpl> layer = CCTiledLayerImpl::create(0);
     OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(IntSize(100, 100), CCLayerTilingData::NoBorderTexels);
@@ -76,25 +78,33 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const Tr
     if (!parent) {
         layer->createRenderSurface();
         layer->setTargetRenderSurface(layer->renderSurface());
-    } else
+        surfaceLayerList.append(layer.get());
+        layer->renderSurface()->layerList().append(layer.get());
+    } else {
         layer->setTargetRenderSurface(parent->targetRenderSurface());
+        parent->renderSurface()->layerList().append(layer.get());
+    }
 
     return layer.release();
 }
 
-static void appendQuads(CCQuadList& quadList, Vector<OwnPtr<CCSharedQuadState> >& sharedStateList, CCTiledLayerImpl* layer, CCOcclusionTrackerImpl& occlusionTracker)
+static void appendQuads(CCQuadList& quadList, Vector<OwnPtr<CCSharedQuadState> >& sharedStateList, CCTiledLayerImpl* layer, CCLayerIteratorType& it, CCOcclusionTrackerImpl& occlusionTracker)
 {
+    occlusionTracker.enterLayer(it);
     CCQuadCuller quadCuller(quadList, layer, &occlusionTracker);
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
     bool hadMissingTiles = false;
     layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
     sharedStateList.append(sharedQuadState.release());
+    occlusionTracker.leaveLayer(it);
+    ++it;
 }
 
 #define DECLARE_AND_INITIALIZE_TEST_QUADS               \
     DebugScopedSetImplThread impl;                      \
     CCQuadList quadList;                                \
     Vector<OwnPtr<CCSharedQuadState> > sharedStateList; \
+    Vector<CCLayerImpl*> renderSurfaceLayerList;        \
     TransformationMatrix childTransform;                \
     IntSize rootSize = IntSize(300, 300);               \
     IntRect rootRect = IntRect(IntPoint(), rootSize);   \
@@ -105,16 +115,16 @@ TEST(CCQuadCullerTest, verifyNoCulling)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, false, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 130000, 1);
-    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 40000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulledForDrawing(), 0, 1);
 }
 
@@ -122,14 +132,13 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -140,14 +149,13 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 0.9f, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 0.9f, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 40000, 1);
@@ -158,14 +166,13 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 40000, 1);
@@ -178,14 +185,13 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
 
     childTransform.translate(50, 50);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
 
     IntRect quadVisibleRect1 = quadList[5].get()->quadVisibleRect();
@@ -222,14 +228,13 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
 
     rootRect = childRect = IntRect(0, 0, 100, 100);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, rootTransform, rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, rootTransform, rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 2u);
 
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 20363, 1);
@@ -251,14 +256,13 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
 
     rootRect = childRect = IntRect(0, 0, 100, 100);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, rootTransform, rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, rootTransform, rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 2u);
 
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 19643, 1);
@@ -272,14 +276,13 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
 
     childTransform.translate(100, 100);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -292,15 +295,14 @@ TEST(CCQuadCullerTest, verifyCullSubRegion)
 
     childTransform.translate(50, 50);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() / 2);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect, renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 30000, 1);
@@ -313,15 +315,14 @@ TEST(CCQuadCullerTest, verifyCullSubRegion2)
 
     childTransform.translate(50, 10);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() * 3 / 4);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect, renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 25000, 1);
@@ -334,15 +335,14 @@ TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
 
     childTransform.translate(50, 49);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     IntRect childOpaqueRect(childRect.x() + childRect.width() / 4, childRect.y() + childRect.height() / 4, childRect.width() / 2, childRect.height() / 2);
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, false, childOpaqueRect, renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 30000, 1);
@@ -356,14 +356,13 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
     // Use a small rotation so as to not disturb the geometry significantly.
     childTransform.rotate(1);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), childTransform, childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 130000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -383,14 +382,13 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsSafelyCulled)
     TransformationMatrix parentTransform;
     parentTransform.rotate(1);
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, parentTransform, rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, parentTransform, rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 100600, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -401,14 +399,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverTile)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(200, 100, 100, 100));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 1u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 10000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -419,14 +416,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverCulledTile)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(100, 100, 100, 100));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 1u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 10000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -437,14 +433,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverPartialTiles)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(50, 50, 200, 200));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 40000, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -455,14 +450,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(500, 500, 100, 100));
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 0u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
@@ -473,14 +467,13 @@ TEST(CCQuadCullerTest, verifyWithoutMetrics)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
-    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect());
-    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(0, TransformationMatrix(), rootRect, 1.0, true, IntRect(), renderSurfaceLayerList);
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(rootLayer.get(), TransformationMatrix(), childRect, 1.0, true, IntRect(), renderSurfaceLayerList);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(50, 50, 200, 200), false);
-    occlusionTracker.enterTargetRenderSurface(rootLayer->renderSurface());
+    CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList);
 
-    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
-    occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    appendQuads(quadList, sharedStateList, childLayer.get(), it, occlusionTracker);
+    appendQuads(quadList, sharedStateList, rootLayer.get(), it, occlusionTracker);
     EXPECT_EQ(quadList.size(), 9u);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);

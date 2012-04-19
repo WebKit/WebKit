@@ -113,6 +113,9 @@ IntRect CCLayerTilingData::tileRect(const Tile* tile) const
 
 Region CCLayerTilingData::opaqueRegionInLayerRect(const IntRect& layerRect) const
 {
+    if (layerRect.isEmpty())
+        return Region();
+
     Region opaqueRegion;
     int left, top, right, bottom;
     layerRectToTileIndices(layerRect, left, top, right, bottom);

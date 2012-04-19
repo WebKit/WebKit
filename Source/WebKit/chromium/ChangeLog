@@ -1,3 +1,67 @@
+2012-04-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Simplify occlusion tracker API by passing layer iterator data
+        https://bugs.webkit.org/show_bug.cgi?id=84088
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (CCOcclusionTrackerTestMainThreadTypes):
+        (CCOcclusionTrackerTestImplThreadTypes):
+        (WebKitTests::CCOcclusionTrackerTest::CCOcclusionTrackerTest):
+        (WebKitTests::CCOcclusionTrackerTest::calcDrawEtc):
+        (CCOcclusionTrackerTest):
+        (WebKitTests::CCOcclusionTrackerTest::enterLayer):
+        (WebKitTests::CCOcclusionTrackerTest::leaveLayer):
+        (WebKitTests::CCOcclusionTrackerTest::visitLayer):
+        (WebKitTests::CCOcclusionTrackerTest::enterContributingSurface):
+        (WebKitTests::CCOcclusionTrackerTest::leaveContributingSurface):
+        (WebKitTests::CCOcclusionTrackerTest::visitContributingSurface):
+        (WebKitTests::CCOcclusionTrackerTest::resetLayerIterator):
+        (WebKitTests::CCOcclusionTrackerTestIdentityTransforms::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestTranslatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestChildInRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestVisitTargetTwoTimes::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceRotatedOffAxis::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceWithTwoOpaqueChildren::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblings::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblingsWithTwoTransforms::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestFilters::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaDoesOcclude::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaWithClipping::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerScissorRectOutsideChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestScreenScissorRectOutsideChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerScissorRectOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestScreenScissorRectOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerScissorRectPartlyOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestScreenScissorRectPartlyOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerScissorRectOverNothing::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestScreenScissorRectOverNothing::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerScissorRectForLayerOffOrigin::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOpaqueContentsRegionEmpty::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOpaqueContentsRegionNonEmpty::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTest3dTransform::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestPerspectiveTransform::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestPerspectiveTransformBehindCamera::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity1OnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity0OnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationTranslateOnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaOccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceWithReplicaUnoccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceAndReplicaOccludedDifferently::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceChildOfSurface::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceChildOfClippingSurface::runMyTest):
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore):
+        (WebCore::makeLayer):
+        (WebCore::appendQuads):
+        (WebCore::TEST):
+
 2012-04-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add canBeginFrame state to CCSchedulerStateMachine to suppress initialization before our surface is available

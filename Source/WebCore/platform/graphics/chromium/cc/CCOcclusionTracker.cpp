@@ -48,6 +48,28 @@ CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(Int
 }
 
 template<typename LayerType, typename RenderSurfaceType>
+void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::enterLayer(const CCLayerIteratorPosition<LayerType>& layerIterator)
+{
+    RenderSurfaceType* renderSurface = layerIterator.targetRenderSurfaceLayer->renderSurface();
+
+    if (layerIterator.representsItself)
+        enterTargetRenderSurface(renderSurface);
+    else if (layerIterator.representsTargetRenderSurface)
+        finishedTargetRenderSurface(layerIterator.currentLayer, renderSurface);
+}
+
+template<typename LayerType, typename RenderSurfaceType>
+void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveLayer(const CCLayerIteratorPosition<LayerType>& layerIterator)
+{
+    RenderSurfaceType* renderSurface = layerIterator.targetRenderSurfaceLayer->renderSurface();
+
+    if (layerIterator.representsItself)
+        markOccludedBehindLayer(layerIterator.currentLayer);
+    else if (layerIterator.representsContributingRenderSurface)
+        leaveToTargetRenderSurface(renderSurface);
+}
+
+template<typename LayerType, typename RenderSurfaceType>
 void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::enterTargetRenderSurface(const RenderSurfaceType* newTarget)
 {
     if (!m_stack.isEmpty() && m_stack.last().surface == newTarget)
@@ -396,6 +418,8 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::layerScissorRectIn
 
 // Declare the possible functions here for the linker.
 template CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, bool recordMetricsForFrame);
+template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::enterLayer(const CCLayerIteratorPosition<LayerChromium>&);
+template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::leaveLayer(const CCLayerIteratorPosition<LayerChromium>&);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::enterTargetRenderSurface(const RenderSurfaceChromium* newTarget);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::finishedTargetRenderSurface(const LayerChromium* owningLayer, const RenderSurfaceChromium* finishedTarget);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::leaveToTargetRenderSurface(const RenderSurfaceChromium* newTarget);
@@ -406,6 +430,8 @@ template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::u
 template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::layerScissorRectInTargetSurface(const LayerChromium*) const;
 
 template CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, bool recordMetricsForFrame);
+template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::enterLayer(const CCLayerIteratorPosition<CCLayerImpl>&);
+template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::leaveLayer(const CCLayerIteratorPosition<CCLayerImpl>&);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::enterTargetRenderSurface(const CCRenderSurface* newTarget);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::finishedTargetRenderSurface(const CCLayerImpl* owningLayer, const CCRenderSurface* finishedTarget);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::leaveToTargetRenderSurface(const CCRenderSurface* newTarget);

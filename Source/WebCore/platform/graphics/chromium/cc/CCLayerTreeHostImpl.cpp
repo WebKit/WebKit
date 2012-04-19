@@ -298,32 +298,24 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         CCRenderSurface* renderSurface = it.targetRenderSurfaceLayer()->renderSurface();
         CCRenderPass* pass = surfacePassMap.get(renderSurface);
+        bool hadMissingTiles = false;
 
-        if (it.representsItself())
-            occlusionTracker.enterTargetRenderSurface(renderSurface);
-        else if (it.representsTargetRenderSurface()) {
-            occlusionTracker.finishedTargetRenderSurface(*it, renderSurface);
-            continue;
-        } else {
+        occlusionTracker.enterLayer(it);
+
+        if (it.representsContributingRenderSurface())
             pass->appendQuadsForRenderSurfaceLayer(*it, &occlusionTracker);
-            occlusionTracker.leaveToTargetRenderSurface(renderSurface);
-            continue;
+        else if (it.representsItself() && !it->visibleLayerRect().isEmpty()) {
+            it->willDraw(m_layerRenderer.get());
+            pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         }
 
-        if (it->visibleLayerRect().isEmpty())
-            continue;
-
-        it->willDraw(m_layerRenderer.get());
-
-        bool hadMissingTiles = false;
-        pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
         if (hadMissingTiles) {
             bool layerHasAnimatingTransform = it->screenSpaceTransformIsAnimating() || it->drawTransformIsAnimating();
             if (layerHasAnimatingTransform)
                 drawFrame = false;
         }
 
-        occlusionTracker.markOccludedBehindLayer(*it);
+        occlusionTracker.leaveLayer(it);
     }
 
     passes.last()->appendQuadsToFillScreen(m_rootLayerImpl.get(), m_backgroundColor, occlusionTracker);

@@ -555,19 +555,17 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
+        occlusionTracker.enterLayer(it);
+
         if (it.representsTargetRenderSurface()) {
             ASSERT(it->renderSurface()->drawOpacity() || it->renderSurface()->drawOpacityIsAnimating());
-
-            occlusionTracker.finishedTargetRenderSurface(*it, it->renderSurface());
             paintMasksForRenderSurface(*it, paintType, updater);
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());
-
-            occlusionTracker.enterTargetRenderSurface(it->targetRenderSurface());
             update(*it, paintType, updater, &occlusionTracker);
-            occlusionTracker.markOccludedBehindLayer(*it);
-        } else
-            occlusionTracker.leaveToTargetRenderSurface(it.targetRenderSurfaceLayer()->renderSurface());
+        }
+
+        occlusionTracker.leaveLayer(it);
     }
 
     occlusionTracker.overdrawMetrics().recordMetrics(this);
