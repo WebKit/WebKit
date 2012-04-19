@@ -29,7 +29,8 @@
 #if ENABLE(GAMEPAD)
 
 #include "GamepadList.h"
-#include "PlatformSupport.h"
+
+#include <public/Platform.h>
 
 namespace WebCore {
 
@@ -37,7 +38,25 @@ class GamepadList;
 
 void sampleGamepads(GamepadList* into)
 {
-    PlatformSupport::sampleGamepads(into);
+    WebKit::WebGamepads gamepads;
+
+    WebKit::Platform::current()->sampleGamepads(gamepads);
+
+    for (unsigned i = 0; i < WebKit::WebGamepads::itemsLengthCap; ++i) {
+        WebKit::WebGamepad& webGamepad = gamepads.items[i];
+        if (i < gamepads.length && webGamepad.connected) {
+            RefPtr<Gamepad> gamepad = into->item(i);
+            if (!gamepad)
+                gamepad = Gamepad::create();
+            gamepad->id(webGamepad.id);
+            gamepad->index(i);
+            gamepad->timestamp(webGamepad.timestamp);
+            gamepad->axes(webGamepad.axesLength, webGamepad.axes);
+            gamepad->buttons(webGamepad.buttonsLength, webGamepad.buttons);
+            into->set(i, gamepad);
+        } else
+            into->set(i, 0);
+    }
 }
 
 }
