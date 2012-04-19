@@ -1278,16 +1278,11 @@ fast/events/js-keyboard-event-creation.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
 fast/events/keydown-numpad-keys.html
-fast/events/onsearch-enter.html
 fast/events/option-tab.html
 fast/events/special-key-events-in-input-text.html
-fast/forms/button-enter-click.html
 fast/forms/button-spacebar-click.html
 fast/forms/enter-clicks-buttons.html
 fast/forms/input-search-press-escape-key.html
-fast/forms/input-text-enter.html
-fast/forms/textinput-not-fired-on-enter-in-input.html
-http/tests/misc/isindex-with-no-form.html
 
 # BUG: mouse-related bugs in the EventSender-PlatformMouseEventEfl interaction
 fast/events/mouse-click-events.html
