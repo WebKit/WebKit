@@ -69,6 +69,7 @@ fast/js/dfg-convert-this-dom-window
 fast/js/dfg-double-vote-fuzz
 fast/js/dfg-exception
 fast/js/dfg-float32array
+fast/js/dfg-float64array
 fast/js/dfg-get-by-val-clobber
 fast/js/dfg-get-by-val-getter-cse
 fast/js/dfg-getter-throw
