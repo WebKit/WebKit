@@ -1,3 +1,15 @@
+2012-04-19  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call audioHardwareSampleRate directly
+        https://bugs.webkit.org/show_bug.cgi?id=84335
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestination::hardwareSampleRate):
+
 2012-04-18  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Fix build.

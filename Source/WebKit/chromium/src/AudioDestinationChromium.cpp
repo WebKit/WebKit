@@ -35,6 +35,8 @@
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
 
+#include <public/Platform.h>
+
 using namespace WebKit;
 
 namespace WebCore {
@@ -102,7 +104,7 @@ void AudioDestinationChromium::stop()
 
 float AudioDestination::hardwareSampleRate()
 {
-    return static_cast<float>(webKitPlatformSupport()->audioHardwareSampleRate());
+    return static_cast<float>(WebKit::Platform::current()->audioHardwareSampleRate());
 }
 
 // Pulls on our provider to get the rendered audio stream.
