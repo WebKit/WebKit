@@ -59,10 +59,10 @@ inline MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserV
             // currently accepts only <integer>/<integer>
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-            CSSParserValue* value = 0;
+            CSSParserValue* value = valueList->current();
             bool isValid = true;
 
-            while ((value = valueList->current()) && isValid) {
+            while (value && isValid) {
                 if (value->unit == CSSParserValue::Operator && value->iValue == '/')
                     list->append(CSSPrimitiveValue::create("/", CSSPrimitiveValue::CSS_STRING));
                 else if (value->unit == CSSPrimitiveValue::CSS_NUMBER)
