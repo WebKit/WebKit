@@ -1282,9 +1282,6 @@ BUGWK83717 MAC : svg/custom/foreign-object-skew.svg = IMAGE PASS
 
 BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
-// The ref test is failing? Very odd if so.
-BUGWK84203 : svg/transforms/transform-origin-css-property.xhtml = IMAGE
-
 // It is very hard to see why some of these are failing. The diff must be tiny in some cases.
 // Other fail intermittently in a way that is odd - clipping and masking should be stable.
 // It is probably a test design flaw.

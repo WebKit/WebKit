@@ -22,22 +22,22 @@
        document.getElementById("divRoot").appendChild(div);
     }
 
-    var transformOrigins = [
-         "50% 50%",
-         "0% 0%",
-         "0% 50%",
-         "100% 0%",
-         "0% 50%",
-         "100% 50%",
-         "0% 100%",
-         "50% 100%",
-         "100% 100%",
+    var equivalentTransformOrigins = [
+         ["50% 50%", "center 50%", "50% center", "center", "center center"],
+         ["0% 0%", "left 0%", "0% top", "left top", "top left"],
+         ["0% 50%", "left 50%", "0% center", "left", "left center", "center left"],
+         ["100% 0%", "right 0%", "100% top", "right top", "top right"],
+         ["0% 50%", "left 50%", "0% center", "left center", "center left"],
+         ["100% 50%", "right 50%", "100% center", "right center", "center right"],
+         ["0% 100%", "left 100%", "0% bottom", "left bottom", "left bottom"],
+         ["50% 100%", "center 100%", "50% bottom", "bottom", "center bottom", "bottom center"],
+         ["100% 100%", "right 100%", "100% bottom", "right bottom", "bottom right"]
      ];
 
-     for (var i = 0; i < transformOrigins.length; i++)  {
+     for (var i = 0; i < equivalentTransformOrigins.length; i++)  {
          var x = 60 + (i %  4) * 60;
          var y = 60 + Math.floor(i / 4) * 60;
-         addTransformOriginDiv(x, y, transformOrigins[i]);
+         equivalentTransformOrigins[i].map( function(s) { addTransformOriginDiv(x, y, s); } );
      }
 
   ]]></script>
