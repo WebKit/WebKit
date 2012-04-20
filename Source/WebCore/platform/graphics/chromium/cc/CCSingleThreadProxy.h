@@ -48,6 +48,7 @@ public:
     virtual void finishAllRendering() OVERRIDE;
     virtual bool isStarted() const OVERRIDE;
     virtual bool initializeContext() OVERRIDE;
+    virtual void setSurfaceReady() OVERRIDE;
     virtual bool initializeLayerRenderer() OVERRIDE;
     virtual bool recreateContext() OVERRIDE;
     virtual int compositorIdentifier() const OVERRIDE { return m_compositorIdentifier; }

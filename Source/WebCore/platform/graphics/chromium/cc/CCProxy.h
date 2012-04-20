@@ -67,6 +67,9 @@ public:
     // The context will not be used and no frames may be produced until initializeLayerRenderer() is called.
     virtual bool initializeContext() = 0;
 
+    // Indicates that the compositing surface associated with our context is ready to use.
+    virtual void setSurfaceReady() = 0;
+
     // Attempts to initialize the layer renderer. Returns false if the context isn't usable for compositing.
     virtual bool initializeLayerRenderer() = 0;
 

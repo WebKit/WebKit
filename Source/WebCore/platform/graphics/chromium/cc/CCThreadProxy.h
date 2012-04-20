@@ -57,6 +57,7 @@ public:
     virtual void finishAllRendering() OVERRIDE;
     virtual bool isStarted() const OVERRIDE;
     virtual bool initializeContext() OVERRIDE;
+    virtual void setSurfaceReady() OVERRIDE;
     virtual bool initializeLayerRenderer() OVERRIDE;
     virtual bool recreateContext() OVERRIDE;
     virtual int compositorIdentifier() const OVERRIDE;
@@ -129,6 +130,7 @@ private:
     void requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec);
     void finishAllRenderingOnImplThread(CCCompletionEvent*);
     void initializeImplOnImplThread(CCCompletionEvent*);
+    void setSurfaceReadyOnImplThread();
     void initializeContextOnImplThread(GraphicsContext3D*);
     void initializeLayerRendererOnImplThread(CCCompletionEvent*, bool* initializeSucceeded, LayerRendererCapabilities*);
     void setVisibleOnImplThread(CCCompletionEvent*, bool visible);

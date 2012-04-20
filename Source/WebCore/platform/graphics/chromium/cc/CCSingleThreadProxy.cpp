@@ -126,6 +126,11 @@ bool CCSingleThreadProxy::initializeContext()
     return true;
 }
 
+void CCSingleThreadProxy::setSurfaceReady()
+{
+    // Scheduling is controlled by the embedder in the single thread case, so nothing to do.
+}
+
 bool CCSingleThreadProxy::initializeLayerRenderer()
 {
     ASSERT(CCProxy::isMainThread());

@@ -207,6 +207,11 @@ void WebPopupMenuImpl::themeChanged()
     notImplemented();
 }
 
+void WebPopupMenuImpl::setCompositorSurfaceReady()
+{
+    notImplemented();
+}
+
 void WebPopupMenuImpl::composite(bool)
 {
     notImplemented();

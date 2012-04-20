@@ -85,6 +85,11 @@ public:
     // Must be called before any methods below.
     WEBKIT_EXPORT bool initialize(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);
 
+    // Indicates that the compositing surface used by this WebLayerTreeView is ready to use.
+    // A WebLayerTreeView may request a context from its client before the surface is ready,
+    // but it won't attempt to use it.
+    WEBKIT_EXPORT void setSurfaceReady();
+
     // Sets the root of the tree. The root is set by way of the constructor.
     // This is typically used to explicitly set the root to null to break
     // cycles.

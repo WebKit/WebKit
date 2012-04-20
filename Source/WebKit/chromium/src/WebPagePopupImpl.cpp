@@ -209,6 +209,10 @@ void WebPagePopupImpl::animate(double)
     PageWidgetDelegate::animate(m_page.get(), monotonicallyIncreasingTime());
 }
 
+void WebPagePopupImpl::setCompositorSurfaceReady()
+{
+}
+
 void WebPagePopupImpl::composite(bool)
 {
 }

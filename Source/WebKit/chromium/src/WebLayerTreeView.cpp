@@ -69,6 +69,11 @@ bool WebLayerTreeView::initialize(WebLayerTreeViewClient* client, const WebLayer
     return !isNull();
 }
 
+void WebLayerTreeView::setSurfaceReady()
+{
+    m_private->setSurfaceReady();
+}
+
 void WebLayerTreeView::setRootLayer(WebLayer *root)
 {
     if (root)

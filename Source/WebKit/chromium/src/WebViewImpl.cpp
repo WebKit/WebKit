@@ -384,6 +384,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_isAcceleratedCompositingActive(false)
     , m_compositorCreationFailed(false)
     , m_recreatingGraphicsContext(false)
+    , m_compositorSurfaceReady(false)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
@@ -1400,6 +1401,13 @@ void WebViewImpl::updateBatteryStatus(const WebBatteryStatus& status)
     m_batteryClient->updateBatteryStatus(status);
 }
 #endif
+
+void WebViewImpl::setCompositorSurfaceReady()
+{
+    m_compositorSurfaceReady = true;
+    if (!m_layerTreeView.isNull())
+        m_layerTreeView.setSurfaceReady();
+}
 
 void WebViewImpl::animate(double)
 {
@@ -3269,6 +3277,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_layerTreeView.initialize(this, m_rootLayer, layerTreeViewSettings);
         if (!m_layerTreeView.isNull()) {
             m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+            if (m_compositorSurfaceReady)
+                m_layerTreeView.setSurfaceReady();
             updateLayerTreeViewport();
             m_client->didActivateCompositor(m_layerTreeView.compositorIdentifier());
             m_isAcceleratedCompositingActive = true;

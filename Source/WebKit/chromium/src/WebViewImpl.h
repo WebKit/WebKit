@@ -124,6 +124,7 @@ public:
     virtual void didEnterFullScreen();
     virtual void willExitFullScreen();
     virtual void didExitFullScreen();
+    virtual void setCompositorSurfaceReady();
     virtual void animate(double);
     virtual void layout(); // Also implements WebLayerTreeViewClient::layout()
     virtual void paint(WebCanvas*, const WebRect&);
@@ -754,6 +755,7 @@ private:
     bool m_compositorCreationFailed;
     // If true, the graphics context is being restored.
     bool m_recreatingGraphicsContext;
+    bool m_compositorSurfaceReady;
 #endif
     static const WebInputEvent* m_currentInputEvent;
 

@@ -128,6 +128,8 @@ public:
     static PassOwnPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
     virtual ~CCLayerTreeHost();
 
+    void setSurfaceReady();
+
     // Returns true if any CCLayerTreeHost is alive.
     static bool anyLayerTreeHostInstanceExists();
 

@@ -538,6 +538,7 @@ void CCLayerTreeHostTest::doBeginTest()
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT_TRUE(m_layerTreeHost);
     rootLayer->setLayerTreeHost(m_layerTreeHost.get());
+    m_layerTreeHost->setSurfaceReady();
 
     m_beginning = true;
     beginTest();

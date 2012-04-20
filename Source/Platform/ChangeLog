@@ -1,3 +1,15 @@
+2012-04-20  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Plumb a compositor surface ready notification through to the threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=84305
+
+        Reviewed by Adrienne Walker.
+
+        Add a notification for when the compositor surface associated with a given view is ready to use.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2012-04-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Convert WebPluginContainerImpl over to use WebExternalTextureLayer

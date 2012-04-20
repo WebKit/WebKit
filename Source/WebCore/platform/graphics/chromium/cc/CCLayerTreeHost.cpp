@@ -123,6 +123,11 @@ CCLayerTreeHost::~CCLayerTreeHost()
     numLayerTreeInstances--;
 }
 
+void CCLayerTreeHost::setSurfaceReady()
+{
+    m_proxy->setSurfaceReady();
+}
+
 void CCLayerTreeHost::initializeLayerRenderer()
 {
     TRACE_EVENT("CCLayerTreeHost::initializeLayerRenderer", this, 0);
