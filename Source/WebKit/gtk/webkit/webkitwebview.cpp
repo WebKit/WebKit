@@ -3420,6 +3420,9 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setEnableScrollAnimator(settingsPrivate->enableSmoothScrolling);
 #endif
 
+    // Use mock scrollbars if in DumpRenderTree mode (i.e. testing layout tests).
+    coreSettings->setMockScrollbarsEnabled(DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled());
+
     if (Page* page = core(webView))
         page->setTabKeyCyclesThroughElements(settingsPrivate->tabKeyCyclesThroughElements);
 
