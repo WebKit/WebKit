@@ -1684,6 +1684,7 @@
             ['include', 'platform/graphics/harfbuzz/FontPlatformDataHarfBuzz\\.cpp$'],
             ['include', 'platform/graphics/harfbuzz/HarfBuzzSkia\\.cpp$'],
             ['include', 'platform/graphics/harfbuzz/HarfBuzzShaperBase\\.cpp$'],
+            ['exclude', 'platform/graphics/skia/FontCacheSkia\\.cpp$'],
             ['include', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
           ],
         }, { # OS!="android"
