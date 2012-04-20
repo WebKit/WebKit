@@ -195,9 +195,6 @@ public:
     static bool layoutTestMode();
 
     // Memory -------------------------------------------------------------
-    // Returns the current space allocated for the pagefile, in MB.
-    // That is committed size for Windows and virtual memory size for POSIX
-    static int memoryUsageMB();
     // Same as above, but always returns actual value, without any caches.
     static int actualMemoryUsageMB();
     // If memory usage is below this threshold, do not bother forcing GC.

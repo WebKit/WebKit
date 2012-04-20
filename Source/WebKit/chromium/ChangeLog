@@ -1,3 +1,15 @@
+2012-04-20  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call memoryUsageMB directly
+        https://bugs.webkit.org/show_bug.cgi?id=84376
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
 2012-04-20  Adrienne Walker  <enne@google.com>
 
         [chromium] Clip TransparencyWin to prevent OOM from large Skia canvas

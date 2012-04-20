@@ -37,6 +37,7 @@
 #include "DOMImplementation.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "MemoryUsageSupport.h"
 #include "MessagePort.h"
 #include "PlatformSupport.h"
 #include "RetainedDOMInfo.h"
@@ -468,7 +469,7 @@ namespace {
 int getMemoryUsageInMB()
 {
 #if PLATFORM(CHROMIUM)
-    return PlatformSupport::memoryUsageMB();
+    return MemoryUsageSupport::memoryUsageMB();
 #else
     return 0;
 #endif

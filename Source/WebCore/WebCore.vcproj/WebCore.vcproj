@@ -27606,6 +27606,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\MemoryUsageSupport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\MemoryUsageSupport.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\MIMETypeRegistry.cpp"
 				>
 			</File>

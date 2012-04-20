@@ -1101,6 +1101,7 @@ SET(WebCore_SOURCES
     platform/Length.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
+    platform/MemoryUsageSupport.cpp
     platform/MIMETypeRegistry.cpp
     platform/MemoryPressureHandler.cpp
     platform/PlatformEvent.cpp
