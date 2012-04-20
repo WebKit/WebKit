@@ -32,7 +32,7 @@ namespace WebCore {
 
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
-    return 6;
+    return 10000;
 }
 
 static inline NetworkRequest::CachePolicy platformCachePolicyForRequest(const ResourceRequest& request)
