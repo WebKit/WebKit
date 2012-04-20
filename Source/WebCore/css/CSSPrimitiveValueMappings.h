@@ -371,11 +371,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case ListItemPart:
             m_value.ident = CSSValueListitem;
             break;
-        case MediaEnterFullscreenButtonPart:
-            m_value.ident = CSSValueMediaEnterFullscreenButton;
-            break;
-        case MediaExitFullscreenButtonPart:
-            m_value.ident = CSSValueMediaExitFullscreenButton;
+        case MediaFullscreenButtonPart:
+            m_value.ident = CSSValueMediaFullscreenButton;
             break;
         case MediaPlayButtonPart:
             m_value.ident = CSSValueMediaPlayButton;

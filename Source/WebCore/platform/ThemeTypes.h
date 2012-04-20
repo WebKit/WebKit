@@ -48,7 +48,7 @@ typedef unsigned ControlStates;
 enum ControlPart {
     NoControlPart, CheckboxPart, RadioPart, PushButtonPart, SquareButtonPart, ButtonPart,
     ButtonBevelPart, DefaultButtonPart, InnerSpinButtonPart, InputSpeechButtonPart, ListboxPart, ListItemPart,
-    MediaEnterFullscreenButtonPart, MediaExitFullscreenButtonPart, MediaFullScreenVolumeSliderPart, MediaFullScreenVolumeSliderThumbPart, MediaMuteButtonPart, MediaPlayButtonPart, MediaSeekBackButtonPart, 
+    MediaFullscreenButtonPart, MediaFullScreenVolumeSliderPart, MediaFullScreenVolumeSliderThumbPart, MediaMuteButtonPart, MediaPlayButtonPart, MediaSeekBackButtonPart, 
     MediaSeekForwardButtonPart, MediaRewindButtonPart, MediaReturnToRealtimeButtonPart, MediaToggleClosedCaptionsButtonPart,
     MediaSliderPart, MediaSliderThumbPart, MediaVolumeSliderContainerPart, MediaVolumeSliderPart, MediaVolumeSliderThumbPart,
     MediaVolumeSliderMuteButtonPart, MediaControlsBackgroundPart, MediaControlsFullscreenBackgroundPart, MediaCurrentTimePart, MediaTimeRemainingPart,
