@@ -34,6 +34,7 @@
 
 #include "cc/CCDamageTracker.h"
 
+#include "FilterOperations.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCRenderSurface.h"
@@ -56,7 +57,7 @@ CCDamageTracker::~CCDamageTracker()
 {
 }
 
-void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer)
+void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer, const FilterOperations& filters)
 {
     //
     // This function computes the "damage rect" of a target surface, and updates the state
@@ -136,6 +137,8 @@ void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& laye
         m_currentDamageRect = damageFromActiveLayers;
         m_currentDamageRect.uniteIfNonZero(damageFromSurfaceMask);
         m_currentDamageRect.uniteIfNonZero(damageFromLeftoverRects);
+
+        expandDamageRectWithForegroundFilters(filters);
     }
 
     // The next history map becomes the current map for the next frame.
@@ -304,6 +307,17 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
         // In the current implementation, a change in the replica mask damages the entire replica region.
         if (replicaIsNew || replicaMaskLayer->layerPropertyChanged() || !replicaMaskLayer->updateRect().isEmpty())
             targetDamageRect.uniteIfNonZero(replicaMaskLayerRect);
+    }
+}
+
+void CCDamageTracker::expandDamageRectWithForegroundFilters(const FilterOperations& filters)
+{
+    // Filters can spread damage around in the surface.
+    if (filters.hasFilterThatMovesPixels()) {
+        int top, right, bottom, left;
+        filters.getOutsets(top, right, bottom, left);
+        m_currentDamageRect.move(-left, -top);
+        m_currentDamageRect.expand(left + right, top + bottom);
     }
 }
 

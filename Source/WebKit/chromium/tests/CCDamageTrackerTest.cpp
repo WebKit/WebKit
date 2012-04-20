@@ -70,7 +70,7 @@ void emulateDrawingOneFrame(CCLayerImpl* root)
     // Iterate back-to-front, so that damage correctly propagates from descendant surfaces to ancestors.
     for (int i = renderSurfaceLayerList.size() - 1; i >= 0; --i) {
         CCRenderSurface* targetSurface = renderSurfaceLayerList[i]->renderSurface();
-        targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), targetSurface->surfacePropertyChangedOnlyFromDescendant(), targetSurface->contentRect(), renderSurfaceLayerList[i]->maskLayer());
+        targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), targetSurface->surfacePropertyChangedOnlyFromDescendant(), targetSurface->contentRect(), renderSurfaceLayerList[i]->maskLayer(), renderSurfaceLayerList[i]->filters());
     }
 
     root->resetAllChangeTrackingForSubtree();
@@ -313,6 +313,32 @@ TEST_F(CCDamageTrackerTest, verifyDamageForTransformedLayer)
     FloatRect expectedRect(expectedPosition, expectedPosition, expectedWidth, expectedWidth);
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(expectedRect, rootDamageRect);
+}
+
+TEST_F(CCDamageTrackerTest, verifyDamageForBlurredSurface)
+{
+    OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
+    CCLayerImpl* child = root->children()[0].get();
+
+    FilterOperations filters;
+    filters.operations().append(BlurFilterOperation::create(Length(5, WebCore::Percent), FilterOperation::BLUR));
+    int outsetTop, outsetRight, outsetBottom, outsetLeft;
+    filters.getOutsets(outsetTop, outsetRight, outsetBottom, outsetLeft);
+    root->setFilters(filters);
+
+    // Setting the filter will damage the whole surface.
+    emulateDrawingOneFrame(root.get());
+
+    // Setting the update rect should cause the corresponding damage to the surface, blurred based on the size of the blur filter.
+    child->setUpdateRect(FloatRect(10, 11, 12, 13));
+    emulateDrawingOneFrame(root.get());
+
+    // Damage position on the surface should be: position of updateRect (10, 11) relative to the child (100, 100), but expanded by the blur outsets.
+    FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    FloatRect expectedDamageRect = FloatRect(110, 111, 12, 13);
+    expectedDamageRect.move(-outsetLeft, -outsetTop);
+    expectedDamageRect.expand(outsetLeft + outsetRight, outsetTop + outsetBottom);
+    EXPECT_FLOAT_RECT_EQ(expectedDamageRect, rootDamageRect);
 }
 
 TEST_F(CCDamageTrackerTest, verifyDamageForAddingAndRemovingLayer)
@@ -877,7 +903,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForEmptyLayerList)
     ASSERT_TRUE(root->renderSurface() == root->targetRenderSurface());
     CCRenderSurface* targetSurface = root->renderSurface();
     targetSurface->clearLayerList();
-    targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), false, IntRect(), 0);
+    targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), false, IntRect(), 0, FilterOperations());
 
     FloatRect damageRect = targetSurface->damageTracker()->currentDamageRect();
     EXPECT_TRUE(damageRect.isEmpty());

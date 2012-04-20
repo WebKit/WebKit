@@ -35,6 +35,7 @@ namespace WebCore {
 
 class CCLayerImpl;
 class CCRenderSurface;
+class FilterOperations;
 
 // Computes the region where pixels have actually changed on a RenderSurface. This region is used
 // to scissor what is actually drawn to the screen to save GPU computation and bandwidth.
@@ -44,7 +45,7 @@ public:
     ~CCDamageTracker();
 
     void forceFullDamageNextUpdate() { m_forceFullDamageNextUpdate = true; }
-    void updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer);
+    void updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, bool targetSurfacePropertyChangedOnlyFromDescendant, const IntRect& targetSurfaceContentRect, CCLayerImpl* targetSurfaceMaskLayer, const FilterOperations&);
     const FloatRect& currentDamageRect() { return m_currentDamageRect; }
 
 private:
@@ -60,6 +61,8 @@ private:
     // These helper functions are used only in trackDamageFromActiveLayers().
     void extendDamageForLayer(CCLayerImpl*, FloatRect& targetDamageRect);
     void extendDamageForRenderSurface(CCLayerImpl*, FloatRect& targetDamageRect);
+
+    void expandDamageRectWithForegroundFilters(const FilterOperations&);
 
     // To correctly track exposed regions, two hashtables of rects are maintained.
     // The "current" map is used to compute exposed regions of the current frame, while

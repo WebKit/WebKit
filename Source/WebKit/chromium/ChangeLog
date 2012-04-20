@@ -1,3 +1,15 @@
+2012-04-20  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Some filters require inflating damage rect in CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=84373
+
+        Reviewed by James Robinson.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::emulateDrawingOneFrame):
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+
 2012-04-20  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Don't crash when scrolling empty layer tree
