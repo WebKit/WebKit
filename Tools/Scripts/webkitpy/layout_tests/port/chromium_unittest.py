@@ -104,7 +104,7 @@ class ChromiumDriverTest(unittest.TestCase):
         self.driver.test_to_uri = lambda test: 'mocktesturi'
         self.driver._port.driver_name = lambda: 'mockdriver'
         self.driver._port._get_crash_log = lambda name, pid, out, err, newer_than: 'mockcrashlog'
-        driver_output = self.driver.run_test(DriverInput(test_name='some/test.html', timeout=1, image_hash=None, is_reftest=False))
+        driver_output = self.driver.run_test(DriverInput(test_name='some/test.html', timeout=1, image_hash=None, should_run_pixel_test=False))
         self.assertTrue(driver_output.crash)
         self.assertEqual(driver_output.crashed_process_name, 'mockdriver')
         self.assertEqual(driver_output.crashed_pid, 1234)

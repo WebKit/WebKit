@@ -29,24 +29,24 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-class TestInput:
+class TestInput(object):
     """Groups information about a test for easy passing of data."""
 
-    # To save footprints since most TestInput instances don't have to have these fields.
-    ref_file = None
-    is_mismatch_reftest = None
-
-    def __init__(self, test_name, timeout, should_run_pixel_test=True):
+    def __init__(self, test_name, timeout):
         """Holds the input parameters for a test.
         Args:
           test: name of test (not an absolute path!)
           timeout: Timeout in msecs the driver should use while running the test
-          ref_file: name of reference_filename (not an absolute path!)
-          is_mismatch_test: true when the test is a mismatch reftest.
           """
         self.test_name = test_name
         self.timeout = timeout
-        self.should_run_pixel_test = should_run_pixel_test
+
+        # TestInput objects are normally constructed by the manager and passed
+        # to the workers, but these two fields are set lazily in the workers
+        # because they require us to figure out if the test is a reftest or not
+        # and we want to be able to do that in parallel.
+        self.should_run_pixel_tests = None
+        self.reference_files = None
 
     def __repr__(self):
-        return "TestInput('%s', %d)" % (self.test_name, self.timeout)
+        return "TestInput('%s', %d, %s, %s)" % (self.test_name, self.timeout, self.should_run_pixel_tests, self.reference_files)

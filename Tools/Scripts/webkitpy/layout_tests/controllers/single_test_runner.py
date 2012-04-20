@@ -57,9 +57,7 @@ class SingleTestRunner:
         self._worker_name = worker_name
         self._test_name = test_input.test_name
         self._should_run_pixel_test = test_input.should_run_pixel_test
-
-        self._is_reftest = False
-        self._reference_files = port.reference_files(self._test_name)
+        self._reference_files = test_input.reference_files
 
         if self._reference_files:
             # Detect and report a test which has a wrong combination of expectation files.
@@ -92,7 +90,7 @@ class SingleTestRunner:
         image_hash = None
         if self._should_fetch_expected_checksum():
             image_hash = self._port.expected_checksum(self._test_name)
-        return DriverInput(self._test_name, self._timeout, image_hash, bool(self._reference_files))
+        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test)
 
     def run(self):
         if self._reference_files:
@@ -290,7 +288,7 @@ class SingleTestRunner:
         putAllMismatchBeforeMatch = sorted
         for expectation, reference_filename in putAllMismatchBeforeMatch(self._reference_files):
             reference_test_name = self._port.relative_test_filename(reference_filename)
-            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, test_output.image_hash, is_reftest=True))
+            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, test_output.image_hash, should_run_pixel_test=True))
             test_result = self._compare_output_with_reference(test_output, reference_output, reference_filename, expectation == '!=')
 
             if (expectation == '!=' and test_result.failures) or (expectation == '==' and not test_result.failures):

@@ -68,7 +68,6 @@ TestController& TestController::shared()
 
 TestController::TestController(int argc, const char* argv[])
     : m_dumpPixels(false)
-    , m_skipPixelTestOption(false)
     , m_verbose(false)
     , m_printSeparators(false)
     , m_usingServerMode(false)
@@ -257,11 +256,6 @@ void TestController::initialize(int argc, const char* argv[])
 
         if (argument == "--no-timeout") {
             m_useWaitToDumpWatchdogTimer = false;
-            continue;
-        }
-
-        if (argument == "--skip-pixel-test-if-no-baseline") {
-            m_skipPixelTestOption = true;
             continue;
         }
 
@@ -519,7 +513,6 @@ bool TestController::runTest(const char* test)
     m_state = RunningTest;
 
     m_currentInvocation = adoptPtr(new TestInvocation(pathOrURL));
-    m_currentInvocation->setSkipPixelTestOption(m_skipPixelTestOption);
     if (m_dumpPixels)
         m_currentInvocation->setIsPixelTest(expectedPixelHash);
 

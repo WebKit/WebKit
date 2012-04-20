@@ -184,7 +184,12 @@ class MockDRT(object):
             line = self._stdin.readline()
             if not line:
                 return 0
-            self.run_one_test(self.input_from_line(line))
+            driver_input = self.input_from_line(line)
+            dirname, basename = self._port.split_test(driver_input.test_name)
+            is_reftest = (self._port.reference_files(driver_input.test_name) or
+                          self._port.is_reference_html_file(self._port._filesystem, dirname, basename))
+            output = self.output_for_test(driver_input, is_reftest)
+            self.write_test_output(driver_input, output, is_reftest)
 
     def input_from_line(self, line):
         vals = line.strip().split("'")
@@ -199,18 +204,15 @@ class MockDRT(object):
         else:
             test_name = self._port.relative_test_filename(uri)
 
-        dirname, basename = self._port.split_test(test_name)
-        is_reftest = (self._port.reference_files(test_name) or
-                      self._port.is_reference_html_file(self._port._filesystem, dirname, basename))
-        return DriverInput(test_name, 0, checksum, is_reftest)
+        return DriverInput(test_name, 0, checksum, self._options.pixel_tests)
 
-    def output_for_test(self, test_input):
+    def output_for_test(self, test_input, is_reftest):
         port = self._port
         actual_text = port.expected_text(test_input.test_name)
         actual_audio = port.expected_audio(test_input.test_name)
         actual_image = None
         actual_checksum = None
-        if test_input.is_reftest:
+        if is_reftest:
             # Make up some output for reftests.
             actual_text = 'reference text\n'
             actual_checksum = 'mock-checksum'
@@ -225,9 +227,7 @@ class MockDRT(object):
 
         return DriverOutput(actual_text, actual_image, actual_checksum, actual_audio)
 
-    def run_one_test(self, test_input):
-        output = self.output_for_test(test_input)
-
+    def write_test_output(self, test_input, output, is_reftest):
         if output.audio:
             self._stdout.write('Content-Type: audio/wav\n')
             self._stdout.write('Content-Transfer-Encoding: base64\n')
@@ -241,7 +241,7 @@ class MockDRT(object):
 
         self._stdout.write('#EOF\n')
 
-        if self._options.pixel_tests and (test_input.image_hash or test_input.is_reftest):
+        if self._options.pixel_tests and output.image_hash:
             self._stdout.write('\n')
             self._stdout.write('ActualHash: %s\n' % output.image_hash)
             self._stdout.write('ExpectedHash: %s\n' % test_input.image_hash)
@@ -265,26 +265,20 @@ class MockChromiumDRT(MockDRT):
             checksum = None
 
         test_name = self._driver.uri_to_test(uri)
-        dirname, basename = self._port.split_test(test_name)
-        is_reftest = (self._port.reference_files(test_name) or
-                      self._port.is_reference_html_file(self._port._filesystem, dirname, basename))
+        return DriverInput(test_name, timeout, checksum, self._options.pixel_tests)
 
-        return DriverInput(test_name, timeout, checksum, is_reftest)
-
-    def output_for_test(self, test_input):
+    def output_for_test(self, test_input, is_reftest):
         # FIXME: This is a hack to make virtual tests work. Need something more general.
         original_test_name = test_input.test_name
         if '--enable-accelerated-2d-canvas' in self._args and 'canvas' in test_input.test_name:
             test_input.test_name = 'platform/chromium/virtual/gpu/' + test_input.test_name
-        output = super(MockChromiumDRT, self).output_for_test(test_input)
+        output = super(MockChromiumDRT, self).output_for_test(test_input, is_reftest)
         test_input.test_name = original_test_name
         return output
 
-    def run_one_test(self, test_input):
-        output = self.output_for_test(test_input)
-
+    def write_test_output(self, test_input, output, is_reftest):
         self._stdout.write("#URL:%s\n" % self._driver.test_to_uri(test_input.test_name))
-        if self._options.pixel_tests and (test_input.image_hash or test_input.is_reftest):
+        if self._options.pixel_tests and output.image_hash:
             self._stdout.write("#MD5:%s\n" % output.image_hash)
             if output.image:
                 self._host.filesystem.maybe_make_directory(self._host.filesystem.dirname(self._options.pixel_path))

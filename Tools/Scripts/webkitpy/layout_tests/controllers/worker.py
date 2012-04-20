@@ -140,9 +140,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         start_time = time.time()
         num_tests = 0
         for test_input in test_list:
-            #FIXME: When the DRT support also this function, that would be useful
-            if self._port.driver_name() == "WebKitTestRunner" and self._port.get_option('skip_pixel_test_if_no_baseline') and self._port.get_option('pixel_tests'):
-                test_input.should_run_pixel_test = (self._port.expected_image(test_input.test_name) != None)
+            self._update_test_input(test_input)
             self._run_test(test_input)
             num_tests += 1
             self._worker_connection.yield_to_broker()
@@ -152,6 +150,18 @@ class Worker(manager_worker_broker.AbstractWorker):
 
     def handle_stop(self, src):
         self.stop_handling_messages()
+
+    def _update_test_input(self, test_input):
+        test_input.reference_files = self._port.reference_files(test_input.test_name)
+        if test_input.reference_files:
+            test_input.should_run_pixel_test = True
+        elif self._options.pixel_tests:
+            if self._options.skip_pixel_test_if_no_baseline:
+                test_input.should_run_pixel_test = bool(self._port.expected_image(test_input.test_name))
+            else:
+                test_input.should_run_pixel_test = True
+        else:
+            test_input.should_run_pixel_test = False
 
     def _run_test(self, test_input):
         test_timeout_sec = self.timeout(test_input)

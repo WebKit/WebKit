@@ -402,7 +402,7 @@ class ChromiumDriver(Driver):
 
     def _wrapper_options(self, pixel_tests):
         cmd = []
-        if pixel_tests or self._pixel_tests:
+        if pixel_tests:
             if not self._image_path:
                 self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
             # See note above in diff_image() for why we need _convert_path().
@@ -514,7 +514,7 @@ class ChromiumDriver(Driver):
 
     def run_test(self, driver_input):
         if not self._proc:
-            self._start(driver_input.is_reftest or self._pixel_tests, driver_input.args)
+            self._start(driver_input.should_run_pixel_test, driver_input.args)
 
         output = []
         error = []

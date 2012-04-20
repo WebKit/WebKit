@@ -452,8 +452,6 @@ class WebKitDriver(Driver):
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
-        if self._port.get_option('skip_pixel_test_if_no_baseline'):
-            cmd.append('--skip-pixel-test-if-no-baseline')
         if self._port.get_option('gc_between_tests'):
             cmd.append('--gc-between-tests')
         if self._port.get_option('complex_text'):
@@ -466,7 +464,7 @@ class WebKitDriver(Driver):
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
 
-        if pixel_tests or self._pixel_tests:
+        if pixel_tests:
             cmd.append('--pixel-tests')
         cmd.extend(per_test_args)
 
@@ -545,7 +543,7 @@ class WebKitDriver(Driver):
     def run_test(self, driver_input):
         start_time = time.time()
         if not self._server_process:
-            self._start(driver_input.is_reftest or self._pixel_tests, [])
+            self._start(driver_input.should_run_pixel_test, [])
         self.error_from_test = str()
         self.err_seen_eof = False
 

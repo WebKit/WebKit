@@ -34,11 +34,11 @@ from webkitpy.common.system import path
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, is_reftest, args=None):
+    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, args=None):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
-        self.is_reftest = is_reftest
+        self.should_run_pixel_test = should_run_pixel_test
         self.args = args or []
 
 
@@ -104,7 +104,6 @@ class Driver(object):
         """
         self._port = port
         self._worker_number = worker_number
-        self._pixel_tests = pixel_tests
         self._no_timeout = no_timeout
 
     def run_test(self, driver_input):
@@ -181,7 +180,6 @@ class DriverProxy(object):
         self._worker_number = worker_number
         self._driver_instance_constructor = driver_instance_constructor
         self._no_timeout = no_timeout
-        self._pixel_tests = pixel_tests
 
         # FIXME: We shouldn't need to create a driver until we actually run a test.
         self._driver = self._make_driver(pixel_tests)
@@ -211,7 +209,7 @@ class DriverProxy(object):
             virtual_driver_input.args = self._port.lookup_virtual_test_args(driver_input.test_name)
             return self.run_test(virtual_driver_input)
 
-        pixel_tests_needed = self._pixel_tests or driver_input.is_reftest
+        pixel_tests_needed = driver_input.should_run_pixel_test
         cmd_line_key = self._cmd_line_as_key(pixel_tests_needed, driver_input.args)
         if not cmd_line_key in self._running_drivers:
             self._running_drivers[cmd_line_key] = self._make_driver(pixel_tests_needed)
@@ -226,7 +224,7 @@ class DriverProxy(object):
         # The only reason we have this routine at all is so the perftestrunner
         # can pause before running a test; it might be better to push that
         # into run_test() directly.
-        self._driver.start(self._pixel_tests, [])
+        self._driver.start(self._port.get_option('pixel_tests'), [])
 
     def has_crashed(self):
         return any(driver.has_crashed() for driver in self._running_drivers.values())
@@ -237,7 +235,7 @@ class DriverProxy(object):
 
     # FIXME: this should be a @classmethod (or implemented on Port instead).
     def cmd_line(self, pixel_tests=None, per_test_args=None):
-        return self._driver.cmd_line(pixel_tests or self._pixel_tests, per_test_args or [])
+        return self._driver.cmd_line(pixel_tests, per_test_args or [])
 
     def _cmd_line_as_key(self, pixel_tests, per_test_args):
         return ' '.join(self.cmd_line(pixel_tests, per_test_args))

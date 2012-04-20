@@ -1,3 +1,63 @@
+2012-04-20  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        NRWT: option --skip-pixel-test-if-no-baseline support on DRT
+        https://bugs.webkit.org/show_bug.cgi?id=72841
+
+        Reviewed by Dirk Pranke
+
+        This patch implements support for --skip-pixel-test-if-no-baseline generically in NRWT,
+        instead of in every DRT and WTR implementation. We add 'should_run_pixel_test'
+        and 'reference_files' fields to the TestInput objects, and use those flags
+        to select the right driver to use in the DriverProxy.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__):
+        (SingleTestRunner._driver_input):
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.handle_test_list):
+        (Worker._update_test_input):
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput):
+        (TestInput.__init__):
+        (TestInput.__repr__):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver._wrapper_options):
+        (ChromiumDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_crash_log):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverInput.__init__):
+        (Driver.__init__):
+        (DriverProxy.__init__):
+        (DriverProxy.run_test):
+        (DriverProxy.start):
+        (DriverProxy.cmd_line):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver._start):
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (MockDRT.run):
+        (MockDRT.input_from_line):
+        (MockDRT.output_for_test):
+        (MockDRT.write_test_output):
+        (MockChromiumDRT.input_from_line):
+        (MockChromiumDRT.output_for_test):
+        (MockChromiumDRT.write_test_output):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.cmd_line):
+        (WebKitDriver.run_test):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::setIsPixelTest):
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation):
+
 2012-04-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Make it possible to define offline storage quota per origin
