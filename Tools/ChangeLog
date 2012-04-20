@@ -1,3 +1,15 @@
+2012-04-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Missing keycode translation for space key
+        https://bugs.webkit.org/show_bug.cgi?id=84153
+
+        Reviewed by Antonio Gomes.
+
+        Set keyname for space key before dispatching event.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyNameFromJSValue):
+
 2012-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Allow to use WebInspector in GtkLauncher

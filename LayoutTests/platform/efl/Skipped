@@ -1280,7 +1280,6 @@ fast/events/key-events-in-input-text.html
 fast/events/keydown-numpad-keys.html
 fast/events/option-tab.html
 fast/events/special-key-events-in-input-text.html
-fast/forms/button-spacebar-click.html
 fast/forms/enter-clicks-buttons.html
 fast/forms/input-search-press-escape-key.html
 
@@ -1877,7 +1876,6 @@ fast/gradients/generated-gradients.html
 fast/gradients/radial-centered.html
 fast/harness/user-preferred-language.html
 fast/html/details-click-controls.html
-fast/html/details-keyboard-show-hide.html
 fast/html/marquee-alternate.html
 fast/inline-block/contenteditable-baseline.html
 fast/inline/continuation-outlines-with-layers-2.html

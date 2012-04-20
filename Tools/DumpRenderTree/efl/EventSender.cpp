@@ -406,6 +406,8 @@ static const CString keyNameFromJSValue(JSStringRef character)
         return "Tab";
     if (charCode == '\x8')
         return "BackSpace";
+    if (charCode == ' ')
+        return "space";
 
     return character->ustring().utf8();
 }
