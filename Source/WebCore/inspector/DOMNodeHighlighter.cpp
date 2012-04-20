@@ -355,10 +355,10 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
 
 static void contentsQuadToRootView(FloatQuad& quad, FrameView* view)
 {
-    quad.setP1(view->contentsToRootView(roundedLayoutPoint(quad.p1())));
-    quad.setP2(view->contentsToRootView(roundedLayoutPoint(quad.p2())));
-    quad.setP3(view->contentsToRootView(roundedLayoutPoint(quad.p3())));
-    quad.setP4(view->contentsToRootView(roundedLayoutPoint(quad.p4())));
+    quad.setP1(view->contentsToRootView(roundedIntPoint(quad.p1())));
+    quad.setP2(view->contentsToRootView(roundedIntPoint(quad.p2())));
+    quad.setP3(view->contentsToRootView(roundedIntPoint(quad.p3())));
+    quad.setP4(view->contentsToRootView(roundedIntPoint(quad.p4())));
 }
 
 static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* highlightData, Highlight* highlight)
@@ -457,7 +457,7 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
         return;
 
     if (context && highlightData->showInfo)
-        drawElementTitle(*context, node, renderer, boundingBox, titleAnchorBox, visibleRect, containingFrame->settings());
+        drawElementTitle(*context, node, renderer, pixelSnappedIntRect(boundingBox), pixelSnappedIntRect(titleAnchorBox), visibleRect, containingFrame->settings());
 }
 
 static void getOrDrawRectHighlight(GraphicsContext* context, Document* document, HighlightData* highlightData, Highlight *highlight)
