@@ -1,3 +1,18 @@
+2012-04-20  Adrienne Walker  <enne@google.com>
+
+        [chromium] Clip TransparencyWin to prevent OOM from large Skia canvas
+        https://bugs.webkit.org/show_bug.cgi?id=84289
+
+        Reviewed by James Robinson.
+
+        Add a test that would OOM if the layer wasn't clipped. Also, verify
+        that clipping the canvas doesn't shift pixels around incorrectly.
+
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::testClippedLayerKeepTransform):
+        (WebCore):
+        (WebCore::TEST):
+
 2012-04-20  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=84490

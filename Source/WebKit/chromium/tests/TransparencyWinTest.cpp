@@ -395,6 +395,66 @@ TEST(TransparencyWin, TranslateOpaqueCompositeLayer)
     EXPECT_EQ(green, getPixelAt(src->context(), 15, 7));
 }
 
+static void testClippedLayerKeepTransform(TransparencyWin::LayerMode layerMode)
+{
+    // Fill with white.
+    OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), 1, ColorSpaceDeviceRGB));
+    Color white(0xFFFFFFFF);
+    FloatRect fullRect(0, 0, 16, 16);
+    src->context()->fillRect(fullRect, white, ColorSpaceDeviceRGB);
+
+    IntRect clipRect(IntPoint(11, 5), IntSize(1, 1));
+    src->context()->clip(clipRect);
+
+    // Scroll down by 6 (coordinate system goes up).
+    src->context()->save();
+    src->context()->translate(0, -6);
+
+    Color red(0xFFFF0000);
+    Color green(0xFF00FF00);
+    {
+        // The transparency layer after translation will be @ (0, -6) with
+        // a size that would be too large to handle unclipped.
+        TransparencyWin helper;
+        helper.init(src->context(),
+                    layerMode,
+                    TransparencyWin::KeepTransform,
+                    IntRect(0, 0, INT_MAX, INT_MAX));
+
+        // Draw a green pixel at (11, 11). This should be within the clip rect
+        // and at (11, 5) after the transform.
+        FloatRect greenRect(11, 11, 1, 1);
+        helper.context()->fillRect(greenRect, green, ColorSpaceDeviceRGB);
+
+        // Draw a red pixel at (9, 9). This should be outside the clip rect
+        // and not drawn.
+        FloatRect redRect(9, 9, 1, 1);
+        helper.context()->fillRect(redRect, red, ColorSpaceDeviceRGB);
+        helper.composite();
+    }
+
+    src->context()->restore();
+
+    // Verify green pixel got drawn in clip rect and red pixel got clipped.
+    EXPECT_EQ(green, getPixelAt(src->context(), 11, 5));
+    EXPECT_EQ(white, getPixelAt(src->context(), 9, 3));
+}
+
+TEST(TransparencyWin, ClippedKeepTransformNoLayer)
+{
+    testClippedLayerKeepTransform(TransparencyWin::NoLayer);
+}
+
+TEST(TransparencyWin, ClippedKeepTransformOpaqueCompositeLayer)
+{
+    testClippedLayerKeepTransform(TransparencyWin::OpaqueCompositeLayer);
+}
+
+TEST(TransparencyWin, ClippedKeepTransformWhiteLayer)
+{
+    testClippedLayerKeepTransform(TransparencyWin::WhiteLayer);
+}
+
 // Same as OpaqueCompositeLayer, but the canvas has a rotation applied. This
 // tests that the propert transform is applied to the copied layer.
 TEST(TransparencyWin, RotateOpaqueCompositeLayer)
