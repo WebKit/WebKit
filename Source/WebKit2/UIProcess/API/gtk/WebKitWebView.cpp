@@ -780,13 +780,14 @@ static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent l
 
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
+    if (loadEvent == WEBKIT_LOAD_STARTED) {
+        webView->priv->loadingResourcesMap.clear();
+        webView->priv->mainResource = 0;
+    } else if (loadEvent == WEBKIT_LOAD_COMMITTED)
+        webView->priv->subresourcesMap.clear();
+
     if (updateReplaceContentStatus(webView, loadEvent))
         return;
-
-    if (loadEvent == WEBKIT_LOAD_STARTED)
-        webView->priv->loadingResourcesMap.clear();
-    else if (loadEvent == WEBKIT_LOAD_COMMITTED)
-        webView->priv->subresourcesMap.clear();
 
     if (loadEvent != WEBKIT_LOAD_FINISHED)
         webkitWebViewUpdateURI(webView);
@@ -918,11 +919,18 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WKFrameRef wkFrame)
     g_signal_connect(printOperation.leakRef(), "finished", G_CALLBACK(g_object_unref), 0);
 }
 
+static inline bool webkitWebViewIsReplacingContentOrDidReplaceContent(WebKitWebView* webView)
+{
+    return (webView->priv->replaceContentStatus == ReplacingContent || webView->priv->replaceContentStatus == DidReplaceContent);
+}
+
 void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame, uint64_t resourceIdentifier, WebKitURIRequest* request, bool isMainResource)
 {
-    // FIXME: ignore resources when replacing content.
-    WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request, isMainResource);
+    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
+        return;
+
     WebKitWebViewPrivate* priv = webView->priv;
+    WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request, isMainResource);
     if (WKFrameIsMainFrame(wkFrame) && isMainResource)
         priv->mainResource = resource;
     priv->loadingResourcesMap.set(resourceIdentifier, adoptGRef(resource));
@@ -931,19 +939,31 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame
 
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
 {
+    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
+        return 0;
+
     GRefPtr<WebKitWebResource> resource = webView->priv->loadingResourcesMap.get(resourceIdentifier);
+    ASSERT(resource.get());
     return resource.get();
 }
 
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t resourceIdentifier)
 {
-    webView->priv->loadingResourcesMap.remove(resourceIdentifier);
+    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
+        return;
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    ASSERT(priv->loadingResourcesMap.contains(resourceIdentifier));
+    priv->loadingResourcesMap.remove(resourceIdentifier);
 }
 
 WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView* webView, uint64_t resourceIdentifier)
 {
-    WebKitWebResource* resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier);
+    if (webkitWebViewIsReplacingContentOrDidReplaceContent(webView))
+        return 0;
+
     WebKitWebViewPrivate* priv = webView->priv;
+    WebKitWebResource* resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier);
     if (resource != priv->mainResource)
         priv->subresourcesMap.set(String::fromUTF8(webkit_web_resource_get_uri(resource)), resource);
     webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier);

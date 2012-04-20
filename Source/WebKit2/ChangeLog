@@ -1,3 +1,34 @@
+2012-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Ignore resources while replacing content in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=79777
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/WebKitResourceLoadClient.cpp:
+        (didSendRequestForResource): Return early if resources is Null.
+        (didReceiveResponseForResource): Ditto.
+        (didReceiveContentLengthForResource): Ditto.
+        (didFinishLoadForResource): Ditto.
+        (didFailLoadForResource): Ditto.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadChanged): Clear resources before checking
+        whether we are replacing content.
+        (webkitWebViewIsReplacingContentOrDidReplaceContent): Helper
+        function to check whether view is replacing content or current
+        content is replaced.
+        (webkitWebViewResourceLoadStarted): Do not create resources when
+        replacing content.
+        (webkitWebViewGetLoadingWebResource): Ignore when replacing
+        content. Also add an assert when getting a loading resources to
+        make sure we only return Null when replacing content.
+        (webkitWebViewRemoveLoadingWebResource): Ditto.
+        (webkitWebViewResourceLoadFinished): Ditto.
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (replacedContentResourceLoadStartedCallback):
+        (testWebViewResourcesReplacedContent):
+        (beforeAll):
+
 2012-04-19  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] ASSERT(m_thread == currentThread()) on Mac when threaded rendering is enabled for the Qt scenegraph

@@ -44,6 +44,9 @@ static void didInitiateLoadForResource(WKPageRef, WKFrameRef wkFrame, uint64_t r
 static void didSendRequestForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
 {
     GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(WEBKIT_WEB_VIEW(clientInfo), resourceIdentifier);
+    if (!resource)
+        return;
+
     GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(wkRequest)->resourceRequest()));
     GRefPtr<WebKitURIResponse> redirectResponse = wkRedirectResponse ? adoptGRef(webkitURIResponseCreateForResourceResponse(toImpl(wkRedirectResponse)->resourceResponse())) : 0;
     webkitWebResourceSentRequest(resource.get(), request.get(), redirectResponse.get());
@@ -52,6 +55,9 @@ static void didSendRequestForResource(WKPageRef, WKFrameRef, uint64_t resourceId
 static void didReceiveResponseForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLResponseRef wkResponse, const void* clientInfo)
 {
     GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(WEBKIT_WEB_VIEW(clientInfo), resourceIdentifier);
+    if (!resource)
+        return;
+
     GRefPtr<WebKitURIResponse> response = adoptGRef(webkitURIResponseCreateForResourceResponse(toImpl(wkResponse)->resourceResponse()));
     webkitWebResourceSetResponse(resource.get(), response.get());
 }
@@ -59,12 +65,18 @@ static void didReceiveResponseForResource(WKPageRef, WKFrameRef, uint64_t resour
 static void didReceiveContentLengthForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, uint64_t contentLength, const void* clientInfo)
 {
     GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(WEBKIT_WEB_VIEW(clientInfo), resourceIdentifier);
+    if (!resource)
+        return;
+
     webkitWebResourceNotifyProgress(resource.get(), contentLength);
 }
 
 static void didFinishLoadForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, const void* clientInfo)
 {
     GRefPtr<WebKitWebResource> resource = webkitWebViewResourceLoadFinished(WEBKIT_WEB_VIEW(clientInfo), resourceIdentifier);
+    if (!resource)
+        return;
+
     webkitWebResourceFinished(resource.get());
 }
 
@@ -72,6 +84,9 @@ static void didFailLoadForResource(WKPageRef, WKFrameRef, uint64_t resourceIdent
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(clientInfo);
     GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier);
+    if (!resource)
+        return;
+
     const ResourceError& resourceError = toImpl(wkError)->platformError();
     GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
                                                  resourceError.errorCode(),
