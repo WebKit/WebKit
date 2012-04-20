@@ -456,18 +456,18 @@ END
     } else {
         push(@headerContent, <<END);
 
-v8::Handle<v8::Value> toV8Slow(Node*, v8::Isolate*, bool);
+v8::Handle<v8::Value> toV8Slow(Node*, bool);
 
 inline v8::Handle<v8::Value> toV8(Node* impl, v8::Isolate* isolate = 0, bool forceNewObject = false)
 {
     if (UNLIKELY(!impl))
         return v8::Null();
     if (UNLIKELY(forceNewObject))
-        return toV8Slow(impl, isolate, forceNewObject);
+        return toV8Slow(impl, forceNewObject);
     v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return toV8Slow(impl, isolate, false);
+    return toV8Slow(impl, false);
 }
 END
     }
