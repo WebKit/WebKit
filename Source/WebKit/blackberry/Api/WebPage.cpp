@@ -115,6 +115,7 @@
 #include "WebKitVersion.h"
 #include "WebPageClient.h"
 #include "WebSocket.h"
+#include "WebViewportArguments.h"
 #include "npapi.h"
 #include "runtime_root.h"
 
@@ -276,6 +277,16 @@ static inline HistoryItem* historyItemFromBackForwardId(WebPage::BackForwardId i
 static inline WebPage::BackForwardId backForwardIdFromHistoryItem(HistoryItem* item)
 {
     return reinterpret_cast<WebPage::BackForwardId>(item);
+}
+
+void WebPage::setUserViewportArguments(const WebViewportArguments& viewportArguments)
+{
+    d->m_userViewportArguments = *(viewportArguments.d);
+}
+
+void WebPage::resetUserViewportArguments()
+{
+    d->m_userViewportArguments = ViewportArguments();
 }
 
 WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const IntRect& rect)
@@ -3123,24 +3134,36 @@ void WebPage::resetVirtualViewportOnCommitted(bool reset)
 
 IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
 {
-    static ViewportArguments defaultViewportArguments;
-    if (m_viewportArguments == defaultViewportArguments)
-        return IntSize();
+    static const ViewportArguments defaultViewportArguments;
+
+    // When calculating a virtual viewport for layout we prioritize the
+    // m_viewportArguments from WebCore over the m_userViewportArguments. We
+    // cannot assign m_viewportAguments = m_userViewportArguments because then
+    // subsequent changes to m_userViewportArguments would be ignored, thinking
+    // the m_viewportArguments had come from WebCore. Instead we make a copy.
+
+    ViewportArguments currentViewportArguments = m_viewportArguments;
+    if (currentViewportArguments == defaultViewportArguments) {
+        if (currentViewportArguments == m_userViewportArguments)
+            return IntSize();
+
+        currentViewportArguments = m_userViewportArguments;
+    }
 
     int desktopWidth = defaultMaxLayoutSize().width();
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
     int deviceDPI = int(roundf((currentPPI.width() + currentPPI.height()) / 2));
-    if (m_viewportArguments.targetDensityDpi == ViewportArguments::ValueAuto
+    if (currentViewportArguments.targetDensityDpi == ViewportArguments::ValueAuto
         && !Platform::DeviceInfo::instance()->isMobile()) {
         // If the content provider hasn't specified a target dpi and we have a large
         // screen we assume the content is fine and set the targetDensityDpi to our dpi.
         // On smaller screen mobile devices we skip this and use WebCore dpi scaling.
-        m_viewportArguments.targetDensityDpi = deviceDPI;
+        currentViewportArguments.targetDensityDpi = deviceDPI;
     }
 
-    ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, m_defaultLayoutSize);
+    ViewportAttributes result = computeViewportAttributes(currentViewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, m_defaultLayoutSize);
     m_page->setDeviceScaleFactor(result.devicePixelRatio);
     return IntSize(result.layoutSize.width(), result.layoutSize.height());
 }

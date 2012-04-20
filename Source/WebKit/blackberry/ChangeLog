@@ -1,3 +1,58 @@
+2012-04-20  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Expose WebViewportArguments to WebPageClient
+        https://bugs.webkit.org/show_bug.cgi?id=84471
+
+        Reviewed by Antonio Gomes.
+
+        Implement the ability for the WebPageClient to specify a fallback
+        virtual viewport to be used whenever a meta viewport tag is not
+        present in the HTML. This can drastically impact apparent layout.
+        This patch is designed to provide a classic "Column View" style of
+        layout without breaking the web by simply exposing meta viewport
+        arguments to WebPageClients.
+
+        Note: As a side effect of this change. the WebPagePrivate::
+        recomputeVirtualViewportFromViewportArguments method no longer
+        modifies the targetDensityDpi property of the m_viewportArguments.
+        However this does not affect the class because that property itself
+        means nothing to us. Only the computeViewportArguments method from
+        WebCore uses it, and the currentViewportArguments object we pass
+        into that method has the adjusted targetDensityDpi value as before.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setUserViewportArguments):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::resetUserViewportArguments):
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+        * Api/WebPage.h:
+        (WebKit):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebViewportArguments.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit:::d):
+        (BlackBerry::WebKit::WebViewportArguments::~WebViewportArguments):
+        (BlackBerry::WebKit::WebViewportArguments::initialScale):
+        (BlackBerry::WebKit::WebViewportArguments::setInitialScale):
+        (BlackBerry::WebKit::WebViewportArguments::minimumScale):
+        (BlackBerry::WebKit::WebViewportArguments::setMinimumScale):
+        (BlackBerry::WebKit::WebViewportArguments::maximumScale):
+        (BlackBerry::WebKit::WebViewportArguments::setMaximumScale):
+        (BlackBerry::WebKit::WebViewportArguments::width):
+        (BlackBerry::WebKit::WebViewportArguments::setWidth):
+        (BlackBerry::WebKit::WebViewportArguments::height):
+        (BlackBerry::WebKit::WebViewportArguments::setHeight):
+        (BlackBerry::WebKit::WebViewportArguments::targetDensityDpi):
+        (BlackBerry::WebKit::WebViewportArguments::setTargetDensityDpi):
+        (BlackBerry::WebKit::WebViewportArguments::userScalable):
+        (BlackBerry::WebKit::WebViewportArguments::setUserScalable):
+        (BlackBerry::WebKit::WebViewportArguments::operator==):
+        (BlackBerry::WebKit::WebViewportArguments::operator!=):
+        * Api/WebViewportArguments.h: Added.
+        (WebCore):
+        (WebKit):
+
 2012-04-19  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Always use the AnimationFrameRateController for accelerated animations

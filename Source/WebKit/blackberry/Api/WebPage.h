@@ -66,6 +66,7 @@ class WebPageCompositor;
 class WebPageGroupLoadDeferrer;
 class WebPagePrivate;
 class WebSettings;
+class WebViewportArguments;
 
 enum JavaScriptDataType { JSUndefined = 0, JSNull, JSBoolean, JSNumber, JSString, JSObject, JSException, JSDataTypeMax };
 
@@ -327,6 +328,9 @@ public:
     void setWebGLEnabled(bool);
 
     void destroyWebPageCompositor();
+
+    void setUserViewportArguments(const WebViewportArguments&);
+    void resetUserViewportArguments();
 
 private:
     virtual ~WebPage();

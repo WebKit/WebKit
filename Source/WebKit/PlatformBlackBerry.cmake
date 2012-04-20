@@ -54,6 +54,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/Api/WebPageCompositor.cpp
     blackberry/Api/WebPageGroupLoadDeferrer.cpp
     blackberry/Api/WebSettings.cpp
+    blackberry/Api/WebViewportArguments.cpp
     blackberry/WebCoreSupport/AboutData.cpp
     blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
     blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp

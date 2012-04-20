@@ -450,6 +450,7 @@ public:
     int m_virtualViewportHeight;
     WebCore::IntSize m_defaultLayoutSize;
     WebCore::ViewportArguments m_viewportArguments; // We keep this around since we may need to re-evaluate the arguments on rotation.
+    WebCore::ViewportArguments m_userViewportArguments; // A fallback set of Viewport Arguments supplied by the WebPageClient
     bool m_didRestoreFromPageCache;
     ViewMode m_viewMode;
     LoadState m_loadState;
