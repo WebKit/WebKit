@@ -110,3 +110,25 @@
     width: 100%;
     height: 100%;
 }
+
+.navigator-tabbed-pane .tabbed-pane-content {
+    overflow: hidden;
+}
+
+.navigator-tabbed-pane .navigator-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.navigator-tabbed-pane .navigator {
+    padding-left: 0;
+}
+
+.navigator-tabbed-pane .tabbed-pane-header {
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F5F5F5), to(#E5E5E5));
+}
+
+.navigator-tabbed-pane .tabbed-pane-header-contents {
+    margin-left: 20px;
+    margin-right: 28px;
+}

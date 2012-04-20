@@ -226,28 +226,6 @@
     top: 2px;
 }
 
-#scripts-navigator-tabbed-pane .tabbed-pane-content {
-    overflow: hidden;
-}
-
-#scripts-navigator-tabbed-pane .navigator-container {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-#scripts-navigator-tabbed-pane .navigator {
-    padding-left: 0;
-}
-
-#scripts-navigator-tabbed-pane .tabbed-pane-header {
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F5F5F5), to(#E5E5E5));
-}
-
-#scripts-navigator-tabbed-pane .tabbed-pane-header-contents {
-    margin-left: 20px;
-    margin-right: 28px;
-}
-
 #scripts-editor-container-tabbed-pane .tabbed-pane-header {
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F5F5F5), to(#E5E5E5));
 }

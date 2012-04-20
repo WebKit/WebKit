@@ -36,8 +36,7 @@ WebInspector.ScriptsNavigator = function()
     
     this._tabbedPane = new WebInspector.TabbedPane();
     this._tabbedPane.shrinkableTabs = true;
-
-    this._tabbedPane.element.id = "scripts-navigator-tabbed-pane";
+    this._tabbedPane.element.addStyleClass("navigator-tabbed-pane");
 
     this._scriptsView = new WebInspector.NavigatorView();
     this._scriptsView.addEventListener(WebInspector.NavigatorView.Events.ItemSelected, this._scriptSelected, this);

@@ -551,6 +551,11 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
         this._navigatorView._scriptSelected(this.uiSourceCode, false);
     },
 
+    ondblclick: function()
+    {
+        this._navigatorView._scriptSelected(this.uiSourceCode, true);
+    },
+
     onenter: function()
     {
         this._navigatorView._scriptSelected(this.uiSourceCode, true);

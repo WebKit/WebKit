@@ -45,24 +45,28 @@ WebInspector.StylesPanel = function()
 
     this._mainView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
     this._mainView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
-    this._mainView.show(this.element);
 
-    this._navigator = new WebInspector.ScriptsNavigator();
-    this._navigatorView = this._navigator.view;
-    this._navigator.view.show(this._mainView.sidebarElement);
-    this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ScriptSelected, this._scriptSelected, this);
+    this._navigatorView = new WebInspector.NavigatorView();
+    this._navigatorView.addEventListener(WebInspector.NavigatorView.Events.ItemSelected, this._itemSelected, this);
+
+    this._tabbedPane = new WebInspector.TabbedPane();
+    this._tabbedPane.element.addStyleClass("navigator-tabbed-pane");
+    this._tabbedPane.shrinkableTabs = true;
+    this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, WebInspector.UIString("Stylesheets"), this._navigatorView);
+    this._tabbedPane.show(this._mainView.sidebarElement);
 
     this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedCSSFiles");
     this._editorContainer.show(this._mainView.mainElement);
 
-    this._navigatorController = new WebInspector.NavigatorOverlayController(this, this._mainView, this._navigator.view, this._editorContainer.view);
-
-    this._sourceFramesForResource = new Map();
-    this._urlToResource = {};
+    this._navigatorController = new WebInspector.NavigatorOverlayController(this, this._mainView, this._tabbedPane, this._editorContainer.view);
 
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._reset, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._reset, this);
+
+    this._mainView.show(this.element);
+    this._sourceFramesForResource = new Map();
+    this._urlToResource = {};
 }
 
 WebInspector.StylesPanel.prototype = {
@@ -104,13 +108,13 @@ WebInspector.StylesPanel.prototype = {
         if (resource.type !== WebInspector.resourceTypes.Stylesheet)
             return;
         this._urlToResource[resource.url] = resource;
-        this._navigator.addUISourceCode(resource);
+        this._navigatorView.addUISourceCode(resource);
         this._editorContainer.uiSourceCodeAdded(resource);
     },
 
     _reset: function()
     {
-        this._navigator.reset();
+        this._navigatorView.reset();
         this._editorContainer.reset();
         this._urlToResource = {};
         this._sourceFramesForResource = new Map();
@@ -148,18 +152,18 @@ WebInspector.StylesPanel.prototype = {
         this._editorContainer.setFileIsDirty(sourceFrame.resource, sourceFrame.isDirty());
     },
 
-    _scriptSelected: function(event)
+    _itemSelected: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
-        var sourceFrame = this._showFile(uiSourceCode);
+        this._showFile(uiSourceCode);
         this._navigatorController.hideNavigatorOverlay();
-        if (sourceFrame && event.data.focusSource)
-            sourceFrame.focus();
+        if (event.data.focusSource)
+            this._editorContainer.view.focus();
     },
 
     _showFile: function(uiSourceCode)
     {
-        this._navigator.revealUISourceCode(uiSourceCode);
+        this._navigatorView.revealUISourceCode(uiSourceCode);
         this._editorContainer.showFile(uiSourceCode);
     },
 
@@ -179,7 +183,7 @@ WebInspector.StylesPanel.prototype = {
         var sourceFrame = this._sourceFramesForResource.get(resource);
         if (typeof anchor.lineNumber === "number")
             sourceFrame.highlightLine(anchor.lineNumber);
-        sourceFrame.focus();
+        this._editorContainer.view.focus();
     }
 }
 
