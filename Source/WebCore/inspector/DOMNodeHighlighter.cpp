@@ -366,11 +366,11 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
     Node* node = highlightData->node.get();
     RenderObject* renderer = node->renderer();
     Frame* containingFrame = node->document()->frame();
-    FrameView* containingView = containingFrame->view();
 
     if (!renderer || !containingFrame)
         return;
 
+    FrameView* containingView = containingFrame->view();
     LayoutRect boundingBox = containingView->contentsToRootView(renderer->absoluteBoundingBoxRect());
     LayoutRect titleAnchorBox = boundingBox;
 
