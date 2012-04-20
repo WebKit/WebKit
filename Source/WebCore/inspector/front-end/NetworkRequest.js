@@ -69,7 +69,7 @@ WebInspector.NetworkRequest.Events = {
 
 WebInspector.NetworkRequest.prototype = {
     /**
-     * @type {NetworkAgent.RequestId}
+     * @return {NetworkAgent.RequestId}
      */
     get requestId()
     {
@@ -82,7 +82,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get url()
     {
@@ -100,7 +100,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get documentURL()
     {
@@ -113,7 +113,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {NetworkAgent.FrameId}
+     * @return {NetworkAgent.FrameId}
      */
     get frameId()
     {
@@ -121,7 +121,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {NetworkAgent.LoaderId}
+     * @return {NetworkAgent.LoaderId}
      */
     get loaderId()
     {
@@ -129,7 +129,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get startTime()
     {
@@ -142,7 +142,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get responseReceivedTime()
     {
@@ -155,7 +155,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get endTime()
     {
@@ -176,7 +176,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get duration()
     {
@@ -186,7 +186,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get latency()
     {
@@ -196,7 +196,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get receiveDuration()
     {
@@ -206,7 +206,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get resourceSize()
     {
@@ -219,7 +219,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get transferSize()
     {
@@ -252,7 +252,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get finished()
     {
@@ -274,7 +274,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get failed()
     {
@@ -287,7 +287,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get canceled()
     {
@@ -300,7 +300,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get cached()
     {
@@ -315,7 +315,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {NetworkAgent.ResourceTiming|undefined}
+     * @return {NetworkAgent.ResourceTiming|undefined}
      */
     get timing()
     {
@@ -336,7 +336,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get mimeType()
     {
@@ -349,7 +349,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get displayName()
     {
@@ -357,7 +357,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get folder()
     {
@@ -370,7 +370,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {WebInspector.ResourceType}
+     * @return {WebInspector.ResourceType}
      */
     get type()
     {
@@ -383,7 +383,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {WebInspector.Resource|undefined}
+     * @return {WebInspector.Resource|undefined}
      */
     get redirectSource()
     {
@@ -398,7 +398,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {Object}
+     * @return {Object}
      */
     get requestHeaders()
     {
@@ -415,7 +415,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get requestHeadersText()
     {
@@ -435,7 +435,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get requestHeadersSize()
     {
@@ -443,7 +443,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {Array.<Object>}
+     * @return {Array.<Object>}
      */
     get sortedRequestHeaders()
     {
@@ -468,7 +468,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {Array.<WebInspector.Cookie>}
+     * @return {Array.<WebInspector.Cookie>}
      */
     get requestCookies()
     {
@@ -478,7 +478,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string|undefined}
+     * @return {string|undefined}
      */
     get requestFormData()
     {
@@ -492,7 +492,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string|undefined}
+     * @return {string|undefined}
      */
     get requestHttpVersion()
     {
@@ -502,7 +502,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {Object}
+     * @return {Object}
      */
     get responseHeaders()
     {
@@ -519,7 +519,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get responseHeadersText()
     {
@@ -539,7 +539,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get responseHeadersSize()
     {
@@ -547,7 +547,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {Array.<Object>}
+     * @return {Array.<Object>}
      */
     get sortedResponseHeaders()
     {
@@ -572,7 +572,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {Array.<WebInspector.Cookie>}
+     * @return {Array.<WebInspector.Cookie>}
      */
     get responseCookies()
     {
@@ -582,7 +582,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {?Array.<Object>}
+     * @return {?Array.<Object>}
      */
     get queryParameters()
     {
@@ -597,7 +597,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {?Array.<Object>}
+     * @return {?Array.<Object>}
      */
     get formParameters()
     {
@@ -613,7 +613,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string|undefined}
+     * @return {string|undefined}
      */
     get responseHttpVersion()
     {
@@ -657,7 +657,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {?string|undefined}
      */
     get content()
     {
@@ -665,7 +665,7 @@ WebInspector.NetworkRequest.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {boolean}
      */
     get contentEncoded()
     {
@@ -693,7 +693,7 @@ WebInspector.NetworkRequest.prototype = {
             return;
         }
         if (typeof this._content !== "undefined") {
-            callback(this.content, this._contentEncoded, this._mimeType);
+            callback(this.content || null, this._contentEncoded, this._mimeType);
             return;
         }
         this._pendingContentCallbacks.push(callback);

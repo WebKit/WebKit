@@ -105,7 +105,7 @@ WebInspector.ScriptsNavigator.prototype = {
     },
 
     /**
-     * @type {WebInspector.View}
+     * @return {WebInspector.View}
      */
     get view()
     {
@@ -632,7 +632,7 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get titleText()
     {
@@ -677,7 +677,7 @@ WebInspector.NavigatorFolderTreeElement = function(folderIdentifier, domain, fol
 
 WebInspector.NavigatorFolderTreeElement.prototype = {
     /**
-     * @type {string}
+     * @return {string}
      */
     get folderIdentifier()
     {
@@ -685,7 +685,7 @@ WebInspector.NavigatorFolderTreeElement.prototype = {
     },
 
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get isDomain()
     {
@@ -721,7 +721,7 @@ WebInspector.NavigatorScriptTreeElement = function(navigator, uiSourceCode, titl
 
 WebInspector.NavigatorScriptTreeElement.prototype = {
     /**
-     * @type {WebInspector.ScriptsNavigator}
+     * @return {WebInspector.ScriptsNavigator}
      */
     get navigator()
     {
@@ -729,7 +729,7 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
     },
 
     /**
-     * @type {WebInspector.UISourceCode}
+     * @return {WebInspector.UISourceCode}
      */
     get uiSourceCode()
     {

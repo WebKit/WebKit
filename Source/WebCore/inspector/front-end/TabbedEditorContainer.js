@@ -76,7 +76,7 @@ WebInspector.TabbedEditorContainer.maximalPreviouslyViewedFilesCount = 30;
 
 WebInspector.TabbedEditorContainer.prototype = {
     /**
-     * @type {WebInspector.SourceFrame}
+     * @return {WebInspector.View}
      */
     get visibleView()
     {
@@ -84,7 +84,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     },
 
     /**
-     * @type {Element}
+     * @return {Element}
      */
     get element()
     {

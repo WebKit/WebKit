@@ -55,7 +55,7 @@ WebInspector.TabbedPane.EventTypes = {
 
 WebInspector.TabbedPane.prototype = {
     /**
-     * @type {WebInspector.View}
+     * @return {WebInspector.View}
      */
     get visibleView()
     {
@@ -63,7 +63,7 @@ WebInspector.TabbedPane.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get selectedTabId()
     {
@@ -498,11 +498,13 @@ WebInspector.TabbedPaneTab = function(tabbedPane, measureElement, id, title, clo
     this._tooltip = tooltip;
     this._view = view;
     this.shown = false;
+    /** @type {number} */ this._measuredWidth;
+    /** @type {Element} */ this._tabElement;
 }
 
 WebInspector.TabbedPaneTab.prototype = {
     /**
-     * @type {string}
+     * @return {string}
      */
     get id()
     {
@@ -510,7 +512,7 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get title()
     {
@@ -526,7 +528,7 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
-     * @type {WebInspector.View}
+     * @return {WebInspector.View}
      */
     get view()
     {
@@ -539,7 +541,7 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
-     * @type {string|undefined}
+     * @return {string|undefined}
      */
     get tooltip()
     {
@@ -554,7 +556,7 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
-     * @type {Element}
+     * @return {Element}
      */
     get tabElement()
     {
@@ -566,7 +568,7 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get measuredWidth()
     {
@@ -578,7 +580,7 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get width()
     {

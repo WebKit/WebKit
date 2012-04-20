@@ -86,7 +86,7 @@ WebInspector.SplitView.SidebarPosition = {
 
 WebInspector.SplitView.prototype = {
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get hasLeftSidebar()
     {
@@ -94,7 +94,7 @@ WebInspector.SplitView.prototype = {
     },
 
     /**
-     * @type {Element}
+     * @return {Element}
      */
     get mainElement()
     {
@@ -102,7 +102,7 @@ WebInspector.SplitView.prototype = {
     },
 
     /**
-     * @type {Element}
+     * @return {Element}
      */
     get sidebarElement()
     {
@@ -110,7 +110,7 @@ WebInspector.SplitView.prototype = {
     },
 
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get resizable()
     {

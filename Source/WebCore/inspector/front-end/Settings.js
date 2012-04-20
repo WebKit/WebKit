@@ -188,7 +188,7 @@ WebInspector.ExperimentsSettings = function()
 
 WebInspector.ExperimentsSettings.prototype = {
     /**
-     * @type {Array.<WebInspector.Experiment>}
+     * @return {Array.<WebInspector.Experiment>}
      */
     get experiments()
     {
@@ -196,7 +196,7 @@ WebInspector.ExperimentsSettings.prototype = {
     },
     
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get experimentsEnabled()
     {

@@ -53,7 +53,7 @@ WebInspector.TextRange.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get linesCount()
     {
@@ -125,7 +125,7 @@ WebInspector.TextEditorModel.endsWithBracketRegex = /[{(\[]\s*$/;
 
 WebInspector.TextEditorModel.prototype = {
     /**
-     * @type {number}
+     * @return {number}
      */
     get linesCount()
     {
@@ -133,7 +133,7 @@ WebInspector.TextEditorModel.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get text()
     {
@@ -141,7 +141,7 @@ WebInspector.TextEditorModel.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get lineBreak()
     {

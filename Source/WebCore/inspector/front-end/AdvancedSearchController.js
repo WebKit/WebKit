@@ -228,7 +228,7 @@ WebInspector.SearchView.maxQueriesCount = 20;
 
 WebInspector.SearchView.prototype = {
     /**
-     * @type {Array.<Element>}
+     * @return {Array.<Element>}
      */
     get statusBarItems()
     {
@@ -236,7 +236,7 @@ WebInspector.SearchView.prototype = {
     },
 
     /**
-     * @type {Element}
+     * @return {Element}
      */
     get counterElement()
     {
@@ -244,15 +244,11 @@ WebInspector.SearchView.prototype = {
     },
 
     /**
-     * @type {WebInspector.SearchConfig}
+     * @return {WebInspector.SearchConfig}
      */
     get searchConfig()
     {
-        var searchConfig = {};
-        searchConfig.query = this._search.value;
-        searchConfig.ignoreCase = this._ignoreCaseCheckbox.checked;
-        searchConfig.isRegex = this._regexCheckbox.checked;
-        return searchConfig;
+        return new WebInspector.SearchConfig(this._search.value, this._ignoreCaseCheckbox.checked, this._regexCheckbox.checked);
     },
     
     /**
@@ -467,7 +463,7 @@ WebInspector.SearchResultsPane = function(searchConfig)
 
 WebInspector.SearchResultsPane.prototype = {
     /**
-     * @type {WebInspector.SearchConfig}
+     * @return {WebInspector.SearchConfig}
      */
     get searchConfig()
     {

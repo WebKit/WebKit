@@ -784,7 +784,7 @@ WebInspector.TimelineCategory.Events = {
 
 WebInspector.TimelineCategory.prototype = {
     /**
-     * @type {boolean}
+     * @return {boolean}
      */
     get hidden()
     {

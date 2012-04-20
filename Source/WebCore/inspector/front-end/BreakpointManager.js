@@ -413,7 +413,7 @@ WebInspector.Breakpoint.prototype = {
     },
 
     /**
-     * @type {WebInspector.UIBreakpoint}
+     * @return {WebInspector.UIBreakpoint}
      */
     get uiBreakpoint()
     {

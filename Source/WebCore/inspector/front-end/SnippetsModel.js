@@ -60,7 +60,7 @@ WebInspector.SnippetsModel.prototype = {
     },
 
     /**
-     * @type {Array.<WebInspector.Snippet>}
+     * @return {Array.<WebInspector.Snippet>}
      */
     get snippets()
     {
@@ -216,7 +216,7 @@ WebInspector.Snippet.fromObject = function(serializedSnippet)
 
 WebInspector.Snippet.prototype = {
     /**
-     * @type {number}
+     * @return {string}
      */
     get id()
     {
@@ -224,7 +224,7 @@ WebInspector.Snippet.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get name()
     {
@@ -241,7 +241,7 @@ WebInspector.Snippet.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get content()
     {
