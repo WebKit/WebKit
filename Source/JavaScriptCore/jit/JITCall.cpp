@@ -161,8 +161,10 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int registerOffset = instruction[3].u.operand;
 
         addPtr(TrustedImm32(registerOffset * sizeof(Register)), callFrameRegister, regT1);
-        store32(TrustedImm32(argCount), Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
+        store32(TrustedImm32(argCount), Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
     } // regT1 holds newCallFrame with ArgumentCount initialized.
+    
+    store32(TrustedImm32(instruction - m_codeBlock->instructions().begin()), Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
 
     storePtr(callFrameRegister, Address(regT1, RegisterFile::CallerFrame * static_cast<int>(sizeof(Register))));

@@ -1,3 +1,59 @@
+2012-04-19  Oliver Hunt  <oliver@apple.com>
+
+        Exception stack traces aren't complete when the exception starts in native code
+        https://bugs.webkit.org/show_bug.cgi?id=84073
+
+        Reviewed by Filip Pizlo.
+
+        Refactored building the stack trace to so that we can construct
+        it earlier, and don't rely on any prior work performed in the
+        exception handling machinery. Also updated LLInt and the DFG to
+        completely initialise the callframes of host function calls.
+
+        Also fixed a few LLInt paths that failed to correctly update the
+        topCallFrame.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        (JSC):
+        (JSC::Interpreter::throwException):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jsc.cpp:
+        (functionJSCStack):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::interpreterThrowInCaller):
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleHostCall):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/Parser.h:
+        (JSC::::parse):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        (JSC::throwError):
+        * runtime/Error.h:
+        (JSC):
+
 2012-04-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         We're collecting pathologically due to small allocations

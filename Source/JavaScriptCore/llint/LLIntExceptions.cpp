@@ -40,6 +40,7 @@ namespace JSC { namespace LLInt {
 void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 {
     JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Throwing exception %s.\n", globalData->exception.description());
 #endif
@@ -56,6 +57,7 @@ Instruction* returnToThrowForThrownException(ExecState* exec)
 Instruction* returnToThrow(ExecState* exec, Instruction* pc)
 {
     JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Throwing exception %s (returnToThrow).\n", globalData->exception.description());
 #endif
@@ -67,6 +69,7 @@ Instruction* returnToThrow(ExecState* exec, Instruction* pc)
 void* callToThrow(ExecState* exec, Instruction* pc)
 {
     JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Throwing exception %s (callToThrow).\n", globalData->exception.description());
 #endif

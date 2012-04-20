@@ -1229,7 +1229,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 {
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData& globalData = exec->globalData();
-    
+
     execCallee->setScopeChain(exec->scopeChain());
     execCallee->setCodeBlock(0);
     execCallee->clearReturnPC();
@@ -1241,6 +1241,8 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         ASSERT(callType != CallTypeJS);
     
         if (callType == CallTypeHost) {
+            NativeCallFrameTracer tracer(&globalData, execCallee);
+            execCallee->setCallee(asObject(callee));
             globalData.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
             LLINT_CALL_RETURN(execCallee, pc, reinterpret_cast<void*>(getHostCallReturnValue));
@@ -1262,6 +1264,8 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
     ASSERT(constructType != ConstructTypeJS);
     
     if (constructType == ConstructTypeHost) {
+        NativeCallFrameTracer tracer(&globalData, execCallee);
+        execCallee->setCallee(asObject(callee));
         globalData.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
         LLINT_CALL_RETURN(execCallee, pc, reinterpret_cast<void*>(getHostCallReturnValue));

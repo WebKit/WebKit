@@ -1673,6 +1673,8 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     storei CellTag, ScopeChain + TagOffset[cfr]
     storei t1, ScopeChain + PayloadOffset[cfr]
     if X86
+        loadp JITStackFrame::globalData + 4[sp], t0 # Additional offset for return address
+        storep cfr, JSGlobalData::topCallFrame[t0]
         peek 0, t1
         storep t1, ReturnPC[cfr]
         move cfr, t2  # t2 = ecx
@@ -1684,6 +1686,8 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         addp 16 - 4, sp
         loadp JITStackFrame::globalData + 4[sp], t3
     elsif ARMv7
+        loadp JITStackFrame::globalData[sp], t0
+        storep cfr, JSGlobalData::topCallFrame[t0]
         move t0, t2
         preserveReturnAddressAfterCall(t3)
         storep t3, ReturnPC[cfr]

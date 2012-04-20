@@ -200,12 +200,6 @@ public:
     // Accessors for properties.
     Graph& graph() { return m_graph; }
     
-    // Just get a token for beginning a call.
-    CallBeginToken beginJSCall()
-    {
-        return CallBeginToken(m_currentCodeOriginIndex++);
-    }
-    
     // Get a token for beginning a call, and set the current code origin index in
     // the call frame.
     CallBeginToken beginCall()

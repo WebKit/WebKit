@@ -969,7 +969,7 @@ void SpeculativeJIT::emitCall(Node& node)
     m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     
     CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
-    CallBeginToken token = m_jit.beginJSCall();
+    CallBeginToken token = m_jit.beginCall();
     JITCompiler::Call fastCall = m_jit.nearCall();
     m_jit.notifyCall(fastCall, codeOrigin, token);
     
@@ -982,7 +982,7 @@ void SpeculativeJIT::emitCall(Node& node)
     JITCompiler::Call slowCall = m_jit.appendCall(slowCallFunction);
     m_jit.addFastExceptionCheck(slowCall, codeOrigin, token);
     m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
-    token = m_jit.beginJSCall();
+    token = m_jit.beginCall();
     JITCompiler::Call theCall = m_jit.call(GPRInfo::returnValueGPR);
     m_jit.notifyCall(theCall, codeOrigin, token);
     

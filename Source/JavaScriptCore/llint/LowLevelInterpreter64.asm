@@ -1513,6 +1513,8 @@ _llint_throw_during_call_trampoline:
 
 macro nativeCallTrampoline(executableOffsetToFunction)
     storep 0, CodeBlock[cfr]
+    loadp JITStackFrame::globalData + 8[sp], t0
+    storep cfr, JSGlobalData::topCallFrame[t0]
     loadp CallerFrame[cfr], t0
     loadp ScopeChain[t0], t1
     storep t1, ScopeChain[cfr]
@@ -1533,6 +1535,8 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     loadi ArgumentCount + TagOffset[cfr], PC
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructions[PB], PB
+    loadp JITStackFrame::globalData[sp], t0
+    storep cfr, JSGlobalData::topCallFrame[t0]
     callSlowPath(_llint_throw_from_native_call)
     jmp _llint_throw_from_slow_path_trampoline
 end

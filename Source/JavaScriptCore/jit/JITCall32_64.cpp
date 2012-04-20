@@ -245,6 +245,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
         store32(TrustedImm32(argCount), payloadFor(RegisterFile::ArgumentCount, regT3));
     } // regT3 holds newCallFrame with ArgumentCount initialized.
+    
+    storePtr(TrustedImmPtr(instruction), tagFor(RegisterFile::ArgumentCount, regT3));
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.
 
     storePtr(callFrameRegister, Address(regT3, RegisterFile::CallerFrame * static_cast<int>(sizeof(Register))));
