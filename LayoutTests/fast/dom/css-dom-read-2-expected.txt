@@ -43,7 +43,7 @@ i { display: block; }
 }
 .one { display: block; }
 .two { display: inline; }
-.three { display: list-item; list-style: square; margin-left: 3em; }
+.three { display: list-item; list-style-type: square; margin-left: 3em; }
 .four { display: none; color: red; }
 i { display: block; }
 

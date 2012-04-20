@@ -249,6 +249,7 @@ flexbox.style.webkitFlexFlow = '';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row none');
 flexbox.style.webkitFlexDirection = 'column';
+flexbox.style.webkitFlexWrap = 'initial';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column none');
 flexbox.style.webkitFlexWrap = 'wrap';

@@ -3643,6 +3643,7 @@ bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<C
         }
         return false;
     }
+    value3 = cssValuePool().createImplicitInitialValue();
     return true;
 }
 

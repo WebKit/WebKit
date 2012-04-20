@@ -387,12 +387,13 @@ String StylePropertySet::getShorthandValue(const StylePropertyShorthand& shortha
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         if (!isPropertyImplicit(shorthand.properties()[i])) {
             RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
-            // FIXME: provide default value if !value or value is initial value
-            if (value && !value->isInitialValue()) {
-                if (!res.isNull())
-                    res += " ";
-                res += value->cssText();
-            }
+            if (value && value->isInitialValue())
+                continue;
+            if (!value)
+                return String();
+            if (!res.isNull())
+                res += " ";
+            res += value->cssText();
         }
     }
     return res;

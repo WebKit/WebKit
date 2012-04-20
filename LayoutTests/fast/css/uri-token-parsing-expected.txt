@@ -19,7 +19,7 @@ Rules from the stylesheet:
 #o { content: url(f); }
 #p { content: url('url(g)'); }
 #q { cursor: url('url(q)'); }
-#r { list-style: url('url(r)'); }
+#r { list-style-image: url('url(r)'); }
 #s { background-image: url('url(s)'); }
 #t { -webkit-mask: url('url(t)'); }
 #u { -webkit-border-image: url('url(u)') 1 2 3 4 fill stretch round; }
@@ -44,7 +44,7 @@ Expected result:
 #o { content: url(f); }
 #p { content: url('url(g)'); }
 #q { cursor: url('url(q)'); }
-#r { list-style: url('url(r)'); }
+#r { list-style-image: url('url(r)'); }
 #s { background-image: url('url(s)'); }
 #t { -webkit-mask: url('url(t)'); }
 #u { -webkit-border-image: url('url(u)') 1 2 3 4 fill stretch round; }
