@@ -272,6 +272,9 @@ namespace WebCore {
 
         PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);
 
+        // Returns false when we're out of memory in V8.
+        bool setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext);
+
         static const char* rangeExceptionName(int exceptionCode);
         static const char* eventExceptionName(int exceptionCode);
         static const char* xmlHttpRequestExceptionName(int exceptionCode);
