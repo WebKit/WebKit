@@ -327,7 +327,7 @@ END
     {
         return reinterpret_cast<${nativeType}*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(${nativeType}*, v8::Isolate* = 0${forceNewObjectParameter});
+    inline static v8::Handle<v8::Object> wrap(${nativeType}*${forceNewObjectParameter});
     static void derefObject(void*);
     static WrapperTypeInfo info;
 END
@@ -420,7 +420,7 @@ private:
 END
 
     push(@headerContent, <<END);
-v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl, v8::Isolate* isolate${forceNewObjectInput})
+v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput})
 {
 END
     push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
@@ -445,13 +445,13 @@ inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Isolate* isolate = 0$
 {
     if (!impl)
         return v8::Null();
-    return ${className}::wrap(impl, isolate${forceNewObjectCall});
+    return ${className}::wrap(impl${forceNewObjectCall});
 }
 END
     } elsif ($interfaceName ne 'Node') {
         push(@headerContent, <<END);
 
-v8::Handle<v8::Value> toV8(${nativeType}*, v8::Isolate* = 0${forceNewObjectParameter});
+v8::Handle<v8::Value> toV8(${nativeType}*, v8::Isolate* isolate = 0${forceNewObjectParameter});
 END
     } else {
         push(@headerContent, <<END);

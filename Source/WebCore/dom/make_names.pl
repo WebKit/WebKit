@@ -1212,7 +1212,7 @@ END
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
         return createWrapperFunction(element);
-    return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), 0, forceNewObject);
+    return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element), forceNewObject);
 END
 ;
     }

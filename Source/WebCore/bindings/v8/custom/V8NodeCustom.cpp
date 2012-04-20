@@ -154,7 +154,7 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, v8::Isolate* isolate, bool forceNewOb
         if (impl->isSVGElement())
             return toV8(static_cast<SVGElement*>(impl), isolate, forceNewObject);
 #endif
-        return V8Element::wrap(static_cast<Element*>(impl), isolate, forceNewObject);
+        return V8Element::wrap(static_cast<Element*>(impl), forceNewObject);
     case Node::ATTRIBUTE_NODE:
         return toV8(static_cast<Attr*>(impl), isolate, forceNewObject);
     case Node::TEXT_NODE:
@@ -179,6 +179,6 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, v8::Isolate* isolate, bool forceNewOb
         return toV8(static_cast<Notation*>(impl), isolate, forceNewObject);
     default: break; // XPATH_NAMESPACE_NODE
     }
-    return V8Node::wrap(impl, isolate, forceNewObject);
+    return V8Node::wrap(impl, forceNewObject);
 }
 } // namespace WebCore
