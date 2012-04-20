@@ -1,3 +1,11 @@
+2012-04-20  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: fixed chromium sanity tests for inspector via assigning last path component
+        to entire url for parsed urls with invalid specs.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._scriptsAreParsed):
+
 2012-04-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call cacheMetadata directly

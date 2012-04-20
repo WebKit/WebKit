@@ -52,7 +52,14 @@ WebInspector.ParsedURL = function(url)
     // 4 - ?path
     // 5 - ?fragment
     var match = url.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
-    if (!match) {
+    if (match) {
+        this.isValid = true;
+        this.scheme = match[1].toLowerCase();
+        this.host = match[2];
+        this.port = match[3];
+        this.path = match[4] || "/";
+        this.fragment = match[5];
+    } else {
         if (this == "about:blank") {
             this.isValid = true;
             this.scheme = "about";
@@ -60,15 +67,8 @@ WebInspector.ParsedURL = function(url)
             this.path = "/";
             return;
         }
-        return;
+        this.path = this.url;
     }
-
-    this.isValid = true;
-    this.scheme = match[1].toLowerCase();
-    this.host = match[2];
-    this.port = match[3];
-    this.path = match[4] || "/";
-    this.fragment = match[5];
 
     if (this.path) {
         // First cut the query params.
@@ -84,7 +84,8 @@ WebInspector.ParsedURL = function(url)
         if (lastSlashIndex !== -1) {
             this.folderPathComponents = path.substring(0, lastSlashIndex);
             this.lastPathComponent = path.substring(lastSlashIndex + 1);
-        }
+        } else
+            this.lastPathComponent = path;
     }
 }
 
