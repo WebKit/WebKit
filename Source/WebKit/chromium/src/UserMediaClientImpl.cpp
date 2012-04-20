@@ -58,12 +58,6 @@ void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpReque
     if (m_client) {
         RefPtr<UserMediaRequest> request = prpRequest;
 
-        // FIXME: Cleanup when the chromium code has switched to the split sources implementation.
-        MediaStreamSourceVector combinedSources;
-        combinedSources.append(audioSources);
-        combinedSources.append(videoSources);
-        m_client->requestUserMedia(PassRefPtr<UserMediaRequest>(request.get()), combinedSources);
-
         m_client->requestUserMedia(request.release(), audioSources, videoSources);
     }
 }

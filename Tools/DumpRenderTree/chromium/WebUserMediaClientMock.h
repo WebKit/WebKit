@@ -50,7 +50,7 @@ public:
 
     bool IsMockStream(const WebURL&);
 
-    virtual void requestUserMedia(const WebUserMediaRequest&, const WebVector<WebMediaStreamSource>&);
+    virtual void requestUserMedia(const WebUserMediaRequest&, const WebVector<WebMediaStreamSource>&, const WebVector<WebMediaStreamSource>&) OVERRIDE;
     virtual void cancelUserMediaRequest(const WebUserMediaRequest&);
 
 private:

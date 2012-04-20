@@ -65,17 +65,20 @@ bool WebUserMediaClientMock::IsMockStream(const WebURL& url)
     return trackId.equals("mediastreamtest");
 }
 
-void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamRequest, const WebVector<WebMediaStreamSource>& streamSourceVector)
+void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamRequest, const WebVector<WebMediaStreamSource>& audioSourcesVector, const WebVector<WebMediaStreamSource>& videoSourcesVector)
 {
     ASSERT(!streamRequest.isNull());
 
     WebUserMediaRequest request = streamRequest;
     const size_t size = 1;
-    WebVector<WebMediaStreamSource> sourceVector(size);
+    WebVector<WebMediaStreamSource> audioSources(size);
+    WebVector<WebMediaStreamSource> videoSources(size);
     WebString trackId("mediastreamtest");
-    WebString trackName("VideoCapture");
-    sourceVector[0].initialize(trackId, WebMediaStreamSource::TypeVideo, trackName);
-    request.requestSucceeded(sourceVector);
+    WebString audioTrackName("AudioRecord");
+    WebString videoTrackName("VideoCapture");
+    audioSources[0].initialize(trackId, WebMediaStreamSource::TypeAudio, audioTrackName);
+    videoSources[0].initialize(trackId, WebMediaStreamSource::TypeVideo, videoTrackName);
+    request.requestSucceeded(audioSources, videoSources);
 }
 
 void WebUserMediaClientMock::cancelUserMediaRequest(const WebUserMediaRequest&)

@@ -1,3 +1,24 @@
+2012-04-19  Jeremy Mao  <yujie.mao@intel.com>
+
+        Media Stream API: Piece of code cleanup for the chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=84328
+
+        Reviewed by Kent Tamura.
+
+        Remove some deprecated interfaces.
+
+        No new tests. No behavior changes.
+
+        * public/WebUserMediaClient.h:
+        Remove deprecated requestUserMedia interface.
+        * public/WebUserMediaRequest.h:
+        Remove deprecated requestSucceeded interface.
+        * src/UserMediaClientImpl.cpp:
+        (WebKit::UserMediaClientImpl::requestUserMedia):
+        Use the requestUserMedia split sources implementation.
+        * src/WebUserMediaRequest.cpp:
+        Remove deprecated requestSucceeded implementation.
+
 2012-04-19  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Prep for changing keyPath return type

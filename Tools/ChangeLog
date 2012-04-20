@@ -1,3 +1,19 @@
+2012-04-19  Jeremy Mao  <yujie.mao@intel.com>
+
+        Media Stream API: Piece of code cleanup for the chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=84328
+
+        Reviewed by Kent Tamura.
+
+        WebUserMediaClientMock use an old requestUserMedia interface and
+        Replace it with the new interface.
+
+        * DumpRenderTree/chromium/WebUserMediaClientMock.cpp:
+        (WebKit::WebUserMediaClientMock::requestUserMedia):
+        Remove the old requestUserMedia and replace it with the new.
+        * DumpRenderTree/chromium/WebUserMediaClientMock.h:
+        (WebUserMediaClientMock):
+
 2012-04-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] DRT console messages should contain only the file name part of local URIs
