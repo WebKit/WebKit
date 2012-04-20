@@ -1,3 +1,13 @@
+2012-04-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSGarbageCollect should not call collectAllGarbage()
+        https://bugs.webkit.org/show_bug.cgi?id=84476
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSBase.cpp:
+        (JSGarbageCollect): Notify the Heap's GCActivityCallback using didAbandonObjectGraph.
+
 2012-04-19  Oliver Hunt  <oliver@apple.com>
 
         Exception stack traces aren't complete when the exception starts in native code

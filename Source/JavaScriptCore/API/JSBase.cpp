@@ -102,7 +102,7 @@ void JSGarbageCollect(JSContextRef ctx)
 
     JSGlobalData& globalData = exec->globalData();
     if (!globalData.heap.isBusy())
-        globalData.heap.collectAllGarbage();
+        globalData.heap.activityCallback()->didAbandonObjectGraph();
 
     // FIXME: Perhaps we should trigger a second mark and sweep
     // once the garbage collector is done if this is called when
