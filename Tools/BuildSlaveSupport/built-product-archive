@@ -73,9 +73,8 @@ def removeDirectoryIfExists(thinDirectory):
         shutil.rmtree(thinDirectory)
 
 
-def copyBuildFiles(source, destination):
-    shutil.copytree(source, destination,
-        ignore=shutil.ignore_patterns('.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb', 'BuildLog.htm', '*.obj', '*.pdb'))
+def copyBuildFiles(source, destination, patterns):
+    shutil.copytree(source, destination, ignore=shutil.ignore_patterns(*patterns))
 
 
 def createZipManually(directoryToZip, archiveFile):
@@ -130,7 +129,7 @@ def archiveBuiltProduct(configuration, platform):
         thinBinDirectory = os.path.join(thinDirectory, "bin")
 
         removeDirectoryIfExists(thinDirectory)
-        copyBuildFiles(binDirectory, thinBinDirectory)
+        copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
         if createZip(thinDirectory, configuration):
             return 1
 
@@ -166,7 +165,8 @@ def archiveBuiltProduct(configuration, platform):
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
         removeDirectoryIfExists(thinDirectory)
-        copyBuildFiles(configurationBuildDirectory, thinDirectory)
+        copyBuildFiles(configurationBuildDirectory, thinDirectory,
+            ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb', 'BuildLog.htm', '*.obj', '*.pdb'])
         if createZip(thinDirectory, configuration):
             return 1
 

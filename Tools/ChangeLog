@@ -1,3 +1,17 @@
+2012-04-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r112781): Windows build slaves are no longer including .pdb files in archives handed to testers
+        https://bugs.webkit.org/show_bug.cgi?id=84424
+
+        Reviewed by Mark Rowe.
+
+        Let Windows and Chromium have their own list of files to copy.
+
+        * BuildSlaveSupport/built-product-archive:
+        (removeDirectoryIfExists):
+        (copyBuildFiles):
+        (archiveBuiltProduct):
+
 2012-04-20  Kamil Blank  <k.blank@samsung.com>
 
         [EFL] Add setting API for author and user styles.
