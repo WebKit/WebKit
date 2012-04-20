@@ -31,7 +31,6 @@
 #include "config.h"
 #include "ResourceHandle.h"
 
-#include "PlatformSupport.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
@@ -290,8 +289,7 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 // static
 void ResourceHandle::cacheMetadata(const ResourceResponse& response, const Vector<char>& data)
 {
-    // FIXME: This should use Platform::current() directly.
-    PlatformSupport::cacheMetadata(response.url(), response.responseTime(), data);
+    WebKit::Platform::current()->cacheMetadata(response.url(), response.responseTime(), data.data(), data.size());
 }
 
 } // namespace WebCore

@@ -93,9 +93,6 @@ struct FontRenderStyle;
 
 class PlatformSupport {
 public:
-    // Cache --------------------------------------------------------------
-    static void cacheMetadata(const KURL&, double responseTime, const Vector<char>&);
-
     // Clipboard ----------------------------------------------------------
     static uint64_t clipboardSequenceNumber(PasteboardPrivate::ClipboardBuffer);
 

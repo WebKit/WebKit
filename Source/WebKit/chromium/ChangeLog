@@ -1,5 +1,17 @@
 2012-04-20  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Call cacheMetadata directly
+        https://bugs.webkit.org/show_bug.cgi?id=84415
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
+2012-04-20  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Call stopSharedTimer directly
         https://bugs.webkit.org/show_bug.cgi?id=84418
 

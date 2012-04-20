@@ -144,13 +144,6 @@ static WebCookieJar* getCookieJar(const Document* document)
     return cookieJar;
 }
 
-// Cache ----------------------------------------------------------------------
-
-void PlatformSupport::cacheMetadata(const KURL& url, double responseTime, const Vector<char>& data)
-{
-    webKitPlatformSupport()->cacheMetadata(url, responseTime, data.data(), data.size());
-}
-
 // Clipboard ------------------------------------------------------------------
 
 uint64_t PlatformSupport::clipboardSequenceNumber(PasteboardPrivate::ClipboardBuffer buffer)
