@@ -3700,9 +3700,6 @@ BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio
 
 BUGWK83647 WIN LINUX : fast/multicol/cell-shrinkback.html = IMAGE
 
-BUGWK83826 : fast/text/drawBidiText.html = IMAGE
-BUGWK83826 : fast/text/international/bidi-listbox-atsui.html = IMAGE
-
 BUGWK83941 : fast/canvas/2d.imageDataHD.html = TIMEOUT
 BUGWK83941 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TIMEOUT
 
