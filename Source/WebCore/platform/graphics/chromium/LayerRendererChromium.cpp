@@ -302,7 +302,7 @@ bool LayerRendererChromium::initialize()
     if (m_capabilities.usingDiscardFramebuffer)
         extensions->ensureEnabled("GL_CHROMIUM_discard_framebuffer");
 
-    GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
+    GLC(m_context, m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
     m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context.get());
 
     if (!initializeSharedObjects())
@@ -371,21 +371,21 @@ void LayerRendererChromium::clearRenderSurface(CCRenderSurface* renderSurface, C
     // of the screen.
 
     if (renderSurface != rootRenderSurface)
-        GLC(m_context.get(), m_context->clearColor(0, 0, 0, 0));
+        GLC(m_context, m_context->clearColor(0, 0, 0, 0));
     else
-        GLC(m_context.get(), m_context->clearColor(0, 0, 1, 1));
+        GLC(m_context, m_context->clearColor(0, 0, 1, 1));
 
     if (m_capabilities.usingPartialSwap)
         setScissorToRect(enclosingIntRect(surfaceDamageRect));
     else
-        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+        GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
 #if defined(NDEBUG)
     if (renderSurface != rootRenderSurface)
 #endif
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
 
-    GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
+    GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 }
 
 void LayerRendererChromium::beginDrawingFrame(CCRenderSurface* defaultRenderSurface)
@@ -416,17 +416,17 @@ void LayerRendererChromium::beginDrawingFrame(CCRenderSurface* defaultRenderSurf
     // Bind the common vertex attributes used for drawing all the layers.
     m_sharedGeometry->prepareForDraw();
 
-    GLC(m_context.get(), m_context->disable(GraphicsContext3D::DEPTH_TEST));
-    GLC(m_context.get(), m_context->disable(GraphicsContext3D::CULL_FACE));
-    GLC(m_context.get(), m_context->colorMask(true, true, true, true));
-    GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
-    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    GLC(m_context, m_context->disable(GraphicsContext3D::DEPTH_TEST));
+    GLC(m_context, m_context->disable(GraphicsContext3D::CULL_FACE));
+    GLC(m_context, m_context->colorMask(true, true, true, true));
+    GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
+    GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 }
 
 void LayerRendererChromium::doNoOp()
 {
-    GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
-    GLC(m_context.get(), m_context->flush());
+    GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+    GLC(m_context, m_context->flush());
 }
 
 void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass)
@@ -456,14 +456,14 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& su
         scissorRect = quad->clipRect();
 
     if (scissorRect.isEmpty())
-        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+        GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     else
         setScissorToRect(scissorRect);
 
     if (quad->needsBlending())
-        GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
+        GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
     else
-        GLC(m_context.get(), m_context->disable(GraphicsContext3D::BLEND));
+        GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 
     switch (quad->material()) {
     case CCDrawQuad::Invalid:
@@ -1045,10 +1045,10 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
             binding.set(textureLayerProgramStretchFlip());
         else
             binding.set(textureLayerProgramStretch());
-        GLC(context, context()->useProgram(binding.programId));
-        GLC(context, context()->uniform1i(binding.samplerLocation, 0));
-        GLC(context, context()->uniform2f(binding.offsetLocation, quad->uvRect().x(), quad->uvRect().y()));
-        GLC(context, context()->uniform2f(binding.scaleLocation, quad->uvRect().width(), quad->uvRect().height()));
+        GLC(context(), context()->useProgram(binding.programId));
+        GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
+        GLC(context(), context()->uniform2f(binding.offsetLocation, quad->uvRect().x(), quad->uvRect().y()));
+        GLC(context(), context()->uniform2f(binding.scaleLocation, quad->uvRect().width(), quad->uvRect().height()));
 
         matrixLocation = binding.matrixLocation;
         alphaLocation = binding.alphaLocation;
@@ -1062,10 +1062,10 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
 
     // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
     // where it will only happen once per texture.
-    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
 
     if (quad->hasAlpha() && !quad->premultipliedAlpha())
         GLC(context(), context()->blendFunc(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
@@ -1074,7 +1074,7 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
 
     drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(), matrixLocation, alphaLocation, -1);
 
-    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 
     if (quad->ioSurfaceTextureId())
         GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
@@ -1082,17 +1082,17 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
 
 void LayerRendererChromium::drawHeadsUpDisplay(ManagedTexture* hudTexture, const IntSize& hudSize)
 {
-    GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
-    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-    GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+    GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
+    GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     useRenderSurface(m_defaultRenderSurface);
 
     const CCHeadsUpDisplay::Program* program = headsUpDisplayProgram();
     ASSERT(program && program->initialized());
-    GLC(m_context.get(), m_context->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(m_context, m_context->activeTexture(GraphicsContext3D::TEXTURE0));
     hudTexture->bindTexture(m_context.get(), renderSurfaceTextureAllocator());
-    GLC(m_context.get(), m_context->useProgram(program->program()));
-    GLC(m_context.get(), m_context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    GLC(m_context, m_context->useProgram(program->program()));
+    GLC(m_context, m_context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     TransformationMatrix matrix;
     matrix.translate3d(hudSize.width() * 0.5, hudSize.height() * 0.5, 0);
@@ -1104,8 +1104,8 @@ void LayerRendererChromium::drawHeadsUpDisplay(ManagedTexture* hudTexture, const
 
 void LayerRendererChromium::finishDrawingFrame()
 {
-    GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-    GLC(m_context.get(), m_context->disable(GraphicsContext3D::BLEND));
+    GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+    GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 
     size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
     size_t reclaimLimit = TextureManager::reclaimLimitBytes(viewportSize());
@@ -1313,7 +1313,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
     m_currentManagedTexture = 0;
 
     if (renderSurface == m_defaultRenderSurface) {
-        GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+        GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
         setDrawViewportRect(renderSurface->contentRect(), true);
         return true;
     }
@@ -1334,7 +1334,7 @@ bool LayerRendererChromium::useManagedTexture(ManagedTexture* texture, const Int
 
 bool LayerRendererChromium::bindFramebufferToTexture(ManagedTexture* texture, const IntRect& viewportRect)
 {
-    GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
+    GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
 
     texture->framebufferTexture2D(m_context.get(), m_renderSurfaceTextureAllocator.get());
 
@@ -1356,7 +1356,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
 {
     IntRect contentRect = (m_currentRenderSurface ? m_currentRenderSurface->contentRect() : m_defaultRenderSurface->contentRect());
 
-    GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
+    GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 
     // The scissor coordinates must be supplied in viewport space so we need to offset
     // by the relative position of the top left corner of the current render surface.
@@ -1369,7 +1369,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
         scissorY = m_currentRenderSurface->contentRect().height() - (scissorRect.maxY() - m_currentRenderSurface->contentRect().y());
     else
         scissorY = scissorRect.y() - contentRect.y();
-    GLC(m_context.get(), m_context->scissor(scissorX, scissorY, scissorRect.width(), scissorRect.height()));
+    GLC(m_context, m_context->scissor(scissorX, scissorY, scissorRect.width(), scissorRect.height()));
 }
 
 bool LayerRendererChromium::makeContextCurrent()
@@ -1386,7 +1386,7 @@ void LayerRendererChromium::setDrawViewportRect(const IntRect& drawRect, bool fl
         m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.maxY(), drawRect.y());
     else
         m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY());
-    GLC(m_context.get(), m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
+    GLC(m_context, m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
     m_windowMatrix = screenMatrix(0, 0, drawRect.width(), drawRect.height());
 }
 
@@ -1397,7 +1397,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     makeContextCurrent();
 
     // Create an FBO for doing offscreen rendering.
-    GLC(m_context.get(), m_offscreenFramebufferId = m_context->createFramebuffer());
+    GLC(m_context, m_offscreenFramebufferId = m_context->createFramebuffer());
 
     // We will always need these programs to render, so create the programs eagerly so that the shader compilation can
     // start while we do other work. Other programs are created lazily on first access.
@@ -1406,7 +1406,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_tilerProgram = adoptPtr(new CCTiledLayerImpl::Program(m_context.get()));
     m_tilerProgramOpaque = adoptPtr(new CCTiledLayerImpl::ProgramOpaque(m_context.get()));
 
-    GLC(m_context.get(), m_context->flush());
+    GLC(m_context, m_context->flush());
 
     m_renderSurfaceTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
                                                            TextureManager::reclaimLimitBytes(viewportSize()),
@@ -1737,7 +1737,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_videoLayerNativeTextureProgram.clear();
     m_streamTextureLayerProgram.clear();
     if (m_offscreenFramebufferId)
-        GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
+        GLC(m_context, m_context->deleteFramebuffer(m_offscreenFramebufferId));
     m_textureCopier.clear();
     m_textureUploader.clear();
 
