@@ -63,8 +63,10 @@ void ScrollbarGroup::scrollbarCreated(WebScrollbarImpl* scrollbar)
         didAddVerticalScrollbar(scrollbar->scrollbar());
     }
 
-    if (!hadScrollbars)
+    if (!hadScrollbars) {
         m_frameView->addScrollableArea(this);
+        m_frameView->setNeedsLayout();
+    }
 }
 
 void ScrollbarGroup::scrollbarDestroyed(WebScrollbarImpl* scrollbar)
@@ -78,8 +80,10 @@ void ScrollbarGroup::scrollbarDestroyed(WebScrollbarImpl* scrollbar)
         m_verticalScrollbar = 0;
     }
 
-    if (!m_horizontalScrollbar && !m_verticalScrollbar)
+    if (!m_horizontalScrollbar && !m_verticalScrollbar) {
         m_frameView->removeScrollableArea(this);
+        m_frameView->setNeedsLayout();
+    }
 }
 
 void ScrollbarGroup::setLastMousePosition(const IntPoint& point)

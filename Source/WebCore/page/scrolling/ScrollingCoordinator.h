@@ -72,9 +72,6 @@ public:
     // Should be called whenever the given frame view has been laid out.
     void frameViewLayoutUpdated(FrameView*);
 
-    // Should be called whenever the set of ScrollableAreas inside a FrameView changes.
-    void frameViewScrollableAreasDidChange(FrameView*);
-
     // Should be called whenever a wheel event handler is added or removed in the 
     // frame view's underlying document.
     void frameViewWheelEventHandlerCountChanged(FrameView*);

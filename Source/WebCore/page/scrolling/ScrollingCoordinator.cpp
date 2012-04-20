@@ -156,15 +156,6 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
 
 }
 
-void ScrollingCoordinator::frameViewScrollableAreasDidChange(FrameView*)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-
-    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame()->view());
-    setNonFastScrollableRegion(nonFastScrollableRegion);
-}
-
 void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView*)
 {
     ASSERT(isMainThread());

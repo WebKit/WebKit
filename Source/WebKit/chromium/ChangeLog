@@ -1,3 +1,17 @@
+2012-04-20  James Robinson  <jamesr@chromium.org>
+
+        Avoid synchronously recalculating the nonFastScrollableRegion when the ScrollableArea set changes
+        https://bugs.webkit.org/show_bug.cgi?id=84470
+
+        Reviewed by Anders Carlsson.
+
+        Trigger a layout when a plugin becomes or stops being scrollable so the nonFastScrollableRegion
+        can be updated.
+
+        * src/ScrollbarGroup.cpp:
+        (WebKit::ScrollbarGroup::scrollbarCreated):
+        (WebKit::ScrollbarGroup::scrollbarDestroyed):
+
 2012-04-20  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Some filters require inflating damage rect in CCDamageTracker
