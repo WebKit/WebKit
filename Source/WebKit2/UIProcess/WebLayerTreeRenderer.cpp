@@ -86,7 +86,8 @@ static IntPoint boundedScrollPosition(const IntPoint& scrollPosition, const IntR
 
 WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeHostProxy* layerTreeHostProxy)
     : m_layerTreeHostProxy(layerTreeHostProxy)
-    , m_rootLayerID(0)
+    , m_rootLayerID(InvalidWebLayerID)
+    , m_isActive(false)
 {
 }
 
@@ -400,6 +401,12 @@ void WebLayerTreeRenderer::purgeGLResources()
         layer->clearBackingStoresRecursive();
 
     m_directlyCompositedImages.clear();
+
+    m_rootLayer->removeAllChildren();
+    m_rootLayer.clear();
+    m_rootLayerID = InvalidWebLayerID;
+    m_layers.clear();
+    m_fixedLayers.clear();
     m_textureMapper.clear();
     m_backingStoresWithPendingBuffers.clear();
 
@@ -419,7 +426,22 @@ void WebLayerTreeRenderer::detach()
 
 void WebLayerTreeRenderer::appendUpdate(const Function<void()>& function)
 {
+    if (!m_isActive)
+        return;
+
     m_renderQueue.append(function);
+}
+
+void WebLayerTreeRenderer::setActive(bool active)
+{
+    if (m_isActive == active)
+        return;
+
+    // Have to clear render queue in both cases.
+    // If there are some updates in queue during activation then those updates are from previous instance of paint node
+    // and cannot be applied to the newly created instance.
+    m_renderQueue.clear();
+    m_isActive = active;
 }
 
 } // namespace WebKit

@@ -1,3 +1,28 @@
+2012-04-19  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] ASSERT(m_thread == currentThread()) on Mac when threaded rendering is enabled for the Qt scenegraph
+        https://bugs.webkit.org/show_bug.cgi?id=84278
+
+        Reviewed by Noam Rosenthal.
+
+        Delete the whole layer tree on UI side when paint node is deleted and force resync of the layers when
+        page becomes visible again.
+
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::purgeBackingStores):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::WebLayerTreeRenderer):
+        (WebKit::WebLayerTreeRenderer::purgeGLResources):
+        (WebKit::WebLayerTreeRenderer::appendUpdate):
+        (WebKit::WebLayerTreeRenderer::setActive):
+        (WebKit):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        (WebKit::ContentsSGNode::ContentsSGNode):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::purgeBackingStores):
+
 2012-04-19  Vivek Galatage  <vivekgalatage@gmail.com>
 
         DevTools: assertion failure upon devtools window reopen.

@@ -35,6 +35,7 @@ public:
     ContentsSGNode(PassRefPtr<WebLayerTreeRenderer> renderer)
         : m_renderer(renderer)
     {
+        layerTreeRenderer()->setActive(true);
     }
 
     virtual StateFlags changedStates()

@@ -609,6 +609,9 @@ void WebGraphicsLayer::purgeBackingStores()
         m_webGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
         m_layerInfo.imageBackingStoreID = 0;
     }
+
+    didChangeLayerState();
+    didChangeChildren();
 }
 
 void WebGraphicsLayer::setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient* client)

@@ -71,6 +71,7 @@ public:
     void detach();
     void appendUpdate(const Function<void()>&);
     void updateViewport();
+    void setActive(bool);
 
     void deleteLayer(WebLayerID);
     void setRootLayerID(WebLayerID);
@@ -132,6 +133,7 @@ private:
     WebLayerID m_rootLayerID;
     WebCore::IntPoint m_renderedContentsScrollPosition;
     WebCore::IntPoint m_pendingRenderedContentsScrollPosition;
+    bool m_isActive;
 };
 
 };

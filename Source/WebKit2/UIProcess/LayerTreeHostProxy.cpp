@@ -134,6 +134,7 @@ void LayerTreeHostProxy::didChangeScrollPosition(const IntPoint& position)
 
 void LayerTreeHostProxy::purgeBackingStores()
 {
+    m_renderer->setActive(false);
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());
 }
 
