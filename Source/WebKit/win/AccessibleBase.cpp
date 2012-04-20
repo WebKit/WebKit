@@ -498,7 +498,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accLocation(long* left, long* top, lon
     if (!childObj->documentFrameView())
         return E_FAIL;
 
-    IntRect screenRect(childObj->documentFrameView()->contentsToScreen(childObj->elementRect()));
+    IntRect screenRect(childObj->documentFrameView()->contentsToScreen(childObj->pixelSnappedElementRect()));
     *left = screenRect.x();
     *top = screenRect.y();
     *width = screenRect.width();

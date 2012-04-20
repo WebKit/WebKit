@@ -506,6 +506,7 @@ public:
     virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
     IntRect pixelSnappedBoundingBoxRect() const { return pixelSnappedIntRect(boundingBoxRect()); }
     virtual LayoutRect elementRect() const = 0;
+    IntRect pixelSnappedElementRect() const { return pixelSnappedIntRect(elementRect()); }
     LayoutSize size() const { return elementRect().size(); }
     IntSize pixelSnappedSize() const { return elementRect().pixelSnappedSize(); }
     virtual IntPoint clickPoint();

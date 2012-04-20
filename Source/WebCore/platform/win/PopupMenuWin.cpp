@@ -341,7 +341,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
         popupWidth += ScrollbarTheme::theme()->scrollbarThickness(SmallScrollbar);
 
     // Add padding to align the popup text with the <select> text
-    popupWidth += max(0, client()->clientPaddingRight() - client()->clientInsetRight()) + max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
+    popupWidth += max<int>(0, client()->clientPaddingRight() - client()->clientInsetRight()) + max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
 
     // Leave room for the border
     popupWidth += 2 * popupWindowBorderWidth;
@@ -653,7 +653,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         
         // Draw the item text
         if (itemStyle.isVisible()) {
-            int textX = max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
+            int textX = max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
             if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent() && itemStyle.textDirection() == LTR)
                 textX += minimumValueForLength(itemStyle.textIndent(), itemRect.width());
             int textY = itemRect.y() + itemFont.fontMetrics().ascent() + (itemRect.height() - itemFont.fontMetrics().height()) / 2;

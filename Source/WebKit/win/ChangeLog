@@ -1,3 +1,13 @@
+2012-04-20  Emil A Eklund  <eae@chromium.org>
+
+        [win] Update windows platform code to use pixel snapped values
+        https://bugs.webkit.org/show_bug.cgi?id=84283
+
+        Reviewed by Eric Seidel.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accLocation):
+
 2012-04-18  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: Disabling Inspector causes build failure on Windows
