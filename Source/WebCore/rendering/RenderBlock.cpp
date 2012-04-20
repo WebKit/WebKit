@@ -3213,8 +3213,8 @@ GapRects RenderBlock::inlineSelectionGaps(RenderBlock* rootBlock, const LayoutPo
 
     // Now paint the gaps for the lines.
     for (; curr && curr->hasSelectedChildren(); curr = curr->nextRootBox()) {
-        LayoutUnit selTop =  curr->selectionTop();
-        LayoutUnit selHeight = curr->selectionHeight();
+        LayoutUnit selTop =  curr->selectionTopAdjustedForPrecedingBlock();
+        LayoutUnit selHeight = curr->selectionHeightAdjustedForPrecedingBlock();
 
         if (!containsStart && !lastSelectedLine &&
             selectionState() != SelectionStart && selectionState() != SelectionBoth)
@@ -3404,6 +3404,36 @@ LayoutUnit RenderBlock::logicalRightSelectionOffset(RenderBlock* rootBlock, Layo
         }
     }
     return logicalRight;
+}
+
+RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) const
+{
+    if (isSelectionRoot())
+        return 0;
+
+    const RenderBox* object = this;
+    RenderBox* sibling;
+    do {
+        sibling = object->previousSiblingBox();
+        while (sibling && (!sibling->isRenderBlock() || toRenderBlock(sibling)->isSelectionRoot()))
+            sibling = sibling->previousSiblingBox();
+
+        offset -= LayoutSize(object->logicalLeft(), object->logicalTop());
+        object = object->parentBox();
+    } while (!sibling && object && object->isRenderBlock() && !toRenderBlock(object)->isSelectionRoot());
+
+    if (!sibling)
+        return 0;
+
+    offset += LayoutSize(sibling->logicalLeft(), sibling->logicalTop());
+
+    RenderObject* child = sibling->lastChild();
+    while (child && child->isRenderBlock()) {
+        sibling = toRenderBlock(child);
+        offset += LayoutSize(sibling->logicalLeft(), sibling->logicalTop());
+        child = sibling->lastChild();
+    }
+    return toRenderBlock(sibling);
 }
 
 void RenderBlock::insertPositionedObject(RenderBox* o)

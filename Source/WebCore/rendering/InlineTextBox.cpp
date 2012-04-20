@@ -841,8 +841,12 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     if (respectHyphen)
         ePos = textRun.length();
 
-    int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
-    int selHeight = selectionHeight();
+    LayoutUnit selectionBottom = root()->selectionBottom();
+    LayoutUnit selectionTop = root()->selectionTopAdjustedForPrecedingBlock();
+
+    int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop;
+    int selHeight = max<LayoutUnit>(0, selectionBottom - selectionTop);
+
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
 
     FloatRect clipRect(localOrigin, FloatSize(m_logicalWidth, selHeight));

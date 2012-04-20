@@ -545,6 +545,29 @@ LayoutUnit RootInlineBox::selectionTop() const
     return prevBottom;
 }
 
+LayoutUnit RootInlineBox::selectionTopAdjustedForPrecedingBlock() const
+{
+    LayoutUnit top = selectionTop();
+
+    RenderObject::SelectionState blockSelectionState = root()->block()->selectionState();
+    if (blockSelectionState != RenderObject::SelectionInside && blockSelectionState != RenderObject::SelectionEnd)
+        return top;
+
+    LayoutSize offsetToBlockBefore;
+    if (RenderBlock* block = root()->block()->blockBeforeWithinSelectionRoot(offsetToBlockBefore)) {
+        if (RootInlineBox* lastLine = block->lastRootBox()) {
+            RenderObject::SelectionState lastLineSelectionState = lastLine->selectionState();
+            if (lastLineSelectionState != RenderObject::SelectionInside && lastLineSelectionState != RenderObject::SelectionStart)
+                return top;
+
+            LayoutUnit lastLineSelectionBottom = lastLine->selectionBottom() + offsetToBlockBefore.height();
+            top = max(top, lastLineSelectionBottom);
+        }
+    }
+
+    return top;
+}
+
 LayoutUnit RootInlineBox::selectionBottom() const
 {
     LayoutUnit selectionBottom = m_lineBottom;
