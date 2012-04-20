@@ -1,12 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (15,36) size 415x433
+  RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="gaussianBlur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+        [feGaussianBlur stdDeviation="2.00, 2.00"]
+          [SourceGraphic]
       RenderSVGText {text} at (-22,-15) size 44x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 44x19
           chunk 1 (middle anchor) text run 1 at (-22.00,0.00) startOffset 0 endOffset 6 width 44.00: "sample"
-    RenderSVGContainer {g} at (15,36) size 415x433
+    RenderSVGContainer {g} at (0,36) size 430x434
       RenderSVGText {text} at (58,36) size 334x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 334x18
           chunk 1 (middle anchor) text run 1 at (58.00,50.00) startOffset 0 endOffset 47 width 334.00: "Text Alignment, Geometry, References, and Spans"
@@ -65,10 +68,9 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (270,198) size 160x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,225.00)}]
         RenderSVGContainer {g} at (308,198) size 84x34
           RenderSVGContainer {use} at (308,198) size 84x34
-            RenderSVGContainer {g} at (308,198) size 84x34
-              RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x34
-                  chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
+            RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 84x34
+                chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
         RenderSVGText {text} at (-80,0) size 160x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 160x19
             chunk 1 (middle anchor) text run 1 at (-80.00,15.00) startOffset 0 endOffset 25 width 160.00: "predefined text via <use>"
@@ -78,50 +80,46 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (24,298) size 152x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,305.00)}]
         RenderSVGContainer {g} at (58,298) size 84x34 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(0.00,0.00)}]
           RenderSVGContainer {use} at (58,298) size 84x34
-            RenderSVGContainer {g} at (58,298) size 84x34
-              RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x34
-                  chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
+            RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 84x34
+                chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
         RenderSVGText {text} at (-76,15) size 152x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 152x19
             chunk 1 (middle anchor) text run 1 at (-76.00,30.00) startOffset 0 endOffset 23 width 152.00: "transform=\"rotate(180)\""
       RenderSVGContainer {g} at (180,293) size 90x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,320.00)}]
         RenderSVGContainer {g} at (183,293) size 84x34 [opacity=0.50]
           RenderSVGContainer {use} at (183,293) size 84x34
-            RenderSVGContainer {g} at (183,293) size 84x34
-              RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x34
-                  chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
+            RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 84x34
+                chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
         RenderSVGText {text} at (-45,0) size 89x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 89x19
             chunk 1 (middle anchor) text run 1 at (-44.50,15.00) startOffset 0 endOffset 13 width 89.00: "opacity=\"0.5\""
       RenderSVGContainer {g} at (301,293) size 98x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,320.00)}]
         RenderSVGContainer {g} at (308,293) size 84x34
           RenderSVGContainer {use} at (308,293) size 84x34
-            RenderSVGContainer {g} at (308,293) size 84x34
-              RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x34
-                  chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
+            RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 84x34
+                chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
         RenderSVGText {text} at (-49,0) size 98x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 98x19
             chunk 1 (middle anchor) text run 1 at (-49.00,15.00) startOffset 0 endOffset 14 width 98.00: "fill=\"DarkRed\""
-      RenderSVGContainer {g} at (15,343) size 170x46 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,370.00)}]
-        RenderSVGContainer {g} at (58,343) size 84x34
+      RenderSVGContainer {g} at (0,270) size 200x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,370.00)}]
+        RenderSVGContainer {g} at (0,270) size 200x200
+          [filter="gaussianBlur"] RenderSVGResourceFilter {filter} at (-100,-100) size 200x200
           RenderSVGContainer {use} at (58,343) size 84x34
-            RenderSVGContainer {g} at (58,343) size 84x34
-              RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x34
-                  chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
+            RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 84x34
+                chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
         RenderSVGText {text} at (-85,0) size 169x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 169x19
             chunk 1 (middle anchor) text run 1 at (-84.50,15.00) startOffset 0 endOffset 27 width 169.00: "filter=\"url(#gaussianBlur)\""
       RenderSVGContainer {g} at (150,342) size 150x57 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,370.00)}]
         RenderSVGContainer {g} at (182,342) size 86x36
           RenderSVGContainer {use} at (182,342) size 86x36
-            RenderSVGContainer {g} at (182,342) size 86x36
-              RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 84x34
-                  chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
+            RenderSVGText {text} at (-42,-27) size 84x34 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 84x34
+                chunk 1 (middle anchor) text run 1 at (-42.00,0.00) startOffset 0 endOffset 6 width 84.00: "sample"
         RenderSVGText {text} at (-44,0) size 87x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 87x19
             chunk 1 (middle anchor) text run 1 at (-43.50,15.00) startOffset 0 endOffset 14 width 87.00: "fill=\"yellow\";"
@@ -160,5 +158,11 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (226,450) size 148x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 148x19
           chunk 1 (middle anchor) text run 1 at (226.00,465.00) startOffset 0 endOffset 22 width 148.00: "stroke-linecap=\"round\""
-    RenderSVGContainer {use} at (0,0) size 0x0
-      RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGContainer {use} at (0,0) size 448x498
+      RenderSVGContainer {g} at (0,0) size 448x498
+        RenderSVGRect {rect} at (0,0) size 448x498 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+        RenderSVGContainer {g} at (418,466) size 27x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(418.00,467.00)}]
+          RenderSVGViewportContainer {svg} at (418,466) size 27x29
+            RenderSVGPath {path} at (418,469) size 13x18 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
+            RenderSVGPath {path} at (432,466) size 13x16 [fill={[type=SOLID] [color=#FF0000]}] [data="M 400 0 C 382 3 351 31 351 31 C 322 54 308 89 323 126 C 310 140 294 170 294 193 C 294 221 314 245 344 222 C 351 230 365 238 381 227 C 376 256 384 275 407 276 C 408 286 420 307 443 293 C 459 283 501 254 522 237 C 547 214 547 143 504 148 C 537 89 501 52 477 64 C 467 68 431 89 425 94 C 424 87 420 82 414 80 C 436 45 436 -5 401 0 Z"]
+            RenderSVGPath {path} at (426,484) size 15x11 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
