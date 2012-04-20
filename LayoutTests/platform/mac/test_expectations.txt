@@ -21,6 +21,9 @@ BUGWK57688 : fast/text/international/bidi-AN-after-empty-run.html = PASS TEXT
 BUGWK57688 : fast/text/international/bidi-CS-after-AN.html = PASS TEXT
 BUGWK57688 : fast/text/international/thai-line-breaks.html = PASS TEXT
 
+// Fails on WK1, but passes on WK2.  (No syntax available for this situation.)
+BUGWK58192 : plugins/npp-set-window-called-during-destruction.html = TEXT PASS
+
 // Flaky tests when run multi-process
 BUGWK58192 : fast/dom/frame-loading-via-document-write.html = TEXT PASS
 BUGWK58192 : http/tests/appcache/fail-on-update-2.html = TEXT PASS
