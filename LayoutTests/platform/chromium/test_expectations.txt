@@ -3732,3 +3732,6 @@ BUGWK84432 WIN : fast/filesystem/op-restricted-names.html = TEXT
 BUGWK84432 WIN : fast/filesystem/op-restricted-unicode.html = TEXT
 BUGWK84432 WIN : fast/filesystem/read-directory.html = TEXT
 BUGWK84432 WIN : fast/filesystem/simple-readonly-file-object.html = TEXT
+
+BUGCR124313 XP DEBUG : fast/css/font-face-opentype.html = CRASH
+BUGCR124313 XP DEBUG : fast/css/font-face-woff.html = CRASH
