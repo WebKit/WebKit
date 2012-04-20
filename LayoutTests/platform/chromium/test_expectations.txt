@@ -1103,9 +1103,6 @@ BUGWK29359 : fast/forms/datetimelocal = PASS FAIL
 BUGWK29359 : fast/forms/month = PASS FAIL
 BUGWK29359 : fast/forms/time = PASS FAIL
 BUGWK29359 : fast/forms/week = PASS FAIL
-// Will do rebaseline when Mac10.5 bot produces the result.
-BUGWK29359 : fast/forms/date/date-appearance.html = FAIL
-
 
 BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 
