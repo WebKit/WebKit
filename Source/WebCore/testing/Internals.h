@@ -165,6 +165,13 @@ public:
     unsigned numberOfLiveDocuments() const;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    void webkitWillEnterFullScreenForElement(Document*, Element*);
+    void webkitDidEnterFullScreenForElement(Document*, Element*);
+    void webkitWillExitFullScreenForElement(Document*, Element*);
+    void webkitDidExitFullScreenForElement(Document*, Element*);
+#endif
+
 private:
     explicit Internals(Document*);
     DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);

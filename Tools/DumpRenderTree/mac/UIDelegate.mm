@@ -260,7 +260,8 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)webView enterFullScreenForElement:(DOMElement*)element listener:(NSObject<WebKitFullScreenListener>*)listener
 {
-    [self performSelector:@selector(enterFullScreenWithListener:) withObject:listener afterDelay:0];
+    if (!gLayoutTestController->hasCustomFullScreenBehavior())
+        [self performSelector:@selector(enterFullScreenWithListener:) withObject:listener afterDelay:0];
 }
 
 - (void)exitFullScreenWithListener:(NSObject<WebKitFullScreenListener>*)listener
@@ -271,7 +272,8 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)webView exitFullScreenForElement:(DOMElement*)element listener:(NSObject<WebKitFullScreenListener>*)listener
 {
-    [self performSelector:@selector(exitFullScreenWithListener:) withObject:listener afterDelay:0];
+    if (!gLayoutTestController->hasCustomFullScreenBehavior())
+        [self performSelector:@selector(exitFullScreenWithListener:) withObject:listener afterDelay:0];
 }
 
 - (BOOL)webView:(WebView *)webView didPressMissingPluginButton:(DOMElement *)element

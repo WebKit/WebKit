@@ -144,6 +144,9 @@ module WTR {
         void resetPageVisibility();
 
         readonly attribute DOMString platformName;
+
+        // Control full screen behavior.
+        void setHasCustomFullScreenBehavior(in boolean value);
     };
 
 }

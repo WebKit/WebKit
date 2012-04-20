@@ -109,6 +109,7 @@ LayoutTestController::LayoutTestController()
     , m_policyDelegateEnabled(false)
     , m_policyDelegatePermissive(false)
     , m_globalFlag(false)
+    , m_customFullScreenBehavior(false)
 {
     platformInitialize();
 }

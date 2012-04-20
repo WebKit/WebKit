@@ -1669,12 +1669,18 @@ void WebViewHost::setAddressBarURL(const WebURL&)
 
 void WebViewHost::enterFullScreenNow()
 {
+    if (layoutTestController()->hasCustomFullScreenBehavior())
+        return;
+
     webView()->willEnterFullScreen();
     webView()->didEnterFullScreen();
 }
 
 void WebViewHost::exitFullScreenNow()
 {
+    if (layoutTestController()->hasCustomFullScreenBehavior())
+        return;
+
     webView()->willExitFullScreen();
     webView()->didExitFullScreen();
 }

@@ -971,4 +971,33 @@ unsigned Internals::numberOfScrollableAreas(Document* document, ExceptionCode&)
     return count;
 }
 
+#if ENABLE(FULLSCREEN_API)
+void Internals::webkitWillEnterFullScreenForElement(Document* document, Element* element)
+{
+    if (!document)
+        return;
+    document->webkitWillEnterFullScreenForElement(element);
+}
+
+void Internals::webkitDidEnterFullScreenForElement(Document* document, Element* element)
+{
+    if (!document)
+        return;
+    document->webkitDidEnterFullScreenForElement(element);
+}
+
+void Internals::webkitWillExitFullScreenForElement(Document* document, Element* element)
+{
+    if (!document)
+        return;
+    document->webkitWillExitFullScreenForElement(element);
+}
+
+void Internals::webkitDidExitFullScreenForElement(Document* document, Element* element)
+{
+    if (!document)
+        return;
+    document->webkitDidExitFullScreenForElement(element);
+}
+#endif
 }

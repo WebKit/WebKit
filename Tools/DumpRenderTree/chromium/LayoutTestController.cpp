@@ -251,6 +251,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("enableFixedLayoutMode", &LayoutTestController::enableFixedLayoutMode);
     bindMethod("setFixedLayoutSize", &LayoutTestController::setFixedLayoutSize);
     bindMethod("selectionAsMarkup", &LayoutTestController::selectionAsMarkup);
+    bindMethod("setHasCustomFullScreenBehavior", &LayoutTestController::setHasCustomFullScreenBehavior);
     
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -674,6 +675,7 @@ void LayoutTestController::reset()
     m_workQueue.reset();
     m_taskList.revokeAll();
     m_shouldStayOnPageAfterHandlingBeforeUnload = false;
+    m_hasCustomFullScreenBehavior = false;
 }
 
 void LayoutTestController::locationChangeDone()
@@ -2228,6 +2230,14 @@ void LayoutTestController::setAudioData(const CppArgumentList& arguments, CppVar
         return;
 
     setShouldDumpAsAudio(true);
+}
+
+void LayoutTestController::setHasCustomFullScreenBehavior(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() <  1 || !arguments[0].isBool())
+        return;
+    m_hasCustomFullScreenBehavior = arguments[0].toBoolean();
 }
 
 #if ENABLE(POINTER_LOCK)

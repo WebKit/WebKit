@@ -1,3 +1,45 @@
+2012-04-04  Jer Noble  <jer.noble@apple.com>
+
+        apple.com top navigation bar appears inside video during full screen exit animation
+        https://bugs.webkit.org/show_bug.cgi?id=83095
+
+        Reviewed by Eric Carlson.
+
+        Add a new LayoutTestController function, setHasCustomFullScreenBehavior(), which allows scripts to
+        disable the standard full screen behavior, and replace it with explicit callbacks to the relevant
+        Document methods from within the script.  This allows subtle timing bugs to be consistently reproduced
+        from within LayoutTests.
+
+        Add the new methods, hasCustomFullScreenBehavior() and setHasCustomFullScreenBehavior():
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setHasCustomFullScreenBehaviorCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::setHasCustomFullScreenBehavior):
+        (LayoutTestController::hasCustomFullScreenBehavior):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::enterFullScreenForElement):
+        (WTR::InjectedBundlePage::exitFullScreenForElement):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::setHasCustomFullScreenBehavior):
+        (WTR::LayoutTestController::hasCustomFullScreenBehavior):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::setHasCustomFullScreenBehavior):
+        (LayoutTestController::hasCustomFullScreenBehavior):
+
+        Query the new methods before calling will/did/Enter/ExitFullScreen:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::enterFullScreenNow):
+        (WebViewHost::exitFullScreenNow):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:enterFullScreenForElement:listener:]):
+        (-[UIDelegate webView:exitFullScreenForElement:listener:]):
+
 2012-04-20  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         NRWT: option --skip-pixel-test-if-no-baseline support on DRT

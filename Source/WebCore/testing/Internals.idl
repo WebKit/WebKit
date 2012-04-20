@@ -139,6 +139,13 @@ module window {
 
         [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
         [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
+
+#if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+        void webkitWillEnterFullScreenForElement(in Document document, in Element element);
+        void webkitDidEnterFullScreenForElement(in Document document, in Element element);
+        void webkitWillExitFullScreenForElement(in Document document, in Element element);
+        void webkitDidExitFullScreenForElement(in Document document, in Element element);
+#endif
     };
 }
 

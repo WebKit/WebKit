@@ -5483,15 +5483,18 @@ void Document::webkitWillExitFullScreenForElement(Element*)
     if (!attached() || inPageCache())
         return;
 
-    m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
-    
     m_fullScreenElement->willStopBeingFullscreenElement();
 }
 
 void Document::webkitDidExitFullScreenForElement(Element*)
 {
+    if (!m_fullScreenElement)
+        return;
+
     if (!attached() || inPageCache())
         return;
+
+    m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 
     m_areKeysEnabledInFullScreen = false;
     

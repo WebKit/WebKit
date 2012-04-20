@@ -1,3 +1,15 @@
+2012-04-06  Jer Noble  <jer.noble@apple.com>
+
+        apple.com top navigation bar appears inside video during full screen exit animation
+        https://bugs.webkit.org/show_bug.cgi?id=83095
+
+        Reviewed by Eric Carlson.
+
+        Add new WebCore symbols needed by DumpRenderTree to exported symbol list.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Ignore resources while replacing content in WebKit2 GTK+ API

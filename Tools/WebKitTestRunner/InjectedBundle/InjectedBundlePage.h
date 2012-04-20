@@ -121,6 +121,7 @@ private:
 #if ENABLE(FULLSCREEN_API)
     // Full Screen client
     static bool supportsFullScreen(WKBundlePageRef, WKFullScreenKeyboardRequestType);
+    static void setHasCustomFullScreenBehavior(WKBundlePageRef, bool value);
     static void enterFullScreenForElement(WKBundlePageRef, WKBundleNodeHandleRef element);
     static void exitFullScreenForElement(WKBundlePageRef, WKBundleNodeHandleRef element);
     static void beganEnterFullScreen(WKBundlePageRef, WKRect initialFrame, WKRect finalFrame);

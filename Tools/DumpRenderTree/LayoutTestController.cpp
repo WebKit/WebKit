@@ -92,6 +92,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_shouldPaintBrokenImage(true)
     , m_shouldStayOnPageAfterHandlingBeforeUnload(false)
     , m_areDesktopNotificationPermissionRequestsIgnored(false)
+    , m_customFullScreenBehavior(false) 
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
 {
@@ -2242,6 +2243,18 @@ static JSValueRef setTextDirectionCallback(JSContextRef context, JSObjectRef fun
     }
 
     return JSValueMakeUndefined(context);
+
+}
+
+static JSValueRef setHasCustomFullScreenBehaviorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount == 1) {
+        bool hasCustomBehavior = JSValueToBoolean(context, arguments[0]);
+        LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+        controller->setHasCustomFullScreenBehavior(hasCustomBehavior);
+    }
+
+    return JSValueMakeUndefined(context);
 }
 
 static void layoutTestControllerObjectFinalize(JSObjectRef object)
@@ -2461,6 +2474,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "focusWebView", focusWebViewCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setBackingScaleFactor", setBackingScaleFactorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "preciseTime", preciseTimeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setHasCustomFullScreenBehavior", setHasCustomFullScreenBehaviorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 
