@@ -125,14 +125,6 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 
 #endif
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
-    : JSNonFinalObject(globalData, structure)
-    , m_indexBias(0)
-    , m_storage(0)
-    , m_sparseValueMap(0)
-{
-}
-
 void JSArray::finishCreation(JSGlobalData& globalData, unsigned initialLength)
 {
     Base::finishCreation(globalData);

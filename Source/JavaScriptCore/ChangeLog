@@ -1,3 +1,20 @@
+2012-04-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        Inline the JSArray constructor
+        https://bugs.webkit.org/show_bug.cgi?id=84416
+
+        Reviewed by Geoffrey Garen.
+
+        The constructor is trivial, no reason to jump for it.
+
+        This makes the creation of array ~5% faster (on non-trivial cases, no empty arrays).
+
+        * runtime/JSArray.cpp:
+        (JSC):
+        * runtime/JSArray.h:
+        (JSC::JSArray::JSArray):
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-04-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Heap should cancel GC timer at the start of the collection

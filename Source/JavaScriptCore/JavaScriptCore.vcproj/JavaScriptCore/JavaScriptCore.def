@@ -9,7 +9,6 @@ EXPORTS
     ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
     ??0DynamicGlobalObjectScope@JSC@@QAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@@Z 
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
-    ??0JSArray@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0JSByteArray@JSC@@AAE@PAVExecState@1@PAVStructure@1@PAVByteArray@WTF@@@Z
     ??0JSLock@JSC@@QAE@PAVExecState@1@@Z
     ??0MD5@WTF@@QAE@XZ

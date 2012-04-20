@@ -139,7 +139,13 @@ namespace JSC {
         friend class JIT;
 
     protected:
-        JS_EXPORT_PRIVATE explicit JSArray(JSGlobalData&, Structure*);
+        explicit JSArray(JSGlobalData& globalData, Structure* structure)
+            : JSNonFinalObject(globalData, structure)
+            , m_indexBias(0)
+            , m_storage(0)
+            , m_sparseValueMap(0)
+        {
+        }
 
         JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, unsigned initialLength = 0);
         JS_EXPORT_PRIVATE JSArray* tryFinishCreationUninitialized(JSGlobalData&, unsigned initialLength);
