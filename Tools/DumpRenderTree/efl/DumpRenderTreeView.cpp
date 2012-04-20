@@ -104,6 +104,22 @@ static void onWindowClose(Ewk_View_Smart_Data* smartData)
     ecore_idler_add(onWindowCloseDelayed, view);
 }
 
+static uint64_t onExceededDatabaseQuota(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* databaseName, uint64_t currentSize, uint64_t expectedSize)
+{
+    if (!gLayoutTestController->dumpDatabaseCallbacks())
+        return 0;
+
+    Ewk_Security_Origin* origin = ewk_frame_security_origin_get(frame);
+    printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n",
+            ewk_security_origin_protocol_get(origin),
+            ewk_security_origin_host_get(origin),
+            ewk_security_origin_port_get(origin),
+            databaseName);
+    ewk_security_origin_free(origin);
+
+    return 5 * 1024 * 1024;
+}
+
 static bool shouldUseSingleBackingStore()
 {
     const char* useSingleBackingStore = getenv("DRT_USE_SINGLE_BACKING_STORE");
@@ -131,6 +147,7 @@ Evas_Object* drtViewAdd(Evas* evas)
     api.run_javascript_prompt = onJavaScriptPrompt;
     api.window_create = onWindowCreate;
     api.window_close = onWindowClose;
+    api.exceeded_database_quota = onExceededDatabaseQuota;
 
     return evas_object_smart_add(evas, evas_smart_class_new(&api.sc));
 }

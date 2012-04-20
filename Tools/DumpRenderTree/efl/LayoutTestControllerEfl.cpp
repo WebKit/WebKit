@@ -575,7 +575,9 @@ void LayoutTestController::clearAllDatabases()
 
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)
 {
-    ewk_settings_web_database_default_quota_set(quota);
+    Ewk_Security_Origin* origin = ewk_frame_security_origin_get(browser->mainFrame());
+    ewk_security_origin_web_database_quota_set(origin, quota);
+    ewk_security_origin_free(origin);
 }
 
 JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)

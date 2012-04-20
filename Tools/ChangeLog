@@ -1,3 +1,25 @@
+2012-04-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Make it possible to define offline storage quota per origin
+        https://bugs.webkit.org/show_bug.cgi?id=84170
+
+        Improved LayoutTestController::setDatabaseQuota to set quota based on
+        origin which was causing some tests to fail. Also align the default
+        quota for testing (5MB) with others ports.
+
+        When dumpDatabaseCallbacks is set to true by, also dump some database
+        information when quota is exceed, which is also required by some tests.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onExceededDatabaseQuota):
+        (drtViewAdd):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setDatabaseQuota):
+
 2012-04-20  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Send double click event from EventSender

@@ -178,6 +178,9 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_settings_icon_database_clear();
     ewk_settings_icon_database_path_set(0);
 
+    ewk_settings_web_database_clear();
+    ewk_settings_web_database_default_quota_set(5 * 1024 * 1024);
+
     ewk_view_setting_private_browsing_set(mainView(), EINA_FALSE);
     ewk_view_setting_spatial_navigation_set(mainView(), EINA_FALSE);
     ewk_view_setting_enable_frame_flattening_set(mainView(), EINA_FALSE);
