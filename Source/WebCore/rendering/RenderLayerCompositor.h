@@ -43,7 +43,8 @@ class RenderVideo;
 #endif
 
 enum CompositingUpdateType {
-    CompositingUpdateAfterLayoutOrStyleChange,
+    CompositingUpdateAfterStyleChange,
+    CompositingUpdateAfterLayout,
     CompositingUpdateOnHitTest,
     CompositingUpdateOnScroll
 };
@@ -100,7 +101,7 @@ public:
     void didFlushChangesForLayer(RenderLayer*);
     
     // Rebuild the tree of compositing layers
-    void updateCompositingLayers(CompositingUpdateType = CompositingUpdateAfterLayoutOrStyleChange, RenderLayer* updateRoot = 0);
+    void updateCompositingLayers(CompositingUpdateType, RenderLayer* updateRoot = 0);
     // This is only used when state changes and we do not exepect a style update or layout to happen soon (e.g. when
     // we discover that an iframe is overlapped during painting).
     void scheduleCompositingLayerUpdate();
@@ -317,10 +318,7 @@ private:
 
     // When true, we have to wait until layout has happened before we can decide whether to enter compositing mode,
     // because only then do we know the final size of plugins and iframes.
-    // FIXME: once set, this is never cleared.
-    mutable bool m_compositingDependsOnGeometry;
-
-    mutable bool m_compositingNeedsUpdate;
+    mutable bool m_reevaluateCompositingAfterLayout;
 
     bool m_compositing;
     bool m_compositingLayersNeedRebuild;

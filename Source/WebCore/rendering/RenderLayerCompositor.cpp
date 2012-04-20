@@ -155,8 +155,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_showRepaintCounter(false)
     , m_acceleratedDrawingEnabled(false)
     , m_compositingConsultsOverlap(true)
-    , m_compositingDependsOnGeometry(false)
-    , m_compositingNeedsUpdate(false)
+    , m_reevaluateCompositingAfterLayout(false)
     , m_compositing(false)
     , m_compositingLayersNeedRebuild(false)
     , m_flushingLayers(false)
@@ -301,7 +300,7 @@ void RenderLayerCompositor::scheduleCompositingLayerUpdate()
 
 void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*)
 {
-    updateCompositingLayers();
+    updateCompositingLayers(CompositingUpdateAfterLayout);
 }
 
 bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer* rootLayer) const
@@ -320,14 +319,15 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (m_forceCompositingMode && !m_compositing)
         enableCompositingMode(true);
 
-    if (!m_compositingDependsOnGeometry && !m_compositing && !m_compositingNeedsUpdate)
+    if (!m_reevaluateCompositingAfterLayout && !m_compositing)
         return;
 
-    bool checkForHierarchyUpdate = m_compositingDependsOnGeometry;
+    bool checkForHierarchyUpdate = m_reevaluateCompositingAfterLayout;
     bool needGeometryUpdate = false;
 
     switch (updateType) {
-    case CompositingUpdateAfterLayoutOrStyleChange:
+    case CompositingUpdateAfterStyleChange:
+    case CompositingUpdateAfterLayout:
     case CompositingUpdateOnHitTest:
         checkForHierarchyUpdate = true;
         break;
@@ -343,11 +343,15 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         return;
 
     bool needHierarchyUpdate = m_compositingLayersNeedRebuild;
+    bool isFullUpdate = !updateRoot;
     if (!updateRoot || m_compositingConsultsOverlap) {
         // Only clear the flag if we're updating the entire hierarchy.
         m_compositingLayersNeedRebuild = false;
         updateRoot = rootRenderLayer();
     }
+
+    if (isFullUpdate && updateType == CompositingUpdateAfterLayout)
+        m_reevaluateCompositingAfterLayout = false;
 
 #if PROFILE_LAYER_REBUILD
     ++m_rootLayerUpdateCount;
@@ -375,7 +379,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         rebuildCompositingLayerTree(updateRoot, childList);
 
         // Host the document layer in the RenderView's root layer.
-        if (updateRoot == rootRenderLayer()) {
+        if (isFullUpdate) {
             // Even when childList is empty, don't drop out of compositing mode if there are
             // composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
             if (childList.isEmpty() && !hasAnyAdditionalCompositedLayers(updateRoot))
@@ -391,7 +395,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     
 #if PROFILE_LAYER_REBUILD
     double endTime = WTF::currentTime();
-    if (updateRoot == rootRenderLayer())
+    if (isFullUpdate)
         fprintf(stderr, "Update %d: computeCompositingRequirements for the world took %fms\n",
                     m_rootLayerUpdateCount, 1000.0 * (endTime - startTime));
 #endif
@@ -399,8 +403,6 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     if (!hasAcceleratedCompositing())
         enableCompositingMode(false);
-
-    m_compositingNeedsUpdate = false;
 }
 
 bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeRepaint shouldRepaint)
@@ -977,7 +979,7 @@ void RenderLayerCompositor::frameViewDidScroll()
 
 String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
 {
-    updateCompositingLayers();
+    updateCompositingLayers(CompositingUpdateAfterLayout);
 
     if (!m_rootContentLayer)
         return String();
@@ -1480,7 +1482,7 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer)
     if (!composite)
         return false;
 
-    m_compositingDependsOnGeometry = true;
+    m_reevaluateCompositingAfterLayout = true;
     
     RenderWidget* pluginRenderer = toRenderWidget(renderer);
     // If we can't reliably know the size of the plugin yet, don't change compositing state.
@@ -1502,7 +1504,7 @@ bool RenderLayerCompositor::requiresCompositingForFrame(RenderObject* renderer) 
     if (!frameRenderer->requiresAcceleratedCompositing())
         return false;
 
-    m_compositingDependsOnGeometry = true;
+    m_reevaluateCompositingAfterLayout = true;
 
     RenderLayerCompositor* innerCompositor = frameContentsCompositor(frameRenderer);
     if (!innerCompositor || !innerCompositor->shouldPropagateCompositingToEnclosingFrame())
@@ -1568,7 +1570,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     RenderObject* container = renderer->container();
     // If the renderer is not hooked up yet then we have to wait until it is.
     if (!container) {
-        m_compositingNeedsUpdate = true;
+        m_reevaluateCompositingAfterLayout = true;
         return false;
     }
 

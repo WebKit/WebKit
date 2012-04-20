@@ -116,7 +116,8 @@ public:
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    void updateCompositingLayers();
+    void updateCompositingLayersAfterStyleChange();
+    void updateCompositingLayersAfterLayout();
     bool syncCompositingStateForThisFrame(Frame* rootFrameForSync);
 
     void clearBackingStores();

@@ -1690,7 +1690,7 @@ void Document::recalcStyle(StyleChange change)
         bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
         // If we didn't update compositing layers because of layout(), we need to do so here.
         if (!layoutPending)
-            view()->updateCompositingLayers();
+            view()->updateCompositingLayersAfterStyleChange();
     }
 #endif
 
@@ -2402,7 +2402,7 @@ void Document::implicitClose()
     // If painting and compositing layer updates were suppressed pending the load event, do these actions now.
     if (renderer() && settings() && settings()->suppressesIncrementalRendering()) {
 #if USE(ACCELERATED_COMPOSITING)
-        view()->updateCompositingLayers();
+        view()->updateCompositingLayersAfterLayout();
 #endif
         renderer()->repaint();
     }

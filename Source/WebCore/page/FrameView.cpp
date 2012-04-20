@@ -641,8 +641,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-
-void FrameView::updateCompositingLayers()
+void FrameView::updateCompositingLayersAfterStyleChange()
 {
     RenderView* root = rootRenderer(this);
     if (!root)
@@ -650,7 +649,18 @@ void FrameView::updateCompositingLayers()
 
     // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
     root->compositor()->cacheAcceleratedCompositingFlags();
-    root->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange);
+    root->compositor()->updateCompositingLayers(CompositingUpdateAfterStyleChange);
+}
+
+void FrameView::updateCompositingLayersAfterLayout()
+{
+    RenderView* root = rootRenderer(this);
+    if (!root)
+        return;
+
+    // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
+    root->compositor()->cacheAcceleratedCompositingFlags();
+    root->compositor()->updateCompositingLayers(CompositingUpdateAfterLayout);
 }
 
 void FrameView::clearBackingStores()
@@ -673,7 +683,7 @@ void FrameView::restoreBackingStores()
 
     RenderLayerCompositor* compositor = root->compositor();
     compositor->enableCompositingMode(true);
-    compositor->updateCompositingLayers();
+    compositor->updateCompositingLayers(CompositingUpdateAfterLayout);
 }
 
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const
@@ -1124,7 +1134,7 @@ void FrameView::layout(bool allowSubtree)
     endDeferredRepaints();
 
 #if USE(ACCELERATED_COMPOSITING)
-    updateCompositingLayers();
+    updateCompositingLayersAfterLayout();
 #endif
     
     m_layoutCount++;
