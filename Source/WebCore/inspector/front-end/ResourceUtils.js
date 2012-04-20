@@ -30,7 +30,7 @@
 
 /**
  * @constructor
- * @param {String|string} url
+ * @param {string} url
  */
 WebInspector.ParsedURL = function(url)
 {
@@ -110,7 +110,7 @@ WebInspector.ParsedURL.prototype = {
  */
 String.prototype.asParsedURL = function()
 {
-    var parsedURL = new WebInspector.ParsedURL(this);
+    var parsedURL = new WebInspector.ParsedURL(this.toString());
     if (parsedURL.isValid)
         return parsedURL;
     return null;

@@ -542,7 +542,7 @@ WebInspector.ResourceTreeFrame.prototype = {
             // Already in the tree, we just got an extra update.
             return resource;
         }
-        resource = new WebInspector.Resource(request, request.url, request.documentURL, request.frameId, request.loaderId);
+        resource = new WebInspector.Resource(request, request.url, request.documentURL, request.frameId, request.loaderId, request.type, request.mimeType);
         this._resourcesMap[resource.url] = resource;
         this._model.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, resource);
         return resource;

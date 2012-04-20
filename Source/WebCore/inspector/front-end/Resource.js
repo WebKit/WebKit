@@ -35,8 +35,8 @@
  * @param {string} documentURL
  * @param {NetworkAgent.FrameId} frameId
  * @param {NetworkAgent.LoaderId} loaderId
- * @param {WebInspector.ResourceType=} type
- * @param {string=} mimeType
+ * @param {WebInspector.ResourceType} type
+ * @param {string} mimeType
  */
 WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, type, mimeType)
 {
@@ -51,8 +51,8 @@ WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, t
     this._mimeType = mimeType;
     this.history = [];
 
-    this._content = undefined;
-    this._contentEncoded = undefined;
+    /** @type {?string} */ this._content;
+    /** @type {boolean} */ this._contentEncoded;
     this._pendingContentCallbacks = [];
 }
 
@@ -154,7 +154,7 @@ WebInspector.Resource.Events = {
 
 WebInspector.Resource.prototype = {
     /**
-     * @type {?WebInspector.NetworkRequest}
+     * @return {?WebInspector.NetworkRequest}
      */
     get request()
     {
@@ -162,7 +162,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get url()
     {
@@ -181,7 +181,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get documentURL()
     {
@@ -189,7 +189,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {NetworkAgent.FrameId}
+     * @return {NetworkAgent.FrameId}
      */
     get frameId()
     {
@@ -197,7 +197,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {NetworkAgent.LoaderId}
+     * @return {NetworkAgent.LoaderId}
      */
     get loaderId()
     {
@@ -205,7 +205,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get displayName()
     {
@@ -213,7 +213,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {WebInspector.ResourceType}
+     * @return {WebInspector.ResourceType}
      */
     get type()
     {
@@ -221,7 +221,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {string}
      */
     get mimeType()
     {
@@ -229,7 +229,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {Array.<WebInspector.ConsoleMessage>}
+     * @return {Array.<WebInspector.ConsoleMessage>}
      */
     get messages()
     {
@@ -251,7 +251,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get errors()
     {
@@ -264,7 +264,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get warnings()
     {
@@ -285,7 +285,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {?string}
      */
     get content()
     {
@@ -293,7 +293,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {boolean}
      */
     get contentEncoded()
     {
@@ -301,7 +301,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get contentTimestamp()
     {
@@ -462,7 +462,7 @@ WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
  * @constructor
  * @implements {WebInspector.ContentProvider}
  * @param {WebInspector.Resource} resource
- * @param {string|undefined} content
+ * @param {?string|undefined} content
  * @param {number} timestamp
  */
 WebInspector.ResourceRevision = function(resource, content, timestamp)
@@ -474,7 +474,7 @@ WebInspector.ResourceRevision = function(resource, content, timestamp)
 
 WebInspector.ResourceRevision.prototype = {
     /**
-     * @type {WebInspector.Resource}
+     * @return {WebInspector.Resource}
      */
     get resource()
     {
@@ -482,7 +482,7 @@ WebInspector.ResourceRevision.prototype = {
     },
 
     /**
-     * @type {number}
+     * @return {number}
      */
     get timestamp()
     {
@@ -490,11 +490,11 @@ WebInspector.ResourceRevision.prototype = {
     },
 
     /**
-     * @type {string}
+     * @return {?string}
      */
     get content()
     {
-        return this._content;
+        return this._content || null;
     },
 
     revertToThis: function()
