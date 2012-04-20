@@ -151,6 +151,8 @@ modules = [
             "EventListenersSidebarPane.js",
             "FilteredItemSelectionDialog.js",
             "GoToLineDialog.js",
+            "NavigatorOverlayController.js",
+            "NavigatorView.js",
             "JavaScriptContextManager.js",
             "ObjectPopoverHelper.js",
             "ObjectPropertiesSection.js",

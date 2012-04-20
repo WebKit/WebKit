@@ -74161,11 +74161,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NavigatorOverlayController.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\NavigatorView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\NetworkItemView.js"
 					>
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\NetworkLog.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\navigatorView.css"
 					>
 				</File>
 				<File

@@ -83,6 +83,8 @@
     <file>KeyboardShortcut.js</file>
     <file>MemoryStatistics.js</file>
     <file>MetricsSidebarPane.js</file>
+    <file>NavigatorOverlayController.js</file>
+    <file>NavigatorView.js</file>
     <file>NetworkItemView.js</file>
     <file>NetworkLog.js</file>
     <file>NetworkManager.js</file>
@@ -185,6 +187,7 @@
     <file>inspector.css</file>
     <file>inspectorCommon.css</file>
     <file>inspectorSyntaxHighlight.css</file>
+    <file>navigatorView.css</file>
     <file>networkLogView.css</file>
     <file>networkPanel.css</file>
     <file>panelEnablerView.css</file>
