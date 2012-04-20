@@ -45,7 +45,7 @@ public:
 
     virtual WebString name() const;
     virtual WebString storeName() const;
-    virtual WebString keyPath() const;
+    virtual WebString keyPathString() const;
     virtual bool unique() const;
     virtual bool multiEntry() const;
 

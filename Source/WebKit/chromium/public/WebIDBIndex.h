@@ -53,6 +53,12 @@ public:
     }
     virtual WebString keyPath() const
     {
+        return keyPathString();
+    }
+    virtual WebString keyPathString() const
+    {
+        // FIXME: Temporary to allow keyPath()'s return type to change.
+        // http://webkit.org/b/84207
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }

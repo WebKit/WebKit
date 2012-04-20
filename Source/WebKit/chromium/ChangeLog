@@ -1,3 +1,30 @@
+2012-04-19  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Prep for changing keyPath return type
+        https://bugs.webkit.org/show_bug.cgi?id=84208
+
+        To introduce Array-type key paths (see http://webkit.org/b/84207) the keyPath() accessors
+        on WebIDBObjectStore and WebIDBIndex need to change return type. To do so requires temporarily
+        changing the method names to keyPathString with compatibility shims (on the WebKit side)
+        then switching the implementation in the Chromium port in a follow-up patch.
+
+        Reviewed by Kent Tamura.
+
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::keyPath):
+        (WebKit::WebIDBIndex::keyPathString):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::keyPath):
+        (WebKit::WebIDBObjectStore::keyPathString):
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::keyPathString):
+        * src/WebIDBIndexImpl.h:
+        (WebIDBIndexImpl):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::keyPathString):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+
 2012-04-19  Andreas Kling  <kling@webkit.org>
 
         [chromium] Add simplified API for iterating over a WebElement's attributes.

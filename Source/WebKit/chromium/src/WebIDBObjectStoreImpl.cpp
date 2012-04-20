@@ -57,7 +57,7 @@ WebString WebIDBObjectStoreImpl::name() const
     return m_objectStore->name();
 }
 
-WebString WebIDBObjectStoreImpl::keyPath() const
+WebString WebIDBObjectStoreImpl::keyPathString() const
 {
     return m_objectStore->keyPath();
 }

@@ -46,7 +46,7 @@ public:
     ~WebIDBObjectStoreImpl();
 
     WebString name() const;
-    WebString keyPath() const;
+    WebString keyPathString() const;
     WebDOMStringList indexNames() const;
 
     void get(const WebIDBKey& key, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);

@@ -58,7 +58,7 @@ WebString WebIDBIndexImpl::storeName() const
     return m_backend->storeName();
 }
 
-WebString WebIDBIndexImpl::keyPath() const
+WebString WebIDBIndexImpl::keyPathString() const
 {
     return m_backend->keyPath();
 }
