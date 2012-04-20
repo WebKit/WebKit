@@ -37,7 +37,6 @@ CopiedSpace::CopiedSpace(Heap* heap)
     , m_fromSpace(0)
     , m_inCopyingPhase(false)
     , m_numberOfLoanedBlocks(0)
-    , m_waterMark(0)
 {
 }
 
@@ -52,12 +51,10 @@ void CopiedSpace::init()
 
 CheckedBoolean CopiedSpace::tryAllocateSlowCase(size_t bytes, void** outPtr)
 {
-    m_heap->activityCallback()->willAllocate();
-    
     if (isOversize(bytes))
         return tryAllocateOversize(bytes, outPtr);
     
-    m_waterMark += m_allocator.currentCapacity();
+    m_heap->didAllocate(m_allocator.currentCapacity());
 
     if (!addNewBlock()) {
         *outPtr = 0;
@@ -86,7 +83,7 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
     
     *outPtr = allocateFromBlock(block, bytes);
 
-    m_waterMark += block->capacity();
+    m_heap->didAllocate(blockSize);
 
     return true;
 }
@@ -138,7 +135,6 @@ CheckedBoolean CopiedSpace::tryReallocateOversize(void** ptr, size_t oldSize, si
     if (isOversize(oldSize)) {
         CopiedBlock* oldBlock = oversizeBlockFor(oldPtr);
         m_oversizeBlocks.remove(oldBlock);
-        m_waterMark -= oldBlock->capacity();
         oldBlock->m_allocation.deallocate();
     }
     
@@ -165,11 +161,6 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block)
     }
 
     {
-        MutexLocker locker(m_memoryStatsLock);
-        m_waterMark += block->capacity();
-    }
-
-    {
         MutexLocker locker(m_loanedBlocksLock);
         ASSERT(m_numberOfLoanedBlocks > 0);
         m_numberOfLoanedBlocks--;
@@ -193,7 +184,6 @@ void CopiedSpace::doneCopying()
         if (block->m_isPinned) {
             block->m_isPinned = false;
             m_toSpace->push(block);
-            m_waterMark += block->capacity();
             continue;
         }
 
@@ -211,10 +201,8 @@ void CopiedSpace::doneCopying()
         if (!curr->m_isPinned) {
             m_oversizeBlocks.remove(curr);
             curr->m_allocation.deallocate();
-        } else {
+        } else
             curr->m_isPinned = false;
-            m_waterMark += curr->capacity();
-        }
         curr = next;
     }
 
@@ -281,8 +269,6 @@ void CopiedSpace::destroy()
         CopiedBlock* block = static_cast<CopiedBlock*>(m_oversizeBlocks.removeHead());
         block->m_allocation.deallocate();
     }
-
-    m_waterMark = 0;
 }
 
 size_t CopiedSpace::size()

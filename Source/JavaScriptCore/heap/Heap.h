@@ -112,8 +112,11 @@ namespace JSC {
         void removeFunctionExecutable(FunctionExecutable*);
 
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
-        JS_EXPORT_PRIVATE void collectAllGarbage();
 
+        JS_EXPORT_PRIVATE void collectAllGarbage();
+        enum SweepToggle { DoNotSweep, DoSweep };
+        bool shouldCollect();
+        void collect(SweepToggle);
         void reportExtraMemoryCost(size_t cost);
 
         JS_EXPORT_PRIVATE void protect(JSValue);
@@ -144,11 +147,11 @@ namespace JSC {
 
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
-        void addToWaterMark(size_t);
-
         double lastGCLength() { return m_lastGCLength; }
 
         JS_EXPORT_PRIVATE void discardAllCompiledCode();
+
+        void didAllocate(size_t);
 
     private:
         friend class CodeBlock;
@@ -162,10 +165,6 @@ namespace JSC {
 
         void* allocateWithDestructor(size_t);
         void* allocateWithoutDestructor(size_t);
-
-        size_t waterMark();
-        size_t highWaterMark();
-        bool shouldCollect();
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
@@ -192,8 +191,6 @@ namespace JSC {
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
         
-        enum SweepToggle { DoNotSweep, DoSweep };
-        void collect(SweepToggle);
         void shrink();
         void releaseFreeBlocks();
         void sweep();
@@ -208,7 +205,9 @@ namespace JSC {
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
         size_t m_lastFullGCSize;
-        size_t m_highWaterMark;
+
+        size_t m_bytesAllocatedLimit;
+        size_t m_bytesAllocated;
         
         OperationInProgress m_operationInProgress;
         MarkedSpace m_objectSpace;
@@ -257,7 +256,7 @@ namespace JSC {
 #if ENABLE(GGC)
         return m_objectSpace.nurseryWaterMark() >= m_minBytesPerCycle && m_isSafeToCollect;
 #else
-        return waterMark() >= highWaterMark() && m_isSafeToCollect;
+        return m_bytesAllocated > m_bytesAllocatedLimit && m_isSafeToCollect;
 #endif
     }
 
@@ -291,23 +290,6 @@ namespace JSC {
     inline void Heap::setMarked(const void* cell)
     {
         MarkedBlock::blockFor(cell)->setMarked(cell);
-    }
-
-    inline size_t Heap::waterMark()
-    {
-        return m_objectSpace.waterMark() + m_storageSpace.waterMark();
-    }
-
-    inline size_t Heap::highWaterMark()
-    {
-        return m_highWaterMark;
-    }
-
-    inline void Heap::addToWaterMark(size_t size)
-    {
-        m_objectSpace.addToWaterMark(size);
-        if (waterMark() > highWaterMark())
-            collect(DoNotSweep);
     }
 
 #if ENABLE(GGC)

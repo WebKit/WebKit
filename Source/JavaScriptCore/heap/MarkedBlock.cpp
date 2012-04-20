@@ -77,7 +77,7 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
 }
 
 template<MarkedBlock::BlockState blockState, MarkedBlock::SweepMode sweepMode, bool destructorCallNeeded>
-MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
+MarkedBlock::FreeList MarkedBlock::specializedSweep()
 {
     ASSERT(blockState != Allocated && blockState != FreeListed);
     ASSERT(destructorCallNeeded || sweepMode != SweepOnly);
@@ -86,6 +86,7 @@ MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
     // This is fine, since the allocation code makes no assumptions about the
     // order of the free list.
     FreeCell* head = 0;
+    size_t count = 0;
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         if (blockState == Marked && m_marks.get(i))
             continue;
@@ -101,19 +102,20 @@ MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
             FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);
             freeCell->next = head;
             head = freeCell;
+            ++count;
         }
     }
 
     m_state = ((sweepMode == SweepToFreeList) ? FreeListed : Zapped);
-    return head;
+    return FreeList(head, count * cellSize());
 }
 
-MarkedBlock::FreeCell* MarkedBlock::sweep(SweepMode sweepMode)
+MarkedBlock::FreeList MarkedBlock::sweep(SweepMode sweepMode)
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 
     if (sweepMode == SweepOnly && !m_cellsNeedDestruction)
-        return 0;
+        return FreeList();
 
     if (m_cellsNeedDestruction)
         return sweepHelper<true>(sweepMode);
@@ -121,7 +123,7 @@ MarkedBlock::FreeCell* MarkedBlock::sweep(SweepMode sweepMode)
 }
 
 template<bool destructorCallNeeded>
-MarkedBlock::FreeCell* MarkedBlock::sweepHelper(SweepMode sweepMode)
+MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
 {
     switch (m_state) {
     case New:
@@ -130,10 +132,10 @@ MarkedBlock::FreeCell* MarkedBlock::sweepHelper(SweepMode sweepMode)
     case FreeListed:
         // Happens when a block transitions to fully allocated.
         ASSERT(sweepMode == SweepToFreeList);
-        return 0;
+        return FreeList();
     case Allocated:
         ASSERT_NOT_REACHED();
-        return 0;
+        return FreeList();
     case Marked:
         return sweepMode == SweepToFreeList
             ? specializedSweep<Marked, SweepToFreeList, destructorCallNeeded>()
@@ -145,12 +147,13 @@ MarkedBlock::FreeCell* MarkedBlock::sweepHelper(SweepMode sweepMode)
     }
 
     ASSERT_NOT_REACHED();
-    return 0;
+    return FreeList();
 }
 
-void MarkedBlock::zapFreeList(FreeCell* firstFreeCell)
+void MarkedBlock::zapFreeList(const FreeList& freeList)
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+    FreeCell* head = freeList.head;
 
     if (m_state == Marked) {
         // If the block is in the Marked state then we know that:
@@ -159,7 +162,7 @@ void MarkedBlock::zapFreeList(FreeCell* firstFreeCell)
         //    fact that their mark bits are unset.
         // Hence if the block is Marked we need to leave it Marked.
         
-        ASSERT(!firstFreeCell);
+        ASSERT(!head);
         
         return;
     }
@@ -176,7 +179,7 @@ void MarkedBlock::zapFreeList(FreeCell* firstFreeCell)
         // dead objects will have 0 in their vtables and live objects will have
         // non-zero vtables, which is consistent with the block being zapped.
         
-        ASSERT(!firstFreeCell);
+        ASSERT(!head);
         
         return;
     }
@@ -188,7 +191,7 @@ void MarkedBlock::zapFreeList(FreeCell* firstFreeCell)
     // way to tell what's live vs dead. We use zapping for that.
     
     FreeCell* next;
-    for (FreeCell* current = firstFreeCell; current; current = next) {
+    for (FreeCell* current = head; current; current = next) {
         next = current->next;
         reinterpret_cast<JSCell*>(current)->zap();
     }

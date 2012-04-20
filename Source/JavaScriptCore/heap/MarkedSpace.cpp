@@ -31,8 +31,7 @@ namespace JSC {
 class Structure;
 
 MarkedSpace::MarkedSpace(Heap* heap)
-    : m_waterMark(0)
-    , m_heap(heap)
+    : m_heap(heap)
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
         allocatorFor(cellSize).init(heap, this, cellSize, false);
@@ -47,8 +46,6 @@ MarkedSpace::MarkedSpace(Heap* heap)
 
 void MarkedSpace::resetAllocators()
 {
-    m_waterMark = 0;
-
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
         allocatorFor(cellSize).reset();
         destructorAllocatorFor(cellSize).reset();

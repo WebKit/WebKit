@@ -1794,7 +1794,7 @@ private:
         else
             allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
 
-        m_jit.loadPtr(&allocator->m_firstFreeCell, resultGPR);
+        m_jit.loadPtr(&allocator->m_freeList.head, resultGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
         
         // The object is half-allocated: we have what we know is a fresh object, but
@@ -1806,7 +1806,7 @@ private:
         
         // Now that we have scratchGPR back, remove the object from the free list
         m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
-        m_jit.storePtr(scratchGPR, &allocator->m_firstFreeCell);
+        m_jit.storePtr(scratchGPR, &allocator->m_freeList.head);
         
         // Initialize the object's classInfo pointer
         m_jit.storePtr(MacroAssembler::TrustedImmPtr(&ClassType::s_info), MacroAssembler::Address(resultGPR, JSCell::classInfoOffset()));

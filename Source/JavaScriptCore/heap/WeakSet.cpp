@@ -84,11 +84,15 @@ WeakBlock::FreeCell* WeakSet::findAllocator()
     if (WeakBlock::FreeCell* allocator = tryFindAllocator())
         return allocator;
 
-    m_heap->addToWaterMark(WeakBlock::blockSize);
+    // FIXME: This reporting of the amount allocated isn't quite accurate and 
+    // probably should be reworked eventually.
+    m_heap->didAllocate(WeakBlock::blockSize);
+    if (m_heap->shouldCollect()) {
+        m_heap->collect(Heap::DoNotSweep);
 
-    // addToWaterMark() may cause a GC, so try again.
-    if (WeakBlock::FreeCell* allocator = tryFindAllocator())
-        return allocator;
+        if (WeakBlock::FreeCell* allocator = tryFindAllocator())
+            return allocator;
+    }
 
     return addAllocator();
 }

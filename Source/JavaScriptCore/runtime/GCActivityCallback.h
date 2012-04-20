@@ -43,7 +43,7 @@ class Heap;
 class GCActivityCallback {
 public:
     virtual ~GCActivityCallback() { }
-    virtual void willAllocate() { }
+    virtual void didAllocate(size_t) { }
     virtual void didCollect() { }
     virtual void didAbandonObjectGraph() { }
     virtual void synchronize() { }
@@ -61,7 +61,7 @@ public:
     DefaultGCActivityCallback(Heap*);
     virtual ~DefaultGCActivityCallback();
 
-    virtual void willAllocate();
+    virtual void didAllocate(size_t);
     virtual void didCollect();
     virtual void didAbandonObjectGraph();
     virtual void synchronize();

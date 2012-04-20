@@ -414,12 +414,12 @@ template <typename ClassType, bool destructor, typename StructureType> inline vo
         allocator = &m_globalData->heap.allocatorForObjectWithDestructor(sizeof(ClassType));
     else
         allocator = &m_globalData->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
-    loadPtr(&allocator->m_firstFreeCell, result);
+    loadPtr(&allocator->m_freeList.head, result);
     addSlowCase(branchTestPtr(Zero, result));
 
     // remove the object from the free list
     loadPtr(Address(result), storagePtr);
-    storePtr(storagePtr, &allocator->m_firstFreeCell);
+    storePtr(storagePtr, &allocator->m_freeList.head);
 
     // initialize the object's structure
     storePtr(structure, Address(result, JSCell::structureOffset()));

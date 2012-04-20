@@ -57,6 +57,7 @@ const double gcCPUBudget = 0.025;
 const double gcTimerIntervalMultiplier = 1.0 / gcCPUBudget;
 const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
 const CFTimeInterval hour = 60 * 60;
+const size_t minBytesBeforeCollect = 128 * KB;
 
 void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void *info)
 {
@@ -113,8 +114,10 @@ static void cancelTimer(DefaultGCActivityCallbackPlatformData* d)
     CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + decade);
 }
 
-void DefaultGCActivityCallback::willAllocate()
+void DefaultGCActivityCallback::didAllocate(size_t bytes)
 {
+    if (bytes < minBytesBeforeCollect)
+        return;
     scheduleTimer(d.get());
 }
 

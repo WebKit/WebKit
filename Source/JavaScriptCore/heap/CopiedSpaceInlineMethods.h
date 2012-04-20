@@ -56,8 +56,6 @@ inline void CopiedSpace::startedCopying()
     m_toSpaceFilter.reset();
     m_allocator.startedCopying();
 
-    m_waterMark = 0;
-
     ASSERT(!m_inCopyingPhase);
     ASSERT(!m_numberOfLoanedBlocks);
     m_inCopyingPhase = true;

@@ -41,7 +41,7 @@ private:
     void* tryAllocateHelper();
     MarkedBlock* allocateBlock(AllocationEffort);
     
-    MarkedBlock::FreeCell* m_firstFreeCell;
+    MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;
     DoublyLinkedList<HeapBlock> m_blockList;
     size_t m_cellSize;
@@ -51,8 +51,7 @@ private:
 };
 
 inline MarkedAllocator::MarkedAllocator()
-    : m_firstFreeCell(0)
-    , m_currentBlock(0)
+    : m_currentBlock(0)
     , m_cellSize(0)
     , m_cellsNeedDestruction(true)
     , m_heap(0)
@@ -70,13 +69,13 @@ inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t c
 
 inline void* MarkedAllocator::allocate()
 {
-    MarkedBlock::FreeCell* firstFreeCell = m_firstFreeCell;
+    MarkedBlock::FreeCell* head = m_freeList.head;
     // This is a light-weight fast path to cover the most common case.
-    if (UNLIKELY(!firstFreeCell))
+    if (UNLIKELY(!head))
         return allocateSlowCase();
     
-    m_firstFreeCell = firstFreeCell->next;
-    return firstFreeCell;
+    m_freeList.head = head->next;
+    return head;
 }
 
 inline void MarkedAllocator::reset()
@@ -87,12 +86,12 @@ inline void MarkedAllocator::reset()
 inline void MarkedAllocator::zapFreeList()
 {
     if (!m_currentBlock) {
-        ASSERT(!m_firstFreeCell);
+        ASSERT(!m_freeList.head);
         return;
     }
     
-    m_currentBlock->zapFreeList(m_firstFreeCell);
-    m_firstFreeCell = 0;
+    m_currentBlock->zapFreeList(m_freeList);
+    m_freeList.head = 0;
 }
 
 template <typename Functor> inline void MarkedAllocator::forEachBlock(Functor& functor)

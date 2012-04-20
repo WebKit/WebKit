@@ -66,7 +66,6 @@ public:
 
     bool contains(void*, CopiedBlock*&);
 
-    size_t waterMark() { return m_waterMark; }
     size_t size();
     size_t capacity();
 
@@ -92,8 +91,6 @@ private:
     static bool fitsInBlock(CopiedBlock*, size_t);
     static CopiedBlock* oversizeBlockFor(void* ptr);
 
-    size_t calculateWaterMark();
-
     Heap* m_heap;
 
     CopiedAllocator m_allocator;
@@ -116,9 +113,6 @@ private:
     Mutex m_loanedBlocksLock; 
     ThreadCondition m_loanedBlocksCondition;
     size_t m_numberOfLoanedBlocks;
-
-    Mutex m_memoryStatsLock;
-    size_t m_waterMark;
 
     static const size_t s_maxAllocationSize = 32 * KB;
     static const size_t s_initialBlockNum = 16;

@@ -87,6 +87,14 @@ namespace JSC {
             FreeCell* next;
         };
         
+        struct FreeList {
+            FreeCell* head;
+            size_t bytes;
+
+            FreeList();
+            FreeList(FreeCell*, size_t);
+        };
+
         struct VoidFunctor {
             typedef void ReturnType;
             void returnValue() { }
@@ -105,13 +113,13 @@ namespace JSC {
         void* allocate();
 
         enum SweepMode { SweepOnly, SweepToFreeList };
-        FreeCell* sweep(SweepMode = SweepOnly);
+        FreeList sweep(SweepMode = SweepOnly);
 
         // While allocating from a free list, MarkedBlock temporarily has bogus
         // cell liveness data. To restore accurate cell liveness data, call one
         // of these functions:
         void didConsumeFreeList(); // Call this once you've allocated all the items in the free list.
-        void zapFreeList(FreeCell* firstFreeCell); // Call this to undo the free list.
+        void zapFreeList(const FreeList&); // Call this to undo the free list.
 
         void clearMarks();
         size_t markCount();
@@ -163,7 +171,7 @@ namespace JSC {
         static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.
 
         enum BlockState { New, FreeListed, Allocated, Marked, Zapped };
-        template<bool destructorCallNeeded> FreeCell* sweepHelper(SweepMode = SweepOnly);
+        template<bool destructorCallNeeded> FreeList sweepHelper(SweepMode = SweepOnly);
 
         typedef char Atom[atomSize];
 
@@ -171,7 +179,7 @@ namespace JSC {
         Atom* atoms();
         size_t atomNumber(const void*);
         void callDestructor(JSCell*);
-        template<BlockState, SweepMode, bool destructorCallNeeded> FreeCell* specializedSweep();
+        template<BlockState, SweepMode, bool destructorCallNeeded> FreeList specializedSweep();
         
 #if ENABLE(GGC)
         CardSet<bytesPerCard, blockSize> m_cards;
@@ -188,6 +196,18 @@ namespace JSC {
         BlockState m_state;
         Heap* m_heap;
     };
+
+    inline MarkedBlock::FreeList::FreeList()
+        : head(0)
+        , bytes(0)
+    {
+    }
+
+    inline MarkedBlock::FreeList::FreeList(FreeCell* head, size_t bytes)
+        : head(head)
+        , bytes(bytes)
+    {
+    }
 
     inline size_t MarkedBlock::firstAtom()
     {

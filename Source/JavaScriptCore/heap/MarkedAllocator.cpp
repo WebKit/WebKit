@@ -8,23 +8,22 @@ namespace JSC {
 
 inline void* MarkedAllocator::tryAllocateHelper()
 {
-    MarkedBlock::FreeCell* firstFreeCell = m_firstFreeCell;
-    if (!firstFreeCell) {
+    if (!m_freeList.head) {
         for (MarkedBlock*& block = m_currentBlock; block; block = static_cast<MarkedBlock*>(block->next())) {
-            firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
-            if (firstFreeCell)
+            m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
+            if (m_freeList.head)
                 break;
-            m_markedSpace->didConsumeFreeList(block);
             block->didConsumeFreeList();
         }
         
-        if (!firstFreeCell)
+        if (!m_freeList.head)
             return 0;
     }
     
-    ASSERT(firstFreeCell);
-    m_firstFreeCell = firstFreeCell->next;
-    return firstFreeCell;
+    MarkedBlock::FreeCell* head = m_freeList.head;
+    m_freeList.head = head->next;
+    ASSERT(head);
+    return head;
 }
     
 inline void* MarkedAllocator::tryAllocate()
@@ -42,7 +41,8 @@ void* MarkedAllocator::allocateSlowCase()
     ASSERT(m_heap->m_operationInProgress == NoOperation);
 #endif
     
-    m_heap->activityCallback()->willAllocate();
+    ASSERT(!m_freeList.head);
+    m_heap->didAllocate(m_freeList.bytes);
     
     void* result = tryAllocate();
     
@@ -71,7 +71,7 @@ void* MarkedAllocator::allocateSlowCase()
     if (result)
         return result;
     
-    ASSERT(m_heap->waterMark() < m_heap->highWaterMark());
+    ASSERT(!m_heap->shouldCollect());
     
     addBlock(allocateBlock(AllocationMustSucceed));
     
@@ -108,11 +108,11 @@ MarkedBlock* MarkedAllocator::allocateBlock(AllocationEffort allocationEffort)
 void MarkedAllocator::addBlock(MarkedBlock* block)
 {
     ASSERT(!m_currentBlock);
-    ASSERT(!m_firstFreeCell);
+    ASSERT(!m_freeList.head);
     
     m_blockList.append(block);
     m_currentBlock = block;
-    m_firstFreeCell = block->sweep(MarkedBlock::SweepToFreeList);
+    m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
 }
 
 void MarkedAllocator::removeBlock(MarkedBlock* block)

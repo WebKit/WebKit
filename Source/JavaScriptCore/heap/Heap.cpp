@@ -313,7 +313,8 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     : m_heapSize(heapSize)
     , m_minBytesPerCycle(heapSizeForHint(heapSize))
     , m_lastFullGCSize(0)
-    , m_highWaterMark(m_minBytesPerCycle)
+    , m_bytesAllocatedLimit(m_minBytesPerCycle)
+    , m_bytesAllocated(0)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
     , m_storageSpace(this)
@@ -465,7 +466,9 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    addToWaterMark(cost);
+    didAllocate(cost);
+    if (shouldCollect())
+        collect(DoNotSweep);
 }
 
 void Heap::protect(JSValue k)
@@ -848,16 +851,17 @@ void Heap::collect(SweepToggle sweepToggle)
         shrink();
     }
 
-    // To avoid pathological GC churn in large heaps, we set the allocation high
-    // water mark to be proportional to the current size of the heap. The exact
-    // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
+    // To avoid pathological GC churn in large heaps, we set the new allocation 
+    // limit to be the current size of the heap. This heuristic 
+    // is a bit arbitrary. Using the current size of the heap after this 
+    // collection gives us a 2X multiplier, which is a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
     size_t newSize = size();
-    size_t proportionalBytes = 2 * newSize;
     if (fullGC) {
         m_lastFullGCSize = newSize;
-        m_highWaterMark = max(proportionalBytes, m_minBytesPerCycle);
+        m_bytesAllocatedLimit = max(newSize, m_minBytesPerCycle);
     }
+    m_bytesAllocated = 0;
     double lastGCEndTime = WTF::currentTime();
     m_lastGCLength = lastGCEndTime - lastGCStartTime;
     JAVASCRIPTCORE_GC_END();
@@ -884,6 +888,12 @@ void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
 GCActivityCallback* Heap::activityCallback()
 {
     return m_activityCallback.get();
+}
+
+void Heap::didAllocate(size_t bytes)
+{
+    m_activityCallback->didAllocate(m_bytesAllocated);
+    m_bytesAllocated += bytes;
 }
 
 bool Heap::isValidAllocation(size_t bytes)

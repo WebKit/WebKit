@@ -1,3 +1,90 @@
+2012-04-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        We're collecting pathologically due to small allocations
+        https://bugs.webkit.org/show_bug.cgi?id=84404
+
+        Reviewed by Geoffrey Garen.
+
+        No change in performance on run-jsc-benchmarks.
+
+        * dfg/DFGSpeculativeJIT.h: Replacing m_firstFreeCell with m_freeList.
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        * heap/CopiedSpace.cpp: Getting rid of any water mark related stuff, since it's no 
+        longer useful. 
+        (JSC::CopiedSpace::CopiedSpace):
+        (JSC::CopiedSpace::tryAllocateSlowCase): We now only call didAllocate here rather than 
+        carrying out a somewhat complicated accounting job for our old water mark throughout CopiedSpace.
+        (JSC::CopiedSpace::tryAllocateOversize):  Call the new didAllocate to notify the Heap of 
+        newly allocated stuff.
+        (JSC::CopiedSpace::tryReallocateOversize):
+        (JSC::CopiedSpace::doneFillingBlock):
+        (JSC::CopiedSpace::doneCopying):
+        (JSC::CopiedSpace::destroy):
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::startedCopying):
+        * heap/Heap.cpp: Removed water mark related stuff, replaced with new bytesAllocated and 
+        bytesAllocatedLimit to track how much memory has been allocated since the last collection.
+        (JSC::Heap::Heap):
+        (JSC::Heap::reportExtraMemoryCostSlowCase):
+        (JSC::Heap::collect): We now set the new limit of bytes that we can allocate before triggering 
+        a collection to be the size of the Heap after the previous collection. Thus, we still have our 
+        2x allocation amount.
+        (JSC::Heap::didAllocate): Notifies the GC activity timer of how many bytes have been allocated 
+        thus far and then adds the new number of bytes to the current total.
+        (JSC):
+        * heap/Heap.h: Removed water mark related stuff.
+        (JSC::Heap::notifyIsSafeToCollect):
+        (Heap):
+        (JSC::Heap::shouldCollect):
+        (JSC):
+        * heap/MarkedAllocator.cpp: 
+        (JSC::MarkedAllocator::tryAllocateHelper): Refactored to use MarkedBlock's new FreeList struct.
+        (JSC::MarkedAllocator::allocateSlowCase):
+        (JSC::MarkedAllocator::addBlock):
+        * heap/MarkedAllocator.h: 
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::allocate): 
+        (JSC::MarkedAllocator::zapFreeList): Refactored to take in a FreeList instead of a FreeCell.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::sweepHelper):
+        (JSC::MarkedBlock::zapFreeList):
+        * heap/MarkedBlock.h:
+        (FreeList): Added a new struct that keeps track of the current MarkedAllocator's
+        free list including the number of bytes of stuff in the free list so that when the free list is 
+        exhausted, the correct amount can be reported to Heap.
+        (MarkedBlock):
+        (JSC::MarkedBlock::FreeList::FreeList):
+        (JSC):
+        * heap/MarkedSpace.cpp: Removing all water mark related stuff.
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        (JSC):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::findAllocator): Refactored to use the didAllocate interface with the Heap. This 
+        function still needs work though now that the Heap knows how many bytes have been allocated 
+        since the last collection.
+        * jit/JITInlineMethods.h: Refactored to use MarkedBlock's new FreeList struct.
+        (JSC::JIT::emitAllocateBasicJSObject): Ditto.
+        * llint/LowLevelInterpreter.asm: Ditto.
+        * runtime/GCActivityCallback.cpp: 
+        (JSC::DefaultGCActivityCallback::didAllocate): 
+        * runtime/GCActivityCallback.h:
+        (JSC::GCActivityCallback::didAllocate): Renamed willAllocate to didAllocate to indicate that 
+        the allocation that is being reported has already taken place.
+        (DefaultGCActivityCallback):
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC):
+        (JSC::DefaultGCActivityCallback::didAllocate): Refactored to return early if the amount of 
+        allocation since the last collection is not above a threshold (initially arbitrarily chosen to 
+        be 128KB). 
+
 2012-04-19  Filip Pizlo  <fpizlo@apple.com>
 
         MacroAssemblerARMv7::branchTruncateDoubleToUint32 should obey the overflow signal

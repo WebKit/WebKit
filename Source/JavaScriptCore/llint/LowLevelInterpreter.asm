@@ -291,17 +291,21 @@ macro allocateBasicJSObject(sizeClassIndex, classInfoOffset, structure, result, 
             MarkedSpace::Subspace::preciseAllocators +
             sizeClassIndex * sizeof MarkedAllocator
         
+        const offsetOfFirstFreeCell = 
+            MarkedAllocator::m_freeList + 
+            MarkedBlock::FreeList::head
+
         # FIXME: we can get the global data in one load from the stack.
         loadp CodeBlock[cfr], scratch1
         loadp CodeBlock::m_globalData[scratch1], scratch1
         
-        # Get the object from the free list.    
-        loadp offsetOfMySizeClass + MarkedAllocator::m_firstFreeCell[scratch1], result
+        # Get the object from the free list.   
+        loadp offsetOfMySizeClass + offsetOfFirstFreeCell[scratch1], result
         btpz result, slowCase
         
         # Remove the object from the free list.
         loadp [result], scratch2
-        storep scratch2, offsetOfMySizeClass + MarkedAllocator::m_firstFreeCell[scratch1]
+        storep scratch2, offsetOfMySizeClass + offsetOfFirstFreeCell[scratch1]
     
         # Initialize the object.
         loadp classInfoOffset[scratch1], scratch2
