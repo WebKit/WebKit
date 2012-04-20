@@ -12,6 +12,8 @@ Programs_GtkLauncher_CPPFLAGS = \
 	$(javascriptcore_cppflags)
 
 Programs_GtkLauncher_SOURCES = \
+	Tools/GtkLauncher/LauncherInspectorWindow.c \
+	Tools/GtkLauncher/LauncherInspectorWindow.h \
 	Tools/GtkLauncher/main.c
 
 Programs_GtkLauncher_CFLAGS = \

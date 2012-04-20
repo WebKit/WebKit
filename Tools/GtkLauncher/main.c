@@ -25,6 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "LauncherInspectorWindow.h"
 #include <errno.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
@@ -206,6 +207,12 @@ static void iconLoadedCb(WebKitWebView* webView, const char* iconURI, GtkWidget*
     g_object_unref(icon);
 }
 
+static GtkWidget *inspectorInspectWebViewCb(WebKitWebInspector *inspector, WebKitWebView *webView, GtkWindow* window)
+{
+    GtkWidget *inspectorWindow = launcherInspectorWindowNew(inspector, window);
+    return GTK_WIDGET(launcherInspectorWindowGetWebView(LAUNCHER_INSPECTOR_WINDOW(inspectorWindow)));
+}
+
 static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidget* statusbar, WebKitWebView* webView, GtkWidget* vbox)
 {
     char *iconDatabasePath;
@@ -228,6 +235,7 @@ static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidge
     g_signal_connect(webView, "close-web-view", G_CALLBACK(closeWebViewCb), window);
     g_signal_connect(webView, "entering-fullscreen", G_CALLBACK(webViewEnteringFullScreen), vbox);
     g_signal_connect(webView, "leaving-fullscreen", G_CALLBACK(webViewLeavingFullScreen), vbox);
+    g_signal_connect(webkit_web_view_get_inspector(webView), "inspect-web-view", G_CALLBACK(inspectorInspectWebViewCb), window);
 
     return scrolledWindow;
 }

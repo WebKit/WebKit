@@ -1,3 +1,27 @@
+2012-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Allow to use WebInspector in GtkLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=84143
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * GtkLauncher/LauncherInspectorWindow.c: Added.
+        (launcherInspectorWindowFinalize):
+        (launcher_inspector_window_init):
+        (launcher_inspector_window_class_init):
+        (inspectedURIChanged): Update the window title based on current
+        inspected URI.
+        (showInspectorWindow): Show inspector window.
+        (closeInspectorWindow): Hide inspector window.
+        (launcherInspectorWindowNew): Create an inspector window.
+        (launcherInspectorWindowGetWebView): Return the inspected web view.
+        * GtkLauncher/LauncherInspectorWindow.h: Added.
+        * GtkLauncher/main.c:
+        (inspectorInspectWebViewCb): Create an inspector window.
+        (createBrowser): Connect to inspect-web-view signal of the view
+        inspector.
+
 2012-04-19  Jeremy Mao  <yujie.mao@intel.com>
 
         Media Stream API: Piece of code cleanup for the chromium port
