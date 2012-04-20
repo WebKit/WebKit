@@ -83,6 +83,7 @@ inline void AttributeVector::insertAttribute(PassRefPtr<Attribute> newAttribute)
 enum EInUpdateStyleAttribute { NotInUpdateStyleAttribute, InUpdateStyleAttribute };
 
 class ElementAttributeData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<ElementAttributeData> create()
     {
