@@ -52,6 +52,7 @@ public:
 
     // FIXME: Once RenderThemeMac is converted over to use Theme then this can be internal to ThemeMac.
     static NSView* ensuredView(ScrollView*);
+    static void setFocusRingClipRect(const FloatRect&);
 };
 
 } // namespace WebCore

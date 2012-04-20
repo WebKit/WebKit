@@ -36,6 +36,8 @@
 
 using namespace std;
 
+NSRect focusRingClipRect;
+
 // This is a view whose sole purpose is to tell AppKit that it's flipped.
 @interface WebCoreFlippedView : NSControl
 @end
@@ -59,7 +61,13 @@ using namespace std;
 
 - (NSRect)_focusRingVisibleRect
 {
-    return [self visibleRect];
+    if (NSIsEmptyRect(focusRingClipRect))
+        return [self visibleRect];
+
+    NSRect rect = focusRingClipRect;
+    rect.origin.y = [self bounds].size.height - NSMaxY(rect);
+
+    return rect;
 }
 
 - (NSView *)_focusRingClipAncestor
@@ -584,7 +592,12 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView)
 
     return flippedView;
 }
-    
+
+void ThemeMac::setFocusRingClipRect(const FloatRect& rect)
+{
+    focusRingClipRect = rect;
+}
+
 // Theme overrides
 
 int ThemeMac::baselinePositionAdjustment(ControlPart part) const

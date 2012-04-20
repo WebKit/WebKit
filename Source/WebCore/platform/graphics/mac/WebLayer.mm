@@ -32,6 +32,7 @@
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
+#import "ThemeMac.h"
 #import <objc/objc-runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/UnusedParam.h>
@@ -79,6 +80,9 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     // smaller than the layer bounds (e.g. tiled layers)
     FloatRect clipBounds = CGContextGetClipBoundingBox(context);
 
+    // The focus ring machinery needs to know the exact clip rect in a flipped, non-transformed coordinate system.
+    ThemeMac::setFocusRingClipRect(FloatRect(clipBounds.x(), layerBounds.size.height - clipBounds.maxY(), clipBounds.width(), clipBounds.height()));
+
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     __block GraphicsContext* ctx = &graphicsContext;
 
@@ -96,6 +100,8 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     IntRect clip(enclosingIntRect(clipBounds));
     layerContents->platformCALayerPaintContents(graphicsContext, clip);
 #endif
+
+    ThemeMac::setFocusRingClipRect(FloatRect());
 
     [NSGraphicsContext restoreGraphicsState];
 
