@@ -88,8 +88,8 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
         const shadowPadding = 10;
         element.positionAt(
-                relativeToElement.totalOffsetLeft() + Math.max(relativeToElement.offsetWidth - width - shadowPadding, shadowPadding),
-                relativeToElement.totalOffsetTop() + Math.max((relativeToElement.offsetHeight - height) / 2 + shadowPadding, shadowPadding));
+            relativeToElement.totalOffsetLeft() + Math.max((relativeToElement.offsetWidth - width - 2 * shadowPadding) / 2, shadowPadding),
+            relativeToElement.totalOffsetTop() + Math.max((relativeToElement.offsetHeight - height - 2 * shadowPadding) / 2, shadowPadding));
     },
 
     focus: function()
