@@ -105,27 +105,21 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
 #endif
 }
 
-static Region computeNonFastScrollableRegion(FrameView* frameView)
+static Region computeNonFastScrollableRegion(Frame* mainFrame)
 {
     Region nonFastScrollableRegion;
 
-    HashSet<FrameView*> childFrameViews;
-    for (HashSet<RefPtr<Widget> >::const_iterator it = frameView->children()->begin(), end = frameView->children()->end(); it != end; ++it) {
-        if ((*it)->isFrameView())
-            childFrameViews.add(static_cast<FrameView*>(it->get()));
-    }
+    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
+        FrameView* frameView = frame->view();
+        if (!frameView)
+            continue;
 
-    if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
+        const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas();
+        if (!scrollableAreas)
+            continue;
+
         for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
-
-            // Check if this area can be scrolled at all.
-            // If this scrollable area is a frame view that itself has scrollable areas, then we need to add it to the region.
-            if ((!scrollableArea->horizontalScrollbar() || !scrollableArea->horizontalScrollbar()->enabled())
-                && (!scrollableArea->verticalScrollbar() || !scrollableArea->verticalScrollbar()->enabled())
-                && (!childFrameViews.contains(static_cast<FrameView*>(scrollableArea)) || !static_cast<FrameView*>(scrollableArea)->scrollableAreas()))
-                    continue;
-
             nonFastScrollableRegion.unite(scrollableArea->scrollableAreaBoundingBox());
         }
     }
@@ -141,7 +135,7 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     // Compute the region of the page that we can't do fast scrolling for. This currently includes
     // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
     // frame view whose layout was updated is not the main frame.
-    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame()->view());
+    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame());
     setNonFastScrollableRegion(nonFastScrollableRegion);
 
     if (!coordinatesScrollingForFrameView(frameView))
