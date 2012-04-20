@@ -354,9 +354,9 @@ void LayoutTestController::setAllowFileAccessFromFileURLs(bool)
     notImplemented();
 }
 
-void LayoutTestController::setAuthorAndUserStylesEnabled(bool)
+void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(browser->mainView(), flag);
 }
 
 void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)

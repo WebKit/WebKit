@@ -561,3 +561,12 @@ JSValueRef DumpRenderTreeSupportEfl::computedStyleIncludingVisitedInfo(JSContext
     RefPtr<WebCore::CSSComputedStyleDeclaration> style = WebCore::CSSComputedStyleDeclaration::create(element, true);
     return toRef(exec, toJS(exec, jsElement->globalObject(), style.get()));
 }
+
+void DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(Evas_Object* ewkView, bool enabled)
+{
+    WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
+    if (!corePage)
+        return;
+
+    corePage->settings()->setAuthorAndUserStylesEnabled(enabled);
+}

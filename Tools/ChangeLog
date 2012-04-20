@@ -1,3 +1,15 @@
+2012-04-20  Kamil Blank  <k.blank@samsung.com>
+
+        [EFL] Add setting API for author and user styles.
+        https://bugs.webkit.org/show_bug.cgi?id=82860
+
+        Reviewed by Daniel Bates.
+
+        Implementation of setAuthorAndUserStylesEnabled.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+
 2012-04-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Missing keycode translation for space key

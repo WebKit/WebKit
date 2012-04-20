@@ -1,3 +1,15 @@
+2012-04-20  Kamil Blank  <k.blank@samsung.com>
+
+        [EFL] Add setting API for author and user styles.
+        https://bugs.webkit.org/show_bug.cgi?id=82860
+
+        Reviewed by Daniel Bates.
+
+        Add missing implementation setAuthorAndUserStylesEnabled to EFL's
+        DumpRenderTreeSupport.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+
 2012-04-19  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] dispatchDidCancelClientRedirect needs implementation
