@@ -569,6 +569,11 @@ PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
     // but if there is a particularly long word, it does not overflow as it
     // normally would in CSS, it is instead forcibly wrapped at the box's edge.)
 
+    // FIXME(BUG 79916): CSS width property should be set to 'size vw', when the
+    // maximum cue size computation is corrected in the specification.
+    if (m_snapToLines)
+        m_displayTree->setInlineStyleProperty(CSSPropertyWidth, (double) m_cueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
+
     // FIXME(BUG 79750, 79751): Steps 10.12 - 10.14
 
     if (!m_snapToLines) {
