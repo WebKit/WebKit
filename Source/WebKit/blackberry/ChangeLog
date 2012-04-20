@@ -1,3 +1,18 @@
+2012-04-20  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=84490
+        PageGroupLoadDeferrer needs to take a ReasonForSuspension argument
+
+        Reviewed by Anders Carlsson.
+
+        * Api/WebPageGroupLoadDeferrer.cpp:
+        (BlackBerry::WebKit::WebPageGroupLoadDeferrer::WebPageGroupLoadDeferrer): Pass along ActiveDOMObject::WillShowDialog,
+          which used to be the default
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::createWindow): Pass along ActiveDOMObject::WillShowDialog, which used to be the default.
+        (WebCore::ChromeClientBlackBerry::runOpenPanel): Ditto.
+
 2012-04-20  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Expose WebViewportArguments to WebPageClient

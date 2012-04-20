@@ -216,7 +216,7 @@ Page* ChromeClientBlackBerry::createWindow(Frame*, const FrameLoadRequest& reque
         return 0;
 #endif
 
-    PageGroupLoadDeferrer deferrer(m_webPagePrivate->m_page, true);
+    PageGroupLoadDeferrer deferrer(m_webPagePrivate->m_page, true, ActiveDOMObject::WillShowDialog);
     TimerBase::fireTimersInNestedEventLoop();
 
     int x = features.xSet ? features.x : 0;
@@ -490,7 +490,7 @@ void ChromeClientBlackBerry::runOpenPanel(Frame*, PassRefPtr<FileChooser> choose
     unsigned int chosenFileSize;
 
     {
-        PageGroupLoadDeferrer deferrer(m_webPagePrivate->m_page, true);
+        PageGroupLoadDeferrer deferrer(m_webPagePrivate->m_page, true, ActiveDOMObject::WillShowDialog);
         TimerBase::fireTimersInNestedEventLoop();
 
         // FIXME: Use chooser->settings().acceptMIMETypes instead of WebString() for the second parameter.

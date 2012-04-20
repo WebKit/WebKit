@@ -279,7 +279,7 @@ void WebView::willEnterModalLoop()
         pageGroupLoadDeferrerStack().append(static_cast<PageGroupLoadDeferrer*>(0));
     else {
         // Pick any page in the page group since we are deferring all pages.
-        pageGroupLoadDeferrerStack().append(new PageGroupLoadDeferrer(*pageGroup->pages().begin(), true));
+        pageGroupLoadDeferrerStack().append(new PageGroupLoadDeferrer(*pageGroup->pages().begin(), true, ActiveDOMObject::WillShowDialog));
     }
 }
 

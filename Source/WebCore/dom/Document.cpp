@@ -478,6 +478,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_wheelEventHandlerCount(0)
     , m_touchEventHandlerCount(0)
     , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
+    , m_scheduledTasksAreSuspended(false)
 {
     m_document = this;
 
@@ -5076,18 +5077,24 @@ void Document::pendingTasksTimerFired(Timer<Document>*)
     }
 }
 
-void Document::suspendScheduledTasks()
+void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
 {
+    ASSERT(!m_scheduledTasksAreSuspended);
+
     suspendScriptedAnimationControllerCallbacks();
-    suspendActiveDOMObjects(ActiveDOMObject::WillShowDialog);
+    suspendActiveDOMObjects(reason);
     scriptRunner()->suspend();
     m_pendingTasksTimer.stop();
     if (m_parser)
         m_parser->suspendScheduledTasks();
+
+    m_scheduledTasksAreSuspended = true;
 }
 
 void Document::resumeScheduledTasks()
 {
+    ASSERT(m_scheduledTasksAreSuspended);
+
     if (m_parser)
         m_parser->resumeScheduledTasks();
     if (!m_pendingTasks.isEmpty())
@@ -5095,6 +5102,8 @@ void Document::resumeScheduledTasks()
     scriptRunner()->resume();
     resumeActiveDOMObjects();
     resumeScriptedAnimationControllerCallbacks();
+    
+    m_scheduledTasksAreSuspended = false;
 }
 
 void Document::suspendScriptedAnimationControllerCallbacks()

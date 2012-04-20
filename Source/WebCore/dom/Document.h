@@ -1141,7 +1141,7 @@ public:
     
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
-    void suspendScheduledTasks();
+    void suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension);
     void resumeScheduledTasks();
 
     IntSize viewportSize() const;
@@ -1482,7 +1482,8 @@ private:
 #endif
 
     Timer<Document> m_pendingTasksTimer;
-    Vector<OwnPtr<Task> > m_pendingTasks;    
+    Vector<OwnPtr<Task> > m_pendingTasks;
+    bool m_scheduledTasksAreSuspended;
 };
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.

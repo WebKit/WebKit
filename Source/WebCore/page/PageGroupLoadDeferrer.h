@@ -20,6 +20,7 @@
 #ifndef PageGroupLoadDeferrer_h
 #define PageGroupLoadDeferrer_h
 
+#include "ActiveDOMObject.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -31,7 +32,7 @@ namespace WebCore {
     class PageGroupLoadDeferrer {
         WTF_MAKE_NONCOPYABLE(PageGroupLoadDeferrer);
     public:
-        PageGroupLoadDeferrer(Page*, bool deferSelf);
+        PageGroupLoadDeferrer(Page*, bool deferSelf, ActiveDOMObject::ReasonForSuspension);
         ~PageGroupLoadDeferrer();
 
     private:

@@ -29,7 +29,7 @@ namespace WebKit {
 WebPageGroupLoadDeferrer::WebPageGroupLoadDeferrer(WebPage* webPage)
 {
     WebCore::TimerBase::fireTimersInNestedEventLoop();
-    m_pageGroupLoadDeferrer = new WebCore::PageGroupLoadDeferrer(webPage->d->m_page, true /* defer the page itself */);
+    m_pageGroupLoadDeferrer = new WebCore::PageGroupLoadDeferrer(webPage->d->m_page, true /* defer the page itself */, WebCore::ActiveDOMObject::WillShowDialog);
 }
 
 WebPageGroupLoadDeferrer::~WebPageGroupLoadDeferrer()

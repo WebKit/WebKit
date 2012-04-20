@@ -227,7 +227,7 @@ void Chrome::runModal() const
 {
     // Defer callbacks in all the other pages in this group, so we don't try to run JavaScript
     // in a way that could interact with this view.
-    PageGroupLoadDeferrer deferrer(m_page, false);
+    PageGroupLoadDeferrer deferrer(m_page, false, ActiveDOMObject::WillShowDialog);
 
     TimerBase::fireTimersInNestedEventLoop();
     m_client->runModal();
@@ -287,7 +287,7 @@ bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
+    PageGroupLoadDeferrer deferrer(m_page, true, ActiveDOMObject::WillShowDialog);
 
     return m_client->runBeforeUnloadConfirmPanel(message, frame);
 }
@@ -304,7 +304,7 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
+    PageGroupLoadDeferrer deferrer(m_page, true, ActiveDOMObject::WillShowDialog);
 
     ASSERT(frame);
     m_client->runJavaScriptAlert(frame, frame->displayStringModifiedByEncoding(message));
@@ -317,7 +317,7 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
+    PageGroupLoadDeferrer deferrer(m_page, true, ActiveDOMObject::WillShowDialog);
 
     ASSERT(frame);
     return m_client->runJavaScriptConfirm(frame, frame->displayStringModifiedByEncoding(message));
@@ -330,7 +330,7 @@ bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const Strin
 
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
+    PageGroupLoadDeferrer deferrer(m_page, true, ActiveDOMObject::WillShowDialog);
 
     ASSERT(frame);
     bool ok = m_client->runJavaScriptPrompt(frame, frame->displayStringModifiedByEncoding(prompt), frame->displayStringModifiedByEncoding(defaultValue), result);
@@ -351,7 +351,7 @@ bool Chrome::shouldInterruptJavaScript()
 {
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
-    PageGroupLoadDeferrer deferrer(m_page, true);
+    PageGroupLoadDeferrer deferrer(m_page, true, ActiveDOMObject::WillShowDialog);
 
     return m_client->shouldInterruptJavaScript();
 }
