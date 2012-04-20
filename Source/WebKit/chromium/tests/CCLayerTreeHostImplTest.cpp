@@ -214,6 +214,12 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
     EXPECT_TRUE(m_didRequestCommit);
 }
 
+TEST_F(CCLayerTreeHostImplTest, scrollWithoutRootLayer)
+{
+    // We should not crash when trying to scroll an empty layer tree.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollIgnored);
+}
+
 TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
 {
     {

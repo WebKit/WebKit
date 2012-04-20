@@ -239,6 +239,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 {
     ASSERT(passes.isEmpty());
     ASSERT(renderSurfaceLayerList.isEmpty());
+    ASSERT(m_rootLayerImpl);
 
     renderSurfaceLayerList.append(m_rootLayerImpl.get());
 
@@ -663,6 +664,9 @@ bool CCLayerTreeHostImpl::ensureMostRecentRenderSurfaceLayerList()
 {
     if (m_mostRecentRenderSurfaceLayerList.size())
         return true;
+
+    if (!m_rootLayerImpl)
+        return false;
 
     // If we are called after setRootLayer() but before prepareToDraw(), we need to recalculate
     // the visible layers. The return value is ignored because we don't care about checkerboarding.
