@@ -3139,14 +3139,7 @@ BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRASH
 
-BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/complex-character-based-fallback.html = IMAGE+TEXT
-BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/danda-space.html = IMAGE+TEXT
 BUGWK78544 LINUX : fast/text/international/danda-space.html = PASS IMAGE IMAGE+TEXT
-BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-baht-space.html = IMAGE+TEXT
-BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/chromium-complex-text-non-printable.html = IMAGE
-BUGWK73991 WIN7 VISTA RELEASE : platform/win/fast/text/uniscribe-missing-glyph.html = IMAGE
-BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/bidi-neutral-run.html = TEXT
-BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = TEXT
 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 BUGWK74055 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-largedraws.html = TIMEOUT
