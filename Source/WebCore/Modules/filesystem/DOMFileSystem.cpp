@@ -133,7 +133,11 @@ public:
     virtual void didReadMetadata(const FileMetadata& metadata)
     {
         ASSERT(!metadata.platformPath.isEmpty());
-        m_filesystem->scheduleCallback(m_successCallback.release(), File::createWithName(metadata.platformPath, m_name));
+        if (!m_successCallback)
+            return;
+
+        m_successCallback->handleEvent(File::createWithName(metadata.platformPath, m_name).get());
+        m_successCallback.release();
     }
 
 private:
