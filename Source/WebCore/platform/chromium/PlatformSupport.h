@@ -235,7 +235,6 @@ public:
     // SharedTimers -------------------------------------------------------
     static void setSharedTimerFiredFunction(void (*func)());
     static void setSharedTimerFireInterval(double);
-    static void stopSharedTimer();
 
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS)

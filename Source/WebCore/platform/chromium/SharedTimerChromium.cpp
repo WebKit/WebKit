@@ -28,6 +28,8 @@
 
 #include "PlatformSupport.h"
 
+#include <public/Platform.h>
+
 namespace WebCore {
 
 void setSharedTimerFiredFunction(void (*f)())
@@ -42,7 +44,7 @@ void setSharedTimerFireInterval(double fireTime)
 
 void stopSharedTimer()
 {
-    PlatformSupport::stopSharedTimer();
+    WebKit::Platform::current()->stopSharedTimer();
 }
 
 } // namespace WebCore

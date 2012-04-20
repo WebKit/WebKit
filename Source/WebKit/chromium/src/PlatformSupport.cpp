@@ -616,11 +616,6 @@ void PlatformSupport::setSharedTimerFireInterval(double interval)
     webKitPlatformSupport()->setSharedTimerFireInterval(interval);
 }
 
-void PlatformSupport::stopSharedTimer()
-{
-    webKitPlatformSupport()->stopSharedTimer();
-}
-
 // Theming --------------------------------------------------------------------
 
 #if OS(WINDOWS)
