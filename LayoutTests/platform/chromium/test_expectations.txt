@@ -3727,3 +3727,8 @@ BUGWK84125 : http/tests/websocket/tests/hixie76/workers/worker-simple.html = CRA
 
 BUGWK84427 LINUX DEBUG : platform/chromium/editing/spelling/delete-misspelled-word.html = TIMEOUT
 BUGWK84427 MAC WIN DEBUG : platform/chromium/editing/spelling/delete-misspelled-word.html = PASS TIMEOUT
+
+BUGWK84432 WIN : fast/filesystem/op-restricted-names.html = TEXT
+BUGWK84432 WIN : fast/filesystem/op-restricted-unicode.html = TEXT
+BUGWK84432 WIN : fast/filesystem/read-directory.html = TEXT
+BUGWK84432 WIN : fast/filesystem/simple-readonly-file-object.html = TEXT
