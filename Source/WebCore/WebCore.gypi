@@ -6560,6 +6560,8 @@
             'inspector/front-end/Images/searchSmallBrightBlue.png',
             'inspector/front-end/Images/searchSmallGray.png',
             'inspector/front-end/Images/searchSmallWhite.png',
+            'inspector/front-end/Images/searchNext.png',
+            'inspector/front-end/Images/searchPrev.png',            
             'inspector/front-end/Images/segment.png',
             'inspector/front-end/Images/segmentEnd.png',
             'inspector/front-end/Images/segmentHover.png',

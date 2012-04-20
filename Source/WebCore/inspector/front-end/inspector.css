@@ -261,7 +261,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
 
 .toolbar-search-item {
     display: -webkit-box;
-    -webkit-box-orient: vertical;
+    -webkit-box-orient: horizontal;
     -webkit-box-align: center;
     -webkit-box-pack: end;
 }
@@ -269,6 +269,39 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
 #search {
     width: 205px;
     font-size: 16px;
+}
+
+#toolbar-search-navigation-control {
+    width: 40px;
+}
+
+.toolbar-search-navigation-label {
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 3px;
+    margin-left: 2px;
+    width: 18px;
+    height: 18px;
+    float: right;
+}
+
+.toolbar-search-navigation-label:hover {
+    border: 1px solid rgba(120, 120, 120, 0.6);    
+}
+
+.toolbar-search-navigation-icon-prev , .toolbar-search-navigation-icon-next {
+    width: 9px;
+    margin-top: 2px;
+    height: 100%;
+    background-repeat: no-repeat;
+}
+
+.toolbar-search-navigation-icon-prev {
+    background-image: url(Images/searchPrev.png);
+}
+
+.toolbar-search-navigation-icon-next {
+    background-image: url(Images/searchNext.png);
 }
 
 body.compact #search {

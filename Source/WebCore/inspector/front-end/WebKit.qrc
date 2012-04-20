@@ -275,6 +275,8 @@
     <file>Images/searchSmallBrightBlue.png</file>
     <file>Images/searchSmallGray.png</file>
     <file>Images/searchSmallWhite.png</file>
+    <file>Images/searchNext.png</file>
+    <file>Images/searchPrev.png</file>
     <file>Images/segment.png</file>
     <file>Images/segmentEnd.png</file>
     <file>Images/segmentHover.png</file>
