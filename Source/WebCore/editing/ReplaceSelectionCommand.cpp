@@ -918,6 +918,10 @@ void ReplaceSelectionCommand::doApply()
 
     bool handledStyleSpans = handleStyleSpansBeforeInsertion(fragment, insertionPos);
 
+    // We're finished if there is nothing to add.
+    if (fragment.isEmpty() || !fragment.firstChild())
+        return;
+
     // If we are not trying to match the destination style we prefer a position
     // that is outside inline elements that provide style.
     // This way we can produce a less verbose markup.
@@ -940,11 +944,7 @@ void ReplaceSelectionCommand::doApply()
 
     // FIXME: When pasting rich content we're often prevented from heading down the fast path by style spans.  Try
     // again here if they've been removed.
-    
-    // We're finished if there is nothing to add.
-    if (fragment.isEmpty() || !fragment.firstChild())
-        return;
-    
+
     // 1) Insert the content.
     // 2) Remove redundant styles and style tags, this inner <b> for example: <b>foo <b>bar</b> baz</b>.
     // 3) Merge the start of the added content with the content before the position being pasted into.
