@@ -3724,3 +3724,5 @@ BUGWK84125 : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash
 BUGWK84125 : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = CRASH
 BUGWK84125 : http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html = CRASH
 BUGWK84125 : http/tests/websocket/tests/hixie76/workers/worker-simple.html = CRASH
+
+BUGWK84427 LINUX DEBUG : platform/chromium/editing/spelling/delete-misspelled-word.html = TIMEOUT
