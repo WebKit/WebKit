@@ -1,3 +1,30 @@
+2012-04-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add Security Origin API
+        https://bugs.webkit.org/show_bug.cgi?id=84023
+
+        Added an API to get a Security Origin handle from a Ewk_Frame. This is
+        needed for fine grained security policy. This new API will also allow
+        to define quota and get usage information of a Web Storage based on its
+        Security Origin.
+
+        Reviewed by Antonio Gomes.
+
+        * ewk/EWebKit.h:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_security_origin_get):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_security_origin.cpp: Added.
+        (ewk_security_origin_protocol_get):
+        (ewk_security_origin_host_get):
+        (ewk_security_origin_port_get):
+        (ewk_security_origin_web_database_usage_get):
+        (ewk_security_origin_web_database_quota_get):
+        (ewk_security_origin_web_database_quota_set):
+        (ewk_security_origin_free):
+        (ewk_security_origin_new):
+        * ewk/ewk_security_origin.h: Added.
+
 2012-04-20  Kamil Blank  <k.blank@samsung.com>
 
         [EFL] Add setting API for author and user styles.

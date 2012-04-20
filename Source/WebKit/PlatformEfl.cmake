@@ -101,6 +101,7 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_js.cpp
     efl/ewk/ewk_main.cpp
     efl/ewk/ewk_network.cpp
+    efl/ewk/ewk_security_origin.cpp
     efl/ewk/ewk_security_policy.cpp
     efl/ewk/ewk_settings.cpp
     efl/ewk/ewk_tiled_backing_store.cpp
@@ -252,6 +253,7 @@ SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_logging.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_main.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_network.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_security_origin.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_security_policy.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_view.h

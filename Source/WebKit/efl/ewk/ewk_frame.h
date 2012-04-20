@@ -70,6 +70,8 @@
 #ifndef ewk_frame_h
 #define ewk_frame_h
 
+#include "ewk_security_origin.h"
+
 #include <Evas.h>
 
 #ifdef __cplusplus
@@ -219,6 +221,17 @@ typedef enum {
  * @return view object or @c 0 on failure
  */
 EAPI Evas_Object *ewk_frame_view_get(const Evas_Object *o);
+
+/**
+ * Retrieves the Ewk_Security_Origin of this frame.
+ *
+ * The returned object should be freed by ewk_security_origin_free().
+ *
+ * @param o frame object to get the security origin
+ *
+ * @return security origin object
+ */
+EAPI Ewk_Security_Origin *ewk_frame_security_origin_get(const Evas_Object *o);
 
 /**
  * Returns a new iterator over all direct children frames.
