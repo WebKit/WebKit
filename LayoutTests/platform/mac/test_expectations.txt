@@ -335,3 +335,5 @@ BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
 BUGWK84483 : svg/css/getComputedStyle-basic.xhtml = TEXT
+
+BUGWK84505 DEBUG : svg/text/foreignObject-text-clipping-bug.xml = CRASH
