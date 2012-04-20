@@ -220,6 +220,9 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
 #endif
+#if ENABLE(CSS_FILTERS)
+    CSSPropertyWebkitFilter,
+#endif
     CSSPropertyWebkitFlex,
     CSSPropertyWebkitFlexOrder,
     CSSPropertyWebkitFlexPack,
