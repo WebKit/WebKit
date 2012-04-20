@@ -211,6 +211,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::clearFrameName(mainFrame());
     DumpRenderTreeSupportEfl::clearOpener(mainFrame());
     DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(mainView(), true);
+    DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(mainView(), true);
 }
 
 // Smart Callbacks
