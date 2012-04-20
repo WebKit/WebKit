@@ -1,3 +1,19 @@
+2012-04-20  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Revert changes that disabled Cairo fonts metrics hinting
+        https://bugs.webkit.org/show_bug.cgi?id=84502
+
+        Reviewed by Daniel Bates.
+
+        Re-enable Cairo metrics hinting, which seems to ensure consistent results in
+        reference and pixel test results. This makes our font metrics a bit different
+        than the Mac port's, but it's a decent price to pay for consistent results.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGtkFontSettings):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::initializeGtkSettings):
+
 2012-04-04  Jer Noble  <jer.noble@apple.com>
 
         apple.com top navigation bar appears inside video during full screen exit animation
