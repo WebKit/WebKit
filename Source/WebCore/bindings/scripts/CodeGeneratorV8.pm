@@ -441,7 +441,7 @@ END
     } elsif (!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"})) {
         push(@headerContent, <<END);
 
-inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Isolate* isolate = 0${forceNewObjectParameter})
+inline v8::Handle<v8::Value> toV8(${nativeType}* impl${forceNewObjectParameter})
 {
     if (!impl)
         return v8::Null();
@@ -451,14 +451,14 @@ END
     } elsif ($interfaceName ne 'Node') {
         push(@headerContent, <<END);
 
-v8::Handle<v8::Value> toV8(${nativeType}*, v8::Isolate* isolate = 0${forceNewObjectParameter});
+v8::Handle<v8::Value> toV8(${nativeType}*${forceNewObjectParameter});
 END
     } else {
         push(@headerContent, <<END);
 
 v8::Handle<v8::Value> toV8Slow(Node*, bool);
 
-inline v8::Handle<v8::Value> toV8(Node* impl, v8::Isolate* isolate = 0, bool forceNewObject = false)
+inline v8::Handle<v8::Value> toV8(Node* impl, bool forceNewObject = false)
 {
     if (UNLIKELY(!impl))
         return v8::Null();
@@ -473,9 +473,9 @@ END
     }
 
     push(@headerContent, <<END);
-inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl, v8::Isolate* isolate = 0${forceNewObjectParameter})
+inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl${forceNewObjectParameter})
 {
-    return toV8(impl.get(), isolate${forceNewObjectCall});
+    return toV8(impl.get()${forceNewObjectCall});
 }
 END
 
@@ -3810,7 +3810,7 @@ sub NativeToJSValue
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", 0, true)" : ")");
+        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", true)" : ")");
     }
 
     if ($type eq "EventTarget") {

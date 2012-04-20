@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(DOMTokenList* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(DOMTokenList* impl)
 {
     if (!impl)
         return v8::Null();

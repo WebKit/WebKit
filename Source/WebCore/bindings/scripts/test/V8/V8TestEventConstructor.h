@@ -58,15 +58,15 @@ v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl)
     return V8TestEventConstructor::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestEventConstructor* impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestEventConstructor* impl)
 {
     if (!impl)
         return v8::Null();
     return V8TestEventConstructor::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventConstructor > impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventConstructor > impl)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get());
 }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit&, const Dictionary&);

@@ -50,7 +50,7 @@ v8::Handle<v8::Value> V8Uint8ClampedArray::setCallback(const v8::Arguments& args
     return setWebGLArrayHelper<Uint8ClampedArray, V8Uint8ClampedArray>(args);
 }
 
-v8::Handle<v8::Value> toV8(Uint8ClampedArray* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(Uint8ClampedArray* impl)
 {
     if (!impl)
         return v8::Null();

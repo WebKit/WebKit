@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(EntrySync* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(EntrySync* impl)
 {
     if (!impl)
         return v8::Null();

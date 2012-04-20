@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(IDBAny* impl)
 {
     if (!impl)
         return v8::Null();

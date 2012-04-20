@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8Float64Array::setCallback(const v8::Arguments& args)
     return setWebGLArrayHelper<Float64Array, V8Float64Array>(args);
 }
 
-v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(Float64Array* impl)
 {
     if (!impl)
         return v8::Null();

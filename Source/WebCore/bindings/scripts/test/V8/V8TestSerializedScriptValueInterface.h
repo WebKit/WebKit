@@ -59,15 +59,15 @@ v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrap(TestSerialized
     return V8TestSerializedScriptValueInterface::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestSerializedScriptValueInterface* impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestSerializedScriptValueInterface* impl)
 {
     if (!impl)
         return v8::Null();
     return V8TestSerializedScriptValueInterface::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestSerializedScriptValueInterface > impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestSerializedScriptValueInterface > impl)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get());
 }
 
 }

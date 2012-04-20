@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(CSSValue* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(CSSValue* impl)
 {
     if (!impl)
         return v8::Null();

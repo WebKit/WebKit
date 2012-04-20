@@ -56,15 +56,15 @@ v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListList
     return V8TestMediaQueryListListener::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestMediaQueryListListener* impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestMediaQueryListListener* impl)
 {
     if (!impl)
         return v8::Null();
     return V8TestMediaQueryListListener::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestMediaQueryListListener > impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestMediaQueryListListener > impl)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get());
 }
 
 }

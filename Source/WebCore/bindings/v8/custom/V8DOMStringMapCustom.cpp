@@ -84,7 +84,7 @@ v8::Handle<v8::Value> V8DOMStringMap::namedPropertySetter(v8::Local<v8::String> 
     return value;
 }
 
-v8::Handle<v8::Value> toV8(DOMStringMap* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(DOMStringMap* impl)
 {
     if (!impl)
         return v8::Null();

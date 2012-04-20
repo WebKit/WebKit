@@ -149,34 +149,34 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, bool forceNewObject)
     switch (impl->nodeType()) {
     case Node::ELEMENT_NODE:
         if (impl->isHTMLElement())
-            return toV8(toHTMLElement(impl), 0, forceNewObject);
+            return toV8(toHTMLElement(impl), forceNewObject);
 #if ENABLE(SVG)
         if (impl->isSVGElement())
-            return toV8(static_cast<SVGElement*>(impl), 0, forceNewObject);
+            return toV8(static_cast<SVGElement*>(impl), forceNewObject);
 #endif
         return V8Element::wrap(static_cast<Element*>(impl), forceNewObject);
     case Node::ATTRIBUTE_NODE:
-        return toV8(static_cast<Attr*>(impl), 0, forceNewObject);
+        return toV8(static_cast<Attr*>(impl), forceNewObject);
     case Node::TEXT_NODE:
-        return toV8(toText(impl), 0, forceNewObject);
+        return toV8(toText(impl), forceNewObject);
     case Node::CDATA_SECTION_NODE:
-        return toV8(static_cast<CDATASection*>(impl), 0, forceNewObject);
+        return toV8(static_cast<CDATASection*>(impl), forceNewObject);
     case Node::ENTITY_REFERENCE_NODE:
-        return toV8(static_cast<EntityReference*>(impl), 0, forceNewObject);
+        return toV8(static_cast<EntityReference*>(impl), forceNewObject);
     case Node::ENTITY_NODE:
-        return toV8(static_cast<Entity*>(impl), 0, forceNewObject);
+        return toV8(static_cast<Entity*>(impl), forceNewObject);
     case Node::PROCESSING_INSTRUCTION_NODE:
-        return toV8(static_cast<ProcessingInstruction*>(impl), 0, forceNewObject);
+        return toV8(static_cast<ProcessingInstruction*>(impl), forceNewObject);
     case Node::COMMENT_NODE:
-        return toV8(static_cast<Comment*>(impl), 0, forceNewObject);
+        return toV8(static_cast<Comment*>(impl), forceNewObject);
     case Node::DOCUMENT_NODE:
-        return toV8(static_cast<Document*>(impl), 0, forceNewObject);
+        return toV8(static_cast<Document*>(impl), forceNewObject);
     case Node::DOCUMENT_TYPE_NODE:
-        return toV8(static_cast<DocumentType*>(impl), 0, forceNewObject);
+        return toV8(static_cast<DocumentType*>(impl), forceNewObject);
     case Node::DOCUMENT_FRAGMENT_NODE:
-        return toV8(static_cast<DocumentFragment*>(impl), 0, forceNewObject);
+        return toV8(static_cast<DocumentFragment*>(impl), forceNewObject);
     case Node::NOTATION_NODE:
-        return toV8(static_cast<Notation*>(impl), 0, forceNewObject);
+        return toV8(static_cast<Notation*>(impl), forceNewObject);
     default: break; // XPATH_NAMESPACE_NODE
     }
     return V8Node::wrap(impl, forceNewObject);

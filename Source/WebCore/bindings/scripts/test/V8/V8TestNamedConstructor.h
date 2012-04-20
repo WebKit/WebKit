@@ -63,15 +63,15 @@ v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl)
     return V8TestNamedConstructor::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestNamedConstructor* impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(TestNamedConstructor* impl)
 {
     if (!impl)
         return v8::Null();
     return V8TestNamedConstructor::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNamedConstructor > impl, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNamedConstructor > impl)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get());
 }
 
 }

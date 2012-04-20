@@ -58,10 +58,10 @@ v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl)
     return V8Float64Array::wrapSlow(impl);
 }
 
-v8::Handle<v8::Value> toV8(Float64Array*, v8::Isolate* isolate = 0);
-inline v8::Handle<v8::Value> toV8(PassRefPtr< Float64Array > impl, v8::Isolate* isolate = 0)
+v8::Handle<v8::Value> toV8(Float64Array*);
+inline v8::Handle<v8::Value> toV8(PassRefPtr< Float64Array > impl)
 {
-    return toV8(impl.get(), isolate);
+    return toV8(impl.get());
 }
 
 }

@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8NamedNodeMap::namedPropertyGetter(v8::Local<v8::String> 
     return toV8(result.release());
 }
 
-v8::Handle<v8::Value> toV8(NamedNodeMap* impl, v8::Isolate* isolate)
+v8::Handle<v8::Value> toV8(NamedNodeMap* impl)
 {
     if (!impl)
         return v8::Null();

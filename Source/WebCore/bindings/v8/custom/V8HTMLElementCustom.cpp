@@ -53,7 +53,7 @@ static v8::Handle<v8::Value> toV8Object(MicroDataItemValue* itemValue)
 }
 #endif
 
-v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Isolate* isolate, bool forceNewObject)
+v8::Handle<v8::Value> toV8(HTMLElement* impl, bool forceNewObject)
 {
     if (!impl)
         return v8::Null();
