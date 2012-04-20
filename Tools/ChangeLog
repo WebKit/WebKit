@@ -1,3 +1,14 @@
+2012-04-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Enable Web Timing
+        https://bugs.webkit.org/show_bug.cgi?id=42432
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Build web timing by default whenever build-webkit is used.
+
+        * Scripts/build-webkit:
+
 2012-04-20  Kamil Blank  <k.blank@samsung.com>
 
         [EFL] Add missing reset for setAuthorAndUserStylesEnabled inside DRT.

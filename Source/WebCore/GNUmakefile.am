@@ -640,6 +640,14 @@ FEATURE_DEFINES += ENABLE_DEVICE_ORIENTATION=1
 webcore_cppflags += -DENABLE_DEVICE_ORIENTATION=1
 endif  # END ENABLE_DEVICE_ORIENTATION
 
+# ---
+# Web Timing support
+# ---
+if ENABLE_WEB_TIMING
+FEATURE_DEFINES += ENABLE_WEB_TIMING=1
+webcore_cppflags += -DENABLE_WEB_TIMING=1
+endif  # END ENABLE_WEB_TIMING
+
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	$(AM_V_GEN)

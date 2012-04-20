@@ -141,19 +141,10 @@ BUGWKGTK SKIP : fast/speech = FAIL
 // Speech JavaScript API is not yet enabled.
 BUGWKGTK SKIP : fast/events/constructors/speech-recognition-event-constructor.html = FAIL
 
-// Web Timing is not enabled.
-BUGWK42432 : fast/dom/Window/window-properties-performance.html = FAIL
-BUGWK42432 : fast/dom/navigation-type-back-forward.html = FAIL
-BUGWK42432 : fast/dom/navigation-type-navigate.html = FAIL
-BUGWK42432 : fast/dom/navigation-type-reload.html = FAIL
-BUGWK42432 : fast/dom/webtiming.html = FAIL
-BUGWK42432 : fast/dom/webtiming-navigate-within-document.html = FAIL
-BUGWK42432 : fast/dom/webtiming-document-open.html = FAIL
-BUGWK42432 : http/tests/misc/webtiming-origins.html = FAIL
-BUGWK42432 : http/tests/misc/webtiming-one-redirect.php = FAIL
-BUGWK42432 : http/tests/misc/webtiming-slow-load.php = FAIL
-BUGWK42432 : http/tests/misc/webtiming-ssl.php = FAIL
-BUGWK42432 : http/tests/misc/webtiming-two-redirects.php = FAIL
+// Web Timing issues.
+BUGWKGTK : fast/dom/Window/window-properties-performance.html = FAIL
+BUGWKGTK : http/tests/misc/webtiming-origins.html = FAIL
+BUGWKGTK : http/tests/misc/webtiming-ssl.php = FAIL
 
 // FileSystem API is not supported.
 BUGWKGTK SKIP : fast/filesystem = FAIL
