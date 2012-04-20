@@ -801,6 +801,8 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
 
+    m_activityCallback->willCollect();
+
     double lastGCStartTime = WTF::currentTime();
     if (lastGCStartTime - m_lastCodeDiscardTime > minute) {
         discardAllCompiledCode();
@@ -865,8 +867,6 @@ void Heap::collect(SweepToggle sweepToggle)
     double lastGCEndTime = WTF::currentTime();
     m_lastGCLength = lastGCEndTime - lastGCStartTime;
     JAVASCRIPTCORE_GC_END();
-
-    m_activityCallback->didCollect();
 }
 
 void Heap::canonicalizeCellLivenessData()

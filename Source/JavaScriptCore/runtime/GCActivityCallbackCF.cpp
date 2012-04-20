@@ -121,7 +121,7 @@ void DefaultGCActivityCallback::didAllocate(size_t bytes)
     scheduleTimer(d.get());
 }
 
-void DefaultGCActivityCallback::didCollect()
+void DefaultGCActivityCallback::willCollect()
 {
     cancelTimer(d.get());
 }

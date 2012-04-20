@@ -44,7 +44,7 @@ class GCActivityCallback {
 public:
     virtual ~GCActivityCallback() { }
     virtual void didAllocate(size_t) { }
-    virtual void didCollect() { }
+    virtual void willCollect() { }
     virtual void didAbandonObjectGraph() { }
     virtual void synchronize() { }
 
@@ -62,7 +62,7 @@ public:
     virtual ~DefaultGCActivityCallback();
 
     virtual void didAllocate(size_t);
-    virtual void didCollect();
+    virtual void willCollect();
     virtual void didAbandonObjectGraph();
     virtual void synchronize();
 

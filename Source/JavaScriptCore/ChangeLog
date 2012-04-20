@@ -1,5 +1,32 @@
 2012-04-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Heap should cancel GC timer at the start of the collection
+        https://bugs.webkit.org/show_bug.cgi?id=84477
+
+        Reviewed by Geoffrey Garen.
+
+        Currently the Heap cancels the GC timer at the conclusion of a collection. 
+        We should change this to be at the beginning because something (e.g. a finalizer) 
+        could call didAbandonObjectGraph(), which will schedule the timer, but then 
+        we'll immediately unschedule the timer at the conclusion of the collection, 
+        thus potentially preventing large swaths of memory from being reclaimed in a timely manner.
+
+        * API/JSBase.cpp:
+        (JSGarbageCollect): Remove outdated fix-me and remove check for whether the Heap is 
+        busy or not, since we're just scheduling a timer to run a GC in the future.
+        * heap/Heap.cpp:
+        (JSC::Heap::collect): Rename didCollect to willCollect and move the call to the 
+        top of Heap::collect.
+        * runtime/GCActivityCallback.cpp: Renamed didCollect to willCollect.
+        (JSC::DefaultGCActivityCallback::willCollect):
+        * runtime/GCActivityCallback.h: Ditto.
+        (JSC::GCActivityCallback::willCollect):
+        (DefaultGCActivityCallback): 
+        * runtime/GCActivityCallbackCF.cpp: Ditto.
+        (JSC::DefaultGCActivityCallback::willCollect):
+
+2012-04-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         JSGarbageCollect should not call collectAllGarbage()
         https://bugs.webkit.org/show_bug.cgi?id=84476
 

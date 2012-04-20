@@ -100,13 +100,7 @@ void JSGarbageCollect(JSContextRef ctx)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec, false);
 
-    JSGlobalData& globalData = exec->globalData();
-    if (!globalData.heap.isBusy())
-        globalData.heap.activityCallback()->didAbandonObjectGraph();
-
-    // FIXME: Perhaps we should trigger a second mark and sweep
-    // once the garbage collector is done if this is called when
-    // the collector is busy.
+    exec->globalData().heap.activityCallback()->didAbandonObjectGraph();
 }
 
 void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)

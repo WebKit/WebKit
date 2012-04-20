@@ -46,7 +46,7 @@ void DefaultGCActivityCallback::didAllocate(size_t)
 {
 }
 
-void DefaultGCActivityCallback::didCollect()
+void DefaultGCActivityCallback::willCollect()
 {
 }
 
