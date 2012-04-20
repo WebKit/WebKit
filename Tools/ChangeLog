@@ -1,3 +1,16 @@
+2012-04-20  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Send double click event from EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=82867
+
+        Reviewed by Daniel Bates.
+
+        Add support for EFL DumpRenderTree EventSender to send
+        double click events.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (sendMouseEvent):
+
 2012-04-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Enable Web Timing

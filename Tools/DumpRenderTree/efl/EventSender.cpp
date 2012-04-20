@@ -150,8 +150,15 @@ static void sendMouseEvent(Evas* evas, EvasMouseEvent event, int buttonNumber, E
     setEvasModifiers(evas, modifiers);
     if (event & EvasMouseEventMove)
         evas_event_feed_mouse_move(evas, gLastMousePositionX, gLastMousePositionY, timeStamp++, 0);
-    if (event & EvasMouseEventDown)
-        evas_event_feed_mouse_down(evas, buttonNumber, EVAS_BUTTON_NONE, timeStamp++, 0);
+    if (event & EvasMouseEventDown) {
+        unsigned flags = 0;
+        if (gClickCount == 2)
+            flags |= EVAS_BUTTON_DOUBLE_CLICK;
+        else if (gClickCount == 3)
+            flags |= EVAS_BUTTON_TRIPLE_CLICK;
+
+        evas_event_feed_mouse_down(evas, buttonNumber, static_cast<Evas_Button_Flags>(flags), timeStamp++, 0);
+    }
     if (event & EvasMouseEventUp)
         evas_event_feed_mouse_up(evas, buttonNumber, EVAS_BUTTON_NONE, timeStamp++, 0);
 

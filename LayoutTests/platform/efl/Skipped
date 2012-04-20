@@ -27,11 +27,6 @@ svg/W3C-SVG-1.1
 svg/W3C-SVG-1.1-SE
 svg/zoom/page/zoom-zoom-coords.xhtml
 
-# EFL's EventSender needs to emit double clicks (e.g. to select text)
-editing/selection/doubleclick-inline-first-last-contenteditable.html
-fast/events/dblclick-addEventListener.html
-fast/forms/password-doubleclick-selection.html
-
 # EFL's EventSender does not implement beginDragWithFiles yet
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
@@ -143,7 +138,6 @@ fast/events/fire-mousedown-while-pressing-mouse-button.html
 fast/events/frame-click-focus.html
 fast/events/ondragenter.html
 fast/events/ondrop-text-html.html
-fast/events/panScroll-click-hyperlink.html
 fast/events/popup-blocking-timers.html
 fast/events/remove-target-in-mouseup-deep.html
 fast/events/remove-target-in-mouseup-insertback.html
@@ -620,7 +614,6 @@ http/tests/globalhistory/history-delegate-basic-visited-links.html
 
 # EFL's LayoutTestController does not implement shadowPseudoId
 fullscreen/video-controls-override.html
-media/audio-delete-while-step-button-clicked.html
 media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html
@@ -1267,9 +1260,6 @@ fast/forms/focus2.html
 fast/events/drag-in-frames.html
 fast/events/drag-parent-node.html
 
-# BUG: clickBody is not being called
-fast/events/event-view-toString.html
-
 # BUG: keyboard-related bugs, generally in the EventSender-PlatformKeyboardEventEfl interaction
 fast/events/js-keyboard-event-creation.html
 fast/events/key-events-in-input-button.html
@@ -1280,14 +1270,10 @@ fast/events/special-key-events-in-input-text.html
 fast/forms/enter-clicks-buttons.html
 fast/forms/input-search-press-escape-key.html
 
-# BUG: mouse-related bugs in the EventSender-PlatformMouseEventEfl interaction
-fast/events/mouse-click-events.html
-
 # BUG: not scrolling correctly
 fast/events/mousedown-in-subframe-scrollbar.html
 fast/events/scroll-after-click-on-tab-index.html
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
-fast/events/scrollbar-double-click.html
 
 # BUG: no mouseout event being sent
 fast/events/mouseout-on-window.html
@@ -1321,7 +1307,6 @@ fast/css/clip-text-in-scaled-div.html
 fast/css/custom-font-xheight.html
 fast/css/counters/complex-before.html
 fast/css/device-aspect-ratio.html
-fast/events/onchange-click-hang.html
 fast/events/overflow-viewport-renderer-deleted.html
 fast/events/scale-and-scroll-body.html
 fast/events/scale-and-scroll-iframe-body.html
@@ -1347,7 +1332,6 @@ fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/harness/results.html
 fast/html/details-children-merge-crash.html
 fast/html/details-element-render-inline-crash.html
-fast/html/details-mouse-click.html
 fast/html/tab-order.html
 fast/inline/skipped-whitespace-boundingBox.html
 fast/loader/fragment-after-redirect-gets-back-entry.html
@@ -1826,8 +1810,6 @@ fast/events/drag-link.html
 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 fast/events/moving-text-should-fire-drop-and-dragend-events.html
 fast/events/offsetX-offsetY.html
-fast/events/page-scaled-mouse-click-iframe.html
-fast/events/page-scaled-mouse-click.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-x-in-scrolling-div.html
@@ -1872,7 +1854,6 @@ fast/frames/frame-set-scaling-hit.html
 fast/gradients/generated-gradients.html
 fast/gradients/radial-centered.html
 fast/harness/user-preferred-language.html
-fast/html/details-click-controls.html
 fast/html/marquee-alternate.html
 fast/inline-block/contenteditable-baseline.html
 fast/inline/continuation-outlines-with-layers-2.html
