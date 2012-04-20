@@ -44,6 +44,7 @@ WebInspector.TabbedPane = function()
     this._tabs = [];
     this._tabsHistory = [];
     this._tabsById = {};
+    this.element.addEventListener("click", this.focus.bind(this), false);
 
     this._dropDownButton = this._createDropDownButton();
 }
@@ -86,14 +87,9 @@ WebInspector.TabbedPane.prototype = {
         this._closeableTabs = closeableTabs;
     },
 
-    focus: function()
+    defaultFocusedElement: function()
     {
-        if (!this.visibleView)
-            return;
-        if (typeof(this.visibleView.focus) === "function")
-            this.visibleView.focus();
-        else
-            this.visibleView.element.focus();
+        return this.visibleView ? this.visibleView.defaultFocusedElement() : null;
     },
 
     /**

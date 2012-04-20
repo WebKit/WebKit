@@ -90,9 +90,9 @@ WebInspector.SourceFrame.prototype = {
         this._clearLineToReveal();
     },
 
-    focus: function()
+    defaultFocusedElement: function()
     {
-        this._textViewer.focus();
+        return this._textViewer.defaultFocusedElement();
     },
 
     get loaded()

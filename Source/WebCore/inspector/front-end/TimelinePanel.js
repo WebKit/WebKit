@@ -193,7 +193,7 @@ WebInspector.TimelinePanel.prototype = {
         return statusBarItems;
     },
 
-    get defaultFocusedElement()
+    defaultFocusedElement: function()
     {
         return this.element;
     },

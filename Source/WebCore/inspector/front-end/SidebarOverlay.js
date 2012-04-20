@@ -74,8 +74,8 @@ WebInspector.SidebarOverlay.prototype = {
             this.element.appendChild(this._resizerWidgetElement);
         this.position(relativeToElement);
         this._boundContainingElementFocused = this._containingElementFocused.bind(this);
-        relativeToElement.addEventListener("DOMFocusIn", this._boundContainingElementFocused, false);
-        
+        relativeToElement.addEventListener("mousedown", this._boundContainingElementFocused, false);
+
         this.dispatchEventToListeners(WebInspector.SidebarOverlay.EventTypes.WasShown, null);
     },
 
@@ -113,7 +113,7 @@ WebInspector.SidebarOverlay.prototype = {
         this.element.removeChild(this._resizerElement);
         if (this._resizerWidgetElement)
             this.element.removeChild(this._resizerWidgetElement);
-        element.removeEventListener("DOMFocusIn", this._boundContainingElementFocused, false);
+        element.removeEventListener("mousedown", this._boundContainingElementFocused, false);
     },
     
     /**

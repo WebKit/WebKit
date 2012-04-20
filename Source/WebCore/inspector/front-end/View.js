@@ -333,6 +333,31 @@ WebInspector.View.prototype = {
 
         if (this._children.length)
             lines.push(prefix + "}");
+    },
+
+    /**
+     * @return {Element}
+     */
+    defaultFocusedElement: function()
+    {
+        return this._defaultFocusedElement || this.element;
+    },
+
+    /**
+     * @param {Element} element
+     */
+    setDefaultFocusedElement: function(element)
+    {
+        this._defaultFocusedElement = element;
+    },
+
+    focus: function()
+    {
+        var element = this.defaultFocusedElement();
+        if (!element || element.isAncestor(document.activeElement))
+            return;
+
+        WebInspector.setCurrentFocusElement(element);
     }
 }
 

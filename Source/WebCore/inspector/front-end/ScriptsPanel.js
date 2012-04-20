@@ -72,13 +72,13 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.editorView.show(this.splitView.mainElement);
 
     this._navigator = new WebInspector.ScriptsNavigator();
-    this._navigator.show(this.editorView.sidebarElement);
+    this._navigator.view.show(this.editorView.sidebarElement);
 
     this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedFiles");
     this._editorContainer.show(this.editorView.mainElement);
     WebInspector.OpenResourceDialog.install(this, this._presentationModel, this.editorView.mainElement);
 
-    this._navigatorController = new WebInspector.ScriptsNavigatorController(this, this.editorView, this._navigator, this._editorContainer);
+    this._navigatorController = new WebInspector.NavigatorOverlayController(this, this.editorView, this._navigator.view, this._editorContainer.view);
 
     this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ScriptSelected, this._scriptSelected, this);
     this._editorContainer.addEventListener(WebInspector.TabbedEditorContainer.Events.EditorSelected, this._editorSelected, this);
@@ -193,9 +193,9 @@ WebInspector.ScriptsPanel.prototype = {
         return [this.enableToggleButton.element, this._pauseOnExceptionButton.element, this._toggleFormatSourceButton.element, this._scriptViewStatusBarItemsContainer];
     },
 
-    get defaultFocusedElement()
+    defaultFocusedElement: function()
     {
-        return this._navigator.defaultFocusedElement;
+        return this._navigator.view.defaultFocusedElement();
     },
 
     get paused()

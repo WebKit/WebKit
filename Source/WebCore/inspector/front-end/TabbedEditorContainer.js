@@ -78,17 +78,17 @@ WebInspector.TabbedEditorContainer.prototype = {
     /**
      * @return {WebInspector.View}
      */
-    get visibleView()
+    get view()
     {
-        return this._tabbedPane.visibleView;
+        return this._tabbedPane;
     },
 
     /**
-     * @return {Element}
+     * @type {WebInspector.SourceFrame}
      */
-    get element()
+    get visibleView()
     {
-        return this._tabbedPane.element;
+        return this._tabbedPane.visibleView;
     },
 
     /**

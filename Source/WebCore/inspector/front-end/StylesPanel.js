@@ -49,13 +49,13 @@ WebInspector.StylesPanel = function()
 
     this._navigator = new WebInspector.ScriptsNavigator();
     this._navigatorView = this._navigator.view;
-    this._navigator.show(this._mainView.sidebarElement);
+    this._navigator.view.show(this._mainView.sidebarElement);
     this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ScriptSelected, this._scriptSelected, this);
 
     this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedCSSFiles");
     this._editorContainer.show(this._mainView.mainElement);
 
-    this._navigatorController = new WebInspector.ScriptsNavigatorController(this, this._mainView, this._navigator, this._editorContainer);
+    this._navigatorController = new WebInspector.NavigatorOverlayController(this, this._mainView, this._navigator.view, this._editorContainer.view);
 
     this._sourceFramesForResource = new Map();
     this._urlToResource = {};

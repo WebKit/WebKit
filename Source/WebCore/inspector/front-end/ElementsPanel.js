@@ -115,7 +115,7 @@ WebInspector.ElementsPanel.prototype = {
         return [this.crumbsElement];
     },
 
-    get defaultFocusedElement()
+    defaultFocusedElement: function()
     {
         return this.treeOutline.element;
     },

@@ -98,9 +98,9 @@ WebInspector.TextViewer.prototype = {
         return this._textModel;
     },
 
-    focus: function()
+    defaultFocusedElement: function()
     {
-        this._mainPanel.focus();
+        return this._mainPanel.defaultFocusedElement();
     },
 
     revealLine: function(lineNumber)
@@ -959,12 +959,11 @@ WebInspector.TextEditorMainPanel.prototype = {
             this._container.focus();
     },
 
-    focus: function()
+    defaultFocusedElement: function()
     {
         if (this._readOnly)
-            this.element.focus();
-        else
-            this._container.focus();
+            return this.element;
+        return this._container;
     },
 
     _updateSelectionOnStartEditing: function()

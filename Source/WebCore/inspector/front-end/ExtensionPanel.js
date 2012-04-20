@@ -126,7 +126,7 @@ WebInspector.ExtensionPanel.prototype = {
         return this._toolbarItemLabel;
     },
 
-    get defaultFocusedElement()
+    defaultFocusedElement: function()
     {
         return this.sidebarTreeElement || this.element;
     },
