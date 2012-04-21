@@ -3412,11 +3412,11 @@ RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) con
         return 0;
 
     const RenderBox* object = this;
-    RenderBox* sibling;
+    RenderObject* sibling;
     do {
-        sibling = object->previousSiblingBox();
+        sibling = object->previousSibling();
         while (sibling && (!sibling->isRenderBlock() || toRenderBlock(sibling)->isSelectionRoot()))
-            sibling = sibling->previousSiblingBox();
+            sibling = sibling->previousSibling();
 
         offset -= LayoutSize(object->logicalLeft(), object->logicalTop());
         object = object->parentBox();
@@ -3425,15 +3425,17 @@ RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) con
     if (!sibling)
         return 0;
 
-    offset += LayoutSize(sibling->logicalLeft(), sibling->logicalTop());
+    RenderBlock* beforeBlock = toRenderBlock(sibling);
 
-    RenderObject* child = sibling->lastChild();
+    offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
+
+    RenderObject* child = beforeBlock->lastChild();
     while (child && child->isRenderBlock()) {
-        sibling = toRenderBlock(child);
-        offset += LayoutSize(sibling->logicalLeft(), sibling->logicalTop());
-        child = sibling->lastChild();
+        beforeBlock = toRenderBlock(child);
+        offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
+        child = beforeBlock->lastChild();
     }
-    return toRenderBlock(sibling);
+    return beforeBlock;
 }
 
 void RenderBlock::insertPositionedObject(RenderBox* o)
