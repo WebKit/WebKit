@@ -14,14 +14,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 784x35
-          text run at (0,0) width 402: "This tests deleting a selection created with a word granularity. "
-          text run at (401,0) width 355: "To run it manually, double click on 'bar' and hit delete. "
-          text run at (755,0) width 29: "You"
-          text run at (0,18) width 129: "should see 'foo baz'."
+        RenderText {#text} at (0,0) size 768x37
+          text run at (0,0) width 392: "This tests deleting a selection created with a word granularity. "
+          text run at (392,0) width 348: "To run it manually, double click on 'bar' and hit delete. "
+          text run at (740,0) width 28: "You"
+          text run at (0,18) width 127: "should see 'foo baz'."
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 22x17
-          text run at (0,0) width 22: "foo"
-        RenderText {#text} at (21,0) size 27x17
-          text run at (21,0) width 27: " baz"
+        RenderText {#text} at (0,0) size 21x19
+          text run at (0,0) width 21: "foo"
+        RenderText {#text} at (21,0) size 26x19
+          text run at (21,0) width 26: " baz"
 caret: position 3 of child 0 {#text} of child 2 {DIV} of body
