@@ -762,21 +762,24 @@ void KURL::setUser(const String& user)
 
     // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
     // and to avoid changing more than just the user login.
-    String u;
+
     int end = m_userEnd;
     if (!user.isEmpty()) {
-        u = user;
+        String u = user;
         if (m_userStart == m_schemeEnd + 1)
             u = "//" + u;
         // Add '@' if we didn't have one before.
         if (end == m_hostEnd || (end == m_passwordEnd && m_string[end] != '@'))
             u.append('@');
+        parse(m_string.left(m_userStart) + u + m_string.substring(end));
     } else {
         // Remove '@' if we now have neither user nor password.
         if (m_userEnd == m_passwordEnd && end != m_hostEnd && m_string[end] == '@')
             end += 1;
+        // We don't want to parse in the extremely common case where we are not going to make a change.
+        if (m_userStart != end)
+            parse(m_string.left(m_userStart) + m_string.substring(end));
     }
-    parse(m_string.left(m_userStart) + u + m_string.substring(end));
 }
 
 void KURL::setPass(const String& password)
@@ -786,21 +789,24 @@ void KURL::setPass(const String& password)
 
     // FIXME: Non-ASCII characters must be encoded and escaped to match parse() expectations,
     // and to avoid changing more than just the user password.
-    String p;
+
     int end = m_passwordEnd;
     if (!password.isEmpty()) {
-        p = ":" + password + "@";
+        String p = ":" + password + "@";
         if (m_userEnd == m_schemeEnd + 1)
             p = "//" + p;
         // Eat the existing '@' since we are going to add our own.
         if (end != m_hostEnd && m_string[end] == '@')
             end += 1;
+        parse(m_string.left(m_userEnd) + p + m_string.substring(end));
     } else {
         // Remove '@' if we now have neither user nor password.
         if (m_userStart == m_userEnd && end != m_hostEnd && m_string[end] == '@')
             end += 1;
+        // We don't want to parse in the extremely common case where we are not going to make a change.
+        if (m_userEnd != end)
+            parse(m_string.left(m_userEnd) + m_string.substring(end));
     }
-    parse(m_string.left(m_userEnd) + p + m_string.substring(end));
 }
 
 void KURL::setFragmentIdentifier(const String& s)
