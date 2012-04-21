@@ -43,6 +43,8 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest clear()
             raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange key)
+            raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction)

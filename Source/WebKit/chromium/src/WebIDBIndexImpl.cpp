@@ -95,7 +95,7 @@ void WebIDBIndexImpl::getObject(const WebIDBKey& key, WebIDBCallbacks* callbacks
 
 void WebIDBIndexImpl::getObject(const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    // FIXME: not implemented in indexeddb yet
+    m_backend->get(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 void WebIDBIndexImpl::getKey(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
@@ -105,7 +105,7 @@ void WebIDBIndexImpl::getKey(const WebIDBKey& key, WebIDBCallbacks* callbacks, c
 
 void WebIDBIndexImpl::getKey(const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    // FIXME: not implemented in indexeddb yet
+    m_backend->getKey(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 } // namespace WebKit

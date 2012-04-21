@@ -1,3 +1,24 @@
+2012-04-20  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Support get/getKey(keyRange)
+        https://bugs.webkit.org/show_bug.cgi?id=83638
+
+        Reviewed by Ojan Vafai.
+
+        Hook up WebKit API to the new get/getKey implementations.
+
+        * src/IDBIndexBackendProxy.cpp:
+        (WebKit::IDBIndexBackendProxy::get):
+        (WebKit):
+        (WebKit::IDBIndexBackendProxy::getKey):
+        * src/IDBIndexBackendProxy.h:
+        (IDBIndexBackendProxy):
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit::WebIDBIndexImpl::getKey):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::get):
+
 2012-04-20  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=84512

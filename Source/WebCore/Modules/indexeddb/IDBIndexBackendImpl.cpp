@@ -151,25 +151,81 @@ void IDBIndexBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCal
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
-void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKey> key, bool getObject, PassRefPtr<IDBCallbacks> callbacks)
+void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
 {
     IDB_TRACE("IDBIndexBackendImpl::getInternal");
-    // FIXME: Split getInternal into two functions, getting rid off |getObject|.
-    if (getObject) {
-        String value = index->m_backingStore->getObjectViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
-        if (value.isNull()) {
-            callbacks->onSuccess(SerializedScriptValue::undefinedValue());
-            return;
-        }
-        callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
-    } else {
-        RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
-        if (!keyResult) {
-            callbacks->onSuccess(static_cast<IDBKey*>(0));
-            return;
-        }
-        callbacks->onSuccess(keyResult.get());
+    String value = index->m_backingStore->getObjectViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
+    if (value.isNull()) {
+        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+        return;
     }
+    callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
+}
+
+void IDBIndexBackendImpl::getByRangeInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+{
+    IDB_TRACE("IDBIndexBackendImpl::getByRangeInternal");
+
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor =
+            index->m_backingStore->openIndexCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), keyRange.get(), IDBCursor::NEXT);
+
+    if (!backingStoreCursor) {
+        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+        return;
+    }
+
+    String value = index->m_backingStore->getObjectViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *backingStoreCursor->key());
+    if (value.isNull()) {
+        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+        backingStoreCursor->close();
+        return;
+    }
+    callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
+    backingStoreCursor->close();
+}
+
+void IDBIndexBackendImpl::getKeyInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+{
+    IDB_TRACE("IDBIndexBackendImpl::getKeyInternal");
+    RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
+    if (!keyResult) {
+        callbacks->onSuccess(static_cast<IDBKey*>(0));
+        return;
+    }
+    callbacks->onSuccess(keyResult.get());
+}
+
+void IDBIndexBackendImpl::getKeyByRangeInternal(ScriptExecutionContext* context, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+{
+    IDB_TRACE("IDBIndexBackendImpl::getByRangeInternal");
+
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor =
+            index->m_backingStore->openIndexKeyCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), keyRange.get(), IDBCursor::NEXT);
+
+    if (!backingStoreCursor) {
+        callbacks->onSuccess(static_cast<IDBKey*>(0));
+        return;
+    }
+
+    RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *backingStoreCursor->key());
+    if (!keyResult) {
+        callbacks->onSuccess(static_cast<IDBKey*>(0));
+        backingStoreCursor->close();
+        return;
+    }
+    callbacks->onSuccess(keyResult.get());
+    backingStoreCursor->close();
+}
+
+
+void IDBIndexBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBIndexBackendImpl::get");
+    RefPtr<IDBIndexBackendImpl> index = this;
+    RefPtr<IDBKeyRange> keyRange = prpKeyRange;
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+    if (!transaction->scheduleTask(createCallbackTask(&getByRangeInternal, index, keyRange, callbacks)))
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
 void IDBIndexBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -178,7 +234,17 @@ void IDBIndexBackendImpl::get(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&getInternal, index, key, true, callbacks)))
+    if (!transaction->scheduleTask(createCallbackTask(&getInternal, index, key, callbacks)))
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+}
+
+void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBIndexBackendImpl::getKey");
+    RefPtr<IDBIndexBackendImpl> index = this;
+    RefPtr<IDBKeyRange> keyRange = prpKeyRange;
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+    if (!transaction->scheduleTask(createCallbackTask(&getKeyByRangeInternal, index, keyRange, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -188,7 +254,7 @@ void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallba
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&getInternal, index, key, false, callbacks)))
+    if (!transaction->scheduleTask(createCallbackTask(&getKeyInternal, index, key, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 

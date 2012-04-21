@@ -38,7 +38,11 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction)
             raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange key)
+            raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
+            raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKeyRange key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKey key)
             raises (IDBDatabaseException);

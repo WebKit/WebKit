@@ -78,21 +78,35 @@ IDBTransaction* IDBObjectStore::transaction() const
     return m_transaction.get();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::get");
-    if (key && (key->type() == IDBKey::InvalidType)) {
+
+    if (!keyRange) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
-
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->get(key, request, m_transaction->backend(), ec);
+    m_backend->get(keyRange, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
         return 0;
     }
     return request.release();
+}
+
+PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBObjectStore::get");
+    if (!key || (key->type() == IDBKey::InvalidType)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    if (ec)
+        return 0;
+    return get(context, keyRange.release(), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> key, ExceptionCode& ec)
