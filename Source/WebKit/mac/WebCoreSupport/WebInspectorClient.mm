@@ -405,6 +405,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
         [_webView removeFromSuperview];
         [_inspectedWebView.get() addSubview:_webView positioned:NSWindowBelow relativeTo:(NSView *)frameView];
+        [[_inspectedWebView.get() window] makeFirstResponder:_webView];
 
         [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin)];
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin)];

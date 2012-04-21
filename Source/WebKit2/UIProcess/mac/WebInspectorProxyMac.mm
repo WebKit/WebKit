@@ -268,6 +268,7 @@ void WebInspectorProxy::platformAttach()
     [m_inspectorView.get() setHidden:!m_isVisible];
 
     [[inspectedView superview] addSubview:m_inspectorView.get() positioned:NSWindowBelow relativeTo:inspectedView];
+    [[inspectedView window] makeFirstResponder:m_inspectorView.get()];
 
     if (m_inspectorWindow) {
         [m_inspectorWindow.get() setDelegate:nil];

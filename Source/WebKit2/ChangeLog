@@ -1,3 +1,15 @@
+2012-04-20  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector be the first responder when opening docked.
+
+        <rdar://problem/11294217>
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformAttach): Call makeFirstResponder: on
+        the window and pass the Inspector's WKView.
+
 2012-04-06  Jer Noble  <jer.noble@apple.com>
 
         apple.com top navigation bar appears inside video during full screen exit animation
