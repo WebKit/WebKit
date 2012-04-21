@@ -499,9 +499,10 @@ private:
         }
     }
     
-    void load16Signed(ArmAddress, RegisterID)
+    void load16Signed(ArmAddress address, RegisterID dest)
     {
-        unreachableForPlatform();
+        ASSERT(address.type == ArmAddress::HasIndex);
+        m_assembler.ldrsh(dest, address.base, address.u.index, address.u.scale);
     }
 
     void load8(ArmAddress address, RegisterID dest)
@@ -518,9 +519,10 @@ private:
         }
     }
     
-    void load8Signed(ArmAddress, RegisterID)
+    void load8Signed(ArmAddress address, RegisterID dest)
     {
-        unreachableForPlatform();
+        ASSERT(address.type == ArmAddress::HasIndex);
+        m_assembler.ldrsb(dest, address.base, address.u.index, address.u.scale);
     }
 
 protected:
@@ -609,9 +611,9 @@ public:
         load8(setupArmAddress(address), dest);
     }
     
-    void load8Signed(BaseIndex, RegisterID)
+    void load8Signed(BaseIndex address, RegisterID dest)
     {
-        unreachableForPlatform();
+        load8Signed(setupArmAddress(address), dest);
     }
 
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
@@ -649,9 +651,9 @@ public:
         m_assembler.ldrh(dest, makeBaseIndexBase(address), address.index, address.scale);
     }
     
-    void load16Signed(BaseIndex, RegisterID)
+    void load16Signed(BaseIndex address, RegisterID dest)
     {
-        unreachableForPlatform();
+        load16Signed(setupArmAddress(address), dest);
     }
     
     void load16(ImplicitAddress address, RegisterID dest)

@@ -162,10 +162,8 @@ inline bool isFloat64ArrayPrediction(PredictedType value)
 inline bool isActionableIntMutableArrayPrediction(PredictedType value)
 {
     return isByteArrayPrediction(value)
-#if CPU(X86) || CPU(X86_64)
         || isInt8ArrayPrediction(value)
         || isInt16ArrayPrediction(value)
-#endif
         || isInt32ArrayPrediction(value)
         || isUint8ArrayPrediction(value)
         || isUint8ClampedArrayPrediction(value)

@@ -707,20 +707,12 @@ struct Node {
     
     bool shouldSpeculateInt8Array()
     {
-#if CPU(X86) || CPU(X86_64)
         return isInt8ArrayPrediction(prediction());
-#else
-        return false;
-#endif
     }
     
     bool shouldSpeculateInt16Array()
     {
-#if CPU(X86) || CPU(X86_64)
         return isInt16ArrayPrediction(prediction());
-#else
-        return false;
-#endif
     }
     
     bool shouldSpeculateInt32Array()

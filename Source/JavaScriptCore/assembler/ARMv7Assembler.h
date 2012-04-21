@@ -531,9 +531,11 @@ private:
         OP_STR_reg_T1       = 0x5000,
         OP_STRH_reg_T1      = 0x5200,
         OP_STRB_reg_T1      = 0x5400,
+        OP_LDRSB_reg_T1     = 0x5600,
         OP_LDR_reg_T1       = 0x5800,
         OP_LDRH_reg_T1      = 0x5A00,
         OP_LDRB_reg_T1      = 0x5C00,
+        OP_LDRSH_reg_T1     = 0x5E00,
         OP_STR_imm_T1       = 0x6000,
         OP_LDR_imm_T1       = 0x6800,
         OP_STRB_imm_T1      = 0x7000,
@@ -627,6 +629,8 @@ private:
         OP_LDRH_imm_T2  = 0xF8B0,
         OP_STR_imm_T3   = 0xF8C0,
         OP_LDR_imm_T3   = 0xF8D0,
+        OP_LDRSB_reg_T2 = 0xF910,
+        OP_LDRSH_reg_T2 = 0xF930,
         OP_LSL_reg_T2   = 0xFA00,
         OP_LSR_reg_T2   = 0xFA20,
         OP_ASR_reg_T2   = 0xFA40,
@@ -1157,6 +1161,30 @@ public:
             m_formatter.oneWordOp7Reg3Reg3Reg3(OP_LDRB_reg_T1, rm, rn, rt);
         else
             m_formatter.twoWordOp12Reg4FourFours(OP_LDRB_reg_T2, rn, FourFours(rt, 0, shift, rm));
+    }
+    
+    void ldrsb(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
+    {
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(!BadReg(rm));
+        ASSERT(shift <= 3);
+        
+        if (!shift && !((rt | rn | rm) & 8))
+            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_LDRSB_reg_T1, rm, rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4FourFours(OP_LDRSB_reg_T2, rn, FourFours(rt, 0, shift, rm));
+    }
+
+    void ldrsh(RegisterID rt, RegisterID rn, RegisterID rm, unsigned shift = 0)
+    {
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(!BadReg(rm));
+        ASSERT(shift <= 3);
+        
+        if (!shift && !((rt | rn | rm) & 8))
+            m_formatter.oneWordOp7Reg3Reg3Reg3(OP_LDRSH_reg_T1, rm, rn, rt);
+        else
+            m_formatter.twoWordOp12Reg4FourFours(OP_LDRSH_reg_T2, rn, FourFours(rt, 0, shift, rm));
     }
 
     void lsl(RegisterID rd, RegisterID rm, int32_t shiftAmount)

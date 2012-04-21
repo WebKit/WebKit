@@ -1,3 +1,23 @@
+2012-04-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should optimize int8 and int16 arrays on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=84503
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::ldrsb):
+        (JSC::ARMv7Assembler::ldrsh):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load16Signed):
+        (JSC::MacroAssemblerARMv7::load8Signed):
+        * bytecode/PredictedType.h:
+        (JSC::isActionableIntMutableArrayPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInt8Array):
+        (JSC::DFG::Node::shouldSpeculateInt16Array):
+
 2012-04-20  Oliver Hunt  <oliver@apple.com>
 
         Add an ability to find the extent of a callframe
