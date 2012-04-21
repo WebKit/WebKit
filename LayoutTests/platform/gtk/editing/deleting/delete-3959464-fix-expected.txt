@@ -26,22 +26,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 750x53
-          text run at (14,14) width 750: "Should see \"foo\" and \"bar\" each in a separate red box. Note that the \"foo\" text"
-          text run at (14,41) width 153: "is really \"foo \". "
-          text run at (166,41) width 63: "There "
-        RenderInline {B} at (0,0) size 51x26
-          RenderText {#text} at (228,41) size 51x26
-            text run at (228,41) width 51: "must"
-        RenderText {#text} at (278,41) size 315x26
-          text run at (278,41) width 315: " be a space at the end of the line."
-      RenderBlock {DIV} at (0,106) size 784x165
-        RenderBlock {DIV} at (0,0) size 784x55 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 32x26
+      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 715x56
+          text run at (14,14) width 715: "Should see \"foo\" and \"bar\" each in a separate red box. Note that the \"foo\""
+          text run at (14,42) width 197: "text is really \"foo \". "
+          text run at (211,42) width 63: "There "
+        RenderInline {B} at (0,0) size 50x28
+          RenderText {#text} at (274,42) size 50x28
+            text run at (274,42) width 50: "must"
+        RenderText {#text} at (324,42) size 318x28
+          text run at (324,42) width 318: " be a space at the end of the line."
+      RenderBlock {DIV} at (0,108) size 784x168
+        RenderBlock {DIV} at (0,0) size 784x56 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 32x28
             text run at (14,14) width 32: "foo"
-        RenderBlock {DIV} at (0,55) size 784x55 [border: (2px solid #FF0000)]
-          RenderBR {BR} at (14,14) size 0x26
-        RenderBlock {DIV} at (0,110) size 784x55 [border: (2px solid #FF0000)]
-          RenderBR {BR} at (14,14) size 0x26
+        RenderBlock {DIV} at (0,56) size 784x56 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (14,14) size 0x28
+        RenderBlock {DIV} at (0,112) size 784x56 [border: (2px solid #FF0000)]
+          RenderBR {BR} at (14,14) size 0x28
 caret: position 0 of child 0 {BR} of child 3 {DIV} of child 3 {DIV} of body
