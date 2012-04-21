@@ -1,0 +1,38 @@
+ListBox In Multi-Coulumn
+
+This is test cases for BUG 70898.
+No outer
+
+
+
+
+DIV outer
+
+
+
+
+SPAN outer
+
+ 
+
+
+TABLE outer
+
+
+
+
+Results
+
+PASSED c00
+PASSED c01
+PASSED c02
+PASSED c10
+PASSED c11
+PASSED c12
+PASSED c20
+PASSED c21
+PASSED c22
+PASSED c30
+FAILED c31 expected=b got=d 277@581
+FAILED c32 expected=b got=d 533@581
+
