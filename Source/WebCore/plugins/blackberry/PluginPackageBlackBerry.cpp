@@ -192,7 +192,8 @@ unsigned PluginPackage::hash() const
     const unsigned hashCodes[] = {
         m_name.impl()->hash(),
         m_description.impl()->hash(),
-        m_mimeToExtensions.size()
+        m_mimeToExtensions.size(),
+        m_path.impl()->hash()
     };
 
     return StringHasher::computeHash(reinterpret_cast<const UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
