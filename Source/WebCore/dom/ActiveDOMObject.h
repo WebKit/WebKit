@@ -53,7 +53,7 @@ public:
     // to stop the object. Exact semantics of suspend is up to the object then.
     enum ReasonForSuspension {
         JavaScriptDebuggerPaused,
-        WillShowDialog,
+        WillDeferLoading,
         DocumentWillBecomeInactive,
         PageWillBeSuspended
     };

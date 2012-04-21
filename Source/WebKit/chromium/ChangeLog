@@ -1,3 +1,16 @@
+2012-04-20  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=84512
+        Repurpose ActiveDOMObject::WillShowDialog to WillDeferLoading
+
+        Reviewed by Eric Carlson.
+
+        PageGroupLoadDeferrer's don't take a ReasonForSuspension argument anymore;
+        They just use WillDeferLoading by default.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::willEnterModalLoop):
+
 2012-04-20  James Robinson  <jamesr@chromium.org>
 
         [chromium] Plumb a compositor surface ready notification through to the threaded compositor
