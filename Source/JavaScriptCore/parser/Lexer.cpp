@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2006, 2007, 2008, 2009, 2011, 2012 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *  Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
@@ -368,7 +368,7 @@ Lexer<T>::~Lexer()
 }
 
 template <typename T>
-UString Lexer<T>::getInvalidCharMessage()
+UString Lexer<T>::invalidCharacterMessage() const
 {
     switch (m_current) {
     case 0:
@@ -450,14 +450,13 @@ ALWAYS_INLINE void Lexer<T>::shift()
 template <typename T>
 ALWAYS_INLINE int Lexer<T>::peek(int offset)
 {
-    // Only use if necessary
     ASSERT(offset > 0 && offset < 5);
     const T* code = m_code + offset;
     return (code < m_codeEnd) ? *code : -1;
 }
 
 template <typename T>
-int Lexer<T>::getUnicodeCharacter()
+int Lexer<T>::parseFourDigitUnicodeHex()
 {
     int char1 = peek(1);
     int char2 = peek(2);
@@ -479,11 +478,11 @@ void Lexer<T>::shiftLineTerminator()
 {
     ASSERT(isLineTerminator(static_cast<T>(m_current)));
 
-    int m_prev = m_current;
+    int prev = m_current;
     shift();
 
     // Allow both CRLF and LFCR.
-    if (m_prev + m_current == '\n' + '\r')
+    if (prev + m_current == '\n' + '\r')
         shift();
 
     ++m_lineNumber;
@@ -633,7 +632,7 @@ inline void Lexer<T>::record16(int c)
 }
 
 template <>
-    template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::parseIdentifier(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
+template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::parseIdentifier(JSTokenData* tokenData, unsigned lexerFlags, bool strictMode)
 {
     const ptrdiff_t remaining = m_codeEnd - m_code;
     if ((remaining >= maxTokenLength) && !(lexerFlags & LexerFlagsIgnoreReservedWords)) {
@@ -691,6 +690,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
             return keyword == RESERVED_IF_STRICT && !strictMode ? IDENT : keyword;
         }
     }
+
     const UChar* identifierStart = currentCharacter();
 
     UChar orAllChars = 0;
@@ -762,7 +762,7 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
         if (UNLIKELY(m_current != 'u'))
             return ERRORTOK;
         shift();
-        int character = getUnicodeCharacter();
+        int character = parseFourDigitUnicodeHex();
         if (UNLIKELY(character == -1))
             return ERRORTOK;
         UChar ucharacter = static_cast<UChar>(character);
@@ -910,7 +910,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 shift();
             } else if (m_current == 'u') {
                 shift();
-                int character = getUnicodeCharacter();
+                int character = parseFourDigitUnicodeHex();
                 if (character != -1) {
                     if (shouldBuildStrings)
                         record16(character);
@@ -1508,7 +1508,7 @@ inNumberAfterDecimalPoint:
         m_terminator = true;
         goto start;
     case CharacterInvalid:
-        m_lexErrorMessage = getInvalidCharMessage();
+        m_lexErrorMessage = invalidCharacterMessage();
         goto returnError;
     default:
         ASSERT_NOT_REACHED();

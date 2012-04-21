@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012 Apple Inc. All rights reserved.
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *
  *  This library is free software; you can redistribute it and/or
@@ -67,8 +67,6 @@ enum LexerFlags {
     LexexFlagsDontBuildKeywords = 4
 };
 
-class RegExp;
-
 template <typename T>
 class Lexer {
     WTF_MAKE_NONCOPYABLE(Lexer);
@@ -134,10 +132,10 @@ private:
 
     ALWAYS_INLINE void shift();
     ALWAYS_INLINE int peek(int offset);
-    int getUnicodeCharacter();
+    int parseFourDigitUnicodeHex();
     void shiftLineTerminator();
 
-    UString getInvalidCharMessage();
+    UString invalidCharacterMessage() const;
     ALWAYS_INLINE const T* currentCharacter() const;
     ALWAYS_INLINE int currentOffset() const { return m_code - m_codeStart; }
     ALWAYS_INLINE void setOffsetFromCharOffset(const T* charOffset) { setOffset(charOffset - m_codeStart); }

@@ -1,3 +1,25 @@
+2012-04-21  Darin Adler  <darin@apple.com>
+
+        Change JavaScript lexer to use 0 instead of -1 for sentinel, eliminating the need to put characters into ints
+        https://bugs.webkit.org/show_bug.cgi?id=84523
+
+        Reviewed by Oliver Hunt.
+
+        Separate preparation step of copyright dates, renaming, and other small tweaks.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::invalidCharacterMessage): Removed "get" from name to match WebKit naming conventions.
+        (JSC::Lexer::peek): Removed meaningless comment.
+        (JSC::Lexer::parseFourDigitUnicodeHex): Renamed from getUnicodeCharacter to be more precise about
+        what this function does.
+        (JSC::Lexer::shiftLineTerminator): Renamed local variable that had a data-member-style name.
+        (JSC::Lexer::parseStringSlowCase): Updated for new name of parseFourDigitUnicodeHex.
+        (JSC::Lexer::lex): Updated for new name of invalidCharacterMessage.
+
+        * parser/Lexer.h: Removed an unneeded forward declaration of the RegExp class.
+        Renamed getInvalidCharMessage to invalidCharacterMessage and made it const. Renamed
+        getUnicodeCharacter to parseFourDigitUnicodeHex.
+
 2012-04-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize int8 and int16 arrays on ARMv7
