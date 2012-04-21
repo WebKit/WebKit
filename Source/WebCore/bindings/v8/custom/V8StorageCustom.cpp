@@ -58,7 +58,7 @@ static v8::Handle<v8::Value> storageGetter(v8::Local<v8::String> v8Name, const v
     Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
 
-    if (storage->contains(name) && name != "length")
+    if (name != "length" && storage->contains(name))
         return v8String(storage->getItem(name));
 
     return notHandledByInterceptor();
@@ -86,7 +86,7 @@ v8::Handle<v8::Integer> V8Storage::namedPropertyQuery(v8::Local<v8::String> v8Na
     Storage* storage = V8Storage::toNative(info.Holder());
     String name = toWebCoreString(v8Name);
 
-    if (storage->contains(name) && name != "length")
+    if (name != "length" && storage->contains(name))
         return v8::Integer::New(v8::None);
 
     return v8::Handle<v8::Integer>();
