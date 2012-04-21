@@ -622,7 +622,8 @@ inner-spin-button
 -webkit-input-speech-button
 listbox
 listitem
-media-fullscreen-button
+media-enter-fullscreen-button
+media-exit-fullscreen-button
 media-fullscreen-volume-slider
 media-fullscreen-volume-slider-thumb
 media-mute-button

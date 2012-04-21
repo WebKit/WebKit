@@ -308,7 +308,8 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
         case SliderThumbHorizontalPart:
         case SliderThumbVerticalPart:
             return paintSliderThumb(o, paintInfo, r);
-        case MediaFullscreenButtonPart:
+        case MediaEnterFullscreenButtonPart:
+        case MediaExitFullscreenButtonPart:
             return paintMediaFullscreenButton(o, paintInfo, r);
         case MediaPlayButtonPart:
             return paintMediaPlayButton(o, paintInfo, r);
