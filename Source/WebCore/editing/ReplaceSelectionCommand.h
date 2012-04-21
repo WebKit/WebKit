@@ -68,7 +68,7 @@ private:
 
         Node* firstNodeInserted() const { return m_firstNodeInserted.get(); }
         Node* lastLeafInserted() const { return m_lastNodeInserted->lastDescendant(); }
-        Node* pastLastLeaf() const { return m_firstNodeInserted ? lastLeafInserted()->traverseNextNode() : 0; }
+        Node* pastLastLeaf() const { return m_lastNodeInserted ? lastLeafInserted()->traverseNextNode() : 0; }
 
     private:
         RefPtr<Node> m_firstNodeInserted;

@@ -62,7 +62,8 @@ void SimplifyMarkupCommand::doApply()
                 nodesToRemove.append(currentNode);
             
             currentNode = currentNode->parentNode();
-            ASSERT(currentNode);
+            if (!currentNode)
+                break;
 
             if (!currentNode->renderer() || !currentNode->renderer()->isRenderInline() || toRenderInline(currentNode->renderer())->alwaysCreateLineBoxes())
                 continue;
