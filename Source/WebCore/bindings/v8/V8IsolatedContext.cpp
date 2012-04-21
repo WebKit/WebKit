@@ -38,8 +38,7 @@
 #include "V8BindingPerContextData.h"
 #include "V8DOMWindow.h"
 #include "V8Proxy.h"
-
-#include <stdio.h>
+#include <wtf/StringExtras.h>
 
 namespace WebCore {
 
@@ -55,11 +54,25 @@ void V8IsolatedContext::contextWeakReferenceCallback(v8::Persistent<v8::Value> o
     delete context;
 }
 
+static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext, int debugId)
+{
+    char buffer[32];
+    if (debugId == -1)
+        snprintf(buffer, sizeof(buffer), "injected");
+    else
+        snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
+    targetContext->SetData(v8::String::New(buffer));
+}
+
 V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int worldId)
     : m_world(IsolatedWorld::create(worldId)),
       m_frame(proxy->frame())
 {
     v8::HandleScope scope;
+    v8::Handle<v8::Context> mainWorldContext = proxy->windowShell()->context();
+    if (mainWorldContext.IsEmpty())
+        return;
+
     // FIXME: We should be creating a new V8DOMWindowShell here instead of riping out the context.
     m_context = SharedPersistent<v8::Context>::create(proxy->windowShell()->createNewContext(v8::Handle<v8::Object>(), extensionGroup, m_world->id()));
     if (m_context->get().IsEmpty())
@@ -67,6 +80,9 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
 
     // Run code in the new context.
     v8::Context::Scope contextScope(m_context->get());
+
+    // Setup context id for JS debugger.
+    setInjectedScriptContextDebugId(m_context->get(), proxy->contextDebugId(mainWorldContext));
 
     getGlobalObject(m_context->get())->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, this);
 
