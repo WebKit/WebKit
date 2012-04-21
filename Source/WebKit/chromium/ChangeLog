@@ -1,3 +1,9 @@
+2012-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium roll attempt from r133173 to r133348.
+
+        * DEPS:
+
 2012-04-20  Adrienne Walker  <enne@google.com>
 
         [chromium] Refactor opaque content transform out of Skia context
