@@ -639,25 +639,25 @@ void PlatformContextSkia::applyClipFromImage(const SkRect& rect, const SkBitmap&
 void PlatformContextSkia::didDrawRect(const SkRect& rect, const SkPaint& paint, const SkBitmap* bitmap)
 {
     if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawRect(this, m_opaqueRegionTransform, rect, paint, bitmap);
+        m_opaqueRegion.didDrawRect(this, rect, paint, bitmap);
 }
 
 void PlatformContextSkia::didDrawPath(const SkPath& path, const SkPaint& paint)
 {
     if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawPath(this, m_opaqueRegionTransform, path, paint);
+        m_opaqueRegion.didDrawPath(this, path, paint);
 }
 
 void PlatformContextSkia::didDrawPoints(SkCanvas::PointMode mode, int numPoints, const SkPoint points[], const SkPaint& paint)
 {
     if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawPoints(this, m_opaqueRegionTransform, mode, numPoints, points, paint);
+        m_opaqueRegion.didDrawPoints(this, mode, numPoints, points, paint);
 }
 
 void PlatformContextSkia::didDrawBounded(const SkRect& rect, const SkPaint& paint)
 {
     if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawBounded(this, m_opaqueRegionTransform, rect, paint);
+        m_opaqueRegion.didDrawBounded(this, rect, paint);
 }
 
 void PlatformContextSkia::adjustTextRenderMode(SkPaint* paint)

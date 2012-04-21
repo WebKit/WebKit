@@ -40,7 +40,6 @@
 #include "SkRect.h"
 
 namespace WebCore {
-class AffineTransform;
 class PlatformContextSkia;
 
 // This class is an encapsulation of functionality for PlatformContextSkia, and its methods are mirrored
@@ -58,10 +57,10 @@ public:
 
     void setImageMask(const SkRect& imageOpaqueRect);
 
-    void didDrawRect(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap);
-    void didDrawPath(const PlatformContextSkia*, const AffineTransform&, const SkPath&, const SkPaint&);
-    void didDrawPoints(const PlatformContextSkia*, const AffineTransform&, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
-    void didDrawBounded(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&);
+    void didDrawRect(const PlatformContextSkia*, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap);
+    void didDrawPath(const PlatformContextSkia*, const SkPath&, const SkPaint&);
+    void didDrawPoints(const PlatformContextSkia*, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
+    void didDrawBounded(const PlatformContextSkia*, const SkRect&, const SkPaint&);
 
 private:
     enum DrawType {
@@ -69,7 +68,7 @@ private:
         FillOrStroke
     };
 
-    void didDraw(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap, bool fillsBounds, DrawType);
+    void didDraw(const PlatformContextSkia*, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap, bool fillsBounds, DrawType);
     void didDrawUnbounded(const SkPaint&);
     void markRectAsOpaque(const SkRect&);
     void markRectAsNonOpaque(const SkRect&);

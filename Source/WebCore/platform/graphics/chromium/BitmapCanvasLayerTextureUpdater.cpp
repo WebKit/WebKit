@@ -78,7 +78,7 @@ LayerTextureUpdater::SampledTexelFormat BitmapCanvasLayerTextureUpdater::sampled
             LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
 }
 
-void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale, IntRect* resultingOpaqueRect)
+void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale, IntRect& resultingOpaqueRect)
 {
     m_texSubImage.setSubImageSize(tileSize);
 
@@ -92,10 +92,7 @@ void BitmapCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect
         borderTexels ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
     PlatformCanvas::Painter canvasPainter(&m_canvas, textOption);
     canvasPainter.skiaContext()->setTrackOpaqueRegion(!layerIsOpaque);
-    paintContents(*canvasPainter.context(), *canvasPainter.skiaContext(), contentRect, contentsScale);
-
-    if (!layerIsOpaque)
-        *resultingOpaqueRect = canvasPainter.skiaContext()->opaqueRegion().asRect();
+    paintContents(*canvasPainter.context(), *canvasPainter.skiaContext(), contentRect, contentsScale, resultingOpaqueRect);
 }
 
 void BitmapCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)

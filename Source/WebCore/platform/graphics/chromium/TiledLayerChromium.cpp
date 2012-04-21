@@ -432,7 +432,7 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
     // so we grab a local reference here to hold the updater alive until the paint completes.
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
     IntRect paintedOpaqueRect;
-    textureUpdater()->prepareToUpdate(paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale(), &paintedOpaqueRect);
+    textureUpdater()->prepareToUpdate(paintRect, m_tiler->tileSize(), m_tiler->hasBorderTexels(), contentsScale(), paintedOpaqueRect);
     m_didPaint = true;
 
     for (int j = top; j <= bottom; ++j) {

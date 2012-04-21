@@ -1,3 +1,26 @@
+2012-04-20  Adrienne Walker  <enne@google.com>
+
+        [chromium] Refactor opaque content transform out of Skia context
+        https://bugs.webkit.org/show_bug.cgi?id=83608
+
+        Reviewed by James Robinson.
+
+        Add tests for opaque tracking in LayerTextureUpdater, since the
+        transform logic has moved there.
+
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeLayerTextureUpdater::prepareToUpdate):
+        * tests/CCTiledLayerTestCommon.h:
+        (FakeLayerTextureUpdater):
+        * tests/LayerTextureUpdaterTest.cpp:
+        (WebCore::PaintFillPartialOpaque::PaintFillPartialOpaque):
+        (PaintFillPartialOpaque):
+        (WebCore::PaintFillPartialOpaque::operator()):
+        (WebCore):
+        (WebCore::TEST):
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+
 2012-04-20  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove special case for recreating layers during sync

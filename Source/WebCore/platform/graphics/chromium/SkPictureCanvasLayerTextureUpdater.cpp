@@ -48,7 +48,7 @@ SkPictureCanvasLayerTextureUpdater::~SkPictureCanvasLayerTextureUpdater()
 {
 }
 
-void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& /* tileSize */, int borderTexels, float contentsScale, IntRect* resultingOpaqueRect)
+void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& /* tileSize */, int borderTexels, float contentsScale, IntRect& resultingOpaqueRect)
 {
     SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
     PlatformContextSkia platformContext(canvas);
@@ -60,11 +60,8 @@ void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentR
     // instead of using subpixel antialiasing.
     platformContext.setDrawingToImageBuffer(borderTexels ? true : false);
     GraphicsContext graphicsContext(&platformContext);
-    paintContents(graphicsContext, platformContext, contentRect, contentsScale);
+    paintContents(graphicsContext, platformContext, contentRect, contentsScale, resultingOpaqueRect);
     m_picture.endRecording();
-
-    if (!m_layerIsOpaque)
-        *resultingOpaqueRect = platformContext.opaqueRegion().asRect();
 }
 
 void SkPictureCanvasLayerTextureUpdater::drawPicture(SkCanvas* canvas)

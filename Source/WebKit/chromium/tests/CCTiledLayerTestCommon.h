@@ -61,7 +61,7 @@ public:
     virtual PassOwnPtr<WebCore::LayerTextureUpdater::Texture> createTexture(WebCore::TextureManager*);
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
 
-    virtual void prepareToUpdate(const WebCore::IntRect& contentRect, const WebCore::IntSize&, int, float, WebCore::IntRect* resultingOpaqueRect);
+    virtual void prepareToUpdate(const WebCore::IntRect& contentRect, const WebCore::IntSize&, int, float, WebCore::IntRect& resultingOpaqueRect);
     // Sets the rect to invalidate during the next call to prepareToUpdate(). After the next
     // call to prepareToUpdate() the rect is reset.
     void setRectToInvalidate(const WebCore::IntRect&, FakeTiledLayerChromium*);

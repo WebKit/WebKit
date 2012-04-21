@@ -79,6 +79,27 @@ struct PaintFillAlpha : public PaintCallback {
     }
 };
 
+struct PaintFillPartialOpaque : public PaintCallback {
+    PaintFillPartialOpaque(IntRect opaqueRect)
+        : m_opaqueRect(opaqueRect)
+    {
+    }
+
+    virtual void operator()(GraphicsContext& context, const IntRect& contentRect)
+    {
+        Color alpha(0, 0, 0, 0);
+        context.fillRect(contentRect, alpha, ColorSpaceDeviceRGB);
+
+        IntRect fillOpaque = m_opaqueRect;
+        fillOpaque.intersect(contentRect);
+
+        Color opaque(255, 255, 255, 255);
+        context.fillRect(fillOpaque, opaque, ColorSpaceDeviceRGB);
+    }
+
+    IntRect m_opaqueRect;
+};
+
 #define EXPECT_EQ_RECT(a, b) \
     EXPECT_EQ(a.x(), b.x()); \
     EXPECT_EQ(a.maxX(), b.maxX()); \
@@ -95,19 +116,19 @@ TEST(LayerTextureUpdaterTest, testOpaqueRectPresentAfterOpaquePaint)
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillOpaque));
     updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillOpaque));
     updater = BitmapSkPictureCanvasLayerTextureUpdater::create(painter.release(), false);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillOpaque));
     updater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(painter.release());
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), opaqueRect);
 }
 
@@ -121,19 +142,19 @@ TEST(LayerTextureUpdaterTest, testOpaqueRectNotPresentAfterNonOpaquePaint)
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillAlpha));
     updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillAlpha));
     updater = BitmapSkPictureCanvasLayerTextureUpdater::create(painter.release(), false);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillAlpha));
     updater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(painter.release());
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 }
 
@@ -148,21 +169,21 @@ TEST(LayerTextureUpdaterTest, testOpaqueRectNotPresentForOpaqueLayerWithOpaquePa
     painter = adoptPtr(new TestLayerPainterChromium(fillOpaque));
     updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
     updater->setOpaque(true);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillOpaque));
     updater = BitmapSkPictureCanvasLayerTextureUpdater::create(painter.release(), false);
     updater->setOpaque(true);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillOpaque));
     updater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(painter.release());
     updater->setOpaque(true);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 }
 
@@ -177,22 +198,70 @@ TEST(LayerTextureUpdaterTest, testOpaqueRectNotPresentForOpaqueLayerWithNonOpaqu
     painter = adoptPtr(new TestLayerPainterChromium(fillAlpha));
     updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
     updater->setOpaque(true);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillAlpha));
     updater = BitmapSkPictureCanvasLayerTextureUpdater::create(painter.release(), false);
     updater->setOpaque(true);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
 
     opaqueRect = IntRect();
     painter = adoptPtr(new TestLayerPainterChromium(fillAlpha));
     updater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(painter.release());
     updater->setOpaque(true);
-    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, &opaqueRect);
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
     EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), opaqueRect);
+}
+
+TEST(LayerTextureUpdaterTest, testPartialOpaqueRectNoTransform)
+{
+    IntRect partialRect(100, 200, 50, 75);
+    PaintFillPartialOpaque fillPartial(partialRect);
+    OwnPtr<TestLayerPainterChromium> painter = adoptPtr(new TestLayerPainterChromium(fillPartial));
+    RefPtr<LayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
+
+    IntRect opaqueRect;
+    updater->prepareToUpdate(IntRect(0, 0, 400, 400), IntSize(400, 400), 0, 1, opaqueRect);
+    EXPECT_EQ_RECT(partialRect, opaqueRect);
+}
+
+TEST(LayerTextureUpdaterTest, testPartialOpaqueRectTranslation)
+{
+    IntRect partialRect(100, 200, 50, 75);
+    PaintFillPartialOpaque fillPartial(partialRect);
+
+    OwnPtr<TestLayerPainterChromium> painter = adoptPtr(new TestLayerPainterChromium(fillPartial));
+    RefPtr<LayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
+
+    IntRect opaqueRect;
+    IntRect contentRect(11, 12, 389, 388);
+    updater->prepareToUpdate(contentRect, IntSize(400, 400), 0, 1, opaqueRect);
+    EXPECT_EQ_RECT(partialRect, opaqueRect);
+}
+
+TEST(LayerTextureUpdaterTest, testPartialOpaqueRectScale)
+{
+    float contentsScale = 0.5;
+
+    IntRect partialRect(9, 20, 50, 75);
+    IntRect partialDeviceRect(partialRect);
+    PaintFillPartialOpaque fillPartial(partialDeviceRect);
+    OwnPtr<TestLayerPainterChromium> painter = adoptPtr(new TestLayerPainterChromium(fillPartial));
+    RefPtr<LayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
+
+    IntRect opaqueRect;
+    IntRect contentRect(4, 6, 396, 394);
+    updater->prepareToUpdate(contentRect, IntSize(400, 400), 0, contentsScale, opaqueRect);
+
+    // Original rect: 9, 20, 50, 75
+    // Scaled down to half size: 4.5, 10, 25, 37.5
+    // Enclosed int rect: 5, 10, 24, 37
+    // Scaled back up to content: 10, 20, 48, 74
+    IntRect scaledRect(10, 20, 48, 74);
+    EXPECT_EQ_RECT(scaledRect, opaqueRect);
 }
 
 } // namespace
