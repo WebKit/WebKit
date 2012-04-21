@@ -10,8 +10,8 @@ layer at (0,0) size 800x600 layerType: foreground only
         RenderInline {SPAN} at (0,0) size 100x20
           RenderText {#text} at (3,3) size 100x20
             text run at (3,3) width 100: "lorem"
-        RenderText {#text} at (102,3) size 220x80
-          text run at (102,3) width 121: " ipsum"
+        RenderText {#text} at (103,3) size 220x80
+          text run at (103,3) width 120: " ipsum"
           text run at (3,23) width 180: "dolor sit"
           text run at (3,43) width 100: "amet,"
           text run at (3,63) width 220: "consectetur"
