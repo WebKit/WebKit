@@ -125,6 +125,15 @@ namespace JSC  {
         }
 #endif
 
+        Register* frameExtent()
+        {
+            if (!codeBlock())
+                return registers();
+            return frameExtentInternal();
+        }
+    
+        Register* frameExtentInternal();
+    
 #if ENABLE(DFG_JIT)
         InlineCallFrame* inlineCallFrame() const { return this[RegisterFile::ReturnPC].asInlineCallFrame(); }
         unsigned codeOriginIndexForDFG() const { return this[RegisterFile::ArgumentCount].tag(); }

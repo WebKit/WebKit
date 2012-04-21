@@ -1,3 +1,23 @@
+2012-04-20  Oliver Hunt  <oliver@apple.com>
+
+        Add an ability to find the extent of a callframe
+        https://bugs.webkit.org/show_bug.cgi?id=84513
+
+        Reviewed by Filip Pizlo.
+
+        Add a function to get the extent of a callframe and
+        use that function for a new assertion to make sure the
+        RegisterFile makes sense using that information.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::frameExtentInternal):
+        (JSC):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::frameExtent):
+        (ExecState):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeCall):
+
 2012-04-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Inline the JSArray constructor

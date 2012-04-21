@@ -183,4 +183,11 @@ CallFrame* CallFrame::trueCallerFrame()
 }
 #endif
 
+Register* CallFrame::frameExtentInternal()
+{
+    CodeBlock* codeBlock = this->codeBlock();
+    ASSERT(codeBlock);
+    return registers() + codeBlock->m_numCalleeRegisters;
+}
+
 }
