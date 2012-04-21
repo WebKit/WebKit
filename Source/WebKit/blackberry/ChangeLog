@@ -1,3 +1,26 @@
+2012-04-21  Benjamin C Meyer  <bmeyer@rim.com>
+
+        Don't hard code the plugins that blackberry supports.
+        https://bugs.webkit.org/show_bug.cgi?id=84535
+
+        Use the existing PluginDatabase to query for the plugins we can handle.
+
+        The original implemention of FrameLoaderClientBlackBerry::createPlugin
+        was a partial copy from another port.  In the Qt port there is some
+        workarounds for flash which is why this exists there.  Sadly the bits
+        that were copied made it so only flash worked, but as flash was the only
+        plugin on the system this issue was not noticed until QNX tried to get
+        jnext working.  Tracing it down to this bit of code rather then
+        correcting it they hardcoded the jnext into the same block as flash was.
+
+        The blackberry port isn't specifically suppose to only allow jnext and
+        flash, but was an accident due to the way this code was developed.
+
+        Reviewed by Adam Treat.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::createPlugin):
+
 2012-04-20  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=84512

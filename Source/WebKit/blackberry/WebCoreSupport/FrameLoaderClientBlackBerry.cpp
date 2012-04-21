@@ -51,6 +51,7 @@
 #include "NetworkManager.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PluginDatabase.h"
 #include "PluginView.h"
 #include "ProgressTracker.h"
 #include "ProtectionSpace.h"
@@ -327,7 +328,7 @@ PassRefPtr<Widget> FrameLoaderClientBlackBerry::createPlugin(const IntSize& plug
             mimeType = mimeTypeIn;
     }
 
-    if (mimeType == "application/x-shockwave-flash" || mimeType == "application/jnext-scriptable-plugin")
+    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         return PluginView::create(m_frame, pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 
     // If it's not the plugin type we support, try load directly from browser.
