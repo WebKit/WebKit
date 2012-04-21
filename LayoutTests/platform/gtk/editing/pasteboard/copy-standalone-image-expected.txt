@@ -11,12 +11,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 362x17
-          text run at (0,0) width 362: "This is an automatic test of copying an image document."
+        RenderText {#text} at (0,0) size 354x19
+          text run at (0,0) width 354: "This is an automatic test of copying an image document."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 775x35
-          text run at (0,0) width 775: "To perform this test manually, click once in the image frame, choose Edit -> Copy then click in the red box and paste the"
-          text run at (0,18) width 365: "image. If the image pastes successfully the test is passed."
+        RenderText {#text} at (0,0) size 759x37
+          text run at (0,0) width 759: "To perform this test manually, click once in the image frame, choose Edit -> Copy then click in the red box and paste the"
+          text run at (0,18) width 355: "image. If the image pastes successfully the test is passed."
       RenderBlock (anonymous) at (0,86) size 784x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px solid #0000FF)]
           layer at (0,0) size 300x150
