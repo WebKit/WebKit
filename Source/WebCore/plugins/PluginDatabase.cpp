@@ -428,7 +428,9 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 {
     String preferredPath = homeDirectoryPath();
 
-#if defined(XP_UNIX)
+#if PLATFORM(BLACKBERRY)
+    preferredPath = BlackBerry::Platform::Client::get()->getApplicationPluginDirectory().c_str();
+#elif defined(XP_UNIX)
     preferredPath.append(String("/.mozilla/plugins"));
 #elif defined(XP_MACOSX)
     preferredPath.append(String("/Library/Internet Plug-Ins"));
