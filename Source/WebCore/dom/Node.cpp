@@ -128,8 +128,6 @@ using namespace std;
 
 namespace WebCore {
 
-COMPILE_ASSERT(Node::TypeTagSize <= 8, Node_tag_should_fit_in_bits);
-
 using namespace HTMLNames;
 
 bool Node::isSupported(const String& feature, const String& version)
