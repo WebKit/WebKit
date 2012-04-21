@@ -5,6 +5,48 @@
 
         Reviewed by Oliver Hunt.
 
+        Profiles showed that checks against -1 were costly, and I saw they could be eliminated.
+        Streamlined this code to use standard character types and 0 rather than -1. One benefit
+        of this is that there's no widening and narrowing. Another is that there are many cases
+        where we already have the correct behavior for 0, so can eliminate a branch that was
+        used to test for -1 before. Also eliminates typecasts in the code.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::invalidCharacterMessage): Updated use of String::format since m_current is now a
+        character type, not an int.
+        (JSC::Lexer::setCode): Use 0 rather than -1 when past the end.
+        (JSC::Lexer::shift): Ditto. Also spruced up the comment a bit.
+        (JSC::Lexer::atEnd): Added. New function that distinguishes an actual 0 character from the end
+        of the code. This can be used places we used to cheeck for -1.
+        (JSC::Lexer::peek): Updated to use -1 instead of 0. Removed meaningless comment.
+        (JSC::Lexer::parseFourDigitUnicodeHex): Changed to use character types instead of int.
+        (JSC::Lexer::shiftLineTerminator): Removed now-unneeded type casts. Changed local variable that
+        had a data-member-style name.
+        (JSC::Lexer::parseIdentifier): Removed now-unneeded explicit checks for -1, since the isIdentPart
+        function already returns false for the 0 character. Updated types in a couple other places. Used
+        the atEnd function where needed.
+        (JSC::Lexer::parseIdentifierSlowCase): More of the same.
+        (JSC::characterRequiresParseStringSlowCase): Added overloaded helper function for parseString.
+        (JSC::Lexer::parseString): Ditto.
+        (JSC::Lexer::parseStringSlowCase): Ditto.
+        (JSC::Lexer::parseMultilineComment): Ditto.
+        (JSC::Lexer::lex): More of the same. Also changed code to set the startOffset directly in
+        the tokenInfo instead of putting it in a local variable first, saving some memory access.
+        (JSC::Lexer::scanRegExp): Ditto.
+        (JSC::Lexer::skipRegExp): Ditto.
+
+        * parser/Lexer.h: Changed return type of the peek function and type of m_current from int to
+        the character type. Added atEnd function.
+        (JSC::Lexer::setOffset): Used 0 instead of -1 and removed an overzealous attempt to optimize. 
+        (JSC::Lexer::lexExpectIdentifier): Used 0 instead of -1.
+
+2012-04-21  Darin Adler  <darin@apple.com>
+
+        Change JavaScript lexer to use 0 instead of -1 for sentinel, eliminating the need to put characters into ints
+        https://bugs.webkit.org/show_bug.cgi?id=84523
+
+        Reviewed by Oliver Hunt.
+
         Separate preparation step of copyright dates, renaming, and other small tweaks.
 
         * parser/Lexer.cpp:

@@ -108,10 +108,10 @@ public:
         m_code = m_codeStart + offset;
         m_buffer8.resize(0);
         m_buffer16.resize(0);
-        // Faster than an if-else sequence
-        m_current = -1;
         if (LIKELY(m_code < m_codeEnd))
             m_current = *m_code;
+        else
+            m_current = 0;
     }
     void setLineNumber(int line)
     {
@@ -131,7 +131,8 @@ private:
     void append16(const UChar* characters, size_t length) { m_buffer16.append(characters, length); }
 
     ALWAYS_INLINE void shift();
-    ALWAYS_INLINE int peek(int offset);
+    ALWAYS_INLINE bool atEnd() const;
+    ALWAYS_INLINE T peek(int offset) const;
     int parseFourDigitUnicodeHex();
     void shiftLineTerminator();
 
@@ -180,8 +181,7 @@ private:
     bool m_error;
     UString m_lexErrorMessage;
 
-    // current and following unicode characters (int to allow for -1 for end-of-file marker)
-    int m_current;
+    T m_current;
 
     IdentifierArena* m_arena;
 
@@ -282,7 +282,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
             goto slowCase;
         m_current = *ptr;
     } else
-        m_current = -1;
+        m_current = 0;
 
     m_code = ptr;
 
