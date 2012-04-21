@@ -33,6 +33,6 @@ PASSED c20
 PASSED c21
 PASSED c22
 PASSED c30
-FAILED c31 expected=b got=d 277@581
-FAILED c32 expected=b got=d 533@581
+PASSED c31
+PASSED c32
 
