@@ -1,8 +1,8 @@
-layer at (0,0) size 1431655767x584
-  RenderView at (0,0) size 800x584
-layer at (0,0) size 800x584
-  RenderBlock {HTML} at (0,0) size 800x584
-    RenderBody {BODY} at (8,8) size 784x568
+layer at (0,0) size 1431655767x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (8,8) size 784x569
       RenderBlock {DIV} at (0,0) size 15x200
         RenderBlock (anonymous) at (0,200) size 15x0
           RenderInline {A} at (0,0) size 0x0
@@ -18,16 +18,16 @@ layer at (8,8) size 15x200
 layer at (8,8) size 15x200
   RenderBlock {DIV} at (0,0) size 15x200
     RenderImage {IMG} at (0,0) size 15x200 [bgcolor=#C0C0C0]
-layer at (8,208) size 17x96
-  RenderBlock (positioned) {DIV} at (0,200) size 17x96
-    RenderBlock (anonymous) at (0,0) size 17x0
+layer at (8,208) size 16x96
+  RenderBlock (positioned) {DIV} at (0,200) size 16x96
+    RenderBlock (anonymous) at (0,0) size 16x0
       RenderInline {A} at (0,0) size 0x0
-    RenderBlock (anonymous) at (0,16) size 17x64
-      RenderBlock {P} at (0,0) size 17x64
-        RenderText {#text} at (0,0) size 17x64
-          text run at (0,0) width 17: "A"
-          text run at (0,16) width 17: "B"
-          text run at (0,32) width 17: "C"
-          text run at (0,48) width 17: "D"
-    RenderBlock (anonymous) at (0,96) size 17x0
+    RenderBlock (anonymous) at (0,16) size 16x64
+      RenderBlock {P} at (0,0) size 16x64
+        RenderText {#text} at (0,0) size 16x65
+          text run at (0,0) width 16: "A"
+          text run at (0,16) width 16: "B"
+          text run at (0,32) width 16: "C"
+          text run at (0,48) width 16: "D"
+    RenderBlock (anonymous) at (0,96) size 16x0
       RenderInline {A} at (0,0) size 0x0

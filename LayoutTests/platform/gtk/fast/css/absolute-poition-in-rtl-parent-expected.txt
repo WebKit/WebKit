@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 783x53
-          text run at (0,0) width 512: "On the left, you should see three blocks that are aligned left within a black box. "
-          text run at (511,0) width 85: "They should "
-          text run at (595,0) width 188: "be stacked vertically with the"
-          text run at (0,18) width 251: "green box in between two olive boxes. "
-          text run at (250,18) width 197: "The olive boxes and the green "
-          text run at (446,18) width 312: "box should be 100x100, and there should be 100"
-          text run at (0,36) width 329: "pixels of padding on the right side of the box stack."
+        RenderText {#text} at (0,0) size 768x55
+          text run at (0,0) width 502: "On the left, you should see three blocks that are aligned left within a black box. "
+          text run at (502,0) width 83: "They should "
+          text run at (585,0) width 183: "be stacked vertically with the"
+          text run at (0,18) width 248: "green box in between two olive boxes. "
+          text run at (248,18) width 194: "The olive boxes and the green "
+          text run at (442,18) width 308: "box should be 100x100, and there should be 100"
+          text run at (0,36) width 322: "pixels of padding on the right side of the box stack."
       RenderBlock {P} at (0,70) size 784x54
-        RenderText {#text} at (0,0) size 766x53
-          text run at (0,0) width 495: "On the right, you should see two blocks that are centered within a black box. "
-          text run at (494,0) width 104: "They should be "
-          text run at (597,0) width 169: "stacked vertically with the"
-          text run at (0,18) width 460: "green box below the olive box. The olive box and the green box should "
-          text run at (459,18) width 297: "be 100x100, and there should be 100 pixels of"
-          text run at (0,36) width 252: "padding on either side of the box stack."
+        RenderText {#text} at (0,0) size 753x55
+          text run at (0,0) width 487: "On the right, you should see two blocks that are centered within a black box. "
+          text run at (487,0) width 102: "They should be "
+          text run at (589,0) width 164: "stacked vertically with the"
+          text run at (0,18) width 455: "green box below the olive box. The olive box and the green box should "
+          text run at (455,18) width 292: "be 100x100, and there should be 100 pixels of"
+          text run at (0,36) width 247: "padding on either side of the box stack."
 layer at (8,148) size 240x340
   RenderBlock (positioned) {DIV} at (8,148) size 240x340 [border: (20px solid #000000)]
     RenderTable {TABLE} at (20,20) size 100x100

@@ -1,10 +1,10 @@
-layer at (0,0) size 784x2026
-  RenderView at (0,0) size 784x600
-layer at (0,0) size 784x600
-  RenderBlock {HTML} at (0,0) size 784x600
-    RenderBody {BODY} at (8,8) size 768x584
-      RenderText {#text} at (0,0) size 369x17
-        text run at (0,0) width 369: "The purple box should stick to the bottom of the window."
+layer at (0,0) size 785x2026
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderText {#text} at (0,0) size 363x19
+        text run at (0,0) width 363: "The purple box should stick to the bottom of the window."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
