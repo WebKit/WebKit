@@ -1,3 +1,18 @@
+2012-04-20  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] WebFilterOperations API does not compile or dynamically link
+        https://bugs.webkit.org/show_bug.cgi?id=84506
+
+        Reviewed by James Robinson.
+
+        Non-inline functions need WEBKIT_EXPORT in their declarations,
+        and the type used in the WebPrivateOwnPtr needs to be forward-
+        declared even when WEBKIT_IMPLEMENTATION is not defined.
+
+        * chromium/public/WebFilterOperations.h:
+        (WebKit::WebFilterOperations::WebFilterOperations):
+        (WebFilterOperations):
+
 2012-04-20  James Robinson  <jamesr@chromium.org>
 
         [chromium] Plumb a compositor surface ready notification through to the threaded compositor

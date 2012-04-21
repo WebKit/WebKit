@@ -35,7 +35,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebFilterOperations::WebFilterOperations()
+void WebFilterOperations::initialize()
 {
     m_private.reset(new FilterOperations());
 }

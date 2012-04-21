@@ -29,11 +29,9 @@
 #include "WebCommon.h"
 #include "WebPrivateOwnPtr.h"
 
-#if WEBKIT_IMPLEMENTATION
 namespace WebCore {
 class FilterOperations;
 }
-#endif
 
 namespace WebKit {
 struct WebFilterOperation;
@@ -41,18 +39,20 @@ struct WebFilterOperation;
 // An ordered set of filter operations.
 class WebFilterOperations {
 public:
-    WebFilterOperations();
+    WebFilterOperations() { initialize(); }
 
-    void append(const WebFilterOperation&);
+    WEBKIT_EXPORT void append(const WebFilterOperation&);
 
     // Removes all filter operations.
-    void clear();
+    WEBKIT_EXPORT void clear();
 
 #if WEBKIT_IMPLEMENTATION
     const WebCore::FilterOperations& toFilterOperations() const;
 #endif
 
 private:
+    WEBKIT_EXPORT void initialize();
+
     WebPrivateOwnPtr<WebCore::FilterOperations> m_private;
 };
 
