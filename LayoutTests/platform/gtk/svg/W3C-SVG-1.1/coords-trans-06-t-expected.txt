@@ -13,11 +13,11 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (0,42) size 480x171 [transform={m=((2.50,0.00)(0.00,2.50)) t=(-600.00,-450.00)}]
           RenderSVGText {text} at (240,185) size 208x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 208x18
-              chunk 1 text run 1 at (240.00,200.00) startOffset 0 endOffset 34 width 207.03: "scale(25, 95) then translate(2, 2)"
+              chunk 1 text run 1 at (240.00,200.00) startOffset 0 endOffset 34 width 207.20: "scale(25, 95) then translate(2, 2)"
           RenderSVGRect {rect} at (20,100) size 13x13 [fill={[type=SOLID] [color=#000000]}] [x=248.00] [y=208.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (170,100) size 13x13 [fill={[type=SOLID] [color=#0000FF]}] [x=308.00] [y=208.00] [width=5.00] [height=5.00]
           RenderSVGRect {rect} at (20,200) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [x=248.00] [y=248.00] [width=5.00] [height=5.00]
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

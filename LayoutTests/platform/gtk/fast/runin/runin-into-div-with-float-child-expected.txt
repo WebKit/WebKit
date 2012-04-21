@@ -7,11 +7,11 @@ layer at (0,0) size 800x56
         RenderInline (run-in) {DIV} at (0,0) size 160x40 [color=#FFA500]
           RenderText {#text} at (40,0) size 160x40
             text run at (40,0) width 160: "ABCD"
-        RenderInline (generated) at (0,0) size 161x40 [color=#0000FF]
-          RenderText at (199,0) size 161x40
-            text run at (199,0) width 161: "EFGH"
+        RenderInline (generated) at (0,0) size 160x40 [color=#0000FF]
+          RenderText at (200,0) size 160x40
+            text run at (200,0) width 160: "EFGH"
         RenderBlock (floating) {DIV} at (0,0) size 40x40
           RenderText {#text} at (0,0) size 40x40
             text run at (0,0) width 40: "A"
-        RenderText {#text} at (359,0) size 161x40
-          text run at (359,0) width 161: "IJKL"
+        RenderText {#text} at (360,0) size 160x40
+          text run at (360,0) width 160: "IJKL"

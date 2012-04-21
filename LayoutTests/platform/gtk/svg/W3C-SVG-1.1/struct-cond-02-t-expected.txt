@@ -2,22 +2,16 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (20,87) size 416x177
-      RenderSVGContainer {g} at (20,87) size 416x177
-        RenderSVGContainer {switch} at (20,87) size 416x177
-          RenderSVGContainer {g} at (20,87) size 416x177
-            RenderSVGText {text} at (90,87) size 311x16 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 311x16
-                chunk 1 text run 1 at (90.00,100.00) startOffset 0 endOffset 46 width 311.00: "You have no (matching) language preference set"
-            RenderSVGText {text} at (20,162) size 246x23 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 246x23
-                chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 20 width 246.00: "\x{306A}\x{305C}\x{3001}\x{307F}\x{3093}\x{306A}\x{65E5}\x{672C}\x{8A9E}\x{3092}\x{8A71}\x{3057}\x{3066}\x{304F}\x{308C}\x{306A}\x{3044}\x{306E}\x{304B}\x{FF1F}"
+    RenderSVGContainer {g} at (20,128) size 375x98
+      RenderSVGContainer {g} at (20,128) size 375x98
+        RenderSVGContainer {switch} at (20,128) size 375x98
+          RenderSVGContainer {g} at (20,128) size 375x98
             RenderSVGText {text} at (20,198) size 375x28 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 375x28
                 chunk 1 text run 1 at (20.00,220.00) startOffset 0 endOffset 35 width 375.00: "Why can't they just speak English ?"
-            RenderSVGText {text} at (20,245) size 416x19 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 416x19
-                chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 59 width 416.00: "Pourquoi, tout simplement, ne parlent-ils pas en Fran\x{E7}ais ?"
+            RenderSVGText {text} at (230,128) size 133x28 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 133x28
+                chunk 1 text run 1 at (230.00,150.00) startOffset 0 endOffset 12 width 133.00: "English (US)"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"

@@ -3,10 +3,10 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (5,3) size 367x287
-      RenderSVGText {text} at (5,3) size 367x45 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 367x45
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 24 width 366.78: "Test left-to-right text."
+    RenderSVGContainer {g} at (5,3) size 363x287
+      RenderSVGText {text} at (5,3) size 363x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 363x46
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 24 width 363.00: "Test left-to-right text."
       RenderSVGContainer {g} at (10,56) size 244x164
         RenderSVGText {text} at (10,56) size 232x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 232x23
@@ -37,5 +37,5 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (10.00,285.00) startOffset 0 endOffset 21 width 270.17: "Japanese: \x{79C1}\x{306F}\x{30AC}\x{30E9}\x{30B9}\x{3092}\x{98DF}\x{3079}\x{307E}\x{3059}\x{3002}"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

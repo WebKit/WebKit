@@ -1,5 +1,5 @@
 layer at (0,0) size 800x800
-  RenderView at (0,0) size 784x584
+  RenderView at (0,0) size 785x585
 layer at (0,0) size 800x800
   RenderSVGRoot {svg} at (0,0) size 370x370
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0

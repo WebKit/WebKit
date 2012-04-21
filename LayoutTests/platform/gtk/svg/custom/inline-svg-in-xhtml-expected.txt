@@ -15,19 +15,19 @@ layer at (48,38) size 722x542 layerType: foreground only
     RenderBlock {form} at (1,1) size 720x142
       RenderFieldSet {fieldset} at (2,0) size 716x142 [border: (2px groove #C0C0C0)]
         RenderBlock {legend} at (14,0) size 88x18
-          RenderText {#text} at (2,0) size 84x17
+          RenderText {#text} at (2,0) size 84x19
             text run at (2,0) width 84: "HTML Form"
         RenderBlock {p} at (14,39) size 688x28
-          RenderInline {label} at (0,0) size 110x17
-            RenderText {#text} at (0,5) size 110x17
-              text run at (0,5) width 110: "Enter something:"
-          RenderText {#text} at (109,5) size 5x17
-            text run at (109,5) width 5: " "
-          RenderTextControl {input} at (116,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderBlock {div} at (3,3) size 187x18
+          RenderInline {label} at (0,0) size 107x19
+            RenderText {#text} at (0,5) size 107x19
+              text run at (0,5) width 107: "Enter something:"
+          RenderText {#text} at (107,5) size 4x19
+            text run at (107,5) width 4: " "
+          RenderTextControl {input} at (113,2) size 194x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+            RenderBlock {div} at (3,3) size 188x18
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {p} at (14,83) size 688x31
-          RenderButton {button} at (2,2) size 78x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-            RenderBlock (anonymous) at (8,4) size 62x18
-              RenderText {#text} at (0,0) size 62x17
-                text run at (0,0) width 62: "Activate!"
+          RenderButton {button} at (2,2) size 77x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,4) size 61x18
+              RenderText {#text} at (0,0) size 61x19
+                text run at (0,0) width 61: "Activate!"

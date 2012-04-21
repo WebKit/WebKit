@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (50,52) size 574x83 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 564x45
           RenderSVGInlineText {#text} at (0,0) size 564x45
-            chunk 1 text run 1 at (50.00,88.00) startOffset 0 endOffset 36 width 563.26: "Two lines of text should be visible."
-        RenderSVGInlineText {#text} at (563,0) size 10x45
-          chunk 1 text run 1 at (613.26,88.00) startOffset 0 endOffset 1 width 10.00: " "
+            chunk 1 text run 1 at (50.00,88.00) startOffset 0 endOffset 36 width 564.00: "Two lines of text should be visible."
+        RenderSVGInlineText {#text} at (564,0) size 10x45
+          chunk 1 text run 1 at (614.00,88.00) startOffset 0 endOffset 1 width 10.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 564x45
           RenderSVGInlineText {#text} at (0,38) size 564x45
-            chunk 1 text run 1 at (50.00,126.00) startOffset 0 endOffset 36 width 563.26: "Two lines of text should be visible."
+            chunk 1 text run 1 at (50.00,126.00) startOffset 0 endOffset 36 width 564.00: "Two lines of text should be visible."

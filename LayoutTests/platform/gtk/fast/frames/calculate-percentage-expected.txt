@@ -86,11 +86,11 @@ layer at (0,0) size 800x600
                 RenderBody {BODY} at (8,8) size 40x231
         RenderFrameSet {FRAMESET} at (496,0) size 56x500
           RenderFrame {FRAME} at (0,0) size 56x0
-            layer at (0,0) size 40x8
-              RenderView at (0,0) size 40x0
-            layer at (0,0) size 40x8
-              RenderBlock {HTML} at (0,0) size 40x8
-                RenderBody {BODY} at (8,8) size 24x0
+            layer at (0,0) size 41x8
+              RenderView at (0,0) size 41x0
+            layer at (0,0) size 41x8
+              RenderBlock {HTML} at (0,0) size 41x8
+                RenderBody {BODY} at (8,8) size 25x0
           RenderFrame {FRAME} at (0,6) size 56x494
             layer at (0,0) size 56x494
               RenderView at (0,0) size 56x494
@@ -131,11 +131,11 @@ layer at (0,0) size 800x600
               RenderBlock {HTML} at (0,0) size 56x494
                 RenderBody {BODY} at (8,8) size 40x478
           RenderFrame {FRAME} at (0,500) size 56x0
-            layer at (0,0) size 40x8
-              RenderView at (0,0) size 40x0
-            layer at (0,0) size 40x8
-              RenderBlock {HTML} at (0,0) size 40x8
-                RenderBody {BODY} at (8,8) size 24x0
+            layer at (0,0) size 41x8
+              RenderView at (0,0) size 41x0
+            layer at (0,0) size 41x8
+              RenderBlock {HTML} at (0,0) size 41x8
+                RenderBody {BODY} at (8,8) size 25x0
         RenderFrameSet {FRAMESET} at (744,0) size 56x500
           RenderFrame {FRAME} at (0,0) size 56x494
             layer at (0,0) size 56x494
@@ -144,11 +144,11 @@ layer at (0,0) size 800x600
               RenderBlock {HTML} at (0,0) size 56x494
                 RenderBody {BODY} at (8,8) size 40x478
           RenderFrame {FRAME} at (0,500) size 56x0
-            layer at (0,0) size 40x8
-              RenderView at (0,0) size 40x0
-            layer at (0,0) size 40x8
-              RenderBlock {HTML} at (0,0) size 40x8
-                RenderBody {BODY} at (8,8) size 24x0
+            layer at (0,0) size 41x8
+              RenderView at (0,0) size 41x0
+            layer at (0,0) size 41x8
+              RenderBlock {HTML} at (0,0) size 41x8
+                RenderBody {BODY} at (8,8) size 25x0
       RenderFrame {FRAME} at (0,506) size 800x94
         layer at (0,0) size 800x94
           RenderView at (0,0) size 800x94

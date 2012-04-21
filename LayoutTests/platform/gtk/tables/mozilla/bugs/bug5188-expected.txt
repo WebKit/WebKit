@@ -20,19 +20,19 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (0,0) size 0x0
                   RenderTableRow {TR} at (0,9) size 297x78
                     RenderTableCell {TD} at (0,9) size 149x42 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 132x35
-                        text run at (3,3) width 132: "New WidgetMasters"
-                        text run at (3,21) width 83: "every Week!"
+                      RenderText {#text} at (3,3) size 130x37
+                        text run at (3,3) width 130: "New WidgetMasters"
+                        text run at (3,21) width 81: "every Week!"
                     RenderTableCell {TD} at (149,9) size 148x78 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 140x71
-                        text run at (3,3) width 118: "WidgetMaster can"
-                        text run at (3,21) width 140: "build your company a"
-                        text run at (3,39) width 47: "custom"
-                        text run at (3,57) width 97: "WidgetMaster!"
+                      RenderText {#text} at (3,3) size 138x73
+                        text run at (3,3) width 115: "WidgetMaster can"
+                        text run at (3,21) width 138: "build your company a"
+                        text run at (3,39) width 45: "custom"
+                        text run at (3,57) width 94: "WidgetMaster!"
             RenderTableCell {TD} at (453,64) size 169x22 [r=1 c=2 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 28x22 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 26x20
-                  RenderTableRow {TR} at (0,0) size 26x20
-                    RenderTableCell {TD} at (0,0) size 26x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 24x17
-                        text run at (1,1) width 24: "cell"
+              RenderTable {TABLE} at (0,0) size 26x22 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 24x20
+                  RenderTableRow {TR} at (0,0) size 24x20
+                    RenderTableCell {TD} at (0,0) size 24x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 22x19
+                        text run at (1,1) width 22: "cell"

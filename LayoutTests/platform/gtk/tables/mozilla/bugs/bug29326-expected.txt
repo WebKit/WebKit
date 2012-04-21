@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 398x52
             RenderTableCell {TD} at (2,2) size 394x52 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (2,2) size 390x32
-                RenderMenuList {SELECT} at (2,2) size 59x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock (anonymous) at (1,1) size 57x26
-                    RenderText at (4,4) size 32x17
-                      text run at (4,4) width 32: "Test"
+                RenderMenuList {SELECT} at (2,2) size 58x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                  RenderBlock (anonymous) at (1,1) size 56x26
+                    RenderText at (4,4) size 31x19
+                      text run at (4,4) width 31: "Test"
                 RenderText {#text} at (0,0) size 0x0

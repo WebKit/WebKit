@@ -43,11 +43,11 @@ layer at (36,2638) size 764x226
             RenderListItem {LI} at (0,0) size 12x12 [bgcolor=#000000]
 layer at (48,2842) size 740x10 scrollHeight 276
   RenderBlock {DIV} at (12,204) size 740x10
-    RenderTable {TABLE} at (0,0) size 20x276
-      RenderTableSection {TBODY} at (0,0) size 20x276
-        RenderTableRow {TR} at (0,0) size 20x276
-          RenderTableCell {TD} at (0,0) size 20x276 [r=0 c=0 rs=1 cs=1]
-            RenderImage {IMG} at (0,199) size 20x20
+    RenderTable {TABLE} at (0,0) size 64x276
+      RenderTableSection {TBODY} at (0,0) size 64x276
+        RenderTableRow {TR} at (0,0) size 64x276
+          RenderTableCell {TD} at (0,0) size 64x276 [r=0 c=0 rs=1 cs=1]
+            RenderImage {IMG} at (0,155) size 64x64
 layer at (132,108) size 48x18
   RenderBlock (positioned) {P} at (132,108) size 48x18 [bgcolor=#000000] [border: none (6px solid #FFFF00) none]
 layer at (132,144) size 48x15
@@ -58,11 +58,9 @@ layer at (108,2686) size 96x12
 layer at (84,2710) size 144x24
   RenderBlock (positioned) {DIV} at (48,72) size 144x24 [bgcolor=#FF0000]
     RenderBlock {DIV} at (0,0) size 144x0
-      RenderInline {OBJECT} at (0,0) size 79x14
-        RenderInline {OBJECT} at (0,0) size 79x14
-          RenderInline {OBJECT} at (0,0) size 79x14 [border: (12px solid #000000) none]
-            RenderText {#text} at (76,5) size 44x14
-              text run at (76,5) width 44: "ERROR"
+      RenderInline {OBJECT} at (0,0) size 131x14
+        RenderInline {OBJECT} at (0,0) size 131x14
+          RenderImage {OBJECT} at (13,0) size 131x24 [border: (12px solid #000000) none]
     RenderBlock (floating) {DIV} at (0,0) size 144x24 [border: (12px solid #FF0000) none (12px solid #000000)]
     RenderBlock {DIV} at (0,0) size 144x24 [border: (24px solid #FFFF00)]
 layer at (84,2782) size 144x24

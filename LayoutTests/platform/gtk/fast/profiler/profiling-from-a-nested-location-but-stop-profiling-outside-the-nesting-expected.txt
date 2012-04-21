@@ -1,4 +1,4 @@
-This page's JavaScript starts profiling from within a nested location but stops the profiler from a different level of nesting.
+This page's JavaScript starts profiling from within a nested location but stops the profiler from a different level of nesting. 
 
 To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be a call to functionWichStartsAndStopsTheProfiler().
 

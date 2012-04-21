@@ -11,12 +11,12 @@ layer at (0,0) size 800x600
                 RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
                   RenderImage {IMG} at (0,0) size 20x20
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {A} at (0,0) size 189x35 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 189x35 [color=#000000]
-                    RenderText {#text} at (62,0) size 189x17
-                      text run at (62,0) width 113: "Free Homepage! "
-                      text run at (174,0) width 77: "Free Email!"
-                    RenderBR {BR} at (250,14) size 1x0
-                    RenderText {#text} at (69,18) size 175x17
-                      text run at (69,18) width 44: "It's all "
-                      text run at (112,18) width 132: "yours at ACMEcity!"
+                RenderInline {A} at (0,0) size 185x37 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 185x37 [color=#000000]
+                    RenderText {#text} at (64,0) size 185x19
+                      text run at (64,0) width 111: "Free Homepage! "
+                      text run at (174,0) width 75: "Free Email!"
+                    RenderBR {BR} at (248,15) size 1x0
+                    RenderText {#text} at (71,18) size 171x19
+                      text run at (71,18) width 42: "It's all "
+                      text run at (112,18) width 130: "yours at ACMEcity!"

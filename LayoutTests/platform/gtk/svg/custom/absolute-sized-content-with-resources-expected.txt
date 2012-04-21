@@ -4,8 +4,8 @@ layer at (0,0) size 800x460
   RenderBlock {html} at (0,0) size 800x460
     RenderBody {body} at (8,16) size 784x436
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 781x17
-          text run at (0,0) width 781: "The svg area contained in the div element (red box), should contain four masked circles, that do not pixelate after resizing"
+        RenderText {#text} at (0,0) size 763x19
+          text run at (0,0) width 763: "The svg area contained in the div element (red box), should contain four masked circles, that do not pixelate after resizing"
       RenderBlock {div} at (0,34) size 402x402 [border: (1px solid #FF0000)]
         RenderSVGRoot {svg} at (42,117) size 334x268
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0

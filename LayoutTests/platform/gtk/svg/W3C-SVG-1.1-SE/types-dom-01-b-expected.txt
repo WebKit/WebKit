@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 12 at (264.78,150.00) startOffset 27 endOffset 33 width 64.48: "GLocat"
               chunk 1 text run 13 at (329.24,150.00) startOffset 33 endOffset 37 width 37.80: "able"
           RenderSVGText {text} at (100,114) size 298x20 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 298x21
+            RenderSVGInlineText {#text} at (0,0) size 298x20
               chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 6 width 68.92: "Some o"
               chunk 1 text run 2 at (168.72,130.00) startOffset 6 endOffset 7 width 5.56: "t"
               chunk 1 text run 3 at (174.22,130.00) startOffset 7 endOffset 12 width 40.02: "her t"
@@ -34,7 +34,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 9 at (367.30,130.00) startOffset 31 endOffset 32 width 11.12: "e"
               chunk 1 text run 10 at (377.88,130.00) startOffset 32 endOffset 35 width 19.38: "xt'"
           RenderSVGViewportContainer {svg} at (275,45) size 100x100
-            RenderSVGPath {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=50.00]
+            RenderSVGEllipse {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=50.00]
         RenderSVGText {text} at (10,190) size 277x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 277x12
             chunk 1 text run 1 at (10.00,200.00) startOffset 0 endOffset 3 width 16.68: ".ge"

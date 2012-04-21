@@ -10,11 +10,11 @@ After setSelectionRange(5, 10): textarea selection start: 5 end: 10
 
 Double clicking to make selection for textarea
 onselect fired for textarea
-After double clicking: textarea selection start: 8 end: 9
+After double clicking: textarea selection start: 9 end: 13
 
 Calling blur on textarea
-After blur: textarea selection start: 8 end: 9
+After blur: textarea selection start: 9 end: 13
 
 Calling focus on textarea
-After focus: textarea selection start: 8 end: 9
+After focus: textarea selection start: 9 end: 13
 

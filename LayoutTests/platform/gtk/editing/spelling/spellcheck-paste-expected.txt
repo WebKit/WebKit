@@ -6,10 +6,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS successfullyParsed is true
 
 TEST COMPLETE
-FAIL INPUT should have a marker on for 'foo bar'
-FAIL INPUT should have a marker on for 'fo<b>o ba</b>r'
-FAIL TEXTAREA should have a marker on for 'foo bar'
-FAIL TEXTAREA should have a marker on for 'fo<b>o ba</b>r'
-FAIL DIV should have a marker on for 'foo bar'
-FAIL DIV should have a marker on for 'fo<b>o ba</b>r'
+FAIL INPUT should have a marker on 'zz apple'
+FAIL INPUT should have a marker on 'z<b>z appl</b>e'
+FAIL INPUT should have a marker on 'zz zz zz'
+FAIL TEXTAREA should have a marker on 'zz apple'
+FAIL TEXTAREA should have a marker on 'z<b>z appl</b>e'
+FAIL TEXTAREA should have a marker on 'zz zz zz'
+FAIL DIV should have a marker on 'zz apple'
+FAIL DIV should have a marker on 'z<b>z appl</b>e'
+FAIL DIV should have a marker on 'zz zz zz'
 

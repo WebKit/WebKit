@@ -11,8 +11,8 @@ layer at (0,0) size 800x96
           RenderInline (generated) at (0,0) size 80x40
             RenderText at (0,0) size 80x40
               text run at (0,0) width 80: "EF"
-          RenderText {#text} at (79,0) size 81x40
-            text run at (79,0) width 81: "AB"
+          RenderText {#text} at (80,0) size 80x40
+            text run at (80,0) width 80: "AB"
         RenderBlock {DIV} at (0,40) size 784x40
           RenderText {#text} at (160,0) size 80x40
             text run at (160,0) width 80: "CD"

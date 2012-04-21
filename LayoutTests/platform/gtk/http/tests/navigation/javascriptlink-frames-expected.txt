@@ -4,119 +4,119 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderFrameSet {FRAMESET} at (0,0) size 800x600
       RenderFrame {FRAME} at (0,0) size 800x534
-        layer at (0,0) size 784x1634
-          RenderView at (0,0) size 784x534
-        layer at (0,0) size 784x1634
-          RenderBlock {HTML} at (0,0) size 784x1634
-            RenderBody {BODY} at (8,8) size 768x1594
-              RenderBlock (anonymous) at (0,0) size 768x259
-                RenderText {#text} at (0,0) size 751x184
-                  text run at (0,0) width 679: "This is test page that we navigate to as part of testing"
-                  text run at (0,37) width 335: "various navigation styles. "
-                  text run at (334,37) width 417: "It includes a form so that we can"
-                  text run at (0,74) width 719: "test saving and restoring of form data, and it needs to be"
-                  text run at (0,111) width 747: "long enough that we can test saving and restoring of scroll"
-                  text run at (0,148) width 120: "position. "
-                RenderBR {BR} at (119,177) size 1x0
+        layer at (0,0) size 785x1632
+          RenderView at (0,0) size 785x534
+        layer at (0,0) size 785x1632
+          RenderBlock {HTML} at (0,0) size 785x1632
+            RenderBody {BODY} at (8,8) size 769x1592
+              RenderBlock (anonymous) at (0,0) size 769x259
+                RenderText {#text} at (0,0) size 749x184
+                  text run at (0,0) width 676: "This is test page that we navigate to as part of testing"
+                  text run at (0,37) width 333: "various navigation styles. "
+                  text run at (333,37) width 416: "It includes a form so that we can"
+                  text run at (0,74) width 717: "test saving and restoring of form data, and it needs to be"
+                  text run at (0,111) width 745: "long enough that we can test saving and restoring of scroll"
+                  text run at (0,148) width 119: "position. "
+                RenderBR {BR} at (119,177) size 0x0
                 RenderBR {BR} at (0,185) size 0x36
                 RenderBR {BR} at (0,222) size 0x36
-              RenderBlock {HR} at (0,275) size 768x2 [border: (1px inset #000000)]
-              RenderBlock {FORM} at (0,293) size 768x508
+              RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
+              RenderBlock {FORM} at (0,293) size 769x506
                 RenderButton {INPUT} at (2,2) size 147x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 131x18
-                    RenderText at (0,0) size 131x17
+                    RenderText at (0,0) size 131x19
                       text run at (0,0) width 131: "Submit with POST"
-                RenderBR {BR} at (151,20) size 0x0
-                RenderButton {INPUT} at (2,33) size 303x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-                  RenderBlock (anonymous) at (8,4) size 287x18
-                    RenderText at (0,0) size 287x17
-                      text run at (0,0) width 287: "Submit with POST followed by a redirect"
-                RenderBR {BR} at (307,51) size 0x0
-                RenderText {#text} at (0,62) size 377x36
-                  text run at (0,62) width 377: "Here are some form elements"
-                RenderTextControl {INPUT} at (379,74) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderBR {BR} at (573,91) size 1x0
-                RenderText {#text} at (0,100) size 335x36
-                  text run at (0,100) width 335: "that we can use for testing"
-                RenderTextControl {INPUT} at (337,112) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderBlock {DIV} at (3,3) size 187x18
-                RenderBR {BR} at (532,129) size 0x0
-                RenderBlock {INPUT} at (4,153) size 16x16
-                RenderText {#text} at (24,138) size 74x36
-                  text run at (24,138) width 74: " Male"
-                RenderBR {BR} at (97,167) size 1x0
-                RenderBlock {INPUT} at (4,190) size 16x16
-                RenderText {#text} at (24,175) size 103x36
-                  text run at (24,175) width 103: " Female"
-                RenderBR {BR} at (126,204) size 1x0
-                RenderBlock {INPUT} at (4,227) size 16x16
-                RenderText {#text} at (24,212) size 130x36
-                  text run at (24,212) width 130: " option #1"
-                RenderBR {BR} at (153,241) size 1x0
-                RenderBlock {INPUT} at (4,264) size 16x16
-                RenderText {#text} at (24,249) size 130x36
-                  text run at (24,249) width 130: " option #2"
-                RenderBR {BR} at (153,278) size 1x0
-                RenderMenuList {SELECT} at (2,288) size 328x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock (anonymous) at (1,1) size 326x26
-                    RenderText at (4,4) size 83x17
-                      text run at (4,4) width 83: "Initial Value"
-                RenderBR {BR} at (332,307) size 0x0
+                RenderBR {BR} at (151,21) size 0x0
+                RenderButton {INPUT} at (2,33) size 302x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                  RenderBlock (anonymous) at (8,4) size 286x18
+                    RenderText at (0,0) size 286x19
+                      text run at (0,0) width 286: "Submit with POST followed by a redirect"
+                RenderBR {BR} at (306,52) size 0x0
+                RenderText {#text} at (0,62) size 376x36
+                  text run at (0,62) width 376: "Here are some form elements"
+                RenderTextControl {INPUT} at (378,73) size 194x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderBR {BR} at (574,91) size 0x0
+                RenderText {#text} at (0,99) size 334x36
+                  text run at (0,99) width 334: "that we can use for testing"
+                RenderTextControl {INPUT} at (336,110) size 194x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBlock {DIV} at (3,3) size 188x18
+                RenderBR {BR} at (532,128) size 0x0
+                RenderBlock {INPUT} at (4,151) size 16x16
+                RenderText {#text} at (24,136) size 73x36
+                  text run at (24,136) width 73: " Male"
+                RenderBR {BR} at (97,165) size 0x0
+                RenderBlock {INPUT} at (4,188) size 16x16
+                RenderText {#text} at (24,173) size 102x36
+                  text run at (24,173) width 102: " Female"
+                RenderBR {BR} at (126,202) size 0x0
+                RenderBlock {INPUT} at (4,225) size 16x16
+                RenderText {#text} at (24,210) size 130x36
+                  text run at (24,210) width 130: " option #1"
+                RenderBR {BR} at (154,239) size 0x0
+                RenderBlock {INPUT} at (4,262) size 16x16
+                RenderText {#text} at (24,247) size 130x36
+                  text run at (24,247) width 130: " option #2"
+                RenderBR {BR} at (154,276) size 0x0
+                RenderMenuList {SELECT} at (2,286) size 326x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                  RenderBlock (anonymous) at (1,1) size 324x26
+                    RenderText at (4,4) size 84x19
+                      text run at (4,4) width 84: "Initial Value"
+                RenderBR {BR} at (330,306) size 0x0
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {HR} at (0,833) size 768x2 [border: (1px inset #000000)]
-              RenderBlock {P} at (0,867) size 768x37
-                RenderText {#text} at (0,0) size 63x36
-                  text run at (0,0) width 63: "Now"
-              RenderBlock {P} at (0,936) size 768x37
-                RenderText {#text} at (0,0) size 68x36
-                  text run at (0,0) width 68: "some"
-              RenderBlock {P} at (0,1005) size 768x37
+              RenderBlock {HR} at (0,831) size 769x2 [border: (1px inset #000000)]
+              RenderBlock {P} at (0,865) size 769x37
+                RenderText {#text} at (0,0) size 62x36
+                  text run at (0,0) width 62: "Now"
+              RenderBlock {P} at (0,934) size 769x37
+                RenderText {#text} at (0,0) size 67x36
+                  text run at (0,0) width 67: "some"
+              RenderBlock {P} at (0,1003) size 769x37
                 RenderText {#text} at (0,0) size 63x36
                   text run at (0,0) width 63: "filler"
-              RenderBlock {P} at (0,1074) size 768x37
-                RenderText {#text} at (0,0) size 29x36
-                  text run at (0,0) width 29: "so"
-              RenderBlock {P} at (0,1143) size 768x37
-                RenderText {#text} at (0,0) size 40x36
-                  text run at (0,0) width 40: "the"
-              RenderBlock {P} at (0,1212) size 768x37
-                RenderText {#text} at (0,0) size 47x36
-                  text run at (0,0) width 47: "doc"
-              RenderBlock {P} at (0,1281) size 768x37
-                RenderText {#text} at (0,0) size 22x36
-                  text run at (0,0) width 22: "is"
-              RenderBlock {P} at (0,1350) size 768x37
+              RenderBlock {P} at (0,1072) size 769x37
+                RenderText {#text} at (0,0) size 28x36
+                  text run at (0,0) width 28: "so"
+              RenderBlock {P} at (0,1141) size 769x37
+                RenderText {#text} at (0,0) size 39x36
+                  text run at (0,0) width 39: "the"
+              RenderBlock {P} at (0,1210) size 769x37
+                RenderText {#text} at (0,0) size 46x36
+                  text run at (0,0) width 46: "doc"
+              RenderBlock {P} at (0,1279) size 769x37
+                RenderText {#text} at (0,0) size 21x36
+                  text run at (0,0) width 21: "is"
+              RenderBlock {P} at (0,1348) size 769x37
                 RenderText {#text} at (0,0) size 57x36
                   text run at (0,0) width 57: "long"
-              RenderBlock {P} at (0,1419) size 768x37
-                RenderText {#text} at (0,0) size 95x36
-                  text run at (0,0) width 95: "enough"
-              RenderBlock {P} at (0,1488) size 768x37
+              RenderBlock {P} at (0,1417) size 769x37
+                RenderText {#text} at (0,0) size 94x36
+                  text run at (0,0) width 94: "enough"
+              RenderBlock {P} at (0,1486) size 769x37
                 RenderText {#text} at (0,0) size 112x36
                   text run at (0,0) width 112: "to scroll."
-              RenderBlock {P} at (0,1557) size 768x37
-                RenderInline {A} at (0,0) size 532x36
-                  RenderText {#text} at (0,0) size 532x36
-                    text run at (0,0) width 532: "This is an anchor point named \"anchor1\"."
-        layer at (390,378) size 187x18 scrollWidth 195
-          RenderBlock {DIV} at (3,3) size 187x18
-            RenderText {#text} at (1,0) size 193x17
-              text run at (1,0) width 193: "Initial text before user input"
-        layer at (10,621) size 292x186 clip at (11,622) size 290x184
-          RenderTextControl {TEXTAREA} at (2,320) size 292x186 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock {DIV} at (3,3) size 286x36
-              RenderText {#text} at (0,0) size 237x17
-                text run at (0,0) width 237: "More initial text before user input."
-                text run at (236,0) width 1: " "
-              RenderBR {BR} at (0,18) size 0x17
+              RenderBlock {P} at (0,1555) size 769x37
+                RenderInline {A} at (0,0) size 531x36
+                  RenderText {#text} at (0,0) size 531x36
+                    text run at (0,0) width 531: "This is an anchor point named \"anchor1\"."
+        layer at (389,377) size 188x18 scrollWidth 192 scrollHeight 19
+          RenderBlock {DIV} at (3,3) size 188x18
+            RenderText {#text} at (1,0) size 190x19
+              text run at (1,0) width 190: "Initial text before user input"
+        layer at (10,619) size 291x186 clip at (11,620) size 289x184
+          RenderTextControl {TEXTAREA} at (2,318) size 291x186 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock {DIV} at (3,3) size 285x36
+              RenderText {#text} at (0,0) size 234x19
+                text run at (0,0) width 234: "More initial text before user input."
+                text run at (234,0) width 0: " "
+              RenderBR {BR} at (0,18) size 0x19
       RenderFrame {FRAME} at (0,540) size 800x60
-        layer at (0,0) size 784x90
-          RenderView at (0,0) size 784x60
-        layer at (0,0) size 784x90
-          RenderBlock {HTML} at (0,0) size 784x90
-            RenderBody {BODY} at (8,8) size 768x74
-              RenderText {#text} at (0,0) size 724x73
-                text run at (0,0) width 724: "This is just a minimal page that we navigate to as part of"
+        layer at (0,0) size 785x90
+          RenderView at (0,0) size 785x60
+        layer at (0,0) size 785x90
+          RenderBlock {HTML} at (0,0) size 785x90
+            RenderBody {BODY} at (8,8) size 769x74
+              RenderText {#text} at (0,0) size 722x73
+                text run at (0,0) width 722: "This is just a minimal page that we navigate to as part of"
                 text run at (0,37) width 272: "testing back/forward."
 
 ============== Back Forward List ==============

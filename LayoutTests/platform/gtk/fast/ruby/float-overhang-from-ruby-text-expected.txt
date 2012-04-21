@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderRuby (inline) {RUBY} at (0,0) size 100x50
           RenderRubyRun (anonymous) at (0,25) size 100x50
             RenderRubyText {RT} at (0,-25) size 100x25
-              RenderText {#text} at (50,0) size 26x25
-                text run at (50,0) width 26: "a"
+              RenderText {#text} at (50,0) size 25x25
+                text run at (50,0) width 25: "a"
               RenderBlock (floating) {DIV} at (0,0) size 50x50 [bgcolor=#ADD8E6]
             RenderRubyBase (anonymous) at (0,0) size 100x50
               RenderText {#text} at (0,0) size 100x50
