@@ -1,3 +1,12 @@
+2012-04-20  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove special case for recreating layers during sync
+        https://bugs.webkit.org/show_bug.cgi?id=84458
+
+        Reviewed by James Robinson.
+
+        * tests/TreeSynchronizerTest.cpp:
+
 2012-04-20  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Support get/getKey(keyRange)

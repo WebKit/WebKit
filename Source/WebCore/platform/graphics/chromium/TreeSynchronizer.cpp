@@ -71,10 +71,8 @@ PassOwnPtr<CCLayerImpl> TreeSynchronizer::reuseOrCreateCCLayerImpl(RawPtrCCLayer
 {
     OwnPtr<CCLayerImpl> ccLayerImpl = oldLayers.take(layer->id());
 
-    if (!ccLayerImpl) {
+    if (!ccLayerImpl)
         ccLayerImpl = layer->createCCLayerImpl();
-        layer->setNonFastScrollableRegionChanged(); // We just created a fresh CCLayerImpl, so make sure we transfer the nonFastScrollableRegion.
-    }
 
     newLayers.set(layer->id(), ccLayerImpl.get());
     return ccLayerImpl.release();
