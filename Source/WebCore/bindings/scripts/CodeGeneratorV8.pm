@@ -1665,8 +1665,10 @@ sub GenerateParametersCheck
                  JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)") . ");\n";
             if ($nativeType eq 'Dictionary') {
                $parameterCheckString .= "    if (args.Length() > $paramIndex && !$parameterName.isUndefinedOrNull() && !$parameterName.isObject()) {\n";
-               $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
-               $parameterCheckString .= "        V8Proxy::setDOMException(ec);\n";
+               if (@{$function->raisesExceptions}) {
+                   $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
+                   $parameterCheckString .= "        V8Proxy::setDOMException(ec);\n";
+               }
                $parameterCheckString .= "        return throwError(\"Not an object.\", V8Proxy::TypeError);\n";
                $parameterCheckString .= "    }\n";
             }

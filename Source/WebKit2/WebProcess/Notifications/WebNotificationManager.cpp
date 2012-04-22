@@ -109,7 +109,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!notification || !page->corePage()->settings()->notificationsEnabled())
-        return true;
+        return false;
     
     uint64_t notificationID = generateNotificationID();
     m_notificationMap.set(notification, notificationID);
@@ -153,6 +153,7 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
         RefPtr<Notification> notification = m_notificationIDMap.take(notificationIDs[i]);
         if (!notification)
             continue;
+        notification->finalize();
         m_notificationMap.remove(notification);
     }
     

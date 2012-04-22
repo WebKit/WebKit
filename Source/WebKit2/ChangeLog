@@ -1,3 +1,17 @@
+2012-04-20  Jon Lee  <jonlee@apple.com>
+
+        Add Notification constructor
+        https://bugs.webkit.org/show_bug.cgi?id=80477
+        <rdar://problem/10912431>
+
+        Reviewed by Jian Li.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): If the notification doesn't get shown,
+        we should return false, since it will not go through a setPendingActivity cycle.
+        (WebKit::WebNotificationManager::clearNotifications): When clearing notifications,
+        finalize them so that they can be cleaned up by the GC.
+
 2012-04-20  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Inspector be the first responder when opening docked.

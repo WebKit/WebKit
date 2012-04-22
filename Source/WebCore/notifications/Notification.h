@@ -45,9 +45,14 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
+#if ENABLE(NOTIFICATIONS)
+#include "Timer.h"
+#endif
+
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 namespace WebCore {
 
+class Dictionary;
 class NotificationCenter;
 class ResourceError;
 class ResourceResponse;
@@ -60,8 +65,13 @@ class Notification : public RefCounted<Notification>, public ActiveDOMObject, pu
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Notification();
+#if ENABLE(LEGACY_NOTIFICATIONS)
     static PassRefPtr<Notification> create(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
     static PassRefPtr<Notification> create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
+#endif
+#if ENABLE(NOTIFICATIONS)
+    static PassRefPtr<Notification> create(ScriptExecutionContext*, const String& title, const Dictionary& options);
+#endif
     
     virtual ~Notification();
 
@@ -78,6 +88,7 @@ public:
     void setURL(KURL url) { m_notificationURL = url; }
     
     KURL iconURL() const { return m_icon; }
+
     String title() const { return m_title; }
     String body() const { return m_body; }
 
@@ -117,7 +128,7 @@ public:
     // ActiveDOMObject interface
     virtual void contextDestroyed();
 
-    void stopLoading();
+    void stopLoadingIcon();
 
     SharedBuffer* iconData() { return m_iconData.get(); }
     void releaseIconData() { m_iconData = 0; }
@@ -131,9 +142,18 @@ public:
     virtual void didFail(const ResourceError&);
     virtual void didFailRedirectCheck();
 
+    void finalize();
+
 private:
+#if ENABLE(LEGACY_NOTIFICATIONS)
     Notification(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
     Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
+#endif
+#if ENABLE(NOTIFICATIONS)
+    Notification(ScriptExecutionContext*, const String& title);
+#endif
+
+    void setBody(const String& body) { m_body = body; }
 
     // EventTarget interface
     virtual void refEventTarget() { ref(); }
@@ -141,9 +161,13 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-    void startLoading();
-    void finishLoading();
+    void startLoadingIcon();
+    void finishLoadingIcon();
 
+#if ENABLE(NOTIFICATIONS)
+    void showTaskTimerFired(Timer<Notification>*);
+#endif
+    
     bool m_isHTML;
 
     // Text notifications.
@@ -158,9 +182,10 @@ private:
 
     enum NotificationState {
         Idle = 0,
-        Loading = 1,
+        LoadingIcon = 1,
         Showing = 2,
-        Cancelled = 3
+        CancelledIcon = 3,
+        Closed = 4,
     };
 
     NotificationState m_state;
@@ -171,6 +196,9 @@ private:
 
     RefPtr<ThreadableLoader> m_loader;
     RefPtr<SharedBuffer> m_iconData;
+#if ENABLE(NOTIFICATIONS)
+    OwnPtr<Timer<Notification> > m_showTaskTimer;
+#endif
 };
 
 } // namespace WebCore

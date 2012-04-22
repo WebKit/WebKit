@@ -108,6 +108,7 @@ void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
     for (size_t i = 0; i < count; ++i) {
         WebNotification *webNotification = webNotifications[i].get();
         [nsIDs addObject:[NSNumber numberWithUnsignedLongLong:[webNotification notificationID]]];
+        core(webNotification)->finalize();
         m_notificationMap.remove(core(webNotification));
     }
 

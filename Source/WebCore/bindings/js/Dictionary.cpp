@@ -26,6 +26,11 @@
 #include "config.h"
 #include "Dictionary.h"
 
+#if ENABLE(NOTIFICATIONS)
+#include "JSNotification.h"
+#include "Notification.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -35,14 +40,14 @@ Dictionary::Dictionary(JSC::ExecState* exec, JSC::JSValue value)
 {
 }
 
-template <typename Result>
-bool Dictionary::get(const String& propertyName, Result& result) const
+
+#if ENABLE(NOTIFICATIONS)
+template<>
+JSObject* Dictionary::asJSObject<Notification>(Notification* object) const
 {
-    if (!m_dictionary.isValid())
-        return false;
-    
-    return m_dictionary.get(propertyName.ascii().data(), result);
+    return asObject(toJS(m_dictionary.execState(), jsCast<JSDOMGlobalObject*>(m_dictionary.execState()->lexicalGlobalObject()), object));
 }
+#endif
 
 };
 

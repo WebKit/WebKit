@@ -58,6 +58,7 @@ public:
     template <typename Result>
     bool get(const char* propertyName, Result&) const;
 
+    JSC::ExecState* execState() const { return m_exec; }
     bool isValid() const { return m_exec && m_initializerObject; }
 
 private:

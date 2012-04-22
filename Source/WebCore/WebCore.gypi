@@ -2028,6 +2028,7 @@
             'bindings/js/JSXSLTProcessorCustom.cpp',
             'bindings/js/JavaScriptCallFrame.cpp',
             'bindings/js/JavaScriptCallFrame.h',
+            'bindings/js/Dictionary.cpp',
             'bindings/js/Dictionary.h',
             'bindings/js/ScheduledAction.cpp',
             'bindings/js/ScheduledAction.h',

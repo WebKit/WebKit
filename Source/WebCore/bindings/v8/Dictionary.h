@@ -26,6 +26,7 @@
 #ifndef Dictionary_h
 #define Dictionary_h
 
+#include "EventListener.h"
 #include "MessagePort.h"
 #include "PlatformString.h"
 #include "ScriptValue.h"
@@ -38,12 +39,13 @@ namespace WebCore {
 class DOMStringList;
 class DOMWindow;
 class IDBKeyRange;
-class Storage;
 class MediaKeyError;
-class TrackBase;
+class Notification;
 class SpeechRecognitionError;
 class SpeechRecognitionResult;
 class SpeechRecognitionResultList;
+class Storage;
+class TrackBase;
 
 class Dictionary {
 public:
@@ -83,6 +85,8 @@ public:
     bool get(const String&, HashSet<AtomicString>&) const;
 
     bool getWithUndefinedOrNullCheck(const String&, String&) const;
+
+    PassRefPtr<EventListener> getEventListener(const String&, Notification*) const { return 0; }
 
 private:
     bool getKey(const String& key, v8::Local<v8::Value>&) const;

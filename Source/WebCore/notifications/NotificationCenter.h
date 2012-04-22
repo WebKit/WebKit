@@ -53,6 +53,7 @@ class NotificationCenter : public RefCounted<NotificationCenter>, public ActiveD
 public:
     static PassRefPtr<NotificationCenter> create(ScriptExecutionContext*, NotificationClient*);
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
     PassRefPtr<Notification> createHTMLNotification(const String& URI, ExceptionCode& ec)
     {
         if (!client()) {
@@ -65,7 +66,9 @@ public:
         }
         return Notification::create(scriptExecutionContext()->completeURL(URI), scriptExecutionContext(), ec, this);
     }
+#endif
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
     PassRefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
     {
         if (!client()) {
@@ -74,6 +77,7 @@ public:
         }
         return Notification::create(title, body, iconURI, scriptExecutionContext(), ec, this);
     }
+#endif
 
     NotificationClient* client() const { return m_client; }
 

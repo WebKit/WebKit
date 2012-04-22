@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,10 +36,12 @@ module threads {
         ActiveDOMObject,
         OmitConstructor
     ] NotificationCenter {
+#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
 #if !defined(ENABLE_TEXT_NOTIFICATIONS_ONLY) || !ENABLE_TEXT_NOTIFICATIONS_ONLY
        [V8Custom] Notification createHTMLNotification(in DOMString url) raises(DOMException);
 #endif
        [V8Custom] Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
+#endif
 
        int checkPermission();
        [Custom] void requestPermission(in VoidCallback callback);

@@ -35,6 +35,9 @@
 
 #include "Notification.h"
 
+#include "DOMWindow.h"
+#include "DOMWindowNotifications.h"
+#include "Dictionary.h"
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "EventNames.h"
@@ -52,6 +55,7 @@ Notification::Notification()
 {
 }
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
 Notification::Notification(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
     : ActiveDOMObject(context, this)
     , m_isHTML(true)
@@ -70,7 +74,9 @@ Notification::Notification(const KURL& url, ScriptExecutionContext* context, Exc
 
     m_notificationURL = url;
 }
+#endif
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
 Notification::Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
     : ActiveDOMObject(context, this)
     , m_isHTML(false)
@@ -90,15 +96,33 @@ Notification::Notification(const String& title, const String& body, const String
         return;
     }
 }
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+Notification::Notification(ScriptExecutionContext* context, const String& title)
+    : ActiveDOMObject(context, this)
+    , m_isHTML(false)
+    , m_title(title)
+    , m_state(Idle)
+    , m_showTaskTimer(adoptPtr(new Timer<Notification>(this, &Notification::showTaskTimerFired)))
+{
+    ASSERT(context->isDocument());
+    m_notificationCenter = DOMWindowNotifications::webkitNotifications(static_cast<Document*>(context)->domWindow());
+    
+    ASSERT(m_notificationCenter->client());
+    m_showTaskTimer->startOneShot(0);
+}
+#endif
 
 Notification::~Notification() 
 {
-    if (m_state == Loading) {
+    if (m_state == LoadingIcon) {
         ASSERT_NOT_REACHED();
         close();
     }
 }
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
 PassRefPtr<Notification> Notification::create(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
 { 
     RefPtr<Notification> notification(adoptRef(new Notification(url, context, ec, provider)));
@@ -112,6 +136,33 @@ PassRefPtr<Notification> Notification::create(const String& title, const String&
     notification->suspendIfNeeded();
     return notification.release();
 }
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+static void getAndAddEventListener(const AtomicString& eventName, const char* property, const Dictionary& options, Notification* notification)
+{
+    RefPtr<EventListener> listener = options.getEventListener(property, notification);
+    if (listener)
+        notification->addEventListener(eventName, listener.release(), false);
+}
+
+PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, const String& title, const Dictionary& options)
+{
+    RefPtr<Notification> notification(adoptRef(new Notification(context, title)));
+    String argument;
+    if (options.get("body", argument))
+        notification->setBody(argument);
+    if (options.get("tag", argument))
+        notification->setTag(argument);
+    getAndAddEventListener(eventNames().showEvent, "onshow", options, notification.get());
+    getAndAddEventListener(eventNames().closeEvent, "onclose", options, notification.get());
+    getAndAddEventListener(eventNames().errorEvent, "onerror", options, notification.get());
+    getAndAddEventListener(eventNames().clickEvent, "onclick", options, notification.get());
+
+    notification->suspendIfNeeded();
+    return notification.release();
+}
+#endif
 
 const AtomicString& Notification::interfaceName() const
 {
@@ -126,20 +177,19 @@ void Notification::show()
         // handling of ondisplay may rely on that.
         if (m_state == Idle) {
             m_state = Showing;
-            if (m_notificationCenter->client())
+            if (m_notificationCenter->client()) {
                 m_notificationCenter->client()->show(this);
+                setPendingActivity(this);
+            }
         }
     } else
-        startLoading();
-#elif PLATFORM(MAC)
-    if (m_state == Idle && m_notificationCenter->client()) {
-        m_notificationCenter->client()->show(this);
-        m_state = Showing;
-    }
+        startLoadingIcon();
 #else
     // prevent double-showing
-    if (m_state == Idle && m_notificationCenter->client() && m_notificationCenter->client()->show(this))
+    if (m_state == Idle && m_notificationCenter->client() && m_notificationCenter->client()->show(this)) {
         m_state = Showing;
+        setPendingActivity(this);
+    }
 #endif
 }
 
@@ -148,15 +198,16 @@ void Notification::close()
     switch (m_state) {
     case Idle:
         break;
-    case Loading:
-        m_state = Cancelled;
-        stopLoading();
+    case LoadingIcon:
+        m_state = CancelledIcon;
+        stopLoadingIcon();
         break;
     case Showing:
         if (m_notificationCenter->client())
             m_notificationCenter->client()->cancel(this);
         break;
-    case Cancelled:
+    case CancelledIcon:
+    case Closed:
         break;
     }
 }
@@ -178,12 +229,12 @@ void Notification::contextDestroyed()
         m_notificationCenter->client()->notificationObjectDestroyed(this);
 }
 
-void Notification::startLoading()
+void Notification::startLoadingIcon()
 {
     if (m_state != Idle)
         return;
     setPendingActivity(this);
-    m_state = Loading;
+    m_state = LoadingIcon;
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = DoNotSendCallbacks;
     options.sniffContent = DoNotSniffContent;
@@ -193,7 +244,7 @@ void Notification::startLoading()
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, ResourceRequest(iconURL()), options);
 }
 
-void Notification::stopLoading()
+void Notification::stopLoadingIcon()
 {
     m_iconData = 0;
     RefPtr<ThreadableLoader> protect(m_loader);
@@ -204,7 +255,7 @@ void Notification::didReceiveResponse(unsigned long, const ResourceResponse& res
 {
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
-        stopLoading();
+        stopLoadingIcon();
         return;
     }
     m_iconData = SharedBuffer::create();
@@ -217,25 +268,32 @@ void Notification::didReceiveData(const char* data, int dataLength)
 
 void Notification::didFinishLoading(unsigned long, double)
 {
-    finishLoading();
+    finishLoadingIcon();
 }
 
 void Notification::didFail(const ResourceError&)
 {
-    finishLoading();
+    finishLoadingIcon();
 }
 
 void Notification::didFailRedirectCheck()
 {
-    finishLoading();
+    finishLoadingIcon();
 }
 
-void Notification::finishLoading()
+void Notification::finishLoadingIcon()
 {
-    if (m_state == Loading) {
+    if (m_state == LoadingIcon) {
         if (m_notificationCenter->client() && m_notificationCenter->client()->show(this))
             m_state = Showing;
     }
+}
+
+void Notification::finalize()
+{
+    if (m_state == Closed)
+        return;
+    m_state = Closed;
     unsetPendingActivity(this);
 }
 
@@ -252,12 +310,21 @@ void Notification::dispatchClickEvent()
 void Notification::dispatchCloseEvent()
 {
     dispatchEvent(Event::create(eventNames().closeEvent, false, false));
+    finalize();
 }
 
 void Notification::dispatchErrorEvent()
 {
     dispatchEvent(ErrorEvent::create());
 }
+
+#if ENABLE(NOTIFICATIONS)
+void Notification::showTaskTimerFired(Timer<Notification>* timer)
+{
+    ASSERT_UNUSED(timer, timer == m_showTaskTimer.get());
+    show();
+}
+#endif
 
 } // namespace WebCore
 

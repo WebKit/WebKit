@@ -1143,8 +1143,6 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(Dictionary, oo, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     if (args.Length() > 0 && !oo.isUndefinedOrNull() && !oo.isObject()) {
-        ec = TYPE_MISMATCH_ERR;
-        V8Proxy::setDOMException(ec);
         return throwError("Not an object.", V8Proxy::TypeError);
     }
     if (args.Length() <= 1) {
@@ -1153,8 +1151,6 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     }
     EXCEPTION_BLOCK(Dictionary, ooo, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     if (args.Length() > 1 && !ooo.isUndefinedOrNull() && !ooo.isObject()) {
-        ec = TYPE_MISMATCH_ERR;
-        V8Proxy::setDOMException(ec);
         return throwError("Not an object.", V8Proxy::TypeError);
     }
     imp->optionsObject(oo, ooo);
