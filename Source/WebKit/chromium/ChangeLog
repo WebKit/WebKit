@@ -1,3 +1,10 @@
+2012-04-22  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Fix clang build after r114827, unreviewed.
+
+        * tests/LayerTextureUpdaterTest.cpp:
+        (WebCore::TEST):
+
 2012-04-22  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Damage Tracker needs to use CCMathUtil transforms

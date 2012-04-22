@@ -220,7 +220,7 @@ TEST(LayerTextureUpdaterTest, testPartialOpaqueRectNoTransform)
 {
     IntRect partialRect(100, 200, 50, 75);
     PaintFillPartialOpaque fillPartial(partialRect);
-    OwnPtr<TestLayerPainterChromium> painter = adoptPtr(new TestLayerPainterChromium(fillPartial));
+    OwnPtr<TestLayerPainterChromium> painter(adoptPtr(new TestLayerPainterChromium(fillPartial)));
     RefPtr<LayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
 
     IntRect opaqueRect;
@@ -233,7 +233,7 @@ TEST(LayerTextureUpdaterTest, testPartialOpaqueRectTranslation)
     IntRect partialRect(100, 200, 50, 75);
     PaintFillPartialOpaque fillPartial(partialRect);
 
-    OwnPtr<TestLayerPainterChromium> painter = adoptPtr(new TestLayerPainterChromium(fillPartial));
+    OwnPtr<TestLayerPainterChromium> painter(adoptPtr(new TestLayerPainterChromium(fillPartial)));
     RefPtr<LayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
 
     IntRect opaqueRect;
@@ -249,7 +249,7 @@ TEST(LayerTextureUpdaterTest, testPartialOpaqueRectScale)
     IntRect partialRect(9, 20, 50, 75);
     IntRect partialDeviceRect(partialRect);
     PaintFillPartialOpaque fillPartial(partialDeviceRect);
-    OwnPtr<TestLayerPainterChromium> painter = adoptPtr(new TestLayerPainterChromium(fillPartial));
+    OwnPtr<TestLayerPainterChromium> painter(adoptPtr(new TestLayerPainterChromium(fillPartial)));
     RefPtr<LayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(painter.release(), false);
 
     IntRect opaqueRect;
