@@ -30,6 +30,7 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerSorter.h"
 #include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
 
@@ -313,6 +314,49 @@ TEST_F(CCDamageTrackerTest, verifyDamageForTransformedLayer)
     FloatRect expectedRect(expectedPosition, expectedPosition, expectedWidth, expectedWidth);
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(expectedRect, rootDamageRect);
+}
+
+TEST_F(CCDamageTrackerTest, verifyDamageForPerspectiveClippedLayer)
+{
+    // If a layer has a perspective transform that causes w < 0, then not clipping the
+    // layer can cause an invalid damage rect. This test checks that the w < 0 case is
+    // tracked properly.
+    //
+    // The transform is constructed so that if w < 0 clipping is not performed, the
+    // incorrect rect will be very small, specifically: position (-3.153448, -2.750628) and size 8.548689 x 5.661383.
+    // Instead, the correctly transformed rect should actually be very huge (i.e. in theory, infinite)
+
+    OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithOneSurface();
+    CCLayerImpl* child = root->children()[0].get();
+
+    TransformationMatrix transform;
+    transform.applyPerspective(1);
+    transform.translate3d(-150, -50, 0);
+    transform.rotate3d(0, 45, 0);
+    transform.translate3d(-50, -50, 0);
+
+    // Set up the child
+    child->setPosition(FloatPoint(0, 0));
+    child->setBounds(IntSize(100, 100));
+    child->setTransform(transform);
+    emulateDrawingOneFrame(root.get());
+
+    // Sanity check that the child layer's bounds would actually get clipped by w < 0,
+    // otherwise this test is not actually testing the intended scenario.
+    FloatQuad testQuad(FloatRect(FloatPoint::zero(), FloatSize(100, 100)));
+    bool clipped = false;
+    CCMathUtil::mapQuad(transform, testQuad, clipped);
+    EXPECT_TRUE(clipped);
+
+    // Damage the child without moving it.
+    child->setOpacity(0.5);
+    emulateDrawingOneFrame(root.get());
+
+    // The expected damage should cover the entire root surface (500x500), but we don't
+    // care whether the damage rect was clamped or is larger than the surface for this test.
+    FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    EXPECT_GE(rootDamageRect.width(), 500);
+    EXPECT_GE(rootDamageRect.height(), 500);
 }
 
 TEST_F(CCDamageTrackerTest, verifyDamageForBlurredSurface)

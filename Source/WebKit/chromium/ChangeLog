@@ -1,3 +1,14 @@
+2012-04-22  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Damage Tracker needs to use CCMathUtil transforms
+        https://bugs.webkit.org/show_bug.cgi?id=84070
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+
 2012-04-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium roll attempt from r133173 to r133348.
