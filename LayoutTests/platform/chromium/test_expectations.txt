@@ -3156,7 +3156,7 @@ BUGWK78725 : http/tests/filesystem/workers/resolve-url-sync.html = PASS TIMEOUT
 BUGWK78725 : http/tests/filesystem/workers/resolve-url.html = PASS TIMEOUT
 
 BUGWK75111 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT TIMEOUT
-BUGWK77136 DEBUG : fast/workers/storage/interrupt-database.html = PASS CRASH
+BUGWK77136 DEBUG : fast/workers/storage/interrupt-database.html = PASS CRASH TIMEOUT
 BUGWK77136 WIN RELEASE : fast/workers/storage/interrupt-database.html = PASS TIMEOUT
 
 BUGWK75161 : media/video-poster-blocked-by-willsendrequest.html = TEXT
