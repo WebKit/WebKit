@@ -1,3 +1,23 @@
+2012-04-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Multi-level tap-to-zoom.
+        https://bugs.webkit.org/show_bug.cgi?id=84456
+
+        Reviewed by Kenneth Rohde Christiansen.
+        
+        Replace tap-to-zoomed flag with a stack of progressively higher zoom levels, 
+        and zoom out to last zoom-level when attempting to zoom to current level.
+        
+        Additionally detect a series of tap-to-zoom gestures on the same level and 
+        continue to zoom out.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-04-20  Jon Lee  <jonlee@apple.com>
 
         Add Notification constructor

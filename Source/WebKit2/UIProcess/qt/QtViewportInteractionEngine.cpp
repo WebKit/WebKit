@@ -125,9 +125,9 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport
     , m_suspendCount(0)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
-    , m_zoomedToArea(false)
     , m_scaleAnimation(new ScaleAnimation(this))
     , m_pinchStartScale(-1)
+    , m_zoomOutScale(0.0)
 {
     reset();
 
@@ -367,12 +367,25 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     qreal targetCSSScale = cssScaleFromItem(viewportRect.size().width() / endArea.size().width());
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(qMin(targetCSSScale, qreal(2.5))));
 
-    // Zoom back out on a second double click, but still center on the new touch point.
-    if (m_zoomedToArea) {
-        m_zoomedToArea = false;
-        endItemScale = itemScaleFromCSS(m_minimumScale);
-    } else
-        m_zoomedToArea = true;
+    qreal currentScale = m_content->contentsScale();
+    if (!m_scaleStack.isEmpty()) {
+        // Zoom back out if attempting to scale to the same current scale, or
+        // attempting to continue scaling out from the inner most level.
+        if (endItemScale == m_zoomOutScale || endItemScale == currentScale)
+            endItemScale = m_scaleStack.takeLast();
+        else if (endItemScale > currentScale) {
+            m_scaleStack.append(currentScale);
+            m_zoomOutScale = endItemScale;
+        } else { // endItemScale < currentScale
+            // Unstack all scale-levels deeper than the new level, so a zoom-out won't zoom in to a previous level.
+            while (!m_scaleStack.isEmpty() && m_scaleStack.last() >= endItemScale)
+                m_scaleStack.removeLast();
+            m_zoomOutScale = endItemScale;
+        }
+    } else {
+        m_scaleStack.append(currentScale);
+        m_zoomOutScale = endItemScale;
+    }
 
     // We want to end up with the target area filling the whole width of the viewport (if possible),
     // and centralized vertically where the user requested zoom. Thus our hotspot is the center of
@@ -526,7 +539,8 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
         return;
 
     m_hadUserInteraction = true;
-    m_zoomedToArea = false;
+    m_scaleStack.clear();
+    m_zoomOutScale = 0.0;
 
     m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 
