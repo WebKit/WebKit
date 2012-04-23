@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 David Levin <levin@chromium.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -359,7 +359,7 @@ namespace WTF {
         void removeWithoutEntryConsistencyCheck(const_iterator);
         void clear();
 
-        static bool isEmptyBucket(const ValueType& value) { return isHashTraitsEmptyValue<KeyTraits>(Extractor::extract(value)); }
+        static bool isEmptyBucket(const ValueType& value) { return Extractor::extract(value) == KeyTraits::emptyValue(); }
         static bool isDeletedBucket(const ValueType& value) { return KeyTraits::isDeletedValue(Extractor::extract(value)); }
         static bool isEmptyOrDeletedBucket(const ValueType& value) { return isEmptyBucket(value) || isDeletedBucket(value); }
 
