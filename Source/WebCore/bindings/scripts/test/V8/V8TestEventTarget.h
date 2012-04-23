@@ -40,7 +40,7 @@ public:
     {
         return reinterpret_cast<TestEventTarget*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestEventTarget*);
+    inline static v8::Handle<v8::Object> wrap(TestEventTarget*, v8::Isolate* = 0);
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> indexedPropertyGetter(uint32_t, const v8::AccessorInfo&);
@@ -51,7 +51,7 @@ private:
     static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestEventTarget>);
 };
 
-v8::Handle<v8::Object> V8TestEventTarget::wrap(TestEventTarget* impl)
+v8::Handle<v8::Object> V8TestEventTarget::wrap(TestEventTarget* impl, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
@@ -63,7 +63,7 @@ inline v8::Handle<v8::Value> toV8(TestEventTarget* impl, v8::Isolate* isolate = 
 {
     if (!impl)
         return v8::Null();
-    return V8TestEventTarget::wrap(impl);
+    return V8TestEventTarget::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventTarget > impl, v8::Isolate* isolate = 0)
 {

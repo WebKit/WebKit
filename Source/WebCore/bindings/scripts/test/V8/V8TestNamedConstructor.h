@@ -46,7 +46,7 @@ public:
     {
         return reinterpret_cast<TestNamedConstructor*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestNamedConstructor*);
+    inline static v8::Handle<v8::Object> wrap(TestNamedConstructor*, v8::Isolate* = 0);
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
@@ -55,7 +55,7 @@ private:
     static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestNamedConstructor>);
 };
 
-v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl)
+v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl, v8::Isolate* isolate)
 {
         v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
@@ -67,7 +67,7 @@ inline v8::Handle<v8::Value> toV8(TestNamedConstructor* impl, v8::Isolate* isola
 {
     if (!impl)
         return v8::Null();
-    return V8TestNamedConstructor::wrap(impl);
+    return V8TestNamedConstructor::wrap(impl, isolate);
 }
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNamedConstructor > impl, v8::Isolate* isolate = 0)
 {
