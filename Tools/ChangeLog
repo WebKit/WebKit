@@ -1,5 +1,20 @@
 2012-04-23  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed rolling out r114881, because it broke upload buildstep.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ConfigureBuild.__init__):
+        (ConfigureBuild.start):
+        (CompileWebKit.start):
+        (UploadBuiltProduct):
+        (UploadBuiltProduct.determineExtraFeatures):
+        (Factory.__init__):
+        (BuildFactory.__init__):
+        (TestFactory.__init__):
+        (loadBuilderConfig):
+
+2012-04-23  Csaba Osztrogonác  <ossy@webkit.org>
+
         master.cfg cleanup, remove dead codes after r92792.
         https://bugs.webkit.org/show_bug.cgi?id=84433
 
