@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8HTMLFormElement::indexedPropertyGetter(uint32_t index, c
     RefPtr<Node> formElement = form->elements()->item(index);
     if (!formElement)
         return notHandledByInterceptor();
-    return toV8(formElement.release());
+    return toV8(formElement.release(), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -75,9 +75,9 @@ v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::Strin
     ASSERT(!elements.isEmpty());
 
     if (elements.size() == 1)
-        return toV8(elements.at(0).release());
+        return toV8(elements.at(0).release(), info.GetIsolate());
 
-    return toV8(V8NamedNodesCollection::create(elements));
+    return toV8(V8NamedNodesCollection::create(elements), info.GetIsolate());
 }
 
 } // namespace WebCore

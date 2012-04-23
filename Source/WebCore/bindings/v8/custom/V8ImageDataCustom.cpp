@@ -42,7 +42,7 @@ v8::Handle<v8::Value> toV8(ImageData* impl, v8::Isolate* isolate)
     v8::Handle<v8::Object> wrapper = V8ImageData::wrap(impl);
     if (!wrapper.IsEmpty()) {
         // Create a V8 CanvasPixelArray object.
-        v8::Handle<v8::Value> pixelArray = toV8(impl->data());
+        v8::Handle<v8::Value> pixelArray = toV8(impl->data(), isolate);
         // Set the "data" property of the ImageData object to
         // the created v8 object, eliminating the C++ callback
         // when accessing the "data" property.

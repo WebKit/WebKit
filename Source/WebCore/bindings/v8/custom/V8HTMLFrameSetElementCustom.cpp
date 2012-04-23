@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8HTMLFrameSetElement::namedPropertyGetter(v8::Local<v8::S
         if (!doc)
             return v8::Undefined();
         if (Frame* frame = doc->frame())
-            return toV8(frame->domWindow());
+            return toV8(frame->domWindow(), info.GetIsolate());
     }
     return notHandledByInterceptor();
 }

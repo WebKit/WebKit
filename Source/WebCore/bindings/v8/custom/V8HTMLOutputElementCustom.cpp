@@ -42,7 +42,7 @@ v8::Handle<v8::Value> V8HTMLOutputElement::htmlForAccessorGetter(v8::Local<v8::S
 {
     INC_STATS("DOM.HTMLOutputElement.htmlFor._get");
     HTMLOutputElement* imp = V8HTMLOutputElement::toNative(info.Holder());
-    return toV8(imp->htmlFor());
+    return toV8(imp->htmlFor(), info.GetIsolate());
 }
 
 void V8HTMLOutputElement::htmlForAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

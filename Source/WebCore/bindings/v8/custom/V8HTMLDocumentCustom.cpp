@@ -177,7 +177,7 @@ v8::Handle<v8::Value> V8HTMLDocument::allAccessorGetter(v8::Local<v8::String> na
     INC_STATS("DOM.HTMLDocument.all._get");
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(holder);
-    return toV8(htmlDocument->all());
+    return toV8(htmlDocument->all(), info.GetIsolate());
 }
 
 void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

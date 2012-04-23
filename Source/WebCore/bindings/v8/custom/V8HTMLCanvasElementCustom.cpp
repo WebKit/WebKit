@@ -86,10 +86,10 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     if (!result)
         return v8::Null();
     if (result->is2d())
-        return toV8(static_cast<CanvasRenderingContext2D*>(result));
+        return toV8(static_cast<CanvasRenderingContext2D*>(result), args.GetIsolate());
 #if ENABLE(WEBGL)
     else if (result->is3d())
-        return toV8(static_cast<WebGLRenderingContext*>(result));
+        return toV8(static_cast<WebGLRenderingContext*>(result), args.GetIsolate());
 #endif
     ASSERT_NOT_REACHED();
     return v8::Null();
