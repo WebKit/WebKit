@@ -652,16 +652,16 @@ void HitTestResult::append(const HitTestResult& other)
     }
 }
 
-LayoutRect HitTestResult::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+IntRect HitTestResult::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
 {
-    LayoutPoint actualPoint(point);
-    actualPoint -= LayoutSize(leftPadding, topPadding);
+    IntPoint actualPoint(roundedIntPoint(point));
+    actualPoint -= IntSize(leftPadding, topPadding);
 
     IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);
     // As IntRect is left inclusive and right exclusive (seeing IntRect::contains(x, y)), adding "1".
     actualPadding += IntSize(1, 1);
 
-    return LayoutRect(actualPoint, actualPadding);
+    return IntRect(actualPoint, actualPadding);
 }
 
 const HitTestResult::NodeSet& HitTestResult::rectBasedTestResult() const

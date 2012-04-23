@@ -73,7 +73,7 @@ FloatQuad HitTestingTransformState::mappedQuad() const
     return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarQuad);
 }
 
-IntRect HitTestingTransformState::boundsOfMappedQuad() const
+LayoutRect HitTestingTransformState::boundsOfMappedQuad() const
 {
     return m_accumulatedTransform.inverse().clampedBoundsOfProjectedQuad(m_lastPlanarQuad);
 }

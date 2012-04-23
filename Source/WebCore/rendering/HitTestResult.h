@@ -112,8 +112,8 @@ public:
 
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
-    LayoutRect rectForPoint(const LayoutPoint&) const;
-    static LayoutRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+    IntRect rectForPoint(const LayoutPoint&) const;
+    static IntRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     int topPadding() const { return m_topPadding; }
     int rightPadding() const { return m_rightPadding; }
     int bottomPadding() const { return m_bottomPadding; }
@@ -162,7 +162,7 @@ private:
 // y = p.y() - topPadding
 // width = leftPadding + rightPadding + 1
 // height = topPadding + bottomPadding + 1
-inline LayoutRect HitTestResult::rectForPoint(const LayoutPoint& point) const
+inline IntRect HitTestResult::rectForPoint(const LayoutPoint& point) const
 {
     return rectForPoint(point, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
 }
