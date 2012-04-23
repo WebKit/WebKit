@@ -1,3 +1,17 @@
+2012-04-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        [TestResultsServer] Impossible to inspect builds on non-Chromium builders
+        https://bugs.webkit.org/show_bug.cgi?id=84544
+
+        Reviewed by Ryosuke Niwa.
+
+        Use the groupEnum parameter that is passed through to the onBuilderListLoad
+        function rather than an undefined attribute of the BuilderGroup object. This
+        makes it again possible to inspect builds on non-Chromium builders in the
+        test results server by not trying to always add Chromium revision links.
+
+        * TestResultServer/static-dashboards/builders.js:
+
 2012-04-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Revert changes that disabled Cairo fonts metrics hinting

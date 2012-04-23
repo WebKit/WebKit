@@ -179,7 +179,7 @@ function onBuilderListLoad(builderGroups, builderFilter, master, groupName, grou
 {
     var builders = generateBuildersFromBuilderList(Object.keys(json), builderFilter);
     associateBuildersWithMaster(builders, master);
-    builderGroups[groupName] = new BuilderGroup(BuilderGroup.groupEnum, builders);
+    builderGroups[groupName] = new BuilderGroup(groupEnum, builders);
     g_handleBuildersListLoaded();
 }
 
