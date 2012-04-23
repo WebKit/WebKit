@@ -33,23 +33,15 @@
 #include "ManagedTexture.h"
 #include "PlatformCanvas.h"
 #include "TextureManager.h"
+#include "cc/CCDebugRectHistory.h"
 #include "cc/CCFontAtlas.h"
+#include "cc/CCFrameRateCounter.h"
 #include "cc/CCLayerTreeHostImpl.h"
-#include <wtf/CurrentTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 using namespace std;
-
-CCHeadsUpDisplay::CCHeadsUpDisplay()
-    : m_currentFrameNumber(1)
-{
-    m_beginTimeHistoryInSec[0] = currentTime();
-    m_beginTimeHistoryInSec[1] = m_beginTimeHistoryInSec[0];
-    for (int i = 2; i < kBeginFrameHistorySize; i++)
-        m_beginTimeHistoryInSec[i] = 0;
-}
 
 CCHeadsUpDisplay::~CCHeadsUpDisplay()
 {
@@ -60,38 +52,19 @@ void CCHeadsUpDisplay::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
     m_fontAtlas = fontAtlas;
 }
 
-const double CCHeadsUpDisplay::kIdleSecondsTriggersReset = 0.5;
-const double CCHeadsUpDisplay::kFrameTooFast = 1.0 / 70;
-
-// safeMod works on -1, returning m-1 in that case.
-static inline int safeMod(int number, int modulus)
-{
-    return (number + modulus) % modulus;
-}
-
-inline int CCHeadsUpDisplay::frameIndex(int frame) const
-{
-    return safeMod(frame, kBeginFrameHistorySize);
-}
-
-void CCHeadsUpDisplay::onFrameBegin(double timestamp)
-{
-    m_beginTimeHistoryInSec[frameIndex(m_currentFrameNumber)] = timestamp;
-}
-
-void CCHeadsUpDisplay::onSwapBuffers()
-{
-    m_currentFrameNumber += 1;
-}
-
 bool CCHeadsUpDisplay::enabled(const CCSettings& settings) const
 {
-    return showPlatformLayerTree(settings) || settings.showFPSCounter;
+    return showPlatformLayerTree(settings) || settings.showFPSCounter || showDebugRects(settings);
 }
 
 bool CCHeadsUpDisplay::showPlatformLayerTree(const CCSettings& settings) const
 {
     return settings.showPlatformLayerTree;
+}
+
+bool CCHeadsUpDisplay::showDebugRects(const CCSettings& settings) const
+{
+    return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects;
 }
 
 void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
@@ -104,7 +77,7 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
     const CCSettings& settings = layerTreeHostImpl->settings();
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
-    if (showPlatformLayerTree(settings)) {
+    if (showPlatformLayerTree(settings) || showDebugRects(settings)) {
         hudSize.setWidth(min(2048, layerTreeHostImpl->viewportSize().width()));
         hudSize.setHeight(min(2048, layerTreeHostImpl->viewportSize().height()));
     } else {
@@ -151,15 +124,6 @@ void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
     m_hudTexture->unreserve();
 }
 
-bool CCHeadsUpDisplay::isBadFrame(int frameNumber) const
-{
-    double delta = m_beginTimeHistoryInSec[frameIndex(frameNumber)] -
-                   m_beginTimeHistoryInSec[frameIndex(frameNumber - 1)];
-    bool tooSlow = delta > (kNumMissedFramesForReset / 60.0);
-    bool schedulerAllowsDoubleFrames = !CCProxy::hasImplThread();
-    return (schedulerAllowsDoubleFrames && delta < kFrameTooFast) || tooSlow;
-}
-
 void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, CCLayerTreeHostImpl* layerTreeHostImpl, const CCSettings& settings, const IntSize& hudSize)
 {
     if (showPlatformLayerTree(settings)) {
@@ -177,65 +141,24 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, CCLayerTreeHost
         platformLayerTreeTop = 0;
 
     if (settings.showFPSCounter)
-        drawFPSCounter(context, fpsCounterTop, fpsCounterHeight);
+        drawFPSCounter(context, layerTreeHostImpl->fpsCounter(), fpsCounterTop, fpsCounterHeight);
 
     if (showPlatformLayerTree(settings) && m_fontAtlas) {
         String layerTree = layerTreeHostImpl->layerTreeAsText();
         m_fontAtlas->drawText(context, layerTree, IntPoint(2, platformLayerTreeTop), hudSize);
     }
+
+    if (showDebugRects(settings))
+        drawDebugRects(context, layerTreeHostImpl->debugRectHistory(), settings);
 }
 
-void CCHeadsUpDisplay::getAverageFPSAndStandardDeviation(double *average, double *standardDeviation) const
-{
-    double& averageFPS = *average;
-
-    int frame = m_currentFrameNumber - 1; 
-    averageFPS = 0;
-    int averageFPSCount = 0;
-    double fpsVarianceNumerator = 0;
-
-    // Walk backwards through the samples looking for a run of good frame
-    // timings from which to compute the mean and standard deviation.
-    //
-    // Slow frames occur just because the user is inactive, and should be
-    // ignored. Fast frames are ignored if the scheduler is in single-thread
-    // mode in order to represent the true frame rate in spite of the fact that
-    // the first few swapbuffers happen instantly which skews the statistics
-    // too much for short lived animations.
-    //
-    // isBadFrame encapsulates the frame too slow/frame too fast logic.
-    while (1) {
-        if (!isBadFrame(frame)) {
-            averageFPSCount++;
-            double secForLastFrame = m_beginTimeHistoryInSec[frameIndex(frame)] -
-                                     m_beginTimeHistoryInSec[frameIndex(frame - 1)];
-            double x = 1.0 / secForLastFrame;
-            double deltaFromAverage = x - averageFPS;
-            // Change with caution - numerics. http://en.wikipedia.org/wiki/Standard_deviation
-            averageFPS = averageFPS + deltaFromAverage / averageFPSCount;
-            fpsVarianceNumerator = fpsVarianceNumerator + deltaFromAverage * (x - averageFPS);
-        }
-        if (averageFPSCount && isBadFrame(frame)) {
-            // We've gathered a run of good samples, so stop.
-            break;
-        }
-        --frame;
-        if (frameIndex(frame) == frameIndex(m_currentFrameNumber) || frame < 0) {
-            // We've gone through all available historical data, so stop.
-            break;
-        }
-    }
-
-    *standardDeviation = sqrt(fpsVarianceNumerator / averageFPSCount);
-}
-
-void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int height)
+void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int height)
 {
     float textWidth = 170; // so text fits on linux.
-    float graphWidth = kBeginFrameHistorySize;
+    float graphWidth = fpsCounter->timeStampHistorySize();
 
     // Draw the FPS text.
-    drawFPSCounterText(context, top, textWidth, height);
+    drawFPSCounterText(context, fpsCounter, top, textWidth, height);
 
     // Draw FPS graph.
     const double loFPS = 0;
@@ -252,18 +175,26 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int hei
     IntPoint prev(-1, 0);
     int x = 0;
     double h = static_cast<double>(height - 2);
-    for (int i = m_currentFrameNumber % kBeginFrameHistorySize; i != (m_currentFrameNumber - 1) % kBeginFrameHistorySize; i = (i + 1) % kBeginFrameHistorySize) {
-        int j = (i + 1) % kBeginFrameHistorySize;
-        double fps = 1.0 / (m_beginTimeHistoryInSec[j] - m_beginTimeHistoryInSec[i]);
-        if (isBadFrame(j)) {
+    for (int i = 0; i < fpsCounter->timeStampHistorySize() - 1; ++i) {
+        int j = i + 1;
+        double delta = fpsCounter->timeStampOfRecentFrame(j) - fpsCounter->timeStampOfRecentFrame(i);
+
+        // Skip plotting this particular instantaneous frame rate if it is not likely to have been valid.
+        if (fpsCounter->isBadFrameInterval(delta)) {
             x += 1;
             continue;
         }
+
+        double fps = 1.0 / delta;
+
+        // Clamp the FPS to the range we want to plot visually.
         double p = 1 - ((fps - loFPS) / (hiFPS - loFPS));
         if (p < 0)
             p = 0;
         if (p > 1)
             p = 1;
+
+        // Plot this data point.
         IntPoint cur(graphLeft + x, 1 + top + p*h);
         if (prev.x() != -1)
             context->drawLine(prev, cur);
@@ -272,10 +203,10 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, int top, int hei
     }
 }
 
-void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, int top, int width, int height)
+void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int width, int height)
 {
     double averageFPS, stdDeviation;
-    getAverageFPSAndStandardDeviation(&averageFPS, &stdDeviation);
+    fpsCounter->getAverageFPSAndStandardDeviation(averageFPS, stdDeviation);
 
     // Draw background.
     context->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
@@ -284,6 +215,34 @@ void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, int top, int
     // Draw FPS text.
     if (m_fontAtlas)
         m_fontAtlas->drawText(context, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
+}
+
+void CCHeadsUpDisplay::drawDebugRects(GraphicsContext* context, CCDebugRectHistory* debugRectHistory, const CCSettings& settings)
+{
+    const Vector<CCDebugRect>& debugRects = debugRectHistory->debugRects();
+    for (size_t i = 0; i < debugRects.size(); ++i) {
+
+        if (debugRects[i].type == PaintRectType) {
+            // Paint rects in red
+            context->setStrokeColor(Color(255, 0, 0, 255), ColorSpaceDeviceRGB);
+            context->fillRect(debugRects[i].rect, Color(255, 0, 0, 30), ColorSpaceDeviceRGB);
+            context->strokeRect(debugRects[i].rect, 2.0);
+        }
+
+        if (debugRects[i].type == PropertyChangedRectType) {
+            // Property-changed rects in blue
+            context->setStrokeColor(Color(0, 0, 255, 255), ColorSpaceDeviceRGB);
+            context->fillRect(debugRects[i].rect, Color(0, 0, 255, 30), ColorSpaceDeviceRGB);
+            context->strokeRect(debugRects[i].rect, 2.0);
+        }
+
+        if (debugRects[i].type == SurfaceDamageRectType) {
+            // Surface damage rects in yellow-orange
+            context->setStrokeColor(Color(200, 100, 0, 255), ColorSpaceDeviceRGB);
+            context->fillRect(debugRects[i].rect, Color(200, 100, 0, 30), ColorSpaceDeviceRGB);
+            context->strokeRect(debugRects[i].rect, 2.0);
+        }
+    }
 }
 
 }

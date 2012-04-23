@@ -32,7 +32,9 @@
 #include "TraceEvent.h"
 #include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCDamageTracker.h"
+#include "cc/CCDebugRectHistory.h"
 #include "cc/CCDelayBasedTimeSource.h"
+#include "cc/CCFrameRateCounter.h"
 #include "cc/CCGestureCurve.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
@@ -117,6 +119,8 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_needsAnimateLayers(false)
     , m_pinchGestureActive(false)
     , m_timeSourceClientAdapter(CCLayerTreeHostImplTimeSourceAdapter::create(this, CCDelayBasedTimeSource::create(lowFrequencyAnimationInterval * 1000.0, CCProxy::currentThread())))
+    , m_fpsCounter(CCFrameRateCounter::create())
+    , m_debugRectHistory(CCDebugRectHistory::create())
 {
     ASSERT(CCProxy::isImplThread());
     didVisibilityChange(this, m_visible);
@@ -258,7 +262,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
     TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
 
-    if (layerRendererCapabilities().usingPartialSwap)
+    if (layerRendererCapabilities().usingPartialSwap || settings().showSurfaceDamageRects)
         trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
     m_rootDamageRect = m_rootLayerImpl->renderSurface()->damageTracker()->currentDamageRect();
 
@@ -398,8 +402,8 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     // FIXME: use the frame begin time from the overall compositor scheduler.
     // This value is currently inaccessible because it is up in Chromium's
     // RenderWidget.
-    m_headsUpDisplay->onFrameBegin(currentTime());
 
+    m_fpsCounter->markBeginningOfFrame(currentTime());
     m_layerRenderer->beginDrawingFrame(m_rootLayerImpl->renderSurface());
 
     for (size_t i = 0; i < frame.renderPasses.size(); ++i)
@@ -412,6 +416,10 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
         if (it.representsItself() && !it->visibleLayerRect().isEmpty())
             it->didDraw();
     }
+
+    if (m_debugRectHistory->enabled(settings()))
+        m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), frame.renderSurfaceLayerList, settings());
+
     if (m_headsUpDisplay->enabled(settings()))
         m_headsUpDisplay->draw(this);
 
@@ -447,7 +455,8 @@ TextureAllocator* CCLayerTreeHostImpl::contentsTextureAllocator() const
 bool CCLayerTreeHostImpl::swapBuffers()
 {
     ASSERT(m_layerRenderer);
-    m_headsUpDisplay->onSwapBuffers();
+
+    m_fpsCounter->markEndOfFrame();
     return m_layerRenderer->swapBuffers(enclosingIntRect(m_rootDamageRect));
 }
 

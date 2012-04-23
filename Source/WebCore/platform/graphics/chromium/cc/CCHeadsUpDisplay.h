@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class CCDebugRectHistory;
+class CCFrameRateCounter;
 class CCLayerTreeHostImpl;
 class GraphicsContext;
 class ManagedTexture;
@@ -51,40 +53,23 @@ public:
 
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);
 
-    int currentFrameNumber() const { return m_currentFrameNumber; }
-
-    void onFrameBegin(double timestamp);
-    void onSwapBuffers();
-
     bool enabled(const CCSettings&) const;
     void draw(CCLayerTreeHostImpl*);
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexSwizzleAlpha> Program;
 
 private:
-    CCHeadsUpDisplay();
+    CCHeadsUpDisplay() { };
 
     void drawHudContents(GraphicsContext*, CCLayerTreeHostImpl*, const CCSettings&, const IntSize& hudSize);
-    void drawFPSCounter(GraphicsContext*, int top, int height);
-    void drawFPSCounterText(GraphicsContext*, int top, int width, int height);
-    bool isBadFrame(int frameNumber) const;
-    int frameIndex(int frameNumber) const;
-    void getAverageFPSAndStandardDeviation(double *average, double *standardDeviation) const;
+    void drawFPSCounter(GraphicsContext*, CCFrameRateCounter*, int top, int height);
+    void drawFPSCounterText(GraphicsContext*, CCFrameRateCounter*, int top, int width, int height);
+    void drawDebugRects(GraphicsContext*, CCDebugRectHistory*, const CCSettings&);
 
     bool showPlatformLayerTree(const CCSettings&) const;
-
-    int m_currentFrameNumber;
+    bool showDebugRects(const CCSettings&) const;
 
     OwnPtr<ManagedTexture> m_hudTexture;
-
-    static const int kBeginFrameHistorySize = 120;
-    // The number of seconds of no frames makes us decide that the previous
-    // animation is over.
-    static const double kIdleSecondsTriggersReset;
-    double m_beginTimeHistoryInSec[kBeginFrameHistorySize];
-    static const double kFrameTooFast;
-    static const int kNumMissedFramesForReset = 5;
-
     OwnPtr<CCFontAtlas> m_fontAtlas;
 };
 

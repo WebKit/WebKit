@@ -40,7 +40,9 @@ namespace WebCore {
 
 class CCActiveGestureAnimation;
 class CCCompletionEvent;
+class CCDebugRectHistory;
 class CCFontAtlas;
+class CCFrameRateCounter;
 class CCPageScaleAnimation;
 class CCLayerImpl;
 class CCLayerTreeHostImplTimeSourceAdapter;
@@ -150,6 +152,9 @@ public:
 
     void setNeedsRedraw();
 
+    CCFrameRateCounter* fpsCounter() const { return m_fpsCounter.get(); }
+    CCDebugRectHistory* debugRectHistory() const { return m_debugRectHistory.get(); }
+
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
 
@@ -215,6 +220,9 @@ private:
     CCLayerList m_mostRecentRenderSurfaceLayerList;
 
     FloatRect m_rootDamageRect;
+
+    OwnPtr<CCFrameRateCounter> m_fpsCounter;
+    OwnPtr<CCDebugRectHistory> m_debugRectHistory;
 };
 
 };

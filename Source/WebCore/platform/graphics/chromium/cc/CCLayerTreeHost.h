@@ -76,6 +76,9 @@ struct CCSettings {
             : acceleratePainting(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
+            , showPaintRects(false)
+            , showPropertyChangedRects(false)
+            , showSurfaceDamageRects(false)
             , refreshRate(0)
             , perTilePainting(false)
             , partialSwapEnabled(false)
@@ -85,6 +88,9 @@ struct CCSettings {
     bool acceleratePainting;
     bool showFPSCounter;
     bool showPlatformLayerTree;
+    bool showPaintRects;
+    bool showPropertyChangedRects;
+    bool showSurfaceDamageRects;
     double refreshRate;
     bool perTilePainting;
     bool partialSwapEnabled;
