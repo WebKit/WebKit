@@ -92,6 +92,10 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     if (dispatched())
         return;
 
+    m_propagationStopped = false;
+    m_immediatePropagationStopped = false;
+    m_defaultPrevented = false;
+
     m_type = eventTypeArg;
     m_canBubble = canBubbleArg;
     m_cancelable = cancelableArg;
