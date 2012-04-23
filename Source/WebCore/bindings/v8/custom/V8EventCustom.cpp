@@ -54,7 +54,7 @@ v8::Handle<v8::Value> V8Event::dataTransferAccessorGetter(v8::Local<v8::String> 
     Event* event = V8Event::toNative(info.Holder());
 
     if (event->isDragEvent())
-        return toV8(static_cast<MouseEvent*>(event)->clipboard());
+        return toV8(static_cast<MouseEvent*>(event)->clipboard(), info.GetIsolate());
 
     return v8::Undefined();
 }
@@ -64,14 +64,14 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
     Event* event = V8Event::toNative(info.Holder());
 
     if (event->isClipboardEvent())
-        return toV8(static_cast<ClipboardEvent*>(event)->clipboard());
+        return toV8(static_cast<ClipboardEvent*>(event)->clipboard(), info.GetIsolate());
 
     return v8::Undefined();
 }
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     if (eventNames().interfaceFor##interfaceName == desiredInterface) \
-        return toV8(static_cast<interfaceName*>(event));
+        return toV8(static_cast<interfaceName*>(event), isolate);
 
 v8::Handle<v8::Value> toV8(Event* event, v8::Isolate *isolate)
 {

@@ -107,7 +107,7 @@ v8::Handle<v8::Value> V8DirectoryEntrySync::getDirectoryCallback(const v8::Argum
         V8Proxy::setDOMException(ec);
         return v8::Handle<v8::Value>();
     }
-    return toV8(result.release());
+    return toV8(result.release(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DirectoryEntrySync::getFileCallback(const v8::Arguments& args)
@@ -126,7 +126,7 @@ v8::Handle<v8::Value> V8DirectoryEntrySync::getFileCallback(const v8::Arguments&
         V8Proxy::setDOMException(ec);
         return v8::Handle<v8::Value>();
     }
-    return toV8(result.release());
+    return toV8(result.release(), args.GetIsolate());
 }
 
 

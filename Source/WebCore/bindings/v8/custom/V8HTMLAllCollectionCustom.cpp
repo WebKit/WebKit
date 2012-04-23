@@ -121,7 +121,7 @@ v8::Handle<v8::Value> V8HTMLAllCollection::callAsFunctionCallback(const v8::Argu
         return v8::Undefined();
 
     if (Node* node = imp->namedItemWithIndex(name, index->Uint32Value()))
-        return toV8(node);
+        return toV8(node, args.GetIsolate());
 
     return v8::Undefined();
 }

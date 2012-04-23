@@ -463,7 +463,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     if (!openedWindow)
         return v8::Undefined();
 
-    return toV8(openedWindow.release());
+    return toV8(openedWindow.release(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
@@ -480,7 +480,7 @@ v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v
 
     Frame* child = frame->tree()->scopedChild(index);
     if (child)
-        return toV8(child->domWindow());
+        return toV8(child->domWindow(), info.GetIsolate());
 
     return notHandledByInterceptor();
 }
@@ -503,7 +503,7 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
     AtomicString propName = v8StringToAtomicWebCoreString(name);
     Frame* child = frame->tree()->scopedChild(propName);
     if (child)
-        return toV8(child->domWindow());
+        return toV8(child->domWindow(), info.GetIsolate());
 
     // Search IDL functions defined in the prototype
     if (!info.Holder()->GetRealNamedProperty(name).IsEmpty())
@@ -517,8 +517,8 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
             HTMLCollection* items = doc->windowNamedItems(propName);
             if (items->length() >= 1) {
                 if (items->length() == 1)
-                    return toV8(items->firstItem());
-                return toV8(items);
+                    return toV8(items->firstItem(), info.GetIsolate());
+                return toV8(items, info.GetIsolate());
             }
         }
     }

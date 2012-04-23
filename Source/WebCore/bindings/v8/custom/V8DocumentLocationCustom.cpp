@@ -41,7 +41,7 @@ v8::Handle<v8::Value> V8Document::locationAccessorGetter(v8::Local<v8::String> n
         return v8::Null();
 
     DOMWindow* window = document->frame()->domWindow();
-    return toV8(window->location());
+    return toV8(window->location(), info.GetIsolate());
 }
 
 void V8Document::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

@@ -50,10 +50,10 @@ v8::Handle<v8::Value> toV8(Entry* impl, v8::Isolate* isolate)
         return v8::Null();
 
     if (impl->isFile())
-        return toV8(static_cast<FileEntry*>(impl));
+        return toV8(static_cast<FileEntry*>(impl), isolate);
 
     ASSERT(impl->isDirectory());
-    return toV8(static_cast<DirectoryEntry*>(impl));
+    return toV8(static_cast<DirectoryEntry*>(impl), isolate);
 }
 
 } // namespace WebCore

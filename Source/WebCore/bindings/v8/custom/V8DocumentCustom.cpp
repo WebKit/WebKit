@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     if (ec)
         return throwError(ec);
 
-    return toV8(result.release());
+    return toV8(result.release(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Arguments& args)
@@ -107,10 +107,10 @@ v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Argument
     if (!result)
         return v8::Undefined();
     if (result->is2d())
-        return toV8(static_cast<CanvasRenderingContext2D*>(result));
+        return toV8(static_cast<CanvasRenderingContext2D*>(result), args.GetIsolate());
 #if ENABLE(WEBGL)
     else if (result->is3d())
-        return toV8(static_cast<WebGLRenderingContext*>(result));
+        return toV8(static_cast<WebGLRenderingContext*>(result), args.GetIsolate());
 #endif // ENABLE(WEBGL)
     ASSERT_NOT_REACHED();
     return v8::Undefined();
@@ -147,7 +147,7 @@ v8::Handle<v8::Value> V8Document::createTouchListCallback(const v8::Arguments& a
         touchList->append(V8Touch::toNative(args[i]->ToObject()));
     }
 
-    return toV8(touchList.release());
+    return toV8(touchList.release(), args.GetIsolate());
 }
 #endif
 
