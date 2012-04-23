@@ -80,16 +80,16 @@ namespace JSC { namespace DFG {
     macro(Int32ToDouble, NodeResultNumber) \
     \
     /* Nodes for arithmetic operations. */\
-    macro(ArithAdd, NodeResultNumber) \
-    macro(ArithSub, NodeResultNumber) \
-    macro(ArithNegate, NodeResultNumber) \
-    macro(ArithMul, NodeResultNumber) \
-    macro(ArithDiv, NodeResultNumber) \
-    macro(ArithMod, NodeResultNumber) \
-    macro(ArithAbs, NodeResultNumber) \
-    macro(ArithMin, NodeResultNumber) \
-    macro(ArithMax, NodeResultNumber) \
-    macro(ArithSqrt, NodeResultNumber) \
+    macro(ArithAdd, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithSub, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithNegate, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithMul, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithDiv, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithMod, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithAbs, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithMin, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithMax, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithSqrt, NodeResultNumber | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \

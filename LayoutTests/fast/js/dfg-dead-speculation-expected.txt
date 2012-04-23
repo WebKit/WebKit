@@ -1,0 +1,409 @@
+Tests that the DFG will still perform speculations on dead things.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 84
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS foo(thingy, i) is 10
+PASS variable is 24
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
