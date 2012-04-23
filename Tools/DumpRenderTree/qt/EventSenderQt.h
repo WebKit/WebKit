@@ -70,6 +70,7 @@ public slots:
     void addTouchPoint(int x, int y);
     void updateTouchPoint(int index, int x, int y);
     void setTouchModifier(const QString &modifier, bool enable);
+    void setTouchPointRadius(int radiusX, int radiusY);
     void touchStart();
     void touchMove();
     void touchEnd();
@@ -101,6 +102,7 @@ private:
     void replaySavedEvents(bool flush);
     QPoint m_mousePos;
     QPoint m_clickPos;
+    QPoint m_touchPointRadius;
     Qt::MouseButtons m_mouseButtons;
     QWebPage* m_page;
     int m_clickCount;

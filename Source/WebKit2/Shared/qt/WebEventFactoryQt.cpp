@@ -209,7 +209,8 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const QTouchEvent* event, con
         if (type == WebEvent::TouchCancel)
             state = WebPlatformTouchPoint::TouchCancelled;
 
-        m_touchPoints.append(WebPlatformTouchPoint(id, state, touchPoint.screenPos().toPoint(), fromItemTransform.map(touchPoint.pos()).toPoint()));
+        IntSize radius(touchPoint.rect().width()/ 2, touchPoint.rect().height() / 2);
+        m_touchPoints.append(WebPlatformTouchPoint(id, state, touchPoint.screenPos().toPoint(), fromItemTransform.map(touchPoint.pos()).toPoint(), radius, 0.0, touchPoint.pressure()));
     }
 
     return WebTouchEvent(type, m_touchPoints, modifiers, timestamp);

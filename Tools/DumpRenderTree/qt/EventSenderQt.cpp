@@ -411,6 +411,8 @@ void EventSender::addTouchPoint(int x, int y)
     point.setPos(pos);
     point.setStartPos(pos);
     point.setState(Qt::TouchPointPressed);
+    if (!m_touchPointRadius.isNull())
+        point.setRect(QRectF(pos - m_touchPointRadius, pos + m_touchPointRadius));
     m_touchPoints.append(point);
 }
 
@@ -419,9 +421,12 @@ void EventSender::updateTouchPoint(int index, int x, int y)
     if (index < 0 || index >= m_touchPoints.count())
         return;
 
-    QTouchEvent::TouchPoint &p = m_touchPoints[index];
-    p.setPos(QPointF(x, y));
-    p.setState(Qt::TouchPointMoved);
+    const QPointF pos(x, y);
+    QTouchEvent::TouchPoint &point = m_touchPoints[index];
+    point.setPos(pos);
+    point.setState(Qt::TouchPointMoved);
+    if (!m_touchPointRadius.isNull())
+        point.setRect(QRectF(pos - m_touchPointRadius, pos + m_touchPointRadius));
 }
 
 void EventSender::setTouchModifier(const QString &modifier, bool enable)
@@ -440,6 +445,11 @@ void EventSender::setTouchModifier(const QString &modifier, bool enable)
         m_touchModifiers |= mod;
     else
         m_touchModifiers &= ~mod;
+}
+
+void EventSender::setTouchPointRadius(int radiusX, int radiusY)
+{
+    m_touchPointRadius = QPoint(radiusX, radiusY);
 }
 
 void EventSender::touchStart()
@@ -480,6 +490,7 @@ void EventSender::clearTouchPoints()
     m_touchPoints.clear();
     m_touchModifiers = Qt::KeyboardModifiers();
     m_touchActive = false;
+    m_touchPointRadius = QPoint();
 }
 
 void EventSender::releaseTouchPoint(int index)

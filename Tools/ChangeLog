@@ -1,3 +1,20 @@
+2012-04-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt][WK2] Convert touch-point area.
+        https://bugs.webkit.org/show_bug.cgi?id=84434
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add feature to set touch-point radius for emitted touch-events.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::addTouchPoint):
+        (EventSender::updateTouchPoint):
+        (EventSender::setTouchPointRadius):
+        (EventSender::clearTouchPoints):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        (EventSender):
+
 2012-04-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] EFL's LayoutTestController does not implement elementDoesAutoCompleteForElementWithId

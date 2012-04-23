@@ -1,3 +1,15 @@
+2012-04-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt][WK2] Convert touch-point area.
+        https://bugs.webkit.org/show_bug.cgi?id=84434
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Missed WebKit2 conversion in commit r106470.
+
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+
 2012-04-23  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Add desktop zooming support for QQuickWebView

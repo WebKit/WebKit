@@ -40,13 +40,17 @@ function verifyTouchEvent(type, totalTouchCount, changedTouchCount, targetTouchC
     shouldBe("lastEvent.pageY", "0");
 }
 
-function verifyTouchPoint(list, point, x, y, id)
+function verifyTouchPoint(list, point, x, y, id, rx, ry)
 {
     shouldBe("lastEvent." + list + "[" + point + "].pageX", x.toString());
     shouldBe("lastEvent." + list + "[" + point + "].pageY", y.toString());
     shouldBe("lastEvent." + list + "[" + point + "].clientX", x.toString());
     shouldBe("lastEvent." + list + "[" + point + "].clientY", y.toString());
     shouldBe("lastEvent." + list + "[" + point + "].identifier", id.toString());
+    if (eventSender.setTouchPointRadius) {
+        shouldBe("lastEvent." + list + "[" + point + "].webkitRadiusX", rx.toString());
+        shouldBe("lastEvent." + list + "[" + point + "].webkitRadiusY", ry.toString());
+    }
 }
 
 function verifyTouch(which) {
@@ -55,13 +59,13 @@ function verifyTouch(which) {
            verifyTouchEvent("touchstart", 1, 1, 1);
            shouldBe("lastEvent.shiftKey", "false");
            shouldBeEqualToString("lastEvent.touches[0].target.id", "touchtarget");
-           verifyTouchPoint("touches", 0, 10, 10, 0);
-           verifyTouchPoint("changedTouches", 0, 10, 10, 0);
-           verifyTouchPoint("targetTouches", 0, 10, 10, 0);
+           verifyTouchPoint("touches", 0, 10, 10, 0, 10, 10);
+           verifyTouchPoint("changedTouches", 0, 10, 10, 0, 10, 10);
+           verifyTouchPoint("targetTouches", 0, 10, 10, 0, 10, 10);
         break;
         case 1:
            verifyTouchEvent("touchmove", 1, 1, 1);
-           verifyTouchPoint("touches", 0, 50, 50, 0);
+           verifyTouchPoint("touches", 0, 50, 50, 0, 12, 12);
            shouldBe("lastEvent.shiftKey", "true");
            shouldBe("lastEvent.altKey", "true");
            shouldBe("lastEvent.ctrlKey", "false");
@@ -69,7 +73,7 @@ function verifyTouch(which) {
         break;
         case 2:
             verifyTouchEvent("touchend", 0, 1, 0);
-            verifyTouchPoint("changedTouches", 0, 50, 50, 0);
+            verifyTouchPoint("changedTouches", 0, 50, 50, 0, 12, 12);
             shouldBe("lastEvent.shiftKey", "false");
             shouldBe("lastEvent.altKey", "false");
         break;
@@ -88,9 +92,13 @@ function verifyTouch(which) {
 
 function singleTouchSequence()
 {
+    if (eventSender.setTouchPointRadius)
+        eventSender.setTouchPointRadius(10,10);
     eventSender.addTouchPoint(10, 10);
     eventSender.touchStart();
 
+    if (eventSender.setTouchPointRadius)
+        eventSender.setTouchPointRadius(12,12);
     eventSender.updateTouchPoint(0, 50, 50);
     eventSender.setTouchModifier("shift", true);
     eventSender.setTouchModifier("alt", true);
