@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved
+ * Copyright (C) 2006, 2007, 2008, 2012 Apple Inc. All rights reserved
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,13 +23,15 @@
 #define StringHash_h
 
 #include <wtf/text/AtomicString.h>
-#include <wtf/text/WTFString.h>
-#include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StringHasher.h>
-#include <wtf/unicode/Unicode.h>
 
 namespace WTF {
+
+    inline bool HashTraits<String>::isEmptyValue(const String& value)
+    {
+        return value.isNull();
+    }
 
     // The hash() functions on StringHash and CaseFoldingHash do not support
     // null strings. get(), contains(), and add() on HashMap<String,..., StringHash>
@@ -179,8 +181,8 @@ namespace WTF {
 
 }
 
-using WTF::StringHash;
-using WTF::CaseFoldingHash;
 using WTF::AlreadyHashed;
+using WTF::CaseFoldingHash;
+using WTF::StringHash;
 
 #endif
