@@ -1,3 +1,13 @@
+2012-04-23  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] When prepareToDraw fails due to animation checkerboard, we need to call setNeedsCommit
+        https://bugs.webkit.org/show_bug.cgi?id=84520
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-04-23  Mikhail Naganov  <mnaganov@chromium.org>
 
         Chromium roll from r133348 to r133422.

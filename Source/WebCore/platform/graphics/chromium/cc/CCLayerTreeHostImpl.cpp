@@ -375,8 +375,11 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
     if (!m_rootLayerImpl)
         return false;
 
-    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList))
+    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList)) {
+        // We're missing textures on an animating layer. Request a commit.
+        m_client->setNeedsCommitOnImplThread();
         return false;
+    }
 
     m_mostRecentRenderSurfaceLayerList = frame.renderSurfaceLayerList;
 
