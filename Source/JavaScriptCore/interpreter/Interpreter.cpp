@@ -1253,7 +1253,6 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
     Register* oldEnd = m_registerFile.end();
     ASSERT(callFrame->frameExtent() <= oldEnd || callFrame == callFrame->scopeChain()->globalObject->globalExec());
-    ASSERT(callFrame == callFrame->globalData().topCallFrame || callFrame == callFrame->scopeChain()->globalObject->globalExec());
     int argCount = 1 + args.size(); // implicit "this" parameter
     size_t registerOffset = argCount + RegisterFile::CallFrameHeaderSize;
 
