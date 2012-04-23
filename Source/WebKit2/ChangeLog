@@ -1,3 +1,21 @@
+2012-04-23  Andreas Kling  <kling@webkit.org>
+
+        [Mac] WebProcess should empty cache on a background thread/block.
+        <http://webkit.org/b/84619>
+        <rdar://problem/10668689>
+
+        Reviewed by Anders Carlsson.
+
+        Move the removeAllCachedResponses call to a dispatch queue and wait for it on exit.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformClearResourceCaches):
+        (WebKit::WebProcess::platformTerminate):
+
 2012-04-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt][WK2] Convert touch-point area.

@@ -135,6 +135,9 @@ WebProcess::WebProcess()
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
+#if PLATFORM(MAC)
+    , m_clearResourceCachesDispatchGroup(0)
+#endif
     , m_fullKeyboardAccessEnabled(false)
 #if PLATFORM(QT)
     , m_networkAccessManager(0)

@@ -48,6 +48,10 @@
 class QNetworkAccessManager;
 #endif
 
+#if PLATFORM(MAC)
+#include <dispatch/dispatch.h>
+#endif
+
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotificationManager.h"
 #endif
@@ -254,6 +258,7 @@ private:
 #endif
 #if PLATFORM(MAC)
     pid_t m_presenterApplicationPid;
+    dispatch_group_t m_clearResourceCachesDispatchGroup;
 #endif
 
     bool m_fullKeyboardAccessEnabled;

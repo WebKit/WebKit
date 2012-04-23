@@ -130,7 +130,13 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
 {
     if (cachesToClear == InMemoryResourceCachesOnly)
         return;
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+
+    if (!m_clearResourceCachesDispatchGroup)
+        m_clearResourceCachesDispatchGroup = dispatch_group_create();
+
+    dispatch_group_async(m_clearResourceCachesDispatchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    });
 }
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
@@ -284,6 +290,11 @@ void WebProcess::initializeShim()
 
 void WebProcess::platformTerminate()
 {
+    if (m_clearResourceCachesDispatchGroup) {
+        dispatch_group_wait(m_clearResourceCachesDispatchGroup, DISPATCH_TIME_FOREVER);
+        dispatch_release(m_clearResourceCachesDispatchGroup);
+        m_clearResourceCachesDispatchGroup = 0;
+    }
 }
 
 void WebProcess::secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData& response)
