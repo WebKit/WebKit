@@ -46,10 +46,10 @@ class HttpLockTestWithRealFileSystem(unittest.TestCase):
 
     def clean_all_lockfile(self):
         if self.filesystem.exists(self.guard_lock_file):
-            self.filesystem.unlink(self.guard_lock_file)
+            self.filesystem.remove(self.guard_lock_file)
         lock_list = self.filesystem.glob(self.lock_file_path_prefix + '*')
         for file_name in lock_list:
-            self.filesystem.unlink(file_name)
+            self.filesystem.remove(file_name)
 
     def assertEqual(self, first, second):
         if first != second:
