@@ -64,6 +64,7 @@ module window {
 
         boolean attached(in Node node) raises(DOMException);
 
+        DOMString visiblePlaceholder(in Element element);
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
         void selectColorInColorChooser(in Element element, in DOMString colorValue);
 #endif

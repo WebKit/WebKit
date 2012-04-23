@@ -92,6 +92,7 @@ public:
     Node* nextNodeByWalker(Node*, ExceptionCode&);
     Node* previousNodeByWalker(Node*, ExceptionCode&);
 
+    String visiblePlaceholder(Element*);
 #if ENABLE(INPUT_TYPE_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);
 #endif

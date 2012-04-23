@@ -87,6 +87,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
 {
     if (markerType.isEmpty() || equalIgnoringCase(markerType, "all"))
@@ -388,10 +390,18 @@ String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)
     return element->shadowPseudoId().string();
 }
 
+String Internals::visiblePlaceholder(Element* element)
+{
+    HTMLTextFormControlElement* textControl = toTextFormControl(element);
+    if (textControl && textControl->placeholderShouldBeVisible())
+        return textControl->placeholderElement()->textContent();
+    return String();
+}
+
 #if ENABLE(INPUT_TYPE_COLOR)
 void Internals::selectColorInColorChooser(Element* element, const String& colorValue)
 {
-    if (!element->hasTagName(HTMLNames::inputTag))
+    if (!element->hasTagName(inputTag))
         return;
     HTMLInputElement* inputElement = element->toInputElement();
     if (!inputElement)
