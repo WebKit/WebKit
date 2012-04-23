@@ -27,7 +27,6 @@
 
 #include "ActiveDOMObject.cpp"
 #include "Attr.cpp"
-#include "Attribute.cpp"
 #include "BeforeTextInsertedEvent.cpp"
 #include "BeforeUnloadEvent.cpp"
 #include "CDATASection.cpp"
