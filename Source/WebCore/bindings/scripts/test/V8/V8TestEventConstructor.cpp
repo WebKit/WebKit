@@ -86,7 +86,8 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     RefPtr<TestEventConstructor> event = TestEventConstructor::create(type, eventInit);
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, event.get());
-    return toV8(event.release(), args.Holder());
+    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
 }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const Dictionary& options)

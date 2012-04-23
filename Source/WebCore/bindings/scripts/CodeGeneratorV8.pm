@@ -1817,7 +1817,8 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     RefPtr<${implClassName}> event = ${implClassName}::create(type, eventInit);
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, event.get());
-    return toV8(event.release(), args.Holder());
+    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
 }
 
 bool fill${implClassName}Init(${implClassName}Init& eventInit, const Dictionary& options)

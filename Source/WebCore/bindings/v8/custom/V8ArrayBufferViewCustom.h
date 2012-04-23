@@ -88,7 +88,10 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
     V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
     if (hasIndexer)
         args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
-    return toV8(array.release(), args.Holder(), MarkIndependent);
+    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
+    wrapper.MarkIndependent();
+    V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+    return args.Holder();
 }
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
@@ -117,7 +120,10 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         // Do not call SetIndexedPropertiesToExternalArrayData on this
         // object. Not only is there no point from a performance
         // perspective, but doing so causes errors in the subset() case.
-        return toV8(array.release(), args.Holder(), MarkIndependent);
+        v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
+        wrapper.MarkIndependent();
+        V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+        return args.Holder();
     }
 
     // Supported constructors:
@@ -173,7 +179,10 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (!srcArray.IsEmpty())
         copyElements(args.Holder(), srcArray, 0);
 
-    return toV8(array.release(), args.Holder(), MarkIndependent);
+    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
+    wrapper.MarkIndependent();
+    V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+    return args.Holder();
 }
 
 template <class CPlusPlusArrayType, class JavaScriptWrapperArrayType>

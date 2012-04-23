@@ -75,7 +75,8 @@ v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments&
 
     // Setup the standard wrapper object internal fields.
     V8DOMWrapper::setDOMWrapper(messageChannel, &info, obj.get());
-    return toV8(obj.release(), messageChannel);
+    V8DOMWrapper::setJSWrapperForDOMObject(obj.release(), v8::Persistent<v8::Object>::New(messageChannel));
+    return messageChannel;
 }
 
 

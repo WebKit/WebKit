@@ -49,7 +49,8 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
         // 'new DataView()' and the call used to construct the cached DataView object.
         RefPtr<DataView> dataView = DataView::create(0);
         V8DOMWrapper::setDOMWrapper(args.Holder(), &info, dataView.get());
-        return toV8(dataView.release(), args.Holder());
+        V8DOMWrapper::setJSWrapperForDOMObject(dataView.release(), v8::Persistent<v8::Object>::New(args.Holder()));
+        return args.Holder();
     }
     if (args[0]->IsNull() || !V8ArrayBuffer::HasInstance(args[0]))
         return V8Proxy::throwTypeError();
