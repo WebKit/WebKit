@@ -190,8 +190,13 @@ java/
         self.assertEqual(child_processes, 1)
 
     def test_get_crash_log(self):
-        # Mac crash logs are tested elsewhere
-        pass
+        # Mac crash logs are tested elsewhere, so here we just make sure we don't crash.
+        def fake_time_cb():
+            times = [0, 20, 40]
+            return lambda: times.pop(0)
+        port = self.make_port(port_name='mac-snowleopard')
+        port._get_crash_log('DumpRenderTree', 1234, '', '', 0,
+            time_fn=fake_time_cb(), sleep_fn=lambda delay: None)
 
     def test_helper_starts(self):
         host = MockSystemHost(MockExecutive())
