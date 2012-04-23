@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x446
+  RenderBlock {HTML} at (0,0) size 800x446
+    RenderBody {BODY} at (8,8) size 784x430
+      RenderBlock {DIV} at (0,0) size 784x430
+        RenderBlock (anonymous) at (0,0) size 784x42
+          RenderText {#text} at (0,0) size 765x42
+            text run at (0,0) width 765: "In all four cases below, the exclamation mark should be on the left side of the first line and on the right side of"
+            text run at (0,21) width 112: "the second line."
+        RenderBlock {DIV} at (0,42) size 784x388
+          RenderBR {BR} at (474,76) size 0x21
+          RenderBR {BR} at (474,173) size 0x21
+          RenderBR {BR} at (474,270) size 0x21
+          RenderText {#text} at (0,0) size 0x0
+layer at (10,52) size 470x88
+  RenderTextControl {TEXTAREA} at (2,2) size 470x88
+    RenderBlock {DIV} at (2,2) size 466x63
+      RenderText {#text} at (462,0) size 39x42
+        text run at (462,0) width 0 RTL: " "
+        text run at (462,0) width 4 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+        text run at (427,21) width 39: "hello!"
+        text run at (466,21) width 0: " "
+      RenderBR {BR} at (466,42) size 0x21
+layer at (10,149) size 470x88
+  RenderTextControl {TEXTAREA} at (2,99) size 470x88
+    RenderBlock {DIV} at (2,2) size 466x63
+      RenderText {#text} at (0,0) size 39x42
+        text run at (0,0) width 0 RTL: " "
+        text run at (0,0) width 4 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+        text run at (0,21) width 39: "hello!"
+        text run at (39,21) width 0: " "
+      RenderBR {BR} at (0,42) size 0x21
+layer at (10,246) size 470x88
+  RenderTextControl {TEXTAREA} at (2,196) size 470x88
+    RenderBlock {DIV} at (2,2) size 466x63
+      RenderText {#text} at (0,0) size 39x42
+        text run at (0,0) width 0 RTL: " "
+        text run at (0,0) width 4 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+        text run at (0,21) width 39: "hello!"
+        text run at (39,21) width 0: " "
+      RenderBR {BR} at (0,42) size 0x21
+layer at (10,343) size 470x88
+  RenderTextControl {TEXTAREA} at (2,293) size 470x88
+    RenderBlock {DIV} at (2,2) size 466x63
+      RenderText {#text} at (462,0) size 39x42
+        text run at (462,0) width 0 RTL: " "
+        text run at (462,0) width 4 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+        text run at (427,21) width 39: "hello!"
+        text run at (466,21) width 0: " "
+      RenderBR {BR} at (466,42) size 0x21

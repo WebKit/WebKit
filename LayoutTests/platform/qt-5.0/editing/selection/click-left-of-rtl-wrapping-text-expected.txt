@@ -1,0 +1,6 @@
+This tests clicking on the left of RTL text puts the caret at the end of the line.
+
+FAIL: clicking on the left of the 1st line of ך לכ put the caret at 4 but expected at 2
+FAIL: clicking on the left of the 1st line of ככ ככככ כככ put the caret at 8 but expected at 3
+FAIL: clicking on the left of the 1st line of גכ יגכ יגכ יגכ יגכ put the caret at 7 but expected at 3
+
