@@ -849,9 +849,6 @@ BUGCR30536 WIN : http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-va
 BUGCR8941 SLOW WIN : http/tests/xmlhttprequest/web-apps/013.html = FAIL
 BUGCR8941 WIN : http/tests/xmlhttprequest/web-apps/012.html = FAIL
 
-// Has a 150ms setTimeout and seems racy
-BUGWK72402 DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
-
 // Incrorect results, in incorrect international font metrics.
 BUGCR20521 WIN : fast/text/atsui-multiple-renderers.html = IMAGE+TEXT
 BUGWK78544 LINUX : fast/text/atsui-multiple-renderers.html = PASS IMAGE IMAGE+TEXT
