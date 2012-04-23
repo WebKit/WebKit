@@ -50,9 +50,7 @@ PassRefPtr<Attr> ElementAttributeData::ensureAttr(Element* element, const Qualif
 {
     AttrMap::AddResult result = attrMap().add(std::make_pair(element, name), 0);
     if (result.isNewEntry) {
-        RefPtr<Attr> attr = Attr::create(element, name);
-        attr->attachToElement(element);
-        result.iterator->second = attr.release();
+        result.iterator->second = Attr::create(element, name);
         ++m_attrCount;
     }
     return result.iterator->second.get();
