@@ -61,7 +61,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    if (!platformData().size())
+    if (!glyph || !platformData().size())
         return 0;
 
     QVector<quint32> glyphIndexes;
