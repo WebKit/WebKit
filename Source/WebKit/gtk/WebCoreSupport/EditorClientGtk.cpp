@@ -124,13 +124,6 @@ void EditorClient::setInputMethodState(bool active)
         gtk_im_context_focus_in(priv->imContext.get());
     else
         gtk_im_context_focus_out(priv->imContext.get());
-
-#ifdef MAEMO_CHANGES
-    if (active)
-        hildon_gtk_im_context_show(priv->imContext.get());
-    else
-        hildon_gtk_im_context_hide(priv->imContext.get());
-#endif
 }
 
 bool EditorClient::shouldShowUnicodeMenu()

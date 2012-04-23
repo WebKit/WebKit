@@ -326,21 +326,6 @@ esac
 
 AC_MSG_RESULT([$with_target])
 
-AC_MSG_CHECKING([for Hildon UI extensions])
-AC_ARG_WITH(hildon,
-            AC_HELP_STRING([--with-hildon],
-                           [Use Hildon UI extensions [default=no]]),
-            [],[with_hildon="no"])
-AC_MSG_RESULT([$with_hildon])
-
-if test "$with_hildon" = "yes"; then
-    HILDON_CPPFLAGS="-DMAEMO_CHANGES"
-    PKG_CHECK_MODULES([HILDON], [hildon-1])
-    AC_SUBST([HILDON_CPPFLAGS])
-    AC_SUBST([HILDON_CFLAGS])
-    AC_SUBST([HILDON_LIBS])
-fi
-
 AC_MSG_CHECKING([the GStreamer version to use])
 AC_ARG_WITH([gstreamer],
         [AS_HELP_STRING([--with-gstreamer=0.10|1.0], [the GStreamer version to use (default: 0.10)])],
@@ -1499,7 +1484,6 @@ Features:
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
  GDK target                                               : $with_target
- Hildon UI extensions                                     : $with_hildon
  GStreamer version                                        : $with_gstreamer
  Introspection support                                    : $enable_introspection
  Generate documentation                                   : $enable_gtk_doc

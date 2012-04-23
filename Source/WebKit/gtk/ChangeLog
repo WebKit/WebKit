@@ -1,3 +1,16 @@
+2012-04-22  Adrian Bunk  <bunk@stusta.de>
+
+        [GTK] Remove the obsolete Hildon UI extensions
+        https://bugs.webkit.org/show_bug.cgi?id=83420
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::setInputMethodState):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_button_release_event):
+
 2012-04-20  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk][WK1] Use mock scrollbars when testing
