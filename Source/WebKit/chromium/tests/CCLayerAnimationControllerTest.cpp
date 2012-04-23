@@ -86,6 +86,33 @@ TEST(CCLayerAnimationControllerTest, createOpacityAnimation)
     EXPECT_EQ(1, curve->getValue(duration));
 }
 
+TEST(CCLayerAnimationControllerTest, ignoreUnsupportedAnimationDirections)
+{
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
+    values.insert(new FloatAnimationValue(0, 0));
+    values.insert(new FloatAnimationValue(duration, 1));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+
+    animation->setDirection(Animation::AnimationDirectionAlternate);
+    EXPECT_FALSE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
+
+    animation->setDirection(Animation::AnimationDirectionAlternateReverse);
+    EXPECT_FALSE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
+
+    animation->setDirection(Animation::AnimationDirectionReverse);
+    EXPECT_FALSE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
+
+    animation->setDirection(Animation::AnimationDirectionNormal);
+    EXPECT_TRUE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
+}
+
 TEST(CCLayerAnimationControllerTest, createTransformAnimation)
 {
     FakeLayerAnimationControllerClient dummy;

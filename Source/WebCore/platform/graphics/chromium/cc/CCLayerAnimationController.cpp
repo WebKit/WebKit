@@ -53,7 +53,7 @@ template <class Value, class Keyframe, class Curve>
 PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& valueList, const Animation* animation, size_t animationId, size_t groupId, double timeOffset, CCActiveAnimation::TargetProperty targetProperty)
 {
     // FIXME: add support for different directions.
-    if (animation && animation->isDirectionSet() && animation->direction() == Animation::AnimationDirectionAlternate)
+    if (animation && animation->isDirectionSet() && animation->direction() != Animation::AnimationDirectionNormal)
         return nullptr;
 
     // FIXME: add support for fills forwards and fills backwards
