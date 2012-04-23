@@ -598,7 +598,7 @@ bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t inde
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, false);
 }
 
-v8::Handle<v8::Value> toV8(DOMWindow* window)
+v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Isolate* isolate)
 {
     if (!window)
         return v8::Null();

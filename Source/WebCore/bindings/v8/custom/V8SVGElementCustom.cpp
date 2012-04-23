@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(SVGElement* impl, bool forceNewObject)
+v8::Handle<v8::Value> toV8(SVGElement* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8::Null();

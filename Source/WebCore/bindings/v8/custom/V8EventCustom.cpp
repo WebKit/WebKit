@@ -73,7 +73,7 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
     if (eventNames().interfaceFor##interfaceName == desiredInterface) \
         return toV8(static_cast<interfaceName*>(event));
 
-v8::Handle<v8::Value> toV8(Event* event)
+v8::Handle<v8::Value> toV8(Event* event, v8::Isolate *isolate)
 {
     if (!event)
         return v8::Null();

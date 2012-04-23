@@ -61,15 +61,15 @@ v8::Handle<v8::Object> V8TestInterface::wrap(TestInterface* impl)
     return V8TestInterface::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestInterface* impl)
+inline v8::Handle<v8::Value> toV8(TestInterface* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8::Null();
     return V8TestInterface::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestInterface > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestInterface > impl, v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get());
+    return toV8(impl.get(), isolate);
 }
 
 }

@@ -58,15 +58,15 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrap(TestActiveDOMObject* impl)
     return V8TestActiveDOMObject::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestActiveDOMObject* impl)
+inline v8::Handle<v8::Value> toV8(TestActiveDOMObject* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8::Null();
     return V8TestActiveDOMObject::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestActiveDOMObject > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestActiveDOMObject > impl, v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get());
+    return toV8(impl.get(), isolate);
 }
 
 }

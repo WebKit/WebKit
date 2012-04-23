@@ -57,15 +57,15 @@ v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl
     return V8TestCustomNamedGetter::wrapSlow(impl);
 }
 
-inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl)
+inline v8::Handle<v8::Value> toV8(TestCustomNamedGetter* impl, v8::Isolate* isolate = 0)
 {
     if (!impl)
         return v8::Null();
     return V8TestCustomNamedGetter::wrap(impl);
 }
-inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl)
+inline v8::Handle<v8::Value> toV8(PassRefPtr< TestCustomNamedGetter > impl, v8::Isolate* isolate = 0)
 {
-    return toV8(impl.get());
+    return toV8(impl.get(), isolate);
 }
 
 }

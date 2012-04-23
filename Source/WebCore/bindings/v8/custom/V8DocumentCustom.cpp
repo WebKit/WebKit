@@ -116,15 +116,15 @@ v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Argument
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> toV8(Document* impl, bool forceNewObject)
+v8::Handle<v8::Value> toV8(Document* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8::Null();
     if (impl->isHTMLDocument())
-        return toV8(static_cast<HTMLDocument*>(impl), forceNewObject);
+        return toV8(static_cast<HTMLDocument*>(impl), isolate, forceNewObject);
 #if ENABLE(SVG)
     if (impl->isSVGDocument())
-        return toV8(static_cast<SVGDocument*>(impl), forceNewObject);
+        return toV8(static_cast<SVGDocument*>(impl), isolate, forceNewObject);
 #endif
     v8::Handle<v8::Object> wrapper = V8Document::wrap(impl, forceNewObject);
     if (wrapper.IsEmpty())

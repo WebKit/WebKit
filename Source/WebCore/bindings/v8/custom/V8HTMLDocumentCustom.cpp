@@ -186,7 +186,7 @@ void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
     info.This()->ForceSet(name, value);
 }
 
-v8::Handle<v8::Value> toV8(HTMLDocument* impl, bool forceNewObject)
+v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Isolate* isolate, bool forceNewObject)
 {
     if (!impl)
         return v8::Null();

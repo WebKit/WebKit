@@ -272,7 +272,7 @@ bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Va
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false);
 }
 
-v8::Handle<v8::Value> toV8(Location* impl)
+v8::Handle<v8::Value> toV8(Location* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();

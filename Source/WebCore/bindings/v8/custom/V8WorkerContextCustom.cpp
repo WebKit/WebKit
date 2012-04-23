@@ -124,7 +124,7 @@ v8::Handle<v8::Value> V8WorkerContext::setIntervalCallback(const v8::Arguments& 
     return SetTimeoutOrInterval(args, false);
 }
 
-v8::Handle<v8::Value> toV8(WorkerContext* impl)
+v8::Handle<v8::Value> toV8(WorkerContext* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
