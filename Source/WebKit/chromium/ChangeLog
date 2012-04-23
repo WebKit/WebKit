@@ -1,3 +1,21 @@
+2012-04-22  Andreas Kling  <kling@webkit.org>
+
+        Optimize Element attribute storage for the common case (no Attr objects.)
+        <http://webkit.org/b/83440>
+
+        Reviewed by Antti Koivisto.
+
+        Remove the WebNamedNodeMap and WebAttribute API classes since they are no
+        longer needed by chromium after <http://crrev.com/133299>.
+
+        * WebKit.gyp:
+        * public/WebAttribute.h: Removed.
+        * public/WebElement.h:
+        * public/WebNamedNodeMap.h: Removed.
+        * src/WebAttribute.cpp: Removed.
+        * src/WebElement.cpp:
+        * src/WebNamedNodeMap.cpp: Removed.
+
 2012-04-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Fix clang build after r114827, unreviewed.

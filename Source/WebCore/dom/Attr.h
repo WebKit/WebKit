@@ -26,7 +26,7 @@
 #define Attr_h
 
 #include "ContainerNode.h"
-#include "Attribute.h"
+#include "QualifiedName.h"
 
 namespace WebCore {
 
@@ -36,26 +36,24 @@ class StylePropertySet;
 // Attr can have Text and EntityReference children
 // therefore it has to be a fullblown Node. The plan
 // is to dynamically allocate a textchild and store the
-// resulting nodevalue in the Attribute upon
+// resulting nodevalue in the attribute upon
 // destruction. however, this is not yet implemented.
 
 class Attr : public ContainerNode {
-    friend class AttributeVector;
-    friend class ElementAttributeData;
 public:
-    static PassRefPtr<Attr> create(Element*, Document*, PassRefPtr<Attribute>);
+    static PassRefPtr<Attr> create(Element*, const QualifiedName&);
+    static PassRefPtr<Attr> create(Document*, const QualifiedName&, const AtomicString& value);
     virtual ~Attr();
 
     String name() const { return qualifiedName().toString(); }
     bool specified() const { return m_specified; }
     Element* ownerElement() const { return m_element; }
 
-    const AtomicString& value() const { return m_attribute->value(); }
+    const AtomicString& value() const;
     void setValue(const AtomicString&, ExceptionCode&);
     void setValue(const AtomicString&);
 
-    Attribute* attr() const { return m_attribute.get(); }
-    const QualifiedName& qualifiedName() const { return m_attribute->name(); }
+    const QualifiedName& qualifiedName() const { return m_name; }
 
     bool isId() const;
 
@@ -63,21 +61,25 @@ public:
 
     void setSpecified(bool specified) { m_specified = specified; }
 
+    void attachToElement(Element*);
+    void detachFromElementWithValue(const AtomicString&);
+
 private:
-    Attr(Element*, Document*, PassRefPtr<Attribute>);
+    Attr(Element*, const QualifiedName&);
+    Attr(Document*, const QualifiedName&, const AtomicString& value);
 
     void createTextChild();
 
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
+    virtual String nodeName() const OVERRIDE { return name(); }
+    virtual NodeType nodeType() const OVERRIDE { return ATTRIBUTE_NODE; }
 
-    const AtomicString& localName() const;
-    const AtomicString& namespaceURI() const;
-    const AtomicString& prefix() const;
+    const AtomicString& localName() const { return m_name.localName(); }
+    const AtomicString& namespaceURI() const { return m_name.namespaceURI(); }
+    const AtomicString& prefix() const { return m_name.prefix(); }
 
     virtual void setPrefix(const AtomicString&, ExceptionCode&);
 
-    virtual String nodeValue() const;
+    virtual String nodeValue() const OVERRIDE { return value(); }
     virtual void setNodeValue(const String&, ExceptionCode&);
     virtual PassRefPtr<Node> cloneNode(bool deep);
 
@@ -90,8 +92,14 @@ private:
     virtual const AtomicString& virtualLocalName() const { return localName(); }
     virtual const AtomicString& virtualNamespaceURI() const { return namespaceURI(); }
 
+    Attribute* elementAttribute();
+
+    // Attr wraps either an element/name, or a name/value pair (when it's a standalone Node.)
+    // Note that m_name is always set, but m_element/m_standaloneValue may be null.
     Element* m_element;
-    RefPtr<Attribute> m_attribute;
+    QualifiedName m_name;
+    AtomicString m_standaloneValue;
+
     RefPtr<StylePropertySet> m_style;
     unsigned m_ignoreChildrenChanged : 31;
     bool m_specified : 1;

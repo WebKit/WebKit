@@ -128,7 +128,7 @@ Element::~Element()
     if (shadowTree())
         rareData()->m_shadowTree.clear();
     if (m_attributeData)
-        m_attributeData->clearAttributes();
+        m_attributeData->clearAttributes(this);
 }
 
 inline ElementRareData* Element::rareData() const
@@ -186,10 +186,30 @@ void Element::copyNonAttributeProperties(const Element*)
 {
 }
 
+PassRefPtr<Attr> Element::detachAttribute(size_t index)
+{
+    if (!attributeData())
+        return 0;
+
+    Attribute* attribute = attributeData()->attributeItem(index);
+
+    RefPtr<Attr> attr = attrIfExists(attribute->name());
+    if (attr)
+        attr->detachFromElementWithValue(attribute->value());
+    else
+        attr = Attr::create(document(), attribute->name(), attribute->value());
+
+    return attr.release();
+}
+
 void Element::removeAttribute(const QualifiedName& name)
 {
     if (!attributeData())
         return;
+
+    if (RefPtr<Attr> attr = attrIfExists(name))
+        attr->detachFromElementWithValue(attr->value());
+
     attributeData()->removeAttribute(name, this);
 }
 
@@ -652,14 +672,14 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
     }
 
     if (!old) {
-        m_attributeData->addAttribute(Attribute::create(name, value), this, inUpdateStyleAttribute);
+        m_attributeData->addAttribute(Attribute(name, value), this, inUpdateStyleAttribute);
         return;
     }
 
     if (inUpdateStyleAttribute == NotInUpdateStyleAttribute)
-        willModifyAttribute(name, old ? old->value() : nullAtom, value);
+        willModifyAttribute(name, old->value(), value);
 
-    if (Attr* attrNode = old->attr())
+    if (RefPtr<Attr> attrNode = attrIfExists(name))
         attrNode->setValue(value);
     else
         old->setValue(value);
@@ -741,42 +761,42 @@ static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& v
     return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));       
 }
 
-void Element::parserSetAttributes(PassOwnPtr<AttributeVector> attributeVector, FragmentScriptingPermission scriptingPermission)
+void Element::parserSetAttributes(const AttributeVector& attributeVector, FragmentScriptingPermission scriptingPermission)
 {
     ASSERT(!inDocument());
     ASSERT(!parentNode());
 
     ASSERT(!m_attributeData);
 
-    if (!attributeVector)
+    if (attributeVector.isEmpty())
         return;
 
     createAttributeData();
-    m_attributeData->m_attributes.swap(*attributeVector);
+    m_attributeData->m_attributes = attributeVector;
+    m_attributeData->m_attributes.shrinkToFit();
 
     // If the element is created as result of a paste or drag-n-drop operation
     // we want to remove all the script and event handlers.
     if (scriptingPermission == FragmentScriptingNotAllowed) {
         unsigned i = 0;
         while (i < m_attributeData->length()) {
-            const QualifiedName& attributeName = m_attributeData->m_attributes[i]->name();
+            const QualifiedName& attributeName = m_attributeData->m_attributes[i].name();
             if (isEventHandlerAttribute(attributeName)) {
                 m_attributeData->m_attributes.remove(i);
                 continue;
             }
 
-            if (isAttributeToRemove(attributeName, m_attributeData->m_attributes[i]->value()))
-                m_attributeData->m_attributes[i]->setValue(nullAtom);
+            if (isAttributeToRemove(attributeName, m_attributeData->m_attributes[i].value()))
+                m_attributeData->m_attributes[i].setValue(nullAtom);
             i++;
         }
     }
 
     // Store the set of attributes that changed on the stack in case
     // attributeChanged mutates m_attributeData.
-    Vector<RefPtr<Attribute> > attributes;
-    m_attributeData->copyAttributesToVector(attributes);
-    for (Vector<RefPtr<Attribute> >::iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
-        attributeChanged(iter->get());
+    AttributeVector clonedAttributes = m_attributeData->clonedAttributeVector();
+    for (unsigned i = 0; i < clonedAttributes.size(); ++i)
+        attributeChanged(&clonedAttributes[i]);
 }
 
 bool Element::hasAttributes() const
@@ -1382,11 +1402,10 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
     }
 
     ElementAttributeData* attributeData = ensureUpdatedAttributeData();
-    Attribute* attribute = attr->attr();
-    size_t index = attributeData->getAttributeItemIndex(attribute->name());
-    Attribute* oldAttribute = index != notFound ? attributeData->attributeItem(index) : 0;
-    if (oldAttribute == attribute)
-        return attr; // we know about it already
+
+    RefPtr<Attr> oldAttr = attrIfExists(attr->qualifiedName());
+    if (oldAttr.get() == attr)
+        return attr; // This Attr is already attached to the element.
 
     // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
@@ -1395,13 +1414,22 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
         return 0;
     }
 
-    RefPtr<Attr> oldAttr;
-    if (oldAttribute) {
-        oldAttr = oldAttribute->createAttrIfNeeded(this);
-        attributeData->replaceAttribute(index, attribute, this);
-    } else
-        attributeData->addAttribute(attribute, this);
+    size_t index = attributeData->getAttributeItemIndex(attr->qualifiedName());
+    Attribute* oldAttribute = index != notFound ? attributeData->attributeItem(index) : 0;
 
+    if (!oldAttribute) {
+        attributeData->addAttribute(Attribute(attr->qualifiedName(), attr->value()), this);
+        attributeData->setAttr(this, attr->qualifiedName(), attr);
+        return 0;
+    }
+
+    if (oldAttr)
+        oldAttr->detachFromElementWithValue(oldAttribute->value());
+    else
+        oldAttr = Attr::create(document(), oldAttribute->name(), oldAttribute->value());
+
+    attributeData->replaceAttribute(index, Attribute(attr->name(), attr->value()), this);
+    attributeData->setAttr(this, attr->qualifiedName(), attr);
     return oldAttr.release();
 }
 
@@ -1433,7 +1461,9 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
         return 0;
     }
 
-    return attributeData->takeAttribute(index, this);
+    RefPtr<Attr> oldAttr = detachAttribute(index);
+    attributeData->removeAttribute(index, this);
+    return oldAttr.release();
 }
 
 void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode& ec, FragmentScriptingPermission scriptingPermission)
@@ -1453,6 +1483,13 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
         return;
 
     setAttribute(qName, value);
+}
+
+void Element::removeAttribute(size_t index)
+{
+    ASSERT(attributeData());
+    ASSERT(index <= attributeCount());
+    attributeData()->removeAttribute(index, this);
 }
 
 void Element::removeAttribute(const String& name)
@@ -1701,11 +1738,9 @@ void Element::normalizeAttributes()
     if (!attributeData || attributeData->isEmpty())
         return;
 
-    Vector<RefPtr<Attribute> > attributeVector;
-    attributeData->copyAttributesToVector(attributeVector);
-    size_t numAttrs = attributeVector.size();
-    for (size_t i = 0; i < numAttrs; ++i) {
-        if (Attr* attr = attributeVector[i]->attr())
+    const AttributeVector& attributes = attributeData->attributeVector();
+    for (size_t i = 0; i < attributes.size(); ++i) {
+        if (RefPtr<Attr> attr = attrIfExists(attributes[i].name()))
             attr->normalize();
     }
 }
@@ -2014,17 +2049,12 @@ void Element::didModifyAttribute(Attribute* attr)
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
-void Element::didRemoveAttribute(Attribute* attr)
+void Element::didRemoveAttribute(const QualifiedName& name)
 {
-    if (attr->isNull())
-        return;
+    Attribute dummyAttribute(name, nullAtom);
+    attributeChanged(&dummyAttribute);
 
-    AtomicString savedValue = attr->value();
-    attr->setValue(nullAtom);
-    attributeChanged(attr);
-    attr->setValue(savedValue);
-
-    InspectorInstrumentation::didRemoveDOMAttr(document(), this, attr->name().localName());
+    InspectorInstrumentation::didRemoveDOMAttr(document(), this, name.localName());
     dispatchSubtreeModifiedEvent();
 }
 
@@ -2068,6 +2098,19 @@ void Element::setSavedLayerScrollOffset(const IntSize& size)
     if (size.isZero() && !hasRareData())
         return;
     ensureRareData()->m_savedLayerScrollOffset = size;
+}
+
+PassRefPtr<Attr> Element::attrIfExists(const QualifiedName& name)
+{
+    if (!attributeData())
+        return 0;
+    return attributeData()->attrIfExists(this, name);
+}
+
+PassRefPtr<Attr> Element::ensureAttr(const QualifiedName& name)
+{
+    ASSERT(attributeData());
+    return attributeData()->ensureAttr(this, name);
 }
 
 } // namespace WebCore

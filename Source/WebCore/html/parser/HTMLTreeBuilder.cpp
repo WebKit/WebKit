@@ -531,7 +531,7 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
     parseError(token);
 }
 
-void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, PassOwnPtr<AttributeVector> attributes)
+void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, const AttributeVector& attributes)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
     AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, tagName.localName(), attributes);
@@ -560,20 +560,17 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
     processEndTag(endP);
 }
 
-PassOwnPtr<AttributeVector> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
+AttributeVector HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
 {
-    OwnPtr<AttributeVector> attributes = token.takeAttributes();
-    if (!attributes)
-        attributes = AttributeVector::create();
-    else {
-        attributes->removeAttribute(nameAttr);
-        attributes->removeAttribute(actionAttr);
-        attributes->removeAttribute(promptAttr);
+    AttributeVector attributes = token.attributes();
+    if (!attributes.isEmpty()) {
+        attributes.removeAttribute(nameAttr);
+        attributes.removeAttribute(actionAttr);
+        attributes.removeAttribute(promptAttr);
     }
 
-    RefPtr<Attribute> mappedAttribute = Attribute::create(nameAttr, isindexTag.localName());
-    attributes->insertAttribute(mappedAttribute.release());
-    return attributes.release();
+    attributes.insertAttribute(Attribute(nameAttr, isindexTag.localName()));
+    return attributes;
 }
 
 void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken& token)
@@ -585,12 +582,12 @@ void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken& token)
         return;
     notImplemented(); // Acknowledge self-closing flag
     processFakeStartTag(formTag);
-    RefPtr<Attribute> actionAttribute = token.getAttributeItem(actionAttr);
+    Attribute* actionAttribute = token.getAttributeItem(actionAttr);
     if (actionAttribute)
         m_tree.form()->setAttribute(actionAttr, actionAttribute->value());
     processFakeStartTag(hrTag);
     processFakeStartTag(labelTag);
-    RefPtr<Attribute> promptAttribute = token.getAttributeItem(promptAttr);
+    Attribute* promptAttribute = token.getAttributeItem(promptAttr);
     if (promptAttribute)
         processFakeCharacters(promptAttribute->value());
     else
@@ -679,15 +676,11 @@ void adjustAttributes(AtomicHTMLToken& token)
         mapLoweredLocalNameToName(caseMap, attrs, length);
     }
 
-    AttributeVector* attributes = token.attributes();
-    if (!attributes)
-        return;
-
-    for (unsigned x = 0; x < attributes->size(); ++x) {
-        Attribute* attribute = attributes->attributeItem(x);
-        const QualifiedName& casedName = caseMap->get(attribute->localName());
+    for (unsigned i = 0; i < token.attributes().size(); ++i) {
+        Attribute& tokenAttribute = token.attributes().at(i);
+        const QualifiedName& casedName = caseMap->get(tokenAttribute.localName());
         if (!casedName.localName().isNull())
-            attribute->parserSetName(casedName);
+            tokenAttribute.parserSetName(casedName);
     }
 }
 
@@ -728,15 +721,11 @@ void adjustForeignAttributes(AtomicHTMLToken& token)
         map->add("xmlns:xlink", QualifiedName("xmlns", "xlink", XMLNSNames::xmlnsNamespaceURI));
     }
 
-    AttributeVector* attributes = token.attributes();
-    if (!attributes)
-        return;
-
-    for (unsigned x = 0; x < attributes->size(); ++x) {
-        Attribute* attribute = attributes->attributeItem(x);
-        const QualifiedName& name = map->get(attribute->localName());
+    for (unsigned i = 0; i < token.attributes().size(); ++i) {
+        Attribute& tokenAttribute = token.attributes().at(i);
+        const QualifiedName& name = map->get(tokenAttribute.localName());
         if (!name.localName().isNull())
-            attribute->parserSetName(name);
+            tokenAttribute.parserSetName(name);
     }
 }
 
@@ -930,7 +919,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == inputTag) {
-        RefPtr<Attribute> typeAttribute = token.getAttributeItem(typeAttr);
+        Attribute* typeAttribute = token.getAttributeItem(typeAttr);
         m_tree.reconstructTheActiveFormattingElements();
         m_tree.insertSelfClosingHTMLElement(token);
         if (!typeAttribute || !equalIgnoringCase(typeAttribute->value(), "hidden"))

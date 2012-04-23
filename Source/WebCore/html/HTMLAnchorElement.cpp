@@ -225,7 +225,9 @@ void HTMLAnchorElement::parseAttribute(Attribute* attr)
             }
             if (document()->page() && !document()->page()->javaScriptURLsAreAllowed() && protocolIsJavaScript(parsedURL)) {
                 clearIsLink();
-                attr->setValue(nullAtom);
+                // FIXME: This is horribly factored.
+                if (Attribute* hrefAttribute = getAttributeItem(hrefAttr))
+                    hrefAttribute->setValue(nullAtom);
             }
         }
         invalidateCachedVisitedLinkHash();

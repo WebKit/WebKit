@@ -194,7 +194,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& token)
 {
     RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(m_document);
-    element->parserSetAttributes(token.takeAttributes(), m_fragmentScriptingPermission);
+    element->parserSetAttributes(token.attributes(), m_fragmentScriptingPermission);
     attachLater(m_attachmentRoot, element);
     m_openElements.pushHTMLHtmlElement(element);
 
@@ -205,14 +205,15 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& tok
 
 void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken& token, Element* element)
 {
-    if (!token.attributes())
+    if (token.attributes().isEmpty())
         return;
 
-    ElementAttributeData* attributes = element->ensureAttributeData();
-    for (unsigned i = 0; i < token.attributes()->size(); ++i) {
-        Attribute* attribute = token.attributes()->attributeItem(i);
-        if (!attributes->getAttributeItem(attribute->name()))
-            element->setAttribute(attribute->name(), attribute->value());
+    ElementAttributeData* elementAttributeData = element->ensureAttributeData();
+
+    for (unsigned i = 0; i < token.attributes().size(); ++i) {
+        const Attribute& tokenAttribute = token.attributes().at(i);
+        if (!elementAttributeData->getAttributeItem(tokenAttribute.name()))
+            element->setAttribute(tokenAttribute.name(), tokenAttribute.value());
     }
 }
 
@@ -336,7 +337,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
 {
     RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, currentNode()->document(), true);
     if (m_fragmentScriptingPermission == FragmentScriptingAllowed)
-        element->parserSetAttributes(token.takeAttributes(), m_fragmentScriptingPermission);
+        element->parserSetAttributes(token.attributes(), m_fragmentScriptingPermission);
     attachLater(currentNode(), element);
     m_openElements.push(element.release());
 }
@@ -399,7 +400,7 @@ PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, 
 {
     QualifiedName tagName(nullAtom, token.name(), namespaceURI);
     RefPtr<Element> element = currentNode()->document()->createElement(tagName, true);
-    element->parserSetAttributes(token.takeAttributes(), m_fragmentScriptingPermission);
+    element->parserSetAttributes(token.attributes(), m_fragmentScriptingPermission);
     return element.release();
 }
 
@@ -410,7 +411,7 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& tok
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
     RefPtr<Element> element = HTMLElementFactory::createHTMLElement(tagName, currentNode()->document(), form(), true);
-    element->parserSetAttributes(token.takeAttributes(), m_fragmentScriptingPermission);
+    element->parserSetAttributes(token.attributes(), m_fragmentScriptingPermission);
     ASSERT(element->isHTMLElement());
     return element.release();
 }
@@ -419,26 +420,6 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromElementRecord(HTM
 {
     return createHTMLElementFromSavedElement(record->element());
 }
-
-namespace {
-
-// FIXME: Move this function to the top of the file.
-inline PassOwnPtr<AttributeVector> cloneAttributes(Element* element)
-{
-    ElementAttributeData* attributes = element->updatedAttributeData();
-    if (!attributes)
-        return nullptr;
-
-    OwnPtr<AttributeVector> newAttributes = AttributeVector::create();
-    for (size_t i = 0; i < attributes->length(); ++i) {
-        Attribute* attribute = attributes->attributeItem(i);
-        RefPtr<Attribute> clone = Attribute::create(attribute->name(), attribute->value());
-        newAttributes->append(clone);
-    }
-    return newAttributes.release();
-}
-
-} // namespace
 
 PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Element* element)
 {
@@ -450,7 +431,12 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Elem
     // spec implies it should be "1".  Minefield matches the HTML5 spec here.
 
     ASSERT(element->isHTMLElement()); // otherwise localName() might be wrong.
-    AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, element->localName(), cloneAttributes(element));
+
+    AttributeVector clonedAttributes;
+    if (ElementAttributeData* attributeData = element->updatedAttributeData())
+        clonedAttributes = attributeData->clonedAttributeVector();
+
+    AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, element->localName(), clonedAttributes);
     return createHTMLElement(fakeToken);
 }
 

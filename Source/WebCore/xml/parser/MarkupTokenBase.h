@@ -28,7 +28,6 @@
 #define MarkupTokenBase_h
 
 #include "ElementAttributeData.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 #ifndef NDEBUG
@@ -410,7 +409,7 @@ public:
         }
     }
 
-    AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, PassOwnPtr<AttributeVector> attributes = nullptr)
+    AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, const AttributeVector& attributes = AttributeVector())
         : m_type(type)
         , m_name(name)
         , m_externalCharacters(0)
@@ -442,21 +441,19 @@ public:
     Attribute* getAttributeItem(const QualifiedName& attributeName)
     {
         ASSERT(usesAttributes());
-        if (!m_attributes)
-            return 0;
-        return m_attributes->getAttributeItem(attributeName);
+        return m_attributes.getAttributeItem(attributeName);
     }
 
-    AttributeVector* attributes() const
+    AttributeVector& attributes()
     {
         ASSERT(usesAttributes());
-        return m_attributes.get();
+        return m_attributes;
     }
 
-    PassOwnPtr<AttributeVector> takeAttributes()
+    const AttributeVector& attributes() const
     {
         ASSERT(usesAttributes());
-        return m_attributes.release();
+        return m_attributes;
     }
 
     const typename Token::DataVector& characters() const
@@ -517,7 +514,7 @@ protected:
     // For StartTag and EndTag
     bool m_selfClosing;
 
-    OwnPtr<AttributeVector> m_attributes;
+    AttributeVector m_attributes;
 };
 
 template<typename Token>
@@ -527,8 +524,8 @@ inline void AtomicMarkupTokenBase<Token>::initializeAttributes(const typename To
     if (!size)
         return;
 
-    m_attributes = AttributeVector::create();
-    m_attributes->reserveInitialCapacity(size);
+    m_attributes.clear();
+    m_attributes.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i) {
         const typename Token::Attribute& attribute = attributes[i];
         if (attribute.m_name.isEmpty())
@@ -542,7 +539,7 @@ inline void AtomicMarkupTokenBase<Token>::initializeAttributes(const typename To
         ASSERT(attribute.m_valueRange.m_end);
 
         AtomicString value(attribute.m_value.data(), attribute.m_value.size());
-        m_attributes->insertAttribute(Attribute::create(nameForAttribute(attribute), value));
+        m_attributes.insertAttribute(Attribute(nameForAttribute(attribute), value));
     }
 }
 

@@ -5130,7 +5130,6 @@
         'webcore_dom_files': [
             'dom/ActiveDOMObject.cpp',
             'dom/Attr.cpp',
-            'dom/Attribute.cpp',
             'dom/BeforeLoadEvent.h',
             'dom/BeforeTextInsertedEvent.cpp',
             'dom/BeforeTextInsertedEvent.h',

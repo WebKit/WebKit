@@ -115,6 +115,7 @@ public:
     const AtomicString& getAttribute(const QualifiedName&) const;
     void setAttribute(const QualifiedName&, const AtomicString& value, EInUpdateStyleAttribute = NotInUpdateStyleAttribute);
     void removeAttribute(const QualifiedName&);
+    void removeAttribute(size_t index);
 
     // Typed getters and setters for language bindings.
     int getIntegralAttribute(const QualifiedName& attributeName) const;
@@ -163,6 +164,8 @@ public:
     size_t attributeCount() const;
     Attribute* attributeItem(unsigned index) const;
     Attribute* getAttributeItem(const QualifiedName&) const;
+    size_t getAttributeItemIndex(const QualifiedName& name) const { return attributeData()->getAttributeItemIndex(name); }
+    size_t getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const { return attributeData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
 
     void scrollIntoView(bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
@@ -197,11 +200,16 @@ public:
     void removeAttribute(const String& name);
     void removeAttributeNS(const String& namespaceURI, const String& localName);
 
+    PassRefPtr<Attr> detachAttribute(size_t index);
+
     PassRefPtr<Attr> getAttributeNode(const String& name);
     PassRefPtr<Attr> getAttributeNodeNS(const String& namespaceURI, const String& localName);
     PassRefPtr<Attr> setAttributeNode(Attr*, ExceptionCode&);
     PassRefPtr<Attr> setAttributeNodeNS(Attr*, ExceptionCode&);
     PassRefPtr<Attr> removeAttributeNode(Attr*, ExceptionCode&);
+
+    PassRefPtr<Attr> attrIfExists(const QualifiedName&);
+    PassRefPtr<Attr> ensureAttr(const QualifiedName&);
     
     virtual CSSStyleDeclaration* style();
 
@@ -236,7 +244,7 @@ public:
     virtual void attributeChanged(Attribute*);
 
     // Only called by the parser immediately after element construction.
-    void parserSetAttributes(PassOwnPtr<AttributeVector>, FragmentScriptingPermission);
+    void parserSetAttributes(const AttributeVector&, FragmentScriptingPermission);
 
     ElementAttributeData* attributeData() const { return m_attributeData.get(); }
     ElementAttributeData* ensureAttributeData() const;
@@ -297,7 +305,7 @@ public:
     void willRemoveAttribute(const QualifiedName&, const AtomicString& value);
     void didAddAttribute(Attribute*);
     void didModifyAttribute(Attribute*);
-    void didRemoveAttribute(Attribute*);
+    void didRemoveAttribute(const QualifiedName&);
 
     LayoutSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const LayoutSize&);

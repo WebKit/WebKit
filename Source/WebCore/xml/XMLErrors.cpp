@@ -91,18 +91,18 @@ static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, co
 {
     RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), true);
 
-    OwnPtr<AttributeVector> reportAttributes = AttributeVector::create();
-    reportAttributes->append(Attribute::create(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));
-    reportElement->parserSetAttributes(reportAttributes.release(), FragmentScriptingNotAllowed);
+    AttributeVector reportAttributes;
+    reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));
+    reportElement->parserSetAttributes(reportAttributes, FragmentScriptingNotAllowed);
 
     RefPtr<Element> h3 = doc->createElement(h3Tag, true);
     reportElement->parserAddChild(h3.get());
     h3->parserAddChild(doc->createTextNode("This page contains the following errors:"));
 
     RefPtr<Element> fixed = doc->createElement(divTag, true);
-    OwnPtr<AttributeVector> fixedAttributes = AttributeVector::create();
-    fixedAttributes->append(Attribute::create(styleAttr, "font-family:monospace;font-size:12px"));
-    fixed->parserSetAttributes(fixedAttributes.release(), FragmentScriptingNotAllowed);
+    AttributeVector fixedAttributes;
+    fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"));
+    fixed->parserSetAttributes(fixedAttributes, FragmentScriptingNotAllowed);
     reportElement->parserAddChild(fixed.get());
 
     fixed->parserAddChild(doc->createTextNode(errorMessages));
@@ -158,10 +158,10 @@ void XMLErrors::insertErrorMessageBlock()
 
 #if ENABLE(XSLT)
     if (m_document->transformSourceDocument()) {
-        OwnPtr<AttributeVector> attributes = AttributeVector::create();
-        attributes->append(Attribute::create(styleAttr, "white-space: normal"));
+        AttributeVector attributes;
+        attributes.append(Attribute(styleAttr, "white-space: normal"));
         RefPtr<Element> paragraph = m_document->createElement(pTag, true);
-        paragraph->parserSetAttributes(attributes.release(), FragmentScriptingNotAllowed);
+        paragraph->parserSetAttributes(attributes, FragmentScriptingNotAllowed);
         paragraph->parserAddChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."));
         reportElement->parserAddChild(paragraph.release());
     }

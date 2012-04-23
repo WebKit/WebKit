@@ -52,38 +52,36 @@ void NamedNodeMap::deref()
 
 PassRefPtr<Node> NamedNodeMap::getNamedItem(const String& name) const
 {
-    return m_element->attributeData()->getAttributeNode(name, shouldIgnoreAttributeCase(m_element), m_element);
+    return m_element->getAttributeNode(name);
 }
 
 PassRefPtr<Node> NamedNodeMap::getNamedItemNS(const String& namespaceURI, const String& localName) const
 {
-    return m_element->attributeData()->getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), m_element);
+    return m_element->getAttributeNodeNS(namespaceURI, localName);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const String& name, ExceptionCode& ec)
 {
-    ElementAttributeData* attributeData = m_element->attributeData();
-
-    size_t index = attributeData->getAttributeItemIndex(name, shouldIgnoreAttributeCase(m_element));
+    size_t index = m_element->getAttributeItemIndex(name, shouldIgnoreAttributeCase(m_element));
     if (index == notFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
-    
-    return attributeData->takeAttribute(index, m_element);
+    RefPtr<Attr> removedAttr = m_element->detachAttribute(index);
+    m_element->removeAttribute(index);
+    return removedAttr.release();
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
 {
-    ElementAttributeData* attributeData = m_element->attributeData();
-
-    size_t index = attributeData->getAttributeItemIndex(QualifiedName(nullAtom, localName, namespaceURI));
+    size_t index = m_element->getAttributeItemIndex(QualifiedName(nullAtom, localName, namespaceURI));
     if (index == notFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
-
-    return attributeData->takeAttribute(index, m_element);
+    RefPtr<Attr> removedAttr = m_element->detachAttribute(index);
+    m_element->removeAttribute(index);
+    return removedAttr.release();
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
@@ -111,7 +109,7 @@ PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
 {
     if (index >= length())
         return 0;
-    return m_element->attributeItem(index)->createAttrIfNeeded(m_element);
+    return m_element->ensureAttr(m_element->attributeItem(index)->name());
 }
 
 size_t NamedNodeMap::length() const
