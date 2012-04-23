@@ -21,8 +21,11 @@
 #include "config.h"
 #include "QtPageClient.h"
 
+#include "DrawingAreaProxy.h"
+#include "LayerTreeContext.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebUndoController.h"
+#include "ShareableBitmap.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
 #include "WebPopupMenuProxyQt.h"
@@ -35,8 +38,9 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/NotImplemented.h>
 
-using namespace WebKit;
 using namespace WebCore;
+
+namespace WebKit {
 
 QtPageClient::QtPageClient()
     : m_webView(0)
@@ -300,3 +304,4 @@ void QtPageClient::updateAcceleratedCompositingMode(const LayerTreeContext&)
     // FIXME: Implement.
 }
 
+} // namespace WebKit

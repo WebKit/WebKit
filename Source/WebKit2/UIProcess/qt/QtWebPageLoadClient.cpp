@@ -21,11 +21,14 @@
 #include "config.h"
 #include "QtWebPageLoadClient.h"
 
+#include "QtWebError.h"
 #include "WKStringQt.h"
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 #include "qwebloadrequest_p.h"
 #include <WKFrame.h>
+
+namespace WebKit {
 
 QtWebPageLoadClient::QtWebPageLoadClient(WKPageRef pageRef, QQuickWebView* webView)
     : m_webView(webView)
@@ -194,3 +197,5 @@ void QtWebPageLoadClient::didChangeBackForwardList(WKPageRef, WKBackForwardListI
 {
     toQtWebPageLoadClient(clientInfo)->didChangeBackForwardList();
 }
+
+} // namespace Webkit

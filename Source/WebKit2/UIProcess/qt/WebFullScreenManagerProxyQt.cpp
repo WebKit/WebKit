@@ -26,7 +26,6 @@
 #include "WebFullScreenManagerMessages.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebProcess.h"
-
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;

@@ -138,4 +138,4 @@ void QtWebPageSGNode::setRenderer(PassRefPtr<WebLayerTreeRenderer> renderer)
     appendChildNode(m_contentsNode);
 }
 
-}
+} // namespace WebKit

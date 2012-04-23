@@ -22,10 +22,15 @@
 #define QtWebPagePolicyClient_h
 
 #include "qquickwebview_p.h"
-#include <QtCore/QUrl>
+#include <QtGlobal>
 #include <WKPage.h>
 
-class QQuickWebView;
+QT_BEGIN_NAMESPACE
+class QUrl;
+QT_END_NAMESPACE
+
+namespace WebKit {
+
 class QtWebPagePolicyClient {
 public:
     QtWebPagePolicyClient(WKPageRef, QQuickWebView*);
@@ -39,5 +44,7 @@ private:
 
     QQuickWebView* m_webView;
 };
+
+} // namespace WebKit
 
 #endif // QtWebPagePolicyClient_h

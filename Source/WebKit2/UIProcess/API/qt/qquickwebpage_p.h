@@ -28,8 +28,11 @@
 
 class QQuickWebPagePrivate;
 class QQuickWebView;
-class QtWebPageEventHandler;
 class QWebPreferences;
+
+namespace WebKit {
+class QtWebPageEventHandler;
+}
 
 class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
     Q_OBJECT
@@ -45,7 +48,7 @@ public:
     QTransform transformFromItem() const;
     QTransform transformToItem() const;
 
-    QtWebPageEventHandler* eventHandler() const;
+    WebKit::QtWebPageEventHandler* eventHandler() const;
 
 protected:
     virtual QSGNode* updatePaintNode(QSGNode*, UpdatePaintNodeData*);

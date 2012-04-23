@@ -22,8 +22,6 @@
 #ifndef QtViewportInteractionEngine_h
 #define QtViewportInteractionEngine_h
 
-#include "qwebkitglobal.h"
-#include <QTouchEvent>
 #include <QtCore/QObject>
 #include <QtCore/QRectF>
 #include <QtCore/QVariant>
@@ -32,7 +30,6 @@
 
 QT_BEGIN_NAMESPACE
 class QPointF;
-class QQuickItem;
 class QQuickWebPage;
 class QQuickWebView;
 class QWheelEvent;
@@ -166,6 +163,6 @@ private:
     QList<qreal> m_scaleStack;
 };
 
-}
+} // namespace WebKit
 
 #endif // QtViewportInteractionEngine_h

@@ -26,9 +26,12 @@
 #include "QtWebPageSGNode.h"
 #include "TransformationMatrix.h"
 #include "WebLayerTreeRenderer.h"
+#include "WebPageProxy.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
 #include <QtQuick/QQuickCanvas>
+
+using namespace WebKit;
 
 QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
     : QQuickItem(viewportItem->contentItem())

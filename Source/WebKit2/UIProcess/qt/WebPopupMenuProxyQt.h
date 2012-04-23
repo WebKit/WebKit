@@ -28,7 +28,6 @@
 #define WebPopupMenuProxyQt_h
 
 #include "WebPopupMenuProxy.h"
-
 #include <QtCore/QObject>
 #include <wtf/OwnPtr.h>
 

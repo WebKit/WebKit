@@ -21,10 +21,11 @@
 #include "config.h"
 #include "QtWebUndoController.h"
 
-#include <qglobal.h>
+#include "WebEditCommandProxy.h"
+#include <QtGlobal>
 #include <wtf/RefPtr.h>
 
-using namespace WebKit;
+namespace WebKit {
 
 void QtWebUndoController::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
@@ -61,3 +62,5 @@ void QtWebUndoController::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
         command->reapply();
     }
 }
+
+} // namespace WebKit

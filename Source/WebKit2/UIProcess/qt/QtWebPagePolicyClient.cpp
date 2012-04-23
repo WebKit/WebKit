@@ -27,7 +27,10 @@
 #include "qwebnavigationrequest_p.h"
 #include <QtCore/QObject>
 #include <WKFramePolicyListener.h>
+#include <WKRetainPtr.h>
 #include <WKURLRequest.h>
+
+namespace WebKit {
 
 QtWebPagePolicyClient::QtWebPagePolicyClient(WKPageRef pageRef, QQuickWebView* webView)
     : m_webView(webView)
@@ -152,3 +155,6 @@ void QtWebPagePolicyClient::decidePolicyForResponse(WKPageRef page, WKFrameRef f
 
     WKFramePolicyListenerUse(listener);
 }
+
+} // namespace WebKit
+

@@ -1,3 +1,102 @@
+2012-04-23  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Move non-api classes to WebKit namespace at WebKit2/UiProcess/qt
+        https://bugs.webkit.org/show_bug.cgi?id=84528
+
+        Reviewed by Simon Hausmann.
+
+        Fix namespace usage in non-api classes for Qt.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (WebKit):
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (WebKit):
+        (QQuickWebViewPrivate::viewportInteractionEngine):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate::viewportInteractionEngine):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/API/qt/qwebdownloaditem_p.h:
+        (WebKit):
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        * UIProcess/qt/LayerBackingStore.cpp:
+        * UIProcess/qt/LayerBackingStore.h:
+        (WebKit):
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (WebKit):
+        * UIProcess/qt/QtDialogRunner.h:
+        (WebKit):
+        * UIProcess/qt/QtDownloadManager.cpp:
+        * UIProcess/qt/QtDownloadManager.h:
+        (WebKit):
+        * UIProcess/qt/QtGestureRecognizer.cpp:
+        * UIProcess/qt/QtGestureRecognizer.h:
+        (WebKit):
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit):
+        * UIProcess/qt/QtPageClient.h:
+        (WebKit):
+        (QtPageClient):
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        * UIProcess/qt/QtPinchGestureRecognizer.h:
+        * UIProcess/qt/QtTapGestureRecognizer.h:
+        (WebKit):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        * UIProcess/qt/QtWebContext.cpp:
+        * UIProcess/qt/QtWebContext.h:
+        * UIProcess/qt/QtWebError.cpp:
+        (WebKit):
+        * UIProcess/qt/QtWebError.h:
+        (WebKit):
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp:
+        (WebKit):
+        * UIProcess/qt/QtWebIconDatabaseClient.h:
+        (WTF):
+        (WebKit):
+        (QtWebIconDatabaseClient):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (WebCore):
+        (WebKit):
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (WebKit):
+        * UIProcess/qt/QtWebPageLoadClient.h:
+        (WebKit):
+        * UIProcess/qt/QtWebPagePolicyClient.cpp:
+        (WebKit):
+        * UIProcess/qt/QtWebPagePolicyClient.h:
+        (WebKit):
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        * UIProcess/qt/QtWebPageSGNode.h:
+        (WebKit):
+        * UIProcess/qt/QtWebPageUIClient.cpp:
+        * UIProcess/qt/QtWebPageUIClient.h:
+        (WebKit):
+        * UIProcess/qt/QtWebUndoController.cpp:
+        (WebKit):
+        * UIProcess/qt/QtWebUndoController.h:
+        (WebKit):
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        * UIProcess/qt/WebContextQt.cpp:
+        * UIProcess/qt/WebFullScreenManagerProxyQt.cpp:
+        * UIProcess/qt/WebGeolocationProviderQt.cpp:
+        (WebKit):
+        * UIProcess/qt/WebGeolocationProviderQt.h:
+        (WebKit):
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit):
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+
 2012-04-23  Kent Tamura  <tkent@chromium.org>
 
         Add test function to get placeholder string

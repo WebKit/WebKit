@@ -34,7 +34,6 @@
 #include "WebGeolocationProviderQt.h"
 #endif
 #include "WebProcessCreationParameters.h"
-
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QDir>

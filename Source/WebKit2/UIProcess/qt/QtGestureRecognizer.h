@@ -26,11 +26,10 @@
 #ifndef QtGestureRecognizer_h
 #define QtGestureRecognizer_h
 
-class QtWebPageEventHandler;
-
 namespace WebKit {
 
 class QtViewportInteractionEngine;
+class QtWebPageEventHandler;
 
 class QtGestureRecognizer {
 public:
@@ -50,6 +49,6 @@ protected:
     QtViewportInteractionEngine* interactionEngine();
 };
 
-}
+} // namespace WebKit
 
 #endif /* QtGestureRecognizer_h */

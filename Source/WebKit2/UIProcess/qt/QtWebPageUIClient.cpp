@@ -30,6 +30,9 @@
 #include <WKHitTestResult.h>
 #include <WKOpenPanelParameters.h>
 #include <WKOpenPanelResultListener.h>
+#include <WKRetainPtr.h>
+
+namespace WebKit {
 
 QtWebPageUIClient::QtWebPageUIClient(WKPageRef pageRef, QQuickWebView* webView)
     : m_webView(webView)
@@ -158,3 +161,4 @@ void QtWebPageUIClient::policyForGeolocationPermissionRequest(WKPageRef page, WK
     toQtWebPageUIClient(clientInfo)->permissionRequest(req);
 }
 
+} // namespace WebKit

@@ -20,15 +20,17 @@
 
 #include "config.h"
 #include "QtDialogRunner.h"
+
 #include "WKRetainPtr.h"
 #include "WKStringQt.h"
 #include "qwebpermissionrequest_p.h"
-
 #include <QtQml/QQmlComponent>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlEngine>
 #include <QtQuick/QQuickItem>
 #include <wtf/PassOwnPtr.h>
+
+namespace WebKit {
 
 QtDialogRunner::QtDialogRunner()
     : QEventLoop()
@@ -378,5 +380,8 @@ bool QtDialogRunner::createDialog(QQmlComponent* component, QQuickItem* dialogPa
     return true;
 }
 
+} // namespace WebKit
+
 #include "QtDialogRunner.moc"
 #include "moc_QtDialogRunner.cpp"
+

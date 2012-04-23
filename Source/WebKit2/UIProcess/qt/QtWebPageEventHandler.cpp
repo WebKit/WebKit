@@ -25,6 +25,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "QtViewportInteractionEngine.h"
+#include "WebPageProxy.h"
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include <QCursor>
@@ -40,8 +41,9 @@
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
 
-using namespace WebKit;
 using namespace WebCore;
+
+namespace WebKit {
 
 static inline Qt::DropAction dragOperationToDropAction(unsigned dragOperation)
 {
@@ -547,4 +549,7 @@ void QtWebPageEventHandler::startDrag(const WebCore::DragData& dragData, PassRef
     m_webPageProxy->dragEnded(clientPosition, globalPosition, dropActionToDragOperation(actualDropAction));
 }
 
+} // namespace WebKit
+
 #include "moc_QtWebPageEventHandler.cpp"
+

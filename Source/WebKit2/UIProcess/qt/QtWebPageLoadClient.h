@@ -21,12 +21,16 @@
 #ifndef QtWebPageLoadClient_h
 #define QtWebPageLoadClient_h
 
-#include "QtWebError.h"
-#include <QtCore/QString>
-#include <QtCore/QUrl>
+#include <QtGlobal>
 #include <WKPage.h>
 
+QT_BEGIN_NAMESPACE
+class QUrl;
+QT_END_NAMESPACE
+
 class QQuickWebView;
+
+namespace WebKit {
 
 class QtWebPageLoadClient {
 public:
@@ -63,5 +67,7 @@ private:
     QQuickWebView* m_webView;
     int m_loadProgress;
 };
+
+} // namespace Webkit
 
 #endif // QtWebPageLoadClient_h

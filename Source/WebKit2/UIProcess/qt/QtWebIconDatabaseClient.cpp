@@ -32,7 +32,7 @@
 #include <QtCore/QUrl>
 #include <QtGui/QImage>
 
-using namespace WebKit;
+namespace WebKit {
 
 static inline QtWebIconDatabaseClient* toQtWebIconDatabaseClient(const void* clientInfo)
 {
@@ -120,4 +120,7 @@ void QtWebIconDatabaseClient::releaseIconForPageURL(const String& pageURL)
     m_iconDatabase->releaseIconForPageURL(pageURL);
 }
 
+} // namespace WebKit
+
 #include "moc_QtWebIconDatabaseClient.cpp"
+

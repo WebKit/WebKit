@@ -21,9 +21,10 @@
 #ifndef QtWebUndoController_h
 #define QtWebUndoController_h
 
-#include "PageClient.h"
 #include "WebEditCommandProxy.h"
 #include "WebPageProxy.h"
+
+namespace WebKit {
 
 class QtWebUndoController {
 public:
@@ -37,5 +38,7 @@ public:
     CommandVector m_undoStack;
     CommandVector m_redoStack;
 };
+
+} // namespace WebKit
 
 #endif // QtWebUndoController_h

@@ -51,3 +51,4 @@ void WebContextMenuProxyQt::hideContextMenu()
 #include "moc_WebContextMenuProxyQt.cpp"
 
 } // namespace WebKit
+

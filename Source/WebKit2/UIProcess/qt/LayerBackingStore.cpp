@@ -22,6 +22,7 @@
 
 #if USE(UI_SIDE_COMPOSITING)
 #include "GraphicsLayer.h"
+#include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperGL.h"
 
@@ -136,5 +137,5 @@ void LayerBackingStore::commitTileOperations(TextureMapper* textureMapper)
         it->second.swapBuffers(textureMapper);
 }
 
-}
+} // namespace WebKit
 #endif

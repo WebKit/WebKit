@@ -21,15 +21,9 @@
 #ifndef qquickwebview_p_p_h
 #define qquickwebview_p_p_h
 
-#include "DrawingAreaProxy.h"
-#include "QtDialogRunner.h"
 #include "QtPageClient.h"
-#include "QtViewportInteractionEngine.h"
-#include "QtWebPageLoadClient.h"
-#include "QtWebPagePolicyClient.h"
 #include "QtWebPageUIClient.h"
 #include "QtWebUndoController.h"
-#include "WebPageProxy.h"
 
 #include "qquickwebview_p.h"
 #include "qquickwebpage_p.h"
@@ -42,9 +36,15 @@
 
 namespace WebKit {
 class DownloadProxy;
+class DrawingAreaProxy;
+class QtDialogRunner;
+class QtViewportInteractionEngine;
 class QtWebContext;
+class QtWebPageLoadClient;
+class QtWebPagePolicyClient;
 class WebPageProxy;
 }
+
 class QWebNavigationHistory;
 class QWebViewportInfo;
 
@@ -82,7 +82,7 @@ public:
 
     void setNeedsDisplay();
 
-    virtual QtViewportInteractionEngine* viewportInteractionEngine() { return 0; }
+    virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return 0; }
     virtual void updateViewportSize() { }
     void updateTouchViewportSize();
 
@@ -95,7 +95,7 @@ public:
     void _q_onReceivedResponseFromDownload(QWebDownloadItem*);
     void _q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURLString);
 
-    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType);
+    void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, WebKit::QtWebPageUIClient::FileChooserType);
     quint64 exceededDatabaseQuota(const QString& databaseName, const QString& displayName, WKSecurityOriginRef securityOrigin, quint64 currentQuota, quint64 currentOriginUsage, quint64 currentDatabaseUsage, quint64 expectedUsage);
     void runJavaScriptAlert(const QString&);
     bool runJavaScriptConfirm(const QString&);
@@ -105,7 +105,7 @@ public:
     bool handleCertificateVerificationRequest(const QString& hostname);
     void handleProxyAuthenticationRequiredRequest(const QString& hostname, uint16_t port, const QString& prefilledUsername, QString& username, QString& password);
 
-    void execDialogRunner(QtDialogRunner&);
+    void execDialogRunner(WebKit::QtDialogRunner&);
 
     void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
     void setTransparentBackground(bool);
@@ -131,22 +131,22 @@ public:
     virtual void didChangeContentsSize(const QSize& newSize) { }
     void processDidCrash();
     void didRelaunchProcess();
-    PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
-    void handleDownloadRequest(DownloadProxy*);
+    PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
+    void handleDownloadRequest(WebKit::DownloadProxy*);
 
 protected:
     QQuickWebViewPrivate(QQuickWebView* viewport);
-    RefPtr<QtWebContext> context;
+    RefPtr<WebKit::QtWebContext> context;
     RefPtr<WebKit::WebPageProxy> webPageProxy;
 
-    QtPageClient pageClient;
-    QtWebUndoController undoController;
+    WebKit::QtPageClient pageClient;
+    WebKit::QtWebUndoController undoController;
     OwnPtr<QWebNavigationHistory> navigationHistory;
     OwnPtr<QWebPreferences> preferences;
 
-    QScopedPointer<QtWebPageLoadClient> pageLoadClient;
-    QScopedPointer<QtWebPagePolicyClient> pagePolicyClient;
-    QScopedPointer<QtWebPageUIClient> pageUIClient;
+    QScopedPointer<WebKit::QtWebPageLoadClient> pageLoadClient;
+    QScopedPointer<WebKit::QtWebPagePolicyClient> pagePolicyClient;
+    QScopedPointer<WebKit::QtWebPageUIClient> pageUIClient;
 
     QScopedPointer<QQuickWebPage> pageView;
     QQuickWebView* q_ptr;
@@ -198,7 +198,7 @@ public:
     virtual void loadDidCommit();
     virtual void didFinishFirstNonEmptyLayout();
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
-    virtual QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
+    virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
     virtual void updateViewportSize();
 
     virtual void _q_suspend();
@@ -209,7 +209,7 @@ public:
     virtual void didChangeContentsSize(const QSize& newSize);
 
 private:
-    QScopedPointer<QtViewportInteractionEngine> interactionEngine;
+    QScopedPointer<WebKit::QtViewportInteractionEngine> interactionEngine;
     bool pageIsSuspended;
     bool loadSuccessDispatchIsPending;
 };

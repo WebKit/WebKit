@@ -29,7 +29,7 @@
 #include <WKURL.h>
 #include <WKURLQt.h>
 
-using namespace WebKit;
+namespace WebKit {
 
 QtWebError::QtWebError(WKErrorRef errorRef)
     : error(errorRef)
@@ -65,3 +65,5 @@ QString QtWebError::description() const
 {
     return WKStringCopyQString(WKErrorCopyLocalizedDescription(error.get()));
 }
+
+} // namespace WebKit

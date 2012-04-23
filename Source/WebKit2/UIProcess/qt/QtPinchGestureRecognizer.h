@@ -27,9 +27,7 @@
 #define QtPinchGestureRecognizer_h
 
 #include "QtGestureRecognizer.h"
-
 #include <QTouchEvent>
-#include <QtCore/QList>
 #include <QtCore/QPointF>
 
 namespace WebKit {
@@ -55,6 +53,6 @@ private:
     qreal m_initialFingerDistance;
 };
 
-}
+} // namespace WebKit
 
 #endif /* QtPinchGestureRecognizer_h */

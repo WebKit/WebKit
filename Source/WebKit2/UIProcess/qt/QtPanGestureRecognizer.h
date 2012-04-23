@@ -27,9 +27,7 @@
 #define QtPanGestureRecognizer_h
 
 #include "QtGestureRecognizer.h"
-
 #include <QPointF>
-#include <QScopedPointer>
 #include <QTouchEvent>
 
 namespace WebKit {

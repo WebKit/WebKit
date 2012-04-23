@@ -21,24 +21,24 @@
 #ifndef QtPageClient_h
 #define QtPageClient_h
 
-#include "DrawingAreaProxy.h"
-#include "LayerTreeContext.h"
 #include "PageClient.h"
-#include "ShareableBitmap.h"
-#include "ViewportArguments.h"
 
-class QtWebPageEventHandler;
-class QtWebUndoController;
 class QQuickWebView;
 
-using namespace WebKit;
+namespace WebKit {
 
-class QtPageClient : public WebKit::PageClient {
+class DrawingAreaProxy;
+class LayerTreeContext;
+class QtWebPageEventHandler;
+class QtWebUndoController;
+class ShareableBitmap;
+
+class QtPageClient : public PageClient {
 public:
     QtPageClient();
     ~QtPageClient();
 
-    void initialize(QQuickWebView*, QtWebPageEventHandler*, QtWebUndoController*);
+    void initialize(QQuickWebView*, QtWebPageEventHandler*, WebKit::QtWebUndoController*);
 
     // QQuickWebView.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
@@ -107,5 +107,7 @@ private:
     QtWebPageEventHandler* m_eventHandler;
     QtWebUndoController* m_undoController;
 };
+
+} // namespace WebKit
 
 #endif /* QtPageClient_h */

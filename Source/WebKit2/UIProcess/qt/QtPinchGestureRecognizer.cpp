@@ -26,6 +26,7 @@
 #include "config.h"
 #include "QtPinchGestureRecognizer.h"
 
+#include "QtViewportInteractionEngine.h"
 #include "QtWebPageEventHandler.h"
 #include <QtCore/QLineF>
 
@@ -99,4 +100,5 @@ void QtPinchGestureRecognizer::cancel()
     reset();
 }
 
-}
+} // namespace WebKit
+

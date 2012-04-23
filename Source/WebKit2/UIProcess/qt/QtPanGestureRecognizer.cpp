@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-
 #include "QtPanGestureRecognizer.h"
 
+#include "QtViewportInteractionEngine.h"
 #include "QtWebPageEventHandler.h"
 
 namespace WebKit {

@@ -142,4 +142,4 @@ void QtDownloadManager::didReceiveDataForDownload(WKContextRef, WKDownloadRef do
     toQtDownloadManager(clientInfo)->downloadDataReceived(toImpl(download), length);
 }
 
-}
+} // namespace WebKit

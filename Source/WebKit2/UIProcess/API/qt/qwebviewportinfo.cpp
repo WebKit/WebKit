@@ -19,10 +19,13 @@
  */
 
 #include "config.h"
+#include "QtViewportInteractionEngine.h"
 #include "qwebviewportinfo_p.h"
 
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
+
+using namespace WebKit;
 
 QWebViewportInfo::QWebViewportInfo(QQuickWebViewPrivate* webViewPrivate, QObject* parent)
     : QObject(parent)

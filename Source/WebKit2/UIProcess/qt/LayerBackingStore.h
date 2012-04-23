@@ -22,12 +22,13 @@
 
 #if USE(UI_SIDE_COMPOSITING)
 
-#include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include <wtf/HashMap.h>
 
 namespace WebKit {
+
+class ShareableSurface;
 
 class LayerBackingStoreTile : public WebCore::TextureMapperTile {
 public:
@@ -68,7 +69,7 @@ private:
     float m_scale;
 };
 
-}
+} // namespace WebKit
 #endif
 
 #endif // LayerBackingStore_h

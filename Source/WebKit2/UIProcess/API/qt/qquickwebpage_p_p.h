@@ -27,9 +27,8 @@
 namespace WebKit {
 class WebPageProxy;
 class QtViewportInteractionEngine;
-}
-
 class QtWebPageEventHandler;
+}
 
 class QQuickWebPagePrivate {
 public:
@@ -43,7 +42,7 @@ public:
     void paint(QPainter*);
     void resetPaintNode();
 
-    QScopedPointer<QtWebPageEventHandler> eventHandler;
+    QScopedPointer<WebKit::QtWebPageEventHandler> eventHandler;
     QQuickWebPage* const q;
     QQuickWebView* const viewportItem;
     WebKit::WebPageProxy* webPageProxy;

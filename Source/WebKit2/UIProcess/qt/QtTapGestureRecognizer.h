@@ -27,12 +27,9 @@
 #define QtTapGestureRecognizer_h
 
 #include "QtGestureRecognizer.h"
-
 #include <QTouchEvent>
 #include <QtCore/QBasicTimer>
 #include <QtCore/QObject>
-#include <QtCore/QtGlobal>
-#include <wtf/OwnPtr.h>
 
 // FIXME: These constants should possibly depend on DPI.
 const int maxPanDistance = 5;
@@ -40,9 +37,9 @@ const int maxDoubleTapDistance = 120;
 const int tapAndHoldTime = 800;
 const int maxDoubleTapInterval = 400;
 
-class QtWebPageEventHandler;
-
 namespace WebKit {
+
+class QtWebPageEventHandler;
 
 class QtTapGestureRecognizer : public QObject, private QtGestureRecognizer {
 public:

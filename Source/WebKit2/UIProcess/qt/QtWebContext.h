@@ -21,11 +21,12 @@
 #ifndef QtWebContext_h
 #define QtWebContext_h
 
+#include <QtGlobal>
 #include <WKContext.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <qglobal.h>
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -76,6 +77,6 @@ private:
     OwnPtr<QtWebIconDatabaseClient> m_iconDatabase;
 };
 
-}
+} // namespace WebKit
 
 #endif // QtWebContext_h

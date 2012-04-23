@@ -192,4 +192,5 @@ void QtWebContext::didReceiveMessageFromInjectedBundle(WKStringRef messageName, 
     toImpl(page)->didReceiveMessageFromNavigatorQtObject(toImpl(str)->string());
 }
 
-}
+} // namespace WebKit
+

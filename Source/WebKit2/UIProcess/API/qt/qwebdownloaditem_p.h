@@ -26,7 +26,6 @@
 #include <QUrl>
 
 class QWebDownloadItemPrivate;
-class QtWebError;
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -34,6 +33,7 @@ QT_END_NAMESPACE
 
 namespace WebKit {
 class QtDownloadManager;
+class QtWebError;
 }
 
 class QWEBKIT_EXPORT QWebDownloadItem : public QObject {

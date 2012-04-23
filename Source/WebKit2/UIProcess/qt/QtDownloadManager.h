@@ -24,7 +24,6 @@
 #include <QMap>
 #include <WKContext.h>
 
-class QtWebError;
 class QWebDownloadItem;
 
 namespace WebCore {
@@ -34,6 +33,7 @@ class ResourceResponse;
 namespace WebKit {
 
 class DownloadProxy;
+class QtWebError;
 class WebContext;
 
 class QtDownloadManager {
@@ -60,5 +60,6 @@ private:
     QMap<uint64_t, QWebDownloadItem*> m_downloads;
 };
 
-}
+} // namespace WebKit
+
 #endif /* QtDownloadManager_h */

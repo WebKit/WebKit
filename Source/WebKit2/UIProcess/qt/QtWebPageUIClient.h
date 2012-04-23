@@ -31,6 +31,8 @@
 class QQuickWebView;
 class QWebPermissionRequest;
 
+namespace WebKit {
+
 class QtWebPageUIClient {
 public:
     enum FileChooserType {
@@ -62,5 +64,7 @@ private:
     QUrl m_lastHoveredURL;
     QString m_lastHoveredTitle;
 };
+
+} // namespace WebKit
 
 #endif // QtWebPageUIClient_h

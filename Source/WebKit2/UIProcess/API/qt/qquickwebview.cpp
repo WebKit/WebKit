@@ -23,10 +23,14 @@
 
 #include "DownloadProxy.h"
 #include "DrawingAreaProxyImpl.h"
+#include "QtDialogRunner.h"
 #include "QtDownloadManager.h"
+#include "QtViewportInteractionEngine.h"
 #include "QtWebContext.h"
 #include "QtWebIconDatabaseClient.h"
 #include "QtWebPageEventHandler.h"
+#include "QtWebPageLoadClient.h"
+#include "QtWebPagePolicyClient.h"
 #include "UtilsQt.h"
 #include "WebBackForwardList.h"
 #include "WebPageGroup.h"
@@ -55,6 +59,7 @@
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 static bool s_flickableViewportEnabled = true;
 

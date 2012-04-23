@@ -26,9 +26,13 @@
 #include <QtCore/QStringList>
 #include <wtf/OwnPtr.h>
 
+QT_BEGIN_NAMESPACE
 class QDeclarativeComponent;
 class QDeclarativeContext;
 class QQuickItem;
+QT_END_NAMESPACE
+
+namespace WebKit {
 
 class QtDialogRunner : public QEventLoop {
     Q_OBJECT
@@ -96,5 +100,7 @@ private:
     QStringList m_filepaths;
     quint64 m_databaseQuota;
 };
+
+} // namespace WebKit
 
 #endif // QtDialogRunner_h

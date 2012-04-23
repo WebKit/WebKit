@@ -41,7 +41,8 @@ class QtWebPageSGNode : public QSGTransformNode {
     private:
         ContentsSGNode* m_contentsNode;
         QSGSimpleRectNode* m_backgroundNode;
-    };
-}
+};
+
+} // namespace WebKit
 
 #endif /* QtWebPageSGNode_h */

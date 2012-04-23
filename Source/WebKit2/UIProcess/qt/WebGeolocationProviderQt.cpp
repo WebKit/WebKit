@@ -22,10 +22,9 @@
 #include "WebGeolocationProviderQt.h"
 
 #if ENABLE(GEOLOCATION)
-
 #include <QtLocation/QGeoPositionInfoSource>
 
-using namespace WebKit;
+namespace WebKit {
 
 static inline const WebGeolocationProviderQt* toLocationProvider(const void* clientInfo)
 {
@@ -113,6 +112,8 @@ void WebGeolocationProviderQt::stopUpdating() const
     if (m_source)
         m_source->stopUpdates();
 }
+
+} // namespace WebKit
 
 #include "moc_WebGeolocationProviderQt.cpp"
 

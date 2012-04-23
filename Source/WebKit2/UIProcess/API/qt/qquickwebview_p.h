@@ -48,6 +48,9 @@ class PlatformWebView;
 namespace WebKit {
 class QtRefCountedNetworkRequestData;
 class QtViewportInteractionEngine;
+class QtWebPageLoadClient;
+class QtWebPagePolicyClient;
+class QtWebPageUIClient;
 }
 
 namespace WTF {
@@ -208,9 +211,9 @@ private:
     QQuickWebViewExperimental* m_experimental;
 
     friend class WebKit::QtViewportInteractionEngine;
-    friend class QtWebPageLoadClient;
-    friend class QtWebPagePolicyClient;
-    friend class QtWebPageUIClient;
+    friend class WebKit::QtWebPageLoadClient;
+    friend class WebKit::QtWebPagePolicyClient;
+    friend class WebKit::QtWebPageUIClient;
     friend class WTR::PlatformWebView;
     friend class QQuickWebViewExperimental;
 };
@@ -339,7 +342,7 @@ private:
     QObject* schemeParent;
     QWebViewportInfo* m_viewportInfo;
 
-    friend class QtWebPageUIClient;
+    friend class WebKit::QtWebPageUIClient;
 
     Q_DECLARE_PRIVATE(QQuickWebView)
     Q_DECLARE_PUBLIC(QQuickWebView)

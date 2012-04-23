@@ -46,4 +46,4 @@ QtViewportInteractionEngine* QtGestureRecognizer::interactionEngine()
     return m_eventHandler->interactionEngine();
 }
 
-}
+} // namespace WebKit

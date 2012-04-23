@@ -611,6 +611,8 @@ void QtViewportInteractionEngine::scaleContent(const QPointF& centerInCSSCoordin
     m_viewport->setContentPos(m_viewport->contentPos() + (newPinchCenterOnViewport - oldPinchCenterOnViewport));
 }
 
+} // namespace WebKit
+
 #include "moc_QtViewportInteractionEngine.cpp"
 
-}
+
