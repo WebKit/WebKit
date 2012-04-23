@@ -60,11 +60,12 @@ WebInspector.ParsedURL = function(url)
         this.path = match[4] || "/";
         this.fragment = match[5];
     } else {
-        if (this.url == "about:blank") {
-            this.isValid = true;
+        if (this.url.startsWith("data:")) {
+            this.scheme = "data";
+            return;
+        }
+        if (this.url === "about:blank") {
             this.scheme = "about";
-            this.host = "blank";
-            this.path = "/";
             return;
         }
         this.path = this.url;
@@ -94,6 +95,14 @@ WebInspector.ParsedURL.prototype = {
     {
         if (this._displayName)
             return this._displayName;
+
+        if (this.scheme === "data") {
+            this._displayName = this.url.trimEnd(20);
+            return this._displayName;
+        }
+
+        if (this.url === "about:blank")
+            return this.url;
 
         this._displayName = this.lastPathComponent;
         if (!this._displayName)
