@@ -333,3 +333,7 @@ BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
 BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
+
+BUGWK84604 FUTURE : fast/js/global-constructors.html = TEXT
+BUGWK84604 FUTURE : fast/dom/Window/window-properties.html = TEXT
+BUGWK84604 FUTURE : fast/dom/prototype-inheritance-2.html = TEXT
