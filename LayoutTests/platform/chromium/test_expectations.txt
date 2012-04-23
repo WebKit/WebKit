@@ -3422,6 +3422,24 @@ BUGWK81931 SNOWLEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PAS
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 
+// Need rebaselining.
+BUGWK82150 : media/media-document-audio-repaint.html = TEXT
+BUGWK82150 : media/video-no-audio.html = TEXT
+BUGWK82150 : media/controls-strict.html = TEXT
+BUGWK82150 : media/video-volume-slider.html = TEXT
+BUGWK82150 : media/controls-styling.html = TEXT
+BUGWK82150 : media/video-display-toggle.html = TEXT
+BUGWK82150 : media/audio-repaint.html = TEXT
+BUGWK82150 : media/audio-controls-rendering.html = TEXT
+BUGWK82150 : media/video-zoom-controls.html = TEXT
+BUGWK82150 : media/video-controls-rendering.html = TEXT
+BUGWK82150 : media/controls-without-preload.html = TEXT
+BUGWK82150 : media/media-controls-clone.html = TEXT
+BUGWK82150 : fast/layers/video-layer.html = TEXT
+BUGWK82150 : media/video-empty-source.html = TEXT
+BUGWK82150 : media/video-playing-and-pause.html = TEXT
+BUGWK82150 : media/controls-after-reload.html = TEXT
+
 // New test, flaky since added in r110965.
 BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
 

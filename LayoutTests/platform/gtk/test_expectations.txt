@@ -310,7 +310,7 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
-BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
+// BUGWK83679 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
 
 // Crashes on GStreamer side when loading one of the media elements of the test.
 BUGWK50155 : fast/events/tabindex-focus-blur-all.html = CRASH
@@ -1543,6 +1543,16 @@ BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 BUGWK73744 : fast/table/td-width-fifty-percent-regression.html = FAIL
 
 BUGWK84378 : media/track/track-cue-rendering-snap-to-lines-not-set.html = FAIL
+
+// Need new baselines.
+BUGWK82150 : media/audio-controls-rendering.html = TEXT
+BUGWK82150 : media/audio-repaint.html = TEXT
+BUGWK82150 : media/controls-strict.html = TEXT
+BUGWK82150 : media/controls-styling.html = TEXT
+BUGWK82150 : media/controls-without-preload.html = TEXT
+BUGWK82150 : media/media-controls-clone.html = TEXT
+BUGWK82150 : media/media-document-audio-repaint.html = TEXT
+BUGWK82150 : media/video-controls-rendering.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

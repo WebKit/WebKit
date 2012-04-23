@@ -42,6 +42,8 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     width: 20px;
     height: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
@@ -91,6 +93,8 @@ audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-cont
     position: absolute;
     height: 100px;
     width: 20px;
+    bottom: 20px;
+    z-index: 1;
 }
 
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {

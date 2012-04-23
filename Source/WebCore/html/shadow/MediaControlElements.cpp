@@ -319,34 +319,6 @@ const AtomicString& MediaControlTimelineContainerElement::shadowPseudoId() const
 
 // ----------------------------
 
-class RenderMediaVolumeSliderContainer : public RenderBlock {
-public:
-    RenderMediaVolumeSliderContainer(Node*);
-
-private:
-    virtual void layout();
-};
-
-RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer(Node* node)
-    : RenderBlock(node)
-{
-}
-
-void RenderMediaVolumeSliderContainer::layout()
-{
-    RenderBlock::layout();
-    if (style()->display() == NONE || !previousSibling() || !previousSibling()->isBox())
-        return;
-
-    RenderBox* buttonBox = toRenderBox(previousSibling());
-
-    LayoutStateDisabler layoutStateDisabler(view());
-
-    IntPoint offset = theme()->volumeSliderOffsetFromMuteButton(buttonBox, pixelSnappedSize());
-    setX(offset.x() + buttonBox->offsetLeft());
-    setY(offset.y() + buttonBox->offsetTop());
-}
-
 inline MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement(Document* document)
     : MediaControlElement(document)
 {
@@ -357,11 +329,6 @@ PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderCon
     RefPtr<MediaControlVolumeSliderContainerElement> element = adoptRef(new MediaControlVolumeSliderContainerElement(document));
     element->hide();
     return element.release();
-}
-
-RenderObject* MediaControlVolumeSliderContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
-{
-    return new (arena) RenderMediaVolumeSliderContainer(this);
 }
 
 void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)

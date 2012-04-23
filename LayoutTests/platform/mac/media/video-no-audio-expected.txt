@@ -30,5 +30,6 @@ layer at (8,305) size 352x25
           RenderText {#text} at (0,0) size 31x11
             text run at (0,0) width 31: "-00:09"
     RenderButton {INPUT} at (329,4) size 16x16
+    RenderBlock {DIV} at (322,12) size 0x0
 layer at (102,314) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
