@@ -1,3 +1,10 @@
+2012-04-23  Dmitry Titov  <dimich@chromium.org>
+
+        Chromium roll 133422:133506.
+        Not reviewed.
+
+        * DEPS:
+
 2012-04-23  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Properly ignore unsupported animation directions.
