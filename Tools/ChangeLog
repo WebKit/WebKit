@@ -1,3 +1,15 @@
+2012-04-23  Ojan Vafai  <ojan@chromium.org>
+
+        Split up flakiness_dashboard.html into multiple files. This is a step in the direction
+        of making the code more maintainable (e.g. being able to use qunit for testing).
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.css: Added.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js: Copied from Tools/TestResultServer/static-dashboards/flakiness_dashboard.html.
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.css: Added.
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js: Renamed from Tools/TestResultServer/static-dashboards/flakiness_dashboard_tests.js.
+
 2012-04-23  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt][WK2] Convert touch-point area.

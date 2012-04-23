@@ -586,7 +586,7 @@ function appendJSONScriptElements()
     parseParameters();
 
     if (g_crossDashboardState.useTestData) {
-        appendScript('flakiness_dashboard_tests.js');
+        appendScript('flakiness_dashboard_unittests.js');
         return;
     }
 
