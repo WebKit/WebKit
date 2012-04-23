@@ -52,7 +52,7 @@ namespace WebCore {
     typedef wxMenu* PlatformMenuDescription;
 #elif PLATFORM(EFL)
     class ContextMenuItem;
-    typedef Vector<ContextMenuItem>* PlatformMenuDescription;
+    typedef const Vector<ContextMenuItem>* PlatformMenuDescription;
 #else
     typedef void* PlatformMenuDescription;
 #endif
