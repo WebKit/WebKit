@@ -80,7 +80,6 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/PrintContext.h>
-#import <WebCore/RenderLayer.h>
 #import <WebCore/RenderPart.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ReplaceSelectionCommand.h>
@@ -632,11 +631,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     NSRect rangeRect = [self _firstRectForDOMRange:range];    
     Node *startNode = core([range startContainer]);
         
-    if (startNode && startNode->renderer()) {
-        RenderLayer *layer = startNode->renderer()->enclosingLayer();
-        if (layer)
-            layer->scrollRectToVisible(enclosingIntRect(rangeRect), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
-    }
+    if (startNode && startNode->renderer())
+        startNode->renderer()->scrollRectToVisible(enclosingIntRect(rangeRect), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 - (BOOL)_needsLayout

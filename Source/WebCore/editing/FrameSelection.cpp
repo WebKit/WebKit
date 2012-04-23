@@ -50,7 +50,6 @@
 #include "InlineTextBox.h"
 #include "Page.h"
 #include "Range.h"
-#include "RenderLayer.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
@@ -1953,10 +1952,8 @@ void FrameSelection::revealSelection(const ScrollAlignment& alignment, bool reve
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
-            layer->scrollRectToVisible(rect, alignment, alignment);
+        if (start.deprecatedNode()->renderer()->scrollRectToVisible(rect, alignment, alignment))
             updateAppearance();
-        }
     }
 }
 
