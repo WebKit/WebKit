@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
     if (!result)
         return notHandledByInterceptor();
 
-    return toV8(result.release());
+    return toV8(result.release(), info.GetIsolate());
 }
 
 } // namespace WebCore

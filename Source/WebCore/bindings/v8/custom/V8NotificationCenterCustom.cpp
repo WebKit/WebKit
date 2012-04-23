@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createHTMLNotificationCallback(const
         return throwError(ec);
 
     notification->ref();
-    return toV8(notification.get());
+    return toV8(notification.get(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8::Arguments& args)
@@ -75,7 +75,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8:
         return throwError(ec);
 
     notification->ref();
-    return toV8(notification.get());
+    return toV8(notification.get(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::Arguments& args)

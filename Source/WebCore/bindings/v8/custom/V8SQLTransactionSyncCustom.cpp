@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8SQLTransactionSync::executeSqlCallback(const v8::Argumen
     SQLTransactionSync* transaction = V8SQLTransactionSync::toNative(args.Holder());
 
     ExceptionCode ec = 0;
-    v8::Handle<v8::Value> result = toV8(transaction->executeSQL(statement, sqlValues, ec));
+    v8::Handle<v8::Value> result = toV8(transaction->executeSQL(statement, sqlValues, ec), args.GetIsolate());
     V8Proxy::setDOMException(ec);
 
     return result;

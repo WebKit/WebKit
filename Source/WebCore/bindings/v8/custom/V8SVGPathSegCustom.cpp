@@ -63,43 +63,43 @@ v8::Handle<v8::Value> toV8(SVGPathSeg* impl, v8::Isolate* isolate)
         return v8::Null();
     switch (impl->pathSegType()) {
     case SVGPathSeg::PATHSEG_CLOSEPATH:
-        return toV8(static_cast<SVGPathSegClosePath*>(impl));
+        return toV8(static_cast<SVGPathSegClosePath*>(impl), isolate);
     case SVGPathSeg::PATHSEG_MOVETO_ABS:
-        return toV8(static_cast<SVGPathSegMovetoAbs*>(impl));
+        return toV8(static_cast<SVGPathSegMovetoAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_MOVETO_REL:
-        return toV8(static_cast<SVGPathSegMovetoRel*>(impl));
+        return toV8(static_cast<SVGPathSegMovetoRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_LINETO_ABS:
-        return toV8(static_cast<SVGPathSegLinetoAbs*>(impl));
+        return toV8(static_cast<SVGPathSegLinetoAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_LINETO_REL:
-        return toV8(static_cast<SVGPathSegLinetoRel*>(impl));
+        return toV8(static_cast<SVGPathSegLinetoRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoCubicAbs*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoCubicAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_REL:
-        return toV8(static_cast<SVGPathSegCurvetoCubicRel*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoCubicRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticAbs*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_REL:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticRel*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_ARC_ABS:
-        return toV8(static_cast<SVGPathSegArcAbs*>(impl));
+        return toV8(static_cast<SVGPathSegArcAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_ARC_REL:
-        return toV8(static_cast<SVGPathSegArcRel*>(impl));
+        return toV8(static_cast<SVGPathSegArcRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_ABS:
-        return toV8(static_cast<SVGPathSegLinetoHorizontalAbs*>(impl));
+        return toV8(static_cast<SVGPathSegLinetoHorizontalAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_LINETO_HORIZONTAL_REL:
-        return toV8(static_cast<SVGPathSegLinetoHorizontalRel*>(impl));
+        return toV8(static_cast<SVGPathSegLinetoHorizontalRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_LINETO_VERTICAL_ABS:
-        return toV8(static_cast<SVGPathSegLinetoVerticalAbs*>(impl));
+        return toV8(static_cast<SVGPathSegLinetoVerticalAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_LINETO_VERTICAL_REL:
-        return toV8(static_cast<SVGPathSegLinetoVerticalRel*>(impl));
+        return toV8(static_cast<SVGPathSegLinetoVerticalRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothAbs*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_CUBIC_SMOOTH_REL:
-        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothRel*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoCubicSmoothRel*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothAbs*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothAbs*>(impl), isolate);
     case SVGPathSeg::PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL:
-        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothRel*>(impl));
+        return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothRel*>(impl), isolate);
     }
     ASSERT_NOT_REACHED();
     return V8SVGPathSeg::wrap(impl);

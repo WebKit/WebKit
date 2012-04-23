@@ -73,11 +73,11 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
     }
 
     case MessageEvent::DataTypeBlob:
-        result = toV8(event->dataAsBlob());
+        result = toV8(event->dataAsBlob(), info.GetIsolate());
         break;
 
     case MessageEvent::DataTypeArrayBuffer:
-        result = toV8(event->dataAsArrayBuffer());
+        result = toV8(event->dataAsArrayBuffer(), info.GetIsolate());
         break;
     }
 
@@ -101,7 +101,7 @@ v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> 
 
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get()));
+        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get(), info.GetIsolate()));
 
     return portArray;
 }
