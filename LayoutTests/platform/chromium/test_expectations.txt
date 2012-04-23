@@ -3688,3 +3688,5 @@ BUGCR124313 XP DEBUG : fast/css/font-face-opentype.html = CRASH
 BUGCR124313 XP DEBUG : fast/css/font-face-woff.html = CRASH
 
 BUGWK84550 SNOWLEOPARD : fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = TEXT PASS
+
+BUGWK84596 : media/encrypted-media/encrypted-media-events.html = PASS CRASH
