@@ -340,10 +340,14 @@ sub ParseInterface
 
 # Helpers for all CodeGenerator***.pm modules
 
-sub AvoidInclusionOfType
+sub SkipIncludeHeader
 {
     my $object = shift;
     my $type = shift;
+
+    return 1 if $primitiveTypeHash{$type};
+    return 1 if $numericTypeHash{$type};
+    return 1 if $type eq "String";
 
     # Special case: SVGPoint.h / SVGNumber.h do not exist.
     return 1 if $type eq "SVGPoint" or $type eq "SVGNumber";
@@ -450,7 +454,7 @@ sub GetArrayType
     my $object = shift;
     my $type = shift;
 
-    return $1 if $type =~ /^sequence<([\w\d_]+)>.*/;
+    return $1 if $type =~ /^sequence<([\w\d_\s]+)>.*/;
     return "";
 }
 

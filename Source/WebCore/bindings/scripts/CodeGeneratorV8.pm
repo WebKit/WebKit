@@ -144,7 +144,7 @@ sub AddIncludesForType
     if (IsTypedArrayType($type)) {
         AddToImplIncludes("wtf/${type}.h");
     }
-    if (!$codeGenerator->IsPrimitiveType($type) and !$codeGenerator->IsStringType($type) and !$codeGenerator->AvoidInclusionOfType($type) and $type ne "Date") {
+    if (!$codeGenerator->IsPrimitiveType($type) and !$codeGenerator->IsStringType($type) and !$codeGenerator->SkipIncludeHeader($type) and $type ne "Date") {
         # default, include the same named file
         AddToImplIncludes(GetV8HeaderName(${type}));
 
@@ -521,7 +521,7 @@ sub GetHeaderClassInclude
         $className =~ s/Abs|Rel//;
     }
     return "wtf/${className}.h" if IsTypedArrayType($className);
-    return "" if ($codeGenerator->AvoidInclusionOfType($className));
+    return "" if ($codeGenerator->SkipIncludeHeader($className));
     return "${className}.h";
 }
 
@@ -915,10 +915,11 @@ END
 
         my $arrayType = $codeGenerator->GetArrayType($returnType);
         if ($arrayType) {
-            AddToImplIncludes("V8$arrayType.h");
-            AddToImplIncludes("$arrayType.h");
-            push(@implContentDecls, "    const Vector<RefPtr<$arrayType> > vector = ${getterString};\n");
-            push(@implContentDecls, "    return v8Array(vector);\n");
+            if (!$codeGenerator->SkipIncludeHeader($arrayType)) {
+                AddToImplIncludes("V8$arrayType.h");
+                AddToImplIncludes("$arrayType.h");
+            }
+            push(@implContentDecls, "    return v8Array(${getterString});\n");
             push(@implContentDecls, "}\n\n");
             return;
         }
@@ -3801,7 +3802,7 @@ sub NativeToJSValue
 
     my $arrayType = $codeGenerator->GetArrayType($type);
     if ($arrayType) {
-        if ($arrayType ne "String") {
+        if (!$codeGenerator->SkipIncludeHeader($arrayType)) {
             AddToImplIncludes("V8$arrayType.h");
             AddToImplIncludes("$arrayType.h");
         }

@@ -235,6 +235,214 @@ static void sequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Val
     return;
 }
 
+static v8::Handle<v8::Value> intSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.intSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->intSequenceAttr());
+}
+
+static void intSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.intSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<int> v = toNativeArray<int>(value);
+    imp->setIntSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> shortSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.shortSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->shortSequenceAttr());
+}
+
+static void shortSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.shortSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<short> v = toNativeArray<short>(value);
+    imp->setShortSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> longSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.longSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->longSequenceAttr());
+}
+
+static void longSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.longSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<long> v = toNativeArray<long>(value);
+    imp->setLongSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> longLongSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.longLongSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->longLongSequenceAttr());
+}
+
+static void longLongSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.longLongSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<long long> v = toNativeArray<long long>(value);
+    imp->setLongLongSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> unsignedIntSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedIntSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->unsignedIntSequenceAttr());
+}
+
+static void unsignedIntSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedIntSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<unsigned int> v = toNativeArray<unsigned int>(value);
+    imp->setUnsignedIntSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> unsignedShortSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedShortSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->unsignedShortSequenceAttr());
+}
+
+static void unsignedShortSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedShortSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<unsigned short> v = toNativeArray<unsigned short>(value);
+    imp->setUnsignedShortSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> unsignedLongSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedLongSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->unsignedLongSequenceAttr());
+}
+
+static void unsignedLongSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedLongSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<unsigned long> v = toNativeArray<unsigned long>(value);
+    imp->setUnsignedLongSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> unsignedLongLongSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedLongLongSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->unsignedLongLongSequenceAttr());
+}
+
+static void unsignedLongLongSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.unsignedLongLongSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<unsigned long long> v = toNativeArray<unsigned long long>(value);
+    imp->setUnsignedLongLongSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> floatSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.floatSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->floatSequenceAttr());
+}
+
+static void floatSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.floatSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<float> v = toNativeArray<float>(value);
+    imp->setFloatSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> doubleSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.doubleSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->doubleSequenceAttr());
+}
+
+static void doubleSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.doubleSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<double> v = toNativeArray<double>(value);
+    imp->setDoubleSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> booleanSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.booleanSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->booleanSequenceAttr());
+}
+
+static void booleanSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.booleanSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<boolean> v = toNativeArray<boolean>(value);
+    imp->setBooleanSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> voidSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.voidSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->voidSequenceAttr());
+}
+
+static void voidSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.voidSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<void> v = toNativeArray<void>(value);
+    imp->setVoidSequenceAttr(v);
+    return;
+}
+
+static v8::Handle<v8::Value> dateSequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.dateSequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Array(imp->dateSequenceAttr());
+}
+
+static void dateSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.dateSequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Vector<Date> v = toNativeArray<Date>(value);
+    imp->setDateSequenceAttr(v);
+    return;
+}
+
 static v8::Handle<v8::Value> XMLObjAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.XMLObjAttr._get");
@@ -1814,6 +2022,32 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"testObjAttr", TestObjV8Internal::testObjAttrAttrGetter, TestObjV8Internal::testObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'sequenceAttr' (Type: 'attribute' ExtAttr: '')
     {"sequenceAttr", TestObjV8Internal::sequenceAttrAttrGetter, TestObjV8Internal::sequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'intSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"intSequenceAttr", TestObjV8Internal::intSequenceAttrAttrGetter, TestObjV8Internal::intSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'shortSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"shortSequenceAttr", TestObjV8Internal::shortSequenceAttrAttrGetter, TestObjV8Internal::shortSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'longSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"longSequenceAttr", TestObjV8Internal::longSequenceAttrAttrGetter, TestObjV8Internal::longSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'longLongSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"longLongSequenceAttr", TestObjV8Internal::longLongSequenceAttrAttrGetter, TestObjV8Internal::longLongSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'unsignedIntSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"unsignedIntSequenceAttr", TestObjV8Internal::unsignedIntSequenceAttrAttrGetter, TestObjV8Internal::unsignedIntSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'unsignedShortSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"unsignedShortSequenceAttr", TestObjV8Internal::unsignedShortSequenceAttrAttrGetter, TestObjV8Internal::unsignedShortSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'unsignedLongSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"unsignedLongSequenceAttr", TestObjV8Internal::unsignedLongSequenceAttrAttrGetter, TestObjV8Internal::unsignedLongSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'unsignedLongLongSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"unsignedLongLongSequenceAttr", TestObjV8Internal::unsignedLongLongSequenceAttrAttrGetter, TestObjV8Internal::unsignedLongLongSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'floatSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"floatSequenceAttr", TestObjV8Internal::floatSequenceAttrAttrGetter, TestObjV8Internal::floatSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'doubleSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"doubleSequenceAttr", TestObjV8Internal::doubleSequenceAttrAttrGetter, TestObjV8Internal::doubleSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'booleanSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"booleanSequenceAttr", TestObjV8Internal::booleanSequenceAttrAttrGetter, TestObjV8Internal::booleanSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'voidSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"voidSequenceAttr", TestObjV8Internal::voidSequenceAttrAttrGetter, TestObjV8Internal::voidSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'dateSequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"dateSequenceAttr", TestObjV8Internal::dateSequenceAttrAttrGetter, TestObjV8Internal::dateSequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'XMLObjAttr' (Type: 'attribute' ExtAttr: '')
     {"XMLObjAttr", TestObjV8Internal::XMLObjAttrAttrGetter, TestObjV8Internal::XMLObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'create' (Type: 'attribute' ExtAttr: '')

@@ -45,7 +45,22 @@ module test {
         attribute unsigned long long       unsignedLongLongAttr;
         attribute DOMString                stringAttr;
         attribute TestObj                  testObjAttr;
+
+        // Sequence Attributes
         attribute sequence<ScriptProfile>  sequenceAttr;
+        attribute sequence<int> intSequenceAttr;
+        attribute sequence<short> shortSequenceAttr;
+        attribute sequence<long> longSequenceAttr;
+        attribute sequence<long long> longLongSequenceAttr;
+        attribute sequence<unsigned int> unsignedIntSequenceAttr;
+        attribute sequence<unsigned short> unsignedShortSequenceAttr;
+        attribute sequence<unsigned long> unsignedLongSequenceAttr;
+        attribute sequence<unsigned long long> unsignedLongLongSequenceAttr;
+        attribute sequence<float> floatSequenceAttr;
+        attribute sequence<double> doubleSequenceAttr;
+        attribute sequence<boolean> booleanSequenceAttr;
+        attribute sequence<void> voidSequenceAttr;
+        attribute sequence<Date> dateSequenceAttr;
 
         JS, V8
         // WK_ucfirst, WK_lcfirst exceptional cases.

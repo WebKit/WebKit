@@ -248,7 +248,7 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
-    if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->AvoidInclusionOfType($type)
+    if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->SkipIncludeHeader($type)
         or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array" or $type eq "DOMTimeStamp") {
     } elsif ($type =~ /SVGPathSeg/) {
         my $joinedName = $type;
@@ -3025,7 +3025,7 @@ sub NativeToJSValue
 
     my $arrayType = $codeGenerator->GetArrayType($type);
     if ($arrayType) {
-        if ($arrayType ne "String") {
+        if (!$codeGenerator->SkipIncludeHeader($arrayType)) {
             AddToImplIncludes("JS$arrayType.h", $conditional);
             AddToImplIncludes("$arrayType.h", $conditional);
         }
@@ -3053,9 +3053,9 @@ sub NativeToJSValue
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);
         if (IsTypedArrayType($type)) {
-            AddToImplIncludes("<wtf/$type.h>", $conditional) if not $codeGenerator->AvoidInclusionOfType($type);
+            AddToImplIncludes("<wtf/$type.h>", $conditional) if not $codeGenerator->SkipIncludeHeader($type);
         } else {
-            AddToImplIncludes("$type.h", $conditional) if not $codeGenerator->AvoidInclusionOfType($type);
+            AddToImplIncludes("$type.h", $conditional) if not $codeGenerator->SkipIncludeHeader($type);
         }
     }
 

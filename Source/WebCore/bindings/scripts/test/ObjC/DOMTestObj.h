@@ -82,8 +82,6 @@ enum {
 - (void)setStringAttr:(NSString *)newStringAttr;
 - (DOMTestObj *)testObjAttr;
 - (void)setTestObjAttr:(DOMTestObj *)newTestObjAttr;
-- (DOMsequence<ScriptProfile> *)sequenceAttr;
-- (void)setSequenceAttr:(DOMsequence<ScriptProfile> *)newSequenceAttr;
 - (DOMTestObj *)XMLObjAttr;
 - (void)setXMLObjAttr:(DOMTestObj *)newXMLObjAttr;
 - (BOOL)create;
