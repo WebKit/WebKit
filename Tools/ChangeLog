@@ -1,3 +1,14 @@
+2012-04-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        master.cfg cleanup, remove dead codes after r92792.
+        https://bugs.webkit.org/show_bug.cgi?id=84433
+
+        Relanding r114881 after typo fix in UploadBuiltProduct.
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2012-04-23  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [EFL][DRT] Need to support requestAnimationFrame
