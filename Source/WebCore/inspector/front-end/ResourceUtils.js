@@ -60,7 +60,13 @@ WebInspector.ParsedURL = function(url)
         this.path = match[4] || "/";
         this.fragment = match[5];
     } else {
-        if (this == "about:blank") {
+        if (this.url.indexOf("data:") == 0) {
+            this.isValid = true;
+            this.path = this.url;
+            this.lastPathComponent = this.path;
+            return;
+        }
+        if (this.url == "about:blank") {
             this.isValid = true;
             this.scheme = "about";
             this.host = "blank";

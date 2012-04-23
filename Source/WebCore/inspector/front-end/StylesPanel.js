@@ -58,19 +58,22 @@ WebInspector.StylesPanel = function()
     this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedCSSFiles");
     this._editorContainer.show(this._mainView.mainElement);
 
+    this._mainView.show(this.element);
+
     this._navigatorController = new WebInspector.NavigatorOverlayController(this, this._mainView, this._tabbedPane, this._editorContainer.view);
 
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._reset, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._reset, this);
 
-    this._mainView.show(this.element);
     this._sourceFramesForResource = new Map();
     this._urlToResource = {};
+
+    var openResourceShortcut = WebInspector.OpenResourceDialog.createShortcut();
+    this.registerShortcut(openResourceShortcut.key, this._showOpenStylesheetDialog.bind(this));
 }
 
 WebInspector.StylesPanel.prototype = {
-
     wasShown: function()
     {
         WebInspector.Panel.prototype.wasShown.call(this);
@@ -184,7 +187,43 @@ WebInspector.StylesPanel.prototype = {
         if (typeof anchor.lineNumber === "number")
             sourceFrame.highlightLine(anchor.lineNumber);
         this._editorContainer.view.focus();
+    },
+
+    _showOpenStylesheetDialog: function()
+    {
+        if (WebInspector.Dialog.currentInstance())
+            return;
+
+        var dialog = new WebInspector.FilteredItemSelectionDialog(new WebInspector.OpenStylesheetDialog(this));
+        WebInspector.Dialog.show(this.element, dialog);
     }
 }
 
 WebInspector.StylesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.OpenResourceDialog}
+ * @param {WebInspector.StylesPanel} panel
+ */
+WebInspector.OpenStylesheetDialog = function(panel)
+{
+    var resources = [];
+    for (var url in panel._urlToResource)
+        resources.push(panel._urlToResource[url]);
+    WebInspector.OpenResourceDialog.call(this, resources);
+
+    this._panel = panel;
+}
+
+WebInspector.OpenStylesheetDialog.prototype = {
+    /**
+     * @param {number} itemIndex
+     */
+    selectItem: function(itemIndex)
+    {
+        this._panel._showFile(this.resources[itemIndex]);
+    }
+}
+
+WebInspector.OpenStylesheetDialog.prototype.__proto__ = WebInspector.OpenResourceDialog.prototype;
