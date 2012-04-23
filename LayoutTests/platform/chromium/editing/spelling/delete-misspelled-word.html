@@ -32,7 +32,7 @@ var retryCount = 10;
 function verifyMarker() {
     var hasMarker = internals.hasSpellingMarker(document, 0, 1);
     if (hasMarker && --retryCount > 0) {
-        window.setTimeout(verifyMarker, sleepPeriod);
+        window.setTimeout(verifyMarker, 1);
         return;
     }
     shouldBeFalse('internals.hasSpellingMarker(document, 0, 1)');
