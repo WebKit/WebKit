@@ -226,13 +226,8 @@ void ElementAttributeData::setAttributes(const ElementAttributeData& other, Elem
         element->updateName(oldName ? oldName->value() : nullAtom, newName ? newName->value() : nullAtom);
 
     clearAttributes(element);
-    unsigned newLength = other.length();
-    m_attributes.resize(newLength);
-
-    // FIXME: These loops can probably be combined.
-    for (unsigned i = 0; i < newLength; i++)
-        m_attributes[i] = other.m_attributes[i];
-    for (unsigned i = 0; i < newLength; i++)
+    m_attributes = other.m_attributes;
+    for (unsigned i = 0; i < m_attributes.size(); ++i)
         element->attributeChanged(&m_attributes[i]);
 }
 
