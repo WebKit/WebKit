@@ -1,3 +1,9 @@
+2012-04-23  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Chromium roll from r133348 to r133422.
+
+        * DEPS:
+
 2012-04-23  Gavin Peters  <gavinp@chromium.org>
 
         Move ReferrerPolicy out of SecurityPolicy class into its own header in platform.
