@@ -49,6 +49,7 @@ public:
     static void clearFrameName(Evas_Object* ewkFrame);
     static void clearOpener(Evas_Object* ewkFrame);
     static String counterValueByElementId(const Evas_Object* ewkFrame, const char* elementId);
+    static bool elementDoesAutoCompleteForElementWithId(const Evas_Object* ewkFrame, const String& elementId);
     static Eina_List* frameChildren(const Evas_Object* ewkFrame);
     static WebCore::Frame* frameParent(const Evas_Object* ewkFrame);
     static bool isPageBoxVisible(const Evas_Object* ewkFrame, int pageIndex);

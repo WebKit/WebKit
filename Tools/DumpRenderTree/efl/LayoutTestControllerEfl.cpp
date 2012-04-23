@@ -466,10 +466,11 @@ void LayoutTestController::setPluginsEnabled(bool flag)
     ewk_view_setting_enable_plugins_set(browser->mainView(), flag);
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef)
+bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id)
 {
-    notImplemented();
-    return false;
+    const String elementId(id->ustring().impl());
+    const Evas_Object* mainFrame = browser->mainFrame();
+    return DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId(mainFrame, elementId);
 }
 
 void LayoutTestController::execCommand(JSStringRef, JSStringRef)

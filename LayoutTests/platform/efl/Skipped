@@ -409,9 +409,6 @@ fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 # EFL's LayoutTestController does not implement setJavaScriptProfilingEnabled
 fast/profiler
 
-# EFL's LayoutTestController does not implement elementDoesAutoCompleteForElementWithId
-security/set-form-autocomplete-attribute.html
-
 # EFL's LayoutTestController does not implement execCommand
 editing/deleting
 editing/execCommand

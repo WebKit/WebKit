@@ -100,6 +100,24 @@ String DumpRenderTreeSupportEfl::counterValueByElementId(const Evas_Object* ewkF
     return WebCore::counterValueForElement(element);
 }
 
+bool DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId(const Evas_Object* ewkFrame, const String& elementId)
+{
+    WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
+
+    if (!frame)
+        return false;
+
+    WebCore::Document* document = frame->document();
+    ASSERT(document);
+
+    WebCore::HTMLInputElement* inputElement = static_cast<WebCore::HTMLInputElement*>(document->getElementById(elementId));
+
+    if (!inputElement)
+        return false;
+
+    return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
+}
+
 Eina_List* DumpRenderTreeSupportEfl::frameChildren(const Evas_Object* ewkFrame)
 {
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
