@@ -503,29 +503,6 @@ WebInspector.HeapSnapshotProviderProxy.prototype.__proto__ = WebInspector.HeapSn
  * @constructor
  * @extends {WebInspector.HeapSnapshotProxyObject}
  */
-WebInspector.HeapSnapshotPathFinderProxy = function(worker, objectId)
-{
-    WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);
-}
-
-WebInspector.HeapSnapshotPathFinderProxy.prototype = {
-    findNext: function(callback)
-    {
-        this.callMethod(callback, "findNext");
-    },
-
-    updateRoots: function(filter)
-    {
-        this.callMethod(null, "updateRoots", filter);
-    }
-};
-
-WebInspector.HeapSnapshotPathFinderProxy.prototype.__proto__ = WebInspector.HeapSnapshotProxyObject.prototype;
-
-/**
- * @constructor
- * @extends {WebInspector.HeapSnapshotProxyObject}
- */
 WebInspector.HeapSnapshotsDiffProxy = function(worker, objectId)
 {
     WebInspector.HeapSnapshotProxyObject.call(this, worker, objectId);

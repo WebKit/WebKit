@@ -39,6 +39,14 @@ WebInspector.HeapSnapshotSortableDataGrid = function(columns)
 }
 
 WebInspector.HeapSnapshotSortableDataGrid.prototype = {
+    /**
+     * @return {number}
+     */
+    defaultPopulateCount: function()
+    {
+        return 100;
+    },
+
     dispose: function()
     {
         var children = this.topLevelNodes();
@@ -293,8 +301,6 @@ WebInspector.HeapSnapshotContainmentDataGrid = function(columns)
 }
 
 WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
-    _defaultPopulateCount: 100,
-
     expandRoute: function(route)
     {
         function nextStep(parent, hopIndex)
@@ -405,8 +411,6 @@ WebInspector.HeapSnapshotConstructorsDataGrid = function()
 }
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
-    _defaultPopulateCount: 100,
-
     _sortFields: function(sortColumn, sortAscending)
     {
         return {
@@ -423,10 +427,10 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
         if (this._profileIndex === -1)
-            this.populateChildren();
+            this._populateChildren();
     },
 
-    populateChildren: function()
+    _populateChildren: function()
     {
         function aggregatesReceived(key, aggregates)
         {
@@ -457,7 +461,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
             this._maxNodeId = profiles[profileIndex].maxJSObjectId;
         }
 
-        this.populateChildren();
+        this._populateChildren();
     },
 
 };
@@ -483,7 +487,14 @@ WebInspector.HeapSnapshotDiffDataGrid = function()
 }
 
 WebInspector.HeapSnapshotDiffDataGrid.prototype = {
-    _defaultPopulateCount: 50,
+    /**
+     * @override
+     * @return {number}
+     */
+    defaultPopulateCount: function()
+    {
+        return 50;
+    },
 
     _sortFields: function(sortColumn, sortAscending)
     {
@@ -519,10 +530,10 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
             this.dispatchEventToListeners("sorting complete");
             return;
         }
-        this.populateChildren();
+        this._populateChildren();
     },
 
-    populateChildren: function()
+    _populateChildren: function()
     {
         function baseAggregatesReceived(baseClasses)
         {
@@ -572,7 +583,14 @@ WebInspector.HeapSnapshotDominatorsDataGrid = function()
 }
 
 WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
-    _defaultPopulateCount: 25,
+    /**
+     * @override
+     * @return {number}
+     */
+    defaultPopulateCount: function()
+    {
+        return 25;
+    },
 
     setDataSource: function(snapshotView, snapshot)
     {

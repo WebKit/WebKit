@@ -37,7 +37,9 @@
 WebInspector.HeapSnapshotGridNode = function(tree, hasChildren)
 {
     WebInspector.DataGridNode.call(this, null, hasChildren);
-    this._defaultPopulateCount = tree._defaultPopulateCount;
+    /**
+     * @type {WebInspector.HeapSnapshotProviderProxy}
+     */
     this._provider = null;
     this._dataGrid = tree;
     this.addEventListener("populate", this._populate, this);
@@ -109,6 +111,10 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         this._provider.sortAndRewind(this.comparator(), sorted.bind(this));
     },
 
+    /**
+     * @param {?number} howMany
+     * @param {?number} atIndex
+     */
     populateChildren: function(provider, howMany, atIndex, afterPopulate, suppressNotifyAboutCompletion)
     {
         if (!howMany && provider) {
@@ -118,7 +124,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         provider = provider || this._provider;
         if (!("instanceCount" in provider))
             provider.instanceCount = 0;
-        howMany = howMany || this._defaultPopulateCount;
+        howMany = howMany || this._dataGrid.defaultPopulateCount();
         atIndex = atIndex || this.children.length;
         var haveSavedChildren = !!this._savedChildren;
         if (haveSavedChildren) {
@@ -134,8 +140,8 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         {
             if (part >= howMany)
                 return;
-            part += this._defaultPopulateCount;
-            provider.serializeNextItems(this._defaultPopulateCount, childrenRetrieved.bind(this));
+            part += this._dataGrid.defaultPopulateCount();
+            provider.serializeNextItems(this._dataGrid.defaultPopulateCount(), childrenRetrieved.bind(this));
         }
         function childrenRetrieved(items)
         {
@@ -158,7 +164,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             }
 
             if (items.hasNext)
-                this.insertChild(new WebInspector.ShowMoreDataGridNode(this.populateChildren.bind(this, provider), this._defaultPopulateCount, length), atIndex++);
+                this.insertChild(new WebInspector.ShowMoreDataGridNode(this.populateChildren.bind(this, provider), this._dataGrid.defaultPopulateCount(), length), atIndex++);
             if (afterPopulate)
                 afterPopulate();
             if (!suppressNotifyAboutCompletion) {
@@ -682,6 +688,8 @@ WebInspector.HeapSnapshotConstructorNode.prototype.__proto__ = WebInspector.Heap
 
 /**
  * @constructor
+ * @param {WebInspector.HeapSnapshotProviderProxy} it1
+ * @param {WebInspector.HeapSnapshotProviderProxy} it2
  */
 WebInspector.HeapSnapshotIteratorsTuple = function(it1, it2)
 {
@@ -716,6 +724,10 @@ WebInspector.HeapSnapshotDiffNode = function(tree, className, baseAggregate, agg
     this._name = className;
     this._baseIndexes = baseAggregate ? baseAggregate.idxs : [];
     this._indexes = aggregate ? aggregate.idxs : [];
+
+    /**
+     * @type {WebInspector.HeapSnapshotIteratorsTuple}
+     */
     this._provider = this._createNodesProvider(tree.baseSnapshot, tree.snapshot, aggregate ? aggregate.type : baseAggregate.type, className);
 }
 
@@ -815,9 +827,9 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
         if (!provider && !howMany) {
             var firstProviderPopulated = function()
             {
-                WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it2, this._defaultPopulateCount, atIndex, afterPopulate, false);
+                WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it2, this._dataGrid.defaultPopulateCount(), atIndex, afterPopulate, false);
             };
-            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1, this._defaultPopulateCount, atIndex, firstProviderPopulated.bind(this), true);
+            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1, this._dataGrid.defaultPopulateCount(), atIndex, firstProviderPopulated.bind(this), true);
         } else if (!howMany) {
             var firstProviderPopulated = function()
             {

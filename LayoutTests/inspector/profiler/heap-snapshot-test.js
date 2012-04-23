@@ -175,10 +175,10 @@ InspectorTest.startProfilerTest = function(callback)
     function detailedHeapProfilesEnabled()
     {
         // Reduce the number of populated nodes to speed up testing.
-        WebInspector.HeapSnapshotContainmentDataGrid.prototype._defaultPopulateCount = 10;
-        WebInspector.HeapSnapshotConstructorsDataGrid.prototype._defaultPopulateCount = 10;
-        WebInspector.HeapSnapshotDiffDataGrid.prototype._defaultPopulateCount = 5;
-        WebInspector.HeapSnapshotDominatorsDataGrid.prototype._defaultPopulateCount = 3;
+        WebInspector.HeapSnapshotContainmentDataGrid.prototype.defaultPopulateCount = function() { return 10; };
+        WebInspector.HeapSnapshotConstructorsDataGrid.prototype.defaultPopulateCount = function() { return 10; };
+        WebInspector.HeapSnapshotDiffDataGrid.prototype.defaultPopulateCount = function() { return 5; };
+        WebInspector.HeapSnapshotDominatorsDataGrid.prototype.defaultPopulateCount = function() { return 3; }
         InspectorTest.addResult("Detailed heap profiles were enabled.");
         InspectorTest.safeWrap(callback)();
     }
