@@ -49,13 +49,13 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> toV8Object(CanvasStyle* style)
+static v8::Handle<v8::Value> toV8Object(CanvasStyle* style, v8::Isolate* isolate)
 {
     if (style->canvasGradient())
-        return toV8(style->canvasGradient());
+        return toV8(style->canvasGradient(), isolate);
 
     if (style->canvasPattern())
-        return toV8(style->canvasPattern());
+        return toV8(style->canvasPattern(), isolate);
 
     return v8String(style->color());
 }
@@ -74,7 +74,7 @@ static PassRefPtr<CanvasStyle> toCanvasStyle(v8::Handle<v8::Value> value)
 v8::Handle<v8::Value> V8CanvasRenderingContext2D::strokeStyleAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8CanvasRenderingContext2D::toNative(info.Holder());
-    return toV8Object(impl->strokeStyle());
+    return toV8Object(impl->strokeStyle(), info.GetIsolate());
 }
 
 void V8CanvasRenderingContext2D::strokeStyleAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -89,7 +89,7 @@ void V8CanvasRenderingContext2D::strokeStyleAccessorSetter(v8::Local<v8::String>
 v8::Handle<v8::Value> V8CanvasRenderingContext2D::fillStyleAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8CanvasRenderingContext2D::toNative(info.Holder());
-    return toV8Object(impl->fillStyle());
+    return toV8Object(impl->fillStyle(), info.GetIsolate());
 }
 
 void V8CanvasRenderingContext2D::fillStyleAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

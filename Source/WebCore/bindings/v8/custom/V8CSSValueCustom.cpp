@@ -47,16 +47,16 @@ v8::Handle<v8::Value> toV8(CSSValue* impl, v8::Isolate* isolate)
     if (!impl)
         return v8::Null();
     if (impl->isWebKitCSSTransformValue())
-        return toV8(static_cast<WebKitCSSTransformValue*>(impl));
+        return toV8(static_cast<WebKitCSSTransformValue*>(impl), isolate);
     if (impl->isValueList())
-        return toV8(static_cast<CSSValueList*>(impl));
+        return toV8(static_cast<CSSValueList*>(impl), isolate);
     if (impl->isPrimitiveValue())
-        return toV8(static_cast<CSSPrimitiveValue*>(impl));
+        return toV8(static_cast<CSSPrimitiveValue*>(impl), isolate);
 #if ENABLE(SVG)
     if (impl->isSVGPaint())
-        return toV8(static_cast<SVGPaint*>(impl));
+        return toV8(static_cast<SVGPaint*>(impl), isolate);
     if (impl->isSVGColor())
-        return toV8(static_cast<SVGColor*>(impl));
+        return toV8(static_cast<SVGColor*>(impl), isolate);
 #endif
     return V8CSSValue::wrap(impl);
 }

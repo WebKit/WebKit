@@ -44,7 +44,7 @@ v8::Handle<v8::Value> toV8(CSSStyleSheet* impl, v8::Isolate* isolate)
     // Add a hidden reference from stylesheet object to its owner node.
     Node* ownerNode = impl->ownerNode();
     if (ownerNode && !wrapper.IsEmpty())
-        V8DOMWrapper::setNamedHiddenReference(wrapper, "ownerNode", toV8(ownerNode));
+        V8DOMWrapper::setNamedHiddenReference(wrapper, "ownerNode", toV8(ownerNode, isolate));
     return wrapper;
 }
 

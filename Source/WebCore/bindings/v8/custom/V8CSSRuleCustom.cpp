@@ -54,23 +54,23 @@ v8::Handle<v8::Value> toV8(CSSRule* impl, v8::Isolate* isolate)
         // -> Use the base class wrapper here.
         return V8CSSRule::wrap(impl);
     case CSSRule::STYLE_RULE:
-        return toV8(static_cast<CSSStyleRule*>(impl));
+        return toV8(static_cast<CSSStyleRule*>(impl), isolate);
     case CSSRule::CHARSET_RULE:
-        return toV8(static_cast<CSSCharsetRule*>(impl));
+        return toV8(static_cast<CSSCharsetRule*>(impl), isolate);
     case CSSRule::IMPORT_RULE:
-        return toV8(static_cast<CSSImportRule*>(impl));
+        return toV8(static_cast<CSSImportRule*>(impl), isolate);
     case CSSRule::MEDIA_RULE:
-        return toV8(static_cast<CSSMediaRule*>(impl));
+        return toV8(static_cast<CSSMediaRule*>(impl), isolate);
     case CSSRule::FONT_FACE_RULE:
-        return toV8(static_cast<CSSFontFaceRule*>(impl));
+        return toV8(static_cast<CSSFontFaceRule*>(impl), isolate);
     case CSSRule::PAGE_RULE:
-        return toV8(static_cast<CSSPageRule*>(impl));
+        return toV8(static_cast<CSSPageRule*>(impl), isolate);
     case CSSRule::WEBKIT_KEYFRAME_RULE:
-        return toV8(static_cast<WebKitCSSKeyframeRule*>(impl));
+        return toV8(static_cast<WebKitCSSKeyframeRule*>(impl), isolate);
     case CSSRule::WEBKIT_KEYFRAMES_RULE:
-        return toV8(static_cast<WebKitCSSKeyframesRule*>(impl));
+        return toV8(static_cast<WebKitCSSKeyframesRule*>(impl), isolate);
     case CSSRule::WEBKIT_REGION_RULE:
-        return toV8(static_cast<WebKitCSSRegionRule*>(impl));
+        return toV8(static_cast<WebKitCSSRegionRule*>(impl), isolate);
     }
     return V8CSSRule::wrap(impl);
 }
