@@ -300,6 +300,7 @@ Never found MimeType
 Never found Node
 Never found NodeFilter
 Never found Notation
+Never found Notification
 Never found Option
 Never found Plugin
 Never found ProcessingInstruction
