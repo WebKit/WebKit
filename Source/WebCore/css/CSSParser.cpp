@@ -1525,9 +1525,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         break;
 
-    case CSSPropertyFontWeight:  // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
+    case CSSPropertyFontWeight:  { // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
+        if (m_valueList->size() != 1)
+            return false;
         return parseFontWeight(important);
-
+    }
     case CSSPropertyBorderSpacing: {
         if (num == 1) {
             ShorthandScope scope(this, CSSPropertyBorderSpacing);
@@ -1777,12 +1779,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 
     case CSSPropertyFontSize:
-        // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
-        if (id >= CSSValueXxSmall && id <= CSSValueLarger)
-            validPrimitive = true;
-        else
-            validPrimitive = (validUnit(value, FLength | FPercent | FNonNeg));
-        break;
+        return parseFontSize(important);
 
     case CSSPropertyFontVariant:         // normal | small-caps | inherit
         return parseFontVariant(important);
@@ -1838,12 +1835,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         validPrimitive = (!id && validUnit(value, FInteger, CSSQuirksMode));
         break;
 
-    case CSSPropertyLineHeight:          // normal | <number> | <length> | <percentage> | inherit
-        if (id == CSSValueNormal)
-            validPrimitive = true;
-        else
-            validPrimitive = (!id && validUnit(value, FNumber | FLength | FPercent | FNonNeg));
-        break;
+    case CSSPropertyLineHeight:
+        return parseLineHeight(important);
     case CSSPropertyCounterIncrement:    // [ <identifier> <integer>? ]+ | none | inherit
         if (id != CSSValueNone)
             return parseCounter(propId, 1, important);
@@ -4330,111 +4323,50 @@ bool CSSParser::parseExclusionShape(bool shapeInside, bool important)
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'
 bool CSSParser::parseFont(bool important)
 {
-    bool valid = true;
-    bool styleImplicit = true;
-    bool variantImplicit = true;
-    bool weightImplicit = true;
-    bool lineHeightImplicit = true;
-    int valueOrdinal = 0;
-
-    CSSParserValue *value = m_valueList->current();
-    RefPtr<FontValue> font = FontValue::create();
-    // Optional font-style, font-variant and font-weight.
-    while (value) {
-        int id = value->id;
-        if (id == CSSValueInitial || id == CSSValueInherit)
+    // Let's check if there is an inherit or initial somewhere in the shorthand.
+    for (unsigned i = 0; i < m_valueList->size(); ++i) {
+        if (m_valueList->valueAt(i)->id == CSSValueInherit || m_valueList->valueAt(i)->id == CSSValueInitial)
             return false;
-        if (id) {
-            if (id == CSSValueNormal) {
-                // It's the initial value for all three, so mark the corresponding longhand as explicit.
-                switch (valueOrdinal) {
-                case 0:
-                    styleImplicit = false;
-                    break;
-                case 1:
-                    variantImplicit = false;
-                    break;
-                case 2:
-                    weightImplicit = false;
-                    break;
-                }
-            } else if (id == CSSValueItalic || id == CSSValueOblique) {
-                if (font->style)
-                    return false;
-                font->style = cssValuePool().createIdentifierValue(id);
-                styleImplicit = false;
-            } else if (id == CSSValueSmallCaps) {
-                if (font->variant)
-                    return false;
-                font->variant = cssValuePool().createIdentifierValue(id);
-                variantImplicit = false;
-            } else if (id >= CSSValueBold && id <= CSSValueLighter) {
-                if (font->weight)
-                    return false;
-                font->weight = cssValuePool().createIdentifierValue(id);
-                weightImplicit = false;
-            } else
-                valid = false;
-        } else if (!font->weight && validUnit(value, FInteger | FNonNeg, CSSStrictMode)) {
-            int weight = static_cast<int>(value->fValue);
-            int val = 0;
-            if (weight == 100)
-                val = CSSValue100;
-            else if (weight == 200)
-                val = CSSValue200;
-            else if (weight == 300)
-                val = CSSValue300;
-            else if (weight == 400)
-                val = CSSValue400;
-            else if (weight == 500)
-                val = CSSValue500;
-            else if (weight == 600)
-                val = CSSValue600;
-            else if (weight == 700)
-                val = CSSValue700;
-            else if (weight == 800)
-                val = CSSValue800;
-            else if (weight == 900)
-                val = CSSValue900;
-
-            if (val) {
-                font->weight = cssValuePool().createIdentifierValue(val);
-                weightImplicit = false;
-            } else
-                valid = false;
-        } else {
-            valid = false;
-        }
-        if (!valid)
-            break;
-        value = m_valueList->next();
-        ++valueOrdinal;
     }
+
+    ShorthandScope scope(this, CSSPropertyFont);
+    // Optional font-style, font-variant and font-weight.
+    bool fontStyleParsed = false;
+    bool fontVariantParsed = false;
+    bool fontWeightParsed = false;
+    CSSParserValue* value;
+    while ((value = m_valueList->current())) {
+        if (!fontStyleParsed && isValidKeywordPropertyAndValue(CSSPropertyFontStyle, value->id)) {
+            addProperty(CSSPropertyFontStyle, cssValuePool().createIdentifierValue(value->id), important);
+            fontStyleParsed = true;
+        } else if (!fontVariantParsed && (value->id == CSSValueNormal || value->id == CSSValueSmallCaps)) {
+            // Font variant in the shorthand is particular, it only accepts normal or small-caps.
+            addProperty(CSSPropertyFontVariant, cssValuePool().createIdentifierValue(value->id), important);
+            fontVariantParsed = true;
+        } else if (!fontWeightParsed && parseFontWeight(important))
+            fontWeightParsed = true;
+        else
+            break;
+        m_valueList->next();
+    }
+
     if (!value)
         return false;
 
-    if (value->id == CSSValueInitial || value->id == CSSValueInherit)
-        return false;
-
-    // Set undefined values to default.
-    if (!font->style)
-        font->style = cssValuePool().createIdentifierValue(CSSValueNormal);
-    if (!font->variant)
-        font->variant = cssValuePool().createIdentifierValue(CSSValueNormal);
-    if (!font->weight)
-        font->weight = cssValuePool().createIdentifierValue(CSSValueNormal);
+    if (!fontStyleParsed)
+        addProperty(CSSPropertyFontStyle, cssValuePool().createIdentifierValue(CSSValueNormal), important, true);
+    if (!fontVariantParsed)
+        addProperty(CSSPropertyFontVariant, cssValuePool().createIdentifierValue(CSSValueNormal), important, true);
+    if (!fontWeightParsed)
+        addProperty(CSSPropertyFontWeight, cssValuePool().createIdentifierValue(CSSValueNormal), important, true);
 
     // Now a font size _must_ come.
     // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
-    if (value->id >= CSSValueXxSmall && value->id <= CSSValueLarger)
-        font->size = cssValuePool().createIdentifierValue(value->id);
-    else if (validUnit(value, FLength | FPercent | FNonNeg))
-        font->size = createPrimitiveNumericValue(value);
-    value = m_valueList->next();
-    if (!font->size || !value)
+    if (!parseFontSize(important))
         return false;
 
-    if (value->id == CSSValueInitial || value->id == CSSValueInherit)
+    value = m_valueList->current();
+    if (!value)
         return false;
 
     if (value->unit == CSSParserValue::Operator && value->iValue == '/') {
@@ -4442,42 +4374,23 @@ bool CSSParser::parseFont(bool important)
         value = m_valueList->next();
         if (!value)
             return false;
-        if (value->id == CSSValueNormal) {
-            // Default value, just mark the property as explicit.
-            lineHeightImplicit = false;
-        } else if (validUnit(value, FNumber | FLength | FPercent | FNonNeg)) {
-            font->lineHeight = createPrimitiveNumericValue(value);
-            lineHeightImplicit = false;
-        } else
+        if (!parseLineHeight(important))
             return false;
-        value = m_valueList->next();
-        if (!value)
-            return false;
-    }
-
-    if (value->id == CSSValueInitial || value->id == CSSValueInherit)
-        return false;
-
-    if (!font->lineHeight)
-        font->lineHeight = cssValuePool().createIdentifierValue(CSSValueNormal);
+    } else
+        addProperty(CSSPropertyLineHeight, cssValuePool().createIdentifierValue(CSSValueNormal), important, true);
 
     // Font family must come now.
-    font->family = parseFontFamily();
-
-    if (m_valueList->current() || !font->family)
+    RefPtr<CSSValue> parsedFamilyValue = parseFontFamily();
+    if (!parsedFamilyValue)
         return false;
 
-    ShorthandScope scope(this, CSSPropertyFont);
-    addProperty(CSSPropertyFontFamily, font->family, important);
-    addProperty(CSSPropertyFontSize, font->size, important);
-    addProperty(CSSPropertyFontStyle, font->style, important, styleImplicit);
-    addProperty(CSSPropertyFontVariant, font->variant, important, variantImplicit);
-    addProperty(CSSPropertyFontWeight, font->weight, important, weightImplicit);
-    addProperty(CSSPropertyLineHeight, font->lineHeight, important, lineHeightImplicit);
+    addProperty(CSSPropertyFontFamily, parsedFamilyValue.release(), important);
 
     // FIXME: http://www.w3.org/TR/2011/WD-css3-fonts-20110324/#font-prop requires that
     // "font-stretch", "font-size-adjust", and "font-kerning" be reset to their initial values
     // but we don't seem to support them at the moment. They should also be added here once implemented.
+    if (m_valueList->current())
+        return false;
 
     return true;
 }
@@ -4576,6 +4489,36 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
     return list.release();
 }
 
+bool CSSParser::parseLineHeight(bool important)
+{
+    CSSParserValue* value = m_valueList->current();
+    int id = value->id;
+    bool validPrimitive = false;
+    // normal | <number> | <length> | <percentage> | inherit
+    if (id == CSSValueNormal)
+        validPrimitive = true;
+    else
+        validPrimitive = (!id && validUnit(value, FNumber | FLength | FPercent | FNonNeg));
+    if (validPrimitive && (!m_valueList->next() || inShorthand()))
+        addProperty(CSSPropertyLineHeight, parseValidPrimitive(id, value), important);
+    return validPrimitive;
+}
+
+bool CSSParser::parseFontSize(bool important)
+{
+    CSSParserValue* value = m_valueList->current();
+    int id = value->id;
+    bool validPrimitive = false;
+    // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
+    if (id >= CSSValueXxSmall && id <= CSSValueLarger)
+        validPrimitive = true;
+    else
+        validPrimitive = validUnit(value, FLength | FPercent | FNonNeg);
+    if (validPrimitive && (!m_valueList->next() || inShorthand()))
+        addProperty(CSSPropertyFontSize, parseValidPrimitive(id, value), important);
+    return validPrimitive;
+}
+
 bool CSSParser::parseFontVariant(bool important)
 {
     RefPtr<CSSValueList> values;
@@ -4625,9 +4568,6 @@ bool CSSParser::parseFontVariant(bool important)
 
 bool CSSParser::parseFontWeight(bool important)
 {
-    if (m_valueList->size() != 1)
-        return false;
-
     CSSParserValue* value = m_valueList->current();
     if ((value->id >= CSSValueNormal) && (value->id <= CSSValue900)) {
         addProperty(CSSPropertyFontWeight, cssValuePool().createIdentifierValue(value->id), important);
@@ -4635,9 +4575,10 @@ bool CSSParser::parseFontWeight(bool important)
     }
     if (validUnit(value, FInteger | FNonNeg, CSSQuirksMode)) {
         int weight = static_cast<int>(value->fValue);
-        if (!(weight % 100) && weight >= 100 && weight <= 900)
+        if (!(weight % 100) && weight >= 100 && weight <= 900) {
             addProperty(CSSPropertyFontWeight, cssValuePool().createIdentifierValue(CSSValue100 + weight / 100 - 1), important);
-        return true;
+            return true;
+        }
     }
     return false;
 }

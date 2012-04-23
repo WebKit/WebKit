@@ -157,6 +157,8 @@ public:
 
     static bool fastParseColor(RGBA32&, const String&, bool strict);
 
+    bool parseLineHeight(bool important);
+    bool parseFontSize(bool important);
     bool parseFontVariant(bool important);
     bool parseFontWeight(bool important);
     bool parseFontFaceSrc();
