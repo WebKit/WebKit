@@ -43,7 +43,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_alpha(alpha)
     , m_scissorEnabled(false)
     , m_texture2DBinding(0)
-    , m_framebufferBinding(0)
     , m_activeTextureUnit(GraphicsContext3D::TEXTURE0)
     , m_context(context)
     , m_size(-1, -1)
