@@ -127,6 +127,16 @@ String.prototype.removeURLFragment = function()
     return this.substring(0, fragmentIndex);
 }
 
+String.prototype.startsWith = function(substring)
+{
+    return !this.lastIndexOf(substring, 0);
+}
+
+String.prototype.endsWith = function(substring)
+{
+    return this.indexOf(substring, this.length - substring.length) !== -1;
+}
+
 Number.constrain = function(num, min, max)
 {
     if (num < min)

@@ -60,12 +60,6 @@ WebInspector.ParsedURL = function(url)
         this.path = match[4] || "/";
         this.fragment = match[5];
     } else {
-        if (this.url.indexOf("data:") == 0) {
-            this.isValid = true;
-            this.path = this.url;
-            this.lastPathComponent = this.path;
-            return;
-        }
         if (this.url == "about:blank") {
             this.isValid = true;
             this.scheme = "about";
@@ -170,7 +164,7 @@ WebInspector.displayNameForURL = function(url)
     var index = WebInspector.inspectedPageURL.indexOf(lastPathComponent);
     if (index !== -1 && index + lastPathComponent.length === WebInspector.inspectedPageURL.length) {
         var baseURL = WebInspector.inspectedPageURL.substring(0, index);
-        if (url.indexOf(baseURL) === 0)
+        if (url.startsWith(baseURL))
             return url.substring(index);
     }
 
@@ -199,7 +193,7 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linki
         container.appendChild(document.createTextNode(nonLink));
 
         var title = linkString;
-        var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
+        var realURL = (linkString.startsWith("www.") ? "http://" + linkString : linkString);
         var lineColumnMatch = lineColumnRegEx.exec(realURL);
         if (lineColumnMatch)
             realURL = realURL.substring(0, realURL.length - lineColumnMatch[0].length);
@@ -335,7 +329,7 @@ WebInspector.resourceURLForRelatedNode = function(node, url)
     if (!url || url.indexOf("://") > 0)
         return url;
 
-    if (url.trim().indexOf("javascript:") === 0)
+    if (url.trim().startsWith("javascript:"))
         return null; // Do not provide a resource URL for security.
 
     for (var frameOwnerCandidate = node; frameOwnerCandidate; frameOwnerCandidate = frameOwnerCandidate.parentNode) {
@@ -375,7 +369,7 @@ WebInspector.completeURL = function(baseURL, href)
 
         // Return special URLs as-is.
         var trimmedHref = href.trim();
-        if (trimmedHref.indexOf("data:") === 0 || trimmedHref.indexOf("javascript:") === 0)
+        if (trimmedHref.startsWith("data:") || trimmedHref.startsWith("javascript:"))
             return href;
     }
 

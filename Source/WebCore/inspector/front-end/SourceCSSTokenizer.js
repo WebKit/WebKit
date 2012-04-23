@@ -395,7 +395,7 @@ case 32:
                         if (token === "@media") {
                             this.tokenType = "css-at-rule";
                             this._condition.parseCondition = this._parseConditions.AT_MEDIA_RULE;
-                        } else if (token.indexOf("@") === 0) {
+                        } else if (token.startsWith("@")) {
                             this.tokenType = "css-at-rule";
                             this._condition.parseCondition = this._parseConditions.AT_RULE;
                         } else

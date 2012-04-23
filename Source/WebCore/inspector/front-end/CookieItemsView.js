@@ -243,7 +243,7 @@ WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
     var url = resourceURL.asParsedURL();
     if (!url || !WebInspector.Cookies.cookieDomainMatchesResourceDomain(cookie.domain, url.host))
         return false;
-    return (url.path.indexOf(cookie.path) === 0
+    return (url.path.startsWith(cookie.path)
         && (!cookie.port || url.port == cookie.port)
         && (!cookie.secure || url.scheme === "https"));
 }

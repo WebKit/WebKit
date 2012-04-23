@@ -325,7 +325,7 @@ WebInspector.ProfilesPanel.prototype = {
         this._profiles.push(profile);
         this._profilesIdMap[this._makeKey(profile.uid, typeId)] = profile;
 
-        if (profile.title.indexOf(UserInitiatedProfileName) !== 0) {
+        if (!profile.title.startsWith(UserInitiatedProfileName)) {
             var profileTitleKey = this._makeKey(profile.title, typeId);
             if (!(profileTitleKey in this._profileGroups))
                 this._profileGroups[profileTitleKey] = [];
@@ -551,7 +551,7 @@ WebInspector.ProfilesPanel.prototype = {
     displayTitleForProfileLink: function(title, typeId)
     {
         title = unescape(title);
-        if (title.indexOf(UserInitiatedProfileName) === 0) {
+        if (title.startsWith(UserInitiatedProfileName)) {
             title = WebInspector.UIString("Profile %d", title.substring(UserInitiatedProfileName.length + 1));
         } else {
             var titleKey = this._makeKey(title, typeId);
@@ -940,7 +940,7 @@ WebInspector.ProfileSidebarTreeElement = function(profile, titleFormat, classNam
     this.profile = profile;
     this._titleFormat = titleFormat;
 
-    if (this.profile.title.indexOf(UserInitiatedProfileName) === 0)
+    if (this.profile.title.startsWith(UserInitiatedProfileName))
         this._profileNumber = this.profile.title.substring(UserInitiatedProfileName.length + 1);
 
     WebInspector.SidebarTreeElement.call(this, className, "", "", profile, false);
@@ -965,7 +965,7 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     {
         if (this._mainTitle)
             return this._mainTitle;
-        if (this.profile.title.indexOf(UserInitiatedProfileName) === 0)
+        if (this.profile.title.startsWith(UserInitiatedProfileName))
             return WebInspector.UIString(this._titleFormat, this._profileNumber);
         return this.profile.title;
     },

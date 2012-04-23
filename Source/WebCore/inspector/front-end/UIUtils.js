@@ -359,7 +359,7 @@ WebInspector.startEditing = function(element, config)
         } else if (result === "cancel") {
             editingCancelled.call(element);
             event.consume(true);
-        } else if (result && result.indexOf("move-") === 0) {
+        } else if (result && result.startsWith("move-")) {
             moveDirection = result.substring(5);
             if (event.keyIdentifier !== "U+0009")
                 blurEventListener();

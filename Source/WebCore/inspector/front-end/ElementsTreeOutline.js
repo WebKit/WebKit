@@ -1494,7 +1494,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 var attrValueElement = attrSpanElement.createChild("span", "webkit-html-attribute-value");
                 attrValueElement.textContent = value;
             } else {
-                if (value.indexOf("data:") === 0)
+                if (value.startsWith("data:"))
                     value = value.trimMiddle(60);
                 attrSpanElement.appendChild(linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a"));
             }

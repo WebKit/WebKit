@@ -221,9 +221,9 @@ WebInspector.CPUProfileView.prototype = {
 
         this._searchFinishedCallback = finishedCallback;
 
-        var greaterThan = (query.indexOf(">") === 0);
-        var lessThan = (query.indexOf("<") === 0);
-        var equalTo = (query.indexOf("=") === 0 || ((greaterThan || lessThan) && query.indexOf("=") === 1));
+        var greaterThan = (query.startsWith(">"));
+        var lessThan = (query.startsWith("<"));
+        var equalTo = (query.startsWith("=") || ((greaterThan || lessThan) && query.indexOf("=") === 1));
         var percentUnits = (query.lastIndexOf("%") === (query.length - 1));
         var millisecondsUnits = (query.length > 2 && query.lastIndexOf("ms") === (query.length - 2));
         var secondsUnits = (!millisecondsUnits && query.lastIndexOf("s") === (query.length - 1));

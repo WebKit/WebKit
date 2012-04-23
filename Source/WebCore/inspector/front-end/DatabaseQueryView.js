@@ -75,7 +75,7 @@ WebInspector.DatabaseQueryView.prototype = {
                 var text = textArray[i].toLowerCase();
                 if (text.length < prefix.length)
                     continue;
-                if (text.indexOf(prefix) !== 0)
+                if (!text.startsWith(prefix))
                     continue;
                 results.push(textArray[i]);
             }

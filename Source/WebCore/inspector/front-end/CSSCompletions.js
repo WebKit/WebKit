@@ -64,7 +64,7 @@ WebInspector.CSSCompletions.prototype = {
             return [];
 
         var results = [];
-        while (firstIndex < this._values.length && this._values[firstIndex].indexOf(prefix) === 0)
+        while (firstIndex < this._values.length && this._values[firstIndex].startsWith(prefix))
             results.push(this._values[firstIndex++]);
         return results;
     },
@@ -88,7 +88,7 @@ WebInspector.CSSCompletions.prototype = {
 
         do {
             var middleIndex = (maxIndex + minIndex) >> 1;
-            if (this._values[middleIndex].indexOf(prefix) === 0) {
+            if (this._values[middleIndex].startsWith(prefix)) {
                 foundIndex = middleIndex;
                 break;
             }
@@ -101,7 +101,7 @@ WebInspector.CSSCompletions.prototype = {
         if (foundIndex === undefined)
             return -1;
 
-        while (foundIndex && this._values[foundIndex - 1].indexOf(prefix) === 0)
+        while (foundIndex && this._values[foundIndex - 1].startsWith(prefix))
             foundIndex--;
 
         return foundIndex;

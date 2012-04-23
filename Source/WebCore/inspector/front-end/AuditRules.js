@@ -1106,7 +1106,7 @@ WebInspector.AuditRules.VendorPrefixedCSSProperties.prototype = {
 
     visitProperty: function(styleSheet, property, result)
     {
-        if (property.name.indexOf(this._webkitPrefix) !== 0)
+        if (!property.name.startsWith(this._webkitPrefix))
             return;
 
         var normalPropertyName = property.name.substring(this._webkitPrefix.length).toLowerCase(); // Start just after the "-webkit-" prefix.

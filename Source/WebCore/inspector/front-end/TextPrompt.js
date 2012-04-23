@@ -511,7 +511,7 @@ WebInspector.TextPrompt.prototype = {
 
     _completeCommonPrefix: function()
     {
-        if (!this.autoCompleteElement || !this._commonPrefix || !this._userEnteredText || this._commonPrefix.indexOf(this._userEnteredText) !== 0)
+        if (!this.autoCompleteElement || !this._commonPrefix || !this._userEnteredText || !this._commonPrefix.startsWith(this._userEnteredText))
             return;
 
         if (!this.isSuggestBoxVisible()) {

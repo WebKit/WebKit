@@ -162,7 +162,7 @@ WebInspector.SnippetsModel.prototype = {
     snippetIdForSourceURL: function(sourceURL)
     {
         var snippetsPrefix = WebInspector.SnippetsModel.snippetsSourceURLPrefix;
-        if (sourceURL.indexOf(snippetsPrefix) !== 0)
+        if (!sourceURL.startsWith(snippetsPrefix))
             return null;
         var splittedURL = sourceURL.substring(snippetsPrefix.length).split("_");
         var snippetId = splittedURL[0];

@@ -576,9 +576,9 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
         if (!breakpointItem)
             return;
         breakpointItem.checkbox.checked = true;
-        if (eventName.indexOf(WebInspector.EventListenerBreakpointsSidebarPane.categotyListener) === 0)
+        if (eventName.startsWith(WebInspector.EventListenerBreakpointsSidebarPane.categotyListener))
             DOMDebuggerAgent.setEventListenerBreakpoint(eventName.substring(WebInspector.EventListenerBreakpointsSidebarPane.categotyListener.length));
-        else if (eventName.indexOf(WebInspector.EventListenerBreakpointsSidebarPane.categotyInstrumentation) === 0)
+        else if (eventName.startsWith(WebInspector.EventListenerBreakpointsSidebarPane.categotyInstrumentation))
             DOMDebuggerAgent.setInstrumentationBreakpoint(eventName.substring(WebInspector.EventListenerBreakpointsSidebarPane.categotyInstrumentation.length));
         this._updateCategoryCheckbox(breakpointItem.parent);
     },
@@ -589,9 +589,9 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
         if (!breakpointItem)
             return;
         breakpointItem.checkbox.checked = false;
-        if (eventName.indexOf(WebInspector.EventListenerBreakpointsSidebarPane.categotyListener) === 0)
+        if (eventName.startsWith(WebInspector.EventListenerBreakpointsSidebarPane.categotyListener))
             DOMDebuggerAgent.removeEventListenerBreakpoint(eventName.substring(WebInspector.EventListenerBreakpointsSidebarPane.categotyListener.length));
-        else if (eventName.indexOf(WebInspector.EventListenerBreakpointsSidebarPane.categotyInstrumentation) === 0)
+        else if (eventName.startsWith(WebInspector.EventListenerBreakpointsSidebarPane.categotyInstrumentation))
             DOMDebuggerAgent.removeInstrumentationBreakpoint(eventName.substring(WebInspector.EventListenerBreakpointsSidebarPane.categotyInstrumentation.length));
         this._updateCategoryCheckbox(breakpointItem.parent);
     },

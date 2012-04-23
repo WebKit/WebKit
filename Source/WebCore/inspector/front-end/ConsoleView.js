@@ -471,7 +471,7 @@ WebInspector.ConsoleView.prototype = {
 
             if (property.length < prefix.length)
                 continue;
-            if (prefix.length && property.indexOf(prefix) !== 0)
+            if (prefix.length && !property.startsWith(prefix))
                 continue;
 
             results.push(property);
