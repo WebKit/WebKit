@@ -515,11 +515,9 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
         this.snapshot = snapshot;
     },
 
-    _baseProfileIndexChanged: function(loader, profileIndex)
-    {
-        loader(profileIndex, this.setBaseDataSource.bind(this));
-    },
-
+    /**
+     * @param {WebInspector.HeapSnapshotProxy} baseSnapshot
+     */
     setBaseDataSource: function(baseSnapshot)
     {
         this.baseSnapshot = baseSnapshot;
@@ -535,34 +533,22 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
 
     _populateChildren: function()
     {
-        function baseAggregatesReceived(baseClasses)
+        function aggregatesForDiffReceived(aggregatesForDiff)
         {
-            function aggregatesReceived(classes)
+            this.snapshot.calculateSnapshotDiff(this.baseSnapshot.uid, aggregatesForDiff, didCalculateSnapshotDiff.bind(this));
+            function didCalculateSnapshotDiff(diffByClassName)
             {
-                var nodeCount = 0;
-                var nodes = [];
-                for (var clss in baseClasses)
-                    nodes.push(new WebInspector.HeapSnapshotDiffNode(this, clss, baseClasses[clss], classes[clss]));
-                for (clss in classes) {
-                    if (!(clss in baseClasses))
-                        nodes.push(new WebInspector.HeapSnapshotDiffNode(this, clss, null, classes[clss]));
+                for (var className in diffByClassName) {
+                    var diff = diffByClassName[className];
+                    this.appendTopLevelNode(new WebInspector.HeapSnapshotDiffNode(this, className, diff));
                 }
-                nodeCount = nodes.length;
-                function addNodeIfNonZeroDiff(boundNode, zeroDiff)
-                {
-                    if (!zeroDiff)
-                        this.appendTopLevelNode(boundNode);
-                    if (!--nodeCount)
-                        this.sortingChanged();
-                }
-                for (var i = 0, l = nodes.length; i < l; ++i) {
-                    var node = nodes[i];
-                    node.calculateDiff(this, addNodeIfNonZeroDiff.bind(this, node));
-                }
+                this.sortingChanged();
             }
-            this.snapshot.aggregates(true, "allObjects", null, aggregatesReceived.bind(this));
         }
-        this.baseSnapshot.aggregates(true, "allObjects", null, baseAggregatesReceived.bind(this));
+        // Two snapshots live in different workers isolated from each other. That is why
+        // we first need to collect information about the nodes in the first snapshot and
+        // then pass it to the second snapshot to calclulate the diff.
+        this.baseSnapshot.aggregatesForDiff(aggregatesForDiffReceived.bind(this));
     }
 };
 

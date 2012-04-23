@@ -690,11 +690,15 @@ WebInspector.HeapSnapshotConstructorNode.prototype.__proto__ = WebInspector.Heap
  * @constructor
  * @param {WebInspector.HeapSnapshotProviderProxy} it1
  * @param {WebInspector.HeapSnapshotProviderProxy} it2
+ * @param {WebInspector.HeapSnapshotProxy} baseSnapshot
+ * @param {WebInspector.HeapSnapshotProxy} snapshot
  */
-WebInspector.HeapSnapshotIteratorsTuple = function(it1, it2)
+WebInspector.HeapSnapshotIteratorsTuple = function(it1, it2, baseSnapshot, snapshot)
 {
     this._it1 = it1;
     this._it2 = it2;
+    this.baseSnapshot = baseSnapshot;
+    this.snapshot = snapshot;
 }
 
 WebInspector.HeapSnapshotIteratorsTuple.prototype = {
@@ -718,82 +722,43 @@ WebInspector.HeapSnapshotIteratorsTuple.prototype = {
  * @constructor
  * @extends {WebInspector.HeapSnapshotGridNode}
  */
-WebInspector.HeapSnapshotDiffNode = function(tree, className, baseAggregate, aggregate)
+WebInspector.HeapSnapshotDiffNode = function(tree, className, diffForClass)
 {
     WebInspector.HeapSnapshotGridNode.call(this, tree, true);
     this._name = className;
-    this._baseIndexes = baseAggregate ? baseAggregate.idxs : [];
-    this._indexes = aggregate ? aggregate.idxs : [];
+
+    this._addedCount = diffForClass.addedCount;
+    this._removedCount = diffForClass.removedCount;
+    this._countDelta = diffForClass.countDelta;
+    this._addedSize = diffForClass.addedSize;
+    this._removedSize = diffForClass.removedSize;
+    this._sizeDelta = diffForClass.sizeDelta;
+
+    this._deletedIndexes = diffForClass.deletedIndexes;
 
     /**
      * @type {WebInspector.HeapSnapshotIteratorsTuple}
      */
-    this._provider = this._createNodesProvider(tree.baseSnapshot, tree.snapshot, aggregate ? aggregate.type : baseAggregate.type, className);
+    this._provider = this._createNodesProvider(tree.baseSnapshot, tree.snapshot);
 }
 
 WebInspector.HeapSnapshotDiffNode.prototype = {
-    calculateDiff: function(dataGrid, callback)
-    {
-        var diff = dataGrid.snapshot.createDiff(this._name);
-
-        function diffCalculated(diffResult)
-        {
-            diff.dispose();
-            this._addedCount = diffResult.addedCount;
-            this._removedCount = diffResult.removedCount;
-            this._countDelta = diffResult.countDelta;
-            this._addedSize = diffResult.addedSize;
-            this._removedSize = diffResult.removedSize;
-            this._sizeDelta = diffResult.sizeDelta;
-            this._baseIndexes = null;
-            this._indexes = null;
-            callback(this._addedSize === 0 && this._removedSize === 0);
-        }
-        function baseSelfSizesReceived(baseSelfSizes)
-        {
-            diff.pushBaseSelfSizes(baseSelfSizes);
-            diff.calculate(diffCalculated.bind(this));
-        }
-        function baseIdsReceived(baseIds)
-        {
-            diff.pushBaseIds(baseIds);
-            dataGrid.snapshot.pushBaseIds(dataGrid.baseSnapshot.uid, this._name, baseIds);
-            dataGrid.baseSnapshot.nodeFieldValuesByIndex("selfSize", this._baseIndexes, baseSelfSizesReceived.bind(this));
-        }
-        function idsReceived(ids)
-        {
-            dataGrid.baseSnapshot.pushBaseIds(dataGrid.snapshot.uid, this._name, ids);
-        }
-        dataGrid.baseSnapshot.nodeFieldValuesByIndex("id", this._baseIndexes, baseIdsReceived.bind(this));
-        dataGrid.snapshot.nodeFieldValuesByIndex("id", this._indexes, idsReceived.bind(this));
-    },
-
     _createChildNode: function(item, provider)
     {
         if (provider === this._provider._it1)
-            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, null, provider.snapshot, item);
+            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, null, this._provider.snapshot, item);
         else
-            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, provider.snapshot, null, item);
+            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, this._provider.baseSnapshot, null, item);
     },
 
-    _createNodesProvider: function(baseSnapshot, snapshot, nodeType, nodeClassName)
+    _createNodesProvider: function(baseSnapshot, snapshot)
     {
         var className = this._name;
         return new WebInspector.HeapSnapshotIteratorsTuple(
-            createProvider(snapshot, baseSnapshot), createProvider(baseSnapshot, snapshot));
-
-        function createProvider(snapshot, otherSnapshot)
-        {
-            var otherSnapshotId = otherSnapshot.uid;
-            var provider = snapshot.createNodesProvider(
-                "function (node) {" +
-                "     return node.type === \"" + nodeType + "\" " +
-                (nodeClassName !== null ? "&& node.className === \"" + nodeClassName + "\"" : "") +
-                "         && !this.baseSnapshotHasNode(" + otherSnapshotId + ", \"" + className + "\", node.id);" +
-                "}");
-            provider.snapshot = snapshot;
-            return provider;
-        }
+            snapshot.createAddedNodesProvider(baseSnapshot.uid, className),
+            baseSnapshot.createDeletedNodesProvider(this._deletedIndexes),
+            baseSnapshot,
+            snapshot);
     },
 
     _childHashForEntity: function(node)

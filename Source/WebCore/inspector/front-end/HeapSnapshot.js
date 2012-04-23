@@ -835,6 +835,9 @@ WebInspector.HeapSnapshot = function(profile)
     this._metaNode = profile.snapshot.meta;
     this._strings = profile.strings;
 
+    this._snapshotDiffs = {};
+    this._aggregatesForDiff = null;
+
     this._init();
 }
 
@@ -1102,7 +1105,6 @@ WebInspector.HeapSnapshot.prototype = {
             delete this._aggregates;
             delete this._aggregatesSortedFlags;
         }
-        delete this._baseNodeIds;
         delete this._dominatedNodes;
         delete this._firstDominatedNodeIndex;
         delete this._flags;
@@ -1112,17 +1114,6 @@ WebInspector.HeapSnapshot.prototype = {
     get _allNodes()
     {
         return new WebInspector.HeapSnapshotNodeIterator(this.rootNode);
-    },
-
-    nodeFieldValuesByIndex: function(fieldName, indexes)
-    {
-        var node = new WebInspector.HeapSnapshotNode(this);
-        var result = new Array(indexes.length);
-        for (var i = 0, l = indexes.length; i < l; ++i) {
-            node.nodeIndex = indexes[i];
-            result[i] = node[fieldName];
-        }
-        return result;
     },
 
     get rootNode()
@@ -1193,6 +1184,35 @@ WebInspector.HeapSnapshot.prototype = {
         this._aggregates[key] = aggregatesByClassName;
 
         return aggregatesByClassName;
+    },
+
+    aggregatesForDiff: function()
+    {
+        if (this._aggregatesForDiff)
+            return this._aggregatesForDiff;
+
+        var aggregatesByClassName = this.aggregates(true, "allObjects");
+        this._aggregatesForDiff  = {};
+
+        var node = new WebInspector.HeapSnapshotNode(this);
+        for (var className in aggregatesByClassName) {
+            var aggregate = aggregatesByClassName[className];
+            var indexes = aggregate.idxs;
+            var ids = new Array(indexes.length);
+            var selfSizes = new Array(indexes.length);
+            for (var i = 0; i < indexes.length; i++) {
+                node.nodeIndex = indexes[i];
+                ids[i] = node.id;
+                selfSizes[i] = node.selfSize;
+            }
+
+            this._aggregatesForDiff[className] = {
+                indexes: indexes,
+                ids: ids,
+                selfSizes: selfSizes
+            };
+        }
+        return this._aggregatesForDiff;
     },
 
     _calculateObjectToWindowDistance: function()
@@ -1509,23 +1529,78 @@ WebInspector.HeapSnapshot.prototype = {
         this._markQueriableHeapObjects();
     },
 
-    baseSnapshotHasNode: function(baseSnapshotId, className, nodeId)
+    calculateSnapshotDiff: function(baseSnapshotId, baseSnapshotAggregates)
     {
-        return this._baseNodeIds[baseSnapshotId][className].binaryIndexOf(nodeId, this._numbersComparator) !== -1;
+        var snapshotDiff = this._snapshotDiffs[baseSnapshotId];
+        if (snapshotDiff)
+            return snapshotDiff;
+        snapshotDiff = {};
+
+        var aggregates = this.aggregates(true, "allObjects");
+        for (var className in baseSnapshotAggregates) {
+            var baseAggregate = baseSnapshotAggregates[className];
+            var diff = this._calculateDiffForClass(baseAggregate, aggregates[className]);
+            if (diff)
+                snapshotDiff[className] = diff;
+        }
+        var emptyBaseAggregate = { ids: [], indexes: [], selfSizes: [] };
+        for (var className in aggregates) {
+            if (className in baseSnapshotAggregates)
+                continue;
+            snapshotDiff[className] = this._calculateDiffForClass(emptyBaseAggregate, aggregates[className]);
+        }
+
+        this._snapshotDiffs[baseSnapshotId] = snapshotDiff;
+        return snapshotDiff;
     },
 
-    pushBaseIds: function(baseSnapshotId, className, nodeIds)
+    _calculateDiffForClass: function(baseAggregate, aggregate)
     {
-        if (!this._baseNodeIds)
-            this._baseNodeIds = [];
-        if (!this._baseNodeIds[baseSnapshotId])
-            this._baseNodeIds[baseSnapshotId] = {};
-        this._baseNodeIds[baseSnapshotId][className] = nodeIds;
-    },
+        var baseIds = baseAggregate.ids;
+        var baseIndexes = baseAggregate.indexes;
+        var baseSelfSizes = baseAggregate.selfSizes;
 
-    createDiff: function(className)
-    {
-        return new WebInspector.HeapSnapshotsDiff(this, className);
+        var indexes = aggregate ? aggregate.idxs : [];
+
+        var i = 0, l = baseIds.length;
+        var j = 0, m = indexes.length;
+        var diff = { addedCount: 0,
+                     removedCount: 0,
+                     addedSize: 0,
+                     removedSize: 0,
+                     deletedIndexes: [],
+                     addedIndexes: [] };
+
+        var nodeB = new WebInspector.HeapSnapshotNode(this, indexes[j]);
+        while (i < l && j < m) {
+            var nodeAId = baseIds[i];
+            if (nodeAId < nodeB.id) {
+                diff.deletedIndexes.push(baseIndexes[i]);
+                diff.removedCount++;
+                diff.removedSize += baseSelfSizes[i];
+                ++i;
+            } else { // nodeAId === nodeB.id
+                ++i;
+                nodeB.nodeIndex = indexes[++j];
+            }
+        }
+        while (i < l) {
+            diff.deletedIndexes.push(baseIndexes[i]);
+            diff.removedCount++;
+            diff.removedSize += baseSelfSizes[i];
+            ++i;
+        }
+        while (j < m) {
+            diff.addedIndexes.push(indexes[j]);
+            diff.addedCount++;
+            diff.addedSize += nodeB.selfSize;
+            nodeB.nodeIndex = indexes[++j];
+        }
+        diff.countDelta = diff.addedCount - diff.removedCount;
+        diff.sizeDelta = diff.addedSize - diff.removedSize;
+        if (!diff.addedCount && !diff.removedCount)
+            return null;
+        return diff;
     },
 
     _parseFilter: function(filter)
@@ -1546,6 +1621,18 @@ WebInspector.HeapSnapshot.prototype = {
     {
         var node = new WebInspector.HeapSnapshotNode(this, nodeIndex);
         return new WebInspector.HeapSnapshotEdgesProvider(this, nodeIndex, this._parseFilter(filter), node.retainers);
+    },
+
+    createAddedNodesProvider: function(baseSnapshotId, className)
+    {
+        var snapshotDiff = this._snapshotDiffs[baseSnapshotId];
+        var diffForClass = snapshotDiff[className];
+        return new WebInspector.HeapSnapshotNodesProvider(this, null, diffForClass.addedIndexes);
+    },
+
+    createDeletedNodesProvider: function(nodeIndexes)
+    {
+        return new WebInspector.HeapSnapshotNodesProvider(this, null, nodeIndexes);
     },
 
     createNodesProvider: function(filter)
@@ -1852,63 +1939,3 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
 };
 
 WebInspector.HeapSnapshotNodesProvider.prototype.__proto__ = WebInspector.HeapSnapshotFilteredOrderedIterator.prototype;
-
-/**
- * @constructor
- */
-WebInspector.HeapSnapshotsDiff = function(snapshot, className)
-{
-    this._snapshot = snapshot;
-    this._className = className;
-};
-
-WebInspector.HeapSnapshotsDiff.prototype = {
-    calculate: function()
-    {
-        var aggregates = this._snapshot.aggregates(true)[this._className];
-        var indexes = aggregates ? aggregates.idxs : [];
-        var i = 0, l = this._baseIds.length;
-        var j = 0, m = indexes.length;
-        var diff = { addedCount: 0, removedCount: 0, addedSize: 0, removedSize: 0 };
-
-        var nodeB = new WebInspector.HeapSnapshotNode(this._snapshot, indexes[j]);
-        while (i < l && j < m) {
-            var nodeAId = this._baseIds[i];
-            if (nodeAId < nodeB.id) {
-                diff.removedCount++;
-                diff.removedSize += this._baseSelfSizes[i];
-                ++i;
-            } else if (nodeAId > nodeB.id) {
-                diff.addedCount++;
-                diff.addedSize += nodeB.selfSize;
-                nodeB.nodeIndex = indexes[++j];
-            } else {
-                ++i;
-                nodeB.nodeIndex = indexes[++j];
-            }
-        }
-        while (i < l) {
-            diff.removedCount++;
-            diff.removedSize += this._baseSelfSizes[i];
-            ++i;
-        }
-        while (j < m) {
-            diff.addedCount++;
-            diff.addedSize += nodeB.selfSize;
-            nodeB.nodeIndex = indexes[++j];
-        }
-        diff.countDelta = diff.addedCount - diff.removedCount;
-        diff.sizeDelta = diff.addedSize - diff.removedSize;
-        return diff;
-    },
-
-    pushBaseIds: function(baseIds)
-    {
-        this._baseIds = baseIds;
-    },
-
-    pushBaseSelfSizes: function(baseSelfSizes)
-    {
-        this._baseSelfSizes = baseSelfSizes;
-    }
-};

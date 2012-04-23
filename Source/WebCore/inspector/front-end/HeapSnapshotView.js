@@ -370,7 +370,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
         this._baseProfileUid = this._profiles()[this.baseSelectElement.selectedIndex].uid;
         var dataGrid = /** @type {WebInspector.HeapSnapshotDiffDataGrid} */ this.dataGrid;
-        dataGrid._baseProfileIndexChanged(this._loadProfileByIndex.bind(this), this.baseSelectElement.selectedIndex);
+        this._loadProfile(this._baseProfileUid, dataGrid.setBaseDataSource.bind(dataGrid));
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;
@@ -422,12 +422,6 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _loadProfile: function(profileUid, callback)
     {
-        WebInspector.panels.profiles.loadHeapSnapshot(profileUid, callback);
-    },
-
-    _loadProfileByIndex: function(profileIndex, callback)
-    {
-        var profileUid = this._profiles()[profileIndex].uid;
         WebInspector.panels.profiles.loadHeapSnapshot(profileUid, callback);
     },
 
