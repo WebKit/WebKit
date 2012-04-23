@@ -158,3 +158,27 @@ BUGWK84592 : animations/stop-animation-on-suspend.html = TEXT
 
 // Animation API not available.
 BUGWK84593 : animations/animation-api-1.html = TEXT
+
+// IndexedDB is not yet enabled.
+BUGWKEFL SKIP : storage/indexeddb = FAIL
+BUGWKEFL SKIP : http/tests/inspector/indexeddb = FAIL
+
+// Quota API is not supported.
+BUGWKEFL SKIP : storage/storageinfo-missing-arguments.html = FAIL
+BUGWKEFL SKIP : storage/storageinfo-no-callbacks.html = FAIL
+BUGWKEFL SKIP : storage/storageinfo-query-usage.html = FAIL
+BUGWKEFL SKIP : storage/storageinfo-request-quota.html = FAIL
+
+BUGWK59801 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH
+
+// EFL's LayoutTestController does not implement originsWithLocalStorage.
+BUGWKEFL SKIP : storage/domstorage/localstorage/storagetracker = FAIL
+
+// EFL's LayoutTestController does not implement evaluateScriptInIsolatedWorld.
+BUGWKEFL SKIP : http/tests/security/isolatedWorld = FAIL
+BUGWKEFL SKIP : storage/open-database-creation-callback-isolated-world.html = FAIL
+BUGWKEFL SKIP : storage/statement-error-callback-isolated-world.html = FAIL
+BUGWKEFL SKIP : storage/statement-success-callback-isolated-world.html = FAIL
+BUGWKEFL SKIP : storage/transaction-callback-isolated-world.html = FAIL
+BUGWKEFL SKIP : storage/transaction-error-callback-isolated-world.html = FAIL
+BUGWKEFL SKIP : storage/transaction-success-callback-isolated-world.html = FAIL

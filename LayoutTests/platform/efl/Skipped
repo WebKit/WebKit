@@ -523,15 +523,6 @@ http/tests/appcache
 # EFL's LayoutTestController does not implement applicationCacheDiskUsageForOrigin
 http/tests/appcache
 
-# EFL's LayoutTestController does not implement localStorageDiskUsageForOrigin
-storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
-
-# EFL's LayoutTestController does not implement clearAllDatabases
-storage
-
-# EFL's LayoutTestController does not implement originsWithLocalStorage
-storage/domstorage/localstorage/storagetracker
-
 # EFL's LayoutTestController does not implement setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
 
@@ -600,15 +591,6 @@ userscripts/window-onerror-for-isolated-world-2.html
 # EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
-
-# EFL's LayoutTestController does not implement evaluateScriptInIsolatedWorld
-http/tests/security/isolatedWorld
-storage/open-database-creation-callback-isolated-world.html
-storage/statement-error-callback-isolated-world.html
-storage/statement-success-callback-isolated-world.html
-storage/transaction-callback-isolated-world.html
-storage/transaction-error-callback-isolated-world.html
-storage/transaction-success-callback-isolated-world.html
 
 # EFL's LayoutTestController does not implement removeAllVisitedLinks
 http/tests/globalhistory/history-delegate-basic-visited-links.html
@@ -987,10 +969,6 @@ http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
 # Should be moved to platform/mac <rdar://5621425> (via win/, chromium/ and wincairo/)
 http/tests/misc/willCacheResponse-delegate-callback.html
 
-# Fails assertion: ASSERT(m_workerContext->hasOneRef());
-# https://bugs.webkit.org/show_bug.cgi?id=59801
-fast/workers/storage/use-same-database-in-page-and-workers.html
-
 # Tests that fail across all platforms. Even though some platforms don't skip these tests, there are platform-specific results generated that make these tests 'pass' (via GTK+).
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
@@ -1343,12 +1321,6 @@ fast/replaced/object-with-embed-url-param.html
 fast/text/complex-synthetic-bold-space-width.html
 fast/text/justification-padding-mid-word.html
 fast/text/midword-break-after-breakable-char.html
-fast/workers/storage/change-version-handle-reuse-sync.html
-fast/workers/storage/open-database-creation-callback-sync.html
-fast/workers/storage/open-database-inputs-sync.html
-fast/workers/storage/sql-exception-codes-sync.html
-fast/workers/storage/test-authorizer-sync.html
-fast/workers/storage/test-authorizer.html
 
 # BUG: Needs a grayish canvas background. See DumpRenderTree/chromium/WebViewHost::displayRepaintMask().
 fast/repaint/absolute-position-change-containing-block.html
