@@ -99,7 +99,14 @@ public:
 
     // The DrawingBuffer needs to track the texture bound to texture unit 0.
     // The bound texture is tracked to avoid costly queries during rendering.
-    void setTexture2DBinding(GC3Dint texture) { m_texture2DBinding = texture; }
+    void setTexture2DBinding(Platform3DObject texture) { m_texture2DBinding = texture; }
+
+    // The DrawingBuffer needs to track the currently bound framebuffer so it
+    // restore the binding when needed.
+    void setFramebufferBinding(Platform3DObject fbo) { m_framebufferBinding = fbo; }
+
+    // Bind to the m_framebufferBinding if it's not 0.
+    void restoreFramebufferBinding();
 
     // Track the currently active texture unit. Texture unit 0 is used as host for a scratch
     // texture.
@@ -135,6 +142,7 @@ private:
     AlphaRequirement m_alpha;
     bool m_scissorEnabled;
     Platform3DObject m_texture2DBinding;
+    Platform3DObject m_framebufferBinding;
     GC3Denum m_activeTextureUnit;
 
     RefPtr<GraphicsContext3D> m_context;

@@ -336,6 +336,14 @@ void DrawingBuffer::commit(long x, long y, long width, long height)
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
 }
 
+void DrawingBuffer::restoreFramebufferBinding()
+{
+    if (!m_context || !m_framebufferBinding)
+        return;
+
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_framebufferBinding);
+}
+
 bool DrawingBuffer::multisample() const
 {
     return m_context && m_context->getContextAttributes().antialias && m_multisampleExtensionSupported;

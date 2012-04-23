@@ -86,6 +86,8 @@ void WebGLLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTrac
     m_textureId = m_drawingBuffer->frontColorBuffer();
     if (m_drawingBuffer->requiresCopyFromBackToFrontBuffer())
         updater.appendCopy(m_drawingBuffer->colorBuffer(), m_textureId, bounds());
+
+    m_drawingBuffer->restoreFramebufferBinding();
 }
 
 void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)

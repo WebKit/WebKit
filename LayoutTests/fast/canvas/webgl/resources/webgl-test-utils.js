@@ -1104,7 +1104,66 @@ var getUrlArguments = function() {
   return args;
 };
 
+/**
+ * Provides requestAnimationFrame in a cross browser way.
+ */
+var requestAnimFrameImpl_;
+
+var requestAnimFrame = function(callback, element) {
+  if (!requestAnimFrameImpl_) {
+    requestAnimFrameImpl_ = function() {
+      var functionNames = [
+        "requestAnimationFrame",
+        "webkitRequestAnimationFrame",
+        "mozRequestAnimationFrame",
+        "oRequestAnimationFrame",
+        "msRequestAnimationFrame"
+      ];
+      for (var jj = 0; jj < functionNames.length; ++jj) {
+        var functionName = functionNames[jj];
+        if (window[functionName]) {
+          return function(name) {
+            return function(callback, element) {
+              return window[name].call(window, callback, element);
+            };
+          }(functionName);
+        }
+      }
+      return function(callback, element) {
+           return window.setTimeout(callback, 1000 / 70);
+        };
+    }();
+  }
+
+  return requestAnimFrameImpl_(callback, element);
+};
+
+/**
+ * Provides cancelAnimationFrame in a cross browser way.
+ */
+var cancelAnimFrame = (function() {
+  return window.cancelAnimationFrame ||
+         window.webkitCancelAnimationFrame ||
+         window.mozCancelAnimationFrame ||
+         window.oCancelAnimationFrame ||
+         window.msCancelAnimationFrame ||
+         window.clearTimeout;
+})();
+
+var waitFrames = function(frames, callback) {
+  var countDown = function() {
+    if (frames == 0) {
+      callback();
+    } else {
+      --frames;
+      requestAnimFrame(countDown);
+    }
+  };
+  countDown();
+};
+
 return {
+  cancelAnimFrame: cancelAnimFrame,
   create3DContext: create3DContext,
   create3DContextWithWrapperThatThrowsOnGLError:
     create3DContextWithWrapperThatThrowsOnGLError,
@@ -1147,6 +1206,8 @@ return {
   shouldGenerateGLError: shouldGenerateGLError,
   readFile: readFile,
   readFileList: readFileList,
+  requestAnimFrame: requestAnimFrame,
+  waitFrames: waitFrames,
 
   none: false
 };
