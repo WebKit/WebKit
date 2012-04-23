@@ -920,6 +920,8 @@ void WebGLRenderingContext::bindFramebuffer(GC3Denum target, WebGLFramebuffer* b
         return;
     }
     m_framebufferBinding = buffer;
+    if (m_drawingBuffer)
+        m_drawingBuffer->setFramebufferBinding(objectOrZero(m_framebufferBinding.get()));
     if (!m_framebufferBinding && m_drawingBuffer) {
         // Instead of binding fb 0, bind the drawing buffer.
         m_drawingBuffer->bind();
@@ -1533,10 +1535,11 @@ void WebGLRenderingContext::deleteFramebuffer(WebGLFramebuffer* framebuffer)
         return;
     if (framebuffer == m_framebufferBinding) {
         m_framebufferBinding = 0;
-        // Have to call bindFramebuffer here to bind back to internal fbo.
-        if (m_drawingBuffer)
+        if (m_drawingBuffer) {
+            m_drawingBuffer->setFramebufferBinding(0);
+            // Have to call bindFramebuffer here to bind back to internal fbo.
             m_drawingBuffer->bind();
-        else
+        } else
             m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     }
 }
@@ -4307,8 +4310,9 @@ void WebGLRenderingContext::loseContextImpl(WebGLRenderingContext::LostContextMo
     detachAndRemoveAllObjects();
 
     if (m_drawingBuffer) {
-        // Make absolutely sure we do not refer to an already-deleted texture.
+        // Make absolutely sure we do not refer to an already-deleted texture or framebuffer.
         m_drawingBuffer->setTexture2DBinding(0);
+        m_drawingBuffer->setFramebufferBinding(0);
     }
 
     // There is no direct way to clear errors from a GL implementation and
