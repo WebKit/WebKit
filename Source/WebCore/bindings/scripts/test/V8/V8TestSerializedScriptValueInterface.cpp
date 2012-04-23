@@ -102,7 +102,7 @@ static v8::Handle<v8::Value> portsAttrGetter(v8::Local<v8::String> name, const v
     MessagePortArray portsCopy(*ports);
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get()));
+        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get(), info.GetIsolate()));
     return portArray;
 }
 

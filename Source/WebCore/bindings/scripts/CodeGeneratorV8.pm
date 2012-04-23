@@ -931,7 +931,7 @@ END
         my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
         push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8::Handle<v8::Object>();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
-        push(@implContentDecls, "        wrapper = toV8(result.get());\n");
+        push(@implContentDecls, "        wrapper = toV8(result.get(), info.GetIsolate());\n");
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
         if ($dataNode->name eq "DOMWindow") {
             push(@implContentDecls, "            V8DOMWrapper::setNamedHiddenWindowReference(imp->frame(), \"${attrName}\", wrapper);\n");
@@ -949,7 +949,7 @@ END
         AddToImplIncludes("V8$attrType.h");
         my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($attrType);
         # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
-        push(@implContentDecls, "    return toV8(static_cast<$svgNativeType*>($result));\n");
+        push(@implContentDecls, "    return toV8(static_cast<$svgNativeType*>($result), info.GetIsolate());\n");
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($attrType) and not $implClassName =~ /List$/) {
         AddToImplIncludes("V8$attrType.h");
         AddToImplIncludes("SVGPropertyTearOff.h");
@@ -972,19 +972,19 @@ END
                     $result =~ s/matrix/svgMatrix/;
                 }
 
-                push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(wrapper, $result, $updateMethod)));\n");
+                push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(wrapper, $result, $updateMethod)), info.GetIsolate());\n");
             } else {
                 AddToImplIncludes("SVGStaticPropertyTearOff.h");
                 $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyTearOff<$implClassName, /;
 
-                push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result, $updateMethod)));\n");
+                push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result, $updateMethod)), info.GetIsolate());\n");
             }
         } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
-            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result)));\n");
+            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result)), info.GetIsolate());\n");
         } elsif ($tearOffType =~ /SVG(Point|PathSeg)List/) {
-            push(@implContentDecls, "    return toV8(WTF::getPtr($result));\n");
+            push(@implContentDecls, "    return toV8(WTF::getPtr($result), info.GetIsolate());\n");
         } else {
-            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($result)));\n");
+            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($result)), info.GetIsolate());\n");
         }
     } elsif ($attribute->signature->type eq "MessagePortArray") {
         AddToImplIncludes("V8Array.h");
@@ -997,7 +997,7 @@ END
     MessagePortArray portsCopy(*ports);
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get()));
+        portArray->Set(v8::Integer::New(i), toV8(portsCopy[i].get(), info.GetIsolate()));
     return portArray;
 END
     } else {
@@ -1899,7 +1899,7 @@ static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arg
 
     // Make sure the document is added to the DOM Node map. Otherwise, the ${implClassName} instance
     // may end up being the only node in the map and get garbage-collected prematurely.
-    toV8(document);
+    toV8(document, args.GetIsolate());
 
 END
 
@@ -3063,7 +3063,7 @@ END
             @args = ();
             foreach my $param (@params) {
                 my $paramName = $param->name;
-                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName) . ";\n");
+                push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName, "0") . ";\n");
                 push(@implContent, "    if (${paramName}Handle.IsEmpty()) {\n");
                 push(@implContent, "        if (!isScriptControllerTerminating())\n");
                 push(@implContent, "            CRASH();\n");
@@ -3333,7 +3333,7 @@ sub GenerateFunctionCallString()
         AddToImplIncludes("V8$returnType.h");
         AddToImplIncludes("SVGPropertyTearOff.h");
         my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($returnType);
-        $result .= $indent . "return toV8(WTF::getPtr(${svgNativeType}::create($return)));\n";
+        $result .= $indent . "return toV8(WTF::getPtr(${svgNativeType}::create($return)), args.GetIsolate());\n";
         return $result;
     }
 
@@ -3791,15 +3791,14 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
-        my $getIsolateArgument = $getIsolate ? ", $getIsolate" : "";
         if (defined $conv) {
-            return "v8StringOrNull($value$getIsolateArgument)" if $conv eq "Null";
-            return "v8StringOrUndefined($value$getIsolateArgument)" if $conv eq "Undefined";
-            return "v8StringOrFalse($value$getIsolateArgument)" if $conv eq "False";
+            return "v8StringOrNull($value, $getIsolate)" if $conv eq "Null";
+            return "v8StringOrUndefined($value, $getIsolate)" if $conv eq "Undefined";
+            return "v8StringOrFalse($value, $getIsolate)" if $conv eq "False";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        return "v8String($value$getIsolateArgument)";
+        return "v8String($value, $getIsolate)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);
@@ -3815,7 +3814,7 @@ sub NativeToJSValue
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", 0, true)" : ")");
+        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", $getIsolate, true)" : ")");
     }
 
     if ($type eq "EventTarget") {
@@ -3836,7 +3835,7 @@ sub NativeToJSValue
     AddToImplIncludes("wtf/RefPtr.h");
     AddToImplIncludes("wtf/GetPtr.h");
 
-    return "toV8($value)";
+    return "toV8($value, $getIsolate)";
 }
 
 sub ReturnNativeToJSValue

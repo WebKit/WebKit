@@ -61,7 +61,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
 
     // Make sure the document is added to the DOM Node map. Otherwise, the TestNamedConstructor instance
     // may end up being the only node in the map and get garbage-collected prematurely.
-    toV8(document);
+    toV8(document, args.GetIsolate());
 
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::TypeError);

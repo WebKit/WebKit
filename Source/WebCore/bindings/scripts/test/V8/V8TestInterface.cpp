@@ -136,7 +136,7 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
     RefPtr<TestObj> result = TestSupplemental::supplementalMethod2(imp, scriptContext, strArg, objArg, ec);
     if (UNLIKELY(ec))
         goto fail;
-    return toV8(result.release());
+    return toV8(result.release(), args.GetIsolate());
     }
     fail:
     V8Proxy::setDOMException(ec);
