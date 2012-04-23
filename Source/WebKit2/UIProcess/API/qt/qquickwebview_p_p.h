@@ -90,6 +90,9 @@ public:
     virtual void _q_resume() { }
     virtual void _q_contentViewportChanged(const QPointF& trajectory) { };
 
+    virtual qreal zoomFactor() const { return 1; }
+    virtual void setZoomFactor(qreal) { }
+
     void _q_onVisibleChanged();
     void _q_onUrlChanged();
     void _q_onReceivedResponseFromDownload(QWebDownloadItem*);
@@ -181,6 +184,9 @@ public:
     virtual void updateViewportSize();
     virtual void enableMouseEvents();
     virtual void disableMouseEvents();
+
+    qreal zoomFactor() const;
+    void setZoomFactor(qreal);
 };
 
 class QQuickWebViewFlickablePrivate : public QQuickWebViewPrivate {

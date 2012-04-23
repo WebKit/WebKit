@@ -1,3 +1,22 @@
+2012-04-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Add desktop zooming support for QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=82337
+
+        Reviewed by Simon Hausmann.
+
+        Add zooming support for MiniBrowser to
+        test the new API.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::zoomIn):
+        (BrowserWindow::zoomOut):
+        (BrowserWindow::keyPressEvent):
+        (BrowserWindow::wheelEvent):
+        * MiniBrowser/qt/BrowserWindow.h:
+        (BrowserWindow):
+
 2012-04-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rolling out r114881, because it broke upload buildstep.

@@ -529,6 +529,16 @@ void QQuickWebViewLegacyPrivate::disableMouseEvents()
     q->setAcceptHoverEvents(false);
 }
 
+qreal QQuickWebViewLegacyPrivate::zoomFactor() const
+{
+    return webPageProxy->pageZoomFactor();
+}
+
+void QQuickWebViewLegacyPrivate::setZoomFactor(qreal factor)
+{
+    webPageProxy->setPageZoomFactor(factor);
+}
+
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
     , pageIsSuspended(true)
@@ -1450,6 +1460,19 @@ void QQuickWebView::updateContentsSize(const QSizeF& size)
 {
     Q_D(QQuickWebView);
     d->updateContentsSize(size);
+}
+
+qreal QQuickWebView::zoomFactor() const
+{
+    Q_D(const QQuickWebView);
+    return d->zoomFactor();
+}
+
+void QQuickWebView::setZoomFactor(qreal factor)
+{
+
+    Q_D(QQuickWebView);
+    d->setZoomFactor(factor);
 }
 
 #include "moc_qquickwebview_p.cpp"

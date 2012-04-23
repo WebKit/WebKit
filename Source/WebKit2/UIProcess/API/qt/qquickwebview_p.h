@@ -144,6 +144,10 @@ public:
     void updateContentsSize(const QSizeF&);
     QPointF pageItemPos();
 
+    // Private C++-only API.
+    qreal zoomFactor() const;
+    void setZoomFactor(qreal);
+
 public Q_SLOTS:
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
 

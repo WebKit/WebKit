@@ -1,3 +1,26 @@
+2012-04-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Add desktop zooming support for QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=82337
+
+        Reviewed by Simon Hausmann.
+
+        Add private C++ API for programmatic zooming.
+        This is important on desktop where we don't
+        have any way to zoom currently.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::zoomFactor):
+        (QQuickWebViewLegacyPrivate::setZoomFactor):
+        (QQuickWebView::zoomFactor):
+        (QQuickWebView::setZoomFactor):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::zoomFactor):
+        (QQuickWebViewPrivate::setZoomFactor):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewLegacyPrivate):
+
 2012-04-23  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Move non-api classes to WebKit namespace at WebKit2/UiProcess/qt

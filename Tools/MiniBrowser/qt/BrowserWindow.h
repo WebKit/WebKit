@@ -60,7 +60,15 @@ private slots:
     void onTitleChanged(QString);
 
 private:
+    void zoomIn();
+    void zoomOut();
+
+    virtual void keyPressEvent(QKeyEvent*);
+    virtual void wheelEvent(QWheelEvent*);
+
     WindowOptions* m_windowOptions;
+    QVector<qreal> m_zoomLevels;
+    unsigned m_currentZoomLevel;
 };
 
 #endif
