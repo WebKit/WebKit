@@ -60,7 +60,7 @@ function test()
     serializedBreakpoints.push(createBreakpoint("a.js", 20, "", false));
     serializedBreakpoints.push(createBreakpoint("b.js", 3, "", true));
 
-    function createUISourceCode(id, url) { return new WebInspector.UISourceCodeImpl(id, url, null); }
+    function createUISourceCode(id, url) { return new WebInspector.JavaScriptSource(id, url, null); }
 
     var scriptMapping = {};
     scriptMapping.rawLocationToUILocation = function(rawLocation) { return rawLocation; };

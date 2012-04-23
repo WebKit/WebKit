@@ -6360,6 +6360,7 @@
             'inspector/front-end/inspector.js',
             'inspector/front-end/JavaScriptContextManager.js',
             'inspector/front-end/JavaScriptFormatter.js',
+            'inspector/front-end/JavaScriptSource.js',
             'inspector/front-end/JavaScriptSourceFrame.js',
             'inspector/front-end/KeyboardShortcut.js',
             'inspector/front-end/MemoryStatistics.js',

@@ -154,6 +154,7 @@ modules = [
             "NavigatorOverlayController.js",
             "NavigatorView.js",
             "JavaScriptContextManager.js",
+            "JavaScriptSource.js",
             "ObjectPopoverHelper.js",
             "ObjectPropertiesSection.js",
             "PropertiesSidebarPane.js",

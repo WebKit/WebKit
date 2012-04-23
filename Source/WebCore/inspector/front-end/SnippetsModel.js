@@ -394,7 +394,7 @@ WebInspector.SnippetsScriptMapping.prototype = {
     {
         var uiSourceCodeId = ""; // FIXME: to be implemented.
         var uiSourceCodeURL = ""; // FIXME: to be implemented.
-        var uiSourceCode = new WebInspector.UISourceCodeImpl(uiSourceCodeId, uiSourceCodeURL, new WebInspector.SnippetContentProvider(snippet));
+        var uiSourceCode = new WebInspector.JavaScriptSource(uiSourceCodeId, uiSourceCodeURL, new WebInspector.SnippetContentProvider(snippet));
         uiSourceCode.isSnippet = true;
         uiSourceCode.isEditable = true;
         this._uiSourceCodeForSnippet.put(snippet, uiSourceCode);
@@ -417,7 +417,7 @@ WebInspector.SnippetsScriptMapping.prototype = {
      */
     _createUISourceCodeForScript: function(script)
     {
-        var uiSourceCode = new WebInspector.UISourceCodeImpl(script.sourceURL, script.sourceURL, new WebInspector.ScriptContentProvider(script));
+        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script.sourceURL, new WebInspector.ScriptContentProvider(script));
         uiSourceCode.isSnippetEvaluation = true;
         var oldUISourceCode = this._uiSourceCodeForScriptId[script.scriptId];
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
