@@ -90,7 +90,7 @@ static v8::Handle<v8::Value> readOnlyStringAttrAttrGetter(v8::Local<v8::String> 
 {
     INC_STATS("DOM.TestObj.readOnlyStringAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->readOnlyStringAttr());
+    return v8String(imp->readOnlyStringAttr(), info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> readOnlyTestObjAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -191,7 +191,7 @@ static v8::Handle<v8::Value> stringAttrAttrGetter(v8::Local<v8::String> name, co
 {
     INC_STATS("DOM.TestObj.stringAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->stringAttr());
+    return v8String(imp->stringAttr(), info.GetIsolate());
 }
 
 static void stringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -479,7 +479,7 @@ static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String>
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr));
+    return v8String(imp->getAttribute(WebCore::HTMLNames::reflectedstringattrAttr), info.GetIsolate());
 }
 
 static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -543,7 +543,7 @@ static v8::Handle<v8::Value> reflectedURLAttrAttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestObj.reflectedURLAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
+    return v8String(imp->getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr), info.GetIsolate());
 }
 
 static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -559,7 +559,7 @@ static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String>
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr));
+    return v8String(imp->getAttribute(WebCore::HTMLNames::customContentStringAttrAttr), info.GetIsolate());
 }
 
 static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -607,7 +607,7 @@ static v8::Handle<v8::Value> reflectedCustomURLAttrAttrGetter(v8::Local<v8::Stri
 {
     INC_STATS("DOM.TestObj.reflectedCustomURLAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
+    return v8String(imp->getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr), info.GetIsolate());
 }
 
 static void reflectedCustomURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -673,7 +673,7 @@ static v8::Handle<v8::Value> stringAttrWithGetterExceptionAttrGetter(v8::Local<v
         V8Proxy::setDOMException(ec);
         return v8::Handle<v8::Value>();
     }
-    return v8String(v);
+    return v8String(v, info.GetIsolate());
 }
 
 static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -692,7 +692,7 @@ static v8::Handle<v8::Value> stringAttrWithSetterExceptionAttrGetter(v8::Local<v
 {
     INC_STATS("DOM.TestObj.stringAttrWithSetterException._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->stringAttrWithSetterException());
+    return v8String(imp->stringAttrWithSetterException(), info.GetIsolate());
 }
 
 static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -1207,7 +1207,7 @@ static v8::Handle<v8::Value> hashAttrGetter(v8::Local<v8::String> name, const v8
 {
     INC_STATS("DOM.TestObj.hash._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8String(imp->hash());
+    return v8String(imp->hash(), info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> TestObjConstructorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1664,7 +1664,7 @@ static v8::Handle<v8::Value> conditionalMethod1Callback(const v8::Arguments& arg
 {
     INC_STATS("DOM.TestObj.conditionalMethod1");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    return v8String(imp->conditionalMethod1());
+    return v8String(imp->conditionalMethod1(), args.GetIsolate());
 }
 
 #endif // ENABLE(Condition1)

@@ -551,7 +551,7 @@ v8::Handle<v8::Value> getElementStringAttr(const v8::AccessorInfo& info,
                                            const QualifiedName& name) 
 {
     Element* imp = V8Element::toNative(info.Holder());
-    return v8ExternalString(imp->getAttribute(name));
+    return v8ExternalString(imp->getAttribute(name), info.GetIsolate());
 }
 
 void setElementStringAttr(const v8::AccessorInfo& info,
