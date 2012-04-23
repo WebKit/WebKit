@@ -42,8 +42,8 @@
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
 #include "QualifiedName.h"
+#include "ReferrerPolicy.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityPolicy.h"
 #include "StringWithDirection.h"
 #include "Timer.h"
 #include "TreeScope.h"
@@ -326,7 +326,7 @@ public:
 
     ViewportArguments viewportArguments() const { return m_viewportArguments; }
 
-    SecurityPolicy::ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
+    ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
 
     DocumentType* doctype() const { return m_docType.get(); }
 
@@ -1464,7 +1464,7 @@ private:
 
     ViewportArguments m_viewportArguments;
 
-    SecurityPolicy::ReferrerPolicy m_referrerPolicy;
+    ReferrerPolicy m_referrerPolicy;
 
     bool m_directionSetOnDocumentElement;
     bool m_writingModeSetOnDocumentElement;

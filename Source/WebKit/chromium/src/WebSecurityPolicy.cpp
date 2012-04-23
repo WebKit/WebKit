@@ -107,7 +107,7 @@ bool WebSecurityPolicy::shouldHideReferrer(const WebURL& url, const WebString& r
 
 WebString WebSecurityPolicy::generateReferrerHeader(WebReferrerPolicy referrerPolicy, const WebURL& url, const WebString& referrer)
 {
-    return SecurityPolicy::generateReferrerHeader(static_cast<SecurityPolicy::ReferrerPolicy>(referrerPolicy), url, referrer);
+    return SecurityPolicy::generateReferrerHeader(static_cast<ReferrerPolicy>(referrerPolicy), url, referrer);
 }
 
 void WebSecurityPolicy::registerURLSchemeAsNotAllowingJavascriptURLs(const WebString& scheme)

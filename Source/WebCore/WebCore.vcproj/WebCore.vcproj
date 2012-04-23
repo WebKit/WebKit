@@ -27682,6 +27682,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ReferrerPolicy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\RunLoop.cpp"
 				>
 			</File>

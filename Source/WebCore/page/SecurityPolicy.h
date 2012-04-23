@@ -29,6 +29,7 @@
 #ifndef SecurityPolicy_h
 #define SecurityPolicy_h
 
+#include "ReferrerPolicy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,15 +39,6 @@ class SecurityOrigin;
 
 class SecurityPolicy {
 public:
-    enum ReferrerPolicy {
-        ReferrerPolicyAlways,
-        ReferrerPolicyDefault,
-        ReferrerPolicyNever,
-        // Same as ReferrerPolicyAlways, except that only the origin of the
-        // referring URL is send.
-        ReferrerPolicyOrigin,
-    };
-
     // True if the referrer should be omitted according to the
     // ReferrerPolicyDefault. If you intend to send a referrer header, you
     // should use generateReferrerHeader instead.
