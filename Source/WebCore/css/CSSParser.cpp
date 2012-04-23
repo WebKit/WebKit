@@ -7969,14 +7969,20 @@ void CSSParser::parseEscape(UChar*& result)
             unicode = (unicode << 4) + toASCIIHexValue(*m_currentCharacter++);
         } while (--length && isASCIIHexDigit(*m_currentCharacter));
 
-        // Characters above 0xffff are not handled.
-        if (unicode > 0xffff)
+        // Characters above 0x10ffff are not handled.
+        if (unicode > 0x10ffff)
             unicode = 0xfffd;
 
         // Optional space after the escape sequence.
         if (isHTMLSpace(*m_currentCharacter))
             ++m_currentCharacter;
-        *result = unicode;
+
+        // Replace unicode with a surrogate pairs when it is bigger than 0xffff
+        if (U16_LENGTH(unicode) == 2) {
+            *result++ = U16_LEAD(unicode);
+            *result = U16_TRAIL(unicode);
+        } else
+            *result = unicode;
     } else
         *result = *m_currentCharacter++;
     ++result;
