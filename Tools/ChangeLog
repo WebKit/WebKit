@@ -1,3 +1,14 @@
+2012-04-23  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL][DRT] Need to support requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=84585
+
+        Reviewed by Martin Robinson.
+
+        Making requestAnimationFrame() support a default on the EFL build.
+
+        * Scripts/build-webkit:
+
 2012-04-23  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Add desktop zooming support for QQuickWebView

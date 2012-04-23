@@ -150,3 +150,11 @@ BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT
 // Missing execCommand('copy') and execCommand('paste').
 BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TIMEOUT
 
+// Missing showModalDialog implementation
+BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
+
+// Issue with timing for suspend/resumeAnimations()?
+BUGWK84592 : animations/stop-animation-on-suspend.html = TEXT
+
+// Animation API not available.
+BUGWK84593 : animations/animation-api-1.html = TEXT

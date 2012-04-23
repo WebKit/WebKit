@@ -816,11 +816,6 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
 
-# The EFL port has no support for webkitRequestAnimationFrame
-animations/animation-api-1.html
-animations/stop-animation-on-suspend.html
-fast/animation
-
 # The EFL port has no support for the FileSystem API
 fast/filesystem
 http/tests/filesystem
