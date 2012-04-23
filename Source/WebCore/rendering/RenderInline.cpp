@@ -1031,7 +1031,7 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
 
     LayoutRect r(-ow + left, -ow + top, boundingBox.width() + ow * 2, boundingBox.height() + ow * 2);
 
-    if (hitRepaintContainer)
+    if (hitRepaintContainer || !cb)
         return r;
 
     if (cb->hasColumns())
