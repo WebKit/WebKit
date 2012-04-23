@@ -1,3 +1,13 @@
+2012-04-23  Milian Wolff  <mail@milianw.de>
+
+        [Qt] Make DRT not dump pixel results if test is calling layoutTestController.dumpAsText()
+        https://bugs.webkit.org/show_bug.cgi?id=84327
+
+        Reviewed by Csaba Osztrogonác.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::dump):
+
 2012-04-22  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
 
         [Gtk] Added MOZ_X11 build flag for TARGET_X11
