@@ -1,3 +1,19 @@
+2012-04-23  Oliver Hunt  <oliver@apple.com>
+
+        Call instruction for the baseline JIT stores origin info in wrong callframe
+        https://bugs.webkit.org/show_bug.cgi?id=84645
+
+        Reviewed by Gavin Barraclough.
+
+        The baseline JIT was updating the wrong callframe when making a call.  If the
+        call failed during dispatch (unable to perform codegen, calling a non-object)
+        we would attempt to use this information, but it would be completely wrong.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+
 2012-04-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG must keep alive values that it will perform speculations on

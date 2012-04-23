@@ -211,4 +211,17 @@ try {
     printStack(e.stack);
 }
 
+var someValue = null;
+
+function callNonCallable() {
+    someValue();
+}
+
+for (var i = 0; i < 100; i++) {
+    try {
+        callNonCallable();
+    } catch (e) {
+    }
+}
+
 successfullyParsed = true;
