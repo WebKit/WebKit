@@ -137,6 +137,7 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
             !embedded {
                 CONFIG += x11
                 LIBS += -lXrender
+                DEFINES += MOZ_X11
             }
             DEFINES += XP_UNIX
             DEFINES += ENABLE_NETSCAPE_PLUGIN_METADATA_CACHE=1

@@ -154,6 +154,12 @@ global_cppflags += \
 	-DXP_UNIX
 endif
 
+# Add MOZ_X11 for X11 targets only
+if TARGET_X11
+global_cppflags += \
+	-DMOZ_X11
+endif
+
 # Use the wide character version of win32 API by default
 if TARGET_WIN32
 global_cppflags += \

@@ -1,3 +1,14 @@
+2012-04-22  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
+
+        [Gtk] Added MOZ_X11 build flag for TARGET_X11
+        [Qt]  Added MOZ_X11 build flag for !embedded
+        https://bugs.webkit.org/show_bug.cgi?id=40785
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.am:
+        * Target.pri:
+
 2012-04-22  Jon Lee  <jonlee@apple.com>
 
         Remove notifications support on Mac Lion.

@@ -791,6 +791,7 @@ contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
 plugin_backend_xlib {
     DEFINES += XP_UNIX
     PKGCONFIG += x11
+    DEFINES += MOZ_X11
 }
 
 include(DerivedSources.pri)

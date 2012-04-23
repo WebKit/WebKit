@@ -201,6 +201,11 @@ if !TARGET_WIN32
 TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS += -DXP_UNIX
 endif
 
+# Add MOZ_X11 only for X11 targets
+if TARGET_X11
+TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS += -DMOZ_X11
+endif
+
 TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp \
