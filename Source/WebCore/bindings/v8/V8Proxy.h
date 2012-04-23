@@ -235,10 +235,10 @@ namespace WebCore {
 
         // If the exception code is different from zero, a DOM exception is
         // schedule to be thrown.
-        static void setDOMException(int exceptionCode);
+        static void setDOMException(int exceptionCode, v8::Isolate* = 0);
 
         // Schedule an error object to be thrown.
-        static v8::Handle<v8::Value> throwError(ErrorType, const char* message);
+        static v8::Handle<v8::Value> throwError(ErrorType, const char* message, v8::Isolate* = 0);
 
         // Helpers for throwing syntax and type errors with predefined messages.
         static v8::Handle<v8::Value> throwTypeError();
@@ -324,21 +324,29 @@ namespace WebCore {
     {
         return v8::Local<v8::Boolean>();
     }
-    inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type = V8Proxy::TypeError)
+
+    inline v8::Handle<v8::Primitive> throwError(const char* message, v8::Isolate* isolate = 0)
     {
         if (!v8::V8::IsExecutionTerminating())
-            V8Proxy::throwError(type, message);
+            V8Proxy::throwError(V8Proxy::TypeError, message, isolate);
         return v8::Undefined();
     }
 
-    inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec)
+    inline v8::Handle<v8::Primitive> throwError(const char* message, V8Proxy::ErrorType type, v8::Isolate* isolate = 0)
     {
         if (!v8::V8::IsExecutionTerminating())
-            V8Proxy::setDOMException(ec);
+            V8Proxy::throwError(type, message, isolate);
         return v8::Undefined();
     }
 
-    inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception)
+    inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec, v8::Isolate* isolate = 0)
+    {
+        if (!v8::V8::IsExecutionTerminating())
+            V8Proxy::setDOMException(ec, isolate);
+        return v8::Undefined();
+    }
+
+    inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception, v8::Isolate* isolate = 0)
     {
         if (!v8::V8::IsExecutionTerminating())
             v8::ThrowException(exception);
