@@ -1490,7 +1490,6 @@ BUGCR9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = PASS TIME
 BUGCR10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
 
 // Text declared as "monospace" with no size is bigger in Chromium
-BUGCR23494 LEOPARD : css2.1/t1503-c522-font-family-00-b.html = IMAGE
 BUGCR23494 LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 
 // Actual is just slightly off in color than expected
