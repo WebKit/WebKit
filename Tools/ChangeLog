@@ -1,3 +1,17 @@
+2012-04-23  Hao Zheng  <zhenghao@chromium.org>
+
+        [chromium-android] Get rid of the trick that replaces system fallback font with DejaVuSans.
+        https://bugs.webkit.org/show_bug.cgi?id=84580
+
+        Reviewed by Ojan Vafai.
+
+        Android's first fallback font is changed to DroidSansArabic.ttf in JB.
+        Take the opportunity to get rid of the trick.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.start_helper):
+        (ChromiumAndroidPort._push_fonts):
+
 2012-04-23  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy is failing

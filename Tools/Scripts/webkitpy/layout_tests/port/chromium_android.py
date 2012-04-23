@@ -98,15 +98,11 @@ HOST_FONT_FILES = [
     [MS_TRUETYPE_FONTS_DIR, 'Verdana_Bold.ttf'],
     [MS_TRUETYPE_FONTS_DIR, 'Verdana_Bold_Italic.ttf'],
     [MS_TRUETYPE_FONTS_DIR, 'Verdana_Italic.ttf'],
-    # The Microsoft font EULA
-    ['/usr/share/doc/ttf-mscorefonts-installer/', 'READ_ME!.gz'],
-    ['/usr/share/fonts/truetype/ttf-dejavu/', 'DejaVuSans.ttf'],
 ]
 # Should increase this version after changing HOST_FONT_FILES.
 FONT_FILES_VERSION = 1
 
 DEVICE_FONTS_DIR = DEVICE_DRT_DIR + 'fonts/'
-DEVICE_FIRST_FALLBACK_FONT = '/system/fonts/DroidNaskh-Regular.ttf'
 
 # The layout tests directory on device, which has two usages:
 # 1. as a virtual path in file urls that will be bridged to HTTP.
@@ -214,7 +210,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
         self._push_executable()
         self._push_fonts()
-        self._setup_system_font_for_test()
         self._synchronize_datetime()
 
         # Start the HTTP server so that the device can access the test cases.
@@ -224,7 +219,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         cmd = self._run_adb_command(['shell', '%s %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
 
     def stop_helper(self):
-        self._restore_system_font()
         # Leave the forwarder and tests httpd server there because they are
         # useful for debugging and do no harm to subsequent tests.
         self._teardown_performance()
@@ -306,20 +300,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             for (host_dir, font_file) in HOST_FONT_FILES:
                 self._push_to_device(host_dir + font_file, DEVICE_FONTS_DIR + font_file)
             self._update_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION)
-
-    def _setup_system_font_for_test(self):
-        # The DejaVu font implicitly used by some CSS 2.1 tests should be added
-        # into the font fallback list of the system. DroidNaskh-Regular.ttf is
-        # the first font in Android Skia's font fallback list. Fortunately the
-        # DejaVu font also contains Naskh glyphs.
-        # First remount /system in read/write mode.
-        self._run_adb_command(['remount'])
-        self._copy_device_file(DEVICE_FONTS_DIR + 'DejaVuSans.ttf', DEVICE_FIRST_FALLBACK_FONT)
-
-    def _restore_system_font(self):
-        # First remount /system in read/write mode.
-        self._run_adb_command(['remount'])
-        self._push_to_device(os.environ['OUT'] + DEVICE_FIRST_FALLBACK_FONT, DEVICE_FIRST_FALLBACK_FONT)
 
     def _push_test_resources(self):
         _log.debug('Pushing test resources')
