@@ -70,7 +70,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     // Zoom values are chosen to be like in Mozilla Firefox 3.
     m_zoomLevels << 0.3 << 0.5 << 0.67 << 0.8 << 0.9
                  << 1
-                 << 1.11 << 1.12 << 1.33 << 1.5 << 1.7 << 2 << 2.4 << 3;
+                 << 1.11 << 1.22 << 1.33 << 1.5 << 1.7 << 2 << 2.4 << 3;
 
     m_currentZoomLevel = m_zoomLevels.indexOf(1);
 }

@@ -1,3 +1,14 @@
+2012-04-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Add desktop zooming support for QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=82337
+
+        Unreviewed typo fix after r114900.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow): Fix the mistyped
+        value of a zoom level.
+
 2012-04-23  Hao Zheng  <zhenghao@chromium.org>
 
         [chromium-android] Get rid of the trick that replaces system fallback font with DejaVuSans.
