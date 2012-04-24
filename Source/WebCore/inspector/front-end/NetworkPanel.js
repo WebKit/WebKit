@@ -1858,10 +1858,14 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._statusCell.removeChildren();
 
         if (this._request.failed) {
-            if (this._request.canceled)
-                this._statusCell.setTextAndTitle(WebInspector.UIString("(canceled)"));
-            else
-                this._statusCell.setTextAndTitle(WebInspector.UIString("(failed)"));
+            var failText = this._request.canceled ? WebInspector.UIString("(canceled)") : WebInspector.UIString("(failed)");
+            if (this._request.localizedFailDescription) {
+                this._statusCell.appendChild(document.createTextNode(failText));
+                this._appendSubtitle(this._statusCell, this._request.localizedFailDescription);
+                this._statusCell.title = failText + " " + this._request.localizedFailDescription;
+            } else {
+                this._statusCell.setTextAndTitle(failText);
+            }
             this._statusCell.addStyleClass("network-dim-cell");
             this.element.addStyleClass("network-error-row");
             return;

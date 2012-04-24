@@ -1,3 +1,13 @@
+2012-04-24  Yuzhu Shen  <yzshen@chromium.org>
+
+        [chromium] Add a description field in WebURLError and show failure description in the inspector network tab.
+        https://bugs.webkit.org/show_bug.cgi?id=84566
+
+        Reviewed by Pavel Feldman.
+
+        * chromium/public/WebURLError.h:
+        (WebURLError):
+
 2012-04-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use TextureLayerChromium for WebGL content instead of a dedicated layer type

@@ -53,6 +53,7 @@ WebURLError& WebURLError::operator=(const ResourceError& error)
         reason = error.errorCode();
         unreachableURL = KURL(ParsedURLString, error.failingURL());
         isCancellation = error.isCancellation();
+        localizedDescription = error.localizedDescription();
     }
     return *this;
 }
@@ -64,7 +65,8 @@ WebURLError::operator ResourceError() const
     CString spec = unreachableURL.spec();
     ResourceError resourceError = ResourceError(domain, reason,
                                                 String::fromUTF8(spec.data(),
-                                                spec.length()), String());
+                                                spec.length()),
+                                                localizedDescription);
     resourceError.setIsCancellation(isCancellation);
     return resourceError;
 }

@@ -59,6 +59,9 @@ struct WebURLError {
     // The url that failed to load.
     WebURL unreachableURL;
 
+    // A description for the error.
+    WebString localizedDescription;
+
     WebURLError() : reason(0), isCancellation(false) { }
 
 #if defined(WEBKIT_IMPLEMENTATION)
