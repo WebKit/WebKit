@@ -38,7 +38,6 @@ class Element;
 
 inline Attribute* findAttributeInVector(const Vector<Attribute>& attributes, const QualifiedName& name)
 {
-    ASSERT(attributes);
     for (unsigned i = 0; i < attributes.size(); ++i) {
         if (attributes.at(i).name().matches(name))
             return &const_cast<Vector<Attribute>& >(attributes).at(i);
