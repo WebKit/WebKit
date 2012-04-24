@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrame {FRAME} at (0,0) size 800x100
+        layer at (0,0) size 785x102
+          RenderView at (0,0) size 785x100
+        layer at (0,0) size 785x102
+          RenderBlock {HTML} at (0,0) size 785x102
+            RenderBody {BODY} at (0,0) size 785x102
+              RenderBlock {DIV} at (0,0) size 785x102 [border: (1px solid #000000)]
+                RenderText {#text} at (1,1) size 689x19
+                  text run at (1,1) width 689: "This layout test is checks that we don't crash when a stand alone image is dragged into a content editable div. "
+                RenderBR {BR} at (690,16) size 0x0
+                RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
+                  RenderText {#text} at (1,29) size 149x19
+                    text run at (1,29) width 149: "rdar://problem/5021127"
+                RenderImage {IMG} at (150,19) size 25x25
+      RenderFrame {FRAME} at (0,106) size 800x100
+        layer at (0,0) size 800x100
+          RenderView at (0,0) size 800x100
+        layer at (0,0) size 800x100
+          RenderBlock {HTML} at (0,0) size 800x100
+            RenderBody {BODY} at (0,0) size 800x100
+              RenderImage {IMG} at (0,0) size 25x25

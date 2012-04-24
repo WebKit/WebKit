@@ -1,3 +1,13 @@
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, re-add the GTK baselines that were removed during last
+        rebaseline of doom (like r114836 and likely other commits).
+
+        * platform/gtk/: Fix empty baselines...
+        * platform/gtk/editing/selection/5195166-1-expected.txt: Added.
+        * platform/gtk/fast/html/details-marker-style-expected.txt: Added.
+        * platform/gtk/fast/images/support-broken-image-delegate-expected.txt: Added.
+
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.

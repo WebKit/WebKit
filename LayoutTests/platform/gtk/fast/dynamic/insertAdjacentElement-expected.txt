@@ -1,0 +1,5 @@
+Caught expected exception: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Caught expected exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+1 (black) 2 (green) 3 (green) 4 (black) 
+
+PASS

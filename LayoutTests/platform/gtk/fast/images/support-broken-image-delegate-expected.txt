@@ -1,0 +1,6 @@
+resources/broken-image-with-invalid-format.png - willSendRequest <NSURLRequest URL resources/broken-image-with-invalid-format.png, main document URL support-broken-image-delegate.html, http method GET> redirectResponse (null)
+resources/broken-image-with-invalid-format.png - didReceiveResponse <NSURLResponse resources/broken-image-with-invalid-format.png, http status code 0>
+<unknown> - didFinishLoading
+Radar 8610908 - Add a resource delegate method to query if WebCore should paint the broken image.
+
+FAIL
