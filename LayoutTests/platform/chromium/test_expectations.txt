@@ -3718,3 +3718,5 @@ BUGWK84719 WIN : svg/text/select-text-svgfont.html = TEXT PASS
 BUGWK84720 DEBUG: fast/repaint/fixed-right-in-page-scale.html = IMAGE PASS
 
 BUGWK84724 SNOWLEOPARD: platform/chromium/media/video-frame-size-change.html = IMAGE PASS
+
+BUGWK84733 VISTA : fast/canvas/canvas-composite.html = TIMEOUT PASS
