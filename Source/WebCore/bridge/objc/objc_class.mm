@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,19 +36,12 @@ static void deleteMethod(CFAllocatorRef, const void* value)
 {
     delete static_cast<const Method*>(value);
 }
-    
-static void deleteField(CFAllocatorRef, const void* value)
-{
-    delete static_cast<const Field*>(value);
-}
 
 const CFDictionaryValueCallBacks MethodDictionaryValueCallBacks = { 0, 0, &deleteMethod, 0 , 0 };
-const CFDictionaryValueCallBacks FieldDictionaryValueCallBacks = { 0, 0, &deleteField, 0 , 0 };    
     
 ObjcClass::ObjcClass(ClassStructPtr aClass)
     : _isa(aClass)
     , _methods(AdoptCF, CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &MethodDictionaryValueCallBacks))
-    , _fields(AdoptCF, CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &FieldDictionaryValueCallBacks))
 {
 }
 
@@ -134,14 +127,14 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
 
 Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) const
 {
+    Field* field = m_fieldCache.get(identifier.impl());
+    if (field)
+        return field;
+
     ClassStructPtr thisClass = _isa;
 
     CString jsName = identifier.ascii();
     RetainPtr<CFStringRef> fieldName(AdoptCF, CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
-    Field* aField = (Field*)CFDictionaryGetValue(_fields.get(), fieldName.get());
-    if (aField)
-        return aField;
-
     id targetObject = (static_cast<ObjcInstance*>(instance))->getObject();
     id attributes = [targetObject attributeKeys];
     if (attributes) {
@@ -164,8 +157,9 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
                 mappedName = [thisClass webScriptNameForKey:UTF8KeyName];
 
             if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || [keyName isEqual:(NSString*)fieldName.get()]) {
-                aField = new ObjcField((CFStringRef)keyName); // deleted when the dictionary is destroyed
-                CFDictionaryAddValue(_fields.get(), fieldName.get(), aField);
+                OwnPtr<Field> newField = adoptPtr(new ObjcField((CFStringRef)keyName));
+                field = newField.get();
+                m_fieldCache.add(identifier.impl(), newField.release());
                 break;
             }
         }
@@ -194,8 +188,9 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
                     mappedName = [thisClass webScriptNameForKey:objcIvarName];
 
                 if ((mappedName && [mappedName isEqual:(NSString*)fieldName.get()]) || strcmp(objcIvarName, jsName.data()) == 0) {
-                    aField = new ObjcField(objcIVar); // deleted when the dictionary is destroyed
-                    CFDictionaryAddValue(_fields.get(), fieldName.get(), aField);
+                    OwnPtr<Field> newField = adoptPtr(new ObjcField(objcIVar));
+                    field = newField.get();
+                    m_fieldCache.add(identifier.impl(), newField.release());
                     break;
                 }
             }
@@ -205,7 +200,7 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
         }
     }
 
-    return aField;
+    return field;
 }
 
 JSValue ObjcClass::fallbackObject(ExecState* exec, Instance* instance, const Identifier &propertyName)
