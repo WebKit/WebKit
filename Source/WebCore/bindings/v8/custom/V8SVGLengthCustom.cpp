@@ -50,7 +50,7 @@ v8::Handle<v8::Value> V8SVGLength::valueAccessorGetter(v8::Local<v8::String> nam
     SVGLengthContext lengthContext(wrapper->contextElement());
     float value = imp.value(lengthContext, ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     return v8::Number::New(value);
@@ -61,7 +61,7 @@ void V8SVGLength::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     INC_STATS("DOM.SVGLength.value._set");
     SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(info.Holder());
     if (wrapper->role() == AnimValRole) {
-        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);
+        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, info.GetIsolate());
         return;
     }
 
@@ -75,7 +75,7 @@ void V8SVGLength::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     SVGLengthContext lengthContext(wrapper->contextElement());
     imp.setValue(static_cast<float>(value->NumberValue()), lengthContext, ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     else
         wrapper->commitChange();
 }
@@ -85,7 +85,7 @@ v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arg
     INC_STATS("DOM.SVGLength.convertToSpecifiedUnits");
     SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(args.Holder());
     if (wrapper->role() == AnimValRole) {
-        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);
+        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());
         return v8::Handle<v8::Value>();
     }
 
@@ -98,7 +98,7 @@ v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arg
     SVGLengthContext lengthContext(wrapper->contextElement());
     imp.convertToSpecifiedUnits(unitType, lengthContext, ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
     else
         wrapper->commitChange();
     return v8::Handle<v8::Value>();

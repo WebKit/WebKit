@@ -217,7 +217,7 @@ enum ObjectType {
 static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, ObjectType objectType)
 {
     if (args.Length() != 2) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -245,7 +245,7 @@ static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, Objec
         break;
     }
     if (ec) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
     return toV8Object(info, args.GetIsolate());
@@ -271,7 +271,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
     INC_STATS("DOM.WebGLRenderingContext.getAttachedShaders()");
 
     if (args.Length() < 1) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -285,7 +285,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
     Vector<RefPtr<WebGLShader> > shaders;
     bool succeed = context->getAttachedShaders(program, shaders, ec);
     if (ec) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Null();
     }
     if (!succeed)
@@ -307,7 +307,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Ar
     INC_STATS("DOM.WebGLRenderingContext.getExtensionCallback()");
     WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() < 1) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, name, args[0]);
@@ -320,7 +320,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
     INC_STATS("DOM.WebGLRenderingContext.getFramebufferAttachmentParameter()");
 
     if (args.Length() != 3) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -331,7 +331,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
     unsigned pname = toInt32(args[2]);
     WebGLGetInfo info = context->getFramebufferAttachmentParameter(target, attachment, pname, ec);
     if (ec) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
     return toV8Object(info, args.GetIsolate());
@@ -342,7 +342,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
     INC_STATS("DOM.WebGLRenderingContext.getParameter()");
 
     if (args.Length() != 1) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -351,7 +351,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
     unsigned pname = toInt32(args[0]);
     WebGLGetInfo info = context->getParameter(pname, ec);
     if (ec) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
     return toV8Object(info, args.GetIsolate());
@@ -362,7 +362,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
     INC_STATS("DOM.WebGLRenderingContext.getProgramParameter()");
 
     if (args.Length() != 2) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -376,7 +376,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
     unsigned pname = toInt32(args[1]);
     WebGLGetInfo info = context->getProgramParameter(program, pname, ec);
     if (ec) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
     return toV8Object(info, args.GetIsolate());
@@ -393,7 +393,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
     INC_STATS("DOM.WebGLRenderingContext.getShaderParameter()");
 
     if (args.Length() != 2) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -407,7 +407,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
     unsigned pname = toInt32(args[1]);
     WebGLGetInfo info = context->getShaderParameter(shader, pname, ec);
     if (ec) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
     return toV8Object(info, args.GetIsolate());
@@ -438,7 +438,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
     INC_STATS("DOM.WebGLRenderingContext.getUniform()");
 
     if (args.Length() != 2) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -459,7 +459,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
 
     WebGLGetInfo info = context->getUniform(program, location, ec);
     if (ec) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
     return toV8Object(info, args.GetIsolate());
@@ -511,7 +511,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     // * glVertexAttrib4fv(GLint index, Float32Array data);
 
     if (args.Length() != 2) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -547,7 +547,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
             default: ASSERT_NOT_REACHED(); break;
         }
         if (ec)
-            V8Proxy::setDOMException(ec);
+            V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -561,7 +561,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     float* data = jsArrayToFloatArray(array, len);
     if (!data) {
         // FIXME: consider different / better exception type.
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
     ExceptionCode ec = 0;
@@ -578,7 +578,7 @@ static v8::Handle<v8::Value> vertexAttribAndUniformHelperf(const v8::Arguments& 
     }
     fastFree(data);
     if (ec)
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Undefined();
 }
 
@@ -595,7 +595,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     // * glUniform4iv(GLUniformLocation location, Int32Array data);
 
     if (args.Length() != 2) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -619,7 +619,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
             default: ASSERT_NOT_REACHED(); break;
         }
         if (ec)
-            V8Proxy::setDOMException(ec);
+            V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -633,7 +633,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     int* data = jsArrayToIntArray(array, len);
     if (!data) {
         // FIXME: consider different / better exception type.
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
     ExceptionCode ec = 0;
@@ -646,7 +646,7 @@ static v8::Handle<v8::Value> uniformHelperi(const v8::Arguments& args,
     }
     fastFree(data);
     if (ec)
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Undefined();
 }
 
@@ -711,7 +711,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     //
     // FIXME: need to change to accept Float32Array as well.
     if (args.Length() != 3) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -736,7 +736,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
             default: ASSERT_NOT_REACHED(); break;
         }
         if (ec)
-            V8Proxy::setDOMException(ec);
+            V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -750,7 +750,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     float* data = jsArrayToFloatArray(array, len);
     if (!data) {
         // FIXME: consider different / better exception type.
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
     ExceptionCode ec = 0;
@@ -762,7 +762,7 @@ static v8::Handle<v8::Value> uniformMatrixHelper(const v8::Arguments& args,
     }
     fastFree(data);
     if (ec)
-        V8Proxy::setDOMException(ec); 
+        V8Proxy::setDOMException(ec, args.GetIsolate()); 
     return v8::Undefined();
 }
 
