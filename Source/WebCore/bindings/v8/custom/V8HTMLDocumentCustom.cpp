@@ -79,7 +79,7 @@ v8::Local<v8::Object> V8HTMLDocument::WrapInShadowObject(v8::Local<v8::Object> w
     return shadow;
 }
 
-v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key)
+v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key, v8::Isolate* isolate)
 {
     if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
         return v8::Handle<v8::Value>();
@@ -92,12 +92,12 @@ v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocumen
         Node* node = items->firstItem();
         Frame* frame = 0;
         if (node->hasTagName(HTMLNames::iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
-            return toV8(frame->domWindow());
+            return toV8(frame->domWindow(), isolate);
 
-        return toV8(node);
+        return toV8(node, isolate);
     }
 
-    return toV8(items);
+    return toV8(items, isolate);
 }
 
 // HTMLDocument ----------------------------------------------------------------

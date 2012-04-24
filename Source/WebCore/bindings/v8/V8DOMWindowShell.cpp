@@ -550,7 +550,7 @@ v8::Handle<v8::Value> getter(v8::Local<v8::String> property, const v8::AccessorI
     AtomicString name = v8StringToAtomicWebCoreString(property);
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(info.Holder());
     ASSERT(htmlDocument);
-    v8::Handle<v8::Value> result = V8HTMLDocument::GetNamedProperty(htmlDocument, name);
+    v8::Handle<v8::Value> result = V8HTMLDocument::GetNamedProperty(htmlDocument, name, info.GetIsolate());
     if (!result.IsEmpty())
         return result;
     v8::Handle<v8::Value> prototype = info.Holder()->GetPrototype();
