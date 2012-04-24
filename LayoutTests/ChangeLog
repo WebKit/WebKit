@@ -1,6 +1,15 @@
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84696
+
+        Mark fast/workers/storage/interrupt-database.html as flaky on Mac 10.6
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
         https://bugs.webkit.org/show_bug.cgi?id=84698
 
         Mark fast/forms/placeholder-position.html as flaky on Linux
