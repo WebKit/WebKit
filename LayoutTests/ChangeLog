@@ -1,3 +1,9 @@
+2012-04-24  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] All of <datalist> tests are passing.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.

@@ -1086,10 +1086,6 @@ BUGCR33211 LINUX MAC : http/tests/loading/deleted-host-in-resource-load-delegate
 // HTML5 DB layout tests
 BUGCR27697 SKIP : storage/hash-change-with-xhr.html = PASS
 
-// HTML5 datalist element. We don't enable it because WebKit implementation
-// is incomplete.
-BUGCR20226 : fast/forms/datalist/ = PASS FAIL
-
 // Implementation of Date/time input types are incomplete and
 // ENABLE_INPUT_TYPE_* flags are not enabled.
 BUGWK29359 : fast/forms/datetime = PASS FAIL
