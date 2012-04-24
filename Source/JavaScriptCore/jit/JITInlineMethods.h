@@ -485,11 +485,12 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
     unsigned initialLength = std::max(length, 4U);
     size_t initialStorage = JSArray::storageSize(initialLength);
 
+    // We allocate the backing store first to ensure that garbage collection 
+    // doesn't happen during JSArray initialization.
+    emitAllocateBasicStorage(initialStorage, storageResult, storagePtr);
+
     // Allocate the cell for the array.
     emitAllocateBasicJSObject<JSArray, false>(TrustedImmPtr(m_codeBlock->globalObject()->arrayStructure()), cellResult, storagePtr);
-
-    // Allocate the backing store for the array.
-    emitAllocateBasicStorage(initialStorage, storageResult, storagePtr);
 
     // Store all the necessary info in the ArrayStorage.
     storePtr(storageResult, Address(storageResult, ArrayStorage::allocBaseOffset()));

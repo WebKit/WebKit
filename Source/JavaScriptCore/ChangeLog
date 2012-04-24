@@ -1,3 +1,23 @@
+2012-04-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Failure to allocate ArrayStorage in emit_op_new_array leads to poisonous JSArray
+        https://bugs.webkit.org/show_bug.cgi?id=84648
+
+        Reviewed by Geoffrey Garen.
+
+        When emit_op_new_array successfully allocates a new JSArray but fails to allocate 
+        the corresponding ArrayStorage for it, it falls back to the out-of-line stub call 
+        to constructArray, which constructs and entirely new JSArray/ArrayStorage pair. 
+        This leaves us with a JSArray hanging around on the stack or in a register that 
+        did not go through its own constructor, thus giving it uninitialized memory in the 
+        two fields that are checked in JSArray::visitChildren.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSArray): We try to allocate the ArrayStorage first, so that 
+        if we fail we haven't generated the poisonous JSArray that can cause a GC crash.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_new_array):
+
 2012-04-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG on ARMv7 should not OSR exit on every integer division

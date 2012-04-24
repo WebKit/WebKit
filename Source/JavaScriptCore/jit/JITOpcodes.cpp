@@ -1710,11 +1710,14 @@ void JIT::emit_op_new_array(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_new_array(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    // If the allocation would be oversize, we will already make the proper stub call above in 
+    // emit_op_new_array.
     int length = currentInstruction[3].u.operand;
     if (CopiedSpace::isOversize(JSArray::storageSize(length)))
         return;
-    linkSlowCase(iter); // Not enough space in MarkedSpace for cell.
     linkSlowCase(iter); // Not enough space in CopiedSpace for storage.
+    linkSlowCase(iter); // Not enough space in MarkedSpace for cell.
+
     JITStubCall stubCall(this, cti_op_new_array);
     stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
     stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
