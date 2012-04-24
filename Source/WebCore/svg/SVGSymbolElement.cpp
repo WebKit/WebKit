@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGSymbolElement.h"
 
+#include "RenderSVGHiddenContainer.h"
 #include "SVGElementInstance.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
@@ -98,6 +99,11 @@ void SVGSymbolElement::svgAttributeChanged(const QualifiedName& attrName)
 bool SVGSymbolElement::selfHasRelativeLengths() const
 {
     return hasAttribute(SVGNames::viewBoxAttr);
+}
+
+RenderObject* SVGSymbolElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSVGHiddenContainer(this);
 }
 
 }

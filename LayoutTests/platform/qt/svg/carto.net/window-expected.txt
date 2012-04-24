@@ -3,6 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,18) size 56x17 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#DCDCDC]}] [x=-70.00] [y=-10.00] [width=140.00] [height=20.00]
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,22) size 5x9 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+        RenderSVGPath {line} at (0,21) size 5x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=-5.50] [y1=-5.50] [x2=5.50] [y2=5.50]
+        RenderSVGPath {line} at (0,21) size 5x11 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=-5.50] [x2=-5.50] [y2=5.50]
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,21) size 5x11 [stroke={[type=SOLID] [color=#696969]}] [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,22) size 5x9 [x=-5.50] [y=-5.50] [width=11.00] [height=11.00]
+        RenderSVGPath {line} at (0,30) size 5x2 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.50] [y1=5.50] [x2=-5.50] [y2=5.50]
     RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#D3D3D3]}] [x=-5000.00] [y=-5000.00] [width=15000.00] [height=15000.00]
     RenderSVGRect {rect} at (0,26) size 800x64 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-5000.00] [y=0.00] [width=15000.00] [height=80.00]
     RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-5000.00] [y=-5000.00] [width=5000.00] [height=15000.00]

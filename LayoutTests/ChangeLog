@@ -1,3 +1,62 @@
+2012-04-24  Rob Buis  <rbuis@rim.com>
+
+        [SVG] getBBox on a <g> within symbol returns 0 but with defs it works correctly
+        https://bugs.webkit.org/show_bug.cgi?id=72796
+
+        SVG <use> of <symbol> containing <linearGradient> renders black
+        https://bugs.webkit.org/show_bug.cgi?id=82775
+
+        Add a new test for each bug. Also rebaseline some test results since
+        RenderSVGHiddenContainer is dumped now.
+
+        Reviewed by Dirk Schulze.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * platform/mac/svg/carto.net/button-expected.txt:
+        * platform/mac/svg/carto.net/colourpicker-expected.txt:
+        * platform/mac/svg/carto.net/slider-expected.txt:
+        * platform/mac/svg/carto.net/window-expected.txt:
+        * platform/mac/svg/custom/embedding-external-svgs-expected.txt:
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt:
+        * platform/mac/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/mac/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/mac/svg/custom/struct-use-09-b-expected.txt: Removed.
+        * platform/mac/svg/custom/use-clipped-hit-expected.txt:
+        * platform/mac/svg/custom/use-css-events-expected.txt:
+        * platform/mac/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-symbol-expected.txt:
+        * platform/mac/svg/custom/use-on-symbol-expected.txt:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/mac/svg/custom/use-recalcStyle-crash-expected.txt:
+        * platform/mac/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/mac/svg/custom/use-symbol-overflow-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * platform/qt/svg/carto.net/button-expected.txt:
+        * platform/qt/svg/carto.net/colourpicker-expected.txt:
+        * platform/qt/svg/carto.net/slider-expected.txt:
+        * platform/qt/svg/carto.net/window-expected.txt:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt:
+        * platform/qt/svg/custom/use-on-g-containing-symbol-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-expected.txt:
+        * platform/qt/svg/custom/use-recalcStyle-crash-expected.txt:
+        * platform/qt/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-svg2-expected.txt:
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol-expected.txt:
+        * platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol2-expected.txt:
+        * svg/custom/bbox-of-g-in-symbol-expected.txt: Added.
+        * svg/custom/bbox-of-g-in-symbol.svg: Added.
+        * svg/custom/deep-dynamic-updates-expected.txt:
+        * svg/custom/gradient-in-symbol-expected.svg: Added.
+        * svg/custom/gradient-in-symbol.svg: Added.
+        * svg/custom/use-in-symbol-with-offset-expected.txt:
+        * svg/custom/use-setAttribute-crash-expected.txt:
+        * svg/custom/use-transfer-width-height-properties-to-svg2-expected.txt:
+        * svg/custom/use-transfer-width-height-properties-to-symbol-expected.txt:
+        * svg/custom/use-transfer-width-height-properties-to-symbol1-expected.txt:
+        * svg/custom/use-transfer-width-height-properties-to-symbol2-expected.txt:
+
 2012-04-24  Philip Rogers  <pdr@google.com>
 
         Update svg-ellipse-non-scale-stroke expectations

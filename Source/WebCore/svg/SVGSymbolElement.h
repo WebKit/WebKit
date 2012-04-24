@@ -47,7 +47,7 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
-    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     virtual bool selfHasRelativeLengths() const;
 

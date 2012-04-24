@@ -11,6 +11,8 @@ layer at (0,0) size 800x328
             RenderView at (0,0) size 40x40
           layer at (0,0) size 40x40
             RenderSVGRoot {svg} at (0,0) size 40x40
+              RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+                RenderSVGPath {polygon} at (17,0) size 6x12 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
               RenderSVGContainer {g} at (0,0) size 40x40
                 RenderSVGContainer {use} at (17,0) size 6x12
                   RenderSVGViewportContainer {svg} at (17,0) size 6x12
@@ -63,6 +65,8 @@ layer at (0,0) size 800x328
             RenderView at (0,0) size 40x40
           layer at (0,0) size 40x40
             RenderSVGRoot {svg} at (0,0) size 40x40
+              RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+                RenderSVGPath {polygon} at (17,0) size 6x12 [fill={[type=SOLID] [color=#000000]}] [points="22 0 28 0 23 15 23 15"]
               RenderSVGContainer {g} at (0,0) size 40x40
                 RenderSVGContainer {use} at (17,0) size 6x12
                   RenderSVGViewportContainer {svg} at (17,0) size 6x12

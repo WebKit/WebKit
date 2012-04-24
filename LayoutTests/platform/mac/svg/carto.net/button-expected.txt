@@ -3,6 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 6x8 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
+          RenderSVGPath {line} at (0,0) size 4x8 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
+          RenderSVGPath {path} at (0,0) size 6x5 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
     RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#DEB887]}] [x=-1000.00] [y=-1000.00] [width=3000.00] [height=3000.00]
     RenderSVGContainer {g} at (77,77) size 635x206
       RenderSVGContainer {g} at (77,77) size 81x26
