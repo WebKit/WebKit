@@ -56,8 +56,9 @@ public:
     // For LocalizedDate
     double parseLocalizedDate(const String&);
     String formatLocalizedDate(const DateComponents&);
-
 #if ENABLE(CALENDAR_PICKER)
+    String localizedDateFormatText();
+
     // For LocalizedCalendar
     const Vector<String>& monthLabels();
     const Vector<String>& weekDayShortLabels();
@@ -77,6 +78,7 @@ private:
     bool initializeShortDateFormat();
 
 #if ENABLE(CALENDAR_PICKER)
+    void initializeLocalizedDateFormatText();
     PassOwnPtr<Vector<String> > createLabelVector(UDateFormatSymbolType, int32_t startIndex, int32_t size);
     void initializeCalendar();
 #endif
@@ -99,6 +101,7 @@ private:
     bool m_didCreateShortDateFormat;
 
 #if ENABLE(CALENDAR_PICKER)
+    String m_localizedDateFormatText;
     OwnPtr<Vector<String> > m_monthLabels;
     OwnPtr<Vector<String> > m_weekDayShortLabels;
     unsigned m_firstDayOfWeek;

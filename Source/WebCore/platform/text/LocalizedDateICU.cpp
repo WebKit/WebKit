@@ -70,4 +70,11 @@ String formatLocalizedDate(const DateComponents& dateComponents)
     return String();
 }
 
+#if ENABLE(CALENDAR_PICKER)
+String localizedDateFormatText()
+{
+    return ICULocale::currentLocale()->localizedDateFormatText();
+}
+#endif
+
 }

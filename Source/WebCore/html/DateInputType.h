@@ -59,6 +59,9 @@ private:
     virtual void createShadowSubtree() OVERRIDE;
     virtual void destroyShadowSubtree() OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
+    virtual bool supportsPlaceholder() const OVERRIDE;
+    virtual bool usesFixedPlaceholder() const OVERRIDE;
+    virtual String fixedPlaceholder() OVERRIDE;
 
     // TextFieldInputType functions
     virtual bool needsContainer() const OVERRIDE;

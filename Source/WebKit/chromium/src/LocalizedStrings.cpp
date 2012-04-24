@@ -406,6 +406,24 @@ String calendarClearText()
 {
     return query(WebLocalizedString::CalendarClear);
 }
+
+String dateFormatYearText()
+{
+    // FXIME: Implement.
+    return String();
+}
+
+String dateFormatMonthText()
+{
+    // FXIME: Implement.
+    return String();
+}
+
+String dateFormatDayInMonthText()
+{
+    // FXIME: Implement.
+    return String();
+}
 #endif
 
 } // namespace WebCore

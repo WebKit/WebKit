@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ICULocale.h"
 
+#include "LocalizedStrings.h"
 #include <limits>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -311,6 +312,85 @@ String ICULocale::formatLocalizedDate(const DateComponents& dateComponents)
 }
 
 #if ENABLE(CALENDAR_PICKER)
+static inline bool isICUYearSymbol(UChar letter)
+{
+    return letter == 'y' || letter == 'Y';
+}
+
+static inline bool isICUMonthSymbol(UChar letter)
+{
+    return letter == 'M';
+}
+
+static inline bool isICUDayInMonthSymbol(UChar letter)
+{
+    return letter == 'd';
+}
+
+// Specification of the input:
+// http://icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details
+static String localizeFormat(const Vector<UChar>& buffer)
+{
+    StringBuilder builder;
+    UChar lastChar = 0;
+    bool inQuote = false;
+    for (unsigned i = 0; i < buffer.size(); ++i) {
+        if (inQuote) {
+            if (buffer[i] == '\'') {
+                inQuote = false;
+                lastChar = 0;
+                ASSERT(i);
+                if (buffer[i - 1] == '\'')
+                    builder.append('\'');
+            } else
+                builder.append(buffer[i]);
+        } else {
+            if (isASCIIAlpha(lastChar) && lastChar == buffer[i])
+                continue;
+            lastChar = buffer[i];
+            if (isICUYearSymbol(lastChar)) {
+                String text = dateFormatYearText();
+                builder.append(text.isEmpty() ? "Year" : text);
+            } else if (isICUMonthSymbol(lastChar)) {
+                String text = dateFormatMonthText();
+                builder.append(text.isEmpty() ? "Month" : text);
+            } else if (isICUDayInMonthSymbol(lastChar)) {
+                String text = dateFormatDayInMonthText();
+                builder.append(text.isEmpty() ? "Day" : text);
+            } else if (lastChar == '\'')
+                inQuote = true;
+            else
+                builder.append(lastChar);
+        }
+    }
+    return builder.toString();
+}
+
+void ICULocale::initializeLocalizedDateFormatText()
+{
+    if (!m_localizedDateFormatText.isNull())
+        return;
+    m_localizedDateFormatText = String("");
+    if (!initializeShortDateFormat())
+        return;
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t length = udat_toPattern(m_shortDateFormat, TRUE, 0, 0, &status);
+    if (status != U_BUFFER_OVERFLOW_ERROR)
+        return;
+    Vector<UChar> buffer(length);
+    status = U_ZERO_ERROR;
+    udat_toPattern(m_shortDateFormat, TRUE, buffer.data(), length, &status);
+    if (U_FAILURE(status))
+        return;
+    m_localizedDateFormatText = localizeFormat(buffer);
+}
+
+String ICULocale::localizedDateFormatText()
+{
+    initializeLocalizedDateFormatText();
+    return m_localizedDateFormatText;
+}
+
 PassOwnPtr<Vector<String> > ICULocale::createLabelVector(UDateFormatSymbolType type, int32_t startIndex, int32_t size)
 {
     if (!m_shortDateFormat)

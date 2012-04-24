@@ -1,3 +1,15 @@
+2012-04-23  Kent Tamura  <tkent@chromium.org>
+
+        Show the format indicator in a date field
+        https://bugs.webkit.org/show_bug.cgi?id=83872
+
+        Reviewed by Hajime Morita.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::dateFormatYearText): Added a stub.
+        (WebCore::dateFormatMonthText): ditto.
+        (WebCore::dateFormatDayInMonthText): ditto.
+
 2012-04-23  Michael Nordman  <michaeln@google.com>
 
         [chromium] DomStorage event handling mods.

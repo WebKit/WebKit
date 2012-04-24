@@ -35,6 +35,7 @@
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "LocalizedDate.h"
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(INPUT_TYPE_DATE)
@@ -138,6 +139,21 @@ void DateInputType::handleBlurEvent()
     // We need to reset the renderer value explicitly because an unacceptable
     // renderer value should be purged before style calculation.
     element()->updateInnerTextValue();
+}
+
+bool DateInputType::supportsPlaceholder() const
+{
+    return true;
+}
+
+bool DateInputType::usesFixedPlaceholder() const
+{
+    return true;
+}
+
+String DateInputType::fixedPlaceholder()
+{
+    return localizedDateFormatText();
 }
 #endif // ENABLE(CALENDAR_PICKER)
 

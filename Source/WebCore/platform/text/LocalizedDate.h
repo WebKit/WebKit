@@ -44,6 +44,9 @@ double parseLocalizedDate(const String&, DateComponents::Type);
 // localized dates the function should return an empty string.
 String formatLocalizedDate(const DateComponents& dateComponents);
 
+#if ENABLE(CALENDAR_PICKER)
+String localizedDateFormatText();
+#endif
 } // namespace WebCore
 
 #endif // LocalizedDate_h

@@ -214,6 +214,9 @@ namespace WebCore {
 #if ENABLE(CALENDAR_PICKER)
     String calendarTodayText();
     String calendarClearText();
+    String dateFormatYearText();
+    String dateFormatMonthText();
+    String dateFormatDayInMonthText();
 #endif
 
 #if !PLATFORM(CHROMIUM)
