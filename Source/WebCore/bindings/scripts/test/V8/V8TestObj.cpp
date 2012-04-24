@@ -626,7 +626,7 @@ static v8::Handle<v8::Value> attrWithGetterExceptionAttrGetter(v8::Local<v8::Str
     ExceptionCode ec = 0;
     int v = imp->attrWithGetterException(ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     return v8::Integer::New(v);
@@ -640,7 +640,7 @@ static void attrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Lo
     ExceptionCode ec = 0;
     imp->setAttrWithGetterException(v, ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     return;
 }
 
@@ -659,7 +659,7 @@ static void attrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Lo
     ExceptionCode ec = 0;
     imp->setAttrWithSetterException(v, ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     return;
 }
 
@@ -670,7 +670,7 @@ static v8::Handle<v8::Value> stringAttrWithGetterExceptionAttrGetter(v8::Local<v
     ExceptionCode ec = 0;
     String v = imp->stringAttrWithGetterException(ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     return v8String(v, info.GetIsolate());
@@ -684,7 +684,7 @@ static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, 
     ExceptionCode ec = 0;
     imp->setStringAttrWithGetterException(v, ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     return;
 }
 
@@ -703,7 +703,7 @@ static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, 
     ExceptionCode ec = 0;
     imp->setStringAttrWithSetterException(v, ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     return;
 }
 
@@ -763,7 +763,7 @@ static v8::Handle<v8::Value> withScriptStateAttributeRaisesAttrGetter(v8::Local<
         return v8::Undefined();
     RefPtr<TestObj> v = imp->withScriptStateAttributeRaises(state, ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     if (state.hadException())
@@ -782,7 +782,7 @@ static void withScriptStateAttributeRaisesAttrSetter(v8::Local<v8::String> name,
         return;
     imp->setWithScriptStateAttributeRaises(state, WTF::getPtr(v), ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     if (state.hadException())
         throwError(state.exception());
     return;
@@ -798,7 +798,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAttributeRaisesAttrGetter
         return v8::Undefined();
     RefPtr<TestObj> v = imp->withScriptExecutionContextAttributeRaises(scriptContext, ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     return toV8(v.release(), info.GetIsolate());
@@ -815,7 +815,7 @@ static void withScriptExecutionContextAttributeRaisesAttrSetter(v8::Local<v8::St
         return;
     imp->setWithScriptExecutionContextAttributeRaises(scriptContext, WTF::getPtr(v), ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     return;
 }
 
@@ -862,7 +862,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeRa
         return v8::Undefined();
     RefPtr<TestObj> v = imp->withScriptExecutionContextAndScriptStateAttributeRaises(state, scriptContext, ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     if (state.hadException())
@@ -884,7 +884,7 @@ static void withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter(v8
         return;
     imp->setWithScriptExecutionContextAndScriptStateAttributeRaises(state, scriptContext, WTF::getPtr(v), ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, info.GetIsolate());
     if (state.hadException())
         throwError(state.exception());
     return;
@@ -1314,7 +1314,7 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1377,7 +1377,7 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
     return v8::Handle<v8::Value>();
     }
     fail:
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1440,7 +1440,7 @@ static v8::Handle<v8::Value> withScriptStateVoidExceptionCallback(const v8::Argu
     return v8::Handle<v8::Value>();
     }
     fail:
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1459,7 +1459,7 @@ static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Argum
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1506,7 +1506,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateObjExceptio
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1895,7 +1895,7 @@ static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
     return toV8(result.release());
     }
     fail:
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -1993,7 +1993,7 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
     return toV8(result.release(), args.GetIsolate());
     }
     fail:
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 

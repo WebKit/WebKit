@@ -636,10 +636,11 @@ sub GenerateHeaderCustomCall
 sub GenerateSetDOMException
 {
     my $indent = shift;
+    my $getIsolate = shift;
     my $result = "";
 
     $result .= $indent . "if (UNLIKELY(ec)) {\n";
-    $result .= $indent . "    V8Proxy::setDOMException(ec);\n";
+    $result .= $indent . "    V8Proxy::setDOMException(ec, $getIsolate);\n";
     $result .= $indent . "    return v8::Handle<v8::Value>();\n";
     $result .= $indent . "}\n";
 
@@ -889,7 +890,7 @@ END
         } else {
             push(@implContentDecls, "    $nativeType v = $getterString;\n");
         }
-        push(@implContentDecls, GenerateSetDOMException("    "));
+        push(@implContentDecls, GenerateSetDOMException("    ", "info.GetIsolate()"));
 
         if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContentDecls, "    if (state.hadException())\n");
@@ -1062,7 +1063,7 @@ END
             AddToImplIncludes("ExceptionCode.h");
             push(@implContentDecls, "    $svgNativeType* wrapper = V8${implClassName}::toNative(info.Holder());\n");
             push(@implContentDecls, "    if (wrapper->role() == AnimValRole) {\n");
-            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);\n");
+            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, info.GetIsolate());\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
             push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
@@ -1179,7 +1180,7 @@ END
 
     if ($useExceptions) {
         push(@implContentDecls, "    if (UNLIKELY(ec))\n");
-        push(@implContentDecls, "        V8Proxy::setDOMException(ec);\n");
+        push(@implContentDecls, "        V8Proxy::setDOMException(ec, info.GetIsolate());\n");
     }
 
     if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
@@ -1397,7 +1398,7 @@ END
             AddToImplIncludes("ExceptionCode.h");
             push(@implContentDecls, "    $nativeClassName wrapper = V8${implClassName}::toNative(args.Holder());\n");
             push(@implContentDecls, "    if (wrapper->role() == AnimValRole) {\n");
-            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR);\n");
+            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());\n");
             push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
             push(@implContentDecls, "    }\n");
             my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
@@ -1454,7 +1455,7 @@ END
     if ($raisesExceptions) {
         push(@implContentDecls, "    }\n");
         push(@implContentDecls, "    fail:\n");
-        push(@implContentDecls, "    V8Proxy::setDOMException(ec);\n");
+        push(@implContentDecls, "    V8Proxy::setDOMException(ec, args.GetIsolate());\n");
         push(@implContentDecls, "    return v8::Handle<v8::Value>();\n");
     }
 
@@ -1668,7 +1669,7 @@ sub GenerateParametersCheck
                $parameterCheckString .= "    if (args.Length() > $paramIndex && !$parameterName.isUndefinedOrNull() && !$parameterName.isObject()) {\n";
                if (@{$function->raisesExceptions}) {
                    $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
-                   $parameterCheckString .= "        V8Proxy::setDOMException(ec);\n";
+                   $parameterCheckString .= "        V8Proxy::setDOMException(ec, args.GetIsolate());\n";
                }
                $parameterCheckString .= "        return throwError(\"Not an object.\", V8Proxy::TypeError);\n";
                $parameterCheckString .= "    }\n";
@@ -3286,7 +3287,7 @@ sub GenerateFunctionCallString()
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($parameter->type) and not $implClassName =~ /List$/) {
             push @arguments, "$paramName->propertyReference()";
             $result .= $indent . "if (!$paramName) {\n";
-            $result .= $indent . "    V8Proxy::setDOMException(WebCore::TYPE_MISMATCH_ERR);\n";
+            $result .= $indent . "    V8Proxy::setDOMException(WebCore::TYPE_MISMATCH_ERR, args.GetIsolate());\n";
             $result .= $indent . "    return v8::Handle<v8::Value>();\n";
             $result .= $indent . "}\n";
         } elsif ($parameter->type eq "SVGMatrix" and $implClassName eq "SVGTransformList") {
