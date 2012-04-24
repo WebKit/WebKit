@@ -1,3 +1,14 @@
+2012-04-24  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Unreviewd test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84790
+
+        Adding expectations for new tests added in r115091.
+
+        * platform/chromium-mac/fast/css/table-rules-attribute-groups-with-frame-expected.png: Added.
+        * platform/chromium-mac/fast/css/table-rules-attribute-with-frame1-expected.png: Added.
+        * platform/chromium-mac/fast/css/table-rules-attribute-with-frame2-expected.png: Added.
+
 2012-04-24  Victor Carbune  <vcarbune@adobe.com>
 
         Extra display logic for the media control panel element
