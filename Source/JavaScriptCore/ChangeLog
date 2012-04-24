@@ -1,3 +1,31 @@
+2012-04-24  Geoffrey Garen  <ggaren@apple.com>
+
+        "GlobalHandle" HandleHeap (now WeakSet) allocations grow but do not shrink
+        https://bugs.webkit.org/show_bug.cgi?id=84740
+        <rdar://problem/9917638>
+
+        Reviewed by Gavin Barraclough.
+
+        Shrink!
+
+        * heap/Heap.cpp:
+        (JSC::Heap::destroy): Be more specific about what's shrinking, since we
+        can also shrink the WeakSet, but we don't do so here.
+
+        (JSC::Heap::collect): If we're going to shrink the heap, shrink the
+        WeakSet too. Otherwise, its footprint is permanent.
+
+        * heap/Heap.h:
+        (Heap): Removed shrink() as a public interface, since it's vague about
+        which parts of the heap it affects, and it's really an internal detail.
+
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::shrink): Nix any free blocks. We assume that sweep() has
+        already taken place, since that's the convention for shrink() in the heap.
+
+        * heap/WeakSet.h:
+        (WeakSet): New function!
+
 2012-04-24  Adam Klein  <adamk@chromium.org>
 
         Fix includes in StrongInlines.h and ScriptValue.h

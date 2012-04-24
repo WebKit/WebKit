@@ -73,6 +73,17 @@ void WeakSet::sweep()
     }
 }
 
+void WeakSet::shrink()
+{
+    WeakBlock* next;
+    for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = next) {
+        next = static_cast<WeakBlock*>(block->next());
+
+        if (!block->sweepResult().isNull() && block->sweepResult().blockIsFree)
+            removeAllocator(block);
+    }
+}
+
 void WeakSet::resetAllocator()
 {
     m_allocator = 0;

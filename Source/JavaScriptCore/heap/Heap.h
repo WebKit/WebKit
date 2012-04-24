@@ -191,7 +191,6 @@ namespace JSC {
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
         
-        void shrink();
         void releaseFreeBlocks();
         void sweep();
 

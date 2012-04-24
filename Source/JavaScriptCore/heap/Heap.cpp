@@ -378,7 +378,7 @@ void Heap::destroy()
 
     m_weakSet.finalizeAll();
     m_globalData->smallStrings.finalizeSmallStrings();
-    shrink();
+    m_objectSpace.shrink();
     m_storageSpace.destroy();
     ASSERT(!size());
 
@@ -850,7 +850,8 @@ void Heap::collect(SweepToggle sweepToggle)
         SamplingRegion samplingRegion("Garbage Collection: Sweeping");
         GCPHASE(Sweeping);
         sweep();
-        shrink();
+        m_objectSpace.shrink();
+        m_weakSet.shrink();
     }
 
     // To avoid pathological GC churn in large heaps, we set the new allocation 
@@ -913,11 +914,6 @@ bool Heap::isValidAllocation(size_t bytes)
 void Heap::freeBlocks(MarkedBlock* head)
 {
     m_objectSpace.freeBlocks(head);
-}
-
-void Heap::shrink()
-{
-    m_objectSpace.shrink();
 }
 
 void Heap::releaseFreeBlocks()

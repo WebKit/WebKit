@@ -48,6 +48,8 @@ public:
     void sweep();
     void resetAllocator();
 
+    void shrink();
+
 private:
     JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator();
     WeakBlock::FreeCell* tryFindAllocator();
