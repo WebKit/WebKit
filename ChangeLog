@@ -1,3 +1,12 @@
+2012-04-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        Fixed background is scrolling in http://www.nieuwecode.nl/ in Qt webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=83980
+
+        Reviewed by Simon Fraser.
+
+        * ManualTests/fixed-position-no-z-index.html: Added.
+
 2012-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build and run TestWebKitAPI unit tests

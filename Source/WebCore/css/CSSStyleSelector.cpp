@@ -148,6 +148,10 @@
 #include "StyleCachedImageSet.h"
 #endif
 
+#if PLATFORM(QT)
+#define FIXED_POSITION_CREATES_STACKING_CONTEXT 1
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -2007,6 +2011,9 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     // object wedged in between them.  Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f
         || style->hasTransformRelatedProperty() || style->hasMask() || style->boxReflect() || style->hasFilter()
+#ifdef FIXED_POSITION_CREATES_STACKING_CONTEXT
+        || style->position() == FixedPosition
+#endif
 #if ENABLE(OVERFLOW_SCROLLING)
         // Touch overflow scrolling creates a stacking context.
         || style->useTouchOverflowScrolling()
