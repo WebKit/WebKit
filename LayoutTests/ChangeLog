@@ -1,6 +1,15 @@
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84720
+
+        Mark fast/repaint/fixed-right-in-page-scale.html as flaky in debug mode.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
         https://bugs.webkit.org/show_bug.cgi?id=84719
 
         Mark svg/text/select-text-svgfont.html as flaky on Windows.

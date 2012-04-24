@@ -3714,3 +3714,5 @@ BUGWK84712 VISTA : http/tests/inspector/network/x-frame-options-deny.html = TIME
 BUGWK84714 SNOWLEOPARD : compositing/geometry/empty-embed-rects.html = TIMEOUT PASS
 
 BUGWK84719 WIN : svg/text/select-text-svgfont.html = TEXT PASS
+
+BUGWK84720 DEBUG: fast/repaint/fixed-right-in-page-scale.html = IMAGE PASS
