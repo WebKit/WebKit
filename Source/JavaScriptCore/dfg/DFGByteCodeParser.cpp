@@ -89,6 +89,8 @@ private:
     void emitFunctionCheck(JSFunction* expectedFunction, NodeIndex callTarget, int registerOffset, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
+    // Handle setting the result of an intrinsic.
+    void setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction);
     // Prepare to parse a block.
@@ -1287,23 +1289,30 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     return true;
 }
 
-bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis)
+void ByteCodeParser::setIntrinsicResult(bool usesResult, int resultOperand, NodeIndex nodeIndex)
 {
     if (!usesResult)
-        return true;
+        return;
+    set(resultOperand, nodeIndex);
+}
 
+bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis)
+{
     if (argumentCountIncludingThis == 1) { // Math.min()
-        set(resultOperand, constantNaN());
+        setIntrinsicResult(usesResult, resultOperand, constantNaN());
         return true;
     }
      
     if (argumentCountIncludingThis == 2) { // Math.min(x)
-        set(resultOperand, get(registerOffset + argumentToOperand(1)));
+        // FIXME: what we'd really like is a ValueToNumber, except we don't support that right now. Oh well.
+        NodeIndex result = get(registerOffset + argumentToOperand(1));
+        addToGraph(CheckNumber, result);
+        setIntrinsicResult(usesResult, resultOperand, result);
         return true;
     }
     
     if (argumentCountIncludingThis == 3) { // Math.min(x, y)
-        set(resultOperand, addToGraph(op, get(registerOffset + argumentToOperand(1)), get(registerOffset + argumentToOperand(2))));
+        setIntrinsicResult(usesResult, resultOperand, addToGraph(op, get(registerOffset + argumentToOperand(1)), get(registerOffset + argumentToOperand(2))));
         return true;
     }
     
@@ -1317,14 +1326,8 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
 {
     switch (intrinsic) {
     case AbsIntrinsic: {
-        if (!usesResult) {
-            // There is no such thing as executing abs for effect, so this
-            // is dead code.
-            return true;
-        }
-        
         if (argumentCountIncludingThis == 1) { // Math.abs()
-            set(resultOperand, constantNaN());
+            setIntrinsicResult(usesResult, resultOperand, constantNaN());
             return true;
         }
 
@@ -1334,7 +1337,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         NodeIndex nodeIndex = addToGraph(ArithAbs, get(registerOffset + argumentToOperand(1)));
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
             m_graph[nodeIndex].mergeFlags(NodeMayOverflow);
-        set(resultOperand, nodeIndex);
+        setIntrinsicResult(usesResult, resultOperand, nodeIndex);
         return true;
     }
 
@@ -1345,18 +1348,15 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         return handleMinMax(usesResult, resultOperand, ArithMax, registerOffset, argumentCountIncludingThis);
         
     case SqrtIntrinsic: {
-        if (!usesResult)
-            return true;
-        
         if (argumentCountIncludingThis == 1) { // Math.sqrt()
-            set(resultOperand, constantNaN());
+            setIntrinsicResult(usesResult, resultOperand, constantNaN());
             return true;
         }
         
         if (!MacroAssembler::supportsFloatingPointSqrt())
             return false;
         
-        set(resultOperand, addToGraph(ArithSqrt, get(registerOffset + argumentToOperand(1))));
+        setIntrinsicResult(usesResult, resultOperand, addToGraph(ArithSqrt, get(registerOffset + argumentToOperand(1))));
         return true;
     }
         

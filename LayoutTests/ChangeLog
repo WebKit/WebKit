@@ -1,3 +1,24 @@
+2012-04-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG performs incorrect DCE on (some?) intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=84746
+        <rdar://problem/11310772>
+
+        Rubber stamped by Oliver Hunt.
+
+        * fast/js/dfg-dead-min-one-arg-expected.txt: Added.
+        * fast/js/dfg-dead-min-one-arg.html: Added.
+        * fast/js/dfg-dead-min-two-args-expected.txt: Added.
+        * fast/js/dfg-dead-min-two-args.html: Added.
+        * fast/js/script-tests/dfg-dead-min-one-arg.js: Added.
+        (foo):
+        (.x.f.valueOf):
+        * fast/js/script-tests/dfg-dead-min-two-args.js: Added.
+        (foo):
+        (bar):
+        (.x.f.valueOf):
+        (.y.f.valueOf):
+
 2012-04-24  Andreas Kling  <kling@webkit.org>
 
         Rebaseline mac rendertree output for svg/custom/use-css-events.svg.

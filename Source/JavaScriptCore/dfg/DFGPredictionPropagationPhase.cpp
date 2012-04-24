@@ -620,6 +620,7 @@ private:
         case CheckFunction:
         case PutStructure:
         case TearOffActivation:
+        case CheckNumber:
             changed |= mergeDefaultFlags(node);
             break;
             

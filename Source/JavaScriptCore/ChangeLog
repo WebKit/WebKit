@@ -1,3 +1,27 @@
+2012-04-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG performs incorrect DCE on (some?) intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=84746
+        <rdar://problem/11310772>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::setIntrinsicResult):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-04-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Failure to allocate ArrayStorage in emit_op_new_array leads to poisonous JSArray

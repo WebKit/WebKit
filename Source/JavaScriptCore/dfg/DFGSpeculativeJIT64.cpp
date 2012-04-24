@@ -2128,6 +2128,19 @@ void SpeculativeJIT::compile(Node& node)
         compileInt32ToDouble(node);
         break;
     }
+        
+    case CheckNumber: {
+        if (!isNumberPrediction(m_state.forNode(node.child1()).m_type)) {
+            JSValueOperand op1(this, node.child1());
+            JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, op1.gpr(), GPRInfo::tagTypeNumberRegister);
+            speculationCheck(
+                BadType, JSValueRegs(op1.gpr()), node.child1().index(),
+                m_jit.branchTestPtr(MacroAssembler::Zero, op1.gpr(), GPRInfo::tagTypeNumberRegister));
+            isInteger.link(&m_jit);
+        }
+        noResult(m_compileIndex);
+        break;
+    }
 
     case ValueAdd:
     case ArithAdd:

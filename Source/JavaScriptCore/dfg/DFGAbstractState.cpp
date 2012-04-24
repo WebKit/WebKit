@@ -310,6 +310,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(node.child1()).filter(PredictNumber);
         forNode(nodeIndex).set(PredictDouble);
         break;
+        
+    case CheckNumber:
+        forNode(node.child1()).filter(PredictNumber);
+        break;
             
     case ValueAdd:
     case ArithAdd: {
