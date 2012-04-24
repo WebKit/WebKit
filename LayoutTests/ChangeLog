@@ -1,6 +1,15 @@
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=65063
+
+        Unmark as failing on Mac 10.6 css2.1/t0905-c414-flt-01-d-g.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
 
         Unmark as failing on Mac 10.5 the following tests:
             fast/backgrounds/size/backgroundSize15.html
