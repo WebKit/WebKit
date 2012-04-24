@@ -1,3 +1,22 @@
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix some more GTK baselines after r114836.
+
+        * platform/gtk/fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/gtk/fast/dom/importNodeHTML-expected.txt:
+        * platform/gtk/fast/dom/importNodeXML-expected.txt:
+        * platform/gtk/fast/dom/inner-text-expected.txt:
+        * platform/gtk/fast/dom/isindex-001-expected.txt:
+        * platform/gtk/fast/dom/isindex-002-expected.txt:
+        * platform/gtk/fast/dom/outerText-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/gtk/fast/dom/row-inner-text-expected.txt:
+        * platform/gtk/fast/dom/rtl-scroll-to-leftmost-and-resize-expected.txt:
+        * platform/gtk/fast/dom/scroll-reveal-left-overflow-expected.txt:
+        * platform/gtk/fast/dom/scroll-reveal-top-overflow-expected.txt:
+        * platform/gtk/fast/dom/tabindex-clamp-expected.txt:
+        * platform/gtk/fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+
 2012-04-24  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening. Skipped a test because JSC doesn't support heap profiling.
