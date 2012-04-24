@@ -437,11 +437,14 @@ void QtViewportInteractionEngine::reset()
     m_minimumScale = 1;
     m_maximumScale = 1;
     m_devicePixelRatio = 1;
+    m_pinchStartScale = -1;
+    m_zoomOutScale = 0.0;
 
     m_viewport->cancelFlick();
     m_scaleAnimation->stop();
     m_scaleUpdateDeferrer.clear();
     m_scrollUpdateDeferrer.clear();
+    m_scaleStack.clear();
 }
 
 void QtViewportInteractionEngine::setCSSScaleBounds(qreal minimum, qreal maximum)

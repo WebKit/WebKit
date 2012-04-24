@@ -1,3 +1,15 @@
+2012-04-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Incomplete interaction-engine reset.
+        https://bugs.webkit.org/show_bug.cgi?id=84594
+
+        Reviewed by Simon Hausmann.
+
+        Reset a few values forgotten in the reset function.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::reset):
+
 2012-04-23  Andreas Kling  <kling@webkit.org>
 
         [Mac] WebProcess should empty cache on a background thread/block.
