@@ -261,24 +261,24 @@ namespace WebCore {
     }
 
     template<typename T>
-    v8::Handle<v8::Value> v8Array(const Vector<T>& iterator)
+    v8::Handle<v8::Value> v8Array(const Vector<T>& iterator, v8::Isolate* isolate)
     {
         v8::Local<v8::Array> result = v8::Array::New(iterator.size());
         int index = 0;
         typename Vector<T>::const_iterator end = iterator.end();
         for (typename Vector<T>::const_iterator iter = iterator.begin(); iter != end; ++iter)
-            result->Set(v8::Integer::New(index++), toV8(WTF::getPtr(*iter)));
+            result->Set(v8::Integer::New(index++), toV8(WTF::getPtr(*iter), isolate));
         return result;
     }
 
     template<>
-    inline v8::Handle<v8::Value> v8Array(const Vector<String>& iterator)
+    inline v8::Handle<v8::Value> v8Array(const Vector<String>& iterator, v8::Isolate* isolate)
     {
         v8::Local<v8::Array> array = v8::Array::New(iterator.size());
         Vector<String>::const_iterator end = iterator.end();
         int index = 0;
         for (Vector<String>::const_iterator iter = iterator.begin(); iter != end; ++iter)
-            array->Set(v8::Integer::New(index++), v8String(*iter));
+            array->Set(v8::Integer::New(index++), v8String(*iter, isolate));
         return array;
     }
 

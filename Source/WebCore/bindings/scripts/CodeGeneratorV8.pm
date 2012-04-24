@@ -919,7 +919,7 @@ END
                 AddToImplIncludes("V8$arrayType.h");
                 AddToImplIncludes("$arrayType.h");
             }
-            push(@implContentDecls, "    return v8Array(${getterString});\n");
+            push(@implContentDecls, "    return v8Array(${getterString}, info.GetIsolate());\n");
             push(@implContentDecls, "}\n\n");
             return;
         }
@@ -3808,7 +3808,7 @@ sub NativeToJSValue
             AddToImplIncludes("V8$arrayType.h");
             AddToImplIncludes("$arrayType.h");
         }
-        return "v8Array($value)";
+        return "v8Array($value, $getIsolate)";
     }
 
     AddIncludesForType($type);

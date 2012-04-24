@@ -223,7 +223,7 @@ static v8::Handle<v8::Value> sequenceAttrAttrGetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.TestObj.sequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->sequenceAttr());
+    return v8Array(imp->sequenceAttr(), info.GetIsolate());
 }
 
 static void sequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -1295,7 +1295,7 @@ static v8::Handle<v8::Value> methodReturningSequenceCallback(const v8::Arguments
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    return v8Array(imp->methodReturningSequence(intArg));
+    return v8Array(imp->methodReturningSequence(intArg), args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8::Arguments& args)
