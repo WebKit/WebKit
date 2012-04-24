@@ -1,3 +1,9 @@
+2012-04-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the NEWS for the 1.8.1 release.
+
+        * NEWS:
+
 2012-04-17  Carlos Garnacho  <carlos@lanedo.com>
 
         [GTK] Enable back double buffering on WebKitWebView to fix flickering

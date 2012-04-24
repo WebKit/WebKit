@@ -1,4 +1,20 @@
 =================
+WebKitGTK+ 1.8.1
+=================
+
+What's new in WebKitGTK+ 1.8.1?
+
+ - Throttle DNS prefetching to avoid overloading the resolver.
+ - Fix a bug where the Content-Length header was not sent for certain XMLHttpRequests.
+ - Fix a repainting error that occurred during interior frame scrolling.
+ - Fix a SIGILL crash in JavaScriptCore on the Geode processor.
+ - Fix the rendering of toggle buttons with larger-than-default widths
+   and heights with the Adwaita theme.
+ - Fix a crash that could occur during synchronous XMLHttpRequests.
+ - Fix flickering during scrolling and resizing in newer versions of GTK+.
+ - Merge many security fixes from trunk.
+
+=================
 WebKitGTK+ 1.8.0
 =================
 
