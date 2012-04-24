@@ -1591,6 +1591,9 @@ BUGWK84691 : fast/events/mouse-relative-position.html = FAIL
 
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 
+// Requires rebaseline after bug 83978
+BUGWK83978 : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

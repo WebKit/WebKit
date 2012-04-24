@@ -3745,3 +3745,6 @@ BUGWK84724 SNOWLEOPARD: platform/chromium/media/video-frame-size-change.html = I
 BUGWK84733 VISTA : fast/canvas/canvas-composite.html = TIMEOUT PASS
 
 BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
+
+// Requires rebaseline after bug 83978
+BUGWK83978 WIN MAC: tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT

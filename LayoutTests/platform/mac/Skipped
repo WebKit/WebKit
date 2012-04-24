@@ -794,3 +794,6 @@ fast/dom/inline-event-attributes-release.html
 # https://bugs.webkit.org/show_bug.cgi?id=84102
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
+
+# Requires rebaseline after bug 83978
+tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html

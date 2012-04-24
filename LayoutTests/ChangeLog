@@ -1,3 +1,42 @@
+2012-04-21  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: table-columns-example-001 fails
+        https://bugs.webkit.org/show_bug.cgi?id=83978
+
+        Reviewed by David Hyatt.
+
+        * css2.1/20110323/table-columns-example-001-expected.html: Added.
+        * css2.1/20110323/table-columns-example-001.htm: Added.
+        * fast/css/table-rules-attribute-expected.html: Added.
+        * fast/css/table-rules-attribute-groups-expected.html: Added.
+        * fast/css/table-rules-attribute-groups-with-frame-expected.png: Added.
+        * fast/css/table-rules-attribute-groups-with-frame-expected.txt: Added.
+        * fast/css/table-rules-attribute-groups-with-frame.html: Added.
+        * fast/css/table-rules-attribute-groups.html: Added.
+        * fast/css/table-rules-attribute-none-with-frame-expected.html: Added.
+        * fast/css/table-rules-attribute-none-with-frame.html: Added.
+        * fast/css/table-rules-attribute-with-frame1-expected.png: Added.
+        * fast/css/table-rules-attribute-with-frame1-expected.txt: Added.
+        * fast/css/table-rules-attribute-with-frame1.html: Added.
+        * fast/css/table-rules-attribute-with-frame2-expected.png: Added.
+        * fast/css/table-rules-attribute-with-frame2-expected.txt: Added.
+        * fast/css/table-rules-attribute-with-frame2.html: Added.
+          These test the correct interaction of a rules attribute with a frame attribute. 'cols' is used
+          for the test, but each of cols, rows, and all have the same effect on the table's borders. It wasn't
+          possible to create reftests for all of them because of the different behaviour of the frame attr to 
+          a simple border, probably due to painting order.
+        * fast/css/table-rules-attribute.html: Added.
+          This tests correct rendering of the rules attribute on a table without its own border. It
+          also tests border collapsing on tables with a rules attribute.
+        * platform/chromium-linux/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+           This is a progression - the table's border is hidden.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+
 2012-04-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Rebaseline background tests

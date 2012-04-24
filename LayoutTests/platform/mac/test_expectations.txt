@@ -337,3 +337,6 @@ BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 BUGWK84604 FUTURE : fast/js/global-constructors.html = TEXT
 BUGWK84604 FUTURE : fast/dom/Window/window-properties.html = TEXT
 BUGWK84604 FUTURE : fast/dom/prototype-inheritance-2.html = TEXT
+
+// Requires rebaseline after bug 83978
+BUGWK83978 : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
