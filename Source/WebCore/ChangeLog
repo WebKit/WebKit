@@ -1,3 +1,26 @@
+2012-04-22  Martin Robinson  <mrobinson@igalia.com>
+
+        REGRESSION(113604): [Soup] Some pages that use synchronous XMLHttpRequests freeze the browser
+        https://bugs.webkit.org/show_bug.cgi?id=84560
+
+        Reviewed by Xan Lopez.
+
+        When kicking off a synchronous XMLHttpRequest, add one to the connection
+        limit. This ensures that when a page starts a synchronous request, while
+        already at the connection limit the request will not deadlock.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader): Accept a new SoupSession
+        argument so that we can get the correct SoupSession for the networking context. Bump
+        the connection limit.
+        (WebCore::WebCoreSynchronousLoader::~WebCoreSynchronousLoader): Decrement the connection limit.
+        (WebCore::WebCoreSynchronousLoader::adjustMaxConnections): Added this helper.
+        (WebCoreSynchronousLoader): Added a new SoupSession member.
+        (WebCore::sessionFromContext): Added this helper.
+        (WebCore::ResourceHandleInternal::soupSession): Use the new sessionFromContext helper.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Pass the SoupSession from the NetworkingContext
+        to the synchronous loader.
+
 2012-04-18  MORITA Hajime  <morrita@google.com>
 
         ShadowTree uses weak iteration patterns
