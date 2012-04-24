@@ -40,7 +40,18 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, const 
     if (type != "jpeg" && type != "png" && type != "tiff" && type != "ico" && type != "bmp")
         return false;
 
-    GRefPtr<GdkPixbuf> pixbuf = cairoImageSurfaceToGdkPixbuf(surface);
+    GRefPtr<GdkPixbuf> pixbuf;
+    if (type == "jpeg") {
+        // JPEG doesn't support alpha channel. The <canvas> spec states that toDataURL() must encode a Porter-Duff
+        // composite source-over black for image types that do not support alpha.
+        RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_image_surface_create_for_data(cairo_image_surface_get_data(surface),
+                                                                                          CAIRO_FORMAT_RGB24,
+                                                                                          cairo_image_surface_get_width(surface),
+                                                                                          cairo_image_surface_get_height(surface),
+                                                                                          cairo_image_surface_get_stride(surface)));
+        pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(newSurface.get()));
+    } else
+        pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(surface));
     if (!pixbuf)
         return false;
 

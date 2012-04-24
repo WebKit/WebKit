@@ -989,7 +989,6 @@ BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.system.html = FAIL
 BUGWKGTK : canvas/philip/tests/2d.text.measure.width.space.html = FAIL
-BUGWKGTK : canvas/philip/tests/toDataURL.jpeg.alpha.html = FAIL
 BUGWKGTK : canvas/philip/tests/type.prototype.html = FAIL
 
 

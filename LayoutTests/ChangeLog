@@ -1,3 +1,13 @@
+2012-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Should pass canvas/philip/tests/toDataURL.jpeg.alpha.html
+        https://bugs.webkit.org/show_bug.cgi?id=83973
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/test_expectations.txt: Unskip
+        canvas/philip/tests/toDataURL.jpeg.alpha.html
+
 2012-04-24  Florin Malita  <fmalita@google.com>
 
         WebCore::EventTarget::addEventListener crash
