@@ -50,7 +50,6 @@
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
-#include "CSSStyleApplyProperty.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
@@ -100,6 +99,7 @@
 #include "ShadowRoot.h"
 #include "ShadowValue.h"
 #include "SkewTransformOperation.h"
+#include "StyleBuilder.h"
 #include "StyleCachedImage.h"
 #include "StylePendingImage.h"
 #include "StyleRule.h"
@@ -3911,7 +3911,7 @@ void CSSStyleSelector::applyProperty(CSSPropertyID id, CSSValue *value)
     }
 #endif
 
-    // These properties are implemented in the CSSStyleApplyProperty lookup table.
+    // These properties are implemented in the StyleBuilder lookup table.
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:
     case CSSPropertyBackgroundColor:

@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "CSSStyleApplyProperty.h"
+#include "StyleBuilder.h"
 
 #include "CSSAspectRatioValue.h"
 #include "CSSCalculationValue.h"
@@ -1194,9 +1194,9 @@ public:
         } else if (primitiveValue->isNumber()) {
             // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
             lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
-        } else if (primitiveValue->isViewportPercentageLength()) {
+        } else if (primitiveValue->isViewportPercentageLength())
             lineHeight = primitiveValue->viewportPercentageLength();
-        } else
+        else
             return;
         selector->style()->setLineHeight(lineHeight);
     }

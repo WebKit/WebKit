@@ -482,7 +482,6 @@ SET(WebCore_SOURCES
     css/CSSSegmentedFontFace.cpp
     css/CSSSelector.cpp
     css/CSSSelectorList.cpp
-    css/CSSStyleApplyProperty.cpp
     css/CSSStyleDeclaration.cpp
     css/CSSStyleRule.cpp
     css/CSSStyleSelector.cpp
@@ -508,6 +507,7 @@ SET(WebCore_SOURCES
     css/RGBColor.cpp
     css/SelectorChecker.cpp
     css/ShadowValue.cpp
+    css/StyleBuilder.cpp
     css/StyleMedia.cpp
     css/StylePropertySet.cpp
     css/StylePropertyShorthand.cpp

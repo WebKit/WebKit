@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSStyleApplyProperty_h
-#define CSSStyleApplyProperty_h
+#ifndef StyleBuilder_h
+#define StyleBuilder_h
 
 #include "CSSPropertyNames.h"
 #include <wtf/PassRefPtr.h>
@@ -98,4 +98,4 @@ private:
 
 }
 
-#endif // CSSStyleApplyProperty_h
+#endif // StyleBuilder_h
