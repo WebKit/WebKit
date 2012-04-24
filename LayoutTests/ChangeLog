@@ -1,3 +1,12 @@
+2012-04-24  Kenneth Russell  <kbr@google.com>
+
+        fast/dom/Window/window-postmessage-clone.html failing on Mac after r114992
+        https://bugs.webkit.org/show_bug.cgi?id=84741
+
+        Not reviewed. Rebaseline only; verified locally.
+
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+
 2012-04-24  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, skip unsupported inspector heap profiler test on mac.

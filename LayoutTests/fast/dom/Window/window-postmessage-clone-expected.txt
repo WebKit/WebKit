@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 86: TypeError: No default value
-CONSOLE MESSAGE: line 86: TypeError: No default value
 Tests that we clone object hierarchies
 
 FAIL: 'postMessage((function(){}))' should throw but didn't
