@@ -1,3 +1,22 @@
+2012-04-24  Lucas Forschler  <lforschler@apple.com>
+
+    Merge patch for <rdar://problem/11310337>
+        
+    2012-01-06  Gavin Barraclough  <barraclough@apple.com>
+
+        <rdar://problem/10655942> ZDI-CAN-1484: JavaScriptCore integer overflow in JSArray storageSize with manually set array length
+
+        Reviewed by Sam Weinig.
+
+        Added CRASHing guards againt numeric overflows.
+
+        * runtime/JSArray.cpp:
+        (JSC::storageSize):
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::increaseVectorPrefixLength):
+        (JSC::JSArray::unshiftCount):
+
 2012-04-17  Lucas Forschler  <lforschler@apple.com>
 
     Merge 107647

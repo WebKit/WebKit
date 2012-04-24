@@ -101,7 +101,8 @@ static unsigned lastArraySize = 0;
 
 static inline size_t storageSize(unsigned vectorLength)
 {
-    ASSERT(vectorLength <= MAX_STORAGE_VECTOR_LENGTH);
+    if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
+        CRASH();
 
     // MAX_STORAGE_VECTOR_LENGTH is defined such that provided (vectorLength <= MAX_STORAGE_VECTOR_LENGTH)
     // - as asserted above - the following calculation cannot overflow.
@@ -489,8 +490,9 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
     }
 
     void* baseStorage = storage->m_allocBase;
-    
-    if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage)) {
+
+    if ((unsigned)m_indexBias > (MAX_STORAGE_VECTOR_LENGTH - newVectorLength)
+        || !tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage)) {
         throwOutOfMemoryError(exec);
         return;
     }
@@ -646,7 +648,8 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     unsigned newVectorLength = getNewVectorLength(newLength);
     void* baseStorage = storage->m_allocBase;
 
-    if (!tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage))
+    if ((unsigned)m_indexBias > (MAX_STORAGE_VECTOR_LENGTH - newVectorLength)
+        || !tryFastRealloc(baseStorage, storageSize(newVectorLength + m_indexBias)).getValue(baseStorage))
         return false;
 
     storage = m_storage = reinterpret_cast_ptr<ArrayStorage*>(static_cast<char*>(baseStorage) + m_indexBias * sizeof(JSValue));
@@ -675,6 +678,8 @@ bool JSArray::increaseVectorPrefixLength(unsigned newLength)
     ASSERT(newLength <= MAX_STORAGE_VECTOR_INDEX);
     unsigned newVectorLength = getNewVectorLength(newLength);
 
+    if ((unsigned)m_indexBias > (MAX_STORAGE_VECTOR_LENGTH - newVectorLength))
+        return false;
     void* newBaseStorage = fastMalloc(storageSize(newVectorLength + m_indexBias));
     if (!newBaseStorage)
         return false;
@@ -908,7 +913,8 @@ void JSArray::unshiftCount(ExecState* exec, int count)
         memmove(newBaseStorage, storage, storageSize(0));
         m_storage = reinterpret_cast_ptr<ArrayStorage*>(newBaseStorage);
         m_vectorLength += count;
-    } else if (!increaseVectorPrefixLength(m_vectorLength + count)) {
+    } else if ((unsigned)count > (MAX_STORAGE_VECTOR_LENGTH - m_vectorLength)
+        || !increaseVectorPrefixLength(m_vectorLength + count)) {
         throwOutOfMemoryError(exec);
         return;
     }
