@@ -35,6 +35,14 @@
     padding: 5px;
 }
 
+.results-view ul.actions.rebaseline-action {
+    float: none;
+    position: absolute;
+    right: 4px;
+    top: 7px;
+    padding: 0;
+}
+
 .results-view ul.actions li, .ui-dialog ul.actions li {
     display: inline-block;
 }
@@ -83,16 +91,62 @@
     height: auto;
 }
 
-.ui-state-default .link-title, .ui-state-default .link-title:link, .ui-state-default .link-title:visited {
+.results-view .top-panel {
+    min-height: 100px;
+    max-height: 20%;
+    overflow: auto;
+    position: relative;
+}
+
+.results-view .resize-handle {
+    height: 5px;
+    text-align: center;
+    -webkit-user-select: none;
+    line-height: 5px;
+    cursor: ns-resize;
+    font-size: 5px;
+    font-weight: bold;
+    padding: 1px;
+}
+
+.results-view .resize-handle:before {
+    content: '|||';
+}
+
+.results-view .link-title,
+.results-view .active .non-link-title {
     display: none;
 }
-.ui-state-active .link-title, .ui-state-active .link-title:link, .ui-state-active .link-title:visited {
-    text-decoration: underline;
+
+.results-view .non-link-title,
+.results-view .active .link-title {
     display: inline-block;
 }
-/* Stupid CSS specificity rules. We need the .ui-accordion-header to override the builtin jquery styling on anchor tags in accordion headers. */
-.ui-state-active.ui-accordion-header .non-link-title, .ui-state-active .non-link-title:link, .ui-state-active .non-link-title:visited {
-    display: none;
+
+.results-view h3 {
+    font-size: 16px;
+    border-top: 1px solid #DDD;
+    margin: 0;
+    cursor: pointer;
+}
+
+.results-view h3:not(.active):hover {
+    background-color: #EEE;
+}
+
+.results-view .active {
+    background-color: #CCC;
+}
+
+/* CSS percentages in standards-mode are dumb. You need to have a percentage or fixed height
+   all the way up the tree in order to have percentages resolve. */
+html, body, #onebar, .results-view, .test-selector {
+    height: 100%;
+}
+
+#results {
+    height: -webkit-calc(100% - 39px);
+    box-sizing: border-box;
 }
 
 /*** status console ***/

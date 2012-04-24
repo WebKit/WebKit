@@ -1,3 +1,19 @@
+2012-04-16  Ojan Vafai  <ojan@chromium.org>
+
+        Replace garden-o-matic accordion UI with a panel UI
+        https://bugs.webkit.org/show_bug.cgi?id=84081
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a nicer UI to work with and makes it easier to embed the flakiness dashboard,
+        since we can reuse the same iframe without moving it in the DOM.
+
+        Also, excise unnecessary jquery-isms.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2012-04-24  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] DumpRenderTree should depend on base.gyp:test_support_base

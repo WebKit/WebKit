@@ -72,26 +72,43 @@ var kExampleResultsWithTimeoutByTest = {
     }
 };
 
-test('View', 8, function() {
+test('View', 16, function() {
     var delegate = {
         fetchResultsURLs: function(failureInfo, callback) { return; }
     };
 
     var view = new ui.results.View(delegate);
     view.setResultsByTest(kExampleResultsByTest);
+
     view.firstResult();
+    var testSelector = view.querySelector('.test-selector');
+    var topPanel = testSelector.querySelector('.top-panel');
+    equals(topPanel.childNodes[0], topPanel.querySelector('.active'));;
+    equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 0);
 
     view.nextResult();
-    equals($('.test-selector', view).accordion('option', 'active'), 0);
+    equals(topPanel.childNodes[0], topPanel.querySelector('.active'));;
     equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
     equals(view.currentTestName(), 'scrollbars/custom-scrollbar-with-incomplete-style.html');
+
     view.nextResult();
-    equals($('.test-selector', view).accordion('option', 'active'), 1);
-    equals($($('.builder-selector', view)[1]).tabs('option', 'selected'), 0);
+    equals(topPanel.childNodes[1], topPanel.querySelector('.active'));;
+    equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 0);
     equals(view.currentTestName(), 'userscripts/another-test.html');
+
     view.previousResult();
-    equals($('.test-selector', view).accordion('option', 'active'), 0);
+    equals(topPanel.childNodes[0], topPanel.querySelector('.active'));;
     equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
+
+    view.nextTest();
+    equals(topPanel.childNodes[1], topPanel.querySelector('.active'));;
+    equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 0);
+    equals(view.currentTestName(), 'userscripts/another-test.html');
+
+    view.previousTest();
+    equals(topPanel.childNodes[0], topPanel.querySelector('.active'));;
+    equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
+    equals(view.currentTestName(), 'scrollbars/custom-scrollbar-with-incomplete-style.html');
 });
 
 test('View', 2, function() {
@@ -101,8 +118,9 @@ test('View', 2, function() {
 
     var view = new ui.results.View(delegate);
     view.setResultsByTest(kExampleReftestResults);
+    view.firstResult();
 
-    equals($('.non-action-button', view).length, 2);
+    equals($('.non-action-button', view).length, 1);
     equals($('.action', view).length, 0);
 });
 
