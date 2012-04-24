@@ -3719,3 +3719,5 @@ BUGCR124779 : media/track/track-cues-sorted-before-dispatch.html = CRASH
 BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
 
 BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html = TEXT PASS
+
+BUGWK84689 SNOWLEOPARD : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TIMEOUT PASS
