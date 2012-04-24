@@ -1,3 +1,13 @@
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84726
+
+        Mark webkitpy.layout_tests.servers.http_server_unittest.TestHttpServer.test_start_cmd as failing on Windows.
+
+        * Scripts/webkitpy/test/test_finder.py:
+        (TestFinder._default_names):
+
 2012-04-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable Web Timing

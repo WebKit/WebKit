@@ -166,6 +166,9 @@ class TestFinder(object):
                                    'webkitpy.tool')
                 self._exclude(modules, win32_blacklist, 'fail horribly on win32', 54526)
 
+                win32_blacklist_84726 = ('webkitpy.layout_tests.servers.http_server_unittest.TestHttpServer.test_start_cmd')
+                self._exclude(modules, win32_blacklist_84726, 'fails on win32', 84726)
+
         return modules
 
     def _exclude(self, modules, module_prefixes, reason, bugid):
