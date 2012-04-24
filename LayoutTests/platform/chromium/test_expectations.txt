@@ -1486,11 +1486,7 @@ BUGCR10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
 BUGCR23494 LEOPARD : fast/text/monospace-width-cache.html = IMAGE
 
 // Actual is just slightly off in color than expected
-BUGCR23488 LEOPARD RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 SLOW LEOPARD DEBUG : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
-BUGCR23488 LEOPARD : fast/frames/content-opacity-2.html = IMAGE
 
 // Looks the same to me... huh. Variation of above?
 BUGCR23489 MAC : fast/table/empty-section-crash.html = IMAGE
@@ -1504,9 +1500,6 @@ BUGCR23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 // Unexpected gray
 BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
 BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
-
-// Disagreeing XML parsing error messages
-BUGCR88911 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE+TEXT
 
 BUGCR23473 MAC : fast/repaint/4774354.html = IMAGE
 BUGCR23473 MAC : fast/repaint/4776765.html = IMAGE
@@ -2952,9 +2945,6 @@ BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 
-// Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with Skia graphics.
-BUGWK68437 LEOPARD : printing/return-from-printing-mode.html = IMAGE
-
 // These should fall under BUGWK68270, but they were listed as flaky elsewhere
 // in the file. Once BUGWK68270 is fixed, these should return to being flaky as
 // below:
@@ -3029,8 +3019,6 @@ BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 // Failing since ~r97700.
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
 BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE
-
-BUGCR101024 LEOPARD : fast/events/reveal-link-when-focused.html = IMAGE
 
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html = PASS TEXT
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html = PASS TEXT

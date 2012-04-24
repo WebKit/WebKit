@@ -1,6 +1,20 @@
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
+
+        Unmark as failing on Mac 10.5 the following tests:
+            fast/backgrounds/size/backgroundSize15.html
+            fast/events/reveal-link-when-focused.html
+            fast/frames/content-opacity-1.html
+            fast/frames/content-opacity-2.html
+            fast/xsl/xslt-extra-content-at-end.xml
+            printing/return-from-printing-mode.html
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
         https://bugs.webkit.org/show_bug.cgi?id=82628
 
         Unmark svg/hittest/svg-ellipse-non-scale-stroke.xhtml -- passes for a long time.
