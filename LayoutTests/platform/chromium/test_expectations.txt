@@ -3720,3 +3720,5 @@ BUGWK84720 DEBUG: fast/repaint/fixed-right-in-page-scale.html = IMAGE PASS
 BUGWK84724 SNOWLEOPARD: platform/chromium/media/video-frame-size-change.html = IMAGE PASS
 
 BUGWK84733 VISTA : fast/canvas/canvas-composite.html = TIMEOUT PASS
+
+BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
