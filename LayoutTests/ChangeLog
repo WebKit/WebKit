@@ -1,6 +1,15 @@
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84714
+
+        Mark compositing/geometry/empty-embed-rects.html as flaky on Mac 10.6.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
         https://bugs.webkit.org/show_bug.cgi?id=84712
 
         Mark http/tests/inspector/network/x-frame-options-deny.html as flaky on Vista.
