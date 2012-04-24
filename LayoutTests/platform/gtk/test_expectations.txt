@@ -1460,21 +1460,6 @@ BUGWK73409 : fast/forms/placeholder-set-attribute.html = FAIL
 BUGWK73409 : fast/forms/search-placeholder-value-changed.html = FAIL
 BUGWK73409 : fast/forms/textarea-placeholder-set-attribute.html = FAIL
 
-// Failing since font metrics change
-BUGWKGTK : fast/block/float/overhanging-tall-block.html = FAIL
-BUGWKGTK : fast/css/percentage-non-integer.html = FAIL
-BUGWKGTK : fast/css/word-space-extra.html = FAIL
-BUGWKGTK : fast/css/zoom-body-scroll.html = FAIL
-BUGWKGTK : fast/repaint/moving-shadow-on-container.html = FAIL
-BUGWKGTK : fast/repaint/moving-shadow-on-path.html = FAIL
-BUGWKGTK : css3/flexbox/line-wrapping.html = FAIL
-BUGWKGTK : fast/css/font-face-data-uri.html = FAIL
-BUGWKGTK : fast/css/font-face-download-error.html = FAIL
-BUGWKGTK : fast/events/keydown-1.html = FAIL
-BUGWKGTK : fast/forms/cursor-at-editable-content-boundary.html = FAIL
-BUGWKGTK : fast/text/glyph-reordering.html = FAIL
-BUGWKGTK : fast/text/ipa-tone-letters.html = FAIL
-
 BUGWK73653 : fast/events/offsetX-offsetY.html = FAIL
 BUGWK73653 : fast/forms/number/spin-in-multi-column.html = FAIL
 BUGWK73653 : fast/forms/range/slider-in-multi-column.html = FAIL
