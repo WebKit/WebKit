@@ -3484,6 +3484,7 @@ webcore_sources += \
 	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
 	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.h \
+	Source/WebCore/platform/network/soup/CookieStorageSoup.cpp \
 	Source/WebCore/platform/network/soup/CredentialStorageSoup.cpp \
 	Source/WebCore/platform/network/soup/DNSSoup.cpp \
 	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \

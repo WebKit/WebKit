@@ -36,17 +36,28 @@ class CookieManagerTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(CookieManagerTest);
 
+    static void cookiesChangedCallback(WebKitCookieManager*, CookieManagerTest* test)
+    {
+        test->m_cookiesChanged = true;
+        if (test->m_finishLoopWhenCookiesChange)
+            g_main_loop_quit(test->m_mainLoop);
+    }
+
     CookieManagerTest()
         : WebViewTest()
         , m_cookieManager(webkit_web_context_get_cookie_manager(webkit_web_view_get_context(m_webView)))
         , m_acceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY)
         , m_domains(0)
+        , m_cookiesChanged(false)
+        , m_finishLoopWhenCookiesChange(false)
     {
+        g_signal_connect(m_cookieManager, "changed", G_CALLBACK(cookiesChangedCallback), this);
     }
 
     ~CookieManagerTest()
     {
         g_strfreev(m_domains);
+        g_signal_handlers_disconnect_matched(m_cookieManager, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
     }
 
     static void getAcceptPolicyReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
@@ -105,9 +116,19 @@ public:
         webkit_cookie_manager_delete_all_cookies(m_cookieManager);
     }
 
+    void waitUntilCookiesChanged()
+    {
+        m_cookiesChanged = false;
+        m_finishLoopWhenCookiesChange = true;
+        g_main_loop_run(m_mainLoop);
+        m_finishLoopWhenCookiesChange = false;
+    }
+
     WebKitCookieManager* m_cookieManager;
     WebKitCookieAcceptPolicy m_acceptPolicy;
     char** m_domains;
+    bool m_cookiesChanged;
+    bool m_finishLoopWhenCookiesChange;
 };
 
 static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer)
@@ -166,6 +187,23 @@ static void testCookieManagerDeleteCookies(CookieManagerTest* test, gconstpointe
     g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
 }
 
+static void testCookieManagerCookiesChanged(CookieManagerTest* test, gconstpointer)
+{
+    g_assert(!test->m_cookiesChanged);
+    test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
+    test->loadURI(kServer->getURIForPath("/index.html").data());
+    test->waitUntilLoadFinished();
+    g_assert(test->m_cookiesChanged);
+
+    test->deleteCookiesForDomain(kFirstPartyDomain);
+    test->waitUntilCookiesChanged();
+    g_assert(test->m_cookiesChanged);
+
+    test->deleteAllCookies();
+    test->waitUntilCookiesChanged();
+    g_assert(test->m_cookiesChanged);
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -192,6 +230,7 @@ void beforeAll()
 
     CookieManagerTest::add("WebKitCookieManager", "accept-policy", testCookieManagerAcceptPolicy);
     CookieManagerTest::add("WebKitCookieManager", "delete-cookies", testCookieManagerDeleteCookies);
+    CookieManagerTest::add("WebKitCookieManager", "cookies-changed", testCookieManagerCookiesChanged);
 }
 
 void afterAll()

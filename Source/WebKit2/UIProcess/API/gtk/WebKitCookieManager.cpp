@@ -27,9 +27,17 @@
 
 using namespace WebKit;
 
+enum {
+    CHANGED,
+
+    LAST_SIGNAL
+};
+
 struct _WebKitCookieManagerPrivate {
     WKRetainPtr<WKCookieManagerRef> wkCookieManager;
 };
+
+static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT)
 
@@ -46,7 +54,9 @@ static void webkit_cookie_manager_init(WebKitCookieManager* manager)
 
 static void webkitCookieManagerFinalize(GObject* object)
 {
-    WEBKIT_COOKIE_MANAGER(object)->priv->~WebKitCookieManagerPrivate();
+    WebKitCookieManagerPrivate* priv = WEBKIT_COOKIE_MANAGER(object)->priv;
+    WKCookieManagerStopObservingCookieChanges(priv->wkCookieManager.get());
+    priv->~WebKitCookieManagerPrivate();
     G_OBJECT_CLASS(webkit_cookie_manager_parent_class)->finalize(object);
 }
 
@@ -56,12 +66,40 @@ static void webkit_cookie_manager_class_init(WebKitCookieManagerClass* findClass
     gObjectClass->finalize = webkitCookieManagerFinalize;
 
     g_type_class_add_private(findClass, sizeof(WebKitCookieManagerPrivate));
+
+    /**
+     * WebKitCookieManager::changed:
+     * @cookie_manager: the #WebKitCookieManager
+     *
+     * This signal is emitted when cookies are added, removed or modified.
+     */
+    signals[CHANGED] =
+        g_signal_new("changed",
+                     G_TYPE_FROM_CLASS(gObjectClass),
+                     G_SIGNAL_RUN_LAST,
+                     0, 0, 0,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
+}
+
+static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo)
+{
+    g_signal_emit(WEBKIT_COOKIE_MANAGER(clientInfo), signals[CHANGED], 0);
 }
 
 WebKitCookieManager* webkitCookieManagerCreate(WKCookieManagerRef wkCookieManager)
 {
     WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, NULL));
     manager->priv->wkCookieManager = wkCookieManager;
+
+    WKCookieManagerClient wkCookieManagerClient = {
+        kWKCookieManagerClientCurrentVersion,
+        manager, // clientInfo
+        cookiesDidChange
+    };
+    WKCookieManagerSetClient(wkCookieManager, &wkCookieManagerClient);
+    WKCookieManagerStartObservingCookieChanges(wkCookieManager);
+
     return manager;
 }
 
