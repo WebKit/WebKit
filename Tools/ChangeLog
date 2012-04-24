@@ -1,3 +1,18 @@
+2012-04-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        [TestResultsServer] Add a unit test for changes in r114868
+        https://bugs.webkit.org/show_bug.cgi?id=84713
+
+        Reviewed by Ojan Vafai.
+
+        Add a new unit test to test the isToTWebKit attribute of a BuilderGroup object
+        that is created for either DEPS or ToT builder groups. The unit test covers changes
+        made in r114868.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (testBuilderGroupIsToTWebKitAttribute.g_handleBuildersListLoaded):
+        (testBuilderGroupIsToTWebKitAttribute.assertEquals):
+
 2012-04-24  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10120155> and https://bugs.webkit.org/show_bug.cgi?id=82664

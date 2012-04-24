@@ -645,6 +645,26 @@ function testAddBuilderLoadErrors()
     assertEquals(g_errorMessages, 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
 }
 
+function testBuilderGroupIsToTWebKitAttribute()
+{
+    var dummyMaster = new BuilderMaster('dummy.org', 'http://build.dummy.org');
+    var testBuilderGroups = {
+        '@ToT - dummy.org': null,
+        '@DEPS - dummy.org': null,
+    }
+    var testJSONData = "{ \"Dummy Builder 1\": null, \"Dummy Builder 2\": null }";
+
+    // Override g_handleBuildersListLoaded to avoid entering an infinite recursion
+    // as the builder lists are being loaded with dummy data.
+    g_handleBuildersListLoaded = function() { }
+
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
+    assertEquals(testBuilderGroups['@ToT - dummy.org'].isToTWebKit, true);
+
+    onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@DEPS - dummy.org', BuilderGroup.DEPS_WEBKIT, JSON.parse(testJSONData));
+    assertEquals(testBuilderGroups['@DEPS - dummy.org'].isToTWebKit, false);
+}
+
 function htmlEscape(string)
 {
     var div = document.createElement('div');
