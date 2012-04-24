@@ -180,12 +180,14 @@ const CSSParserContext& strictCSSParserContext()
     DEFINE_STATIC_LOCAL(CSSParserContext, strictContext, (CSSStrictMode));
     return strictContext;
 }
-    
+
 CSSParserContext::CSSParserContext(CSSParserMode mode)
     : mode(mode)
     , isHTMLDocument(false)
     , isCSSCustomFilterEnabled(false)
     , isCSSRegionsEnabled(false)
+    , needsSiteSpecificQuirks(false)
+    , enforcesCSSMIMETypeInNoQuirksMode(true)
 {
 }
 
@@ -195,6 +197,8 @@ CSSParserContext::CSSParserContext(Document* document)
     , isHTMLDocument(document->isHTMLDocument())
     , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)
     , isCSSRegionsEnabled(document->cssRegionsEnabled())
+    , needsSiteSpecificQuirks(document->settings() ? document->settings()->needsSiteSpecificQuirks() : false)
+    , enforcesCSSMIMETypeInNoQuirksMode(!document->settings() || document->settings()->enforceCSSMIMETypeInNoQuirksMode())
 {
 }
 

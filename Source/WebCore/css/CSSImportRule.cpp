@@ -59,53 +59,19 @@ StyleRuleImport::~StyleRuleImport()
         m_cachedSheet->removeClient(&m_styleSheetClient);
 }
 
-void StyleRuleImport::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
+void StyleRuleImport::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
 {
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
     m_styleSheet = StyleSheetInternal::create(this, href, baseURL, charset);
 
-    bool crossOriginCSS = false;
-    bool validMIMEType = false;
-    CSSParserMode cssParserMode = m_parentStyleSheet ? m_parentStyleSheet->parserContext().mode : CSSStrictMode;
-    bool enforceMIMEType = isStrictParserMode(cssParserMode);
     Document* document = m_parentStyleSheet ? m_parentStyleSheet->findDocument() : 0;
-    bool needsSiteSpecificQuirks = document && document->settings() && document->settings()->needsSiteSpecificQuirks();
-
-#ifdef BUILDING_ON_LEOPARD
-    if (enforceMIMEType && needsSiteSpecificQuirks) {
-        // Covers both http and https, with or without "www."
-        if (baseURL.string().contains("mcafee.com/japan/", false))
-            enforceMIMEType = false;
-    }
-#endif
-
-    String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
-    m_styleSheet->parseString(sheetText);
-
-    if (!document || !document->securityOrigin()->canRequest(baseURL))
-        crossOriginCSS = true;
-
-    if (crossOriginCSS && !validMIMEType && !m_styleSheet->hasSyntacticallyValidCSSHeader())
-        m_styleSheet = StyleSheetInternal::create(this, href, baseURL, charset);
-
-    if (isStrictParserMode(cssParserMode) && needsSiteSpecificQuirks) {
-        // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
-        DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
-        DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
-        // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
-        // while the other lacks the second trailing newline.
-        if (baseURL.string().endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
-                && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1) {
-            ASSERT(m_styleSheet->childRules().size() == 1);
-            m_styleSheet->clearRules();
-        }
-    }
+    m_styleSheet->parseUserStyleSheet(cachedStyleSheet, document ? document->securityOrigin() : 0);
 
     m_loading = false;
 
     if (m_parentStyleSheet) {
-        m_parentStyleSheet->notifyLoadedSheet(sheet);
+        m_parentStyleSheet->notifyLoadedSheet(cachedStyleSheet);
         m_parentStyleSheet->checkLoaded();
     }
 }

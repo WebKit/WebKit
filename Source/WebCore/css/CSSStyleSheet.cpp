@@ -266,15 +266,49 @@ const AtomicString& StyleSheetInternal::determineNamespace(const AtomicString& p
     return nullAtom; // Assume we won't match any namespaces.
 }
 
-bool StyleSheetInternal::parseString(const String &string)
+void StyleSheetInternal::parseUserStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)
 {
-    return parseStringAtLine(string, 0);
+    // Check to see if we should enforce the MIME type of the CSS resource in strict mode.
+    // Running in iWeb 2 is one example of where we don't want to - <rdar://problem/6099748>
+    bool enforceMIMEType = isStrictParserMode(m_parserContext.mode) && m_parserContext.enforcesCSSMIMETypeInNoQuirksMode;
+    bool hasValidMIMEType = false;
+    String sheetText = cachedStyleSheet->sheetText(enforceMIMEType, &hasValidMIMEType);
+
+    CSSParser p(parserContext());
+    p.parseSheet(this, sheetText, 0);
+
+    // If we're loading a stylesheet cross-origin, and the MIME type is not standard, require the CSS
+    // to at least start with a syntactically valid CSS rule.
+    // This prevents an attacker playing games by injecting CSS strings into HTML, XML, JSON, etc. etc.
+    if (!hasValidMIMEType && !hasSyntacticallyValidCSSHeader()) {
+        bool isCrossOriginCSS = !securityOrigin || !securityOrigin->canRequest(finalURL());
+        if (isCrossOriginCSS) {
+            clearRules();
+            return;
+        }
+    }
+    if (m_parserContext.needsSiteSpecificQuirks && isStrictParserMode(m_parserContext.mode)) {
+        // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
+        DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
+        DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
+        // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
+        // while the other lacks the second trailing newline.
+        if (finalURL().string().endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
+            && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1)
+            clearRules();
+    }
 }
 
-bool StyleSheetInternal::parseStringAtLine(const String& string, int startLineNumber)
+bool StyleSheetInternal::parseString(const String& sheetText)
+{
+    return parseStringAtLine(sheetText, 0);
+}
+
+bool StyleSheetInternal::parseStringAtLine(const String& sheetText, int startLineNumber)
 {
     CSSParser p(parserContext());
-    p.parseSheet(this, string, startLineNumber);
+    p.parseSheet(this, sheetText, startLineNumber);
+
     return true;
 }
 

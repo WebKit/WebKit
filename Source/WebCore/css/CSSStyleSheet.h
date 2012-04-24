@@ -36,6 +36,7 @@ class CachedCSSStyleSheet;
 class CachedResourceLoader;
 class Document;
 class MediaQuerySet;
+class SecurityOrigin;
 class StyleRuleBase;
 class StyleRuleImport;
 struct CSSNamespace;
@@ -74,8 +75,8 @@ public:
 
     void styleSheetChanged();
 
+    void parseUserStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     bool parseString(const String&);
-
     bool parseStringAtLine(const String&, int startLineNumber);
 
     bool isLoading() const;

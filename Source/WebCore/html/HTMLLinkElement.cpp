@@ -287,7 +287,7 @@ void HTMLLinkElement::finishParsingChildren()
     HTMLElement::finishParsingChildren();
 }
 
-void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
+void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
 {
     if (!inDocument()) {
         ASSERT(!m_sheet);
@@ -296,60 +296,16 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 
     RefPtr<StyleSheetInternal> styleSheet = StyleSheetInternal::create(this, href, baseURL, charset);
 
-    bool strictParsing = !document()->inQuirksMode();
-    bool enforceMIMEType = strictParsing;
-    bool crossOriginCSS = false;
-    bool validMIMEType = false;
-    bool needsSiteSpecificQuirks = document()->page() && document()->page()->settings()->needsSiteSpecificQuirks();
-
-    // Check to see if we should enforce the MIME type of the CSS resource in strict mode.
-    // Running in iWeb 2 is one example of where we don't want to - <rdar://problem/6099748>
-    if (enforceMIMEType && document()->page() && !document()->page()->settings()->enforceCSSMIMETypeInNoQuirksMode())
-        enforceMIMEType = false;
-
-#ifdef BUILDING_ON_LEOPARD
-    if (enforceMIMEType && needsSiteSpecificQuirks) {
-        // Covers both http and https, with or without "www."
-        if (baseURL.string().contains("mcafee.com/japan/", false))
-            enforceMIMEType = false;
-    }
-#endif
-
-    String sheetText = sheet->sheetText(enforceMIMEType, &validMIMEType);
-    styleSheet->parseString(sheetText);
-
-    // If we're loading a stylesheet cross-origin, and the MIME type is not
-    // standard, require the CSS to at least start with a syntactically
-    // valid CSS rule.
-    // This prevents an attacker playing games by injecting CSS strings into
-    // HTML, XML, JSON, etc. etc.
-    if (!document()->securityOrigin()->canRequest(baseURL))
-        crossOriginCSS = true;
-
-    if (crossOriginCSS && !validMIMEType && !styleSheet->hasSyntacticallyValidCSSHeader())
-        styleSheet = StyleSheetInternal::create(this, href, baseURL, charset);
-
-    if (strictParsing && needsSiteSpecificQuirks) {
-        // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
-        DEFINE_STATIC_LOCAL(const String, slashKHTMLFixesDotCss, ("/KHTMLFixes.css"));
-        DEFINE_STATIC_LOCAL(const String, mediaWikiKHTMLFixesStyleSheet, ("/* KHTML fix stylesheet */\n/* work around the horizontal scrollbars */\n#column-content { margin-left: 0; }\n\n"));
-        // There are two variants of KHTMLFixes.css. One is equal to mediaWikiKHTMLFixesStyleSheet,
-        // while the other lacks the second trailing newline.
-        if (baseURL.string().endsWith(slashKHTMLFixesDotCss) && !sheetText.isNull() && mediaWikiKHTMLFixesStyleSheet.startsWith(sheetText)
-                && sheetText.length() >= mediaWikiKHTMLFixesStyleSheet.length() - 1) {
-            ASSERT(styleSheet->ruleCount() == 1);
-            styleSheet->clearRules();
-        }
-    }
-    m_sheet = CSSStyleSheet::create(styleSheet);
-
-    styleSheet->setTitle(title());
+    styleSheet->parseUserStyleSheet(cachedStyleSheet, document()->securityOrigin());
 
     RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
     styleSheet->setMediaQueries(media.release());
+    styleSheet->setTitle(title());
+
+    m_sheet = CSSStyleSheet::create(styleSheet);
 
     m_loading = false;
-    styleSheet->notifyLoadedSheet(sheet);
+    styleSheet->notifyLoadedSheet(cachedStyleSheet);
     styleSheet->checkLoaded();
 }
 
