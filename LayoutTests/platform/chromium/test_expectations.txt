@@ -3717,3 +3717,5 @@ BUGCR124779 : media/track/track-cues-pause-on-exit.html = CRASH
 BUGCR124779 : media/track/track-cues-sorted-before-dispatch.html = CRASH
 
 BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
+
+BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html = TEXT PASS
