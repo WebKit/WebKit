@@ -398,6 +398,27 @@ void EventSendingController::setTouchModifier(const JSStringRef &modifier, bool 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
 }
 
+
+void EventSendingController::setTouchPointRadius(int radiusX, int radiusY)
+{
+    WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
+    WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> subMessageKey(AdoptWK, WKStringCreateWithUTF8CString("SubMessage"));
+    WKRetainPtr<WKStringRef> subMessageName(AdoptWK, WKStringCreateWithUTF8CString("SetTouchPointRadius"));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), subMessageKey.get(), subMessageName.get());
+
+    WKRetainPtr<WKStringRef> xKey(AdoptWK, WKStringCreateWithUTF8CString("RadiusX"));
+    WKRetainPtr<WKUInt64Ref> xRef(AdoptWK, WKUInt64Create(radiusX));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), xKey.get(), xRef.get());
+
+    WKRetainPtr<WKStringRef> yKey(AdoptWK, WKStringCreateWithUTF8CString("RadiusY"));
+    WKRetainPtr<WKUInt64Ref> yRef(AdoptWK, WKUInt64Create(radiusY));
+    WKDictionaryAddItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
+
+    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
+}
+
 void EventSendingController::touchStart()
 {
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));

@@ -1,3 +1,28 @@
+2012-04-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt][WK2] Convert touch-point area
+        https://bugs.webkit.org/show_bug.cgi?id=84434
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix failing test after r114917 by also adding the new EventSender API
+        to WebKitTestRunner.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        (EventSenderProxy):
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::setTouchPointRadius):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        (EventSendingController):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::addTouchPoint):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::setTouchPointRadius):
+        (WTR::EventSenderProxy::clearTouchPoints):
+
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.

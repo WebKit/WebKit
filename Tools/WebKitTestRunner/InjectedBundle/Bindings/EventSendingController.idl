@@ -47,6 +47,7 @@ module WTR {
         void addTouchPoint(in long x, in long y);
         void updateTouchPoint(in long index, in long x, in long y);
         void setTouchModifier(in DOMString modifier, in boolean enable);
+        void setTouchPointRadius(in long radiusX, in long radiusY);
         void touchStart();
         void touchMove();
         void touchEnd();

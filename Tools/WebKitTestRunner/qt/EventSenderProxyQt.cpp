@@ -318,15 +318,20 @@ void EventSenderProxy::addTouchPoint(int x, int y)
     point.setPos(pos);
     point.setStartPos(pos);
     point.setState(Qt::TouchPointPressed);
+    if (!m_touchPointRadius.isNull())
+        point.setRect(QRectF(pos - m_touchPointRadius, pos + m_touchPointRadius));
     m_touchPoints.append(point);
 }
 
 void EventSenderProxy::updateTouchPoint(int index, int x, int y)
 {
     ASSERT(index >= 0 && index < m_touchPoints.count());
+    QPointF pos(x, y);
     QTouchEvent::TouchPoint &p = m_touchPoints[index];
-    p.setPos(QPointF(x, y));
+    p.setPos(pos);
     p.setState(Qt::TouchPointMoved);
+    if (!m_touchPointRadius.isNull())
+        p.setRect(QRectF(pos - m_touchPointRadius, pos + m_touchPointRadius));
 }
 
 void EventSenderProxy::setTouchModifier(WKEventModifiers modifier, bool enable)
@@ -337,6 +342,11 @@ void EventSenderProxy::setTouchModifier(WKEventModifiers modifier, bool enable)
         m_touchModifiers |= mod;
     else
         m_touchModifiers &= ~mod;
+}
+
+void EventSenderProxy::setTouchPointRadius(int radiusX, int radiusY)
+{
+    m_touchPointRadius = QPoint(radiusX, radiusY);
 }
 
 void EventSenderProxy::touchStart()
@@ -376,6 +386,7 @@ void EventSenderProxy::clearTouchPoints()
     m_touchPoints.clear();
     m_touchModifiers = Qt::KeyboardModifiers();
     m_touchActive = false;
+    m_touchPointRadius = QPoint();
 }
 
 void EventSenderProxy::releaseTouchPoint(int index)

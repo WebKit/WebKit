@@ -707,6 +707,17 @@ WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedB
             return 0;
         }
 
+        if (WKStringIsEqualToUTF8CString(subMessageName, "SetTouchPointRadius")) {
+            WKRetainPtr<WKStringRef> xKey = adoptWK(WKStringCreateWithUTF8CString("RadiusX"));
+            int x = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, xKey.get()))));
+
+            WKRetainPtr<WKStringRef> yKey = adoptWK(WKStringCreateWithUTF8CString("RadiusY"));
+            int y = static_cast<int>(WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, yKey.get()))));
+
+            m_eventSenderProxy->setTouchPointRadius(x, y);
+            return 0;
+        }
+
         if (WKStringIsEqualToUTF8CString(subMessageName, "TouchStart")) {
             WKPageSetShouldSendEventsSynchronously(mainWebView()->page(), true);
             m_eventSenderProxy->touchStart();
