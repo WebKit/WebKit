@@ -3712,3 +3712,5 @@ BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT 
 BUGWK84712 VISTA : http/tests/inspector/network/x-frame-options-deny.html = TIMEOUT PASS
 
 BUGWK84714 SNOWLEOPARD : compositing/geometry/empty-embed-rects.html = TIMEOUT PASS
+
+BUGWK84719 WIN : svg/text/select-text-svgfont.html = TEXT PASS
