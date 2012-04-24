@@ -327,7 +327,7 @@ void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
     FrameView* frameView = m_page->mainFrame()->view();
 
     // FIXME: Having fixed objects on the page should not trigger the slow path.
-    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates || frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects());
+    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates || frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects() || m_page->mainFrame()->document()->isImageDocument());
 }
 
 void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool forceMainThreadScrollLayerPositionUpdates)
