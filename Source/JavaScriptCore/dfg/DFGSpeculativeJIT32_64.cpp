@@ -2055,7 +2055,7 @@ void SpeculativeJIT::compile(Node& node)
     }
         
     case CheckNumber: {
-        if (!isPredictedNumber(m_state.forNode(node.child1()).m_type)) {
+        if (!isNumberPrediction(m_state.forNode(node.child1()).m_type)) {
             JSValueOperand op1(this, node.child1());
             JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, op1.tagGPR(), TrustedImm32(JSValue::Int32Tag));
             speculationCheck(
