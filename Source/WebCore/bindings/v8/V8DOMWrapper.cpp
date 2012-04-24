@@ -87,7 +87,11 @@ v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, 
     Frame* frame = window->frame();
     if (!frame)
         return v8::Local<v8::Function>();
-    return V8Proxy::retrievePerContextData(frame)->constructorForType(type);
+
+    if (V8BindingPerContextData* contextData = V8Proxy::retrievePerContextData(frame))
+        return contextData->constructorForType(type);
+
+    return v8::Local<v8::Function>();
 }
 
 #if ENABLE(WORKERS)
