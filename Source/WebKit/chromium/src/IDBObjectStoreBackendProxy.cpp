@@ -74,14 +74,6 @@ PassRefPtr<DOMStringList> IDBObjectStoreBackendProxy::indexNames() const
     return m_webIDBObjectStore->indexNames();
 }
 
-void IDBObjectStoreBackendProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
-{
-    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
-    // all implementations of IDB interfaces are proxy objects.
-    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBObjectStore->get(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
-}
-
 void IDBObjectStoreBackendProxy::get(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

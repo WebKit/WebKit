@@ -65,8 +65,6 @@ public:
         return WebDOMStringList();
     }
 
-    virtual void get(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-
     virtual void get(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     enum PutMode {

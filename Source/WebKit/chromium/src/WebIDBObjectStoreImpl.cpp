@@ -67,11 +67,6 @@ WebDOMStringList WebIDBObjectStoreImpl::indexNames() const
     return m_objectStore->indexNames();
 }
 
-void WebIDBObjectStoreImpl::get(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
-{
-    m_objectStore->get(key, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
-}
-
 void WebIDBObjectStoreImpl::get(const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     m_objectStore->get(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);

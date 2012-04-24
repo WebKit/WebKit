@@ -52,7 +52,6 @@ public:
     virtual PassRefPtr<DOMStringList> indexNames() const = 0;
 
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
-    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
     enum PutMode {
         AddOrUpdate,
