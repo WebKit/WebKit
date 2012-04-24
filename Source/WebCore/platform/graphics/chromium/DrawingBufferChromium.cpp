@@ -35,8 +35,9 @@
 #include "CanvasRenderingContext.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-#include "WebGLLayerChromium.h"
+#include "TextureLayerChromium.h"
 #include "cc/CCProxy.h"
+#include "cc/CCTextureUpdater.h"
 #include <algorithm>
 
 using namespace std;
@@ -90,9 +91,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
 
 DrawingBuffer::~DrawingBuffer()
 {
-    if (m_platformLayer)
-        m_platformLayer->setDrawingBuffer(0);
-
     if (!m_context)
         return;
 
@@ -149,16 +147,56 @@ unsigned DrawingBuffer::frontColorBuffer() const
 }
 #endif
 
+class DrawingBufferPrivate : public TextureLayerChromiumClient {
+    WTF_MAKE_NONCOPYABLE(DrawingBufferPrivate);
+public:
+    explicit DrawingBufferPrivate(DrawingBuffer* drawingBuffer)
+        : m_drawingBuffer(drawingBuffer)
+        , m_layer(TextureLayerChromium::create(this))
+    {
+        GraphicsContext3D::Attributes attributes = m_drawingBuffer->graphicsContext3D()->getContextAttributes();
+        m_layer->setOpaque(!attributes.alpha);
+        m_layer->setPremultipliedAlpha(attributes.premultipliedAlpha);
+    }
+
+    virtual ~DrawingBufferPrivate()
+    {
+        m_layer->clearClient();
+    }
+
+    virtual unsigned prepareTexture(CCTextureUpdater& updater) OVERRIDE
+    {
+        m_drawingBuffer->prepareBackBuffer();
+
+        context()->flush();
+        context()->markLayerComposited();
+
+        unsigned textureId = m_drawingBuffer->frontColorBuffer();
+        if (m_drawingBuffer->requiresCopyFromBackToFrontBuffer())
+            updater.appendCopy(m_drawingBuffer->colorBuffer(), textureId, m_drawingBuffer->size());
+
+        return textureId;
+    }
+
+    virtual GraphicsContext3D* context() OVERRIDE
+    {
+        return m_drawingBuffer->graphicsContext3D();
+    }
+
+    LayerChromium* layer() const { return m_layer.get(); }
+
+private:
+    DrawingBuffer* m_drawingBuffer;
+    RefPtr<TextureLayerChromium> m_layer;
+};
+
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
-    if (!m_platformLayer) {
-        m_platformLayer = WebGLLayerChromium::create();
-        m_platformLayer->setDrawingBuffer(this);
-        m_platformLayer->setOpaque(m_alpha == Opaque);
-    }
+    if (!m_private)
+        m_private = adoptPtr(new DrawingBufferPrivate(this));
 
-    return m_platformLayer.get();
+    return m_private->layer();
 }
 #endif
 

@@ -1,3 +1,17 @@
+2012-04-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use TextureLayerChromium for WebGL content instead of a dedicated layer type
+        https://bugs.webkit.org/show_bug.cgi?id=84311
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebExternalTextureLayer::create):
+        * src/WebLayer.cpp:
+        * tests/WebGLLayerChromiumTest.cpp: Removed.
+        * tests/WebLayerTest.cpp:
+
 2012-04-23  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: remove IDB(Index|ObjectStore)BackendImpl::get/getKey for IDBKey

@@ -60,12 +60,10 @@ public:
     // Sets whether or not the texture should be flipped in the Y direction when
     // rendered.
     WEBKIT_EXPORT void setFlipped(bool);
-    WEBKIT_EXPORT bool flipped() const;
 
     // Sets the rect in UV space of the texture that is mapped to the layer
     // bounds.
     WEBKIT_EXPORT void setUVRect(const WebFloatRect&);
-    WEBKIT_EXPORT WebFloatRect uvRect() const;
 
 private:
 #if WEBKIT_IMPLEMENTATION

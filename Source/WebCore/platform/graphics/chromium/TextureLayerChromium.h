@@ -33,34 +33,73 @@
 
 namespace WebCore {
 
+class TextureLayerChromiumClient {
+public:
+    // Called to prepare this layer's texture for compositing. The client may queue a texture
+    // upload or copy on the CCTextureUpdater.
+    // Returns the texture ID to be used for compositing.
+    virtual unsigned prepareTexture(CCTextureUpdater&) = 0;
+
+    // Returns the context that is providing the texture. Used for rate limiting and detecting lost context.
+    virtual GraphicsContext3D* context() = 0;
+
+protected:
+    virtual ~TextureLayerChromiumClient() { }
+};
+
 // A Layer containing a the rendered output of a plugin instance.
 class TextureLayerChromium : public LayerChromium {
 public:
-    static PassRefPtr<TextureLayerChromium> create();
+    // If this texture layer requires special preparation logic for each frame driven by
+    // the compositor, pass in a non-nil client. Pass in a nil client pointer if texture updates
+    // are driven by an external process.
+    static PassRefPtr<TextureLayerChromium> create(TextureLayerChromiumClient*);
+    virtual ~TextureLayerChromium();
+
+    void clearClient() { m_client = 0; }
 
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
 
-    virtual bool drawsContent() const OVERRIDE;
+    // Sets whether this texture should be Y-flipped at draw time. Defaults to true.
+    void setFlipped(bool);
+
+    // Sets a UV transform to be used at draw time. Defaults to (0, 0, 1, 1).
+    void setUVRect(const FloatRect&);
+
+    // Sets whether the alpha channel is premultiplied or unpremultiplied. Defaults to true.
+    void setPremultipliedAlpha(bool);
+
+    // Sets whether this context should rate limit on damage to prevent too many frames from
+    // being queued up before the compositor gets a chance to run. Requires a non-nil client.
+    // Defaults to false.
+    void setRateLimitContext(bool);
 
     // Code path for plugins which supply their own texture ID.
     void setTextureId(unsigned);
-    void setFlipped(bool);
-    bool flipped() const { return m_flipped; }
-    void setUVRect(const FloatRect&);
-    const FloatRect& uvRect() const { return m_uvRect; }
 
     // Code path for plugins which render via an IOSurface.
     void setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId);
 
+    virtual void setNeedsDisplayRect(const FloatRect&) OVERRIDE;
+
+    virtual bool drawsContent() const OVERRIDE;
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
 protected:
-    TextureLayerChromium();
+    explicit TextureLayerChromium(TextureLayerChromiumClient*);
 
 private:
-    unsigned m_textureId;
+    TextureLayerChromiumClient* m_client;
+
     bool m_flipped;
     FloatRect m_uvRect;
+    bool m_premultipliedAlpha;
+    bool m_rateLimitContext;
+    bool m_contextLost;
+
+    unsigned m_textureId;
+
     IntSize m_ioSurfaceSize;
     uint32_t m_ioSurfaceId;
 };

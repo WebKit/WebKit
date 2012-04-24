@@ -29,38 +29,39 @@
 
 #include "TextureLayerChromium.h"
 
+#include "Extensions3D.h"
+#include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureLayerImpl.h"
 
 namespace WebCore {
 
-PassRefPtr<TextureLayerChromium> TextureLayerChromium::create()
+PassRefPtr<TextureLayerChromium> TextureLayerChromium::create(TextureLayerChromiumClient* client)
 {
-    return adoptRef(new TextureLayerChromium);
+    return adoptRef(new TextureLayerChromium(client));
 }
 
-TextureLayerChromium::TextureLayerChromium()
+TextureLayerChromium::TextureLayerChromium(TextureLayerChromiumClient* client)
     : LayerChromium()
-    , m_textureId(0)
+    , m_client(client)
     , m_flipped(true)
     , m_uvRect(0, 0, 1, 1)
+    , m_premultipliedAlpha(true)
+    , m_rateLimitContext(false)
+    , m_contextLost(false)
+    , m_textureId(0)
     , m_ioSurfaceId(0)
 {
+}
+
+TextureLayerChromium::~TextureLayerChromium()
+{
+    if (m_rateLimitContext && m_client && layerTreeHost())
+        layerTreeHost()->stopRateLimiter(m_client->context());
 }
 
 PassOwnPtr<CCLayerImpl> TextureLayerChromium::createCCLayerImpl()
 {
     return CCTextureLayerImpl::create(m_layerId);
-}
-
-bool TextureLayerChromium::drawsContent() const
-{
-    return (m_textureId || m_ioSurfaceId) && LayerChromium::drawsContent();
-}
-
-void TextureLayerChromium::setTextureId(unsigned id)
-{
-    m_textureId = id;
-    setNeedsCommit();
 }
 
 void TextureLayerChromium::setFlipped(bool flipped)
@@ -75,6 +76,26 @@ void TextureLayerChromium::setUVRect(const FloatRect& rect)
     setNeedsCommit();
 }
 
+void TextureLayerChromium::setPremultipliedAlpha(bool premultipliedAlpha)
+{
+    m_premultipliedAlpha = premultipliedAlpha;
+    setNeedsCommit();
+}
+
+void TextureLayerChromium::setRateLimitContext(bool rateLimit)
+{
+    if (!rateLimit && m_rateLimitContext && m_client && layerTreeHost())
+        layerTreeHost()->stopRateLimiter(m_client->context());
+
+    m_rateLimitContext = rateLimit;
+}
+
+void TextureLayerChromium::setTextureId(unsigned id)
+{
+    m_textureId = id;
+    setNeedsCommit();
+}
+
 void TextureLayerChromium::setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId)
 {
     m_ioSurfaceSize = IntSize(width, height);
@@ -82,14 +103,38 @@ void TextureLayerChromium::setIOSurfaceProperties(int width, int height, uint32_
     setNeedsCommit();
 }
 
+void TextureLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
+{
+    LayerChromium::setNeedsDisplayRect(dirtyRect);
+
+    if (m_rateLimitContext && m_client && layerTreeHost())
+        layerTreeHost()->startRateLimiter(m_client->context());
+}
+
+bool TextureLayerChromium::drawsContent() const
+{
+    return (m_client || m_textureId || m_ioSurfaceId) && !m_contextLost && LayerChromium::drawsContent();
+}
+
+void TextureLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*)
+{
+    if (m_client) {
+        m_textureId = m_client->prepareTexture(updater);
+        m_contextLost = m_client->context()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
+    }
+
+    m_needsDisplay = false;
+}
+
 void TextureLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     LayerChromium::pushPropertiesTo(layer);
 
     CCTextureLayerImpl* textureLayer = static_cast<CCTextureLayerImpl*>(layer);
-    textureLayer->setTextureId(m_textureId);
     textureLayer->setFlipped(m_flipped);
     textureLayer->setUVRect(m_uvRect);
+    textureLayer->setPremultipliedAlpha(m_premultipliedAlpha);
+    textureLayer->setTextureId(m_textureId);
     textureLayer->setIOSurfaceProperties(m_ioSurfaceSize, m_ioSurfaceId);
 }
 

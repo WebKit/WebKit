@@ -3600,8 +3600,6 @@
             'platform/graphics/chromium/VDMXParser.h',
             'platform/graphics/chromium/VideoLayerChromium.cpp',
             'platform/graphics/chromium/VideoLayerChromium.h',
-            'platform/graphics/chromium/WebGLLayerChromium.cpp',
-            'platform/graphics/chromium/WebGLLayerChromium.h',
             'platform/graphics/chromium/cc/CCActiveAnimation.cpp',
             'platform/graphics/chromium/cc/CCActiveAnimation.h',
             'platform/graphics/chromium/cc/CCActiveGestureAnimation.cpp',

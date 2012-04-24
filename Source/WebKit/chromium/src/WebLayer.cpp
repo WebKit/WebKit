@@ -31,12 +31,10 @@
 #include "SkMatrix44.h"
 #include "TransformationMatrix.h"
 #include "WebLayerImpl.h"
-
+#include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebFloatRect.h>
 #include <public/WebSize.h>
-
-#include <public/WebFilterOperations.h>
 
 using namespace WebCore;
 

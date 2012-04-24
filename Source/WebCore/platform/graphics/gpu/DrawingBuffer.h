@@ -48,7 +48,7 @@ class CanvasRenderingContext;
 class GraphicsContext3D;
 class ImageData;
 #if PLATFORM(CHROMIUM)
-class WebGLLayerChromium;
+class DrawingBufferPrivate;
 #endif
 
 // Manages a rendering target (framebuffer + attachment) for a canvas.  Can publish its rendering
@@ -130,7 +130,7 @@ public:
     void paintCompositedResultsToCanvas(CanvasRenderingContext*);
 #endif
 
-    PassRefPtr<GraphicsContext3D> graphicsContext3D() const { return m_context; }
+    GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
 
 private:
     DrawingBuffer(GraphicsContext3D*, const IntSize&, bool multisampleExtensionSupported,
@@ -166,7 +166,7 @@ private:
     Platform3DObject m_multisampleColorBuffer;
 
 #if PLATFORM(CHROMIUM)
-    RefPtr<WebGLLayerChromium> m_platformLayer;
+    OwnPtr<DrawingBufferPrivate> m_private;
 #endif
 
 #if PLATFORM(MAC)

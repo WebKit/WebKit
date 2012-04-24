@@ -55,7 +55,6 @@ public:
 
     unsigned textureId() const { return m_textureId; }
     void setTextureId(unsigned id) { m_textureId = id; }
-    void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     void setPremultipliedAlpha(bool premultipliedAlpha) { m_premultipliedAlpha = premultipliedAlpha; }
     void setFlipped(bool flipped) { m_flipped = flipped; }
     void setUVRect(const FloatRect& rect) { m_uvRect = rect; }
@@ -68,7 +67,6 @@ private:
     virtual const char* layerTypeAsString() const OVERRIDE { return "TextureLayer"; }
 
     unsigned m_textureId;
-    bool m_hasAlpha;
     bool m_premultipliedAlpha;
     bool m_flipped;
     FloatRect m_uvRect;

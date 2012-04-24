@@ -36,7 +36,7 @@ namespace WebKit {
 
 WebExternalTextureLayer WebExternalTextureLayer::create()
 {
-    RefPtr<TextureLayerChromium> layer = TextureLayerChromium::create();
+    RefPtr<TextureLayerChromium> layer = TextureLayerChromium::create(0);
     layer->setIsDrawable(true);
     return WebExternalTextureLayer(layer.release());
 }
@@ -56,19 +56,9 @@ void WebExternalTextureLayer::setFlipped(bool flipped)
     unwrap<TextureLayerChromium>()->setFlipped(flipped);
 }
 
-bool WebExternalTextureLayer::flipped() const
-{
-    return constUnwrap<TextureLayerChromium>()->flipped();
-}
-
 void WebExternalTextureLayer::setUVRect(const WebFloatRect& rect)
 {
     unwrap<TextureLayerChromium>()->setUVRect(rect);
-}
-
-WebFloatRect WebExternalTextureLayer::uvRect() const
-{
-    return WebFloatRect(constUnwrap<TextureLayerChromium>()->uvRect());
 }
 
 WebExternalTextureLayer::WebExternalTextureLayer(PassRefPtr<TextureLayerChromium> layer)

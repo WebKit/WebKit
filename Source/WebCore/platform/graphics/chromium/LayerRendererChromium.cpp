@@ -51,7 +51,6 @@
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
 #include "TreeSynchronizer.h"
-#include "WebGLLayerChromium.h"
 #include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
@@ -1067,7 +1066,7 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
 
-    if (quad->hasAlpha() && !quad->premultipliedAlpha())
+    if (!quad->premultipliedAlpha())
         GLC(context(), context()->blendFunc(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 
     const IntSize& bounds = quad->quadRect().size();

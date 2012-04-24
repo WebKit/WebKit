@@ -164,13 +164,11 @@ TEST_F(WebLayerTest, Client)
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
     textureLayer.setFlipped(true);
     Mock::VerifyAndClearExpectations(&m_client);
-    EXPECT_TRUE(textureLayer.flipped());
 
     EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
     WebFloatRect uvRect(0.1f, 0.1f, 0.9f, 0.9f);
     textureLayer.setUVRect(uvRect);
     Mock::VerifyAndClearExpectations(&m_client);
-    EXPECT_TRUE(textureLayer.flipped());
 
 
     // Content layer.

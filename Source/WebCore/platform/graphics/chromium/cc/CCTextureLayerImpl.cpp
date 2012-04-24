@@ -41,7 +41,6 @@ namespace WebCore {
 CCTextureLayerImpl::CCTextureLayerImpl(int id)
     : CCLayerImpl(id)
     , m_textureId(0)
-    , m_hasAlpha(true)
     , m_premultipliedAlpha(true)
     , m_flipped(true)
     , m_uvRect(0, 0, 1, 1)
@@ -93,7 +92,7 @@ void CCTextureLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_hasAlpha, m_premultipliedAlpha, m_uvRect, m_flipped, m_ioSurfaceSize, m_ioSurfaceTextureId));
+    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_premultipliedAlpha, m_uvRect, m_flipped, m_ioSurfaceSize, m_ioSurfaceTextureId));
 }
 
 void CCTextureLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
