@@ -773,7 +773,7 @@ fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
 
 # The EFL port has no support for usermedia
-fast/dom/MediaStream
+fast/mediastream
 
 # The EFL port has no support for the Fullscreen API
 fullscreen
@@ -1724,11 +1724,6 @@ fast/lists/ol-reversed-simple.xhtml
 fast/loader/local-CSS-from-local.html
 fast/loader/local-JavaScript-from-local.html
 fast/loader/local-image-from-local.html
-fast/mediastream/peerconnection-Attributes.html
-fast/mediastream/peerconnection-addstream.html
-fast/mediastream/peerconnection-argument-types.html
-fast/mediastream/peerconnection-eventlistener-optional-argument.html
-fast/mediastream/peerconnection-removestream.html
 fast/multicol
 fast/overflow/overflow-float-stacking.html
 fast/overflow/overflow-stacking.html

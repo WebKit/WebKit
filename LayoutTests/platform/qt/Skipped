@@ -95,7 +95,6 @@ fast/speech
 fast/events/constructors/speech-recognition-event-constructor.html
 
 # ENABLE(MEDIA_STREAM) is disabled.
-fast/dom/MediaStream
 fast/mediastream
 
 # ENABLE(DIRECTORY_UPLOAD) is disabled.

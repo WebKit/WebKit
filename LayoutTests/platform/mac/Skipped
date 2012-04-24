@@ -237,7 +237,6 @@ fast/speech
 fast/events/constructors/speech-recognition-event-constructor.html
 
 # Media Stream API is not yet enabled.
-fast/dom/MediaStream
 fast/mediastream
 
 # Needs to be fixed at image decoder layer for Safari.

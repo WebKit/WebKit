@@ -1,4 +1,4 @@
-description("Tests the acceptable types for arguments to method for DeprecatedPeerConnection defination.");
+description("Tests the acceptable types for arguments to navigator.getUserMedia methods.");
 
 function shouldNotThrow(expression)
 {
@@ -15,7 +15,7 @@ function test(expression, expressionShouldThrow, expectedException) {
         if (expectedException)
             shouldThrow(expression, '(function() { return "' + expectedException + '"; })();');
         else
-            shouldThrow(expression, '(function() { return "Error: TYPE_MISMATCH_ERR: DOM Exception 17"; })();');
+            shouldThrow(expression, '(function() { return "TypeError: Not enough arguments"; })();');
     } else {
         shouldNotThrow(expression);
     }
@@ -23,6 +23,7 @@ function test(expression, expressionShouldThrow, expectedException) {
 
 var toStringError = new Error('toString threw exception');
 var notSupportedError = new Error('NOT_SUPPORTED_ERR: DOM Exception 9');
+var typeMismatchError = new Error('TYPE_MISMATCH_ERR: DOM Exception 17');
 var emptyFunction = function() {};
 
 function ObjectThrowingException() {};
@@ -31,59 +32,57 @@ ObjectThrowingException.prototype.toString = function() {
 }
 var objectThrowingException = new ObjectThrowingException();
 
-shouldBeTrue("typeof webkitDeprecatedPeerConnection== 'function'");
+// No arguments
+test('navigator.webkitGetUserMedia()', true);
 
-// 0 Argument
-test('new webkitDeprecatedPeerConnection()', true,'TypeError: Not enough arguments');
+// 1 Argument (getUserMedia requires at least 2 arguments).
+test('navigator.webkitGetUserMedia(undefined)', true);
+test('navigator.webkitGetUserMedia(null)', true);
+test('navigator.webkitGetUserMedia({})', true);
+test('navigator.webkitGetUserMedia(objectThrowingException)', true);
+test('navigator.webkitGetUserMedia("video")', true);
+test('navigator.webkitGetUserMedia(true)', true);
+test('navigator.webkitGetUserMedia(42)', true);
+test('navigator.webkitGetUserMedia(Infinity)', true);
+test('navigator.webkitGetUserMedia(-Infinity)', true);
+test('navigator.webkitGetUserMedia(emptyFunction)', true);
 
-// 1 Argument (new webkitDeprecatedPeerConnection requires at least 2 arguments).
-test('new webkitDeprecatedPeerConnection("STUN 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("STUN relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("STUN example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("STUNS 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("STUNS relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("STUNS example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURN 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURN relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURN example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURNS 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURNS relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURNS example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURN NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("TURNS NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("STUN NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("STUNS NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("undefined")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection("null")', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection({})', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection(42)', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection(Infinity)', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection(-Infinity)', true, 'TypeError: Not enough arguments');
-test('new webkitDeprecatedPeerConnection(emptyFunction)', true, 'TypeError: Not enough arguments');
+// 2 Arguments.
+test('navigator.webkitGetUserMedia("video", emptyFunction)', false);
+test('navigator.webkitGetUserMedia(undefined, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia(null, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia({}, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia(objectThrowingException, emptyFunction)', true, toStringError);
+test('navigator.webkitGetUserMedia(true, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia(42, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia(Infinity, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia(-Infinity, emptyFunction)', true, notSupportedError);
+test('navigator.webkitGetUserMedia(emptyFunction, emptyFunction)', true, notSupportedError);
 
-//2 Argument
-test('new webkitDeprecatedPeerConnection("STUN 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("STUN relay.example.net:3478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("STUN example.net",emptyFunction)',false);
-test('new webkitDeprecatedPeerConnection("STUNS 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("STUNS relay.example.net:3478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("STUNS example.net",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURN 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURN relay.example.net:3478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURN example.net",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURNS 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURNS relay.example.net:3478",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURNS example.net",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURN NONE",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURNS NONE",emptyFunction)',false);
-test('new webkitDeprecatedPeerConnection("STUN NONE",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("STUNS NONE",emptyFunction)', false);
-test('new webkitDeprecatedPeerConnection("TURN NONE",undefined)',  true);
-test('new webkitDeprecatedPeerConnection("TURNS NONE",{})', true);
-test('new webkitDeprecatedPeerConnection("STUN NONE",42)',  true);
-test('new webkitDeprecatedPeerConnection("STUNS NONE",Infinity)', true);
-test('new webkitDeprecatedPeerConnection("STUNS NONE",-Infinity)', true);
+test('navigator.webkitGetUserMedia("video", "video")', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", undefined)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", null)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", {})', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", objectThrowingException)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", true)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", 42)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", Infinity)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", -Infinity)', true, typeMismatchError);
 
-
+// 3 Arguments.
+test('navigator.webkitGetUserMedia("video", emptyFunction, emptyFunction)', false);
+test('navigator.webkitGetUserMedia("video", emptyFunction, undefined)', false);
+test('navigator.webkitGetUserMedia("audio, video", emptyFunction, undefined)', false);
+test('navigator.webkitGetUserMedia("audio, somethingelse,,video", emptyFunction, undefined)', false);
+test('navigator.webkitGetUserMedia("audio, video user", emptyFunction, undefined)', false);
+test('navigator.webkitGetUserMedia("audio, video environment", emptyFunction, undefined)', false);
+test('navigator.webkitGetUserMedia("video", emptyFunction, "video")', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", emptyFunction, null)', false );
+test('navigator.webkitGetUserMedia("video", emptyFunction, {})', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", emptyFunction, objectThrowingException)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", emptyFunction, true)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", emptyFunction, 42)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", emptyFunction, Infinity)', true, typeMismatchError);
+test('navigator.webkitGetUserMedia("video", emptyFunction, -Infinity)', true, typeMismatchError);
 
 window.jsTestIsAsync = false;

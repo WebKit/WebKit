@@ -1,3 +1,46 @@
+2012-04-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Moving LT/fast/dom/MediaStream/* to LT/fast/mediastream
+        https://bugs.webkit.org/show_bug.cgi?id=82870
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/MediaStream/script-tests/argument-types.js: Removed.
+        * fast/mediastream/argument-types-expected.txt: Renamed from LayoutTests/fast/dom/MediaStream/argument-types-expected.txt.
+        * fast/mediastream/argument-types.html: Renamed from LayoutTests/fast/dom/MediaStream/argument-types.html.
+        * fast/mediastream/enabled-expected.txt: Renamed from LayoutTests/fast/dom/MediaStream/enabled-expected.txt.
+        * fast/mediastream/enabled.html: Renamed from LayoutTests/fast/dom/MediaStream/enabled.html.
+        * fast/mediastream/no-interface-object-expected.txt: Renamed from LayoutTests/fast/dom/MediaStream/no-interface-object-expected.txt.
+        * fast/mediastream/no-interface-object.html: Renamed from LayoutTests/fast/dom/MediaStream/no-interface-object.html.
+        * fast/mediastream/peerconnection-Attributes.html:
+        * fast/mediastream/peerconnection-argument-types.html:
+        * fast/mediastream/script-tests/argument-types.js:
+        (test):
+        * fast/mediastream/script-tests/enabled.js: Renamed from LayoutTests/fast/dom/MediaStream/script-tests/enabled.js.
+        (hasGetUserMediaProperty):
+        * fast/mediastream/script-tests/no-interface-object.js: Renamed from LayoutTests/fast/dom/MediaStream/script-tests/no-interface-object.js.
+        (shouldThrowReferenceError):
+        (test):
+        * fast/mediastream/script-tests/peerconnection-Attributes.js: Renamed from LayoutTests/fast/mediastream/script-tests/Attributes.js.
+        (shouldNotThrow):
+        (test):
+        (shouldBeA):
+        (shouldBeTrueA):
+        (emptyFunction):
+        (ObjectThrowingException.prototype.toString):
+        (gotStream):
+        (gotStreamFailed):
+        * fast/mediastream/script-tests/peerconnection-argument-types.js: Copied from LayoutTests/fast/mediastream/script-tests/argument-types.js.
+        (shouldNotThrow):
+        (test):
+        (emptyFunction):
+        (ObjectThrowingException.prototype.toString):
+        * platform/efl/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-04-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Failure to allocate ArrayStorage in emit_op_new_array leads to poisonous JSArray
