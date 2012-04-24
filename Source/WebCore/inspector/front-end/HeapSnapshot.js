@@ -1619,13 +1619,13 @@ WebInspector.HeapSnapshot.prototype = {
     createEdgesProvider: function(nodeIndex, filter)
     {
         var node = new WebInspector.HeapSnapshotNode(this, nodeIndex);
-        return new WebInspector.HeapSnapshotEdgesProvider(this, nodeIndex, this._parseFilter(filter), node.edges);
+        return new WebInspector.HeapSnapshotEdgesProvider(this, this._parseFilter(filter), node.edges);
     },
 
     createRetainingEdgesProvider: function(nodeIndex, filter)
     {
         var node = new WebInspector.HeapSnapshotNode(this, nodeIndex);
-        return new WebInspector.HeapSnapshotEdgesProvider(this, nodeIndex, this._parseFilter(filter), node.retainers);
+        return new WebInspector.HeapSnapshotEdgesProvider(this, this._parseFilter(filter), node.retainers);
     },
 
     createAddedNodesProvider: function(baseSnapshotId, className)
@@ -1640,20 +1640,15 @@ WebInspector.HeapSnapshot.prototype = {
         return new WebInspector.HeapSnapshotNodesProvider(this, null, nodeIndexes);
     },
 
-    createNodesProvider: function(filter)
-    {
-        return new WebInspector.HeapSnapshotNodesProvider(this, this._parseFilter(filter));
-    },
-
     createNodesProviderForClass: function(className, aggregatesKey)
     {
         return new WebInspector.HeapSnapshotNodesProvider(this, null, this.aggregates(false, aggregatesKey)[className].idxs);
     },
 
-    createNodesProviderForDominator: function(nodeIndex, filter)
+    createNodesProviderForDominator: function(nodeIndex)
     {
         var node = new WebInspector.HeapSnapshotNode(this, nodeIndex);
-        return new WebInspector.HeapSnapshotNodesProvider(this, this._parseFilter(filter), this._dominatedNodesOfNode(node));
+        return new WebInspector.HeapSnapshotNodesProvider(this, null, this._dominatedNodesOfNode(node));
     },
 
     updateStaticData: function()
@@ -1796,7 +1791,7 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator = fu
  * @constructor
  * @extends {WebInspector.HeapSnapshotFilteredOrderedIterator}
  */
-WebInspector.HeapSnapshotEdgesProvider = function(snapshot, nodeIndex, filter, edgesIter)
+WebInspector.HeapSnapshotEdgesProvider = function(snapshot, filter, edgesIter)
 {
     this.snapshot = snapshot;
     WebInspector.HeapSnapshotFilteredOrderedIterator.call(this, edgesIter, filter);

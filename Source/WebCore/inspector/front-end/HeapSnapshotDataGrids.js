@@ -301,43 +301,6 @@ WebInspector.HeapSnapshotContainmentDataGrid = function(columns)
 }
 
 WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
-    expandRoute: function(route)
-    {
-        function nextStep(parent, hopIndex)
-        {
-            if (hopIndex >= route.length) {
-                parent.element.scrollIntoViewIfNeeded(true);
-                parent.select();
-                return;
-            }
-            var nodeIndex = route[hopIndex];
-            for (var i = 0, l = parent.children.length; i < l; ++i) {
-                var child = parent.children[i];
-                if (child.snapshotNodeIndex === nodeIndex) {
-                    if (child.expanded)
-                        nextStep(child, hopIndex + 1);
-                    else {
-                        function afterExpand()
-                        {
-                            child.removeEventListener("populate complete", afterExpand, null);
-                            var lastChild = child.children[child.children.length - 1];
-                            if (!lastChild.showAll)
-                                nextStep(child, hopIndex + 1);
-                            else {
-                                child.addEventListener("populate complete", afterExpand, null);
-                                lastChild.showAll.click();
-                            }
-                        }
-                        child.addEventListener("populate complete", afterExpand, null);
-                        child.expand();
-                    }
-                    break;
-                }
-            }
-        }
-        nextStep(this.rootNode(), 0);
-    },
-
     setDataSource: function(snapshotView, snapshot, nodeIndex)
     {
         this.snapshotView = snapshotView;

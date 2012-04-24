@@ -218,8 +218,8 @@ Object.defineProperty(Array.prototype, "upperBound",
     }
 });
 
-Object.defineProperty(Array.prototype, "partition",
-{
+(function() {
+var partition = {
     /**
      * @this {Array.<number>}
      * @param {function(number,number):boolean} comparator
@@ -248,10 +248,11 @@ Object.defineProperty(Array.prototype, "partition",
         swap(this, right, storeIndex);
         return storeIndex;
     }
-});
+};
+Object.defineProperty(Array.prototype, "partition", partition);
+Object.defineProperty(Uint32Array.prototype, "partition", partition);
 
-Object.defineProperty(Array.prototype, "sortRange",
-{
+var sortRange = {
     /**
      * @this {Array.<number>}
      * @param {function(number,number):boolean} comparator
@@ -278,7 +279,10 @@ Object.defineProperty(Array.prototype, "sortRange",
             quickSortFirstK(this, comparator, leftBound, rightBound, k);
         return this;
     }
-});
+}
+Object.defineProperty(Array.prototype, "sortRange", sortRange);
+Object.defineProperty(Uint32Array.prototype, "sortRange", sortRange);
+})();
 
 Object.defineProperty(Array.prototype, "qselect",
 {

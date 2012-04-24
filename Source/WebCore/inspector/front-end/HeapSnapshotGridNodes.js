@@ -33,14 +33,15 @@
  * @extends {WebInspector.DataGridNode}
  * @param {WebInspector.HeapSnapshotSortableDataGrid} tree
  * @param {boolean} hasChildren
+ * @param {WebInspector.HeapSnapshotProviderProxy|WebInspector.HeapSnapshotIteratorsTuple} provider
  */
-WebInspector.HeapSnapshotGridNode = function(tree, hasChildren)
+WebInspector.HeapSnapshotGridNode = function(tree, hasChildren, provider)
 {
     WebInspector.DataGridNode.call(this, null, hasChildren);
     /**
-     * @type {WebInspector.HeapSnapshotProviderProxy}
+     * @type {WebInspector.HeapSnapshotProviderProxy|WebInspector.HeapSnapshotIteratorsTuple}
      */
-    this._provider = null;
+    this._provider = provider;
     this._dataGrid = tree;
     this.addEventListener("populate", this._populate, this);
 }
@@ -220,10 +221,11 @@ WebInspector.HeapSnapshotGridNode.prototype.__proto__ = WebInspector.DataGridNod
 /**
  * @constructor
  * @extends {WebInspector.HeapSnapshotGridNode}
+ * @param {WebInspector.HeapSnapshotProviderProxy} provider
  */
-WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
+WebInspector.HeapSnapshotGenericObjectNode = function(tree, node, provider)
 {
-    WebInspector.HeapSnapshotGridNode.call(this, tree, false);
+    WebInspector.HeapSnapshotGridNode.call(this, tree, false, provider);
     // node is null for DataGrid root nodes.
     if (!node)
         return;
@@ -391,52 +393,56 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype.__proto__ = WebInspector.He
 /**
  * @constructor
  * @extends {WebInspector.HeapSnapshotGenericObjectNode}
+ * @param {WebInspector.HeapSnapshotSortableDataGrid} tree
+ * @param {boolean} isFromBaseSnapshot
  */
 WebInspector.HeapSnapshotObjectNode = function(tree, isFromBaseSnapshot, edge, parentGridNode)
 {
-    WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, edge.node);
+    WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, edge.node,
+        WebInspector.HeapSnapshotObjectNode._createProvider(isFromBaseSnapshot, edge.nodeIndex, tree));
     this._referenceName = edge.name;
     this._referenceType = edge.type;
     this._propertyAccessor = edge.propertyAccessor;
     this._distanceToWindow = edge.distanceToWindow;
     this.showRetainingEdges = tree.showRetainingEdges;
     this._isFromBaseSnapshot = isFromBaseSnapshot;
-    this._provider = this._createProvider(!isFromBaseSnapshot ? tree.snapshot : tree.baseSnapshot, edge.nodeIndex, tree);
-    this.updateHasChildren(parentGridNode);
+
+    this._parentGridNode = parentGridNode;
+    this._cycledWithAncestorGridNode = this._findAncestorWithSameSnapshotNodeId();
+    if (!this._cycledWithAncestorGridNode)
+        this.updateHasChildren();
+}
+
+WebInspector.HeapSnapshotObjectNode._createProvider = function(isFromBaseSnapshot, nodeIndex, tree)
+{
+    var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
+    var filter = "function(edge) {\n" +
+        "    return !edge.isInvisible\n" +
+        "        && (" + !tree.showRetainingEdges + " || (edge.node.id !== 1 && !edge.node.isSynthetic))\n" +
+        "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));\n" +
+        "}\n";
+    var snapshot = isFromBaseSnapshot ? tree.baseSnapshot : tree.snapshot;
+    if (tree.showRetainingEdges)
+        return snapshot.createRetainingEdgesProvider(nodeIndex, filter);
+    else
+        return snapshot.createEdgesProvider(nodeIndex, filter);
 }
 
 WebInspector.HeapSnapshotObjectNode.prototype = {
-    updateHasChildren: function(parentGridNode)
+    _findAncestorWithSameSnapshotNodeId: function()
     {
-        this._parentGridNode = parentGridNode;
-        var ancestor = parentGridNode;
+        var ancestor = this._parentGridNode;
         while (ancestor) {
-            if (ancestor.snapshotNodeId === this.snapshotNodeId) {
-                this._cycledWithAncestorGridNode = ancestor;
-                return;
-            }
+            if (ancestor.snapshotNodeId === this.snapshotNodeId)
+                return ancestor;
             ancestor = ancestor._parentGridNode;
         }
-        WebInspector.HeapSnapshotGenericObjectNode.prototype.updateHasChildren.call(this);
+        return null;
     },
 
     _createChildNode: function(item)
     {
         return new WebInspector.HeapSnapshotObjectNode(this._dataGrid, this._isFromBaseSnapshot, item, this);
-    },
-
-    _createProvider: function(snapshot, nodeIndex, tree)
-    {
-        var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
-        var filter = "function(edge) {\n" +
-            "    return !edge.isInvisible\n" +
-            "        && (" + !this.showRetainingEdges + " || (edge.node.id !== 1 && !edge.node.isSynthetic))\n" +
-            "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));\n" +
-            "}\n";
-        if (tree.showRetainingEdges)
-            return snapshot.createRetainingEdgesProvider(nodeIndex, filter);
-        else
-            return snapshot.createEdgesProvider(nodeIndex, filter);
     },
 
     _childHashForEntity: function(edge)
@@ -518,27 +524,27 @@ WebInspector.HeapSnapshotObjectNode.prototype.__proto__ = WebInspector.HeapSnaps
  */
 WebInspector.HeapSnapshotInstanceNode = function(tree, baseSnapshot, snapshot, node)
 {
-    WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, node);
+    WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, node,
+        WebInspector.HeapSnapshotInstanceNode._createProvider(baseSnapshot || snapshot, node.nodeIndex));
     this._isDeletedNode = !!baseSnapshot;
-    this._provider = this._createProvider(baseSnapshot || snapshot, node.nodeIndex);
     this.updateHasChildren();
 };
+
+WebInspector.HeapSnapshotInstanceNode._createProvider = function(snapshot, nodeIndex)
+{
+    var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
+    return snapshot.createEdgesProvider(
+        nodeIndex,
+        "function(edge) {" +
+        "    return !edge.isInvisible" +
+        "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));" +
+        "}");
+}
 
 WebInspector.HeapSnapshotInstanceNode.prototype = {
     _createChildNode: function(item)
     {
         return new WebInspector.HeapSnapshotObjectNode(this._dataGrid, this._isDeletedNode, item, null);
-    },
-
-    _createProvider: function(snapshot, nodeIndex)
-    {
-        var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
-        return snapshot.createEdgesProvider(
-            nodeIndex,
-            "function(edge) {" +
-            "    return !edge.isInvisible" +
-            "        && (" + showHiddenData + " || (!edge.isHidden && !edge.node.isHidden));" +
-            "}");
     },
 
     _childHashForEntity: function(edge)
@@ -602,13 +608,13 @@ WebInspector.HeapSnapshotInstanceNode.prototype.__proto__ = WebInspector.HeapSna
  */
 WebInspector.HeapSnapshotConstructorNode = function(tree, className, aggregate, aggregatesKey)
 {
-    WebInspector.HeapSnapshotGridNode.call(this, tree, aggregate.count > 0);
+    WebInspector.HeapSnapshotGridNode.call(this, tree, aggregate.count > 0,
+        tree.snapshot.createNodesProviderForClass(className, aggregatesKey));
     this._name = className;
     this._distanceToWindow = aggregate.distanceToWindow;
     this._count = aggregate.count;
     this._shallowSize = aggregate.self;
     this._retainedSize = aggregate.maxRet;
-    this._provider = this._createNodesProvider(tree.snapshot, className, aggregatesKey);
 }
 
 WebInspector.HeapSnapshotConstructorNode.prototype = {
@@ -623,11 +629,6 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
     _createChildNode: function(item)
     {
         return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, null, this._dataGrid.snapshot, item);
-    },
-
-    _createNodesProvider: function(snapshot, className, aggregatesKey)
-    {
-        return snapshot.createNodesProviderForClass(className, aggregatesKey);
     },
 
     comparator: function()
@@ -724,7 +725,8 @@ WebInspector.HeapSnapshotIteratorsTuple.prototype = {
  */
 WebInspector.HeapSnapshotDiffNode = function(tree, className, diffForClass)
 {
-    WebInspector.HeapSnapshotGridNode.call(this, tree, true);
+    WebInspector.HeapSnapshotGridNode.call(this, tree, true,
+        WebInspector.HeapSnapshotDiffNode._createProvider(tree, className, diffForClass.deletedIndexes));
     this._name = className;
 
     this._addedCount = diffForClass.addedCount;
@@ -733,13 +735,16 @@ WebInspector.HeapSnapshotDiffNode = function(tree, className, diffForClass)
     this._addedSize = diffForClass.addedSize;
     this._removedSize = diffForClass.removedSize;
     this._sizeDelta = diffForClass.sizeDelta;
+}
 
-    this._deletedIndexes = diffForClass.deletedIndexes;
-
-    /**
-     * @type {WebInspector.HeapSnapshotIteratorsTuple}
-     */
-    this._provider = this._createNodesProvider(tree.baseSnapshot, tree.snapshot);
+WebInspector.HeapSnapshotDiffNode._createProvider = function(tree, className, deletedIndexes)
+{
+    var result =  new WebInspector.HeapSnapshotIteratorsTuple(
+        tree.snapshot.createAddedNodesProvider(tree.baseSnapshot.uid, className),
+        tree.baseSnapshot.createDeletedNodesProvider(deletedIndexes),
+        tree.baseSnapshot,
+        tree.snapshot);
+    return result;
 }
 
 WebInspector.HeapSnapshotDiffNode.prototype = {
@@ -749,16 +754,6 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
             return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, null, this._provider.snapshot, item);
         else
             return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, this._provider.baseSnapshot, null, item);
-    },
-
-    _createNodesProvider: function(baseSnapshot, snapshot)
-    {
-        var className = this._name;
-        return new WebInspector.HeapSnapshotIteratorsTuple(
-            snapshot.createAddedNodesProvider(baseSnapshot.uid, className),
-            baseSnapshot.createDeletedNodesProvider(this._deletedIndexes),
-            baseSnapshot,
-            snapshot);
     },
 
     _childHashForEntity: function(node)
@@ -838,8 +833,8 @@ WebInspector.HeapSnapshotDiffNode.prototype.__proto__ = WebInspector.HeapSnapsho
  */
 WebInspector.HeapSnapshotDominatorObjectNode = function(tree, node)
 {
-    WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, node);
-    this._provider = this._createProvider(tree.snapshot, node.nodeIndex);
+    WebInspector.HeapSnapshotGenericObjectNode.call(this, tree, node,
+        tree.snapshot.createNodesProviderForDominator(node.nodeIndex));
     this.updateHasChildren();
 };
 
@@ -847,12 +842,6 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
     _createChildNode: function(item)
     {
         return new WebInspector.HeapSnapshotDominatorObjectNode(this._dataGrid, item);
-    },
-
-    _createProvider: function(snapshot, nodeIndex)
-    {
-        return snapshot.createNodesProviderForDominator(nodeIndex,
-            "function (node) { return true; }");
     },
 
     _childHashForEntity: function(node)
