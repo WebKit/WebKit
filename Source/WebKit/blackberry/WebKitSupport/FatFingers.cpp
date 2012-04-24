@@ -306,7 +306,7 @@ bool FatFingers::findIntersectingRegions(Document* document,
 #if DEBUG_FAT_FINGERS
     IntRect fingerRect(fingerRectForPoint(frameContentPos));
     IntRect screenFingerRect = m_webPage->mapToTransformed(fingerRect);
-    log(LogLevelInfo, "fat finger rect now %s", screenFingerRect.toString().latin1().data());
+    log(LogLevelInfo, "fat finger rect now %d, %d, %d, %d", screenFingerRect.x(), screenFingerRect.y(), screenFingerRect.width(), screenFingerRect.height());
 
     // only record the first finger rect
     if (document == m_webPage->m_mainFrame->document())

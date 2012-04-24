@@ -1,3 +1,16 @@
+2012-04-23  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Build failure when DEBUG_FAT_FINGER is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=84563
+
+        Reviewed by Antonio Gomes.
+
+        Fat Finger log code uses obsolete IntRect::toString() for logging,
+        which was first implemented interally and removed later.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::findIntersectingRegions):
+
 2012-04-21  Benjamin C Meyer  <bmeyer@rim.com>
 
         Don't hard code the plugins that blackberry supports.
