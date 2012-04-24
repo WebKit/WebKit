@@ -481,6 +481,8 @@ public:
     template <typename CharType>
     ALWAYS_INLINE PassRefPtr<StringImpl> removeCharacters(const CharType* characters, CharacterMatchFunctionPtr);
 
+    size_t find(LChar character, unsigned start = 0);
+    size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
     WTF_EXPORT_PRIVATE size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
     size_t find(const LChar*, unsigned index = 0);
@@ -735,7 +737,8 @@ inline bool equalIgnoringCase(const char* a, const UChar* b, unsigned length) { 
 
 WTF_EXPORT_PRIVATE bool equalIgnoringNullity(StringImpl*, StringImpl*);
 
-inline size_t find(const LChar* characters, unsigned length, LChar matchCharacter, unsigned index = 0)
+template<typename CharacterType>
+inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
 {
     while (index < length) {
         if (characters[index] == matchCharacter)
@@ -745,14 +748,16 @@ inline size_t find(const LChar* characters, unsigned length, LChar matchCharacte
     return notFound;
 }
 
-inline size_t find(const UChar* characters, unsigned length, UChar matchCharacter, unsigned index = 0)
+ALWAYS_INLINE size_t find(const UChar* characters, unsigned length, LChar matchCharacter, unsigned index = 0)
 {
-    while (index < length) {
-        if (characters[index] == matchCharacter)
-            return index;
-        ++index;
-    }
-    return notFound;
+    return find(characters, length, static_cast<UChar>(matchCharacter), index);
+}
+
+inline size_t find(const LChar* characters, unsigned length, UChar matchCharacter, unsigned index = 0)
+{
+    if (matchCharacter & ~0xFF)
+        return notFound;
+    return find(characters, length, static_cast<LChar>(matchCharacter), index);
 }
 
 inline size_t find(const LChar* characters, unsigned length, CharacterMatchFunctionPtr matchFunction, unsigned index = 0)
@@ -799,6 +804,18 @@ inline size_t reverseFind(const UChar* characters, unsigned length, UChar matchC
             return notFound;
     }
     return index;
+}
+
+inline size_t StringImpl::find(LChar character, unsigned start)
+{
+    if (is8Bit())
+        return WTF::find(characters8(), m_length, character, start);
+    return WTF::find(characters16(), m_length, character, start);
+}
+
+ALWAYS_INLINE size_t StringImpl::find(char character, unsigned start)
+{
+    return find(static_cast<LChar>(character), start);
 }
 
 inline size_t StringImpl::find(UChar character, unsigned start)

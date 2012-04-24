@@ -633,20 +633,7 @@ static inline EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString*
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    size_t searchStringLength = searchString.length();
-
-    size_t matchStart;
-    if (searchStringLength == 1) {
-        StringImpl* searchStringImpl = searchString.impl();
-        UChar searchCharacter;
-        if (searchStringImpl->is8Bit())
-            searchCharacter = searchStringImpl->characters8()[0];
-        else
-            searchCharacter = searchStringImpl->characters16()[0];
-
-        matchStart = string.find(searchCharacter);
-    } else
-        matchStart = string.find(searchString);
+    size_t matchStart = string.find(searchString);
 
     if (matchStart == notFound)
         return JSValue::encode(jsString);
@@ -656,7 +643,7 @@ static inline EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString*
     CallType callType = getCallData(replaceValue, callData);
     if (callType != CallTypeNone) {
         MarkedArgumentBuffer args;
-        args.append(jsSubstring(exec, string, matchStart, searchStringLength));
+        args.append(jsSubstring(exec, string, matchStart, searchString.impl()->length()));
         args.append(jsNumber(matchStart));
         args.append(jsString);
         replaceValue = call(exec, replaceValue, callType, callData, jsUndefined(), args);
@@ -671,7 +658,7 @@ static inline EncodedJSValue replaceUsingStringSearch(ExecState* exec, JSString*
     StringImpl* stringImpl = string.impl();
     UString leftPart(StringImpl::create(stringImpl, 0, matchStart));
 
-    size_t matchEnd = matchStart + searchStringLength;
+    size_t matchEnd = matchStart + searchString.impl()->length();
     int ovector[2] = { matchStart,  matchEnd};
     UString middlePart = substituteBackreferences(replaceString, string, ovector, 0);
 

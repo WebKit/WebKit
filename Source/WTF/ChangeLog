@@ -1,3 +1,32 @@
+2012-04-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Generalize the single character optimization of r114072
+        https://bugs.webkit.org/show_bug.cgi?id=83961
+
+        Reviewed by Eric Seidel.
+
+        This patch makes some improvment over String::find() in the case of lookup for a single
+        character.
+
+        The two function find(UChar|LChar) are replaced by a template.
+
+        The case of searching a UChar in a 8bit string has a shortcut if the UChar cannot
+        possibly match any character in the range of the type LChar.
+
+        The slow case StringImpl::find(StringImpl*) is modified to
+        -Do not allocate in the fast case if only one string is 8bit.
+        -Use the shortcut for searching UChar in LChar.
+
+        This speed up the function by about 7% when avoiding string conversion.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF):
+        (WTF::find):
+        (WTF::StringImpl::find):
+
 2012-04-24  Darin Adler  <darin@apple.com>
 
         Iterating a HashMap<String, X> involves a string equality comparison to check for the empty value

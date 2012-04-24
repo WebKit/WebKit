@@ -1,3 +1,15 @@
+2012-04-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Generalize the single character optimization of r114072
+        https://bugs.webkit.org/show_bug.cgi?id=83961
+
+        Reviewed by Eric Seidel.
+
+        Use the regular String::find(StringImpl*) in all cases now that it has been made faster.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingStringSearch):
+
 2012-04-24  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, 32-bit build fix.
