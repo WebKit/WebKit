@@ -563,16 +563,12 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
 Vector<Attribute> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
 {
     Vector<Attribute> attributes = token.attributes();
-    Vector<unsigned, 3> indicesToRemove;
 
     for (unsigned i = 0; i < attributes.size(); ++i) {
         const QualifiedName& name = attributes.at(i).name();
         if (name.matches(nameAttr) || name.matches(actionAttr) || name.matches(promptAttr))
-            indicesToRemove.append(i);
+            attributes.remove(i);
     }
-
-    for (unsigned i = 0; i < indicesToRemove.size(); ++i)
-        attributes.remove(indicesToRemove.at(i));
 
     attributes.append(Attribute(nameAttr, isindexTag.localName()));
     return attributes;
