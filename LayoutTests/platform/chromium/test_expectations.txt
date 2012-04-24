@@ -1185,7 +1185,7 @@ BUGWK78422 WIN LINUX : svg/animations/animate-text-nested-transforms.html = TEXT
 BUGWK78830 DEBUG : svg/custom/mask-invalidation.svg = IMAGE PASS
 
 // Failing since added by r108699
-BUGWK79454 LINUX MAC DEBUG : svg/text/text-rescale.html = IMAGE PASS
+BUGWK79454 LINUX MAC : svg/text/text-rescale.html = IMAGE PASS
 BUGWK79454 LINUX MAC : svg/text/text-viewbox-rescale.html = IMAGE PASS
 
 BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
