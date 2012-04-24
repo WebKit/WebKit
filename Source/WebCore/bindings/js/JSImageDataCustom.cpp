@@ -25,11 +25,11 @@
 
 #include "config.h"
 #include "JSImageData.h"
+#include "JSUint8ClampedArray.h"
 
 #include "ImageData.h"
 #include "PlatformString.h"
 
-#include <runtime/JSByteArray.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace JSC;
@@ -47,10 +47,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData* imageD
     
     wrapper = CREATE_DOM_WRAPPER(exec, globalObject, ImageData, imageData);
     Identifier dataName(exec, "data");
-    Structure* cpaStructure = getCachedDOMStructure(globalObject, &JSByteArray::s_info);
-    if (!cpaStructure)
-        cpaStructure = cacheDOMStructure(globalObject, JSByteArray::createStructure(exec->globalData(), globalObject, jsNull(), &JSByteArray::s_info), &JSByteArray::s_info);
-    wrapper->putDirect(exec->globalData(), dataName, JSByteArray::create(exec, cpaStructure, imageData->data()->data()), DontDelete | ReadOnly);
+    wrapper->putDirect(exec->globalData(), dataName, toJS(exec, globalObject, imageData->data()), DontDelete | ReadOnly);
     exec->heap()->reportExtraMemoryCost(imageData->data()->length());
     
     return wrapper;

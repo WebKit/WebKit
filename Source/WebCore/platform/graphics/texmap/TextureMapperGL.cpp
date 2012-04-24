@@ -47,7 +47,6 @@
 #include "CairoUtilities.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
-#include <wtf/ByteArray.h>
 #endif
 
 #define GL_CMD(...) do { __VA_ARGS__; ASSERT_ARG(__VA_ARGS__, !glGetError()); } while (0)

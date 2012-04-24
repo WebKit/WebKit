@@ -121,9 +121,9 @@ void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect
 }
 
 template <bool premultiplied>
-static PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SharedBitmap* bitmap)
+static PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const SharedBitmap* bitmap)
 {
-    RefPtr<ByteArray> imageData = ByteArray::create(rect.width() * rect.height() * 4);
+    RefPtr<Uint8ClampedArray> imageData = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
 
     const unsigned char* src = static_cast<const unsigned char*>(bitmap->bytes());
     if (!src)
@@ -135,7 +135,7 @@ static PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SharedBitma
         return imageData.release();
 
     unsigned char* dst = imageData->data();
-    memset(dst, 0, imageData->length());
+    imageData->zeroFill();
     src += (sourceRect.y() * bitmap->width() + sourceRect.x()) * 4;
     dst += ((sourceRect.y() - rect.y()) * rect.width() + sourceRect.x() - rect.x()) * 4;
     int bytesToCopy = sourceRect.width() * 4;
@@ -170,17 +170,17 @@ static PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SharedBitma
     return imageData.release();
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<false>(rect, m_data.m_bitmap.get());
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<true>(rect, m_data.m_bitmap.get());
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
+void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
     SharedBitmap* bitmap = m_data.m_bitmap.get();
     unsigned char* dst = (unsigned char*)bitmap->bytes();

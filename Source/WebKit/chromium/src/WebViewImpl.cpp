@@ -156,10 +156,10 @@
 #include <public/WebLayerTreeView.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>
-#include <wtf/ByteArray.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Uint8ClampedArray.h>
 
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
@@ -1477,7 +1477,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     IntRect invertRect(rect.x(), bitmapHeight - rect.maxY(), rect.width(), rect.height());
 
     OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
-    RefPtr<ByteArray> pixelArray(ByteArray::create(rect.width() * rect.height() * 4));
+    RefPtr<Uint8ClampedArray> pixelArray(Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4));
     if (imageBuffer && pixelArray) {
         m_layerTreeView.compositeAndReadback(pixelArray->data(), invertRect);
         imageBuffer->putByteArray(Premultiplied, pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());

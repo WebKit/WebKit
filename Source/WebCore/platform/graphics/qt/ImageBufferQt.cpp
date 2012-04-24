@@ -189,17 +189,17 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 }
 
 template <Multiply multiplied>
-PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
+PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
 {
     float area = 4.0f * rect.width() * rect.height();
     if (area > static_cast<float>(std::numeric_limits<int>::max()))
         return 0;
 
-    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
+    RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
     unsigned char* data = result->data();
 
     if (rect.x() < 0 || rect.y() < 0 || rect.maxX() > size.width() || rect.maxY() > size.height())
-        memset(data, 0, result->length());
+        result->zeroFill();
 
     int originx = rect.x();
     int destx = 0;
@@ -271,12 +271,12 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
     return result.release();
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Unmultiplied>(rect, m_data, m_size);
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
@@ -297,7 +297,7 @@ static inline unsigned int premultiplyABGRtoARGB(unsigned int x)
     return x;
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
+void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);

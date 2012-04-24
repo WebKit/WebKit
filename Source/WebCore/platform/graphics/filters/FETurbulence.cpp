@@ -31,9 +31,9 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
 #include <wtf/ParallelJobs.h>
+#include <wtf/Uint8ClampedArray.h>
 
 namespace WebCore {
 
@@ -330,7 +330,7 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(int channel, Painti
     return static_cast<unsigned char>(turbulenceFunctionResult * 255);
 }
 
-inline void FETurbulence::fillRegion(ByteArray* pixelArray, PaintingData& paintingData, int startY, int endY)
+inline void FETurbulence::fillRegion(Uint8ClampedArray* pixelArray, PaintingData& paintingData, int startY, int endY)
 {
     IntRect filterRegion = absolutePaintRect();
     IntPoint point(0, filterRegion.y() + startY);
@@ -356,12 +356,12 @@ void FETurbulence::fillRegionWorker(FillRegionParameters* parameters)
 
 void FETurbulence::platformApplySoftware()
 {
-    ByteArray* pixelArray = createUnmultipliedImageResult();
+    Uint8ClampedArray* pixelArray = createUnmultipliedImageResult();
     if (!pixelArray)
         return;
 
     if (absolutePaintRect().isEmpty()) {
-        pixelArray->clear();
+        pixelArray->zeroFill();
         return;
     }
 

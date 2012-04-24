@@ -116,19 +116,19 @@ static void premultitplyScanline(void* data, size_t tileNumber)
 #endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
 #endif // USE(ACCELERATE)
 
-PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
+PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
 {
     float area = 4.0f * rect.width() * rect.height();
     if (area > static_cast<float>(std::numeric_limits<int>::max()))
         return 0;
 
-    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
+    RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
     unsigned char* data = result->data();
     
     int endx = ceilf(rect.maxX() * resolutionScale);
     int endy = ceilf(rect.maxY() * resolutionScale);
     if (rect.x() < 0 || rect.y() < 0 || endx > size.width() || endy > size.height())
-        memset(data, 0, result->length());
+        result->zeroFill();
     
     int originx = rect.x();
     int destx = 0;
@@ -342,7 +342,7 @@ PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSiz
     return result.release();
 }
 
-void ImageBufferData::putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale)
+void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);

@@ -6,8 +6,6 @@ FAIL: 'postMessage((function(){}))' should throw but didn't
 FAIL: 'postMessage(var x = 0; try { eval("badref"); } catch(e) { x = e; } x)' should throw but didn't
 PASS: 'postMessage(window)' threw TypeError: Type error
 PASS: 'postMessage(({get a() { throw "x" }}))' threw x
-FAIL: 'postMessage(imageData.data)' should throw but didn't
-FAIL: 'postMessage(mutatedImageData.data)' should throw but didn't
 PASS: 'postMessage((function() {return {get a() { throw "accessor-exn"; }};})())' threw accessor-exn
 PASS: 'postMessage((function() {var obja = {get p() { throw "accessor-exn"; }}; return {get a() { return obja; }};})())' threw accessor-exn
 PASS: lastIndex initially correct: was 3
@@ -44,7 +42,9 @@ PASS: eventData is === to eventData[0]
 PASS: eventData.graph1 is === to eventData.graph2
 PASS: eventData[0] is === to eventData[1]
 PASS: eventData is [object ImageData] of type object
+PASS: eventData is [object Uint8ClampedArray] of type object
 PASS: eventData is [object ImageData] of type object
+PASS: eventData is [object Uint8ClampedArray] of type object
 PASS: eventData is 42 of type number
 PASS: eventData is 42 of type number
 PASS: evalThunk OK

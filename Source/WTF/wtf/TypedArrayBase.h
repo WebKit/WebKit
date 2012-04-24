@@ -104,6 +104,15 @@ protected:
     }
 
     template <class Subclass>
+    static PassRefPtr<Subclass> createUninitialized(unsigned length)
+    {
+        RefPtr<ArrayBuffer> buffer = ArrayBuffer::createUninitialized(length, sizeof(T));
+        if (!buffer.get())
+            return 0;
+        return create<Subclass>(buffer, 0, length);
+    }
+
+    template <class Subclass>
     PassRefPtr<Subclass> subarrayImpl(int start, int end) const
     {
         unsigned offset, length;

@@ -92,9 +92,8 @@ public:
     {
         int width = instance->width();
         int height = instance->height();
-        RefPtr<ByteArray> byteArray = ByteArray::create(width * height * 4);
-        copyPixels(instance->toImage(), width, height, byteArray->data());
-        RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height), byteArray);
+        RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height));
+        copyPixels(instance->toImage(), width, height, imageData->data()->data());
         return toJS(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), imageData.get());
     }
 private:

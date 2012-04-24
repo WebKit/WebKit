@@ -306,7 +306,7 @@ void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) co
     CGContextTranslateCTM(platformContextToClip, -rect.x(), -rect.y() - rect.height());
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
@@ -317,7 +317,7 @@ PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect,
     return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), true, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
@@ -328,7 +328,7 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
     return m_data.getData(rect, internalSize(), m_context->isAcceleratedContext(), false, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
+void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem coordinateSystem)
 {
     if (!m_context->isAcceleratedContext()) {
         m_data.putData(source, sourceSize, sourceRect, destPoint, internalSize(), m_context->isAcceleratedContext(), multiplied == Unmultiplied, coordinateSystem == LogicalCoordinateSystem ? m_resolutionScale : 1);
@@ -440,7 +440,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
     ASSERT(uti);
 
-    RefPtr<ByteArray> premultipliedData;
+    RefPtr<Uint8ClampedArray> premultipliedData;
     RetainPtr<CGImageRef> image;
 
     if (CFEqual(uti.get(), jpegUTI())) {
@@ -480,7 +480,7 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
     RetainPtr<CGImageRef> image;
     RetainPtr<CGDataProviderRef> dataProvider;
 
-    unsigned char* data = source.data()->data()->data();
+    unsigned char* data = source.data()->data();
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
     ASSERT(uti);
     Vector<uint8_t> dataVector;

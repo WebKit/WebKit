@@ -31,9 +31,9 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Uint8ClampedArray.h>
 
 namespace WebCore {
 
@@ -154,7 +154,7 @@ void FEComponentTransfer::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    ByteArray* pixelArray = createUnmultipliedImageResult();
+    Uint8ClampedArray* pixelArray = createUnmultipliedImageResult();
     if (!pixelArray)
         return;
 
@@ -176,7 +176,7 @@ void FEComponentTransfer::platformApplySoftware()
     unsigned pixelArrayLength = pixelArray->length();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
         for (unsigned channel = 0; channel < 4; ++channel) {
-            unsigned char c = pixelArray->get(pixelOffset + channel);
+            unsigned char c = pixelArray->item(pixelOffset + channel);
             pixelArray->set(pixelOffset + channel, tables[channel][c]);
         }
     }

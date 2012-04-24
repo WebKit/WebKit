@@ -202,7 +202,7 @@ bool GraphicsContext3D::extractImageData(ImageData* imageData,
     int height = imageData->height();
     int dataBytes = width * height * 4;
     data.resize(dataBytes);
-    if (!packPixels(imageData->data()->data()->data(),
+    if (!packPixels(imageData->data()->data(),
                     SourceFormatRGBA8,
                     width,
                     height,

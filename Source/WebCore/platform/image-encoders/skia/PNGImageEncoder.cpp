@@ -126,7 +126,7 @@ bool PNGImageEncoder::encode(const SkBitmap& bitmap, Vector<unsigned char>* outp
 
 bool PNGImageEncoder::encode(const ImageData& imageData, Vector<unsigned char>* output)
 {
-    return encodePixels(imageData.size(), imageData.data()->data()->data(), false, output);
+    return encodePixels(imageData.size(), imageData.data()->data(), false, output);
 }
 
 } // namespace WebCore

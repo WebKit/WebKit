@@ -62,10 +62,14 @@
 #include "TextMetrics.h"
 #include "TextRun.h"
 
-#include <wtf/ByteArray.h>
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayer.h"
+#endif
+
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/Uint8ClampedArray.h>
 #include <wtf/UnusedParam.h>
 
 #if USE(CG)
@@ -1740,7 +1744,7 @@ static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
         return 0;
 
     RefPtr<ImageData> data = ImageData::create(size);
-    memset(data->data()->data()->data(), 0, data->data()->data()->length());
+    data->data()->zeroFill();
     return data.release();
 }
 
@@ -1829,7 +1833,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
     if (!buffer)
         return createEmptyImageData(imageDataRect.size());
 
-    RefPtr<ByteArray> byteArray = buffer->getUnmultipliedImageData(imageDataRect, coordinateSystem);
+    RefPtr<Uint8ClampedArray> byteArray = buffer->getUnmultipliedImageData(imageDataRect, coordinateSystem);
     if (!byteArray)
         return 0;
 
@@ -1902,7 +1906,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
     IntRect sourceRect(destRect);
     sourceRect.move(-destOffset);
 
-    buffer->putByteArray(Unmultiplied, data->data()->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset), coordinateSystem);
+    buffer->putByteArray(Unmultiplied, data->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset), coordinateSystem);
 
     if (coordinateSystem == ImageBuffer::BackingStoreCoordinateSystem) {
         FloatRect dirtyRect = destRect;

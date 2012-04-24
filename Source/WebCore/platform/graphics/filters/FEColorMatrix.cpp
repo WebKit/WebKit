@@ -30,8 +30,8 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Uint8ClampedArray.h>
 
 namespace WebCore {
 
@@ -125,14 +125,14 @@ inline void luminance(double& red, double& green, double& blue, double& alpha)
 }
 
 template<ColorMatrixType filterType>
-void effectType(ByteArray* pixelArray, const Vector<float>& values)
+void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values)
 {
     unsigned pixelArrayLength = pixelArray->length();
     for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-        double red = pixelArray->get(pixelByteOffset);
-        double green = pixelArray->get(pixelByteOffset + 1);
-        double blue = pixelArray->get(pixelByteOffset + 2);
-        double alpha = pixelArray->get(pixelByteOffset + 3);
+        double red = pixelArray->item(pixelByteOffset);
+        double green = pixelArray->item(pixelByteOffset + 1);
+        double blue = pixelArray->item(pixelByteOffset + 2);
+        double alpha = pixelArray->item(pixelByteOffset + 3);
 
         switch (filterType) {
             case FECOLORMATRIX_TYPE_MATRIX:
@@ -167,7 +167,7 @@ void FEColorMatrix::platformApplySoftware()
     resultImage->context()->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
 
     IntRect imageRect(IntPoint(), absolutePaintRect().size());
-    RefPtr<ByteArray> pixelArray = resultImage->getUnmultipliedImageData(imageRect);
+    RefPtr<Uint8ClampedArray> pixelArray = resultImage->getUnmultipliedImageData(imageRect);
 
     switch (m_type) {
     case FECOLORMATRIX_TYPE_UNKNOWN:

@@ -57,8 +57,8 @@ private:
 
     struct PlatformApplyParameters {
         FEGaussianBlur* filter;
-        RefPtr<ByteArray> srcPixelArray;
-        RefPtr<ByteArray> dstPixelArray;
+        RefPtr<Uint8ClampedArray> srcPixelArray;
+        RefPtr<Uint8ClampedArray> dstPixelArray;
         int width;
         int height;
         unsigned kernelSizeX;
@@ -70,10 +70,10 @@ private:
     FEGaussianBlur(Filter*, float, float);
 
     static inline void kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight);
-    inline void platformApply(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
+    inline void platformApply(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
 
-    inline void platformApplyGeneric(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
-    inline void platformApplyNeon(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
+    inline void platformApplyGeneric(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
+    inline void platformApplyNeon(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
 #if USE(SKIA)
     virtual bool platformApplySkia();
 #endif

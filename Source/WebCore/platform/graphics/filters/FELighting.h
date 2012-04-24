@@ -34,8 +34,8 @@
 #include "LightSource.h"
 #include "PointLightSource.h"
 #include "SpotLightSource.h"
-#include <wtf/ByteArray.h>
 #include <wtf/Platform.h>
+#include <wtf/Uint8ClampedArray.h>
 
 // Common base class for FEDiffuseLighting and FESpecularLighting
 
@@ -59,7 +59,7 @@ protected:
 
     struct LightingData {
         // This structure contains only read-only (SMP safe) data
-        ByteArray* pixels;
+        Uint8ClampedArray* pixels;
         float surfaceScale;
         int widthMultipliedByPixelSize;
         int widthDecreasedByOne;
@@ -92,7 +92,7 @@ protected:
 
     FELighting(Filter*, LightingType, const Color&, float, float, float, float, float, float, PassRefPtr<LightSource>);
 
-    bool drawLighting(ByteArray*, int, int);
+    bool drawLighting(Uint8ClampedArray*, int, int);
     inline void inlineSetPixel(int offset, LightingData&, LightSource::PaintingData&,
                                int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
 

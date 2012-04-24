@@ -31,7 +31,7 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
+#include <wtf/Uint8ClampedArray.h>
 
 namespace WebCore {
 
@@ -96,15 +96,15 @@ void FEDisplacementMap::platformApplySoftware()
     ASSERT(m_xChannelSelector != CHANNEL_UNKNOWN);
     ASSERT(m_yChannelSelector != CHANNEL_UNKNOWN);
 
-    ByteArray* dstPixelArray = createPremultipliedImageResult();
+    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
     if (!dstPixelArray)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ByteArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<ByteArray> srcPixelArrayB = in2->asUnmultipliedImage(effectBDrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->asUnmultipliedImage(effectBDrawingRect);
 
     ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
 
@@ -119,13 +119,13 @@ void FEDisplacementMap::platformApplySoftware()
         int line = y * stride;
         for (int x = 0; x < paintSize.width(); ++x) {
             int dstIndex = line + x * 4;
-            int srcX = x + static_cast<int>(scaleX * srcPixelArrayB->get(dstIndex + m_xChannelSelector - 1) + scaleAdjustmentX);
-            int srcY = y + static_cast<int>(scaleY * srcPixelArrayB->get(dstIndex + m_yChannelSelector - 1) + scaleAdjustmentY);
+            int srcX = x + static_cast<int>(scaleX * srcPixelArrayB->item(dstIndex + m_xChannelSelector - 1) + scaleAdjustmentX);
+            int srcY = y + static_cast<int>(scaleY * srcPixelArrayB->item(dstIndex + m_yChannelSelector - 1) + scaleAdjustmentY);
             for (unsigned channel = 0; channel < 4; ++channel) {
                 if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height())
                     dstPixelArray->set(dstIndex + channel, static_cast<unsigned char>(0));
                 else {
-                    unsigned char pixelValue = srcPixelArrayA->get(srcY * stride + srcX * 4 + channel);
+                    unsigned char pixelValue = srcPixelArrayA->item(srcY * stride + srcX * 4 + channel);
                     dstPixelArray->set(dstIndex + channel, pixelValue);
                 }
             }

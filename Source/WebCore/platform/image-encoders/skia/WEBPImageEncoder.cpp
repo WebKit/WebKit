@@ -130,7 +130,7 @@ bool WEBPImageEncoder::encode(const SkBitmap& bitmap, int quality, Vector<unsign
 
 bool WEBPImageEncoder::encode(const ImageData& imageData, int quality, Vector<unsigned char>* output)
 {
-    return encodePixels(imageData.size(), imageData.data()->data()->data(), false, quality, output);
+    return encodePixels(imageData.size(), imageData.data()->data(), false, quality, output);
 }
 
 } // namespace WebCore

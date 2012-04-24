@@ -54,7 +54,7 @@ void neonDrawAllChannelGaussianBlur(unsigned char* source, unsigned char* destin
 void neonDrawAlphaChannelGaussianBlur(unsigned char* source, unsigned char* destination, FEGaussianBlurPaintingDataForNeon*);
 }
 
-inline void FEGaussianBlur::platformApplyNeon(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
+inline void FEGaussianBlur::platformApplyNeon(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
 {
     const int widthMultipliedByFour = 4 * paintSize.width();
     FEGaussianBlurPaintingDataForNeon argumentsX = {
@@ -89,7 +89,7 @@ inline void FEGaussianBlur::platformApplyNeon(ByteArray* srcPixelArray, ByteArra
             else
                 neonDrawAllChannelGaussianBlur(srcPixelArray->data(), tmpPixelArray->data(), &argumentsX);
         } else {
-            ByteArray* auxPixelArray = tmpPixelArray;
+            Uint8ClampedArray* auxPixelArray = tmpPixelArray;
             tmpPixelArray = srcPixelArray;
             srcPixelArray = auxPixelArray;
         }
@@ -102,7 +102,7 @@ inline void FEGaussianBlur::platformApplyNeon(ByteArray* srcPixelArray, ByteArra
             else
                 neonDrawAllChannelGaussianBlur(tmpPixelArray->data(), srcPixelArray->data(), &argumentsY);
         } else {
-            ByteArray* auxPixelArray = tmpPixelArray;
+            Uint8ClampedArray* auxPixelArray = tmpPixelArray;
             tmpPixelArray = srcPixelArray;
             srcPixelArray = auxPixelArray;
         }

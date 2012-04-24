@@ -38,11 +38,11 @@
 #include "GraphicsTypes.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
-#include <wtf/ByteArray.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Uint8ClampedArray.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -98,10 +98,10 @@ namespace WebCore {
 
         enum CoordinateSystem { LogicalCoordinateSystem, BackingStoreCoordinateSystem };
 
-        PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&, CoordinateSystem = LogicalCoordinateSystem) const;
-        PassRefPtr<ByteArray> getPremultipliedImageData(const IntRect&, CoordinateSystem = LogicalCoordinateSystem) const;
+        PassRefPtr<Uint8ClampedArray> getUnmultipliedImageData(const IntRect&, CoordinateSystem = LogicalCoordinateSystem) const;
+        PassRefPtr<Uint8ClampedArray> getPremultipliedImageData(const IntRect&, CoordinateSystem = LogicalCoordinateSystem) const;
 
-        void putByteArray(Multiply multiplied, ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem = LogicalCoordinateSystem);
+        void putByteArray(Multiply multiplied, Uint8ClampedArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem = LogicalCoordinateSystem);
         
         void convertToLuminanceMask();
         

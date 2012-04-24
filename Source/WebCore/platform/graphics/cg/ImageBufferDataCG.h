@@ -25,10 +25,10 @@
  */
 
 #include "Image.h"
-#include <wtf/ByteArray.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Uint8ClampedArray.h>
 
 #if (PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
 #define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
@@ -58,8 +58,8 @@ public:
     mutable double m_lastFlushTime;
 #endif
 
-    PassRefPtr<ByteArray> getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
-    void putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale);
+    PassRefPtr<Uint8ClampedArray> getData(const IntRect&, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
+    void putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale);
 };
 
 } // namespace WebCore

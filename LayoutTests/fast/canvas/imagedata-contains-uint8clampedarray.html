@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that ImageData contains a Uint8ClampedArray.");
+
+var canvas = document.createElement("canvas");
+canvas.width = 10;
+canvas.height = 10;
+var context = canvas.getContext("2d");
+
+var imageData = context.getImageData(0, 0, 1, 1);
+shouldBe('imageData.data.constructor', 'Uint8ClampedArray');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

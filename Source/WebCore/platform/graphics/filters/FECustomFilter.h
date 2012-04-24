@@ -38,7 +38,7 @@
 #include <wtf/RefPtr.h>
 
 namespace JSC {
-class ByteArray;
+class Uint8ClampedArray;
 }
 
 namespace WebCore {
@@ -75,7 +75,7 @@ private:
     void bindVertexAttribute(int attributeLocation, unsigned size, unsigned& offset);
     void bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter*);
     void bindProgramParameters();
-    void bindProgramAndBuffers(ByteArray* srcPixelArray);
+    void bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray);
     
     HostWindow* m_hostWindow;
     

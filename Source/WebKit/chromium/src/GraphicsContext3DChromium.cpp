@@ -318,7 +318,7 @@ PassRefPtr<ImageData> GraphicsContext3DPrivate::paintRenderingResultsToImageData
     getDrawingParameters(drawingBuffer, m_impl.get(), &framebufferId, &width, &height);
 
     RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height));
-    unsigned char* pixels = imageData->data()->data()->data();
+    unsigned char* pixels = imageData->data()->data();
     size_t bufferSize = 4 * width * height;
 
     m_impl->readBackFramebuffer(pixels, bufferSize, framebufferId, width, height);

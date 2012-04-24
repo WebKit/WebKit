@@ -63,8 +63,8 @@
 #include <runtime/RegExp.h>
 #include <runtime/RegExpObject.h>
 #include <wtf/ArrayBuffer.h>
-#include <wtf/ByteArray.h>
 #include <wtf/HashTraits.h>
+#include <wtf/Uint8ClampedArray.h>
 #include <wtf/Vector.h>
 
 using namespace JSC;
@@ -609,7 +609,7 @@ private:
                 write(data->width());
                 write(data->height());
                 write(data->data()->length());
-                write(data->data()->data()->data(), data->data()->length());
+                write(data->data()->data(), data->data()->length());
                 return true;
             }
             if (obj->inherits(&RegExpObject::s_info)) {
@@ -1430,7 +1430,7 @@ private:
                 return jsNull();
             }
             RefPtr<ImageData> result = ImageData::create(IntSize(width, height));
-            memcpy(result->data()->data()->data(), m_ptr, length);
+            memcpy(result->data()->data(), m_ptr, length);
             m_ptr += length;
             return getJSValue(result.get());
         }

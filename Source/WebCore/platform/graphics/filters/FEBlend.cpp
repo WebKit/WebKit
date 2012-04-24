@@ -31,7 +31,7 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
+#include <wtf/Uint8ClampedArray.h>
 
 typedef unsigned char (*BlendType)(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB);
 
@@ -94,24 +94,24 @@ void FEBlend::platformApplySoftware()
     ASSERT(m_mode > FEBLEND_MODE_UNKNOWN);
     ASSERT(m_mode <= FEBLEND_MODE_LIGHTEN);
 
-    ByteArray* dstPixelArray = createPremultipliedImageResult();
+    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
     if (!dstPixelArray)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ByteArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<ByteArray> srcPixelArrayB = in2->asPremultipliedImage(effectBDrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->asPremultipliedImage(effectBDrawingRect);
 
     unsigned pixelArrayLength = srcPixelArrayA->length();
     ASSERT(pixelArrayLength == srcPixelArrayB->length());
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
-        unsigned char alphaA = srcPixelArrayA->get(pixelOffset + 3);
-        unsigned char alphaB = srcPixelArrayB->get(pixelOffset + 3);
+        unsigned char alphaA = srcPixelArrayA->item(pixelOffset + 3);
+        unsigned char alphaB = srcPixelArrayB->item(pixelOffset + 3);
         for (unsigned channel = 0; channel < 3; ++channel) {
-            unsigned char colorA = srcPixelArrayA->get(pixelOffset + channel);
-            unsigned char colorB = srcPixelArrayB->get(pixelOffset + channel);
+            unsigned char colorA = srcPixelArrayA->item(pixelOffset + channel);
+            unsigned char colorB = srcPixelArrayB->item(pixelOffset + channel);
             unsigned char result;
 
             switch (m_mode) {

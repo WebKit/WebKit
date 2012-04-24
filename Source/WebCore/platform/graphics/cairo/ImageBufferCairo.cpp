@@ -132,16 +132,16 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 }
 
 template <Multiply multiplied>
-PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
+PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
 {
     ASSERT(cairo_surface_get_type(data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 
-    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
+    RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
     unsigned char* dataSrc = cairo_image_surface_get_data(data.m_surface);
     unsigned char* dataDst = result->data();
 
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
-        memset(dataDst, 0, result->length());
+        result->zeroFill();
 
     int originx = rect.x();
     int destx = 0;
@@ -190,17 +190,17 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& d
     return result.release();
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Unmultiplied>(rect, m_data, m_size);
 }
 
-PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
+PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect, CoordinateSystem) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
 
-void ImageBuffer::putByteArray(Multiply multiplied, ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
+void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
     ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 

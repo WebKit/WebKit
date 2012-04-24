@@ -1,3 +1,17 @@
+2012-04-23  Kenneth Russell  <kbr@google.com>
+
+        Change ImageData to reference Uint8ClampedArray rather than CanvasPixelArray
+        https://bugs.webkit.org/show_bug.cgi?id=73011
+
+        Reviewed by Oliver Hunt.
+
+        * fast/canvas/imagedata-contains-uint8clampedarray-expected.txt: Added.
+        * fast/canvas/imagedata-contains-uint8clampedarray.html: Added.
+        * fast/dom/Window/script-tests/postmessage-clone.js:
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-expected.txt:
+        * platform/gtk/fast/dom/Window/window-postmessage-clone-expected.txt:
+
 2012-04-23  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, fix wrong paths of js-test-*.js.

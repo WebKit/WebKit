@@ -34,7 +34,7 @@ module html {
         readonly attribute long width;
         readonly attribute long height;
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        readonly attribute CanvasPixelArray data;
+        readonly attribute Uint8ClampedArray data;
 #endif
     };
 

@@ -59,9 +59,9 @@ var mutatedImageData = document.createElement("canvas").getContext("2d").createI
 for (var i = 0; i < imageData.data.length * 4; i++)
     mutatedImageData.data[i] = i % 256;
 tryPostMessage('imageData', false, imageData);
-tryPostMessage('imageData.data', true, null, DOMException.DATA_CLONE_ERR)
+tryPostMessage('imageData.data', false, imageData.data)
 tryPostMessage('mutatedImageData', false, imageData);
-tryPostMessage('mutatedImageData.data', true, null, DOMException.DATA_CLONE_ERR)
+tryPostMessage('mutatedImageData.data', false, imageData.data)
 for (var i = 0; i < imageData.data.length * 4; i++)
     mutatedImageData.data[i] = 0;
 

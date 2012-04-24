@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8ImageData.h"
 
-#include "V8CanvasPixelArray.h"
+#include "V8Uint8ClampedArray.h"
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ v8::Handle<v8::Value> toV8(ImageData* impl, v8::Isolate* isolate)
         return v8::Null();
     v8::Handle<v8::Object> wrapper = V8ImageData::wrap(impl);
     if (!wrapper.IsEmpty()) {
-        // Create a V8 CanvasPixelArray object.
+        // Create a V8 Uint8ClampedArray object.
         v8::Handle<v8::Value> pixelArray = toV8(impl->data(), isolate);
         // Set the "data" property of the ImageData object to
         // the created v8 object, eliminating the C++ callback

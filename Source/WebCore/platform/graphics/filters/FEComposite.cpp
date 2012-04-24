@@ -32,7 +32,7 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
+#include <wtf/Uint8ClampedArray.h>
 
 namespace WebCore {
 
@@ -179,7 +179,7 @@ static inline void arithmeticSoftware(unsigned char* source, unsigned char* dest
     computeArithmeticPixels<1, 1, 1, 1>(source, destination, pixelArrayLength, k1, k2, k3, k4);
 }
 
-inline void FEComposite::platformArithmeticSoftware(ByteArray* source, ByteArray* destination,
+inline void FEComposite::platformArithmeticSoftware(Uint8ClampedArray* source, Uint8ClampedArray* destination,
     float k1, float k2, float k3, float k4)
 {
     int length = source->length();
@@ -221,12 +221,12 @@ void FEComposite::platformApplySoftware()
     FilterEffect* in2 = inputEffect(1);
 
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
-        ByteArray* dstPixelArray = createPremultipliedImageResult();
+        Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
         if (!dstPixelArray)
             return;
 
         IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-        RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectADrawingRect);
+        RefPtr<Uint8ClampedArray> srcPixelArray = in->asPremultipliedImage(effectADrawingRect);
 
         IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
         in2->copyPremultipliedImage(dstPixelArray, effectBDrawingRect);

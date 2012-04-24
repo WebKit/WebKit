@@ -150,7 +150,7 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(Drawin
         return 0;
 
     RefPtr<ImageData> imageData = ImageData::create(IntSize(m_currentWidth, m_currentHeight));
-    unsigned char* pixels = imageData->data()->data()->data();
+    unsigned char* pixels = imageData->data()->data();
     int totalBytes = 4 * m_currentWidth * m_currentHeight;
 
     readRenderingResults(pixels, totalBytes);

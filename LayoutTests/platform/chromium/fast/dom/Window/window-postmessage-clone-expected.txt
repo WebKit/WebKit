@@ -4,8 +4,6 @@ PASS: 'postMessage((function(){}))' threw Error: DATA_CLONE_ERR: DOM Exception 2
 PASS: 'postMessage(var x = 0; try { eval("badref"); } catch(e) { x = e; } x)' threw Error: DATA_CLONE_ERR: DOM Exception 25
 PASS: 'postMessage(window)' threw Error: DATA_CLONE_ERR: DOM Exception 25
 PASS: 'postMessage(({get a() { throw "x" }}))' threw x
-PASS: 'postMessage(imageData.data)' threw Error: DATA_CLONE_ERR: DOM Exception 25
-PASS: 'postMessage(mutatedImageData.data)' threw Error: DATA_CLONE_ERR: DOM Exception 25
 PASS: 'postMessage((function() {return {get a() { throw "accessor-exn"; }};})())' threw accessor-exn
 PASS: 'postMessage((function() {var obja = {get p() { throw "accessor-exn"; }}; return {get a() { return obja; }};})())' threw accessor-exn
 PASS: lastIndex initially correct: was 3
@@ -40,7 +38,9 @@ PASS: eventData is === to eventData[0]
 PASS: eventData.graph1 is === to eventData.graph2
 PASS: eventData[0] is === to eventData[1]
 PASS: eventData is [object ImageData] of type object
+PASS: eventData is [object Uint8ClampedArray] of type object
 PASS: eventData is [object ImageData] of type object
+PASS: eventData is [object Uint8ClampedArray] of type object
 PASS: eventData is 42 of type number
 PASS: eventData is 42 of type number
 PASS: evalThunk OK

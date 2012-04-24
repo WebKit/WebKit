@@ -34,7 +34,6 @@
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
 #include "Blob.h"
-#include <wtf/ByteArray.h>
 #include "CanvasPixelArray.h"
 #include "DataView.h"
 #include "ExceptionCode.h"
@@ -1006,7 +1005,7 @@ private:
         ImageData* imageData = V8ImageData::toNative(value.As<v8::Object>());
         if (!imageData)
             return;
-        WTF::ByteArray* pixelArray = imageData->data()->data();
+        Uint8ClampedArray* pixelArray = imageData->data();
         m_writer.writeImageData(imageData->width(), imageData->height(), pixelArray->data(), pixelArray->length());
     }
 
@@ -1582,7 +1581,7 @@ private:
         if (m_position + pixelDataLength > m_length)
             return false;
         RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height));
-        WTF::ByteArray* pixelArray = imageData->data()->data();
+        Uint8ClampedArray* pixelArray = imageData->data();
         ASSERT(pixelArray);
         ASSERT(pixelArray->length() >= pixelDataLength);
         memcpy(pixelArray->data(), m_buffer + m_position, pixelDataLength);

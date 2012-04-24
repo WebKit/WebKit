@@ -30,8 +30,8 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
-#include <wtf/ByteArray.h>
 #include <wtf/ParallelJobs.h>
+#include <wtf/Uint8ClampedArray.h>
 #include <wtf/Vector.h>
 
 using std::min;
@@ -106,8 +106,8 @@ bool FEMorphology::setRadiusY(float radiusY)
 
 void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, int yEnd)
 {
-    ByteArray* srcPixelArray = paintingData->srcPixelArray;
-    ByteArray* dstPixelArray = paintingData->dstPixelArray;
+    Uint8ClampedArray* srcPixelArray = paintingData->srcPixelArray;
+    Uint8ClampedArray* dstPixelArray = paintingData->dstPixelArray;
     const int width = paintingData->width;
     const int height = paintingData->height;
     const int effectWidth = width * 4;
@@ -122,9 +122,9 @@ void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, 
             extrema.clear();
             // Compute extremas for each columns
             for (int x = 0; x <= radiusX; ++x) {
-                unsigned char columnExtrema = srcPixelArray->get(extremaStartY * effectWidth + 4 * x + clrChannel);
+                unsigned char columnExtrema = srcPixelArray->item(extremaStartY * effectWidth + 4 * x + clrChannel);
                 for (int eY = extremaStartY + 1; eY < extremaEndY; ++eY) {
-                    unsigned char pixel = srcPixelArray->get(eY * effectWidth + 4 * x + clrChannel);
+                    unsigned char pixel = srcPixelArray->item(eY * effectWidth + 4 * x + clrChannel);
                     if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema)
                         || (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema)) {
                         columnExtrema = pixel;
@@ -137,9 +137,9 @@ void FEMorphology::platformApplyGeneric(PaintingData* paintingData, int yStart, 
             // Kernel is filled, get extrema of next column
             for (int x = 0; x < width; ++x) {
                 const int endX = min(x + radiusX, width - 1);
-                unsigned char columnExtrema = srcPixelArray->get(extremaStartY * effectWidth + endX * 4 + clrChannel);
+                unsigned char columnExtrema = srcPixelArray->item(extremaStartY * effectWidth + endX * 4 + clrChannel);
                 for (int i = extremaStartY + 1; i <= extremaEndY; ++i) {
-                    unsigned char pixel = srcPixelArray->get(i * effectWidth + endX * 4 + clrChannel);
+                    unsigned char pixel = srcPixelArray->item(i * effectWidth + endX * 4 + clrChannel);
                     if ((m_type == FEMORPHOLOGY_OPERATOR_ERODE && pixel <= columnExtrema)
                         || (m_type == FEMORPHOLOGY_OPERATOR_DILATE && pixel >= columnExtrema))
                         columnExtrema = pixel;
@@ -197,13 +197,13 @@ void FEMorphology::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
 
-    ByteArray* dstPixelArray = createPremultipliedImageResult();
+    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
     if (!dstPixelArray)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
     if (m_radiusX <= 0 || m_radiusY <= 0) {
-        dstPixelArray->clear();
+        dstPixelArray->zeroFill();
         return;
     }
 
@@ -212,7 +212,7 @@ void FEMorphology::platformApplySoftware()
     int radiusY = static_cast<int>(floorf(filter->applyVerticalScale(m_radiusY)));
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
 
     PaintingData paintingData;
     paintingData.srcPixelArray = srcPixelArray.get();

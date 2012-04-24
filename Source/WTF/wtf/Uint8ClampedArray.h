@@ -38,6 +38,16 @@ public:
     static inline PassRefPtr<Uint8ClampedArray> create(const unsigned char* array, unsigned length);
     static inline PassRefPtr<Uint8ClampedArray> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
+    // Should only be used for WebCore-internal use (like filters and
+    // getImageData) when it is known the entire array will be filled.
+    // Do not return these results directly to JavaScript.
+    static inline PassRefPtr<Uint8ClampedArray> createUninitialized(unsigned length);
+
+    // It's only needed to potentially call this method if the array
+    // was created uninitialized -- the default initialization paths
+    // zero the allocated memory.
+    inline void zeroFill();
+
     // Can’t use "using" here due to a bug in the RVCT compiler.
     bool set(TypedArrayBase<unsigned char>* array, unsigned offset) { return TypedArrayBase<unsigned char>::set(array, offset); }
     inline void set(unsigned index, double value);
@@ -69,6 +79,16 @@ PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(const unsigned char* arr
 PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
     return TypedArrayBase<unsigned char>::create<Uint8ClampedArray>(buffer, byteOffset, length);
+}
+
+PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::createUninitialized(unsigned length)
+{
+    return TypedArrayBase<unsigned char>::createUninitialized<Uint8ClampedArray>(length);
+}
+
+void Uint8ClampedArray::zeroFill()
+{
+    zeroRange(0, length());
 }
 
 void Uint8ClampedArray::set(unsigned index, double value)

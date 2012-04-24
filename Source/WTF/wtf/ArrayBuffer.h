@@ -57,7 +57,12 @@ private:
 
     friend class ArrayBuffer;
 
-    static inline void tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents&);
+    enum InitializationPolicy {
+        ZeroInitialize,
+        DontInitialize
+    };
+
+    static inline void tryAllocate(unsigned numElements, unsigned elementByteSize, InitializationPolicy, ArrayBufferContents&);
     void transfer(ArrayBufferContents& other)
     {
         ASSERT(!other.m_data);
@@ -78,6 +83,9 @@ public:
     static inline PassRefPtr<ArrayBuffer> create(const void* source, unsigned byteLength);
     static inline PassRefPtr<ArrayBuffer> create(ArrayBufferContents&);
 
+    // Only for use by Uint8ClampedArray::createUninitialized.
+    static inline PassRefPtr<ArrayBuffer> createUninitialized(unsigned numElements, unsigned elementByteSize);
+
     inline void* data();
     inline const void* data() const;
     inline unsigned byteLength() const;
@@ -94,6 +102,8 @@ public:
     ~ArrayBuffer() { }
 
 private:
+    static inline PassRefPtr<ArrayBuffer> create(unsigned numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy);
+
     inline ArrayBuffer(ArrayBufferContents&);
     inline PassRefPtr<ArrayBuffer> sliceImpl(unsigned begin, unsigned end) const;
     inline unsigned clampIndex(int index) const;
@@ -115,11 +125,7 @@ int ArrayBuffer::clampValue(int x, int left, int right)
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(unsigned numElements, unsigned elementByteSize)
 {
-    ArrayBufferContents contents;
-    ArrayBufferContents::tryAllocate(numElements, elementByteSize, contents);
-    if (!contents.m_data)
-        return 0;
-    return adoptRef(new ArrayBuffer(contents));
+    return create(numElements, elementByteSize, ArrayBufferContents::ZeroInitialize);
 }
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBuffer* other)
@@ -130,7 +136,7 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBuffer* other)
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(const void* source, unsigned byteLength)
 {
     ArrayBufferContents contents;
-    ArrayBufferContents::tryAllocate(byteLength, 1, contents);
+    ArrayBufferContents::tryAllocate(byteLength, 1, ArrayBufferContents::ZeroInitialize, contents);
     if (!contents.m_data)
         return 0;
     RefPtr<ArrayBuffer> buffer = adoptRef(new ArrayBuffer(contents));
@@ -140,6 +146,20 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(const void* source, unsigned byteLen
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents& contents)
 {
+    return adoptRef(new ArrayBuffer(contents));
+}
+
+PassRefPtr<ArrayBuffer> ArrayBuffer::createUninitialized(unsigned numElements, unsigned elementByteSize)
+{
+    return create(numElements, elementByteSize, ArrayBufferContents::DontInitialize);
+}
+
+PassRefPtr<ArrayBuffer> ArrayBuffer::create(unsigned numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy policy)
+{
+    ArrayBufferContents contents;
+    ArrayBufferContents::tryAllocate(numElements, elementByteSize, policy, contents);
+    if (!contents.m_data)
+        return 0;
     return adoptRef(new ArrayBuffer(contents));
 }
 
@@ -188,7 +208,7 @@ unsigned ArrayBuffer::clampIndex(int index) const
     return clampValue(index, 0, currentLength);
 }
 
-void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents& result)
+void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy policy, ArrayBufferContents& result)
 {
     // Do not allow 32-bit overflow of the total size.
     // FIXME: Why not? The tryFastCalloc function already checks its arguments,
@@ -201,7 +221,15 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
             return;
         }
     }
-    if (WTF::tryFastCalloc(numElements, elementByteSize).getValue(result.m_data)) {
+    bool allocationSucceeded = false;
+    if (policy == ZeroInitialize)
+        allocationSucceeded = WTF::tryFastCalloc(numElements, elementByteSize).getValue(result.m_data);
+    else {
+        ASSERT(policy == DontInitialize);
+        allocationSucceeded = WTF::tryFastMalloc(numElements * elementByteSize).getValue(result.m_data);
+    }
+
+    if (allocationSucceeded) {
         result.m_sizeInBytes = numElements * elementByteSize;
         return;
     }

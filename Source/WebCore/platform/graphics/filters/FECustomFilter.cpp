@@ -46,7 +46,7 @@
 #include "TilingData.h"
 #include "TransformationMatrix.h"
 
-#include <wtf/ByteArray.h>
+#include <wtf/Uint8ClampedArray.h>
 
 namespace WebCore {
 
@@ -95,13 +95,13 @@ PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, HostWindow* ho
 
 void FECustomFilter::platformApplySoftware()
 {
-    ByteArray* dstPixelArray = createPremultipliedImageResult();
+    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
     if (!dstPixelArray)
         return;
 
     FilterEffect* in = inputEffect(0);
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
+    RefPtr<Uint8ClampedArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
     
     IntSize newContextSize(effectDrawingRect.size());
     bool hadContext = m_context;
@@ -129,7 +129,7 @@ void FECustomFilter::platformApplySoftware()
     m_drawingBuffer->commit();
 
     RefPtr<ImageData> imageData = m_context->paintRenderingResultsToImageData(m_drawingBuffer.get());
-    ByteArray* gpuResult = imageData->data()->data();
+    Uint8ClampedArray* gpuResult = imageData->data();
     ASSERT(gpuResult->length() == dstPixelArray->length());
     memcpy(dstPixelArray->data(), gpuResult->data(), gpuResult->length());
 }
@@ -209,7 +209,7 @@ void FECustomFilter::bindProgramParameters()
     }
 }
 
-void FECustomFilter::bindProgramAndBuffers(ByteArray* srcPixelArray)
+void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
 {
     m_context->useProgram(m_shader->program());
     
