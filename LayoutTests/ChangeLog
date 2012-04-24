@@ -1,3 +1,10 @@
+2012-04-23  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, fix wrong paths of js-test-*.js.
+        https://bugs.webkit.org/show_bug.cgi?id=82871
+
+        * fast/forms/datalist/input-list.html:
+
 2012-04-23  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Fix issue with trying to access a constructor in a frame that has been removed
