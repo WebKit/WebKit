@@ -409,20 +409,17 @@ String calendarClearText()
 
 String dateFormatYearText()
 {
-    // FXIME: Implement.
-    return String();
+    return query(WebLocalizedString::DateFormatYearLabel);
 }
 
 String dateFormatMonthText()
 {
-    // FXIME: Implement.
-    return String();
+    return query(WebLocalizedString::DateFormatMonthLabel);
 }
 
 String dateFormatDayInMonthText()
 {
-    // FXIME: Implement.
-    return String();
+    return query(WebLocalizedString::DateFormatDayInMonthLabel);
 }
 #endif
 
