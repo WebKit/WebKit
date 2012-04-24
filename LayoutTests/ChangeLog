@@ -1,3 +1,11 @@
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/test_expectations.txt: One more drag&drop test
+        failing and mark fast/events/panScroll-click-hyperlink.html as
+        missing result.
+
 2012-04-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: encapsulate live location into the Script.

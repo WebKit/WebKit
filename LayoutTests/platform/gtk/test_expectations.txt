@@ -1574,6 +1574,7 @@ BUGWK84675 : fast/forms/drag-out-of-textarea.html = TEXT
 BUGWK84675 : fast/forms/file/get-file-upload.html = TEXT
 BUGWK84675 : fast/forms/file/input-file-re-render.html = TEXT
 BUGWK84675 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
+BUGWK84675 : fast/lists/drag-into-marker.html = TEXT
 
 BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
@@ -1582,7 +1583,7 @@ BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TE
 BUGWK84679 : css3/zoom-coords.xhtml = FAIL
 
 BUGWK84694 : fast/events/selectstart-by-double-triple-clicks.html = FAIL
-BUGWK84693 : fast/events/panScroll-click-hyperlink.html = FAIL
+BUGWK84693 : fast/events/panScroll-click-hyperlink.html = MISSING
 BUGWK84692 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 BUGWK84691 : fast/events/mouse-relative-position.html = FAIL
 
