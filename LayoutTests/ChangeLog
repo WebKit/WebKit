@@ -1,3 +1,14 @@
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update, mark some tests as
+        failing and remove wrong baselines.
+
+        * platform/gtk/fast/events/attempt-scroll-with-no-scrollbars-expected.txt: Removed.
+        * platform/gtk/fast/events/mouse-relative-position-expected.txt: Removed.
+        * platform/gtk/fast/events/panScroll-click-hyperlink-expected.txt: Removed.
+        * platform/gtk/fast/events/selectstart-by-double-triple-clicks-expected.txt: Removed.
+        * platform/gtk/test_expectations.txt:
+
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
