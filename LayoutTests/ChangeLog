@@ -1,3 +1,11 @@
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
+
+        Fix lint error in the test expectations file.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, re-add the GTK baselines that were removed during last

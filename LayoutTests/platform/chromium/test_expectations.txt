@@ -3266,8 +3266,6 @@ BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-
 
 BUGWK80058 WIN : fast/workers/stress-js-execution.html = CRASH PASS
 
-BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT
-
 BUGV8_1973 : fast/js/caller-property.html = TEXT
 
 BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = FAIL
@@ -3715,6 +3713,9 @@ BUGCR124779 : media/media-controller-playback.html = CRASH
 BUGCR124779 : media/track/track-cues-missed.html = CRASH
 BUGCR124779 : media/track/track-cues-pause-on-exit.html = CRASH
 BUGCR124779 : media/track/track-cues-sorted-before-dispatch.html = CRASH
+
+// Uncomment after CR124779 is resolved (if the test is still flaky)
+// BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT
 
 BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
 
