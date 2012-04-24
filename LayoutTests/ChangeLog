@@ -1,3 +1,13 @@
+2012-04-24  Florin Malita  <fmalita@google.com>
+
+        WebCore::EventTarget::addEventListener crash
+        https://bugs.webkit.org/show_bug.cgi?id=84171
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/custom/use-tref-crash-expected.txt: Added.
+        * svg/custom/use-tref-crash.svg: Added.
+
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.

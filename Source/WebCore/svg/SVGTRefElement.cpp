@@ -281,9 +281,15 @@ void SVGTRefElement::buildPendingResource()
 
     updateReferencedText();
 
-    m_eventListener = TargetListener::create(this, id);
-    target->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
-    target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, m_eventListener.get(), false);
+    // Don't set up event listeners if this is a shadow tree node.
+    // SVGUseElement::transferEventListenersToShadowTree() handles this task, and addEventListener()
+    // expects every element instance to have an associated shadow tree element - which is not the
+    // case when we land here from SVGUseElement::buildShadowTree().
+    if (!isInShadowTree()) {
+        m_eventListener = TargetListener::create(this, id);
+        target->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
+        target->addEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, m_eventListener.get(), false);
+    }
 }
 
 Node::InsertionNotificationRequest SVGTRefElement::insertedInto(Node* rootParent)
