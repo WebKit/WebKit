@@ -70,6 +70,10 @@ QtBuiltinBundlePage::QtBuiltinBundlePage(QtBuiltinBundle* bundle, WKBundlePageRe
         0, // didNewFirstVisuallyNonEmptyLayoutForFrame
         0, // didDetectXSSForFrame
         0, // shouldGoToBackForwardListItem
+        0, // didCreateGlobalObjectForFrame
+        0, // willDisconnectDOMWindowExtensionFromGlobalObject
+        0, // didReconnectDOMWindowExtensionToGlobalObject
+        0, // willDestroyGlobalObjectForDOMWindowExtension
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 }
