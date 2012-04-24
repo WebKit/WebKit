@@ -39,9 +39,9 @@ namespace {
 
 #define EXPECT_EQ_RECT(a, b) \
     EXPECT_EQ(a.x(), b.x()); \
-    EXPECT_EQ(a.maxX(), b.maxX()); \
     EXPECT_EQ(a.y(), b.y()); \
-    EXPECT_EQ(a.maxY(), b.maxY());
+    EXPECT_EQ(a.width(), b.width()); \
+    EXPECT_EQ(a.height(), b.height());
 
 #define EXPECT_PIXELS_MATCH(bitmap, opaqueRect) \
 { \
@@ -226,9 +226,88 @@ TEST(PlatformContextSkiaTest, trackOpaqueClipTest)
     context.save();
     context.clipToImageBuffer(alphaImage.get(), FloatRect(30, 30, 10, 10));
     context.fillRect(FloatRect(10, 10, 90, 90), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+    context.restore();
     EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
     EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
-    context.restore();
+}
+
+TEST(PlatformContextSkiaTest, trackImageMask)
+{
+    SkBitmap bitmap;
+    bitmap.setConfig(SkBitmap::kARGB_8888_Config, 400, 400);
+    bitmap.allocPixels();
+    SkCanvas canvas(bitmap);
+
+    PlatformContextSkia platformContext(&canvas);
+    platformContext.setTrackOpaqueRegion(true);
+    GraphicsContext context(&platformContext);
+
+    Color opaque(1.0f, 0.0f, 0.0f, 1.0f);
+    Color alpha(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Image masks are done by drawing a bitmap into a transparency layer that uses DstIn to mask
+    // out a transparency layer below that is filled with the mask color. In the end this should
+    // not be marked opaque.
+
+    context.setCompositeOperation(CompositeSourceOver);
+    context.beginTransparencyLayer(1);
+    context.fillRect(FloatRect(10, 10, 10, 10), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+
+    context.setCompositeOperation(CompositeDestinationIn);
+    context.beginTransparencyLayer(1);
+
+    OwnPtr<ImageBuffer> alphaImage = ImageBuffer::create(IntSize(100, 100));
+    alphaImage->context()->fillRect(IntRect(0, 0, 100, 100), alpha, ColorSpaceDeviceRGB);
+
+    context.setCompositeOperation(CompositeSourceOver);
+    context.drawImageBuffer(alphaImage.get(), ColorSpaceDeviceRGB, FloatRect(10, 10, 10, 10));
+
+    context.endTransparencyLayer();
+    context.endTransparencyLayer();
+
+    EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
+}
+
+TEST(PlatformContextSkiaTest, trackImageMaskWithOpaqueRect)
+{
+    SkBitmap bitmap;
+    bitmap.setConfig(SkBitmap::kARGB_8888_Config, 400, 400);
+    bitmap.allocPixels();
+    SkCanvas canvas(bitmap);
+
+    PlatformContextSkia platformContext(&canvas);
+    platformContext.setTrackOpaqueRegion(true);
+    GraphicsContext context(&platformContext);
+
+    Color opaque(1.0f, 0.0f, 0.0f, 1.0f);
+    Color alpha(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Image masks are done by drawing a bitmap into a transparency layer that uses DstIn to mask
+    // out a transparency layer below that is filled with the mask color. In the end this should
+    // not be marked opaque.
+
+    context.setCompositeOperation(CompositeSourceOver);
+    context.beginTransparencyLayer(1);
+    context.fillRect(FloatRect(10, 10, 10, 10), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+
+    context.setCompositeOperation(CompositeDestinationIn);
+    context.beginTransparencyLayer(1);
+
+    OwnPtr<ImageBuffer> alphaImage = ImageBuffer::create(IntSize(100, 100));
+    alphaImage->context()->fillRect(IntRect(0, 0, 100, 100), alpha, ColorSpaceDeviceRGB);
+
+    context.setCompositeOperation(CompositeSourceOver);
+    context.drawImageBuffer(alphaImage.get(), ColorSpaceDeviceRGB, FloatRect(10, 10, 10, 10));
+
+    // We can't have an opaque mask actually, but we can pretend here like it would look if we did.
+    context.fillRect(FloatRect(12, 12, 3, 3), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+
+    context.endTransparencyLayer();
+    context.endTransparencyLayer();
+
+    EXPECT_EQ_RECT(IntRect(12, 12, 3, 3), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
 }
 
 TEST(PlatformContextSkiaTest, trackOpaqueJoinTest)

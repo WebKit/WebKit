@@ -1,3 +1,14 @@
+2012-04-23  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Image masks are considered opaque incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=84275
+
+        Reviewed by Adrienne Walker.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-04-23  Kent Tamura  <tkent@chromium.org>
 
         Show the format indicator in a date field
