@@ -1,3 +1,14 @@
+2012-04-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: encapsulate live location into the Script.
+        https://bugs.webkit.org/show_bug.cgi?id=84722
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/linkifier.html:
+
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.

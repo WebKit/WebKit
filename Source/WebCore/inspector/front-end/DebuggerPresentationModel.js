@@ -115,12 +115,13 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     /**
      * @param {DebuggerAgent.Location} rawLocation
-     * @param {function(WebInspector.UILocation)} updateDelegate
-     * @return {WebInspector.LiveLocation}
+     * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
+     * @return {WebInspector.Script.Location}
      */
     createLiveLocation: function(rawLocation, updateDelegate)
     {
-        return this._scriptMapping.createLiveLocation(rawLocation, updateDelegate);
+        var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
+        return script.createLocation(rawLocation, updateDelegate);
     },
 
     /**
@@ -191,7 +192,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     setScriptSource: function(uiSourceCode, newSource, callback)
     {
         var rawLocation = this.uiLocationToRawLocation(uiSourceCode, 0, 0);
-        var script = WebInspector.debuggerModel.scriptForSourceID(rawLocation.scriptId);
+        var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
 
         /**
          * @this {WebInspector.DebuggerPresentationModel}
@@ -252,7 +253,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
             uiLocation.uiSourceCode.consoleMessageAdded(presentationMessage);
         }
         var liveLocation = this.createLiveLocation(rawLocation, updateLocation.bind(this));
-        liveLocation.init();
         this._consoleMessageLiveLocations.push(liveLocation);
     },
 
@@ -323,7 +323,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._presentationCallFrames = [];
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
-            if (WebInspector.debuggerModel.scriptForSourceID(callFrame.location.scriptId))
+            if (WebInspector.debuggerModel.scriptForId(callFrame.location.scriptId))
                 this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails();
@@ -356,7 +356,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, uiLocation);
         }
         this._executionLineLiveLocation = this.createLiveLocation(callFrame._callFrame.location, updateExecutionLine.bind(this));
-        this._executionLineLiveLocation.init();
     },
 
     /**
@@ -553,10 +552,9 @@ WebInspector.PresentationCallFrame.prototype = {
         function locationUpdated(uiLocation)
         {
             callback(uiLocation);
-            liveLocation.dispose();
+            return true;
         }
-        var liveLocation = this._model.createLiveLocation(this._callFrame.location, locationUpdated.bind(this));
-        liveLocation.init();
+        this._model.createLiveLocation(this._callFrame.location, locationUpdated.bind(this));
     }
 }
 
@@ -570,7 +568,6 @@ WebInspector.DebuggerPresentationModel.CallFramePlacard = function(callFrame, mo
 {
     WebInspector.Placard.call(this, callFrame._callFrame.functionName || WebInspector.UIString("(anonymous function)"), "");
     this._liveLocation = model.createLiveLocation(callFrame._callFrame.location, this._update.bind(this));
-    this._liveLocation.init();
 }
 
 WebInspector.DebuggerPresentationModel.CallFramePlacard.prototype = {
@@ -745,11 +742,10 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
      */
     linkifyRawLocation: function(rawLocation, classes)
     {
-        if (!WebInspector.debuggerModel.scriptForSourceID(rawLocation.scriptId))
+        if (!WebInspector.debuggerModel.scriptForId(rawLocation.scriptId))
             return null;
         var anchor = WebInspector.linkifyURLAsNode("", "", classes, false);
         var liveLocation = this._model.createLiveLocation(rawLocation, this._updateAnchor.bind(this, anchor));
-        liveLocation.init();
         this._liveLocations.push(liveLocation);
         return anchor;
     },

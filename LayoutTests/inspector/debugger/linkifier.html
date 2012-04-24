@@ -10,6 +10,7 @@ function test()
 
     var linkifier;
     var link;
+    var script;
 
     function waitForScripts()
     {
@@ -19,7 +20,7 @@ function test()
             if (continued)
                 return;
 
-            var script = event.data;
+            script = event.data;
             if (script.sourceURL === WebInspector.inspectedPageURL) {
                 continued = true;
                 setTimeout(debuggerTest, 0);
@@ -67,11 +68,7 @@ function test()
 
     function liveLocationsCount()
     {
-        var locations = WebInspector.debuggerPresentationModel._scriptMapping._liveLocationsForScriptId;
-        var count = 0;
-        for (id in locations)
-            count += locations[id].length;
-        return count;
+        return script._locations.length;
     }
 }
 

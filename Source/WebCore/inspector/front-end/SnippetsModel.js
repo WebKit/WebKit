@@ -374,8 +374,7 @@ WebInspector.SnippetsScriptMapping.prototype = {
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._snippetForScriptId[script.scriptId] = snippet;
         this._scriptForUISourceCode.put(uiSourceCode, script);
-        var data = { scriptId: script.scriptId, uiSourceCodes: [uiSourceCode] };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
+        script.setSourceMapping(this);
     },
 
     /**
@@ -422,12 +421,9 @@ WebInspector.SnippetsScriptMapping.prototype = {
         var oldUISourceCode = this._uiSourceCodeForScriptId[script.scriptId];
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptForUISourceCode.put(uiSourceCode, script);
-        var data = { scriptId: script.scriptId, uiSourceCodes: [oldUISourceCode] };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptUnbound, data);
-        data = { removedItems: [], addedItems: [uiSourceCode] };
+        var data = { removedItems: [], addedItems: [uiSourceCode] };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
-        data = { scriptId: script.scriptId, uiSourceCodes: [uiSourceCode] };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
+        script.setSourceMapping(this);
     },
 
     /**

@@ -139,7 +139,7 @@ WebInspector.DebuggerModel.prototype = {
      */
     setBreakpointByScriptLocation: function(location, condition, callback)
     {
-        var script = this.scriptForSourceID(location.scriptId);
+        var script = this.scriptForId(location.scriptId);
         if (script.sourceURL)
             this.setBreakpoint(script.sourceURL, location.lineNumber, location.columnNumber, condition, callback);
         else
@@ -238,7 +238,7 @@ WebInspector.DebuggerModel.prototype = {
      * @param {DebuggerAgent.ScriptId} scriptId
      * @return {WebInspector.Script}
      */
-    scriptForSourceID: function(scriptId)
+    scriptForId: function(scriptId)
     {
         return this._scripts[scriptId] || null;
     },

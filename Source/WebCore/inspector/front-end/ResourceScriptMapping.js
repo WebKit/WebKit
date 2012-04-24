@@ -117,7 +117,6 @@ WebInspector.ResourceScriptMapping.prototype = {
         var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, request, this._formatter, this._formatSource);
         this._rawSourceCodes.push(rawSourceCode);
         this._bindScriptToRawSourceCode(script, rawSourceCode);
-
         if (isInlineScript)
             this._rawSourceCodeForDocumentURL[script.sourceURL] = rawSourceCode;
 
@@ -149,27 +148,15 @@ WebInspector.ResourceScriptMapping.prototype = {
             this._rawSourceCodeForUISourceCode.put(addedItem, rawSourceCode);
 
         var scriptIds = [];
-        for (var i = 0; i < rawSourceCode._scripts.length; ++i)
+        for (var i = 0; i < rawSourceCode._scripts.length; ++i) {
             scriptIds.push(rawSourceCode._scripts[i].scriptId);
+            rawSourceCode._scripts[i].setSourceMapping(this);
+        }
         var removedItems = removedItem ? [removedItem] : [];
         var addedItems = addedItem ? [addedItem] : [];
 
-        if (removedItem) {
-            for (var i = 0; i < scriptIds.length; ++i) {
-                var data = { scriptId: scriptIds[i], uiSourceCodes: [removedItem] };
-                this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptUnbound, data);
-            }
-        }
-
         var data = { removedItems: removedItems, addedItems: addedItems };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
-
-        if (addedItem) {
-            for (var i = 0; i < scriptIds.length; ++i) {
-                data = { scriptId: scriptIds[i], uiSourceCodes: [addedItem] };
-                this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
-            }
-        }
     },
 
     /**
@@ -180,6 +167,7 @@ WebInspector.ResourceScriptMapping.prototype = {
     {
         this._rawSourceCodeForScriptId[script.scriptId] = rawSourceCode;
         this._rawSourceCodeForURL[script.sourceURL] = rawSourceCode;
+        script.setSourceMapping(this);
     },
 
     /**
