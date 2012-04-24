@@ -1,3 +1,9 @@
+2012-04-23  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-23  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=83918.

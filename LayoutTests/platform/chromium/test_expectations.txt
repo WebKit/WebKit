@@ -2150,6 +2150,8 @@ BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-vi
 BUGWEBGL WIN : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = PASS CRASH
 BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
 BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/read-pixels-test.html = TIMEOUT
+BUGWEBGL : fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html = TIMEOUT
+BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html = TIMEOUT
 
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
