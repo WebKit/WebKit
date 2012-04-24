@@ -1,3 +1,9 @@
+2012-04-24  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed, skip unsupported inspector heap profiler test on mac.
+
+        * platform/mac/Skipped: Skip inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
+
 2012-04-24  Rob Buis  <rbuis@rim.com>
 
         [SVG] getBBox on a <g> within symbol returns 0 but with defs it works correctly
