@@ -1,6 +1,15 @@
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84724
+
+        Mark platform/chromium/media/video-frame-size-change.html as flaky on Mac 10.6.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
         http://crbug.com/31623
 
         Mark http/tests/appcache/remove-cache.html as flaky on Mac 10.6.
