@@ -1,3 +1,12 @@
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84712
+
+        Mark http/tests/inspector/network/x-frame-options-deny.html as flaky on Vista.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix some more GTK baselines after r114836.
