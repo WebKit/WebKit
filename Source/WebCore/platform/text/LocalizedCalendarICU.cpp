@@ -32,129 +32,23 @@
 #include "LocalizedCalendar.h"
 
 #if ENABLE(CALENDAR_PICKER)
-#include "Language.h"
-#include <unicode/ucal.h>
-#include <unicode/udat.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/text/CString.h>
+#include "ICULocale.h"
 
 namespace WebCore {
 
-class ScopedDateFormat {
-public:
-    ScopedDateFormat()
-    {
-        UErrorCode status = U_ZERO_ERROR;
-        m_dateFormat = udat_open(UDAT_DEFAULT, UDAT_DEFAULT, defaultLanguage().utf8().data(), 0, -1, 0, -1, &status);
-    }
-
-    ~ScopedDateFormat()
-    {
-        if (m_dateFormat)
-            udat_close(m_dateFormat);
-    }
-
-    UDateFormat* get() const { return m_dateFormat; }
-
-private:
-    UDateFormat* m_dateFormat;
-};
-
-static PassOwnPtr<Vector<String> > createFallbackMonthLabels()
-{
-    OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
-    labels->reserveCapacity(12);
-    labels->append("January");
-    labels->append("February");
-    labels->append("March");
-    labels->append("April");
-    labels->append("May");
-    labels->append("June");
-    labels->append("July");
-    labels->append("August");
-    labels->append("September");
-    labels->append("October");
-    labels->append("November");
-    labels->append("December");
-    return labels.release();
-}
-
-static PassOwnPtr<Vector<String> > createLabelVector(UDateFormatSymbolType type, int32_t startIndex, int32_t size)
-{
-    ScopedDateFormat dateFormat;
-    if (!dateFormat.get())
-        return PassOwnPtr<Vector<String> >();
-    if (udat_countSymbols(dateFormat.get(), type) != startIndex + size)
-        return PassOwnPtr<Vector<String> >();
-
-    OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
-    labels->reserveCapacity(size);
-    for (int32_t i = 0; i < size; ++i) {
-        UErrorCode status = U_ZERO_ERROR;
-        int32_t length = udat_getSymbols(dateFormat.get(), type, startIndex + i, 0, 0, &status);
-        if (status != U_BUFFER_OVERFLOW_ERROR)
-            return PassOwnPtr<Vector<String> >();
-        Vector<UChar> buffer(length);
-        status = U_ZERO_ERROR;
-        udat_getSymbols(dateFormat.get(), type, startIndex + i, buffer.data(), length, &status);
-        if (U_FAILURE(status))
-            return PassOwnPtr<Vector<String> >();
-        labels->append(String::adopt(buffer));
-    }
-    return labels.release();
-}
-
-static PassOwnPtr<Vector<String> > createMonthLabels()
-{
-    OwnPtr<Vector<String> > labels = createLabelVector(UDAT_MONTHS, UCAL_JANUARY, 12);
-    return labels ? labels.release() : createFallbackMonthLabels();
-}
-
 const Vector<String>& monthLabels()
 {
-    static const Vector<String>* labels = createMonthLabels().leakPtr();
-    return *labels;
-}
-
-static PassOwnPtr<Vector<String> > createFallbackWeekDayShortLabels()
-{
-    OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
-    labels->reserveCapacity(7);
-    labels->append("Sun");
-    labels->append("Mon");
-    labels->append("Tue");
-    labels->append("Wed");
-    labels->append("Thu");
-    labels->append("Fri");
-    labels->append("Sat");
-    return labels.release();
-}
-
-static PassOwnPtr<Vector<String> > createWeekDayShortLabels()
-{
-    OwnPtr<Vector<String> > labels = createLabelVector(UDAT_SHORT_WEEKDAYS, UCAL_SUNDAY, 7);
-    return labels ? labels.release() : createFallbackWeekDayShortLabels();
+    return ICULocale::currentLocale()->monthLabels();
 }
 
 const Vector<String>& weekDayShortLabels()
 {
-    static const Vector<String>* labels = createWeekDayShortLabels().leakPtr();
-    return *labels;
-}
-
-static unsigned getFirstDayOfWeek()
-{
-    ScopedDateFormat dateFormat;
-    if (!dateFormat.get())
-        return 0;
-    unsigned firstDay = ucal_getAttribute(udat_getCalendar(dateFormat.get()), UCAL_FIRST_DAY_OF_WEEK) - UCAL_SUNDAY;
-    return firstDay;
+    return ICULocale::currentLocale()->weekDayShortLabels();
 }
 
 unsigned firstDayOfWeek()
 {
-    static unsigned firstDay = getFirstDayOfWeek();
-    return firstDay;
+    return ICULocale::currentLocale()->firstDayOfWeek();
 }
 
 }

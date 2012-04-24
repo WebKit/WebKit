@@ -31,44 +31,18 @@
 #include "config.h"
 #include "LocalizedDate.h"
 
-#include "Language.h"
+#include "ICULocale.h"
 #include <limits>
-#include <unicode/udat.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/text/CString.h>
 
-using namespace icu;
 using namespace std;
 
 namespace WebCore {
 
-static inline UDateFormat* createShortDateFormatter()
-{
-    const UChar gmtTimezone[3] = {'G', 'M', 'T'};
-    UErrorCode status = U_ZERO_ERROR;
-    return udat_open(UDAT_NONE, UDAT_SHORT, defaultLanguage().utf8().data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
-}
-
 double parseLocalizedDate(const String& input, DateComponents::Type type)
 {
     switch (type) {
-    case DateComponents::Date: {
-        if (input.length() > static_cast<unsigned>(numeric_limits<int32_t>::max()))
-            break;
-        int32_t inputLength = static_cast<int32_t>(input.length());
-        UDateFormat* dateFormat = createShortDateFormatter();
-        if (!dateFormat)
-            break;
-        UErrorCode status = U_ZERO_ERROR;
-        int32_t parsePosition = 0;
-        UDate date = udat_parse(dateFormat, input.characters(), inputLength, &parsePosition, &status);
-        udat_close(dateFormat);
-        if (parsePosition != inputLength || U_FAILURE(status))
-            break;
-        // UDate, which is an alias of double, is compatible with our expectation.
-        return date;
-    }
+    case DateComponents::Date:
+        return ICULocale::currentLocale()->parseLocalizedDate(input);
     case DateComponents::DateTime:
     case DateComponents::DateTimeLocal:
     case DateComponents::Month:
@@ -83,25 +57,8 @@ double parseLocalizedDate(const String& input, DateComponents::Type type)
 String formatLocalizedDate(const DateComponents& dateComponents)
 {
     switch (dateComponents.type()) {
-    case DateComponents::Date: {
-        UDateFormat* dateFormat = createShortDateFormatter();
-        if (!dateFormat)
-            break;
-        double input = dateComponents.millisecondsSinceEpoch();
-        UErrorCode status = U_ZERO_ERROR;
-        int32_t length = udat_format(dateFormat, input, 0, 0, 0, &status);
-        if (status != U_BUFFER_OVERFLOW_ERROR) {
-            udat_close(dateFormat);
-            break;
-        }
-        Vector<UChar> buffer(length);
-        status = U_ZERO_ERROR;
-        udat_format(dateFormat, input, buffer.data(), length, 0, &status);
-        udat_close(dateFormat);
-        if (U_FAILURE(status))
-            break;
-        return String::adopt(buffer);
-    }
+    case DateComponents::Date:
+        return ICULocale::currentLocale()->formatLocalizedDate(dateComponents);
     case DateComponents::DateTime:
     case DateComponents::DateTimeLocal:
     case DateComponents::Month:

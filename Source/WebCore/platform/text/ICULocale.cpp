@@ -31,23 +31,31 @@
 #include "config.h"
 #include "ICULocale.h"
 
+#include <limits>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace icu;
+using namespace std;
 
 namespace WebCore {
 
 ICULocale::ICULocale(const char* locale)
     : m_locale(locale)
     , m_numberFormat(0)
+    , m_shortDateFormat(0)
     , m_didCreateDecimalFormat(false)
+    , m_didCreateShortDateFormat(false)
+#if ENABLE(CALENDAR_PICKER)
+    , m_firstDayOfWeek(0)
+#endif
 {
 }
 
 ICULocale::~ICULocale()
 {
     unum_close(m_numberFormat);
+    udat_close(m_shortDateFormat);
 }
 
 PassOwnPtr<ICULocale> ICULocale::create(const char* localeString)
@@ -257,6 +265,149 @@ String ICULocale::convertFromLocalizedNumber(const String& localized)
     }
     return builder.toString();
 }
+
+bool ICULocale::initializeShortDateFormat()
+{
+    if (m_didCreateShortDateFormat)
+        return m_shortDateFormat;
+    const UChar gmtTimezone[3] = {'G', 'M', 'T'};
+    UErrorCode status = U_ZERO_ERROR;
+    m_shortDateFormat = udat_open(UDAT_NONE, UDAT_SHORT, m_locale.data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
+    m_didCreateShortDateFormat = true;
+    return m_shortDateFormat;
+}
+
+double ICULocale::parseLocalizedDate(const String& input)
+{
+    if (!initializeShortDateFormat())
+        return numeric_limits<double>::quiet_NaN();
+    if (input.length() > static_cast<unsigned>(numeric_limits<int32_t>::max()))
+        return numeric_limits<double>::quiet_NaN();
+    int32_t inputLength = static_cast<int32_t>(input.length());
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t parsePosition = 0;
+    UDate date = udat_parse(m_shortDateFormat, input.characters(), inputLength, &parsePosition, &status);
+    if (parsePosition != inputLength || U_FAILURE(status))
+        return numeric_limits<double>::quiet_NaN();
+    // UDate, which is an alias of double, is compatible with our expectation.
+    return date;
+}
+
+String ICULocale::formatLocalizedDate(const DateComponents& dateComponents)
+{
+    if (!initializeShortDateFormat())
+        return String();
+    double input = dateComponents.millisecondsSinceEpoch();
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t length = udat_format(m_shortDateFormat, input, 0, 0, 0, &status);
+    if (status != U_BUFFER_OVERFLOW_ERROR)
+        return String();
+    Vector<UChar> buffer(length);
+    status = U_ZERO_ERROR;
+    udat_format(m_shortDateFormat, input, buffer.data(), length, 0, &status);
+    if (U_FAILURE(status))
+        return String();
+    return String::adopt(buffer);
+}
+
+#if ENABLE(CALENDAR_PICKER)
+PassOwnPtr<Vector<String> > ICULocale::createLabelVector(UDateFormatSymbolType type, int32_t startIndex, int32_t size)
+{
+    if (!m_shortDateFormat)
+        return PassOwnPtr<Vector<String> >();
+    if (udat_countSymbols(m_shortDateFormat, type) != startIndex + size)
+        return PassOwnPtr<Vector<String> >();
+
+    OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
+    labels->reserveCapacity(size);
+    for (int32_t i = 0; i < size; ++i) {
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t length = udat_getSymbols(m_shortDateFormat, type, startIndex + i, 0, 0, &status);
+        if (status != U_BUFFER_OVERFLOW_ERROR)
+            return PassOwnPtr<Vector<String> >();
+        Vector<UChar> buffer(length);
+        status = U_ZERO_ERROR;
+        udat_getSymbols(m_shortDateFormat, type, startIndex + i, buffer.data(), length, &status);
+        if (U_FAILURE(status))
+            return PassOwnPtr<Vector<String> >();
+        labels->append(String::adopt(buffer));
+    }
+    return labels.release();
+}
+
+static PassOwnPtr<Vector<String> > createFallbackMonthLabels()
+{
+    OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
+    labels->reserveCapacity(12);
+    labels->append("January");
+    labels->append("February");
+    labels->append("March");
+    labels->append("April");
+    labels->append("May");
+    labels->append("June");
+    labels->append("July");
+    labels->append("August");
+    labels->append("September");
+    labels->append("October");
+    labels->append("November");
+    labels->append("December");
+    return labels.release();
+}
+
+static PassOwnPtr<Vector<String> > createFallbackWeekDayShortLabels()
+{
+    OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
+    labels->reserveCapacity(7);
+    labels->append("Sun");
+    labels->append("Mon");
+    labels->append("Tue");
+    labels->append("Wed");
+    labels->append("Thu");
+    labels->append("Fri");
+    labels->append("Sat");
+    return labels.release();
+}
+
+void ICULocale::initializeCalendar()
+{
+    if (m_monthLabels && m_weekDayShortLabels)
+        return;
+
+    if (!initializeShortDateFormat()) {
+        m_firstDayOfWeek = 0;
+        m_monthLabels = createFallbackMonthLabels();
+        m_weekDayShortLabels = createFallbackWeekDayShortLabels();
+        return;
+    }
+    m_firstDayOfWeek = ucal_getAttribute(udat_getCalendar(m_shortDateFormat), UCAL_FIRST_DAY_OF_WEEK) - UCAL_SUNDAY;
+
+    m_monthLabels = createLabelVector(UDAT_MONTHS, UCAL_JANUARY, 12);
+    if (!m_monthLabels)
+        m_monthLabels = createFallbackMonthLabels();
+
+    m_weekDayShortLabels = createLabelVector(UDAT_SHORT_WEEKDAYS, UCAL_SUNDAY, 7);
+    if (!m_weekDayShortLabels)
+        m_weekDayShortLabels = createFallbackWeekDayShortLabels();
+}
+
+const Vector<String>& ICULocale::monthLabels()
+{
+    initializeCalendar();
+    return *m_monthLabels;
+}
+
+const Vector<String>& ICULocale::weekDayShortLabels()
+{
+    initializeCalendar();
+    return *m_weekDayShortLabels;
+}
+
+unsigned ICULocale::firstDayOfWeek()
+{
+    initializeCalendar();
+    return m_firstDayOfWeek;
+}
+#endif
 
 } // namespace WebCore
 

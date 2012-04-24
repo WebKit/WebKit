@@ -31,6 +31,8 @@
 #ifndef ICULocale_h
 #define ICULocale_h
 
+#include "DateComponents.h"
+#include <unicode/udat.h>
 #include <unicode/unum.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -39,14 +41,28 @@
 
 namespace WebCore {
 
-// We should use this class only for LocalizedNumberICU.cpp and LocalizedNumberICUTest.cpp.
+// We should use this class only for LocalizedNumberICU.cpp, LocalizedDateICU.cpp,
+// LocalizedCalendarICU.cpp, and LocalizedNumberICUTest.cpp.
 class ICULocale {
 public:
     static PassOwnPtr<ICULocale> create(const char* localeString);
     static ICULocale* currentLocale();
     ~ICULocale();
+
+    // For LocalizedNumber
     String convertToLocalizedNumber(const String&);
     String convertFromLocalizedNumber(const String&);
+
+    // For LocalizedDate
+    double parseLocalizedDate(const String&);
+    String formatLocalizedDate(const DateComponents&);
+
+#if ENABLE(CALENDAR_PICKER)
+    // For LocalizedCalendar
+    const Vector<String>& monthLabels();
+    const Vector<String>& weekDayShortLabels();
+    unsigned firstDayOfWeek();
+#endif
 
 private:
     static PassOwnPtr<ICULocale> createForCurrentLocale();
@@ -58,8 +74,16 @@ private:
     bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
     unsigned matchedDecimalSymbolIndex(const String& input, unsigned& position);
 
+    bool initializeShortDateFormat();
+
+#if ENABLE(CALENDAR_PICKER)
+    PassOwnPtr<Vector<String> > createLabelVector(UDateFormatSymbolType, int32_t startIndex, int32_t size);
+    void initializeCalendar();
+#endif
+
     CString m_locale;
     UNumberFormat* m_numberFormat;
+    UDateFormat* m_shortDateFormat;
     enum {
         // 0-9 for digits.
         DecimalSeparatorIndex = 10,
@@ -72,6 +96,13 @@ private:
     String m_negativePrefix;
     String m_negativeSuffix;
     bool m_didCreateDecimalFormat;
+    bool m_didCreateShortDateFormat;
+
+#if ENABLE(CALENDAR_PICKER)
+    OwnPtr<Vector<String> > m_monthLabels;
+    OwnPtr<Vector<String> > m_weekDayShortLabels;
+    unsigned m_firstDayOfWeek;
+#endif
 };
 
 }
