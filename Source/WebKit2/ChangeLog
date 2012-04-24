@@ -1,3 +1,17 @@
+2012-04-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Tap-to zoom should navigate when appropiate
+        https://bugs.webkit.org/show_bug.cgi?id=84602
+
+        Reviewed by Simon Hausmann.
+
+        When a zoomable area is returned and has the same zoom-level as the current, 
+        examine if the using this target would expose currently unexposed parts of
+        the zoom-target. If it does, pan to that area instead of zooming back.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+
 2012-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitCookieManager::changed signal to WebKit2 GTK+ API

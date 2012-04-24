@@ -387,15 +387,20 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
 
     QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
 
-    enum { ZoomIn, ZoomBack, ZoomOut } zoomAction = ZoomIn;
+    enum { ZoomIn, ZoomBack, ZoomOut, NoZoom } zoomAction = ZoomIn;
 
     if (!m_scaleStack.isEmpty()) {
         // Zoom back out if attempting to scale to the same current scale, or
         // attempting to continue scaling out from the inner most level.
         // Use fuzzy compare with a fixed error to be able to deal with largish differences due to pixel rounding.
         if (fuzzyCompare(endItemScale, currentScale, 0.01)) {
-            // FIXME: Check if we should move the viewport instead of zooming back.
-            zoomAction = ZoomBack;
+            // If moving the viewport would expose more of the targetRect and move at least 40 pixels, update position but do not scale out.
+            QRectF currentContentRect(m_viewport->contentPos() / currentScale, viewportRect.size() / currentScale);
+            QRectF targetIntersection = endVisibleContentRect.intersected(targetArea);
+            if (!currentContentRect.contains(targetIntersection) && (qAbs(endVisibleContentRect.top() - currentContentRect.top()) >= 40 || qAbs(endVisibleContentRect.left() - currentContentRect.left()) >= 40))
+                zoomAction = NoZoom;
+            else
+                zoomAction = ZoomBack;
         } else if (fuzzyCompare(endItemScale, m_zoomOutScale, 0.01))
             zoomAction = ZoomBack;
         else if (endItemScale < currentScale)
@@ -420,6 +425,8 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
         while (!m_scaleStack.isEmpty() && m_scaleStack.last().scale >= endItemScale)
             m_scaleStack.removeLast();
         m_zoomOutScale = endItemScale;
+        break;
+    case NoZoom:
         break;
     }
 
