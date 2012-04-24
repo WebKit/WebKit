@@ -1,3 +1,27 @@
+2012-04-24  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Shaders: Repainting the FECustomFilter requires full source image
+        https://bugs.webkit.org/show_bug.cgi?id=76689
+
+        Reviewed by Dean Jackson.
+
+        * css3/filters/custom/filter-repaint-custom-clipped-expected.png: Added.
+        * css3/filters/custom/filter-repaint-custom-clipped-expected.txt: Added.
+        * css3/filters/custom/filter-repaint-custom-clipped.html: Added.
+        * css3/filters/custom/filter-repaint-custom-expected.png: Added.
+        * css3/filters/custom/filter-repaint-custom-expected.txt: Added.
+        * css3/filters/custom/filter-repaint-custom-rotated-expected.png: Added.
+        * css3/filters/custom/filter-repaint-custom-rotated-expected.txt: Added.
+        * css3/filters/custom/filter-repaint-custom-rotated.html: Added.
+        * css3/filters/custom/filter-repaint-custom.html: Added.
+        * css3/filters/resources/color-add.fs: Added.
+        * css3/filters/resources/vertex-horizontal-offset.vs: Added.
+        * css3/filters/resources/vertex-rotate.vs: Added.
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-clipped-expected.png: Added.
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-expected.png: Added.
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-rotated-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed test expectations update.

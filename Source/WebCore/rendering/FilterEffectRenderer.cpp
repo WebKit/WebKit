@@ -90,6 +90,9 @@ FilterEffectRenderer::FilterEffectRenderer()
     , m_leftOutset(0)
     , m_graphicsBufferAttached(false)
     , m_hasFilterThatMovesPixels(false)
+#if ENABLE(CSS_SHADERS)
+    , m_hasCustomShaderFilter(false)
+#endif
 {
     setFilterResolution(FloatSize(1, 1));
     m_sourceGraphic = SourceGraphic::create(this);
@@ -110,6 +113,9 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
     UNUSED_PARAM(document);
 #endif
 
+#if ENABLE(CSS_SHADERS)
+    m_hasCustomShaderFilter = false;
+#endif
     m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     if (m_hasFilterThatMovesPixels)
         operations.getOutsets(m_topOutset, m_rightOutset, m_bottomOutset, m_leftOutset);
@@ -268,6 +274,7 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
                 effect = FECustomFilter::create(this, document->view()->root()->hostWindow(), program, customFilterOperation->parameters(),
                                                 customFilterOperation->meshRows(), customFilterOperation->meshColumns(),
                                                 customFilterOperation->meshBoxType(), customFilterOperation->meshType());
+                m_hasCustomShaderFilter = true;
             }
 #endif
             break;
@@ -337,6 +344,13 @@ void FilterEffectRenderer::apply()
 
 LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect)
 {
+#if ENABLE(CSS_SHADERS)
+    if (hasCustomShaderFilter()) {
+        // When we have at least a custom shader in the chain, we need to compute the whole source image, because the shader can
+        // reference any pixel and we cannot control that.
+        return filterBoxRect;
+    }
+#endif
     // The result of this function is the area in the "filterBoxRect" that needs to be repainted, so that we fully cover the "dirtyRect".
     LayoutRect rectForRepaint = dirtyRect;
     if (hasFilterThatMovesPixels()) {

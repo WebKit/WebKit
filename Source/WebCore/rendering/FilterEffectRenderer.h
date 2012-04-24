@@ -110,6 +110,9 @@ public:
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
     LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
+#if ENABLE(CSS_SHADERS)
+    bool hasCustomShaderFilter() const { return m_hasCustomShaderFilter; }
+#endif
 private:
     void setMaxEffectRects(const FloatRect& effectRect)
     {
@@ -141,6 +144,9 @@ private:
     
     bool m_graphicsBufferAttached;
     bool m_hasFilterThatMovesPixels;
+#if ENABLE(CSS_SHADERS)
+    bool m_hasCustomShaderFilter;
+#endif
 };
 
 } // namespace WebCore
