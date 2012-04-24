@@ -1,3 +1,20 @@
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
+
+        The following tests have been marked as crashing in debug mode only:
+
+            http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html
+            http/tests/websocket/tests/hixie76/workers/close-in-worker.html
+            http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html
+            http/tests/websocket/tests/hixie76/workers/worker-simple.html
+            media/media-controller-playback.html
+            media/track/track-cues-missed.html
+            media/track/track-cues-pause-on-exit.html
+            media/track/track-cues-sorted-before-dispatch.html
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Should pass canvas/philip/tests/toDataURL.jpeg.alpha.html

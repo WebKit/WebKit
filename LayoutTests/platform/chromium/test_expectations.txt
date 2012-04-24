@@ -3669,10 +3669,10 @@ BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
-BUGWK84125 : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html = CRASH
-BUGWK84125 : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = CRASH
-BUGWK84125 : http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html = CRASH
-BUGWK84125 : http/tests/websocket/tests/hixie76/workers/worker-simple.html = CRASH
+BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html = CRASH
+BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = CRASH
+BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/worker-handshake-challenge-randomness.html = CRASH
+BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/worker-simple.html = CRASH
 
 BUGWK84427 LINUX DEBUG : platform/chromium/editing/spelling/delete-misspelled-word.html = TIMEOUT
 BUGWK84427 MAC WIN DEBUG : platform/chromium/editing/spelling/delete-misspelled-word.html = PASS TIMEOUT
@@ -3691,10 +3691,10 @@ BUGWK84596 : media/encrypted-media/encrypted-media-events.html = PASS CRASH
 
 BUGCR124777 : media/video-colorspace-yuv422.html = IMAGE+TEXT TIMEOUT
 
-BUGCR124779 : media/media-controller-playback.html = CRASH
-BUGCR124779 : media/track/track-cues-missed.html = CRASH
-BUGCR124779 : media/track/track-cues-pause-on-exit.html = CRASH
-BUGCR124779 : media/track/track-cues-sorted-before-dispatch.html = CRASH
+BUGCR124779 DEBUG : media/media-controller-playback.html = CRASH
+BUGCR124779 DEBUG : media/track/track-cues-missed.html = CRASH
+BUGCR124779 DEBUG : media/track/track-cues-pause-on-exit.html = CRASH
+BUGCR124779 DEBUG : media/track/track-cues-sorted-before-dispatch.html = CRASH
 
 // Uncomment after CR124779 is resolved (if the test is still flaky)
 // BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT
