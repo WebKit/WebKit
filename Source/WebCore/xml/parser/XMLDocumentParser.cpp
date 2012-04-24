@@ -204,7 +204,7 @@ void XMLDocumentParser::end()
         insertErrorMessageBlock();
     else {
         exitText();
-        document()->styleSelectorChanged(RecalcStyleImmediately);
+        document()->styleResolverChanged(RecalcStyleImmediately);
     }
 
     if (isParsing())

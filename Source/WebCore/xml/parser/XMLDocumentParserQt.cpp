@@ -202,7 +202,7 @@ void XMLDocumentParser::doEnd()
     if (m_sawXSLTransform) {
         document()->setTransformSource(adoptPtr(new TransformSource(m_originalSourceForTransform)));
         document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
-        document()->styleSelectorChanged(RecalcStyleImmediately);
+        document()->styleResolverChanged(RecalcStyleImmediately);
         document()->setParsing(true);
         DocumentParser::stopParsing();
     }

@@ -82,7 +82,7 @@ void CSSPageRule::setSelectorText(const String& selectorText)
     
     if (this->selectorText() == oldSelectorText)
         return;
-    doc->styleSelectorChanged(DeferRecalcStyle);
+    doc->styleResolverChanged(DeferRecalcStyle);
 }
 
 String CSSPageRule::cssText() const

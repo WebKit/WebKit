@@ -1030,7 +1030,7 @@ void EditingStyle::mergeStyle(const StylePropertySet* style, CSSPropertyOverride
 static PassRefPtr<StylePropertySet> styleFromMatchedRulesForElement(Element* element, unsigned rulesToInclude)
 {
     RefPtr<StylePropertySet> style = StylePropertySet::create();
-    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element, rulesToInclude);
+    RefPtr<CSSRuleList> matchedRules = element->document()->styleResolver()->styleRulesForElement(element, rulesToInclude);
     if (matchedRules) {
         for (unsigned i = 0; i < matchedRules->length(); i++) {
             if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {

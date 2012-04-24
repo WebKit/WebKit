@@ -122,7 +122,7 @@ void HTMLStyleElement::registerWithScopingNode()
     scope->registerScopedHTMLStyleChild();
     scope->setNeedsStyleRecalc();
     if (inDocument() && !document()->parsing() && document()->renderer())
-        document()->styleSelectorChanged(DeferRecalcStyle);
+        document()->styleResolverChanged(DeferRecalcStyle);
 
     m_isRegisteredWithScopingNode = true;
 }
@@ -145,7 +145,7 @@ void HTMLStyleElement::unregisterWithScopingNode()
         scope->setNeedsStyleRecalc();
     }
     if (inDocument() && !document()->parsing() && document()->renderer())
-        document()->styleSelectorChanged(DeferRecalcStyle);
+        document()->styleResolverChanged(DeferRecalcStyle);
 
     m_isRegisteredWithScopingNode = false;
 }

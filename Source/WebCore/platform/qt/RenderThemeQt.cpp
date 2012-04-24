@@ -394,9 +394,9 @@ void RenderThemeQt::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, E
     style->setBoxShadow(nullptr);
 }
 
-void RenderThemeQt::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
+void RenderThemeQt::adjustSliderThumbStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
-    RenderTheme::adjustSliderThumbStyle(selector, style, element);
+    RenderTheme::adjustSliderThumbStyle(styleResolver, style, element);
     style->setBoxShadow(nullptr);
 }
 
@@ -406,8 +406,7 @@ bool RenderThemeQt::paintSearchField(RenderObject* o, const PaintInfo& pi,
     return paintTextField(o, pi, r);
 }
 
-void RenderThemeQt::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style,
-                                           Element* e) const
+void RenderThemeQt::adjustSearchFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Resetting the style like this leads to differences like:
     // - RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] border: (2px inset #000000)]
@@ -420,8 +419,7 @@ void RenderThemeQt::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle*
     computeSizeBasedOnStyle(style);
 }
 
-void RenderThemeQt::adjustSearchFieldCancelButtonStyle(StyleResolver* selector, RenderStyle* style,
-                                                       Element* e) const
+void RenderThemeQt::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Logic taken from RenderThemeChromium.cpp.
     // Scale the button size based on the font size.
@@ -472,11 +470,10 @@ bool RenderThemeQt::paintSearchFieldCancelButton(RenderObject* o, const PaintInf
     return false;
 }
 
-void RenderThemeQt::adjustSearchFieldDecorationStyle(StyleResolver* selector, RenderStyle* style,
-                                                     Element* e) const
+void RenderThemeQt::adjustSearchFieldDecorationStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     notImplemented();
-    RenderTheme::adjustSearchFieldDecorationStyle(selector, style, e);
+    RenderTheme::adjustSearchFieldDecorationStyle(styleResolver, style, e);
 }
 
 bool RenderThemeQt::paintSearchFieldDecoration(RenderObject* o, const PaintInfo& pi,
@@ -486,11 +483,10 @@ bool RenderThemeQt::paintSearchFieldDecoration(RenderObject* o, const PaintInfo&
     return RenderTheme::paintSearchFieldDecoration(o, pi, r);
 }
 
-void RenderThemeQt::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style,
-                                                            Element* e) const
+void RenderThemeQt::adjustSearchFieldResultsDecorationStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     notImplemented();
-    RenderTheme::adjustSearchFieldResultsDecorationStyle(selector, style, e);
+    RenderTheme::adjustSearchFieldResultsDecorationStyle(styleResolver, style, e);
 }
 
 bool RenderThemeQt::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& pi,
@@ -501,8 +497,7 @@ bool RenderThemeQt::paintSearchFieldResultsDecoration(RenderObject* o, const Pai
 }
 
 #ifndef QT_NO_SPINBOX
-void RenderThemeQt::adjustInnerSpinButtonStyle(StyleResolver* selector, RenderStyle* style,
-                                               Element* e) const
+void RenderThemeQt::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Use the same width as our native scrollbar
     int width = ScrollbarTheme::theme()->scrollbarThickness();

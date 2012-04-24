@@ -254,8 +254,8 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
     Document* document = renderer->document();
     ASSERT(document);
     
-    StyleResolver* styleSelector = document->styleSelector();
-    ASSERT(styleSelector);
+    StyleResolver* styleResolver = document->styleResolver();
+    ASSERT(styleResolver);
 
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     AffineTransform ctm;
@@ -273,7 +273,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
     fontDescription.setComputedSize(StyleResolver::getComputedSizeFromSpecifiedSize(document, scalingFactor, fontDescription.isAbsoluteSize(), fontDescription.computedSize(), DoNotUseSmartMinimumForFontSize));
 
     scaledFont = Font(fontDescription, 0, 0);
-    scaledFont.update(styleSelector->fontSelector());
+    scaledFont.update(styleResolver->fontSelector());
 }
 
 }

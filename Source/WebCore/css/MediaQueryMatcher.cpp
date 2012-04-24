@@ -84,11 +84,11 @@ PassOwnPtr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
     if (!documentElement)
         return nullptr;
 
-    StyleResolver* styleSelector = m_document->styleSelector();
-    if (!styleSelector)
+    StyleResolver* styleResolver = m_document->styleResolver();
+    if (!styleResolver)
         return nullptr;
 
-    RefPtr<RenderStyle> rootStyle = styleSelector->styleForElement(documentElement, 0 /*defaultParent*/, DisallowStyleSharing, MatchOnlyUserAgentRules);
+    RefPtr<RenderStyle> rootStyle = styleResolver->styleForElement(documentElement, 0 /*defaultParent*/, DisallowStyleSharing, MatchOnlyUserAgentRules);
 
     return adoptPtr(new MediaQueryEvaluator(mediaType(), m_document->frame(), rootStyle.get()));
 }
@@ -137,7 +137,7 @@ void MediaQueryMatcher::removeListener(MediaQueryListListener* listener, MediaQu
     }
 }
 
-void MediaQueryMatcher::styleSelectorChanged()
+void MediaQueryMatcher::styleResolverChanged()
 {
     ASSERT(m_document);
 

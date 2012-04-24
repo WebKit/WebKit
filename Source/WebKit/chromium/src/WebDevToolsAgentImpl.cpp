@@ -236,7 +236,7 @@ public:
         double sizeRatio = static_cast<double>(scaledFrameSize.width) / m_emulatedFrameSize.width;
         frame->setPageAndTextZoomFactors(sizeRatio * m_originalZoomFactor, m_webView->emulatedTextZoomFactor());
         Document* doc = frame->document();
-        doc->styleSelectorChanged(RecalcStyleImmediately);
+        doc->styleResolverChanged(RecalcStyleImmediately);
         doc->updateLayout();
     }
 
@@ -338,7 +338,7 @@ private:
             frameView->resize(overrideWidth, overrideHeight);
 
         Document* doc = frameView->frame()->document();
-        doc->styleSelectorChanged(RecalcStyleImmediately);
+        doc->styleResolverChanged(RecalcStyleImmediately);
         doc->updateLayout();
     }
 

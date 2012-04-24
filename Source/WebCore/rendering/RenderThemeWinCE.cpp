@@ -235,10 +235,10 @@ bool RenderThemeWinCE::paintTextField(RenderObject* o, const PaintInfo& i, const
     return false;
 }
 
-void RenderThemeWinCE::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     style->resetBorder();
-    adjustMenuListButtonStyle(selector, style, e);
+    adjustMenuListButtonStyle(styleResolver, style, e);
 }
 
 bool RenderThemeWinCE::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
@@ -352,7 +352,7 @@ void RenderThemeWinCE::adjustButtonInnerStyle(RenderStyle* style) const
     style->setPaddingLeft(Length(3, Fixed));
 }
 
-void RenderThemeWinCE::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustSearchFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     // Override padding size to match AppKit text positioning.
     const int padding = 1;
@@ -392,21 +392,21 @@ bool RenderThemeWinCE::paintSearchFieldCancelButton(RenderObject* o, const Paint
     return false;
 }
 
-void RenderThemeWinCE::adjustSearchFieldCancelButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize cancelSize(13, 11);
     style->setWidth(Length(cancelSize.width(), Fixed));
     style->setHeight(Length(cancelSize.height(), Fixed));
 }
 
-void RenderThemeWinCE::adjustSearchFieldDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize emptySize(1, 11);
     style->setWidth(Length(emptySize.width(), Fixed));
     style->setHeight(Length(emptySize.height(), Fixed));
 }
 
-void RenderThemeWinCE::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize magnifierSize(15, 11);
     style->setWidth(Length(magnifierSize.width(), Fixed));
@@ -419,7 +419,7 @@ bool RenderThemeWinCE::paintSearchFieldResultsDecoration(RenderObject* o, const 
     return false;
 }
 
-void RenderThemeWinCE::adjustSearchFieldResultsButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize magnifierSize(15, 11);
     style->setWidth(Length(magnifierSize.width(), Fixed));
@@ -432,7 +432,7 @@ bool RenderThemeWinCE::paintSearchFieldResultsButton(RenderObject* o, const Pain
     return false;
 }
 
-void RenderThemeWinCE::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // These are the paddings needed to place the text correctly in the <select> box
     const int dropDownBoxPaddingTop    = 2;
@@ -529,7 +529,7 @@ bool RenderThemeWinCE::paintSliderThumb(RenderObject* o, const PaintInfo& i, con
     return rc;
 }
 
-void RenderThemeWinCE::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWinCE::adjustSearchFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     const int padding = 1;
     style->setPaddingLeft(Length(padding, Fixed));

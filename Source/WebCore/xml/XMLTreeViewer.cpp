@@ -80,7 +80,7 @@ void XMLTreeViewer::transformDocumentToTreeView()
     RefPtr<Text> text = m_document->createTextNode(cssString);
     ExceptionCode exceptionCode;
     m_document->getElementById("xml-viewer-style")->appendChild(text, exceptionCode);
-    m_document->styleSelectorChanged(RecalcStyleImmediately);
+    m_document->styleResolverChanged(RecalcStyleImmediately);
 }
 
 } // namespace WebCore

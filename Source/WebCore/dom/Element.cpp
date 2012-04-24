@@ -83,38 +83,38 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace XMLNames;
     
-class StyleSelectorParentPusher {
+class StyleResolverParentPusher {
 public:
-    StyleSelectorParentPusher(Element* parent)
+    StyleResolverParentPusher(Element* parent)
         : m_parent(parent)
-        , m_pushedStyleSelector(0)
+        , m_pushedStyleResolver(0)
     {
     }
     void push()
     {
-        if (m_pushedStyleSelector)
+        if (m_pushedStyleResolver)
             return;
-        m_pushedStyleSelector = m_parent->document()->styleSelector();
-        m_pushedStyleSelector->pushParentElement(m_parent);
+        m_pushedStyleResolver = m_parent->document()->styleResolver();
+        m_pushedStyleResolver->pushParentElement(m_parent);
     }
-    ~StyleSelectorParentPusher() 
+    ~StyleResolverParentPusher()
     {
 
-        if (!m_pushedStyleSelector)
+        if (!m_pushedStyleResolver)
             return;
 
         // This tells us that our pushed style selector is in a bad state,
         // so we should just bail out in that scenario.
-        ASSERT(m_pushedStyleSelector == m_parent->document()->styleSelector());
-        if (m_pushedStyleSelector != m_parent->document()->styleSelector())
+        ASSERT(m_pushedStyleResolver == m_parent->document()->styleResolver());
+        if (m_pushedStyleResolver != m_parent->document()->styleResolver())
             return;
 
-        m_pushedStyleSelector->popParentElement(m_parent); 
+        m_pushedStyleResolver->popParentElement(m_parent);
     }
 
 private:
     Element* m_parent;
-    StyleResolver* m_pushedStyleSelector;
+    StyleResolver* m_pushedStyleResolver;
 };
 
 PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
@@ -697,8 +697,8 @@ void Element::attributeChanged(Attribute* attr)
         setHasName(!attr->isNull());
 
     if (!needsStyleRecalc() && document()->attached()) {
-        StyleResolver* styleSelector = document()->styleSelectorIfExists();
-        if (!styleSelector || styleSelector->hasSelectorForAttribute(attr->name().localName()))
+        StyleResolver* styleResolver = document()->styleResolverIfExists();
+        if (!styleResolver || styleResolver->hasSelectorForAttribute(attr->name().localName()))
             setNeedsStyleRecalc();
     }
 
@@ -958,7 +958,7 @@ void Element::attach()
     RenderWidget::suspendWidgetHierarchyUpdates();
 
     createRendererIfNeeded();
-    StyleSelectorParentPusher parentPusher(this);
+    StyleResolverParentPusher parentPusher(this);
 
     // When a shadow root exists, it does the work of attaching the children.
     if (ShadowTree* tree = shadowTree()) {
@@ -1051,7 +1051,7 @@ PassRefPtr<RenderStyle> Element::styleForRenderer()
 {
     if (hasCustomStyleForRenderer())
         return customStyleForRenderer();
-    return document()->styleSelector()->styleForElement(static_cast<Element*>(this));
+    return document()->styleResolver()->styleForElement(static_cast<Element*>(this));
 }
 
 void Element::recalcStyle(StyleChange change)
@@ -1126,7 +1126,7 @@ void Element::recalcStyle(StyleChange change)
         // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
         if (document()->usesRemUnits() && document()->documentElement() == this && ch != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
             // Cached RenderStyles may depend on the rem units.
-            document()->styleSelector()->invalidateMatchedPropertiesCache();
+            document()->styleResolver()->invalidateMatchedPropertiesCache();
             change = Force;
         }
 
@@ -1137,7 +1137,7 @@ void Element::recalcStyle(StyleChange change)
                 change = ch;
         }
     }
-    StyleSelectorParentPusher parentPusher(this);
+    StyleResolverParentPusher parentPusher(this);
     // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.
@@ -1348,9 +1348,9 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
 void Element::beginParsingChildren()
 {
     clearIsParsingChildrenFinished();
-    StyleResolver* styleSelector = document()->styleSelectorIfExists();
-    if (styleSelector && attached())
-        styleSelector->pushParentElement(this);
+    StyleResolver* styleResolver = document()->styleResolverIfExists();
+    if (styleResolver && attached())
+        styleResolver->pushParentElement(this);
 }
 
 void Element::finishParsingChildren()
@@ -1358,8 +1358,8 @@ void Element::finishParsingChildren()
     ContainerNode::finishParsingChildren();
     setIsParsingChildrenFinished();
     checkForSiblingStyleChanges(this, renderStyle(), true, lastChild(), 0, 0);
-    if (StyleResolver* styleSelector = document()->styleSelectorIfExists())
-        styleSelector->popParentElement(this);
+    if (StyleResolver* styleResolver = document()->styleResolverIfExists())
+        styleResolver->popParentElement(this);
 }
 
 #ifndef NDEBUG

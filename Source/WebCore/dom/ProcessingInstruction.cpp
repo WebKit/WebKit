@@ -307,7 +307,7 @@ void ProcessingInstruction::removedFrom(Node* insertionPoint)
     }
 
     if (m_cachedSheet)
-        document()->styleSelectorChanged(DeferRecalcStyle);
+        document()->styleResolverChanged(DeferRecalcStyle);
 }
 
 void ProcessingInstruction::finishParsingChildren()

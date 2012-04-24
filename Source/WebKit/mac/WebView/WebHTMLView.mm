@@ -3018,7 +3018,7 @@ WEBCORE_COMMAND(yankAndSelect)
 #endif
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->document()->styleSelectorChanged(RecalcStyleImmediately);
+        coreFrame->document()->styleResolverChanged(RecalcStyleImmediately);
     
 #ifdef LOG_TIMES        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
@@ -3923,7 +3923,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
             document->setPaginatedForScreen(_private->paginateScreenContent);
             document->setPrinting(_private->printing);
-            document->styleSelectorChanged(RecalcStyleImmediately);
+            document->styleResolverChanged(RecalcStyleImmediately);
         }
     }
 

@@ -221,16 +221,16 @@ void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)
     if (needsReattachHostChildrenAndShadow())
         reattachHostChildrenAndShadow();
     else {
-        StyleResolver* styleSelector = youngest->document()->styleSelector();
+        StyleResolver* styleResolver = youngest->document()->styleResolver();
 
-        styleSelector->pushParentShadowRoot(youngest);
+        styleResolver->pushParentShadowRoot(youngest);
         for (Node* n = youngest->firstChild(); n; n = n->nextSibling()) {
             if (n->isElementNode())
                 static_cast<Element*>(n)->recalcStyle(change);
             else if (n->isTextNode())
                 toText(n)->recalcTextStyle(change);
         }
-        styleSelector->popParentShadowRoot(youngest);
+        styleResolver->popParentShadowRoot(youngest);
     }
 
     clearNeedsReattachHostChildrenAndShadow();

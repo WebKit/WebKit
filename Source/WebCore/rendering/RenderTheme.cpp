@@ -72,7 +72,7 @@ RenderTheme::RenderTheme()
 {
 }
 
-void RenderTheme::adjustStyle(StyleResolver* selector, RenderStyle* style, Element* e,
+void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e,
                               bool UAHasAppearance, const BorderData& border, const FillLayer& background, const Color& backgroundColor)
 {
     // Force inline and table display styles to be inline-block (except for table- which is block)
@@ -183,47 +183,47 @@ void RenderTheme::adjustStyle(StyleResolver* selector, RenderStyle* style, Eleme
     switch (style->appearance()) {
 #if !USE(NEW_THEME)
         case CheckboxPart:
-            return adjustCheckboxStyle(selector, style, e);
+            return adjustCheckboxStyle(styleResolver, style, e);
         case RadioPart:
-            return adjustRadioStyle(selector, style, e);
+            return adjustRadioStyle(styleResolver, style, e);
         case PushButtonPart:
         case SquareButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
-            return adjustButtonStyle(selector, style, e);
+            return adjustButtonStyle(styleResolver, style, e);
         case InnerSpinButtonPart:
-            return adjustInnerSpinButtonStyle(selector, style, e);
+            return adjustInnerSpinButtonStyle(styleResolver, style, e);
 #endif
         case TextFieldPart:
-            return adjustTextFieldStyle(selector, style, e);
+            return adjustTextFieldStyle(styleResolver, style, e);
         case TextAreaPart:
-            return adjustTextAreaStyle(selector, style, e);
+            return adjustTextAreaStyle(styleResolver, style, e);
         case MenulistPart:
-            return adjustMenuListStyle(selector, style, e);
+            return adjustMenuListStyle(styleResolver, style, e);
         case MenulistButtonPart:
-            return adjustMenuListButtonStyle(selector, style, e);
+            return adjustMenuListButtonStyle(styleResolver, style, e);
         case MediaSliderPart:
         case MediaVolumeSliderPart:
         case MediaFullScreenVolumeSliderPart:
         case SliderHorizontalPart:
         case SliderVerticalPart:
-            return adjustSliderTrackStyle(selector, style, e);
+            return adjustSliderTrackStyle(styleResolver, style, e);
         case SliderThumbHorizontalPart:
         case SliderThumbVerticalPart:
-            return adjustSliderThumbStyle(selector, style, e);
+            return adjustSliderThumbStyle(styleResolver, style, e);
         case SearchFieldPart:
-            return adjustSearchFieldStyle(selector, style, e);
+            return adjustSearchFieldStyle(styleResolver, style, e);
         case SearchFieldCancelButtonPart:
-            return adjustSearchFieldCancelButtonStyle(selector, style, e);
+            return adjustSearchFieldCancelButtonStyle(styleResolver, style, e);
         case SearchFieldDecorationPart:
-            return adjustSearchFieldDecorationStyle(selector, style, e);
+            return adjustSearchFieldDecorationStyle(styleResolver, style, e);
         case SearchFieldResultsDecorationPart:
-            return adjustSearchFieldResultsDecorationStyle(selector, style, e);
+            return adjustSearchFieldResultsDecorationStyle(styleResolver, style, e);
         case SearchFieldResultsButtonPart:
-            return adjustSearchFieldResultsButtonStyle(selector, style, e);
+            return adjustSearchFieldResultsButtonStyle(styleResolver, style, e);
 #if ENABLE(PROGRESS_TAG)
         case ProgressBarPart:
-            return adjustProgressBarStyle(selector, style, e);
+            return adjustProgressBarStyle(styleResolver, style, e);
 #endif
 #if ENABLE(METER_TAG)
         case MeterPart:
@@ -231,11 +231,11 @@ void RenderTheme::adjustStyle(StyleResolver* selector, RenderStyle* style, Eleme
         case ContinuousCapacityLevelIndicatorPart:
         case DiscreteCapacityLevelIndicatorPart:
         case RatingLevelIndicatorPart:
-            return adjustMeterStyle(selector, style, e);
+            return adjustMeterStyle(styleResolver, style, e);
 #endif
 #if ENABLE(INPUT_SPEECH)
         case InputSpeechButtonPart:
-            return adjustInputFieldSpeechButtonStyle(selector, style, e);
+            return adjustInputFieldSpeechButtonStyle(styleResolver, style, e);
 #endif
         default:
             break;
@@ -903,9 +903,9 @@ void RenderTheme::adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) co
 }
 
 #if ENABLE(INPUT_SPEECH)
-void RenderTheme::adjustInputFieldSpeechButtonStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
+void RenderTheme::adjustInputFieldSpeechButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
-    RenderInputSpeech::adjustInputFieldSpeechButtonStyle(selector, style, element);
+    RenderInputSpeech::adjustInputFieldSpeechButtonStyle(styleResolver, style, element);
 }
 
 bool RenderTheme::paintInputFieldSpeechButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)

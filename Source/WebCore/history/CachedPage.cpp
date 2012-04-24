@@ -88,8 +88,8 @@ void CachedPage::restore(Page* page)
 
     if (m_needStyleRecalcForVisitedLinks) {
         for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (StyleResolver* styleSelector = frame->document()->styleSelector())
-                styleSelector->allVisitedStateChanged();
+            if (StyleResolver* styleResolver = frame->document()->styleResolver())
+                styleResolver->allVisitedStateChanged();
         }
     }
 

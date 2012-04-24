@@ -630,7 +630,7 @@ void RenderThemeQtMobile::computeSizeBasedOnStyle(RenderStyle* renderStyle) cons
         renderStyle->setMinHeight(Length(size.height(), Fixed));
 }
 
-void RenderThemeQtMobile::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, Element*) const
+void RenderThemeQtMobile::adjustButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Ditch the border.
     style->resetBorder();
@@ -721,9 +721,9 @@ bool RenderThemeQtMobile::paintTextField(RenderObject* o, const PaintInfo& i, co
     return false;
 }
 
-void RenderThemeQtMobile::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeQtMobile::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
-    RenderThemeQt::adjustMenuListStyle(selector, style, e);
+    RenderThemeQt::adjustMenuListStyle(styleResolver, style, e);
     style->setPaddingLeft(Length(menuListPadding, Fixed));
 }
 

@@ -520,7 +520,7 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     m_doc->setPrinting(printing);
     view()->adjustMediaTypeForPrinting(printing);
 
-    m_doc->styleSelectorChanged(RecalcStyleImmediately);
+    m_doc->styleResolverChanged(RecalcStyleImmediately);
     if (printing)
         view()->forceLayoutForPagination(pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
     else {

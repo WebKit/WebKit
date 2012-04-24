@@ -1328,7 +1328,7 @@ void XMLDocumentParser::doEnd()
         document()->setTransformSource(adoptPtr(new TransformSource(doc)));
 
         document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.
-        document()->styleSelectorChanged(RecalcStyleImmediately);
+        document()->styleResolverChanged(RecalcStyleImmediately);
         document()->setParsing(true);
 
         DocumentParser::stopParsing();

@@ -382,12 +382,12 @@ void StyleSheetInternal::styleSheetChanged()
     while (StyleSheetInternal* parent = rootSheet->parentStyleSheet())
         rootSheet = parent;
 
-    /* FIXME: We don't need to do everything updateStyleSelector does,
+    /* FIXME: We don't need to do everything styleResolverChanged does,
      * basically we just need to recreate the document's selector with the
      * already existing style sheets.
      */
     if (Document* documentToUpdate = rootSheet->findDocument())
-        documentToUpdate->styleSelectorChanged(DeferRecalcStyle);
+        documentToUpdate->styleResolverChanged(DeferRecalcStyle);
 }
 
 void StyleSheetInternal::updateBaseURL()

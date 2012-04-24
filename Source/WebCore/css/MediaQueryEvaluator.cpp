@@ -130,7 +130,7 @@ static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
     return r == MediaQuery::Not ? !value : value;
 }
 
-bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* styleSelector) const
+bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* styleResolver) const
 {
     if (!querySet)
         return true;
@@ -154,8 +154,8 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
             size_t j = 0;
             for (; j < exps->size(); ++j) {
                 bool exprResult = eval(exps->at(j).get());
-                if (styleSelector && exps->at(j)->isViewportDependent())
-                    styleSelector->addViewportDependentMediaQueryResult(exps->at(j).get(), exprResult);
+                if (styleResolver && exps->at(j)->isViewportDependent())
+                    styleResolver->addViewportDependentMediaQueryResult(exps->at(j).get(), exprResult);
                 if (!exprResult)
                     break;
             }

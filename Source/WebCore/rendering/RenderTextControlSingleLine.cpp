@@ -674,7 +674,7 @@ void RenderTextControlSingleLine::setTextFromItem(unsigned listIndex)
 
 FontSelector* RenderTextControlSingleLine::fontSelector() const
 {
-    return document()->styleSelector()->fontSelector();
+    return document()->styleResolver()->fontSelector();
 }
 
 HostWindow* RenderTextControlSingleLine::hostWindow() const

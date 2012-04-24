@@ -466,15 +466,15 @@ bool RenderThemeChromiumSkia::paintMediaMuteButton(RenderObject* object, const P
 #endif
 }
 
-void RenderThemeChromiumSkia::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, WebCore::Element* e) const
+void RenderThemeChromiumSkia::adjustMenuListStyle(StyleResolver*, RenderStyle* style, WebCore::Element*) const
 {
     // Height is locked to auto on all browsers.
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-void RenderThemeChromiumSkia::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeChromiumSkia::adjustMenuListButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
-    adjustMenuListStyle(selector, style, e);
+    adjustMenuListStyle(styleResolver, style, e);
 }
 
 // Used to paint styled menulists (i.e. with a non-default border)

@@ -312,7 +312,7 @@ void SVGFontFaceElement::rebuildFontFace()
         }
     }
 
-    document()->styleSelectorChanged(DeferRecalcStyle);
+    document()->styleResolverChanged(DeferRecalcStyle);
 }
 
 Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(Node* rootParent)
@@ -334,7 +334,7 @@ void SVGFontFaceElement::removedFrom(Node* rootParent)
         document()->accessSVGExtensions()->unregisterSVGFontFaceElement(this);
         m_fontFaceRule->properties()->parseDeclaration(emptyString(), 0);
 
-        document()->styleSelectorChanged(DeferRecalcStyle);
+        document()->styleResolverChanged(DeferRecalcStyle);
     }
 }
 

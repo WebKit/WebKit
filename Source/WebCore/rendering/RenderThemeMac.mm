@@ -1197,7 +1197,7 @@ static const IntSize* menuListButtonSizes()
     return sizes;
 }
 
-void RenderThemeMac::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     NSControlSize controlSize = controlSizeForFont(style);
 
@@ -1220,7 +1220,7 @@ void RenderThemeMac::adjustMenuListStyle(StyleResolver* selector, RenderStyle* s
     // Our font is locked to the appropriate system font size for the control.  To clarify, we first use the CSS-specified font to figure out
     // a reasonable control size, but once that control size is determined, we throw that font away and use the appropriate
     // system font for the control size instead.
-    setFontFromControlSize(selector, style, controlSize);
+    setFontFromControlSize(styleResolver, style, controlSize);
 
     style->setBoxShadow(nullptr);
 }
@@ -1348,9 +1348,9 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     return false;
 }
 
-void RenderThemeMac::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
+void RenderThemeMac::adjustSliderThumbStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
-    RenderTheme::adjustSliderThumbStyle(selector, style, element);
+    RenderTheme::adjustSliderThumbStyle(styleResolver, style, element);
     style->setBoxShadow(nullptr);
 }
 
@@ -1479,7 +1479,7 @@ void RenderThemeMac::setSearchFieldSize(RenderStyle* style) const
     setSizeFromFont(style, searchFieldSizes());
 }
 
-void RenderThemeMac::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element*) const
 {
     // Override border.
     style->resetBorder();
@@ -1505,7 +1505,7 @@ void RenderThemeMac::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle
     style->setPaddingBottom(Length(padding, Fixed));
     
     NSControlSize controlSize = controlSizeForFont(style);
-    setFontFromControlSize(selector, style, controlSize);
+    setFontFromControlSize(styleResolver, style, controlSize);
 
     style->setBoxShadow(nullptr);
 }

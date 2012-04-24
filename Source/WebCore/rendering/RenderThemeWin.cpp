@@ -687,7 +687,7 @@ bool RenderThemeWin::paintButton(RenderObject* o, const PaintInfo& i, const IntR
     return false;
 }
 
-void RenderThemeWin::adjustInnerSpinButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustInnerSpinButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     int width = ::GetSystemMetrics(SM_CXVSCROLL);
     if (width <= 0)
@@ -754,13 +754,13 @@ bool RenderThemeWin::paintMenuList(RenderObject* o, const PaintInfo& i, const In
     return paintMenuListButton(o, i, r);
 }
 
-void RenderThemeWin::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustMenuListStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     style->resetBorder();
-    adjustMenuListButtonStyle(selector, style, e);
+    adjustMenuListButtonStyle(styleResolver, style, e);
 }
 
-void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     // These are the paddings needed to place the text correctly in the <select> box
     const int dropDownBoxPaddingTop    = 2;
@@ -862,7 +862,7 @@ bool RenderThemeWin::paintSearchField(RenderObject* o, const PaintInfo& i, const
     return paintTextField(o, i, r);
 }
 
-void RenderThemeWin::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustSearchFieldStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
     // Override paddingSize to match AppKit text positioning.
     const int padding = 1;
@@ -899,7 +899,7 @@ bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
     return false;
 }
 
-void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -908,14 +908,14 @@ void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver* selector,
     style->setHeight(Length(cancelButtonSize, Fixed));
 }
 
-void RenderThemeWin::adjustSearchFieldDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize emptySize(1, 11);
     style->setWidth(Length(emptySize.width(), Fixed));
     style->setHeight(Length(emptySize.height(), Fixed));
 }
 
-void RenderThemeWin::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Scale the decoration size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -948,7 +948,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecoration(RenderObject* o, const Pa
     return false;
 }
 
-void RenderThemeWin::adjustSearchFieldResultsButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWin::adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;

@@ -1943,23 +1943,23 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     newStyle->font().update(newStyle->font().fontSelector());
 
     // Now map the font property longhands into the style.
-    StyleResolver* styleSelector = canvas()->styleSelector();
-    styleSelector->applyPropertyToStyle(CSSPropertyFontFamily, tempDecl->getPropertyCSSValue(CSSPropertyFontFamily).get(), newStyle.get());
-    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontStyle, tempDecl->getPropertyCSSValue(CSSPropertyFontStyle).get());
-    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontVariant, tempDecl->getPropertyCSSValue(CSSPropertyFontVariant).get());
-    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontWeight, tempDecl->getPropertyCSSValue(CSSPropertyFontWeight).get());
+    StyleResolver* styleResolver = canvas()->styleResolver();
+    styleResolver->applyPropertyToStyle(CSSPropertyFontFamily, tempDecl->getPropertyCSSValue(CSSPropertyFontFamily).get(), newStyle.get());
+    styleResolver->applyPropertyToCurrentStyle(CSSPropertyFontStyle, tempDecl->getPropertyCSSValue(CSSPropertyFontStyle).get());
+    styleResolver->applyPropertyToCurrentStyle(CSSPropertyFontVariant, tempDecl->getPropertyCSSValue(CSSPropertyFontVariant).get());
+    styleResolver->applyPropertyToCurrentStyle(CSSPropertyFontWeight, tempDecl->getPropertyCSSValue(CSSPropertyFontWeight).get());
 
     // As described in BUG66291, setting font-size on a font may entail a CSSPrimitiveValue::computeLengthDouble call,
     // which assumes the fontMetrics are available for the affected font, otherwise a crash occurs (see http://trac.webkit.org/changeset/96122).
     // The updateFont() call below updates the fontMetrics and ensures the proper setting of font-size.
-    styleSelector->updateFont();
-    styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontSize, tempDecl->getPropertyCSSValue(CSSPropertyFontSize).get());
-    styleSelector->applyPropertyToCurrentStyle(CSSPropertyLineHeight, tempDecl->getPropertyCSSValue(CSSPropertyLineHeight).get());
+    styleResolver->updateFont();
+    styleResolver->applyPropertyToCurrentStyle(CSSPropertyFontSize, tempDecl->getPropertyCSSValue(CSSPropertyFontSize).get());
+    styleResolver->applyPropertyToCurrentStyle(CSSPropertyLineHeight, tempDecl->getPropertyCSSValue(CSSPropertyLineHeight).get());
 
     state().m_font = newStyle->font();
-    state().m_font.update(styleSelector->fontSelector());
+    state().m_font.update(styleResolver->fontSelector());
     state().m_realizedFont = true;
-    styleSelector->fontSelector()->registerForInvalidationCallbacks(&state());
+    styleResolver->fontSelector()->registerForInvalidationCallbacks(&state());
 }
 
 String CanvasRenderingContext2D::textAlign() const

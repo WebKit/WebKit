@@ -333,8 +333,8 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
     // FIXME: Make Document a FontSelectorClient so that it can simply register for invalidation callbacks.
     if (!m_document)
         return;
-    if (StyleResolver* styleSelector = m_document->styleSelectorIfExists())
-        styleSelector->invalidateMatchedPropertiesCache();
+    if (StyleResolver* styleResolver = m_document->styleResolverIfExists())
+        styleResolver->invalidateMatchedPropertiesCache();
     if (m_document->inPageCache() || !m_document->renderer())
         return;
     m_document->scheduleForcedStyleRecalc();

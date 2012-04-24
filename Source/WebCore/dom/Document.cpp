@@ -527,8 +527,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
 
-    m_didCalculateStyleSelector = false;
-    m_hasDirtyStyleSelector = false;
+    m_didCalculateStyleResolver = false;
+    m_hasDirtyStyleResolver = false;
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
     m_hasNodesWithPlaceholderStyle = false;
@@ -616,7 +616,7 @@ Document::~Document()
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
 
-    clearStyleSelector(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
+    clearStyleResolver(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
     m_cachedResourceLoader.clear();
 
     // We must call clearRareData() here since a Document class inherits TreeScope
@@ -771,7 +771,7 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
     if (m_docType)
         this->adoptIfNeeded(m_docType.get());
     // Doctype affects the interpretation of the stylesheets.
-    clearStyleSelector();
+    clearStyleResolver();
 }
 
 DOMImplementation* Document::implementation()
@@ -790,7 +790,7 @@ void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* a
         return;
     m_documentElement = newDocumentElement;
     // The root style used for media query matching depends on the document element.
-    clearStyleSelector();
+    clearStyleResolver();
 }
 
 PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionCode& ec)
@@ -1245,7 +1245,7 @@ void Document::setContentLanguage(const String& language)
     m_contentLanguage = language;
 
     // Recalculate style so language is used when selecting the initial font.
-    styleSelectorChanged(DeferRecalcStyle);
+    styleResolverChanged(DeferRecalcStyle);
 }
 
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
@@ -1696,7 +1696,7 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
     
-    if (m_hasDirtyStyleSelector)
+    if (m_hasDirtyStyleResolver)
         updateActiveStylesheets(RecalcStyleImmediately);
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
@@ -1725,7 +1725,7 @@ void Document::recalcStyle(StyleChange change)
         // style selector may set this again during recalc
         m_hasNodesWithPlaceholderStyle = false;
         
-        RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(this, m_styleSelector ? m_styleSelector->fontSelector() : 0);
+        RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(this, m_styleResolver ? m_styleResolver->fontSelector() : 0);
         StyleChange ch = Node::diff(documentStyle.get(), renderer()->style(), this);
         if (ch != NoChange)
             renderer()->setStyle(documentStyle.release());
@@ -1756,7 +1756,7 @@ bail_out:
     m_inStyleRecalc = false;
     
     // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
-    if (m_styleSelector)
+    if (m_styleResolver)
         resetCSSFeatureFlags();
 
     if (frameView) {
@@ -1842,7 +1842,7 @@ void Document::updateLayoutIgnorePendingStylesheets()
         HTMLElement* bodyElement = body();
         if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
-            styleSelectorChanged(RecalcStyleImmediately);
+            styleResolverChanged(RecalcStyleImmediately);
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
             // may not have had their real style calculated yet. Normally this gets cleaned when style sheets arrive 
@@ -1861,14 +1861,14 @@ PassRefPtr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Elem
 
     bool oldIgnore = m_ignorePendingStylesheets;
     m_ignorePendingStylesheets = true;
-    RefPtr<RenderStyle> style = styleSelector()->styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : 0);
+    RefPtr<RenderStyle> style = styleResolver()->styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : 0);
     m_ignorePendingStylesheets = oldIgnore;
     return style.release();
 }
 
 PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
 {
-    RefPtr<RenderStyle> style = styleSelector()->styleForPage(pageIndex);
+    RefPtr<RenderStyle> style = styleResolver()->styleForPage(pageIndex);
     return style.release();
 }
 
@@ -1943,32 +1943,32 @@ void Document::setIsViewSource(bool isViewSource)
 void Document::combineCSSFeatureFlags()
 {
     // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
-    m_usesSiblingRules = m_usesSiblingRules || m_styleSelector->usesSiblingRules();
-    m_usesFirstLineRules = m_usesFirstLineRules || m_styleSelector->usesFirstLineRules();
-    m_usesBeforeAfterRules = m_usesBeforeAfterRules || m_styleSelector->usesBeforeAfterRules();
-    m_usesLinkRules = m_usesLinkRules || m_styleSelector->usesLinkRules();
+    m_usesSiblingRules = m_usesSiblingRules || m_styleResolver->usesSiblingRules();
+    m_usesFirstLineRules = m_usesFirstLineRules || m_styleResolver->usesFirstLineRules();
+    m_usesBeforeAfterRules = m_usesBeforeAfterRules || m_styleResolver->usesBeforeAfterRules();
+    m_usesLinkRules = m_usesLinkRules || m_styleResolver->usesLinkRules();
 }
 
 void Document::resetCSSFeatureFlags()
 {
-    m_usesSiblingRules = m_styleSelector->usesSiblingRules();
-    m_usesFirstLineRules = m_styleSelector->usesFirstLineRules();
-    m_usesBeforeAfterRules = m_styleSelector->usesBeforeAfterRules();
-    m_usesLinkRules = m_styleSelector->usesLinkRules();
+    m_usesSiblingRules = m_styleResolver->usesSiblingRules();
+    m_usesFirstLineRules = m_styleResolver->usesFirstLineRules();
+    m_usesBeforeAfterRules = m_styleResolver->usesBeforeAfterRules();
+    m_usesLinkRules = m_styleResolver->usesLinkRules();
 }
 
-void Document::createStyleSelector()
+void Document::createStyleResolver()
 {
     bool matchAuthorAndUserStyles = true;
     if (Settings* docSettings = settings())
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
-    m_styleSelector = adoptPtr(new StyleResolver(this, matchAuthorAndUserStyles));
+    m_styleResolver = adoptPtr(new StyleResolver(this, matchAuthorAndUserStyles));
     combineCSSFeatureFlags();
 }
 
-inline void Document::clearStyleSelector()
+inline void Document::clearStyleResolver()
 {
-    m_styleSelector.clear();
+    m_styleResolver.clear();
 }
 
 void Document::attach()
@@ -2783,7 +2783,7 @@ void Document::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
         m_pageUserSheet = 0;
-        styleSelectorChanged(DeferRecalcStyle);
+        styleResolverChanged(DeferRecalcStyle);
     }
 }
 
@@ -2791,7 +2791,7 @@ void Document::updatePageUserSheet()
 {
     clearPageUserSheet();
     if (pageUserSheet())
-        styleSelectorChanged(RecalcStyleImmediately);
+        styleResolverChanged(RecalcStyleImmediately);
 }
 
 const Vector<RefPtr<StyleSheetInternal> >* Document::pageGroupUserSheets() const
@@ -2836,7 +2836,7 @@ void Document::clearPageGroupUserSheets()
     m_pageGroupUserSheetCacheValid = false;
     if (m_pageGroupUserSheets && m_pageGroupUserSheets->size()) {
         m_pageGroupUserSheets->clear();
-        styleSelectorChanged(DeferRecalcStyle);
+        styleResolverChanged(DeferRecalcStyle);
     }
 }
 
@@ -2844,7 +2844,7 @@ void Document::updatePageGroupUserSheets()
 {
     clearPageGroupUserSheets();
     if (pageGroupUserSheets() && pageGroupUserSheets()->size())
-        styleSelectorChanged(RecalcStyleImmediately);
+        styleResolverChanged(RecalcStyleImmediately);
 }
 
 void Document::addUserSheet(PassRefPtr<StyleSheetInternal> userSheet)
@@ -2852,7 +2852,7 @@ void Document::addUserSheet(PassRefPtr<StyleSheetInternal> userSheet)
     if (!m_userSheets)
         m_userSheets = adoptPtr(new Vector<RefPtr<StyleSheetInternal> >);
     m_userSheets->append(userSheet);
-    styleSelectorChanged(RecalcStyleImmediately);
+    styleResolverChanged(RecalcStyleImmediately);
 }
 
 CSSStyleSheet* Document::elementSheet()
@@ -2895,7 +2895,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         // -dwh
         m_selectedStylesheetSet = content;
         m_preferredStylesheetSet = content;
-        styleSelectorChanged(DeferRecalcStyle);
+        styleResolverChanged(DeferRecalcStyle);
     } else if (equalIgnoringCase(equiv, "refresh")) {
         double delay;
         String url;
@@ -3175,7 +3175,7 @@ String Document::selectedStylesheetSet() const
 void Document::setSelectedStylesheetSet(const String& aString)
 {
     m_selectedStylesheetSet = aString;
-    styleSelectorChanged(DeferRecalcStyle);
+    styleResolverChanged(DeferRecalcStyle);
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
@@ -3194,7 +3194,7 @@ void Document::removePendingSheet()
     if (m_pendingStylesheets)
         return;
 
-    styleSelectorChanged(RecalcStyleIfNeeded);
+    styleResolverChanged(RecalcStyleIfNeeded);
 
     if (ScriptableDocumentParser* parser = scriptableDocumentParser())
         parser->executeScriptsWaitingForStylesheets();
@@ -3206,15 +3206,15 @@ void Document::removePendingSheet()
 void Document::evaluateMediaQueryList()
 {
     if (m_mediaQueryMatcher)
-        m_mediaQueryMatcher->styleSelectorChanged();
+        m_mediaQueryMatcher->styleResolverChanged();
 }
 
-void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
+void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 {
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style selector for the first time.
-    if (!attached() || (!m_didCalculateStyleSelector && !haveStylesheetsLoaded())) {
-        m_styleSelector.clear();
+    if (!attached() || (!m_didCalculateStyleResolver && !haveStylesheetsLoaded())) {
+        m_styleResolver.clear();
         return;
     }
 
@@ -3419,9 +3419,9 @@ bool Document::testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal* styles
     return false;
 }
 
-void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleSelectorReset, bool& requiresFullStyleRecalc)
+void Document::analyzeStylesheetChange(StyleResolverUpdateFlag updateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleResolverReset, bool& requiresFullStyleRecalc)
 {
-    requiresStyleSelectorReset = true;
+    requiresStyleResolverReset = true;
     requiresFullStyleRecalc = true;
     
     // Stylesheets of <style> elements that @import stylesheets are active but loading. We need to trigger a full recalc when such loads are done.
@@ -3439,7 +3439,7 @@ void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const
 
     if (updateFlag != RecalcStyleIfNeeded)
         return;
-    if (!m_styleSelector)
+    if (!m_styleResolver)
         return;
 
     // See if we are just adding stylesheets.
@@ -3450,7 +3450,7 @@ void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const
         if (m_styleSheets->item(i) != newStylesheets[i])
             return;
     }
-    requiresStyleSelectorReset = false;
+    requiresStyleResolverReset = false;
 
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
     if (!body() || m_hasNodesWithPlaceholderStyle)
@@ -3477,13 +3477,13 @@ static bool styleSheetsUseRemUnits(const Vector<RefPtr<StyleSheet> >& sheets)
     return false;
 }
 
-bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
+bool Document::updateActiveStylesheets(StyleResolverUpdateFlag updateFlag)
 {
     if (m_inStyleRecalc) {
         // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
         // https://bugs.webkit.org/show_bug.cgi?id=54344
         // FIXME: This should be fixed in SVG and this code replaced with ASSERT(!m_inStyleRecalc).
-        m_hasDirtyStyleSelector = true;
+        m_hasDirtyStyleResolver = true;
         scheduleForcedStyleRecalc();
         return false;
     }
@@ -3493,21 +3493,21 @@ bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
     StyleSheetVector newStylesheets;
     collectActiveStylesheets(newStylesheets);
 
-    bool requiresStyleSelectorReset;
+    bool requiresStyleResolverReset;
     bool requiresFullStyleRecalc;
-    analyzeStylesheetChange(updateFlag, newStylesheets, requiresStyleSelectorReset, requiresFullStyleRecalc);
+    analyzeStylesheetChange(updateFlag, newStylesheets, requiresStyleResolverReset, requiresFullStyleRecalc);
 
-    if (requiresStyleSelectorReset)
-        clearStyleSelector();
+    if (requiresStyleResolverReset)
+        clearStyleResolver();
     else {
-        m_styleSelector->appendAuthorStylesheets(m_styleSheets->length(), newStylesheets);
+        m_styleResolver->appendAuthorStylesheets(m_styleSheets->length(), newStylesheets);
         resetCSSFeatureFlags();
     }
     m_styleSheets->swap(newStylesheets);
 
     m_usesRemUnits = styleSheetsUseRemUnits(m_styleSheets->vector());
-    m_didCalculateStyleSelector = true;
-    m_hasDirtyStyleSelector = false;
+    m_didCalculateStyleResolver = true;
+    m_hasDirtyStyleResolver = false;
     
     return requiresFullStyleRecalc;
 }

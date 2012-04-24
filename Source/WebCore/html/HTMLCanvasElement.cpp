@@ -463,9 +463,9 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
     return document()->securityOrigin();
 }
 
-StyleResolver* HTMLCanvasElement::styleSelector()
+StyleResolver* HTMLCanvasElement::styleResolver()
 {
-    return document()->styleSelector();
+    return document()->styleResolver();
 }
 
 bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const

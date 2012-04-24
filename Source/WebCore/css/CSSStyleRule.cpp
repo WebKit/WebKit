@@ -111,7 +111,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         selectorTextCache().set(this, generateSelectorText());
     }
 
-    doc->styleSelectorChanged(DeferRecalcStyle);
+    doc->styleResolverChanged(DeferRecalcStyle);
 }
 
 String CSSStyleRule::cssText() const

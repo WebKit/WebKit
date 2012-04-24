@@ -79,7 +79,7 @@ void StyleElement::removedFromDocument(Document* document, Element* element)
 
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
     if (document->renderer())
-        document->styleSelectorChanged(DeferRecalcStyle);
+        document->styleResolverChanged(DeferRecalcStyle);
 }
 
 void StyleElement::clearDocumentData(Document* document, Element* element)

@@ -257,7 +257,7 @@ bool RenderThemeWx::supportsFocus(ControlPart part) const
     }
 }
 
-void RenderThemeWx::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeWx::adjustButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     addIntrinsicMargins(style);
 }

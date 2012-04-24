@@ -204,14 +204,14 @@ static GtkStateType gtkIconState(RenderTheme* theme, RenderObject* renderObject)
     return GTK_STATE_NORMAL;
 }
 
-void RenderThemeGtk::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, WebCore::Element* e) const
+void RenderThemeGtk::adjustButtonStyle(StyleResolver*, RenderStyle* style, WebCore::Element*) const
 {
     // Some layout tests check explicitly that buttons ignore line-height.
     if (style->appearance() == PushButtonPart)
         style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-void RenderThemeGtk::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustMenuListStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // The tests check explicitly that select menu buttons ignore line height.
     style->setLineHeight(RenderStyle::initialLineHeight());
@@ -220,9 +220,9 @@ void RenderThemeGtk::adjustMenuListStyle(StyleResolver* selector, RenderStyle* s
     style->resetBorderRadius();
 }
 
-void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
-    adjustMenuListStyle(selector, style, e);
+    adjustMenuListStyle(styleResolver, style, e);
 }
 
 bool RenderThemeGtk::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
@@ -276,9 +276,9 @@ static GtkIconSize getIconSizeForPixelSize(gint pixelSize)
     return GTK_ICON_SIZE_DIALOG;
 }
 
-void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* e) const
 {
-    adjustSearchFieldCancelButtonStyle(selector, style, e);
+    adjustSearchFieldCancelButtonStyle(styleResolver, style, e);
 }
 
 bool RenderThemeGtk::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
@@ -304,7 +304,7 @@ static void adjustSearchFieldIconStyle(RenderStyle* style)
     style->setHeight(Length(height, Fixed));
 }
 
-void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     adjustSearchFieldIconStyle(style);
 }
@@ -341,7 +341,7 @@ bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* renderObjec
     return false;
 }
 
-void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     adjustSearchFieldIconStyle(style);
 }
@@ -360,7 +360,7 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, co
     return false;
 }
 
-void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // We cannot give a proper rendering when border radius is active, unfortunately.
     style->resetBorderRadius();
@@ -402,9 +402,9 @@ void RenderThemeGtk::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, 
     style->setBoxShadow(nullptr);
 }
 
-void RenderThemeGtk::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
+void RenderThemeGtk::adjustSliderThumbStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
-    RenderTheme::adjustSliderThumbStyle(selector, style, element);
+    RenderTheme::adjustSliderThumbStyle(styleResolver, style, element);
     style->setBoxShadow(nullptr);
 }
 

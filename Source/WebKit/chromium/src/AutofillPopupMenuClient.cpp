@@ -226,7 +226,7 @@ void AutofillPopupMenuClient::setTextFromItem(unsigned listIndex)
 
 FontSelector* AutofillPopupMenuClient::fontSelector() const
 {
-    return m_textField->document()->styleSelector()->fontSelector();
+    return m_textField->document()->styleResolver()->fontSelector();
 }
 
 HostWindow* AutofillPopupMenuClient::hostWindow() const
@@ -285,7 +285,7 @@ void AutofillPopupMenuClient::initialize(
     regularFontDescription.setComputedSize(style->fontDescription().computedSize());
 
     Font regularFont(regularFontDescription, 0, 0);
-    regularFont.update(textField->document()->styleSelector()->fontSelector());
+    regularFont.update(textField->document()->styleResolver()->fontSelector());
     // The direction of text in popup menu is set the same as the direction of
     // the input element: textField.
     m_regularStyle = adoptPtr(new PopupMenuStyle(Color::black, Color::white, regularFont, true, false,

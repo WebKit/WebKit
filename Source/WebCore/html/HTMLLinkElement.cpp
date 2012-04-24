@@ -123,7 +123,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
         if (!m_sheet && m_disabledState == EnabledViaScript)
             process();
         else
-            document()->styleSelectorChanged(DeferRecalcStyle); // Update the style selector.
+            document()->styleResolverChanged(DeferRecalcStyle); // Update the style selector.
     }
 }
 
@@ -231,7 +231,7 @@ void HTMLLinkElement::process()
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
         clearSheet();
-        document()->styleSelectorChanged(DeferRecalcStyle);
+        document()->styleResolverChanged(DeferRecalcStyle);
     }
 }
 
@@ -278,7 +278,7 @@ void HTMLLinkElement::removedFrom(Node* insertionPoint)
         removePendingSheet();
 
     if (document()->renderer())
-        document()->styleSelectorChanged(DeferRecalcStyle);
+        document()->styleResolverChanged(DeferRecalcStyle);
 }
 
 void HTMLLinkElement::finishParsingChildren()
@@ -431,7 +431,7 @@ void HTMLLinkElement::removePendingSheet()
         return;
     if (type == NonBlocking) {
         // Document::removePendingSheet() triggers the style selector recalc for blocking sheets.
-        document()->styleSelectorChanged(RecalcStyleImmediately);
+        document()->styleResolverChanged(RecalcStyleImmediately);
         return;
     }
     document()->removePendingSheet();

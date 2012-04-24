@@ -342,7 +342,7 @@ void StyleRuleCSSStyleDeclaration::setNeedsStyleRecalc()
 {
     if (CSSStyleSheet* styleSheet = parentStyleSheet()) {
         if (Document* document = styleSheet->findDocument())
-            document->styleSelectorChanged(DeferRecalcStyle);
+            document->styleResolverChanged(DeferRecalcStyle);
     }
 }
 

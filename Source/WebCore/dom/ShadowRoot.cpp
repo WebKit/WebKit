@@ -200,10 +200,10 @@ void ShadowRoot::setApplyAuthorSheets(bool value)
 
 void ShadowRoot::attach()
 {
-    StyleResolver* styleSelector = document()->styleSelector();
-    styleSelector->pushParentShadowRoot(this);
+    StyleResolver* styleResolver = document()->styleResolver();
+    styleResolver->pushParentShadowRoot(this);
     DocumentFragment::attach();
-    styleSelector->popParentShadowRoot(this);
+    styleResolver->popParentShadowRoot(this);
 }
 
 }

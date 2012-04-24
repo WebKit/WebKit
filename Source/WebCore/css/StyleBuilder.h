@@ -42,9 +42,9 @@ public:
     typedef void (*ApplyFunction)(StyleResolver*, CSSValue*);
     PropertyHandler() : m_inherit(0), m_initial(0), m_apply(0) { }
     PropertyHandler(InheritFunction inherit, InitialFunction initial, ApplyFunction apply) : m_inherit(inherit), m_initial(initial), m_apply(apply) { }
-    void applyInheritValue(StyleResolver* selector) const { ASSERT(m_inherit); (*m_inherit)(selector); }
-    void applyInitialValue(StyleResolver* selector) const { ASSERT(m_initial); (*m_initial)(selector); }
-    void applyValue(StyleResolver* selector, CSSValue* value) const { ASSERT(m_apply); (*m_apply)(selector, value); }
+    void applyInheritValue(StyleResolver* styleResolver) const { ASSERT(m_inherit); (*m_inherit)(styleResolver); }
+    void applyInitialValue(StyleResolver* styleResolver) const { ASSERT(m_initial); (*m_initial)(styleResolver); }
+    void applyValue(StyleResolver* styleResolver, CSSValue* value) const { ASSERT(m_apply); (*m_apply)(styleResolver, value); }
     bool isValid() const { return m_inherit && m_initial && m_apply; }
     InheritFunction inheritFunction() const { return m_inherit; }
     InitialFunction initialFunction() { return m_initial; }

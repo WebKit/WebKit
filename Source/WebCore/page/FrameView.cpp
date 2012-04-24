@@ -985,8 +985,8 @@ void FrameView::layout(bool allowSubtree)
 
         // Viewport-dependent media queries may cause us to need completely different style information.
         // Check that here.
-        if (document->styleSelector()->affectedByViewportChange()) {
-            document->styleSelectorChanged(RecalcStyleImmediately);
+        if (document->styleResolver()->affectedByViewportChange()) {
+            document->styleResolverChanged(RecalcStyleImmediately);
             InspectorInstrumentation::mediaQueryResultChanged(document);
         } else
             document->evaluateMediaQueryList();

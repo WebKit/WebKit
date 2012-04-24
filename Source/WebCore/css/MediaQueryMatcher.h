@@ -50,7 +50,7 @@ public:
     PassRefPtr<MediaQueryList> matchMedia(const String&);
 
     unsigned evaluationRound() const { return m_evaluationRound; }
-    void styleSelectorChanged();
+    void styleResolverChanged();
     bool evaluate(const MediaQuerySet*);
 
 private:

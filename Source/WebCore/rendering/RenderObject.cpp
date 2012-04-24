@@ -2559,11 +2559,11 @@ PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(PseudoId pseudo, Re
     Element* element = toElement(n);
 
     if (pseudo == FIRST_LINE_INHERITED) {
-        RefPtr<RenderStyle> result = document()->styleSelector()->styleForElement(element, parentStyle, DisallowStyleSharing);
+        RefPtr<RenderStyle> result = document()->styleResolver()->styleForElement(element, parentStyle, DisallowStyleSharing);
         result->setStyleType(FIRST_LINE_INHERITED);
         return result.release();
     }
-    return document()->styleSelector()->pseudoStyleForElement(pseudo, element, parentStyle);
+    return document()->styleResolver()->pseudoStyleForElement(pseudo, element, parentStyle);
 }
 
 static Color decorationColor(RenderObject* renderer)

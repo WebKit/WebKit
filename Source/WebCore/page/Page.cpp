@@ -253,7 +253,7 @@ void Page::setViewMode(ViewMode viewMode)
         m_mainFrame->view()->forceLayout();
 
     if (m_mainFrame->document())
-        m_mainFrame->document()->styleSelectorChanged(RecalcStyleImmediately);
+        m_mainFrame->document()->styleResolverChanged(RecalcStyleImmediately);
 }
 
 void Page::setMainFrame(PassRefPtr<Frame> mainFrame)
@@ -393,7 +393,7 @@ void Page::scheduleForcedStyleRecalcForAllPages()
 void Page::setNeedsRecalcStyleInAllFrames()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->document()->styleSelectorChanged(DeferRecalcStyle);
+        frame->document()->styleResolverChanged(DeferRecalcStyle);
 }
 
 void Page::refreshPlugins(bool reload)
@@ -834,8 +834,8 @@ void Page::allVisitedStateChanged(PageGroup* group)
         if (page->m_group != group)
             continue;
         for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
-            if (StyleResolver* styleSelector = frame->document()->styleSelector())
-                styleSelector->allVisitedStateChanged();
+            if (StyleResolver* styleResolver = frame->document()->styleResolver())
+                styleResolver->allVisitedStateChanged();
         }
     }
 }
@@ -852,8 +852,8 @@ void Page::visitedStateChanged(PageGroup* group, LinkHash visitedLinkHash)
         if (page->m_group != group)
             continue;
         for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
-            if (StyleResolver* styleSelector = frame->document()->styleSelector())
-                styleSelector->visitedStateChanged(visitedLinkHash);
+            if (StyleResolver* styleResolver = frame->document()->styleResolver())
+                styleResolver->visitedStateChanged(visitedLinkHash);
         }
     }
 }

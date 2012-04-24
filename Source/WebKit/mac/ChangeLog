@@ -1,3 +1,19 @@
+2012-04-24  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Replace occurences of style selector from variables and methods names by style resolver.
+        https://bugs.webkit.org/show_bug.cgi?id=84765
+
+        Reviewed by Andreas Kling.
+
+        Rename methods and variables to follow the new name StyleResolver. It requires to update the
+        local variables, methods parameters, and function names to match the new name and to remove
+        the concept of "selector" to avoid clashing with the CSS concept. The next and last patch
+        will be to rename CSSStyleSelector file and update the includes.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView reapplyStyles]):
+        (-[WebHTMLView _setPrinting:minimumPageLogicalWidth:logicalHeight:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustViewSize:paginateScreenContent:]):
+
 2012-04-23  Andy Estes  <aestes@apple.com>
 
         Incremental rendering should be unsuppressed after the load event or a configurable timeout, whichever occurs first.

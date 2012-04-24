@@ -51,7 +51,7 @@ KeyframeAnimation::KeyframeAnimation(const Animation* animation, RenderObject* r
 {
     // Get the keyframe RenderStyles
     if (m_object && m_object->node() && m_object->node()->isElementNode())
-        m_object->document()->styleSelector()->keyframeStylesForAnimation(static_cast<Element*>(m_object->node()), unanimatedStyle, m_keyframes);
+        m_object->document()->styleResolver()->keyframeStylesForAnimation(static_cast<Element*>(m_object->node()), unanimatedStyle, m_keyframes);
 
     // Update the m_transformFunctionListValid flag based on whether the function lists in the keyframes match.
     validateTransformFunctionList();

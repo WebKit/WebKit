@@ -862,7 +862,7 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
         // declarations, as well as embedded and inline style declarations.
 
         Document* doc = m_element->document();
-        if (RefPtr<CSSRuleList> rules = doc->styleSelector()->styleRulesForElement(m_element, /*authorOnly*/ true)) {
+        if (RefPtr<CSSRuleList> rules = doc->styleResolver()->styleRulesForElement(m_element, /*authorOnly*/ true)) {
             for (int i = rules->length(); i > 0; --i) {
                 CSSStyleRule* rule = static_cast<CSSStyleRule*>(rules->item(i - 1));
 
