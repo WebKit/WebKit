@@ -926,18 +926,7 @@ perf/show-hide-table-rows.html
 jquery/manipulation.html
 
 # Other failing Sputnik tests
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.2_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.10_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.11_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.1_decodeURI/S15.1.3.1_A1.12_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.2_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.10_T1.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.11_T2.html
-sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_decodeURIComponent/S15.1.3.2_A1.12_T2.html
-sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
-sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
 sputnik/Unicode/Unicode_510/S7.6_A3.1.html
-sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
