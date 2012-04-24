@@ -74,7 +74,7 @@ public:
 
 protected:
     StyleRuleBase(Type type, signed sourceLine = 0) : m_type(type), m_sourceLine(sourceLine) { }
-    StyleRuleBase(const StyleRuleBase& o) : m_type(o.m_type), m_sourceLine(o.m_sourceLine) { }
+    StyleRuleBase(const StyleRuleBase& o) : WTF::RefCountedBase(), m_type(o.m_type), m_sourceLine(o.m_sourceLine) { }
 
     ~StyleRuleBase() { }
 
