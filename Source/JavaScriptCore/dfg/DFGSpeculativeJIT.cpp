@@ -751,6 +751,9 @@ void ValueSource::dump(FILE* out) const
     case SourceNotSet:
         fprintf(out, "NotSet");
         break;
+    case SourceIsDead:
+        fprintf(out, "IsDead");
+        break;
     case ValueInRegisterFile:
         fprintf(out, "InRegFile");
         break;
@@ -949,7 +952,9 @@ void SpeculativeJIT::compile(BasicBlock& block)
     ASSERT(m_variables.size() == block.variablesAtHead.numberOfLocals());
     for (size_t i = 0; i < m_variables.size(); ++i) {
         NodeIndex nodeIndex = block.variablesAtHead.local(i);
-        if (nodeIndex == NoNode || m_jit.graph().localIsCaptured(i))
+        if ((nodeIndex == NoNode || !at(nodeIndex).refCount()) && !m_jit.graph().localIsCaptured(i))
+            m_variables[i] = ValueSource(SourceIsDead);
+        else if (m_jit.graph().localIsCaptured(i))
             m_variables[i] = ValueSource(ValueInRegisterFile);
         else if (at(nodeIndex).variableAccessData()->shouldUseDoubleFormat())
             m_variables[i] = ValueSource(DoubleInRegisterFile);
@@ -1290,6 +1295,9 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
 ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)
 {
     switch (valueSource.kind()) {
+    case SourceIsDead:
+        return ValueRecovery::constant(jsUndefined());
+        
     case ValueInRegisterFile:
         return ValueRecovery::alreadyInRegisterFile();
         

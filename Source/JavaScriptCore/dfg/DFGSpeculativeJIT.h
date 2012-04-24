@@ -54,6 +54,7 @@ enum ValueSourceKind {
     CellInRegisterFile,
     BooleanInRegisterFile,
     DoubleInRegisterFile,
+    SourceIsDead,
     HaveNode
 };
 
