@@ -1,3 +1,27 @@
+2012-04-24  Rob Buis  <rbuis@rim.com>
+
+        REGRESSION (r115083-r115087): 6 tests failing on Lion Release (WebKit2 Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=84783
+
+        Reviewed by Dirk Schulze.
+
+        Fix struct-use-09-b.svg missing test result by converting to a reftest.
+
+        * platform/chromium-linux/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/chromium-mac/svg/custom/struct-use-09-b-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/chromium-win/svg/custom/struct-use-09-b-expected.txt: Removed.
+        * platform/gtk/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/gtk/svg/custom/struct-use-09-b-expected.txt: Removed.
+        * platform/mac-leopard/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/mac/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/qt/svg/custom/struct-use-09-b-expected.png: Removed.
+        * platform/qt/svg/custom/struct-use-09-b-expected.txt: Removed.
+        * svg/custom/struct-use-09-b-expected.svg:
+        * svg/custom/struct-use-09-b.svg:
+
 2012-04-24  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewd test expectations update.
