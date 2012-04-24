@@ -1,3 +1,12 @@
+2012-04-24  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Gardening
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped: Skip http/tests/notifications/icon-exists-cancel.html, because it fails from r115011.
+        * platform/qt/fast/forms/form-collection-radio-node-list-expected.txt: Added after r115009.
+
 2012-04-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK test_expectations update, mark some tests as
