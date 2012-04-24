@@ -1,3 +1,13 @@
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r114957.
+
+        * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
 2012-04-23  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed. Fix incorrect test results for <datalist>
