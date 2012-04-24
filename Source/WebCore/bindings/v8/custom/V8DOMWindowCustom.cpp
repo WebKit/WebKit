@@ -78,7 +78,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     ScriptExecutionContext* scriptContext = static_cast<ScriptExecutionContext*>(imp->document());
 
     if (!scriptContext) {
-        V8Proxy::setDOMException(INVALID_ACCESS_ERR);
+        V8Proxy::setDOMException(INVALID_ACCESS_ERR, args.GetIsolate());
         return v8::Undefined();
     }
 

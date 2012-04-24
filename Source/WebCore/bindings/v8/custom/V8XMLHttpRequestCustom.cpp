@@ -75,7 +75,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
             ExceptionCode ec = 0;
             Document* document = xmlHttpRequest->responseXML(ec);
             if (ec) {
-                V8Proxy::setDOMException(ec);
+                V8Proxy::setDOMException(ec, info.GetIsolate());
                 return v8::Undefined();
             }
             return toV8(document, info.GetIsolate());
@@ -87,7 +87,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
             ExceptionCode ec = 0;
             Blob* blob = xmlHttpRequest->responseBlob(ec);
             if (ec) {
-                V8Proxy::setDOMException(ec);
+                V8Proxy::setDOMException(ec, info.GetIsolate());
                 return v8::Undefined();
             }
             return toV8(blob, info.GetIsolate());
@@ -101,7 +101,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
             ExceptionCode ec = 0;
             ArrayBuffer* arrayBuffer = xmlHttpRequest->responseArrayBuffer(ec);
             if (ec) {
-                V8Proxy::setDOMException(ec);
+                V8Proxy::setDOMException(ec, info.GetIsolate());
                 return v8::Undefined();
             }
             return toV8(arrayBuffer, info.GetIsolate());

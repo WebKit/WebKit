@@ -112,7 +112,7 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
     ExceptionCode ec = 0;
     imp->observe(target, options, attributeFilter, ec);
     if (ec)
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 

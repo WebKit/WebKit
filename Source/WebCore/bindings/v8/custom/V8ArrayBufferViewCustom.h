@@ -81,7 +81,7 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
     }
     RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
     if (!array) {
-        V8Proxy::setDOMException(INDEX_SIZE_ERR);
+        V8Proxy::setDOMException(INDEX_SIZE_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
     // Transform the holder into a wrapper object for the array.
@@ -189,7 +189,7 @@ template <class CPlusPlusArrayType, class JavaScriptWrapperArrayType>
 v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
 {
     if (args.Length() < 1) {
-        V8Proxy::setDOMException(SYNTAX_ERR);
+        V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
         return notHandledByInterceptor();
     }
 
@@ -202,7 +202,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
         if (args.Length() == 2)
             offset = toUInt32(args[1]);
         if (!impl->set(src, offset))
-            V8Proxy::setDOMException(INDEX_SIZE_ERR);
+            V8Proxy::setDOMException(INDEX_SIZE_ERR, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -217,7 +217,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
             || offset + length > impl->length()
             || offset + length < offset)
             // Out of range offset or overflow
-            V8Proxy::setDOMException(INDEX_SIZE_ERR);
+            V8Proxy::setDOMException(INDEX_SIZE_ERR, args.GetIsolate());
         else {
             if (!fastSetInstalled(args.Holder())) {
                 installFastSet(args.Holder());
@@ -230,7 +230,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
         return v8::Undefined();
     }
 
-    V8Proxy::setDOMException(SYNTAX_ERR);
+    V8Proxy::setDOMException(SYNTAX_ERR, args.GetIsolate());
     return notHandledByInterceptor();
 }
 

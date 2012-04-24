@@ -110,7 +110,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
 
     ExceptionCode ec = 0;
     transaction->executeSQL(statement, sqlValues, callback, errorCallback, ec);
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, args.GetIsolate());
 
     return v8::Undefined();
 }

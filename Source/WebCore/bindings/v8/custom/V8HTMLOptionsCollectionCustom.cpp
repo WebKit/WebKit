@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
 {
     INC_STATS("DOM.HTMLOptionsCollection.add()");
     if (!V8HTMLOptionElement::HasInstance(args[0])) {
-        V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
+        V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
         return v8::Undefined();
     }
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
     }
 
     if (ec != 0)
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
 
     return v8::Undefined();
 }
@@ -111,7 +111,7 @@ void V8HTMLOptionsCollection::lengthAccessorSetter(v8::Local<v8::String> name, v
     if (!ec)
         imp->setLength(newLength, ec);
 
-    V8Proxy::setDOMException(ec);
+    V8Proxy::setDOMException(ec, info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
@@ -131,7 +131,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertySetter(uint32_t in
     INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertySetter");
     HTMLOptionsCollection* collection = V8HTMLOptionsCollection::toNative(info.Holder());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(collection->base());
-    return toOptionsCollectionSetter(index, value, base);
+    return toOptionsCollectionSetter(index, value, base, info.GetIsolate());
 }
 
 } // namespace WebCore

@@ -176,7 +176,7 @@ template<class Collection> static void setCollectionStringIndexedGetter(v8::Hand
     desc->InstanceTemplate()->SetIndexedPropertyHandler(collectionStringIndexedPropertyGetter<Collection>, 0, 0, 0, collectionIndexedPropertyEnumerator<Collection>);
 }
 
-v8::Handle<v8::Value> toOptionsCollectionSetter(uint32_t index, v8::Handle<v8::Value>, HTMLSelectElement*);
+v8::Handle<v8::Value> toOptionsCollectionSetter(uint32_t index, v8::Handle<v8::Value>, HTMLSelectElement*, v8::Isolate*);
 
 } // namespace WebCore
 

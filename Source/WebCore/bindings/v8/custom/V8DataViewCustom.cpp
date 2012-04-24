@@ -75,7 +75,7 @@ v8::Handle<v8::Value> V8DataView::getInt8Callback(const v8::Arguments& args)
     EXCEPTION_BLOCK(unsigned, byteOffset, toUInt32(args[0]));
     int8_t result = imp->getInt8(byteOffset, ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     return v8::Integer::New(result);
@@ -92,7 +92,7 @@ v8::Handle<v8::Value> V8DataView::getUint8Callback(const v8::Arguments& args)
     EXCEPTION_BLOCK(unsigned, byteOffset, toUInt32(args[0]));
     uint8_t result = imp->getUint8(byteOffset, ec);
     if (UNLIKELY(ec)) {
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
         return v8::Handle<v8::Value>();
     }
     return v8::Integer::New(result);
@@ -110,7 +110,7 @@ v8::Handle<v8::Value> V8DataView::setInt8Callback(const v8::Arguments& args)
     EXCEPTION_BLOCK(int, value, toInt32(args[1]));
     imp->setInt8(byteOffset, static_cast<int8_t>(value), ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
@@ -126,7 +126,7 @@ v8::Handle<v8::Value> V8DataView::setUint8Callback(const v8::Arguments& args)
     EXCEPTION_BLOCK(int, value, toInt32(args[1]));
     imp->setUint8(byteOffset, static_cast<uint8_t>(value), ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec);
+        V8Proxy::setDOMException(ec, args.GetIsolate());
     return v8::Handle<v8::Value>();
 }
 
