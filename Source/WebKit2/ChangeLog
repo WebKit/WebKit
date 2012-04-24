@@ -1,5 +1,27 @@
 2012-04-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        [Qt] Restore x-position when restoring previous zoom-level.
+        https://bugs.webkit.org/show_bug.cgi?id=84591
+
+        Reviewed by Simon Hausmann.
+
+        Tap-to-zoom fits content to width, therefore it is essentional that
+        the content is refitted to width when zooming out.
+
+        This patch pairs horizontal position and scale on the zoom-out stack.
+
+        Additionally it fixes a problem with not detecting zoom-out properly
+        due to floating point errors.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::fuzzyCompare):
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (WebKit::QtViewportInteractionEngine::ScaleStackItem::ScaleStackItem):
+        (QtViewportInteractionEngine):
+
+2012-04-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         [Qt] Incomplete interaction-engine reset.
         https://bugs.webkit.org/show_bug.cgi?id=84594
 

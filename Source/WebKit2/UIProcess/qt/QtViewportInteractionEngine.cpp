@@ -92,6 +92,12 @@ private:
     QtViewportInteractionEngine* const engine;
 };
 
+// A floating point compare with absolute error.
+static inline bool fuzzyCompare(qreal a, qreal b, qreal epsilon)
+{
+    return qAbs(a - b) < epsilon;
+}
+
 inline qreal QtViewportInteractionEngine::cssScaleFromItem(qreal itemScale)
 {
     return itemScale / m_devicePixelRatio;
@@ -366,26 +372,7 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
 
     qreal targetCSSScale = cssScaleFromItem(viewportRect.size().width() / endArea.size().width());
     qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(qMin(targetCSSScale, qreal(2.5))));
-
     qreal currentScale = m_content->contentsScale();
-    if (!m_scaleStack.isEmpty()) {
-        // Zoom back out if attempting to scale to the same current scale, or
-        // attempting to continue scaling out from the inner most level.
-        if (endItemScale == m_zoomOutScale || endItemScale == currentScale)
-            endItemScale = m_scaleStack.takeLast();
-        else if (endItemScale > currentScale) {
-            m_scaleStack.append(currentScale);
-            m_zoomOutScale = endItemScale;
-        } else { // endItemScale < currentScale
-            // Unstack all scale-levels deeper than the new level, so a zoom-out won't zoom in to a previous level.
-            while (!m_scaleStack.isEmpty() && m_scaleStack.last() >= endItemScale)
-                m_scaleStack.removeLast();
-            m_zoomOutScale = endItemScale;
-        }
-    } else {
-        m_scaleStack.append(currentScale);
-        m_zoomOutScale = endItemScale;
-    }
 
     // We want to end up with the target area filling the whole width of the viewport (if possible),
     // and centralized vertically where the user requested zoom. Thus our hotspot is the center of
@@ -399,6 +386,42 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
 
     QRectF endVisibleContentRect(endPosition / endItemScale, viewportRect.size() / endItemScale);
+
+    enum { ZoomIn, ZoomBack, ZoomOut } zoomAction = ZoomIn;
+
+    if (!m_scaleStack.isEmpty()) {
+        // Zoom back out if attempting to scale to the same current scale, or
+        // attempting to continue scaling out from the inner most level.
+        // Use fuzzy compare with a fixed error to be able to deal with largish differences due to pixel rounding.
+        if (fuzzyCompare(endItemScale, currentScale, 0.01)) {
+            // FIXME: Check if we should move the viewport instead of zooming back.
+            zoomAction = ZoomBack;
+        } else if (fuzzyCompare(endItemScale, m_zoomOutScale, 0.01))
+            zoomAction = ZoomBack;
+        else if (endItemScale < currentScale)
+            zoomAction = ZoomOut;
+    }
+
+    switch (zoomAction) {
+    case ZoomIn:
+        m_scaleStack.append(ScaleStackItem(currentScale, m_viewport->contentPos().x()));
+        m_zoomOutScale = endItemScale;
+        break;
+    case ZoomBack: {
+        ScaleStackItem lastScale = m_scaleStack.takeLast();
+        endItemScale = lastScale.scale;
+        endPosition.setY(hotspot.y() * endItemScale - viewportHotspot.y());
+        endPosition.setX(lastScale.xPosition);
+        endVisibleContentRect = QRectF(endPosition / endItemScale, viewportRect.size() / endItemScale);
+        break;
+    }
+    case ZoomOut:
+        // Unstack all scale-levels deeper than the new level, so a zoom-back won't end up zooming in.
+        while (!m_scaleStack.isEmpty() && m_scaleStack.last().scale >= endItemScale)
+            m_scaleStack.removeLast();
+        m_zoomOutScale = endItemScale;
+        break;
+    }
 
     animateItemRectVisible(endVisibleContentRect);
 }

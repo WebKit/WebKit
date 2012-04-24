@@ -155,12 +155,22 @@ private:
         virtual void updateCurrentValue(const QVariant&) { }
     };
 
+    struct ScaleStackItem {
+        ScaleStackItem(qreal scale, qreal xPosition)
+            : scale(scale)
+            , xPosition(xPosition)
+        { }
+
+        qreal scale;
+        qreal xPosition;
+    };
+
     ScaleAnimation* m_scaleAnimation;
     QPointF m_lastPinchCenterInViewportCoordinates;
     QPointF m_lastScrollPosition;
     qreal m_pinchStartScale;
     qreal m_zoomOutScale;
-    QList<qreal> m_scaleStack;
+    QList<ScaleStackItem> m_scaleStack;
 };
 
 } // namespace WebKit
