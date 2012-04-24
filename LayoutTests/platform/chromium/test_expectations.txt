@@ -1803,7 +1803,7 @@ BUGCR30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PAS
 // WebKit roll 52468->52535
 BUGCR31991 LINUX WIN : fast/text/international/bidi-layout-across-linebreak.html = TEXT
 
-BUGCR31623 WIN : http/tests/appcache/remove-cache.html = PASS TIMEOUT TEXT
+BUGCR31623 WIN SNOWLEOPARD : http/tests/appcache/remove-cache.html = PASS TIMEOUT TEXT
 
 // V8's implementation of getOwnPropertyNames has different results for built-in
 // functions.
