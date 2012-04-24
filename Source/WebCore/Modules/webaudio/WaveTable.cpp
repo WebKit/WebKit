@@ -211,7 +211,7 @@ void WaveTable::createBandLimitedTables(const float* realData, const float* imag
             vmaxmgv(data, 1, &maxValue, m_waveTableSize);
 
             if (maxValue)
-                normalizationScale = 0.5f / maxValue;
+                normalizationScale = 1.0f / maxValue;
         }
 
         // Apply normalization scale.
