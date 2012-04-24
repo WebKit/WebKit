@@ -1,3 +1,27 @@
+2012-04-24  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84785
+
+        Updating test expectation changes due to r115085.
+
+        * platform/chromium-linux-x86/svg/custom/use-setAttribute-crash-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/use-setAttribute-crash-expected.txt: Removed.
+        * platform/chromium-mac-leopard/svg/custom/use-setAttribute-crash-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/use-setAttribute-crash-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/struct-use-09-b-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/use-setAttribute-crash-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/custom/use-setAttribute-crash-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/embedding-external-svgs-expected.txt:
+        * platform/chromium-win/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/struct-use-09-b-expected.txt:
+        * platform/chromium-win/svg/custom/use-setAttribute-crash-expected.txt:
+        * platform/chromium/svg/custom/use-in-symbol-with-offset-expected.txt: Added.
+        * platform/chromium/svg/custom/use-transfer-width-height-properties-to-svg2-expected.txt: Renamed from LayoutTests/platform/qt/svg/custom/use-transfer-width-height-properties-to-svg2-expected.txt.
+        * platform/chromium/svg/custom/use-transfer-width-height-properties-to-symbol-expected.txt: Renamed from LayoutTests/platform/qt/svg/custom/use-transfer-width-height-properties-to-symbol-expected.txt.
+
 2012-04-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r115009; It doesn't make necessary changes to NodeRareData and Node.
