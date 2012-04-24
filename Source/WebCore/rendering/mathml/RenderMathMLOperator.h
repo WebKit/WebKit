@@ -46,11 +46,14 @@ public:
         
 protected:
     virtual void layout();
-    virtual PassRefPtr<RenderStyle> createStackableStyle(int size, int topRelative);
-    virtual RenderBlock* createGlyph(UChar glyph, int size = 0, int charRelative = 0, int topRelative = 0);
+    virtual PassRefPtr<RenderStyle> createStackableStyle(int lineHeight, int maxHeightForRenderer, int topRelative);
+    virtual RenderBlock* createGlyph(UChar glyph, int lineHeight, int maxHeightForRenderer = 0, int charRelative = 0, int topRelative = 0);
     
 private:
     virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
+
+    int glyphHeightForCharacter(UChar);
+    int lineHeightForCharacter(UChar);
 
     int m_stretchHeight;
     bool m_isStacked;

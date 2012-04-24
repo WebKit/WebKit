@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x132
-  RenderBlock {html} at (0,0) size 800x132
-    RenderBody {body} at (8,16) size 784x100
+layer at (0,0) size 800x130
+  RenderBlock {html} at (0,0) size 800x130
+    RenderBody {body} at (8,16) size 784x98
       RenderBlock {p} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 27x18
           text run at (0,0) width 27: "text "
@@ -30,17 +30,17 @@ layer at (0,0) size 800x132
               RenderText {#text} at (9,7) size 5x12
                 text run at (9,7) width 5: "x"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,76) size 784x24
-        RenderText {#text} at (0,2) size 27x18
-          text run at (0,2) width 27: "text "
-        RenderMathMLMath {math} at (27,0) size 14x24
-          RenderMathMLSubSup {msub} at (1,0) size 12x24
-            RenderMathMLBlock {msub} at (0,0) size 5x21
-              RenderMathMLOperator {mo} at (0,0) size 5x21
+      RenderBlock {p} at (0,76) size 784x22
+        RenderText {#text} at (0,0) size 27x18
+          text run at (0,0) width 27: "text "
+        RenderMathMLMath {math} at (27,1) size 14x21
+          RenderMathMLSubSup {msub} at (1,0) size 12x21
+            RenderMathMLBlock {msub} at (0,0) size 5x19
+              RenderMathMLOperator {mo} at (0,0) size 5x19
                 RenderMathMLBlock {mo} at (0,0) size 5x19
-                  RenderText {mo} at (0,-1) size 5x22
-                    text run at (0,-1) width 5: "\x{222B}"
+                  RenderText {mo} at (0,0) size 5x19
+                    text run at (0,0) width 5: "\x{222B}"
             RenderInline {mi} at (0,0) size 7x12
-              RenderText {#text} at (5,12) size 7x12
-                text run at (5,12) width 7: "Y"
+              RenderText {#text} at (5,9) size 7x12
+                text run at (5,9) width 7: "Y"
         RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,21 @@
+2012-04-23  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=84649
+        RenderMathMLOperator currently ignores font families, fails to use Stix
+
+        Reviewed by Dan Bernstein.
+
+         Metrics are slightly different now that Stix glyphs are being used for operators.
+        * platform/mac/mathml/presentation/fenced-expected.txt:
+        * platform/mac/mathml/presentation/fenced-mi-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+
 2012-04-23  Eriq Augustine  <eaugusti@chromium.org>
 
         Return value from executed script in Chromium.
