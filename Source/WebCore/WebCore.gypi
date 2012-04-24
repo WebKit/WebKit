@@ -3178,6 +3178,8 @@
             'platform/audio/AudioDestination.h',
             'platform/audio/AudioFileReader.h',
             'platform/audio/AudioProcessor.h',
+            'platform/audio/AudioPullFIFO.cpp',
+            'platform/audio/AudioPullFIFO.h',
             'platform/audio/AudioResampler.cpp',
             'platform/audio/AudioResampler.h',
             'platform/audio/AudioResamplerKernel.cpp',
