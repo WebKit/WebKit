@@ -259,3 +259,18 @@ BUGWK82294 : compositing/tiling/huge-layer-with-layer-children-resize.html = TEX
 BUGWK82294 : compositing/tiling/huge-layer-with-layer-children.html = TEXT
 BUGWK82294 : compositing/tiling/huge-layer.html = TEXT
 BUGWK82294 : compositing/video/video-poster.html = TEXT
+
+// Link prefetch is disabled by default
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-beforeload.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-detached.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prerender.html = FAIL
+BUGWKEFL SKIP : fast/dom/HTMLLinkElement/subresource.html = FAIL
+BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
+BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = FAIL
+BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = FAIL

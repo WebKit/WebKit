@@ -1,3 +1,16 @@
+2012-04-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Move tests that require link prefetching to test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=84673
+
+        Unreviewed, test expectations update.
+
+        Move tests that require link prefetching to test expectations since it
+        is disabled by default.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-04-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: remove pure delegation code from DebuggerPresentationModel
