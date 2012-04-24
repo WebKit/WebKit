@@ -282,7 +282,8 @@ void WebPagePopupImpl::setFocus(bool enable)
 void WebPagePopupImpl::close()
 {
     m_page.clear();
-    delete this;
+    m_widgetClient = 0;
+    deref();
 }
 
 void WebPagePopupImpl::closePopup()
@@ -292,8 +293,11 @@ void WebPagePopupImpl::closePopup()
         m_page->mainFrame()->loader()->stopAllLoaders();
         m_page->mainFrame()->loader()->stopLoading(UnloadEventPolicyNone);
     }
-    // closeWidgetSoon() will call this->close() later.
-    m_widgetClient->closeWidgetSoon();
+    // m_widgetClient might be 0 because this widget might be already closed.
+    if (m_widgetClient) {
+        // closeWidgetSoon() will call this->close() later.
+        m_widgetClient->closeWidgetSoon();
+    }
 
     m_popupClient->didClosePopup();
 }
@@ -307,7 +311,13 @@ WebPagePopup* WebPagePopup::create(WebWidgetClient* client)
 #if ENABLE(PAGE_POPUP)
     if (!client)
         CRASH();
-    return new WebPagePopupImpl(client);
+    // A WebPagePopupImpl instance usually has two references.
+    //  - One owned by the instance itself. It represents the visible widget.
+    //  - One owned by a WebViewImpl. It's released when the WebViewImpl ask the
+    //    WebPagePopupImpl to close.
+    // We need them because the closing operation is asynchronous and the widget
+    // can be closed while the WebViewImpl is unaware of it.
+    return adoptRef(new WebPagePopupImpl(client)).leakRef();
 #else
     UNUSED_PARAM(client);
     return 0;

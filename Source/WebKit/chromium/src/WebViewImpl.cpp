@@ -372,9 +372,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_dragOperation(WebDragOperationNone)
     , m_autofillPopupShowing(false)
     , m_autofillPopup(0)
-#if ENABLE(PAGE_POPUP)
-    , m_pagePopup(0)
-#endif
     , m_isTransparent(false)
     , m_tabsToLinks(false)
     , m_dragScrollTimer(adoptPtr(new DragScrollTimer))
@@ -1215,15 +1212,15 @@ PagePopup* WebViewImpl::openPagePopup(PagePopupClient* client, const IntRect& or
 
     if (Frame* frame = focusedWebCoreFrame())
         frame->selection()->setCaretVisible(false);
-    return m_pagePopup;
+    return m_pagePopup.get();
 }
 
 void WebViewImpl::closePagePopup(PagePopup* popup)
 {
     ASSERT(popup);
     WebPagePopupImpl* popupImpl = static_cast<WebPagePopupImpl*>(popup);
-    ASSERT(m_pagePopup == popupImpl);
-    if (m_pagePopup != popupImpl)
+    ASSERT(m_pagePopup.get() == popupImpl);
+    if (m_pagePopup.get() != popupImpl)
         return;
     m_pagePopup->closePopup();
     m_pagePopup = 0;
@@ -2797,7 +2794,7 @@ void WebViewImpl::hidePopups()
     hideAutofillPopup();
 #if ENABLE(PAGE_POPUP)
     if (m_pagePopup)
-        closePagePopup(m_pagePopup);
+        closePagePopup(m_pagePopup.get());
 #endif
 }
 

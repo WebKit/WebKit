@@ -37,6 +37,7 @@
 #include "PageWidgetDelegate.h"
 #include "WebPagePopup.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 class Page;
@@ -51,11 +52,13 @@ class WebViewImpl;
 
 class WebPagePopupImpl : public WebPagePopup,
                          public PageWidgetEventHandler,
-                         public WebCore::PagePopup {
+                         public WebCore::PagePopup,
+                         public RefCounted<WebPagePopupImpl> {
     WTF_MAKE_NONCOPYABLE(WebPagePopupImpl);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
+    virtual ~WebPagePopupImpl();
     bool init(WebViewImpl*, WebCore::PagePopupClient*, const WebCore::IntRect& originBoundsInRootView);
     bool handleKeyEvent(const WebCore::PlatformKeyboardEvent&);
     void closePopup();
@@ -82,7 +85,6 @@ private:
 #endif
 
     explicit WebPagePopupImpl(WebWidgetClient*);
-    virtual ~WebPagePopupImpl();
     bool initPage();
 
     WebWidgetClient* m_widgetClient;

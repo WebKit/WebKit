@@ -1,3 +1,28 @@
+2012-04-23  Kent Tamura  <tkent@chromium.org>
+
+        Crash when the page with a calendar picker is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=84287
+
+        Reviewed by Hajime Morita.
+
+        Use the same ownership model as WebPopupMenuImpl's.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::close):
+        Clear m_widgetClient to avoid furthur access to it. deref instead of delete.
+        (WebKit::WebPagePopupImpl::closePopup):
+        Do not call closeWidgetSoon() if close() was already called.
+        (WebKit::WebPagePopup::create):
+        Add a reference. Add explanation of the ownership.
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl): Make this RefCounted.  Make the destuctor public.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl): No need to clear m_pagePopup explicitly.
+        (WebKit::WebViewImpl::openPagePopup): Need to use .get() because m_pagePopup is a RefPtr.
+        (WebKit::WebViewImpl::closePagePopup): ditto.
+        (WebKit::WebViewImpl::hidePopups): ditto.
+        * src/WebViewImpl.h: Make m_pagePopup a RefPtr.
+
 2012-04-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use TextureLayerChromium for WebGL content instead of a dedicated layer type

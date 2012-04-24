@@ -711,7 +711,7 @@ private:
 
 #if ENABLE(PAGE_POPUP)
     // The popup associated with an input element.
-    WebPagePopupImpl* m_pagePopup;
+    RefPtr<WebPagePopupImpl> m_pagePopup;
 #endif
 
     OwnPtr<WebDevToolsAgentPrivate> m_devToolsAgent;
