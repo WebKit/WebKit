@@ -1,3 +1,12 @@
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84698
+
+        Mark fast/forms/placeholder-position.html as flaky on Linux
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Gardening

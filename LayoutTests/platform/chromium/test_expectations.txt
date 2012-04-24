@@ -3722,3 +3722,5 @@ BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
 BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html = TEXT PASS
 
 BUGWK84689 SNOWLEOPARD : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TIMEOUT PASS
+
+BUGWK84698 LINUX : fast/forms/placeholder-position.html = IMAGE PASS
