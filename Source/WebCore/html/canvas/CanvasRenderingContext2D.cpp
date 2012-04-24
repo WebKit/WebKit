@@ -1943,7 +1943,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     newStyle->font().update(newStyle->font().fontSelector());
 
     // Now map the font property longhands into the style.
-    CSSStyleSelector* styleSelector = canvas()->styleSelector();
+    StyleResolver* styleSelector = canvas()->styleSelector();
     styleSelector->applyPropertyToStyle(CSSPropertyFontFamily, tempDecl->getPropertyCSSValue(CSSPropertyFontFamily).get(), newStyle.get());
     styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontStyle, tempDecl->getPropertyCSSValue(CSSPropertyFontStyle).get());
     styleSelector->applyPropertyToCurrentStyle(CSSPropertyFontVariant, tempDecl->getPropertyCSSValue(CSSPropertyFontVariant).get());

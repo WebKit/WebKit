@@ -834,7 +834,7 @@ void Page::allVisitedStateChanged(PageGroup* group)
         if (page->m_group != group)
             continue;
         for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
-            if (CSSStyleSelector* styleSelector = frame->document()->styleSelector())
+            if (StyleResolver* styleSelector = frame->document()->styleSelector())
                 styleSelector->allVisitedStateChanged();
         }
     }
@@ -852,7 +852,7 @@ void Page::visitedStateChanged(PageGroup* group, LinkHash visitedLinkHash)
         if (page->m_group != group)
             continue;
         for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext()) {
-            if (CSSStyleSelector* styleSelector = frame->document()->styleSelector())
+            if (StyleResolver* styleSelector = frame->document()->styleSelector())
                 styleSelector->visitedStateChanged(visitedLinkHash);
         }
     }

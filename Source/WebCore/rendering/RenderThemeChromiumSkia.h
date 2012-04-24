@@ -70,22 +70,22 @@ class RenderThemeChromiumSkia : public RenderTheme {
 
         virtual void setRadioSize(RenderStyle*) const;
 
-        virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
         virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-        virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
 
         virtual bool paintMediaControlsBackground(RenderObject*, const PaintInfo&, const IntRect&);
@@ -106,8 +106,8 @@ class RenderThemeChromiumSkia : public RenderTheme {
         // In short, we either go down the MenuList code path or the MenuListButton
         // codepath. We never go down both. And in both cases, they render the
         // entire menulist.
-        virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-        virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
+        virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 
 #if ENABLE(PROGRESS_TAG)

@@ -289,7 +289,7 @@ void RenderThemeQStyle::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
 
 
 
-void RenderThemeQStyle::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element*) const
+void RenderThemeQStyle::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, Element*) const
 {
     // Ditch the border.
     style->resetBorder();
@@ -407,7 +407,7 @@ bool RenderThemeQStyle::paintTextField(RenderObject* o, const PaintInfo& i, cons
     return false;
 }
 
-void RenderThemeQStyle::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeQStyle::adjustTextAreaStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     adjustTextFieldStyle(selector, style, element);
 }
@@ -463,7 +463,7 @@ bool RenderThemeQStyle::paintMenuList(RenderObject* o, const PaintInfo& i, const
     return false;
 }
 
-void RenderThemeQStyle::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeQStyle::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     // WORKAROUND because html.css specifies -webkit-border-radius for <select> so we override it here
     // see also http://bugs.webkit.org/show_bug.cgi?id=18399
@@ -594,7 +594,7 @@ bool RenderThemeQStyle::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
     return false;
 }
 
-void RenderThemeQStyle::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQStyle::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
 }
@@ -627,7 +627,7 @@ bool RenderThemeQStyle::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
     return false;
 }
 
-void RenderThemeQStyle::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeQStyle::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(selector, style, element);
     style->setBoxShadow(nullptr);
@@ -639,7 +639,7 @@ bool RenderThemeQStyle::paintSearchField(RenderObject* o, const PaintInfo& pi,
     return paintTextField(o, pi, r);
 }
 
-void RenderThemeQStyle::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style,
+void RenderThemeQStyle::adjustSearchFieldDecorationStyle(StyleResolver* selector, RenderStyle* style,
                                                      Element* e) const
 {
     notImplemented();
@@ -653,7 +653,7 @@ bool RenderThemeQStyle::paintSearchFieldDecoration(RenderObject* o, const PaintI
     return RenderTheme::paintSearchFieldDecoration(o, pi, r);
 }
 
-void RenderThemeQStyle::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style,
+void RenderThemeQStyle::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style,
                                                             Element* e) const
 {
     notImplemented();

@@ -572,15 +572,15 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
     recalcStyleForPseudoStateIfNeeded(element, forcedPseudoClasses ? forcedPseudoClasses->get() : 0);
 
     // Matched rules.
-    CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
-    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules);
+    StyleResolver* selector = element->ownerDocument()->styleSelector();
+    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, StyleResolver::AllCSSRules);
     matchedCSSRules = buildArrayForRuleList(matchedRules.get(), selector);
 
     // Pseudo elements.
     if (!includePseudo || *includePseudo) {
         RefPtr<TypeBuilder::Array<TypeBuilder::CSS::PseudoIdRules> > pseudoElements = TypeBuilder::Array<TypeBuilder::CSS::PseudoIdRules>::create();
         for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
-            RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, CSSStyleSelector::AllCSSRules);
+            RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, StyleResolver::AllCSSRules);
             if (matchedRules && matchedRules->length()) {
                 RefPtr<TypeBuilder::CSS::PseudoIdRules> pseudoStyles = TypeBuilder::CSS::PseudoIdRules::create()
                     .setPseudoId(static_cast<int>(pseudoId))
@@ -597,8 +597,8 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
         RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> > inheritedStyles = TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry>::create();
         Element* parentElement = element->parentElement();
         while (parentElement) {
-            CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
-            RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, CSSStyleSelector::AllCSSRules);
+            StyleResolver* parentSelector = parentElement->ownerDocument()->styleSelector();
+            RefPtr<CSSRuleList> parentMatchedRules = parentSelector->styleRulesForElement(parentElement, StyleResolver::AllCSSRules);
             RefPtr<TypeBuilder::CSS::InheritedStyleEntry> parentStyle = TypeBuilder::CSS::InheritedStyleEntry::create()
                 .setMatchedCSSRules(buildArrayForRuleList(parentMatchedRules.get(), selector));
             if (parentElement->style() && parentElement->style()->length()) {
@@ -944,7 +944,7 @@ TypeBuilder::CSS::CSSRule::Origin::Enum InspectorCSSAgent::detectOrigin(CSSStyle
     return origin;
 }
 
-PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > InspectorCSSAgent::buildArrayForRuleList(CSSRuleList* ruleList, CSSStyleSelector* styleSelector)
+PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > InspectorCSSAgent::buildArrayForRuleList(CSSRuleList* ruleList, StyleResolver* styleSelector)
 {
     RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > result = TypeBuilder::Array<TypeBuilder::CSS::CSSRule>::create();
     if (!ruleList)
@@ -955,9 +955,9 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > InspectorCSSAgent::bu
         if (!rule)
             continue;
 
-        // CSSRules returned by CSSStyleSelector::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
+        // CSSRules returned by StyleResolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
         // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-        // FIXME: This could be factored better. CSSStyleSelector::styleRulesForElement should return a StyleRule vector, not a CSSRuleList.
+        // FIXME: This could be factored better. StyleResolver::styleRulesForElement should return a StyleRule vector, not a CSSRuleList.
         if (!rule->parentStyleSheet()) {
             rule = styleSelector->ensureFullCSSOMWrapperForInspector(rule->styleRule());
             if (!rule)

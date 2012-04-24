@@ -71,7 +71,7 @@ namespace WebCore {
         virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
         virtual bool popsMenuBySpaceOrReturn() const OVERRIDE { return true; }

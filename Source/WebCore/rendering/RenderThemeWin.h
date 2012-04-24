@@ -77,7 +77,7 @@ public:
 
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
@@ -85,9 +85,9 @@ public:
     virtual bool paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
     { return paintTextField(o, i, r); }
 
-    virtual void adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
+    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 
@@ -97,26 +97,26 @@ public:
 
     virtual bool popupOptionSupportsTextIndent() const { return true; }
 
-    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldDecoration(RenderObject*, const PaintInfo&, const IntRect&) { return false; }
 
-    virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void themeChanged();
 
-    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
-    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
-    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
+    virtual void adjustButtonStyle(StyleResolver*, RenderStyle* style, Element*) const { }
+    virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle* style, Element*) const { }
+    virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle* style, Element*) const { }
 
     static void setWebKitIsBeingUnloaded();
 

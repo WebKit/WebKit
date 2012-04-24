@@ -1725,7 +1725,7 @@ void Document::recalcStyle(StyleChange change)
         // style selector may set this again during recalc
         m_hasNodesWithPlaceholderStyle = false;
         
-        RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(this, m_styleSelector ? m_styleSelector->fontSelector() : 0);
+        RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(this, m_styleSelector ? m_styleSelector->fontSelector() : 0);
         StyleChange ch = Node::diff(documentStyle.get(), renderer()->style(), this);
         if (ch != NoChange)
             renderer()->setStyle(documentStyle.release());
@@ -1962,7 +1962,7 @@ void Document::createStyleSelector()
     bool matchAuthorAndUserStyles = true;
     if (Settings* docSettings = settings())
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
-    m_styleSelector = adoptPtr(new CSSStyleSelector(this, matchAuthorAndUserStyles));
+    m_styleSelector = adoptPtr(new StyleResolver(this, matchAuthorAndUserStyles));
     combineCSSFeatureFlags();
 }
 
@@ -3398,7 +3398,7 @@ bool Document::testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal* styles
     // Then test if we actually have any of those in the tree at the moment.
     HashSet<AtomicStringImpl*> idScopes; 
     HashSet<AtomicStringImpl*> classScopes;
-    if (!CSSStyleSelector::determineStylesheetSelectorScopes(stylesheet, idScopes, classScopes))
+    if (!StyleResolver::determineStylesheetSelectorScopes(stylesheet, idScopes, classScopes))
         return true;
     // Invalidate the subtrees that match the scopes.
     Node* node = firstChild();

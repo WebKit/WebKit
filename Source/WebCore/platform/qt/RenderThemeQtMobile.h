@@ -58,14 +58,14 @@ public:
 
 protected:
 
-    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 

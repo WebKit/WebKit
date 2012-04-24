@@ -51,18 +51,18 @@ public:
     QStyle* qStyle() const;
 
 protected:
-    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
 #if ENABLE(PROGRESS_TAG)
     // Returns the duration of the animation for the progress bar.
@@ -71,17 +71,17 @@ protected:
 #endif
 
     virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
 #ifndef QT_NO_SPINBOX

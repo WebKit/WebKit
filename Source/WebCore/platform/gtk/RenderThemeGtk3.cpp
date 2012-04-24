@@ -774,7 +774,7 @@ static gint spinButtonArrowSize(GtkStyleContext* context)
     return arrowSize - arrowSize % 2; // Force even.
 }
 
-void RenderThemeGtk::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SPIN_BUTTON);
 

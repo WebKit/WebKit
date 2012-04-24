@@ -73,18 +73,18 @@ public:
 
     virtual void adjustRepaintRect(const RenderObject*, IntRect&);
 
-    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual int minimumMenuListSize(RenderStyle*) const;
 
-    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&,
@@ -257,7 +257,7 @@ bool RenderThemeWx::supportsFocus(ControlPart part) const
     }
 }
 
-void RenderThemeWx::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeWx::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     addIntrinsicMargins(style);
 }
@@ -303,7 +303,7 @@ bool RenderThemeWx::paintButton(RenderObject* o, const PaintInfo& i, const IntRe
     return false;
 }
 
-void RenderThemeWx::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeWx::adjustTextFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
 
 }
@@ -335,7 +335,7 @@ int RenderThemeWx::minimumMenuListSize(RenderStyle*) const
     return MINIMUM_MENU_LIST_SIZE; 
 }
 
-void RenderThemeWx::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeWx::adjustMenuListStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
      style->resetBorder();
 
@@ -373,7 +373,7 @@ bool RenderThemeWx::paintMenuList(RenderObject* o, const PaintInfo& i, const Int
     return false;
 }
 
-void RenderThemeWx::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+void RenderThemeWx::adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const
 {
     notImplemented();
 }

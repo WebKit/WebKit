@@ -45,7 +45,7 @@ public:
     virtual void setRadioSize(RenderStyle*) const;
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
     void calculateButtonSize(RenderStyle*) const;
-    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void adjustSliderThumbSize(RenderStyle*) const;
     virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
@@ -58,21 +58,21 @@ public:
     virtual Color platformFocusRingColor() const;
     virtual bool supportsFocusRing(const RenderStyle* style) const { return style->hasAppearance(); }
 
-    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual void adjustCheckboxStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual void adjustRadioStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustCheckboxStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustRadioStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);

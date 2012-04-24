@@ -39,7 +39,7 @@ namespace WebCore {
 
 class RenderInputSpeech {
 public:
-    static void adjustInputFieldSpeechButtonStyle(CSSStyleSelector*, RenderStyle*, Element*);
+    static void adjustInputFieldSpeechButtonStyle(StyleResolver*, RenderStyle*, Element*);
     static bool paintInputFieldSpeechButton(RenderObject*, const PaintInfo&, const IntRect&);
 };
 

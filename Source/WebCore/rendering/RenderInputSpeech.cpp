@@ -46,7 +46,7 @@ static const float defaultSpeechButtonSize = 16;
 static const float minSpeechButtonSize = 8;
 static const float maxSpeechButtonSize = 40;
 
-void RenderInputSpeech::adjustInputFieldSpeechButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*)
+void RenderInputSpeech::adjustInputFieldSpeechButtonStyle(StyleResolver*, RenderStyle* style, Element*)
 {
     // Scale the button size based on the font size.
     float fontScale = style->fontSize() / defaultControlFontPixelSize;

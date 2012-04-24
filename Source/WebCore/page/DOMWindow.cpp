@@ -1287,12 +1287,12 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const St
     if (!isCurrentlyDisplayedInFrame())
         return 0;
 
-    unsigned rulesToInclude = CSSStyleSelector::AuthorCSSRules;
+    unsigned rulesToInclude = StyleResolver::AuthorCSSRules;
     if (!authorOnly)
-        rulesToInclude |= CSSStyleSelector::UAAndUserCSSRules;
+        rulesToInclude |= StyleResolver::UAAndUserCSSRules;
     if (Settings* settings = m_frame->settings()) {
         if (settings->crossOriginCheckInGetMatchedCSSRulesDisabled())
-            rulesToInclude |= CSSStyleSelector::CrossOriginCSSRules;
+            rulesToInclude |= StyleResolver::CrossOriginCSSRules;
     }
     
     PseudoId pseudoId = CSSSelector::pseudoId(CSSSelector::parsePseudoType(pseudoElement));

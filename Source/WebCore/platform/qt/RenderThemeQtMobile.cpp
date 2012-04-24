@@ -630,7 +630,7 @@ void RenderThemeQtMobile::computeSizeBasedOnStyle(RenderStyle* renderStyle) cons
         renderStyle->setMinHeight(Length(size.height(), Fixed));
 }
 
-void RenderThemeQtMobile::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element*) const
+void RenderThemeQtMobile::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, Element*) const
 {
     // Ditch the border.
     style->resetBorder();
@@ -673,7 +673,7 @@ bool RenderThemeQtMobile::paintButton(RenderObject* o, const PaintInfo& i, const
     return false;
 }
 
-void RenderThemeQtMobile::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQtMobile::adjustTextFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Resetting the style like this leads to differences like:
     // - RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] border: (2px inset #000000)]
@@ -721,7 +721,7 @@ bool RenderThemeQtMobile::paintTextField(RenderObject* o, const PaintInfo& i, co
     return false;
 }
 
-void RenderThemeQtMobile::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeQtMobile::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     RenderThemeQt::adjustMenuListStyle(selector, style, e);
     style->setPaddingLeft(Length(menuListPadding, Fixed));

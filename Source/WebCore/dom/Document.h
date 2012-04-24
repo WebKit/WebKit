@@ -61,7 +61,6 @@ class AXObjectCache;
 class Attr;
 class CDATASection;
 class CSSStyleDeclaration;
-class CSSStyleSelector;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class CachedResourceLoader;
@@ -126,6 +125,7 @@ class SecurityOrigin;
 class SerializedScriptValue;
 class SegmentedString;
 class Settings;
+class StyleResolver;
 class StyleSheet;
 class StyleSheetInternal;
 class StyleSheetList;
@@ -454,14 +454,14 @@ public:
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
 
-    CSSStyleSelector* styleSelectorIfExists() const { return m_styleSelector.get(); }
+    StyleResolver* styleSelectorIfExists() const { return m_styleSelector.get(); }
 
     bool isViewSource() const { return m_isViewSource; }
     void setIsViewSource(bool);
 
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
 
-    CSSStyleSelector* styleSelector()
+    StyleResolver* styleSelector()
     { 
         if (!m_styleSelector)
             createStyleSelector();
@@ -1224,7 +1224,7 @@ private:
 
     int m_guardRefCount;
 
-    OwnPtr<CSSStyleSelector> m_styleSelector;
+    OwnPtr<StyleResolver> m_styleSelector;
     bool m_didCalculateStyleSelector;
     bool m_hasDirtyStyleSelector;
     Vector<OwnPtr<FontData> > m_customFonts;

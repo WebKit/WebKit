@@ -683,7 +683,7 @@ void RenderThemeMac::setSizeFromFont(RenderStyle* style, const IntSize* sizes) c
         style->setHeight(Length(size.height(), Fixed));
 }
 
-void RenderThemeMac::setFontFromControlSize(CSSStyleSelector*, RenderStyle* style, NSControlSize controlSize) const
+void RenderThemeMac::setFontFromControlSize(StyleResolver*, RenderStyle* style, NSControlSize controlSize) const
 {
     FontDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
@@ -726,7 +726,7 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo,
     return false;
 }
 
-void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+void RenderThemeMac::adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const
 {
 }
 
@@ -748,7 +748,7 @@ bool RenderThemeMac::paintTextArea(RenderObject* o, const PaintInfo& paintInfo, 
     return false;
 }
 
-void RenderThemeMac::adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+void RenderThemeMac::adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const
 {
 }
 
@@ -953,7 +953,7 @@ double RenderThemeMac::animationDurationForProgressBar(RenderProgress*) const
     return progressAnimationNumFrames * progressAnimationFrameRate;
 }
 
-void RenderThemeMac::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+void RenderThemeMac::adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const
 {
 }
 
@@ -1197,7 +1197,7 @@ static const IntSize* menuListButtonSizes()
     return sizes;
 }
 
-void RenderThemeMac::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeMac::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     NSControlSize controlSize = controlSizeForFont(style);
 
@@ -1264,7 +1264,7 @@ int RenderThemeMac::popupInternalPaddingBottom(RenderStyle* style) const
     return 0;
 }
 
-void RenderThemeMac::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     float fontScale = style->fontSize() / baseFontSize;
 
@@ -1306,7 +1306,7 @@ int RenderThemeMac::minimumMenuListSize(RenderStyle* style) const
 const int trackWidth = 5;
 const int trackRadius = 2;
 
-void RenderThemeMac::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
 }
@@ -1348,7 +1348,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     return false;
 }
 
-void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeMac::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(selector, style, element);
     style->setBoxShadow(nullptr);
@@ -1479,7 +1479,7 @@ void RenderThemeMac::setSearchFieldSize(RenderStyle* style) const
     setSizeFromFont(style, searchFieldSizes());
 }
 
-void RenderThemeMac::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element*) const
 {
     // Override border.
     style->resetBorder();
@@ -1567,7 +1567,7 @@ const IntSize* RenderThemeMac::cancelButtonSizes() const
     return sizes;
 }
 
-void RenderThemeMac::adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
     style->setWidth(Length(size.width(), Fixed));
@@ -1582,7 +1582,7 @@ const IntSize* RenderThemeMac::resultsButtonSizes() const
 }
 
 const int emptyResultsOffset = 9;
-void RenderThemeMac::adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width() - emptyResultsOffset, Fixed));
@@ -1595,7 +1595,7 @@ bool RenderThemeMac::paintSearchFieldDecoration(RenderObject*, const PaintInfo&,
     return false;
 }
 
-void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width(), Fixed));
@@ -1628,7 +1628,7 @@ bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const Pa
 }
 
 const int resultsArrowWidth = 5;
-void RenderThemeMac::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style->setWidth(Length(size.width() + resultsArrowWidth, Fixed));

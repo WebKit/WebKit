@@ -844,7 +844,7 @@ bool RenderThemeEfl::paintSliderTrack(RenderObject* object, const PaintInfo& inf
     return paintThemePart(object, SliderVertical, info, rect);
 }
 
-void RenderThemeEfl::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSliderTrackStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSliderTrackStyle(selector, style, element);
@@ -861,7 +861,7 @@ void RenderThemeEfl::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderSt
         style->setHeight(desc->min.height());
 }
 
-void RenderThemeEfl::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(selector, style, element);
     adjustSliderTrackStyle(selector, style, element);
@@ -888,7 +888,7 @@ bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& inf
     return false;
 }
 
-void RenderThemeEfl::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustCheckboxStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustCheckboxStyle(selector, style, element);
@@ -909,7 +909,7 @@ bool RenderThemeEfl::paintCheckbox(RenderObject* object, const PaintInfo& info, 
     return paintThemePart(object, CheckBox, info, rect);
 }
 
-void RenderThemeEfl::adjustRadioStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustRadioStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustRadioStyle(selector, style, element);
@@ -930,7 +930,7 @@ bool RenderThemeEfl::paintRadio(RenderObject* object, const PaintInfo& info, con
     return paintThemePart(object, RadioButton, info, rect);
 }
 
-void RenderThemeEfl::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustButtonStyle(selector, style, element);
@@ -953,7 +953,7 @@ bool RenderThemeEfl::paintButton(RenderObject* object, const PaintInfo& info, co
     return paintThemePart(object, Button, info, rect);
 }
 
-void RenderThemeEfl::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustMenuListStyle(selector, style, element);
@@ -971,7 +971,7 @@ bool RenderThemeEfl::paintMenuList(RenderObject* object, const PaintInfo& info, 
     return paintThemePart(object, ComboBox, info, rect);
 }
 
-void RenderThemeEfl::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     adjustMenuListStyle(selector, style, element);
 }
@@ -981,7 +981,7 @@ bool RenderThemeEfl::paintMenuListButton(RenderObject* object, const PaintInfo& 
     return paintMenuList(object, info, rect);
 }
 
-void RenderThemeEfl::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustTextFieldStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustTextFieldStyle(selector, style, element);
@@ -999,7 +999,7 @@ bool RenderThemeEfl::paintTextField(RenderObject* object, const PaintInfo& info,
     return paintThemePart(object, TextField, info, rect);
 }
 
-void RenderThemeEfl::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustTextAreaStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     adjustTextFieldStyle(selector, style, element);
 }
@@ -1009,7 +1009,7 @@ bool RenderThemeEfl::paintTextArea(RenderObject* object, const PaintInfo& info, 
     return paintTextField(object, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSearchFieldDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldDecorationStyle(selector, style, element);
@@ -1025,7 +1025,7 @@ bool RenderThemeEfl::paintSearchFieldDecoration(RenderObject* object, const Pain
     return paintThemePart(object, SearchFieldDecoration, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldResultsButtonStyle(selector, style, element);
@@ -1041,7 +1041,7 @@ bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* object, const P
     return paintThemePart(object, SearchFieldResultsButton, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldResultsDecorationStyle(selector, style, element);
@@ -1057,7 +1057,7 @@ bool RenderThemeEfl::paintSearchFieldResultsDecoration(RenderObject* object, con
     return paintThemePart(object, SearchFieldResultsDecoration, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldCancelButtonStyle(selector, style, element);
@@ -1073,7 +1073,7 @@ bool RenderThemeEfl::paintSearchFieldCancelButton(RenderObject* object, const Pa
     return paintThemePart(object, SearchFieldCancelButton, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
         static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldStyle(selector, style, element);
@@ -1112,7 +1112,7 @@ void RenderThemeEfl::systemFont(int propId, FontDescription& fontDescription) co
 }
 
 #if ENABLE(PROGRESS_TAG)
-void RenderThemeEfl::adjustProgressBarStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeEfl::adjustProgressBarStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     style->setBoxShadow(nullptr);
 }

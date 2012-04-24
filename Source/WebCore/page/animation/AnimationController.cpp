@@ -547,7 +547,7 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     if (blendedStyle != newStyle) {
         // If the animations/transitions change opacity or transform, we need to update
         // the style to impose the stacking rules. Note that this is also
-        // done in CSSStyleSelector::adjustRenderStyle().
+        // done in StyleResolver::adjustRenderStyle().
         if (blendedStyle->hasAutoZIndex() && (blendedStyle->opacity() < 1.0f || blendedStyle->hasTransform()))
             blendedStyle->setZIndex(0);
     }

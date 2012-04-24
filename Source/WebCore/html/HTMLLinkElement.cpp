@@ -205,7 +205,7 @@ void HTMLLinkElement::process()
 
         bool mediaQueryMatches = true;
         if (!m_media.isEmpty()) {
-            RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(document());
+            RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(document());
             RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
             MediaQueryEvaluator evaluator(document()->frame()->view()->mediaType(), document()->frame(), documentStyle.get());
             mediaQueryMatches = evaluator.eval(media.get());

@@ -77,7 +77,7 @@ public:
     virtual int minimumMenuListSize(RenderStyle*) const;
 
     virtual void adjustSliderThumbSize(RenderStyle*) const;
-    virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const; 
+    virtual void adjustSliderThumbStyle(StyleResolver*, RenderStyle*, Element*) const; 
     
     virtual int popupInternalPaddingLeft(RenderStyle*) const;
     virtual int popupInternalPaddingRight(RenderStyle*) const;
@@ -92,38 +92,38 @@ protected:
     virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void setRadioSize(RenderStyle*) const;
 
-    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, WebCore::Element*) const;
+    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, WebCore::Element*) const;
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void setButtonSize(RenderStyle*) const;
 
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
     virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-    virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
-    virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
  
     virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&);
@@ -154,7 +154,7 @@ private:
     void setSizeFromFont(RenderStyle*, const IntSize* sizes) const;
     IntSize sizeForFont(RenderStyle*, const IntSize* sizes) const;
     IntSize sizeForSystemFont(RenderStyle*, const IntSize* sizes) const;
-    void setFontFromControlSize(CSSStyleSelector*, RenderStyle*, NSControlSize) const;
+    void setFontFromControlSize(StyleResolver*, RenderStyle*, NSControlSize) const;
 
     // Helpers for adjusting appearance and for painting
     const IntSize* checkboxSizes() const;

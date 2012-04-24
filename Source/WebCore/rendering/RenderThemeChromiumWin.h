@@ -86,13 +86,13 @@ namespace WebCore {
         // See comment in RenderThemeChromiumSkia::setDefaultFontSize() regarding ugliness of this hack.
         static void setDefaultFontSize(int);
 
-        virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
 #if ENABLE(PROGRESS_TAG)
         virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
         virtual double animationDurationForProgressBar(RenderProgress*) const;
-        virtual void adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+        virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 

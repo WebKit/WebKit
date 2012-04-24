@@ -60,7 +60,7 @@ bool StyleMedia::matchMedium(const String& query) const
     if (!documentElement)
         return false;
 
-    CSSStyleSelector* styleSelector = document->styleSelector();
+    StyleResolver* styleSelector = document->styleSelector();
     if (!styleSelector)
         return false;
 

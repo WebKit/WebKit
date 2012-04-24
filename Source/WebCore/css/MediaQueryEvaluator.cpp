@@ -130,7 +130,7 @@ static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
     return r == MediaQuery::Not ? !value : value;
 }
 
-bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, CSSStyleSelector* styleSelector) const
+bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* styleSelector) const
 {
     if (!querySet)
         return true;

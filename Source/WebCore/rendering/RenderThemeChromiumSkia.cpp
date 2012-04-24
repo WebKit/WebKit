@@ -228,7 +228,7 @@ void RenderThemeChromiumSkia::setRadioSize(RenderStyle* style) const
     setCheckboxSize(style);
 }
 
-void RenderThemeChromiumSkia::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     if (style->appearance() == PushButtonPart) {
         // Ignore line-height.
@@ -241,7 +241,7 @@ bool RenderThemeChromiumSkia::paintTextArea(RenderObject* o, const PaintInfo& i,
     return paintTextField(o, i, r);
 }
 
-void RenderThemeChromiumSkia::adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
      // Ignore line-height.
      style->setLineHeight(RenderStyle::initialLineHeight());
@@ -252,7 +252,7 @@ bool RenderThemeChromiumSkia::paintSearchField(RenderObject* o, const PaintInfo&
     return paintTextField(o, i, r);
 }
 
-void RenderThemeChromiumSkia::adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -299,14 +299,14 @@ bool RenderThemeChromiumSkia::paintSearchFieldCancelButton(RenderObject* cancelB
     return false;
 }
 
-void RenderThemeChromiumSkia::adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize emptySize(1, 11);
     style->setWidth(Length(emptySize.width(), Fixed));
     style->setHeight(Length(emptySize.height(), Fixed));
 }
 
-void RenderThemeChromiumSkia::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Scale the decoration size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -340,7 +340,7 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsDecoration(RenderObject* ma
     return false;
 }
 
-void RenderThemeChromiumSkia::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -466,13 +466,13 @@ bool RenderThemeChromiumSkia::paintMediaMuteButton(RenderObject* object, const P
 #endif
 }
 
-void RenderThemeChromiumSkia::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+void RenderThemeChromiumSkia::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, WebCore::Element* e) const
 {
     // Height is locked to auto on all browsers.
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-void RenderThemeChromiumSkia::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeChromiumSkia::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     adjustMenuListStyle(selector, style, e);
 }

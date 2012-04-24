@@ -204,14 +204,14 @@ static GtkStateType gtkIconState(RenderTheme* theme, RenderObject* renderObject)
     return GTK_STATE_NORMAL;
 }
 
-void RenderThemeGtk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+void RenderThemeGtk::adjustButtonStyle(StyleResolver* selector, RenderStyle* style, WebCore::Element* e) const
 {
     // Some layout tests check explicitly that buttons ignore line-height.
     if (style->appearance() == PushButtonPart)
         style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-void RenderThemeGtk::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustMenuListStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     // The tests check explicitly that select menu buttons ignore line height.
     style->setLineHeight(RenderStyle::initialLineHeight());
@@ -220,7 +220,7 @@ void RenderThemeGtk::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle
     style->resetBorderRadius();
 }
 
-void RenderThemeGtk::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustMenuListButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     adjustMenuListStyle(selector, style, e);
 }
@@ -276,7 +276,7 @@ static GtkIconSize getIconSizeForPixelSize(gint pixelSize)
     return GTK_ICON_SIZE_DIALOG;
 }
 
-void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldResultsButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     adjustSearchFieldCancelButtonStyle(selector, style, e);
 }
@@ -304,7 +304,7 @@ static void adjustSearchFieldIconStyle(RenderStyle* style)
     style->setHeight(Length(height, Fixed));
 }
 
-void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     adjustSearchFieldIconStyle(style);
 }
@@ -341,7 +341,7 @@ bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* renderObjec
     return false;
 }
 
-void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     adjustSearchFieldIconStyle(style);
 }
@@ -360,7 +360,7 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, co
     return false;
 }
 
-void RenderThemeGtk::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeGtk::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style, Element* e) const
 {
     // We cannot give a proper rendering when border radius is active, unfortunately.
     style->resetBorderRadius();
@@ -397,12 +397,12 @@ bool RenderThemeGtk::paintCapsLockIndicator(RenderObject* renderObject, const Pa
     return true;
 }
 
-void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeGtk::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
 }
 
-void RenderThemeGtk::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeGtk::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(selector, style, element);
     style->setBoxShadow(nullptr);
@@ -641,7 +641,7 @@ bool RenderThemeGtk::paintMediaCurrentTime(RenderObject* renderObject, const Pai
 #endif
 
 #if ENABLE(PROGRESS_TAG)
-void RenderThemeGtk::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeGtk::adjustProgressBarStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
 }

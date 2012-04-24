@@ -1046,7 +1046,7 @@ static PassRefPtr<StylePropertySet> styleFromMatchedRulesForElement(Element* ele
 void EditingStyle::mergeStyleFromRules(StyledElement* element)
 {
     RefPtr<StylePropertySet> styleFromMatchedRules = styleFromMatchedRulesForElement(element,
-        CSSStyleSelector::AuthorCSSRules | CSSStyleSelector::CrossOriginCSSRules);
+        StyleResolver::AuthorCSSRules | StyleResolver::CrossOriginCSSRules);
     // Styles from the inline style declaration, held in the variable "style", take precedence 
     // over those from matched rules.
     if (m_mutableStyle)
@@ -1098,7 +1098,7 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* 
         return;
 
     // 1. Remove style from matched rules because style remain without repeating it in inline style declaration
-    RefPtr<StylePropertySet> styleFromMatchedRules = styleFromMatchedRulesForElement(element, CSSStyleSelector::AllButEmptyCSSRules);
+    RefPtr<StylePropertySet> styleFromMatchedRules = styleFromMatchedRulesForElement(element, StyleResolver::AllButEmptyCSSRules);
     if (styleFromMatchedRules && !styleFromMatchedRules->isEmpty())
         m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), styleFromMatchedRules->ensureCSSStyleDeclaration());
 
@@ -1127,7 +1127,7 @@ void EditingStyle::removePropertiesInElementDefaultStyle(Element* element)
     if (!m_mutableStyle || m_mutableStyle->isEmpty())
         return;
 
-    RefPtr<StylePropertySet> defaultStyle = styleFromMatchedRulesForElement(element, CSSStyleSelector::UAAndUserCSSRules);
+    RefPtr<StylePropertySet> defaultStyle = styleFromMatchedRulesForElement(element, StyleResolver::UAAndUserCSSRules);
 
     removePropertiesInStyle(m_mutableStyle.get(), defaultStyle.get());
 }
@@ -1534,10 +1534,10 @@ int legacyFontSizeFromCSSValue(Document* document, CSSPrimitiveValue* value, boo
 {
     if (isCSSValueLength(value)) {
         int pixelFontSize = value->getIntValue(CSSPrimitiveValue::CSS_PX);
-        int legacyFontSize = CSSStyleSelector::legacyFontSize(document, pixelFontSize, shouldUseFixedFontDefaultSize);
+        int legacyFontSize = StyleResolver::legacyFontSize(document, pixelFontSize, shouldUseFixedFontDefaultSize);
         // Use legacy font size only if pixel value matches exactly to that of legacy font size.
         int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;
-        if (mode == AlwaysUseLegacyFontSize || CSSStyleSelector::fontSizeForKeyword(document, cssPrimitiveEquivalent, shouldUseFixedFontDefaultSize) == pixelFontSize)
+        if (mode == AlwaysUseLegacyFontSize || StyleResolver::fontSizeForKeyword(document, cssPrimitiveEquivalent, shouldUseFixedFontDefaultSize) == pixelFontSize)
             return legacyFontSize;
 
         return 0;

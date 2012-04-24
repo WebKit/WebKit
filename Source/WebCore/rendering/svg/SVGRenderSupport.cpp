@@ -234,7 +234,7 @@ bool SVGRenderSupport::isOverflowHidden(const RenderObject* object)
     // SVG doesn't support independent x/y overflow
     ASSERT(object->style()->overflowX() == object->style()->overflowY());
 
-    // OSCROLL is never set for SVG - see CSSStyleSelector::adjustRenderStyle
+    // OSCROLL is never set for SVG - see StyleResolver::adjustRenderStyle
     ASSERT(object->style()->overflowX() != OSCROLL);
 
     // RenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.

@@ -118,11 +118,11 @@ enum RuleMatchingBehavior {
 };
 
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.
-class CSSStyleSelector {
-    WTF_MAKE_NONCOPYABLE(CSSStyleSelector); WTF_MAKE_FAST_ALLOCATED;
+class StyleResolver {
+    WTF_MAKE_NONCOPYABLE(StyleResolver); WTF_MAKE_FAST_ALLOCATED;
 public:
-    CSSStyleSelector(Document*, bool matchAuthorAndUserStyles);
-    ~CSSStyleSelector();
+    StyleResolver(Document*, bool matchAuthorAndUserStyles);
+    ~StyleResolver();
 
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
     void pushParentElement(Element*);
@@ -274,7 +274,7 @@ public:
     struct Features {
         Features();
         ~Features();
-        void add(const CSSStyleSelector::Features&);
+        void add(const StyleResolver::Features&);
         void clear();
         HashSet<AtomicStringImpl*> idsInRules;
         HashSet<AtomicStringImpl*> attrsInRules;

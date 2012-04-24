@@ -122,7 +122,7 @@ public:
     void setOriginTainted() { m_originClean = false; }
     bool originClean() const { return m_originClean; }
 
-    CSSStyleSelector* styleSelector();
+    StyleResolver* styleSelector();
 
     AffineTransform baseTransform() const;
 

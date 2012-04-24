@@ -84,7 +84,7 @@ PassOwnPtr<MediaQueryEvaluator> MediaQueryMatcher::prepareEvaluator() const
     if (!documentElement)
         return nullptr;
 
-    CSSStyleSelector* styleSelector = m_document->styleSelector();
+    StyleResolver* styleSelector = m_document->styleSelector();
     if (!styleSelector)
         return nullptr;
 

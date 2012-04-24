@@ -39,7 +39,6 @@
 namespace WebCore {
 
 class AnimationList;
-class CSSStyleSelector;
 class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
 #if ENABLE(CSS_FILTERS)
@@ -53,6 +52,7 @@ class StyleGridItemData;
 class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
+class StyleResolver;
 class StyleTransformData;
 
 class ContentData;

@@ -319,7 +319,7 @@ void RenderThemeQt::setButtonSize(RenderStyle* style) const
     computeSizeBasedOnStyle(style);
 }
 
-void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQt::adjustTextFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Resetting the style like this leads to differences like:
     // - RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] border: (2px inset #000000)]
@@ -332,7 +332,7 @@ void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, 
     computeSizeBasedOnStyle(style);
 }
 
-void RenderThemeQt::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeQt::adjustTextAreaStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     adjustTextFieldStyle(selector, style, element);
 }
@@ -342,7 +342,7 @@ bool RenderThemeQt::paintTextArea(RenderObject* o, const PaintInfo& i, const Int
     return paintTextField(o, i, r);
 }
 
-void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQt::adjustMenuListStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->resetBorder();
 
@@ -358,7 +358,7 @@ void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
     setPopupPadding(style);
 }
 
-void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQt::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     // Height is locked to auto.
     style->setHeight(Length(Auto));
@@ -383,18 +383,18 @@ double RenderThemeQt::animationRepeatIntervalForProgressBar(RenderProgress* rend
     return 0.1;
 }
 
-void RenderThemeQt::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQt::adjustProgressBarStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
 }
 #endif
 
-void RenderThemeQt::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQt::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
 }
 
-void RenderThemeQt::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+void RenderThemeQt::adjustSliderThumbStyle(StyleResolver* selector, RenderStyle* style, Element* element) const
 {
     RenderTheme::adjustSliderThumbStyle(selector, style, element);
     style->setBoxShadow(nullptr);
@@ -406,7 +406,7 @@ bool RenderThemeQt::paintSearchField(RenderObject* o, const PaintInfo& pi,
     return paintTextField(o, pi, r);
 }
 
-void RenderThemeQt::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style,
+void RenderThemeQt::adjustSearchFieldStyle(StyleResolver* selector, RenderStyle* style,
                                            Element* e) const
 {
     // Resetting the style like this leads to differences like:
@@ -420,7 +420,7 @@ void RenderThemeQt::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSty
     computeSizeBasedOnStyle(style);
 }
 
-void RenderThemeQt::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
+void RenderThemeQt::adjustSearchFieldCancelButtonStyle(StyleResolver* selector, RenderStyle* style,
                                                        Element* e) const
 {
     // Logic taken from RenderThemeChromium.cpp.
@@ -472,7 +472,7 @@ bool RenderThemeQt::paintSearchFieldCancelButton(RenderObject* o, const PaintInf
     return false;
 }
 
-void RenderThemeQt::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style,
+void RenderThemeQt::adjustSearchFieldDecorationStyle(StyleResolver* selector, RenderStyle* style,
                                                      Element* e) const
 {
     notImplemented();
@@ -486,7 +486,7 @@ bool RenderThemeQt::paintSearchFieldDecoration(RenderObject* o, const PaintInfo&
     return RenderTheme::paintSearchFieldDecoration(o, pi, r);
 }
 
-void RenderThemeQt::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector* selector, RenderStyle* style,
+void RenderThemeQt::adjustSearchFieldResultsDecorationStyle(StyleResolver* selector, RenderStyle* style,
                                                             Element* e) const
 {
     notImplemented();
@@ -501,7 +501,7 @@ bool RenderThemeQt::paintSearchFieldResultsDecoration(RenderObject* o, const Pai
 }
 
 #ifndef QT_NO_SPINBOX
-void RenderThemeQt::adjustInnerSpinButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
+void RenderThemeQt::adjustInnerSpinButtonStyle(StyleResolver* selector, RenderStyle* style,
                                                Element* e) const
 {
     // Use the same width as our native scrollbar

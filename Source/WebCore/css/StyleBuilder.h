@@ -31,20 +31,20 @@
 
 namespace WebCore {
 
-class CSSStyleSelector;
 class CSSValue;
 class StyleBuilder;
+class StyleResolver;
 
 class PropertyHandler {
 public:
-    typedef void (*InheritFunction)(CSSStyleSelector*);
-    typedef void (*InitialFunction)(CSSStyleSelector*);
-    typedef void (*ApplyFunction)(CSSStyleSelector*, CSSValue*);
+    typedef void (*InheritFunction)(StyleResolver*);
+    typedef void (*InitialFunction)(StyleResolver*);
+    typedef void (*ApplyFunction)(StyleResolver*, CSSValue*);
     PropertyHandler() : m_inherit(0), m_initial(0), m_apply(0) { }
     PropertyHandler(InheritFunction inherit, InitialFunction initial, ApplyFunction apply) : m_inherit(inherit), m_initial(initial), m_apply(apply) { }
-    void applyInheritValue(CSSStyleSelector* selector) const { ASSERT(m_inherit); (*m_inherit)(selector); }
-    void applyInitialValue(CSSStyleSelector* selector) const { ASSERT(m_initial); (*m_initial)(selector); }
-    void applyValue(CSSStyleSelector* selector, CSSValue* value) const { ASSERT(m_apply); (*m_apply)(selector, value); }
+    void applyInheritValue(StyleResolver* selector) const { ASSERT(m_inherit); (*m_inherit)(selector); }
+    void applyInitialValue(StyleResolver* selector) const { ASSERT(m_initial); (*m_initial)(selector); }
+    void applyValue(StyleResolver* selector, CSSValue* value) const { ASSERT(m_apply); (*m_apply)(selector, value); }
     bool isValid() const { return m_inherit && m_initial && m_apply; }
     InheritFunction inheritFunction() const { return m_inherit; }
     InitialFunction initialFunction() { return m_initial; }

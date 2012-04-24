@@ -221,7 +221,7 @@ void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)
     if (needsReattachHostChildrenAndShadow())
         reattachHostChildrenAndShadow();
     else {
-        CSSStyleSelector* styleSelector = youngest->document()->styleSelector();
+        StyleResolver* styleSelector = youngest->document()->styleSelector();
 
         styleSelector->pushParentShadowRoot(youngest);
         for (Node* n = youngest->firstChild(); n; n = n->nextSibling()) {

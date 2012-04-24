@@ -102,7 +102,7 @@ static Color colorFromSVGColorCSSValue(SVGColor* svgColor, const Color& fgColor)
     return color;
 }
 
-void CSSStyleSelector::applySVGProperty(CSSPropertyID id, CSSValue* value)
+void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
 {
     ASSERT(value);
     CSSPrimitiveValue* primitiveValue = 0;
@@ -596,7 +596,7 @@ void CSSStyleSelector::applySVGProperty(CSSPropertyID id, CSSValue* value)
         }
         default:
             // If you crash here, it's because you added a css property and are not handling it
-            // in either this switch statement or the one in CSSStyleSelector::applyProperty
+            // in either this switch statement or the one in StyleResolver::applyProperty
             ASSERT_WITH_MESSAGE(0, "unimplemented propertyID: %d", id);
             return;
     }

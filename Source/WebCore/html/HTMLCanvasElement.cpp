@@ -463,7 +463,7 @@ SecurityOrigin* HTMLCanvasElement::securityOrigin() const
     return document()->securityOrigin();
 }
 
-CSSStyleSelector* HTMLCanvasElement::styleSelector()
+StyleResolver* HTMLCanvasElement::styleSelector()
 {
     return document()->styleSelector();
 }

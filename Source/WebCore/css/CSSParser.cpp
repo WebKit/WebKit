@@ -3009,7 +3009,7 @@ CSSParser::SizeParameterType CSSParser::parseSizeParameter(CSSValueList* parsedV
     case CSSValueLetter:
         if (prevParamType == None || prevParamType == Orientation) {
             // Normalize to Page Size then Orientation order by prepending.
-            // This is not specified by the CSS3 Paged Media specification, but for simpler processing later (CSSStyleSelector::applyPageSizeProperty).
+            // This is not specified by the CSS3 Paged Media specification, but for simpler processing later (StyleResolver::applyPageSizeProperty).
             parsedValues->prepend(cssValuePool().createIdentifierValue(value->id));
             return PageSize;
         }

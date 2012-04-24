@@ -305,7 +305,7 @@ bool RenderThemeChromiumLinux::paintSliderThumb(RenderObject* o, const PaintInfo
     return false;
 }
 
-void RenderThemeChromiumLinux::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumLinux::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartInnerSpinButton);
 

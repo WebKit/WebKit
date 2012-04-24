@@ -105,13 +105,13 @@ namespace WebCore {
 using std::max;
 
 class BorderData;
-class CSSStyleSelector;
 class CounterContent;
 class CursorList;
 class IntRect;
 class Pair;
 class ShadowData;
 class StyleImage;
+class StyleResolver;
 class TransformationMatrix;
 
 class ContentData;
@@ -122,12 +122,12 @@ class RenderStyle: public RefCounted<RenderStyle> {
     friend class AnimationBase; // Used by CSS animations. We can't allow them to animate based off visited colors.
     friend class ApplyStyleCommand; // Editing has to only reveal unvisited info.
     friend class EditingStyle; // Editing has to only reveal unvisited info.
-    friend class CSSStyleSelector; // Sets members directly.
     friend class CSSComputedStyleDeclaration; // Ignores visited styles, so needs to be able to see unvisited info.
     friend class PropertyWrapperMaybeInvalidColor; // Used by CSS animations. We can't allow them to animate based off visited colors.
     friend class RenderSVGResource; // FIXME: Needs to alter the visited state by hand. Should clean the SVG code up and move it into RenderStyle perhaps.
     friend class RenderTreeAsText; // FIXME: Only needed so the render tree can keep lying and dump the wrong colors.  Rebaselining would allow this to be yanked.
     friend class StyleBuilder; // Sets members directly.
+    friend class StyleResolver; // Sets members directly.
 protected:
 
     class RenderStyleBitfields {
@@ -219,7 +219,7 @@ protected:
     DataRef<SVGRenderStyle> m_svgStyle;
 #endif
 
-// !START SYNC!: Keep this in sync with the copy constructor in RenderStyle.cpp and implicitlyInherited() in CSSStyleSelector.cpp
+// !START SYNC!: Keep this in sync with the copy constructor in RenderStyle.cpp and implicitlyInherited() in StyleResolver.cpp
 
     // inherit
     struct InheritedFlags {

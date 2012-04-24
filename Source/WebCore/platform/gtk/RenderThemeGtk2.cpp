@@ -574,7 +574,7 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
 }
 #endif
 
-void RenderThemeGtk::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     GtkStyle* gtkStyle = gtk_widget_get_style(gtkSpinButton());
     const PangoFontDescription* fontDescription = gtkStyle->font_desc;

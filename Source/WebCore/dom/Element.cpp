@@ -114,7 +114,7 @@ public:
 
 private:
     Element* m_parent;
-    CSSStyleSelector* m_pushedStyleSelector;
+    StyleResolver* m_pushedStyleSelector;
 };
 
 PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
@@ -697,7 +697,7 @@ void Element::attributeChanged(Attribute* attr)
         setHasName(!attr->isNull());
 
     if (!needsStyleRecalc() && document()->attached()) {
-        CSSStyleSelector* styleSelector = document()->styleSelectorIfExists();
+        StyleResolver* styleSelector = document()->styleSelectorIfExists();
         if (!styleSelector || styleSelector->hasSelectorForAttribute(attr->name().localName()))
             setNeedsStyleRecalc();
     }
@@ -1348,7 +1348,7 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
 void Element::beginParsingChildren()
 {
     clearIsParsingChildrenFinished();
-    CSSStyleSelector* styleSelector = document()->styleSelectorIfExists();
+    StyleResolver* styleSelector = document()->styleSelectorIfExists();
     if (styleSelector && attached())
         styleSelector->pushParentElement(this);
 }
@@ -1358,7 +1358,7 @@ void Element::finishParsingChildren()
     ContainerNode::finishParsingChildren();
     setIsParsingChildrenFinished();
     checkForSiblingStyleChanges(this, renderStyle(), true, lastChild(), 0, 0);
-    if (CSSStyleSelector* styleSelector = document()->styleSelectorIfExists())
+    if (StyleResolver* styleSelector = document()->styleSelectorIfExists())
         styleSelector->popParentElement(this);
 }
 
