@@ -108,7 +108,7 @@ Path RenderDetailsMarker::getCanonicalPath() const
 Path RenderDetailsMarker::getPath(const LayoutPoint& origin) const
 {
     Path result = getCanonicalPath();
-    result.transform(AffineTransform().scale(logicalHeight()));
+    result.transform(AffineTransform().scale(contentWidth(), contentHeight()));
     result.translate(FloatSize(origin.x(), origin.y()));
     return result;
 }
@@ -134,6 +134,7 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     paintInfo.context->setStrokeThickness(1.0f);
     paintInfo.context->setFillColor(color, style()->colorSpace());
 
+    boxOrigin.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
     paintInfo.context->fillPath(getPath(boxOrigin));
 }
 
