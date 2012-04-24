@@ -87,6 +87,17 @@ bool FilterOperations::operationsMatch(const FilterOperations& other) const
     return true;
 }
 
+#if ENABLE(CSS_SHADERS)
+bool FilterOperations::hasCustomFilter() const
+{
+    for (size_t i = 0; i < m_operations.size(); ++i) {
+        if (m_operations.at(i)->getOperationType() == FilterOperation::CUSTOM)
+            return true;
+    }
+    return false;
+}
+#endif
+
 bool FilterOperations::hasOutsets() const
 {
     for (size_t i = 0; i < m_operations.size(); ++i) {

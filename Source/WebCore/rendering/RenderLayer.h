@@ -50,7 +50,6 @@
 #include <wtf/OwnPtr.h>
 
 #if ENABLE(CSS_FILTERS)
-#include "FilterEffectObserver.h"
 #include "RenderLayerFilterInfo.h"
 #endif
 
@@ -212,11 +211,7 @@ private:
     bool m_fixed : 1;
 };
 
-class RenderLayer : public ScrollableArea
-#if ENABLE(CSS_FILTERS)
-    , public FilterEffectObserver
-#endif
-{
+class RenderLayer : public ScrollableArea {
 public:
     friend class RenderReplica;
 

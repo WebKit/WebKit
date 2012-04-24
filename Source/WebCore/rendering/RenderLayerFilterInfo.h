@@ -37,15 +37,24 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterProgramClient.h"
+#endif
+
 namespace WebCore {
 
 class FilterEffectRenderer;
+class FilterOperations;
 class RenderLayer;
 class RenderLayerFilterInfo;
 
 typedef HashMap<const RenderLayer*, RenderLayerFilterInfo*> RenderLayerFilterInfoMap;
     
-class RenderLayerFilterInfo {
+class RenderLayerFilterInfo
+#if ENABLE(CSS_SHADERS)
+    : public CustomFilterProgramClient
+#endif
+{
 public:
     static RenderLayerFilterInfo* filterInfoForRenderLayer(const RenderLayer*);
     static RenderLayerFilterInfo* createFilterInfoForRenderLayerIfNeeded(RenderLayer*);
@@ -57,6 +66,16 @@ public:
     
     FilterEffectRenderer* renderer() const { return m_renderer.get(); }
     void setRenderer(PassRefPtr<FilterEffectRenderer>);
+    
+#if ENABLE(CSS_SHADERS)
+    // Implementation of the CustomFilterProgramClient interface.
+    virtual void notifyCustomFilterProgramLoaded(CustomFilterProgram*);
+
+    void updateCustomFilterClients(const FilterOperations&);
+    void removeCustomFilterClients();
+#endif
+
+    
 private:
     RenderLayerFilterInfo(RenderLayer*);
     ~RenderLayerFilterInfo();
@@ -65,6 +84,11 @@ private:
     
     RefPtr<FilterEffectRenderer> m_renderer;
     LayoutRect m_dirtySourceRect;
+    
+#if ENABLE(CSS_SHADERS)
+    typedef Vector<RefPtr<CustomFilterProgram> > CustomFilterProgramList;
+    CustomFilterProgramList m_cachedCustomFilterPrograms;
+#endif
     
     static RenderLayerFilterInfoMap* s_filterMap;
 };

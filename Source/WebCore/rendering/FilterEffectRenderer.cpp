@@ -35,7 +35,6 @@
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
 #include "FEMerge.h"
-#include "FilterEffectObserver.h"
 #include "FloatConversion.h"
 #include "RenderLayer.h"
 
@@ -84,9 +83,8 @@ static bool isCSSCustomFilterEnabled(Document* document)
 }
 #endif
 
-FilterEffectRenderer::FilterEffectRenderer(FilterEffectObserver* observer)
-    : m_observer(observer)
-    , m_topOutset(0)
+FilterEffectRenderer::FilterEffectRenderer()
+    : m_topOutset(0)
     , m_rightOutset(0)
     , m_bottomOutset(0)
     , m_leftOutset(0)
@@ -99,9 +97,6 @@ FilterEffectRenderer::FilterEffectRenderer(FilterEffectObserver* observer)
 
 FilterEffectRenderer::~FilterEffectRenderer()
 {
-#if ENABLE(CSS_SHADERS)
-    removeCustomFilterClients();
-#endif
 }
 
 GraphicsContext* FilterEffectRenderer::inputContext()
@@ -113,8 +108,6 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
 {
 #if !ENABLE(CSS_SHADERS) || !ENABLE(WEBGL)
     UNUSED_PARAM(document);
-#else
-    CustomFilterProgramList cachedCustomFilterPrograms;
 #endif
 
     m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
@@ -271,8 +264,6 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             
             CustomFilterOperation* customFilterOperation = static_cast<CustomFilterOperation*>(filterOperation);
             RefPtr<CustomFilterProgram> program = customFilterOperation->program();
-            cachedCustomFilterPrograms.append(program);
-            program->addClient(this);
             if (program->isLoaded()) {
                 effect = FECustomFilter::create(this, document->view()->root()->hostWindow(), program, customFilterOperation->parameters(),
                                                 customFilterOperation->meshRows(), customFilterOperation->meshColumns(),
@@ -297,11 +288,6 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         }
     }
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-    removeCustomFilterClients();
-    m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
-#endif
-
     // If we didn't make any effects, tell our caller we are not valid
     if (!previousEffect)
         return false;
@@ -323,19 +309,6 @@ bool FilterEffectRenderer::updateBackingStoreRect(const FloatRect& filterRect)
     }
     return false;
 }
-
-#if ENABLE(CSS_SHADERS)
-void FilterEffectRenderer::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
-{
-    m_observer->filterNeedsRepaint();
-}
-
-void FilterEffectRenderer::removeCustomFilterClients()
-{
-    for (CustomFilterProgramList::iterator iter = m_cachedCustomFilterPrograms.begin(), end = m_cachedCustomFilterPrograms.end(); iter != end; ++iter)
-        iter->get()->removeClient(this);
-}
-#endif
 
 void FilterEffectRenderer::allocateBackingStoreIfNeeded()
 {

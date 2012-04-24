@@ -41,17 +41,12 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if ENABLE(CSS_SHADERS)
-#include "CustomFilterProgramClient.h"
-#endif
-
 namespace WebCore {
 
 typedef Vector<RefPtr<FilterEffect> > FilterEffectList;
 class CachedShader;
 class CustomFilterProgram;
 class Document;
-class FilterEffectObserver;
 class GraphicsContext;
 class RenderLayer;
 
@@ -81,15 +76,12 @@ private:
 };
 
 class FilterEffectRenderer : public Filter
-#if ENABLE(CSS_SHADERS)
-    , public CustomFilterProgramClient
-#endif
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<FilterEffectRenderer> create(FilterEffectObserver* observer)
+    static PassRefPtr<FilterEffectRenderer> create()
     {
-        return adoptRef(new FilterEffectRenderer(observer));
+        return adoptRef(new FilterEffectRenderer());
     }
 
     virtual void setSourceImageRect(const FloatRect& sourceImageRect)
@@ -119,13 +111,6 @@ public:
     LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
 private:
-#if ENABLE(CSS_SHADERS)
-    // Implementation of the CustomFilterProgramClient interface.
-    virtual void notifyCustomFilterProgramLoaded(CustomFilterProgram*);
-    
-    void removeCustomFilterClients();
-#endif
-
     void setMaxEffectRects(const FloatRect& effectRect)
     {
         for (size_t i = 0; i < m_effects.size(); ++i) {
@@ -140,7 +125,7 @@ private:
         return 0;
     }
 
-    FilterEffectRenderer(FilterEffectObserver*);
+    FilterEffectRenderer();
     virtual ~FilterEffectRenderer();
     
     FloatRect m_sourceDrawingRegion;
@@ -148,12 +133,6 @@ private:
     
     FilterEffectList m_effects;
     RefPtr<SourceGraphic> m_sourceGraphic;
-    FilterEffectObserver* m_observer; // No need for a strong references here. It owns us.
-    
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-    typedef Vector<RefPtr<CustomFilterProgram> > CustomFilterProgramList;
-    CustomFilterProgramList m_cachedCustomFilterPrograms;
-#endif
     
     int m_topOutset;
     int m_rightOutset;

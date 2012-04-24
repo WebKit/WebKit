@@ -35,6 +35,11 @@
 #include "FilterEffectRenderer.h"
 #include "RenderLayer.h"
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterOperation.h"
+#include "CustomFilterProgram.h"
+#endif
+
 namespace WebCore {
 
 RenderLayerFilterInfoMap* RenderLayerFilterInfo::s_filterMap = 0;
@@ -88,13 +93,52 @@ RenderLayerFilterInfo::RenderLayerFilterInfo(RenderLayer* layer)
 
 RenderLayerFilterInfo::~RenderLayerFilterInfo()
 {
-    // Keeping the destructor here because there's a ref to FilterEffectRenderer that might get deleted.
+#if ENABLE(CSS_SHADERS)
+    removeCustomFilterClients();
+#endif
 }
 
 void RenderLayerFilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> renderer)
 { 
     m_renderer = renderer; 
 }
+
+#if ENABLE(CSS_SHADERS)
+void RenderLayerFilterInfo::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
+{
+    RenderObject* renderer = m_layer->renderer();
+    renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    renderer->repaint();
+}
+
+void RenderLayerFilterInfo::updateCustomFilterClients(const FilterOperations& operations)
+{
+    if (!operations.size()) {
+        removeCustomFilterClients();
+        return;
+    }
+    CustomFilterProgramList cachedCustomFilterPrograms;
+    for (size_t i = 0; i < operations.size(); ++i) {
+        const FilterOperation* filterOperation = operations.at(i);
+        if (filterOperation->getOperationType() != FilterOperation::CUSTOM)
+            continue;
+        const CustomFilterOperation* customFilterOperation = static_cast<const CustomFilterOperation*>(filterOperation);
+        RefPtr<CustomFilterProgram> program = customFilterOperation->program();
+        cachedCustomFilterPrograms.append(program);
+        program->addClient(this);
+    }
+    // Remove the old clients here, after we've added the new ones, so that we don't flicker if some shaders are unchanged.
+    removeCustomFilterClients();
+    m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
+}
+
+void RenderLayerFilterInfo::removeCustomFilterClients()
+{
+    for (size_t i = 0; i < m_cachedCustomFilterPrograms.size(); ++i)
+        m_cachedCustomFilterPrograms.at(i)->removeClient(this);
+    m_cachedCustomFilterPrograms.clear();
+}
+#endif
 
 } // namespace WebCore
 

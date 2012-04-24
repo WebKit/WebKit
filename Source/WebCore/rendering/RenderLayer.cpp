@@ -4873,6 +4873,13 @@ void RenderLayer::updateOrRemoveFilterEffect()
         removeFilterInfoIfNeeded();
         return;
     }
+
+#if ENABLE(CSS_SHADERS)
+    if (renderer()->style()->filter().hasCustomFilter())
+        ensureFilterInfo()->updateCustomFilterClients(renderer()->style()->filter());
+    else if (hasFilterInfo())
+        filterInfo()->removeCustomFilterClients();
+#endif
     
     if (!paintsWithFilters()) {
         // Don't delete the whole filter info here, because we might use it
@@ -4884,7 +4891,7 @@ void RenderLayer::updateOrRemoveFilterEffect()
     
     RenderLayerFilterInfo* filterInfo = ensureFilterInfo();
     if (!filterInfo->renderer()) {
-        RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create(this);
+        RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
         RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
         filterRenderer->setRenderingMode(renderingMode);
         filterInfo->setRenderer(filterRenderer.release());

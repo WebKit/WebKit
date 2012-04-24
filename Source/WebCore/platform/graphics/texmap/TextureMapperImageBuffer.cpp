@@ -112,7 +112,7 @@ void TextureMapperImageBuffer::drawTexture(const BitmapTexture& texture, const F
 #if ENABLE(CSS_FILTERS)
 void BitmapTextureImageBuffer::applyFilters(const BitmapTexture& contentTexture, const FilterOperations& filters)
 {
-    RefPtr<FilterEffectRenderer> renderer = FilterEffectRenderer::create(0);
+    RefPtr<FilterEffectRenderer> renderer = FilterEffectRenderer::create();
     renderer->setSourceImageRect(FloatRect(FloatPoint::zero(), contentTexture.size()));
 
     // The document parameter is only needed for CSS shaders.

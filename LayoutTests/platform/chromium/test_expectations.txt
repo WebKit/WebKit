@@ -2803,12 +2803,6 @@ BUGWK82783 SKIP : css3/filters/filter-with-transform.html = FAIL
 BUGWK82783 SKIP : css3/filters/filter-repaint-sepia.html = FAIL
 BUGWK82783 SKIP : css3/filters/nested-filter.html = FAIL
 
-// Custom filters painting is broken for now: https://bugs.webkit.org/show_bug.cgi?id=82803
-BUGWK82803 SKIP : css3/filters/custom/effect-custom-combined-missing.html = FAIL
-BUGWK82803 SKIP : css3/filters/custom/effect-custom.html = FAIL
-BUGWK82803 SKIP : css3/filters/custom/effect-custom-parameters.html = FAIL
-BUGWK82803 SKIP : css3/filters/custom/custom-filter-shader-cache.html = FAIL
-
 BUGWK84067 : css3/filters/custom/custom-filter-property-computed-style.html = TEXT
 
 // <style scoped> not yet enabled.

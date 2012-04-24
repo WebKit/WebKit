@@ -81,6 +81,8 @@ public:
     
     virtual ~CustomFilterOperation();
     
+    virtual bool affectsOpacity() const { return true; }
+    virtual bool movesPixels() const { return true; }
 private:
     virtual bool operator==(const FilterOperation& o) const
     {
