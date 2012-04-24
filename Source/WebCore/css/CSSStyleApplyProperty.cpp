@@ -58,7 +58,7 @@ public:
         if (id == CSSPropertyInvalid)
             return;
 
-        const CSSStyleApplyProperty& table = CSSStyleApplyProperty::sharedCSSStyleApplyProperty();
+        const StyleBuilder& table = StyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
             handler.applyInheritValue(selector);
@@ -79,7 +79,7 @@ public:
         if (id == CSSPropertyInvalid)
             return;
 
-        const CSSStyleApplyProperty& table = CSSStyleApplyProperty::sharedCSSStyleApplyProperty();
+        const StyleBuilder& table = StyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
             handler.applyInitialValue(selector);
@@ -100,7 +100,7 @@ public:
         if (id == CSSPropertyInvalid)
             return;
 
-        const CSSStyleApplyProperty& table = CSSStyleApplyProperty::sharedCSSStyleApplyProperty();
+        const StyleBuilder& table = StyleBuilder::sharedStyleBuilder();
         const PropertyHandler& handler = table.propertyHandler(id);
         if (handler.isValid())
             handler.applyValue(selector, value);
@@ -1764,13 +1764,13 @@ private:
 
 };
 
-const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
+const StyleBuilder& StyleBuilder::sharedStyleBuilder()
 {
-    DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
-    return cssStyleApplyPropertyInstance;
+    DEFINE_STATIC_LOCAL(StyleBuilder, styleBuilderInstance, ());
+    return styleBuilderInstance;
 }
 
-CSSStyleApplyProperty::CSSStyleApplyProperty()
+StyleBuilder::StyleBuilder()
 {
     for (int i = 0; i < numCSSProperties; ++i)
         m_propertyMap[i] = PropertyHandler();

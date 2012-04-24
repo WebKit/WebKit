@@ -355,7 +355,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, bool matchAuthorAndUserSt
     , m_fontSelector(CSSFontSelector::create(document))
     , m_applyPropertyToRegularStyle(true)
     , m_applyPropertyToVisitedLinkStyle(false)
-    , m_applyProperty(CSSStyleApplyProperty::sharedCSSStyleApplyProperty())
+    , m_styleBuilder(StyleBuilder::sharedStyleBuilder())
 #if ENABLE(CSS_SHADERS)
     , m_hasPendingShaders(false)
 #endif
@@ -3101,7 +3101,7 @@ void CSSStyleSelector::applyProperty(CSSPropertyID id, CSSValue *value)
         m_parentStyle->setHasExplicitlyInheritedProperties();
 
     // check lookup table for implementations and use when available
-    const PropertyHandler& handler = m_applyProperty.propertyHandler(id);
+    const PropertyHandler& handler = m_styleBuilder.propertyHandler(id);
     if (handler.isValid()) {
         if (isInherit)
             handler.applyInheritValue(this);

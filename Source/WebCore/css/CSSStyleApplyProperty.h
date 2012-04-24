@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSStyleSelector;
 class CSSValue;
-class CSSStyleApplyProperty;
+class StyleBuilder;
 
 class PropertyHandler {
 public:
@@ -55,10 +55,10 @@ private:
     ApplyFunction m_apply;
 };
 
-class CSSStyleApplyProperty {
-    WTF_MAKE_NONCOPYABLE(CSSStyleApplyProperty);
+class StyleBuilder {
+    WTF_MAKE_NONCOPYABLE(StyleBuilder);
 public:
-    static const CSSStyleApplyProperty& sharedCSSStyleApplyProperty();
+    static const StyleBuilder& sharedStyleBuilder();
 
     const PropertyHandler& propertyHandler(CSSPropertyID property) const
     {
@@ -66,7 +66,7 @@ public:
         return m_propertyMap[index(property)];
     }
 private:
-    CSSStyleApplyProperty();
+    StyleBuilder();
     static int index(CSSPropertyID property)
     {
         return property - firstCSSProperty;

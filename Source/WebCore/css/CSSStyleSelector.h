@@ -49,7 +49,6 @@ class CSSImageGeneratorValue;
 class CSSImageSetValue;
 class CSSImageValue;
 class CSSSelector;
-class CSSStyleApplyProperty;
 class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
@@ -70,6 +69,7 @@ class RuleData;
 class RuleSet;
 class Settings;
 class StaticCSSRuleList;
+class StyleBuilder;
 class StyleImage;
 class StyleKeyframe;
 class StylePendingImage;
@@ -494,7 +494,7 @@ private:
 
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;
-    const CSSStyleApplyProperty& m_applyProperty;
+    const StyleBuilder& m_styleBuilder;
     
     HashMap<StyleRule*, RefPtr<CSSStyleRule> > m_styleRuleToCSSOMWrapperMap;
     HashSet<RefPtr<CSSStyleSheet> > m_styleSheetCSSOMWrapperSet;
