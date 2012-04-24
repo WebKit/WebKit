@@ -108,6 +108,7 @@ inline MediaControlPanelElement::MediaControlPanelElement(Document* document)
     : MediaControlElement(document)
     , m_canBeDragged(false)
     , m_isBeingDragged(false)
+    , m_isDisplayed(false)
     , m_opaque(true)
     , m_transitionTimer(this, &MediaControlPanelElement::transitionTimerFired)
 {
@@ -241,9 +242,8 @@ void MediaControlPanelElement::makeOpaque()
 
     m_opaque = true;
 
-    // FIXME(BUG 79347): The display:none property should be toggled below only
-    // when display logic is introduced.
-    // show();
+    if (m_isDisplayed)
+        show();
 }
 
 void MediaControlPanelElement::makeTransparent()
@@ -257,9 +257,7 @@ void MediaControlPanelElement::makeTransparent()
 
     m_opaque = false;
 
-    // FIXME(BUG 79347): The display:none property should be toggled below
-    // (through the timer start) when display logic is introduced.
-    // startTimer();
+    startTimer();
 }
 
 void MediaControlPanelElement::defaultEventHandler(Event* event)
@@ -290,6 +288,11 @@ void MediaControlPanelElement::setCanBeDragged(bool canBeDragged)
 
     if (!canBeDragged)
         endDrag();
+}
+
+void MediaControlPanelElement::setIsDisplayed(bool isDisplayed)
+{
+    m_isDisplayed = isDisplayed;
 }
 
 // ----------------------------

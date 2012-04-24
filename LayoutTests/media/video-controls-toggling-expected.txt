@@ -1,0 +1,28 @@
+Tests that showing / hiding video controls uses the sets the display:none property
+
+** Playing the video **
+RUN(video.play())
+
+** Move mouse somewhere over the panel **
+RUN(eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]))
+
+** Test that controls are shown when controls attribute is present **
+EXPECTED (panel.style['display'] != 'none') OK
+
+** Move mouse outside the video **
+RUN(eventSender.mouseMoveTo(video.offsetLeft, video.offsetTop + 2 * video.offsetHeight))
+
+** The controls should have the display property set to none
+EXPECTED (panel.style['display'] == 'none') OK
+
+** Remove controls attribute**
+RUN(video.removeAttribute('controls'))
+
+** Move mouse back over the panel **
+RUN(eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]))
+
+** Video controls should not be shown **
+EXPECTED (panel.style['display'] == 'none') OK
+
+END OF TEST
+

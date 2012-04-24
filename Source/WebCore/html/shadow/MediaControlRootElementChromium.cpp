@@ -170,11 +170,13 @@ void MediaControlRootElementChromium::setMediaController(MediaControllerInterfac
 
 void MediaControlRootElementChromium::show()
 {
+    m_panel->setIsDisplayed(true);
     m_panel->show();
 }
 
 void MediaControlRootElementChromium::hide()
 {
+    m_panel->setIsDisplayed(false);
     m_panel->hide();
 }
 

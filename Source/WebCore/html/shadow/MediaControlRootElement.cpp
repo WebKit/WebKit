@@ -284,11 +284,13 @@ void MediaControlRootElement::setMediaController(MediaControllerInterface* contr
 
 void MediaControlRootElement::show()
 {
+    m_panel->setIsDisplayed(true);
     m_panel->show();
 }
 
 void MediaControlRootElement::hide()
 {
+    m_panel->setIsDisplayed(false);
     m_panel->hide();
 }
 

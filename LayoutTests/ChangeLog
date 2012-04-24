@@ -1,3 +1,16 @@
+2012-04-24  Victor Carbune  <vcarbune@adobe.com>
+
+        Extra display logic for the media control panel element
+        https://bugs.webkit.org/show_bug.cgi?id=82476
+
+        Reviewed by Eric Carlson.
+
+        Added test to ensure that controls are not displayed when
+        the controls attribute is not set.
+
+        * media/video-controls-toggling-expected.txt: Added.
+        * media/video-controls-toggling.html: Added.
+
 2012-04-24  Alexandru Chiculita  <achicu@adobe.com>
 
         CSS Shaders: Custom filters painting is broken

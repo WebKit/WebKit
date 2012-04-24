@@ -109,6 +109,8 @@ public:
     static PassRefPtr<MediaControlPanelElement> create(Document*);
 
     void setCanBeDragged(bool);
+    void setIsDisplayed(bool);
+
     void resetPosition();
     void makeOpaque();
     void makeTransparent();
@@ -131,6 +133,7 @@ private:
 
     bool m_canBeDragged;
     bool m_isBeingDragged;
+    bool m_isDisplayed;
     bool m_opaque;
     LayoutPoint m_dragStartEventLocation;
 
