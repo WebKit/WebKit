@@ -106,7 +106,7 @@
 }
 .test-table .wrong-expectations,
 .wrong-expectations {
-    background-color: #pink;
+    background-color: pink;
 }
 .P {
     background-color: #8fdf5f;
@@ -260,3 +260,19 @@ pre.expectation {
 .expectations-item:hover .pngchecksum {
     visibility: visible;
 }
+.skipped-builder-list {
+    margin-left: 20px;
+    background-color: #E8E8E8;
+}
+.skipped-builder {
+    display: inline-block;
+    white-space: nowrap;
+}
+.skipped-builder:after {
+    content: '|';
+    margin: 5px;
+}
+.skipped-builder:last-child:after {
+    content: '';
+}
+

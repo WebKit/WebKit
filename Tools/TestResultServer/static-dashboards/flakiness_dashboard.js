@@ -1537,20 +1537,29 @@ function htmlForIndividualTestOnAllBuilders(test)
     processTestRunsForAllBuilders();
 
     var testResults = g_testToResultsMap[test];
+    if (!testResults)
+        return '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>';
+        
     var html = '';
-    if (testResults) {
-        html +='<div><b>If a builder is not listed, that means the builder ' +
-            'does not run that test (e.g. it is skipped) or all runs of the ' +
-            'test passed.</b></div>';
-
-        for (var j = 0; j < testResults.length; j++)
-            html += htmlForSingleTestRow(testResults[j]);
-        html = htmlForTestTable(html);
-    } else {
-        html += '<div class="not-found">Test not found. Either it does ' +
-            'not exist, is skipped or passes on all platforms.</div>';
+    var shownBuilders = [];
+    for (var j = 0; j < testResults.length; j++) {
+        shownBuilders.push(testResults[j].builder);
+        html += htmlForSingleTestRow(testResults[j]);
     }
-    return html;
+
+    var skippedBuilders = []
+    for (builder in currentBuilderGroup().builders) {
+        if (shownBuilders.indexOf(builder) == -1)
+            skippedBuilders.push(builder);
+    }
+
+    var skippedBuildersHtml = '';
+    if (skippedBuilders.length) {
+        skippedBuildersHtml = '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
+            '<div class=skipped-builder-list><div class=skipped-builder>' + skippedBuilders.join('</div><div class=skipped-builder>') + '</div></div>';
+    }
+
+    return htmlForTestTable(html) + skippedBuildersHtml;
 }
 
 function htmlForIndividualTestOnAllBuildersWithChrome(test)

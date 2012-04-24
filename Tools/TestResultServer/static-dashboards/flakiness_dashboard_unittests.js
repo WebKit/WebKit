@@ -415,10 +415,25 @@ function testHtmlForIndividualTestOnAllBuildersWithChrome()
                 '<th sortValue=%><div class=table-header-content><span></span><span class=header-text>% fail</span></div></th>' +
                 '<th sortValue=flakiness colspan=10000><div class=table-header-content><span></span><span class=header-text>flakiness (numbers are runtimes in seconds)</span></div></th>' +
             '</tr></thead>' +
-            '<tbody>' +
-                '<div><b>If a builder is not listed, that means the builder does not run that test (e.g. it is skipped) or all runs of the test passed.</b></div>' +
-            '</tbody>' +
+            '<tbody></tbody>' +
         '</table>' +
+        '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
+        '<div class=skipped-builder-list>' +
+            '<div class=skipped-builder>Webkit Linux</div>' +
+            '<div class=skipped-builder>Webkit Linux (dbg)</div>' +
+            '<div class=skipped-builder>Webkit Linux 32</div>' +
+            '<div class=skipped-builder>Webkit Mac10.5</div>' +
+            '<div class=skipped-builder>Webkit Mac10.5 (dbg)(1)</div>' +
+            '<div class=skipped-builder>Webkit Mac10.5 (dbg)(2)</div>' +
+            '<div class=skipped-builder>Webkit Mac10.6</div>' +
+            '<div class=skipped-builder>Webkit Mac10.6 (dbg)</div>' +
+            '<div class=skipped-builder>Webkit Mac10.7</div>' +
+            '<div class=skipped-builder>Webkit Vista</div>' +
+            '<div class=skipped-builder>Webkit Win</div>' +
+            '<div class=skipped-builder>Webkit Win (dbg)(1)</div>' +
+            '<div class=skipped-builder>Webkit Win (dbg)(2)</div>' +
+            '<div class=skipped-builder>Webkit Win7</div>' +
+        '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
             '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span> | ' +
@@ -443,10 +458,25 @@ function testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster()
                     '<th sortValue=%><div class=table-header-content><span></span><span class=header-text>% fail</span></div></th>' +
                     '<th sortValue=flakiness colspan=10000><div class=table-header-content><span></span><span class=header-text>flakiness (numbers are runtimes in seconds)</span></div></th>' +
                 '</tr></thead>' +
-                '<tbody>' +
-                    '<div><b>If a builder is not listed, that means the builder does not run that test (e.g. it is skipped) or all runs of the test passed.</b></div>' +
-                '</tbody>' +
+                '<tbody></tbody>' +
             '</table>' +
+            '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
+            '<div class=skipped-builder-list>' +
+                '<div class=skipped-builder>Webkit Linux</div>' +
+                '<div class=skipped-builder>Webkit Linux (dbg)</div>' +
+                '<div class=skipped-builder>Webkit Linux 32</div>' +
+                '<div class=skipped-builder>Webkit Mac10.5</div>' +
+                '<div class=skipped-builder>Webkit Mac10.5 (dbg)(1)</div>' +
+                '<div class=skipped-builder>Webkit Mac10.5 (dbg)(2)</div>' +
+                '<div class=skipped-builder>Webkit Mac10.6</div>' +
+                '<div class=skipped-builder>Webkit Mac10.6 (dbg)</div>' +
+                '<div class=skipped-builder>Webkit Mac10.7</div>' +
+                '<div class=skipped-builder>Webkit Vista</div>' +
+                '<div class=skipped-builder>Webkit Win</div>' +
+                '<div class=skipped-builder>Webkit Win (dbg)(1)</div>' +
+                '<div class=skipped-builder>Webkit Win (dbg)(2)</div>' +
+                '<div class=skipped-builder>Webkit Win7</div>' +
+            '</div>' +
             '<div class=expectations test=dummytest.html>' +
                 '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
                 '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span>' +
