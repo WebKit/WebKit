@@ -1,3 +1,22 @@
+2012-04-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Create a new flag for PeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=84723
+
+        Reviewed by Dimitri Glazkov.
+
+        To allow Chrome to make the GetUserMedia functionality available by default we
+        need another flag for the PeerConnection related parts. This new flag is in
+        addition to the general media stream flag, and both need to be enabled for
+        PeerConnection object creation.
+
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enablePeerConnection):
+        (WebKit):
+        (WebKit::WebRuntimeFeatures::isPeerConnectionEnabled):
+
 2012-04-24  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Don't keep pointers to released layer tree

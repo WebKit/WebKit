@@ -188,9 +188,12 @@ public:
     static bool mediaStreamEnabled() { return isMediaStreamEnabled; }
     static void setMediaStreamEnabled(bool isEnabled) { isMediaStreamEnabled = isEnabled; }
     static bool webkitGetUserMediaEnabled() { return isMediaStreamEnabled; }
-    static bool webkitDeprecatedPeerConnectionEnabled() { return isMediaStreamEnabled; }
     static bool webkitMediaStreamEnabled() { return isMediaStreamEnabled; }
-    static bool webkitPeerConnection00Enabled() { return isMediaStreamEnabled; }
+
+    static bool peerConnectionEnabled() { return isMediaStreamEnabled && isPeerConnectionEnabled; }
+    static void setPeerConnectionEnabled(bool isEnabled) { isPeerConnectionEnabled = isEnabled; }
+    static bool webkitDeprecatedPeerConnectionEnabled() { return peerConnectionEnabled(); }
+    static bool webkitPeerConnection00Enabled() { return peerConnectionEnabled(); }
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -268,6 +271,7 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     static bool isMediaStreamEnabled;
+    static bool isPeerConnectionEnabled;
 #endif
 
 #if ENABLE(GAMEPAD)

@@ -62,7 +62,8 @@ bool RuntimeEnabledFeatures::isScriptedSpeechEnabled = false;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-bool RuntimeEnabledFeatures::isMediaStreamEnabled = true;
+bool RuntimeEnabledFeatures::isMediaStreamEnabled = false;
+bool RuntimeEnabledFeatures::isPeerConnectionEnabled = true;
 #endif
 
 #if ENABLE(GAMEPAD)

@@ -358,6 +358,24 @@ bool WebRuntimeFeatures::isMediaStreamEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enablePeerConnection(bool enable)
+{
+#if ENABLE(MEDIA_STREAM)
+    RuntimeEnabledFeatures::setPeerConnectionEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isPeerConnectionEnabled()
+{
+#if ENABLE(MEDIA_STREAM)
+    return RuntimeEnabledFeatures::peerConnectionEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableFullScreenAPI(bool enable)
 {
 #if ENABLE(FULLSCREEN_API)
