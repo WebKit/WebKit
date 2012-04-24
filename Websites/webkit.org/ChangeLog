@@ -1,3 +1,15 @@
+2012-04-23  Daniel Bates  <dbates@webkit.org>
+
+        Explicitly mention Xcode version 4.3.2 in Mac debug instructions
+
+        Rubber-stamped by Eric Seidel.
+
+        The build location instructions at the top of page building/{debug-mac-uiprocess.html, debug.html}
+        are specific to Xcode 4.3.2.
+
+        * building/debug-mac-uiprocess.html: Substitute "Xcode 4.3.2" for "Xcode 4".
+        * building/debug.html: Ditto.
+
 2012-04-19  Daniel Bates  <dbates@webkit.org>
 
         Update Build Location notice on Mac debug instructions to reflect changes in Xcode 4.3.2
