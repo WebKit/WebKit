@@ -47,7 +47,7 @@ public:
     static PassRefPtr<InjectedBundleDOMWindowExtension> create(WebFrame*, InjectedBundleScriptWorld*);
     static InjectedBundleDOMWindowExtension* get(WebCore::DOMWindowExtension*);
 
-    virtual ~InjectedBundleDOMWindowExtension() OVERRIDE;
+    virtual ~InjectedBundleDOMWindowExtension();
     
     WebFrame* frame() const;
     InjectedBundleScriptWorld* world() const;

@@ -1,3 +1,10 @@
+2012-04-24  Brady Eidson  <beidson@apple.com>
+
+        Fix Windows build.
+
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h:
+        (~InjectedBundleDOMWindowExtension): VS doesn't like OVERRIDE on d'tor's
+
 2012-04-24  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] Unreviewed build fix after r115083
