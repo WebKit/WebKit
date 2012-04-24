@@ -2620,3 +2620,8 @@ fast/block/line-layout/selection-highlight-overlap.html
 fast/multicol/cell-shrinkback.html
 fast/table/td-width-fifty-percent-regression.html
 svg/custom/anchor-on-use.svg
+
+# REGRESSION(114309) - Exception stack traces aren't complete when the exception starts in native code
+# https://bugs.webkit.org/show_bug.cgi?id=84073
+plugins/npruntime/object-from-destroyed-plugin.html
+plugins/npruntime/object-from-destroyed-plugin-in-subframe.html

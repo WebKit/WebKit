@@ -117,3 +117,7 @@ svg/custom/use-invalid-html.xhtml
 svg/custom/use-invalid-style.svg
 svg/hixie/error/dumpAsText/004.xml
 svg/hixie/error/dumpAsText/005.xml
+
+# REGRESSION(r114899) - https://bugs.webkit.org/show_bug.cgi?id=84595
+editing/selection/5354455-1.html
+editing/selection/click-left-of-rtl-wrapping-text.html

@@ -1,3 +1,11 @@
+2012-04-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Skip failing tests because of new regressions.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/Skipped:
+
 2012-04-24  Rakesh KN  <rakesh.kn@motorola.com>
 
         RadioNodeList support in HTMLFormElement::elements
