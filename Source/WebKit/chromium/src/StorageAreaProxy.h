@@ -28,12 +28,18 @@
 
 #include "StorageArea.h"
 
-namespace WebKit { class WebStorageArea; }
+namespace WebKit {
+class WebStorageArea;
+class WebStorageNamespace;
+}
 
 namespace WebCore {
 
 class Frame;
+class KURL;
+class Page;
 class SecurityOrigin;
+class Storage;
 
 class StorageAreaProxy : public StorageArea {
 public:
@@ -51,9 +57,19 @@ public:
 
     virtual bool disabledByPrivateBrowsingInFrame(const Frame*) const { return false; }
 
+    static void dispatchLocalStorageEvent(
+            const String& pageGroupName, const String& key, const String& oldValue, const String& newValue,
+            SecurityOrigin*, const KURL& pageURL, WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess);
+    static void dispatchSessionStorageEvent(
+            const String& pageGroupName, const String& key, const String& oldValue, const String& newValue,
+            SecurityOrigin*, const KURL& pageURL, const WebKit::WebStorageNamespace&,
+            WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess);
+
 private:
     void storageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Frame* sourceFrame);
     bool canAccessStorage(Frame*) const;
+
+    static bool isEventSource(Storage*, WebKit::WebStorageArea* sourceAreaInstance);
 
     OwnPtr<WebKit::WebStorageArea> m_storageArea;
     StorageType m_storageType;

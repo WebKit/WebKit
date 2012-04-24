@@ -354,6 +354,8 @@ namespace WebCore {
         // HTML 5 key/value storage
         Storage* sessionStorage(ExceptionCode&) const;
         Storage* localStorage(ExceptionCode&) const;
+        Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
+        Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 
 #if ENABLE(QUOTA)
         StorageInfo* webkitStorageInfo() const;

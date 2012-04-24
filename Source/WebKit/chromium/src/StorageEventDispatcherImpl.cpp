@@ -41,6 +41,8 @@
 #include "SecurityOrigin.h"
 #include "StorageEvent.h"
 
+// FIXME: delete this almost obsolete file soon
+
 namespace WebCore {
 
 StorageEventDispatcherImpl::StorageEventDispatcherImpl(const String& groupName)
@@ -49,7 +51,6 @@ StorageEventDispatcherImpl::StorageEventDispatcherImpl(const String& groupName)
     ASSERT(m_pageGroup);
 }
 
-// FIXME: add a sourceStorageArea parameter to this
 void StorageEventDispatcherImpl::dispatchStorageEvent(const String& key, const String& oldValue,
                                                       const String& newValue, SecurityOrigin* securityOrigin,
                                                       const KURL& url, StorageType storageType)
@@ -66,7 +67,6 @@ void StorageEventDispatcherImpl::dispatchStorageEvent(const String& key, const S
     HashSet<Page*>::const_iterator end = pages.end();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            // FIXME: identify the srcFrame while in this loop too and exclude it from 'frames'.
             if (frame->document()->securityOrigin()->equal(securityOrigin))
                 frames.append(frame);
         }

@@ -35,7 +35,9 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
+#include "Storage.h"
 #include "StorageEvent.h"
+#include "StorageNamespaceProxy.h"
 
 #include "WebFrameImpl.h"
 #include "WebPermissionClient.h"
@@ -121,6 +123,7 @@ bool StorageAreaProxy::contains(const String& key, Frame* frame) const
     return !getItem(key, frame).isNull();
 }
 
+// FIXME: remove this method and the calls to it from our setters after multi-side patch landing is done.
 // Copied from WebCore/storage/StorageEventDispatcher.cpp out of necessity.  It's probably best to keep it current.
 void StorageAreaProxy::storageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Frame* sourceFrame)
 {
@@ -175,6 +178,78 @@ bool StorageAreaProxy::canAccessStorage(Frame* frame) const
     WebKit::WebFrameImpl* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
     WebKit::WebViewImpl* webView = webFrame->viewImpl();
     return !webView->permissionClient() || webView->permissionClient()->allowStorage(webFrame, m_storageType == LocalStorage);
+}
+
+void StorageAreaProxy::dispatchLocalStorageEvent(const String& pageGroupName, const String& key, const String& oldValue, const String& newValue,
+                                                 SecurityOrigin* securityOrigin, const KURL& pageURL, WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess)
+{
+    // FIXME: Multi-sided patch engineering alert !
+    // step 1: this method gets defined and implemented in webkit/webcore with the early return.
+    // step 2: this method starts getting called by chromium still with the early return.
+    // step 3: This class's setters are modified to no longer raise SessionStorage
+    //         events for inprocess changes and this early return is removed.
+    if (originatedInProcess)
+        return;
+
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroupName)->pages();
+    for (HashSet<Page*>::const_iterator it = pages.begin(); it != pages.end(); ++it) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            if (frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(frame->domWindow()->optionalLocalStorage(), sourceAreaInstance)) {
+                // FIXME: maybe only raise if the window has an onstorage listener attached to avoid creating the Storage instance.
+                ExceptionCode ec = 0;
+                Storage* storage = frame->domWindow()->localStorage(ec);
+                if (!ec)
+                    frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
+            }
+        }
+    }
+}
+
+static Page* findPageWithSessionStorageNamespace(const String& pageGroupName, const WebKit::WebStorageNamespace& sessionNamespace)
+{
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroupName)->pages();
+    for (HashSet<Page*>::const_iterator it = pages.begin(); it != pages.end(); ++it) {
+        const bool createIfNeeded = true;
+        StorageNamespaceProxy* proxy = static_cast<StorageNamespaceProxy*>((*it)->sessionStorage(createIfNeeded));
+        if (proxy->isSameNamespace(sessionNamespace))
+            return *it;
+    }
+    return 0;
+}
+
+void StorageAreaProxy::dispatchSessionStorageEvent(const String& pageGroupName, const String& key, const String& oldValue, const String& newValue,
+                                                   SecurityOrigin* securityOrigin, const KURL& pageURL, const WebKit::WebStorageNamespace& sessionNamespace,
+                                                   WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess)
+{
+    // FIXME: Multi-sided patch engineering alert !
+    // step 1: this method gets defined and implemented in webkit/webcore with the early return.
+    // step 2: this method starts getting called by chromium still with the early return.
+    // step 3: This class's setters are modified to no longer raise SessionStorage
+    //         events for inprocess changes and this early return is removed.
+    if (originatedInProcess)
+        return;
+
+    Page* page = findPageWithSessionStorageNamespace(pageGroupName, sessionNamespace);
+    if (!page)
+        return;
+
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(frame->domWindow()->optionalSessionStorage(), sourceAreaInstance)) {
+            // FIXME: maybe only raise if the window has an onstorage listener attached to avoid creating the Storage instance.
+            ExceptionCode ec = 0;
+            Storage* storage = frame->domWindow()->sessionStorage(ec);
+            if (!ec)
+                frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
+        }
+    }
+}
+
+bool StorageAreaProxy::isEventSource(Storage* storage, WebKit::WebStorageArea* sourceAreaInstance)
+{
+    if (!storage)
+        return false;
+    StorageAreaProxy* areaProxy = static_cast<StorageAreaProxy*>(storage->area());
+    return areaProxy->m_storageArea == sourceAreaInstance;
 }
 
 } // namespace WebCore

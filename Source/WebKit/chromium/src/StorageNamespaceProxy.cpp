@@ -100,4 +100,9 @@ void StorageNamespaceProxy::sync()
     ASSERT_NOT_REACHED();
 }
 
+bool StorageNamespaceProxy::isSameNamespace(const WebKit::WebStorageNamespace& sessionNamespace)
+{
+    return m_storageNamespace->isSameNamespace(sessionNamespace);
+}
+
 } // namespace WebCore

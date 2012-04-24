@@ -1,3 +1,51 @@
+2012-04-23  Michael Nordman  <michaeln@google.com>
+
+        [chromium] DomStorage event handling mods.
+        https://bugs.webkit.org/show_bug.cgi?id=84387
+
+        Events are currently handled inconsistently. The dispatch of some events are
+        initiated from within webkit/webcore, the dispatch of other events are initiated
+        from the outside via the WebKit::WebStorageEventDispatcher interface. The existing
+        WebStorageEventDispatcher is not expressive enough to handle initiation all 
+        events from the outside. There's a chunk of nearly replicated code in there
+        that shouldn't be. The existing code has several FIXMEs related to making
+        this better.
+
+        The current state of things in webkit/webcore is also blocking development of some
+        overall performance improvements to chromium's implemention of this feature (getting
+        rid of sync ipcs for each access and adding a renderer-side caching layer).
+
+        To facilitate the perf improvements, this patch adds WebKit API to allow all
+        DomStorage events to be initiated from the outside. This is needed because
+        there will be an async latency between setting an item and receiving the
+        'oldValue' from the main browser process which is required to raise the
+        mutation event.
+
+        This is the first of a multi-sided sequence of patches to make this transition.
+        wkpatch 1: add the new wider WebKit API and impl
+        crpatch 2: start using the new wider WebKit API
+        wkpatch 3: cleanup, delete the old WebKit API and impl
+        xxxxxxx 4/5: cleanup, remove extra params from new API whose only purpose was to allow the transition
+
+        Reviewed by Dimitri Glazkov.
+
+        * public/WebStorageEventDispatcher.h: Add new API to dispatch events.
+        * public/WebStorageNamespace.h: Add new API to test for namespace equality.
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::dispatchLocalStorageEvent): implementation of the new API
+        (WebCore::StorageAreaProxy::dispatchSessionStorageEvent):  implementation of the new API
+        (WebCore::StorageAreaProxy::IsEventSource): a helper method
+        (WebCore::StorageAreaProxy::FindPageWithSessionStorageNamespace): a helper method
+        * src/StorageAreaProxy.h:
+        * src/StorageEventDispatcherImpl.cpp: added a FIXME comment to delete soon
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespaceProxy::IsSameNamespace): plumbing to call the new API
+        * src/StorageNamespaceProxy.h:
+        * src/WebStorageEventDispatcherImpl.cpp:
+        (WebKit::WebStorageEventDispatcher::dispatchLocalStorageEvent): plumbing to call the new impl
+        (WebKit::WebStorageEventDispatcher::dispatchSessionStorageEvent): plumbing to call the new impl
+        * src/WebStorageEventDispatcherImpl.h: added a FIXME comment to delete soon
+
 2012-04-23  Kenneth Russell  <kbr@google.com>
 
         Change ImageData to reference Uint8ClampedArray rather than CanvasPixelArray

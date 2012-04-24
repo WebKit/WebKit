@@ -51,6 +51,8 @@ namespace WebCore {
 
         bool contains(const String& key) const;
 
+        StorageArea* area() const { return m_storageArea.get(); }
+
     private:
         Storage(Frame*, PassRefPtr<StorageArea>);
 

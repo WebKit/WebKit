@@ -33,6 +33,7 @@
 
 #include "KURL.h"
 #include "SecurityOrigin.h"
+#include "StorageAreaProxy.h"
 
 #include "platform/WebURL.h"
 #include <wtf/PassOwnPtr.h>
@@ -40,6 +41,33 @@
 namespace WebKit {
 
 extern const char* pageGroupName;
+
+void WebStorageEventDispatcher::dispatchLocalStorageEvent(
+        const WebString& key, const WebString& oldValue,
+        const WebString& newValue, const WebURL& origin,
+        const WebURL& pageURL, WebStorageArea* sourceAreaInstance,
+        bool originatedInProcess)
+{
+    RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::create(origin);
+    WebCore::StorageAreaProxy::dispatchLocalStorageEvent(
+            pageGroupName, key, oldValue, newValue, securityOrigin.get(), pageURL,
+            sourceAreaInstance, originatedInProcess);
+}
+
+void WebStorageEventDispatcher::dispatchSessionStorageEvent(
+        const WebString& key, const WebString& oldValue,
+        const WebString& newValue, const WebURL& origin,
+        const WebURL& pageURL, const WebStorageNamespace& sessionNamespace,
+        WebStorageArea* sourceAreaInstance, bool originatedInProcess)
+{
+    RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::create(origin);
+    WebCore::StorageAreaProxy::dispatchSessionStorageEvent(
+            pageGroupName, key, oldValue, newValue, securityOrigin.get(), pageURL,
+            sessionNamespace, sourceAreaInstance, originatedInProcess);
+}
+
+
+// FIXME: remove the WebStorageEventDispatcherImpl class soon.
 
 WebStorageEventDispatcher* WebStorageEventDispatcher::create()
 {

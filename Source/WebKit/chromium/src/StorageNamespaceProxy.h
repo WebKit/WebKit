@@ -45,6 +45,8 @@ public:
     virtual void clearAllOriginsForDeletion();
     virtual void sync();
 
+    bool isSameNamespace(const WebKit::WebStorageNamespace&);
+
 private:
     OwnPtr<WebKit::WebStorageNamespace> m_storageNamespace;
     StorageType m_storageType;
