@@ -2038,6 +2038,11 @@ void SpeculativeJIT::compile(Node& node)
         compileUInt32ToNumber(node);
         break;
     }
+        
+    case DoubleAsInt32: {
+        compileDoubleAsInt32(node);
+        break;
+    }
 
     case ValueToInt32: {
         compileValueToInt32(node);
@@ -2071,25 +2076,7 @@ void SpeculativeJIT::compile(Node& node)
 #if CPU(X86)
             compileIntegerArithDivForX86(node);
 #else // CPU(X86) -> so non-X86 code follows
-            SpeculateDoubleOperand op1(this, node.child1());
-            SpeculateDoubleOperand op2(this, node.child2());
-            FPRTemporary result(this);
-            FPRTemporary scratch(this);
-            GPRTemporary intResult(this);
-            
-            FPRReg op1FPR = op1.fpr();
-            FPRReg op2FPR = op2.fpr();
-            FPRReg resultFPR = result.fpr();
-            FPRReg scratchFPR = scratch.fpr();
-            GPRReg resultGPR = intResult.gpr();
-            
-            m_jit.divDouble(op1FPR, op2FPR, resultFPR);
-            
-            JITCompiler::JumpList failureCases;
-            m_jit.branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR);
-            speculationCheck(Overflow, JSValueRegs(), NoNode, failureCases);
-
-            integerResult(resultGPR, m_compileIndex);
+            ASSERT_NOT_REACHED(); // should have been coverted into a double divide.
 #endif // CPU(X86)
             break;
         }

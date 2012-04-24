@@ -1751,6 +1751,7 @@ private:
     void compileGetByValOnString(Node&);
     void compileValueToInt32(Node&);
     void compileUInt32ToNumber(Node&);
+    void compileDoubleAsInt32(Node&);
     void compileInt32ToDouble(Node&);
     void compileGetByValOnByteArray(Node&);
     void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
@@ -1848,9 +1849,9 @@ private:
     // Add a set of speculation checks without additional recovery.
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail)
     {
-        Vector<MacroAssembler::Jump, 16> JumpVector = jumpsToFail.jumps();
-        for (unsigned i = 0; i < JumpVector.size(); ++i)
-            speculationCheck(kind, jsValueSource, nodeIndex, JumpVector[i]);
+        Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
+        for (unsigned i = 0; i < jumpVector.size(); ++i)
+            speculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i]);
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::JumpList& jumpsToFail)
     {
@@ -1872,17 +1873,32 @@ private:
     {
         speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
         
-        Node& setLocal = at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock + 1));
-        Node& nextNode = at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock + 2));
-        ASSERT(setLocal.op() == SetLocal);
-        ASSERT(setLocal.codeOrigin == at(m_compileIndex).codeOrigin);
+        unsigned setLocalIndexInBlock = m_indexInBlock + 1;
+        
+        Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock));
+        
+        if (setLocal->op() == Int32ToDouble) {
+            setLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
+            ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
+        } else
+            ASSERT(setLocal->child1() == m_compileIndex);
+        
+        Node& nextNode = at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1));
+        ASSERT(setLocal->op() == SetLocal);
+        ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
         ASSERT(nextNode.codeOrigin != at(m_compileIndex).codeOrigin);
         
         OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
         exit.m_codeOrigin = nextNode.codeOrigin;
-        exit.m_lastSetOperand = setLocal.local();
+        exit.m_lastSetOperand = setLocal->local();
         
-        exit.valueRecoveryForOperand(setLocal.local()) = valueRecovery;
+        exit.valueRecoveryForOperand(setLocal->local()) = valueRecovery;
+    }
+    void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
+    {
+        Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
+        for (unsigned i = 0; i < jumpVector.size(); ++i)
+            forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i], valueRecovery);
     }
 
     // Called when we statically determine that a speculation will fail.

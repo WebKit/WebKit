@@ -93,6 +93,7 @@ struct OSRExit {
     CorrectableJumpPoint m_check;
     NodeIndex m_nodeIndex;
     CodeOrigin m_codeOrigin;
+    CodeOrigin m_codeOriginForExitProfile;
     
     unsigned m_recoveryIndex;
     

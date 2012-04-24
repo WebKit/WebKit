@@ -260,10 +260,28 @@ private:
         }
             
         case ArithDiv: {
-            if (isX86()
-                && Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()])
-                && node.canSpeculateInteger())
+            if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()])
+                && node.canSpeculateInteger()) {
+                if (isX86())
+                    break;
+                fixDoubleEdge(0);
+                fixDoubleEdge(1);
+                
+                Node& oldDivision = m_graph[m_compileIndex];
+                
+                Node newDivision = oldDivision;
+                newDivision.setRefCount(2);
+                newDivision.predict(PredictDouble);
+                NodeIndex newDivisionIndex = m_graph.size();
+                
+                oldDivision.setOp(DoubleAsInt32);
+                oldDivision.children.initialize(Edge(newDivisionIndex, DoubleUse), Edge(), Edge());
+                
+                m_graph.append(newDivision);
+                m_insertionSet.append(m_indexInBlock, newDivisionIndex);
+                
                 break;
+            }
             fixDoubleEdge(0);
             fixDoubleEdge(1);
             break;

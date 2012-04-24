@@ -1343,10 +1343,13 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             // The reverse of the above: This node could be a UInt32ToNumber, but its
             //    alternative is still alive. This means that the only remaining uses of
             //    the number would be fine with a UInt32 intermediate.
+            //
+            // DoubleAsInt32: Same as UInt32ToNumber.
+            //
         
             bool found = false;
         
-            if (nodePtr->op() == UInt32ToNumber) {
+            if (nodePtr->op() == UInt32ToNumber || nodePtr->op() == DoubleAsInt32) {
                 NodeIndex nodeIndex = nodePtr->child1().index();
                 nodePtr = &at(nodeIndex);
                 infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
@@ -1358,6 +1361,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                 NodeIndex int32ToDoubleIndex = NoNode;
                 NodeIndex valueToInt32Index = NoNode;
                 NodeIndex uint32ToNumberIndex = NoNode;
+                NodeIndex doubleAsInt32Index = NoNode;
             
                 for (unsigned virtualRegister = 0; virtualRegister < m_generationInfo.size(); ++virtualRegister) {
                     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -1378,13 +1382,17 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                     case UInt32ToNumber:
                         uint32ToNumberIndex = info.nodeIndex();
                         break;
+                    case DoubleAsInt32:
+                        doubleAsInt32Index = info.nodeIndex();
                     default:
                         break;
                     }
                 }
             
                 NodeIndex nodeIndexToUse;
-                if (int32ToDoubleIndex != NoNode)
+                if (doubleAsInt32Index != NoNode)
+                    nodeIndexToUse = doubleAsInt32Index;
+                else if (int32ToDoubleIndex != NoNode)
                     nodeIndexToUse = int32ToDoubleIndex;
                 else if (valueToInt32Index != NoNode)
                     nodeIndexToUse = valueToInt32Index;
@@ -1727,6 +1735,23 @@ void SpeculativeJIT::compileUInt32ToNumber(Node& node)
 
     m_jit.move(op1.gpr(), result.gpr());
     integerResult(result.gpr(), m_compileIndex, op1.format());
+}
+
+void SpeculativeJIT::compileDoubleAsInt32(Node& node)
+{
+    SpeculateDoubleOperand op1(this, node.child1());
+    FPRTemporary scratch(this);
+    GPRTemporary result(this);
+    
+    FPRReg valueFPR = op1.fpr();
+    FPRReg scratchFPR = scratch.fpr();
+    GPRReg resultGPR = result.gpr();
+
+    JITCompiler::JumpList failureCases;
+    m_jit.branchConvertDoubleToInt32(valueFPR, resultGPR, failureCases, scratchFPR);
+    forwardSpeculationCheck(Overflow, JSValueRegs(), NoNode, failureCases, ValueRecovery::inFPR(valueFPR));
+
+    integerResult(resultGPR, m_compileIndex);
 }
 
 void SpeculativeJIT::compileInt32ToDouble(Node& node)

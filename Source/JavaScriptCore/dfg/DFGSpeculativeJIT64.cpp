@@ -2114,6 +2114,11 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case DoubleAsInt32: {
+        compileDoubleAsInt32(node);
+        break;
+    }
+
     case ValueToInt32: {
         compileValueToInt32(node);
         break;

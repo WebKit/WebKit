@@ -78,6 +78,8 @@ namespace JSC { namespace DFG {
     /* Used to cast known integers to doubles, so as to separate the double form */\
     /* of the value from the integer form. */\
     macro(Int32ToDouble, NodeResultNumber) \
+    /* Used to speculate that a double value is actually an integer. */\
+    macro(DoubleAsInt32, NodeResultInt32) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber | NodeMustGenerate) \

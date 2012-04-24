@@ -594,6 +594,7 @@ private:
         case IsString:
         case IsObject:
         case IsFunction:
+        case DoubleAsInt32:
             setReplacement(pureCSE(node));
             break;
             

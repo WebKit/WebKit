@@ -290,6 +290,11 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).set(PredictInt32);
         break;
             
+    case DoubleAsInt32:
+        forNode(node.child1()).filter(PredictNumber);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+            
     case ValueToInt32:
         if (m_graph[node.child1()].shouldSpeculateInteger())
             forNode(node.child1()).filter(PredictInt32);
