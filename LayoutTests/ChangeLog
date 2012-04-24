@@ -1,3 +1,9 @@
+2012-04-24  Andreas Kling  <kling@webkit.org>
+
+        Rebaseline mac rendertree output for svg/custom/use-css-events.svg.
+
+        * platform/mac/svg/custom/use-css-events-expected.txt: Updated for custom ellipse renderer changes.
+
 2012-04-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Moving LT/fast/dom/MediaStream/* to LT/fast/mediastream
