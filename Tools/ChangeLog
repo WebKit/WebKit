@@ -1,3 +1,16 @@
+2012-04-24  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] DumpRenderTree should depend on base.gyp:test_support_base
+        https://bugs.webkit.org/show_bug.cgi?id=84729
+
+        Reviewed by Dirk Pranke.
+
+        This dependency is necessary for Android since it'll soon be
+        calling InitAndroidOSPathStub() in it's platform support. The
+        TestWebKitAPI and webkit_unit_tests already have this dependency.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-04-24  Ojan Vafai  <ojan@chromium.org>
 
         Replace vague informative statement with the list of builders where the test isn't listed
