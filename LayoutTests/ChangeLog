@@ -1,6 +1,15 @@
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=75161
+
+        Unmark media/video-poster-blocked-by-willsendrequest.html -- fails no more after FFmpeg roll 132717:133551 in Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
         https://bugs.webkit.org/show_bug.cgi?id=84714
 
         Mark compositing/geometry/empty-embed-rects.html as flaky on Mac 10.6.
