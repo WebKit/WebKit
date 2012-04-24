@@ -149,7 +149,7 @@ public:
     virtual void notifySelectionDetailsChanged(const Platform::IntRect& start, const Platform::IntRect& end, const Platform::IntRectRegion&) = 0;
     virtual void cancelSelectionVisuals() = 0;
     virtual void notifySelectionHandlesReversed() = 0;
-    virtual void notifyCaretChanged(const Platform::IntRect& caret, bool userTouchTriggered) = 0;
+    virtual void notifyCaretChanged(const Platform::IntRect& caret, bool userTouchTriggered, bool singleLineInput = false, const Platform::IntRect& singleLineBoundingBox = Platform::IntRect()) = 0;
 
     virtual void cursorChanged(Platform::CursorType, const char* url, int x, int y) = 0;
 

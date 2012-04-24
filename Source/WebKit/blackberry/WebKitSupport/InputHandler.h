@@ -102,6 +102,8 @@ public:
 
     WTF::String elementText();
 
+    WebCore::IntRect boundingBoxForInputField();
+
     // IMF driven calls.
     bool setBatchEditingActive(bool);
     bool setSelection(int start, int end, bool changeIsPartOfComposition = false);

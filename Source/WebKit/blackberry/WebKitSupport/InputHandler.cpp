@@ -537,6 +537,17 @@ void InputHandler::nodeTextChanged(const Node* node)
     removeAttributedTextMarker();
 }
 
+WebCore::IntRect InputHandler::boundingBoxForInputField()
+{
+    if (!isActiveTextEdit())
+        return WebCore::IntRect();
+
+    if (!m_currentFocusElement->renderer())
+        return WebCore::IntRect();
+
+    return m_currentFocusElement->renderer()->absoluteBoundingBoxRect();
+}
+
 void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
 {
     if (!m_inputModeEnabled || !m_currentFocusElement || !m_currentFocusElement->document())
