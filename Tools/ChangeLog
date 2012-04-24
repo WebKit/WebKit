@@ -1,3 +1,27 @@
+2012-04-24  Ojan Vafai  <ojan@chromium.org>
+
+        Improve code for embedding flakiness dashboard as an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=84782
+
+        Reviewed by Dirk Pranke.
+
+        -Include the horizontal scrollbar height in the measured height of the page.
+        -Post a message everytime the height changes instead of in response to a queryContentHeight message.
+        This way, the embedder doesn't need to poll.
+
+        No new tests. This is hard to test because it involves postMessage and iframes.
+        Once we switch the dashboard tests over to qunit, we should be able to write an
+        asyncTest for this.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (generatePage):
+        (appendHTML):
+        (appendExpectations):
+        (postHeightChangedMessage):
+        (generatePageForIndividualTests.if):
+        (generatePageForIndividualTests):
+        * TestResultServer/static-dashboards/flakiness_dashboard_embedded.html: Added.
+
 2012-04-16  Ojan Vafai  <ojan@chromium.org>
 
         Replace garden-o-matic accordion UI with a panel UI

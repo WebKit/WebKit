@@ -95,6 +95,8 @@ function generatePage()
 
     for (var builder in g_builders)
         processTestResultsForBuilderAsync(builder);
+
+    postHeightChangedMessage();
 }
 
 function handleValidHashParameter(key, value)
@@ -1244,6 +1246,7 @@ function appendHTML(html)
     div.innerHTML = html;
     document.body.appendChild(div);
     logTime('Time to innerHTML', startTime);
+    postHeightChangedMessage();
 }
 
 function alphanumericCompare(column, reverse)
@@ -2090,6 +2093,8 @@ function appendExpectations()
     performChunkedAction(expectations, function(chunk) {
         for (var i = 0, len = chunk.length; i < len; i++)
             loadExpectations(chunk[i]);
+        postHeightChangedMessage();
+
     }, hideLoadingUI, 10000);
 }
 
@@ -2098,6 +2103,7 @@ function hideLoadingUI()
     var loadingDiv = $('loading-ui');
     if (loadingDiv)
         loadingDiv.style.display = 'none';
+    postHeightChangedMessage();
 }
 
 function generatePageForIndividualTests(tests)
@@ -2320,21 +2326,24 @@ function htmlForSlowTimes(minTime)
         minTime + ' seconds == SLOW</li></ul>';
 }
 
-window.addEventListener('message', function(event) {
-    try {
-        var parsedData = JSON.parse(event.data);
-    } catch (error) {
-        console.log('Could not parse postMessage as JSON: ' + event.data);
+function postHeightChangedMessage()
+{
+    if (window == parent)
         return;
-    }
 
-    if (parsedData.command == 'queryContentHeight') {
-        var response = {height: document.documentElement.offsetHeight};
-        event.source.postMessage(JSON.stringify(response), '*');
-        return;
+    var root = document.documentElement;
+    var height = root.offsetHeight;
+    if (root.offsetWidth < root.scrollWidth) {
+        // We have a horizontal scrollbar. Include it in the height.
+        var dummyNode = document.createElement('div');
+        dummyNode.style.overflow = 'scroll';
+        document.body.appendChild(dummyNode);
+        var scrollbarWidth = dummyNode.offsetHeight - dummyNode.clientHeight;
+        document.body.removeChild(dummyNode);
+        height += scrollbarWidth;
     }
-    console.log('Unknown postMessage query: ' + event.data);
-});
+    parent.postMessage({command: 'heightChanged', height: height}, '*')
+}
 
 document.addEventListener('keydown', function(e) {
     if (e.keyIdentifier == 'U+003F' || e.keyIdentifier == 'U+00BF') {
