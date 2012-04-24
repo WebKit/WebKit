@@ -44,7 +44,7 @@ class SkippedTest:
 
 class TestRunner:
 
-    TEST_DIRS = [ "unittests", "WebKit2APITests" ]
+    TEST_DIRS = [ "unittests", "WebKit2APITests", "TestWebKitAPI/WTF" ]
 
     SKIPPED = [
         SkippedTest("unittests/testdownload",
@@ -238,7 +238,7 @@ class TestRunner:
         # Run only skipped tests.
         return skipped is not None
 
-    def _run_test(self, test):
+    def _run_test_glib(self, test):
         tester_command = ['gtester']
         if self._options.verbose:
             tester_command.append('--verbose')
@@ -247,6 +247,23 @@ class TestRunner:
         tester_command.append(test)
 
         return not self._create_process(tester_command, env=self._test_env).wait()
+
+    def _run_test_google(self, test):
+        tester_command = [test, "--gtest_throw_on_failure"]
+        skipped_tests_cases = self._test_cases_to_skip(test)
+        if skipped_tests_cases:
+            tester_command.append("--gtest_filter=-%s" % ":".join(skipped_tests_cases))
+
+        return not self._create_process(tester_command, env=self._test_env).wait()
+
+    def _run_test(self, test):
+        if "unittests" in test or "WebKit2APITests" in test:
+            return self._run_test_glib(test)
+
+        if "TestWebKitAPI" in test:
+            return self._run_test_google(test)
+
+        return False
 
     def run_tests(self):
         if not self._tests:

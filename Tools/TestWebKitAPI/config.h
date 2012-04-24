@@ -29,7 +29,7 @@
 #include <runtime/JSExportMacros.h>
 #endif
 
-#if __APPLE__
+#if defined(__APPLE__) && __APPLE__
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
@@ -43,7 +43,7 @@
 
 #include <stdint.h>
 
-#if !PLATFORM(CHROMIUM)
+#if !PLATFORM(CHROMIUM) || (PLATFORM(GTK) && defined(BUILDING_WEBKIT2__))
 #include <WebKit2/WebKit2.h>
 #endif
 

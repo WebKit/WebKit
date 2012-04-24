@@ -1,0 +1,94 @@
+TEST_PROGS += \
+	Programs/TestWebKitAPI/WTF/TestCheckedArithmeticOperations \
+	Programs/TestWebKitAPI/WTF/TestFunctional \
+	Programs/TestWebKitAPI/WTF/TestHashMap \
+	Programs/TestWebKitAPI/WTF/TestRedBlackTree \
+	Programs/TestWebKitAPI/WTF/TestStringBuilder \
+	Programs/TestWebKitAPI/WTF/TestStringOperators \
+	Programs/TestWebKitAPI/WTF/TestTemporaryChange \
+	Programs/TestWebKitAPI/WTF/TestVectorBasic \
+	Programs/TestWebKitAPI/WTF/TestVector \
+	Programs/TestWebKitAPI/WTF/TestVectorReverse
+
+noinst_PROGRAMS += $(TEST_PROGS)
+
+# Use -isystem gcc flag so that gcc considers gtest headers as system headers.
+# We need this to avoid a lot of compile warnings due to -Wundef.
+# See http://code.google.com/p/googletest/issues/detail?id=258
+testwebkitapi_wtf_tests_cppflags = \
+	-isystem $(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(srcdir)/Tools/TestWebKitAPI \
+	-I$(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
+
+testwebkitapi_wtf_tests_ldadd = \
+	Libraries/libgtest.la \
+	Libraries/libgtest_main.la \
+	libWTF.la
+
+testwebkitapi_wtf_tests_ldflags = \
+	-no-install \
+	-no-fast-install
+
+Programs_TestWebKitAPI_WTF_TestCheckedArithmeticOperations_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp
+Programs_TestWebKitAPI_WTF_TestCheckedArithmeticOperations_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestCheckedArithmeticOperations_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestCheckedArithmeticOperations_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestFunctional_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/Functional.cpp
+Programs_TestWebKitAPI_WTF_TestFunctional_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestFunctional_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestFunctional_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestHashMap_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/HashMap.cpp
+Programs_TestWebKitAPI_WTF_TestHashMap_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestHashMap_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestHashMap_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestRedBlackTree_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/RedBlackTree.cpp
+Programs_TestWebKitAPI_WTF_TestRedBlackTree_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestRedBlackTree_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestRedBlackTree_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestStringBuilder_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/StringBuilder.cpp
+Programs_TestWebKitAPI_WTF_TestStringBuilder_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestStringBuilder_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestStringBuilder_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestStringOperators_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/StringOperators.cpp
+Programs_TestWebKitAPI_WTF_TestStringOperators_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestStringOperators_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestStringOperators_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestTemporaryChange_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/TemporaryChange.cpp
+Programs_TestWebKitAPI_WTF_TestTemporaryChange_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestTemporaryChange_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestTemporaryChange_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestVectorBasic_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/VectorBasic.cpp
+Programs_TestWebKitAPI_WTF_TestVectorBasic_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestVectorBasic_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestVectorBasic_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestVector_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/Vector.cpp
+Programs_TestWebKitAPI_WTF_TestVector_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestVector_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestVector_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
+Programs_TestWebKitAPI_WTF_TestVectorReverse_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WTF/VectorReverse.cpp
+Programs_TestWebKitAPI_WTF_TestVectorReverse_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
+Programs_TestWebKitAPI_WTF_TestVectorReverse_LDADD = $(testwebkitapi_wtf_tests_ldadd)
+Programs_TestWebKitAPI_WTF_TestVectorReverse_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
+
