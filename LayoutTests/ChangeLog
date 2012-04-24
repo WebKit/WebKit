@@ -1,5 +1,11 @@
 2012-04-24  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/test_expectations.txt:
+
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline after r114957.
 
         * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt:
