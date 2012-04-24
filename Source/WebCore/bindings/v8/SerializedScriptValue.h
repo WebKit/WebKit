@@ -52,16 +52,16 @@ public:
     // V8. When serialization is successful, |didThrow| is false.
     static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>,
                                                     MessagePortArray*, ArrayBufferArray*,
-                                                    bool& didThrow);
-    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>);
+                                                    bool& didThrow, v8::Isolate* = 0);
+    static PassRefPtr<SerializedScriptValue> create(v8::Handle<v8::Value>, v8::Isolate* = 0);
     static PassRefPtr<SerializedScriptValue> createFromWire(const String& data);
-    static PassRefPtr<SerializedScriptValue> create(const String& data);
+    static PassRefPtr<SerializedScriptValue> create(const String& data, v8::Isolate* = 0);
     static PassRefPtr<SerializedScriptValue> create();
 
     static SerializedScriptValue* nullValue();
-    static PassRefPtr<SerializedScriptValue> undefinedValue();
-    static PassRefPtr<SerializedScriptValue> booleanValue(bool value);
-    static PassRefPtr<SerializedScriptValue> numberValue(double value);
+    static PassRefPtr<SerializedScriptValue> undefinedValue(v8::Isolate* = 0);
+    static PassRefPtr<SerializedScriptValue> booleanValue(bool value, v8::Isolate* = 0);
+    static PassRefPtr<SerializedScriptValue> numberValue(double value, v8::Isolate* = 0);
 
     PassRefPtr<SerializedScriptValue> release();
 
@@ -69,10 +69,10 @@ public:
 
     // Deserializes the value (in the current context). Returns a null value in
     // case of failure.
-    v8::Handle<v8::Value> deserialize(MessagePortArray* = 0);
+    v8::Handle<v8::Value> deserialize(MessagePortArray* = 0, v8::Isolate* = 0);
 
 #if ENABLE(INSPECTOR)
-    ScriptValue deserializeForInspector(ScriptState*);
+    ScriptValue deserializeForInspector(ScriptState*, v8::Isolate* = 0);
 #endif
 
     const Vector<String>& blobURLs() const { return m_blobURLs; }
@@ -85,7 +85,7 @@ private:
     typedef Vector<WTF::ArrayBufferContents, 1> ArrayBufferContentsArray;
 
     SerializedScriptValue();
-    SerializedScriptValue(v8::Handle<v8::Value>, MessagePortArray*, ArrayBufferArray*, bool& didThrow);
+    SerializedScriptValue(v8::Handle<v8::Value>, MessagePortArray*, ArrayBufferArray*, bool& didThrow, v8::Isolate*);
     explicit SerializedScriptValue(const String& wireData);
 
     static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(ArrayBufferArray&, bool& didThrow);

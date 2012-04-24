@@ -2062,15 +2062,16 @@ private:
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value,
                                                                 MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
-                                                                bool& didThrow)
+                                                                bool& didThrow,
+                                                                v8::Isolate* isolate)
 {
-    return adoptRef(new SerializedScriptValue(value, messagePorts, arrayBuffers, didThrow));
+    return adoptRef(new SerializedScriptValue(value, messagePorts, arrayBuffers, didThrow, isolate));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
     bool didThrow;
-    return adoptRef(new SerializedScriptValue(value, 0, 0, didThrow));
+    return adoptRef(new SerializedScriptValue(value, 0, 0, didThrow, isolate));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const String& data)
@@ -2078,7 +2079,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const St
     return adoptRef(new SerializedScriptValue(data));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& data)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& data, v8::Isolate* isolate)
 {
     Writer writer;
     writer.writeWebCoreString(data);
@@ -2105,7 +2106,7 @@ SerializedScriptValue* SerializedScriptValue::nullValue()
     return nullValue.get();
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue(v8::Isolate* isolate)
 {
     Writer writer;
     writer.writeUndefined();
@@ -2113,7 +2114,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue()
     return adoptRef(new SerializedScriptValue(wireData));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value, v8::Isolate* isolate)
 {
     Writer writer;
     if (value)
@@ -2124,7 +2125,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value
     return adoptRef(new SerializedScriptValue(wireData));
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value, v8::Isolate* isolate)
 {
     Writer writer;
     writer.writeNumber(value);
@@ -2189,7 +2190,8 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
 
 SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, 
                                              MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
-                                             bool& didThrow)
+                                             bool& didThrow,
+                                             v8::Isolate* isolate)
 {
     didThrow = false;
     Writer writer;
@@ -2240,7 +2242,7 @@ SerializedScriptValue::SerializedScriptValue(const String& wireData)
     m_data = wireData.isolatedCopy();
 }
 
-v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messagePorts)
+v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messagePorts, v8::Isolate* isolate)
 {
     if (!m_data.impl())
         return v8::Null();
@@ -2251,12 +2253,12 @@ v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messa
 }
 
 #if ENABLE(INSPECTOR)
-ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState)
+ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState, v8::Isolate* isolate)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(scriptState->context());
 
-    return ScriptValue(deserialize());
+    return ScriptValue(deserialize(0, isolate));
 }
 #endif
 
