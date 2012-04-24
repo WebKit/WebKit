@@ -68,14 +68,29 @@ static bool hasTouchListener(Element* element)
         || element->hasEventListeners(eventNames().touchendEvent);
 }
 
+static bool isRangeControlElement(Element* element)
+{
+    ASSERT(element);
+    if (!element->hasTagName(HTMLNames::inputTag))
+        return false;
+
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
+    return inputElement->isRangeControl();
+}
+
 static bool elementExpectsMouseEvents(Element* element)
 {
-    // Make sure we are not operating a shadow node here, since the webpages
-    // aren't able to attach event listeners to shadow content.
+    // If the shadow tree contains a Range Control, like the MediaControlTimeline,
+    // MediaContolVolumeElement, etc, they expect natual elements. Otherwise, we
+    // won't operate on the shadow node, because the webpages aren't able to attach
+    // listeners to shadow content.
     ASSERT(element);
-    while (element->isInShadowTree())
+    while (element->isInShadowTree()) {
         element = toElement(element->shadowAncestorNode());
-
+      
+        if (isRangeControlElement(element))
+            return true;
+    }
     return hasMouseMoveListener(element) && !hasTouchListener(element);
 }
 
@@ -84,13 +99,10 @@ static bool shouldConvertTouchToMouse(Element* element)
     if (!element)
         return false;
 
-    // Range element are a special case that require natural mouse events in order to allow
+    // Range element is a special case that requires natural mouse events in order to allow
     // dragging of the slider handle.
-    if (element->hasTagName(HTMLNames::inputTag)) {
-        HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
-        if (inputElement->isRangeControl())
-            return true;
-    }
+    if (isRangeControlElement(element))
+        return true;
 
     if ((element->hasTagName(HTMLNames::objectTag) || element->hasTagName(HTMLNames::embedTag)) && static_cast<HTMLPlugInElement*>(element))
         return true;

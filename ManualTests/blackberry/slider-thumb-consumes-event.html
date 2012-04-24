@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title> Slider thumb should eat event </title>
+</head>
+
+<body>
+<p>
+This test case verifies that an event should be comsumed <br>
+by the slider thumb element when pressed on it, to prevent<br>
+the event been used for page zooming or scrolling. <br><br>
+
+Steps to verify:<br>
+1. Zoom in the page.<br>
+2. Press and drag the slider thumb.<br><br>
+
+If the slider changes but the page stays, it SUCCEEDS.<br>
+othersie, if the page scrolls, it FAILS.<br><br>
+
+range:    <input type="range" min="0" max="100" step="1" /><br>
+</body>
+</html>

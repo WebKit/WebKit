@@ -1,3 +1,20 @@
+2012-04-24  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Input Range element expects mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=84571
+
+        Reviewed by Antonio Gomes.
+
+        Input element with Range type expects mouse events to
+        drag the handle. Note that Input Range could appear
+        in both the web page directly, or in some shadow tree,
+        like the MediaControlTimeline and MediaControlVolume.
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::isRangeControlElement):
+        (WebKit):
+        (BlackBerry::WebKit::elementExpectsMouseEvents):
+        (BlackBerry::WebKit::shouldConvertTouchToMouse):
+
 2012-04-23  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Build failure when DEBUG_FAT_FINGER is enabled
