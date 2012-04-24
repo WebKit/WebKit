@@ -23,7 +23,6 @@
 #include "BackForwardController.h"
 #include "BackForwardListImpl.h"
 #include "CString.h"
-#include "Credential.h"
 #include "DatabaseTracker.h"
 #include "DocumentLoader.h"
 #include "DumpRenderTree/GCController.h"
@@ -120,11 +119,6 @@ static WTF::String drtFrameDescription(WebCore::Frame* frame)
     if (!name.isNull())
         return WTF::String::format("frame \"%s\"", name.utf8().data());
     return "frame (anonymous)";
-}
-
-static WTF::String drtCredentialDescription(WebCore::Credential&)
-{
-    return "<unknown>";
 }
 
 static bool shouldLogFrameLoadDelegates(const WTF::String& url)
@@ -811,20 +805,6 @@ void DumpRenderTree::didReceiveResponseForFrame(WebCore::Frame* frame, const Web
 {
     if (!testDone && gLayoutTestController->dumpResourceResponseMIMETypes())
         printf("%s has MIME type %s\n", response.url().lastPathComponent().utf8().data(), response.mimeType().utf8().data());
-}
-
-bool DumpRenderTree::didReceiveAuthenticationChallenge(WebCore::Credential& credential)
-{
-    if (!gLayoutTestController->handlesAuthenticationChallenges()) {
-        credential = WebCore::Credential();
-        printf("%s - didReceiveAuthenticationChallenge - Simulating cancelled authentication\n", drtCredentialDescription(credential).utf8().data());
-        return false;
-    }
-    const char* user = gLayoutTestController->authenticationUsername().c_str();
-    const char* password = gLayoutTestController->authenticationPassword().c_str();
-    credential = WebCore::Credential(user, password, WebCore::CredentialPersistenceForSession);
-    printf("%s - didReceiveAuthenticationChallenge - Responding with %s:%s\n", drtCredentialDescription(credential).utf8().data(), user, password);
-    return true;
 }
 
 }

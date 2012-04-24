@@ -1,3 +1,17 @@
+2012-04-24  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Revert broken changes to authentication dialog
+        https://bugs.webkit.org/show_bug.cgi?id=80135
+
+        Reviewed by Antonio Gomes.
+
+        The previous patches from this bug caused an infinite loop when using digest auth;
+        apparently they were only tested with basic.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (WebCore):
+
 2012-04-24  Zan Dobersek  <zandobersek@gmail.com>
 
         [TestResultsServer] Add a unit test for changes in r114868

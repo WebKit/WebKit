@@ -179,7 +179,7 @@ public:
     virtual int showAlertDialog(WebPageClient::AlertType atype);
     virtual bool isActive() const;
     virtual bool isVisible() const { return m_visible; }
-    virtual bool authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, WebCore::Credential&);
+    virtual WebCore::Credential authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&);
     virtual SaveCredentialType notifyShouldSaveCredential(bool);
 
     // Called from within WebKit via ChromeClientBlackBerry.

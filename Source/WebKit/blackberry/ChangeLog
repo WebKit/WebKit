@@ -1,3 +1,20 @@
+2012-04-24  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Revert broken changes to authentication dialog
+        https://bugs.webkit.org/show_bug.cgi?id=80135
+
+        Reviewed by Antonio Gomes.
+
+        The previous patches from this bug caused an infinite loop when using digest auth;
+        apparently they were only tested with basic.
+
+        * Api/DumpRenderTreeClient.h:
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-04-24  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Add additional details including the bounds of the box for caretPositionChanged.

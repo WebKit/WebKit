@@ -211,7 +211,7 @@ public:
     virtual void animateBlockZoom(const Platform::FloatPoint& finalPoint, double finalScale) = 0;
 
     virtual void setPreventsScreenIdleDimming(bool noDimming) = 0;
-    virtual bool authenticationChallenge(const unsigned short* realm, unsigned int realmLength, WebString& username, WebString& password) = 0;
+    virtual void authenticationChallenge(const unsigned short* realm, unsigned int realmLength, WebString& username, WebString& password) = 0;
     virtual SaveCredentialType notifyShouldSaveCredential(bool isNew) = 0;
 
     virtual bool shouldPluginEnterFullScreen() = 0;

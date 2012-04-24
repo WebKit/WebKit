@@ -741,6 +741,9 @@ bool NetworkJob::handleAuthHeader(const ProtectionSpaceServerType space, const S
     if (!m_handle)
         return false;
 
+    if (!m_handle->getInternal()->m_currentWebChallenge.isNull())
+        return false;
+
     if (header.isEmpty())
         return false;
 
@@ -849,6 +852,9 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String username;
         String password;
 
+        if (!m_frame || !m_frame->loader() || !m_frame->loader()->client())
+            return false;
+
         // Before asking the user for credentials, we check if the URL contains that.
         if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
             username = m_handle->getInternal()->m_user.utf8().data();
@@ -859,14 +865,13 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
             m_handle->getInternal()->m_user = "";
             m_handle->getInternal()->m_pass = "";
         } else {
-            Credential inputCredential;
-            bool isConfirmed = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace, inputCredential);
+            Credential inputCredential = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace);
             username = inputCredential.user();
             password = inputCredential.password();
-
-            if (!isConfirmed)
-                return false;
         }
+
+        if (username.isEmpty() && password.isEmpty())
+            return false;
 
         credential = Credential(username, password, CredentialPersistenceForSession);
 
