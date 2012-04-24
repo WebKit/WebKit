@@ -1154,7 +1154,6 @@ compositing/tiling/constrained-layer-size.html
 css2.1/20110323/abspos-containing-block-initial-001.htm
 css2.1/20110323/abspos-containing-block-initial-001-ref.htm
 css3/filters/filter-property.html
-fast/backgrounds/size/contain-and-cover.html
 fast/box-shadow/shadow-tiling-artifact.html
 fast/canvas/svg-taint.html
 fast/css/clip-text-in-scaled-div.html
@@ -2237,8 +2236,6 @@ css3/images/cross-fade-simple.html
 css3/images/cross-fade-sizing.html
 css3/images/cross-fade-tiled.html
 editing/input/caret-at-the-edge-of-input.html
-fast/backgrounds/mask-box-image.html
-fast/backgrounds/size/contain-and-cover-zoomed.html
 fast/borders/border-image-slice-constrained.html
 fast/borders/border-mixed-alpha.html
 fast/borders/borderRadiusArcs01.html

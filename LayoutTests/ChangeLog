@@ -1,3 +1,57 @@
+2012-04-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Rebaseline background tests
+        https://bugs.webkit.org/show_bug.cgi?id=84686
+
+        Unreviewed rebaseline.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/backgrounds/001-expected.txt:
+        * platform/efl/fast/backgrounds/animated-gif-as-background-expected.png:
+        * platform/efl/fast/backgrounds/animated-svg-as-mask-expected.txt:
+        * platform/efl/fast/backgrounds/background-leakage-expected.txt:
+        * platform/efl/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/efl/fast/backgrounds/background-origin-root-element-expected.txt:
+        * platform/efl/fast/backgrounds/background-position-1-expected.png:
+        * platform/efl/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/efl/fast/backgrounds/background-position-rounding-expected.png:
+        * platform/efl/fast/backgrounds/body-generated-image-propagated-to-root-expected.txt:
+        * platform/efl/fast/backgrounds/mask-box-image-expected.png: Added.
+        * platform/efl/fast/backgrounds/mask-box-image-expected.txt: Added.
+        * platform/efl/fast/backgrounds/mask-composite-expected.png:
+        * platform/efl/fast/backgrounds/opacity-on-document-element-expected.txt:
+        * platform/efl/fast/backgrounds/positioned-root-expected.png: Removed.
+        * platform/efl/fast/backgrounds/positioned-root-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/quirks-mode-line-box-backgrounds-expected.txt:
+        * platform/efl/fast/backgrounds/repeat/mask-negative-offset-repeat-expected.txt:
+        * platform/efl/fast/backgrounds/repeat/negative-offset-repeat-expected.txt:
+        * platform/efl/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/efl/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.txt:
+        * platform/efl/fast/backgrounds/repeat/noRepeatCorrectClip-expected.png:
+        * platform/efl/fast/backgrounds/size/backgroundSize15-expected.txt:
+        * platform/efl/fast/backgrounds/size/backgroundSize16-expected.txt:
+        * platform/efl/fast/backgrounds/size/backgroundSize17-expected.png:
+        * platform/efl/fast/backgrounds/size/backgroundSize17-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/size/backgroundSize18-expected.png:
+        * platform/efl/fast/backgrounds/size/backgroundSize18-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/size/backgroundSize19-expected.png:
+        * platform/efl/fast/backgrounds/size/backgroundSize19-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/size/backgroundSize20-expected.png:
+        * platform/efl/fast/backgrounds/size/backgroundSize20-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/size/backgroundSize21-expected.png:
+        * platform/efl/fast/backgrounds/size/backgroundSize21-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/efl/fast/backgrounds/size/backgroundSize22-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.png: Added.
+        * platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Added.
+        * platform/efl/fast/backgrounds/size/zero-expected.txt:
+        * platform/efl/fast/backgrounds/solid-color-context-restore-expected.png:
+        * platform/efl/fast/backgrounds/solid-color-context-restore-expected.txt:
+        * platform/efl/fast/backgrounds/svg-as-mask-expected.txt: Removed.
+        * platform/efl/fast/backgrounds/table-root-expected.png: Removed.
+        * platform/efl/fast/backgrounds/table-root-expected.txt: Removed.
+
 2012-04-24  Kenneth Russell  <kbr@google.com>
 
         fast/dom/Window/window-postmessage-clone.html failing on Mac after r114992
