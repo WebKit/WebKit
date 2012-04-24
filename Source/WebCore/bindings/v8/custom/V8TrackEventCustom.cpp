@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8TrackEvent::trackAccessorGetter(v8::Local<v8::String> na
         break;
         
     case TrackBase::TextTrack:
-        return toV8(static_cast<TextTrack*>(track));
+        return toV8(static_cast<TextTrack*>(track), info.GetIsolate());
         break;
 
     case TrackBase::AudioTrack:

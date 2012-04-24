@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicString name)
+static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicString name, v8::Isolate* isolate)
 {
     Vector<RefPtr<Node> > namedItems;
     collection->namedItems(name, namedItems);
@@ -50,9 +50,9 @@ static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicStr
         return v8::Handle<v8::Value>();
 
     if (namedItems.size() == 1)
-        return toV8(namedItems.at(0).release());
+        return toV8(namedItems.at(0).release(), isolate);
 
-    return toV8(V8NamedNodesCollection::create(namedItems));
+    return toV8(V8NamedNodesCollection::create(namedItems), isolate);
 }
 
 v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -65,14 +65,14 @@ v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String
         return notHandledByInterceptor();
 
     HTMLCollection* imp = V8HTMLCollection::toNative(info.Holder());
-    return getNamedItems(imp, v8StringToAtomicWebCoreString(name));
+    return getNamedItems(imp, v8StringToAtomicWebCoreString(name), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLCollection::namedItemCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLCollection.namedItem()");
     HTMLCollection* imp = V8HTMLCollection::toNative(args.Holder());
-    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]));
+    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.GetIsolate());
 
     if (result.IsEmpty())
         return v8::Undefined();

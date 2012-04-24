@@ -115,7 +115,7 @@ static int* jsArrayToIntArray(v8::Handle<v8::Array> array, uint32_t len)
     return data;
 }
 
-static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
+static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info, v8::Isolate* isolate)
 {
     switch (info.getType()) {
     case WebGLGetInfo::kTypeBool:
@@ -138,34 +138,34 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info)
     case WebGLGetInfo::kTypeUnsignedInt:
         return v8::Integer::NewFromUnsigned(info.getUnsignedInt());
     case WebGLGetInfo::kTypeWebGLBuffer:
-        return toV8(info.getWebGLBuffer());
+        return toV8(info.getWebGLBuffer(), isolate);
     case WebGLGetInfo::kTypeWebGLFloatArray:
-        return toV8(info.getWebGLFloatArray());
+        return toV8(info.getWebGLFloatArray(), isolate);
     case WebGLGetInfo::kTypeWebGLFramebuffer:
-        return toV8(info.getWebGLFramebuffer());
+        return toV8(info.getWebGLFramebuffer(), isolate);
     case WebGLGetInfo::kTypeWebGLIntArray:
-        return toV8(info.getWebGLIntArray());
+        return toV8(info.getWebGLIntArray(), isolate);
     // FIXME: implement WebGLObjectArray
     // case WebGLGetInfo::kTypeWebGLObjectArray:
     case WebGLGetInfo::kTypeWebGLProgram:
-        return toV8(info.getWebGLProgram());
+        return toV8(info.getWebGLProgram(), isolate);
     case WebGLGetInfo::kTypeWebGLRenderbuffer:
-        return toV8(info.getWebGLRenderbuffer());
+        return toV8(info.getWebGLRenderbuffer(), isolate);
     case WebGLGetInfo::kTypeWebGLTexture:
-        return toV8(info.getWebGLTexture());
+        return toV8(info.getWebGLTexture(), isolate);
     case WebGLGetInfo::kTypeWebGLUnsignedByteArray:
-        return toV8(info.getWebGLUnsignedByteArray());
+        return toV8(info.getWebGLUnsignedByteArray(), isolate);
     case WebGLGetInfo::kTypeWebGLUnsignedIntArray:
-        return toV8(info.getWebGLUnsignedIntArray());
+        return toV8(info.getWebGLUnsignedIntArray(), isolate);
     case WebGLGetInfo::kTypeWebGLVertexArrayObjectOES:
-        return toV8(info.getWebGLVertexArrayObjectOES());
+        return toV8(info.getWebGLVertexArrayObjectOES(), isolate);
     default:
         notImplemented();
         return v8::Undefined();
     }
 }
 
-static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8::Object> contextObject)
+static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8::Object> contextObject, v8::Isolate* isolate)
 {
     if (!extension)
         return v8::Null();
@@ -173,35 +173,35 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     const char* referenceName = 0;
     switch (extension->getName()) {
     case WebGLExtension::WebKitWebGLLoseContextName:
-        extensionObject = toV8(static_cast<WebGLLoseContext*>(extension));
+        extensionObject = toV8(static_cast<WebGLLoseContext*>(extension), isolate);
         referenceName = "webKitWebGLLoseContextName";
         break;
     case WebGLExtension::EXTTextureFilterAnisotropicName:
-        extensionObject = toV8(static_cast<EXTTextureFilterAnisotropic*>(extension));
+        extensionObject = toV8(static_cast<EXTTextureFilterAnisotropic*>(extension), isolate);
         referenceName = "extTextureFilterAnisotropicName";
         break;
     case WebGLExtension::OESStandardDerivativesName:
-        extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension));
+        extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension), isolate);
         referenceName = "oesStandardDerivativesName";
         break;
     case WebGLExtension::OESTextureFloatName:
-        extensionObject = toV8(static_cast<OESTextureFloat*>(extension));
+        extensionObject = toV8(static_cast<OESTextureFloat*>(extension), isolate);
         referenceName = "oesTextureFloatName";
         break;
     case WebGLExtension::OESVertexArrayObjectName:
-        extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension));
+        extensionObject = toV8(static_cast<OESVertexArrayObject*>(extension), isolate);
         referenceName = "oesVertexArrayObjectName";
         break;
     case WebGLExtension::WebGLDebugRendererInfoName:
-        extensionObject = toV8(static_cast<WebGLDebugRendererInfo*>(extension));
+        extensionObject = toV8(static_cast<WebGLDebugRendererInfo*>(extension), isolate);
         referenceName = "webGLDebugRendererInfoName";
         break;
     case WebGLExtension::WebGLDebugShadersName:
-        extensionObject = toV8(static_cast<WebGLDebugShaders*>(extension));
+        extensionObject = toV8(static_cast<WebGLDebugShaders*>(extension), isolate);
         referenceName = "webGLDebugShadersName";
         break;
     case WebGLExtension::WebKitWebGLCompressedTextureS3TCName:
-        extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension));
+        extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension), isolate);
         referenceName = "webKitWebGLCompressedTextureS3TCName";
         break;
     }
@@ -248,7 +248,7 @@ static v8::Handle<v8::Value> getObjectParameter(const v8::Arguments& args, Objec
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8Object(info);
+    return toV8Object(info, args.GetIsolate());
 }
 
 static WebGLUniformLocation* toWebGLUniformLocation(v8::Handle<v8::Value> value, bool& ok)
@@ -292,7 +292,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
         return v8::Null();
     v8::Local<v8::Array> array = v8::Array::New(shaders.size());
     for (size_t ii = 0; ii < shaders.size(); ++ii)
-        array->Set(v8::Integer::New(ii), toV8(shaders[ii].get()));
+        array->Set(v8::Integer::New(ii), toV8(shaders[ii].get(), args.GetIsolate()));
     return array;
 }
 
@@ -312,7 +312,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Ar
     }
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, name, args[0]);
     WebGLExtension* extension = imp->getExtension(name);
-    return toV8Object(extension, args.Holder());
+    return toV8Object(extension, args.Holder(), args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameterCallback(const v8::Arguments& args)
@@ -334,7 +334,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getFramebufferAttachmentParameter
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8Object(info);
+    return toV8Object(info, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Arguments& args)
@@ -354,7 +354,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getParameterCallback(const v8::Ar
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8Object(info);
+    return toV8Object(info, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const v8::Arguments& args)
@@ -379,7 +379,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getProgramParameterCallback(const
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8Object(info);
+    return toV8Object(info, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getRenderbufferParameterCallback(const v8::Arguments& args)
@@ -410,7 +410,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getShaderParameterCallback(const 
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8Object(info);
+    return toV8Object(info, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getSupportedExtensionsCallback(const v8::Arguments& args)
@@ -462,7 +462,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getUniformCallback(const v8::Argu
         V8Proxy::setDOMException(ec);
         return v8::Undefined();
     }
-    return toV8Object(info);
+    return toV8Object(info, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8WebGLRenderingContext::getVertexAttribCallback(const v8::Arguments& args)

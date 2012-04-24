@@ -52,7 +52,7 @@ v8::Handle<v8::Value> V8StyleSheetList::namedPropertyGetter(v8::Local<v8::String
     if (!item)
         return notHandledByInterceptor();
 
-    return toV8(item->sheet());
+    return toV8(item->sheet(), info.GetIsolate());
 }
 
 } // namespace WebCore
