@@ -3712,3 +3712,12 @@ BUGCR124313 XP DEBUG : fast/css/font-face-woff.html = CRASH
 BUGWK84550 SNOWLEOPARD : fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = TEXT PASS
 
 BUGWK84596 : media/encrypted-media/encrypted-media-events.html = PASS CRASH
+
+BUGCR124777 : media/video-colorspace-yuv422.html = IMAGE+TEXT TIMEOUT
+
+BUGCR124779 : media/media-controller-playback.html = CRASH
+BUGCR124779 : media/track/track-cues-missed.html = CRASH
+BUGCR124779 : media/track/track-cues-pause-on-exit.html = CRASH
+BUGCR124779 : media/track/track-cues-sorted-before-dispatch.html = CRASH
+
+BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS

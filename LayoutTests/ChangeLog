@@ -1,3 +1,17 @@
+2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update.
+
+        Mark certain media tests after FFmpeg roll in Chromium:
+            media/media-controller-playback.html
+            media/track/track-cues-missed.html
+            media/track/track-cues-pause-on-exit.html
+            media/track/track-cues-sorted-before-dispatch.html
+            media/video-colorspace-yuv422.html
+            media/video-currentTime-delay.html
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK test_expectations and another media rebaseline
