@@ -278,7 +278,7 @@ WebInspector.DebuggerModel.prototype = {
     /**
      * @return {?WebInspector.DebuggerPausedDetails}
      */
-    get debuggerPausedDetails()
+    debuggerPausedDetails: function()
     {
         return this._debuggerPausedDetails;
     },
@@ -365,6 +365,14 @@ WebInspector.DebuggerModel.prototype = {
             break;
         }
         return closestScript ? new WebInspector.DebuggerModel.Location(closestScript, lineNumber, columnNumber) : null;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isPaused: function()
+    {
+        return !!this.debuggerPausedDetails();
     }
 }
 

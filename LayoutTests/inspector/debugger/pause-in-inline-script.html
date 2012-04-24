@@ -32,7 +32,7 @@ var test = function()
     function step1()
     {
         InspectorTest.addResult("Did load front-end");
-        InspectorTest.addResult("Paused: " + !!WebInspector.debuggerModel.debuggerPausedDetails);
+        InspectorTest.addResult("Paused: " + !!WebInspector.debuggerModel.debuggerPausedDetails());
         InspectorTest.reloadPage(didReload.bind(this));
         WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, didPauseAfterReload, this); 
 

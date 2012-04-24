@@ -71,6 +71,11 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
+    get breakpointManager()
+    {
+        return this._breakpointManager;
+    },
+
     /**
      * @param {WebInspector.DebuggerPresentationModel.LinkifierFormatter=} formatter
      */
@@ -211,41 +216,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {string} oldSource
-     * @param {string} newSource
-     */
-    _updateBreakpointsAfterLiveEdit: function(uiSourceCode, oldSource, newSource)
-    {
-        var breakpoints = uiSourceCode.breakpoints();
-
-        // Clear and re-create breakpoints according to text diff.
-        var diff = Array.diff(oldSource.split("\n"), newSource.split("\n"));
-        for (var lineNumber in breakpoints) {
-            var breakpoint = breakpoints[lineNumber];
-
-            this.removeBreakpoint(uiSourceCode, parseInt(lineNumber, 10));
-
-            var newLineNumber = diff.left[lineNumber].row;
-            if (newLineNumber === undefined) {
-                for (var i = lineNumber - 1; i >= 0; --i) {
-                    if (diff.left[i].row === undefined)
-                        continue;
-                    var shiftedLineNumber = diff.left[i].row + lineNumber - i;
-                    if (shiftedLineNumber < diff.right.length) {
-                        var originalLineNumber = diff.right[shiftedLineNumber].row;
-                        if (originalLineNumber === lineNumber || originalLineNumber === undefined)
-                            newLineNumber = shiftedLineNumber;
-                    }
-                    break;
-                }
-            }
-            if (newLineNumber !== undefined)
-                this.setBreakpoint(uiSourceCode, newLineNumber, breakpoint.condition, breakpoint.enabled);
-        }
-    },
-
-    /**
      * @param {boolean} formatSource
      */
     setFormatSource: function(formatSource)
@@ -342,68 +312,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     },
 
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {string} condition
-     * @param {boolean} enabled
-     */
-    setBreakpoint: function(uiSourceCode, lineNumber, condition, enabled)
-    {
-        this._breakpointManager.setBreakpoint(uiSourceCode, lineNumber, condition, enabled);
-        this.setBreakpointsActive(true);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {boolean} enabled
-     */
-    setBreakpointEnabled: function(uiSourceCode, lineNumber, enabled)
-    {
-        var breakpoint = this.findBreakpoint(uiSourceCode, lineNumber);
-        if (!breakpoint)
-            return;
-        this._breakpointManager.removeBreakpoint(uiSourceCode, lineNumber);
-        this._breakpointManager.setBreakpoint(uiSourceCode, lineNumber, breakpoint.condition, enabled);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {string} condition
-     * @param {boolean} enabled
-     */
-    updateBreakpoint: function(uiSourceCode, lineNumber, condition, enabled)
-    {
-        this._breakpointManager.removeBreakpoint(uiSourceCode, lineNumber);
-        this._breakpointManager.setBreakpoint(uiSourceCode, lineNumber, condition, enabled);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     */
-    removeBreakpoint: function(uiSourceCode, lineNumber)
-    {
-        this._breakpointManager.removeBreakpoint(uiSourceCode, lineNumber);
-    },
-
-    /**
-     */
     removeAllBreakpoints: function()
     {
         this._breakpointManager.removeAllBreakpoints();
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @return {WebInspector.UIBreakpoint|undefined}
-     */
-    findBreakpoint: function(uiSourceCode, lineNumber)
-    {
-        return uiSourceCode.breakpoints()[String(lineNumber)];
     },
 
     _debuggerPaused: function()
@@ -415,7 +326,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             if (WebInspector.debuggerModel.scriptForSourceID(callFrame.location.scriptId))
                 this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this));
         }
-        var details = WebInspector.debuggerModel.debuggerPausedDetails;
+        var details = WebInspector.debuggerModel.debuggerPausedDetails();
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, { callFrames: this._presentationCallFrames, details: details });
         this.selectedCallFrame = this._presentationCallFrames[0];
     },
@@ -425,11 +336,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._presentationCallFrames = [];
         this.selectedCallFrame = null;
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed);
-    },
-
-    get paused()
-    {
-        return !!WebInspector.debuggerModel.debuggerPausedDetails;
     },
 
     set selectedCallFrame(callFrame)
@@ -755,7 +661,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
             if (userCallback)
                 userCallback(error);
             if (!error)
-                this._presentationModel._updateBreakpointsAfterLiveEdit(uiSourceCode, oldContent || "", content);
+                uiSourceCode.updateBreakpointsAfterLiveEdit(oldContent || "", content);
         }
         this._presentationModel.setScriptSource(uiSourceCode, content, callback.bind(this));
     }

@@ -25,13 +25,14 @@
 
 /**
  * @constructor
+ * @param {WebInspector.BreakpointManager} breakpointManager
  * @extends {WebInspector.SidebarPane}
  */
-WebInspector.JavaScriptBreakpointsSidebarPane = function(model, showSourceLineDelegate)
+WebInspector.JavaScriptBreakpointsSidebarPane = function(breakpointManager, showSourceLineDelegate)
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Breakpoints"));
 
-    this._model = model;
+    this._breakpointManager = breakpointManager;
     this._showSourceLineDelegate = showSourceLineDelegate;
 
     this.listElement = document.createElement("ol");
@@ -148,17 +149,17 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         // Breakpoint element has it's own click handler.
         event.consume();
 
-        this._model.setBreakpointEnabled(breakpoint.uiSourceCode, breakpoint.lineNumber, event.target.checked);
+        breakpoint.uiSourceCode.setBreakpointEnabled(breakpoint.lineNumber, event.target.checked);
     },
 
     _breakpointContextMenu: function(breakpoint, event)
     {
         var contextMenu = new WebInspector.ContextMenu();
 
-        var removeHandler = this._model.removeBreakpoint.bind(this._model, breakpoint.uiSourceCode, breakpoint.lineNumber);
+        var removeHandler = breakpoint.uiSourceCode.removeBreakpoint.bind(breakpoint.uiSourceCode, breakpoint.lineNumber);
         contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), removeHandler);
         var removeAllTitle = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove all JavaScript breakpoints" : "Remove All JavaScript Breakpoints");
-        contextMenu.appendItem(removeAllTitle, this._model.removeAllBreakpoints.bind(this._model));
+        contextMenu.appendItem(removeAllTitle, this._breakpointManager.removeAllBreakpoints.bind(this._breakpointManager));
 
         contextMenu.show(event);
     },
@@ -167,7 +168,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
     {
         var contextMenu = new WebInspector.ContextMenu();
         var removeAllTitle = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove all JavaScript breakpoints" : "Remove All JavaScript Breakpoints");
-        contextMenu.appendItem(removeAllTitle, this._model.removeAllBreakpoints.bind(this._model));
+        contextMenu.appendItem(removeAllTitle, this._breakpointManager.removeAllBreakpoints.bind(this._breakpointManager));
         contextMenu.show(event);
     },
 

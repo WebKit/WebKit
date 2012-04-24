@@ -38,6 +38,12 @@
 WebInspector.JavaScriptSource = function(id, url, contentProvider)
 {
     WebInspector.UISourceCode.call(this, id, url, contentProvider);
+
+    this._model = WebInspector.debuggerPresentationModel;
+
+    if (this._model) // For tests.
+        this._breakpointManager = this._model.breakpointManager;
+
     /**
      * @type {Object.<string,WebInspector.UIBreakpoint>}
      */
@@ -99,6 +105,112 @@ WebInspector.JavaScriptSource.prototype = {
     {
         this._consoleMessages = [];
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessagesCleared);
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @return {WebInspector.UIBreakpoint|undefined}
+     */
+    findBreakpoint: function(lineNumber)
+    {
+        return this._breakpoints[String(lineNumber)];
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {string} condition
+     * @param {boolean} enabled
+     */
+    setBreakpoint: function(lineNumber, condition, enabled)
+    {
+        this._breakpointManager.setBreakpoint(this, lineNumber, condition, enabled);
+        this._model.setBreakpointsActive(true);
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {boolean} enabled
+     */
+    setBreakpointEnabled: function(lineNumber, enabled)
+    {
+        var breakpoint = this.findBreakpoint(lineNumber);
+        if (!breakpoint)
+            return;
+        this._breakpointManager.removeBreakpoint(this, lineNumber);
+        this._breakpointManager.setBreakpoint(this, lineNumber, breakpoint.condition, enabled);
+    },
+
+    /**
+     * @param {number} lineNumber
+     */
+    removeBreakpoint: function(lineNumber)
+    {
+        this._breakpointManager.removeBreakpoint(this, lineNumber);
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {string} condition
+     * @param {boolean} enabled
+     */
+    updateBreakpoint: function(lineNumber, condition, enabled)
+    {
+        this._breakpointManager.removeBreakpoint(this, lineNumber);
+        this._breakpointManager.setBreakpoint(this, lineNumber, condition, enabled);
+    },
+
+    continueToLine: function(lineNumber)
+    {
+        this._model.continueToLine(this, lineNumber);
+    },
+
+    /**
+     * @return {boolean}
+     */
+    canSetContent: function()
+    {
+        return this._model.canEditScriptSource(this);
+    },
+
+    /**
+     * @param {string} newSource
+     * @param {function(?Protocol.Error)} callback
+     */
+    setContent: function(newSource, callback)
+    {
+        this._model.setScriptSource(this, newSource, callback);
+    },
+
+    /**
+     * @param {string} oldSource
+     * @param {string} newSource
+     */
+    updateBreakpointsAfterLiveEdit: function(oldSource, newSource)
+    {
+        // Clear and re-create breakpoints according to text diff.
+        var diff = Array.diff(oldSource.split("\n"), newSource.split("\n"));
+        for (var lineNumber in this._breakpoints) {
+            var breakpoint = this._breakpoints[lineNumber];
+
+            this.removeBreakpoint(parseInt(lineNumber, 10));
+
+            var newLineNumber = diff.left[lineNumber].row;
+            if (newLineNumber === undefined) {
+                for (var i = lineNumber - 1; i >= 0; --i) {
+                    if (diff.left[i].row === undefined)
+                        continue;
+                    var shiftedLineNumber = diff.left[i].row + lineNumber - i;
+                    if (shiftedLineNumber < diff.right.length) {
+                        var originalLineNumber = diff.right[shiftedLineNumber].row;
+                        if (originalLineNumber === lineNumber || originalLineNumber === undefined)
+                            newLineNumber = shiftedLineNumber;
+                    }
+                    break;
+                }
+            }
+            if (newLineNumber !== undefined)
+                this.setBreakpoint(newLineNumber, breakpoint.condition, breakpoint.enabled);
+        }
     }
 }
 
