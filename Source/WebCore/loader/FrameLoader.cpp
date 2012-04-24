@@ -571,6 +571,7 @@ void FrameLoader::receivedFirstData()
 
     dispatchDidCommitLoad();
     dispatchDidClearWindowObjectsInAllWorlds();
+    dispatchGlobalObjectAvailableInAllWorlds();
 
     if (m_documentLoader) {
         StringWithDirection ptitle = m_documentLoader->title();
@@ -3108,6 +3109,14 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 #endif
 
     InspectorInstrumentation::didClearWindowObjectInWorld(m_frame, world);
+}
+
+void FrameLoader::dispatchGlobalObjectAvailableInAllWorlds()
+{
+    Vector<DOMWrapperWorld*> worlds;
+    ScriptController::getAllWorlds(worlds);
+    for (size_t i = 0; i < worlds.size(); ++i)
+        m_client->dispatchGlobalObjectAvailable(worlds[i]);
 }
 
 SandboxFlags FrameLoader::effectiveSandboxFlags() const

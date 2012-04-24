@@ -33,6 +33,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+class DOMWindowExtension;
 class DOMWrapperWorld;
 class ResourceError;
 class ResourceRequest;
@@ -72,6 +73,11 @@ public:
     void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
     void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const String& url, double delay, double date);
     void didHandleOnloadEventsForFrame(WebPage*, WebFrame*);
+
+    void didCreateGlobalObjectForFrame(WebPage*, JSObjectRef globalObject, WebFrame*, WebCore::DOMWrapperWorld*);
+    void willDisconnectDOMWindowExtensionFromGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
+    void didReconnectDOMWindowExtensionToGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
+    void willDestroyGlobalObjectForDOMWindowExtension(WebPage*, WebCore::DOMWindowExtension*);
 };
 
 } // namespace WebKit

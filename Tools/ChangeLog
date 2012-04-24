@@ -1,3 +1,44 @@
+2012-04-24  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10120155> and https://bugs.webkit.org/show_bug.cgi?id=82664
+         Need DOMWindow mechanism to supplement UserScripts for page cache notifications
+
+        Reviewed by Sam Weinig.
+
+        Add a new bundle test that stresses the basics of the WKBundleDOMWindowExtension API.
+
+        It makes sure new extensions can be added at the right times, and that all of the expected
+        callbacks are made.
+
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Record all messages sent from the bundle.
+        (TestWebKitAPI::TEST): Run a page through some basic exercises, then compared messages sent from the
+           bundle to a set of known expected messages.
+
+        Listen to all the new client callbacks, create some extensions, and monitor their lifetimes:
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp: Added.
+        (TestWebKitAPI::DOMWindowExtensionBasic::DOMWindowExtensionBasic):
+        (TestWebKitAPI::DOMWindowExtensionBasic::frameLoadFinished):
+        (TestWebKitAPI::DOMWindowExtensionBasic::sendExtensionStateMessage):
+        (TestWebKitAPI::DOMWindowExtensionBasic::initialize):
+        (TestWebKitAPI::DOMWindowExtensionBasic::didCreatePage):
+        (TestWebKitAPI::DOMWindowExtensionBasic::updateExtensionStateRecord):
+        (TestWebKitAPI::DOMWindowExtensionBasic::sendBundleMessage):
+        (TestWebKitAPI::DOMWindowExtensionBasic::didCreateGlobalObjectForFrame):
+        (TestWebKitAPI::DOMWindowExtensionBasic::willDisconnectDOMWindowExtensionFromGlobalObject):
+        (TestWebKitAPI::DOMWindowExtensionBasic::didReconnectDOMWindowExtensionToGlobalObject):
+        (TestWebKitAPI::DOMWindowExtensionBasic::willDestroyGlobalObjectForDOMWindowExtension):
+        (TestWebKitAPI::didFinishLoadForFrameCallback):
+        (TestWebKitAPI::didCreateGlobalObjectForFrameCallback):
+        (TestWebKitAPI::willDisconnectDOMWindowExtensionFromGlobalObjectCallback):
+        (TestWebKitAPI::didReconnectDOMWindowExtensionToGlobalObjectCallback):
+        (TestWebKitAPI::willDestroyGlobalObjectForDOMWindowExtensionCallback):
+
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle): Make this method static, as it always should have been.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2012-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build and run TestWebKitAPI unit tests

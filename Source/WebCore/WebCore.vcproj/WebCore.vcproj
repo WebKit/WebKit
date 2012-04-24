@@ -26174,6 +26174,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\DOMWindowExtension.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DOMWindowExtension.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\DOMWindowProperty.cpp"
 				>
 			</File>

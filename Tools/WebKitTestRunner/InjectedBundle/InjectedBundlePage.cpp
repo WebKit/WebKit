@@ -236,6 +236,10 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // didNewFirstVisuallyNonEmptyLayoutForFrame
         didDetectXSSForFrame,
         0, // shouldGoToBackForwardListItem
+        0, // didCreateGlobalObjectForFrame
+        0, // willDisconnectDOMWindowExtensionFromGlobalObject
+        0, // didReconnectDOMWindowExtensionToGlobalObject
+        0, // willDestroyGlobalObjectForDOMWindowExtension
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 

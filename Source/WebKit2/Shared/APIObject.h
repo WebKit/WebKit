@@ -106,6 +106,7 @@ public:
         TypeBundle,
         TypeBundleBackForwardList,
         TypeBundleBackForwardListItem,
+        TypeBundleDOMWindowExtension,
         TypeBundleFrame,
         TypeBundleHitTestResult,
         TypeBundleInspector,

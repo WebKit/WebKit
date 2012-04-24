@@ -338,6 +338,7 @@ SET(WebKit2_SOURCES
     WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp
     WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp
     WebProcess/InjectedBundle/InjectedBundleClient.cpp
+    WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
@@ -353,6 +354,7 @@ SET(WebKit2_SOURCES
     WebProcess/InjectedBundle/API/c/WKBundle.cpp
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp
+    WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.cpp
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp
     WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp

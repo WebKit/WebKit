@@ -34,7 +34,7 @@ static bool done;
 static bool loadDone;
 static bool messageReceived;
 
-void didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
+static void didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
     messageReceived = true;
     if (loadDone)

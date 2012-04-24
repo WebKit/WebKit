@@ -28,7 +28,9 @@
 
 #include "AuthenticationManager.h"
 #include "DataReference.h"
+#include "InjectedBundle.h"
 #include "InjectedBundleBackForwardListItem.h"
+#include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "PlatformCertificateInfo.h"
@@ -1396,6 +1398,46 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     // Ensure the accessibility hierarchy is updated.
     webPage->updateAccessibilityTree();
 #endif
+}
+
+
+void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld* world)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+    
+    JSObjectRef globalObject = toRef(m_frame->coreFrame()->script()->globalObject(world));
+    
+    webPage->injectedBundleLoaderClient().didCreateGlobalObjectForFrame(webPage, globalObject, m_frame, world);
+    
+}
+
+void WebFrameLoaderClient::dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(WebCore::DOMWindowExtension* extension)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+        
+    webPage->injectedBundleLoaderClient().willDisconnectDOMWindowExtensionFromGlobalObject(webPage, extension);
+}
+
+void WebFrameLoaderClient::dispatchDidReconnectDOMWindowExtensionToGlobalObject(WebCore::DOMWindowExtension* extension)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+        
+    webPage->injectedBundleLoaderClient().didReconnectDOMWindowExtensionToGlobalObject(webPage, extension);
+}
+
+void WebFrameLoaderClient::dispatchWillDestroyGlobalObjectForDOMWindowExtension(WebCore::DOMWindowExtension* extension)
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+        
+    webPage->injectedBundleLoaderClient().willDestroyGlobalObjectForDOMWindowExtension(webPage, extension);
 }
 
 void WebFrameLoaderClient::documentElementAvailable()

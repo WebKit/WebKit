@@ -26,6 +26,7 @@
 #include "config.h"
 #include "APIClientTraits.h"
 
+#include "WKBundle.h"
 #include "WKBundlePage.h"
 
 namespace WebKit {

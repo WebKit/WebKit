@@ -816,6 +816,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundle.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleFrame.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h \
@@ -855,6 +857,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \

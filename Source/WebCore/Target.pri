@@ -1009,6 +1009,7 @@ SOURCES += \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
     page/DOMWindow.cpp \
+    page/DOMWindowExtension.cpp \
     page/DOMWindowProperty.cpp \
     page/DragController.cpp \
     page/EventHandler.cpp \
@@ -2131,6 +2132,7 @@ HEADERS += \
     page/DOMSelection.h \
     page/DOMTimer.h \
     page/DOMWindow.h \
+    page/DOMWindowExtension.h \
     page/DragController.h \
     page/DragState.h \
     page/EventHandler.h \

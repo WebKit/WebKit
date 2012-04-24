@@ -2354,6 +2354,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleDOMWindowExtension.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleDOMWindowExtension.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleHitTestResult.cpp"
 					>
 				</File>
@@ -2477,6 +2485,14 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardListItem.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleDOMWindowExtension.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleDOMWindowExtension.h"
 							>
 						</File>
 						<File

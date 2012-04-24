@@ -1,3 +1,65 @@
+2012-04-24  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10120155> and https://bugs.webkit.org/show_bug.cgi?id=82664
+         Need DOMWindow mechanism to supplement UserScripts for page cache notifications
+
+        Reviewed by Sam Weinig.
+        
+        - Adds a new API object WKBundleDOMWindowExtension
+        - Exposes callbacks about the lifetime of DOMWindowExtensions through BundlePageLoaderClient
+
+        Add new API casts:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIObject.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+
+        Add API for the new DOMWindowExtension object:
+        * WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.cpp: Added.
+        (WKBundleDOMWindowExtensionGetTypeID):
+        (WKBundleDOMWindowExtensionCreate):
+        (WKBundleDOMWindowExtensionGetFrame):
+        (WKBundleDOMWindowExtensionGetScriptWorld):
+        * WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.h: Added.
+
+        Add implementation for that API which wraps the WebCore::DOMWindowExtension:
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp: Added.
+        (WebKit::allExtensions):
+        (WebKit::InjectedBundleDOMWindowExtension::create):
+        (WebKit::InjectedBundleDOMWindowExtension::get):
+        (WebKit::InjectedBundleDOMWindowExtension::InjectedBundleDOMWindowExtension):
+        (WebKit::InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension):
+        (WebKit::InjectedBundleDOMWindowExtension::frame):
+        (WebKit::InjectedBundleDOMWindowExtension::world):
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h: Added.
+        (InjectedBundleDOMWindowExtension):
+        (WebKit::InjectedBundleDOMWindowExtension::type):
+
+        Add new BundlePageLoaderClient methods:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didCreateGlobalObjectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::willDisconnectDOMWindowExtensionFromGlobalObject):
+        (WebKit::InjectedBundlePageLoaderClient::didReconnectDOMWindowExtensionToGlobalObject):
+        (WebKit::InjectedBundlePageLoaderClient::willDestroyGlobalObjectForDOMWindowExtension):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (InjectedBundlePageLoaderClient):
+
+        Implement the 4 new callbacks from WebCore which notify the BundlePageLoaderClient:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchGlobalObjectAvailable):
+        (WebKit::WebFrameLoaderClient::dispatchWillDisconnectDOMWindowExtensionFromGlobalObject):
+        (WebKit::WebFrameLoaderClient::dispatchDidReconnectDOMWindowExtensionToGlobalObject):
+        (WebKit::WebFrameLoaderClient::dispatchWillDestroyGlobalObjectForDOMWindowExtension):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+        Project Files:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2012-04-24  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Implement axis locking on the WebView for pan gestures

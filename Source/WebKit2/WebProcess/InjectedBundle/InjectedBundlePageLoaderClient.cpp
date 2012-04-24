@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePageLoaderClient.h"
 
+#include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
@@ -246,6 +247,45 @@ void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage* page
         return;
 
     m_client.didHandleOnloadEventsForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::didCreateGlobalObjectForFrame(WebPage* page, JSObjectRef globalObject, WebFrame* frame, WebCore::DOMWrapperWorld* world)
+{
+    if (!m_client.didCreateGlobalObjectForFrame)
+        return;
+    
+    RefPtr<InjectedBundleScriptWorld> injectedWorld = InjectedBundleScriptWorld::getOrCreate(world);
+    m_client.didCreateGlobalObjectForFrame(toAPI(page), globalObject, toAPI(frame), toAPI(injectedWorld.get()), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::willDisconnectDOMWindowExtensionFromGlobalObject(WebPage* page, WebCore::DOMWindowExtension* coreExtension)
+{
+    if (!m_client.willDisconnectDOMWindowExtensionFromGlobalObject)
+        return;
+
+    RefPtr<InjectedBundleDOMWindowExtension> extension = InjectedBundleDOMWindowExtension::get(coreExtension);
+    ASSERT(extension);
+    m_client.willDisconnectDOMWindowExtensionFromGlobalObject(toAPI(page), toAPI(extension.get()), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::didReconnectDOMWindowExtensionToGlobalObject(WebPage* page, WebCore::DOMWindowExtension* coreExtension)
+{
+    if (!m_client.didReconnectDOMWindowExtensionToGlobalObject)
+        return;
+
+    RefPtr<InjectedBundleDOMWindowExtension> extension = InjectedBundleDOMWindowExtension::get(coreExtension);
+    ASSERT(extension);
+    m_client.didReconnectDOMWindowExtensionToGlobalObject(toAPI(page), toAPI(extension.get()), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::willDestroyGlobalObjectForDOMWindowExtension(WebPage* page, WebCore::DOMWindowExtension* coreExtension)
+{
+    if (!m_client.willDestroyGlobalObjectForDOMWindowExtension)
+        return;
+
+    RefPtr<InjectedBundleDOMWindowExtension> extension = InjectedBundleDOMWindowExtension::get(coreExtension);
+    ASSERT(extension);
+    m_client.willDestroyGlobalObjectForDOMWindowExtension(toAPI(page), toAPI(extension.get()), m_client.clientInfo);
 }
 
 } // namespace WebKit

@@ -45,6 +45,7 @@
 #include "DOMTimer.h"
 #include "DOMTokenList.h"
 #include "DOMURL.h"
+#include "DOMWindowExtension.h"
 #include "DOMWindowNotifications.h"
 #include "Database.h"
 #include "DatabaseCallback.h"
@@ -474,9 +475,10 @@ void DOMWindow::willDetachPage()
 {
     InspectorInstrumentation::frameWindowDiscarded(m_frame, this);
 
-    HashSet<DOMWindowProperty*>::iterator stop = m_properties.end();
-    for (HashSet<DOMWindowProperty*>::iterator it = m_properties.begin(); it != stop; ++it)
-        (*it)->willDetachPage();
+    Vector<DOMWindowProperty*> properties;
+    copyToVector(m_properties, properties);
+    for (size_t i = 0; i < properties.size(); ++i)
+        properties[i]->willDetachPage();
 }
 
 void DOMWindow::registerProperty(DOMWindowProperty* property)
@@ -514,17 +516,19 @@ void DOMWindow::resumeFromPageCache()
 
 void DOMWindow::disconnectDOMWindowProperties()
 {
-    HashSet<DOMWindowProperty*>::iterator stop = m_properties.end();
-    for (HashSet<DOMWindowProperty*>::iterator it = m_properties.begin(); it != stop; ++it)
-        (*it)->disconnectFrame();
+    Vector<DOMWindowProperty*> properties;
+    copyToVector(m_properties, properties);
+    for (size_t i = 0; i < properties.size(); ++i)
+        properties[i]->disconnectFrame();
 }
 
 void DOMWindow::reconnectDOMWindowProperties()
 {
     ASSERT(m_suspendedForPageCache);
-    HashSet<DOMWindowProperty*>::iterator stop = m_properties.end();
-    for (HashSet<DOMWindowProperty*>::iterator it = m_properties.begin(); it != stop; ++it)
-        (*it)->reconnectFrame(m_frame);
+    Vector<DOMWindowProperty*> properties;
+    copyToVector(m_properties, properties);
+    for (size_t i = 0; i < properties.size(); ++i)
+        properties[i]->reconnectFrame(m_frame);
 }
 
 void DOMWindow::clearDOMWindowProperties()

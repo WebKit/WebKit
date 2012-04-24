@@ -63,6 +63,7 @@ namespace WebCore {
     class AuthenticationChallenge;
     class CachedFrame;
     class Color;
+    class DOMWindowExtension;
     class DOMWrapperWorld;
     class DocumentLoader;
     class Element;
@@ -331,6 +332,11 @@ namespace WebCore {
 #endif
 
         virtual void dispatchWillOpenSocketStream(SocketStreamHandle*) { }
+
+        virtual void dispatchGlobalObjectAvailable(DOMWrapperWorld*) { }
+        virtual void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(DOMWindowExtension*) { }
+        virtual void dispatchDidReconnectDOMWindowExtensionToGlobalObject(DOMWindowExtension*) { }
+        virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(DOMWindowExtension*) { }
     };
 
 } // namespace WebCore
