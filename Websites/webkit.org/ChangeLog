@@ -1,5 +1,17 @@
 2012-04-23  Daniel Bates  <dbates@webkit.org>
 
+        Add notice about running xcode-select before using Xcode 4.3.2 command line tools
+
+        Rubber-stamped by Eric Seidel.
+
+        Before you can use the Xcode 4.3.2 command line tools, you must either run
+        sudo xcode-select -switch /Applications/Xcode.app or set the environment variable
+        DEVELOPER_DIR to point to the Xcode developer tools directory. 
+
+        * building/tools.html:
+
+2012-04-23  Daniel Bates  <dbates@webkit.org>
+
         Explicitly mention Xcode version 4.3.2 in Mac debug instructions
 
         Rubber-stamped by Eric Seidel.
