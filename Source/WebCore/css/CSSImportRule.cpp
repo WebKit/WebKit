@@ -134,11 +134,15 @@ CSSImportRule::~CSSImportRule()
 {
     if (m_styleSheetCSSOMWrapper)
         m_styleSheetCSSOMWrapper->clearOwnerRule();
+    if (m_mediaCSSOMWrapper)
+        m_mediaCSSOMWrapper->clearParentRule();
 }
 
-MediaList* CSSImportRule::media()
+MediaList* CSSImportRule::media() const
 {
-    return m_importRule->mediaQueries()->ensureMediaList(parentStyleSheet());
+    if (!m_mediaCSSOMWrapper)
+        m_mediaCSSOMWrapper = MediaList::create(m_importRule->mediaQueries(), const_cast<CSSImportRule*>(this));
+    return m_mediaCSSOMWrapper.get();
 }
 
 String CSSImportRule::cssText() const

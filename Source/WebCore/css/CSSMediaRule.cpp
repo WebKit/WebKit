@@ -46,6 +46,8 @@ CSSMediaRule::~CSSMediaRule()
         if (m_childRuleCSSOMWrappers[i])
             m_childRuleCSSOMWrappers[i]->setParentRule(0);
     }
+    if (m_mediaCSSOMWrapper)
+        m_mediaCSSOMWrapper->clearParentRule();
 }
 
 unsigned CSSMediaRule::insertRule(const String& ruleString, unsigned index, ExceptionCode& ec)
@@ -129,9 +131,13 @@ String CSSMediaRule::cssText() const
     return result.toString();
 }
 
-MediaList* CSSMediaRule::media() const 
-{ 
-    return m_mediaRule->mediaQueries() ? m_mediaRule->mediaQueries()->ensureMediaList(parentStyleSheet()) : 0; 
+MediaList* CSSMediaRule::media() const
+{
+    if (!m_mediaRule->mediaQueries())
+        return 0;
+    if (!m_mediaCSSOMWrapper)
+        m_mediaCSSOMWrapper = MediaList::create(m_mediaRule->mediaQueries(), const_cast<CSSMediaRule*>(this));
+    return m_mediaCSSOMWrapper.get();
 }
 
 unsigned CSSMediaRule::length() const

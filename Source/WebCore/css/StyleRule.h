@@ -160,7 +160,7 @@ public:
         return adoptRef(new StyleRuleMedia(media, adoptRules));
     }
 
-    const MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
+    MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
 
 private:
     StyleRuleMedia(PassRefPtr<MediaQuerySet>, Vector<RefPtr<StyleRuleBase> >& adoptRules);

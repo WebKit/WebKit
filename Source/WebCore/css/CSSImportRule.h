@@ -48,7 +48,6 @@ public:
     String href() const { return m_strHref; }
     StyleSheetInternal* styleSheet() const { return m_styleSheet.get(); }
 
-    // Not part of the CSSOM.
     bool isLoading() const;
     MediaQuerySet* mediaQueries() { return m_mediaQueries.get(); }
 
@@ -91,7 +90,7 @@ public:
     ~CSSImportRule();
 
     String href() const { return m_importRule->href(); }
-    MediaList* media();
+    MediaList* media() const;
     CSSStyleSheet* styleSheet() const;
     
     String cssText() const;
@@ -101,6 +100,7 @@ private:
 
     RefPtr<StyleRuleImport> m_importRule;
 
+    mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable RefPtr<CSSStyleSheet> m_styleSheetCSSOMWrapper;
 };
 

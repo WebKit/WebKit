@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class CSSRule;
 class CSSStyleSheet;
 class MediaList;
 class MediaQuery;
@@ -61,8 +62,6 @@ public:
     int lastLine() const { return m_lastLine; }
     void setLastLine(int lastLine) { m_lastLine = lastLine; }
     
-    MediaList* ensureMediaList(CSSStyleSheet*) const;
-    
     String mediaText() const;
 
 private:
@@ -72,15 +71,18 @@ private:
     unsigned m_fallbackToDescriptor : 1; // true if failed media query parsing should fallback to media description parsing.
     signed m_lastLine : 31;
     Vector<OwnPtr<MediaQuery> > m_queries;
-    
-    mutable OwnPtr<MediaList> m_cssomWrapper;
 };
 
-class MediaList {
-    WTF_MAKE_NONCOPYABLE(MediaList); WTF_MAKE_FAST_ALLOCATED;
+class MediaList : public RefCounted<MediaList> {
 public:
-    void ref() { m_mediaQueries->ref(); }
-    void deref() { m_mediaQueries->deref(); }
+    static PassRefPtr<MediaList> create(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
+    {
+        return adoptRef(new MediaList(mediaQueries, parentSheet));
+    }
+    static PassRefPtr<MediaList> create(MediaQuerySet* mediaQueries, CSSRule* parentRule)
+    {
+        return adoptRef(new MediaList(mediaQueries, parentRule));
+    }
 
     ~MediaList();
 
@@ -93,25 +95,22 @@ public:
     void setMediaText(const String&, ExceptionCode&);
 
     // Not part of CSSOM.
+    CSSRule* parentRule() const { return m_parentRule; }
     CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
-    void setParentStyleSheet(CSSStyleSheet* styleSheet)
-    {
-        // MediaList should never be moved between style sheets.
-        ASSERT(styleSheet == m_parentStyleSheet || !m_parentStyleSheet || !styleSheet);
-        m_parentStyleSheet = styleSheet;
-    }
-    const MediaQuerySet* queries() const { return m_mediaQueries; }
+    void clearParentStyleSheet() { ASSERT(m_parentStyleSheet); m_parentStyleSheet = 0; }
+    void clearParentRule() { ASSERT(m_parentRule); m_parentRule = 0; }
+    const MediaQuerySet* queries() const { return m_mediaQueries.get(); }
 
 private:
     MediaList();
     MediaList(MediaQuerySet*, CSSStyleSheet* parentSheet);
+    MediaList(MediaQuerySet*, CSSRule* parentRule);
 
     void notifyChanged();
 
-    MediaQuerySet* m_mediaQueries;
+    RefPtr<MediaQuerySet> m_mediaQueries;
     CSSStyleSheet* m_parentStyleSheet;
-    
-    friend class MediaQuerySet;
+    CSSRule* m_parentRule;
 };
 
 } // namespace

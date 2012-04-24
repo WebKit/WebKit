@@ -55,10 +55,9 @@ private:
     
     RefPtr<StyleRuleMedia> m_mediaRule;
 
+    mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
-    
-    friend class StyleRule;
 };
 
 } // namespace WebCore

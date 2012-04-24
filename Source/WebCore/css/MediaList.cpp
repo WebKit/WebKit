@@ -199,17 +199,18 @@ String MediaQuerySet::mediaText() const
     }
     return text;
 }
-
-MediaList* MediaQuerySet::ensureMediaList(CSSStyleSheet* parentSheet) const
-{
-    if (!m_cssomWrapper)
-        m_cssomWrapper = adoptPtr(new MediaList(const_cast<MediaQuerySet*>(this), parentSheet));
-    return m_cssomWrapper.get();
-}
     
 MediaList::MediaList(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
     : m_mediaQueries(mediaQueries)
     , m_parentStyleSheet(parentSheet)
+    , m_parentRule(0)
+{
+}
+
+MediaList::MediaList(MediaQuerySet* mediaQueries, CSSRule* parentRule)
+    : m_mediaQueries(mediaQueries)
+    , m_parentStyleSheet(0)
+    , m_parentRule(parentRule)
 {
 }
 
@@ -258,10 +259,10 @@ void MediaList::appendMedium(const String& medium, ExceptionCode& ec)
 
 void MediaList::notifyChanged()
 {
-    if (!m_parentStyleSheet)
+    CSSStyleSheet* parentStyleSheet = m_parentRule ? m_parentRule->parentStyleSheet() : m_parentStyleSheet;
+    if (!parentStyleSheet)
         return;
-
-    m_parentStyleSheet->styleSheetChanged();
+    parentStyleSheet->styleSheetChanged();
 }
 
 }

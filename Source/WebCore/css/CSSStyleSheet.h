@@ -225,6 +225,8 @@ private:
     bool m_isDisabled;
 
     CSSImportRule* m_ownerRule;
+
+    mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };

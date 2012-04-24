@@ -458,6 +458,8 @@ CSSStyleSheet::~CSSStyleSheet()
         if (m_childRuleCSSOMWrappers[i])
             m_childRuleCSSOMWrappers[i]->setParentStyleSheet(0);
     }
+    if (m_mediaCSSOMWrapper)
+        m_mediaCSSOMWrapper->clearParentStyleSheet();
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)
@@ -580,7 +582,9 @@ MediaList* CSSStyleSheet::media() const
 { 
     if (!m_internal->mediaQueries())
         return 0;
-    return m_internal->mediaQueries()->ensureMediaList(const_cast<CSSStyleSheet*>(this));
+    if (!m_mediaCSSOMWrapper)
+        m_mediaCSSOMWrapper = MediaList::create(m_internal->mediaQueries(), const_cast<CSSStyleSheet*>(this));
+    return m_mediaCSSOMWrapper.get();
 }
 
 CSSStyleSheet* CSSStyleSheet::parentStyleSheet() const 

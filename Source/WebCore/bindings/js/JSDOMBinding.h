@@ -216,6 +216,8 @@ enum ParameterDefaultPolicy {
 
     inline void* root(MediaList* mediaList)
     {
+        if (CSSRule* parentRule = mediaList->parentRule())
+            return root(parentRule);
         if (CSSStyleSheet* parentStyleSheet = mediaList->parentStyleSheet())
             return root(parentStyleSheet);
         return mediaList;
