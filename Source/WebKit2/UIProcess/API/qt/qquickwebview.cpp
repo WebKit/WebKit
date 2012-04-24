@@ -49,8 +49,7 @@
 #include "qwebviewportinfo_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
-#include <QtQml/QQmlEngine>
-#include <QtQuick/QQuickCanvas>
+#include <QDateTime>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <WKOpenPanelResultListener.h>
@@ -62,12 +61,87 @@ using namespace WebCore;
 using namespace WebKit;
 
 static bool s_flickableViewportEnabled = true;
+static const int kAxisLockSampleCount = 5;
+static const qreal kAxisLockVelocityThreshold = 300;
+static const qreal kAxisLockVelocityDirectionThreshold = 50;
 
 static QQuickWebViewPrivate* createPrivateObject(QQuickWebView* publicObject)
 {
     if (s_flickableViewportEnabled)
         return new QQuickWebViewFlickablePrivate(publicObject);
     return new QQuickWebViewLegacyPrivate(publicObject);
+}
+
+QQuickWebViewPrivate::FlickableAxisLocker::FlickableAxisLocker()
+    : m_allowedDirection(QQuickFlickable::AutoFlickDirection)
+    , m_sampleCount(0)
+{
+}
+
+QVector2D QQuickWebViewPrivate::FlickableAxisLocker::touchVelocity(const QTouchEvent* event)
+{
+    static bool touchVelocityAvailable = event->device()->capabilities().testFlag(QTouchDevice::Velocity);
+    const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
+
+    if (touchVelocityAvailable)
+        return touchPoint.velocity();
+
+    const QLineF movementLine(touchPoint.screenPos(), m_initialScreenPosition);
+    const qint64 elapsed = m_time.elapsed();
+
+    if (!elapsed)
+        return QVector2D(0, 0);
+
+    // Calculate an approximate velocity vector in the unit of pixel / second.
+    return QVector2D(1000 * movementLine.dx() / elapsed, 1000 * movementLine.dy() / elapsed);
+}
+
+void QQuickWebViewPrivate::FlickableAxisLocker::update(const QTouchEvent* event)
+{
+    ASSERT(event->touchPoints().size() == 1);
+    const QTouchEvent::TouchPoint& touchPoint = event->touchPoints().first();
+
+    ++m_sampleCount;
+
+    if (m_sampleCount == 1) {
+        m_initialScreenPosition = touchPoint.screenPos();
+        m_time.restart();
+        return;
+    }
+
+    if (m_sampleCount > kAxisLockSampleCount
+            || m_allowedDirection == QQuickFlickable::HorizontalFlick
+            || m_allowedDirection == QQuickFlickable::VerticalFlick)
+        return;
+
+    QVector2D velocity = touchVelocity(event);
+
+    qreal directionIndicator = qAbs(velocity.x()) - qAbs(velocity.y());
+
+    if (velocity.length() > kAxisLockVelocityThreshold && qAbs(directionIndicator) > kAxisLockVelocityDirectionThreshold)
+        m_allowedDirection = (directionIndicator > 0) ? QQuickFlickable::HorizontalFlick : QQuickFlickable::VerticalFlick;
+}
+
+void QQuickWebViewPrivate::FlickableAxisLocker::setReferencePosition(const QPointF& position)
+{
+    m_lockReferencePosition = position;
+}
+
+void QQuickWebViewPrivate::FlickableAxisLocker::reset()
+{
+    m_allowedDirection = QQuickFlickable::AutoFlickDirection;
+    m_sampleCount = 0;
+}
+
+QPointF QQuickWebViewPrivate::FlickableAxisLocker::adjust(const QPointF& position)
+{
+    if (m_allowedDirection == QQuickFlickable::HorizontalFlick)
+        return QPointF(position.x(), m_lockReferencePosition.y());
+
+    if (m_allowedDirection == QQuickFlickable::VerticalFlick)
+        return QPointF(m_lockReferencePosition.x(), position.y());
+
+    return position;
 }
 
 QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
@@ -1311,6 +1385,16 @@ void QQuickWebView::touchEvent(QTouchEvent* event)
         return;
     }
 
+    bool lockingDisabled = flickableDirection() != AutoFlickDirection
+                           || event->touchPoints().size() != 1
+                           || width() >= contentWidth()
+                           || height() >= contentHeight();
+
+    if (!lockingDisabled)
+        d->axisLocker.update(event);
+    else
+        d->axisLocker.reset();
+
     forceActiveFocus();
     d->pageView->eventHandler()->handleTouchEvent(event);
 }
@@ -1417,6 +1501,8 @@ void QQuickWebView::setContentPos(const QPointF& pos)
 
 void QQuickWebView::handleFlickableMousePress(const QPointF& position, qint64 eventTimestampMillis)
 {
+    Q_D(QQuickWebView);
+    d->axisLocker.setReferencePosition(position);
     QMouseEvent mouseEvent(QEvent::MouseButtonPress, position, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
     mouseEvent.setTimestamp(eventTimestampMillis);
     QQuickFlickable::mousePressEvent(&mouseEvent);
@@ -1424,14 +1510,17 @@ void QQuickWebView::handleFlickableMousePress(const QPointF& position, qint64 ev
 
 void QQuickWebView::handleFlickableMouseMove(const QPointF& position, qint64 eventTimestampMillis)
 {
-    QMouseEvent mouseEvent(QEvent::MouseMove, position, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    Q_D(QQuickWebView);
+    QMouseEvent mouseEvent(QEvent::MouseMove, d->axisLocker.adjust(position), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
     mouseEvent.setTimestamp(eventTimestampMillis);
     QQuickFlickable::mouseMoveEvent(&mouseEvent);
 }
 
 void QQuickWebView::handleFlickableMouseRelease(const QPointF& position, qint64 eventTimestampMillis)
 {
-    QMouseEvent mouseEvent(QEvent::MouseButtonRelease, position, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    Q_D(QQuickWebView);
+    QMouseEvent mouseEvent(QEvent::MouseButtonRelease, d->axisLocker.adjust(position), Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+    d->axisLocker.reset();
     mouseEvent.setTimestamp(eventTimestampMillis);
     QQuickFlickable::mouseReleaseEvent(&mouseEvent);
 }

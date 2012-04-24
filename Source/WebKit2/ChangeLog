@@ -1,3 +1,37 @@
+2012-04-24  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Implement axis locking on the WebView for pan gestures
+        https://bugs.webkit.org/show_bug.cgi?id=84350
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If a pan gesture has sufficient velocity along one axis the WebView
+        should automatically lock the page movement to that axis.
+        This locking should be maintained until the ongoing pan gesture ends.
+
+        This patch implements a simple axis locker which adjusts the positions
+        sent to the Flickable to the initial reference position according to the
+        direction an velocity information it gathered from incoming touch events.
+
+        The FlickableAxisLocker makes use of the velocity information of the touch point
+        if available, else an approximate velocity of the incoming event is
+        calculated.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::FlickableAxisLocker::FlickableAxisLocker):
+        (QQuickWebViewPrivate::FlickableAxisLocker::touchVelocity):
+        (QQuickWebViewPrivate::FlickableAxisLocker::update):
+        (QQuickWebViewPrivate::FlickableAxisLocker::setReferencePosition):
+        (QQuickWebViewPrivate::FlickableAxisLocker::reset):
+        (QQuickWebViewPrivate::FlickableAxisLocker::adjust):
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebView::touchEvent):
+        (QQuickWebView::handleFlickableMousePress):
+        (QQuickWebView::handleFlickableMouseMove):
+        (QQuickWebView::handleFlickableMouseRelease):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2012-04-24  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Tap-to zoom should navigate when appropiate

@@ -28,6 +28,7 @@
 #include "qquickwebview_p.h"
 #include "qquickwebpage_p.h"
 
+#include <QtCore/QElapsedTimer>
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <WebCore/ViewportArguments.h>
@@ -138,6 +139,25 @@ public:
     void handleDownloadRequest(WebKit::DownloadProxy*);
 
 protected:
+    class FlickableAxisLocker {
+        QQuickFlickable::FlickableDirection m_allowedDirection;
+
+        QElapsedTimer m_time;
+        QPointF m_initialScreenPosition;
+        QPointF m_lockReferencePosition;
+        int m_sampleCount;
+
+        QVector2D touchVelocity(const QTouchEvent* event);
+
+    public:
+        FlickableAxisLocker();
+
+        void update(const QTouchEvent* event);
+        void setReferencePosition(const QPointF&);
+        void reset();
+        QPointF adjust(const QPointF&);
+    };
+
     QQuickWebViewPrivate(QQuickWebView* viewport);
     RefPtr<WebKit::QtWebContext> context;
     RefPtr<WebKit::WebPageProxy> webPageProxy;
@@ -153,6 +173,8 @@ protected:
 
     QScopedPointer<QQuickWebPage> pageView;
     QQuickWebView* q_ptr;
+
+    FlickableAxisLocker axisLocker;
 
     QDeclarativeComponent* alertDialog;
     QDeclarativeComponent* confirmDialog;
