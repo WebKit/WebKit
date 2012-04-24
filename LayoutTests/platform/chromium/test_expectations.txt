@@ -1205,7 +1205,6 @@ BUGWK81217 SNOWLEOPARD DEBUG : svg/custom/js-late-clipPath-and-object-creation.s
 BUGWK81217 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
 BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
 BUGWK81217 : svg/custom/use-detach.svg = PASS FAIL
-BUGWK81217 : svg/carto.net/window.svg = PASS FAIL
 BUGWK81217 : svg/carto.net/tabgroup.svg = PASS FAIL
 BUGWK81217 : svg/hixie/perf/003.xml = PASS FAIL
 
@@ -1279,13 +1278,9 @@ BUGWK84230 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
 BUGWK84731 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = PASS TEXT
 BUGWK84731 : svg/carto.net/button.svg = PASS TEXT
-BUGWK84731 : svg/carto.net/colourpicker.svg = PASS TEXT
+BUGWK84731 WIN MAC : svg/carto.net/colourpicker.svg = PASS TEXT
 BUGWK84731 : svg/carto.net/slider.svg = PASS TEXT
 BUGWK84731 : svg/carto.net/window.svg = PASS TEXT
-BUGWK84731 : svg/custom/embedding-external-svgs.svg = PASS TEXT
-BUGWK84731 : svg/custom/relative-sized-shadow-tree-content-with-symbol.svg = PASS TEXT
-BUGWK84731 : svg/custom/relative-sized-use-on-symbol.svg = PASS TEXT
-BUGWK84731 : svg/custom/relative-sized-use-without-attributes-on-symbol.svg = PASS TEXT
 BUGWK84731 : svg/custom/use-clipped-hit.svg = PASS TEXT
 BUGWK84731 : svg/custom/use-css-events.svg = PASS TEXT
 BUGWK84731 : svg/custom/use-modify-target-symbol.svg = PASS TEXT
