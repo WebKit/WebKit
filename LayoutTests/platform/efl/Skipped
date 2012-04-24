@@ -784,20 +784,6 @@ svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 webarchive
 
-# The EFL port has no support for webtiming
-fast/dom/Window/window-properties-performance.html
-fast/dom/navigation-type-back-forward.html
-fast/dom/navigation-type-navigate.html
-fast/dom/navigation-type-reload.html
-fast/dom/webtiming.html
-fast/dom/webtiming-navigate-within-document.html
-fast/dom/webtiming-document-open.html
-http/tests/misc/webtiming-origins.html
-http/tests/misc/webtiming-one-redirect.php
-http/tests/misc/webtiming-slow-load.php
-http/tests/misc/webtiming-ssl.php
-http/tests/misc/webtiming-two-redirects.php
-
 # The EFL port has no support for webaudio
 webaudio
 

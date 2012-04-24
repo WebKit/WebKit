@@ -362,7 +362,7 @@ my @features = (
       define => "ENABLE_WEB_SOCKETS", default => 1, value=> \$webSocketsSupport },
 
     { option => "web-timing", desc => "Toggle Web Timing support",
-      define => "ENABLE_WEB_TIMING", default => (isBlackBerry() || isGtk()), value=> \$webTimingSupport },
+      define => "ENABLE_WEB_TIMING", default => (isBlackBerry() || isGtk() || isEfl()), value=> \$webTimingSupport },
 
     { option => "workers", desc => "Toggle Web Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$workersSupport },

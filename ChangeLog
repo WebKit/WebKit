@@ -1,3 +1,15 @@
+2012-04-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Enable Web Timing
+        https://bugs.webkit.org/show_bug.cgi?id=84705
+
+        Reviewed by Tony Gentilcore.
+
+        Enable Web Timing in EFL port for for performance profiling and
+        improvement.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-04-23  Kent Tamura  <tkent@chromium.org>
 
         Add test function to get placeholder string
