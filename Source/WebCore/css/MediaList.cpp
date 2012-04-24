@@ -83,7 +83,8 @@ MediaQuerySet::MediaQuerySet(const String& mediaString, bool fallbackToDescripto
 }
 
 MediaQuerySet::MediaQuerySet(const MediaQuerySet& o)
-    : m_fallbackToDescriptor(o.m_fallbackToDescriptor)
+    : RefCounted<MediaQuerySet>()
+    , m_fallbackToDescriptor(o.m_fallbackToDescriptor)
     , m_lastLine(o.m_lastLine)
     , m_queries(o.m_queries.size())
 {

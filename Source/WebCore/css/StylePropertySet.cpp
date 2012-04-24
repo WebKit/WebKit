@@ -82,7 +82,8 @@ StylePropertySet::StylePropertySet(const CSSProperty* properties, int numPropert
 }
 
 StylePropertySet::StylePropertySet(const StylePropertySet& o)
-    : m_properties(o.m_properties)
+    : RefCounted<StylePropertySet>()
+    , m_properties(o.m_properties)
     , m_cssParserMode(o.m_cssParserMode)
     , m_ownsCSSOMWrapper(false)
 {
