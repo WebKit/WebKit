@@ -853,6 +853,12 @@ void WebPagePrivate::setLoadState(LoadState state)
             // Check if we have already process the meta viewport tag, this only happens on history navigation
             if (!m_didRestoreFromPageCache) {
                 m_viewportArguments = ViewportArguments();
+
+                // At the moment we commit a new load, set the viewport arguments
+                // to any fallback values. If there is a meta viewport in the
+                // content it will overwrite the fallback arguments soon.
+                dispatchViewportPropertiesDidChange(m_userViewportArguments);
+
                 m_userScalable = m_webSettings->isUserScalable();
                 resetScales();
             } else {
@@ -3129,35 +3135,23 @@ void WebPage::resetVirtualViewportOnCommitted(bool reset)
 IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
 {
     static const ViewportArguments defaultViewportArguments;
-
-    // When calculating a virtual viewport for layout we prioritize the
-    // m_viewportArguments from WebCore over the m_userViewportArguments. We
-    // cannot assign m_viewportAguments = m_userViewportArguments because then
-    // subsequent changes to m_userViewportArguments would be ignored, thinking
-    // the m_viewportArguments had come from WebCore. Instead we make a copy.
-
-    ViewportArguments currentViewportArguments = m_viewportArguments;
-    if (currentViewportArguments == defaultViewportArguments) {
-        if (currentViewportArguments == m_userViewportArguments)
-            return IntSize();
-
-        currentViewportArguments = m_userViewportArguments;
-    }
+    if (m_viewportArguments == defaultViewportArguments)
+        return IntSize();
 
     int desktopWidth = defaultMaxLayoutSize().width();
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
     int deviceDPI = int(roundf((currentPPI.width() + currentPPI.height()) / 2));
-    if (currentViewportArguments.targetDensityDpi == ViewportArguments::ValueAuto
+    if (m_viewportArguments.targetDensityDpi == ViewportArguments::ValueAuto
         && !Platform::DeviceInfo::instance()->isMobile()) {
         // If the content provider hasn't specified a target dpi and we have a large
         // screen we assume the content is fine and set the targetDensityDpi to our dpi.
         // On smaller screen mobile devices we skip this and use WebCore dpi scaling.
-        currentViewportArguments.targetDensityDpi = deviceDPI;
+        m_viewportArguments.targetDensityDpi = deviceDPI;
     }
 
-    ViewportAttributes result = computeViewportAttributes(currentViewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, m_defaultLayoutSize);
+    ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, m_defaultLayoutSize);
     m_page->setDeviceScaleFactor(result.devicePixelRatio);
     return IntSize(result.layoutSize.width(), result.layoutSize.height());
 }

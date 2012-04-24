@@ -1,3 +1,21 @@
+2012-04-24  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] setUserViewportArguments not always respected.
+        https://bugs.webkit.org/show_bug.cgi?id=84738
+
+        Reviewed by Antonio Gomes.
+
+        Remove the unnecessary logic in
+        WebPagePrivate::recomputeVirtualViewportFromViewportArguments().
+        Instead it is much simpler to just set the m_viewportArguments to
+        m_userViewportArguments on LoadCommitted. If there is a viewport
+        tag in the content, m_viewportArguments will be replaced with it
+        as usual during normal page load.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+
 2012-04-24  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Revert broken changes to authentication dialog
