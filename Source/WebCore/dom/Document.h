@@ -1132,7 +1132,7 @@ public:
     void didAddTouchEventHandler();
     void didRemoveTouchEventHandler();
 
-    bool visualUpdatesAllowed() const;
+    bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
 
 #if ENABLE(MICRODATA)
     PassRefPtr<NodeList> getItems(const String& typeNames);
@@ -1217,6 +1217,10 @@ private:
     void pushFullscreenElementStack(Element*);
     void addDocumentToFullScreenChangeEventQueue(Document*);
 #endif
+
+    void setVisualUpdatesAllowed(ReadyState);
+    void setVisualUpdatesAllowed(bool);
+    void visualUpdatesSuppressionTimerFired(Timer<Document>*);
 
     int m_guardRefCount;
 
@@ -1484,6 +1488,9 @@ private:
     Timer<Document> m_pendingTasksTimer;
     Vector<OwnPtr<Task> > m_pendingTasks;
     bool m_scheduledTasksAreSuspended;
+    
+    bool m_visualUpdatesAllowed;
+    Timer<Document> m_visualUpdatesSuppressionTimer;
 };
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.

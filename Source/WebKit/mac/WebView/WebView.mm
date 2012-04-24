@@ -1528,6 +1528,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings->setShouldRespectImageOrientation([preferences shouldRespectImageOrientation]);
     settings->setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
+    
+    NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
+    if (timeout > 0)
+        settings->setIncrementalRenderingSuppressionTimeoutInSeconds(timeout);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];

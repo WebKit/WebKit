@@ -118,6 +118,8 @@ static EditingBehaviorType editingBehaviorTypeForPlatform()
     ;
 }
 
+static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
+
 Settings::Settings(Page* page)
     : m_page(0)
     , m_editableLinkBehavior(EditableLinkDefaultBehavior)
@@ -262,8 +264,9 @@ Settings::Settings(Page* page)
     , m_threadedAnimationEnabled(false)
     , m_shouldRespectImageOrientation(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
+    , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {
-    // A Frame may not have been created yet, so we initialize the AtomicString 
+    // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
     AtomicString::init();
     initializeDefaultFontFamilies();

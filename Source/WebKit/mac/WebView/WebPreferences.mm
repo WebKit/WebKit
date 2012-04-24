@@ -1676,6 +1676,16 @@ static NSString *classIBCreatorID = nil;
     return [self _boolValueForKey:WebKitShouldRespectImageOrientationKey];
 }
 
+- (void)setIncrementalRenderingSuppressionTimeoutInSeconds:(NSTimeInterval)timeout
+{
+    [self _setFloatValue:timeout forKey:WebKitIncrementalRenderingSuppressionTimeoutInSecondsKey];
+}
+
+- (NSTimeInterval)incrementalRenderingSuppressionTimeoutInSeconds
+{
+    return [self _floatValueForKey:WebKitIncrementalRenderingSuppressionTimeoutInSecondsKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

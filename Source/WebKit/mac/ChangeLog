@@ -1,3 +1,20 @@
+2012-04-23  Andy Estes  <aestes@apple.com>
+
+        Incremental rendering should be unsuppressed after the load event or a configurable timeout, whichever occurs first.
+        https://bugs.webkit.org/show_bug.cgi?id=84583
+
+        Add a private WebPreference for setting the incremental rendering suppression timeout.
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setIncrementalRenderingSuppressionTimeoutInSeconds:]):
+        (-[WebPreferences incrementalRenderingSuppressionTimeoutInSeconds]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2012-04-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Cut dependency on RenderLayer::scrollRectToVisible outside rendering

@@ -552,6 +552,9 @@ namespace WebCore {
         void setShouldRespectImageOrientation(bool enabled) { m_shouldRespectImageOrientation = enabled; }
         bool shouldRespectImageOrientation() const { return m_shouldRespectImageOrientation; }
         
+        void setIncrementalRenderingSuppressionTimeoutInSeconds(double timeout) { m_incrementalRenderingSuppressionTimeoutInSeconds = timeout; }
+        double incrementalRenderingSuppressionTimeoutInSeconds() const { return m_incrementalRenderingSuppressionTimeoutInSeconds; }
+        
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -717,6 +720,8 @@ namespace WebCore {
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);
+        
+        double m_incrementalRenderingSuppressionTimeoutInSeconds;
 
 #if USE(AVFOUNDATION)
         static bool gAVFoundationEnabled;

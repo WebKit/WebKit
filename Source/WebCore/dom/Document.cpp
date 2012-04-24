@@ -479,6 +479,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_touchEventHandlerCount(0)
     , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
     , m_scheduledTasksAreSuspended(false)
+    , m_visualUpdatesAllowed(true)
+    , m_visualUpdatesSuppressionTimer(this, &Document::visualUpdatesSuppressionTimerFired)
 {
     m_document = this;
 
@@ -1161,6 +1163,58 @@ void Document::setReadyState(ReadyState readyState)
 
     m_readyState = readyState;
     dispatchEvent(Event::create(eventNames().readystatechangeEvent, false, false));
+    
+    if (settings() && settings()->suppressesIncrementalRendering())
+        setVisualUpdatesAllowed(readyState);
+}
+
+void Document::setVisualUpdatesAllowed(ReadyState readyState)
+{
+    ASSERT(settings() && settings()->suppressesIncrementalRendering());
+    switch (readyState) {
+    case Loading:
+        ASSERT(!m_visualUpdatesSuppressionTimer.isActive());
+        ASSERT(m_visualUpdatesAllowed);
+        m_visualUpdatesSuppressionTimer.startOneShot(settings()->incrementalRenderingSuppressionTimeoutInSeconds());
+        setVisualUpdatesAllowed(false);
+        break;
+    case Interactive:
+        ASSERT(m_visualUpdatesSuppressionTimer.isActive() || m_visualUpdatesAllowed);
+        break;
+    case Complete:
+        if (m_visualUpdatesSuppressionTimer.isActive()) {
+            ASSERT(!m_visualUpdatesAllowed);
+            m_visualUpdatesSuppressionTimer.stop();
+            setVisualUpdatesAllowed(true);
+        } else
+            ASSERT(m_visualUpdatesAllowed);
+        break;
+    }
+}
+    
+void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
+{
+    if (m_visualUpdatesAllowed == visualUpdatesAllowed)
+        return;
+
+    m_visualUpdatesAllowed = visualUpdatesAllowed;
+
+    if (!visualUpdatesAllowed)
+        return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (view())
+        view()->updateCompositingLayersAfterLayout();
+#endif
+
+    if (renderer())
+        renderer()->repaint();
+}
+
+void Document::visualUpdatesSuppressionTimerFired(Timer<Document>*)
+{
+    ASSERT(!m_visualUpdatesAllowed);
+    setVisualUpdatesAllowed(true);
 }
 
 String Document::encoding() const
@@ -2398,14 +2452,6 @@ void Document::implicitClose()
     }
 
     m_processingLoadEvent = false;
-
-    // If painting and compositing layer updates were suppressed pending the load event, do these actions now.
-    if (renderer() && settings() && settings()->suppressesIncrementalRendering()) {
-#if USE(ACCELERATED_COMPOSITING)
-        view()->updateCompositingLayersAfterLayout();
-#endif
-        renderer()->repaint();
-    }
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
     if (f && renderObject && AXObjectCache::accessibilityEnabled()) {
@@ -5786,13 +5832,6 @@ void Document::didRemoveTouchEventHandler()
     Frame* mainFrame = page() ? page()->mainFrame() : 0;
     if (mainFrame)
         mainFrame->notifyChromeClientTouchEventHandlerCountChanged();
-}
-
-bool Document::visualUpdatesAllowed() const
-{
-    return !settings()
-        || !settings()->suppressesIncrementalRendering()
-        || loadEventFinished();
 }
 
 DocumentLoader* Document::loader() const
