@@ -41,7 +41,11 @@ function generateExponentialOscillatorSweep(oscillatorType) {
         osc.type = oscillatorType;
     }
 
-    osc.connect(context.destination);
+    // Scale by 1/2 to better visualize the waveform and to avoid clipping past full scale.
+    var gainNode = context.createGainNode();
+    gainNode.gain.value = 0.5;
+    osc.connect(gainNode);
+    gainNode.connect(context.destination);
 
     var nyquist = 0.5 * sampleRate;
     osc.frequency.setValueAtTime(10, 0);

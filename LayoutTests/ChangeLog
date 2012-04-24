@@ -1,3 +1,18 @@
+2012-04-24  Chris Rogers  <crogers@google.com>
+
+        Fix layout test failures for Oscillator because WaveTable now normalizes to 0dBFS instead of -6dbFS
+        https://bugs.webkit.org/show_bug.cgi?id=84799
+
+        Reviewed by James Robinson.
+
+        This fixes failures caused by: http://trac.webkit.org/changeset/115111
+        We need to adjust the layout test itself to scale by 1/2 to compensate for the new WaveTable normalization.
+        The reason we don't change the audio .wav file baselines themselves is because audio values can potentially
+        clip past full scale, and we need to be able to avoid this "overshoot".
+
+        * webaudio/resources/oscillator-testing.js:
+        (generateExponentialOscillatorSweep):
+
 2012-04-24  Alexandru Chiculita  <achicu@adobe.com>
 
         CSS Shaders: Repainting the FECustomFilter requires full source image
