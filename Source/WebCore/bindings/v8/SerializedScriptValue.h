@@ -45,11 +45,6 @@ typedef Vector<RefPtr<WTF::ArrayBuffer>, 1> ArrayBufferArray;
 
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
 public:
-    static void deserializeAndSetProperty(v8::Handle<v8::Object>, const char* propertyName,
-                                          v8::PropertyAttribute, SerializedScriptValue*);
-    static void deserializeAndSetProperty(v8::Handle<v8::Object>, const char* propertyName,
-                                          v8::PropertyAttribute, PassRefPtr<SerializedScriptValue>);
-
     // If a serialization error occurs (e.g., cyclic input value) this
     // function returns an empty representation, schedules a V8 exception to
     // be thrown using v8::ThrowException(), and sets |didThrow|. In this case
