@@ -1,3 +1,20 @@
+2012-04-23  Dmitry Titov  <dimich@chromium.org>
+
+        Getting baselines for new test landed in http://trac.webkit.org/changeset/114973
+        Not reviewed.
+
+        * platform/chromium-linux-x86/fast/html/details-marker-style-expected.txt: Added.
+        * platform/chromium-linux/fast/html/details-marker-style-expected.png: Added.
+        * platform/chromium-linux/fast/html/details-marker-style-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/html/details-marker-style-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/html/details-marker-style-expected.txt: Added.
+        * platform/chromium-mac/fast/html/details-marker-style-expected.png: Added.
+        * platform/chromium-mac/fast/html/details-marker-style-expected.txt: Added.
+        * platform/chromium-win-vista/fast/html/details-marker-style-expected.txt: Added.
+        * platform/chromium-win-xp/fast/html/details-marker-style-expected.txt: Added.
+        * platform/chromium-win/fast/html/details-marker-style-expected.png: Added.
+        * platform/chromium-win/fast/html/details-marker-style-expected.txt: Added.
+
 2012-04-23  Dana Jansens  <danakj@chromium.org>
 
         Layout Test platform/chromium/compositing/filters/background-filter-blur-outsets.html is failing
