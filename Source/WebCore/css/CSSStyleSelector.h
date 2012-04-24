@@ -529,7 +529,7 @@ private:
     const ContainerNode* m_scopeStackParent;
 #endif
 
-    friend class CSSStyleApplyProperty;
+    friend class StyleBuilder;
     friend bool operator==(const MatchedProperties&, const MatchedProperties&);
     friend bool operator!=(const MatchedProperties&, const MatchedProperties&);
     friend bool operator==(const MatchRanges&, const MatchRanges&);
