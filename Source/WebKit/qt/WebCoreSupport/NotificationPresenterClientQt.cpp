@@ -69,6 +69,7 @@ NotificationPresenterClientQt* NotificationPresenterClientQt::notificationPresen
 
 NotificationWrapper::NotificationWrapper()
     : m_closeTimer(this, &NotificationWrapper::close)
+    , m_displayEventTimer(this, &NotificationWrapper::sendDisplayEvent)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
@@ -83,6 +84,13 @@ void NotificationWrapper::close(Timer<NotificationWrapper>*)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->cancel(this);
+#endif
+}
+
+void NotificationWrapper::sendDisplayEvent(Timer<NotificationWrapper>*)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    NotificationPresenterClientQt::notificationPresenter()->sendDisplayEvent(this);
 #endif
 }
 
@@ -106,17 +114,14 @@ const QString NotificationWrapper::message() const
     return QString();
 }
 
-const QByteArray NotificationWrapper::iconData() const
+const QUrl NotificationWrapper::iconUrl() const
 {
-    QByteArray iconData;
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
-    if (notification) {
-        if (notification->iconData())
-            iconData = QByteArray::fromRawData(notification->iconData()->data(), notification->iconData()->size());
-    }
+    if (notification)
+        return notification->iconURL();
 #endif
-    return iconData;
+    return QUrl();
 }
 
 const QUrl NotificationWrapper::openerPageUrl() const
@@ -179,15 +184,11 @@ bool NotificationPresenterClientQt::show(Notification* notification)
         removeReplacedNotificationFromQueue(notification);
     if (dumpNotification)
         dumpShowText(notification);
-    QByteArray iconData;
-    if (notification->iconData())
-        iconData = QByteArray::fromRawData(notification->iconData()->data(), notification->iconData()->size());
-    displayNotification(notification, iconData);
-    notification->releaseIconData();
+    displayNotification(notification);
     return true;
 }
 
-void NotificationPresenterClientQt::displayNotification(Notification* notification, const QByteArray& bytes)
+void NotificationPresenterClientQt::displayNotification(Notification* notification)
 {
     NotificationWrapper* wrapper = new NotificationWrapper();
     m_notifications.insert(notification, wrapper);
@@ -208,16 +209,11 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
 #ifndef QT_NO_SYSTEMTRAYICON
         if (!dumpNotification)
             wrapper->m_closeTimer.startOneShot(notificationTimeout);
-        QPixmap pixmap;
-        if (bytes.length() && pixmap.loadFromData(bytes)) {
-            QIcon icon(pixmap);
-            wrapper->m_notificationIcon = adoptPtr(new QSystemTrayIcon(icon));
-        } else
             wrapper->m_notificationIcon = adoptPtr(new QSystemTrayIcon());
 #endif
     }
 
-    sendEvent(notification, "display");
+    wrapper->m_displayEventTimer.startOneShot(0);
 
     // Make sure the notification was not cancelled during handling the display event
     if (m_notifications.find(notification) == m_notifications.end())
@@ -383,6 +379,14 @@ void NotificationPresenterClientQt::allowNotificationForFrame(Frame* frame)
         callbacks.at(i)->handleEvent();
     m_pendingPermissionRequests.remove(iter.key());
 }
+
+void NotificationPresenterClientQt::sendDisplayEvent(NotificationWrapper* wrapper)
+{
+    Notification* notification = notificationForWrapper(wrapper);
+    if (notification)
+        sendEvent(notification, "display");
+}
+
 
 void NotificationPresenterClientQt::sendEvent(Notification* notification, const AtomicString& eventName)
 {

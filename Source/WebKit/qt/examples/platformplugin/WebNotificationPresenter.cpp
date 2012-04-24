@@ -39,13 +39,7 @@ void WebNotificationWidget::showNotification(const QWebNotificationData* data)
     QGridLayout* layout = new QGridLayout(this);
     layout->addWidget(new QLabel(data->title()), 0, 0, 1, 5);
     int messagePosition = 0;
-    QPixmap pixmap;
-    if (data->iconData().length() && pixmap.loadFromData(data->iconData())) {
-        QLabel* label = new QLabel;
-        label->setPixmap(pixmap);
-        layout->addWidget(label, 1, 0, 1, 1);
-        messagePosition++;
-    }
+
     QLabel* messageLabel = new QLabel(data->message());
     messageLabel->setMask(bitmap);
     messageLabel->setWordWrap(true);

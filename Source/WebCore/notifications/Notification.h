@@ -61,7 +61,7 @@ class ThreadableLoader;
 
 typedef int ExceptionCode;
 
-class Notification : public RefCounted<Notification>, public ActiveDOMObject, public ThreadableLoaderClient, public EventTarget {
+class Notification : public RefCounted<Notification>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Notification();
@@ -130,17 +130,8 @@ public:
 
     void stopLoadingIcon();
 
-    SharedBuffer* iconData() { return m_iconData.get(); }
-    void releaseIconData() { m_iconData = 0; }
-
     // Deprecated. Use functions from NotificationCenter.
     void detachPresenter() { }
-
-    virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
-    virtual void didReceiveData(const char* data, int dataLength);
-    virtual void didFinishLoading(unsigned long identifier, double finishTime);
-    virtual void didFail(const ResourceError&);
-    virtual void didFailRedirectCheck();
 
     void finalize();
 
@@ -182,10 +173,8 @@ private:
 
     enum NotificationState {
         Idle = 0,
-        LoadingIcon = 1,
-        Showing = 2,
-        CancelledIcon = 3,
-        Closed = 4,
+        Showing = 1,
+        Closed = 2,
     };
 
     NotificationState m_state;
@@ -194,8 +183,6 @@ private:
     
     EventTargetData m_eventTargetData;
 
-    RefPtr<ThreadableLoader> m_loader;
-    RefPtr<SharedBuffer> m_iconData;
 #if ENABLE(NOTIFICATIONS)
     OwnPtr<Timer<Notification> > m_showTaskTimer;
 #endif

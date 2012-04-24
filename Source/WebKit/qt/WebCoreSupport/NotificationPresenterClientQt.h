@@ -59,9 +59,10 @@ public:
 
     void close();
     void close(Timer<NotificationWrapper>*);
+    void sendDisplayEvent(Timer<NotificationWrapper>*);
     const QString title() const;
     const QString message() const;
-    const QByteArray iconData() const;
+    const QUrl iconUrl() const;
     const QUrl openerPageUrl() const;
 
 public Q_SLOTS:
@@ -75,6 +76,7 @@ public:
 
     OwnPtr<QWebNotificationPresenter> m_presenter;
     Timer<NotificationWrapper> m_closeTimer;
+    Timer<NotificationWrapper> m_displayEventTimer;
 };
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -108,10 +110,11 @@ public:
     Notification* notificationForWrapper(const NotificationWrapper*) const;
     void notificationClicked(NotificationWrapper*);
     void notificationClicked(const QString& title);
+    void sendDisplayEvent(NotificationWrapper*);
 
 private:
     void sendEvent(Notification*, const AtomicString& eventName);
-    void displayNotification(Notification*, const QByteArray&);
+    void displayNotification(Notification*);
     void removeReplacedNotificationFromQueue(Notification*);
     void detachNotification(Notification*);
     void dumpReplacedIdText(Notification*);

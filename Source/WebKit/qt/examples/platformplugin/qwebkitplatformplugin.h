@@ -75,7 +75,7 @@ public:
 
     virtual const QString title() const = 0;
     virtual const QString message() const = 0;
-    virtual const QByteArray iconData() const = 0;
+    virtual const QUrl iconUrl() const = 0;
     virtual const QUrl openerPageUrl() const = 0;
 };
 
@@ -180,7 +180,7 @@ public:
 };
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.8");
+Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.9");
 QT_END_NAMESPACE
 
 #endif // QWEBKITPLATFORMPLUGIN_H

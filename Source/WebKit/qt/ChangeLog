@@ -1,3 +1,33 @@
+2012-04-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt] Move notification icon download out of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=80700
+
+        Reviewed by Simon Hausmann.
+
+        Remove the code that handles the notification's icon and use the icon url instead.
+        The "display" event has to be asynchronous, so a timer was added to achieve that.
+        The platform plugin API and example were updated to reflect this change.
+        This change does not address the recent changes in web notifications spec.
+
+        * Api/qwebkitplatformplugin.h:
+        (QWebNotificationData):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationWrapper::NotificationWrapper):
+        (WebCore::NotificationWrapper::sendDisplayEvent):
+        (WebCore):
+        (WebCore::NotificationWrapper::iconUrl):
+        (WebCore::NotificationPresenterClientQt::show):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::sendDisplayEvent):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (NotificationWrapper):
+        (NotificationPresenterClientQt):
+        * examples/platformplugin/WebNotificationPresenter.cpp:
+        (WebNotificationWidget::showNotification):
+        * examples/platformplugin/qwebkitplatformplugin.h:
+        (QWebNotificationData):
+
 2012-04-18  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Clean-up WheelEvent Conversion.

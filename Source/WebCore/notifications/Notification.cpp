@@ -116,10 +116,6 @@ Notification::Notification(ScriptExecutionContext* context, const String& title)
 
 Notification::~Notification() 
 {
-    if (m_state == LoadingIcon) {
-        ASSERT_NOT_REACHED();
-        close();
-    }
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
@@ -171,26 +167,11 @@ const AtomicString& Notification::interfaceName() const
 
 void Notification::show() 
 {
-#if PLATFORM(QT)
-    if (iconURL().isEmpty()) {
-        // Set the state before actually showing, because
-        // handling of ondisplay may rely on that.
-        if (m_state == Idle) {
-            m_state = Showing;
-            if (m_notificationCenter->client()) {
-                m_notificationCenter->client()->show(this);
-                setPendingActivity(this);
-            }
-        }
-    } else
-        startLoadingIcon();
-#else
     // prevent double-showing
     if (m_state == Idle && m_notificationCenter->client() && m_notificationCenter->client()->show(this)) {
         m_state = Showing;
         setPendingActivity(this);
     }
-#endif
 }
 
 void Notification::close()
@@ -198,15 +179,10 @@ void Notification::close()
     switch (m_state) {
     case Idle:
         break;
-    case LoadingIcon:
-        m_state = CancelledIcon;
-        stopLoadingIcon();
-        break;
     case Showing:
         if (m_notificationCenter->client())
             m_notificationCenter->client()->cancel(this);
         break;
-    case CancelledIcon:
     case Closed:
         break;
     }
@@ -227,66 +203,6 @@ void Notification::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
     if (m_notificationCenter->client())
         m_notificationCenter->client()->notificationObjectDestroyed(this);
-}
-
-void Notification::startLoadingIcon()
-{
-    if (m_state != Idle)
-        return;
-    setPendingActivity(this);
-    m_state = LoadingIcon;
-    ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = DoNotSendCallbacks;
-    options.sniffContent = DoNotSniffContent;
-    options.preflightPolicy = ConsiderPreflight;
-    options.allowCredentials = AllowStoredCredentials;
-    options.crossOriginRequestPolicy = AllowCrossOriginRequests;
-    m_loader = ThreadableLoader::create(scriptExecutionContext(), this, ResourceRequest(iconURL()), options);
-}
-
-void Notification::stopLoadingIcon()
-{
-    m_iconData = 0;
-    RefPtr<ThreadableLoader> protect(m_loader);
-    m_loader->cancel();
-}
-
-void Notification::didReceiveResponse(unsigned long, const ResourceResponse& response)
-{
-    int status = response.httpStatusCode();
-    if (status && (status < 200 || status > 299)) {
-        stopLoadingIcon();
-        return;
-    }
-    m_iconData = SharedBuffer::create();
-}
-
-void Notification::didReceiveData(const char* data, int dataLength)
-{
-    m_iconData->append(data, dataLength);
-}
-
-void Notification::didFinishLoading(unsigned long, double)
-{
-    finishLoadingIcon();
-}
-
-void Notification::didFail(const ResourceError&)
-{
-    finishLoadingIcon();
-}
-
-void Notification::didFailRedirectCheck()
-{
-    finishLoadingIcon();
-}
-
-void Notification::finishLoadingIcon()
-{
-    if (m_state == LoadingIcon) {
-        if (m_notificationCenter->client() && m_notificationCenter->client()->show(this))
-            m_state = Showing;
-    }
 }
 
 void Notification::finalize()
