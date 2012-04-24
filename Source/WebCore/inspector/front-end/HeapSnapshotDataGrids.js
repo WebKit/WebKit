@@ -35,6 +35,11 @@
 WebInspector.HeapSnapshotSortableDataGrid = function(columns)
 {
     WebInspector.DataGrid.call(this, columns);
+
+    /**
+     * @type {number}
+     */
+    this._recursiveSortingDepth = 0;
     this.addEventListener("sorting changed", this.sortingChanged, this);
 }
 
@@ -135,20 +140,15 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
 
     recursiveSortingEnter: function()
     {
-        if (!("_recursiveSortingDepth" in this))
-            this._recursiveSortingDepth = 1;
-        else
-            ++this._recursiveSortingDepth;
+        ++this._recursiveSortingDepth;
     },
 
     recursiveSortingLeave: function()
     {
-        if (!("_recursiveSortingDepth" in this))
+        if (!this._recursiveSortingDepth)
             return;
-        if (!--this._recursiveSortingDepth) {
-            delete this._recursiveSortingDepth;
+        if (!--this._recursiveSortingDepth)
             this.dispatchEventToListeners("sorting complete");
-        }
     }
 };
 

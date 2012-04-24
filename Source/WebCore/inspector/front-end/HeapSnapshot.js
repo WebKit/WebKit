@@ -1579,6 +1579,11 @@ WebInspector.HeapSnapshot.prototype = {
                 diff.removedCount++;
                 diff.removedSize += baseSelfSizes[i];
                 ++i;
+            } else if (nodeAId > nodeB.id) { // Native nodes(e.g. dom groups) may have ids less than max JS object id in the base snapshot
+                diff.addedIndexes.push(indexes[j]);
+                diff.addedCount++;
+                diff.addedSize += nodeB.selfSize;
+                nodeB.nodeIndex = indexes[++j];
             } else { // nodeAId === nodeB.id
                 ++i;
                 nodeB.nodeIndex = indexes[++j];
