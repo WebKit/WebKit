@@ -1,3 +1,12 @@
+2012-04-24  Robert Hogan  <robert@webkit.org>
+
+        Rebaseline 2 tests after r115091
+
+        Unreviewed.
+
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/accessibility/table-with-rules-expected.txt:
+
 2012-04-24  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Rebaseline and enable the background-blur layout tests

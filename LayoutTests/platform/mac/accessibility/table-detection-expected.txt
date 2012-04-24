@@ -608,7 +608,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {55, 18}
+AXSize: NSSize: {53, 18}
 AXTitle: 
 AXDescription: 
 AXValue: 

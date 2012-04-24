@@ -11,7 +11,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {59, 22}
+AXSize: NSSize: {57, 20}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -73,7 +73,7 @@ AXRoleDescription: table
 AXChildren: <array of size 4>
 AXHelp: 
 AXParent: <AXTable>
-AXSize: NSSize: {56, 22}
+AXSize: NSSize: {56, 20}
 AXTitle: 
 AXDescription: 
 AXValue: 
