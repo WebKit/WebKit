@@ -289,6 +289,7 @@ public:
     void setAllowFileAccessFromFileURLs(const CppArgumentList&, CppVariant*);
     void setAllowRunningOfInsecureContent(const CppArgumentList&, CppVariant*);
 
+    void evaluateScriptInIsolatedWorldAndReturnValue(const CppArgumentList&, CppVariant*);
     void evaluateScriptInIsolatedWorld(const CppArgumentList&, CppVariant*);
     void setIsolatedWorldSecurityOrigin(const CppArgumentList&, CppVariant*);
 

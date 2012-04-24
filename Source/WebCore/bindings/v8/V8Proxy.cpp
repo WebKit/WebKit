@@ -217,7 +217,7 @@ bool V8Proxy::handleOutOfMemory()
     return true;
 }
 
-void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup)
+void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup, WTF::Vector<v8::Local<v8::Value> >* results)
 {
     // FIXME: This will need to get reorganized once we have a windowShell for the isolated world.
     if (!windowShell()->initContextIfNeeded())
@@ -240,7 +240,7 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
             // FIXME: We should change this to using window shells to match JSC.
             m_isolatedWorlds.set(worldID, isolatedContext);
         }
-        
+
         IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_isolatedWorldSecurityOrigins.find(worldID);
         if (securityOriginIter != m_isolatedWorldSecurityOrigins.end())
             isolatedContext->setSecurityOrigin(securityOriginIter->second);
@@ -254,11 +254,17 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
 
     v8::Local<v8::Context> context = v8::Local<v8::Context>::New(isolatedContext->context());
     v8::Context::Scope context_scope(context);
-    for (size_t i = 0; i < sources.size(); ++i)
-      evaluate(sources[i], 0);
+
+    if (results) {
+        for (size_t i = 0; i < sources.size(); ++i)
+            results->append(evaluate(sources[i], 0));
+    } else {
+        for (size_t i = 0; i < sources.size(); ++i)
+            evaluate(sources[i], 0);
+    }
 
     if (worldID == 0)
-      isolatedContext->destroy();
+        isolatedContext->destroy();
 }
 
 void V8Proxy::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> prpSecurityOriginIn)

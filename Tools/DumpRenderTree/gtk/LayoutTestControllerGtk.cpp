@@ -916,6 +916,11 @@ void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef scrip
     g_free(scriptString);
 }
 
+void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+{
+    // FIXME: Implement this.
+}
+
 void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     // FIXME: Implement this.

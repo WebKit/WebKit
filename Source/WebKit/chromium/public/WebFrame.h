@@ -276,6 +276,10 @@ public:
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
         const WebScriptSource&) = 0;
 
+    virtual void executeScriptInIsolatedWorld(
+        int worldID, const WebScriptSource* sourcesIn, unsigned numSources,
+        int extensionGroup, WebVector<v8::Local<v8::Value> >* results) = 0;
+
     // Call the function with the given receiver and arguments, bypassing
     // canExecute().
     virtual v8::Handle<v8::Value> callFunctionEvenIfScriptDisabled(

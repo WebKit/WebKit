@@ -910,6 +910,11 @@ void LayoutTestController::startSpeechInput(const QString& inputElement)
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
+void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const QString& script)
+{
+    // FIXME: Implement.
+}
+
 void LayoutTestController::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
 {
     DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->webPage()->mainFrame(), worldID, script);

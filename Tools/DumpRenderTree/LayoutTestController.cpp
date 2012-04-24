@@ -1827,6 +1827,18 @@ static JSValueRef evaluateScriptInIsolatedWorldCallback(JSContextRef context, JS
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef evaluateScriptInIsolatedWorldAndReturnValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    double worldID = JSValueToNumber(context, arguments[0], exception);
+    ASSERT(!*exception);
+    JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[1], exception));
+    ASSERT(!*exception);
+
+    controller->evaluateScriptInIsolatedWorldAndReturnValue(static_cast<unsigned>(worldID), JSContextGetGlobalObject(context), script.get());
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef elementDoesAutoCompleteForElementWithIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2351,6 +2363,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "elementDoesAutoCompleteForElementWithId", elementDoesAutoCompleteForElementWithIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "encodeHostName", encodeHostNameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "evaluateInWebInspector", evaluateInWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "evaluateScriptInIsolatedWorldAndReturnValue", evaluateScriptInIsolatedWorldAndReturnValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "evaluateScriptInIsolatedWorld", evaluateScriptInIsolatedWorldCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "execCommand", execCommandCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "findString", findStringCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

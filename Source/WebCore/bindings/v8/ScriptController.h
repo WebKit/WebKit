@@ -87,7 +87,7 @@ public:
     // as a string.
     ScriptValue evaluate(const ScriptSourceCode&);
 
-    void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&);
+    void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, Vector<ScriptValue>* results);
 
     // Executes JavaScript in an isolated world. The script gets its own global scope,
     // its own prototypes for intrinsic JavaScript objects (String, Array, and so-on),
@@ -99,7 +99,7 @@ public:
     // If the worldID is 0, a new world is always created.
     //
     // FIXME: Get rid of extensionGroup here.
-    void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&, int extensionGroup);
+    void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup, Vector<ScriptValue>* results);
 
     // Associates an isolated world (see above for description) with a security
     // origin. XMLHttpRequest instances used in that world will be considered

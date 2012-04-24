@@ -1289,6 +1289,11 @@ unsigned worldIDForWorld(IWebScriptWorld* world)
     return 0;
 }
 
+void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+{
+    // FIXME: Implement this.
+}
+
 void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     COMPtr<IWebFramePrivate> framePrivate(Query, frame);

@@ -258,6 +258,7 @@ public slots:
 
     void setEditingBehavior(const QString& editingBehavior);
 
+    void evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const QString& script);
     void evaluateScriptInIsolatedWorld(int worldID, const QString& script);
     bool isPageBoxVisible(int pageIndex);
     QString pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);

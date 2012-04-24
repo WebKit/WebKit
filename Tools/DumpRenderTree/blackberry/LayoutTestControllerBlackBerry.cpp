@@ -502,6 +502,14 @@ void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef scrip
     notImplemented();
 }
 
+void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+{
+    UNUSED_PARAM(worldID);
+    UNUSED_PARAM(globalObject);
+    UNUSED_PARAM(script);
+    notImplemented();
+}
+
 void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     UNUSED_PARAM(worldID);

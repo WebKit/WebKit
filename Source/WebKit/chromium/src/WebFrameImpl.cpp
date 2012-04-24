@@ -829,7 +829,7 @@ void WebFrameImpl::executeScriptInIsolatedWorld(
             sourcesIn[i].code, sourcesIn[i].url, position));
     }
 
-    m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup);
+    m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, 0);
 }
 
 void WebFrameImpl::setIsolatedWorldSecurityOrigin(int worldID, const WebSecurityOrigin& securityOrigin)
@@ -894,6 +894,28 @@ v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptS
 
     TextPosition position(OrdinalNumber::fromOneBasedInt(source.startLine), OrdinalNumber::first());
     return m_frame->script()->executeScript(ScriptSourceCode(source.code, source.url, position)).v8Value();
+}
+
+void WebFrameImpl::executeScriptInIsolatedWorld(
+    int worldID, const WebScriptSource* sourcesIn, unsigned numSources,
+    int extensionGroup, WebVector<v8::Local<v8::Value> >* results)
+{
+    Vector<ScriptSourceCode> sources;
+
+    for (unsigned i = 0; i < numSources; ++i) {
+        TextPosition position(OrdinalNumber::fromOneBasedInt(sourcesIn[i].startLine), OrdinalNumber::first());
+        sources.append(ScriptSourceCode(sourcesIn[i].code, sourcesIn[i].url, position));
+    }
+
+    if (results) {
+        Vector<ScriptValue> scriptResults;
+        m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, &scriptResults);
+        WebVector<v8::Local<v8::Value> > v8Results(scriptResults.size());
+        for (unsigned i = 0; i < scriptResults.size(); i++)
+            v8Results[i] = v8::Local<v8::Value>::New(scriptResults[i].v8Value());
+        results->swap(v8Results);
+    } else
+        m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup, 0);
 }
 
 // Call the function with the given receiver and arguments, bypassing canExecuteScripts.

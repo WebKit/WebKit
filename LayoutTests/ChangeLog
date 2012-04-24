@@ -1,3 +1,15 @@
+2012-04-23  Eriq Augustine  <eaugusti@chromium.org>
+
+        Return value from executed script in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=79851
+
+        Reviewed by Adam Barth.
+
+        Testing executing a script and getting the result of that script.
+
+        * platform/chromium/http/tests/misc/execute-and-return-value-expected.txt: Added.
+        * platform/chromium/http/tests/misc/execute-and-return-value.html: Added.
+
 2012-04-23  Kent Tamura  <tkent@chromium.org>
 
         RenderDetailsMarker should draw the triangle inside the content box

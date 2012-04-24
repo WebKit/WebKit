@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+
+  var intTest = layoutTestController.evaluateScriptInIsolatedWorldAndReturnValue(0, "5");
+  document.body.appendChild(document.createTextNode('Expecting 5: ' + intTest));
+  document.body.appendChild(document.createElement('br'));
+
+  var doubleTest = layoutTestController.evaluateScriptInIsolatedWorldAndReturnValue(0, "3.14");
+  document.body.appendChild(document.createTextNode('Expecting 3.14: ' + doubleTest));
+  document.body.appendChild(document.createElement('br'));
+
+  var stringTest = layoutTestController.evaluateScriptInIsolatedWorldAndReturnValue(0, '"The quick brown dog."');
+  document.body.appendChild(document.createTextNode('Expecting "The quick brown dog.": ' + stringTest));
+  document.body.appendChild(document.createElement('br'));
+
+  var booleanTest = layoutTestController.evaluateScriptInIsolatedWorldAndReturnValue(0, "!true");
+  document.body.appendChild(document.createTextNode('Expecting false: ' + booleanTest));
+  document.body.appendChild(document.createElement('br'));
+
+  var nullTest = layoutTestController.evaluateScriptInIsolatedWorldAndReturnValue(0, "null");
+  document.body.appendChild(document.createTextNode('Expecting null: ' + nullTest));
+  document.body.appendChild(document.createElement('br'));
+}
+</script>
+</body>
+</html>

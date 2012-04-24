@@ -62,6 +62,8 @@ class WebPluginContainerImpl;
 class WebView;
 class WebViewImpl;
 
+template <typename T> class WebVector;
+
 // Implementation of WebFrame, note that this is a reference counted object.
 class WebFrameImpl : public WebFrame, public RefCounted<WebFrameImpl> {
 public:
@@ -110,6 +112,9 @@ public:
 #if WEBKIT_USING_V8
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
         const WebScriptSource&);
+    virtual void executeScriptInIsolatedWorld(
+        int worldID, const WebScriptSource* sourcesIn, unsigned numSources,
+        int extensionGroup, WebVector<v8::Local<v8::Value> >* results);
     virtual v8::Handle<v8::Value> callFunctionEvenIfScriptDisabled(
         v8::Handle<v8::Function>,
         v8::Handle<v8::Object>,

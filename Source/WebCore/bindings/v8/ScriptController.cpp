@@ -170,14 +170,22 @@ ScriptValue ScriptController::callFunctionEvenIfScriptDisabled(v8::Handle<v8::Fu
     return ScriptValue(m_proxy->callFunction(function, receiver, argc, argv));
 }
 
-void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources)
+void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, Vector<ScriptValue>* results)
 {
-    m_proxy->evaluateInIsolatedWorld(worldID, sources, 0);
+    evaluateInIsolatedWorld(worldID, sources, 0, results);
 }
 
-void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup)
+void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup, Vector<ScriptValue>* results)
 {
-    m_proxy->evaluateInIsolatedWorld(worldID, sources, extensionGroup);
+    v8::HandleScope handleScope;
+    if (results) {
+        Vector<v8::Local<v8::Value> > v8Results;
+        m_proxy->evaluateInIsolatedWorld(worldID, sources, extensionGroup, &v8Results);
+        Vector<v8::Local<v8::Value> >::iterator itr;
+        for (itr = v8Results.begin(); itr != v8Results.end(); ++itr)
+            results->append(ScriptValue(*itr));
+    } else
+        m_proxy->evaluateInIsolatedWorld(worldID, sources, extensionGroup, 0);
 }
 
 void ScriptController::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> securityOrigin)
@@ -380,7 +388,7 @@ void ScriptController::evaluateInWorld(const ScriptSourceCode& source,
     Vector<ScriptSourceCode> sources;
     sources.append(source);
     // FIXME: Get an ID from the world param.
-    evaluateInIsolatedWorld(0, sources);
+    evaluateInIsolatedWorld(0, sources, 0);
 }
 
 static NPObject* createNoScriptObject()

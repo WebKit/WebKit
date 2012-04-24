@@ -311,6 +311,7 @@ public:
     void closeWebInspector();
     void evaluateInWebInspector(long callId, JSStringRef script);
     void evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script);
+    void evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script);
     void allowRoundingHacks();
 
     bool shouldStayOnPageAfterHandlingBeforeUnload() const { return m_shouldStayOnPageAfterHandlingBeforeUnload; }

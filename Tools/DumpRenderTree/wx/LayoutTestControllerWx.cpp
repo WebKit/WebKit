@@ -456,6 +456,11 @@ void LayoutTestController::removeAllVisitedLinks()
     // FIXME: Implement this.
 }
 
+void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+{
+
+}
+
 void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
 

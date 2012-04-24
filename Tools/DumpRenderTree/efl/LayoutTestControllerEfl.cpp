@@ -692,6 +692,11 @@ void LayoutTestController::evaluateInWebInspector(long, JSStringRef)
     notImplemented();
 }
 
+void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned, JSObjectRef, JSStringRef)
+{
+    notImplemented();
+}
+
 void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned, JSObjectRef, JSStringRef)
 {
     notImplemented();

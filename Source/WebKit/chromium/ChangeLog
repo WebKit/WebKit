@@ -1,3 +1,22 @@
+2012-04-23  Eriq Augustine  <eaugusti@chromium.org>
+
+        Return value from executed script in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=79851
+
+        Reviewed by Adam Barth.
+
+        Providing a variant of evaluateScriptInIsolatedWorld that
+        returns the value of the evaluated script.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeScriptInIsolatedWorldAndReturnValues):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebKit):
+        (WebFrameImpl):
+
 2012-04-23  Raymond Toy  <rtoy@google.com>
 
         Move AudioDestinationChromium FIFO class to its own class.
