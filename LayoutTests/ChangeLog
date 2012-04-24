@@ -1,3 +1,17 @@
+2012-04-24  Rob Buis  <rbuis@rim.com>
+
+        REGRESSION (r115083-r115087): 6 tests failing on Lion Release (WebKit2 Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=84783
+
+        Reviewed by Andreas Kling.
+
+        This regression was caused because the test results from an old patch were
+        blindly taken, rebaseline these against trunk.
+
+        * svg/custom/use-in-symbol-with-offset-expected.txt:
+        * svg/custom/use-transfer-width-height-properties-to-svg2-expected.txt:
+        * svg/custom/use-transfer-width-height-properties-to-symbol-expected.txt:
+
 2012-04-24  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed test expectations update.
