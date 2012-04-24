@@ -94,7 +94,6 @@ StylePropertySet* ElementAttributeData::ensureMutableInlineStyle(StyledElement* 
 {
     if (m_inlineStyleDecl && !m_inlineStyleDecl->isMutable()) {
         m_inlineStyleDecl = m_inlineStyleDecl->copy();
-        m_inlineStyleDecl->setCSSParserMode(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
         return m_inlineStyleDecl.get();
     }
     return ensureInlineStyle(element);

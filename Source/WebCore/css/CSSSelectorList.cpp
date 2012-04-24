@@ -37,6 +37,16 @@ CSSSelectorList::~CSSSelectorList()
     deleteSelectors();
 }
 
+CSSSelectorList::CSSSelectorList(const CSSSelectorList& o)
+{
+    CSSSelector* current = o.m_selectorArray;
+    while (!current->isLastInSelectorList())
+        ++current;
+    unsigned length = (current - o.m_selectorArray) + 1;
+    m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * length));
+    memcpy(m_selectorArray, o.m_selectorArray, sizeof(CSSSelector) * length);
+}
+
 void CSSSelectorList::adopt(CSSSelectorList& list)
 {
     deleteSelectors();

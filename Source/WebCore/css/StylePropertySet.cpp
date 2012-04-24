@@ -81,6 +81,13 @@ StylePropertySet::StylePropertySet(const CSSProperty* properties, int numPropert
     }
 }
 
+StylePropertySet::StylePropertySet(const StylePropertySet& o)
+    : m_properties(o.m_properties)
+    , m_cssParserMode(o.m_cssParserMode)
+    , m_ownsCSSOMWrapper(false)
+{
+}
+
 StylePropertySet::~StylePropertySet()
 {
     ASSERT(!m_ownsCSSOMWrapper || propertySetCSSOMWrapperMap().contains(this));
@@ -931,7 +938,7 @@ void StylePropertySet::removeEquivalentProperties(const CSSStyleDeclaration* sty
 
 PassRefPtr<StylePropertySet> StylePropertySet::copy() const
 {
-    return adoptRef(new StylePropertySet(m_properties));
+    return adoptRef(new StylePropertySet(*this));
 }
 
 PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const

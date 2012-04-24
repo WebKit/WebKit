@@ -64,9 +64,12 @@ public:
     
     String mediaText() const;
 
+    PassRefPtr<MediaQuerySet> copy() const { return adoptRef(new MediaQuerySet(*this)); }
+
 private:
     MediaQuerySet();
     MediaQuerySet(const String& mediaQuery, bool fallbackToDescription);
+    MediaQuerySet(const MediaQuerySet&);
     
     unsigned m_fallbackToDescriptor : 1; // true if failed media query parsing should fallback to media description parsing.
     signed m_lastLine : 31;

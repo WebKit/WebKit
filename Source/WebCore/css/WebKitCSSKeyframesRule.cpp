@@ -39,7 +39,14 @@ StyleRuleKeyframes::StyleRuleKeyframes()
     : StyleRuleBase(Keyframes, 0)
 {
 }
-    
+
+StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
+    : StyleRuleBase(o)
+    , m_keyframes(o.m_keyframes)
+    , m_name(o.m_name)
+{
+}
+
 StyleRuleKeyframes::~StyleRuleKeyframes()
 {
 }

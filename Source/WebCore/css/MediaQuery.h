@@ -38,7 +38,7 @@ namespace WebCore {
 class MediaQueryExp;
 
 class MediaQuery {
-    WTF_MAKE_NONCOPYABLE(MediaQuery); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Restrictor {
         Only, Not, None
@@ -56,7 +56,11 @@ public:
     String cssText() const;
     bool ignored() const { return m_ignored; }
 
+    PassOwnPtr<MediaQuery> copy() const { return adoptPtr(new MediaQuery(*this)); }
+
  private:
+    MediaQuery(const MediaQuery&);
+
     Restrictor m_restrictor;
     String m_mediaType;
     OwnPtr<ExpressionVector> m_expressions;

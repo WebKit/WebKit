@@ -82,6 +82,15 @@ MediaQuerySet::MediaQuerySet(const String& mediaString, bool fallbackToDescripto
         parse("invalid");
 }
 
+MediaQuerySet::MediaQuerySet(const MediaQuerySet& o)
+    : m_fallbackToDescriptor(o.m_fallbackToDescriptor)
+    , m_lastLine(o.m_lastLine)
+    , m_queries(o.m_queries.size())
+{
+    for (unsigned i = 0; i < m_queries.size(); ++i)
+        m_queries[i] = o.m_queries[i]->copy();
+}
+
 MediaQuerySet::~MediaQuerySet()
 {
 }

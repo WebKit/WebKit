@@ -77,6 +77,35 @@ void StyleRuleBase::destroy()
     ASSERT_NOT_REACHED();
 }
 
+PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
+{
+    switch (type()) {
+    case Style:
+        return static_cast<const StyleRule*>(this)->copy();
+    case Page:
+        return static_cast<const StyleRulePage*>(this)->copy();
+    case FontFace:
+        return static_cast<const StyleRuleFontFace*>(this)->copy();
+    case Media:
+        return static_cast<const StyleRuleMedia*>(this)->copy();
+    case Region:
+        return static_cast<const StyleRuleRegion*>(this)->copy();
+    case Import:
+        // FIXME: Copy import rules.
+        ASSERT_NOT_REACHED();
+        return 0;
+    case Keyframes:
+        return static_cast<const StyleRuleKeyframes*>(this)->copy();
+    case Unknown:
+    case Charset:
+    case Keyframe:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRule* parentRule) const
 {
     RefPtr<CSSRule> rule;
@@ -119,6 +148,13 @@ StyleRule::StyleRule(int sourceLine)
 {
 }
 
+StyleRule::StyleRule(const StyleRule& o)
+    : StyleRuleBase(o)
+    , m_properties(o.m_properties->copy())
+    , m_selectorList(o.m_selectorList)
+{
+}
+
 StyleRule::~StyleRule()
 {
 }
@@ -133,6 +169,13 @@ StyleRulePage::StyleRulePage()
 {
 }
 
+StyleRulePage::StyleRulePage(const StyleRulePage& o)
+    : StyleRuleBase(o)
+    , m_properties(o.m_properties->copy())
+    , m_selectorList(o.m_selectorList)
+{
+}
+
 StyleRulePage::~StyleRulePage()
 {
 }
@@ -144,6 +187,12 @@ void StyleRulePage::setProperties(PassRefPtr<StylePropertySet> properties)
 
 StyleRuleFontFace::StyleRuleFontFace()
     : StyleRuleBase(FontFace, 0)
+{
+}
+
+StyleRuleFontFace::StyleRuleFontFace(const StyleRuleFontFace& o)
+    : StyleRuleBase(o)
+    , m_properties(o.m_properties->copy())
 {
 }
 
@@ -162,6 +211,14 @@ StyleRuleBlock::StyleRuleBlock(Type type, Vector<RefPtr<StyleRuleBase> >& adoptR
     m_childRules.swap(adoptRule);
 }
 
+StyleRuleBlock::StyleRuleBlock(const StyleRuleBlock& o)
+    : StyleRuleBase(o)
+    , m_childRules(o.m_childRules.size())
+{
+    for (unsigned i = 0; i < m_childRules.size(); ++i)
+        m_childRules[i] = o.m_childRules[i]->copy();
+}
+
 void StyleRuleBlock::wrapperInsertRule(unsigned index, PassRefPtr<StyleRuleBase> rule)
 {
     m_childRules.insert(index, rule);
@@ -178,10 +235,22 @@ StyleRuleMedia::StyleRuleMedia(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<St
 {
 }
 
+StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
+    : StyleRuleBlock(o)
+    , m_mediaQueries(o.m_mediaQueries->copy())
+{
+}
+
 StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
     : StyleRuleBlock(Region, adoptRules)
 {
     m_selectorList.adoptSelectorVector(*selectors);
+}
+
+StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
+    : StyleRuleBlock(o)
+    , m_selectorList(o.m_selectorList)
+{
 }
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #define WebKitCSSKeyframesRule_h
 
 #include "CSSRule.h"
+#include "ExceptionCode.h"
 #include "StyleRule.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -38,8 +39,6 @@ class CSSRuleList;
 class StyleKeyframe;
 class WebKitCSSKeyframeRule;
 
-typedef int ExceptionCode;
-    
 class StyleRuleKeyframes : public StyleRuleBase {
 public:
     static PassRefPtr<StyleRuleKeyframes> create() { return adoptRef(new StyleRuleKeyframes()); }
@@ -57,9 +56,12 @@ public:
     
     int findKeyframeIndex(const String& key) const;
 
+    PassRefPtr<StyleRuleKeyframes> copy() const { return adoptRef(new StyleRuleKeyframes(*this)); }
+
 private:
     StyleRuleKeyframes();
-    
+    StyleRuleKeyframes(const StyleRuleKeyframes&);
+
     Vector<RefPtr<StyleKeyframe> > m_keyframes;
     AtomicString m_name;
 };

@@ -103,6 +103,17 @@ MediaQuery::MediaQuery(Restrictor r, const String& mediaType, PassOwnPtr<Vector<
     }
 }
 
+MediaQuery::MediaQuery(const MediaQuery& o)
+    : m_restrictor(o.m_restrictor)
+    , m_mediaType(o.m_mediaType)
+    , m_expressions(adoptPtr(new Vector<OwnPtr<MediaQueryExp> >(o.m_expressions->size())))
+    , m_ignored(o.m_ignored)
+    , m_serializationCache(o.m_serializationCache)
+{
+    for (unsigned i = 0; i < m_expressions->size(); ++i)
+        (*m_expressions)[i] = o.m_expressions->at(i)->copy();
+}
+
 MediaQuery::~MediaQuery()
 {
 }

@@ -33,9 +33,11 @@ namespace WebCore {
 class CSSParserSelector;
 
 class CSSSelectorList {
-    WTF_MAKE_NONCOPYABLE(CSSSelectorList); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSSelectorList() : m_selectorArray(0) { }
+    CSSSelectorList(const CSSSelectorList&);
+
     ~CSSSelectorList();
 
     void adopt(CSSSelectorList& list);

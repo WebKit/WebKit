@@ -113,10 +113,10 @@ public:
     // FIXME: Expand the concept of mutable/immutable StylePropertySet.
     bool isMutable() const { return m_ownsCSSOMWrapper; }
 
-    
 private:
     StylePropertySet(CSSParserMode);
     StylePropertySet(const Vector<CSSProperty>&);
+    StylePropertySet(const StylePropertySet&);
     StylePropertySet(const CSSProperty*, int numProperties, CSSParserMode);
 
     void setNeedsStyleRecalc();

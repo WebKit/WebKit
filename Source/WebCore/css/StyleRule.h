@@ -57,7 +57,9 @@ public:
     bool isStyleRule() const { return type() == Style; }
     bool isRegionRule() const { return type() == Region; }
     bool isImportRule() const { return type() == Import; }
-    
+
+    PassRefPtr<StyleRuleBase> copy() const;
+
     int sourceLine() const { return m_sourceLine; }
 
     void deref()
@@ -72,6 +74,8 @@ public:
 
 protected:
     StyleRuleBase(Type type, signed sourceLine = 0) : m_type(type), m_sourceLine(sourceLine) { }
+    StyleRuleBase(const StyleRuleBase& o) : m_type(o.m_type), m_sourceLine(o.m_sourceLine) { }
+
     ~StyleRuleBase() { }
 
 private:
@@ -96,8 +100,11 @@ public:
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
     void setProperties(PassRefPtr<StylePropertySet>);
 
+    PassRefPtr<StyleRule> copy() const { return adoptRef(new StyleRule(*this)); }
+
 private:
     StyleRule(int sourceLine);
+    StyleRule(const StyleRule&);
 
     RefPtr<StylePropertySet> m_properties;
     CSSSelectorList m_selectorList;
@@ -113,8 +120,11 @@ public:
 
     void setProperties(PassRefPtr<StylePropertySet>);
 
+    PassRefPtr<StyleRuleFontFace> copy() const { return adoptRef(new StyleRuleFontFace(*this)); }
+
 private:
     StyleRuleFontFace();
+    StyleRuleFontFace(const StyleRuleFontFace&);
 
     RefPtr<StylePropertySet> m_properties;
 };
@@ -132,8 +142,11 @@ public:
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
     void setProperties(PassRefPtr<StylePropertySet>);
 
+    PassRefPtr<StyleRulePage> copy() const { return adoptRef(new StyleRulePage(*this)); }
+
 private:
     StyleRulePage();
+    StyleRulePage(const StyleRulePage&);
     
     RefPtr<StylePropertySet> m_properties;
     CSSSelectorList m_selectorList;
@@ -148,6 +161,7 @@ public:
     
 protected:
     StyleRuleBlock(Type, Vector<RefPtr<StyleRuleBase> >& adoptRule);
+    StyleRuleBlock(const StyleRuleBlock&);
     
 private:
     Vector<RefPtr<StyleRuleBase> > m_childRules;
@@ -162,8 +176,11 @@ public:
 
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
 
+    PassRefPtr<StyleRuleMedia> copy() const { return adoptRef(new StyleRuleMedia(*this)); }
+
 private:
     StyleRuleMedia(PassRefPtr<MediaQuerySet>, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    StyleRuleMedia(const StyleRuleMedia&);
 
     RefPtr<MediaQuerySet> m_mediaQueries;
 };
@@ -177,8 +194,11 @@ public:
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
 
+    PassRefPtr<StyleRuleRegion> copy() const { return adoptRef(new StyleRuleRegion(*this)); }
+
 private:
     StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >*, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    StyleRuleRegion(const StyleRuleRegion&);
     
     CSSSelectorList m_selectorList;
 };

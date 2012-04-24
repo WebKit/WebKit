@@ -70,6 +70,8 @@ public:
 
     String serialize() const;
 
+    PassOwnPtr<MediaQueryExp> copy() const { return adoptPtr(new MediaQueryExp(*this)); }
+
 private:
     MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);
 
