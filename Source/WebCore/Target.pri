@@ -1259,6 +1259,7 @@ SOURCES += \
     rendering/RenderLayer.cpp \
     rendering/RenderLayerBacking.cpp \
     rendering/RenderLayerCompositor.cpp \
+    rendering/RenderLayerFilterInfo.cpp \
     rendering/RenderLineBoxList.cpp \
     rendering/RenderListBox.cpp \
     rendering/RenderListItem.cpp \

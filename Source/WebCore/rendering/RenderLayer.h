@@ -44,13 +44,15 @@
 #ifndef RenderLayer_h
 #define RenderLayer_h
 
-#if ENABLE(CSS_FILTERS)
-#include "FilterEffectObserver.h"
-#endif
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "ScrollableArea.h"
 #include <wtf/OwnPtr.h>
+
+#if ENABLE(CSS_FILTERS)
+#include "FilterEffectObserver.h"
+#include "RenderLayerFilterInfo.h"
+#endif
 
 namespace WebCore {
 
@@ -576,7 +578,22 @@ public:
 #if ENABLE(CSS_FILTERS)
     bool paintsWithFilters() const;
     bool requiresFullLayerImageForFilters() const;
-    FilterEffectRenderer* filter() const { return m_filter.get(); }
+    FilterEffectRenderer* filterRenderer() const 
+    {
+        RenderLayerFilterInfo* filterInfo = this->filterInfo();
+        return filterInfo ? filterInfo->renderer() : 0;
+    }
+    
+    RenderLayerFilterInfo* filterInfo() const { return hasFilterInfo() ? RenderLayerFilterInfo::filterInfoForRenderLayer(this) : 0; }
+    RenderLayerFilterInfo* ensureFilterInfo() { return RenderLayerFilterInfo::createFilterInfoForRenderLayerIfNeeded(this); }
+    void removeFilterInfoIfNeeded() 
+    {
+        if (hasFilterInfo())
+            RenderLayerFilterInfo::removeFilterInfoForRenderLayer(this); 
+    }
+    
+    bool hasFilterInfo() const { return m_hasFilterInfo; }
+    void setHasFilterInfo(bool hasFilterInfo) { m_hasFilterInfo = hasFilterInfo; }
 #endif
 
 #if !ASSERT_DISABLED
@@ -825,6 +842,10 @@ protected:
     // saves a lot of time when scrolling on a table.
     bool m_canSkipRepaintRectsUpdateOnScroll : 1;
 
+#if ENABLE(CSS_FILTERS)
+    bool m_hasFilterInfo : 1;
+#endif
+
     RenderBoxModelObject* m_renderer;
 
     RenderLayer* m_parent;
@@ -885,11 +906,6 @@ protected:
     
     // May ultimately be extended to many replicas (with their own paint order).
     RenderReplica* m_reflection;
-  
-#if ENABLE(CSS_FILTERS)
-    RefPtr<FilterEffectRenderer> m_filter;
-    LayoutRect m_filterRepaintRect;
-#endif
         
     // Renderers to hold our custom scroll corner and resizer.
     RenderScrollbarPart* m_scrollCorner;

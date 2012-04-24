@@ -1449,6 +1449,8 @@
 		50ACE2CB14B5D79300446666 /* CustomFilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ACE2CA14B5D79300446666 /* CustomFilterOperation.h */; };
 		50CC089A14C6E99C0017AB51 /* CustomFilterNumberParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50CC089914C6E99C0017AB51 /* CustomFilterNumberParameter.h */; };
 		50CC0A3914C6F5B10017AB51 /* CustomFilterOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50CC0A3814C6F5B10017AB51 /* CustomFilterOperation.cpp */; };
+		50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */; };
+		50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		50D403C714768C9400D30BB5 /* FECustomFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D403C514768C9400D30BB5 /* FECustomFilter.cpp */; };
 		50D403C814768C9400D30BB5 /* FECustomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D403C614768C9400D30BB5 /* FECustomFilter.h */; };
 		50D405F9147D31F300D30BB5 /* CustomFilterMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */; };
@@ -8441,6 +8443,8 @@
 		50B42157146976960087E604 /* WebKitCSSShaderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSShaderValue.h; sourceTree = "<group>"; };
 		50CC089914C6E99C0017AB51 /* CustomFilterNumberParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterNumberParameter.h; path = filters/CustomFilterNumberParameter.h; sourceTree = "<group>"; };
 		50CC0A3814C6F5B10017AB51 /* CustomFilterOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterOperation.cpp; path = filters/CustomFilterOperation.cpp; sourceTree = "<group>"; };
+		50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerFilterInfo.cpp; sourceTree = "<group>"; };
+		50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerFilterInfo.h; sourceTree = "<group>"; };
 		50D403C514768C9400D30BB5 /* FECustomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FECustomFilter.cpp; path = filters/FECustomFilter.cpp; sourceTree = "<group>"; };
 		50D403C614768C9400D30BB5 /* FECustomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FECustomFilter.h; path = filters/FECustomFilter.h; sourceTree = "<group>"; };
 		50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterMesh.cpp; path = filters/CustomFilterMesh.cpp; sourceTree = "<group>"; };
@@ -20734,6 +20738,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */,
+				50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */,
 				439046C212DA25CE00AF80A2 /* mathml */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
 				088C2F7412390080003D65CE /* svg */,
@@ -24815,6 +24821,7 @@
 				CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */,
 				CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
+				50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */,
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
 				B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */,
 				E100EE761546EAC100BA11D1 /* StyleBuilder.h in Headers */,
@@ -27828,6 +27835,7 @@
 				CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */,
 				CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */,
 				CECADFCD1537791D00E37068 /* TextInsertionBaseCommand.cpp in Sources */,
+				50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */,
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				B658FFA51522EFAA00DD5595 /* RadioNodeList.cpp in Sources */,
 				E100EE751546EAC100BA11D1 /* StyleBuilder.cpp in Sources */,

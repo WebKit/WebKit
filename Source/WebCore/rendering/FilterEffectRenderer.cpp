@@ -378,11 +378,11 @@ LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const Layout
 
 bool FilterEffectRendererHelper::prepareFilterEffect(RenderLayer* renderLayer, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
-    ASSERT(m_haveFilterEffect && renderLayer->filter());
+    ASSERT(m_haveFilterEffect && renderLayer->filterRenderer());
     m_renderLayer = renderLayer;
     m_repaintRect = dirtyRect;
 
-    FilterEffectRenderer* filter = renderLayer->filter();
+    FilterEffectRenderer* filter = renderLayer->filterRenderer();
     LayoutRect filterSourceRect = filter->computeSourceImageRectForDirtyRect(filterBoxRect, dirtyRect);
     m_paintOffset = filterSourceRect.location();
 
@@ -408,7 +408,7 @@ GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(GraphicsContext* 
 {
     ASSERT(m_renderLayer);
     
-    FilterEffectRenderer* filter = m_renderLayer->filter();
+    FilterEffectRenderer* filter = m_renderLayer->filterRenderer();
     filter->allocateBackingStoreIfNeeded();
     // Paint into the context that represents the SourceGraphic of the filter.
     GraphicsContext* sourceGraphicsContext = filter->inputContext();
@@ -431,8 +431,8 @@ GraphicsContext* FilterEffectRendererHelper::beginFilterEffect(GraphicsContext* 
 
 GraphicsContext* FilterEffectRendererHelper::applyFilterEffect()
 {
-    ASSERT(m_haveFilterEffect && m_renderLayer->filter());
-    FilterEffectRenderer* filter = m_renderLayer->filter();
+    ASSERT(m_haveFilterEffect && m_renderLayer->filterRenderer());
+    FilterEffectRenderer* filter = m_renderLayer->filterRenderer();
     filter->inputContext()->restore();
 
     filter->apply();

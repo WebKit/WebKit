@@ -39366,6 +39366,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderLayerFilterInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderLayerFilterInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderLineBoxList.cpp"
 				>
 				<FileConfiguration

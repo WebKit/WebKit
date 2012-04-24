@@ -169,6 +169,9 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_layerListMutationAllowed(true)
 #endif
     , m_canSkipRepaintRectsUpdateOnScroll(renderer->isTableCell())
+#if ENABLE(CSS_FILTERS)
+    , m_hasFilterInfo(false)
+#endif
     , m_renderer(renderer)
     , m_parent(0)
     , m_previous(0)
@@ -230,6 +233,10 @@ RenderLayer::~RenderLayer()
 
     if (m_reflection)
         removeReflection();
+    
+#if ENABLE(CSS_FILTERS)
+    removeFilterInfoIfNeeded();
+#endif
 
     // Child layers will be deleted by their corresponding render objects, so
     // we don't need to delete them ourselves.
@@ -286,20 +293,23 @@ bool RenderLayer::paintsWithFilters() const
     if (!renderer()->hasFilter())
         return false;
         
+#if USE(ACCELERATED_COMPOSITING)
     if (!isComposited())
         return true;
 
     if (!m_backing || !m_backing->canCompositeFilters())
         return true;
+#endif
 
     return false;
 }
     
 bool RenderLayer::requiresFullLayerImageForFilters() const 
 {
-    // FIXME: This can be optimized to enlarge the repaint rect exactly with the amount that is going to be used.
-    // https://bugs.webkit.org/show_bug.cgi?id=81263
-    return paintsWithFilters() && filter() && filter()->hasFilterThatMovesPixels();
+    if (!paintsWithFilters())
+        return false;
+    FilterEffectRenderer* filter = filterRenderer();
+    return filter ? filter->hasFilterThatMovesPixels() : false;
 }
 #endif
 
@@ -1004,8 +1014,10 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
         rectForRepaint.expand(leftOutset + rightOutset, topOutset + bottomOutset);
     }
 #endif
-    
-    m_filterRepaintRect.unite(rectForRepaint);
+
+    RenderLayerFilterInfo* filterInfo = this->filterInfo();
+    ASSERT(filterInfo);
+    filterInfo->expandDirtySourceRect(rectForRepaint);
     
     RenderLayer* parentLayer = enclosingFilterRepaintLayer();
     ASSERT(parentLayer);
@@ -2978,14 +2990,17 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
     updateLayerListsIfNeeded();
 
 #if ENABLE(CSS_FILTERS)
-    FilterEffectRendererHelper filterPainter(filter() && paintsWithFilters());
+    FilterEffectRendererHelper filterPainter(filterRenderer() && paintsWithFilters());
     if (filterPainter.haveFilterEffect() && !context->paintingDisabled()) {
         LayoutPoint rootLayerOffset;
         convertToLayerCoords(rootLayer, rootLayerOffset);
-        m_filterRepaintRect.move(rootLayerOffset.x(), rootLayerOffset.y());
-        if (filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, rootLayer, 0), parentPaintDirtyRect, m_filterRepaintRect)) {
+        RenderLayerFilterInfo* filterInfo = this->filterInfo();
+        ASSERT(filterInfo);
+        LayoutRect filterRepaintRect = filterInfo->dirtySourceRect();
+        filterRepaintRect.move(rootLayerOffset.x(), rootLayerOffset.y());
+        if (filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, rootLayer, 0), parentPaintDirtyRect, filterRepaintRect)) {
             // Now we know for sure, that the source image will be updated, so we can revert our tracking repaint rect back to zero.
-            m_filterRepaintRect = IntRect();
+            filterInfo->resetDirtySourceRect();
 
             // Rewire the old context to a memory buffer, so that we can capture the contents of the layer.
             // NOTE: We saved the old context in the "transparencyLayerContext" local variable, to be able to start a transparency layer
@@ -2999,7 +3014,7 @@ void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* co
                 // If the filter needs the full source image, we need to avoid using the clip rectangles.
                 // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
                 // Note that we will still apply the clipping on the final rendering of the filter.
-                useClipRect = !filter()->hasFilterThatMovesPixels();
+                useClipRect = !filterRenderer()->hasFilterThatMovesPixels();
             }
         }
     }
@@ -4854,20 +4869,31 @@ void RenderLayer::updateReflectionStyle()
 #if ENABLE(CSS_FILTERS)
 void RenderLayer::updateOrRemoveFilterEffect()
 {
-    if (paintsWithFilters() && renderer()->style()->filter().size()) {
-        if (!m_filter) {
-            m_filter = FilterEffectRenderer::create(this);
-            RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
-            m_filter->setRenderingMode(renderingMode);
-        }
-
-        // If the filter fails to build, remove it from the layer. It will still attempt to
-        // go through regular processing (e.g. compositing), but never apply anything.
-        if (!m_filter->build(renderer()->document(), renderer()->style()->filter()))
-            m_filter = 0;
-    } else {
-        m_filter = 0;
+    if (!hasFilter()) {
+        removeFilterInfoIfNeeded();
+        return;
     }
+    
+    if (!paintsWithFilters()) {
+        // Don't delete the whole filter info here, because we might use it
+        // for loading CSS shader files.
+        if (RenderLayerFilterInfo* filterInfo = this->filterInfo())
+            filterInfo->setRenderer(0);
+        return;
+    }
+    
+    RenderLayerFilterInfo* filterInfo = ensureFilterInfo();
+    if (!filterInfo->renderer()) {
+        RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create(this);
+        RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
+        filterRenderer->setRenderingMode(renderingMode);
+        filterInfo->setRenderer(filterRenderer.release());
+    }
+
+    // If the filter fails to build, remove it from the layer. It will still attempt to
+    // go through regular processing (e.g. compositing), but never apply anything.
+    if (!filterInfo->renderer()->build(renderer()->document(), renderer()->style()->filter()))
+        filterInfo->setRenderer(0);
 }
 
 void RenderLayer::filterNeedsRepaint()
