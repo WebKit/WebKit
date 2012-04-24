@@ -431,7 +431,7 @@ public:
         }
     }
 
-    AtomicXMLToken(XMLTokenTypes::Type type, AtomicString name, const AttributeVector& attributes = AttributeVector())
+    AtomicXMLToken(XMLTokenTypes::Type type, AtomicString name, const Vector<Attribute>& attributes = Vector<Attribute>())
         : AtomicMarkupTokenBase<XMLToken>(type, name, attributes)
     {
     }

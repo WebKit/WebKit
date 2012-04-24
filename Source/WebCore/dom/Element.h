@@ -244,7 +244,7 @@ public:
     virtual void attributeChanged(Attribute*);
 
     // Only called by the parser immediately after element construction.
-    void parserSetAttributes(const AttributeVector&, FragmentScriptingPermission);
+    void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
 
     ElementAttributeData* attributeData() const { return m_attributeData.get(); }
     ElementAttributeData* ensureAttributeData() const;
