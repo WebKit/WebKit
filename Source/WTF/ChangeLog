@@ -1,3 +1,35 @@
+2012-04-24  Darin Adler  <darin@apple.com>
+
+        Iterating a HashMap<String, X> involves a string equality comparison to check for the empty value
+        https://bugs.webkit.org/show_bug.cgi?id=84524
+
+        Reviewed by Antti Koivisto.
+
+        Added a new algorithm for checking for empty buckets that can be specialized.
+        Specialized it for String. We may later want to do the same thing for KURL.
+        It's not important to do it for AtomicString, since AtomicString's == function
+        is already a simple pointer equality compare. We may also later want to do
+        something similar for pairs that have String objects in them.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::isEmptyBucket): Call the new isHashTraitsEmptyValue function, which
+        will do something more efficient for String.
+
+        * wtf/HashTraits.h: Added hasIsEmptyValueFunction to hash traits, with a default value
+        of false. This allows us to continue to get automatic comparison with the appropriate
+        emptyValue result for all existing traits, but supply a custom isEmptyValue function
+        for HashTraits<String>. Putting an isEmptyValue function into the traits would require
+        overriding it in every class that has a custom value for emptyValue. Specialized
+        HashTraits for String to add hasIsEmptyValueFunction and declare, but not define, the
+        isEmptyValue function.
+        (WTF::isHashTraitsEmptyValue): Added a function that uses the HashTraitsEmptyValueChecker
+        struct to use either == combined with the emptyValue function or the isEmptyValue function.
+
+        * wtf/text/StringHash.h: Removed unneeded includes and sorted the using statements at
+        the bottom of the file.
+        (WTF::HashTraits<String>::isEmptyValue): Define this function here, since here we have
+        included the WTFString.h header; the HashTraits.h header compiles without WTFString.h.
+
 2012-04-23  Kenneth Russell  <kbr@google.com>
 
         Change ImageData to reference Uint8ClampedArray rather than CanvasPixelArray

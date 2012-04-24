@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,8 +42,17 @@ namespace WTF {
     template<bool isInteger, typename T> struct GenericHashTraitsBase;
 
     template<typename T> struct GenericHashTraitsBase<false, T> {
+        // The emptyValueIsZero flag is used to optimize allocation of empty hash tables with zeroed memory.
         static const bool emptyValueIsZero = false;
+        
+        // The hasIsEmptyValueFunction flag allows the hash table to automatically generate code to check
+        // for the empty value when it can be done with the equality operator, but allows custom functions
+        // for cases like String that need them.
+        static const bool hasIsEmptyValueFunction = false;
+
+        // The needsDestruction flag is used to optimize destruction and rehashing.
         static const bool needsDestruction = true;
+
         static const int minimumTableSize = 64;
     };
 
@@ -138,7 +147,24 @@ namespace WTF {
         // but then callers won't need to call get; doing so will require updating many call sites.
     };
 
-    template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
+    template<> struct HashTraits<String> : SimpleClassHashTraits<String> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const String&);
+    };
+
+    // This struct template is an implementation detail of the isHashTraitsEmptyValue function,
+    // which selects either the emptyValue function or the isEmptyValue function to check for empty values.
+    template<typename Traits, bool hasEmptyValueFunction> struct HashTraitsEmptyValueChecker;
+    template<typename Traits> struct HashTraitsEmptyValueChecker<Traits, true> {
+        template<typename T> static bool isEmptyValue(const T& value) { return Traits::isEmptyValue(value); }
+    };
+    template<typename Traits> struct HashTraitsEmptyValueChecker<Traits, false> {
+        template<typename T> static bool isEmptyValue(const T& value) { return value == Traits::emptyValue(); }
+    };
+    template<typename Traits, typename T> inline bool isHashTraitsEmptyValue(const T& value)
+    {
+        return HashTraitsEmptyValueChecker<Traits, Traits::hasIsEmptyValueFunction>::isEmptyValue(value);
+    }
 
     // special traits for pairs, helpful for their use in HashMap implementation
 
