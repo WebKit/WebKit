@@ -1,3 +1,13 @@
+2012-04-24  Rakesh KN  <rakesh.kn@motorola.com>
+
+        RadioNodeList support in HTMLFormElement::elements
+        https://bugs.webkit.org/show_bug.cgi?id=81854
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/form-collection-radio-node-list-expected.txt: Added.
+        * fast/forms/form-collection-radio-node-list.html: Added.
+
 2012-04-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK test_expectations update.
