@@ -1,3 +1,11 @@
+2012-04-24  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skipped a test because JSC doesn't support heap profiling.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-04-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Enable passing sputnik tests
