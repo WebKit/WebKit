@@ -108,6 +108,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_frameNumber(0)
     , m_rootScrollLayerImpl(0)
     , m_currentlyScrollingLayerImpl(0)
+    , m_scrollingLayerIdFromPreviousTree(-1)
     , m_settings(settings)
     , m_visible(true)
     , m_headsUpDisplay(CCHeadsUpDisplay::create())
@@ -514,18 +515,19 @@ void CCLayerTreeHostImpl::setRootLayer(PassOwnPtr<CCLayerImpl> layer)
 {
     m_rootLayerImpl = layer;
     m_rootScrollLayerImpl = findRootScrollLayer(m_rootLayerImpl.get());
-
-    if (!m_currentlyScrollingLayerImpl)
-        return;
-
-    if (m_rootLayerImpl && CCLayerTreeHostCommon::findLayerInSubtree(m_rootLayerImpl.get(), m_currentlyScrollingLayerImpl->id()))
-        return;
-
     m_currentlyScrollingLayerImpl = 0;
+
+    if (m_rootLayerImpl && m_scrollingLayerIdFromPreviousTree != -1)
+        m_currentlyScrollingLayerImpl = CCLayerTreeHostCommon::findLayerInSubtree(m_rootLayerImpl.get(), m_scrollingLayerIdFromPreviousTree);
+
+    m_scrollingLayerIdFromPreviousTree = -1;
 }
 
 PassOwnPtr<CCLayerImpl> CCLayerTreeHostImpl::releaseRootLayer()
 {
+    m_scrollingLayerIdFromPreviousTree = m_currentlyScrollingLayerImpl ? m_currentlyScrollingLayerImpl->id() : -1;
+    m_currentlyScrollingLayerImpl = 0;
+
     m_mostRecentRenderSurfaceLayerList.clear();
     return m_rootLayerImpl.release();
 }
@@ -692,7 +694,7 @@ CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoi
 {
     TRACE_EVENT("CCLayerTreeHostImpl::scrollBegin", this, 0);
 
-    m_currentlyScrollingLayerImpl = 0;
+    scrollEnd();
 
     if (!ensureMostRecentRenderSurfaceLayerList())
         return ScrollIgnored;
@@ -773,6 +775,7 @@ void CCLayerTreeHostImpl::scrollBy(const IntSize& scrollDelta)
 void CCLayerTreeHostImpl::scrollEnd()
 {
     m_currentlyScrollingLayerImpl = 0;
+    m_scrollingLayerIdFromPreviousTree = -1;
 }
 
 void CCLayerTreeHostImpl::pinchGestureBegin()

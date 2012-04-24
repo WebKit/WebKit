@@ -1,3 +1,17 @@
+2012-04-24  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Don't keep pointers to released layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=84715
+
+        Reviewed by Adrienne Walker.
+
+        Added new unit test to check that we can keep scrolling even if the layer
+        tree is replaced from under us.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+
 2012-04-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

@@ -190,6 +190,7 @@ private:
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_rootScrollLayerImpl;
     CCLayerImpl* m_currentlyScrollingLayerImpl;
+    int m_scrollingLayerIdFromPreviousTree;
     CCSettings m_settings;
     IntSize m_viewportSize;
     bool m_visible;

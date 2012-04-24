@@ -220,6 +220,38 @@ TEST_F(CCLayerTreeHostImplTest, scrollWithoutRootLayer)
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollIgnored);
 }
 
+TEST_F(CCLayerTreeHostImplTest, replaceTreeWhileScrolling)
+{
+    int layerId = 7;
+    {
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(layerId);
+        root->setVisibleLayerRect(IntRect(0, 0, 100, 100));
+        root->setScrollable(true);
+        root->setMaxScrollPosition(IntSize(100, 100));
+        m_hostImpl->setRootLayer(root.release());
+        initializeLayerRendererAndDrawFrame();
+    }
+
+    // We should not crash if the tree is replaced while we are scrolling.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
+    m_hostImpl->releaseRootLayer();
+
+    {
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(layerId);
+        root->setVisibleLayerRect(IntRect(0, 0, 100, 100));
+        root->setScrollable(true);
+        root->setMaxScrollPosition(IntSize(100, 100));
+        m_hostImpl->setRootLayer(root.release());
+    }
+
+    // We should still be scrolling, because the scrolled layer also exists in the new tree.
+    IntSize scrollDelta(0, 10);
+    m_hostImpl->scrollBy(scrollDelta);
+    m_hostImpl->scrollEnd();
+    OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
+    expectContains(*scrollInfo, layerId, scrollDelta);
+}
+
 TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
 {
     {
