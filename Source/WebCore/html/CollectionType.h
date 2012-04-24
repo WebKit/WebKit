@@ -59,7 +59,6 @@ enum CollectionType {
     ItemProperties, // Microdata item properties in the document
 #endif
 
-    FormControls,
     OtherCollection
 };
 

@@ -826,7 +826,6 @@ SOURCES += \
     html/PasswordInputType.cpp \
     html/PluginDocument.cpp \
     html/RadioInputType.cpp \
-    html/RadioNodeList.cpp \
     html/RangeInputType.cpp \
     html/ResetInputType.cpp \
     html/SearchInputType.cpp \
@@ -1968,7 +1967,6 @@ HEADERS += \
     html/MicroDataItemValue.h \
     html/PluginDocument.h \
     html/PublicURLManager.h \
-    html/RadioNodeList.h \
     html/StepRange.h \
     html/TextDocument.h \
     html/TimeRanges.h \

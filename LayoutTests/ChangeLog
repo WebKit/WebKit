@@ -1,3 +1,10 @@
+2012-04-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r115009; It doesn't make necessary changes to NodeRareData and Node.
+
+        * fast/forms/form-collection-radio-node-list-expected.txt: Removed.
+        * fast/forms/form-collection-radio-node-list.html: Removed.
+
 2012-04-24  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Test expectations updates to make lint happy.
