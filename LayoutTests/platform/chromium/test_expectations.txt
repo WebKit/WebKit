@@ -1272,6 +1272,8 @@ BUGWK83717 MAC : svg/custom/foreign-object-skew.svg = IMAGE PASS
 
 BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
+BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
+
 // It is very hard to see why some of these are failing. The diff must be tiny in some cases.
 // Other fail intermittently in a way that is odd - clipping and masking should be stable.
 // It is probably a test design flaw.

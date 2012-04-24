@@ -10,6 +10,6 @@ PASS ellipse does not contain point at (275, 250)
 PASS ellipse stroke contains point at (275, 250)
 PASS ellipse stroke contains point at (300, 200)
 PASS ellipse stroke does not contain point at (375, 375)
-FAIL ellipse stroke does not contain point at (0, 0)
-FAIL ellipse stroke does not contain point at (150, 150)
+PASS ellipse stroke does not contain point at (0, 0)
+PASS ellipse stroke does not contain point at (150, 150)
 

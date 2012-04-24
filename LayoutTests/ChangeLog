@@ -1,3 +1,15 @@
+2012-04-24  Philip Rogers  <pdr@google.com>
+
+        Update svg-ellipse-non-scale-stroke expectations
+        https://bugs.webkit.org/show_bug.cgi?id=82628
+
+        Unreviewed update of test expectations.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/svg/hittest/svg-ellipse-non-scale-stroke-expected.txt: Removed.
+        * platform/gtk/test_expectations.txt:
+        * svg/hittest/svg-ellipse-non-scale-stroke-expected.txt:
+
 2012-04-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update.
