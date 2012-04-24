@@ -31,6 +31,7 @@
 #include "ScriptValue.h"
 
 #include "InspectorValues.h"
+#include "JSDOMBinding.h"
 #include "SerializedScriptValue.h"
 
 #include <JavaScriptCore/APICast.h>

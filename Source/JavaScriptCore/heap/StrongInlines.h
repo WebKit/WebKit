@@ -26,6 +26,8 @@
 #ifndef StrongInlines_h
 #define StrongInlines_h
 
+#include "JSGlobalData.h"
+
 namespace JSC {
 
 template <typename T>

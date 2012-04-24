@@ -31,7 +31,6 @@
 #ifndef ScriptValue_h
 #define ScriptValue_h
 
-#include "JSDOMBinding.h"
 #include "PlatformString.h"
 #include "SerializedScriptValue.h"
 #include "ScriptState.h"

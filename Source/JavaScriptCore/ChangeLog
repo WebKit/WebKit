@@ -1,3 +1,13 @@
+2012-04-24  Adam Klein  <adamk@chromium.org>
+
+        Fix includes in StrongInlines.h and ScriptValue.h
+        https://bugs.webkit.org/show_bug.cgi?id=84659
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/StrongInlines.h: Include JSGlobalData.h, since JSGlobalData's
+        definiition is required here.
+
 2012-04-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit should ensure that all variables have been initialized
