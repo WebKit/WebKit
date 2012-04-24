@@ -242,7 +242,6 @@ namespace WebCore {
 
         // Helpers for throwing syntax and type errors with predefined messages.
         static v8::Handle<v8::Value> throwTypeError();
-        static v8::Handle<v8::Value> throwSyntaxError();
 
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> mainWorldContext();
