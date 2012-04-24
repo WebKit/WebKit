@@ -359,6 +359,9 @@ BUGWK63611 DEBUG : editing/pasteboard/paste-text-008.html = CRASH
 BUGWK63611 DEBUG : editing/undo/undo-smart-delete-reversed-selection.html = CRASH
 BUGWK63611 DEBUG : editing/selection/directionality-after-undo-replace.html = CRASH
 
+BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin.html = CRASH
+BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin-in-subframe.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -527,10 +530,19 @@ BUGWKGTK : fast/css/user-drag-none.html = TIMEOUT
 
 BUGWK54119 : http/tests/misc/acid2.html = TIMEOUT
 
-BUGWK84676 : fast/files/workers/worker-read-blob-async.html = TIMEOUT
-BUGWK84676 : fast/files/workers/worker-read-blob-sync.html = TIMEOUT
-BUGWK84676 : fast/files/workers/worker-read-file-async.html = TIMEOUT
-BUGWK84676 : fast/files/workers/worker-read-file-sync.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/workers/worker-read-blob-async.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/workers/worker-read-blob-sync.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/workers/worker-read-file-async.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/workers/worker-read-file-sync.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/read-blob-async.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/read-file-async.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/apply-blob-url-to-img.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/file-reader-directory-crash.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/null-origin-string.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/file-reader-abort.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/apply-blob-url-to-xhr.html = TIMEOUT
+BUGWK84676 SKIP : fast/files/file-reader-event-listener.html = TIMEOUT
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests timing out
@@ -1577,6 +1589,8 @@ BUGWK84675 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TEXT
+
+BUGWK84679 : css3/zoom-coords.xml = FAIL
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

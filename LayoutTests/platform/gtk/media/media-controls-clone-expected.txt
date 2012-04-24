@@ -28,9 +28,11 @@ layer at (8,8) size 300x150 scrollHeight 161
           RenderBlock {DIV} at (137,4) size 12x12
     RenderButton {INPUT} at (240,130) size 20x20
     RenderButton {INPUT} at (260,130) size 20x20
-    RenderButton {INPUT} at (280,130) size 20x20
+    RenderBlock {DIV} at (280,130) size 20x20
 layer at (96,142) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (288,138) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (308,138) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (308,138) size 300x20 scrollHeight 31
@@ -48,9 +50,11 @@ layer at (308,138) size 300x20 scrollHeight 31
           RenderBlock {DIV} at (137,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (280,0) size 20x20
 layer at (396,142) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (588,138) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (8,161) size 300x150
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x150
 layer at (8,161) size 300x150 scrollHeight 161
@@ -68,9 +72,11 @@ layer at (8,161) size 300x150 scrollHeight 161
           RenderBlock {DIV} at (137,4) size 12x12
     RenderButton {INPUT} at (240,130) size 20x20
     RenderButton {INPUT} at (260,130) size 20x20
-    RenderButton {INPUT} at (280,130) size 20x20
+    RenderBlock {DIV} at (280,130) size 20x20
 layer at (96,295) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (288,291) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (308,291) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (308,291) size 300x20 scrollHeight 31
@@ -88,6 +94,8 @@ layer at (308,291) size 300x20 scrollHeight 31
           RenderBlock {DIV} at (137,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (280,0) size 20x20
 layer at (396,295) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (588,291) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20

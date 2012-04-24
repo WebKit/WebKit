@@ -31,9 +31,11 @@ layer at (8,62) size 300x20 scrollHeight 30
           RenderBlock {DIV} at (137,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (280,0) size 20x20
 layer at (164,66) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (288,62) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (8,42) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (8,42) size 300x20 scrollHeight 30
@@ -51,9 +53,11 @@ layer at (8,42) size 300x20 scrollHeight 30
           RenderBlock {DIV} at (137,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (280,0) size 20x20
 layer at (164,46) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (288,42) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (8,134) size 300x20
   RenderMedia {AUDIO} at (0,92) size 300x20
 layer at (8,134) size 300x20
@@ -73,4 +77,4 @@ layer at (8,134) size 300x20 scrollHeight 30
           RenderBlock {DIV} at (137,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (280,0) size 20x20

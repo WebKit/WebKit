@@ -1,3 +1,20 @@
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations and another media rebaseline
+        after r114957.
+
+        * platform/gtk/fast/forms/large-toggle-elements-expected.txt:
+        * platform/gtk/fast/frames/scrolling-iframe-out-of-viewport-expected.txt:
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+        * platform/gtk/media/media-controls-clone-expected.txt:
+        * platform/gtk/media/media-document-audio-repaint-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/test_expectations.txt:
+
 2012-04-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Skip failing tests because of new regressions.

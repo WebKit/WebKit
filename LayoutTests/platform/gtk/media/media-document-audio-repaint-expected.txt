@@ -33,6 +33,8 @@ layer at (0,0) size 800x600
                     RenderBlock {DIV} at (137,4) size 12x12
               RenderButton {INPUT} at (240,-19) size 20x20
               RenderButton {INPUT} at (260,-19) size 20x20
-              RenderButton {INPUT} at (280,-19) size 20x20
+              RenderBlock {DIV} at (280,-19) size 20x20
+          layer at (320,145) size 20x20 backgroundClip at (40,164) size 300x1 clip at (40,164) size 300x1 outlineClip at (40,164) size 300x1
+            RenderButton zI: 2 {INPUT} at (0,0) size 20x20
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

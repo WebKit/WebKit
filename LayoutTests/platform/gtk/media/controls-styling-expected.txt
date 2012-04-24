@@ -34,9 +34,11 @@ layer at (18,42) size 320x240 scrollHeight 481
     RenderButton {INPUT} at (240,220) size 20x20
     RenderButton {INPUT} at (260,220) size 20x20
     RenderButton {INPUT} at (280,220) size 20x20
-    RenderButton {INPUT} at (300,220) size 20x20
+    RenderBlock {DIV} at (300,220) size 20x20
 layer at (259,266) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (318,262) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (8,282) size 320x240
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
 layer at (8,282) size 320x240 scrollHeight 250
@@ -55,6 +57,8 @@ layer at (8,282) size 320x240 scrollHeight 250
     RenderButton {INPUT} at (240,220) size 20x20
     RenderButton {INPUT} at (260,220) size 20x20
     RenderButton {INPUT} at (280,220) size 20x20
-    RenderButton {INPUT} at (300,220) size 20x20
+    RenderBlock {DIV} at (300,220) size 20x20
 layer at (96,506) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (308,502) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
