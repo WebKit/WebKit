@@ -501,6 +501,11 @@ BUGWK84675 : editing/pasteboard/file-input-files-access.html = TEXT PASS
 BUGWK84675 : editing/pasteboard/get-data-text-plain-drop.html = TEXT PASS
 BUGWK84675 : editing/pasteboard/subframe-dragndrop-1.html = TEXT PASS
 
+BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = PASS TEXT
+BUGWK84700 : fast/dom/Window/window-postmessage-clone-frames.html = PASS TEXT
+
+BUGWK84702 : fast/forms/form-collection-radio-node-list.html = PASS TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1590,12 +1595,14 @@ BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TEXT
 
-BUGWK84679 : css3/zoom-coords.xml = FAIL
+BUGWK84679 : css3/zoom-coords.xhtml = FAIL
 
 BUGWK84694 : fast/events/selectstart-by-double-triple-clicks.html = FAIL
 BUGWK84693 : fast/events/panScroll-click-hyperlink.html = FAIL
 BUGWK84692 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 BUGWK84691 : fast/events/mouse-relative-position.html = FAIL
+
+BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
