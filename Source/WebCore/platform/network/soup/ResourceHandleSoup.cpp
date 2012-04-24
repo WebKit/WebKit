@@ -75,9 +75,10 @@ class WebCoreSynchronousLoader : public ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(WebCoreSynchronousLoader);
 public:
 
-    WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, Vector<char>& data)
+    WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, SoupSession* session, Vector<char>& data)
         : m_error(error)
         , m_response(response)
+        , m_session(session)
         , m_data(data)
         , m_finished(false)
     {
@@ -88,12 +89,31 @@ public:
         GRefPtr<GMainContext> innerMainContext = adoptGRef(g_main_context_new());
         g_main_context_push_thread_default(innerMainContext.get());
         m_mainLoop = g_main_loop_new(innerMainContext.get(), false);
+
+        adjustMaxConnections(1);
     }
 
     ~WebCoreSynchronousLoader()
     {
+        adjustMaxConnections(-1);
         g_main_context_pop_thread_default(g_main_context_get_thread_default());
         loadingSynchronousRequest = false;
+    }
+
+    void adjustMaxConnections(int adjustment)
+    {
+        int maxConnections, maxConnectionsPerHost;
+        g_object_get(m_session,
+                     SOUP_SESSION_MAX_CONNS, &maxConnections,
+                     SOUP_SESSION_MAX_CONNS_PER_HOST, &maxConnectionsPerHost,
+                     NULL);
+        maxConnections += adjustment;
+        maxConnectionsPerHost += adjustment;
+        g_object_set(m_session,
+                     SOUP_SESSION_MAX_CONNS, maxConnections,
+                     SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
+                     NULL);
+
     }
 
     virtual bool isSynchronousClient()
@@ -133,6 +153,7 @@ public:
 private:
     ResourceError& m_error;
     ResourceResponse& m_response;
+    SoupSession* m_session;
     Vector<char>& m_data;
     bool m_finished;
     GRefPtr<GMainLoop> m_mainLoop;
@@ -151,9 +172,14 @@ ResourceHandleInternal::~ResourceHandleInternal()
 {
 }
 
+static SoupSession* sessionFromContext(NetworkingContext* context)
+{
+    return (context && context->isValid()) ? context->soupSession() : ResourceHandle::defaultSession();
+}
+
 SoupSession* ResourceHandleInternal::soupSession()
 {
-    return (m_context && m_context->isValid()) ? m_context->soupSession() : ResourceHandle::defaultSession();
+    return sessionFromContext(m_context.get());
 }
 
 ResourceHandle::~ResourceHandle()
@@ -750,8 +776,12 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
         return;
     }
 #endif
+ 
+    ASSERT(!loadingSynchronousRequest);
+    if (loadingSynchronousRequest) // In practice this cannot happen, but if for some reason it does,
+        return;                    // we want to avoid accidentally going into an infinite loop of requests.
 
-    WebCoreSynchronousLoader syncLoader(error, response, data);
+    WebCoreSynchronousLoader syncLoader(error, response, sessionFromContext(context), data);
     RefPtr<ResourceHandle> handle = create(context, request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/);
     if (!handle)
         return;
