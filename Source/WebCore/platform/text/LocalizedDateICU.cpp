@@ -75,6 +75,21 @@ String localizedDateFormatText()
 {
     return ICULocale::currentLocale()->localizedDateFormatText();
 }
+
+const Vector<String>& monthLabels()
+{
+    return ICULocale::currentLocale()->monthLabels();
+}
+
+const Vector<String>& weekDayShortLabels()
+{
+    return ICULocale::currentLocale()->weekDayShortLabels();
+}
+
+unsigned firstDayOfWeek()
+{
+    return ICULocale::currentLocale()->firstDayOfWeek();
+}
 #endif
 
 }
