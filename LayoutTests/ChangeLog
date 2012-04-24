@@ -1,3 +1,19 @@
+2012-04-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r114965.
+        http://trac.webkit.org/changeset/114965
+        https://bugs.webkit.org/show_bug.cgi?id=84665
+
+        Four new resource load delegate test failures (Requested by
+        jernoble on #webkit).
+
+        * http/tests/cache/cancel-during-failure-crash-expected.txt: Removed.
+        * http/tests/cache/cancel-during-failure-crash.html: Removed.
+        * platform/chromium-mac/security/block-test-expected.txt:
+        * platform/chromium-win/security/block-test-expected.txt:
+        * platform/gtk/security/block-test-expected.txt:
+        * platform/mac/security/block-test-expected.txt:
+
 2012-04-23  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=84649

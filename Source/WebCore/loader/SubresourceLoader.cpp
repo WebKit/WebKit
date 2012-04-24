@@ -275,10 +275,6 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     m_resource->setLoadFinishTime(finishTime);
     m_resource->data(resourceData(), true);
     m_resource->finish();
-    m_requestCountTracker.clear();
-    if (reachedTerminalState())
-        return;
-    m_document->cachedResourceLoader()->loadDone();
     ResourceLoader::didFinishLoading(finishTime);
 }
 
@@ -296,35 +292,31 @@ void SubresourceLoader::didFail(const ResourceError& error)
     m_resource->error(CachedResource::LoadError);
     if (!m_resource->isPreloaded())
         memoryCache()->remove(m_resource);
-    m_requestCountTracker.clear();
-    if (reachedTerminalState())
-        return;
-    m_document->cachedResourceLoader()->loadDone();
     ResourceLoader::didFail(error);
 }
 
 void SubresourceLoader::willCancel(const ResourceError&)
 {
-    if (m_state == Uninitialized)
-         return;
-    if (m_state == Initialized) {
-        ASSERT(!reachedTerminalState());
-        LOG(ResourceLoading, "Cancelled load of '%s'.\n", m_resource->url().string().latin1().data());
+    if (m_state != Initialized)
+        return;
+    ASSERT(!reachedTerminalState());
+    LOG(ResourceLoading, "Cancelled load of '%s'.\n", m_resource->url().string().latin1().data());
 
-        RefPtr<SubresourceLoader> protect(this);
-        m_state = Finishing;
-        if (m_resource->resourceToRevalidate())
-            memoryCache()->revalidationFailed(m_resource);
-        memoryCache()->remove(m_resource);
-    }
-    m_requestCountTracker.clear();
-    m_document->cachedResourceLoader()->loadDone();
+    RefPtr<SubresourceLoader> protect(this);
+    m_state = Finishing;
+    if (m_resource->resourceToRevalidate())
+        memoryCache()->revalidationFailed(m_resource);
+    memoryCache()->remove(m_resource);
 }
 
 void SubresourceLoader::releaseResources()
 {
     ASSERT(!reachedTerminalState());
     if (m_state != Uninitialized) {
+        m_requestCountTracker.clear();
+        m_document->cachedResourceLoader()->loadDone();
+        if (reachedTerminalState())
+            return;
         m_resource->stopLoading();
         m_documentLoader->removeSubresourceLoader(this);
     }
