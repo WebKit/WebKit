@@ -1,3 +1,17 @@
+2012-04-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r115000.
+        http://trac.webkit.org/changeset/115000
+        https://bugs.webkit.org/show_bug.cgi?id=84703
+
+        Breaks webkit_unit_tests on Mac in Chromium:
+        http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Mac10.6/builds/15157
+        (Requested by mnaganov on #webkit).
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-04-23  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Image masks are considered opaque incorrectly

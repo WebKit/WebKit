@@ -248,7 +248,7 @@ void PlatformContextSkia::restoreLayer()
 {
     m_canvas->restore();
     if (m_trackOpaqueRegion)
-        m_opaqueRegion.popCanvasLayer(this);
+        m_opaqueRegion.popCanvasLayer();
 }
 
 void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
