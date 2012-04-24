@@ -1,3 +1,21 @@
+2012-04-23  Dana Jansens  <danakj@chromium.org>
+
+        Layout Test platform/chromium/compositing/filters/background-filter-blur-outsets.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=84072
+
+        Reviewed by Adrienne Walker.
+
+        Use onload and layoutTestController.display() to ensure the page is
+        loaded and compositor is ready before setting the background blur.
+
+        Also, smaller blur for faster test bots.
+
+        * platform/chromium-linux/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.png:
+        * platform/chromium-linux/platform/chromium/compositing/filters/background-filter-blur-outsets-expected.txt:
+        * platform/chromium/compositing/filters/background-filter-blur-off-axis.html:
+        * platform/chromium/compositing/filters/background-filter-blur-outsets.html:
+        * platform/chromium/compositing/filters/background-filter-blur.html:
+
 2012-04-23  Kenneth Russell  <kbr@google.com>
 
         Change ImageData to reference Uint8ClampedArray rather than CanvasPixelArray

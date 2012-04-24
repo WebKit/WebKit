@@ -18,17 +18,15 @@
 </style>
 <script type="text/javascript">
   function setBlur() {
+    layoutTestController.display(); // Force compositor to start.
     var blurNode = window.document.getElementById('blur');
     window.internals.setBackgroundBlurOnNode(blurNode, 2);
-    layoutTestController.notifyDone();
   }
 
   if (window.layoutTestController) {
-    if (window.internals) {
-      layoutTestController.waitUntilDone();
-      window.setTimeout(setBlur, 0);
-    }
     layoutTestController.dumpAsText(true);
+    if (window.internals)
+      window.onload = setBlur;
   }
 </script>
 </head>

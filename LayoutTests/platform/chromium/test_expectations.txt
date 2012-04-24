@@ -765,8 +765,8 @@ WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS FAIL TIMEOUT
 // data, so this test is not applicable.
 WONTFIX SKIP : compositing/video/video-background-color.html = FAIL
 
-BUGWK84072 LINUX RELEASE : platform/chromium/compositing/filters/background-filter-blur-outsets.html = TEXT
-BUGWK83886 LINUX DEBUG : platform/chromium/compositing/filters/background-filter-blur-outsets.html = PASS TEXT TIMEOUT
+// Rebaseline and enable this when the bug patch lands.
+BUGWK84072 : platform/chromium/compositing/filters/background-filter-blur-outsets.html = TIMEOUT FAIL
 
 // Pre-HTML5 parser quirks only apply to the mac port; we're not interested in
 // supporting that option.
