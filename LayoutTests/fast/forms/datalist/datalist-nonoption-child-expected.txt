@@ -9,6 +9,4 @@ PASS datalist.firstChild.nodeName is "DIV"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Text is ok. An inline element is ok.
-A block element is not ok.
 

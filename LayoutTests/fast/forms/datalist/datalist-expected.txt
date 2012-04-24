@@ -8,4 +8,4 @@ PASS datalist.options.length is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE
-The choices are , , , and .
+

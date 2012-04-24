@@ -1,5 +1,17 @@
 2012-04-23  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed. Fix incorrect test results for <datalist>
+
+        * fast/forms/datalist/datalist-expected.txt: Remove fallback content.
+        * fast/forms/datalist/datalist-nonoption-child-expected.txt: ditto.
+        * platform/chromium-linux/fast/forms/datalist/input-list-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/datalist/input-list-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/datalist/input-list-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/datalist/input-list-expected.png: Removed.
+        * platform/chromium-win/fast/forms/datalist/input-list-expected.txt: Removed.
+
+2012-04-23  Kent Tamura  <tkent@chromium.org>
+
         Show the format indicator in a date field
         https://bugs.webkit.org/show_bug.cgi?id=83872
 
