@@ -275,7 +275,6 @@ void Oscillator::setWaveTable(WaveTable* waveTable)
     MutexLocker processLocker(m_processLock);
     m_waveTable = waveTable;
     m_type = CUSTOM;
-    m_virtualReadIndex = 0;
 }
 
 } // namespace WebCore
