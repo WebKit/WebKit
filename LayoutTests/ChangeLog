@@ -1,3 +1,10 @@
+2012-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaseline after r115187.
+
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+
 2012-04-25  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [SVG] Nothing should be stroked when the stroke-width is 0
