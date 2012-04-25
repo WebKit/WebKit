@@ -2120,19 +2120,15 @@ transforms/2d/hindi-rotated.html
 # ============================================================================= #
 # failing printing tests
 # ============================================================================= #
-printing/compositing-layer-printing.html
 # Printing related layout test failure has no results, but obvious error message
 # https://bugs.webkit.org/show_bug.cgi?id=27913
-printing/media-queries-print.html
 
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
 printing/single-line-must-not-be-split-into-two-pages.html
-printing/width-overflow.html
 
 printing/page-count-relayout-shrink.html
 printing/return-from-printing-mode.html
-printing/simultaneous-position-float-change.html
 
 # ============================================================================= #
 # new tests without expected results

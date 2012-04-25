@@ -1,3 +1,17 @@
+2012-04-25  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] add LayoutTestController::setPrinting support to Qt unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=84246
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::paintPagesWithBoundaries):
+        * Api/qwebframe.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::paintPagesWithBoundaries):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2012-04-24  Alexis Menard  <alexis.menard@openbossa.org>
 
         Replace occurences of style selector from variables and methods names by style resolver.

@@ -234,6 +234,8 @@ public:
 
     static bool defaultHixie76WebSocketProtocolEnabled();
     static void setHixie76WebSocketProtocolEnabled(QWebPage*, bool);
+
+    static QImage paintPagesWithBoundaries(QWebFrame*);
 };
 
 #endif

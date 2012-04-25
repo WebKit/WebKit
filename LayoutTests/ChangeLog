@@ -1,3 +1,23 @@
+2012-04-25  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] add LayoutTestController::setPrinting support to Qt unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=84246
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt/printing/compositing-layer-printing-expected.png: Added.
+        * platform/qt/printing/compositing-layer-printing-expected.txt: Added.
+        * platform/qt/printing/media-queries-print-expected.png: Added.
+        * platform/qt/printing/media-queries-print-expected.txt: Added.
+        * platform/qt/printing/page-rule-in-media-query-expected.png: Added.
+        * platform/qt/printing/page-rule-in-media-query-expected.txt: Renamed from LayoutTests/platform/qt/printing/page-rule-in-media-query-expected.txt.
+        * platform/qt/printing/simultaneous-position-float-change-expected.png: Added.
+        * platform/qt/printing/simultaneous-position-float-change-expected.txt: Added.
+        * platform/qt/printing/width-overflow-expected.png: Added.
+        * platform/qt/printing/width-overflow-expected.txt: Added.
+        * platform/qt/Skipped:
+        * platform/qt/printing/page-rule-in-media-query-expected.png: Removed.
+
 2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update
