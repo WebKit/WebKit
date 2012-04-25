@@ -3364,8 +3364,6 @@ BUGWK81145 LION : fast/events/platform-wheelevent-paging-y-in-scrolling-page.htm
 BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
 
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
-BUGYANGGUO WIN : fast/repaint/moving-shadow-on-container.html = TEXT
-BUGYANGGUO WIN : fast/repaint/moving-shadow-on-path.html = TEXT
 
 BUGWK77368 WIN : css3/flexbox/child-overflow.html = IMAGE
 
