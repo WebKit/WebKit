@@ -60,6 +60,9 @@ public:
 private:
     MediaElementAudioSourceNode(AudioContext*, HTMLMediaElement*);
 
+    // As an audio source, we will never propagate silence.
+    virtual bool propagatesSilence() const OVERRIDE { return false; }
+
     RefPtr<HTMLMediaElement> m_mediaElement;
     Mutex m_processLock;
 
