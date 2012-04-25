@@ -79,10 +79,10 @@ v8::Handle<v8::Value> V8PopStateEvent::stateAccessorGetter(v8::Local<v8::String>
             if (!result.IsEmpty())
                 return cacheState(info.Holder(), result);
         }
-        result = event->serializedState()->deserialize();
+        result = event->serializedState()->deserialize(0, info.GetIsolate());
         v8History->SetHiddenValue(V8HiddenPropertyName::state(), result);
     } else
-        result = event->serializedState()->deserialize();
+        result = event->serializedState()->deserialize(0, info.GetIsolate());
 
     return cacheState(info.Holder(), result);
 }

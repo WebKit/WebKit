@@ -73,7 +73,7 @@ v8::Handle<v8::Value> toV8(IDBAny* impl, v8::Isolate* isolate)
     case IDBAny::IDBTransactionType:
         return toV8(impl->idbTransaction());
     case IDBAny::SerializedScriptValueType:
-        return impl->serializedScriptValue()->deserialize();
+        return impl->serializedScriptValue()->deserialize(0, isolate);
     }
 
     ASSERT_NOT_REACHED();
