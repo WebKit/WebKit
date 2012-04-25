@@ -59,7 +59,7 @@ void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
 {
 }
 
-void ScrollingCoordinator::setScrollParameters(ScrollElasticity, ScrollElasticity, bool, bool, const IntRect&, const IntSize&)
+void ScrollingCoordinator::setScrollParameters(const ScrollParameters&)
 {
 }
 

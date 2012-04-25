@@ -144,9 +144,7 @@ void ScrollingCoordinator::setNonFastScrollableRegion(const Region& region)
         layer->setNonFastScrollableRegion(region);
 }
 
-void ScrollingCoordinator::setScrollParameters(ScrollElasticity horizontalScrollElasticity, ScrollElasticity verticalScrollElasticity,
-                                               bool hasEnabledHorizontalScrollbar, bool hasEnabledVerticalScrollbar,
-                                               const IntRect& viewportRect, const IntSize& contentsSize)
+void ScrollingCoordinator::setScrollParameters(const ScrollParameters&)
 {
     // FIXME: Implement!
 }

@@ -123,9 +123,19 @@ private:
 
     void setScrollLayer(GraphicsLayer*);
     void setNonFastScrollableRegion(const Region&);
-    void setScrollParameters(ScrollElasticity horizontalScrollElasticity, ScrollElasticity verticalScrollElasticity,
-                             bool hasEnabledHorizontalScrollbar, bool hasEnabledVerticalScrollbar,
-                             const IntRect& viewportRect, const IntSize& contentsSize);
+
+    struct ScrollParameters {
+        ScrollElasticity horizontalScrollElasticity;
+        ScrollElasticity verticalScrollElasticity;
+
+        bool hasEnabledHorizontalScrollbar;
+        bool hasEnabledVerticalScrollbar;
+
+        IntRect viewportRect;
+        IntSize contentsSize;
+    };
+
+    void setScrollParameters(const ScrollParameters&);
     void setWheelEventHandlerCount(unsigned);
     void setShouldUpdateScrollLayerPositionOnMainThread(bool);
 

@@ -141,13 +141,16 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    setScrollParameters(frameView->horizontalScrollElasticity(),
-                        frameView->verticalScrollElasticity(),
-                        frameView->horizontalScrollbar() && frameView->horizontalScrollbar()->enabled(),
-                        frameView->verticalScrollbar() && frameView->verticalScrollbar()->enabled(),
-                        IntRect(IntPoint(), frameView->visibleContentRect().size()),
-                        frameView->contentsSize());
+    ScrollParameters scrollParameters;
+    scrollParameters.horizontalScrollElasticity = frameView->horizontalScrollElasticity();
+    scrollParameters.verticalScrollElasticity = frameView->verticalScrollElasticity();
+    scrollParameters.hasEnabledHorizontalScrollbar = frameView->horizontalScrollbar() && frameView->horizontalScrollbar()->enabled();
+    scrollParameters.hasEnabledVerticalScrollbar = frameView->verticalScrollbar() && frameView->verticalScrollbar()->enabled();
 
+    scrollParameters.viewportRect = IntRect(IntPoint(), frameView->visibleContentRect().size());
+    scrollParameters.contentsSize = frameView->contentsSize();
+
+    setScrollParameters(scrollParameters);
 }
 
 void ScrollingCoordinator::frameViewWheelEventHandlerCountChanged(FrameView*)
@@ -352,20 +355,15 @@ void ScrollingCoordinator::setNonFastScrollableRegion(const Region& region)
     scheduleTreeStateCommit();
 }
 
-void ScrollingCoordinator::setScrollParameters(ScrollElasticity horizontalScrollElasticity,
-                                               ScrollElasticity verticalScrollElasticity,
-                                               bool hasEnabledHorizontalScrollbar,
-                                               bool hasEnabledVerticalScrollbar,
-                                               const IntRect& viewportRect,
-                                               const IntSize& contentsSize)
+void ScrollingCoordinator::setScrollParameters(const ScrollParameters& scrollParameters)
 {
-    m_scrollingTreeState->setHorizontalScrollElasticity(horizontalScrollElasticity);
-    m_scrollingTreeState->setVerticalScrollElasticity(verticalScrollElasticity);
-    m_scrollingTreeState->setHasEnabledHorizontalScrollbar(hasEnabledHorizontalScrollbar);
-    m_scrollingTreeState->setHasEnabledVerticalScrollbar(hasEnabledVerticalScrollbar);
+    m_scrollingTreeState->setHorizontalScrollElasticity(scrollParameters.horizontalScrollElasticity);
+    m_scrollingTreeState->setVerticalScrollElasticity(scrollParameters.verticalScrollElasticity);
+    m_scrollingTreeState->setHasEnabledHorizontalScrollbar(scrollParameters.hasEnabledHorizontalScrollbar);
+    m_scrollingTreeState->setHasEnabledVerticalScrollbar(scrollParameters.hasEnabledVerticalScrollbar);
 
-    m_scrollingTreeState->setViewportRect(viewportRect);
-    m_scrollingTreeState->setContentsSize(contentsSize);
+    m_scrollingTreeState->setViewportRect(scrollParameters.viewportRect);
+    m_scrollingTreeState->setContentsSize(scrollParameters.contentsSize);
     scheduleTreeStateCommit();
 }
 
