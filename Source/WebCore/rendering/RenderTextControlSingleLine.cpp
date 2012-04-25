@@ -25,7 +25,6 @@
 #include "RenderTextControlSingleLine.h"
 
 #include "CSSFontSelector.h"
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "Frame.h"
@@ -43,6 +42,7 @@
 #include "SearchPopupMenu.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
+#include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 
 using namespace std;

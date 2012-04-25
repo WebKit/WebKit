@@ -5375,8 +5375,6 @@
 		BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B360C4EA91E0083285F /* CSSHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772B3D0C4EA91E0083285F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772B370C4EA91E0083285F /* CSSParser.cpp */; };
 		BC772B3E0C4EA91E0083285F /* CSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B380C4EA91E0083285F /* CSSParser.h */; };
-		BC772B3F0C4EA91E0083285F /* CSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772B390C4EA91E0083285F /* CSSStyleSelector.cpp */; };
-		BC772B400C4EA91E0083285F /* CSSStyleSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B3A0C4EA91E0083285F /* CSSStyleSelector.h */; };
 		BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */; };
 		BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C450C4EB2C60083285F /* XMLHttpRequest.h */; };
 		BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */; };
@@ -5863,6 +5861,8 @@
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
 		E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F5AA12EE343F004EC58D /* IntRectHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E139866315478474001E3F65 /* StyleResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E139866115478474001E3F65 /* StyleResolver.cpp */; };
+		E139866415478474001E3F65 /* StyleResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E139866215478474001E3F65 /* StyleResolver.h */; };
 		E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */; };
 		E14F1C4414B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */; };
 		E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */ = {isa = PBXBuildFile; fileRef = E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12464,8 +12464,6 @@
 		BC772B360C4EA91E0083285F /* CSSHelper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSHelper.h; sourceTree = "<group>"; };
 		BC772B370C4EA91E0083285F /* CSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSParser.cpp; sourceTree = "<group>"; };
 		BC772B380C4EA91E0083285F /* CSSParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSParser.h; sourceTree = "<group>"; };
-		BC772B390C4EA91E0083285F /* CSSStyleSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleSelector.cpp; sourceTree = "<group>"; };
-		BC772B3A0C4EA91E0083285F /* CSSStyleSelector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSStyleSelector.h; sourceTree = "<group>"; };
 		BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequest.cpp; sourceTree = "<group>"; };
 		BC772C450C4EB2C60083285F /* XMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequest.h; sourceTree = "<group>"; };
 		BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MIMETypeRegistry.cpp; sourceTree = "<group>"; };
@@ -13001,6 +12999,8 @@
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
 		E134F5AA12EE343F004EC58D /* IntRectHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectHash.h; sourceTree = "<group>"; };
+		E139866115478474001E3F65 /* StyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolver.cpp; sourceTree = "<group>"; };
+		E139866215478474001E3F65 /* StyleResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleResolver.h; sourceTree = "<group>"; };
 		E13F01EA1270E10D00DFBA71 /* CookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorage.h; sourceTree = "<group>"; };
 		E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageMac.mm; sourceTree = "<group>"; };
 		E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormControlElementWithState.cpp; sourceTree = "<group>"; };
@@ -20607,8 +20607,6 @@
 				A80E6CC50A1989CA007FB8C5 /* CSSStyleRule.cpp */,
 				A80E6CE20A1989CA007FB8C5 /* CSSStyleRule.h */,
 				85C56CA10AA89AB400D95755 /* CSSStyleRule.idl */,
-				BC772B390C4EA91E0083285F /* CSSStyleSelector.cpp */,
-				BC772B3A0C4EA91E0083285F /* CSSStyleSelector.h */,
 				A8EA80000A19516E00A8EF5F /* CSSStyleSheet.cpp */,
 				A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */,
 				858C39100AA8FF0000B187A4 /* CSSStyleSheet.idl */,
@@ -20686,6 +20684,8 @@
 				A80E6DFA0A199067007FB8C5 /* StylePropertySet.h */,
 				E1B25104152A0BAF0069B779 /* StylePropertyShorthand.cpp */,
 				E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */,
+				E139866115478474001E3F65 /* StyleResolver.cpp */,
+				E139866215478474001E3F65 /* StyleResolver.h */,
 				E4BBED4A14FCDBA1003F0B98 /* StyleRule.cpp */,
 				E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */,
 				A8EA80050A19516E00A8EF5F /* StyleSheet.cpp */,
@@ -21919,7 +21919,6 @@
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
-				BC772B400C4EA91E0083285F /* CSSStyleSelector.h in Headers */,
 				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
 				BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */,
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
@@ -24814,6 +24813,7 @@
 				50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */,
 				E100EE761546EAC100BA11D1 /* StyleBuilder.h in Headers */,
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
+				E139866415478474001E3F65 /* StyleResolver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25404,7 +25404,6 @@
 				E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */,
 				A80E6E100A19911C007FB8C5 /* CSSStyleDeclaration.cpp in Sources */,
 				A80E6CEF0A1989CA007FB8C5 /* CSSStyleRule.cpp in Sources */,
-				BC772B3F0C4EA91E0083285F /* CSSStyleSelector.cpp in Sources */,
 				A8EA80080A19516E00A8EF5F /* CSSStyleSheet.cpp in Sources */,
 				BC80C9870CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp in Sources */,
 				371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */,
@@ -27827,6 +27826,7 @@
 				50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */,
 				E100EE751546EAC100BA11D1 /* StyleBuilder.cpp in Sources */,
 				517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */,
+				E139866315478474001E3F65 /* StyleResolver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

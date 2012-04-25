@@ -29,7 +29,6 @@
 
 #include "AXObjectCache.h"
 #include "BackForwardController.h"
-#include "CSSStyleSelector.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -66,6 +65,7 @@
 #include "ScrollAnimator.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include "TextResourceDecoder.h"
 
 #include <wtf/CurrentTime.h>

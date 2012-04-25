@@ -31,7 +31,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSStyleSelector.h"
 #include "CSSValueList.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -43,9 +42,10 @@
 #include "MediaQueryExp.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
+#include "PlatformScreen.h"
 #include "RenderView.h"
 #include "RenderStyle.h"
-#include "PlatformScreen.h"
+#include "StyleResolver.h"
 #include <wtf/HashMap.h>
 
 #if ENABLE(3D_RENDERING) && USE(ACCELERATED_COMPOSITING)

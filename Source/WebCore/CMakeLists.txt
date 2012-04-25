@@ -483,7 +483,6 @@ SET(WebCore_SOURCES
     css/CSSSelectorList.cpp
     css/CSSStyleDeclaration.cpp
     css/CSSStyleRule.cpp
-    css/CSSStyleSelector.cpp
     css/CSSStyleSheet.cpp
     css/CSSTimingFunctionValue.cpp
     css/CSSUnicodeRangeValue.cpp
@@ -510,6 +509,7 @@ SET(WebCore_SOURCES
     css/StyleMedia.cpp
     css/StylePropertySet.cpp
     css/StylePropertyShorthand.cpp
+    css/StyleResolver.cpp
     css/StyleRule.cpp
     css/StyleSheet.cpp
     css/StyleSheetList.cpp
@@ -2549,7 +2549,7 @@ ADD_CUSTOM_COMMAND(
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/css/make-css-file-arrays.pl --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentStyleSheets.h ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentStyleSheetsData.cpp ${WebCore_USER_AGENT_STYLE_SHEETS}
     VERBATIM)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentStyleSheetsData.cpp)
-ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSStyleSelector.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
+ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/StyleResolver.cpp UserAgentStyleSheetsData.cpp UserAgentStyleSheets.h)
 
 
 GENERATE_GRAMMAR(cssyy ${WEBCORE_DIR}/css/CSSGrammar.y ${DERIVED_SOURCES_WEBCORE_DIR}/CSSGrammar.h ${DERIVED_SOURCES_WEBCORE_DIR}/CSSGrammar.cpp)

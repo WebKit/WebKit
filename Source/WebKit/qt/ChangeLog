@@ -1,3 +1,16 @@
+2012-04-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Rename CSSStyleSelector files to StyleResolver.
+        https://bugs.webkit.org/show_bug.cgi?id=84814
+
+        Reviewed by Antti Koivisto.
+
+        Rename CSSStyleSelector files to match the new class name StyleResolver.
+        Update the includes all over the code base to the new name.
+
+        * Api/qwebelement.cpp:
+        * WebCoreSupport/RenderThemeQStyle.cpp:
+
 2012-04-25  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] add LayoutTestController::setPrinting support to Qt unit tests

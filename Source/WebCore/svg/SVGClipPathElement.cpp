@@ -25,12 +25,12 @@
 #include "SVGClipPathElement.h"
 
 #include "Attribute.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "RenderSVGResourceClipper.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGTransformList.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 

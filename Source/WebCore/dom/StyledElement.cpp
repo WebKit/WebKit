@@ -27,7 +27,6 @@
 #include "Attribute.h"
 #include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
@@ -39,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "StylePropertySet.h"
+#include "StyleResolver.h"
 #include <wtf/HashFunctions.h>
 
 using namespace std;

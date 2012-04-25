@@ -22,7 +22,6 @@
 
 #import "BitmapImage.h"
 #import "ColorMac.h"
-#import "CSSStyleSelector.h"
 #import "CSSValueList.h"
 #import "CSSValueKeywords.h"
 #import "Document.h"
@@ -45,6 +44,7 @@
 #import "RenderView.h"
 #import "SharedBuffer.h"
 #import "StringTruncator.h"
+#import "StyleResolver.h"
 #import "TimeRanges.h"
 #import "ThemeMac.h"
 #import "WebCoreSystemInterface.h"

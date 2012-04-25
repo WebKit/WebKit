@@ -29,7 +29,6 @@
 
 #include "Attribute.h"
 #include "CachedResourceLoader.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -49,6 +48,7 @@
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
 #include "SVGSymbolElement.h"
+#include "StyleResolver.h"
 #include "XLinkNames.h"
 #include "XMLDocumentParser.h"
 #include "XMLSerializer.h"

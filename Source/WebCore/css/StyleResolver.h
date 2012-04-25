@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CSSStyleSelector_h
-#define CSSStyleSelector_h
+#ifndef StyleResolver_h
+#define StyleResolver_h
 
 #include "CSSRule.h"
 #include "CSSValueList.h"
@@ -538,4 +538,4 @@ private:
 
 } // namespace WebCore
 
-#endif // CSSStyleSelector_h
+#endif // StyleResolver_h

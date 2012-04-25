@@ -27,12 +27,12 @@
 #include "SVGMaskElement.h"
 
 #include "Attribute.h"
-#include "CSSStyleSelector.h"
 #include "RenderSVGResourceMasker.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
 #include "SVGUnitTypes.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 

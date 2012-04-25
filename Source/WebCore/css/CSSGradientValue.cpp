@@ -27,7 +27,6 @@
 #include "CSSGradientValue.h"
 
 #include "CSSCalculationValue.h"
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "GeneratorGeneratedImage.h"
 #include "Gradient.h"
@@ -37,6 +36,7 @@
 #include "NodeRenderStyle.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
+#include "StyleResolver.h"
 
 using namespace std;
 

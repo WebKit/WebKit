@@ -32,7 +32,6 @@
 
 #include "MediaControlElements.h"
 
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "DOMTokenList.h"
 #include "EventNames.h"
@@ -53,6 +52,7 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include "Text.h"
 
 namespace WebCore {

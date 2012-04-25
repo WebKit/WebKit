@@ -26,14 +26,9 @@
  */
 
 #include "config.h"
-#include "CSSStyleSelector.h"
+#include "StyleResolver.h"
 
 #include "Attribute.h"
-#include "CachedImage.h"
-#include "CalculationValue.h"
-#include "ContentData.h"
-#include "Counter.h"
-#include "CounterContent.h"
 #include "CSSBorderImage.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
@@ -54,6 +49,11 @@
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
+#include "CachedImage.h"
+#include "CalculationValue.h"
+#include "ContentData.h"
+#include "Counter.h"
+#include "CounterContent.h"
 #include "CursorList.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
@@ -101,9 +101,9 @@
 #include "SkewTransformOperation.h"
 #include "StyleBuilder.h"
 #include "StyleCachedImage.h"
+#include "StyleGeneratedImage.h"
 #include "StylePendingImage.h"
 #include "StyleRule.h"
-#include "StyleGeneratedImage.h"
 #include "StyleSheetList.h"
 #include "Text.h"
 #include "TransformationMatrix.h"
@@ -372,9 +372,8 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     if (!defaultStyle) {
         if (!root || elementCanUseSimpleDefaultStyle(root))
             loadSimpleDefaultStyle();
-        else {
+        else
             loadFullDefaultStyle();
-        }
     }
 
     // construct document root element default style. this is needed
@@ -1733,7 +1732,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
 
     // If the 0% keyframe is missing, create it (but only if there is at least one other keyframe)
     int initialListSize = list.size();
-    if (initialListSize > 0 && list[0].key() != 0) {
+    if (initialListSize > 0 && list[0].key()) {
         static StyleKeyframe* zeroPercentKeyframe;
         if (!zeroPercentKeyframe) {
             zeroPercentKeyframe = StyleKeyframe::create().leakRef();
@@ -1924,21 +1923,20 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     if (style->display() != NONE) {
         // If we have a <td> that specifies a float property, in quirks mode we just drop the float
         // property.
-        // Sites also commonly use display:inline/block on <td>s and <table>s.  In quirks mode we force
+        // Sites also commonly use display:inline/block on <td>s and <table>s. In quirks mode we force
         // these tags to retain their display types.
         if (!m_checker.strictParsing() && e) {
             if (e->hasTagName(tdTag)) {
                 style->setDisplay(TABLE_CELL);
                 style->setFloating(NoFloat);
-            }
-            else if (e->hasTagName(tableTag))
+            } else if (e->hasTagName(tableTag))
                 style->setDisplay(style->isDisplayInlineType() ? INLINE_TABLE : TABLE);
         }
 
         if (e && (e->hasTagName(tdTag) || e->hasTagName(thTag))) {
             if (style->whiteSpace() == KHTML_NOWRAP) {
                 // Figure out if we are really nowrapping or if we should just
-                // use normal instead.  If the width of the cell is fixed, then
+                // use normal instead. If the width of the cell is fixed, then
                 // we don't actually use NOWRAP.
                 if (style->width().isFixed())
                     style->setWhiteSpace(NORMAL);
@@ -1951,8 +1949,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         if (e && e->hasTagName(tableTag) && (style->textAlign() == WEBKIT_LEFT || style->textAlign() == WEBKIT_CENTER || style->textAlign() == WEBKIT_RIGHT))
             style->setTextAlign(TAAUTO);
 
-        // Frames and framesets never honor position:relative or position:absolute.  This is necessary to
-        // fix a crash where a site tries to position these objects.  They also never honor display.
+        // Frames and framesets never honor position:relative or position:absolute. This is necessary to
+        // fix a crash where a site tries to position these objects. They also never honor display.
         if (e && (e->hasTagName(frameTag) || e->hasTagName(framesetTag))) {
             style->setPosition(StaticPosition);
             style->setDisplay(BLOCK);
@@ -1980,12 +1978,12 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         if (style->display() == INLINE && style->styleType() == NOPSEUDO && parentStyle && style->writingMode() != parentStyle->writingMode())
             style->setDisplay(INLINE_BLOCK);
 
-        // After performing the display mutation, check table rows.  We do not honor position:relative on
-        // table rows or cells.  This has been established in CSS2.1 (and caused a crash in containingBlock()
+        // After performing the display mutation, check table rows. We do not honor position:relative on
+        // table rows or cells. This has been established in CSS2.1 (and caused a crash in containingBlock()
         // on some sites).
         if ((style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW_GROUP
-             || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW) &&
-             style->position() == RelativePosition)
+             || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW)
+             && style->position() == RelativePosition)
             style->setPosition(StaticPosition);
 
         // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
@@ -2006,9 +2004,9 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     if (style->position() == StaticPosition)
         style->setHasAutoZIndex();
 
-    // Auto z-index becomes 0 for the root element and transparent objects.  This prevents
+    // Auto z-index becomes 0 for the root element and transparent objects. This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
-    // object wedged in between them.  Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
+    // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e) || style->opacity() < 1.0f
         || style->hasTransformRelatedProperty() || style->hasMask() || style->boxReflect() || style->hasFilter()
 #ifdef FIXED_POSITION_CREATES_STACKING_CONTEXT
@@ -2047,8 +2045,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
     // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
     // FIXME: Eventually table sections will support auto and scroll.
-    if (style->display() == TABLE || style->display() == INLINE_TABLE ||
-        style->display() == TABLE_ROW_GROUP || style->display() == TABLE_ROW) {
+    if (style->display() == TABLE || style->display() == INLINE_TABLE
+        || style->display() == TABLE_ROW_GROUP || style->display() == TABLE_ROW) {
         if (style->overflowX() != OVISIBLE && style->overflowX() != OHIDDEN)
             style->setOverflowX(OVISIBLE);
         if (style->overflowY() != OVISIBLE && style->overflowY() != OHIDDEN)
@@ -2072,7 +2070,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
     // alter fonts and heights/widths.
     if (e && e->isFormControlElement() && style->fontSize() >= 11) {
-        // Don't apply intrinsic margins to image buttons.  The designer knows how big the images are,
+        // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
         if (!e->hasTagName(inputTag) || !static_cast<HTMLInputElement*>(e)->isImageButton())
             addIntrinsicMargins(style);
@@ -2530,8 +2528,8 @@ void RuleSet::addRulesFromSheet(StyleSheetInternal* sheet, const MediaQueryEvalu
                             continue;
                         styleSelector->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(childRule));
                     }
-                }   // for rules
-            }   // if rules
+                } // for rules
+            } // if rules
         } else if (rule->isFontFaceRule() && styleSelector) {
             // Add this font face to our set.
             // FIXME(BUG 72461): We don't add @font-face rules of scoped style sheets for the moment.
@@ -2972,32 +2970,32 @@ void StyleResolver::applyPropertyToCurrentStyle(CSSPropertyID id, CSSValue* valu
 inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 {
     switch (id) {
-        case CSSPropertyBackgroundColor:
-        case CSSPropertyBorderLeftColor:
-        case CSSPropertyBorderRightColor:
-        case CSSPropertyBorderTopColor:
-        case CSSPropertyBorderBottomColor:
-        case CSSPropertyColor:
-        case CSSPropertyOutlineColor:
-        case CSSPropertyWebkitColumnRuleColor:
-        case CSSPropertyWebkitTextEmphasisColor:
-        case CSSPropertyWebkitTextFillColor:
-        case CSSPropertyWebkitTextStrokeColor:
-        // Also allow shorthands so that inherit/initial still work.
-        case CSSPropertyBackground:
-        case CSSPropertyBorderLeft:
-        case CSSPropertyBorderRight:
-        case CSSPropertyBorderTop:
-        case CSSPropertyBorderBottom:
-        case CSSPropertyOutline:
-        case CSSPropertyWebkitColumnRule:
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyColor:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextStrokeColor:
+    // Also allow shorthands so that inherit/initial still work.
+    case CSSPropertyBackground:
+    case CSSPropertyBorderLeft:
+    case CSSPropertyBorderRight:
+    case CSSPropertyBorderTop:
+    case CSSPropertyBorderBottom:
+    case CSSPropertyOutline:
+    case CSSPropertyWebkitColumnRule:
 #if ENABLE(SVG)
-        case CSSPropertyFill:
-        case CSSPropertyStroke:
+    case CSSPropertyFill:
+    case CSSPropertyStroke:
 #endif
-            return true;
-        default:
-            break;
+        return true;
+    default:
+        break;
     }
 
     return false;
@@ -3124,100 +3122,100 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     float zoomFactor = m_style->effectiveZoom();
 
     // What follows is a list that maps the CSS properties into their corresponding front-end
-    // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
+    // RenderStyle values. Shorthands (e.g. border, background) occur in this list as well and
     // are only hit when mapping "inherit" or "initial" into front-end values.
     switch (id) {
-// lists
+    // lists
     case CSSPropertyContent:
         // list of string, uri, counter, attr, i
-    {
-        // FIXME: In CSS3, it will be possible to inherit content.  In CSS2 it is not.  This
-        // note is a reminder that eventually "inherit" needs to be supported.
+        {
+            // FIXME: In CSS3, it will be possible to inherit content. In CSS2 it is not. This
+            // note is a reminder that eventually "inherit" needs to be supported.
 
-        if (isInitial) {
-            m_style->clearContent();
-            return;
-        }
+            if (isInitial) {
+                m_style->clearContent();
+                return;
+            }
 
-        if (!value->isValueList())
-            return;
+            if (!value->isValueList())
+                return;
 
-        bool didSet = false;
-        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-            CSSValue* item = i.value();
-            if (item->isImageGeneratorValue()) {
-                m_style->setContent(StyleGeneratedImage::create(static_cast<CSSImageGeneratorValue*>(item)), didSet);
-                didSet = true;
+            bool didSet = false;
+            for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+                CSSValue* item = i.value();
+                if (item->isImageGeneratorValue()) {
+                    m_style->setContent(StyleGeneratedImage::create(static_cast<CSSImageGeneratorValue*>(item)), didSet);
+                    didSet = true;
 #if ENABLE(CSS_IMAGE_SET)
-            } else if (item->isImageSetValue()) {
-                m_style->setContent(setOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageSetValue*>(item)), didSet);
-                didSet = true;
+                } else if (item->isImageSetValue()) {
+                    m_style->setContent(setOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageSetValue*>(item)), didSet);
+                    didSet = true;
 #endif
-            }
+                }
 
-            if (item->isImageValue()) {
-                m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(item)), didSet);
-                didSet = true;
-                continue;
-            }
+                if (item->isImageValue()) {
+                    m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(item)), didSet);
+                    didSet = true;
+                    continue;
+                }
 
-            if (!item->isPrimitiveValue())
-                continue;
+                if (!item->isPrimitiveValue())
+                    continue;
 
-            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
+                CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
 
-            if (contentValue->isString()) {
-                m_style->setContent(contentValue->getStringValue().impl(), didSet);
-                didSet = true;
-            } else if (contentValue->isAttr()) {
-                // FIXME: Can a namespace be specified for an attr(foo)?
-                if (m_style->styleType() == NOPSEUDO)
-                    m_style->setUnique();
-                else
-                    m_parentStyle->setUnique();
-                QualifiedName attr(nullAtom, contentValue->getStringValue().impl(), nullAtom);
-                const AtomicString& value = m_element->getAttribute(attr);
-                m_style->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
-                didSet = true;
-                // register the fact that the attribute value affects the style
-                m_features.attrsInRules.add(attr.localName().impl());
-            } else if (contentValue->isCounter()) {
-                Counter* counterValue = contentValue->getCounterValue();
-                EListStyleType listStyleType = NoneListStyle;
-                int listStyleIdent = counterValue->listStyleIdent();
-                if (listStyleIdent != CSSValueNone)
-                    listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
-                OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(), listStyleType, counterValue->separator()));
-                m_style->setContent(counter.release(), didSet);
-                didSet = true;
-            } else {
-                switch (contentValue->getIdent()) {
-                case CSSValueOpenQuote:
-                    m_style->setContent(OPEN_QUOTE, didSet);
+                if (contentValue->isString()) {
+                    m_style->setContent(contentValue->getStringValue().impl(), didSet);
                     didSet = true;
-                    break;
-                case CSSValueCloseQuote:
-                    m_style->setContent(CLOSE_QUOTE, didSet);
+                } else if (contentValue->isAttr()) {
+                    // FIXME: Can a namespace be specified for an attr(foo)?
+                    if (m_style->styleType() == NOPSEUDO)
+                        m_style->setUnique();
+                    else
+                        m_parentStyle->setUnique();
+                    QualifiedName attr(nullAtom, contentValue->getStringValue().impl(), nullAtom);
+                    const AtomicString& value = m_element->getAttribute(attr);
+                    m_style->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
                     didSet = true;
-                    break;
-                case CSSValueNoOpenQuote:
-                    m_style->setContent(NO_OPEN_QUOTE, didSet);
+                    // register the fact that the attribute value affects the style
+                    m_features.attrsInRules.add(attr.localName().impl());
+                } else if (contentValue->isCounter()) {
+                    Counter* counterValue = contentValue->getCounterValue();
+                    EListStyleType listStyleType = NoneListStyle;
+                    int listStyleIdent = counterValue->listStyleIdent();
+                    if (listStyleIdent != CSSValueNone)
+                        listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
+                    OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(), listStyleType, counterValue->separator()));
+                    m_style->setContent(counter.release(), didSet);
                     didSet = true;
-                    break;
-                case CSSValueNoCloseQuote:
-                    m_style->setContent(NO_CLOSE_QUOTE, didSet);
-                    didSet = true;
-                    break;
-                default:
-                    // normal and none do not have any effect.
-                    {}
+                } else {
+                    switch (contentValue->getIdent()) {
+                    case CSSValueOpenQuote:
+                        m_style->setContent(OPEN_QUOTE, didSet);
+                        didSet = true;
+                        break;
+                    case CSSValueCloseQuote:
+                        m_style->setContent(CLOSE_QUOTE, didSet);
+                        didSet = true;
+                        break;
+                    case CSSValueNoOpenQuote:
+                        m_style->setContent(NO_OPEN_QUOTE, didSet);
+                        didSet = true;
+                        break;
+                    case CSSValueNoCloseQuote:
+                        m_style->setContent(NO_CLOSE_QUOTE, didSet);
+                        didSet = true;
+                        break;
+                    default:
+                        // normal and none do not have any effect.
+                        { }
+                    }
                 }
             }
+            if (!didSet)
+                m_style->clearContent();
+            return;
         }
-        if (!didSet)
-            m_style->clearContent();
-        return;
-    }
     case CSSPropertyQuotes:
         if (isInherit) {
             if (m_parentStyle)
@@ -3258,7 +3256,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
             setFontDescription(fontDescription);
             return;
-        } else if (isInitial) {
+        }
+
+        if (isInitial) {
             FontDescription initialDesc = FontDescription();
             FontDescription fontDescription = m_style->fontDescription();
             // We need to adjust the size to account for the generic family change from monospace
@@ -3293,33 +3293,33 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
                 face = contentValue->getStringValue();
             else if (settings) {
                 switch (contentValue->getIdent()) {
-                    case CSSValueWebkitBody:
-                        face = settings->standardFontFamily();
-                        break;
-                    case CSSValueSerif:
-                        face = serifFamily;
-                        fontDescription.setGenericFamily(FontDescription::SerifFamily);
-                        break;
-                    case CSSValueSansSerif:
-                        face = sansSerifFamily;
-                        fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
-                        break;
-                    case CSSValueCursive:
-                        face = cursiveFamily;
-                        fontDescription.setGenericFamily(FontDescription::CursiveFamily);
-                        break;
-                    case CSSValueFantasy:
-                        face = fantasyFamily;
-                        fontDescription.setGenericFamily(FontDescription::FantasyFamily);
-                        break;
-                    case CSSValueMonospace:
-                        face = monospaceFamily;
-                        fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
-                        break;
-                    case CSSValueWebkitPictograph:
-                        face = pictographFamily;
-                        fontDescription.setGenericFamily(FontDescription::PictographFamily);
-                        break;
+                case CSSValueWebkitBody:
+                    face = settings->standardFontFamily();
+                    break;
+                case CSSValueSerif:
+                    face = serifFamily;
+                    fontDescription.setGenericFamily(FontDescription::SerifFamily);
+                    break;
+                case CSSValueSansSerif:
+                    face = sansSerifFamily;
+                    fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
+                    break;
+                case CSSValueCursive:
+                    face = cursiveFamily;
+                    fontDescription.setGenericFamily(FontDescription::CursiveFamily);
+                    break;
+                case CSSValueFantasy:
+                    face = fantasyFamily;
+                    fontDescription.setGenericFamily(FontDescription::FantasyFamily);
+                    break;
+                case CSSValueMonospace:
+                    face = monospaceFamily;
+                    fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
+                    break;
+                case CSSValueWebkitPictograph:
+                    face = pictographFamily;
+                    fontDescription.setGenericFamily(FontDescription::PictographFamily);
+                    break;
                 }
             }
 
@@ -3354,8 +3354,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
         if (isInitial) {
             m_style->clearBackgroundLayers();
             m_style->setBackgroundColor(Color());
-        }
-        else if (isInherit) {
+        } else if (isInherit) {
             m_style->inheritBackgroundLayers(*m_parentStyle->backgroundLayers());
             m_style->setBackgroundColor(m_parentStyle->backgroundColor());
         }
@@ -3398,7 +3397,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             FontDescription fontDescription;
             RenderTheme::defaultTheme()->systemFont(primitiveValue->getIdent(), fontDescription);
 
-            // Double-check and see if the theme did anything.  If not, don't bother updating the font.
+            // Double-check and see if the theme did anything. If not, don't bother updating the font.
             if (fontDescription.isAbsoluteSize()) {
                 // Make sure the rendering mode and printer font settings are updated.
                 Settings* settings = m_checker.document()->settings();
@@ -3413,9 +3412,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
                 setFontDescription(fontDescription);
             }
         } else if (value->isFontValue()) {
-            FontValue *font = static_cast<FontValue*>(value);
-            if (!font->style || !font->variant || !font->weight ||
-                 !font->size || !font->lineHeight || !font->family)
+            FontValue* font = static_cast<FontValue*>(value);
+            if (!font->style || !font->variant || !font->weight
+                || !font->size || !font->lineHeight || !font->family)
                 return;
             applyProperty(CSSPropertyFontStyle, font->style.get());
             applyProperty(CSSPropertyFontVariant, font->variant.get());
@@ -3507,8 +3506,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             m_style->setColumnRuleColor(m_parentStyle->columnRuleColor().isValid() ? m_parentStyle->columnRuleColor() : m_parentStyle->color());
             m_style->setColumnRuleStyle(m_parentStyle->columnRuleStyle());
             m_style->setColumnRuleWidth(m_parentStyle->columnRuleWidth());
-        }
-        else if (isInitial)
+        } else if (isInitial)
             m_style->resetColumnRule();
         return;
     case CSSPropertyWebkitMarquee:
@@ -3536,15 +3534,15 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             return;
         if (int ident = primitiveValue->getIdent()) {
             switch (ident) {
-                case CSSValueSlow:
-                    m_style->setMarqueeSpeed(500); // 500 msec.
-                    break;
-                case CSSValueNormal:
-                    m_style->setMarqueeSpeed(85); // 85msec. The WinIE default.
-                    break;
-                case CSSValueFast:
-                    m_style->setMarqueeSpeed(10); // 10msec. Super fast.
-                    break;
+            case CSSValueSlow:
+                m_style->setMarqueeSpeed(500); // 500 msec.
+                break;
+            case CSSValueNormal:
+                m_style->setMarqueeSpeed(85); // 85msec. The WinIE default.
+                break;
+            case CSSValueFast:
+                m_style->setMarqueeSpeed(10); // 10msec. Super fast.
+                break;
             }
         } else if (primitiveValue->isTime())
             m_style->setMarqueeSpeed(primitiveValue->computeTime<int, CSSPrimitiveValue::Milliseconds>());
@@ -3558,15 +3556,15 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             return;
         if (primitiveValue->getIdent()) {
             switch (primitiveValue->getIdent()) {
-                case CSSValueSmall:
-                    m_style->setMarqueeIncrement(Length(1, Fixed)); // 1px.
-                    break;
-                case CSSValueNormal:
-                    m_style->setMarqueeIncrement(Length(6, Fixed)); // 6px. The WinIE default.
-                    break;
-                case CSSValueLarge:
-                    m_style->setMarqueeIncrement(Length(36, Fixed)); // 36px.
-                    break;
+            case CSSValueSmall:
+                m_style->setMarqueeIncrement(Length(1, Fixed)); // 1px.
+                break;
+            case CSSValueNormal:
+                m_style->setMarqueeIncrement(Length(6, Fixed)); // 6px. The WinIE default.
+                break;
+            case CSSValueLarge:
+                m_style->setMarqueeIncrement(Length(36, Fixed)); // 36px.
+                break;
             }
         } else {
             Length marqueeLength = convertToIntLength(primitiveValue, style(), m_rootElementStyle);
@@ -3609,11 +3607,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
             return;
         }
 
-        DashboardRegion *region = primitiveValue->getDashboardRegionValue();
+        DashboardRegion* region = primitiveValue->getDashboardRegionValue();
         if (!region)
             return;
 
-        DashboardRegion *first = region;
+        DashboardRegion* first = region;
         while (region) {
             Length top = convertToIntLength(region->top(), style(), m_rootElementStyle);
             Length right = convertToIntLength(region->right(), style(), m_rootElementStyle);
@@ -3645,20 +3643,20 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(textStrokeWidth, TextStrokeWidth)
         float width = 0;
         switch (primitiveValue->getIdent()) {
-            case CSSValueThin:
-            case CSSValueMedium:
-            case CSSValueThick: {
-                double result = 1.0 / 48;
-                if (primitiveValue->getIdent() == CSSValueMedium)
-                    result *= 3;
-                else if (primitiveValue->getIdent() == CSSValueThick)
-                    result *= 5;
-                width = CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS)->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
-                break;
-            }
-            default:
-                width = primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
-                break;
+        case CSSValueThin:
+        case CSSValueMedium:
+        case CSSValueThick: {
+            double result = 1.0 / 48;
+            if (primitiveValue->getIdent() == CSSValueMedium)
+                result *= 3;
+            else if (primitiveValue->getIdent() == CSSValueThick)
+                result *= 5;
+            width = CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS)->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
+            break;
+        }
+        default:
+            width = primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
+            break;
         }
         m_style->setTextStrokeWidth(width);
         return;
@@ -4184,17 +4182,17 @@ void StyleResolver::mapFillAttachment(CSSPropertyID, FillLayer* layer, CSSValue*
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
-        case CSSValueFixed:
-            layer->setAttachment(FixedBackgroundAttachment);
-            break;
-        case CSSValueScroll:
-            layer->setAttachment(ScrollBackgroundAttachment);
-            break;
-        case CSSValueLocal:
-            layer->setAttachment(LocalBackgroundAttachment);
-            break;
-        default:
-            return;
+    case CSSValueFixed:
+        layer->setAttachment(FixedBackgroundAttachment);
+        break;
+    case CSSValueScroll:
+        layer->setAttachment(ScrollBackgroundAttachment);
+        break;
+    case CSSValueLocal:
+        layer->setAttachment(LocalBackgroundAttachment);
+        break;
+    default:
+        return;
     }
 }
 
@@ -4379,18 +4377,18 @@ void StyleResolver::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValue* 
     float zoomFactor = m_style->effectiveZoom();
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    Length l;
+    Length length;
     if (primitiveValue->isLength())
-        l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
+        length = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (primitiveValue->isPercentage())
-        l = Length(primitiveValue->getDoubleValue(), Percent);
+        length = Length(primitiveValue->getDoubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
-        l = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
+        length = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
     else if (primitiveValue->isViewportPercentageLength())
-        l = primitiveValue->viewportPercentageLength();
+        length = primitiveValue->viewportPercentageLength();
     else
         return;
-    layer->setXPosition(l);
+    layer->setXPosition(length);
 }
 
 void StyleResolver::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValue* value)
@@ -4406,18 +4404,18 @@ void StyleResolver::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValue* 
     float zoomFactor = m_style->effectiveZoom();
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    Length l;
+    Length length;
     if (primitiveValue->isLength())
-        l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
+        length = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (primitiveValue->isPercentage())
-        l = Length(primitiveValue->getDoubleValue(), Percent);
+        length = Length(primitiveValue->getDoubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
-        l = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
+        length = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
     else if (primitiveValue->isViewportPercentageLength())
-        l = primitiveValue->viewportPercentageLength();
+        length = primitiveValue->viewportPercentageLength();
     else
         return;
-    layer->setYPosition(l);
+    layer->setYPosition(length);
 }
 
 void StyleResolver::mapAnimationDelay(Animation* animation, CSSValue* value)
@@ -4585,27 +4583,27 @@ void StyleResolver::mapAnimationTimingFunction(Animation* animation, CSSValue* v
     if (value->isPrimitiveValue()) {
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         switch (primitiveValue->getIdent()) {
-            case CSSValueLinear:
-                animation->setTimingFunction(LinearTimingFunction::create());
-                break;
-            case CSSValueEase:
-                animation->setTimingFunction(CubicBezierTimingFunction::create());
-                break;
-            case CSSValueEaseIn:
-                animation->setTimingFunction(CubicBezierTimingFunction::create(0.42, 0.0, 1.0, 1.0));
-                break;
-            case CSSValueEaseOut:
-                animation->setTimingFunction(CubicBezierTimingFunction::create(0.0, 0.0, 0.58, 1.0));
-                break;
-            case CSSValueEaseInOut:
-                animation->setTimingFunction(CubicBezierTimingFunction::create(0.42, 0.0, 0.58, 1.0));
-                break;
-            case CSSValueStepStart:
-                animation->setTimingFunction(StepsTimingFunction::create(1, true));
-                break;
-            case CSSValueStepEnd:
-                animation->setTimingFunction(StepsTimingFunction::create(1, false));
-                break;
+        case CSSValueLinear:
+            animation->setTimingFunction(LinearTimingFunction::create());
+            break;
+        case CSSValueEase:
+            animation->setTimingFunction(CubicBezierTimingFunction::create());
+            break;
+        case CSSValueEaseIn:
+            animation->setTimingFunction(CubicBezierTimingFunction::create(0.42, 0.0, 1.0, 1.0));
+            break;
+        case CSSValueEaseOut:
+            animation->setTimingFunction(CubicBezierTimingFunction::create(0.0, 0.0, 0.58, 1.0));
+            break;
+        case CSSValueEaseInOut:
+            animation->setTimingFunction(CubicBezierTimingFunction::create(0.42, 0.0, 0.58, 1.0));
+            break;
+        case CSSValueStepStart:
+            animation->setTimingFunction(StepsTimingFunction::create(1, true));
+            break;
+        case CSSValueStepEnd:
+            animation->setTimingFunction(StepsTimingFunction::create(1, false));
+            break;
         }
         return;
     }
@@ -4842,12 +4840,12 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
         return;
 
     // For now, lump all families but monospace together.
-    if (childFont.genericFamily() != FontDescription::MonospaceFamily &&
-        parentFont.genericFamily() != FontDescription::MonospaceFamily)
+    if (childFont.genericFamily() != FontDescription::MonospaceFamily
+        && parentFont.genericFamily() != FontDescription::MonospaceFamily)
         return;
 
     // We know the parent is monospace or the child is monospace, and that font
-    // size was unspecified.  We want to scale our font size as appropriate.
+    // size was unspecified. We want to scale our font size as appropriate.
     // If the font uses a keyword size, then we refetch from the table rather than
     // multiplying by our scale factor.
     float size;
@@ -4895,8 +4893,8 @@ float StyleResolver::getComputedSizeFromSpecifiedSize(Document* document, float 
     if (fabsf(specifiedSize) < std::numeric_limits<float>::epsilon())
         return 0.0f;
 
-    // We support two types of minimum font size.  The first is a hard override that applies to
-    // all fonts.  This is "minSize."  The second type of minimum font size is a "smart minimum"
+    // We support two types of minimum font size. The first is a hard override that applies to
+    // all fonts. This is "minSize." The second type of minimum font size is a "smart minimum"
     // that is applied only when the Web page can't know what size it really asked for, e.g.,
     // when it uses logical sizes like "small" or expresses the font-size as a percentage of
     // the user's default font setting.
@@ -4913,13 +4911,13 @@ float StyleResolver::getComputedSizeFromSpecifiedSize(Document* document, float 
     int minLogicalSize = settings->minimumLogicalFontSize();
     float zoomedSize = specifiedSize * zoomFactor;
 
-    // Apply the hard minimum first.  We only apply the hard minimum if after zooming we're still too small.
+    // Apply the hard minimum first. We only apply the hard minimum if after zooming we're still too small.
     if (zoomedSize < minSize)
         zoomedSize = minSize;
 
-    // Now apply the "smart minimum."  This minimum is also only applied if we're still too small
-    // after zooming.  The font size must either be relative to the user default or the original size
-    // must have been acceptable.  In other words, we only apply the smart minimum whenever we're positive
+    // Now apply the "smart minimum." This minimum is also only applied if we're still too small
+    // after zooming. The font size must either be relative to the user default or the original size
+    // must have been acceptable. In other words, we only apply the smart minimum whenever we're positive
     // doing so won't disrupt the layout.
     if (useSmartMinimumForFontSize && zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
         zoomedSize = minLogicalSize;
@@ -4933,7 +4931,7 @@ const int fontSizeTableMax = 16;
 const int fontSizeTableMin = 9;
 const int totalKeywords = 8;
 
-// WinIE/Nav4 table for font sizes.  Designed to match the legacy font mapping system of HTML.
+// WinIE/Nav4 table for font sizes. Designed to match the legacy font mapping system of HTML.
 static const int quirksFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][totalKeywords] =
 {
       { 9,    9,     9,     9,    11,    14,    18,    28 },
@@ -4943,7 +4941,7 @@ static const int quirksFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
       { 9,    9,    10,    13,    16,    20,    26,    40 }, // fixed font default (13)
       { 9,    9,    11,    14,    17,    21,    28,    42 },
       { 9,   10,    12,    15,    17,    23,    30,    45 },
-      { 9,   10,    13,    16,    18,    24,    32,    48 }  // proportional font default (16)
+      { 9,   10,    13,    16,    18,    24,    32,    48 } // proportional font default (16)
 };
 // HTML       1      2      3      4      5      6      7
 // CSS  xxs   xs     s      m      l     xl     xxl
@@ -4960,7 +4958,7 @@ static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
       { 9,   10,    12,    13,    16,    20,    26,    39 }, // fixed font default (13)
       { 9,   10,    12,    14,    17,    21,    28,    42 },
       { 9,   10,    13,    15,    18,    23,    30,    45 },
-      { 9,   10,    13,    16,    18,    24,    32,    48 }  // proportional font default (16)
+      { 9,   10,    13,    16,    18,    24,    32,    48 } // proportional font default (16)
 };
 // HTML       1      2      3      4      5      6      7
 // CSS  xxs   xs     s      m      l     xl     xxl
@@ -5102,28 +5100,28 @@ bool StyleResolver::affectedByViewportChange() const
 static TransformOperation::OperationType getTransformOperationType(WebKitCSSTransformValue::TransformOperationType type)
 {
     switch (type) {
-        case WebKitCSSTransformValue::ScaleTransformOperation:          return TransformOperation::SCALE;
-        case WebKitCSSTransformValue::ScaleXTransformOperation:         return TransformOperation::SCALE_X;
-        case WebKitCSSTransformValue::ScaleYTransformOperation:         return TransformOperation::SCALE_Y;
-        case WebKitCSSTransformValue::ScaleZTransformOperation:         return TransformOperation::SCALE_Z;
-        case WebKitCSSTransformValue::Scale3DTransformOperation:        return TransformOperation::SCALE_3D;
-        case WebKitCSSTransformValue::TranslateTransformOperation:      return TransformOperation::TRANSLATE;
-        case WebKitCSSTransformValue::TranslateXTransformOperation:     return TransformOperation::TRANSLATE_X;
-        case WebKitCSSTransformValue::TranslateYTransformOperation:     return TransformOperation::TRANSLATE_Y;
-        case WebKitCSSTransformValue::TranslateZTransformOperation:     return TransformOperation::TRANSLATE_Z;
-        case WebKitCSSTransformValue::Translate3DTransformOperation:    return TransformOperation::TRANSLATE_3D;
-        case WebKitCSSTransformValue::RotateTransformOperation:         return TransformOperation::ROTATE;
-        case WebKitCSSTransformValue::RotateXTransformOperation:        return TransformOperation::ROTATE_X;
-        case WebKitCSSTransformValue::RotateYTransformOperation:        return TransformOperation::ROTATE_Y;
-        case WebKitCSSTransformValue::RotateZTransformOperation:        return TransformOperation::ROTATE_Z;
-        case WebKitCSSTransformValue::Rotate3DTransformOperation:       return TransformOperation::ROTATE_3D;
-        case WebKitCSSTransformValue::SkewTransformOperation:           return TransformOperation::SKEW;
-        case WebKitCSSTransformValue::SkewXTransformOperation:          return TransformOperation::SKEW_X;
-        case WebKitCSSTransformValue::SkewYTransformOperation:          return TransformOperation::SKEW_Y;
-        case WebKitCSSTransformValue::MatrixTransformOperation:         return TransformOperation::MATRIX;
-        case WebKitCSSTransformValue::Matrix3DTransformOperation:       return TransformOperation::MATRIX_3D;
-        case WebKitCSSTransformValue::PerspectiveTransformOperation:    return TransformOperation::PERSPECTIVE;
-        case WebKitCSSTransformValue::UnknownTransformOperation:        return TransformOperation::NONE;
+    case WebKitCSSTransformValue::ScaleTransformOperation: return TransformOperation::SCALE;
+    case WebKitCSSTransformValue::ScaleXTransformOperation: return TransformOperation::SCALE_X;
+    case WebKitCSSTransformValue::ScaleYTransformOperation: return TransformOperation::SCALE_Y;
+    case WebKitCSSTransformValue::ScaleZTransformOperation: return TransformOperation::SCALE_Z;
+    case WebKitCSSTransformValue::Scale3DTransformOperation: return TransformOperation::SCALE_3D;
+    case WebKitCSSTransformValue::TranslateTransformOperation: return TransformOperation::TRANSLATE;
+    case WebKitCSSTransformValue::TranslateXTransformOperation: return TransformOperation::TRANSLATE_X;
+    case WebKitCSSTransformValue::TranslateYTransformOperation: return TransformOperation::TRANSLATE_Y;
+    case WebKitCSSTransformValue::TranslateZTransformOperation: return TransformOperation::TRANSLATE_Z;
+    case WebKitCSSTransformValue::Translate3DTransformOperation: return TransformOperation::TRANSLATE_3D;
+    case WebKitCSSTransformValue::RotateTransformOperation: return TransformOperation::ROTATE;
+    case WebKitCSSTransformValue::RotateXTransformOperation: return TransformOperation::ROTATE_X;
+    case WebKitCSSTransformValue::RotateYTransformOperation: return TransformOperation::ROTATE_Y;
+    case WebKitCSSTransformValue::RotateZTransformOperation: return TransformOperation::ROTATE_Z;
+    case WebKitCSSTransformValue::Rotate3DTransformOperation: return TransformOperation::ROTATE_3D;
+    case WebKitCSSTransformValue::SkewTransformOperation: return TransformOperation::SKEW;
+    case WebKitCSSTransformValue::SkewXTransformOperation: return TransformOperation::SKEW_X;
+    case WebKitCSSTransformValue::SkewYTransformOperation: return TransformOperation::SKEW_Y;
+    case WebKitCSSTransformValue::MatrixTransformOperation: return TransformOperation::MATRIX;
+    case WebKitCSSTransformValue::Matrix3DTransformOperation: return TransformOperation::MATRIX_3D;
+    case WebKitCSSTransformValue::PerspectiveTransformOperation: return TransformOperation::PERSPECTIVE;
+    case WebKitCSSTransformValue::UnknownTransformOperation: return TransformOperation::NONE;
     }
     return TransformOperation::NONE;
 }
@@ -5159,212 +5157,212 @@ bool StyleResolver::createTransformOperations(CSSValue* inValue, RenderStyle* st
         CSSPrimitiveValue* firstValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(0));
 
         switch (transformValue->operationType()) {
-            case WebKitCSSTransformValue::ScaleTransformOperation:
-            case WebKitCSSTransformValue::ScaleXTransformOperation:
-            case WebKitCSSTransformValue::ScaleYTransformOperation: {
-                double sx = 1.0;
-                double sy = 1.0;
-                if (transformValue->operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
-                    sy = firstValue->getDoubleValue();
-                else {
-                    sx = firstValue->getDoubleValue();
-                    if (transformValue->operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
-                        if (transformValue->length() > 1) {
-                            CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            sy = secondValue->getDoubleValue();
-                        } else
-                            sy = sx;
+        case WebKitCSSTransformValue::ScaleTransformOperation:
+        case WebKitCSSTransformValue::ScaleXTransformOperation:
+        case WebKitCSSTransformValue::ScaleYTransformOperation: {
+            double sx = 1.0;
+            double sy = 1.0;
+            if (transformValue->operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
+                sy = firstValue->getDoubleValue();
+            else {
+                sx = firstValue->getDoubleValue();
+                if (transformValue->operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
+                    if (transformValue->length() > 1) {
+                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        sy = secondValue->getDoubleValue();
+                    } else
+                        sy = sx;
+                }
+            }
+            operations.operations().append(ScaleTransformOperation::create(sx, sy, 1.0, getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::ScaleZTransformOperation:
+        case WebKitCSSTransformValue::Scale3DTransformOperation: {
+            double sx = 1.0;
+            double sy = 1.0;
+            double sz = 1.0;
+            if (transformValue->operationType() == WebKitCSSTransformValue::ScaleZTransformOperation)
+                sz = firstValue->getDoubleValue();
+            else if (transformValue->operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
+                sy = firstValue->getDoubleValue();
+            else {
+                sx = firstValue->getDoubleValue();
+                if (transformValue->operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
+                    if (transformValue->length() > 2) {
+                        CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
+                        sz = thirdValue->getDoubleValue();
+                    }
+                    if (transformValue->length() > 1) {
+                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        sy = secondValue->getDoubleValue();
+                    } else
+                        sy = sx;
+                }
+            }
+            operations.operations().append(ScaleTransformOperation::create(sx, sy, sz, getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::TranslateTransformOperation:
+        case WebKitCSSTransformValue::TranslateXTransformOperation:
+        case WebKitCSSTransformValue::TranslateYTransformOperation: {
+            Length tx = Length(0, Fixed);
+            Length ty = Length(0, Fixed);
+            if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
+                ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+            else {
+                tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
+                    if (transformValue->length() > 1) {
+                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
                     }
                 }
-                operations.operations().append(ScaleTransformOperation::create(sx, sy, 1.0, getTransformOperationType(transformValue->operationType())));
-                break;
             }
-            case WebKitCSSTransformValue::ScaleZTransformOperation:
-            case WebKitCSSTransformValue::Scale3DTransformOperation: {
-                double sx = 1.0;
-                double sy = 1.0;
-                double sz = 1.0;
-                if (transformValue->operationType() == WebKitCSSTransformValue::ScaleZTransformOperation)
-                    sz = firstValue->getDoubleValue();
-                else if (transformValue->operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
-                    sy = firstValue->getDoubleValue();
-                else {
-                    sx = firstValue->getDoubleValue();
-                    if (transformValue->operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
-                        if (transformValue->length() > 2) {
-                            CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
-                            sz = thirdValue->getDoubleValue();
-                        }
-                        if (transformValue->length() > 1) {
-                            CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            sy = secondValue->getDoubleValue();
-                        } else
-                            sy = sx;
+
+            if (tx.isUndefined() || ty.isUndefined())
+                return false;
+
+            operations.operations().append(TranslateTransformOperation::create(tx, ty, Length(0, Fixed), getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::TranslateZTransformOperation:
+        case WebKitCSSTransformValue::Translate3DTransformOperation: {
+            Length tx = Length(0, Fixed);
+            Length ty = Length(0, Fixed);
+            Length tz = Length(0, Fixed);
+            if (transformValue->operationType() == WebKitCSSTransformValue::TranslateZTransformOperation)
+                tz = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+            else if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
+                ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+            else {
+                tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+                if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
+                    if (transformValue->length() > 2) {
+                        CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
+                        tz = convertToFloatLength(thirdValue, style, rootStyle, zoomFactor);
+                    }
+                    if (transformValue->length() > 1) {
+                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
                     }
                 }
-                operations.operations().append(ScaleTransformOperation::create(sx, sy, sz, getTransformOperationType(transformValue->operationType())));
-                break;
             }
-            case WebKitCSSTransformValue::TranslateTransformOperation:
-            case WebKitCSSTransformValue::TranslateXTransformOperation:
-            case WebKitCSSTransformValue::TranslateYTransformOperation: {
-                Length tx = Length(0, Fixed);
-                Length ty = Length(0, Fixed);
-                if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
-                else {
-                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
-                    if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
-                        if (transformValue->length() > 1) {
-                            CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
-                        }
+
+            if (tx.isUndefined() || ty.isUndefined() || tz.isUndefined())
+                return false;
+
+            operations.operations().append(TranslateTransformOperation::create(tx, ty, tz, getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::RotateTransformOperation: {
+            double angle = firstValue->computeDegrees();
+            operations.operations().append(RotateTransformOperation::create(0, 0, 1, angle, getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::RotateXTransformOperation:
+        case WebKitCSSTransformValue::RotateYTransformOperation:
+        case WebKitCSSTransformValue::RotateZTransformOperation: {
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            double angle = firstValue->computeDegrees();
+
+            if (transformValue->operationType() == WebKitCSSTransformValue::RotateXTransformOperation)
+                x = 1;
+            else if (transformValue->operationType() == WebKitCSSTransformValue::RotateYTransformOperation)
+                y = 1;
+            else
+                z = 1;
+            operations.operations().append(RotateTransformOperation::create(x, y, z, angle, getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::Rotate3DTransformOperation: {
+            if (transformValue->length() < 4)
+                break;
+            CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+            CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
+            CSSPrimitiveValue* fourthValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3));
+            double x = firstValue->getDoubleValue();
+            double y = secondValue->getDoubleValue();
+            double z = thirdValue->getDoubleValue();
+            double angle = fourthValue->computeDegrees();
+            operations.operations().append(RotateTransformOperation::create(x, y, z, angle, getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::SkewTransformOperation:
+        case WebKitCSSTransformValue::SkewXTransformOperation:
+        case WebKitCSSTransformValue::SkewYTransformOperation: {
+            double angleX = 0;
+            double angleY = 0;
+            double angle = firstValue->computeDegrees();
+            if (transformValue->operationType() == WebKitCSSTransformValue::SkewYTransformOperation)
+                angleY = angle;
+            else {
+                angleX = angle;
+                if (transformValue->operationType() == WebKitCSSTransformValue::SkewTransformOperation) {
+                    if (transformValue->length() > 1) {
+                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        angleY = secondValue->computeDegrees();
                     }
                 }
+            }
+            operations.operations().append(SkewTransformOperation::create(angleX, angleY, getTransformOperationType(transformValue->operationType())));
+            break;
+        }
+        case WebKitCSSTransformValue::MatrixTransformOperation: {
+            if (transformValue->length() < 6)
+                break;
+            double a = firstValue->getDoubleValue();
+            double b = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue();
+            double c = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue();
+            double d = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue();
+            double e = zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue();
+            double f = zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue();
+            operations.operations().append(MatrixTransformOperation::create(a, b, c, d, e, f));
+            break;
+        }
+        case WebKitCSSTransformValue::Matrix3DTransformOperation: {
+            if (transformValue->length() < 16)
+                break;
+            TransformationMatrix matrix(static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(0))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(6))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(7))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(8))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(9))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(10))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(11))->getDoubleValue(),
+                               zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(12))->getDoubleValue(),
+                               zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(13))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(14))->getDoubleValue(),
+                               static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(15))->getDoubleValue());
+            operations.operations().append(Matrix3DTransformOperation::create(matrix));
+            break;
+        }
+        case WebKitCSSTransformValue::PerspectiveTransformOperation: {
+            Length p = Length(0, Fixed);
+            if (firstValue->isLength())
+                p = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
+            else {
+                // This is a quirk that should go away when 3d transforms are finalized.
+                double val = firstValue->getDoubleValue();
+                p = val >= 0 ? Length(clampToPositiveInteger(val), Fixed) : Length(Undefined);
+            }
 
-                if (tx.isUndefined() || ty.isUndefined())
-                    return false;
+            if (p.isUndefined())
+                return false;
 
-                operations.operations().append(TranslateTransformOperation::create(tx, ty, Length(0, Fixed), getTransformOperationType(transformValue->operationType())));
-                break;
-            }
-            case WebKitCSSTransformValue::TranslateZTransformOperation:
-            case WebKitCSSTransformValue::Translate3DTransformOperation: {
-                Length tx = Length(0, Fixed);
-                Length ty = Length(0, Fixed);
-                Length tz = Length(0, Fixed);
-                if (transformValue->operationType() == WebKitCSSTransformValue::TranslateZTransformOperation)
-                    tz = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
-                else if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
-                else {
-                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
-                    if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
-                        if (transformValue->length() > 2) {
-                            CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
-                            tz = convertToFloatLength(thirdValue, style, rootStyle, zoomFactor);
-                        }
-                        if (transformValue->length() > 1) {
-                            CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
-                        }
-                    }
-                }
-
-                if (tx.isUndefined() || ty.isUndefined() || tz.isUndefined())
-                    return false;
-
-                operations.operations().append(TranslateTransformOperation::create(tx, ty, tz, getTransformOperationType(transformValue->operationType())));
-                break;
-            }
-            case WebKitCSSTransformValue::RotateTransformOperation: {
-                double angle = firstValue->computeDegrees();
-                operations.operations().append(RotateTransformOperation::create(0, 0, 1, angle, getTransformOperationType(transformValue->operationType())));
-                break;
-            }
-            case WebKitCSSTransformValue::RotateXTransformOperation:
-            case WebKitCSSTransformValue::RotateYTransformOperation:
-            case WebKitCSSTransformValue::RotateZTransformOperation: {
-                double x = 0;
-                double y = 0;
-                double z = 0;
-                double angle = firstValue->computeDegrees();
-
-                if (transformValue->operationType() == WebKitCSSTransformValue::RotateXTransformOperation)
-                    x = 1;
-                else if (transformValue->operationType() == WebKitCSSTransformValue::RotateYTransformOperation)
-                    y = 1;
-                else
-                    z = 1;
-                operations.operations().append(RotateTransformOperation::create(x, y, z, angle, getTransformOperationType(transformValue->operationType())));
-                break;
-            }
-            case WebKitCSSTransformValue::Rotate3DTransformOperation: {
-                if (transformValue->length() < 4)
-                    break;
-                CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
-                CSSPrimitiveValue* fourthValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3));
-                double x = firstValue->getDoubleValue();
-                double y = secondValue->getDoubleValue();
-                double z = thirdValue->getDoubleValue();
-                double angle = fourthValue->computeDegrees();
-                operations.operations().append(RotateTransformOperation::create(x, y, z, angle, getTransformOperationType(transformValue->operationType())));
-                break;
-            }
-            case WebKitCSSTransformValue::SkewTransformOperation:
-            case WebKitCSSTransformValue::SkewXTransformOperation:
-            case WebKitCSSTransformValue::SkewYTransformOperation: {
-                double angleX = 0;
-                double angleY = 0;
-                double angle = firstValue->computeDegrees();
-                if (transformValue->operationType() == WebKitCSSTransformValue::SkewYTransformOperation)
-                    angleY = angle;
-                else {
-                    angleX = angle;
-                    if (transformValue->operationType() == WebKitCSSTransformValue::SkewTransformOperation) {
-                        if (transformValue->length() > 1) {
-                            CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            angleY = secondValue->computeDegrees();
-                        }
-                    }
-                }
-                operations.operations().append(SkewTransformOperation::create(angleX, angleY, getTransformOperationType(transformValue->operationType())));
-                break;
-            }
-            case WebKitCSSTransformValue::MatrixTransformOperation: {
-                if (transformValue->length() < 6)
-                    break;
-                double a = firstValue->getDoubleValue();
-                double b = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue();
-                double c = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue();
-                double d = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue();
-                double e = zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue();
-                double f = zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue();
-                operations.operations().append(MatrixTransformOperation::create(a, b, c, d, e, f));
-                break;
-            }
-            case WebKitCSSTransformValue::Matrix3DTransformOperation: {
-                if (transformValue->length() < 16)
-                    break;
-                TransformationMatrix matrix(static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(0))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(6))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(7))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(8))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(9))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(10))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(11))->getDoubleValue(),
-                                   zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(12))->getDoubleValue(),
-                                   zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(13))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(14))->getDoubleValue(),
-                                   static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(15))->getDoubleValue());
-                operations.operations().append(Matrix3DTransformOperation::create(matrix));
-                break;
-            }
-            case WebKitCSSTransformValue::PerspectiveTransformOperation: {
-                Length p = Length(0, Fixed);
-                if (firstValue->isLength())
-                    p = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
-                else {
-                    // This is a quirk that should go away when 3d transforms are finalized.
-                    double val = firstValue->getDoubleValue();
-                    p = val >= 0 ? Length(clampToPositiveInteger(val), Fixed) : Length(Undefined);
-                }
-
-                if (p.isUndefined())
-                    return false;
-
-                operations.operations().append(PerspectiveTransformOperation::create(p));
-                break;
-            }
-            case WebKitCSSTransformValue::UnknownTransformOperation:
-                ASSERT_NOT_REACHED();
-                break;
+            operations.operations().append(PerspectiveTransformOperation::create(p));
+            break;
+        }
+        case WebKitCSSTransformValue::UnknownTransformOperation:
+            ASSERT_NOT_REACHED();
+            break;
         }
     }
 
@@ -5712,9 +5710,8 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style
         }
         case WebKitCSSFilterValue::BlurFilterOperation: {
             Length stdDeviation = Length(0, Fixed);
-            if (filterValue->length() >= 1) {
+            if (filterValue->length() >= 1)
                 stdDeviation = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
-            }
             if (stdDeviation.isUndefined())
                 return false;
 
@@ -5788,72 +5785,72 @@ void StyleResolver::loadPendingImages()
         CSSPropertyID currentProperty = *it;
 
         switch (currentProperty) {
-            case CSSPropertyBackgroundImage: {
-                for (FillLayer* backgroundLayer = m_style->accessBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next()) {
-                    if (backgroundLayer->image() && backgroundLayer->image()->isPendingImage())
-                        backgroundLayer->setImage(loadPendingImage(static_cast<StylePendingImage*>(backgroundLayer->image())));
-                }
-                break;
+        case CSSPropertyBackgroundImage: {
+            for (FillLayer* backgroundLayer = m_style->accessBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next()) {
+                if (backgroundLayer->image() && backgroundLayer->image()->isPendingImage())
+                    backgroundLayer->setImage(loadPendingImage(static_cast<StylePendingImage*>(backgroundLayer->image())));
             }
-            case CSSPropertyContent: {
-                for (ContentData* contentData = const_cast<ContentData*>(m_style->contentData()); contentData; contentData = contentData->next()) {
-                    if (contentData->isImage()) {
-                        StyleImage* image = static_cast<ImageContentData*>(contentData)->image();
-                        if (image->isPendingImage()) {
-                            RefPtr<StyleImage> loadedImage = loadPendingImage(static_cast<StylePendingImage*>(image));
-                            if (loadedImage)
-                                static_cast<ImageContentData*>(contentData)->setImage(loadedImage.release());
-                        }
+            break;
+        }
+        case CSSPropertyContent: {
+            for (ContentData* contentData = const_cast<ContentData*>(m_style->contentData()); contentData; contentData = contentData->next()) {
+                if (contentData->isImage()) {
+                    StyleImage* image = static_cast<ImageContentData*>(contentData)->image();
+                    if (image->isPendingImage()) {
+                        RefPtr<StyleImage> loadedImage = loadPendingImage(static_cast<StylePendingImage*>(image));
+                        if (loadedImage)
+                            static_cast<ImageContentData*>(contentData)->setImage(loadedImage.release());
                     }
                 }
-                break;
             }
-            case CSSPropertyCursor: {
-                if (CursorList* cursorList = m_style->cursors()) {
-                    for (size_t i = 0; i < cursorList->size(); ++i) {
-                        CursorData& currentCursor = cursorList->at(i);
-                        if (StyleImage* image = currentCursor.image()) {
-                            if (image->isPendingImage())
-                                currentCursor.setImage(loadPendingImage(static_cast<StylePendingImage*>(image)));
-                        }
+            break;
+        }
+        case CSSPropertyCursor: {
+            if (CursorList* cursorList = m_style->cursors()) {
+                for (size_t i = 0; i < cursorList->size(); ++i) {
+                    CursorData& currentCursor = cursorList->at(i);
+                    if (StyleImage* image = currentCursor.image()) {
+                        if (image->isPendingImage())
+                            currentCursor.setImage(loadPendingImage(static_cast<StylePendingImage*>(image)));
                     }
                 }
-                break;
             }
-            case CSSPropertyListStyleImage: {
-                if (m_style->listStyleImage() && m_style->listStyleImage()->isPendingImage())
-                    m_style->setListStyleImage(loadPendingImage(static_cast<StylePendingImage*>(m_style->listStyleImage())));
-                break;
-            }
-            case CSSPropertyBorderImageSource: {
-                if (m_style->borderImageSource() && m_style->borderImageSource()->isPendingImage())
-                    m_style->setBorderImageSource(loadPendingImage(static_cast<StylePendingImage*>(m_style->borderImageSource())));
-                break;
-            }
-            case CSSPropertyWebkitBoxReflect: {
-                if (StyleReflection* reflection = m_style->boxReflect()) {
-                    const NinePieceImage& maskImage = reflection->mask();
-                    if (maskImage.image() && maskImage.image()->isPendingImage()) {
-                        RefPtr<StyleImage> loadedImage = loadPendingImage(static_cast<StylePendingImage*>(maskImage.image()));
-                        reflection->setMask(NinePieceImage(loadedImage.release(), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.outset(), maskImage.horizontalRule(), maskImage.verticalRule()));
-                    }
+            break;
+        }
+        case CSSPropertyListStyleImage: {
+            if (m_style->listStyleImage() && m_style->listStyleImage()->isPendingImage())
+                m_style->setListStyleImage(loadPendingImage(static_cast<StylePendingImage*>(m_style->listStyleImage())));
+            break;
+        }
+        case CSSPropertyBorderImageSource: {
+            if (m_style->borderImageSource() && m_style->borderImageSource()->isPendingImage())
+                m_style->setBorderImageSource(loadPendingImage(static_cast<StylePendingImage*>(m_style->borderImageSource())));
+            break;
+        }
+        case CSSPropertyWebkitBoxReflect: {
+            if (StyleReflection* reflection = m_style->boxReflect()) {
+                const NinePieceImage& maskImage = reflection->mask();
+                if (maskImage.image() && maskImage.image()->isPendingImage()) {
+                    RefPtr<StyleImage> loadedImage = loadPendingImage(static_cast<StylePendingImage*>(maskImage.image()));
+                    reflection->setMask(NinePieceImage(loadedImage.release(), maskImage.imageSlices(), maskImage.fill(), maskImage.borderSlices(), maskImage.outset(), maskImage.horizontalRule(), maskImage.verticalRule()));
                 }
-                break;
             }
-            case CSSPropertyWebkitMaskBoxImageSource: {
-                if (m_style->maskBoxImageSource() && m_style->maskBoxImageSource()->isPendingImage())
-                    m_style->setMaskBoxImageSource(loadPendingImage(static_cast<StylePendingImage*>(m_style->maskBoxImageSource())));
-                break;
+            break;
+        }
+        case CSSPropertyWebkitMaskBoxImageSource: {
+            if (m_style->maskBoxImageSource() && m_style->maskBoxImageSource()->isPendingImage())
+                m_style->setMaskBoxImageSource(loadPendingImage(static_cast<StylePendingImage*>(m_style->maskBoxImageSource())));
+            break;
+        }
+        case CSSPropertyWebkitMaskImage: {
+            for (FillLayer* maskLayer = m_style->accessMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+                if (maskLayer->image() && maskLayer->image()->isPendingImage())
+                    maskLayer->setImage(loadPendingImage(static_cast<StylePendingImage*>(maskLayer->image())));
             }
-            case CSSPropertyWebkitMaskImage: {
-                for (FillLayer* maskLayer = m_style->accessMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
-                    if (maskLayer->image() && maskLayer->image()->isPendingImage())
-                        maskLayer->setImage(loadPendingImage(static_cast<StylePendingImage*>(maskLayer->image())));
-                }
-                break;
-            }
-            default:
-                ASSERT_NOT_REACHED();
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
         }
     }
 

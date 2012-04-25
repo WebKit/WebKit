@@ -29,7 +29,6 @@
 #include "CSSParser.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -40,6 +39,7 @@
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
+#include "StyleResolver.h"
 #include "StyleRule.h"
 #include <math.h>
 

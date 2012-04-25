@@ -32,7 +32,6 @@
 #include "AnimationController.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "FontCache.h"
 #include "FrameView.h"
@@ -52,6 +51,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
+#include "StyleResolver.h"
 #include "TiledBacking.h"
 
 #if ENABLE(CSS_FILTERS)

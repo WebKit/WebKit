@@ -29,7 +29,7 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "CSSStyleSelector.h"
+#include "StyleResolver.h"
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"

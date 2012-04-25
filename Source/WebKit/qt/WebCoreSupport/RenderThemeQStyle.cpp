@@ -31,7 +31,6 @@
 #include "RenderThemeQStyle.h"
 
 #include "CSSFontSelector.h"
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -54,6 +53,7 @@
 #include "RenderSlider.h"
 #include "ScrollbarThemeQStyle.h"
 #include "SliderThumbElement.h"
+#include "StyleResolver.h"
 #include "UserAgentStyleSheets.h"
 
 #include <QApplication>

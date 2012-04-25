@@ -31,9 +31,9 @@
 #include "config.h"
 #include "CSSCalculationValue.h"
 
-#include "CSSStyleSelector.h"
 #include "CSSValueList.h"
 #include "Length.h"
+#include "StyleResolver.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

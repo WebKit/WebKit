@@ -27,7 +27,6 @@
 #include "RenderSVGInlineText.h"
 
 #include "CSSFontSelector.h"
-#include "CSSStyleSelector.h"
 #include "FloatConversion.h"
 #include "FloatQuad.h"
 #include "RenderBlock.h"
@@ -37,6 +36,7 @@
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
 #include "SVGRootInlineBox.h"
+#include "StyleResolver.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {

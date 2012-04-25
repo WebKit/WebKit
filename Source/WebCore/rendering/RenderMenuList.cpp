@@ -28,7 +28,6 @@
 #include "AXObjectCache.h"
 #include "AccessibilityMenuList.h"
 #include "CSSFontSelector.h"
-#include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "FontCache.h"
 #include "Frame.h"
@@ -44,6 +43,7 @@
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include "TextRun.h"
 #include <math.h>
 

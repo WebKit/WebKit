@@ -26,7 +26,6 @@
 #include "HTMLLinkElement.h"
 
 #include "Attribute.h"
-#include "CSSStyleSelector.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
@@ -45,6 +44,7 @@
 #include "ScriptEventListener.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

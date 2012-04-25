@@ -22,7 +22,6 @@
 #include "RenderSlider.h"
 
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -40,6 +39,7 @@
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
+#include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 
 using std::min;

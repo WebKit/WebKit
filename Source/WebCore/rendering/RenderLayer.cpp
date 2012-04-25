@@ -46,7 +46,6 @@
 
 #include "ColumnInfo.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "Document.h"
 #include "DocumentEventQueue.h"
@@ -92,6 +91,7 @@
 #include "Settings.h"
 #include "SourceGraphic.h"
 #include "StylePropertySet.h"
+#include "StyleResolver.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
 #include "TranslateTransformOperation.h"

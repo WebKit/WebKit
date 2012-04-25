@@ -463,7 +463,6 @@ SOURCES += \
     css/CSSSegmentedFontFace.cpp \
     css/CSSStyleDeclaration.cpp \
     css/CSSStyleRule.cpp \
-    css/CSSStyleSelector.cpp \
     css/CSSStyleSheet.cpp \
     css/CSSTimingFunctionValue.cpp \
     css/CSSUnicodeRangeValue.cpp \
@@ -490,6 +489,7 @@ SOURCES += \
     css/StyleMedia.cpp \
     css/StylePropertySet.cpp \
     css/StylePropertyShorthand.cpp \
+    css/StyleResolver.cpp \
     css/StyleRule.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
@@ -1620,7 +1620,6 @@ HEADERS += \
     css/CSSSelectorList.h \
     css/CSSStyleDeclaration.h \
     css/CSSStyleRule.h \
-    css/CSSStyleSelector.h \
     css/CSSStyleSheet.h \
     css/CSSTimingFunctionValue.h \
     css/CSSUnicodeRangeValue.h \
@@ -1647,6 +1646,7 @@ HEADERS += \
     css/StyleBuilder.h \
     css/StylePropertySet.h \
     css/StylePropertyShorthand.h \
+    css/StyleResolver.h \
     css/StyleRule.h \
     css/StyleSheet.h \
     css/StyleSheetList.h \

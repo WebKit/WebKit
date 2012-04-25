@@ -32,7 +32,6 @@
 
 #include "AXObjectCache.h"
 #include "CSSFontSelector.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "DocumentEventQueue.h"
 #include "EventHandler.h"
@@ -58,6 +57,7 @@
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SpatialNavigation.h"
+#include "StyleResolver.h"
 #include <math.h>
 
 using namespace std;

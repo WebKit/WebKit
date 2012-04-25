@@ -26,7 +26,6 @@
 #include "ContentData.h"
 #include "CursorList.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "CSSWrapShapes.h"
 #include "FontSelector.h"
 #include "QuotesData.h"
@@ -35,6 +34,7 @@
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "StyleImage.h"
+#include "StyleResolver.h"
 #if ENABLE(TOUCH_EVENTS)
 #include "RenderTheme.h"
 #endif

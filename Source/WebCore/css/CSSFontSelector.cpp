@@ -34,7 +34,6 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSSegmentedFontFace.h"
-#include "CSSStyleSelector.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -46,6 +45,7 @@
 #include "Settings.h"
 #include "SimpleFontData.h"
 #include "StylePropertySet.h"
+#include "StyleResolver.h"
 #include "StyleRule.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/AtomicString.h>

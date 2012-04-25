@@ -28,7 +28,6 @@
 
 #include "Attribute.h"
 #include "CSSCursorImageValue.h"
-#include "CSSStyleSelector.h"
 #include "DOMImplementation.h"
 #include "Document.h"
 #include "Event.h"
@@ -51,6 +50,7 @@
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "ScriptEventListener.h"
+#include "StyleResolver.h"
 #include "XMLNames.h"
 
 namespace WebCore {

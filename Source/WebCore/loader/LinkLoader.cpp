@@ -32,7 +32,6 @@
 #include "config.h"
 #include "LinkLoader.h"
 
-#include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
@@ -43,6 +42,7 @@
 #include "FrameView.h"
 #include "LinkRelAttribute.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 

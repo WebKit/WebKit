@@ -35,7 +35,6 @@
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -59,6 +58,7 @@
 #include "Settings.h"
 #include "StrokeStyleApplier.h"
 #include "StylePropertySet.h"
+#include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
 

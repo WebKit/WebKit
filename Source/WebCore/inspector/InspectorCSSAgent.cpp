@@ -35,7 +35,6 @@
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
-#include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
@@ -49,6 +48,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "StylePropertySet.h"
+#include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleSheetList.h"
 

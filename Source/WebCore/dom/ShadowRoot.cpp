@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
-#include "CSSStyleSelector.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -40,6 +39,7 @@
 #include "NodeRareData.h"
 #include "ShadowTree.h"
 #include "SVGNames.h"
+#include "StyleResolver.h"
 #include "markup.h"
 
 namespace WebCore {

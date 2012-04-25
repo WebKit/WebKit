@@ -28,7 +28,6 @@
 #include "HTMLOptionElement.h"
 
 #include "Attribute.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -39,6 +38,7 @@
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
 #include "ScriptElement.h"
+#include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

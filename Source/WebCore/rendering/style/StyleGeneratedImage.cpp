@@ -25,8 +25,8 @@
 #include "StyleGeneratedImage.h"
 
 #include "CSSImageGeneratorValue.h"
-#include "CSSStyleSelector.h"
 #include "RenderObject.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
     

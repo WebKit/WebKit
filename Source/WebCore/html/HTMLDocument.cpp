@@ -54,7 +54,6 @@
 #include "HTMLDocument.h"
 
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "CookieJar.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -74,6 +73,7 @@
 #include "KURL.h"
 #include "Page.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {

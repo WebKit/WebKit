@@ -30,7 +30,6 @@
 #include "config.h"
 #include "RenderThemeQt.h"
 
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -57,6 +56,7 @@
 #include "RenderTheme.h"
 #include "RenderThemeQtMobile.h"
 #include "ScrollbarTheme.h"
+#include "StyleResolver.h"
 #include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/StringBuilder.h>

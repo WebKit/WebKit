@@ -26,12 +26,12 @@
 #include "config.h"
 #include "StyleMedia.h"
 
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 

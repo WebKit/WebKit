@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ShadowTree.h"
 
-#include "CSSStyleSelector.h"
 #include "ContainerNodeAlgorithms.h"
 #include "Document.h"
 #include "Element.h"
@@ -35,6 +34,7 @@
 #include "InspectorInstrumentation.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
+#include "StyleResolver.h"
 #include "Text.h"
 
 namespace WebCore {

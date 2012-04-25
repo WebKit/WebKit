@@ -41,7 +41,7 @@
 #include "RenderSlider.h"
 #include "RenderView.h"
 #include "SoftLinking.h"
-#include "cssstyleselector.h"
+#include "StyleResolver.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
  

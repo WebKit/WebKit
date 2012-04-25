@@ -32,7 +32,6 @@
 #include "ValidationMessage.h"
 
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FormAssociatedElement.h"
@@ -45,6 +44,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShadowTree.h"
+#include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/PassOwnPtr.h>
 

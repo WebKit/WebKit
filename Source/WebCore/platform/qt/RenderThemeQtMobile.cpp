@@ -23,7 +23,6 @@
 #include "config.h"
 #include "RenderThemeQtMobile.h"
 
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "Document.h"
@@ -40,6 +39,7 @@
 #if ENABLE(PROGRESS_TAG)
 #include "RenderProgress.h"
 #endif
+#include "StyleResolver.h"
 
 #include <wtf/PassRefPtr.h>
 

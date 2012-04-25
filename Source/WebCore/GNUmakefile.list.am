@@ -1642,8 +1642,6 @@ webcore_sources += \
 	Source/WebCore/css/CSSStyleDeclaration.h \
 	Source/WebCore/css/CSSStyleRule.cpp \
 	Source/WebCore/css/CSSStyleRule.h \
-	Source/WebCore/css/CSSStyleSelector.cpp \
-	Source/WebCore/css/CSSStyleSelector.h \
 	Source/WebCore/css/CSSStyleSheet.cpp \
 	Source/WebCore/css/CSSStyleSheet.h \
 	Source/WebCore/css/CSSTimingFunctionValue.cpp \
@@ -1700,6 +1698,8 @@ webcore_sources += \
 	Source/WebCore/css/StylePropertySet.h \
 	Source/WebCore/css/StylePropertyShorthand.cpp \
 	Source/WebCore/css/StylePropertyShorthand.h \
+	Source/WebCore/css/StyleResolver.cpp \
+	Source/WebCore/css/StyleResolver.h \
 	Source/WebCore/css/StyleRule.cpp \
 	Source/WebCore/css/StyleRule.h \
 	Source/WebCore/css/StyleSheet.cpp \

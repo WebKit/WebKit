@@ -30,7 +30,6 @@
 #include "config.h"
 #include "RenderRegion.h"
 
-#include "CSSStyleSelector.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
@@ -38,6 +37,7 @@
 #include "RenderBoxRegionInfo.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderView.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 

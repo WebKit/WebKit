@@ -22,7 +22,6 @@
 #include "config.h"
 #include "StyleRareNonInheritedData.h"
 
-#include "CSSStyleSelector.h"
 #include "ContentData.h"
 #include "RenderCounter.h"
 #include "RenderStyle.h"
@@ -30,6 +29,7 @@
 #include "StyleFilterData.h"
 #include "StyleTransformData.h"
 #include "StyleImage.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 

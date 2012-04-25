@@ -29,7 +29,6 @@
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSStyleSelector.h"
 #include "CSSValueList.h"
 #include "CursorList.h"
 #include "Document.h"
@@ -40,6 +39,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 

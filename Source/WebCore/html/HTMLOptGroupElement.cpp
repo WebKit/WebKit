@@ -25,13 +25,13 @@
 #include "config.h"
 #include "HTMLOptGroupElement.h"
 
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
+#include "StyleResolver.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

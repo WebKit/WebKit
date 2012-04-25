@@ -20,7 +20,6 @@
 #include "config.h"
 #include "MediaQueryMatcher.h"
 
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
@@ -29,6 +28,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryList.h"
 #include "MediaQueryListListener.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 

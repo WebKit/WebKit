@@ -26,7 +26,6 @@
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
-#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "FrameView.h"
@@ -51,6 +50,7 @@
 #include "RenderImage.h"
 #include "ScriptState.h"
 #include "StaticNodeList.h"
+#include "StyleResolver.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #if USE(JSC)

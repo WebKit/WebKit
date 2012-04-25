@@ -32,7 +32,6 @@
 #include "AutofillPopupMenuClient.h"
 
 #include "CSSFontSelector.h"
-#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "Frame.h"
@@ -40,6 +39,7 @@
 #include "HTMLInputElement.h"
 #include "Page.h"
 #include "RenderTheme.h"
+#include "StyleResolver.h"
 #include "WebAutofillClient.h"
 #include "WebNode.h"
 #include "WebViewClient.h"

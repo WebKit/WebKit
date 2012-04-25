@@ -28,7 +28,6 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h"
-#include "CSSStyleSelector.h"
 #include "Chrome.h"
 #include "ContentData.h"
 #include "CursorList.h"
@@ -64,6 +63,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleResolver.h"
 #include "TransformState.h"
 #include "htmlediting.h"
 #include <algorithm>

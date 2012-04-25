@@ -31,11 +31,11 @@
 
 #include "AnimationControllerPrivate.h"
 #include "CSSPropertyNames.h"
-#include "CSSStyleSelector.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
 #include "RenderBoxModelObject.h"
 #include "RenderStyle.h"
+#include "StyleResolver.h"
 #include <wtf/UnusedParam.h>
 
 using namespace std;
