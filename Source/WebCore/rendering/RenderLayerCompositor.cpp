@@ -369,7 +369,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         m_reevaluateCompositingAfterLayout = false;
 
 #if !LOG_DISABLED
-    double startTime;
+    double startTime = 0;
     if (compositingLogEnabled()) {
         ++m_rootLayerUpdateCount;
         startTime = currentTime();
