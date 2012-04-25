@@ -1,3 +1,15 @@
+2012-04-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        Prevent drag and drop from setting file URLs
+        https://bugs.webkit.org/show_bug.cgi?id=76596
+
+        Reviewed by Enrica Casucci.
+
+        Updated tests to reflect new expectations.
+
+        * http/tests/security/dataTransfer-set-data-file-url.html:
+        * platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html:
+
 2012-04-24  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed test expectations update.

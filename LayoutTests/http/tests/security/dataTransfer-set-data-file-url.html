@@ -8,10 +8,7 @@ function onImgDragStart() {
             objCPlugin.removeBridgeRestrictions_(window);
             var pasteboard = objc('NSPasteboard').pasteboardWithName_('Apple CFPasteboard drag');
             var data = pasteboard.dataForType_('NSFilenamesPboardType');
-            var isPageLocal = (window.location.protocol == 'file:');
-            if (isPageLocal && !data) {
-                alert('NSFilenamesPboardType was incorrectly missing.');
-            } else if (!isPageLocal && data) {
+            if (data) {
                 alert('NSFilenamesPboardType was incorrectly present.');
             }
         } catch (ex) {
