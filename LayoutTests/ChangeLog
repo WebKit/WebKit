@@ -1,3 +1,11 @@
+2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update
+
+        Unmark html5lib/runner.html -- changes that broke it were reverted in r115149.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed. Unskipped 28 http tests passing on all the GTK+ bots.

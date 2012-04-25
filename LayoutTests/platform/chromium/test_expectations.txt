@@ -3737,7 +3737,6 @@ BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 BUGWK83978 WIN MAC: tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
 
 BUGWK84802 : fast/js/random-array-gc-stress.html = FAIL TIMEOUT
-BUGWK84806 : html5lib/runner.html = TEXT
 BUGWK84810 LINUX WIN : svg/carto.net/window.svg = IMAGE+TEXT
 BUGWK84810 MAC : svg/carto.net/window.svg = IMAGE
 
