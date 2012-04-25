@@ -1280,7 +1280,6 @@ BUGWK84731 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = PASS TEXT
 BUGWK84731 : svg/carto.net/button.svg = PASS TEXT
 BUGWK84731 WIN MAC : svg/carto.net/colourpicker.svg = PASS TEXT
 BUGWK84731 : svg/carto.net/slider.svg = PASS TEXT
-BUGWK84731 : svg/carto.net/window.svg = PASS TEXT
 BUGWK84731 : svg/custom/use-clipped-hit.svg = PASS TEXT
 BUGWK84731 : svg/custom/use-css-events.svg = PASS TEXT
 BUGWK84731 : svg/custom/use-modify-target-symbol.svg = PASS TEXT
@@ -3742,3 +3741,5 @@ BUGWK83978 WIN MAC: tables/mozilla_expected_failures/collapsing_borders/bug41262
 
 BUGWK84802 : fast/js/random-array-gc-stress.html = FAIL TIMEOUT
 BUGWK84806 : html5lib/runner.html = TEXT
+BUGWK84810 LINUX WIN : svg/carto.net/window.svg = IMAGE+TEXT
+BUGWK84810 MAC : svg/carto.net/window.svg = IMAGE

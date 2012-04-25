@@ -1,6 +1,15 @@
 2012-04-24  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84810
+
+        Mark svg/carto.net/window.svg as fail due to changes in r115085.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-24  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Unreviewed test expectations update.
         https://bugs.webkit.org/show_bug.cgi?id=84806
 
         html5lib/runner.html fails after r115099 and r115127, mark it so.
