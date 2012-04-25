@@ -13,15 +13,14 @@ var tests = [
     ['border: 1px red;', 'border: 1px red;'],
     ['border: red;', 'border: red;'],
     ['border-top: 1px; border-right: 1px; border-bottom: 1px; border-left: 1px;', 'border: 1px;'],
-    ['border-top: 1px; border-right: 2px; border-bottom: 3px; border-left: 4px;',
-    'border-top-width: 1px; border-right-width: 2px; border-bottom-width: 3px; border-left-width: 4px;'],
-    ['border: 1px; border-top: 2px;',
-    'border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-width: 2px;'],
+    ['border-top: 1px; border-right: 2px; border-bottom: 3px; border-left: 4px;', 'border-width: 1px 2px 3px 4px;'],
+    ['border: 1px; border-top: 2px;', 'border-width: 2px 1px 1px;'],
     ['border: 1px; border-top: 1px !important;',
     'border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-width: 1px !important;'],
-    ['border: 1px; border-top-color: red;',
-    'border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-width: 1px; border-top-color: red;'],
+
+    ['border: 1px; border-top-color: red;', 'border-width: 1px; border-top-color: red;'],
     ['border: solid; border-style: dotted', 'border: dotted;'],
+    ['border-width: 1px;', 'border-width: 1px;'],
 
     ['-webkit-border-horizontal-spacing: 1px; -webkit-border-vertical-spacing: 2px;', 'border-spacing: 1px 2px;'],
 
@@ -33,7 +32,10 @@ var tests = [
     ['margin-top: 1px; margin-right: 2px; margin-bottom: 3px; margin-left: 4px;', 'margin: 1px 2px 3px 4px;'],
     ['outline-width: 2px; outline-style: dotted; outline-color: blue;', 'outline: blue dotted 2px;'],
     ['overflow-x: scroll; overflow-y: hidden;', 'overflow: scroll hidden;'],
+    ['overflow-x: scroll; overflow-y: scroll;', 'overflow: scroll;'],
     ['padding-top: 1px; padding-right: 2px; padding-bottom: 3px; padding-left: 4px;', 'padding: 1px 2px 3px 4px;'],
+
+	['list-style-type: lower-alpha;', 'list-style-type: lower-alpha;']
 ];
 
 function normalizeCssText(text) { return text.trim().split(/;\s*/).sort().slice(1).join("; "); }

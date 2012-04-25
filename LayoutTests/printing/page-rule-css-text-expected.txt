@@ -1,7 +1,7 @@
 @page { margin-top: 5cm; margin-bottom: 10cm; }
 @page :left { margin-right: 3cm; }
 @page :right { margin-left: 3cm; }
-@page :first { border: 1px; }
+@page :first { border-width: 1px; }
 @page hello { color: green; }
 @page world:right { background-color: green; }
 @media print { @page somepage:first { margin: 3cm; } }

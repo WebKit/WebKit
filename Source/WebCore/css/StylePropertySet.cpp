@@ -117,19 +117,8 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         return getLayeredShorthandValue(backgroundRepeatShorthand());
     case CSSPropertyBackground:
         return getLayeredShorthandValue(backgroundShorthand());
-    case CSSPropertyBorder: {
-        const StylePropertyShorthand properties[3] = { borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand() };
-        String res;
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
-            String value = getCommonValue(properties[i]);
-            if (!value.isNull()) {
-                if (!res.isNull())
-                    res += " ";
-                res += value;
-            }
-        }
-        return res;
-    }
+    case CSSPropertyBorder:
+        return borderPropertyValue(OmitUncommonValues);
     case CSSPropertyBorderTop:
         return getShorthandValue(borderTopShorthand());
     case CSSPropertyBorderRight:
@@ -264,26 +253,30 @@ String StylePropertySet::fontValue() const
 String StylePropertySet::get4Values(const StylePropertyShorthand& shorthand) const
 {
     // Assume the properties are in the usual order top, right, bottom, left.
-    RefPtr<CSSValue> topValue = getPropertyCSSValue(shorthand.properties()[0]);
-    RefPtr<CSSValue> rightValue = getPropertyCSSValue(shorthand.properties()[1]);
-    RefPtr<CSSValue> bottomValue = getPropertyCSSValue(shorthand.properties()[2]);
-    RefPtr<CSSValue> leftValue = getPropertyCSSValue(shorthand.properties()[3]);
+    const CSSProperty* top = findPropertyWithId(shorthand.properties()[0]);
+    const CSSProperty* right = findPropertyWithId(shorthand.properties()[1]);
+    const CSSProperty* bottom = findPropertyWithId(shorthand.properties()[2]);
+    const CSSProperty* left = findPropertyWithId(shorthand.properties()[3]);
 
     // All 4 properties must be specified.
-    if (!topValue || !rightValue || !bottomValue || !leftValue)
+    if (!top || !top->value() || !right || !right->value() || !bottom || !bottom->value() || !left || !left->value())
+        return String();
+    if (top->value()->isInitialValue() || right->value()->isInitialValue() || bottom->value()->isInitialValue() || bottom->value()->isInitialValue())
+        return String();
+    if (top->isImportant() != right->isImportant() || right->isImportant() != bottom->isImportant() || bottom->isImportant() != left->isImportant())
         return String();
 
-    bool showLeft = rightValue->cssText() != leftValue->cssText();
-    bool showBottom = (topValue->cssText() != bottomValue->cssText()) || showLeft;
-    bool showRight = (topValue->cssText() != rightValue->cssText()) || showBottom;
+    bool showLeft = right->value()->cssText() != left->value()->cssText();
+    bool showBottom = (top->value()->cssText() != bottom->value()->cssText()) || showLeft;
+    bool showRight = (top->value()->cssText() != right->value()->cssText()) || showBottom;
 
-    String res = topValue->cssText();
+    String res = top->value()->cssText();
     if (showRight)
-        res += " " + rightValue->cssText();
+        res += " " + right->value()->cssText();
     if (showBottom)
-        res += " " + bottomValue->cssText();
+        res += " " + bottom->value()->cssText();
     if (showLeft)
-        res += " " + leftValue->cssText();
+        res += " " + left->value()->cssText();
 
     return res;
 }
@@ -395,10 +388,10 @@ String StylePropertySet::getShorthandValue(const StylePropertyShorthand& shortha
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         if (!isPropertyImplicit(shorthand.properties()[i])) {
             RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
-            if (value && value->isInitialValue())
-                continue;
             if (!value)
                 return String();
+            if (value->isInitialValue())
+                continue;
             if (!res.isNull())
                 res += " ";
             res += value->cssText();
@@ -411,10 +404,11 @@ String StylePropertySet::getShorthandValue(const StylePropertyShorthand& shortha
 String StylePropertySet::getCommonValue(const StylePropertyShorthand& shorthand) const
 {
     String res;
+    bool lastPropertyWasImportant = false;
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         RefPtr<CSSValue> value = getPropertyCSSValue(shorthand.properties()[i]);
         // FIXME: CSSInitialValue::cssText should generate the right value.
-        if (!value || value->isInitialValue())
+        if (!value)
             return String();
         String text = value->cssText();
         if (text.isNull())
@@ -423,8 +417,34 @@ String StylePropertySet::getCommonValue(const StylePropertyShorthand& shorthand)
             res = text;
         else if (res != text)
             return String();
+
+        bool currentPropertyIsImportant = propertyIsImportant(shorthand.properties()[i]);
+        if (i && lastPropertyWasImportant != currentPropertyIsImportant)
+            return String();
+        lastPropertyWasImportant = currentPropertyIsImportant;
     }
     return res;
+}
+
+String StylePropertySet::borderPropertyValue(CommonValueMode valueMode) const
+{
+    const StylePropertyShorthand properties[3] = { borderWidthShorthand(), borderStyleShorthand(), borderColorShorthand() };
+    StringBuilder result;
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
+        String value = getCommonValue(properties[i]);
+        if (value.isNull()) {
+            if (valueMode == ReturnNullOnUncommonValues)
+                return String();
+            ASSERT(valueMode == OmitUncommonValues);
+            continue;
+        }
+        if (value == "initial")
+            continue;
+        if (!result.isEmpty())
+            result.append(" ");
+        result.append(value);
+    }
+    return result.toString();
 }
 
 PassRefPtr<CSSValue> StylePropertySet::getPropertyCSSValue(CSSPropertyID propertyID) const
@@ -588,6 +608,8 @@ String StylePropertySet::asText() const
         const CSSProperty& prop = m_properties[n];
         CSSPropertyID propertyID = prop.id();
         CSSPropertyID shorthandPropertyID = CSSPropertyInvalid;
+        CSSPropertyID borderFallbackShorthandProperty = CSSPropertyInvalid;
+        String value;
 
         switch (propertyID) {
         case CSSPropertyBackgroundPositionX:
@@ -602,44 +624,36 @@ String StylePropertySet::asText() const
         case CSSPropertyBackgroundRepeatY:
             repeatYProp = &prop;
             continue;
-        case CSSPropertyBorderWidth:
         case CSSPropertyBorderTopWidth:
         case CSSPropertyBorderRightWidth:
         case CSSPropertyBorderBottomWidth:
         case CSSPropertyBorderLeftWidth:
-        case CSSPropertyBorderStyle:
+            if (!borderFallbackShorthandProperty)
+                borderFallbackShorthandProperty = CSSPropertyBorderWidth;
         case CSSPropertyBorderTopStyle:
         case CSSPropertyBorderRightStyle:
         case CSSPropertyBorderBottomStyle:
         case CSSPropertyBorderLeftStyle:
-        case CSSPropertyBorderColor:
+            if (!borderFallbackShorthandProperty)
+                borderFallbackShorthandProperty = CSSPropertyBorderStyle;
         case CSSPropertyBorderTopColor:
         case CSSPropertyBorderRightColor:
         case CSSPropertyBorderBottomColor:
         case CSSPropertyBorderLeftColor:
+            if (!borderFallbackShorthandProperty)
+                borderFallbackShorthandProperty = CSSPropertyBorderColor;
+
             // FIXME: Deal with cases where only some of border-(top|right|bottom|left) are specified.
-            shorthandPropertyID = CSSPropertyBorder;
-            if (shorthandPropertyAppeared.get(CSSPropertyBorder - firstCSSProperty))
-                break;
-            for (unsigned i = 0; i < borderAbridgedShorthand().length() && shorthandPropertyID; i++) {
-                const StylePropertyShorthand& shorthand = *(borderAbridgedShorthand().propertiesForInitialization()[i]);
-                String commonValue;
-                bool commonImportance = false;
-                for (size_t j = 0; j < shorthand.length(); ++j) {
-                    CSSPropertyID id = shorthand.properties()[j];
-                    RefPtr<CSSValue> value = getPropertyCSSValue(id);
-                    String currentValue = value ? value->cssText() : String();
-                    bool isImportant = propertyIsImportant(id);
-                    if (j && (currentValue != commonValue || commonImportance != isImportant)) {
-                        shorthandPropertyID = CSSPropertyInvalid;
-                        break;
-                    }
-                    if (!j) {
-                        commonValue = currentValue;
-                        commonImportance = isImportant;
-                    }
-                }
-            }
+            if (!shorthandPropertyAppeared.get(CSSPropertyBorder - firstCSSProperty)) {
+                value = borderPropertyValue(ReturnNullOnUncommonValues);
+                if (value.isNull())
+                    shorthandPropertyAppeared.ensureSizeAndSet(CSSPropertyBorder - firstCSSProperty, numCSSProperties);
+                else
+                    shorthandPropertyID = CSSPropertyBorder;
+            } else if (shorthandPropertyUsed.get(CSSPropertyBorder - firstCSSProperty))
+                shorthandPropertyID = CSSPropertyBorder;
+            if (!shorthandPropertyID)
+                shorthandPropertyID = borderFallbackShorthandProperty;
             break;
         case CSSPropertyWebkitBorderHorizontalSpacing:
         case CSSPropertyWebkitBorderVerticalSpacing:
@@ -724,12 +738,11 @@ String StylePropertySet::asText() const
             break;
         }
 
-        String value;
         unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
         if (shorthandPropertyID) {
             if (shorthandPropertyUsed.get(shortPropertyIndex))
                 continue;
-            if (!shorthandPropertyAppeared.get(shortPropertyIndex))
+            if (!shorthandPropertyAppeared.get(shortPropertyIndex) && value.isNull())
                 value = getPropertyValue(shorthandPropertyID);
             shorthandPropertyAppeared.ensureSizeAndSet(shortPropertyIndex, numCSSProperties);
         }

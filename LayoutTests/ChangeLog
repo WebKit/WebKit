@@ -1,3 +1,18 @@
+2012-04-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r112177): listStyleType CSS property gets converted into listStyle
+        https://bugs.webkit.org/show_bug.cgi?id=83026
+
+        Reviewed by Darin Adler.
+
+        Added test cases to cssText-shorthand.html and rebaselined some tests.
+
+        * fast/css/cssText-shorthand-expected.txt:
+        * fast/css/cssText-shorthand.html: Added more test cases.
+        * fast/css/remove-shorthand-expected.txt: Correctly adds both border-width and border-style
+        when border-color is missing.
+        * printing/page-rule-css-text-expected.txt: Correctly uses border-width instead of border.
+
 2012-04-25  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=83918.

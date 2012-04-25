@@ -25,13 +25,13 @@ removes "border"
 and adds "border-top-width, border-right-width, border-bottom-width, border-top-style, border-right-style, border-bottom-style, border-top-color, border-right-color, border-bottom-color".
 Removing border-color
 removes "border"
-and adds "border".
+and adds "border-width, border-style".
 Removing border-style
 removes "border"
-and adds "border".
+and adds "border-width, border-color".
 Removing border-width
 removes "border"
-and adds "border".
+and adds "border-style, border-color".
 Removing border-radius
 removes "border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius"
 and adds "".
