@@ -3710,3 +3710,5 @@ BUGWK84813 MAC WIN : css3/filters/custom/custom-filter-shader-cache.html = IMAGE
 BUGWK84813 MAC WIN : css3/filters/custom/effect-custom-combined-missing.html = IMAGE
 BUGWK84813 : css3/filters/custom/effect-custom-parameters.html = IMAGE
 BUGWK84813 MAC WIN : css3/filters/custom/effect-custom.html = IMAGE
+
+BUGWK84847 WIN : inspector/timeline/timeline-start-time.html = TEXT PASS
