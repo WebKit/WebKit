@@ -1,3 +1,10 @@
+2012-04-25  Andreas Kling  <kling@webkit.org>
+
+        Use the same results for fast/html/details-marker-style.html on all mac bots.
+
+        * platform/mac/fast/html/details-marker-style-expected.png: Renamed from LayoutTests/platform/mac-snowleopard/fast/html/details-marker-style-expected.png.
+        * platform/mac/fast/html/details-marker-style-expected.txt: Renamed from LayoutTests/platform/mac-snowleopard/fast/html/details-marker-style-expected.txt.
+
 2012-04-25  Filip Pizlo  <fpizlo@apple.com>
 
         http://bellard.org/jslinux/ triggers an assertion failure in the DFG JIT
