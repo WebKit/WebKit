@@ -50,14 +50,14 @@ struct DefaultGCActivityCallbackPlatformData {
     RetainPtr<CFRunLoopTimerRef> timer;
     RetainPtr<CFRunLoopRef> runLoop;
     CFRunLoopTimerContext context;
-    bool timerIsActive;
+    double delay;
 };
 
-const double gcCPUBudget = 0.025;
-const double gcTimerIntervalMultiplier = 1.0 / gcCPUBudget;
+const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB
+const double maxGCTimeSlice = 0.05; // The maximum amount of CPU time we want to use for opportunistic timer-triggered collections.
+const double timerSlop = 2.0; // Fudge factor to avoid performance cost of resetting timer.
 const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
 const CFTimeInterval hour = 60 * 60;
-const size_t minBytesBeforeCollect = 128 * KB;
 
 void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void *info)
 {
@@ -80,9 +80,6 @@ DefaultGCActivityCallback::~DefaultGCActivityCallback()
 {
     CFRunLoopRemoveTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
     CFRunLoopTimerInvalidate(d->timer.get());
-    d->context.info = 0;
-    d->runLoop = 0;
-    d->timer = 0;
 }
 
 void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLoop)
@@ -93,42 +90,40 @@ void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLo
     d->context.info = heap;
     d->runLoop = runLoop;
     d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::timerDidFire, &d->context));
-    d->timerIsActive = false;
+    d->delay = decade;
     CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
 }
 
-static void scheduleTimer(DefaultGCActivityCallbackPlatformData* d)
+static void scheduleTimer(DefaultGCActivityCallbackPlatformData* d, double newDelay)
 {
-    if (d->timerIsActive)
+    if (newDelay * timerSlop > d->delay)
         return;
-    d->timerIsActive = true;
-    CFTimeInterval triggerInterval = static_cast<Heap*>(d->context.info)->lastGCLength() * gcTimerIntervalMultiplier; 
-    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + triggerInterval);
+    double delta = d->delay - newDelay;
+    d->delay = newDelay;
+    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFRunLoopTimerGetNextFireDate(d->timer.get()) - delta);
 }
 
 static void cancelTimer(DefaultGCActivityCallbackPlatformData* d)
 {
-    if (!d->timerIsActive)
-        return;
-    d->timerIsActive = false;
+    d->delay = decade;
     CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + decade);
 }
 
 void DefaultGCActivityCallback::didAllocate(size_t bytes)
 {
-    if (bytes < minBytesBeforeCollect)
-        return;
-    scheduleTimer(d.get());
+    // The first byte allocated in an allocation cycle will report 0 bytes to didAllocate. 
+    // We pretend it's one byte so that we don't ignore this allocation entirely.
+    if (!bytes)
+        bytes = 1;
+    Heap* heap = static_cast<Heap*>(d->context.info);
+    double gcTimeSlice = std::min((static_cast<double>(bytes) / MB) * gcTimeSlicePerMB, maxGCTimeSlice);
+    double newDelay = heap->lastGCLength() / gcTimeSlice;
+    scheduleTimer(d.get(), newDelay);
 }
 
 void DefaultGCActivityCallback::willCollect()
 {
     cancelTimer(d.get());
-}
-
-void DefaultGCActivityCallback::didAbandonObjectGraph()
-{
-    scheduleTimer(d.get());
 }
 
 void DefaultGCActivityCallback::synchronize()

@@ -312,7 +312,7 @@ inline PassOwnPtr<TypeCountSet> RecordType::returnValue()
 Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     : m_heapSize(heapSize)
     , m_minBytesPerCycle(heapSizeForHint(heapSize))
-    , m_lastFullGCSize(0)
+    , m_sizeAfterLastCollect(0)
     , m_bytesAllocatedLimit(m_minBytesPerCycle)
     , m_bytesAllocated(0)
     , m_operationInProgress(NoOperation)
@@ -469,6 +469,19 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     didAllocate(cost);
     if (shouldCollect())
         collect(DoNotSweep);
+}
+
+void Heap::reportAbandonedObjectGraph()
+{
+    // Our clients don't know exactly how much memory they
+    // are abandoning so we just guess for them.
+    double abandonedBytes = 0.10 * m_sizeAfterLastCollect;
+
+    // We want to accelerate the next collection. Because memory has just 
+    // been abandoned, the next collection has the potential to 
+    // be more profitable. Since allocation is the trigger for collection, 
+    // we hasten the next collection by pretending that we've allocated more memory. 
+    didAllocate(abandonedBytes);
 }
 
 void Heap::protect(JSValue k)
@@ -812,7 +825,7 @@ void Heap::collect(SweepToggle sweepToggle)
 #if ENABLE(GGC)
     bool fullGC = sweepToggle == DoSweep;
     if (!fullGC)
-        fullGC = (capacity() > 4 * m_lastFullGCSize);  
+        fullGC = (capacity() > 4 * m_sizeAfterLastCollect);  
 #else
     bool fullGC = true;
 #endif
@@ -861,7 +874,7 @@ void Heap::collect(SweepToggle sweepToggle)
     // new bytes allocated) proportion, and seems to work well in benchmarks.
     size_t newSize = size();
     if (fullGC) {
-        m_lastFullGCSize = newSize;
+        m_sizeAfterLastCollect = newSize;
         m_bytesAllocatedLimit = max(newSize, m_minBytesPerCycle);
     }
     m_bytesAllocated = 0;

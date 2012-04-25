@@ -45,7 +45,6 @@ public:
     virtual ~GCActivityCallback() { }
     virtual void didAllocate(size_t) { }
     virtual void willCollect() { }
-    virtual void didAbandonObjectGraph() { }
     virtual void synchronize() { }
 
 protected:
@@ -63,7 +62,6 @@ public:
 
     virtual void didAllocate(size_t);
     virtual void willCollect();
-    virtual void didAbandonObjectGraph();
     virtual void synchronize();
 
 #if USE(CF)

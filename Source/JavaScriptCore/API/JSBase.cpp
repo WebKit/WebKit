@@ -100,7 +100,7 @@ void JSGarbageCollect(JSContextRef ctx)
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec, false);
 
-    exec->globalData().heap.activityCallback()->didAbandonObjectGraph();
+    exec->globalData().heap.reportAbandonedObjectGraph();
 }
 
 void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)

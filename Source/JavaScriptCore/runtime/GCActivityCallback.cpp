@@ -50,10 +50,6 @@ void DefaultGCActivityCallback::willCollect()
 {
 }
 
-void DefaultGCActivityCallback::didAbandonObjectGraph()
-{
-}
-
 void DefaultGCActivityCallback::synchronize()
 {
 }

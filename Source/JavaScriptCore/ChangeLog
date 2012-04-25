@@ -1,3 +1,60 @@
+2012-04-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        GC Activity Callback timer should be based on how much has been allocated since the last collection
+        https://bugs.webkit.org/show_bug.cgi?id=84763
+
+        Reviewed by Geoffrey Garen.
+
+        The desired behavior for the GC timer is to collect at some point in the future, 
+        regardless of how little we've allocated. A secondary goal, which is almost if not 
+        as important, is for the timer to collect sooner if there is the potential to 
+        collect a greater amount of memory. Conversely, as we allocate more memory we'd 
+        like to reduce the delay to the next collection. If we're allocating quickly enough, 
+        the timer should be preempted in favor of a normal allocation-triggered collection. 
+        If allocation were to slow or stop, we'd like the timer to be able to opportunistically 
+        run a collection without us having to allocate to the hard limit set by the Heap.
+
+        This type of policy can be described in terms of the amount of CPU we are willing 
+        to dedicate to reclaim a single MB of memory. For example, we might be willing to 
+        dedicate 1% of our CPU to reclaim 1 MB. We base our CPU usage off of the length of 
+        the last collection, e.g. if our last collection took 1ms, we would want to wait about 
+        100ms before running another collection to reclaim 1 MB. These constants should be 
+        tune-able, e.g. 0.1% CPU = 1 MB vs. 1% CPU = 1 MB vs. 10% CPU = 1 MB.
+
+        * API/JSBase.cpp: Use the new reportAbandonedObjectGraph.
+        (JSGarbageCollect):
+        * API/JSContextRef.cpp: Ditto.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::reportAbandonedObjectGraph): Similar to reportExtraMemoryCost. Clients call
+        this function to notify the Heap that some unknown number of JSC objects might have just 
+        been abandoned and are now garbage. The Heap might schedule a new collection timer based 
+        on this notification.
+        (JSC):
+        (JSC::Heap::collect): Renamed m_lastFullGCSize to the less confusing m_sizeAfterLastCollect.
+        * heap/Heap.h:
+        (Heap):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::zapFreeList): Fixed a bug in zapFreeList that failed to nullify the 
+        current allocator's FreeList once zapping was complete.
+        * runtime/GCActivityCallback.cpp: Removed didAbandonObjectGraph because it was replaced by 
+        Heap::reportAbandonedObjectGraph.
+        (JSC):
+        * runtime/GCActivityCallback.h:
+        (JSC::GCActivityCallback::willCollect):
+        (DefaultGCActivityCallback):
+        * runtime/GCActivityCallbackCF.cpp: Refactored the GC timer code so that we now schedule the 
+        timer based on how much we have allocated since the last collection up to a certain amount. 
+        We use the length of the previous GC to try to keep our total cost of opportunistic timer-triggered
+        collections around 1% of the CPU per MB of garbage we expect to reclaim up to a maximum of 5 MB.
+        (DefaultGCActivityCallbackPlatformData):
+        (JSC):
+        (JSC::DefaultGCActivityCallback::~DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::commonConstructor):
+        (JSC::scheduleTimer):
+        (JSC::cancelTimer):
+        (JSC::DefaultGCActivityCallback::didAllocate):
+
 2012-04-24  Michael Saboff  <msaboff@apple.com>
 
         objectProtoFuncToString creates new string every invocation

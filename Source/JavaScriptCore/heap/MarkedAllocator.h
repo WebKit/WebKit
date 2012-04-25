@@ -91,7 +91,7 @@ inline void MarkedAllocator::zapFreeList()
     }
     
     m_currentBlock->zapFreeList(m_freeList);
-    m_freeList.head = 0;
+    m_freeList = MarkedBlock::FreeList();
 }
 
 template <typename Functor> inline void MarkedAllocator::forEachBlock(Functor& functor)

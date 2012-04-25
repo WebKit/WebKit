@@ -149,7 +149,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
         globalData.heap.destroy();
     } else if (releasingGlobalObject) {
         globalData.heap.activityCallback()->synchronize();
-        globalData.heap.activityCallback()->didAbandonObjectGraph();
+        globalData.heap.reportAbandonedObjectGraph();
     }
 
     globalData.deref();

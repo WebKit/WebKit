@@ -117,7 +117,9 @@ namespace JSC {
         enum SweepToggle { DoNotSweep, DoSweep };
         bool shouldCollect();
         void collect(SweepToggle);
+
         void reportExtraMemoryCost(size_t cost);
+        void reportAbandonedObjectGraph();
 
         JS_EXPORT_PRIVATE void protect(JSValue);
         JS_EXPORT_PRIVATE bool unprotect(JSValue); // True when the protect count drops to 0.
@@ -203,7 +205,7 @@ namespace JSC {
         
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
-        size_t m_lastFullGCSize;
+        size_t m_sizeAfterLastCollect;
 
         size_t m_bytesAllocatedLimit;
         size_t m_bytesAllocated;
