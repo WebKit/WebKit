@@ -38,7 +38,7 @@ import webkit
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitPort
-
+from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
 
 _log = logging.getLogger(__name__)
 
@@ -80,6 +80,9 @@ class QtPort(WebKitPort):
     def _build_driver(self):
         # The Qt port builds DRT as part of the main build step
         return True
+
+    def _driver_class(self):
+        return XvfbDriver
 
     def _path_to_driver(self):
         return self._build_path('bin/%s' % self.driver_name())
