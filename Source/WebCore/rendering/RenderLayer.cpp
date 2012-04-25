@@ -4741,6 +4741,7 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
+    updateVisibilityStatus();
     updateTransform();
 
     if (compositor()->updateLayerCompositingState(this))
