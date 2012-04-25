@@ -146,6 +146,8 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     scrollParameters.verticalScrollElasticity = frameView->verticalScrollElasticity();
     scrollParameters.hasEnabledHorizontalScrollbar = frameView->horizontalScrollbar() && frameView->horizontalScrollbar()->enabled();
     scrollParameters.hasEnabledVerticalScrollbar = frameView->verticalScrollbar() && frameView->verticalScrollbar()->enabled();
+    scrollParameters.horizontalScrollbarMode = frameView->horizontalScrollbarMode();
+    scrollParameters.verticalScrollbarMode = frameView->verticalScrollbarMode();
 
     scrollParameters.viewportRect = IntRect(IntPoint(), frameView->visibleContentRect().size());
     scrollParameters.contentsSize = frameView->contentsSize();
@@ -361,6 +363,8 @@ void ScrollingCoordinator::setScrollParameters(const ScrollParameters& scrollPar
     m_scrollingTreeState->setVerticalScrollElasticity(scrollParameters.verticalScrollElasticity);
     m_scrollingTreeState->setHasEnabledHorizontalScrollbar(scrollParameters.hasEnabledHorizontalScrollbar);
     m_scrollingTreeState->setHasEnabledVerticalScrollbar(scrollParameters.hasEnabledVerticalScrollbar);
+    m_scrollingTreeState->setHorizontalScrollbarMode(scrollParameters.horizontalScrollbarMode);
+    m_scrollingTreeState->setVerticalScrollbarMode(scrollParameters.verticalScrollbarMode);
 
     m_scrollingTreeState->setViewportRect(scrollParameters.viewportRect);
     m_scrollingTreeState->setContentsSize(scrollParameters.contentsSize);

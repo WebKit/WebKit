@@ -59,8 +59,10 @@ public:
         VerticalScrollElasticity = 1 << 6,
         HasEnabledHorizontalScrollbar = 1 << 7,
         HasEnabledVerticalScrollbar = 1 << 8,
-        ScrollLayer = 1 << 9,
-        RequestedScrollPosition = 1 << 10,
+        HorizontalScrollbarMode = 1 << 9,
+        VerticalScrollbarMode = 1 << 10,
+        ScrollLayer = 1 << 11,
+        RequestedScrollPosition = 1 << 12,
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
@@ -93,6 +95,12 @@ public:
     bool hasEnabledVerticalScrollbar() const { return m_hasEnabledVerticalScrollbar; }
     void setHasEnabledVerticalScrollbar(bool);
 
+    ScrollbarMode horizontalScrollbarMode() const { return m_horizontalScrollbarMode; }
+    void setHorizontalScrollbarMode(ScrollbarMode);
+
+    ScrollbarMode verticalScrollbarMode() const { return m_verticalScrollbarMode; }
+    void setVerticalScrollbarMode(ScrollbarMode);
+
     PlatformLayer* platformScrollLayer() const;
     void setScrollLayer(const GraphicsLayer*);
 
@@ -121,6 +129,9 @@ private:
 
     bool m_hasEnabledHorizontalScrollbar;
     bool m_hasEnabledVerticalScrollbar;
+
+    ScrollbarMode m_horizontalScrollbarMode;
+    ScrollbarMode m_verticalScrollbarMode;
 
     IntPoint m_requestedScrollPosition;
 

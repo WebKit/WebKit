@@ -39,6 +39,8 @@ ScrollingTreeNode::ScrollingTreeNode(ScrollingTree* scrollingTree)
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_hasEnabledHorizontalScrollbar(false)
     , m_hasEnabledVerticalScrollbar(false)
+    , m_horizontalScrollbarMode(ScrollbarAuto)
+    , m_verticalScrollbarMode(ScrollbarAuto)
 {
 }
 
@@ -68,6 +70,12 @@ void ScrollingTreeNode::update(ScrollingTreeState* state)
 
     if (state->changedProperties() & ScrollingTreeState::HasEnabledVerticalScrollbar)
         m_hasEnabledVerticalScrollbar = state->hasEnabledVerticalScrollbar();
+
+    if (state->changedProperties() & ScrollingTreeState::HorizontalScrollbarMode)
+        m_horizontalScrollbarMode = state->horizontalScrollbarMode();
+
+    if (state->changedProperties() & ScrollingTreeState::VerticalScrollbarMode)
+        m_verticalScrollbarMode = state->verticalScrollbarMode();
 }
 
 } // namespace WebCore

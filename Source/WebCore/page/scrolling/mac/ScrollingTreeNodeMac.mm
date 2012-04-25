@@ -78,6 +78,9 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
 
 void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+    if (!canHaveScrollbars())
+        return;
+
     m_scrollElasticityController.handleWheelEvent(wheelEvent);
     scrollingTree()->handleWheelEventPhase(wheelEvent.phase());
 }

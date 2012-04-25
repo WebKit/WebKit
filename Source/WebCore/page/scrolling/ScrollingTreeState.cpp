@@ -43,6 +43,8 @@ ScrollingTreeState::ScrollingTreeState()
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_hasEnabledHorizontalScrollbar(false)
     , m_hasEnabledVerticalScrollbar(false)
+    , m_horizontalScrollbarMode(ScrollbarAuto)
+    , m_verticalScrollbarMode(ScrollbarAuto)
 {
 }
 
@@ -129,6 +131,24 @@ void ScrollingTreeState::setHasEnabledVerticalScrollbar(bool hasEnabledVerticalS
 
     m_hasEnabledVerticalScrollbar = hasEnabledVerticalScrollbar;
     m_changedProperties |= HasEnabledVerticalScrollbar;
+}
+
+void ScrollingTreeState::setHorizontalScrollbarMode(ScrollbarMode horizontalScrollbarMode)
+{
+    if (m_horizontalScrollbarMode == horizontalScrollbarMode)
+        return;
+
+    m_horizontalScrollbarMode = horizontalScrollbarMode;
+    m_changedProperties |= HorizontalScrollbarMode;
+}
+
+void ScrollingTreeState::setVerticalScrollbarMode(ScrollbarMode verticalScrollbarMode)
+{
+    if (m_verticalScrollbarMode == verticalScrollbarMode)
+        return;
+
+    m_verticalScrollbarMode = verticalScrollbarMode;
+    m_changedProperties |= VerticalScrollbarMode;
 }
 
 void ScrollingTreeState::setRequestedScrollPosition(const IntPoint& requestedScrollPosition)

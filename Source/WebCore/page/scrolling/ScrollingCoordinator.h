@@ -131,6 +131,9 @@ private:
         bool hasEnabledHorizontalScrollbar;
         bool hasEnabledVerticalScrollbar;
 
+        ScrollbarMode horizontalScrollbarMode;
+        ScrollbarMode verticalScrollbarMode;
+
         IntRect viewportRect;
         IntSize contentsSize;
     };

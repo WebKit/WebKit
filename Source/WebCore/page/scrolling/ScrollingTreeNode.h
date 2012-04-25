@@ -63,6 +63,8 @@ protected:
     bool hasEnabledHorizontalScrollbar() const { return m_hasEnabledHorizontalScrollbar; }
     bool hasEnabledVerticalScrollbar() const { return m_hasEnabledVerticalScrollbar; }
 
+    bool canHaveScrollbars() const { return m_horizontalScrollbarMode != ScrollbarAlwaysOff && m_verticalScrollbarMode != ScrollbarAlwaysOff; }
+
 private:
     ScrollingTree* m_scrollingTree;
 
@@ -76,6 +78,9 @@ private:
     
     bool m_hasEnabledHorizontalScrollbar;
     bool m_hasEnabledVerticalScrollbar;
+
+    ScrollbarMode m_horizontalScrollbarMode;
+    ScrollbarMode m_verticalScrollbarMode;
 };
 
 } // namespace WebCore
