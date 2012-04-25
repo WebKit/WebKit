@@ -162,6 +162,8 @@ private:
     virtual void platformCALayerDidCreateTiles(const Vector<FloatRect>& dirtyRects) OVERRIDE;
     virtual float platformCALayerDeviceScaleFactor() OVERRIDE;
 
+    virtual double backingStoreArea() const;
+
     void updateOpacityOnLayer();
     
 #if ENABLE(CSS_FILTERS)

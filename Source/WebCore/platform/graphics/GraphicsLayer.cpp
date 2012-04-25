@@ -509,6 +509,14 @@ int GraphicsLayer::validateTransformOperations(const KeyframeValueList& valueLis
     return firstIndex;
 }
 
+double GraphicsLayer::backingStoreArea() const
+{
+    if (!drawsContent())
+        return 0;
+    
+    // Effects of page and device scale are ignored; subclasses should override to take these into account.
+    return static_cast<double>(size().width()) * size().height();
+}
 
 static void writeIndent(TextStream& ts, int indent)
 {

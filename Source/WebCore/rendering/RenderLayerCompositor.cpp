@@ -59,7 +59,7 @@
 #include "HTMLMediaElement.h"
 #endif
 
-#if PROFILE_LAYER_REBUILD
+#if !LOG_DISABLED
 #include <wtf/CurrentTime.h>
 #endif
 
@@ -145,6 +145,18 @@ struct CompositingState {
 #endif
 };
 
+
+static inline bool compositingLogEnabled()
+{
+#if !LOG_DISABLED
+    return LogCompositing.state == WTFLogChannelOn;
+#else
+    return false;
+#endif
+}
+
+#define PIXELS_PER_MEGAPIXEL 1000000.0
+
 RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     : m_renderView(renderView)
     , m_updateCompositingLayersTimer(this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
@@ -161,9 +173,12 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_flushingLayers(false)
     , m_forceCompositingMode(false)
     , m_rootLayerAttachment(RootLayerUnattached)
-#if PROFILE_LAYER_REBUILD
+#if !LOG_DISABLED
     , m_rootLayerUpdateCount(0)
-#endif // PROFILE_LAYER_REBUILD
+    , m_obligateCompositedLayerCount(0)
+    , m_secondaryCompositedLayerCount(0)
+    , m_backingAreaMegaPixels(0)
+#endif
 {
 }
 
@@ -353,10 +368,12 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (isFullUpdate && updateType == CompositingUpdateAfterLayout)
         m_reevaluateCompositingAfterLayout = false;
 
-#if PROFILE_LAYER_REBUILD
-    ++m_rootLayerUpdateCount;
-    
-    double startTime = WTF::currentTime();
+#if !LOG_DISABLED
+    double startTime;
+    if (compositingLogEnabled()) {
+        ++m_rootLayerUpdateCount;
+        startTime = currentTime();
+    }
 #endif        
 
     if (checkForHierarchyUpdate) {
@@ -372,6 +389,19 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         
         needHierarchyUpdate |= layersChanged;
     }
+
+#if !LOG_DISABLED
+    if (compositingLogEnabled() && isFullUpdate && (needHierarchyUpdate || needGeometryUpdate)) {
+        m_obligateCompositedLayerCount = 0;
+        m_secondaryCompositedLayerCount = 0;
+        m_backingAreaMegaPixels = 0;
+
+        Frame* frame = m_renderView->frameView()->frame();
+        bool isMainFrame = !m_renderView->document()->ownerElement();
+        LOG(Compositing, "\nUpdate %d of %s. Overlap testing is %s\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame->tree()->uniqueName().string().utf8().data(),
+            m_compositingConsultsOverlap ? "on" : "off");
+    }
+#endif        
 
     if (needHierarchyUpdate) {
         // Update the hierarchy of the compositing layers.
@@ -393,17 +423,40 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         updateLayerTreeGeometry(updateRoot);
     }
     
-#if PROFILE_LAYER_REBUILD
-    double endTime = WTF::currentTime();
-    if (isFullUpdate)
-        fprintf(stderr, "Update %d: computeCompositingRequirements for the world took %fms\n",
-                    m_rootLayerUpdateCount, 1000.0 * (endTime - startTime));
+#if !LOG_DISABLED
+    if (compositingLogEnabled() && isFullUpdate && (needHierarchyUpdate || needGeometryUpdate)) {
+        double endTime = currentTime();
+        LOG(Compositing, "%d layers (%d primary, %d secondary), total backing area %.2fMP, update took %.2fms, \n",
+            m_obligateCompositedLayerCount + m_secondaryCompositedLayerCount, m_obligateCompositedLayerCount,
+            m_secondaryCompositedLayerCount, m_backingAreaMegaPixels, 1000.0 * (endTime - startTime));
+    }
 #endif
     ASSERT(updateRoot || !m_compositingLayersNeedRebuild);
 
     if (!hasAcceleratedCompositing())
         enableCompositingMode(false);
 }
+
+#if !LOG_DISABLED
+void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer)
+{
+    if (!compositingLogEnabled())
+        return;
+        
+    if (requiresCompositingLayer(layer) || layer->isRootLayer())
+        ++m_obligateCompositedLayerCount;
+    else
+        ++m_secondaryCompositedLayerCount;
+
+    RenderLayerBacking* backing = layer->backing();
+    
+    m_backingAreaMegaPixels += backing->backingStoreArea() / PIXELS_PER_MEGAPIXEL;
+
+    LOG(Compositing, "  Layer %p %dx%d %.3fMP (%s) %s\n", layer, backing->compositedBounds().width(), backing->compositedBounds().height(),
+        backing->backingStoreArea() / PIXELS_PER_MEGAPIXEL,
+        reasonForCompositing(layer), layer->backing()->nameForLayer().utf8().data());
+}
+#endif
 
 bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeRepaint shouldRepaint)
 {
@@ -859,6 +912,10 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
 
         if (!layer->parent())
             updateRootLayerPosition();
+
+#if !LOG_DISABLED
+        logLayerInfo(layer);
+#endif
     }
 
     // If this layer has backing, then we are collecting its children, otherwise appending
@@ -1042,6 +1099,10 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer)
 
         if (!layer->parent())
             updateRootLayerPosition();
+
+#if !LOG_DISABLED
+        logLayerInfo(layer);
+#endif
     }
 
 #if !ASSERT_DISABLED
@@ -1370,6 +1431,56 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer* layer, co
         || renderer->hasFilter()
         || layer->mustOverlapCompositedLayers();
 }
+
+#if !LOG_DISABLED
+const char* RenderLayerCompositor::reasonForCompositing(const RenderLayer* layer)
+{
+    RenderObject* renderer = layer->renderer();
+    if (layer->isReflection()) {
+        renderer = renderer->parent();
+        layer = toRenderBoxModelObject(renderer)->layer();
+    }
+
+    if (requiresCompositingForTransform(renderer))
+        return "transform";
+
+    if (requiresCompositingForVideo(renderer))
+        return "video";
+
+    if (requiresCompositingForCanvas(renderer))
+        return "canvas";
+
+    if (requiresCompositingForPlugin(renderer))
+        return "plugin";
+
+    if (requiresCompositingForFrame(renderer))
+        return "iframe";
+    
+    if ((canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden))
+        return "backface-visibility: hidden";
+
+    if (clipsCompositingDescendants(layer))
+        return "clips compositing descendants";
+
+    if (requiresCompositingForAnimation(renderer))
+        return "animation";
+
+    if (requiresCompositingForFilters(renderer))
+        return "filters";
+
+    if (requiresCompositingForPosition(renderer, layer))
+        return "position: fixed";
+
+    // This includes layers made composited by requiresCompositingWhenDescendantsAreCompositing().
+    if (layer->mustOverlapCompositedLayers())
+        return "overlap/stacking";
+
+    if (inCompositingMode() && layer->isRootLayer())
+        return "root";
+
+    return "";
+}
+#endif
 
 // Return true if the given layer has some ancestor in the RenderLayer hierarchy that clips,
 // up to the enclosing compositing ancestor. This is required because compositing layers are parented

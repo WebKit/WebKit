@@ -2810,6 +2810,15 @@ void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags)
     m_uncommittedChanges |= flags;
 }
 
+double GraphicsLayerCA::backingStoreArea() const
+{
+    if (!drawsContent())
+        return 0;
+    
+    // contentsLayer is given to us, so we don't really know anything about its contents.
+    return static_cast<double>(size().width()) * size().height() * m_layer->contentsScale();
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

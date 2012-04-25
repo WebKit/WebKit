@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-#define PROFILE_LAYER_REBUILD 0
-
 class GraphicsLayer;
 class RenderEmbeddedObject;
 class RenderPart;
@@ -302,6 +300,11 @@ private:
     bool requiresContentShadowLayer() const;
 #endif
 
+#if !LOG_DISABLED
+    const char* reasonForCompositing(const RenderLayer*);
+    void logLayerInfo(const RenderLayer*);
+#endif
+
 private:
     RenderView* m_renderView;
     OwnPtr<GraphicsLayer> m_rootContentLayer;
@@ -342,8 +345,12 @@ private:
     OwnPtr<GraphicsLayer> m_layerForOverhangAreas;
     OwnPtr<GraphicsLayer> m_contentShadowLayer;
 #endif
-#if PROFILE_LAYER_REBUILD
+
+#if !LOG_DISABLED
     int m_rootLayerUpdateCount;
+    int m_obligateCompositedLayerCount; // count of layer that have to be composited.
+    int m_secondaryCompositedLayerCount; // count of layers that have to be composited because of stacking or overlap.
+    double m_backingAreaMegaPixels;
 #endif
 };
 

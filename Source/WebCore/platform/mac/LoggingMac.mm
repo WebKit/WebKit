@@ -73,6 +73,7 @@ void initializeLoggingChannelsIfNecessary()
     initializeWithUserDefault(LogPlugins);
     initializeWithUserDefault(LogArchives);
     initializeWithUserDefault(LogWebAudio);
+    initializeWithUserDefault(LogCompositing);
 }
 
 }

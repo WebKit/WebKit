@@ -1500,7 +1500,6 @@ AnimatedPropertyID RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID 
     return AnimatedPropertyInvalid;
 }
 
-#ifndef NDEBUG
 String RenderLayerBacking::nameForLayer() const
 {
     String name = renderer()->renderName();
@@ -1516,7 +1515,6 @@ String RenderLayerBacking::nameForLayer() const
 
     return name;
 }
-#endif
 
 CompositingLayerType RenderLayerBacking::compositingLayerType() const
 {
@@ -1529,6 +1527,30 @@ CompositingLayerType RenderLayerBacking::compositingLayerType() const
     return ContainerCompositingLayer;
 }
 
+double RenderLayerBacking::backingStoreArea() const
+{
+    double backingArea;
+    
+    // m_ancestorClippingLayer and m_clippingLayer are just used for masking, so have no backing.
+    backingArea = m_graphicsLayer->backingStoreArea();
+    if (m_foregroundLayer)
+        backingArea += m_foregroundLayer->backingStoreArea();
+    if (m_maskLayer)
+        backingArea += m_maskLayer->backingStoreArea();
+
+    if (m_layerForHorizontalScrollbar)
+        backingArea += m_layerForHorizontalScrollbar->backingStoreArea();
+
+    if (m_layerForVerticalScrollbar)
+        backingArea += m_layerForVerticalScrollbar->backingStoreArea();
+
+    if (m_layerForScrollCorner)
+        backingArea += m_layerForScrollCorner->backingStoreArea();
+    
+    return backingArea;
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
+

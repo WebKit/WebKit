@@ -158,6 +158,11 @@ public:
 #if ENABLE(CSS_FILTERS)
     bool canCompositeFilters() const { return m_canCompositeFilters; }
 #endif
+
+    // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
+    double backingStoreArea() const;
+
+    String nameForLayer() const;
     
 private:
     void createPrimaryGraphicsLayer();
@@ -219,10 +224,6 @@ private:
 
     static CSSPropertyID graphicsLayerToCSSProperty(AnimatedPropertyID);
     static AnimatedPropertyID cssToGraphicsLayerProperty(CSSPropertyID);
-
-#ifndef NDEBUG
-    String nameForLayer() const;
-#endif
 
     RenderLayer* m_owningLayer;
 
