@@ -1,0 +1,11 @@
+This test verifies the position and size of the highlight rectangles overlayed on an inspected div in the scrolled view.
+
+margin rect is 260 x 260 at (8, 8)
+border rect is 250 x 250 at (13, 13)
+padding rect is 230 x 230 at (23, 23)
+content rect is 200 x 200 at (38, 38)
+margin rect is 260 x 260 at (-52, 218)
+border rect is 250 x 250 at (-47, 223)
+padding rect is 230 x 230 at (-37, 233)
+content rect is 200 x 200 at (-22, 248)
+

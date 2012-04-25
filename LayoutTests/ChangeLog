@@ -1,3 +1,18 @@
+2012-04-25  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Web Inspector: REGRESSION: Incorrect highlight position of inspected element in scrolled page
+        https://bugs.webkit.org/show_bug.cgi?id=84755
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/elements-test.js: Extracted common function dumpInspectorHighlightRects() into here with a small bug fixed (x and y inversed).
+        * inspector/elements/highlight-node-scaled-expected.txt: Corrected the wrong inversed x and y.
+        * inspector/elements/highlight-node-scaled.html: Extracted out dumpInspectorHighlightRects().
+        * inspector/elements/highlight-node-scroll-expected.txt: Added. Expectation of the new test case.
+        * inspector/elements/highlight-node-scroll.html: Added. The new test case.
+        * inspector/elements/highlight-node.html: Extracted out dumpInspectorHighlightRects(). Expectation not changed because the x and y happened to be the same in the original expectation.
+        * inspector/elements/highlight-svg-root.html: Ditto.
+
 2012-04-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardening after r115091.

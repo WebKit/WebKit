@@ -434,3 +434,15 @@ InspectorTest.generateUndoTest = function(testBody)
 }
 
 };
+
+function dumpInspectorHighlightRects()
+{
+    var rectNames = ["margin", "border", "padding", "content"];
+    var rects = window.internals.inspectorHighlightRects(document);
+    for (var i = 0; i < rects.length; i++)
+    {
+        var rectName = (i < rectNames.length ? rectNames[i] : "untitled");
+        var rect = rects.item(i);
+        output(rectName + " rect is " + rect.width + " x " + rect.height + " at (" + rect.left + ", " + rect.top + ")");
+    }
+}

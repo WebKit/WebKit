@@ -30,19 +30,6 @@ body {
 <script src="../../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function dumpInspectorHighlightRects()
-{
-    var rectNames = ["margin", "border", "padding", "content"];
-    var rects = window.internals.inspectorHighlightRects(document);
-    for (var i = 0; i < rects.length; i++)
-    {
-        var rectName = (i < rectNames.length ? rectNames[i] : "untitled");
-        var rect = rects.item(i);
-        var line = rectName + " rect is " + rect.width + " x " + rect.height + " at (" + rect.top + ", " + rect.left + ")<br/>";
-        document.getElementById("console").innerHTML += line;
-    }
-}
-
 function test()
 {
     function nodeSelected(node)
@@ -60,7 +47,6 @@ function test()
 
 <div id="inspectedElement"></div>
 <p id="description">This test verifies the position and size of the highlight rectangles overlayed on an inspected div.</p>
-<div id="console"></div>
 
 </body>
 </html>

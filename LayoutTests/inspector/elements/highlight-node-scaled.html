@@ -21,19 +21,6 @@ iframe {
 <script src="../../http/tests/inspector/elements-test.js"></script>
 <script>
 
-function dumpInspectorHighlightRects()
-{
-    var rectNames = ["margin", "border", "padding", "content"];
-    var rects = window.internals.inspectorHighlightRects(document);
-    for (var i = 0; i < rects.length; i++)
-    {
-        var rectName = (i < rectNames.length ? rectNames[i] : "untitled");
-        var rect = rects.item(i);
-        var line = rectName + " rect is " + rect.width + " x " + rect.height + " at (" + rect.top + ", " + rect.left + ")<br/>";
-        document.getElementById("console").innerHTML += line;
-    }
-}
-
 function onload()
 {
     if (window.internals)
@@ -60,6 +47,5 @@ function test()
 
 <body onload="onload()">
 <iframe src="resources/highlight-node-scaled-iframe.html"></iframe>
-<div id="console"></div>
 </body>
 </html>

@@ -353,12 +353,13 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
     drawSubstring(nodeTitleRun, currentPos, pxString.length(), pxAndBorderColor, font, context, titleRect);
 }
 
-static void contentsQuadToRootView(FloatQuad& quad, FrameView* view)
+static void contentsQuadToPage(const FrameView* mainView, const FrameView* view, FloatQuad& quad)
 {
     quad.setP1(view->contentsToRootView(roundedIntPoint(quad.p1())));
     quad.setP2(view->contentsToRootView(roundedIntPoint(quad.p2())));
     quad.setP3(view->contentsToRootView(roundedIntPoint(quad.p3())));
     quad.setP4(view->contentsToRootView(roundedIntPoint(quad.p4())));
+    quad += mainView->scrollOffset();
 }
 
 static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* highlightData, Highlight* highlight)
@@ -371,10 +372,11 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
         return;
 
     FrameView* containingView = containingFrame->view();
-    LayoutRect boundingBox = containingView->contentsToRootView(renderer->absoluteBoundingBoxRect());
-    LayoutRect titleAnchorBox = boundingBox;
-
     FrameView* mainView = containingFrame->page()->mainFrame()->view();
+    IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
+    boundingBox.move(mainView->scrollOffset());
+    IntRect titleAnchorBox = boundingBox;
+
     FloatRect visibleRect = mainView->visibleContentRect();
     // Don't translate the context if the frame is rendered in page coordinates.
     if (context && !mainView->delegatesScrolling())
@@ -391,7 +393,7 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
         highlight->type = HighlightTypeRects;
         renderer->absoluteQuads(highlight->quads);
         for (size_t i = 0; i < highlight->quads.size(); ++i)
-            contentsQuadToRootView(highlight->quads[i], containingView);
+            contentsQuadToPage(mainView, containingView, highlight->quads[i]);
 
         if (context)
             drawHighlightForSVGRenderer(*context, highlight->quads, highlightData);
@@ -434,10 +436,10 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
         FloatQuad absBorderQuad = renderer->localToAbsoluteQuad(FloatRect(borderBox));
         FloatQuad absMarginQuad = renderer->localToAbsoluteQuad(FloatRect(marginBox));
 
-        contentsQuadToRootView(absContentQuad, containingView);
-        contentsQuadToRootView(absPaddingQuad, containingView);
-        contentsQuadToRootView(absBorderQuad, containingView);
-        contentsQuadToRootView(absMarginQuad, containingView);
+        contentsQuadToPage(mainView, containingView, absContentQuad);
+        contentsQuadToPage(mainView, containingView, absPaddingQuad);
+        contentsQuadToPage(mainView, containingView, absBorderQuad);
+        contentsQuadToPage(mainView, containingView, absMarginQuad);
 
         titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 

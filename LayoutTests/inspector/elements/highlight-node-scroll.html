@@ -1,0 +1,79 @@
+<html>
+<head>
+
+<style>
+
+body {
+    width: 2000px;
+    height: 2000px;
+    background-color: grey;
+}
+.inspected {
+    margin: 5px;
+    border: solid 10px aqua;
+    padding: 15px;
+    width: 200px;
+    height: 200px;
+    background-color: blue;
+    float: left;
+}
+#scrollingContainer {
+    clear: both;
+    width: 100px;
+    height: 100px;
+    overflow: auto;
+}
+#description {
+    clear: both;
+}
+
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function onload()
+{
+    window.scrollBy(50, 100);
+    scrollingContainer = document.getElementById("scrollingContainer");
+    scrollingContainer.scrollTop = 50;
+    scrollingContainer.scrollLeft = 60;
+    runTest();
+}
+
+function test()
+{
+    function nodeSelected2(node)
+    {
+        RuntimeAgent.evaluate("dumpInspectorHighlightRects()", InspectorTest.completeTest);
+    }
+
+    function testNode2()
+    {
+        InspectorTest.selectNodeWithId("inspectedElement2", nodeSelected2);
+    }
+
+    function nodeSelected1(node)
+    {
+        RuntimeAgent.evaluate("dumpInspectorHighlightRects()", testNode2);
+    }
+
+    InspectorTest.selectNodeWithId("inspectedElement1", nodeSelected1);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+
+<div id="inspectedElement1" class="inspected"></div>
+
+<div id="scrollingContainer">
+    <div id="inspectedElement2" class="inspected"></div>
+</div>
+
+<p id="description">This test verifies the position and size of the highlight rectangles overlayed on an inspected div in the scrolled view.</p>
+
+</body>
+</html>
