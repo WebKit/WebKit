@@ -56,6 +56,7 @@
 #include "CSSRule.cpp"
 #include "CSSRuleList.cpp"
 #include "CSSSegmentedFontFace.cpp"
+#include "CSSSelector.cpp"
 #include "CSSSelectorList.cpp"
 #include "CSSStyleDeclaration.cpp"
 #include "CSSStyleRule.cpp"
