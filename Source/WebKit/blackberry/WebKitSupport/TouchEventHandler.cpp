@@ -227,6 +227,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
         }
     case Platform::TouchPoint::TouchReleased:
         {
+            unsigned spellLength = spellCheck(point);
             // Apply any suppressed changes. This does not eliminate the need
             // for the show after the handling of fat finger pressed as it may
             // have triggered a state change.
@@ -252,8 +253,6 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
             PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, TouchScreen);
             m_webPage->handleMouseEvent(mouseEvent);
             m_lastFatFingersResult.reset(); // Reset the fat finger result as its no longer valid when a user's finger is not on the screen.
-
-            unsigned spellLength = spellCheck(point);
             if (spellLength) {
                 unsigned end = m_webPage->m_inputHandler->caretPosition();
                 unsigned start = end - spellLength;
@@ -284,7 +283,7 @@ unsigned TouchEventHandler::spellCheck(Platform::TouchPoint& touchPoint)
     if (!m_lastFatFingersResult.isTextInput() || !elementUnderFatFinger)
         return 0;
 
-    IntPoint contentPos(m_webPage->mapFromViewportToContents(touchPoint.m_pos));
+    LayoutPoint contentPos(m_webPage->mapFromViewportToContents(touchPoint.m_pos));
     contentPos = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), m_webPage->focusedOrMainFrame(), contentPos);
 
     Document* document = elementUnderFatFinger->document();
@@ -294,7 +293,7 @@ unsigned TouchEventHandler::spellCheck(Platform::TouchPoint& touchPoint)
         return 0;
 
     IntRect rect = marker->renderedRect();
-    IntPoint newContentPos = IntPoint(rect.x() + rect.width(), rect.y() + rect.height() / 2);
+    LayoutPoint newContentPos = LayoutPoint(rect.x() + rect.width(), rect.y() + rect.height() / 2);
     Frame* frame = m_webPage->focusedOrMainFrame();
     if (frame != m_webPage->mainFrame())
         newContentPos = m_webPage->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(newContentPos));

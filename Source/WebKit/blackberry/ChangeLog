@@ -1,3 +1,28 @@
+2012-04-24  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Perform spellcheck before handling TouchRelease event
+        https://bugs.webkit.org/show_bug.cgi?id=84744
+
+        After rebasing to master_35, it appears as though some code had been moved around.
+        Here, we were handling the TouchReleased event before calling spellcheck.  This
+        meant that when we finally got the call to spellcheck, the fatFinger result had been
+        reset and the spelling markers had been removed.
+
+        In addition, based on https://bugs.webkit.org/show_bug.cgi?id=66330
+        I am also updating the BlackBerry specific documentMarkerContainingPoint to use
+        LayoutPoint instead of IntPoint.
+
+        Internally reviewed by Mike Fenton.
+
+        Reviewed by Antonio Gomes.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        (BlackBerry::WebKit::TouchEventHandler::spellCheck):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        * dom/DocumentMarkerController.h:
+
 2012-04-24  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] setUserViewportArguments not always respected.
