@@ -208,7 +208,7 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
         if (parentStyleSheet) {
             sourceURL = parentStyleSheet->internal()->finalURL();
             if (sourceURL.isEmpty())
-                sourceURL = InspectorDOMAgent::documentURLString(parentStyleSheet->findDocument());
+                sourceURL = InspectorDOMAgent::documentURLString(parentStyleSheet->ownerDocument());
         } else
             sourceURL = "";
 
@@ -222,7 +222,7 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
             while (styleSheet) {
                 mediaList = styleSheet->media();
                 if (mediaList && mediaList->length()) {
-                    Document* doc = styleSheet->findDocument();
+                    Document* doc = styleSheet->ownerDocument();
                     if (doc)
                         sourceURL = doc->url();
                     else if (!styleSheet->internal()->finalURL().isEmpty())
@@ -1038,7 +1038,7 @@ InspectorCSSId InspectorStyleSheet::ruleOrStyleId(CSSStyleDeclaration* style) co
 
 Document* InspectorStyleSheet::ownerDocument() const
 {
-    return m_pageStyleSheet->findDocument();
+    return m_pageStyleSheet->ownerDocument();
 }
 
 RefPtr<CSSRuleSourceData> InspectorStyleSheet::ruleSourceDataFor(CSSStyleDeclaration* style) const

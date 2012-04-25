@@ -2622,9 +2622,15 @@ void Document::updateBaseURL()
     if (!m_baseURL.isValid())
         m_baseURL = KURL();
 
-    if (m_elemSheet)
-        m_elemSheet->internal()->setFinalURL(m_baseURL);
-    
+    if (m_elemSheet) {
+        // Element sheet is silly. It never contains anything.
+        ASSERT(!m_elemSheet->internal()->ruleCount());
+        bool usesRemUnits = m_elemSheet->internal()->usesRemUnits();
+        m_elemSheet = CSSStyleSheet::createInline(this, m_baseURL);
+        // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
+        m_elemSheet->internal()->parserSetUsesRemUnits(usesRemUnits);
+    }
+
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
         // Base URL change changes any relative visited links.
         // FIXME: There are other URLs in the tree that would need to be re-evaluated on dynamic base URL change. Style should be invalidated too.
@@ -2759,7 +2765,7 @@ Frame* Document::findUnsafeParentScrollPropagationBoundary()
     return 0;
 }
 
-StyleSheetInternal* Document::pageUserSheet()
+CSSStyleSheet* Document::pageUserSheet()
 {
     if (m_pageUserSheet)
         return m_pageUserSheet.get();
@@ -2773,9 +2779,9 @@ StyleSheetInternal* Document::pageUserSheet()
         return 0;
     
     // Parse the sheet and cache it.
-    m_pageUserSheet = StyleSheetInternal::createInline(this, settings()->userStyleSheetLocation());
-    m_pageUserSheet->setIsUserStyleSheet(true);
-    m_pageUserSheet->parseString(userSheetText);
+    m_pageUserSheet = CSSStyleSheet::createInline(this, settings()->userStyleSheetLocation());
+    m_pageUserSheet->internal()->setIsUserStyleSheet(true);
+    m_pageUserSheet->internal()->parseString(userSheetText);
     return m_pageUserSheet.get();
 }
 
@@ -2794,7 +2800,7 @@ void Document::updatePageUserSheet()
         styleResolverChanged(RecalcStyleImmediately);
 }
 
-const Vector<RefPtr<StyleSheetInternal> >* Document::pageGroupUserSheets() const
+const Vector<RefPtr<CSSStyleSheet> >* Document::pageGroupUserSheets() const
 {
     if (m_pageGroupUserSheetCacheValid)
         return m_pageGroupUserSheets.get();
@@ -2819,12 +2825,12 @@ const Vector<RefPtr<StyleSheetInternal> >* Document::pageGroupUserSheets() const
                 continue;
             if (!UserContentURLPattern::matchesPatterns(url(), sheet->whitelist(), sheet->blacklist()))
                 continue;
-            RefPtr<StyleSheetInternal> parsedSheet = StyleSheetInternal::createInline(const_cast<Document*>(this), sheet->url());
-            parsedSheet->setIsUserStyleSheet(sheet->level() == UserStyleUserLevel);
-            parsedSheet->parseString(sheet->source());
+            RefPtr<CSSStyleSheet> groupSheet = CSSStyleSheet::createInline(const_cast<Document*>(this), sheet->url());
             if (!m_pageGroupUserSheets)
-                m_pageGroupUserSheets = adoptPtr(new Vector<RefPtr<StyleSheetInternal> >);
-            m_pageGroupUserSheets->append(parsedSheet.release());
+                m_pageGroupUserSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
+            m_pageGroupUserSheets->append(groupSheet);
+            groupSheet->internal()->setIsUserStyleSheet(sheet->level() == UserStyleUserLevel);
+            groupSheet->internal()->parseString(sheet->source());
         }
     }
 
@@ -2850,15 +2856,15 @@ void Document::updatePageGroupUserSheets()
 void Document::addUserSheet(PassRefPtr<StyleSheetInternal> userSheet)
 {
     if (!m_userSheets)
-        m_userSheets = adoptPtr(new Vector<RefPtr<StyleSheetInternal> >);
-    m_userSheets->append(userSheet);
+        m_userSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
+    m_userSheets->append(CSSStyleSheet::create(userSheet, this));
     styleResolverChanged(RecalcStyleImmediately);
 }
 
 CSSStyleSheet* Document::elementSheet()
 {
     if (!m_elemSheet)
-        m_elemSheet = CSSStyleSheet::create(StyleSheetInternal::createInline(this, m_baseURL));
+        m_elemSheet = CSSStyleSheet::createInline(this, m_baseURL);
     return m_elemSheet.get();
 }
 

@@ -211,8 +211,9 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
     }
 
     ASSERT(m_isCSS);
-    RefPtr<StyleSheetInternal> newSheet = StyleSheetInternal::create(this, href, baseURL, charset);
-    m_sheet = CSSStyleSheet::create(newSheet);
+    CSSParserContext parserContext(document(), baseURL, charset);
+    RefPtr<StyleSheetInternal> newSheet = StyleSheetInternal::create(href, baseURL, parserContext);
+    m_sheet = CSSStyleSheet::create(newSheet, this);
     // We don't need the cross-origin security check here because we are
     // getting the sheet text in "strict" mode. This enforces a valid CSS MIME
     // type.

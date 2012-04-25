@@ -634,15 +634,15 @@ public:
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();
 
-    StyleSheetInternal* pageUserSheet();
+    CSSStyleSheet* pageUserSheet();
     void clearPageUserSheet();
     void updatePageUserSheet();
 
-    const Vector<RefPtr<StyleSheetInternal> >* pageGroupUserSheets() const;
+    const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets() const;
     void clearPageGroupUserSheets();
     void updatePageGroupUserSheets();
 
-    const Vector<RefPtr<StyleSheetInternal> >* documentUserSheets() const { return m_userSheets.get(); }
+    const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets() const { return m_userSheets.get(); }
     void addUserSheet(PassRefPtr<StyleSheetInternal> userSheet);
 
     CSSStyleSheet* elementSheet();
@@ -1272,9 +1272,9 @@ private:
     bool m_hasNodesWithPlaceholderStyle;
 
     RefPtr<CSSStyleSheet> m_elemSheet;
-    RefPtr<StyleSheetInternal> m_pageUserSheet;
-    mutable OwnPtr<Vector<RefPtr<StyleSheetInternal> > > m_pageGroupUserSheets;
-    OwnPtr<Vector<RefPtr<StyleSheetInternal> > > m_userSheets;
+    RefPtr<CSSStyleSheet> m_pageUserSheet;
+    mutable OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_pageGroupUserSheets;
+    OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_userSheets;
     mutable bool m_pageGroupUserSheetCacheValid;
 
     bool m_printing;

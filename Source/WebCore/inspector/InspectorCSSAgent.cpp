@@ -169,7 +169,7 @@ inline void SelectorProfile::startSelector(const CSSStyleRule* rule)
     if (styleSheet) {
         url = InspectorStyleSheet::styleSheetURL(styleSheet);
         if (url.isEmpty())
-            url = InspectorDOMAgent::documentURLString(styleSheet->findDocument());
+            url = InspectorDOMAgent::documentURLString(styleSheet->ownerDocument());
     }
     m_currentMatchData.url = url;
     m_currentMatchData.lineNumber = rule->styleRule()->sourceLine();
@@ -868,7 +868,7 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     RefPtr<InspectorStyleSheet> inspectorStyleSheet = m_cssStyleSheetToInspectorStyleSheet.get(styleSheet);
     if (!inspectorStyleSheet) {
         String id = String::number(m_lastStyleSheetId++);
-        Document* document = styleSheet->findDocument();
+        Document* document = styleSheet->ownerDocument();
         inspectorStyleSheet = InspectorStyleSheet::create(id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
         m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
         m_cssStyleSheetToInspectorStyleSheet.set(styleSheet, inspectorStyleSheet);

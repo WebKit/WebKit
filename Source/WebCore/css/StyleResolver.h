@@ -400,7 +400,7 @@ public:
 private:
     static RenderStyle* s_styleNotYetAvailable;
 
-    void addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<StyleSheetInternal> >*, RuleSet& userStyle);
+    void addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<CSSStyleSheet> >*, RuleSet& userStyle);
 
     void cacheBorderAndBackground();
 

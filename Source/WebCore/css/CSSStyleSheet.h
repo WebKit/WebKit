@@ -45,25 +45,17 @@ typedef int ExceptionCode;
 
 class StyleSheetInternal : public RefCounted<StyleSheetInternal> {
 public:
-    static PassRefPtr<StyleSheetInternal> create()
+    static PassRefPtr<StyleSheetInternal> create(const CSSParserContext& context = CSSParserContext(CSSStrictMode))
     {
-        return adoptRef(new StyleSheetInternal(static_cast<StyleRuleImport*>(0), String(), KURL(), String()));
+        return adoptRef(new StyleSheetInternal(0, String(), KURL(), context));
     }
-    static PassRefPtr<StyleSheetInternal> create(Node* ownerNode)
+    static PassRefPtr<StyleSheetInternal> create(const String& originalURL, const KURL& finalURL, const CSSParserContext& context)
     {
-        return adoptRef(new StyleSheetInternal(ownerNode, String(), KURL(), String()));
+        return adoptRef(new StyleSheetInternal(0, originalURL, finalURL, context));
     }
-    static PassRefPtr<StyleSheetInternal> create(Node* ownerNode, const String& originalURL, const KURL& finalURL, const String& charset)
+    static PassRefPtr<StyleSheetInternal> create(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const CSSParserContext& context)
     {
-        return adoptRef(new StyleSheetInternal(ownerNode, originalURL, finalURL, charset));
-    }
-    static PassRefPtr<StyleSheetInternal> create(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset)
-    {
-        return adoptRef(new StyleSheetInternal(ownerRule, originalURL, finalURL, charset));
-    }
-    static PassRefPtr<StyleSheetInternal> createInline(Node* ownerNode, const KURL& finalURL)
-    {
-        return adoptRef(new StyleSheetInternal(ownerNode, finalURL.string(), finalURL, String()));
+        return adoptRef(new StyleSheetInternal(ownerRule, originalURL, finalURL, context));
     }
 
     ~StyleSheetInternal();
@@ -84,8 +76,9 @@ public:
     void checkLoaded();
     void startLoadingDynamicSheet();
 
-    Node* findStyleSheetOwnerNode() const;
-    Document* findDocument();
+    StyleSheetInternal* rootStyleSheet() const;
+    Node* singleOwnerNode() const;
+    Document* singleOwnerDocument() const;
 
     const String& charset() const { return m_parserContext.charset; }
 
@@ -115,8 +108,6 @@ public:
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
     
     StyleSheetInternal* parentStyleSheet() const;
-    Node* ownerNode() const { return m_ownerNode; }
-    void clearOwnerNode() { m_ownerNode = 0; }
     StyleRuleImport* ownerRule() const { return m_ownerRule; }
     void clearOwnerRule() { m_ownerRule = 0; }
     
@@ -127,7 +118,6 @@ public:
     String title() const { return m_title; }
     void setTitle(const String& title) { m_title = title; }
     
-    void setFinalURL(const KURL& finalURL) { m_finalURL = finalURL; updateBaseURL(); }
     const KURL& finalURL() const { return m_finalURL; }
     const KURL& baseURL() const { return m_parserContext.baseURL; }
 
@@ -140,16 +130,17 @@ public:
 
     PassRefPtr<CSSRule> createChildRuleCSSOMWrapper(unsigned index, CSSStyleSheet* parentWrapper);
 
+    void registerClient(CSSStyleSheet*);
+    void unregisterClient(CSSStyleSheet*);
+
 private:
-    StyleSheetInternal(Node* ownerNode, const String& originalURL, const KURL& finalURL, const String& charset);
-    StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset);
+    StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& baseURL, const CSSParserContext&);
     
     void clearCharsetRule();
     bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
     
     void updateBaseURL();
 
-    Node* m_ownerNode;
     StyleRuleImport* m_ownerRule;
 
     String m_originalURL;
@@ -169,6 +160,8 @@ private:
     bool m_usesRemUnits : 1;
     
     CSSParserContext m_parserContext;
+
+    Vector<CSSStyleSheet*> m_clients;
 };
 
 class CSSStyleSheet : public StyleSheet {
@@ -177,11 +170,16 @@ public:
     { 
         return adoptRef(new CSSStyleSheet(sheet, ownerRule));
     }
+    static RefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetInternal> sheet, Node* ownerNode)
+    { 
+        return adoptRef(new CSSStyleSheet(sheet, ownerNode));
+    }
+    static PassRefPtr<CSSStyleSheet> createInline(Node*, const KURL&, const String& encoding = String());
 
     virtual ~CSSStyleSheet();
 
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
-    virtual Node* ownerNode() const OVERRIDE { return m_internal->ownerNode(); }
+    virtual Node* ownerNode() const OVERRIDE { return m_ownerNode; }
     virtual MediaList* media() const OVERRIDE;
     virtual String href() const OVERRIDE { return m_internal->originalURL(); }  
     virtual String title() const OVERRIDE { return m_internal->title(); }
@@ -202,14 +200,14 @@ public:
     unsigned length() const;
     CSSRule* item(unsigned index);
 
-    virtual void clearOwnerNode() OVERRIDE { m_internal->clearOwnerNode(); }
+    virtual void clearOwnerNode() OVERRIDE { m_ownerNode = 0; }
     virtual CSSImportRule* ownerRule() const OVERRIDE { return m_ownerRule; }
     virtual KURL baseURL() const OVERRIDE { return m_internal->baseURL(); }
     virtual bool isLoading() const OVERRIDE { return m_internal->isLoading(); }
     
     void clearOwnerRule() { m_ownerRule = 0; }
     void styleSheetChanged() { m_internal->styleSheetChanged(); }
-    Document* findDocument() { return m_internal->findDocument(); }
+    Document* ownerDocument() const;
     
     void clearChildRuleCSSOMWrappers();
 
@@ -217,6 +215,7 @@ public:
 
 private:
     CSSStyleSheet(PassRefPtr<StyleSheetInternal>, CSSImportRule* ownerRule);
+    CSSStyleSheet(PassRefPtr<StyleSheetInternal>, Node* ownerNode);
 
     virtual bool isCSSStyleSheet() const { return true; }
     virtual String type() const { return "text/css"; }
@@ -224,6 +223,7 @@ private:
     RefPtr<StyleSheetInternal> m_internal;
     bool m_isDisabled;
 
+    Node* m_ownerNode;
     CSSImportRule* m_ownerRule;
 
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;

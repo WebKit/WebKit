@@ -63,9 +63,15 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const KURL& baseURL, 
 {
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
-    m_styleSheet = StyleSheetInternal::create(this, href, baseURL, charset);
 
-    Document* document = m_parentStyleSheet ? m_parentStyleSheet->findDocument() : 0;
+    CSSParserContext context = m_parentStyleSheet ? m_parentStyleSheet->parserContext() : CSSStrictMode;
+    context.charset = charset;
+    if (!baseURL.isNull())
+        context.baseURL = baseURL;
+
+    m_styleSheet = StyleSheetInternal::create(this, href, baseURL, context);
+
+    Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : 0;
     m_styleSheet->parseUserStyleSheet(cachedStyleSheet, document ? document->securityOrigin() : 0);
 
     m_loading = false;
@@ -85,7 +91,7 @@ void StyleRuleImport::requestStyleSheet()
 {
     if (!m_parentStyleSheet)
         return;
-    Document* document = m_parentStyleSheet->findDocument();
+    Document* document = m_parentStyleSheet->singleOwnerDocument();
     if (!document)
         return;
 
@@ -102,7 +108,6 @@ void StyleRuleImport::requestStyleSheet()
     // in our parent chain with the same URL, then just bail.
     StyleSheetInternal* rootSheet = m_parentStyleSheet;
     for (StyleSheetInternal* sheet = m_parentStyleSheet; sheet; sheet = sheet->parentStyleSheet()) {
-        // FIXME: This is wrong if the finalURL was updated via document::updateBaseURL.
         if (absHref == sheet->finalURL().string() || absHref == sheet->originalURL())
             return;
         rootSheet = sheet;

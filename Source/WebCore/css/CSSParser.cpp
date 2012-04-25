@@ -181,8 +181,9 @@ const CSSParserContext& strictCSSParserContext()
     return strictContext;
 }
 
-CSSParserContext::CSSParserContext(CSSParserMode mode)
-    : mode(mode)
+CSSParserContext::CSSParserContext(CSSParserMode mode, const KURL& baseURL)
+    : baseURL(baseURL)
+    , mode(mode)
     , isHTMLDocument(false)
     , isCSSCustomFilterEnabled(false)
     , isCSSRegionsEnabled(false)
@@ -191,8 +192,9 @@ CSSParserContext::CSSParserContext(CSSParserMode mode)
 {
 }
 
-CSSParserContext::CSSParserContext(Document* document)
-    : baseURL(document->baseURL())
+CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, const String& charset)
+    : baseURL(baseURL.isNull() ? document->baseURL() : baseURL)
+    , charset(charset)
     , mode(document->inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
     , isHTMLDocument(document->isHTMLDocument())
     , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)

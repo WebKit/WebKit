@@ -263,7 +263,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
             if (i < styleSheet->length() - 1)
                 cssText.append("\n\n");
         }
-        Document* document = styleSheet->findDocument();
+        Document* document = styleSheet->ownerDocument();
         // Some rules have resources associated with them that we need to retrieve.
         if (rule->isImportRule()) {
             CSSImportRule* importRule = static_cast<CSSImportRule*>(rule);            

@@ -341,7 +341,7 @@ void StyleRuleCSSStyleDeclaration::deref()
 void StyleRuleCSSStyleDeclaration::setNeedsStyleRecalc()
 {
     if (CSSStyleSheet* styleSheet = parentStyleSheet()) {
-        if (Document* document = styleSheet->findDocument())
+        if (Document* document = styleSheet->ownerDocument())
             document->styleResolverChanged(DeferRecalcStyle);
     }
 }

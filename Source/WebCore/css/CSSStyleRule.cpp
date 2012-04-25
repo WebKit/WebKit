@@ -93,7 +93,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 {
     Document* doc = 0;
     if (CSSStyleSheet* styleSheet = parentStyleSheet())
-        doc = styleSheet->findDocument();
+        doc = styleSheet->ownerDocument();
     if (!doc)
         return;
 

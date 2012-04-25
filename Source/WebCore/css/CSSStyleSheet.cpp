@@ -73,40 +73,17 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 }
 #endif
 
-StyleSheetInternal::StyleSheetInternal(Node* parentNode, const String& originalURL, const KURL& finalURL, const String& charset)
-    : m_ownerNode(parentNode)
-    , m_ownerRule(0)
+StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const CSSParserContext& context)
+    : m_ownerRule(ownerRule)
     , m_originalURL(originalURL)
     , m_finalURL(finalURL)
     , m_loadCompleted(false)
-    , m_isUserStyleSheet(false)
+    , m_isUserStyleSheet(ownerRule && ownerRule->parentStyleSheet() && ownerRule->parentStyleSheet()->isUserStyleSheet())
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
     , m_usesRemUnits(false)
-    , m_parserContext(parentNode->document())
+    , m_parserContext(context)
 {
-    ASSERT(isAcceptableCSSStyleSheetParent(parentNode));
-
-    updateBaseURL();
-    m_parserContext.charset = charset;
-}
-
-StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const String& charset)
-    : m_ownerNode(0)
-    , m_ownerRule(ownerRule)
-    , m_originalURL(originalURL)
-    , m_finalURL(finalURL)
-    , m_loadCompleted(false)
-    , m_hasSyntacticallyValidCSSHeader(true)
-    , m_didLoadErrorOccur(false)
-    , m_usesRemUnits(false)
-    , m_parserContext((ownerRule && ownerRule->parentStyleSheet()) ? ownerRule->parentStyleSheet()->parserContext() : CSSStrictMode)
-{
-    StyleSheetInternal* parentSheet = ownerRule ? ownerRule->parentStyleSheet() : 0;
-    m_isUserStyleSheet = parentSheet && parentSheet->isUserStyleSheet();
-
-    updateBaseURL();
-    m_parserContext.charset = charset;
 }
 
 StyleSheetInternal::~StyleSheetInternal()
@@ -330,17 +307,20 @@ void StyleSheetInternal::checkLoaded()
     // ScriptableDocumentParser::executeScriptsWaitingForStylesheets().
     // See <rdar://problem/6622300>.
     RefPtr<StyleSheetInternal> protector(this);
-    if (StyleSheetInternal* styleSheet = parentStyleSheet())
-        styleSheet->checkLoaded();
-
-    RefPtr<Node> owner = ownerNode();
-    if (!owner)
+    StyleSheetInternal* parentSheet = parentStyleSheet();
+    if (parentSheet) {
+        parentSheet->checkLoaded();
         m_loadCompleted = true;
-    else {
-        m_loadCompleted = owner->sheetLoaded();
-        if (m_loadCompleted)
-            owner->notifyLoadedSheetAndAllCriticalSubresources(m_didLoadErrorOccur);
+        return;
     }
+    RefPtr<Node> ownerNode = singleOwnerNode();
+    if (!ownerNode) {
+        m_loadCompleted = true;
+        return;
+    }
+    m_loadCompleted = ownerNode->sheetLoaded();
+    if (m_loadCompleted)
+        ownerNode->notifyLoadedSheetAndAllCriticalSubresources(m_didLoadErrorOccur);
 }
 
 void StyleSheetInternal::notifyLoadedSheet(const CachedCSSStyleSheet* sheet)
@@ -351,23 +331,30 @@ void StyleSheetInternal::notifyLoadedSheet(const CachedCSSStyleSheet* sheet)
 
 void StyleSheetInternal::startLoadingDynamicSheet()
 {
-    if (Node* owner = ownerNode())
+    if (Node* owner = singleOwnerNode())
         owner->startLoadingDynamicSheet();
 }
 
-Node* StyleSheetInternal::findStyleSheetOwnerNode() const
+StyleSheetInternal* StyleSheetInternal::rootStyleSheet() const
 {
-    for (const StyleSheetInternal* sheet = this; sheet; sheet = sheet->parentStyleSheet()) {
-        if (Node* ownerNode = sheet->ownerNode())
-            return ownerNode;
-    }
-    return 0;
+    const StyleSheetInternal* root = this;
+    while (root->parentStyleSheet())
+        root = root->parentStyleSheet();
+    return const_cast<StyleSheetInternal*>(root);
 }
 
-Document* StyleSheetInternal::findDocument()
+Node* StyleSheetInternal::singleOwnerNode() const
 {
-    Node* ownerNode = findStyleSheetOwnerNode();
+    StyleSheetInternal* root = rootStyleSheet();
+    if (root->m_clients.isEmpty())
+        return 0;
+    ASSERT(root->m_clients.size() == 1);
+    return root->m_clients[0]->ownerNode();
+}
 
+Document* StyleSheetInternal::singleOwnerDocument() const
+{
+    Node* ownerNode = singleOwnerNode();
     return ownerNode ? ownerNode->document() : 0;
 }
 
@@ -378,33 +365,10 @@ void StyleSheetInternal::setMediaQueries(PassRefPtr<MediaQuerySet> mediaQueries)
 
 void StyleSheetInternal::styleSheetChanged()
 {
-    StyleSheetInternal* rootSheet = this;
-    while (StyleSheetInternal* parent = rootSheet->parentStyleSheet())
-        rootSheet = parent;
-
-    /* FIXME: We don't need to do everything styleResolverChanged does,
-     * basically we just need to recreate the document's selector with the
-     * already existing style sheets.
-     */
-    if (Document* documentToUpdate = rootSheet->findDocument())
-        documentToUpdate->styleResolverChanged(DeferRecalcStyle);
-}
-
-void StyleSheetInternal::updateBaseURL()
-{
-    if (!m_finalURL.isNull()) {
-        m_parserContext.baseURL = m_finalURL;
+    Document* ownerDocument = singleOwnerDocument();
+    if (!ownerDocument)
         return;
-    }
-    if (StyleSheetInternal* parentSheet = parentStyleSheet()) {
-        m_parserContext.baseURL = parentSheet->baseURL();
-        return;
-    }
-    if (m_ownerNode) {
-        m_parserContext.baseURL = m_ownerNode->document()->baseURL();
-        return;
-    }
-    m_parserContext.baseURL = KURL();
+    ownerDocument->styleResolverChanged(DeferRecalcStyle);
 }
 
 KURL StyleSheetInternal::completeURL(const String& url) const
@@ -442,11 +406,43 @@ StyleSheetInternal* StyleSheetInternal::parentStyleSheet() const
     return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0;
 }
 
+void StyleSheetInternal::registerClient(CSSStyleSheet* sheet)
+{
+    ASSERT(!m_clients.contains(sheet));
+    m_clients.append(sheet);
+}
+
+void StyleSheetInternal::unregisterClient(CSSStyleSheet* sheet)
+{
+    size_t position = m_clients.find(sheet);
+    ASSERT(position != notFound);
+    m_clients.remove(position);
+}
+
+PassRefPtr<CSSStyleSheet> CSSStyleSheet::createInline(Node* ownerNode, const KURL& baseURL, const String& encoding)
+{
+    CSSParserContext parserContext(ownerNode->document(), baseURL, encoding);
+    RefPtr<StyleSheetInternal> sheet = StyleSheetInternal::create(baseURL.string(), baseURL, parserContext);
+    return adoptRef(new CSSStyleSheet(sheet.release(), ownerNode));
+}
+
 CSSStyleSheet::CSSStyleSheet(PassRefPtr<StyleSheetInternal> styleSheet, CSSImportRule* ownerRule)
     : m_internal(styleSheet)
     , m_isDisabled(false)
+    , m_ownerNode(0)
     , m_ownerRule(ownerRule)
 {
+    m_internal->registerClient(this);
+}
+
+CSSStyleSheet::CSSStyleSheet(PassRefPtr<StyleSheetInternal> styleSheet, Node* ownerNode)
+    : m_internal(styleSheet)
+    , m_isDisabled(false)
+    , m_ownerNode(ownerNode)
+    , m_ownerRule(0)
+{
+    ASSERT(isAcceptableCSSStyleSheetParent(ownerNode));
+    m_internal->registerClient(this);
 }
 
 CSSStyleSheet::~CSSStyleSheet()
@@ -460,6 +456,8 @@ CSSStyleSheet::~CSSStyleSheet()
     }
     if (m_mediaCSSOMWrapper)
         m_mediaCSSOMWrapper->clearParentStyleSheet();
+
+    m_internal->unregisterClient(this);
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)
@@ -494,7 +492,7 @@ CSSRule* CSSStyleSheet::item(unsigned index)
 PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
 {
     KURL url = m_internal->finalURL();
-    Document* document = m_internal->findDocument();
+    Document* document = ownerDocument();
     if (!url.isEmpty() && document && !document->securityOrigin()->canRequest(url))
         return 0;
     // IE behavior.
@@ -570,7 +568,7 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Exceptio
 PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules()
 {
     KURL url = m_internal->finalURL();
-    Document* document = m_internal->findDocument();
+    Document* document = ownerDocument();
     if (!url.isEmpty() && document && !document->securityOrigin()->canRequest(url))
         return 0;
     if (!m_ruleListCSSOMWrapper)
@@ -590,6 +588,14 @@ MediaList* CSSStyleSheet::media() const
 CSSStyleSheet* CSSStyleSheet::parentStyleSheet() const 
 { 
     return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0; 
+}
+
+Document* CSSStyleSheet::ownerDocument() const
+{
+    const CSSStyleSheet* root = this;
+    while (root->parentStyleSheet())
+        root = root->parentStyleSheet();
+    return root->ownerNode() ? root->ownerNode()->document() : 0;
 }
 
 void CSSStyleSheet::clearChildRuleCSSOMWrappers()
