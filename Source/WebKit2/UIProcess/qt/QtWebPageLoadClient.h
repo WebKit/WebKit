@@ -40,6 +40,7 @@ public:
 
 private:
     void didStartProvisionalLoadForFrame(const QUrl&);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(const QUrl&);
     void didCommitLoadForFrame();
     void didSameDocumentNavigationForFrame();
     void didReceiveTitleForFrame();
@@ -47,11 +48,12 @@ private:
     void didChangeBackForwardList();
 
     void dispatchLoadSucceeded();
-    void dispatchLoadFailed(WKErrorRef);
+    void dispatchLoadFailed(WKFrameRef, WKErrorRef);
     void setLoadProgress(int);
 
     // WKPageLoadClient callbacks.
     static void didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
     static void didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKErrorRef, WKTypeRef userData, const void* clientInfo);
     static void didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
     static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);

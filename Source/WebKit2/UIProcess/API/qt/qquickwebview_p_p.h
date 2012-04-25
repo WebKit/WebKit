@@ -194,7 +194,8 @@ protected:
     bool m_loadStartedSignalSent;
     bool m_dialogActive;
     QUrl m_iconURL;
-    QUrl m_deferedUrlToLoad;
+    QUrl m_deferredUrlToLoad;
+    WTF::String m_currentUrl;
 };
 
 class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {
