@@ -255,7 +255,17 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(jsNontrivialString(exec, thisValue.isUndefined() ? "[object Undefined]" : "[object Null]"));
     JSObject* thisObject = thisValue.toObject(exec);
-    return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable()->className(thisObject), "]"));
+
+    JSString* result = thisObject->structure()->objectToStringValue();
+    if (!result) {
+        RefPtr<StringImpl> newString = WTF::tryMakeString("[object ", thisObject->methodTable()->className(thisObject), "]");
+        if (!newString)
+            return JSValue::encode(throwOutOfMemoryError(exec));
+
+        result = jsNontrivialString(exec, newString.release());
+        thisObject->structure()->setObjectToStringValue(exec->globalData(), thisObject, result);
+    }
+    return JSValue::encode(result);
 }
 
 } // namespace JSC

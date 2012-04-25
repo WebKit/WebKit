@@ -50,6 +50,7 @@ namespace JSC {
     class PropertyNameArrayData;
     class StructureChain;
     class SlotVisitor;
+    class JSString;
 
     class Structure : public JSCell {
     public:
@@ -171,6 +172,13 @@ namespace JSC {
         JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
         void getPropertyNamesFromStructure(JSGlobalData&, PropertyNameArray&, EnumerationMode);
 
+        JSString* objectToStringValue() { return m_objectToStringValue.get(); }
+
+        void setObjectToStringValue(JSGlobalData& globalData, const JSCell* owner, JSString* value)
+        {
+            m_objectToStringValue.set(globalData, owner, value);
+        }
+
         bool staticFunctionsReified()
         {
             return m_staticFunctionReified;
@@ -290,6 +298,8 @@ namespace JSC {
         OwnPtr<PropertyTable> m_propertyTable;
 
         uint32_t m_propertyStorageCapacity;
+
+        WriteBarrier<JSString> m_objectToStringValue;
 
         // m_offset does not account for anonymous slots
         int m_offset;

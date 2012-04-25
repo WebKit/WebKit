@@ -1,3 +1,22 @@
+2012-04-24  Michael Saboff  <msaboff@apple.com>
+
+        objectProtoFuncToString creates new string every invocation
+        https://bugs.webkit.org/show_bug.cgi?id=84781
+
+        Reviewed by Geoffrey Garen.
+
+        Cache the results of object toString() in the attached Structure.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren): visit new m_hasObjectToStringValue.
+        * runtime/Structure.h: Added new member m_hasObjectToStringValue
+        (JSC):
+        (JSC::Structure::objectToStringValue):
+        (Structure):
+        (JSC::Structure::setObjectToStringValue):
+
 2012-04-24  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Oliver Hunt.

@@ -794,6 +794,8 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
                 visitor.append(&ptr->specificValue);
         }
     }
+    if (thisObject->m_objectToStringValue)
+        visitor.append(&thisObject->m_objectToStringValue);
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK
