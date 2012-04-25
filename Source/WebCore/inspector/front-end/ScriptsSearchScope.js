@@ -183,6 +183,6 @@ WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype = {
     }
 }
 
-WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype.__proto__ = WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype;
+WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype.__proto__ = WebInspector.LinkifierFormatter.prototype;
 
 WebInspector.settings.searchInContentScripts = WebInspector.settings.createSetting("searchInContentScripts", false);
