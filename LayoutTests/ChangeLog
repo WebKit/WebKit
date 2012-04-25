@@ -1,3 +1,14 @@
+2012-04-24  Kent Tamura  <tkent@chromium.org>
+
+        Calendar Picker: Open a calendar picker by keyboard operation
+        https://bugs.webkit.org/show_bug.cgi?id=84680
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/date/date-stepup-stepdown-from-renderer-expected.txt:
+        * fast/forms/date/date-stepup-stepdown-from-renderer.html:
+        Stepping up/down by kerboard was removed. Update the test to confirm it doesn't work.
+
 2012-04-24  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed test expectations update.

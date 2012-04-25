@@ -35,6 +35,7 @@
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include "LocalizedDate.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -127,6 +128,19 @@ bool DateInputType::needsContainer() const
 bool DateInputType::shouldHaveSpinButton() const
 {
     return false;
+}
+
+void DateInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    if (element()->disabled() || element()->readOnly())
+        return;
+    if (event->keyIdentifier() == "Down") {
+        if (m_pickerElement)
+            m_pickerElement->openPopup();
+        event->setDefaultHandled();
+        return;
+    }
+    BaseDateAndTimeInputType::handleKeydownEvent(event);
 }
 
 void DateInputType::handleBlurEvent()

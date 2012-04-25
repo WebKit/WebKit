@@ -41,6 +41,7 @@ namespace WebCore {
 class BaseDateAndTimeInputType : public TextFieldInputType {
 protected:
     BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual double parseToDouble(const String&, double) const OVERRIDE;
     virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
     String serializeWithComponents(const DateComponents&) const;
@@ -62,7 +63,6 @@ private:
     virtual bool isSteppable() const OVERRIDE;
     virtual bool stepMismatch(const String&, double) const OVERRIDE;
     virtual double stepBase() const OVERRIDE;
-    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
     virtual String serialize(double) const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;

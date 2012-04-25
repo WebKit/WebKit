@@ -132,14 +132,16 @@ double BaseDateAndTimeInputType::stepBase() const
 
 void BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
-    handleKeydownEventForSpinButton(event);
+    if (shouldHaveSpinButton())
+        handleKeydownEventForSpinButton(event);
     if (!event->defaultHandled())
         TextFieldInputType::handleKeydownEvent(event);
 }
 
 void BaseDateAndTimeInputType::handleWheelEvent(WheelEvent* event)
 {
-    handleWheelEventForSpinButton(event);
+    if (shouldHaveSpinButton())
+        handleWheelEventForSpinButton(event);
 }
 
 double BaseDateAndTimeInputType::parseToDouble(const String& src, double defaultValue) const

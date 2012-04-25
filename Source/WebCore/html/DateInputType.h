@@ -58,6 +58,7 @@ private:
 #if ENABLE(CALENDAR_PICKER)
     virtual void createShadowSubtree() OVERRIDE;
     virtual void destroyShadowSubtree() OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
     virtual bool supportsPlaceholder() const OVERRIDE;
     virtual bool usesFixedPlaceholder() const OVERRIDE;
