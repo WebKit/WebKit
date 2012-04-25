@@ -217,6 +217,36 @@ TEST(CCLayerAnimationControllerTest, TrivialTransition)
     EXPECT_FALSE(controller->hasActiveAnimation());
 }
 
+// Tests animations that are waiting for a synchronized start time do not finish.
+TEST(CCLayerAnimationControllerTest, AnimationsWaitingForStartTimeDoNotFinishIfTheyWaitLongerToStartThanTheirDuration)
+{
+    OwnPtr<CCAnimationEventsVector> events(adoptPtr(new CCAnimationEventsVector));
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(
+        CCLayerAnimationController::create(&dummy));
+
+    OwnPtr<CCActiveAnimation> toAdd(createActiveAnimation(adoptPtr(new FakeFloatTransition(1, 0, 1)), 1, CCActiveAnimation::Opacity));
+    toAdd->setNeedsSynchronizedStartTime(true);
+
+    // We should pause at the first keyframe indefinitely waiting for that animation to start.
+    controller->add(toAdd.release());
+    controller->animate(0, events.get());
+    EXPECT_TRUE(controller->hasActiveAnimation());
+    EXPECT_EQ(0, dummy.opacity());
+    controller->animate(1, events.get());
+    EXPECT_TRUE(controller->hasActiveAnimation());
+    EXPECT_EQ(0, dummy.opacity());
+    controller->animate(2, events.get());
+    EXPECT_TRUE(controller->hasActiveAnimation());
+    EXPECT_EQ(0, dummy.opacity());
+
+    // Send the synchronized start time.
+    controller->notifyAnimationStarted(CCAnimationStartedEvent(0, 1, CCActiveAnimation::Opacity, 2));
+    controller->animate(5, events.get());
+    EXPECT_EQ(1, dummy.opacity());
+    EXPECT_FALSE(controller->hasActiveAnimation());
+}
+
 // Tests that two queued animations affecting the same property run in sequence.
 TEST(CCLayerAnimationControllerTest, TrivialQueuing)
 {

@@ -410,7 +410,7 @@ void CCLayerAnimationController::tickAnimations(double monotonicTime)
             case CCActiveAnimation::Transform: {
                 const CCTransformAnimationCurve* transformAnimationCurve = m_activeAnimations[i]->curve()->toTransformAnimationCurve();
                 const TransformationMatrix matrix = transformAnimationCurve->getValue(trimmed, m_client->bounds());
-                if (m_activeAnimations[i]->isFinishedAt(monotonicTime))
+                if (m_activeAnimations[i]->isFinishedAt(monotonicTime) && !m_activeAnimations[i]->needsSynchronizedStartTime())
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, monotonicTime);
 
                 m_client->setTransformFromAnimation(matrix);
@@ -420,7 +420,7 @@ void CCLayerAnimationController::tickAnimations(double monotonicTime)
             case CCActiveAnimation::Opacity: {
                 const CCFloatAnimationCurve* floatAnimationCurve = m_activeAnimations[i]->curve()->toFloatAnimationCurve();
                 const float opacity = floatAnimationCurve->getValue(trimmed);
-                if (m_activeAnimations[i]->isFinishedAt(monotonicTime))
+                if (m_activeAnimations[i]->isFinishedAt(monotonicTime) && !m_activeAnimations[i]->needsSynchronizedStartTime())
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, monotonicTime);
 
                 m_client->setOpacityFromAnimation(opacity);
