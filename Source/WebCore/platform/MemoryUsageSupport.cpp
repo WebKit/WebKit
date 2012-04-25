@@ -38,4 +38,9 @@ int MemoryUsageSupport::memoryUsageMB()
     return 0;
 }
 
+int MemoryUsageSupport::actualMemoryUsageMB()
+{
+    return 0;
+}
+
 } // namespace WebCore

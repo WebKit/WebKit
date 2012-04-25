@@ -36,6 +36,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "MemoryUsageSupport.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "RuntimeEnabledFeatures.h"
@@ -94,7 +95,7 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     // FIXME: clean up V8Proxy and disable JavaScript.
     int memoryUsageMB = -1;
 #if PLATFORM(CHROMIUM)
-    memoryUsageMB = PlatformSupport::actualMemoryUsageMB();
+    memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
 #endif
     printf("V8 error: %s (%s).  Current memory usage: %d MB\n", message, location, memoryUsageMB);
     handleFatalErrorInV8();

@@ -914,11 +914,6 @@ void PlatformSupport::notifyJSOutOfMemory(Frame* frame)
     webFrame->client()->didExhaustMemoryAvailableForScript(webFrame);
 }
 
-int PlatformSupport::actualMemoryUsageMB()
-{
-    return static_cast<int>(webKitPlatformSupport()->actualMemoryUsageMB());
-}
-
 int PlatformSupport::lowMemoryUsageMB()
 {
     return static_cast<int>(webKitPlatformSupport()->lowMemoryUsageMB());

@@ -38,6 +38,10 @@ public:
     // Returns the current space allocated for the pagefile, in MB.
     // That is committed size for Windows and virtual memory size for POSIX.
     static int memoryUsageMB();
+
+    // Same as above, but always returns actual value, without any
+    // caches.
+    static int actualMemoryUsageMB();
 };
 
 } // namespace WebCore

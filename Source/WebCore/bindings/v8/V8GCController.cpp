@@ -478,7 +478,7 @@ int getMemoryUsageInMB()
 int getActualMemoryUsageInMB()
 {
 #if PLATFORM(CHROMIUM)
-    return PlatformSupport::actualMemoryUsageMB();
+    return MemoryUsageSupport::actualMemoryUsageMB();
 #else
     return 0;
 #endif
