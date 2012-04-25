@@ -240,9 +240,8 @@ static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const Flo
     return surfaceDamageRect;
 }
 
-bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
+void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSurfaceLayerList)
 {
-    ASSERT(passes.isEmpty());
     ASSERT(renderSurfaceLayerList.isEmpty());
     ASSERT(m_rootLayerImpl);
 
@@ -260,6 +259,13 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         TRACE_EVENT("CCLayerTreeHostImpl::calcDrawEtc", this, 0);
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(m_rootLayerImpl.get(), m_rootLayerImpl.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
     }
+}
+
+bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
+{
+    ASSERT(passes.isEmpty());
+
+    calculateRenderSurfaceLayerList(renderSurfaceLayerList);
 
     TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
 
@@ -682,10 +688,10 @@ bool CCLayerTreeHostImpl::ensureMostRecentRenderSurfaceLayerList()
     if (!m_rootLayerImpl)
         return false;
 
-    // If we are called after setRootLayer() but before prepareToDraw(), we need to recalculate
-    // the visible layers. The return value is ignored because we don't care about checkerboarding.
-    CCRenderPassList passes;
-    calculateRenderPasses(passes, m_mostRecentRenderSurfaceLayerList);
+    // If we are called after setRootLayer() but before prepareToDraw(), we need
+    // to recalculate the visible layers. This prevents being unable to scroll
+    // during part of a commit.
+    calculateRenderSurfaceLayerList(m_mostRecentRenderSurfaceLayerList);
 
     return m_mostRecentRenderSurfaceLayerList.size();
 }

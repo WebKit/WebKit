@@ -176,6 +176,7 @@ private:
     void setPageScaleDelta(float);
     void updateMaxScrollPosition();
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
+    void calculateRenderSurfaceLayerList(CCLayerList&);
     // Returns false if the frame should not be displayed.
     bool calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
     void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector*, bool& didAnimate, bool& needsAnimateLayers);
