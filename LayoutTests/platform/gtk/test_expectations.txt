@@ -505,6 +505,11 @@ BUGWK84700 : fast/dom/Window/window-postmessage-clone-frames.html = PASS TEXT
 
 BUGWK84702 : fast/forms/form-collection-radio-node-list.html = PASS TEXT
 
+BUGWK84856 : media/media-controller-playback.html = PASS TEXT
+BUGWK84858 : media/video-seek-past-end-playing.html = PASS TEXT
+
+BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1547,8 +1552,8 @@ BUGWK84691 : fast/events/mouse-relative-position.html = FAIL
 
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 
-// Requires rebaseline after bug 83978
-BUGWK83978 : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
+BUGWK84857 : fast/repaint/moving-shadow-on-container.html = FAIL
+BUGWK84857 : fast/repaint/moving-shadow-on-path.html = FAIL
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

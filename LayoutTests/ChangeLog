@@ -1,3 +1,13 @@
+2012-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+        Rebaseline after r115187.
+        * platform/gtk/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+        Rebaseline after r115091.
+        * platform/gtk/test_expectations.txt:
+
 2012-04-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: extract Linkifier from DebuggerPresentationModel.
