@@ -5,6 +5,18 @@
 
         Reviewed by Filip Pizlo.
 
+        Whoops, committed without saving reviewer requested change.
+
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+
+2012-04-25  Oliver Hunt  <oliver@apple.com>
+
+        Biolab disaster crashes on ToT
+        https://bugs.webkit.org/show_bug.cgi?id=84898
+
+        Reviewed by Filip Pizlo.
+
         I recently added an assertion to the Interpreter to catch incorrect
         updates of topCallFrame.  This caused a bunch of sites (including biolab
         disaster) to crash as we were not correctly handling callee registers

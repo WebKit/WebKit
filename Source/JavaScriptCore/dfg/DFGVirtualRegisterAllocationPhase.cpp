@@ -112,7 +112,7 @@ public:
         size_t inlineCallFrameCount = codeBlock()->inlineCallFrames().size();
         for (size_t i = 0; i < inlineCallFrameCount; i++) {
             InlineCallFrame& inlineCallFrame = codeBlock()->inlineCallFrames()[i];
-            CodeBlock* codeBlock = jsCast<FunctionExecutable*>(inlineCallFrame.executable.get())->baselineCodeBlockFor(inlineCallFrame.isCall ? CodeForCall : CodeForConstruct);
+            CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(&inlineCallFrame);
             unsigned requiredCalleeRegisters = inlineCallFrame.stackOffset + codeBlock->m_numCalleeRegisters;
             if (requiredCalleeRegisters > calleeRegisters)
                 calleeRegisters = requiredCalleeRegisters;
