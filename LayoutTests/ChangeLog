@@ -1,3 +1,13 @@
+2012-04-24  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        getMatchedCSSRules() should return null when the second argument is an unrecognized pseudo-element name
+        https://bugs.webkit.org/show_bug.cgi?id=83298
+
+        Reviewed by Ojan Vafai.
+
+        * fast/dom/Window/getMatchedCSSRules-with-invalid-pseudo-elements-expected.txt: Added.
+        * fast/dom/Window/getMatchedCSSRules-with-invalid-pseudo-elements.html: Added.
+
 2012-04-24  Alexis Menard  <alexis.menard@openbossa.org>
 
         Implement createTBody for table element.
