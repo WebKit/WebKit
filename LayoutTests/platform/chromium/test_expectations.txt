@@ -3545,8 +3545,6 @@ BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-xy-in-scrolling-
 BUGWK82297 SNOWLEOPARD : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT PASS
 BUGWK82297 SNOWLEOPARD : fast/events/scrollbar-double-click.html = TEXT PASS
 
-BUGWK82300 SNOWLEOPARD : compositing/images/direct-pdf-image.html = IMAGE
-
 // this test appears to consistently fail during the main run but usually passes on a retry.
 BUGWK82404 : plugins/netscape-dom-access-and-reload.html = PASS TEXT
 
