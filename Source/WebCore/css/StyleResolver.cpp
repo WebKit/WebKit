@@ -474,7 +474,7 @@ const ContainerNode* StyleResolver::determineScope(const StyleSheetInternal* she
     if (!RuntimeEnabledFeatures::styleScopedEnabled())
         return 0;
 
-    Node* ownerNode = sheet->findStyleSheetOwnerNode();
+    Node* ownerNode = sheet->singleOwnerNode();
     if (!ownerNode || !ownerNode->isHTMLElement() || !ownerNode->hasTagName(HTMLNames::styleTag))
         return 0;
 
