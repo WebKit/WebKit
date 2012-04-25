@@ -1,3 +1,10 @@
+2012-04-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed rebaseline after r115134.
+
+        * platform/qt/fast/block/positioning/016-expected.txt:
+        * platform/qt/fast/block/positioning/025-expected.txt:
+
 2012-04-24  Jeffrey Pfau  <jpfau@apple.com>
 
         Prevent drag and drop from setting file URLs
