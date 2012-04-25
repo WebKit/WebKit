@@ -6350,6 +6350,7 @@
             'inspector/front-end/HeapSnapshot.js',
             'inspector/front-end/HeapSnapshotDataGrids.js',
             'inspector/front-end/HeapSnapshotGridNodes.js',
+            'inspector/front-end/HeapSnapshotLoader.js',
             'inspector/front-end/HeapSnapshotProxy.js',
             'inspector/front-end/HeapSnapshotView.js',
             'inspector/front-end/HeapSnapshotWorker.js',

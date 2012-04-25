@@ -292,6 +292,7 @@ modules = [
             "HeapSnapshot.js",
             "HeapSnapshotDataGrids.js",
             "HeapSnapshotGridNodes.js",
+            "HeapSnapshotLoader.js",
             "HeapSnapshotProxy.js",
             "HeapSnapshotView.js",
             "HeapSnapshotWorker.js",

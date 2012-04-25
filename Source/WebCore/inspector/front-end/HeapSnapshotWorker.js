@@ -32,6 +32,7 @@ WebInspector = {};
 WebInspector.UIString = function(s) { return s; };
 
 importScripts("HeapSnapshot.js");
+importScripts("HeapSnapshotLoader.js");
 importScripts("HeapSnapshotWorkerDispatcher.js");
 importScripts("utilities.js");
 

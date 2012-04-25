@@ -1092,6 +1092,7 @@
                             '<@(_script_name)',
                             '<@(_input_file)',
                             '../../WebCore/inspector/front-end/HeapSnapshot.js',
+                            '../../WebCore/inspector/front-end/HeapSnapshotLoader.js',
                             '../../WebCore/inspector/front-end/HeapSnapshotWorkerDispatcher.js',
                             '../../WebCore/inspector/front-end/utilities.js',
                         ],

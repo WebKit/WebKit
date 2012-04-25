@@ -63,6 +63,7 @@
     <file>HeapSnapshot.js</file>
     <file>HeapSnapshotDataGrids.js</file>
     <file>HeapSnapshotGridNodes.js</file>
+    <file>HeapSnapshotLoader.js</file>
     <file>HeapSnapshotProxy.js</file>
     <file>HeapSnapshotView.js</file>
     <file>HeapSnapshotWorker.js</file>
