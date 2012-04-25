@@ -133,7 +133,7 @@ WebInspector.ScriptsSearchResultsPane = function(searchConfig)
 {
     WebInspector.FileBasedSearchResultsPane.call(this, searchConfig)
 
-    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier(new WebInspector.ScriptsSearchResultsPane.LinkifierFormatter());
+    this._linkifier = new WebInspector.Linkifier(new WebInspector.ScriptsSearchResultsPane.LinkifierFormatter());
 }
 
 WebInspector.ScriptsSearchResultsPane.prototype = {
@@ -166,7 +166,7 @@ WebInspector.ScriptsSearchResultsPane.prototype.__proto__ = WebInspector.FileBas
 
 /**
  * @constructor
- * @implements {WebInspector.DebuggerPresentationModel.LinkifierFormatter}
+ * @implements {WebInspector.LinkifierFormatter}
  */
 WebInspector.ScriptsSearchResultsPane.LinkifierFormatter = function()
 {

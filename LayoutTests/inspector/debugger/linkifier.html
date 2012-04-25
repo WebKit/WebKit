@@ -33,7 +33,7 @@ function test()
 
     function debuggerTest()
     {
-        linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+        linkifier = new WebInspector.Linkifier();
 
         var count1 = liveLocationsCount();
         link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 20, 0, "dummy-class");

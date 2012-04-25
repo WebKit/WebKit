@@ -69,14 +69,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
-     * @param {WebInspector.DebuggerPresentationModel.LinkifierFormatter=} formatter
-     */
-    createLinkifier: function(formatter)
-    {
-        return new WebInspector.DebuggerPresentationModel.Linkifier(this, formatter);
-    },
-
-    /**
      * @param {DebuggerAgent.Location} rawLocation
      * @return {?WebInspector.UILocation}
      */
@@ -411,111 +403,6 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
 }
 
 WebInspector.DebuggerPresentationModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
-
-/**
- * @interface
- */
-WebInspector.DebuggerPresentationModel.LinkifierFormatter = function()
-{
-}
-
-WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype = {
-    /**
-     * @param {Element} anchor
-     * @param {WebInspector.UILocation} uiLocation
-     */
-    formatLiveAnchor: function(anchor, uiLocation) { },
-}
-
-/**
- * @constructor
- * @implements {WebInspector.DebuggerPresentationModel.LinkifierFormatter}
- * @param {number=} maxLength
- */
-WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter = function(maxLength)
-{
-    this._maxLength = maxLength;
-}
-
-WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter.prototype = {
-    /**
-     * @param {Element} anchor
-     * @param {WebInspector.UILocation} uiLocation
-     */
-    formatLiveAnchor: function(anchor, uiLocation)
-    {
-        anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
-
-        var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
-        if (this._maxLength)
-            text = text.trimMiddle(this._maxLength);
-        anchor.textContent = text;
-    }
-}
-
-WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter.prototype.__proto__ = WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype;
-
-/**
- * @constructor
- * @param {WebInspector.DebuggerPresentationModel} model
- * @param {WebInspector.DebuggerPresentationModel.LinkifierFormatter=} formatter
- */
-WebInspector.DebuggerPresentationModel.Linkifier = function(model, formatter)
-{
-    this._model = model;
-    this._formatter = formatter || new WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter();
-    this._liveLocations = [];
-}
-
-WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
-    /**
-     * @param {string} sourceURL
-     * @param {number} lineNumber
-     * @param {number=} columnNumber
-     * @param {string=} classes
-     */
-    linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
-    {
-        var rawLocation = WebInspector.debuggerModel.createRawLocationByURL(sourceURL, lineNumber, columnNumber || 0);
-        if (!rawLocation)
-            return WebInspector.linkifyResourceAsNode(sourceURL, lineNumber, classes);
-        return this.linkifyRawLocation(rawLocation, classes);
-    },
-
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     * @param {string=} classes
-     */
-    linkifyRawLocation: function(rawLocation, classes)
-    {
-        if (!WebInspector.debuggerModel.scriptForId(rawLocation.scriptId))
-            return null;
-        var anchor = WebInspector.linkifyURLAsNode("", "", classes, false);
-        var liveLocation = this._model.createLiveLocation(rawLocation, this._updateAnchor.bind(this, anchor));
-        this._liveLocations.push(liveLocation);
-        return anchor;
-    },
-
-    reset: function()
-    {
-        for (var i = 0; i < this._liveLocations.length; ++i)
-            this._liveLocations[i].dispose();
-        this._liveLocations = [];
-    },
-
-    /**
-     * @param {Element} anchor
-     * @param {WebInspector.UILocation} uiLocation
-     */
-    _updateAnchor: function(anchor, uiLocation)
-    {
-        anchor.preferredPanel = "scripts";
-        anchor.href = uiLocation.uiSourceCode.url;
-        anchor.uiSourceCode = uiLocation.uiSourceCode;
-        anchor.lineNumber = uiLocation.lineNumber;
-        this._formatter.formatLiveAnchor(anchor, uiLocation);
-    }
-}
 
 /**
  * @type {?WebInspector.DebuggerPresentationModel}

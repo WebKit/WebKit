@@ -109,7 +109,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
 
-    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+    this._linkifier = new WebInspector.Linkifier();
 
     this.prompt = new WebInspector.TextPromptWithHistory(this.completionsForTextPrompt.bind(this), ExpressionStopCharacters + ".");
     this.prompt.setSuggestBoxEnabled("generic-suggest");
@@ -776,7 +776,7 @@ WebInspector.ConsoleCommand.prototype = {
 /**
  * @extends {WebInspector.ConsoleMessageImpl}
  * @constructor
- * @param {WebInspector.DebuggerPresentationModel.Linkifier} linkifier
+ * @param {WebInspector.Linkifier} linkifier
  */
 WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingCommand, linkifier)
 {

@@ -89,7 +89,7 @@ WebInspector.ObjectPopoverHelper.prototype = {
                         var functionName = title.createChild("span", "function-name");
                         functionName.textContent = response.name || response.inferredName || response.displayName || WebInspector.UIString("(anonymous function)");
 
-                        this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+                        this._linkifier = new WebInspector.Linkifier();
                         var link = this._linkifier.linkifyRawLocation(response.location, "function-location-link");
                         if (link)
                             title.appendChild(link);

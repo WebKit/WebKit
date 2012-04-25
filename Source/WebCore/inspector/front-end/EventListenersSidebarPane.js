@@ -61,7 +61,7 @@ WebInspector.EventListenersSidebarPane = function()
 
     this.titleElement.appendChild(this.settingsSelectElement);
 
-    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+    this._linkifier = new WebInspector.Linkifier();
 }
 
 WebInspector.EventListenersSidebarPane._objectGroupName = "event-listeners-sidebar-pane";

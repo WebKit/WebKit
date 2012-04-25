@@ -34,7 +34,7 @@
  */
 WebInspector.TimelinePresentationModel = function()
 {
-    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+    this._linkifier = new WebInspector.Linkifier();
     this._glueRecords = false;
     this._filters = [];
     this.reset();

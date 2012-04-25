@@ -76,6 +76,7 @@ modules = [
             "DebuggerPresentationModel.js",
             "HAREntry.js",
             "IndexedDBModel.js",
+            "Linkifier.js",
             "NetworkLog.js",
             "Placard.js",
             "Script.js",

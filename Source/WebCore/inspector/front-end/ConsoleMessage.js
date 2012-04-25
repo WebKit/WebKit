@@ -35,7 +35,7 @@
  * @param {string} source
  * @param {string} level
  * @param {string} message
- * @param {WebInspector.DebuggerPresentationModel.Linkifier} linkifier
+ * @param {WebInspector.Linkifier} linkifier
  * @param {string=} type
  * @param {string=} url
  * @param {number=} line

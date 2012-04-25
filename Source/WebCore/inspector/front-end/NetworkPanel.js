@@ -53,7 +53,7 @@ WebInspector.NetworkLogView = function()
 
     this._createStatusbarButtons();
     this._createFilterStatusBarItems();
-    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
+    this._linkifier = new WebInspector.Linkifier();
 
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestStarted, this._onRequestStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestUpdated, this._onRequestUpdated, this);

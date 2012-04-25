@@ -100,7 +100,7 @@ WebInspector.CPUProfileView = function(profile)
         this._updatePercentButton();
     }
 
-    this._linkifier = WebInspector.debuggerPresentationModel.createLinkifier(new WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter(30));
+    this._linkifier = new WebInspector.Linkifier(new WebInspector.Linkifier.DefaultFormatter(30));
 
     ProfilerAgent.getProfile(this.profile.typeId, this.profile.uid, profileCallback.bind(this));
 }
