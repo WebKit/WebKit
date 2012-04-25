@@ -1,3 +1,25 @@
+2012-04-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK svg rebaseline after r115085.
+
+        * platform/gtk/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * platform/gtk/svg/carto.net/button-expected.txt:
+        * platform/gtk/svg/carto.net/colourpicker-expected.txt:
+        * platform/gtk/svg/carto.net/slider-expected.txt:
+        * platform/gtk/svg/carto.net/window-expected.txt:
+        * platform/gtk/svg/custom/embedding-external-svgs-expected.txt:
+        * platform/gtk/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt:
+        * platform/gtk/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/gtk/svg/custom/use-clipped-hit-expected.txt:
+        * platform/gtk/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/gtk/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/gtk/svg/custom/use-on-g-containing-symbol-expected.txt:
+        * platform/gtk/svg/custom/use-on-symbol-expected.txt:
+        * platform/gtk/svg/custom/use-recalcStyle-crash-expected.txt:
+        * platform/gtk/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/gtk/svg/custom/use-setAttribute-crash-expected.txt:
+        * platform/gtk/svg/custom/use-symbol-overflow-expected.txt:
+
 2012-04-24  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         getMatchedCSSRules() should return null when the second argument is an unrecognized pseudo-element name
