@@ -110,6 +110,7 @@ contributors_who_are_not_committers = [
     Contributor("Adam Kallai", "kadam@inf.u-szeged.hu", 'kadam'),
     Contributor("Aharon Lanin", "aharon@google.com"),
     Contributor("Alan Stearns", "stearns@adobe.com", 'astearns'),
+    Contributor("Alec Flett", ["alecflett@chromium.org", "alecflett@google.com"], "alecf"),
     Contributor("Alexandre Elias", "aelias@chromium.org"),
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
     Contributor("Allan Sandfeld Jensen", ["allan.jensen@nokia.com", "kde@carewolf.com", "sandfeld@kde.org"], "carewolf"),

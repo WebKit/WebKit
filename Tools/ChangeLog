@@ -1,3 +1,9 @@
+2012-04-25  Joshua Bell  <jsbell@chromium.org>
+
+        Unreviewed: Adding Alec Flett as a contributor (non-committer).
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-25  Abhishek Arya  <inferno@chromium.org>
 
         Mark myself as a reviewer.
