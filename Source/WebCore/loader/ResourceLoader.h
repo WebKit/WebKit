@@ -177,7 +177,7 @@ namespace WebCore {
         bool m_reachedTerminalState;
         bool m_calledWillCancel;
         bool m_cancelled;
-        bool m_calledDidFinishLoad;
+        bool m_notifiedLoadComplete;
 
         bool m_defersLoading;
         ResourceRequest m_deferredRequest;

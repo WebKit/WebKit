@@ -60,7 +60,7 @@ ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     , m_reachedTerminalState(false)
     , m_calledWillCancel(false)
     , m_cancelled(false)
-    , m_calledDidFinishLoad(false)
+    , m_notifiedLoadComplete(false)
     , m_defersLoading(frame->page()->defersLoading())
     , m_options(options)
 {
@@ -304,9 +304,9 @@ void ResourceLoader::didFinishLoadingOnePart(double finishTime)
         return;
     ASSERT(!m_reachedTerminalState);
 
-    if (m_calledDidFinishLoad)
+    if (m_notifiedLoadComplete)
         return;
-    m_calledDidFinishLoad = true;
+    m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbacks)
         frameLoader()->notifier()->didFinishLoad(this, finishTime);
 }
@@ -324,8 +324,11 @@ void ResourceLoader::didFail(const ResourceError& error)
     if (FormData* data = m_request.httpBody())
         data->removeGeneratedFilesIfNeeded();
 
-    if (m_options.sendLoadCallbacks == SendCallbacks && !m_calledDidFinishLoad)
-        frameLoader()->notifier()->didFailToLoad(this, error);
+    if (!m_notifiedLoadComplete) {
+        m_notifiedLoadComplete = true;
+        if (m_options.sendLoadCallbacks == SendCallbacks)
+            frameLoader()->notifier()->didFailToLoad(this, error);
+    }
 
     releaseResources();
 }
@@ -372,7 +375,7 @@ void ResourceLoader::cancel(const ResourceError& error)
             m_handle = 0;
         }
 
-        if (m_options.sendLoadCallbacks == SendCallbacks && m_identifier && !m_calledDidFinishLoad)
+        if (m_options.sendLoadCallbacks == SendCallbacks && m_identifier && !m_notifiedLoadComplete)
             frameLoader()->notifier()->didFailToLoad(this, nonNullError);
     }
 

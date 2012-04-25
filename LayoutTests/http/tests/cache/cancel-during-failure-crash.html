@@ -1,0 +1,22 @@
+<html>
+<body>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var img = new Image();
+img.onerror = function() {
+    // cancel resource load within didFail()
+    window.stop();
+    document.body.appendChild(document.createTextNode("PASS"));
+    layoutTestController.notifyDone();
+}
+
+// Port 7 will likely refuse the connection, causing a didFail()
+// from the network stack.
+img.src = "http://localhost:7";
+</script>
+</body>
+</html>
