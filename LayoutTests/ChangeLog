@@ -1,3 +1,9 @@
+2012-04-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed. Unskipped 28 http tests passing on all the GTK+ bots.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-04-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Update pixel test baseline on Lion. All color space changes when painting images.

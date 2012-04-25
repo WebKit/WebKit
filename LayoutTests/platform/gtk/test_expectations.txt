@@ -512,16 +512,6 @@ BUGWK84702 : fast/forms/form-collection-radio-node-list.html = PASS TEXT
 //////////////////////////////////////////////////////////////////////////////////////////
 // Tests timing out
 //////////////////////////////////////////////////////////////////////////////////////////
-
-BUGWK33445 : http/tests/incremental/split-hex-entities.pl = TIMEOUT
-
-BUGWK33026 : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = TIMEOUT
-
-// Times out only on 32-Bits Release
-BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html = TIMEOUT
-BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html = TIMEOUT
-BUGWKGTK : http/tests/xmlhttprequest/redirect-cross-origin-sync.html = TIMEOUT
-
 BUGWK46644 : fast/text/large-text-composed-char-dos.html = TIMEOUT
 
 BUGWKGTK SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIMEOUT
@@ -670,7 +660,6 @@ BUGWK44478 SKIP : fast/text/hyphenate-locale.html = FAIL
 // This port doesn't support v8 i18n extension.
 BUGWKGTK : fast/js/i18n-bindings-locale.html = FAIL
 
-BUGWKGTK : http/tests/appcache/crash-when-navigating-away-then-back.html = FAIL
 BUGWKGTK : http/tests/appcache/fallback.html = FAIL
 BUGWKGTK : http/tests/appcache/origin-quota.html = FAIL
 BUGWKGTK : http/tests/appcache/origin-quota-continued-download.html = FAIL
@@ -687,14 +676,10 @@ BUGWKGTK : http/tests/loading/bad-server-subframe.html = FAIL
 // Needed to cover the fix for <rdar://problem/6727495>
 BUGRDAR6727495 : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = FAIL
 BUGRDAR6727495 : http/tests/loading/gmail-assert-on-load.html = FAIL
-BUGRDAR6727495 : http/tests/loading/redirect-with-no-location-crash.html = FAIL
 BUGRDAR6727495 : http/tests/loading/text-content-type-with-binary-extension.html = FAIL
 
 BUGWKGTK : http/tests/media/video-play-stall-seek.html = FAIL
 BUGWKGTK : http/tests/media/video-play-stall.html = FAIL
-
-// QuickTime reference movie not supported.
-BUGWKGTK : http/tests/media/video-cross-site.html = FAIL
 
 BUGWKGTK : http/tests/misc/acid3.html = FAIL
 BUGWKGTK : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
@@ -722,10 +707,8 @@ BUGWKGTK : http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-
 BUGWKGTK : http/tests/xmlhttprequest/abort-should-cancel-load.html = FAIL
 BUGWKGTK : http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html = FAIL
 BUGWKGTK : http/tests/xmlhttprequest/logout.html = FAIL
-BUGWKGTK : http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html = FAIL
 
 // We don't seem to support neither of these for now
-BUGWKGTK : http/tests/xmlhttprequest/cross-origin-authorization.html = FAIL
 BUGWKGTK : http/tests/xmlhttprequest/cross-origin-cookie-storage.html = FAIL
 BUGWKGTK : http/tests/xmlhttprequest/cross-origin-no-authorization.html = FAIL
 
@@ -745,9 +728,6 @@ BUGWKGTK : http/tests/plugins/plugin-document-has-focus.html = FAIL
 
 // Missing resource load callback ability in DRT
 BUGWK27905 : http/tests/loading/redirect-methods.html = FAIL
-BUGWK27905 : http/tests/misc/favicon-loads-with-images-disabled.html = FAIL
-
-BUGWK28668 : http/tests/appcache/auth.html = FAIL
 
 // New test infrastructure required -- need isolated worlds
 BUGWK31508 : http/tests/security/isolatedWorld = FAIL
@@ -772,7 +752,6 @@ BUGWK53986 : svg/text/caret-in-svg-text.xhtml = FAIL
 // No authentication challenge handling
 BUGWK51104 : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
 BUGWK51104 : http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html = FAIL
-BUGWK51104 : http/tests/cache/subresource-fragment-identifier.html = FAIL
 BUGWK51104 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = FAIL
 BUGWK51104 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = FAIL
 BUGWK51104 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = FAIL
@@ -901,8 +880,6 @@ BUGWK50485 SKIP : inspector/profiler/heap-snapshot-inspect-dom-wrapper.html = FA
 BUGWK37613 SKIP : printing = FAIL
 BUGWK37613 SKIP : editing/execCommand/print.html = TIMEOUT
 
-BUGWK38569 : http/tests/workers/text-encoding.html = FAIL
-
 BUGWK54189 : fast/replaced/border-radius-clip.html = FAIL
 
 // Need to dump context menu items on eventSender.contextClick(true).
@@ -935,7 +912,6 @@ BUGWK40601 : media/controls-right-click-on-timebar.html = FAIL
 // Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
 BUGWK58222 : fast/preloader = FAIL
 BUGWK58222 : http/tests/mime/uppercase-mime-type.html = FAIL
-BUGWK58222 : http/tests/loading/preload-append-scan.php = FAIL
 
 // SVG tests that seem to produce incorrect output
 BUGWKGTK : svg/zoom/text/zoom-hixie-mixed-009.xml = FAIL
@@ -1080,8 +1056,6 @@ BUGWKGTK : http/tests/security/drag-over-remote-content-iframe.html = FAIL
 BUGWKGTK : fast/events/drag-in-frames.html = FAIL
 BUGWKGTK : http/tests/misc/bubble-drag-events.html = FAIL
 
-BUGWK52882 : http/tests/security/drag-drop-same-unique-origin.html = FAIL
-
 // Fails with "Received error from worker: ReferenceError: Can't find variable: revokeObjectURL
 BUGWKGTK : fast/files/workers/worker-apply-blob-url-to-xhr.html = FAIL
 
@@ -1167,8 +1141,6 @@ BUGWKGTK : fast/dom/nodesFromRect-inner-documents.html = FAIL
 // LayoutTestController::addUserScript not implemented for gtk
 BUGWKGTK : plugins/plugin-document-load-prevented-userscript.html = FAIL
 
-BUGWK50872 : http/tests/misc/dns-prefetch-control.html = FAIL
-
 // The following tests requires the DRT's dumpUserGestureInFrameLoadCallbacks
 // method. But that method is not implemented in gtk port since gtk port can't
 // not get user gesture in frameload callbacks.
@@ -1212,12 +1184,6 @@ BUGWKGTK : http/tests/xmlhttprequest/basic-auth-nopassword.html = FAIL
 
 // DRT does not obey layoutTestController.addURLToRedirect()
 BUGWKGTK : http/tests/loading/cross-origin-XHR-willLoadRequest.html = FAIL
-
-BUGWK52798 : http/tests/security/local-CSS-from-remote.html = FAIL
-BUGWK52798 : http/tests/security/local-JavaScript-from-remote.html = FAIL
-BUGWK52798 : http/tests/security/local-iFrame-from-remote.html = FAIL
-BUGWK52798 : http/tests/security/local-image-from-remote.html = FAIL
-BUGWK52798 : http/tests/security/local-user-CSS-from-remote.html = FAIL
 
 // LayoutTestController needs layoutTestController.displayInvalidatedRegion
 BUGWK54073 : plugins/windowless_plugin_paint_test.html = FAIL
@@ -1276,8 +1242,6 @@ BUGWK61122 : http/tests/navigation/post-307-response.html = FAIL
 BUGWK61630 : fast/events/dropzone-002.html = FAIL
 BUGWK61630 : fast/events/dropzone-005.html = FAIL
 
-BUGWK64085 : http/tests/misc/iframe-reparenting-id-collision.html = FAIL
-
 // Font feature settings is not implemented.
 BUGWKGTK : css3/font-feature-settings-rendering.html = FAIL
 
@@ -1295,9 +1259,6 @@ BUGWK66045 : fast/files/create-blob-url-crash.html = FAIL
 BUGWK66045 : fast/files/url-required-arguments.html = FAIL
 
 BUGWK68512 : accessibility/aria-hidden-updates-alldescendants.html = FAIL
-
-BUGWK68514 : http/tests/security/xssAuditor/xss-filter-bypass-big5.html = FAIL
-BUGWK68514 : http/tests/security/xssAuditor/xss-filter-bypass-sjis.html = FAIL
 
 BUGWK68855 : editing/selection/select-bidi-run.html = FAIL
 
@@ -1488,7 +1449,6 @@ BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = F
 BUGWK77633 : fast/forms/listbox-clear-restore.html = FAIL
 
 BUGWK78434 : fast/dom/Window/window-custom-prototype.html = FAIL
-BUGWK78434 : http/tests/security/cross-frame-access-object-getPrototypeOf.html = FAIL
 
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 BUGWKGTK SKIP : inspector/styles/vendor-prefixes.html = FAIL
@@ -1536,9 +1496,6 @@ BUGWK82020 : plugins/netscape-dom-access-and-reload.html = FAIL
 
 // The inner <input> should now grow to take the full cell's height.
 BUGWKGTK : fast/table/colspanMinWidth-vertical.html = FAIL
-
-BUGWK82309 : http/tests/xmlhttprequest/basic-auth-default.html = FAIL
-BUGWK82309 : http/tests/xmlhttprequest/re-login-async.html = FAIL
 
 // This should only be a layer change.
 BUGWK82129 : fast/box-shadow/shadow-buffer-partial.html = FAIL
