@@ -139,6 +139,8 @@ private:
         void setCurrentIteratorToSmallestKey();
         void setCurrentIteratorToLargestKey();
         void refreshTreeIterator() const;
+        bool treeIteratorIsLower() const;
+        bool treeIteratorIsHigher() const;
 
         RefPtr<LevelDBTransaction> m_transaction;
         const LevelDBComparator* m_comparator;
