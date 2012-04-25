@@ -34,7 +34,7 @@
 #include "WebCommon.h"
 #include "WebHTTPBody.h"
 
-#if defined(WEBKIT_IMPLEMENTATION)
+#if WEBKIT_IMPLEMENTATION
 namespace WebCore { class ResourceRequest; }
 #endif
 
@@ -182,7 +182,7 @@ public:
     WEBKIT_EXPORT ExtraData* extraData() const;
     WEBKIT_EXPORT void setExtraData(ExtraData*);
 
-#if defined(WEBKIT_IMPLEMENTATION)
+#if WEBKIT_IMPLEMENTATION
     WebCore::ResourceRequest& toMutableResourceRequest();
     const WebCore::ResourceRequest& toResourceRequest() const;
 #endif

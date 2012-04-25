@@ -34,7 +34,7 @@
 #include "WebCommon.h"
 #include "WebPrivateOwnPtr.h"
 
-#if defined(WEBKIT_IMPLEMENTATION)
+#if WEBKIT_IMPLEMENTATION
 namespace WebCore { class ResourceResponse; }
 #endif
 
@@ -133,7 +133,7 @@ public:
     WEBKIT_EXPORT WebCString securityInfo() const;
     WEBKIT_EXPORT void setSecurityInfo(const WebCString&);
 
-#if defined(WEBKIT_IMPLEMENTATION)
+#if WEBKIT_IMPLEMENTATION
     WebCore::ResourceResponse& toMutableResourceResponse();
     const WebCore::ResourceResponse& toResourceResponse() const;
 #endif

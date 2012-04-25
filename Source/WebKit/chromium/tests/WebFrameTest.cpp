@@ -273,7 +273,12 @@ public:
     {
         // Return a dummy error so the DocumentLoader doesn't assert when
         // the reload cancels it.
-        return WebURLError(WebCore::ResourceError("", 1, "", "cancelled"));
+        WebURLError webURLError;
+        webURLError.domain = "";
+        webURLError.reason = 1;
+        webURLError.isCancellation = true;
+        webURLError.unreachableURL = WebURL();
+        return webURLError;
     }
 };
 
