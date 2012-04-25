@@ -62,13 +62,6 @@ RenderSVGShape::RenderSVGShape(SVGStyledTransformableElement* node)
 {
 }
 
-RenderSVGShape::RenderSVGShape(SVGStyledTransformableElement* node, Path* path, bool isFillFallback)
-    : RenderSVGModelObject(node)
-    , m_path(adoptPtr(path))
-    , m_fillFallback(isFillFallback)
-{
-}
-
 RenderSVGShape::~RenderSVGShape()
 {
 }

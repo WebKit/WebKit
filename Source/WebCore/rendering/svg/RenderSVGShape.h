@@ -144,7 +144,6 @@ private:
     bool m_needsShapeUpdate : 1;
     bool m_needsTransformUpdate : 1;
     bool m_fillFallback : 1;
-    bool m_strokeContainsFallBack : 1;
 };
 
 inline RenderSVGShape* toRenderSVGShape(RenderObject* object)
