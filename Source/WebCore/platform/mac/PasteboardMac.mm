@@ -156,7 +156,7 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
     if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(range->startPosition().anchorNode()), range->startPosition()) >= 0)
         range->setStart(enclosingAnchor, 0, ec);
     
-    NSAttributedString* attributedString;
+    NSAttributedString* attributedString = nil;
     RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(range.get())]);
     if (converter)
         attributedString = [converter.get() attributedString];
@@ -176,7 +176,7 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
 
 void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame* frame)
 {
-    NSAttributedString* attributedString;
+    NSAttributedString* attributedString = nil;
     RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor()->selectedRange().get())]);
     if (converter)
         attributedString = [converter.get() attributedString];
