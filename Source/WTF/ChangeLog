@@ -1,3 +1,12 @@
+2012-04-25  Landry Breuil  <landry@openbsd.org>
+
+        Include <sys/param.h>, needed for sysctl() on OpenBSD/NetBSD
+        https://bugs.webkit.org/show_bug.cgi?id=82585
+
+        Reviewed by Zoltan Herczeg.
+
+        * wtf/NumberOfCores.cpp: include <sys/param.h> on the BSDs
+
 2012-04-25  Kenneth Russell  <kbr@google.com>
 
         Delete CanvasPixelArray, ByteArray, JSByteArray and JSC code once unreferenced
