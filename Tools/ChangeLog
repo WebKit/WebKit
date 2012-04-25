@@ -1,3 +1,16 @@
+2012-04-25  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] [DRT] Reset text zoom factor before running a test
+        https://bugs.webkit.org/show_bug.cgi?id=84861
+
+        Reviewed by Antonio Gomes.
+
+        This fix eliminates most of the current flakiness on EFL build
+        bots, although some CSS tests will now need rebasiling.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-04-25  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] add LayoutTestController::setPrinting support to Qt unit tests
