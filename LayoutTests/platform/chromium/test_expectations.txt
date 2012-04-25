@@ -1276,20 +1276,6 @@ BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
 BUGWK84230 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE PASS
 BUGWK84230 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
-BUGWK84731 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = PASS TEXT
-BUGWK84731 : svg/carto.net/button.svg = PASS TEXT
-BUGWK84731 WIN MAC : svg/carto.net/colourpicker.svg = PASS TEXT
-BUGWK84731 : svg/carto.net/slider.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-clipped-hit.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-css-events.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-modify-target-symbol.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-on-disallowed-foreign-object-5.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-on-g-containing-symbol.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-on-symbol.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-on-symbol-inside-pattern.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-recalcStyle-crash.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-referencing-nonexisting-symbol.svg = PASS TEXT
-BUGWK84731 : svg/custom/use-symbol-overflow.svg = PASS TEXT
 
 
 // -----------------------------------------------------------------

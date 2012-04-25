@@ -1,3 +1,40 @@
+2012-04-25  Stephen Chenney  <schenney@chromium.org>
+
+        Rebaseline chromium test results after bug 72796 is fixed
+        https://bugs.webkit.org/show_bug.cgi?id=84731
+
+        Unreviewed Chromikum expectations update.
+
+        Text baselines changed now that this bug has been fixed.
+
+        * platform/chromium-linux-x86/svg/custom/use-clipped-hit-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/use-modify-target-symbol-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/chromium-linux/svg/custom/use-clipped-hit-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/use-modify-target-symbol-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/chromium-linux/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/chromium-mac-leopard/svg/custom/use-on-disallowed-foreign-object-5-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/use-on-disallowed-foreign-object-5-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/use-on-disallowed-foreign-object-5-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/chromium-win-vista/svg/custom/use-clipped-hit-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/use-modify-target-symbol-expected.txt: Added.
+        * platform/chromium-win-xp/svg/custom/use-clipped-hit-expected.txt: Added.
+        * platform/chromium-win-xp/svg/custom/use-modify-target-symbol-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * platform/chromium-win/svg/carto.net/button-expected.txt:
+        * platform/chromium-win/svg/carto.net/colourpicker-expected.txt:
+        * platform/chromium-win/svg/carto.net/slider-expected.txt:
+        * platform/chromium-win/svg/custom/use-clipped-hit-expected.txt:
+        * platform/chromium-win/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-g-containing-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-symbol-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/chromium-win/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2012-04-25  Andreas Kling  <kling@webkit.org>
 
         Use the same results for fast/html/details-marker-style.html on all mac bots.

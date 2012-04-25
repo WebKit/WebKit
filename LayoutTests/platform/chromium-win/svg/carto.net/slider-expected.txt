@@ -3,6 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGPath {line} at (0,0) size 2x8 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
     RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-2000.00] [y=-2000.00] [width=6000.00] [height=6000.00]
     RenderSVGText {text} at (257,20) size 510x25 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 510x25
