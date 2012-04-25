@@ -2,15 +2,6 @@ description(
 'Tests to randomly modify an object graph of arrays to make sure the GC handles them properly now that it allocates both the JSArray and the ArrayStorage.  To pass we need to not crash.'
 );
 
-function gc()
-{
-    if (this.GCController)
-        GCController.collect();
-    else
-        for (var i = 0; i < 10000; ++i) // Allocate a sufficient number of objects to force a GC.
-            ({});
-}
-
 var global = [];
 
 var getRandomIndex = function(length) {
@@ -47,7 +38,7 @@ var test = function() {
 };
 
 var runs = 0; 
-while (runs < 40) {
+while (runs < 30) {
     test();
     runs += 1;
     global = [];

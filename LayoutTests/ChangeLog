@@ -1,3 +1,14 @@
+2012-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        fast/js/random-array-gc-stress times out in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=84821
+
+        Reviewed by Darin Adler.
+
+        * fast/js/script-tests/random-array-gc-stress.js: Reduce number of iterations so 
+        that the test can complete without timing out. Also remove the gc() function because 
+        a gc() function is already provided in resources/js-test-pre.js.
+
 2012-04-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaseline after r115187.
