@@ -441,10 +441,10 @@ String StylePropertySet::borderPropertyValue(CommonValueMode valueMode) const
         if (value == "initial")
             continue;
         if (!result.isEmpty())
-            result.append(" ");
+            result.append(' ');
         result.append(value);
     }
-    return result.toString();
+    return result.isEmpty() ? String() : result.toString();
 }
 
 PassRefPtr<CSSValue> StylePropertySet::getPropertyCSSValue(CSSPropertyID propertyID) const
