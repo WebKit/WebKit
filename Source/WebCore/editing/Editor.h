@@ -376,6 +376,8 @@ public:
     void takeFindStringFromSelection();
     void writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes);
     void readSelectionFromPasteboard(const String& pasteboardName);
+    String stringSelectionForPasteboard();
+    PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
 #endif
 
     void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle);

@@ -608,17 +608,6 @@ void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&
     [accessibilityRemoteObject() setRemoteParent:remoteElement];
 }
 
-void WebPage::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes, bool& result)
-{
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (!frame || frame->selection()->isNone()) {
-        result = false;
-        return;
-    }
-    frame->editor()->writeSelectionToPasteboard(pasteboardName, pasteboardTypes);
-    result = true;
-}
-
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& result)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
@@ -629,7 +618,33 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& re
     frame->editor()->readSelectionFromPasteboard(pasteboardName);
     result = true;
 }
-    
+
+void WebPage::getStringSelectionForPasteboard(String& stringValue)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || frame->selection()->isNone())
+        return;
+
+    stringValue = frame->editor()->stringSelectionForPasteboard();
+}
+
+void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame || frame->selection()->isNone())
+        return;
+
+    RefPtr<SharedBuffer> buffer = frame->editor()->dataSelectionForPasteboard(pasteboardType);
+    if (!buffer) {
+        size = 0;
+        return;
+    }
+    size = buffer->size();
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(size);
+    memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
+    sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+}
+
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
 {
     return m_mockAccessibilityElement.get();

@@ -43,6 +43,7 @@
 // knowledge of the frame and editor or moved into the editing directory.
 
 #if PLATFORM(MAC)
+OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSArray;
 #endif
@@ -66,6 +67,7 @@ extern const char* WebURLPboardType;
 extern const char* WebURLsWithTitlesPboardType;
 #endif
 
+    class ArchiveResource;
 class Clipboard;
 class DocumentFragment;
 class Frame;
@@ -73,15 +75,17 @@ class HitTestResult;
 class KURL;
 class Node;
 class Range;
-class ArchiveResource;
+class SharedBuffer;
     
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
 #if PLATFORM(MAC)
     // This is required to support OS X services.
-    void writeSelectionForTypes(const Vector<String>& pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame*);
+    void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*);
     Pasteboard(const String& pasteboardName);
+    static String getStringSelection(Frame*);
+    static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
 #endif
     
     static Pasteboard* generalPasteboard();

@@ -229,7 +229,8 @@ messages -> WebPage {
     SetWindowIsVisible(bool windowIsVisible)
     WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates, WebCore::IntPoint accessibilityViewCoordinates)
     RegisterUIProcessAccessibilityTokens(CoreIPC::DataReference elemenToken, CoreIPC::DataReference windowToken)
-    WriteSelectionToPasteboard(WTF::String pasteboardName, WTF::Vector<WTF::String> pasteboardTypes) -> (bool result)
+    GetStringSelectionForPasteboard() -> (WTF::String stringValue)
+    GetDataSelectionForPasteboard(WTF::String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     ReadSelectionFromPasteboard(WTF::String pasteboardName) -> (bool result)
 
     # Text input.

@@ -1,3 +1,31 @@
+2012-04-24  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (r109022) Safari not placing service data on pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=84766
+        <rdar://problem/11085756>
+        
+        The support for OS X services requires that the write operations to
+        the pasteboard occur synchronously. This behavior was changed with r109022.
+        This change removes the original synchronous call to the WebProcess to perform
+        the pasteboard write that had become asynchronous after r109022.
+        It implements instead a synchronous call to retrive the content to be placed
+        in the pasteboard.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView writeSelectionToPasteboard:types:]): Uses new methods.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm: Removed writeSelectionToPasteboard.
+        (WebKit::WebPageProxy::getStringSelectionForPasteboard): Added.
+        (WebKit::WebPageProxy::getBufferSelectionForPasteboard): Added.
+        * WebProcess/WebPage/WebPage.h: Added support for the new messages and
+        removed old message.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm: Ditto.
+        (WebKit::WebPage::readSelectionFromPasteboard): Added.
+        (WebKit::WebPage::getBufferSelectionForPasteboard): Added.
+
 2012-04-24  Brady Eidson  <beidson@apple.com>
 
         Fix Windows build.

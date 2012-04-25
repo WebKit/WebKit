@@ -537,11 +537,17 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
-    Vector<String> pasteboardTypes;
     size_t numTypes = [types count];
-    for (size_t i = 0; i < numTypes; ++i)
-        pasteboardTypes.append([types objectAtIndex:i]);
-    return _data->_page->writeSelectionToPasteboard([pasteboard name], pasteboardTypes);
+    [pasteboard declareTypes:types owner:nil];
+    for (size_t i = 0; i < numTypes; ++i) {
+        if ([[types objectAtIndex:i] isEqualTo:NSStringPboardType])
+            [pasteboard setString:_data->_page->stringSelectionForPasteboard() forType:NSStringPboardType];
+        else {
+            RefPtr<SharedBuffer> buffer = _data->_page->dataSelectionForPasteboard([types objectAtIndex:i]);
+            [pasteboard setData:buffer ? [buffer->createNSData() autorelease] : nil forType:[types objectAtIndex:i]];
+       }
+    }
+    return YES;
 }
 
 - (void)centerSelectionInVisibleArea:(id)sender 

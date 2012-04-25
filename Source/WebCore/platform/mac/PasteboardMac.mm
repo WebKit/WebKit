@@ -133,63 +133,72 @@ void Pasteboard::clear()
     platformStrategies()->pasteboardStrategy()->setTypes(Vector<String>(), m_pasteboardName);
 }
 
-void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+String Pasteboard::getStringSelection(Frame* frame)
 {
-    if (!WebArchivePboardType)
-        Pasteboard::generalPasteboard(); // Initializes pasteboard types.
-    ASSERT(selectedRange);
-    
-    // If the selection is at the beginning of content inside an anchor tag
-    // we move the selection start to include the anchor.
-    // This way the attributed string will contain the url attribute as well.
-    // See <rdar://problem/9084267>.
+    String text = frame->editor()->selectedText();
+    text.replace(noBreakSpace, ' ');
+    return text;
+}
+
+PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String& pasteboardType)
+{
+    if (pasteboardType == WebArchivePboardType) {
+        RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(frame);
+        RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
+        return SharedBuffer::wrapNSData((NSData *)data.get());
+    }
+
     ExceptionCode ec;
-    Node* commonAncestor = selectedRange->commonAncestorContainer(ec);
+    RefPtr<Range> range = frame->editor()->selectedRange();
+    Node* commonAncestor = range->commonAncestorContainer(ec);
     ASSERT(commonAncestor);
     Node* enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
-    if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(selectedRange->startPosition().anchorNode()), selectedRange->startPosition()) >= 0)
-        selectedRange->setStart(enclosingAnchor, 0, ec);
-
-    NSAttributedString *attributedString = nil;
-    RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(selectedRange)]);
+    if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(range->startPosition().anchorNode()), range->startPosition()) >= 0)
+        range->setStart(enclosingAnchor, 0, ec);
+    
+    NSAttributedString* attributedString;
+    RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(range.get())]);
     if (converter)
         attributedString = [converter.get() attributedString];
+    
+    if (pasteboardType == String(NSRTFDPboardType)) {
+        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        return SharedBuffer::wrapNSData((NSData *)RTFDData);
+    }
+    if (pasteboardType == String(NSRTFPboardType)) {
+        if ([attributedString containsAttachments])
+            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
+        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        return SharedBuffer::wrapNSData((NSData *)RTFData);
+    }
+    return 0;
+}
 
+void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame* frame)
+{
+    NSAttributedString* attributedString;
+    RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor()->selectedRange().get())]);
+    if (converter)
+        attributedString = [converter.get() attributedString];
+    
     const Vector<String> types = !pasteboardTypes.isEmpty() ? pasteboardTypes : selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
     platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
     frame->editor()->client()->didSetSelectionTypesForPasteboard();
     
     // Put HTML on the pasteboard.
-    if (types.contains(WebArchivePboardType)) {
-        RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(frame);
-        RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
-        platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData((NSData *)data.get()), WebArchivePboardType, m_pasteboardName);
-    }
+    if (types.contains(WebArchivePboardType))
+        platformStrategies()->pasteboardStrategy()->setBufferForType(getDataSelection(frame, WebArchivePboardType), WebArchivePboardType, m_pasteboardName);
     
     // Put the attributed string on the pasteboard (RTF/RTFD format).
-    if (types.contains(String(NSRTFDPboardType))) {
-        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData((NSData *)RTFDData).get(), NSRTFDPboardType, m_pasteboardName);
-    }
-    if (types.contains(String(NSRTFPboardType))) {
-        if ([attributedString containsAttachments])
-            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
-        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData((NSData *)RTFData).get(), NSRTFPboardType, m_pasteboardName);
-    }
+    if (types.contains(String(NSRTFDPboardType)))
+        platformStrategies()->pasteboardStrategy()->setBufferForType(getDataSelection(frame, NSRTFDPboardType), NSRTFDPboardType, m_pasteboardName);
+
+    if (types.contains(String(NSRTFPboardType)))
+        platformStrategies()->pasteboardStrategy()->setBufferForType(getDataSelection(frame, NSRTFPboardType), NSRTFPboardType, m_pasteboardName);
     
     // Put plain string on the pasteboard.
-    if (types.contains(String(NSStringPboardType))) {
-        // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
-        // and because HTML forces you to do this any time you want two spaces in a row.
-        String text = frame->editor()->selectedText();
-        NSMutableString *s = [[[(NSString*)text copy] autorelease] mutableCopy];
-        
-        NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&noBreakSpace length:1];
-        [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
-        platformStrategies()->pasteboardStrategy()->setStringForType(s, NSStringPboardType, m_pasteboardName);
-        [s release];
-    }
+    if (types.contains(String(NSStringPboardType)))
+        platformStrategies()->pasteboardStrategy()->setStringForType(getStringSelection(frame), NSStringPboardType, m_pasteboardName);
     
     if (types.contains(WebSmartPastePboardType))
         platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
@@ -203,9 +212,9 @@ void Pasteboard::writePlainText(const String& text)
     platformStrategies()->pasteboardStrategy()->setStringForType(text, NSStringPboardType, m_pasteboardName);
 }
     
-void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range*, bool canSmartCopyOrDelete, Frame* frame)
 {
-    writeSelectionForTypes(Vector<String>(), selectedRange, canSmartCopyOrDelete, frame);
+    writeSelectionForTypes(Vector<String>(), canSmartCopyOrDelete, frame);
 }
 
 static void writeURLForTypes(const Vector<String>& types, const String& pasteboardName, const KURL& url, const String& titleStr, Frame* frame)

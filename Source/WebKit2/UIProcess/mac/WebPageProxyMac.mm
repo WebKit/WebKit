@@ -257,15 +257,30 @@ bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand
     return result;
 }
 
-bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+String WebPageProxy::stringSelectionForPasteboard()
+{
+    String value;
+    if (!isValid())
+        return value;
+    
+    const double messageTimeout = 20;
+    process()->sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), Messages::WebPage::GetStringSelectionForPasteboard::Reply(value), m_pageID, messageTimeout);
+    return value;
+}
+
+PassRefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
 {
     if (!isValid())
-        return false;
-
-    bool result = false;
+        return 0;
+    SharedMemory::Handle handle;
+    uint64_t size = 0;
     const double messageTimeout = 20;
-    process()->sendSync(Messages::WebPage::WriteSelectionToPasteboard(pasteboardName, pasteboardTypes), Messages::WebPage::WriteSelectionToPasteboard::Reply(result), m_pageID, messageTimeout);
-    return result;
+    process()->sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType),
+                                                Messages::WebPage::GetDataSelectionForPasteboard::Reply(handle, size), m_pageID, messageTimeout);
+    if (handle.isNull())
+        return 0;
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
 
 bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
