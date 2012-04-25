@@ -62,7 +62,8 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
         SerializedScriptValue::create(args[0],
                                       &ports,
                                       extendedTransfer ? &arrayBuffers : 0,
-                                      didThrow);
+                                      didThrow,
+                                      args.GetIsolate());
     if (didThrow)
         return v8::Undefined();
     ExceptionCode ec = 0;
