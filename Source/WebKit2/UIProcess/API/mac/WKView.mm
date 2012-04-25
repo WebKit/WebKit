@@ -177,7 +177,6 @@ struct WKViewInterpretKeyEventsParameters {
     bool _inResignFirstResponder;
     NSEvent *_mouseDownEvent;
     BOOL _ignoringMouseDraggedEvents;
-    BOOL _dragHasStarted;
 
     id _flagsChangedEventMonitor;
 #if ENABLE(GESTURE_EVENTS)
@@ -1040,7 +1039,6 @@ NATIVE_EVENT_HANDLER(scrollWheel, Wheel)
 {
     [self _setMouseDownEvent:event];
     _data->_ignoringMouseDraggedEvents = NO;
-    _data->_dragHasStarted = NO;
     [self mouseDownInternal:event];
 }
 
@@ -2607,12 +2605,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
 {
-    // We need to prevent re-entering this call to avoid crashing in AppKit.
-    // Given the asynchronous nature of WebKit2 this can now happen.
-    if (_data->_dragHasStarted)
-        return;
-    
-    _data->_dragHasStarted = YES;
     IntSize size([image size]);
     size.scale(1.0 / _data->_page->deviceScaleFactor());
     [image setSize:size];
@@ -2627,7 +2619,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
           pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]
               source:self
            slideBack:YES];
-    _data->_dragHasStarted = NO;
 }
 
 static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)

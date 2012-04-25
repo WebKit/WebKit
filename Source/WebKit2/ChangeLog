@@ -1,3 +1,21 @@
+2012-04-25  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (r110494): Dragging images from Safari to Finder results in .webloc rather than image file
+        https://bugs.webkit.org/show_bug.cgi?id=84878
+        <rdar://problem/11155407>
+        
+        In WebKit2, it could happen to try to start the drag twice, given the asynchronous nature
+        of the communication between the UI process and the WebProcess.
+        We need to guarantee that we don't do that, otherwise on OS X the pasteboard ownership
+        gets changed which affects the promised file types.
+        The fix for the problem is in WebCore and we can now remove the guard on _setDragImage.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseDown:]):
+        (-[WKView _setDragImage:at:linkDrag:]):
+
 2012-04-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make the web view's url property follow the active url

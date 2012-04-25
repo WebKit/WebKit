@@ -3149,7 +3149,14 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         Page* page = m_frame->page();
         DragController* dragController = page ? page->dragController() : 0;
         bool startedDrag = dragController && dragController->startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos);
-        if (!startedDrag && dragState().shouldDispatchEvents()) {
+        // In WebKit2 we could reenter this code and start another drag.
+        // On OS X this causes problems with the ownership of the pasteboard
+        // and the promised types.
+        if (startedDrag) {
+            m_mouseDownMayStartDrag = false;
+            return true;
+        }
+        if (dragState().shouldDispatchEvents()) {
             // Drag was canned at the last minute - we owe m_dragSrc a DRAGEND event
             dispatchDragSrcEvent(eventNames().dragendEvent, event.event());
             m_mouseDownMayStartDrag = false;
