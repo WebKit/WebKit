@@ -54,10 +54,10 @@ using namespace Unicode;
 namespace WebCore {
 
 class SameSizeAsRenderText : public RenderObject {
+    uint32_t bitfields : 16;
     float widths[4];
     String text;
     void* pointers[2];
-    uint32_t bitfields : 16;
 };
 
 COMPILE_ASSERT(sizeof(RenderText) == sizeof(SameSizeAsRenderText), RenderText_should_stay_small);
@@ -135,6 +135,11 @@ static void makeCapitalized(String* string, UChar previous)
 
 RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      : RenderObject(node)
+     , m_hasTab(false)
+     , m_linesDirty(false)
+     , m_containsReversedText(false)
+     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
+     , m_needsTranscoding(false)
      , m_minWidth(-1)
      , m_maxWidth(-1)
      , m_beginMinWidth(0)
@@ -142,16 +147,11 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
      , m_text(str)
      , m_firstTextBox(0)
      , m_lastTextBox(0)
-     , m_hasTab(false)
-     , m_linesDirty(false)
-     , m_containsReversedText(false)
-     , m_isAllASCII(m_text.containsOnlyASCII())
-     , m_canUseSimpleFontCodePath(computeCanUseSimpleFontCodePath())
-     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
-     , m_needsTranscoding(false)
 {
     ASSERT(m_text);
 
+    m_isAllASCII = m_text.containsOnlyASCII();
+    m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     setIsText();
 
     view()->frameView()->incrementVisuallyNonEmptyCharacterCount(m_text.length());

@@ -168,16 +168,7 @@ private:
 
     void secureText(UChar mask);
 
-    float m_minWidth; // here to minimize padding in 64-bit.
-    float m_maxWidth;
-    float m_beginMinWidth;
-    float m_endMinWidth;
-
-    String m_text;
-
-    InlineTextBox* m_firstTextBox;
-    InlineTextBox* m_lastTextBox;
-
+    // We put the bitfield first to minimize padding on 64-bit.
     bool m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
     bool m_hasBreak : 1; // Whether or not we have a hard break (e.g., <pre> with '\n').
     bool m_hasTab : 1; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
@@ -192,6 +183,16 @@ private:
     bool m_canUseSimpleFontCodePath : 1;
     mutable bool m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
     bool m_needsTranscoding : 1;
+    
+    float m_minWidth;
+    float m_maxWidth;
+    float m_beginMinWidth;
+    float m_endMinWidth;
+
+    String m_text;
+
+    InlineTextBox* m_firstTextBox;
+    InlineTextBox* m_lastTextBox;
 };
 
 inline RenderText* toRenderText(RenderObject* object)
