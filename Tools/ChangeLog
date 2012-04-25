@@ -1,3 +1,16 @@
+2012-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        Webkit build fails due to missing gstreamer include file on Kubuntu 8.04
+        https://bugs.webkit.org/show_bug.cgi?id=81913
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/features.prf: Check for gstreamer-0.10
+        and gstreamer-plugins-base >= 0.10.30 just like the GTK port
+        does. 0.10.27 is unfortunately not recent enough to get the media
+        player working reliably.
+
+
 2012-04-25  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Run tests in '/http/tests/local' with local URI

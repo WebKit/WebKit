@@ -1,3 +1,13 @@
+2012-04-25  Philippe Normand  <pnormand@igalia.com>
+
+        Webkit build fails due to missing gstreamer include file on Kubuntu 8.04
+        https://bugs.webkit.org/show_bug.cgi?id=81913
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WTF.pri: GStreamer build support implies GLib support, as it's
+        done in WebCore.pri.
+
 2012-04-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Generalize the single character optimization of r114072
