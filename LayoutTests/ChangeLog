@@ -2,6 +2,22 @@
 
         [Chromium] Unreviewed test expectations update
 
+        Unmark the following CSS pseudo-class tests:
+
+            fast/css/empty-pseudo-class.html
+            fast/css/first-child-pseudo-class.html
+            fast/css/first-of-type-pseudo-class.html
+            fast/css/last-child-pseudo-class.html
+            fast/css/last-of-type-pseudo-class.html
+            fast/css/only-child-pseudo-class.html
+            fast/css/only-of-type-pseudo-class.html
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update
+
         Remove expectation for a passing test:
             fast/dom/error-to-string-stack-overflow.html
 

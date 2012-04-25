@@ -2516,8 +2516,6 @@ BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS
 BUGCR76610 WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76610 MAC WIN DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 
-BUGCR76716 LINUX WIN DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
-
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 LINUX WIN : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 BUGCR76616 LEOPARD : fast/text/emphasis-combined-text.html = IMAGE
@@ -2588,7 +2586,6 @@ BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+T
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = TEXT
-BUGCR78996 LINUX WIN DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
 // http://trac.webkit.org/changeset/83411/ merged some frame tests into one.
 // The merged test is flaky on Chromium since then.
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = PASS TEXT
@@ -2611,8 +2608,6 @@ BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = PASS TEXT
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
 
-BUGCR79855 LINUX WIN DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
-
 BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
 
 BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
@@ -2624,7 +2619,6 @@ BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = PASS TIMEOUT
 
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = PASS CRASH
-BUGWK60096 LINUX WIN DEBUG : fast/css/last-child-pseudo-class.html = PASS TEXT
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS TEXT
 
 // Looks like some uninitialized memory at the bottom.
@@ -2649,7 +2643,6 @@ BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS TEXT
 
 BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
-BUGDPRANKE LINUX WIN DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
 
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
@@ -2692,9 +2685,6 @@ BUGWK60112 : fast/css/epub-properties.html = TEXT
 BUGWK60136 WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = PASS TEXT
 
 BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
-
-// flakiness on the deps bots (noted r~83476)
-BUGWK60105 LINUX WIN DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
 // New test added in r85303.
 BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
@@ -2842,8 +2832,6 @@ BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = T
 
 BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT
 
-BUGCR88311 LINUX WIN DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
-
 // Started around WebKit r90233:r90242
 BUGWK64000 DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
 
@@ -2953,26 +2941,6 @@ BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect-gradient
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient.html = IMAGE
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
-
-// These should fall under BUGWK68270, but they were listed as flaky elsewhere
-// in the file. Once BUGWK68270 is fixed, these should return to being flaky as
-// below:
-// BUGCR76716 SNOWLEOPARD DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
-// BUGWK60096 SNOWLEOPARD DEBUG : fast/css/last-child-pseudo-class.html = PASS TEXT
-// BUGCR88311 SNOWLEOPARD DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
-// BUGWK60105 SNOWLEOPARD DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
-// BUGCR79855 SNOWLEOPARD DEBUG : fast/css/only-child-pseudo-class.html = PASS TEXT
-// BUGDPRANKE SNOWLEOPARD DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
-
-// The *-pseudo-class tests are already marked flaky (for TEXT failure) on all platforms,
-// but reliably fail with IMAGE on Mac10.5 with Skia graphics.
-BUGWK68270 MAC DEBUG : fast/css/empty-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
-BUGWK68270 MAC DEBUG : fast/css/first-child-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
-BUGWK68270 MAC DEBUG : fast/css/first-of-type-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
-BUGWK68270 MAC DEBUG : fast/css/last-child-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
-BUGWK68270 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
-BUGWK68270 MAC DEBUG : fast/css/only-child-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
-BUGWK68270 MAC DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
 
 BUG_EPOGER SNOWLEOPARD DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
 
