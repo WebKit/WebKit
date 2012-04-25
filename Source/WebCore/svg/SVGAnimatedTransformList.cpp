@@ -35,6 +35,7 @@ namespace WebCore {
 
 SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)
     : SVGAnimatedTypeAnimator(AnimatedTransformList, animationElement, contextElement)
+    , m_transformTypeString(SVGTransform::transformTypePrefixForParsing(static_cast<SVGAnimateTransformElement*>(animationElement)->transformType()))
 {
     // Only <animateTransform> uses this animator, as <animate> doesn't allow to animate transform lists directly.
     ASSERT(animationElement->hasTagName(SVGNames::animateTransformTag));
@@ -43,7 +44,7 @@ SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationE
 PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(const String& string)
 {
     OwnPtr<SVGAnimatedType> animatedType = SVGAnimatedType::createTransformList(new SVGTransformList);
-    animatedType->transformList().parse(string);
+    animatedType->transformList().parse(m_transformTypeString + string + ')');
     ASSERT(animatedType->transformList().size() <= 1);
     return animatedType.release();
 }
@@ -56,12 +57,6 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::startAnimValAnimat
 void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
     stopAnimValAnimationForType<SVGAnimatedTransformList>(properties);
-}
-
-inline PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(SVGAnimateTransformElement* animateTransformElement, const String& string)
-{
-    ASSERT(animateTransformElement);
-    return SVGAnimatedTransformListAnimator::constructFromString(SVGTransform::transformTypePrefixForParsing(animateTransformElement->transformType()) + string + ')');
 }
 
 void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
@@ -79,22 +74,10 @@ void SVGAnimatedTransformListAnimator::animValDidChange(const Vector<SVGAnimated
     animValDidChangeForType<SVGAnimatedTransformList>(properties);
 }
 
-void SVGAnimatedTransformListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedTransformListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_animationElement);
-    SVGAnimateTransformElement* animateTransformElement = static_cast<SVGAnimateTransformElement*>(m_animationElement);
-
-    from = constructFromString(animateTransformElement, fromString);
-    to = constructFromString(animateTransformElement, toString);
-}
-
-void SVGAnimatedTransformListAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_animationElement);
-    SVGAnimateTransformElement* animateTransformElement = static_cast<SVGAnimateTransformElement*>(m_animationElement);
-
-    from = constructFromString(animateTransformElement, fromString);
-    to = constructFromString(animateTransformElement, byString);
+    ASSERT(from->type() == AnimatedTransformList);
+    ASSERT(from->type() == to->type());
 
     SVGTransformList& fromTransformList = from->transformList();
     SVGTransformList& toTransformList = to->transformList();
@@ -145,12 +128,11 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
 float SVGAnimatedTransformListAnimator::calculateDistance(const String& fromString, const String& toString)
 {
     ASSERT(m_animationElement);
-    SVGAnimateTransformElement* animateTransformElement = static_cast<SVGAnimateTransformElement*>(m_animationElement);
 
     // FIXME: This is not correct in all cases. The spec demands that each component (translate x and y for example)
     // is paced separately. To implement this we need to treat each component as individual animation everywhere.
-    OwnPtr<SVGAnimatedType> from = constructFromString(animateTransformElement, fromString);
-    OwnPtr<SVGAnimatedType> to = constructFromString(animateTransformElement, toString);
+    OwnPtr<SVGAnimatedType> from = constructFromString(fromString);
+    OwnPtr<SVGAnimatedType> to = constructFromString(toString);
 
     SVGTransformList& fromTransformList = from->transformList();
     SVGTransformList& toTransformList = to->transformList();

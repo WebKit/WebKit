@@ -63,23 +63,10 @@ void SVGAnimatedStringAnimator::animValDidChange(const Vector<SVGAnimatedPropert
     animValDidChangeForType<SVGAnimatedString>(properties);
 }
 
-void SVGAnimatedStringAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedStringAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
-
-void SVGAnimatedStringAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    
-    // Not specified what to do on 'by'-animations with string. Fallback to 'to'-animation right now. 
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
+    ASSERT_UNUSED(from, from->type() == AnimatedString);
+    ASSERT_UNUSED(to, from->type() == to->type());
 }
 
 void SVGAnimatedStringAnimator::calculateAnimatedValue(float percentage, unsigned,

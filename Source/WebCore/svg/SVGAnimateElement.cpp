@@ -209,6 +209,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     if (!targetElement)
         return false;
 
+    determinePropertyValueTypes(fromString, toString); 
     ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
     ASSERT(m_animatedPropertyType == m_animator->type());
     return true;
@@ -222,6 +223,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
 
     ASSERT(!hasTagName(SVGNames::setTag));
 
+    determinePropertyValueTypes(fromString, byString); 
     ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
     ASSERT(m_animatedPropertyType == m_animator->type());
     return true;

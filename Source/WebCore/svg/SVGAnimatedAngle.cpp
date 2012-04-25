@@ -79,26 +79,10 @@ void SVGAnimatedAngleAnimator::animValDidChange(const Vector<SVGAnimatedProperty
     animValDidChangeForTypes<SVGAnimatedAngle, SVGAnimatedEnumeration>(properties);
 }
 
-void SVGAnimatedAngleAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedAngleAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, toString);
-
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
-
-void SVGAnimatedAngleAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, byString);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
+    ASSERT(from->type() == AnimatedAngle);
+    ASSERT(from->type() == to->type());
 
     pair<SVGAngle, unsigned>& fromAngleAndEnumeration = from->angleAndEnumeration();
     pair<SVGAngle, unsigned>& toAngleAndEnumeration = to->angleAndEnumeration();

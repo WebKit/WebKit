@@ -40,27 +40,12 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedColorAnimator::constructFromString(const 
     return animtedType.release();
 }
 
-void SVGAnimatedColorAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedColorAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, toString);
+    ASSERT(from->type() == AnimatedColor);
+    ASSERT(from->type() == to->type());
 
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
-
-void SVGAnimatedColorAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, byString);
-
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
-
+    // FIXME: We clamp too early.
     to->color() = ColorDistance::addColorsAndClamp(from->color(), to->color());
 }
 

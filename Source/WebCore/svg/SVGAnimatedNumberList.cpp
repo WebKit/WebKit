@@ -64,23 +64,11 @@ void SVGAnimatedNumberListAnimator::animValDidChange(const Vector<SVGAnimatedPro
     animValDidChangeForType<SVGAnimatedNumberList>(properties);
 }
 
-void SVGAnimatedNumberListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
+    ASSERT(from->type() == AnimatedNumberList);
+    ASSERT(from->type() == to->type());
 
-void SVGAnimatedNumberListAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
-    
     SVGNumberList& fromNumberList = from->numberList();
     SVGNumberList& toNumberList = to->numberList();
     

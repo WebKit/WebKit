@@ -72,30 +72,15 @@ void SVGAnimatedLengthAnimator::animValDidChange(const Vector<SVGAnimatedPropert
     animValDidChangeForType<SVGAnimatedLength>(properties);
 }
 
-void SVGAnimatedLengthAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedLengthAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, toString);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
+    ASSERT(from->type() == AnimatedLength);
+    ASSERT(from->type() == to->type());
 
-void SVGAnimatedLengthAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, byString);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
-    
     SVGLengthContext lengthContext(m_contextElement);
     SVGLength& fromLength = from->length();
     SVGLength& toLength = to->length();
+
     ExceptionCode ec = 0;
     toLength.setValue(toLength.value(lengthContext) + fromLength.value(lengthContext), lengthContext, ec);
     ASSERT(!ec);

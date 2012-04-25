@@ -35,14 +35,8 @@ SVGAnimatedPathAnimator::SVGAnimatedPathAnimator(SVGAnimationElement* animationE
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string)
 {
-    bool result = false;
-    return constructFromString(string, result);
-}
-
-PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string, bool& result)
-{
     OwnPtr<SVGPathByteStream> byteStream = SVGPathByteStream::create();
-    result = SVGPathParserFactory::self()->buildSVGPathByteStreamFromString(string, byteStream.get(), UnalteredParsing);
+    SVGPathParserFactory::self()->buildSVGPathByteStreamFromString(string, byteStream.get(), UnalteredParsing);
     return SVGAnimatedType::createPath(byteStream.release());
 }
 
@@ -93,34 +87,12 @@ void SVGAnimatedPathAnimator::animValDidChange(const Vector<SVGAnimatedProperty*
     animValDidChangeForType<SVGAnimatedPathSegListPropertyTearOff>(properties);
 }
 
-void SVGAnimatedPathAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedPathAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
+    ASSERT_UNUSED(from, from->type() == AnimatedPath);
+    ASSERT_UNUSED(to, from->type() == to->type());
 
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    AnimationMode animationMode = animationElement->animationMode();
-
-    bool success = false;
-    to = constructFromString(toString, success);
-
-    // For to-animations the from number is calculated later.
-    if (!success || animationMode == ToAnimation) {
-        from = SVGAnimatedType::createPath(SVGPathByteStream::create());
-        return;
-    }
-
-    from = constructFromString(fromString, success);
-    if (success)
-        return;
-
-    from = SVGAnimatedType::createPath(SVGPathByteStream::create());
-}
-
-void SVGAnimatedPathAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& by, const String& fromString, const String& byString)
-{
-    // Fallback to from-to animation, since from-by animation does not make sense.
-    calculateFromAndToValues(from, by, fromString, byString);
+    // FIXME: Add additive support.
 }
 
 void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)

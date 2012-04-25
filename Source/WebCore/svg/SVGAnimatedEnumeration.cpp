@@ -140,23 +140,10 @@ void SVGAnimatedEnumerationAnimator::animValDidChange(const Vector<SVGAnimatedPr
     animValDidChangeForType<SVGAnimatedEnumeration>(properties);
 }
 
-void SVGAnimatedEnumerationAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedEnumerationAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
-
-void SVGAnimatedEnumerationAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    
-    // Not specified what to do on 'by'-animations with enums. Fallback to 'to'-animation right now. 
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
+    ASSERT_UNUSED(from, from->type() == AnimatedEnumeration);
+    ASSERT_UNUSED(to, from->type() == to->type());
 }
 
 void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, unsigned,

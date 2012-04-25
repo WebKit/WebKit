@@ -65,17 +65,11 @@ void SVGAnimatedPointListAnimator::animValDidChange(const Vector<SVGAnimatedProp
     animValDidChangeForType<SVGAnimatedPointList>(properties);
 }
 
-void SVGAnimatedPointListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
+    ASSERT(from->type() == AnimatedPoints);
+    ASSERT(from->type() == to->type());
 
-void SVGAnimatedPointListAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{    
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
-    
     SVGPointList& fromPointList = from->pointList();
     SVGPointList& toPointList = to->pointList();
     unsigned itemCount = fromPointList.size();

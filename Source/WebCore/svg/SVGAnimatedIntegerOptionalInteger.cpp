@@ -74,30 +74,14 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::animValDidChange(const Vector<SV
     animValDidChangeForTypes<SVGAnimatedInteger, SVGAnimatedInteger>(properties);
 }
 
-void SVGAnimatedIntegerOptionalIntegerAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedIntegerOptionalIntegerAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, toString);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
-
-void SVGAnimatedIntegerOptionalIntegerAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, byString);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
+    ASSERT(from->type() == AnimatedIntegerOptionalInteger);
+    ASSERT(from->type() == to->type());
 
     pair<int, int>& fromNumberPair = from->integerOptionalInteger();
     pair<int, int>& toNumberPair = to->integerOptionalInteger();
-    
+
     toNumberPair.first += fromNumberPair.first;
     toNumberPair.second += fromNumberPair.second;
 }

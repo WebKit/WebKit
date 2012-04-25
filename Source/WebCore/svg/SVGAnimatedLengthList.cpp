@@ -65,27 +65,11 @@ void SVGAnimatedLengthListAnimator::animValDidChange(const Vector<SVGAnimatedPro
     animValDidChangeForType<SVGAnimatedLengthList>(properties);
 }
 
-void SVGAnimatedLengthListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedLengthListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, toString);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
+    ASSERT(from->type() == AnimatedLengthList);
+    ASSERT(from->type() == to->type());
 
-void SVGAnimatedLengthListAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    animationElement->determinePropertyValueTypes(fromString, byString);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
-    
     SVGLengthList& fromLengthList = from->lengthList();
     SVGLengthList& toLengthList = to->lengthList();
     unsigned itemsCount = fromLengthList.size();

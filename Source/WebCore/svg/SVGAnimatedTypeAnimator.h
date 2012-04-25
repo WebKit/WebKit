@@ -41,14 +41,25 @@ public:
     virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*) = 0;
     virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&) = 0;
     virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&) = 0;
-    virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
-    virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
+    virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) = 0;
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue) = 0;
     virtual float calculateDistance(const String& fromString, const String& toString) = 0;
 
-    void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
+    void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+    {
+        from = constructFromString(fromString);
+        to = constructFromString(toString);
+    }
 
+    void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
+    {
+        from = constructFromString(fromString);
+        to = constructFromString(byString);
+        addAnimatedTypes(from.get(), to.get());
+    }
+
+    void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
     AnimatedPropertyType type() const { return m_type; }
 
     Vector<SVGAnimatedProperty*> findAnimatedPropertiesForAttributeName(SVGElement* targetElement, const QualifiedName& attributeName)

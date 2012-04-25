@@ -64,18 +64,10 @@ void SVGAnimatedRectAnimator::animValDidChange(const Vector<SVGAnimatedProperty*
     animValDidChangeForType<SVGAnimatedRect>(properties);
 }
 
-void SVGAnimatedRectAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedRectAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
-
-void SVGAnimatedRectAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
+    ASSERT(from->type() == AnimatedRect);
+    ASSERT(from->type() == to->type());
 
     to->rect() += from->rect();
 }

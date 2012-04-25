@@ -63,23 +63,10 @@ void SVGAnimatedPreserveAspectRatioAnimator::animValDidChange(const Vector<SVGAn
     animValDidChangeForType<SVGAnimatedPreserveAspectRatio>(properties);
 }
 
-void SVGAnimatedPreserveAspectRatioAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedPreserveAspectRatioAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
 {
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    
-    from = constructFromString(fromString);
-    to = constructFromString(toString);
-}
-
-void SVGAnimatedPreserveAspectRatioAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
-{
-    ASSERT(m_contextElement);
-    ASSERT(m_animationElement);
-    
-    // Not specified what to do on 'by'-animations with SVGPreserveAspectRatio. Fallback to 'to'-animation right now. 
-    from = constructFromString(fromString);
-    to = constructFromString(byString);
+    ASSERT_UNUSED(from, from->type() == AnimatedPreserveAspectRatio);
+    ASSERT_UNUSED(to, from->type() == to->type());
 }
 
 void SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue(float percentage, unsigned,
