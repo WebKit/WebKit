@@ -56,7 +56,7 @@
 
 namespace WebCore {
 
-class CCAnimationEvent;
+struct CCAnimationEvent;
 class CCLayerAnimationDelegate;
 class CCLayerImpl;
 class CCLayerTreeHost;
