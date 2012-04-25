@@ -327,6 +327,7 @@
                 'public/platform/WebPrivateOwnPtr.h',
                 'public/platform/WebPrivatePtr.h',
                 'public/platform/WebRect.h',
+                'public/platform/WebReferrerPolicy.h',
                 'public/platform/WebSerializedScriptValue.h',
                 'public/platform/WebSize.h',
                 'public/platform/WebSocketStreamError.h',

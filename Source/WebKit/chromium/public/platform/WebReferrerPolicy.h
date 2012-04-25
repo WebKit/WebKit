@@ -28,6 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This forwarding header exists only for staging our file move into the chromium port.
-// FIXME: Remove this forwarder after chrome issue http://codereview.chromium.org/10139023/ lands.
-#include "platform/WebReferrerPolicy.h"
+#include "../../../../Platform/chromium/public/WebReferrerPolicy.h"

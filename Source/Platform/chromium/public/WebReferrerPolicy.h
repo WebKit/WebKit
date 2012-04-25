@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,6 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This forwarding header exists only for staging our file move into the chromium port.
-// FIXME: Remove this forwarder after chrome issue http://codereview.chromium.org/10139023/ lands.
-#include "platform/WebReferrerPolicy.h"
+#ifndef WebReferrerPolicy_h
+#define WebReferrerPolicy_h
+
+namespace WebKit {
+
+enum WebReferrerPolicy {
+    WebReferrerPolicyAlways,
+    WebReferrerPolicyDefault,
+    WebReferrerPolicyNever,
+    WebReferrerPolicyOrigin,
+};
+
+} // namespace WebKit
+
+#endif

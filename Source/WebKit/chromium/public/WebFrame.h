@@ -33,10 +33,10 @@
 
 #include "WebIconURL.h"
 #include "WebNode.h"
-#include "WebReferrerPolicy.h"
 #include "WebURLLoaderOptions.h"
 #include "platform/WebCanvas.h"
 #include "platform/WebFileSystem.h"
+#include "platform/WebReferrerPolicy.h"
 #include "platform/WebURL.h"
 
 struct NPObject;

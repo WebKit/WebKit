@@ -90,7 +90,6 @@
 #include "WebMediaPlayerClient.h"
 #include "WebNotificationPresenter.h"
 #include "WebPageVisibilityState.h"
-#include "WebReferrerPolicy.h"
 #include "WebScrollbar.h"
 #include "WebSettings.h"
 #include "WebStorageQuotaError.h"
@@ -107,6 +106,7 @@
 #include "platform/WebPeerConnection00Handler.h"
 #include "platform/WebPeerConnection00HandlerClient.h"
 #include <public/WebFilterOperation.h>
+#include <public/WebReferrerPolicy.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
