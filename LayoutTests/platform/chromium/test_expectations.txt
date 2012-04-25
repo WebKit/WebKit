@@ -1432,11 +1432,6 @@ BUGCR24227 : http/tests/plugins/local-geturl-from-remote.html = FAIL
 // This test sometimes fails indefinitely, other times it takes 1-2 seconds.
 BUGCR14009 WIN : http/tests/misc/dns-prefetch-control.html = PASS TIMEOUT
 
-// MERGE 38389:38450
-// Form submit causes invalid page reload/navigation when action is a named
-// anchor
-BUGCR10357 : fast/dom/cssTarget-crash.html = PASS TIMEOUT
-
 BUGCR10361 WIN : http/tests/misc/single-character-pi-stylesheet.xhtml = FAIL
 
 // Windows is missing the green box. Started to pass in roll to WebKit r50313

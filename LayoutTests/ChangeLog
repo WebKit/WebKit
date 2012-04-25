@@ -1,3 +1,9 @@
+2012-04-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium[ Remove a flaky expectation for a test that's been consistently passing.
+
+        * platform/chromium/test_expectations.txt: Removed.
+
 2012-04-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed test expectations update.
