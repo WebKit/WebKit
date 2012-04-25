@@ -1,3 +1,15 @@
+2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update
+        https://bugs.webkit.org/show_bug.cgi?id=84854
+
+        Mark the following tests as flaky on Linux 32-bit:
+
+            svg/batik/text/textOnPath.svg
+            svg/batik/text/verticalTextOnPath.svg
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: use composite node provider for diff nodes in heap profiler

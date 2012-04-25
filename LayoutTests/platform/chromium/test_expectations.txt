@@ -3715,3 +3715,6 @@ BUGWK84813 : css3/filters/custom/effect-custom-parameters.html = IMAGE
 BUGWK84813 MAC WIN : css3/filters/custom/effect-custom.html = IMAGE
 
 BUGWK84847 WIN : inspector/timeline/timeline-start-time.html = TEXT PASS
+
+BUGWK84854 LINUX X86 : svg/batik/text/textOnPath.svg = IMAGE PASS
+BUGWK84854 LINUX X86 : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
