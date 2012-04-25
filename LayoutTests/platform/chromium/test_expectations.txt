@@ -3741,7 +3741,7 @@ BUGWK84810 LINUX WIN : svg/carto.net/window.svg = IMAGE+TEXT
 BUGWK84810 MAC : svg/carto.net/window.svg = IMAGE
 
 // Suppress the errors at the moment, rebaseline coming soon.
-BUGWK84813 : css3/filters/custom/custom-filter-shader-cache.html = IMAGE
-BUGWK84813 : css3/filters/custom/effect-custom-combined-missing.html = IMAGE
+BUGWK84813 MAC WIN : css3/filters/custom/custom-filter-shader-cache.html = IMAGE
+BUGWK84813 MAC WIN : css3/filters/custom/effect-custom-combined-missing.html = IMAGE
 BUGWK84813 : css3/filters/custom/effect-custom-parameters.html = IMAGE
-BUGWK84813 : css3/filters/custom/effect-custom.html = IMAGE
+BUGWK84813 MAC WIN : css3/filters/custom/effect-custom.html = IMAGE

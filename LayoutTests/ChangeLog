@@ -1,6 +1,19 @@
 2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update
+        https://bugs.webkit.org/show_bug.cgi?id=84813
+
+        Mark these tests as failing only on Mac and Windows:
+
+            css3/filters/custom/custom-filter-shader-cache.html
+            css3/filters/custom/effect-custom-combined-missing.html
+            css3/filters/custom/effect-custom.html
+
+        * platform/chromium/test_expectations.txt:
+
+2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update
 
         Unmark html5lib/runner.html -- changes that broke it were reverted in r115149.
 
