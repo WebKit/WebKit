@@ -2139,6 +2139,7 @@ BUGWK45652 : fast/viewport/viewport-126.html = MISSING
 BUGWK45652 : fast/viewport/viewport-127.html = MISSING
 BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT TEXT
 BUGWK45652 : fast/viewport/viewport-129.html = TIMEOUT MISSING TEXT
+BUGWK45652 : fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html = PASS
 
 BUGWK45737 BUGCR100056 DEBUG : fast/frames/frame-limit.html = TIMEOUT
 
@@ -3612,8 +3613,6 @@ BUG_OJAN SKIP : fast/js/function-names.html = FAIL
 // constructors they expose and the exact way they are printed.  Not
 // important.
 BUG_OJAN SKIP : fast/js/global-constructors.html = FAIL
-
-BUGWK82993 LINUX : fast/dom/error-to-string-stack-overflow.html = TEXT
 
 // This should only be a layer change.
 BUGWK82129 : fast/box-shadow/shadow-buffer-partial.html = TEXT
