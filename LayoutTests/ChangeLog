@@ -1,3 +1,12 @@
+2012-04-24  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84813
+
+        Suppress test image mismatch due to r115123. Rebaseline is coming soon.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-24  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt] Move notification icon download out of WebCore
