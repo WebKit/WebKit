@@ -531,7 +531,7 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
     parseError(token);
 }
 
-void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, const Vector<Attribute>& attributes)
+void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, const AttributeVector& attributes)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
     AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, tagName.localName(), attributes);
@@ -560,17 +560,16 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
     processEndTag(endP);
 }
 
-Vector<Attribute> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
+AttributeVector HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
 {
-    Vector<Attribute> attributes = token.attributes();
-
-    for (unsigned i = 0; i < attributes.size(); ++i) {
-        const QualifiedName& name = attributes.at(i).name();
-        if (name.matches(nameAttr) || name.matches(actionAttr) || name.matches(promptAttr))
-            attributes.remove(i);
+    AttributeVector attributes = token.attributes();
+    if (!attributes.isEmpty()) {
+        attributes.removeAttribute(nameAttr);
+        attributes.removeAttribute(actionAttr);
+        attributes.removeAttribute(promptAttr);
     }
 
-    attributes.append(Attribute(nameAttr, isindexTag.localName()));
+    attributes.insertAttribute(Attribute(nameAttr, isindexTag.localName()));
     return attributes;
 }
 

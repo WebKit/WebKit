@@ -71,6 +71,15 @@ void ElementAttributeData::removeAttr(Element* element, const QualifiedName& nam
     --m_attrCount;
 }
 
+void AttributeVector::removeAttribute(const QualifiedName& name)
+{
+    size_t index = getAttributeItemIndex(name);
+    if (index == notFound)
+        return;
+
+    remove(index);
+}
+
 ElementAttributeData::~ElementAttributeData()
 {
 }

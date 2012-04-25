@@ -91,7 +91,7 @@ static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, co
 {
     RefPtr<Element> reportElement = doc->createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), true);
 
-    Vector<Attribute> reportAttributes;
+    AttributeVector reportAttributes;
     reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));
     reportElement->parserSetAttributes(reportAttributes, FragmentScriptingNotAllowed);
 
@@ -100,7 +100,7 @@ static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, co
     h3->parserAddChild(doc->createTextNode("This page contains the following errors:"));
 
     RefPtr<Element> fixed = doc->createElement(divTag, true);
-    Vector<Attribute> fixedAttributes;
+    AttributeVector fixedAttributes;
     fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"));
     fixed->parserSetAttributes(fixedAttributes, FragmentScriptingNotAllowed);
     reportElement->parserAddChild(fixed.get());
@@ -158,7 +158,7 @@ void XMLErrors::insertErrorMessageBlock()
 
 #if ENABLE(XSLT)
     if (m_document->transformSourceDocument()) {
-        Vector<Attribute> attributes;
+        AttributeVector attributes;
         attributes.append(Attribute(styleAttr, "white-space: normal"));
         RefPtr<Element> paragraph = m_document->createElement(pTag, true);
         paragraph->parserSetAttributes(attributes, FragmentScriptingNotAllowed);

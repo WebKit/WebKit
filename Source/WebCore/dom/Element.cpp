@@ -760,7 +760,7 @@ static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& v
     return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));       
 }
 
-void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, FragmentScriptingPermission scriptingPermission)
+void Element::parserSetAttributes(const AttributeVector& attributeVector, FragmentScriptingPermission scriptingPermission)
 {
     ASSERT(!inDocument());
     ASSERT(!parentNode());
@@ -793,7 +793,7 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
 
     // Store the set of attributes that changed on the stack in case
     // attributeChanged mutates m_attributeData.
-    Vector<Attribute> clonedAttributes = m_attributeData->clonedAttributeVector();
+    AttributeVector clonedAttributes = m_attributeData->clonedAttributeVector();
     for (unsigned i = 0; i < clonedAttributes.size(); ++i)
         attributeChanged(&clonedAttributes[i]);
 }
@@ -1737,7 +1737,7 @@ void Element::normalizeAttributes()
     if (!attributeData || attributeData->isEmpty())
         return;
 
-    const Vector<Attribute>& attributes = attributeData->attributeVector();
+    const AttributeVector& attributes = attributeData->attributeVector();
     for (size_t i = 0; i < attributes.size(); ++i) {
         if (RefPtr<Attr> attr = attrIfExists(attributes[i].name()))
             attr->normalize();

@@ -432,7 +432,7 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Elem
 
     ASSERT(element->isHTMLElement()); // otherwise localName() might be wrong.
 
-    Vector<Attribute> clonedAttributes;
+    AttributeVector clonedAttributes;
     if (ElementAttributeData* attributeData = element->updatedAttributeData())
         clonedAttributes = attributeData->clonedAttributeVector();
 

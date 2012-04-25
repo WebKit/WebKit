@@ -36,13 +36,39 @@ namespace WebCore {
 class Attr;
 class Element;
 
-inline Attribute* findAttributeInVector(const Vector<Attribute>& attributes, const QualifiedName& name)
+class AttributeVector : public Vector<Attribute> {
+public:
+    AttributeVector() { }
+
+    Attribute* getAttributeItem(const QualifiedName&) const;
+    size_t getAttributeItemIndex(const QualifiedName&) const;
+
+    // Used during parsing: only inserts if not already there.
+    void insertAttribute(const Attribute&);
+    void removeAttribute(const QualifiedName&);
+};
+
+inline Attribute* AttributeVector::getAttributeItem(const QualifiedName& name) const
 {
-    for (unsigned i = 0; i < attributes.size(); ++i) {
-        if (attributes.at(i).name().matches(name))
-            return &const_cast<Vector<Attribute>& >(attributes).at(i);
-    }
+    size_t index = getAttributeItemIndex(name);
+    if (index != notFound)
+        return &const_cast<AttributeVector*>(this)->at(index);
     return 0;
+}
+
+inline size_t AttributeVector::getAttributeItemIndex(const QualifiedName& name) const
+{
+    for (unsigned i = 0; i < size(); ++i) {
+        if (at(i).name().matches(name))
+            return i;
+    }
+    return notFound;
+}
+
+inline void AttributeVector::insertAttribute(const Attribute& newAttribute)
+{
+    if (!getAttributeItem(newAttribute.name()))
+        append(newAttribute);
 }
 
 enum EInUpdateStyleAttribute { NotInUpdateStyleAttribute, InUpdateStyleAttribute };
@@ -81,8 +107,8 @@ public:
 
     // Internal interface.
     Attribute* attributeItem(unsigned index) const { return &const_cast<ElementAttributeData*>(this)->m_attributes[index]; }
-    Attribute* getAttributeItem(const QualifiedName& name) const { return findAttributeInVector(m_attributes, name); }
-    size_t getAttributeItemIndex(const QualifiedName&) const;
+    Attribute* getAttributeItem(const QualifiedName& name) const { return m_attributes.getAttributeItem(name); }
+    size_t getAttributeItemIndex(const QualifiedName& name) const { return m_attributes.getAttributeItemIndex(name); }
     size_t getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const;
 
     // These functions do no error checking.
@@ -110,8 +136,8 @@ private:
     {
     }
 
-    const Vector<Attribute>& attributeVector() const { return m_attributes; }
-    Vector<Attribute> clonedAttributeVector() const { return m_attributes; }
+    const AttributeVector& attributeVector() const { return m_attributes; }
+    AttributeVector clonedAttributeVector() const { return m_attributes; }
 
     void detachAttributesFromElement(Element*);
     Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
@@ -124,7 +150,7 @@ private:
     RefPtr<StylePropertySet> m_attributeStyle;
     SpaceSplitString m_classNames;
     AtomicString m_idForStyleResolution;
-    Vector<Attribute> m_attributes;
+    AttributeVector m_attributes;
 
     unsigned m_attrCount;
 };
@@ -145,15 +171,6 @@ inline Attribute* ElementAttributeData::getAttributeItem(const String& name, boo
     if (index != notFound)
         return &const_cast<ElementAttributeData*>(this)->m_attributes[index];
     return 0;
-}
-
-inline size_t ElementAttributeData::getAttributeItemIndex(const QualifiedName& name) const
-{
-    for (unsigned i = 0; i < m_attributes.size(); ++i) {
-        if (m_attributes.at(i).name().matches(name))
-            return i;
-    }
-    return notFound;
 }
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
