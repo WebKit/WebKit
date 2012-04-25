@@ -120,6 +120,8 @@ void RenderSVGEllipse::fillShape(GraphicsContext* context) const
 
 void RenderSVGEllipse::strokeShape(GraphicsContext* context) const
 {
+    if (!style()->svgStyle()->hasVisibleStroke())
+        return;
     if (isPaintingFallback()) {
         RenderSVGShape::strokeShape(context);
         return;

@@ -1,3 +1,13 @@
+2012-04-25  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [SVG] Nothing should be stroked when the stroke-width is 0
+        https://bugs.webkit.org/show_bug.cgi?id=83568
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platform/chromium/test_expectations.txt: mark affected tests for rebaseline.
+        * platform/qt/Skipped: Unskip svg/custom/path-zero-strokewidth.svg
+
 2012-04-25  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK test_expectations update.

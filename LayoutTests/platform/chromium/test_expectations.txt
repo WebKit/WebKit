@@ -3718,3 +3718,7 @@ BUGWK84847 WIN : inspector/timeline/timeline-start-time.html = TEXT PASS
 
 BUGWK84854 LINUX X86 : svg/batik/text/textOnPath.svg = IMAGE PASS
 BUGWK84854 LINUX X86 : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
+
+// Requires rebaseline after bug 83978
+BUGWK83568 : svg/custom/path-zero-strokewidth.svg = IMAGE
+BUGWK83568 : svg/custom/js-update-style.svg = IMAGE

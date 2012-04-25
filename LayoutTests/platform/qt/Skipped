@@ -2196,7 +2196,6 @@ fast/writing-mode/vertical-align-table-baseline.html
 fast/writing-mode/vertical-baseline-alignment.html
 fast/writing-mode/vertical-font-fallback.html
 svg/css/shadow-changes.svg
-svg/custom/path-zero-strokewidth.svg
 svg/custom/use-invalid-pattern.svg
 svg/text/bidi-embedded-direction.svg
 svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg

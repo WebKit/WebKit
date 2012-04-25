@@ -94,7 +94,8 @@ FloatRect RenderSVGShape::objectBoundingBox() const
 
 void RenderSVGShape::strokeShape(GraphicsContext* context) const
 {
-    context->strokePath(path());
+    if (style()->svgStyle()->hasVisibleStroke())
+        context->strokePath(path());
 }
 
 bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point) const
@@ -265,6 +266,8 @@ void RenderSVGShape::strokePath(RenderStyle* style, GraphicsContext* context, Pa
                                 const Color& fallbackColor, bool nonScalingStroke, const AffineTransform& nonScalingStrokeTransform,
                                 int applyMode)
 {
+    if (!style->svgStyle()->hasVisibleStroke())
+        return;
     Path* usePath = path;
     if (nonScalingStroke) {
         usePath = nonScalingStrokePath(path, nonScalingStrokeTransform);

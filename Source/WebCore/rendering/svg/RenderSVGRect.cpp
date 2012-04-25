@@ -127,6 +127,8 @@ void RenderSVGRect::fillShape(GraphicsContext* context) const
 
 void RenderSVGRect::strokeShape(GraphicsContext* context) const
 {
+    if (!style()->svgStyle()->hasVisibleStroke())
+        return;
     if (!isPaintingFallback()) {
         context->strokeRect(m_boundingBox, strokeWidth());
         return;
