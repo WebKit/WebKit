@@ -701,6 +701,53 @@ TEST(PlatformContextSkiaTest, contextTransparencyLayerTest)
     EXPECT_EQ_RECT(IntRect(), platformContext.opaqueRegion().asRect());
 }
 
+TEST(PlatformContextSkiaTest, UnboundedDrawsAreClipped)
+{
+    SkBitmap bitmap;
+    bitmap.setConfig(SkBitmap::kARGB_8888_Config, 400, 400);
+    bitmap.allocPixels();
+    bitmap.eraseColor(0);
+    SkCanvas canvas(bitmap);
+
+    PlatformContextSkia platformContext(&canvas);
+    platformContext.setTrackOpaqueRegion(true);
+    GraphicsContext context(&platformContext);
+
+    Color opaque(1.0f, 0.0f, 0.0f, 1.0f);
+    Color alpha(0.0f, 0.0f, 0.0f, 0.0f);
+
+    Path path;
+    context.setShouldAntialias(false);
+    context.setMiterLimit(1);
+    context.setStrokeThickness(5);
+    context.setLineCap(SquareCap);
+    context.setStrokeStyle(SolidStroke);
+
+    // Make skia unable to compute fast bounds for our paths.
+    Vector<float> dashArray;
+    dashArray.append(1);
+    dashArray.append(0);
+    context.setLineDash(dashArray, 0);
+
+    // Make the device opaque in 10,10 40x40.
+    context.fillRect(FloatRect(10, 10, 40, 40), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);
+    EXPECT_EQ_RECT(IntRect(10, 10, 40, 40), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
+
+    // Clip to the left edge of the opaque area.
+    context.clip(IntRect(10, 10, 10, 40));
+
+    // Draw a path that gets clipped. This should destroy the opaque area but only inside the clip.
+    context.setCompositeOperation(CompositeSourceOut);
+    context.setFillColor(alpha, ColorSpaceDeviceRGB);
+    path.moveTo(FloatPoint(10, 10));
+    path.addLineTo(FloatPoint(40, 40));
+    context.strokePath(path);
+
+    EXPECT_EQ_RECT(IntRect(20, 10, 30, 40), platformContext.opaqueRegion().asRect());
+    EXPECT_PIXELS_MATCH(bitmap, platformContext.opaqueRegion().asRect());
+}
+
 TEST(PlatformContextSkiaTest, PreserveOpaqueOnlyMattersForFirstLayer)
 {
     SkBitmap bitmap;

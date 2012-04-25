@@ -209,7 +209,7 @@ void OpaqueRegionSkia::didDrawRect(const PlatformContextSkia* context, const SkR
         bool fillsBounds = false;
 
         if (!paint.canComputeFastBounds())
-            didDrawUnbounded(paint);
+            didDrawUnbounded(context, paint, FillOrStroke);
         else {
             SkRect strokeRect;
             strokeRect = paint.computeFastBounds(fillRect, &strokeRect);
@@ -232,7 +232,7 @@ void OpaqueRegionSkia::didDrawPath(const PlatformContextSkia* context, const SkP
     bool fillsBounds = false;
 
     if (!paint.canComputeFastBounds())
-        didDrawUnbounded(paint);
+        didDrawUnbounded(context, paint, FillOrStroke);
     else {
         rect = paint.computeFastBounds(path.getBounds(), &rect);
         didDraw(context, rect, paint, 0, fillsBounds, FillOrStroke);
@@ -260,7 +260,7 @@ void OpaqueRegionSkia::didDrawPoints(const PlatformContextSkia* context, SkCanva
     bool fillsBounds = false;
 
     if (!paint.canComputeFastBounds())
-        didDrawUnbounded(paint);
+        didDrawUnbounded(context, paint, FillOrStroke);
     else {
         rect = paint.computeFastBounds(rect, &rect);
         didDraw(context, rect, paint, 0, fillsBounds, FillOrStroke);
@@ -272,7 +272,7 @@ void OpaqueRegionSkia::didDrawBounded(const PlatformContextSkia* context, const 
     bool fillsBounds = false;
 
     if (!paint.canComputeFastBounds())
-        didDrawUnbounded(paint);
+        didDrawUnbounded(context, paint, FillOrStroke);
     else {
         SkRect rect;
         rect = paint.computeFastBounds(bounds, &rect);
@@ -306,15 +306,17 @@ void OpaqueRegionSkia::didDraw(const PlatformContextSkia* context, const SkRect&
         markRectAsNonOpaque(targetRect);
 }
 
-void OpaqueRegionSkia::didDrawUnbounded(const SkPaint& paint)
+void OpaqueRegionSkia::didDrawUnbounded(const PlatformContextSkia* context, const SkPaint& paint, DrawType drawType)
 {
-    bool drawsOpaque = paintIsOpaque(paint, FillOrStroke, 0);
+    bool drawsOpaque = paintIsOpaque(paint, drawType, 0);
     bool preservesOpaque = xfermodePreservesOpaque(paint, drawsOpaque);
 
     if (preservesOpaque)
         return;
 
-    markAllAsNonOpaque();
+    SkRect deviceClipRect;
+    getDeviceClipAsRect(context, deviceClipRect);
+    markRectAsNonOpaque(deviceClipRect);
 }
 
 void OpaqueRegionSkia::applyOpaqueRegionFromLayer(const PlatformContextSkia* context, const SkRect& layerOpaqueRect, const SkPaint& paint)
