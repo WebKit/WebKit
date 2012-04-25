@@ -59,7 +59,6 @@
 #include "CSSSelectorList.cpp"
 #include "CSSStyleDeclaration.cpp"
 #include "CSSStyleRule.cpp"
-#include "CSSStyleSelector.cpp"
 #include "CSSStyleSheet.cpp"
 #include "CSSTimingFunctionValue.cpp"
 #include "CSSUnicodeRangeValue.cpp"
