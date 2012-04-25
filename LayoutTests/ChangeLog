@@ -1,3 +1,12 @@
+2012-04-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=84890
+
+        Rebaseline chromium-mac test expectation for media/audio-repaint.html after r115235.
+
+        * platform/chromium-mac-snowleopard/media/audio-repaint-expected.png:
+
 2012-04-25  Stephen Chenney  <schenney@chromium.org>
 
         Rebaseline chromium test results after bug 72796 is fixed
