@@ -2613,6 +2613,10 @@ svg/custom/anchor-on-use.svg
 plugins/npruntime/object-from-destroyed-plugin.html
 plugins/npruntime/object-from-destroyed-plugin-in-subframe.html
 
+# [Qt] New inspector/debugger/linkifier.html is flakey from the beginning (r115064).
+# https://bugs.webkit.org/show_bug.cgi?id=84866
+inspector/debugger/linkifier.html
+
 # [Qt] REGRESSION(r115086): inspector/network-status-non-http.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=84566
 inspector/network-status-non-http.html
