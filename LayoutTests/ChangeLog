@@ -1,3 +1,12 @@
+2012-04-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Skip inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
+        on Win and Win Cairo in addition to Mac and Qt(JSC doesn't support heap profiling and
+        the test doesn't make sense there).
+
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-04-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK svg rebaseline after r115085.
