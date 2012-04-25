@@ -229,6 +229,18 @@ public:
         branchTestPtr(cond, reg).linkTo(target, this);
     }
 
+#if !CPU(ARM_THUMB2)
+    PatchableJump patchableBranchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    {
+        return PatchableJump(branchPtrWithPatch(cond, left, dataLabel, initialRightValue));
+    }
+
+    PatchableJump patchableJump()
+    {
+        return PatchableJump(jump());
+    }
+#endif
+
     void jump(Label target)
     {
         jump().linkTo(target, this);
@@ -529,7 +541,6 @@ public:
     
     bool shouldBlind(ImmPtr imm)
     { 
-        ASSERT(!inUninterruptedSequence());
 #if !defined(NDEBUG)
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know
@@ -636,7 +647,6 @@ public:
 #if ENABLE(JIT_CONSTANT_BLINDING)
     bool shouldBlind(Imm32 imm)
     { 
-        ASSERT(!inUninterruptedSequence());
 #if !defined(NDEBUG)
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know

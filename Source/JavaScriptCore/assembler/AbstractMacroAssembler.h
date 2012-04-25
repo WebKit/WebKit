@@ -497,6 +497,21 @@ public:
 #endif
     };
 
+    struct PatchableJump {
+        PatchableJump()
+        {
+        }
+
+        explicit PatchableJump(Jump jump)
+            : m_jump(jump)
+        {
+        }
+
+        operator Jump&() { return m_jump; }
+
+        Jump m_jump;
+    };
+
     // JumpList:
     //
     // A JumpList is a set of Jump objects.
@@ -573,27 +588,15 @@ public:
         return reinterpret_cast<ptrdiff_t>(b.executableAddress()) - reinterpret_cast<ptrdiff_t>(a.executableAddress());
     }
 
-    void beginUninterruptedSequence() { m_inUninterruptedSequence = true; }
-    void endUninterruptedSequence() { m_inUninterruptedSequence = false; }
-
     unsigned debugOffset() { return m_assembler.debugOffset(); }
 
 protected:
     AbstractMacroAssembler()
-        : m_inUninterruptedSequence(false)
-        , m_randomSource(cryptographicallyRandomNumber())
+        : m_randomSource(cryptographicallyRandomNumber())
     {
     }
 
     AssemblerType m_assembler;
-
-    bool inUninterruptedSequence()
-    {
-        return m_inUninterruptedSequence;
-    }
-
-    bool m_inUninterruptedSequence;
-    
     
     uint32_t random()
     {

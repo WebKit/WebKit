@@ -46,9 +46,7 @@ void JITCompiler::linkOSRExits()
         exit.m_check.initialJump().link(this);
         jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &globalData()->osrExitIndex);
-        beginUninterruptedSequence();
-        exit.m_check.switchToLateJump(jump());
-        endUninterruptedSequence();
+        exit.m_check.switchToLateJump(patchableJump());
     }
 }
 

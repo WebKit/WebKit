@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 // Thus it goes through three states:
 //
 // 1) Label of unpatchable branch or jump (i.e. MacroAssembler::Jump).
-// 2) Label of patchable jump (i.e. MacroAssembler::Jump).
+// 2) Label of patchable jump (i.e. MacroAssembler::PatchableJump).
 // 3) Corrected post-linking label of patchable jump (i.e. CodeLocationJump).
 //
 // The setting of state (1) corresponds to planting the in-line unpatchable
@@ -66,7 +66,7 @@ public:
 #endif
     }
     
-    void switchToLateJump(MacroAssembler::Jump check)
+    void switchToLateJump(MacroAssembler::PatchableJump check)
     {
 #ifndef NDEBUG
         ASSERT(m_mode == InitialJump);
@@ -74,12 +74,12 @@ public:
 #endif
         // Late jumps should only ever be real jumps.
 #if CPU(ARM_THUMB2)
-        ASSERT(check.m_type == ARMv7Assembler::JumpNoConditionFixedSize);
-        ASSERT(check.m_condition == ARMv7Assembler::ConditionInvalid);
+        ASSERT(check.m_jump.m_type == ARMv7Assembler::JumpNoConditionFixedSize);
+        ASSERT(check.m_jump.m_condition == ARMv7Assembler::ConditionInvalid);
         m_type = ARMv7Assembler::JumpNoConditionFixedSize;
         m_condition = ARMv7Assembler::ConditionInvalid;
 #endif
-        m_codeOffset = check.m_label.m_offset;
+        m_codeOffset = check.m_jump.m_label.m_offset;
     }
     
     void correctInitialJump(LinkBuffer& linkBuffer)

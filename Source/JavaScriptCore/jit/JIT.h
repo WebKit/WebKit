@@ -156,7 +156,7 @@ namespace JSC {
         MacroAssembler::Call callReturnLocation;
         MacroAssembler::Label hotPathBegin;
         MacroAssembler::DataLabelPtr getStructureToCompare;
-        MacroAssembler::Jump getStructureCheck;
+        MacroAssembler::PatchableJump getStructureCheck;
 #if USE(JSVALUE64)
         MacroAssembler::DataLabelCompact getDisplacementLabel;
 #else
@@ -187,9 +187,9 @@ namespace JSC {
 
         PropertyStubCompilationInfo(PropertyStubGetById_T, unsigned bytecodeIndex, MacroAssembler::Label hotPathBegin,
 #if USE(JSVALUE64)
-            MacroAssembler::DataLabelPtr structureToCompare, MacroAssembler::Jump structureCheck, MacroAssembler::DataLabelCompact displacementLabel, MacroAssembler::Label putResult)
+            MacroAssembler::DataLabelPtr structureToCompare, MacroAssembler::PatchableJump structureCheck, MacroAssembler::DataLabelCompact displacementLabel, MacroAssembler::Label putResult)
 #else
-            MacroAssembler::DataLabelPtr structureToCompare, MacroAssembler::Jump structureCheck, MacroAssembler::DataLabelCompact displacementLabel1, MacroAssembler::DataLabelCompact displacementLabel2, MacroAssembler::Label putResult)
+            MacroAssembler::DataLabelPtr structureToCompare, MacroAssembler::PatchableJump structureCheck, MacroAssembler::DataLabelCompact displacementLabel1, MacroAssembler::DataLabelCompact displacementLabel2, MacroAssembler::Label putResult)
 #endif
             : m_type(GetById)
             , bytecodeIndex(bytecodeIndex)
@@ -564,9 +564,9 @@ namespace JSC {
         void endUninterruptedSequence(int, int, int);
 
 #else
-#define BEGIN_UNINTERRUPTED_SEQUENCE(name)  do { beginUninterruptedSequence(); } while (false)
-#define END_UNINTERRUPTED_SEQUENCE(name)  do { endUninterruptedSequence(); } while (false)
-#define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst) do { endUninterruptedSequence(); } while (false)
+#define BEGIN_UNINTERRUPTED_SEQUENCE(name)
+#define END_UNINTERRUPTED_SEQUENCE(name)
+#define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst)
 #endif
 
         void emit_compareAndJump(OpcodeID, unsigned op1, unsigned op2, unsigned target, RelationalCondition);

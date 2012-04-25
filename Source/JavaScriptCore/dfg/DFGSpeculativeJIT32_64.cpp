@@ -495,10 +495,8 @@ void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node& node)
 
 JITCompiler::Call SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
-    m_jit.beginUninterruptedSequence();
     JITCompiler::DataLabelPtr structureToCompare;
-    JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
-    m_jit.endUninterruptedSequence();
+    JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
     m_jit.loadPtr(JITCompiler::Address(basePayloadGPR, JSObject::offsetOfPropertyStorage()), resultPayloadGPR);
     JITCompiler::DataLabelCompact tagLoadWithPatch = m_jit.load32WithCompactAddressOffsetPatch(JITCompiler::Address(resultPayloadGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
@@ -506,7 +504,7 @@ JITCompiler::Call SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg ba
     
     JITCompiler::Jump done = m_jit.jump();
 
-    structureCheck.link(&m_jit);
+    structureCheck.m_jump.link(&m_jit);
     
     if (slowPathTarget.isSet())
         slowPathTarget.link(&m_jit);
@@ -534,10 +532,8 @@ JITCompiler::Call SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg ba
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
-    m_jit.beginUninterruptedSequence();
     JITCompiler::DataLabelPtr structureToCompare;
-    JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
-    m_jit.endUninterruptedSequence();
+    JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
 
     writeBarrier(basePayloadGPR, valueTagGPR, valueUse, WriteBarrierForPropertyAccess, scratchGPR);
 
@@ -547,7 +543,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
 
     JITCompiler::Jump done = m_jit.jump();
 
-    structureCheck.link(&m_jit);
+    structureCheck.m_jump.link(&m_jit);
 
     if (slowPathTarget.isSet())
         slowPathTarget.link(&m_jit);

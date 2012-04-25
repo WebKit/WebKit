@@ -132,7 +132,6 @@ ALWAYS_INLINE bool JIT::atJumpTarget()
 
 ALWAYS_INLINE void JIT::beginUninterruptedSequence(int insnSpace, int constSpace)
 {
-    JSInterfaceJIT::beginUninterruptedSequence();
 #if CPU(ARM_TRADITIONAL)
 #ifndef NDEBUG
     // Ensure the label after the sequence can also fit
@@ -182,7 +181,6 @@ ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace, 
     ASSERT(differenceBetween(m_uninterruptedInstructionSequenceBegin, label()) <= insnSpace);
     ASSERT(sizeOfConstantPool() - m_uninterruptedConstantSequenceBegin <= constSpace);
 #endif
-    JSInterfaceJIT::endUninterruptedSequence();
 }
 
 #endif

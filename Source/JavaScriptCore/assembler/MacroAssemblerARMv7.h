@@ -45,6 +45,11 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
     inline ARMRegisters::FPSingleRegisterID fpTempRegisterAsSingle() { return ARMRegisters::asSingle(fpTempRegister); }
 
 public:
+    MacroAssemblerARMv7()
+        : m_makeJumpPatchable(false)
+    {
+    }
+
     typedef ARMv7Assembler::LinkRecord LinkRecord;
     typedef ARMv7Assembler::JumpType JumpType;
     typedef ARMv7Assembler::JumpLinkType JumpLinkType;
@@ -1599,6 +1604,22 @@ public:
         return branch32(cond, addressTempRegister, dataTempRegister);
     }
 
+    PatchableJump patchableBranchPtrWithPatch(RelationalCondition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
+    {
+        m_makeJumpPatchable = true;
+        Jump result = branchPtrWithPatch(cond, left, dataLabel, initialRightValue);
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
+    PatchableJump patchableJump()
+    {
+        m_makeJumpPatchable = true;
+        Jump result = jump();
+        m_makeJumpPatchable = false;
+        return PatchableJump(result);
+    }
+
     ALWAYS_INLINE DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         DataLabelPtr label = moveWithPatch(initialValue, dataTempRegister);
@@ -1633,18 +1654,17 @@ public:
     }
 
 protected:
-
     ALWAYS_INLINE Jump jump()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return Jump(m_assembler.bx(dataTempRegister), inUninterruptedSequence() ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
+        return Jump(m_assembler.bx(dataTempRegister), m_makeJumpPatchable ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
     }
 
     ALWAYS_INLINE Jump makeBranch(ARMv7Assembler::Condition cond)
     {
         m_assembler.it(cond, true, true);
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
-        return Jump(m_assembler.bx(dataTempRegister), inUninterruptedSequence() ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
+        return Jump(m_assembler.bx(dataTempRegister), m_makeJumpPatchable ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
     }
     ALWAYS_INLINE Jump makeBranch(RelationalCondition cond) { return makeBranch(armV7Condition(cond)); }
     ALWAYS_INLINE Jump makeBranch(ResultCondition cond) { return makeBranch(armV7Condition(cond)); }
@@ -1741,6 +1761,7 @@ private:
         ARMv7Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
     }
 
+    bool m_makeJumpPatchable;
 };
 
 } // namespace JSC

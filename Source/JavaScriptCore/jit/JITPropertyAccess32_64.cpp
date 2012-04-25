@@ -329,7 +329,7 @@ void JIT::compileGetByIdHotPath()
     Label hotPathBegin(this);
     
     DataLabelPtr structureToCompare;
-    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
+    PatchableJump structureCheck = patchableBranchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
     addSlowCase(structureCheck);
     
     loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT2);

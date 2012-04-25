@@ -63,6 +63,7 @@ class LinkBuffer {
     typedef MacroAssemblerCodePtr CodePtr;
     typedef MacroAssembler::Label Label;
     typedef MacroAssembler::Jump Jump;
+    typedef MacroAssembler::PatchableJump PatchableJump;
     typedef MacroAssembler::JumpList JumpList;
     typedef MacroAssembler::Call Call;
     typedef MacroAssembler::DataLabelCompact DataLabelCompact;
@@ -154,9 +155,9 @@ public:
         return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label)));
     }
 
-    CodeLocationLabel locationOf(Jump jump)
+    CodeLocationLabel locationOf(PatchableJump jump)
     {
-        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_label)));
+        return CodeLocationLabel(MacroAssembler::getLinkerAddress(code(), applyOffset(jump.m_jump.m_label)));
     }
 
     CodeLocationLabel locationOf(Label label)

@@ -1,3 +1,70 @@
+2012-04-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Add explicit patchableBranchPtrWithPatch/patchableJump methods
+        https://bugs.webkit.org/show_bug.cgi?id=84498
+
+        Reviewed by Filip Pizlo.
+
+        Don't rely on inUninterruptedSequence to distinguish which jumps we need to be able to repatch.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::PatchableJump::PatchableJump):
+        (PatchableJump):
+        (JSC::AbstractMacroAssembler::PatchableJump::operator Jump&):
+        (AbstractMacroAssembler):
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+            - Added PatchableJump type, removed inUninterruptedSequence.
+        * assembler/LinkBuffer.h:
+        (LinkBuffer):
+        (JSC::LinkBuffer::locationOf):
+            - Only allow the location to be taken of patchable branches
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::patchableBranchPtrWithPatch):
+        (JSC::MacroAssembler::patchableJump):
+        (JSC::MacroAssembler::shouldBlind):
+            - Added default implementation of patchableBranchPtrWithPatch, patchableJump.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::MacroAssemblerARMv7):
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::patchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::patchableJump):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+            - Added ARMv7 implementation of patchableBranchPtrWithPatch, patchableJump.
+        * dfg/DFGCorrectableJumpPoint.h:
+        (DFG):
+        (JSC::DFG::CorrectableJumpPoint::switchToLateJump):
+            - Late jumps are PatchableJumps.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+            - replace use of inUninterruptedSequence
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::PropertyAccessRecord::PropertyAccessRecord):
+        (PropertyAccessRecord):
+            - replace use of inUninterruptedSequence
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+            - replace use of inUninterruptedSequence
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+            - replace use of inUninterruptedSequence
+        * jit/JIT.h:
+        (PropertyStubCompilationInfo):
+            - replace use of inUninterruptedSequence
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::beginUninterruptedSequence):
+        (JSC::JIT::endUninterruptedSequence):
+            - replace use of inUninterruptedSequence
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+            - replace use of inUninterruptedSequence
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+            - replace use of inUninterruptedSequence
+
 2012-04-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Generalize the single character optimization of r114072
