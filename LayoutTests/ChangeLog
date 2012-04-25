@@ -1,3 +1,41 @@
+2012-04-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Update pixel test baseline on Lion. All color space changes when painting images.
+        I noticed that svg/custom/focus-ring.svg is flakey, the result may be off by two 1px changes.
+
+        * platform/mac/svg/as-background-image/svg-as-background-4-expected.png:
+        * platform/mac/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/mac/svg/carto.net/window-expected.png:
+        * platform/mac/svg/custom/createImageElement-expected.png:
+        * platform/mac/svg/custom/createImageElement2-expected.png:
+        * platform/mac/svg/custom/deep-dynamic-updates-expected.png:
+        * platform/mac/svg/custom/focus-ring-expected.png:
+        * platform/mac/svg/custom/image-parent-translation-expected.png:
+        * platform/mac/svg/custom/image-small-width-height-expected.png:
+        * platform/mac/svg/custom/image-with-prefix-in-webarchive-expected.png:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/mac/svg/custom/js-update-image-and-display-expected.png:
+        * platform/mac/svg/custom/js-update-image-and-display2-expected.png:
+        * platform/mac/svg/custom/js-update-image-and-display3-expected.png:
+        * platform/mac/svg/custom/js-update-image-expected.png:
+        * platform/mac/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/mac/svg/custom/pointer-events-image-expected.png:
+        * platform/mac/svg/custom/text-image-opacity-expected.png:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/mac/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/mac/svg/zoom/page/zoom-background-images-expected.png:
+
 2012-04-25  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Web Inspector: REGRESSION: Incorrect highlight position of inspected element in scrolled page
