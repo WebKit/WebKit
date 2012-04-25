@@ -31,6 +31,7 @@ namespace WebCore {
 class CCLayerAnimationDelegate {
 public:
     virtual void notifyAnimationStarted(double time) = 0;
+    virtual void notifyAnimationFinished(double time) = 0;
 };
 
 } // namespace WebCore

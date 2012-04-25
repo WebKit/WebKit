@@ -700,8 +700,12 @@ void CCLayerTreeHost::setAnimationEventsRecursive(const CCAnimationEventsVector&
         return;
 
     for (size_t eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
-        if (layer->id() == events[eventIndex].layerId)
-            layer->notifyAnimationStarted(events[eventIndex], wallClockTime);
+        if (layer->id() == events[eventIndex].layerId) {
+            if (events[eventIndex].type == CCAnimationEvent::Started)
+                layer->notifyAnimationStarted(events[eventIndex], wallClockTime);
+            else
+                layer->notifyAnimationFinished(wallClockTime);
+        }
     }
 
     for (size_t childIndex = 0; childIndex < layer->children().size(); ++childIndex)

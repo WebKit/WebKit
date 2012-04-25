@@ -77,6 +77,7 @@ public:
 
     // Implementation of CCLayerAnimationDelegate
     virtual void notifyAnimationStarted(double time) { }
+    virtual void notifyAnimationFinished(double time) { }
 };
 
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
@@ -1065,6 +1066,11 @@ public:
     }
 };
 
+TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, runMultiThread)
+{
+    runTestThreaded();
+}
+
 // Ensures that main thread animations have their start times synchronized with impl thread animations.
 class CCLayerTreeHostTestSynchronizeAnimationStartTimes : public CCLayerTreeHostTestThreadOnly {
 public:
@@ -1111,7 +1117,31 @@ TEST_F(CCLayerTreeHostTestSynchronizeAnimationStartTimes, runMultiThread)
     runTestThreaded();
 }
 
-TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, runMultiThread)
+// Ensures that main thread animations have their start times synchronized with impl thread animations.
+class CCLayerTreeHostTestAnimationFinishedEvents : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestAnimationFinishedEvents()
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postAddInstantAnimationToMainThread();
+    }
+
+    virtual void notifyAnimationFinished(double time)
+    {
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+};
+
+TEST_F(CCLayerTreeHostTestAnimationFinishedEvents, runMultiThread)
 {
     runTestThreaded();
 }

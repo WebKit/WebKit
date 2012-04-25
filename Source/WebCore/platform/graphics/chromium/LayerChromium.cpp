@@ -644,10 +644,15 @@ bool LayerChromium::hasActiveAnimation() const
     return m_layerAnimationController->hasActiveAnimation();
 }
 
-void LayerChromium::notifyAnimationStarted(const CCAnimationStartedEvent& event, double wallClockTime)
+void LayerChromium::notifyAnimationStarted(const CCAnimationEvent& event, double wallClockTime)
 {
     m_layerAnimationController->notifyAnimationStarted(event);
     m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
+}
+
+void LayerChromium::notifyAnimationFinished(double wallClockTime)
+{
+    m_layerAnimationDelegate->notifyAnimationFinished(wallClockTime);
 }
 
 Region LayerChromium::visibleContentOpaqueRegion() const

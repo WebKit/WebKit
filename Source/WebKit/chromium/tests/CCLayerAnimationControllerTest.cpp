@@ -216,7 +216,8 @@ TEST(CCLayerAnimationControllerTest, doNotSyncFinishedAnimation)
     EXPECT_EQ(CCActiveAnimation::WaitingForTargetAvailability, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
 
     // Notify main thread controller that the animation has started.
-    controller->notifyAnimationStarted(CCAnimationStartedEvent(0, 0, CCActiveAnimation::Opacity, 0));
+    CCAnimationEvent animationStartedEvent(CCAnimationEvent::Started, 0, 0, CCActiveAnimation::Opacity, 0);
+    controller->notifyAnimationStarted(animationStartedEvent);
 
     // Force animation to complete on impl thread.
     controllerImpl->removeAnimation(0);
@@ -272,7 +273,7 @@ TEST(CCLayerAnimationControllerTest, AnimationsWaitingForStartTimeDoNotFinishIfT
     EXPECT_EQ(0, dummy.opacity());
 
     // Send the synchronized start time.
-    controller->notifyAnimationStarted(CCAnimationStartedEvent(0, 1, CCActiveAnimation::Opacity, 2));
+    controller->notifyAnimationStarted(CCAnimationEvent(CCAnimationEvent::Started, 0, 1, CCActiveAnimation::Opacity, 2));
     controller->animate(5, events.get());
     EXPECT_EQ(1, dummy.opacity());
     EXPECT_FALSE(controller->hasActiveAnimation());

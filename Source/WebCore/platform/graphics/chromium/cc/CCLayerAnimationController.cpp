@@ -188,7 +188,7 @@ void CCLayerAnimationController::animate(double monotonicTime, CCAnimationEvents
     startAnimationsWaitingForTargetAvailability(monotonicTime, events);
     resolveConflicts(monotonicTime);
     tickAnimations(monotonicTime);
-    purgeFinishedAnimations();
+    purgeFinishedAnimations(monotonicTime, events);
     startAnimationsWaitingForTargetAvailability(monotonicTime, events);
 }
 
@@ -223,7 +223,7 @@ bool CCLayerAnimationController::isAnimatingProperty(CCActiveAnimation::TargetPr
     return false;
 }
 
-void CCLayerAnimationController::notifyAnimationStarted(const CCAnimationStartedEvent& event)
+void CCLayerAnimationController::notifyAnimationStarted(const CCAnimationEvent& event)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
         if (m_activeAnimations[i]->group() == event.groupId && m_activeAnimations[i]->targetProperty() == event.targetProperty) {
@@ -280,7 +280,7 @@ void CCLayerAnimationController::startAnimationsWaitingForNextTick(double monoto
             if (!m_activeAnimations[i]->hasSetStartTime())
                 m_activeAnimations[i]->setStartTime(monotonicTime);
             if (events)
-                events->append(CCAnimationStartedEvent(m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
+                events->append(CCAnimationEvent(CCAnimationEvent::Started, m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
         }
     }
 }
@@ -291,7 +291,7 @@ void CCLayerAnimationController::startAnimationsWaitingForStartTime(double monot
         if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForStartTime && m_activeAnimations[i]->startTime() <= monotonicTime) {
             m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, monotonicTime);
             if (events)
-                events->append(CCAnimationStartedEvent(m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
+                events->append(CCAnimationEvent(CCAnimationEvent::Started, m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
         }
     }
 }
@@ -330,7 +330,7 @@ void CCLayerAnimationController::startAnimationsWaitingForTargetAvailability(dou
                 if (!m_activeAnimations[i]->hasSetStartTime())
                     m_activeAnimations[i]->setStartTime(monotonicTime);
                 if (events)
-                    events->append(CCAnimationStartedEvent(m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
+                    events->append(CCAnimationEvent(CCAnimationEvent::Started, m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
                 for (size_t j = i + 1; j < m_activeAnimations.size(); ++j) {
                     if (m_activeAnimations[i]->group() == m_activeAnimations[j]->group()) {
                         m_activeAnimations[j]->setRunState(CCActiveAnimation::Running, monotonicTime);
@@ -364,7 +364,7 @@ void CCLayerAnimationController::resolveConflicts(double monotonicTime)
     }
 }
 
-void CCLayerAnimationController::purgeFinishedAnimations()
+void CCLayerAnimationController::purgeFinishedAnimations(double monotonicTime, CCAnimationEventsVector* events)
 {
     // Each iteration, m_activeAnimations.size() decreases or i increments,
     // guaranteeing progress towards loop termination.
@@ -382,15 +382,19 @@ void CCLayerAnimationController::purgeFinishedAnimations()
             }
         }
         if (allAnimsWithSameIdAreFinished) {
-            // We now need to remove all animations with the same group id as groupId.
+            // We now need to remove all animations with the same group id as groupId
+            // (and send along animation finished notifications, if necessary).
             // Each iteration, m_activeAnimations.size() decreases or j increments,
             // guaranteeing progress towards loop termination. Also, we are guaranteed
             // to remove at least one active animation.
             for (size_t j = i; j < m_activeAnimations.size();) {
                 if (groupId != m_activeAnimations[j]->group())
                     j++;
-                else
+                else {
+                    if (events)
+                        events->append(CCAnimationEvent(CCAnimationEvent::Finished, m_client->id(), m_activeAnimations[j]->group(), m_activeAnimations[j]->targetProperty(), monotonicTime));
                     m_activeAnimations.remove(j);
+                }
             }
         } else
             i++;

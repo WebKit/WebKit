@@ -88,7 +88,7 @@ public:
 
     // This is called in response to an animation being started on the impl thread. This
     // function updates the corresponding main thread animation's start time.
-    void notifyAnimationStarted(const CCAnimationStartedEvent&);
+    void notifyAnimationStarted(const CCAnimationEvent&);
 
 protected:
     explicit CCLayerAnimationController(CCLayerAnimationControllerClient*);
@@ -103,7 +103,7 @@ private:
     void startAnimationsWaitingForStartTime(double monotonicTime, CCAnimationEventsVector*);
     void startAnimationsWaitingForTargetAvailability(double monotonicTime, CCAnimationEventsVector*);
     void resolveConflicts(double monotonicTime);
-    void purgeFinishedAnimations();
+    void purgeFinishedAnimations(double monotonicTime, CCAnimationEventsVector*);
 
     void tickAnimations(double monotonicTime);
 

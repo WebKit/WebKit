@@ -27,26 +27,31 @@
 
 #include "cc/CCActiveAnimation.h"
 
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct CCAnimationStartedEvent {
-    CCAnimationStartedEvent(int layerId, int groupId, CCActiveAnimation::TargetProperty targetProperty, double monotonicTime)
-        : layerId(layerId)
+struct CCAnimationEvent {
+    enum Type { Started, Finished };
+
+    CCAnimationEvent(Type type, int layerId, int groupId, CCActiveAnimation::TargetProperty targetProperty, double monotonicTime)
+        : type(type)
+        , layerId(layerId)
         , groupId(groupId)
         , targetProperty(targetProperty)
         , monotonicTime(monotonicTime)
     {
     }
 
+    Type type;
     int layerId;
     int groupId;
     CCActiveAnimation::TargetProperty targetProperty;
     double monotonicTime;
 };
 
-typedef Vector<CCAnimationStartedEvent> CCAnimationEventsVector;
+typedef Vector<CCAnimationEvent> CCAnimationEventsVector;
 
 } // namespace WebCore
 

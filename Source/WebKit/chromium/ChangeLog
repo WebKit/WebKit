@@ -1,5 +1,24 @@
 2012-04-25  Ian Vollick  <vollick@chromium.org>
 
+        [chromium] Add support for animation finished events.
+        https://bugs.webkit.org/show_bug.cgi?id=84454
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestHooks::notifyAnimationFinished):
+        (WTF::TEST_F):
+        (WTF):
+        (CCLayerTreeHostTestAnimationFinishedEvents):
+        (WTF::CCLayerTreeHostTestAnimationFinishedEvents::CCLayerTreeHostTestAnimationFinishedEvents):
+        (WTF::CCLayerTreeHostTestAnimationFinishedEvents::beginTest):
+        (WTF::CCLayerTreeHostTestAnimationFinishedEvents::notifyAnimationFinished):
+        (WTF::CCLayerTreeHostTestAnimationFinishedEvents::afterTest):
+
+2012-04-25  Ian Vollick  <vollick@chromium.org>
+
         [chromium] Do not clobber synchronized start times.
         https://bugs.webkit.org/show_bug.cgi?id=84605
 

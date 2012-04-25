@@ -110,7 +110,7 @@ void GraphicsLayerChromium::willBeDestroyed()
         // Be sure to reset the delegate, just in case.
         m_transformLayer->setLayerAnimationDelegate(0);
     }
-    
+
     GraphicsLayer::willBeDestroyed();
 }
 
@@ -755,6 +755,11 @@ void GraphicsLayerChromium::notifyAnimationStarted(double startTime)
 {
     if (m_client)
         m_client->notifyAnimationStarted(this, startTime);
+}
+
+void GraphicsLayerChromium::notifyAnimationFinished(double)
+{
+    // Do nothing.
 }
 
 } // namespace WebCore
