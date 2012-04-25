@@ -107,9 +107,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var script = /** @type {WebInspector.Script} */ event.data;
         this._scriptMapping.addScript(script);
         this._addPendingConsoleMessagesToScript(script);
-
-        window.myParseds = window.myParseds || [];
-        window.myParseds.push(script.sourceURL);
     },
 
     /**
