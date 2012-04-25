@@ -274,8 +274,9 @@ private:
 class Writer {
     WTF_MAKE_NONCOPYABLE(Writer);
 public:
-    Writer()
+    Writer(v8::Isolate* isolate)
         : m_position(0)
+        , m_isolate(isolate)
     {
     }
 
@@ -591,6 +592,7 @@ private:
 
     Vector<BufferValueType> m_buffer;
     unsigned m_position;
+    v8::Isolate* m_isolate;
 };
 
 class Serializer {
@@ -1222,11 +1224,12 @@ public:
 // restoring information about saved objects of composite types.
 class Reader {
 public:
-    Reader(const uint8_t* buffer, int length)
+    Reader(const uint8_t* buffer, int length, v8::Isolate* isolate)
         : m_buffer(buffer)
         , m_length(length)
         , m_position(0)
         , m_version(0)
+        , m_isolate(isolate)
     {
         ASSERT(length >= 0);
     }
@@ -1802,6 +1805,7 @@ private:
     const unsigned m_length;
     unsigned m_position;
     uint32_t m_version;
+    v8::Isolate* m_isolate;
 };
 
 
@@ -2081,7 +2085,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const St
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& data, v8::Isolate* isolate)
 {
-    Writer writer;
+    Writer writer(isolate);
     writer.writeWebCoreString(data);
     String wireData = StringImpl::adopt(writer.data());
     return adoptRef(new SerializedScriptValue(wireData));
@@ -2092,13 +2096,13 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
     return adoptRef(new SerializedScriptValue());
 }
 
-SerializedScriptValue* SerializedScriptValue::nullValue()
+SerializedScriptValue* SerializedScriptValue::nullValue(v8::Isolate* isolate)
 {
     // FIXME: This is not thread-safe. Move caching to callers.
     // https://bugs.webkit.org/show_bug.cgi?id=70833
     DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (0));
     if (!nullValue) {
-        Writer writer;
+        Writer writer(isolate);
         writer.writeNull();
         String wireData = StringImpl::adopt(writer.data());
         nullValue = adoptRef(new SerializedScriptValue(wireData));
@@ -2108,7 +2112,7 @@ SerializedScriptValue* SerializedScriptValue::nullValue()
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue(v8::Isolate* isolate)
 {
-    Writer writer;
+    Writer writer(isolate);
     writer.writeUndefined();
     String wireData = StringImpl::adopt(writer.data());
     return adoptRef(new SerializedScriptValue(wireData));
@@ -2116,7 +2120,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::undefinedValue(v8::Isol
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value, v8::Isolate* isolate)
 {
-    Writer writer;
+    Writer writer(isolate);
     if (value)
         writer.writeTrue();
     else
@@ -2127,7 +2131,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value, v8::Isolate* isolate)
 {
-    Writer writer;
+    Writer writer(isolate);
     writer.writeNumber(value);
     String wireData = StringImpl::adopt(writer.data());
     return adoptRef(new SerializedScriptValue(wireData));
@@ -2194,7 +2198,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value,
                                              v8::Isolate* isolate)
 {
     didThrow = false;
-    Writer writer;
+    Writer writer(isolate);
     Serializer::Status status;
     {
         v8::TryCatch tryCatch;
@@ -2247,7 +2251,7 @@ v8::Handle<v8::Value> SerializedScriptValue::deserialize(MessagePortArray* messa
     if (!m_data.impl())
         return v8::Null();
     COMPILE_ASSERT(sizeof(BufferValueType) == 2, BufferValueTypeIsTwoBytes);
-    Reader reader(reinterpret_cast<const uint8_t*>(m_data.impl()->characters()), 2 * m_data.length());
+    Reader reader(reinterpret_cast<const uint8_t*>(m_data.impl()->characters()), 2 * m_data.length(), isolate);
     Deserializer deserializer(reader, messagePorts, m_arrayBufferContentsArray.get());
     return deserializer.deserialize();
 }
