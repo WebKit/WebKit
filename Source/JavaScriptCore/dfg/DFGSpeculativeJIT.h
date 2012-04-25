@@ -1883,13 +1883,19 @@ private:
         } else
             ASSERT(setLocal->child1() == m_compileIndex);
         
-        Node& nextNode = at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1));
         ASSERT(setLocal->op() == SetLocal);
         ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
-        ASSERT(nextNode.codeOrigin != at(m_compileIndex).codeOrigin);
+
+        Node* nextNode = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1));
+        if (nextNode->codeOrigin == at(m_compileIndex).codeOrigin) {
+            ASSERT(nextNode->op() == Flush);
+            nextNode = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 2));
+            ASSERT(nextNode->codeOrigin != at(m_compileIndex).codeOrigin); // duplicate the same assertion as below so that if we fail, we'll know we came down this path.
+        }
+        ASSERT(nextNode->codeOrigin != at(m_compileIndex).codeOrigin);
         
         OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
-        exit.m_codeOrigin = nextNode.codeOrigin;
+        exit.m_codeOrigin = nextNode->codeOrigin;
         exit.m_lastSetOperand = setLocal->local();
         
         exit.valueRecoveryForOperand(setLocal->local()) = valueRecovery;

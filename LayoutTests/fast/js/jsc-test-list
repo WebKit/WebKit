@@ -105,6 +105,7 @@ fast/js/dfg-string-stricteq
 fast/js/dfg-uint16array
 fast/js/dfg-uint32array-overflow-values
 fast/js/dfg-uint32-to-number
+fast/js/dfg-uint32-to-number-on-captured-variable
 fast/js/dfg-uint8array
 fast/js/dfg-uint8clampedarray
 fast/js/dictionary-no-cache

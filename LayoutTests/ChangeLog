@@ -1,3 +1,17 @@
+2012-04-25  Filip Pizlo  <fpizlo@apple.com>
+
+        http://bellard.org/jslinux/ triggers an assertion failure in the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=84815
+        <rdar://problem/11319514>
+
+        Rubber stamped by Gavin Barraclough.
+
+        * fast/js/dfg-uint32-to-number-on-captured-variable-expected.txt: Added.
+        * fast/js/dfg-uint32-to-number-on-captured-variable.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-uint32-to-number-on-captured-variable.js: Added.
+        (foo):
+
 2012-04-25  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=83632.
