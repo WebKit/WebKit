@@ -1,3 +1,50 @@
+2012-04-25  Andrew Scherkus  <scherkus@chromium.org>
+
+        Rebaseline Chromium media layout tests due to r114957.
+
+        * platform/chromium-linux-x86/media/video-empty-source-expected.txt:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.txt: Removed.
+        * platform/chromium-linux/media/video-empty-source-expected.txt:
+        * platform/chromium-mac-leopard/media/video-empty-source-expected.txt:
+        * platform/chromium-mac-snowleopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-snowleopard/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/audio-repaint-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/controls-styling-expected.txt:
+        * platform/chromium-mac/media/controls-without-preload-expected.txt:
+        * platform/chromium-mac/media/media-controls-clone-expected.txt:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-mac/media/video-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-playing-and-pause-expected.txt:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium-mac/media/video-zoom-controls-expected.txt:
+        * platform/chromium-win-vista/media/video-empty-source-expected.txt:
+        * platform/chromium-win-xp/media/video-empty-source-expected.txt:
+        * platform/chromium-win/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-win/media/audio-repaint-expected.txt:
+        * platform/chromium-win/media/controls-after-reload-expected.txt:
+        * platform/chromium-win/media/controls-strict-expected.txt:
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium-win/media/controls-without-preload-expected.txt:
+        * platform/chromium-win/media/media-controls-clone-expected.txt:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win/media/video-controls-rendering-expected.txt:
+        * platform/chromium-win/media/video-display-toggle-expected.txt:
+        * platform/chromium-win/media/video-empty-source-expected.txt:
+        * platform/chromium-win/media/video-no-audio-expected.txt:
+        * platform/chromium-win/media/video-playing-and-pause-expected.txt:
+        * platform/chromium-win/media/video-volume-slider-expected.txt:
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/media/audio-repaint-expected.txt: Renamed from LayoutTests/media/audio-repaint-expected.txt.
+
 2012-04-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed test expectations update.

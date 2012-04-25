@@ -3380,22 +3380,6 @@ BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 
 // Need rebaselining.
-BUGWK82150 : media/media-document-audio-repaint.html = TEXT
-BUGWK82150 : media/video-no-audio.html = TEXT
-BUGWK82150 : media/controls-strict.html = TEXT
-BUGWK82150 : media/video-volume-slider.html = TEXT
-BUGWK82150 : media/controls-styling.html = TEXT
-BUGWK82150 : media/video-display-toggle.html = TEXT
-BUGWK82150 : media/audio-repaint.html = TEXT
-BUGWK82150 : media/audio-controls-rendering.html = TEXT
-BUGWK82150 : media/video-zoom-controls.html = TEXT
-BUGWK82150 : media/video-controls-rendering.html = TEXT
-BUGWK82150 : media/controls-without-preload.html = TEXT
-BUGWK82150 : media/media-controls-clone.html = TEXT
-BUGWK82150 : fast/layers/video-layer.html = TEXT
-BUGWK82150 : media/video-empty-source.html = TEXT
-BUGWK82150 : media/video-playing-and-pause.html = TEXT
-BUGWK82150 : media/controls-after-reload.html = TEXT
 
 // New test, flaky since added in r110965.
 BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
@@ -3694,7 +3678,7 @@ BUGWK84733 VISTA : fast/canvas/canvas-composite.html = TIMEOUT PASS
 BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
 // Requires rebaseline after bug 83978
-BUGWK83978 WIN MAC: tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
+BUGWK83978 WIN MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
 
 BUGWK84802 : fast/js/random-array-gc-stress.html = FAIL TIMEOUT
 BUGWK84810 LINUX WIN : svg/carto.net/window.svg = IMAGE+TEXT
