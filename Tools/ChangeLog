@@ -1,3 +1,17 @@
+2012-04-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] Reset DRT settings to their default values after a testcase was executed.
+        https://bugs.webkit.org/show_bug.cgi?id=84709
+
+        Reviewed by Eric Seidel.
+
+        Not all the settings that can be changed by layout testcases through a JS API were 
+        reset in DumpRenderTreeChrome::resetDefaultsToConsistentValues().
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (defaultEditingBehavior): returns editing behavior depending on current platform.
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues): reset some missed DRT settings
+
 2012-04-24  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: add ASAN handling to chromium crash logs

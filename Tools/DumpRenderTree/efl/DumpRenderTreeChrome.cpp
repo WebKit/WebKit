@@ -168,6 +168,21 @@ Evas_Object* DumpRenderTreeChrome::mainView() const
     return m_mainView;
 }
 
+static inline const char* defaultEditingBehavior()
+{
+    return
+#if OS(DARWIN)
+    "mac";
+#elif OS(WINDOWS)
+    "win";
+#elif OS(UNIX)
+    "unix";
+#else
+    // Fallback
+    "mac";
+#endif
+}
+
 void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 {
     Vector<Evas_Object*>::iterator it = m_extraViews.begin();
@@ -202,6 +217,10 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_view_setting_scripts_can_open_windows_set(mainView(), EINA_TRUE);
     ewk_view_setting_scripts_can_close_windows_set(mainView(), EINA_TRUE);
     ewk_view_setting_auto_load_images_set(mainView(), EINA_TRUE);
+    ewk_view_setting_user_stylesheet_set(mainView(), 0);
+    ewk_view_setting_enable_xss_auditor_set(browser->mainView(), EINA_TRUE);
+    ewk_view_setting_enable_developer_extras_set(browser->mainView(), EINA_FALSE);
+    ewk_view_setting_minimum_timer_interval_set(browser->mainView(), 0.010); // 10 milliseconds (DOMTimer::s_minDefaultTimerInterval)
 
     ewk_view_zoom_set(mainView(), 1.0, 0, 0);
     ewk_view_scale_set(mainView(), 1.0, 0, 0);
@@ -215,6 +234,10 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::clearOpener(mainFrame());
     DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(mainView(), true);
     DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(mainView(), true);
+    DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(mainView(), false);
+    DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(mainView(), false);
+    DumpRenderTreeSupportEfl::setDefersLoading(mainView(), false);
+    DumpRenderTreeSupportEfl::setEditingBehavior(mainView(), defaultEditingBehavior());
 }
 
 // Smart Callbacks
