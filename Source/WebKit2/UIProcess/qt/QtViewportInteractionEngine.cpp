@@ -415,8 +415,11 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     case ZoomBack: {
         ScaleStackItem lastScale = m_scaleStack.takeLast();
         endItemScale = lastScale.scale;
+        // Recalculate endPosition and bound it according to new scale.
         endPosition.setY(hotspot.y() * endItemScale - viewportHotspot.y());
         endPosition.setX(lastScale.xPosition);
+        endPosRange = computePosRangeForItemAtScale(endItemScale);
+        endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
         endVisibleContentRect = QRectF(endPosition / endItemScale, viewportRect.size() / endItemScale);
         break;
     }

@@ -1,3 +1,13 @@
+2012-04-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Zoom back can overscroll document edges.
+        https://bugs.webkit.org/show_bug.cgi?id=84851
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+
 2012-04-18  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make the web view's url property follow the active url

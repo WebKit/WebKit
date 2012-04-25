@@ -1,3 +1,15 @@
+2012-04-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Zoom back can overscroll document edges.
+        https://bugs.webkit.org/show_bug.cgi?id=84851
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Manual test for overscroll on zoom-back. Needs to be manual since we do not yet
+        have automatic testing for this type of UI-side behaviour.
+
+        * ManualTests/qt/double-tap-overscroll.html: Added.
+
 2012-04-24  Yael Aharon  <yael.aharon@nokia.com>
 
         Fixed background is scrolling in http://www.nieuwecode.nl/ in Qt webkit2
