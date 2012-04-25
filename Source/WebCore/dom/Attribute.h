@@ -34,11 +34,6 @@ namespace WebCore {
 // The actual Attr with its value as a Text child is allocated only if needed.
 class Attribute {
 public:
-    Attribute()
-        : m_name(nullAtom, nullAtom, nullAtom)
-    {
-    }
-
     Attribute(const QualifiedName& name, const AtomicString& value)
         : m_name(name)
         , m_value(value)
