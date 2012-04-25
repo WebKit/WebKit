@@ -1,3 +1,12 @@
+2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed test expectations update
+        https://bugs.webkit.org/show_bug.cgi?id=74055
+
+        Unmark fast/canvas/canvas-largedraws.html as failing on Mac 10.5
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         fast/js/random-array-gc-stress times out in debug mode

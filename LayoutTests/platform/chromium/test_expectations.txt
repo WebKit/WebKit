@@ -3095,9 +3095,6 @@ BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRA
 
 BUGWK78544 LINUX : fast/text/international/danda-space.html = PASS IMAGE IMAGE+TEXT
 
-BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
-BUGWK74055 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-largedraws.html = TIMEOUT
-
 BUGWK74157 SNOWLEOPARD : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
 BUGWK74157 LEOPARD : animations/cross-fade-webkit-mask-box-image.html = IMAGE+TEXT IMAGE
 
