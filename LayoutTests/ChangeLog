@@ -1,3 +1,42 @@
+2012-04-25  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: support openCursor(IDBKey)
+        https://bugs.webkit.org/show_bug.cgi?id=84652
+
+        Reviewed by Ojan Vafai.
+
+        Augment existing tests, and add new tests to support
+        IDBKey parameter to openCursor/openKeyCursor. Note that this removes
+        a test that was previously using dictionary-style parameters,
+        which have been temporarily broken due to IDL limitations.
+
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/opencursor-key-expected.txt: Added.
+        * storage/indexeddb/opencursor-key.html: Added.
+        * storage/indexeddb/resources/cursor-delete.js:
+        (openCursor):
+        * storage/indexeddb/resources/open-cursor.js:
+        (emptyCursorWithKeySuccess):
+        (openEmptyCursorWithKey):
+        (cursorWithKeySuccess):
+        (openCursorWithKey):
+        (emptyCursorSuccess):
+        (openEmptyCursor):
+        (cursorSuccess):
+        * storage/indexeddb/resources/opencursor-key.js: Added.
+        (test):
+        (openSuccess):
+        (createAndPopulateObjectStore):
+        (createIndexes):
+        (testAll):
+        (testObjectStore.request.onsuccess):
+        (testObjectStore):
+        (testIndex.request.onsuccess):
+        (testIndex):
+        (testIndexWithKey.request.onsuccess):
+        (testIndexWithKey):
+
 2012-04-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium[ Remove a flaky expectation for a test that's been consistently passing.

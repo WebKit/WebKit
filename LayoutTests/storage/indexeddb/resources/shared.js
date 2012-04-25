@@ -53,7 +53,7 @@ function unexpectedErrorCallback(event)
     finishJSTest();
 }
 
-function unexpectedAbortCallback()
+function unexpectedAbortCallback(e)
 {
     testFailed("Abort function called unexpectedly!");
     finishJSTest();

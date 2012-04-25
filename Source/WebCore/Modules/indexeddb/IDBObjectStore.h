@@ -64,8 +64,9 @@ public:
     PassRefPtr<IDBRequest> add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return add(context, value, 0, ec);  }
     PassRefPtr<IDBRequest> put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return put(context, value, 0, ec);  }
     PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, Dictionary(), ec); }
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, 0, ec); } 
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, static_cast<IDBKeyRange*>(0), ec); } 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) { return openCursor(context, keyRange, IDBCursor::NEXT, ec); } 
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec) { return openCursor(context, key, IDBCursor::NEXT, ec); } 
 
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
@@ -80,6 +81,7 @@ public:
     void deleteIndex(const String& name, ExceptionCode&);
 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, unsigned short direction, ExceptionCode&); 
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKey>, unsigned short direction, ExceptionCode&); 
     PassRefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) { return count(context, static_cast<IDBKeyRange*>(0), ec); }
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);

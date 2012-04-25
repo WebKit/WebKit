@@ -49,6 +49,8 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction)
             raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] unsigned short direction)
+            raises (IDBDatabaseException);
         IDBIndex createIndex(in DOMString name, in DOMString keyPath, in [Optional] Dictionary options)
             raises (IDBDatabaseException);
         IDBIndex index(in DOMString name)

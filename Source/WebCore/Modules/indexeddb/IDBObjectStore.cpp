@@ -274,6 +274,15 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
     return request.release();
 }
 
+PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, unsigned short direction, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBObjectStore::openCursor");
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    if (ec)
+        return 0;
+    return openCursor(context, keyRange.release(), ec);
+}
+
 PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::count");

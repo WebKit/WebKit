@@ -17,16 +17,35 @@ objectStore.add('myValue', 'myKey')
 Opening cursor
 event.target.source.openCursor(keyRange)
 Cursor opened successfully.
-PASS event.target.result.direction is 0
-PASS event.target.result.key is 'myKey'
-PASS event.target.result.value is 'myValue'
+PASS cursor.direction is 0
+PASS cursor.key is 'myKey'
+PASS cursor.value is 'myValue'
 
 Passing an invalid key into .continue({}).
-PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Expecting exception from event.target.result.continue({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
 
 Opening an empty cursor.
 objectStore.openCursor(keyRange)
 Empty cursor opened successfully.
+PASS cursor is null
+Opening cursor
+event.target.source.openCursor("myKey")
+Cursor opened successfully.
+PASS cursor.direction is 0
+PASS cursor.key is 'myKey'
+PASS cursor.value is 'myValue'
+
+Passing an invalid key into .continue({}).
+Expecting exception from cursor.continue({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
+Opening an empty cursor.
+objectStore.openCursor("InexistentKey")
+Empty cursor opened successfully.
+PASS cursor is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

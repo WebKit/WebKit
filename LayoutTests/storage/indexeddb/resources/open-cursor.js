@@ -5,17 +5,58 @@ if (this.importScripts) {
 
 description("Test IndexedDB's openCursor.");
 
+
+function emptyCursorWithKeySuccess()
+{
+    debug("Empty cursor opened successfully.");
+    cursor = event.target.result;
+    shouldBeNull("cursor");
+    finishJSTest();
+}
+
+function openEmptyCursorWithKey()
+{
+    debug("Opening an empty cursor.");
+    request = evalAndLog("objectStore.openCursor(\"InexistentKey\")");
+    request.onsuccess = emptyCursorWithKeySuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cursorWithKeySuccess()
+{
+    debug("Cursor opened successfully.");
+    // FIXME: check that we can iterate the cursor.
+    cursor = event.target.result;
+    shouldBe("cursor.direction", "0");
+    shouldBe("cursor.key", "'myKey'");
+    shouldBe("cursor.value", "'myValue'");
+    debug("");
+    debug("Passing an invalid key into .continue({}).");
+    evalAndExpectException("cursor.continue({})", "IDBDatabaseException.DATA_ERR");
+    debug("");
+    openEmptyCursorWithKey();
+}
+
+function openCursorWithKey()
+{
+    debug("Opening cursor");
+    request = evalAndLog("event.target.source.openCursor(\"myKey\")");
+    request.onsuccess = cursorWithKeySuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
 function emptyCursorSuccess()
 {
-    debug("Empty cursor opened successfully.")
-    // FIXME: check that we can iterate the cursor.
-    finishJSTest();
+    debug("Empty cursor opened successfully.");
+    cursor = event.target.result;
+    shouldBeNull("cursor");
+    openCursorWithKey();
 }
 
 function openEmptyCursor()
 {
     debug("Opening an empty cursor.");
-    keyRange = IDBKeyRange.lowerBound("InexistentKey");
+    keyRange = IDBKeyRange.upperBound("InexistentKey");
     request = evalAndLog("objectStore.openCursor(keyRange)");
     request.onsuccess = emptyCursorSuccess;
     request.onerror = unexpectedErrorCallback;
@@ -23,19 +64,15 @@ function openEmptyCursor()
 
 function cursorSuccess()
 {
-    debug("Cursor opened successfully.")
+    debug("Cursor opened successfully.");
     // FIXME: check that we can iterate the cursor.
-    shouldBe("event.target.result.direction", "0");
-    shouldBe("event.target.result.key", "'myKey'");
-    shouldBe("event.target.result.value", "'myValue'");
+    cursor = event.target.result;
+    shouldBe("cursor.direction", "0");
+    shouldBe("cursor.key", "'myKey'");
+    shouldBe("cursor.value", "'myValue'");
     debug("");
-    try {
-        debug("Passing an invalid key into .continue({}).");
-        event.target.result.continue({});
-        testFailed("No exception thrown");
-    } catch (e) {
-        testPassed("Caught exception: " + e.toString());
-    }
+    debug("Passing an invalid key into .continue({}).");
+    evalAndExpectException("event.target.result.continue({})", "IDBDatabaseException.DATA_ERR");
     debug("");
     openEmptyCursor();
 }

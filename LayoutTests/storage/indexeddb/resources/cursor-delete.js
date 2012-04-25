@@ -46,7 +46,7 @@ function openCursor()
     debug("openCursor1");
     evalAndLog("trans = db.transaction(['test'], IDBTransaction.READ_WRITE)");
     keyRange = IDBKeyRange.lowerBound("myKey1");
-    request = evalAndLog("trans.objectStore('test').openCursor({range: keyRange})");
+    request = evalAndLog("trans.objectStore('test').openCursor(keyRange)");
     request.onsuccess = cursorSuccess;
     request.onerror = unexpectedErrorCallback;
     counter = 1;

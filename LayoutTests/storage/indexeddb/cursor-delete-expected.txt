@@ -19,7 +19,7 @@ objectStore.add('myValue3', 'myKey3')
 objectStore.add('myValue4', 'myKey4')
 openCursor1
 trans = db.transaction(['test'], IDBTransaction.READ_WRITE)
-trans.objectStore('test').openCursor({range: keyRange})
+trans.objectStore('test').openCursor(keyRange)
 event.target.result.delete()
 PASS event.target.result.value is "myValue1"
 event.target.result.continue()
