@@ -109,6 +109,14 @@ public:
         // for the function (and checked for on entry). Since we perform a new and
         // different allocation of temporaries, more registers may now be required.
         unsigned calleeRegisters = scoreBoard.highWatermark() + m_graph.m_parameterSlots;
+        size_t inlineCallFrameCount = codeBlock()->inlineCallFrames().size();
+        for (size_t i = 0; i < inlineCallFrameCount; i++) {
+            InlineCallFrame& inlineCallFrame = codeBlock()->inlineCallFrames()[i];
+            CodeBlock* codeBlock = jsCast<FunctionExecutable*>(inlineCallFrame.executable.get())->baselineCodeBlockFor(inlineCallFrame.isCall ? CodeForCall : CodeForConstruct);
+            unsigned requiredCalleeRegisters = inlineCallFrame.stackOffset + codeBlock->m_numCalleeRegisters;
+            if (requiredCalleeRegisters > calleeRegisters)
+                calleeRegisters = requiredCalleeRegisters;
+        }
         if ((unsigned)codeBlock()->m_numCalleeRegisters < calleeRegisters)
             codeBlock()->m_numCalleeRegisters = calleeRegisters;
 #if DFG_ENABLE(DEBUG_VERBOSE)
