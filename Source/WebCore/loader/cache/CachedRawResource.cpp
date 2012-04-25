@@ -72,6 +72,10 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
 {
     if (m_response.isNull() || !hasClient(c))
         return;
+    // The calls to the client can result in events running, potentially causing
+    // this resource to be evicted from the cache and all clients to be removed,
+    // so a protector is necessary.
+    CachedResourceHandle<CachedRawResource> protect(this);
     CachedRawResourceClient* client = static_cast<CachedRawResourceClient*>(c);
     client->responseReceived(this, m_response);
     if (!hasClient(c))
