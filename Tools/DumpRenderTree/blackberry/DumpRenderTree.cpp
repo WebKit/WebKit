@@ -77,6 +77,7 @@ bool waitForPolicy = false;
 // FIXME: Assuming LayoutTests has been copied to /developer/LayoutTests/
 static const char* const kSDCLayoutTestsURI = "file:///developer/LayoutTests/";
 static const char* httpTestSyntax = "http/tests/";
+static const char* localTestSyntax = "local/";
 static const char* httpPrefixURL = "http://127.0.0.1:8000/";
 
 using namespace std;
@@ -340,7 +341,10 @@ bool DumpRenderTree::isHTTPTest(const WTF::String& test)
 {
     if (test.length() < strlen(httpTestSyntax))
         return false;
-    return test.lower().substring(0, strlen(httpTestSyntax)) == httpTestSyntax;
+    WTF::String testLower = test.lower();
+    int lenHttpTestSyntax = strlen(httpTestSyntax);
+    return testLower.substring(0, lenHttpTestSyntax) == httpTestSyntax
+            && testLower.substring(lenHttpTestSyntax, strlen(localTestSyntax)) != localTestSyntax;
 }
 
 void DumpRenderTree::getTestsToRun()

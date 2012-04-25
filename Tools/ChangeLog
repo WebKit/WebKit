@@ -1,3 +1,19 @@
+2012-04-25  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Run tests in '/http/tests/local' with local URI
+        https://bugs.webkit.org/show_bug.cgi?id=84820
+
+        Reviewed by Nikolas Zimmermann.
+
+        Currently we run all tests under folder "/http/tests/" as HTTP
+        tests (http://...). However in WebKit ORWT and NRWT scripts, tests in
+        'http/tests/local' are run with local path (like '/developer/LayoutTests
+        /http/tests/local/absolute-url-strip-whitespace.html').
+        With this patch we can keep the same behaviour as other portings.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::isHTTPTest):
+
 2012-04-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] Reset DRT settings to their default values after a testcase was executed.
