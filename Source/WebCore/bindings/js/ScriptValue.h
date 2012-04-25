@@ -65,8 +65,6 @@ public:
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*, SerializationErrorMode = Throwing);
     static ScriptValue deserialize(ScriptState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
 
-    static ScriptValue undefined();
-
 #if ENABLE(INSPECTOR)
     PassRefPtr<InspectorValue> toInspectorValue(ScriptState*) const;
 #endif
