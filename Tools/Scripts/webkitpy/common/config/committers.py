@@ -165,7 +165,6 @@ contributors_who_are_not_committers = [
 
 committers_unable_to_review = [
     Committer("Aaron Boodman", "aa@chromium.org", "aboodman"),
-    Committer("Abhishek Arya", "inferno@chromium.org", "inferno-sec"),
     Committer("Adam Klein", "adamk@chromium.org", "aklein"),
     Committer("Adam Langley", "agl@chromium.org", "agl"),
     Committer("Ademar de Souza Reis Jr", ["ademar.reis@gmail.com", "ademar@webkit.org"], "ademar"),
@@ -386,6 +385,7 @@ committers_unable_to_review = [
 
 
 reviewers_list = [
+    Reviewer("Abhishek Arya", "inferno@chromium.org", "inferno-sec"),
     Reviewer("Ada Chan", "adachan@apple.com", "chanada"),
     Reviewer("Adam Barth", "abarth@webkit.org", "abarth"),
     Reviewer("Adam Roben", ["aroben@webkit.org", "aroben@apple.com"], "aroben"),

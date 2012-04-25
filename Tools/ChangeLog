@@ -1,3 +1,12 @@
+2012-04-25  Abhishek Arya  <inferno@chromium.org>
+
+        Mark myself as a reviewer.
+        https://bugs.webkit.org/show_bug.cgi?id=84902
+
+        Reviewed by Dimitri Glazkov.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-25  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt][NRWT] Run each DRT in it's own xvfb
