@@ -1,5 +1,0 @@
-DESKTOP NOTIFICATION: icon http://127.0.0.1:8000/notifications/resources/icon-requires-auth.php, title New E-mail, text Meet me tonight at 8!
-Sending notification that requires authentication. The load would fail, but the notification would be displayed.
-
-PASS: display event invoked.
-

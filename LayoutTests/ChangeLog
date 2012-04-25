@@ -1,5 +1,37 @@
 2012-04-24  Yael Aharon  <yael.aharon@nokia.com>
 
+        [Qt] Move notification icon download out of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=80700
+
+        Reviewed by Jian Li.
+
+        Remove http/tests/notifications after the code the tests were testing has been removed.
+
+        * http/tests/notifications: Removed.
+        * http/tests/notifications/icon-does-not-exist-expected.txt: Removed.
+        * http/tests/notifications/icon-does-not-exist.html: Removed.
+        * http/tests/notifications/icon-exists-cancel-expected.txt: Removed.
+        * http/tests/notifications/icon-exists-cancel.html: Removed.
+        * http/tests/notifications/icon-exists-expected.txt: Removed.
+        * http/tests/notifications/icon-exists-show-alert-during-load-expected.txt: Removed.
+        * http/tests/notifications/icon-exists-show-alert-during-load.html: Removed.
+        * http/tests/notifications/icon-exists.html: Removed.
+        * http/tests/notifications/icon-requires-auth-expected.txt: Removed.
+        * http/tests/notifications/icon-requires-auth.html: Removed.
+        * http/tests/notifications/resources: Removed.
+        * http/tests/notifications/resources/icon-exists.png: Removed.
+        * http/tests/notifications/resources/icon-requires-auth.php: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/Skipped:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
+2012-04-24  Yael Aharon  <yael.aharon@nokia.com>
+
         Unreviewed rebaseline after r115134.
 
         * platform/qt/fast/block/positioning/016-expected.txt:

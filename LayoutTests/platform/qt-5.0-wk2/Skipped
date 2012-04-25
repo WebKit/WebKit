@@ -180,9 +180,6 @@ svg/dynamic-updates
 # layoutTestController.ignoreDesktopNotificationPermissionRequests is unimplemented
 fast/notifications
 
-# layoutTestController.grantDesktopNotificationPermission is unimplemented
-http/tests/notifications
-
 # layoutTestController.setScrollbarPolicy is unimplemented
 fast/overflow/scrollbar-restored-and-then-locked.html
 

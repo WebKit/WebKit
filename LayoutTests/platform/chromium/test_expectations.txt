@@ -752,9 +752,6 @@ WONTFIX SKIP : media/video-document-types.html = TIMEOUT FAIL
 WONTFIX SKIP : media/video-element-other-namespace-crash.html = TIMEOUT
 WONTFIX SKIP : media/video-size-intrinsic-scale.html = TIMEOUT FAIL
 
-// Chromium does not use the icon loader in WebCore for loading notifications.
-WONTFIX SKIP : http/tests/notifications = FAIL
-
 // Doesn't apply to Chromium (QuickTime-specific behavior)
 WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 

@@ -763,7 +763,6 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 
 # The EFL port has no support for desktop notifications
 fast/notifications
-http/tests/notifications
 
 # The EFL port has no support for WebP decoding
 fast/images/webp-image-decoding.html
