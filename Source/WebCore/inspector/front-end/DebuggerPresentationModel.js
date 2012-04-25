@@ -47,8 +47,7 @@ WebInspector.DebuggerPresentationModel = function()
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.CallFrameSelected, this._callFrameSelected, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
@@ -60,14 +59,7 @@ WebInspector.DebuggerPresentationModel = function()
 WebInspector.DebuggerPresentationModel.Events = {
     UISourceCodeAdded: "source-file-added",
     UISourceCodeReplaced: "source-file-replaced",
-    UISourceCodeRemoved: "source-file-removed",
-    DebuggerPaused: "debugger-paused",
-    DebuggerResumed: "debugger-resumed",
-    DebuggerReset: "debugger-reset",
-    CallFrameSelected: "call-frame-selected",
-    ConsoleCommandEvaluatedInSelectedCallFrame: "console-command-evaluated-in-selected-call-frame",
-    ExecutionLineChanged: "execution-line-changed",
-    BreakpointsActiveStateChanged: "breakpoints-active-state-changed"
+    UISourceCodeRemoved: "source-file-removed"
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
@@ -82,15 +74,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
     createLinkifier: function(formatter)
     {
         return new WebInspector.DebuggerPresentationModel.Linkifier(this, formatter);
-    },
-
-    /**
-     * @param {WebInspector.PresentationCallFrame} callFrame
-     * @return {WebInspector.DebuggerPresentationModel.CallFramePlacard}
-     */
-    createPlacard: function(callFrame)
-    {
-        return new WebInspector.DebuggerPresentationModel.CallFramePlacard(callFrame, this);
     },
 
     /**
@@ -116,12 +99,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
     /**
      * @param {DebuggerAgent.Location} rawLocation
      * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
-     * @return {WebInspector.Script.Location}
+     * @return {WebInspector.LiveLocation}
      */
     createLiveLocation: function(rawLocation, updateDelegate)
     {
         var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
-        return script.createLocation(rawLocation, updateDelegate);
+        return script.createLiveLocation(rawLocation, updateDelegate);
     },
 
     /**
@@ -132,6 +115,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var script = /** @type {WebInspector.Script} */ event.data;
         this._scriptMapping.addScript(script);
         this._addPendingConsoleMessagesToScript(script);
+
+        window.myParseds = window.myParseds || [];
+        window.myParseds.push(script.sourceURL);
     },
 
     /**
@@ -140,6 +126,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _failedToParseScriptSource: function(event)
     {
         this._parsedScriptSource(event);
+    },
+
+    _callFrameSelected: function(event)
+    {
+        var callFrame = /** @type {WebInspector.DebuggerModel.CallFrame} */ event.data;
+        this._scriptMapping.forceUpdateSourceMapping(callFrame.location);
     },
 
     /**
@@ -209,9 +201,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 resource.addRevision(newSource);
 
             uiSourceCode.contentChanged(newSource);
-
-            if (WebInspector.debuggerModel.callFrames)
-                this._debuggerPaused();
         }
         WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
     },
@@ -317,141 +306,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._breakpointManager.removeAllBreakpoints();
     },
 
-    _debuggerPaused: function()
-    {
-        var callFrames = WebInspector.debuggerModel.callFrames;
-        this._presentationCallFrames = [];
-        for (var i = 0; i < callFrames.length; ++i) {
-            var callFrame = callFrames[i];
-            if (WebInspector.debuggerModel.scriptForId(callFrame.location.scriptId))
-                this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this));
-        }
-        var details = WebInspector.debuggerModel.debuggerPausedDetails();
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, { callFrames: this._presentationCallFrames, details: details });
-        this.selectedCallFrame = this._presentationCallFrames[0];
-    },
-
-    _debuggerResumed: function()
-    {
-        this._presentationCallFrames = [];
-        this.selectedCallFrame = null;
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed);
-    },
-
-    set selectedCallFrame(callFrame)
-    {
-        if (this._executionLineLiveLocation)
-            this._executionLineLiveLocation.dispose();
-        delete this._executionLineLiveLocation;
-
-        this._selectedCallFrame = callFrame;
-        if (!this._selectedCallFrame)
-            return;
-
-        this._scriptMapping.forceUpdateSourceMapping(callFrame._callFrame.location);
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
-
-        function updateExecutionLine(uiLocation)
-        {
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, uiLocation);
-        }
-        this._executionLineLiveLocation = this.createLiveLocation(callFrame._callFrame.location, updateExecutionLine.bind(this));
-    },
-
-    /**
-     * @return {?WebInspector.PresentationCallFrame}
-     */
-    get selectedCallFrame()
-    {
-        return this._selectedCallFrame;
-    },
-
-    /**
-     * @param {string} code
-     * @param {string} objectGroup
-     * @param {boolean} includeCommandLineAPI
-     * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
-     * @param {boolean} returnByValue
-     * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
-     */
-    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
-    {
-        /**
-         * @param {?RuntimeAgent.RemoteObject} result
-         * @param {boolean=} wasThrown
-         */
-        function didEvaluate(result, wasThrown)
-        {
-            if (returnByValue)
-                callback(null, !!wasThrown, wasThrown ? null : result);
-            else
-                callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
-
-            if (objectGroup === "console")
-                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame);
-        }
-
-        this.selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, didEvaluate.bind(this));
-    },
-
-    /**
-     * @param {function(Object)} callback
-     */
-    getSelectedCallFrameVariables: function(callback)
-    {
-        var result = { this: true };
-
-        var selectedCallFrame = this.selectedCallFrame;
-        if (!selectedCallFrame)
-            callback(result);
-
-        var pendingRequests = 0;
-
-        function propertiesCollected(properties)
-        {
-            for (var i = 0; properties && i < properties.length; ++i)
-                result[properties[i].name] = true;
-            if (--pendingRequests == 0)
-                callback(result);
-        }
-
-        for (var i = 0; i < selectedCallFrame.scopeChain.length; ++i) {
-            var scope = selectedCallFrame.scopeChain[i];
-            var object = WebInspector.RemoteObject.fromPayload(scope.object);
-            pendingRequests++;
-            object.getAllProperties(propertiesCollected);
-        }
-    },
-
     _debuggerReset: function()
     {
         this._scriptMapping.reset();
-        this._presentationCallFrames = [];
-        this._selectedCallFrame = null;
         this._breakpointManager.debuggerReset();
         this._pendingConsoleMessages = {};
         this._consoleMessageLiveLocations = [];
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerReset);
-    },
-
-    /**
-     * @param {boolean} active
-     */
-    setBreakpointsActive: function(active)
-    {
-        if (this._breakpointsActive === active)
-            return;
-        this._breakpointsActive = active;
-        DebuggerAgent.setBreakpointsActive(active);
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointsActiveStateChanged, active);
-    },
-
-    /**
-     * @return {boolean}
-     */
-    breakpointsActive: function()
-    {
-        return this._breakpointsActive;
     }
 }
 
@@ -469,120 +329,6 @@ WebInspector.PresentationConsoleMessage = function(uiSourceCode, lineNumber, ori
     this.lineNumber = lineNumber;
     this.originalMessage = originalMessage;
 }
-
-/**
- * @constructor
- * @param {DebuggerAgent.CallFrame} callFrame
- * @param {number} index
- * @param {WebInspector.DebuggerPresentationModel} model
- */
-WebInspector.PresentationCallFrame = function(callFrame, index, model)
-{
-    this._callFrame = callFrame;
-    this._index = index;
-    this._model = model;
-}
-
-WebInspector.PresentationCallFrame.prototype = {
-    /**
-     * @return {string}
-     */
-    get type()
-    {
-        return this._callFrame.type;
-    },
-
-    /**
-     * @return {Array.<DebuggerAgent.Scope>}
-     */
-    get scopeChain()
-    {
-        return this._callFrame.scopeChain;
-    },
-
-    /**
-     * @return {RuntimeAgent.RemoteObject}
-     */
-    get this()
-    {
-        return this._callFrame.this;
-    },
-
-    /**
-     * @return {number}
-     */
-    get index()
-    {
-        return this._index;
-    },
-
-    /**
-     * @param {string} code
-     * @param {string} objectGroup
-     * @param {boolean} includeCommandLineAPI
-     * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
-     * @param {boolean} returnByValue
-     * @param {function(?RuntimeAgent.RemoteObject, boolean=)=} callback
-     */
-    evaluate: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
-    {
-        /**
-         * @this {WebInspector.PresentationCallFrame}
-         * @param {?Protocol.Error} error
-         * @param {RuntimeAgent.RemoteObject} result
-         * @param {boolean=} wasThrown
-         */
-        function didEvaluateOnCallFrame(error, result, wasThrown)
-        {
-            if (error) {
-                console.error(error);
-                callback(null, false);
-                return;
-            }
-            callback(result, wasThrown);
-        }
-        DebuggerAgent.evaluateOnCallFrame(this._callFrame.callFrameId, code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, didEvaluateOnCallFrame.bind(this));
-    },
-
-    /**
-     * @param {function(WebInspector.UILocation)} callback
-     */
-    uiLocation: function(callback)
-    {
-        function locationUpdated(uiLocation)
-        {
-            callback(uiLocation);
-            return true;
-        }
-        this._model.createLiveLocation(this._callFrame.location, locationUpdated.bind(this));
-    }
-}
-
-/**
- * @constructor
- * @extends {WebInspector.Placard}
- * @param {WebInspector.PresentationCallFrame} callFrame
- * @param {WebInspector.DebuggerPresentationModel} model
- */
-WebInspector.DebuggerPresentationModel.CallFramePlacard = function(callFrame, model)
-{
-    WebInspector.Placard.call(this, callFrame._callFrame.functionName || WebInspector.UIString("(anonymous function)"), "");
-    this._liveLocation = model.createLiveLocation(callFrame._callFrame.location, this._update.bind(this));
-}
-
-WebInspector.DebuggerPresentationModel.CallFramePlacard.prototype = {
-    discard: function()
-    {
-        this._liveLocation.dispose();
-    },
-
-    _update: function(uiLocation)
-    {
-        this.subtitle = WebInspector.displayNameForURL(uiLocation.uiSourceCode.url) + ":" + (uiLocation.lineNumber + 1);
-    }
-}
-
-WebInspector.DebuggerPresentationModel.CallFramePlacard.prototype.__proto__ = WebInspector.Placard.prototype;
 
 /**
  * @constructor

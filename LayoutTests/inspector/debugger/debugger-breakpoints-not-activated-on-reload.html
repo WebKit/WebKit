@@ -37,7 +37,7 @@ var test = function()
     function step4()
     {
         InspectorTest.addResult("Main resource was shown.");
-        if (!WebInspector.debuggerPresentationModel.breakpointsActive())
+        if (!WebInspector.debuggerModel.breakpointsActive())
             InspectorTest.addResult("Breakpoints are deactivated.");
         else
             InspectorTest.addResult("Error: breakpoints are activated.");

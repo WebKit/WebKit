@@ -124,7 +124,7 @@ WebInspector.JavaScriptSource.prototype = {
     setBreakpoint: function(lineNumber, condition, enabled)
     {
         this._breakpointManager.setBreakpoint(this, lineNumber, condition, enabled);
-        this._model.setBreakpointsActive(true);
+        WebInspector.debuggerModel.setBreakpointsActive(true);
     },
 
     /**

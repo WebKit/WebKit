@@ -14,13 +14,13 @@ var test = function()
     InspectorTest.runDebuggerTestSuite([
         function testCallStackPlacardsDiscarded(next)
         {
-            WebInspector.debuggerPresentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, didPause, this);
+            WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, didPause, this);
             var previousCount = undefined;
             function didPause(event)
             {
                 InspectorTest.addResult("Received DebuggerPaused event.");
                 var callFrame = event.data.callFrames[0];
-                InspectorTest.addResult("Function name: " + callFrame._callFrame.functionName);
+                InspectorTest.addResult("Function name: " + callFrame.functionName);
                 var count = liveLocationsCount();
                 if (previousCount !== undefined && count !== previousCount)
                     InspectorTest.addResult("FAILED: Live locations count has changed!");
@@ -54,10 +54,10 @@ var test = function()
 
     function liveLocationsCount()
     {
-        var locations = WebInspector.debuggerPresentationModel._scriptMapping._liveLocationsForScriptId;
         var count = 0;
-        for (id in locations)
-            count += locations[id].length;
+        var scripts = WebInspector.debuggerModel.scripts;
+        for (var id in scripts)
+            count += scripts[id]._locations.length;
         return count;
     }
 }

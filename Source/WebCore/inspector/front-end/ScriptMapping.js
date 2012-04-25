@@ -44,6 +44,19 @@ WebInspector.UILocation = function(uiSourceCode, lineNumber, columnNumber)
 /**
  * @interface
  */
+WebInspector.LiveLocation = function()
+{
+}
+
+WebInspector.LiveLocation.prototype = {
+    update: function(rawLocation) { },
+
+    dispose: function() { }
+}
+
+/**
+ * @interface
+ */
 WebInspector.SourceMapping = function()
 {
 }

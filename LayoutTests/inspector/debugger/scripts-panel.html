@@ -27,7 +27,7 @@ function test()
         model._reset = function(preservedItems)
         {
             uiSourceCodes = preservedItems || [];
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, null);
+            WebInspector.debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.GlobalObjectCleared);
         }
         model._replaceUISourceCodes = function(oldUISourceCodeList, newUISourceCodeList)
         {

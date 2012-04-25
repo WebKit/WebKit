@@ -13,6 +13,7 @@ function f()
 
 Running: testLiveEditWhenPaused
 Script execution paused.
+Script execution paused.
 Script execution resumed.
 
 Running: testNoCrashWhenOnlyOneFunctionOnStack

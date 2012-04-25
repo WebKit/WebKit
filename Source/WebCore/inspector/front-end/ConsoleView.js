@@ -372,8 +372,8 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
-        if (!expressionString && WebInspector.debuggerPresentationModel.selectedCallFrame)
-            WebInspector.debuggerPresentationModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
+        if (!expressionString && WebInspector.debuggerModel.selectedCallFrame())
+            WebInspector.debuggerModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
         else
             this.evalInInspectedWindow(expressionString, "completion", true, true, false, evaluated.bind(this));
 
@@ -592,8 +592,8 @@ WebInspector.ConsoleView.prototype = {
      */
     evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
     {
-        if (WebInspector.debuggerPresentationModel.selectedCallFrame) {
-            WebInspector.debuggerPresentationModel.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback);
+        if (WebInspector.debuggerModel.selectedCallFrame()) {
+            WebInspector.debuggerModel.evaluateOnSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback);
             return;
         }
 

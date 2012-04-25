@@ -35,11 +35,11 @@ var test = function()
 
     function step3(callFrames)
     {
-        WebInspector.debuggerPresentationModel.selectedCallFrame = WebInspector.debuggerPresentationModel._presentationCallFrames[1];
+        WebInspector.debuggerModel.setSelectedCallFrame(WebInspector.debuggerModel.debuggerPausedDetails().callFrames[1]);
         panel._toggleFormatSource();
-        InspectorTest.assertEquals("testFunction", WebInspector.debuggerPresentationModel.selectedCallFrame._callFrame.functionName);
+        InspectorTest.assertEquals("testFunction", WebInspector.debuggerModel.selectedCallFrame().functionName);
         panel._toggleFormatSource();
-        InspectorTest.assertEquals("testFunction", WebInspector.debuggerPresentationModel.selectedCallFrame._callFrame.functionName);
+        InspectorTest.assertEquals("testFunction", WebInspector.debuggerModel.selectedCallFrame().functionName);
         InspectorTest.completeDebuggerTest();
     }
 }

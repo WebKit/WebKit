@@ -32,10 +32,10 @@ var test = function()
                 currentSourceFrame = sourceFrame;
                 InspectorTest.addResult("Script source was shown.");
                 InspectorTest.setBreakpoint(currentSourceFrame, 16, "", true);
-                InspectorTest.runTestFunctionAndWaitUntilPaused(didPaused);
+                InspectorTest.runTestFunctionAndWaitUntilPaused(didPause);
             }
 
-            function didPaused(callFrames)
+            function didPause(callFrames)
             {
                 InspectorTest.addResult("Script execution paused.");
                 InspectorTest.captureStackTrace(callFrames);
@@ -65,11 +65,11 @@ var test = function()
             {
                 currentSourceFrame = sourceFrame;
                 InspectorTest.setBreakpoint(currentSourceFrame, 6, "", true);
-                InspectorTest.waitUntilPaused(didPaused);
+                InspectorTest.waitUntilPaused(didPause);
                 InspectorTest.evaluateInPage("setTimeout(oneLineTestFunction, 0)");
             }
 
-            function didPaused(callFrames)
+            function didPause(callFrames)
             {
                 InspectorTest.captureStackTrace(callFrames);
                 InspectorTest.removeBreakpoint(currentSourceFrame, 6);
@@ -85,11 +85,11 @@ var test = function()
             {
                 currentSourceFrame = sourceFrame;
                 InspectorTest.setBreakpoint(currentSourceFrame, 10, "", true);
-                InspectorTest.waitUntilPaused(didPaused);
+                InspectorTest.waitUntilPaused(didPause);
                 InspectorTest.evaluateInPage("setTimeout(oneLineTestFunction2, 0)");
             }
 
-            function didPaused(callFrames)
+            function didPause(callFrames)
             {
                 InspectorTest.captureStackTrace(callFrames);
                 InspectorTest.removeBreakpoint(currentSourceFrame, 10);

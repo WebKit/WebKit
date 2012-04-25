@@ -27,10 +27,10 @@
  * @constructor
  * @extends {WebInspector.SidebarPane}
  */
-WebInspector.CallStackSidebarPane = function(model)
+WebInspector.CallStackSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
-    this._model = model;
+    this._model = WebInspector.debuggerModel;
 
     this.bodyElement.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 }
@@ -39,11 +39,6 @@ WebInspector.CallStackSidebarPane.prototype = {
     update: function(callFrames)
     {
         this.bodyElement.removeChildren();
-
-        if (this.placards) {
-            for (var i = 0; i < this.placards.length; ++i)
-                this.placards[i].discard();
-        }
         this.placards = [];
 
         if (!callFrames) {
@@ -56,19 +51,18 @@ WebInspector.CallStackSidebarPane.prototype = {
 
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
-            var placard = this._model.createPlacard(callFrame);
-            placard.callFrame = callFrame;
+            var placard = new WebInspector.CallStackSidebarPane.Placard(callFrame);
             placard.element.addEventListener("click", this._placardSelected.bind(this, placard), false);
             this.placards.push(placard);
             this.bodyElement.appendChild(placard.element);
         }
     },
 
-    set selectedCallFrame(x)
+    setSelectedCallFrame: function(x)
     {
         for (var i = 0; i < this.placards.length; ++i) {
             var placard = this.placards[i];
-            placard.selected = (placard.callFrame === x);
+            placard.selected = (placard._callFrame === x);
         }
     },
 
@@ -97,11 +91,11 @@ WebInspector.CallStackSidebarPane.prototype = {
 
     _selectedCallFrameIndex: function()
     {
-        if (!this._model.selectedCallFrame)
+        if (!this._model.selectedCallFrame())
             return -1;
         for (var i = 0; i < this.placards.length; ++i) {
             var placard = this.placards[i];
-            if (placard.callFrame === this._model.selectedCallFrame)
+            if (placard._callFrame === this._model.selectedCallFrame())
                 return i;
         }
         return -1;
@@ -109,7 +103,7 @@ WebInspector.CallStackSidebarPane.prototype = {
 
     _placardSelected: function(placard)
     {
-        this._model.selectedCallFrame = placard.callFrame;
+        this._model.setSelectedCallFrame(placard._callFrame);
     },
 
     _contextMenu: function(event)
@@ -156,3 +150,24 @@ WebInspector.CallStackSidebarPane.prototype = {
 }
 
 WebInspector.CallStackSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.Placard}
+ * @param {WebInspector.DebuggerModel.CallFrame} callFrame
+ */
+WebInspector.CallStackSidebarPane.Placard = function(callFrame)
+{
+    WebInspector.Placard.call(this, callFrame.functionName || WebInspector.UIString("(anonymous function)"), "");
+    callFrame.createLiveLocation(this._update.bind(this));
+    this._callFrame = callFrame;
+}
+
+WebInspector.CallStackSidebarPane.Placard.prototype = {
+    _update: function(uiLocation)
+    {
+        this.subtitle = WebInspector.displayNameForURL(uiLocation.uiSourceCode.url) + ":" + (uiLocation.lineNumber + 1);
+    }
+}
+
+WebInspector.CallStackSidebarPane.Placard.prototype.__proto__ = WebInspector.Placard.prototype;

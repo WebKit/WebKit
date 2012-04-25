@@ -279,7 +279,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 this._highlightElement.addStyleClass("source-frame-eval-expression");
         }
 
-        var selectedCallFrame = this._model.selectedCallFrame;
+        var selectedCallFrame = WebInspector.debuggerModel.selectedCallFrame();
         selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, true, false, showObjectPopover.bind(this));
     },
 

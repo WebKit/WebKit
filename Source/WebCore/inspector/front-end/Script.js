@@ -148,7 +148,7 @@ WebInspector.Script.prototype = {
     {
         this._sourceMapping = sourceMapping;
         for (var i = 0; i < this._locations.length; ++i)
-            this._locations[i]._update();
+            this._locations[i].update();
     },
 
     /**
@@ -156,17 +156,19 @@ WebInspector.Script.prototype = {
      * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
      * @return {WebInspector.Script.Location}
      */
-    createLocation: function(rawLocation, updateDelegate)
+    createLiveLocation: function(rawLocation, updateDelegate)
     {
+        console.assert(rawLocation.scriptId === this.scriptId);
         var location = new WebInspector.Script.Location(this, rawLocation, updateDelegate);
         this._locations.push(location);
-        location._update();
+        location.update();
         return location;
     }
 }
 
 /**
  * @constructor
+ * @implements {WebInspector.LiveLocation}
  * @param {WebInspector.Script} script
  * @param {DebuggerAgent.Location} rawLocation
  * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
@@ -184,7 +186,7 @@ WebInspector.Script.Location.prototype = {
         this._script._locations.remove(this);
     },
 
-    _update: function()
+    update: function()
     {
         if (!this._script._sourceMapping)
             return;

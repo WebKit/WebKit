@@ -88,7 +88,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     this.sidebarPanes = {};
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
-    this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane(this._presentationModel);
+    this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel, this._showSourceLine.bind(this));
     if (Capabilities.nativeInstrumentationEnabled) {
@@ -156,17 +156,17 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._debuggerWasDisabled, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.CallFrameSelected, this._callFrameSelected, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame, this._consoleCommandEvaluatedInSelectedCallFrame, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._reset.bind(this, false));
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed, this._debuggerResumed, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame, this._consoleCommandEvaluatedInSelectedCallFrame, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerReset, this._reset.bind(this, false));
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
     var enableDebugger = !Capabilities.debuggerCausesRecompilation || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
@@ -316,13 +316,12 @@ WebInspector.ScriptsPanel.prototype = {
 
     _consoleCommandEvaluatedInSelectedCallFrame: function(event)
     {
-        this.sidebarPanes.scopechain.update(this._presentationModel.selectedCallFrame);
+        this.sidebarPanes.scopechain.update(WebInspector.debuggerModel.selectedCallFrame());
     },
 
     _debuggerPaused: function(event)
     {
-        var callFrames = event.data.callFrames;
-        var details = event.data.details;
+        var details = /** @type {WebInspector.DebuggerPausedDetails} */ event.data;
 
         this._paused = true;
         this._waitingToPause = false;
@@ -331,7 +330,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateDebuggerButtons();
 
         WebInspector.inspectorView.setCurrentPanel(this);
-        this.sidebarPanes.callstack.update(callFrames);
+        this.sidebarPanes.callstack.update(details.callFrames);
 
         if (details.reason === WebInspector.DebuggerModel.BreakReason.DOM) {
             this.sidebarPanes.domBreakpoints.highlightBreakpoint(details.auxData);
@@ -358,7 +357,7 @@ WebInspector.ScriptsPanel.prototype = {
                 this.sidebarPanes.jsBreakpoints.highlightBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber);
                 this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a JavaScript breakpoint."));
             }
-            callFrames[0].uiLocation(didGetUILocation.bind(this));
+            details.callFrames[0].createLiveLocation(didGetUILocation.bind(this));
         }
 
         window.focus();
@@ -610,8 +609,8 @@ WebInspector.ScriptsPanel.prototype = {
 
         this.sidebarPanes.scopechain.update(callFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
-        this.sidebarPanes.callstack.selectedCallFrame = callFrame;
-        callFrame.uiLocation(this._revealExecutionLine.bind(this));
+        this.sidebarPanes.callstack.setSelectedCallFrame(callFrame);
+        callFrame.createLiveLocation(this._revealExecutionLine.bind(this));
     },
 
     _editorClosed: function(event)
@@ -817,7 +816,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _toggleBreakpointsClicked: function(event)
     {
-        this._presentationModel.setBreakpointsActive(!this._presentationModel.breakpointsActive());
+        WebInspector.debuggerModel.setBreakpointsActive(!WebInspector.debuggerModel.breakpointsActive());
     },
 
     _breakpointsActiveStateChanged: function(event)
