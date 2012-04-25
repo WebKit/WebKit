@@ -45,7 +45,7 @@ function test()
                 {
                     var buttonsNode = InspectorTest.findButtonsNode(row);
                     InspectorTest.assertEquals(true, !!buttonsNode, "no buttons node found!");
-                    InspectorTest.clickShowMoreButton("showNext", buttonsNode, step4);
+                    InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
                 }
             }
 
@@ -60,12 +60,12 @@ function test()
                 var bInstanceRow = InspectorTest.findRow2(deletedNodeMatcher, row);
                 InspectorTest.assertEquals(true, !!bInstanceRow, "\"B\" instance row");
                 var buttonsNode = InspectorTest.findButtonsNode(row, bInstanceRow);
-                InspectorTest.assertEquals(true, !!buttonsNode, "no buttons node found!");
-                InspectorTest.clickShowMoreButton("showNext", buttonsNode, step5);
+                InspectorTest.assertEquals(false, !!buttonsNode, "buttons node found!");
+                step5();
             }
 
             var nodeCount;
-            function step5(row)
+            function step5()
             {
                 nodeCount = InspectorTest.columnContents(columns[0]).length;
                 InspectorTest.assertEquals(true, nodeCount > 0, "nodeCount > 0");

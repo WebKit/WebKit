@@ -37,46 +37,37 @@ function test()
             }
 
             var countA;
+            var countB;
             function step3(row)
             {
-                countA = row.data["addedCount"];
+                countA = row._addedCount;
                 InspectorTest.assertEquals(true, countA > 0, "countA > 0");
+                countB = row._removedCount;
+                InspectorTest.assertEquals(true, countB > 0, "countB > 0");
+
                 var buttonsNode = InspectorTest.findButtonsNode(row);
                 InspectorTest.assertEquals(true, !!buttonsNode, "buttons node (added)");
                 var words = buttonsNode.showAll.textContent.split(" ");
                 for (var i = 0; i < words.length; ++i) {
                     var maybeNumber = parseInt(words[i], 10);
                     if (!isNaN(maybeNumber))
-                        InspectorTest.assertEquals(countA, words[i], buttonsNode.showAll.textContent);
+                        InspectorTest.assertEquals(countA + countB, maybeNumber, buttonsNode.showAll.textContent);
                 }
                 InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
             }
 
-            var countB;
             function step4(row)
             {
                 var rowsShown = InspectorTest.countDataRows(row, function(node) { return node.data.addedCount; });
-                InspectorTest.assertEquals(countA, rowsShown.toString(), "after showAll click 1");
+                InspectorTest.assertEquals(countA, rowsShown, "after showAll click 1");
 
-                countB = row.data["removedCount"];
+                countB = row._removedCount;
                 InspectorTest.assertEquals(true, countB > 0, "countB > 0");
                 var buttonsNode = InspectorTest.findButtonsNode(row);
-                InspectorTest.assertEquals(true, !!buttonsNode, "buttons node (deleted)");
-                var words = buttonsNode.showAll.textContent.split(" ");
-                for (var i = 0; i < words.length; ++i) {
-                    var maybeNumber = parseInt(words[i], 10);
-                    if (!isNaN(maybeNumber))
-                        InspectorTest.assertEquals(countB, words[i], buttonsNode.showAll.textContent);
-                }
-                InspectorTest.clickShowMoreButton("showAll", buttonsNode, step5);
-            }
+                InspectorTest.assertEquals(false, !!buttonsNode, "buttons node (deleted)");
 
-            function step5(row)
-            {
-                var rowsShown = InspectorTest.countDataRows(row, function(node) { return node.data.removedCount; });
-                InspectorTest.assertEquals(countB, rowsShown.toString(), "after showAll click 2");
-                var buttonsNode = InspectorTest.findButtonsNode(row);
-                InspectorTest.assertEquals(false, !!buttonsNode, "buttons node found after all rows shown");
+                var deletedRowsShown = InspectorTest.countDataRows(row, function(node) { return node.data.removedCount; });
+                InspectorTest.assertEquals(countB, deletedRowsShown, "deleted rows shown");
                 setTimeout(next, 0);
             }
         }

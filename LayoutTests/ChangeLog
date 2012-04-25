@@ -1,3 +1,18 @@
+2012-04-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: use composite node provider for diff nodes in heap profiler
+        https://bugs.webkit.org/show_bug.cgi?id=84849
+
+        Inroduced HeapSnapshotDiffNodesProvider which is basically a composite provider
+        combining providers for added and deleted nodes. This allowed to remove custom
+        implementation of HeapSnapshotGridNode.prototype.populateChildren.
+
+       Reviewed by Pavel Feldman.
+
+        * inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html:
+        * inspector/profiler/heap-snapshot-comparison-show-all.html:
+        * inspector/profiler/heap-snapshot-comparison-shown-node-count-preserved-when-sorting.html:
+
 2012-04-25  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Gardening. Skipped a failing test.

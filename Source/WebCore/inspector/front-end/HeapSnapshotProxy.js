@@ -491,9 +491,9 @@ WebInspector.HeapSnapshotProviderProxy.prototype = {
         this.callGetter(callback, "isEmpty");
     },
 
-    serializeNextItems: function(count, callback)
+    serializeSubsequentItems: function(count, callback)
     {
-        this.callMethod(callback, "serializeNextItems", count);
+        this.callMethod(callback, "serializeSubsequentItems", count);
     },
 
     sortAndRewind: function(comparator, callback)

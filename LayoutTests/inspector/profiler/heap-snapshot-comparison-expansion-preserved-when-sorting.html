@@ -38,17 +38,8 @@ function test()
                 {
                     var buttonsNode = InspectorTest.findButtonsNode(row);
                     InspectorTest.assertEquals(true, !!buttonsNode, "no buttons node found!");
-                    InspectorTest.clickShowMoreButton("showAll", buttonsNode, step3);
+                    InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
                 }
-            }
-
-            function step3()
-            {
-                var row = InspectorTest.findRow("object", "B");
-                InspectorTest.assertEquals(true, !!row, "\"B\" row");
-                var buttonsNode = InspectorTest.findButtonsNode(row);
-                InspectorTest.assertEquals(true, !!buttonsNode, "no buttons node found!");
-                InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
             }
 
             var columns;

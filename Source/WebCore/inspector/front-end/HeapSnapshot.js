@@ -1757,7 +1757,7 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype = {
         ++this._position;
     },
 
-    serializeNextItems: function(count)
+    serializeSubsequentItems: function(count)
     {
         this._createIterationOrder();
         var result = new Array(count);
@@ -1917,10 +1917,8 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
         var nodeA = new WebInspector.HeapSnapshotNode(this.snapshot);
         var nodeB = new WebInspector.HeapSnapshotNode(this.snapshot);
 
-        function sortByNodeField(fieldName, ascending, indexA, indexB)
+        function sortByNodeField(fieldName, ascending)
         {
-            nodeA.nodeIndex = indexA;
-            nodeB.nodeIndex = indexB;
             var valueA = nodeA[fieldName];
             var valueB = nodeB[fieldName];
             var result = valueA < valueB ? -1 : (valueA > valueB ? 1 : 0);
@@ -1928,9 +1926,11 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
         }
 
         function sortByComparator(indexA, indexB) {
-            var result = sortByNodeField(fieldName1, ascending1, indexA, indexB);
+            nodeA.nodeIndex = indexA;
+            nodeB.nodeIndex = indexB;
+            var result = sortByNodeField(fieldName1, ascending1);
             if (result === 0)
-                result = sortByNodeField(fieldName2, ascending2, indexA, indexB);
+                result = sortByNodeField(fieldName2, ascending2);
             return result;
         }
 

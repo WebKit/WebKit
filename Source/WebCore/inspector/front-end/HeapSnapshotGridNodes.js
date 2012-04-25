@@ -33,16 +33,17 @@
  * @extends {WebInspector.DataGridNode}
  * @param {WebInspector.HeapSnapshotSortableDataGrid} tree
  * @param {boolean} hasChildren
- * @param {WebInspector.HeapSnapshotProviderProxy|WebInspector.HeapSnapshotIteratorsTuple} provider
+ * @param {WebInspector.HeapSnapshotProviderProxy|WebInspector.HeapSnapshotDiffNodesProvider} provider
  */
 WebInspector.HeapSnapshotGridNode = function(tree, hasChildren, provider)
 {
     WebInspector.DataGridNode.call(this, null, hasChildren);
     /**
-     * @type {WebInspector.HeapSnapshotProviderProxy|WebInspector.HeapSnapshotIteratorsTuple}
+     * @type {WebInspector.HeapSnapshotProviderProxy|WebInspector.HeapSnapshotDiffNodesProvider}
      */
     this._provider = provider;
     this._dataGrid = tree;
+    this._instanceCount = 0;
     this.addEventListener("populate", this._populate, this);
 }
 
@@ -107,7 +108,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         this.removeEventListener("populate", this._populate, this);
         function sorted(ignored)
         {
-            this.populateChildren();
+            this._populateChildren();
         }
         this._provider.sortAndRewind(this.comparator(), sorted.bind(this));
     },
@@ -116,15 +117,8 @@ WebInspector.HeapSnapshotGridNode.prototype = {
      * @param {?number} howMany
      * @param {?number} atIndex
      */
-    populateChildren: function(provider, howMany, atIndex, afterPopulate, suppressNotifyAboutCompletion)
+    _populateChildren: function(howMany, atIndex, afterPopulate)
     {
-        if (!howMany && provider) {
-            howMany = provider.instanceCount;
-            provider.instanceCount = 0;
-        }
-        provider = provider || this._provider;
-        if (!("instanceCount" in provider))
-            provider.instanceCount = 0;
         howMany = howMany || this._dataGrid.defaultPopulateCount();
         atIndex = atIndex || this.children.length;
         var haveSavedChildren = !!this._savedChildren;
@@ -142,7 +136,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             if (part >= howMany)
                 return;
             part += this._dataGrid.defaultPopulateCount();
-            provider.serializeNextItems(this._dataGrid.defaultPopulateCount(), childrenRetrieved.bind(this));
+            this._provider.serializeSubsequentItems(this._dataGrid.defaultPopulateCount(), childrenRetrieved.bind(this));
         }
         function childrenRetrieved(items)
         {
@@ -156,25 +150,23 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                         continue;
                     }
                 }
-                this.insertChild(this._createChildNode(item, provider, this), atIndex++);
+                this.insertChild(this._createChildNode(item), atIndex++);
             }
-            provider.instanceCount += items.length;
+            this._instanceCount += items.length;
             if (part < howMany) {
                 setTimeout(callSerialize.bind(this), 0);
                 return;
             }
 
             if (items.hasNext)
-                this.insertChild(new WebInspector.ShowMoreDataGridNode(this.populateChildren.bind(this, provider), this._dataGrid.defaultPopulateCount(), length), atIndex++);
+                this.insertChild(new WebInspector.ShowMoreDataGridNode(this._populateChildren.bind(this), this._dataGrid.defaultPopulateCount(), length), atIndex++);
             if (afterPopulate)
                 afterPopulate();
-            if (!suppressNotifyAboutCompletion) {
-                function notify()
-                {
-                    this.dispatchEventToListeners("populate complete");
-                }
-                setTimeout(notify.bind(this), 0);
+            function notify()
+            {
+                this.dispatchEventToListeners("populate complete");
             }
+            setTimeout(notify.bind(this), 0);
         }
         setTimeout(callSerialize.bind(this), 0);
     },
@@ -210,7 +202,9 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 }
                 this._dataGrid.recursiveSortingLeave();
             }
-            this.populateChildren(this._provider, null, null, afterPopulate.bind(this));
+            var instanceCount = this._instanceCount;
+            this._instanceCount = 0;
+            this._populateChildren(instanceCount, null, afterPopulate.bind(this));
         }
         this._provider.sortAndRewind(this.comparator(), afterSort.bind(this));
     }
@@ -689,33 +683,78 @@ WebInspector.HeapSnapshotConstructorNode.prototype.__proto__ = WebInspector.Heap
 
 /**
  * @constructor
- * @param {WebInspector.HeapSnapshotProviderProxy} it1
- * @param {WebInspector.HeapSnapshotProviderProxy} it2
- * @param {WebInspector.HeapSnapshotProxy} baseSnapshot
- * @param {WebInspector.HeapSnapshotProxy} snapshot
+ * @extends {WebInspector.HeapSnapshotProviderProxy}
+ * @param {WebInspector.HeapSnapshotProviderProxy} addedNodesProvider
+ * @param {WebInspector.HeapSnapshotProviderProxy} deletedNodesProvider
  */
-WebInspector.HeapSnapshotIteratorsTuple = function(it1, it2, baseSnapshot, snapshot)
+WebInspector.HeapSnapshotDiffNodesProvider = function(addedNodesProvider, deletedNodesProvider, addedCount, removedCount)
 {
-    this._it1 = it1;
-    this._it2 = it2;
-    this.baseSnapshot = baseSnapshot;
-    this.snapshot = snapshot;
+    this._addedNodesProvider = addedNodesProvider;
+    this._deletedNodesProvider = deletedNodesProvider;
+    this._addedCount = addedCount;
+    this._removedCount = removedCount;
+    this._serializedItemsCount = 0;
 }
 
-WebInspector.HeapSnapshotIteratorsTuple.prototype = {
+WebInspector.HeapSnapshotDiffNodesProvider.prototype = {
     dispose: function()
     {
-        this._it1.dispose();
-        this._it2.dispose();
+        this._addedNodesProvider.dispose();
+        this._deletedNodesProvider.dispose();
+    },
+
+    isEmpty: function(callback)
+    {
+        callback(false);
+    },
+
+    serializeSubsequentItems: function(count, callback)
+    {
+        function didReceiveAllItems(items)
+        {
+            this._serializedItemsCount += items.length;
+            items.totalLength = this._addedCount + this._removedCount;
+            callback(items);
+        }
+
+        function didReceiveDeletedItems(addedItems, items)
+        {
+            for (var i = 0; i < items.length; i++) {
+                items[i].isAddedNotRemoved = false;
+                addedItems.push(items[i]);
+            }
+            addedItems.hasNext = items.hasNext;
+            didReceiveAllItems.call(this, addedItems);
+        }
+
+        function didReceiveAddedItems(items)
+        {
+            for (var i = 0; i < items.length; i++)
+                items[i].isAddedNotRemoved = true;
+            if (items.length < count)
+                return this._deletedNodesProvider.serializeSubsequentItems(count - items.length, didReceiveDeletedItems.bind(this, items));
+
+            items.totalLength = this._addedCount + this._removedCount;
+            if (!items.hasNext)
+                items.hasNext = !!this._removedCount;
+            didReceiveAllItems.call(this, items);
+        }
+
+        if (this._serializedItemsCount < this._addedCount)
+            this._addedNodesProvider.serializeSubsequentItems(count, didReceiveAddedItems.bind(this));
+        else
+            this._deletedNodesProvider.serializeSubsequentItems(count, didReceiveDeletedItems.bind(this, []));
     },
 
     sortAndRewind: function(comparator, callback)
     {
+        this._serializedItemsCount = 0;
+
         function afterSort(ignored)
         {
-            this._it2.sortAndRewind(comparator, callback);
+            this._deletedNodesProvider.sortAndRewind(comparator, callback);
         }
-        this._it1.sortAndRewind(comparator, afterSort.bind(this));
+        this._addedNodesProvider.sortAndRewind(comparator, afterSort.bind(this));
     }
 };
 
@@ -726,7 +765,7 @@ WebInspector.HeapSnapshotIteratorsTuple.prototype = {
 WebInspector.HeapSnapshotDiffNode = function(tree, className, diffForClass)
 {
     WebInspector.HeapSnapshotGridNode.call(this, tree, true,
-        WebInspector.HeapSnapshotDiffNode._createProvider(tree, className, diffForClass.deletedIndexes));
+        WebInspector.HeapSnapshotDiffNode._createProvider(tree, className, diffForClass.deletedIndexes, diffForClass.addedCount, diffForClass.removedCount));
     this._name = className;
 
     this._addedCount = diffForClass.addedCount;
@@ -737,23 +776,22 @@ WebInspector.HeapSnapshotDiffNode = function(tree, className, diffForClass)
     this._sizeDelta = diffForClass.sizeDelta;
 }
 
-WebInspector.HeapSnapshotDiffNode._createProvider = function(tree, className, deletedIndexes)
+WebInspector.HeapSnapshotDiffNode._createProvider = function(tree, className, deletedIndexes, addedCount, removedCount)
 {
-    var result =  new WebInspector.HeapSnapshotIteratorsTuple(
+    var result =  new WebInspector.HeapSnapshotDiffNodesProvider(
         tree.snapshot.createAddedNodesProvider(tree.baseSnapshot.uid, className),
         tree.baseSnapshot.createDeletedNodesProvider(deletedIndexes),
-        tree.baseSnapshot,
-        tree.snapshot);
+        addedCount, removedCount);
     return result;
 }
 
 WebInspector.HeapSnapshotDiffNode.prototype = {
-    _createChildNode: function(item, provider)
+    _createChildNode: function(item)
     {
-        if (provider === this._provider._it1)
-            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, null, this._provider.snapshot, item);
+        if (item.isAddedNotRemoved)
+            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, null, this._dataGrid.snapshot, item);
         else
-            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, this._provider.baseSnapshot, null, item);
+            return new WebInspector.HeapSnapshotInstanceNode(this._dataGrid, this._dataGrid.baseSnapshot, null, item);
     },
 
     _childHashForEntity: function(node)
@@ -780,24 +818,6 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
             sizeDelta: ["selfSize", sortAscending, "id", true]
         }[sortColumnIdentifier];
         return WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(sortFields);
-    },
-
-    populateChildren: function(provider, howMany, atIndex, afterPopulate)
-    {
-        if (!provider && !howMany) {
-            var firstProviderPopulated = function()
-            {
-                WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it2, this._dataGrid.defaultPopulateCount(), atIndex, afterPopulate, false);
-            };
-            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1, this._dataGrid.defaultPopulateCount(), atIndex, firstProviderPopulated.bind(this), true);
-        } else if (!howMany) {
-            var firstProviderPopulated = function()
-            {
-                WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it2, null, atIndex, afterPopulate, false);
-            };
-            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1, null, atIndex, firstProviderPopulated.bind(this), true);
-        } else
-            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, provider, howMany, atIndex, afterPopulate, false);
     },
 
     _signForDelta: function(delta)
