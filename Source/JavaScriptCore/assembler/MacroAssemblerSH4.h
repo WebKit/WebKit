@@ -156,6 +156,17 @@ public:
         releaseScratch(scr);
     }
 
+    void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (src != dest) {
+            move(imm, dest);
+            and32(src, dest);
+            return;
+        }
+
+        and32(imm, dest);
+    }
+
     void lshift32(RegisterID shiftamount, RegisterID dest)
     {
         if (shiftamount == SH4Registers::r0)
@@ -191,6 +202,14 @@ public:
         m_assembler.loadConstant((imm.m_value & 0x1f) , scr);
         m_assembler.shllRegReg(dest, scr);
         releaseScratch(scr);
+    }
+
+    void lshift32(RegisterID src, TrustedImm32 shiftamount, RegisterID dest)
+    {
+        if (src != dest)
+            move(src, dest);
+
+        lshift32(shiftamount, dest);
     }
 
     void mul32(RegisterID src, RegisterID dest)
@@ -237,6 +256,29 @@ public:
             move(op2, dest);
             or32(op1, dest);
         }
+    }
+
+    
+void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        if  (src != dest) {
+            move(imm, dest);
+            or32(src, dest);
+            return;
+        }
+
+        or32(imm, dest);
+    }
+
+    void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        if  (src != dest) {
+            move(imm, dest);
+            xor32(src, dest);
+            return;
+        }
+
+        xor32(imm, dest);
     }
 
     void rshift32(RegisterID shiftamount, RegisterID dest)
@@ -1744,6 +1786,13 @@ public:
         return branchSub32(cond, scratchReg3, dest);
     }
 
+    Jump branchSub32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        if (src1 != dest)
+            move(src1, dest);
+        return branchSub32(cond, src2, dest);
+    }
+
     Jump branchOr32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Signed) || (cond == Zero) || (cond == NonZero));
@@ -1803,6 +1852,14 @@ public:
         m_assembler.loadConstant(-(imm.m_value & 0x1f), scr);
         m_assembler.shaRegReg(dest, scr);
         releaseScratch(scr);
+    }
+
+    void urshift32(RegisterID src, TrustedImm32 shiftamount, RegisterID dest)
+    {
+        if (src != dest)
+           move(src, dest);
+
+        urshift32(shiftamount, dest);
     }
 
     Call call()
