@@ -168,6 +168,37 @@ TEST(CCLayerAnimationControllerTest, syncNewAnimation)
     EXPECT_EQ(CCActiveAnimation::WaitingForTargetAvailability, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
 }
 
+// If an animation is started on the impl thread before it is ticked on the main
+// thread, we must be sure to respect the synchronized start time.
+TEST(CCLayerAnimationControllerTest, doNotClobberStartTimes)
+{
+    FakeLayerAnimationControllerClient dummyImpl;
+    OwnPtr<CCLayerAnimationController> controllerImpl(CCLayerAnimationController::create(&dummyImpl));
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
+
+    EXPECT_FALSE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+
+    addOpacityTransitionToController(*controller, 1, 0, 1, false);
+
+    controller->pushAnimationUpdatesTo(controllerImpl.get());
+
+    EXPECT_TRUE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+    EXPECT_EQ(CCActiveAnimation::WaitingForTargetAvailability, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+
+    CCAnimationEventsVector events;
+    controllerImpl->animate(1, &events);
+
+    // Synchronize the start times.
+    EXPECT_EQ(1u, events.size());
+    controller->notifyAnimationStarted(events[0]);
+    EXPECT_EQ(controller->getActiveAnimation(0, CCActiveAnimation::Opacity)->startTime(), controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->startTime());
+
+    // Start the animation on the main thread. Should not affect the start time.
+    controller->animate(1.5, 0);
+    EXPECT_EQ(controller->getActiveAnimation(0, CCActiveAnimation::Opacity)->startTime(), controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->startTime());
+}
+
 TEST(CCLayerAnimationControllerTest, doNotSyncFinishedAnimation)
 {
     FakeLayerAnimationControllerClient dummyImpl;

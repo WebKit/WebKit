@@ -82,6 +82,7 @@ public:
 
     double startTime() const { return m_startTime; }
     void setStartTime(double startTime) { m_startTime = startTime; }
+    bool hasSetStartTime() const { return m_startTime; }
 
     bool isFinishedAt(double time) const;
     bool isFinished() const { return m_runState == Finished || m_runState == Aborted; }

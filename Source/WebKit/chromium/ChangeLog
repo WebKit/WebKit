@@ -1,3 +1,14 @@
+2012-04-25  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Do not clobber synchronized start times.
+        https://bugs.webkit.org/show_bug.cgi?id=84605
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests):
+        (WebKitTests::TEST):
+
 2012-04-25  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call actualMemoryUsageMB directly

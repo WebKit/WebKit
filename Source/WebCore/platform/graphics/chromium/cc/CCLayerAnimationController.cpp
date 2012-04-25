@@ -277,7 +277,8 @@ void CCLayerAnimationController::startAnimationsWaitingForNextTick(double monoto
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
         if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForNextTick) {
             m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, monotonicTime);
-            m_activeAnimations[i]->setStartTime(monotonicTime);
+            if (!m_activeAnimations[i]->hasSetStartTime())
+                m_activeAnimations[i]->setStartTime(monotonicTime);
             if (events)
                 events->append(CCAnimationStartedEvent(m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
         }
@@ -326,13 +327,15 @@ void CCLayerAnimationController::startAnimationsWaitingForTargetAvailability(dou
             // If the intersection is null, then we are free to start the animations in the group.
             if (nullIntersection) {
                 m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, monotonicTime);
-                m_activeAnimations[i]->setStartTime(monotonicTime);
+                if (!m_activeAnimations[i]->hasSetStartTime())
+                    m_activeAnimations[i]->setStartTime(monotonicTime);
                 if (events)
                     events->append(CCAnimationStartedEvent(m_client->id(), m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty(), monotonicTime));
                 for (size_t j = i + 1; j < m_activeAnimations.size(); ++j) {
                     if (m_activeAnimations[i]->group() == m_activeAnimations[j]->group()) {
                         m_activeAnimations[j]->setRunState(CCActiveAnimation::Running, monotonicTime);
-                        m_activeAnimations[j]->setStartTime(monotonicTime);
+                        if (!m_activeAnimations[j]->hasSetStartTime())
+                            m_activeAnimations[j]->setStartTime(monotonicTime);
                     }
                 }
             }
