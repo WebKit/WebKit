@@ -39,8 +39,6 @@ namespace WebCore {
 SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* document)
     : SVGAnimationElement(tagName, document)
     , m_animatedPropertyType(AnimatedString)
-    , m_fromPropertyValueType(RegularPropertyValue)
-    , m_toPropertyValueType(RegularPropertyValue)
 {
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag) || hasTagName(SVGNames::animateTransformTag));
 }
@@ -52,53 +50,6 @@ PassRefPtr<SVGAnimateElement> SVGAnimateElement::create(const QualifiedName& tag
 
 SVGAnimateElement::~SVGAnimateElement()
 {
-}
-
-static inline void getPropertyValue(SVGElement* svgParent, const QualifiedName& attributeName, String& value)
-{
-    ASSERT(svgParent->isStyled());
-    value = CSSComputedStyleDeclaration::create(svgParent)->getPropertyValue(cssPropertyID(attributeName.localName()));
-}
-
-static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
-{
-    ASSERT(targetElement);
-    DEFINE_STATIC_LOCAL(const AtomicString, inherit, ("inherit"));
-    
-    if (value.isEmpty() || value != inherit || !targetElement->isStyled())
-        return false;
-    return SVGStyledElement::isAnimatableCSSProperty(attributeName);
-}
-
-static bool attributeValueIsCurrentColor(const String& value)
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, currentColor, ("currentColor"));
-    return value == currentColor;
-}
-
-void SVGAnimateElement::adjustForCurrentColor(SVGElement* targetElement, Color& color)
-{
-    ASSERT(targetElement);
-
-    if (RenderObject* targetRenderer = targetElement->renderer())
-        color = targetRenderer->style()->visitedDependentColor(CSSPropertyColor);
-    else
-        color = Color();
-}
-
-void SVGAnimateElement::adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String& value)
-{
-    // FIXME: At the moment the computed style gets returned as a String and needs to get parsed again.
-    // In the future we might want to work with the value type directly to avoid the String parsing.
-    ASSERT(targetElement);
-
-    Element* parent = targetElement->parentElement();
-    if (!parent || !parent->isSVGElement())
-        return;
-
-    SVGElement* svgParent = static_cast<SVGElement*>(parent);
-    if (svgParent->isStyled())
-        getPropertyValue(svgParent, attributeName, value);
 }
 
 bool SVGAnimateElement::hasValidAttributeType()
@@ -140,25 +91,6 @@ AnimatedPropertyType SVGAnimateElement::determineAnimatedPropertyType(SVGElement
         ASSERT(propertyTypes[0] == propertyTypes[1]);
 
     return type;
-}
-
-void SVGAnimateElement::determinePropertyValueTypes(const String& from, const String& to)
-{
-    SVGElement* targetElement = this->targetElement();
-    ASSERT(targetElement);
-
-    if (inheritsFromProperty(targetElement, attributeName(), from))
-        m_fromPropertyValueType = InheritValue;
-    if (inheritsFromProperty(targetElement, attributeName(), to))
-        m_toPropertyValueType = InheritValue;
-
-    if (m_animatedPropertyType != AnimatedColor)
-        return;
-    
-    if (attributeValueIsCurrentColor(from))
-        m_fromPropertyValueType = CurrentColorValue;
-    if (attributeValueIsCurrentColor(to))
-        m_toPropertyValueType = CurrentColorValue;
 }
 
 void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)

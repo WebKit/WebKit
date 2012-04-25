@@ -94,22 +94,16 @@ void SVGAnimatedAngleAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimat
     toAngle.setValue(toAngle.value() + fromAngle.value());
 }
 
-void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                                      OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
     
-    AnimationMode animationMode = animationElement->animationMode();
-
-    // To animation uses contributions from the lower priority animations as the base value.
-    pair<SVGAngle, unsigned>& animatedAngleAndEnumeration = animated->angleAndEnumeration();
     pair<SVGAngle, unsigned>& fromAngleAndEnumeration = from->angleAndEnumeration();
-    if (animationMode == ToAnimation)
-        fromAngleAndEnumeration.first = animatedAngleAndEnumeration.first;
-
     pair<SVGAngle, unsigned>& toAngleAndEnumeration = to->angleAndEnumeration();
+    pair<SVGAngle, unsigned>& animatedAngleAndEnumeration = animated->angleAndEnumeration();
+    m_animationElement->adjustFromToValues<pair<SVGAngle, unsigned> >(0, fromAngleAndEnumeration, toAngleAndEnumeration, animatedAngleAndEnumeration, percentage, m_contextElement);
+
     if (fromAngleAndEnumeration.second != toAngleAndEnumeration.second) {
         // Animating from eg. auto to 90deg, or auto to 90deg.
         if (fromAngleAndEnumeration.second == SVGMarkerOrientAngle) {
@@ -152,28 +146,17 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
 
     float fromAngle = fromAngleAndEnumeration.first.value();
     float toAngle = toAngleAndEnumeration.first.value();
-    
-    if (animationElement->fromPropertyValueType() == InheritValue) {
-        String fromAngleString;
-        animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), fromAngleString);
-        fromAngle = sharedSVGAngle(fromAngleString).value();
-    }
-    if (animationElement->toPropertyValueType() == InheritValue) {
-        String toAngleString;
-        animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toAngleString);
-        toAngle = sharedSVGAngle(toAngleString).value(); 
-    }
-    
-    if (animationElement->calcMode() == CalcModeDiscrete)
+
+    if (m_animationElement->calcMode() == CalcModeDiscrete)
         number = percentage < 0.5f ? fromAngle : toAngle;
     else
         number = (toAngle - fromAngle) * percentage + fromAngle;
     
     // FIXME: This is not correct for values animation.
-    if (animationElement->isAccumulated() && repeatCount)
+    if (m_animationElement->isAccumulated() && repeatCount)
         number += toAngle * repeatCount;
     SVGAngle& animatedSVGAngle = animatedAngleAndEnumeration.first;
-    if (animationElement->isAdditive() && animationMode != ToAnimation) {
+    if (m_animationElement->isAdditive() && m_animationElement->animationMode() != ToAnimation) {
         float animatedSVGAngleValue = animatedSVGAngle.value();
         animatedSVGAngleValue += number;
         animatedSVGAngle.setValue(animatedSVGAngleValue);

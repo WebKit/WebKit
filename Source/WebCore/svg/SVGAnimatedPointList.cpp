@@ -81,15 +81,17 @@ void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAn
     }
 }
 
-void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
     
-    SVGPointList& animatedPointList = animated->pointList();
     SVGPointList& fromPointList = from->pointList();
     SVGPointList& toPointList = to->pointList();
+    SVGPointList& animatedPointList = animated->pointList();
+    if (!m_animationElement->adjustFromToListValues<SVGPointList>(0, fromPointList, toPointList, animatedPointList, percentage, m_contextElement))
+        return;
+
     if (!percentage)
         animatedPointList = fromPointList;
     else if (percentage == 1)
@@ -100,12 +102,11 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsi
             SVGPointList::createAnimated(fromPointList, toPointList, animatedPointList, percentage);
             
         // Fall back to discrete animation if the points are not compatible
-        AnimationMode animationMode = static_cast<SVGAnimateElement*>(m_animationElement)->animationMode();
+        AnimationMode animationMode = m_animationElement->animationMode();
         if (animatedPointList.isEmpty())
             animatedPointList = ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1) 
             ? toPointList : fromPointList;
     }
-    return;
 }
 
 float SVGAnimatedPointListAnimator::calculateDistance(const String&, const String&)

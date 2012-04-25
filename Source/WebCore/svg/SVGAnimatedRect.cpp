@@ -72,39 +72,34 @@ void SVGAnimatedRectAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimate
     to->rect() += from->rect();
 }
 
-void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    AnimationMode animationMode = animationElement->animationMode();
-    // To animation uses contributions from the lower priority animations as the base value.
+    FloatRect& fromRect = from->rect();
+    FloatRect& toRect = to->rect();
     FloatRect& animatedRect = animated->rect();
-    if (animationMode == ToAnimation)
-        from->rect() = animatedRect;
-    
-    const FloatRect& fromRect = from->rect();
-    const FloatRect& toRect = to->rect();
+    m_animationElement->adjustFromToValues<FloatRect>(0, fromRect, toRect, animatedRect, percentage, m_contextElement);
+
     FloatRect newRect;    
-    if (animationElement->calcMode() == CalcModeDiscrete)
+    if (m_animationElement->calcMode() == CalcModeDiscrete)
         newRect = percentage < 0.5 ? fromRect : toRect;
     else
         newRect = FloatRect((toRect.x() - fromRect.x()) * percentage + fromRect.x(),
                             (toRect.y() - fromRect.y()) * percentage + fromRect.y(),
                             (toRect.width() - fromRect.width()) * percentage + fromRect.width(),
                             (toRect.height() - fromRect.height()) * percentage + fromRect.height());
-    
+
     // FIXME: This is not correct for values animation. Right now we transform values-animation to multiple from-to-animations and
     // accumulate every single value to the previous one. But accumulation should just take into account after a complete cycle
     // of values-animaiton. See example at: http://www.w3.org/TR/2001/REC-smil-animation-20010904/#RepeatingAnim
-    if (animationElement->isAccumulated() && repeatCount) {
+    if (m_animationElement->isAccumulated() && repeatCount) {
         newRect += toRect;
         newRect.scale(repeatCount);
     }
     
-    if (animationElement->isAdditive() && animationMode != ToAnimation)
+    if (m_animationElement->isAdditive() && m_animationElement->animationMode() != ToAnimation)
         animatedRect += newRect;
     else
         animatedRect = newRect;

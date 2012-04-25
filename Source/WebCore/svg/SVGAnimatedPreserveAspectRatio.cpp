@@ -69,19 +69,21 @@ void SVGAnimatedPreserveAspectRatioAnimator::addAnimatedTypes(SVGAnimatedType* f
     ASSERT_UNUSED(to, from->type() == to->type());
 }
 
-void SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue(float percentage, unsigned,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    
-    AnimationMode animationMode = animationElement->animationMode();
-    SVGPreserveAspectRatio& animateString = animated->preserveAspectRatio();
+
+    SVGPreserveAspectRatio& fromPreserveAspectRatio = from->preserveAspectRatio();
+    SVGPreserveAspectRatio& toPreserveAspectRatio = to->preserveAspectRatio();
+    SVGPreserveAspectRatio& animatedPreserveAspectRatio = animated->preserveAspectRatio();
+    m_animationElement->adjustFromToValues<SVGPreserveAspectRatio>(0, fromPreserveAspectRatio, toPreserveAspectRatio, animatedPreserveAspectRatio, percentage, m_contextElement);
+
+    AnimationMode animationMode = m_animationElement->animationMode();
     if ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1)
-        animateString = to->preserveAspectRatio();
+        animatedPreserveAspectRatio = SVGPreserveAspectRatio(toPreserveAspectRatio);
     else
-        animateString = from->preserveAspectRatio();
+        animatedPreserveAspectRatio = SVGPreserveAspectRatio(fromPreserveAspectRatio);
 }
 
 float SVGAnimatedPreserveAspectRatioAnimator::calculateDistance(const String&, const String&)

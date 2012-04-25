@@ -48,6 +48,14 @@ enum AnimationMode {
     PathAnimation // Used by AnimateMotion.
 };
 
+// If we have 'currentColor' or 'inherit' as animation value, we need to grab
+// the value during the animation since the value can be animated itself.
+enum AnimatedPropertyValueType {
+    RegularPropertyValue,
+    CurrentColorValue,
+    InheritValue
+};
+
 enum CalcMode {
     CalcModeDiscrete,
     CalcModeLinear,
@@ -90,8 +98,67 @@ public:
 
     ShouldApplyAnimation shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName);
 
+    AnimatedPropertyValueType fromPropertyValueType() const { return m_fromPropertyValueType; }
+    AnimatedPropertyValueType toPropertyValueType() const { return m_toPropertyValueType; }
+
+    template<typename AnimatedType>
+    void adjustForInheritance(AnimatedType (*parseTypeFromString)(SVGAnimationElement*, const String&),
+                              AnimatedPropertyValueType valueType, AnimatedType& animatedType, SVGElement* contextElement)
+    {
+        if (valueType != InheritValue)
+            return;
+        // Replace 'inherit' by its computed property value.
+        ASSERT(parseTypeFromString);
+        String typeString;
+        adjustForInheritance(contextElement, attributeName(), typeString);
+        animatedType = (*parseTypeFromString)(this, typeString);
+    }
+
+    template<typename AnimatedType>
+    void adjustFromToValues(AnimatedType (*parseTypeFromString)(SVGAnimationElement*, const String&),
+                            AnimatedType& fromType, AnimatedType& toType, AnimatedType& animatedType,
+                            float& percentage, SVGElement* contextElement)
+    {
+        // To-animation uses contributions from the lower priority animations as the base value.
+        if (animationMode() == ToAnimation)
+            fromType = AnimatedType(animatedType);
+
+        adjustForInheritance<AnimatedType>(parseTypeFromString, m_fromPropertyValueType, fromType, contextElement);
+        adjustForInheritance<AnimatedType>(parseTypeFromString, m_toPropertyValueType, toType, contextElement);
+
+        if (calcMode() == CalcModeDiscrete)
+            percentage = percentage < 0.5 ? 0 : 1;
+    }
+
+    template<typename AnimatedType>
+    bool adjustFromToListValues(AnimatedType (*parseTypeFromString)(SVGAnimationElement*, const String&), 
+                                AnimatedType& fromList, AnimatedType& toList, AnimatedType& animatedList,
+                                float& percentage, SVGElement* contextElement)
+    {
+        adjustFromToValues(parseTypeFromString, fromList, toList, animatedList, percentage, contextElement);
+
+        // If no to value is given, nothing to animate.
+        if (!toList.size())
+            return false;
+
+        // If the from value is given and doesn't match the to value, fallback to a discrete animation.
+        if (fromList.size() != toList.size() && fromList.size()) {
+            if (percentage < 0.5) {
+                if (animationMode() != ToAnimation)
+                    animatedList = fromList;
+            } else
+                animatedList = toList;
+
+            return false;
+        }
+
+        return true;
+    }
+
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
+
+    virtual void determinePropertyValueTypes(const String& from, const String& to);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(Attribute*) OVERRIDE;
@@ -115,6 +182,9 @@ protected:
     virtual void startedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
 
+    AnimatedPropertyValueType m_fromPropertyValueType;
+    AnimatedPropertyValueType m_toPropertyValueType;
+
 private:
     virtual void animationAttributeChanged() OVERRIDE;
 
@@ -133,6 +203,7 @@ private:
     unsigned calculateKeyTimesIndex(float percent) const;
 
     void applyAnimatedValue(ShouldApplyAnimation, SVGElement* targetElement, const QualifiedName& attributeName, SVGAnimatedType*);
+    void adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String&);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAnimationElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

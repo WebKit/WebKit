@@ -20,6 +20,7 @@
  */
 
 #include "config.h"
+
 #if ENABLE(SVG)
 #include "SVGAnimateColorElement.h"
 #include "SVGNames.h"
@@ -37,8 +38,21 @@ PassRefPtr<SVGAnimateColorElement> SVGAnimateColorElement::create(const Qualifie
     return adoptRef(new SVGAnimateColorElement(tagName, document));
 }
 
+static bool attributeValueIsCurrentColor(const String& value)
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, currentColor, ("currentColor"));
+    return value == currentColor;
 }
 
-// vim:ts=4:noet
-#endif // ENABLE(SVG)
+void SVGAnimateColorElement::determinePropertyValueTypes(const String& from, const String& to)
+{
+    SVGAnimateElement::determinePropertyValueTypes(from, to);
+    if (attributeValueIsCurrentColor(from))
+        m_fromPropertyValueType = CurrentColorValue;
+    if (attributeValueIsCurrentColor(to))
+        m_toPropertyValueType = CurrentColorValue;
+}
 
+}
+
+#endif // ENABLE(SVG)

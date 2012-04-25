@@ -95,34 +95,24 @@ void SVGAnimatedNumberAnimator::calculateAnimatedNumber(SVGAnimationElement* ani
         animatedNumber = number;
 }
 
-void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+static float parseNumberFromString(SVGAnimationElement*, const String& string)
+{
+    float number = 0;
+    parseNumberFromString(string, number);
+    return number;
+}
+
+void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    
-    AnimationMode animationMode = animationElement->animationMode();
-    // To animation uses contributions from the lower priority animations as the base value.
-    float& animatedNumber = animated->number();
-    if (animationMode == ToAnimation)
-        from->number() = animatedNumber;
-    
-    // Replace 'inherit' by their computed property values.
+
     float& fromNumber = from->number();
     float& toNumber = to->number();
-    if (animationElement->fromPropertyValueType() == InheritValue) {
-        String fromNumberString;
-        animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), fromNumberString);
-        parseNumberFromString(fromNumberString, fromNumber); 
-    }
-    if (animationElement->toPropertyValueType() == InheritValue) {
-        String toNumberString;
-        animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toNumberString);
-        parseNumberFromString(toNumberString, toNumber); 
-    }
-    
-    calculateAnimatedNumber(animationElement, percentage, repeatCount, animatedNumber, fromNumber, toNumber);
+    float& animatedNumber = animated->number();
+    m_animationElement->adjustFromToValues<float>(parseNumberFromString, fromNumber, toNumber, animatedNumber, percentage, m_contextElement);
+
+    calculateAnimatedNumber(m_animationElement, percentage, repeatCount, animatedNumber, fromNumber, toNumber);
 }
 
 float SVGAnimatedNumberAnimator::calculateDistance(const String& fromString, const String& toString)

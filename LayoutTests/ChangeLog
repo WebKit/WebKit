@@ -1,3 +1,17 @@
+2012-04-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Refactor to/from/animatedType creation, to share more code between animators
+        https://bugs.webkit.org/show_bug.cgi?id=84846
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline one test result, which shows a progression.
+        (At the initial time when we capture the result, only two circles should be visible.)
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+
 2012-04-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed test expectations update

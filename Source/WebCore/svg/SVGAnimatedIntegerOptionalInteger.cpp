@@ -86,24 +86,18 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::addAnimatedTypes(SVGAnimatedType
     toNumberPair.second += fromNumberPair.second;
 }
 
-void SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    AnimationMode animationMode = animationElement->animationMode();
+    pair<int, int>& fromIntegerPair = from->integerOptionalInteger();
+    pair<int, int>& toIntegerPair = to->integerOptionalInteger();
+    pair<int, int>& animatedIntegerPair = animated->integerOptionalInteger();
+    m_animationElement->adjustFromToValues<pair<int, int> >(0, fromIntegerPair, toIntegerPair, animatedIntegerPair, percentage, m_contextElement);
 
-    // To animation uses contributions from the lower priority animations as the base value.
-    pair<int, int>& fromNumberPair = from->integerOptionalInteger();
-    pair<int, int>& animatedNumberPair = animated->integerOptionalInteger();
-    if (animationMode == ToAnimation)
-        fromNumberPair = animatedNumberPair;
-
-    pair<int, int>& toNumberPair = to->integerOptionalInteger();
-    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(animationElement, percentage, repeatCount, animatedNumberPair.first, fromNumberPair.first, toNumberPair.first);
-    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(animationElement, percentage, repeatCount, animatedNumberPair.second, fromNumberPair.second, toNumberPair.second);
+    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, animatedIntegerPair.first, fromIntegerPair.first, toIntegerPair.first);
+    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, animatedIntegerPair.second, fromIntegerPair.second, toIntegerPair.second);
 }
 
 float SVGAnimatedIntegerOptionalIntegerAnimator::calculateDistance(const String&, const String&)

@@ -146,18 +146,21 @@ void SVGAnimatedEnumerationAnimator::addAnimatedTypes(SVGAnimatedType* from, SVG
     ASSERT_UNUSED(to, from->type() == to->type());
 }
 
-void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, unsigned,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
+    unsigned& fromEnumeration = from->enumeration();
+    unsigned& toEnumeration = to->enumeration();
+    unsigned& animatedEnumeration = animated->enumeration();
+    m_animationElement->adjustFromToValues<unsigned>(0, fromEnumeration, toEnumeration, animatedEnumeration, percentage, m_contextElement);
+
     AnimationMode animationMode = m_animationElement->animationMode();
-    unsigned& animateEnumeration = animated->enumeration();
     if ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1)
-        animateEnumeration = to->enumeration();
+        animatedEnumeration = unsigned(toEnumeration);
     else
-        animateEnumeration = from->enumeration();
+        animatedEnumeration = unsigned(fromEnumeration);
 }
 
 float SVGAnimatedEnumerationAnimator::calculateDistance(const String&, const String&)

@@ -86,38 +86,25 @@ void SVGAnimatedLengthAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnima
     ASSERT(!ec);
 }
 
-void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                                       OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+static SVGLength parseLengthFromString(SVGAnimationElement* animationElement, const String& string)
+{
+    return sharedSVGLength(SVGLength::lengthModeForAnimatedLengthAttribute(animationElement->attributeName()), string);
+}
+
+void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    AnimationMode animationMode = animationElement->animationMode();
-
-    // To animation uses contributions from the lower priority animations as the base value.
-    SVGLength& animatedSVGLength = animated->length();
     SVGLength& fromSVGLength = from->length();
-    if (animationMode == ToAnimation)
-        fromSVGLength = animatedSVGLength;
-    
-    // Replace 'inherit' by their computed property values.
     SVGLength& toSVGLength = to->length();
-    if (animationElement->fromPropertyValueType() == InheritValue) {
-        String fromLengthString;
-        animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), fromLengthString);
-        fromSVGLength = sharedSVGLength(m_lengthMode, fromLengthString);
-    }
-    if (animationElement->toPropertyValueType() == InheritValue) {
-        String toLengthString;
-        animationElement->adjustForInheritance(m_contextElement, animationElement->attributeName(), toLengthString);
-        toSVGLength = sharedSVGLength(m_lengthMode, toLengthString); 
-    }
-    
+    SVGLength& animatedSVGLength = animated->length();
+    m_animationElement->adjustFromToValues<SVGLength>(parseLengthFromString, fromSVGLength, toSVGLength, animatedSVGLength, percentage, m_contextElement);
+
     SVGLengthContext lengthContext(m_contextElement);
     float result = animatedSVGLength.value(lengthContext);
     SVGLengthType unitType = percentage < 0.5 ? fromSVGLength.unitType() : toSVGLength.unitType();
-    SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, result, fromSVGLength.value(lengthContext), toSVGLength.value(lengthContext));
+    SVGAnimatedNumberAnimator::calculateAnimatedNumber(m_animationElement, percentage, repeatCount, result, fromSVGLength.value(lengthContext), toSVGLength.value(lengthContext));
 
     ExceptionCode ec = 0;
     animatedSVGLength.setValue(lengthContext, result, m_lengthMode, unitType, ec);

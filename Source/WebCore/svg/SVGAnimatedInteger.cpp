@@ -73,28 +73,24 @@ void SVGAnimatedIntegerAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnim
     to->integer() += from->integer();
 }
 
-void SVGAnimatedIntegerAnimator::calculateAnimatedInteger(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, int& animatedNumber, int fromNumber, int toNumber)
+void SVGAnimatedIntegerAnimator::calculateAnimatedInteger(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, int& animatedInteger, int fromInteger, int toInteger)
 {
-    float animatedFloat = animatedNumber;
-    SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, animatedFloat, fromNumber, toNumber);
-    animatedNumber = static_cast<int>(roundf(animatedFloat));
+    float animatedNumber = animatedInteger;
+    SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, animatedNumber, fromInteger, toInteger);
+    animatedInteger = static_cast<int>(roundf(animatedNumber));
 }
 
-void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                                        OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);    
-    AnimationMode animationMode = animationElement->animationMode();
+    int& fromInteger = from->integer();
+    int& toInteger = to->integer();
+    int& animatedInteger = animated->integer();
+    m_animationElement->adjustFromToValues<int>(0, fromInteger, toInteger, animatedInteger, percentage, m_contextElement);
 
-    // To animation uses contributions from the lower priority animations as the base value.
-    int& animatedInt = animated->integer();
-    if (animationMode == ToAnimation)
-        from->integer() = animatedInt;
-
-    calculateAnimatedInteger(animationElement, percentage, repeatCount, animatedInt, from->integer(), to->integer());
+    calculateAnimatedInteger(m_animationElement, percentage, repeatCount, animatedInteger, fromInteger, toInteger);
 }
 
 float SVGAnimatedIntegerAnimator::calculateDistance(const String& fromString, const String& toString)

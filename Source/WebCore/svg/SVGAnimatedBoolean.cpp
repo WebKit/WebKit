@@ -70,19 +70,21 @@ void SVGAnimatedBooleanAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnim
     ASSERT_UNUSED(to, from->type() == to->type());
 }
 
-void SVGAnimatedBooleanAnimator::calculateAnimatedValue(float percentage, unsigned,
-                                                        OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedBooleanAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);
-    
-    AnimationMode animationMode = animationElement->animationMode();
-    bool& animateString = animated->boolean();
+
+    bool& fromBoolean = from->boolean();
+    bool& toBoolean = to->boolean();
+    bool& animatedBoolean = animated->boolean();
+    m_animationElement->adjustFromToValues<bool>(0, fromBoolean, toBoolean, animatedBoolean, percentage, m_contextElement);
+
+    AnimationMode animationMode = m_animationElement->animationMode();
     if ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1)
-        animateString = to->boolean();
+        animatedBoolean = bool(toBoolean);
     else
-        animateString = from->boolean();
+        animatedBoolean = bool(fromBoolean);
 }
 
 float SVGAnimatedBooleanAnimator::calculateDistance(const String&, const String&)
