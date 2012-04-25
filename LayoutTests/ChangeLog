@@ -1,3 +1,18 @@
+2012-04-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed morning gardening after r115085.
+
+        * platform/qt/Skipped: Unskip a non-existing test.
+        * platform/qt/svg/custom/embedding-external-svgs-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/qt/svg/custom/use-clipped-hit-expected.txt:
+        * platform/qt/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/qt/svg/custom/use-setAttribute-crash-expected.txt:
+        * platform/qt/svg/custom/use-symbol-overflow-expected.txt:
+        * platform/wk2/Skipped: Unskip a non-existing test.
+
 2012-04-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Skip inspector/profiler/heap-snapshot-comparison-dom-groups-change.html

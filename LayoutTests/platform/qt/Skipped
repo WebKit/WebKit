@@ -1107,9 +1107,6 @@ fast/autoresize
 fast/canvas/2d.backingStorePixelRatio.html
 fast/canvas/2d.imageDataHD.html
 
-# window.resizeTo() does not trigger a relayout in our DumpRenderTree
-fast/media/media-query-list-08.html
-
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
 http/tests/security/isolatedWorld/didClearWindowObject.html
 # This needs more investigation

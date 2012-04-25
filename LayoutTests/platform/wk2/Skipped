@@ -1056,7 +1056,6 @@ fast/mutation/inline-event-listener.html
 # eventSender.keyDown is unimplemented
 # https://bugs.webkit.org/show_bug.cgi?id=57515
 fast/dom/shadow/access-key.html
-fast/dom/shadow/shadow-host-transfer-focus.html
 fast/dom/shadow/tab-order-iframe-and-shadow.html
 fast/events/onchange-setvalue.html
 fast/forms/focus-with-display-block.html
