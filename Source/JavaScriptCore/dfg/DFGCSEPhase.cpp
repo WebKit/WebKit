@@ -573,7 +573,6 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
-        case GetByteArrayLength:
         case GetInt8ArrayLength:
         case GetInt16ArrayLength:
         case GetInt32ArrayLength:

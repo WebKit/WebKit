@@ -40,8 +40,6 @@ enum EdgeModeType {
     EDGEMODE_NONE      = 3
 };
 
-class CanvasPixelArray;
-
 class FEConvolveMatrix : public FilterEffect {
 public:
     static PassRefPtr<FEConvolveMatrix> create(Filter*, const IntSize&,

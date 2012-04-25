@@ -1,3 +1,19 @@
+2012-04-25  Kenneth Russell  <kbr@google.com>
+
+        Delete CanvasPixelArray, ByteArray, JSByteArray and JSC code once unreferenced
+        https://bugs.webkit.org/show_bug.cgi?id=83655
+
+        Reviewed by Oliver Hunt.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ByteArray.cpp: Removed.
+        * wtf/ByteArray.h: Removed.
+        * wtf/CMakeLists.txt:
+
 2012-04-25  Philippe Normand  <pnormand@igalia.com>
 
         Webkit build fails due to missing gstreamer include file on Kubuntu 8.04

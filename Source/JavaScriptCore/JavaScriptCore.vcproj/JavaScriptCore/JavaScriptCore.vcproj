@@ -778,14 +778,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSByteArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSByteArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\JSCell.cpp"
 				>
 			</File>

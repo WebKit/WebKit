@@ -48,7 +48,6 @@
 #include "JITExceptions.h"
 #include "JSActivation.h"
 #include "JSArray.h"
-#include "JSByteArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSNotAnObject.h"
@@ -2448,11 +2447,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
             CHECK_FOR_EXCEPTION();
             return JSValue::encode(result);
         }
-        if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
-            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val_byte_array));
-            return JSValue::encode(asByteArray(baseValue)->getIndex(callFrame, i));
-        }
         JSValue result = baseValue.get(callFrame, i);
         CHECK_FOR_EXCEPTION();
         return JSValue::encode(result);
@@ -2493,36 +2487,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_string)
     return JSValue::encode(result);
 }
     
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_byte_array)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    CallFrame* callFrame = stackFrame.callFrame;
-    
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    JSValue subscript = stackFrame.args[1].jsValue();
-    
-    JSValue result;
-
-    if (LIKELY(subscript.isUInt32())) {
-        uint32_t i = subscript.asUInt32();
-        if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
-            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            return JSValue::encode(asByteArray(baseValue)->getIndex(callFrame, i));
-        }
-
-        result = baseValue.get(callFrame, i);
-        if (!isJSByteArray(baseValue))
-            ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val));
-    } else {
-        Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
-        result = baseValue.get(callFrame, property);
-    }
-    
-    CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_sub)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2558,21 +2522,6 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
                 jsArray->setIndex(*globalData, i, value);
             else
                 JSArray::putByIndex(jsArray, callFrame, i, value, callFrame->codeBlock()->isStrictMode());
-        } else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
-            JSByteArray* jsByteArray = asByteArray(baseValue);
-            ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val_byte_array));
-            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            if (value.isInt32()) {
-                jsByteArray->setIndex(i, value.asInt32());
-                return;
-            } else {
-                if (value.isNumber()) {
-                    jsByteArray->setIndex(i, value.asNumber());
-                    return;
-                }
-            }
-
-            baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
         } else
             baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
     } else {
@@ -2583,47 +2532,6 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
         }
     }
 
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_by_val_byte_array)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    CallFrame* callFrame = stackFrame.callFrame;
-    
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    JSValue subscript = stackFrame.args[1].jsValue();
-    JSValue value = stackFrame.args[2].jsValue();
-    
-    if (LIKELY(subscript.isUInt32())) {
-        uint32_t i = subscript.asUInt32();
-        if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
-            JSByteArray* jsByteArray = asByteArray(baseValue);
-            
-            // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            if (value.isInt32()) {
-                jsByteArray->setIndex(i, value.asInt32());
-                return;
-            } else {
-                if (value.isNumber()) {
-                    jsByteArray->setIndex(i, value.asNumber());
-                    return;
-                }
-            }
-        }
-
-        if (!isJSByteArray(baseValue))
-            ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val));
-        baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
-    } else {
-        Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
-        if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
-            PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
-            baseValue.put(callFrame, property, value, slot);
-        }
-    }
-    
     CHECK_FOR_EXCEPTION_AT_END();
 }
 

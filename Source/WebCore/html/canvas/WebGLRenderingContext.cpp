@@ -30,7 +30,6 @@
 #include "WebGLRenderingContext.h"
 
 #include "CachedImage.h"
-#include "CanvasPixelArray.h"
 #include "CheckedInt.h"
 #include "Console.h"
 #include "DOMWindow.h"
@@ -69,7 +68,6 @@
 #include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
 
-#include <wtf/ByteArray.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/Uint16Array.h>

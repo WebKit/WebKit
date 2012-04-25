@@ -174,7 +174,6 @@ SOURCES += \
     runtime/JSActivation.cpp \
     runtime/JSAPIValueWrapper.cpp \
     runtime/JSArray.cpp \
-    runtime/JSByteArray.cpp \
     runtime/JSCell.cpp \
     runtime/JSDateMath.cpp \
     runtime/JSFunction.cpp \

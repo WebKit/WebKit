@@ -1,3 +1,61 @@
+2012-04-25  Kenneth Russell  <kbr@google.com>
+
+        Delete CanvasPixelArray, ByteArray, JSByteArray and JSC code once unreferenced
+        https://bugs.webkit.org/show_bug.cgi?id=83655
+
+        Reviewed by Oliver Hunt.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionToAbbreviatedString):
+        (JSC::predictionFromClassInfo):
+        * bytecode/PredictedType.h:
+        (JSC):
+        (JSC::isActionableIntMutableArrayPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::ValueSource::forPrediction):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSByteArray.cpp: Removed.
+        * runtime/JSByteArray.h: Removed.
+        * runtime/JSGlobalData.cpp:
+
 2012-04-25  Filip Pizlo  <fpizlo@apple.com>
 
         http://bellard.org/jslinux/ triggers an assertion failure in the DFG JIT

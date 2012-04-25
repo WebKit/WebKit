@@ -9,7 +9,6 @@ SET(WTF_HEADERS
     Bitmap.h
     BoundsCheckedPointer.h
     BumpPointerAllocator.h
-    ByteArray.h
     Compiler.h
     Complex.h
     CryptographicallyRandomNumber.h
@@ -136,7 +135,6 @@ SET(WTF_SOURCES
     ArrayBufferView.cpp
     Assertions.cpp
     BitVector.cpp
-    ByteArray.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DateMath.cpp

@@ -34,7 +34,6 @@
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
 #include "Blob.h"
-#include "CanvasPixelArray.h"
 #include "DataView.h"
 #include "ExceptionCode.h"
 #include "File.h"

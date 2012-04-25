@@ -37,7 +37,6 @@
 #include "JIT.h"
 #include "JITDriver.h"
 #include "JSActivation.h"
-#include "JSByteArray.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSPropertyNameIterator.h"
 #include "JSStaticScopeObject.h"
@@ -957,9 +956,6 @@ inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
         if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
             return asString(baseValue)->getIndex(exec, i);
         
-        if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i))
-            return asByteArray(baseValue)->getIndex(exec, i);
-        
         return baseValue.get(exec, i);
     }
     
@@ -1010,18 +1006,6 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
             else
                 JSArray::putByIndex(jsArray, exec, i, value, exec->codeBlock()->isStrictMode());
             LLINT_END();
-        }
-        if (isJSByteArray(baseValue)
-            && asByteArray(baseValue)->canAccessIndex(i)) {
-            JSByteArray* jsByteArray = asByteArray(baseValue);
-            if (value.isInt32()) {
-                jsByteArray->setIndex(i, value.asInt32());
-                LLINT_END();
-            }
-            if (value.isNumber()) {
-                jsByteArray->setIndex(i, value.asNumber());
-                LLINT_END();
-            }
         }
         baseValue.putByIndex(exec, i, value, exec->codeBlock()->isStrictMode());
         LLINT_END();

@@ -311,7 +311,6 @@ ENDFOREACH ()
 
 SET(WebCore_CPP_IDL_FILES
     dom/EventListener.idl
-    html/canvas/CanvasPixelArray.idl
     "${WebCore_CPP_IDL_FILES}"
 )
 

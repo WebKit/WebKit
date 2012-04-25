@@ -82,7 +82,7 @@ public:
     {
         if (isInt32Prediction(prediction))
             return ValueSource(Int32InRegisterFile);
-        if (isArrayPrediction(prediction) || isByteArrayPrediction(prediction))
+        if (isArrayPrediction(prediction))
             return ValueSource(CellInRegisterFile);
         if (isBooleanPrediction(prediction))
             return ValueSource(BooleanInRegisterFile);
@@ -1753,8 +1753,6 @@ private:
     void compileUInt32ToNumber(Node&);
     void compileDoubleAsInt32(Node&);
     void compileInt32ToDouble(Node&);
-    void compileGetByValOnByteArray(Node&);
-    void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
     void compileAdd(Node&);
     void compileArithSub(Node&);
     void compileArithNegate(Node&);

@@ -165,7 +165,6 @@ v8 {
         bindings/v8/custom/V8CSSStyleSheetCustom.cpp \
         bindings/v8/custom/V8CSSValueCustom.cpp \
         bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp \
-        bindings/v8/custom/V8CanvasPixelArrayCustom.cpp \
         bindings/v8/custom/V8ClipboardCustom.cpp \
         bindings/v8/custom/V8CoordinatesCustom.cpp \
         bindings/v8/custom/V8ImageDataCustom.cpp \
@@ -842,7 +841,6 @@ SOURCES += \
     html/WeekInputType.cpp \
     html/canvas/CanvasGradient.cpp \
     html/canvas/CanvasPattern.cpp \
-    html/canvas/CanvasPixelArray.cpp \
     html/canvas/CanvasRenderingContext.cpp \
     html/canvas/CanvasRenderingContext2D.cpp \
     html/canvas/CanvasStyle.cpp \
@@ -1856,7 +1854,6 @@ HEADERS += \
     history/PageCache.h \
     html/canvas/CanvasGradient.h \
     html/canvas/CanvasPattern.h \
-    html/canvas/CanvasPixelArray.h \
     html/canvas/CanvasRenderingContext.h \
     html/canvas/CanvasRenderingContext2D.h \
     html/canvas/CanvasStyle.h \

@@ -40,7 +40,6 @@
 #include "JSActivation.h"
 #include "JSAPIValueWrapper.h"
 #include "JSArray.h"
-#include "JSByteArray.h"
 #include "JSClassRef.h"
 #include "JSFunction.h"
 #include "JSLock.h"

@@ -2194,8 +2194,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CanvasGradient.h \
 	Source/WebCore/html/canvas/CanvasPattern.cpp \
 	Source/WebCore/html/canvas/CanvasPattern.h \
-	Source/WebCore/html/canvas/CanvasPixelArray.cpp \
-	Source/WebCore/html/canvas/CanvasPixelArray.h \
 	Source/WebCore/html/canvas/CanvasRenderingContext2D.cpp \
 	Source/WebCore/html/canvas/CanvasRenderingContext2D.h \
 	Source/WebCore/html/canvas/CanvasRenderingContext.cpp \

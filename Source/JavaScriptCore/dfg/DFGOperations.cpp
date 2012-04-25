@@ -34,7 +34,6 @@
 #include <wtf/InlineASM.h>
 #include "Interpreter.h"
 #include "JSActivation.h"
-#include "JSByteArray.h"
 #include "JSGlobalData.h"
 #include "JSStaticScopeObject.h"
 #include "Operations.h"
@@ -162,20 +161,6 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
         return;
     }
 
-    if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(index)) {
-        JSByteArray* byteArray = asByteArray(baseValue);
-        // FIXME: the JITstub used to relink this to an optimized form!
-        if (value.isInt32()) {
-            byteArray->setIndex(index, value.asInt32());
-            return;
-        }
-
-        if (value.isNumber()) {
-            byteArray->setIndex(index, value.asNumber());
-            return;
-        }
-    }
-
     baseValue.putByIndex(exec, index, value, strict);
 }
 
@@ -300,10 +285,6 @@ static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t in
     // FIXME: the JITstub used to relink this to an optimized form!
     if (isJSString(base) && asString(base)->canGetIndex(index))
         return JSValue::encode(asString(base)->getIndex(exec, index));
-
-    // FIXME: the JITstub used to relink this to an optimized form!
-    if (isJSByteArray(base) && asByteArray(base)->canAccessIndex(index))
-        return JSValue::encode(asByteArray(base)->getIndex(exec, index));
 
     return JSValue::encode(JSValue(base).get(exec, index));
 }

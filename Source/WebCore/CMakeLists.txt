@@ -863,7 +863,6 @@ SET(WebCore_SOURCES
     html/canvas/CanvasContextAttributes.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp
-    html/canvas/CanvasPixelArray.cpp
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp

@@ -76,7 +76,6 @@ private:
                 break;
             bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
             bool isString = isStringPrediction(m_graph[node.child1()].prediction());
-            bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
             bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
             bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
             bool isInt32Array = m_graph[node.child1()].shouldSpeculateInt32Array();
@@ -86,7 +85,7 @@ private:
             bool isUint32Array = m_graph[node.child1()].shouldSpeculateUint32Array();
             bool isFloat32Array = m_graph[node.child1()].shouldSpeculateFloat32Array();
             bool isFloat64Array = m_graph[node.child1()].shouldSpeculateFloat64Array();
-            if (!isArray && !isString && !isByteArray && !isInt8Array && !isInt16Array && !isInt32Array && !isUint8Array && !isUint8ClampedArray && !isUint16Array && !isUint32Array && !isFloat32Array && !isFloat64Array)
+            if (!isArray && !isString && !isInt8Array && !isInt16Array && !isInt32Array && !isUint8Array && !isUint8ClampedArray && !isUint16Array && !isUint32Array && !isFloat32Array && !isFloat64Array)
                 break;
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -96,8 +95,6 @@ private:
                 node.setOp(GetArrayLength);
             else if (isString)
                 node.setOp(GetStringLength);
-            else if (isByteArray)
-                node.setOp(GetByteArrayLength);
             else if (isInt8Array)
                 node.setOp(GetInt8ArrayLength);
             else if (isInt16Array)

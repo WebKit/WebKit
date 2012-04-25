@@ -366,9 +366,8 @@ namespace WebCore {
         // If the object has any internal fields, then we won't be able to serialize or deserialize
         // them; conveniently, this is also a quick way to detect DOM wrapper objects, because
         // the mechanism for these relies on data stored in these fields. We should
-        // catch external array data and external pixel data as a special case (noting that CanvasPixelArrays
-        // can't be serialized without being wrapped by ImageData according to the standard).
-        return object->InternalFieldCount() || object->HasIndexedPropertiesInPixelData() || object->HasIndexedPropertiesInExternalArrayData();
+        // catch external array data as a special case.
+        return object->InternalFieldCount() || object->HasIndexedPropertiesInExternalArrayData();
     }
 
     inline v8::Handle<v8::Boolean> v8Boolean(bool value)

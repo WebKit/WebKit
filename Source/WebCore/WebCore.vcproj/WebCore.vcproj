@@ -57466,14 +57466,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\canvas\CanvasPixelArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\canvas\CanvasPixelArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\canvas\CanvasRenderingContext.cpp"
 				>
 			</File>

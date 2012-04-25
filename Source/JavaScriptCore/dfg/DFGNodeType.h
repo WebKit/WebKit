@@ -118,7 +118,6 @@ namespace JSC { namespace DFG {
     macro(PutByOffset, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetStringLength, NodeResultInt32) \
-    macro(GetByteArrayLength, NodeResultInt32) \
     macro(GetInt8ArrayLength, NodeResultInt32) \
     macro(GetInt16ArrayLength, NodeResultInt32) \
     macro(GetInt32ArrayLength, NodeResultInt32) \

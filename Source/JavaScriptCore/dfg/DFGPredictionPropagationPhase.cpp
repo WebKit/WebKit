@@ -562,7 +562,6 @@ private:
             
         case PutByValAlias:
         case GetArrayLength:
-        case GetByteArrayLength:
         case GetInt8ArrayLength:
         case GetInt16ArrayLength:
         case GetInt32ArrayLength:

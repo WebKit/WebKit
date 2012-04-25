@@ -40,7 +40,6 @@
 #include "ScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
-#include "V8CanvasPixelArray.h"
 #include "V8Database.h"
 #include "V8Float32Array.h"
 #include "V8Float64Array.h"
@@ -57,6 +56,7 @@
 #include "V8Uint16Array.h"
 #include "V8Uint32Array.h"
 #include "V8Uint8Array.h"
+#include "V8Uint8ClampedArray.h"
 
 namespace WebCore {
 
@@ -148,7 +148,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
         return v8::String::New("array");
     if (V8Float32Array::HasInstance(value) || V8Float64Array::HasInstance(value))
         return v8::String::New("array");
-    if (V8CanvasPixelArray::HasInstance(value))
+    if (V8Uint8ClampedArray::HasInstance(value))
         return v8::String::New("array");
     return v8::Undefined();
 }

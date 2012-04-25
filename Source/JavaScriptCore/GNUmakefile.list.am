@@ -450,8 +450,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSAPIValueWrapper.h \
 	Source/JavaScriptCore/runtime/JSArray.cpp \
 	Source/JavaScriptCore/runtime/JSArray.h \
-	Source/JavaScriptCore/runtime/JSByteArray.cpp \
-	Source/JavaScriptCore/runtime/JSByteArray.h \
 	Source/JavaScriptCore/runtime/JSCell.cpp \
 	Source/JavaScriptCore/runtime/JSCell.h \
 	Source/JavaScriptCore/runtime/JSDateMath.cpp \

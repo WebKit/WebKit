@@ -1210,8 +1210,6 @@
 		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
 		49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */; };
 		49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB7102CF23C00187DD3 /* CanvasPattern.h */; };
-		49484FC7102CF23C00187DD3 /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */; };
-		49484FC8102CF23C00187DD3 /* CanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */; };
 		49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */; };
 		49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */; };
 		49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */; };
@@ -8173,9 +8171,6 @@
 		49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasPattern.cpp; path = canvas/CanvasPattern.cpp; sourceTree = "<group>"; };
 		49484FB7102CF23C00187DD3 /* CanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasPattern.h; path = canvas/CanvasPattern.h; sourceTree = "<group>"; };
 		49484FB8102CF23C00187DD3 /* CanvasPattern.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasPattern.idl; path = canvas/CanvasPattern.idl; sourceTree = "<group>"; };
-		49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasPixelArray.cpp; path = canvas/CanvasPixelArray.cpp; sourceTree = "<group>"; };
-		49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasPixelArray.h; path = canvas/CanvasPixelArray.h; sourceTree = "<group>"; };
-		49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasPixelArray.idl; path = canvas/CanvasPixelArray.idl; sourceTree = "<group>"; };
 		49484FBC102CF23C00187DD3 /* CanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasRenderingContext2D.cpp; path = canvas/CanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
 		49484FBD102CF23C00187DD3 /* CanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasRenderingContext2D.h; path = canvas/CanvasRenderingContext2D.h; sourceTree = "<group>"; };
 		49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderingContext2D.idl; path = canvas/CanvasRenderingContext2D.idl; sourceTree = "<group>"; };
@@ -14690,9 +14685,6 @@
 				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
 				49484FB7102CF23C00187DD3 /* CanvasPattern.h */,
 				49484FB8102CF23C00187DD3 /* CanvasPattern.idl */,
-				49484FB9102CF23C00187DD3 /* CanvasPixelArray.cpp */,
-				49484FBA102CF23C00187DD3 /* CanvasPixelArray.h */,
-				49484FBB102CF23C00187DD3 /* CanvasPixelArray.idl */,
 				49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */,
 				49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */,
 				49C7B9BE1042D32F0009D447 /* CanvasRenderingContext.idl */,
@@ -21791,7 +21783,6 @@
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
-				49484FC8102CF23C00187DD3 /* CanvasPixelArray.h in Headers */,
 				49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */,
 				49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */,
 				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
@@ -25292,7 +25283,6 @@
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
 				49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */,
-				49484FC7102CF23C00187DD3 /* CanvasPixelArray.cpp in Sources */,
 				49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */,
 				49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */,
 				49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */,

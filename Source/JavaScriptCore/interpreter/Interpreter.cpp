@@ -45,7 +45,6 @@
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSBoundFunction.h"
-#include "JSByteArray.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "LiteralParser.h"
@@ -3768,8 +3767,6 @@ skip_id_custom_self:
                     result = jsArray->JSArray::get(callFrame, i);
             } else if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
                 result = asString(baseValue)->getIndex(callFrame, i);
-            else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i))
-                result = asByteArray(baseValue)->getIndex(callFrame, i);
             else
                 result = baseValue.get(callFrame, i);
         } else {
@@ -3808,15 +3805,6 @@ skip_id_custom_self:
                     jsArray->setIndex(*globalData, i, callFrame->r(value).jsValue());
                 else
                     jsArray->JSArray::putByIndex(jsArray, callFrame, i, callFrame->r(value).jsValue(), codeBlock->isStrictMode());
-            } else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
-                JSByteArray* jsByteArray = asByteArray(baseValue);
-                JSValue jsValue = callFrame->r(value).jsValue();
-                if (jsValue.isInt32())
-                    jsByteArray->setIndex(i, jsValue.asInt32());
-                else if (jsValue.isDouble())
-                    jsByteArray->setIndex(i, jsValue.asDouble());
-                else
-                    baseValue.putByIndex(callFrame, i, jsValue, codeBlock->isStrictMode());
             } else
                 baseValue.putByIndex(callFrame, i, callFrame->r(value).jsValue(), codeBlock->isStrictMode());
         } else {

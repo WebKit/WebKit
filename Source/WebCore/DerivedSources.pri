@@ -455,7 +455,6 @@ IDL_BINDINGS += \
 
 v8 {
   IDL_BINDINGS += \
-    $$PWD/html/canvas/CanvasPixelArray.idl \
     $$PWD/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $$PWD/Modules/indexeddb/IDBVersionChangeRequest.idl
 }

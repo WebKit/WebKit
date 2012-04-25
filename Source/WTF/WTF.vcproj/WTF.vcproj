@@ -629,14 +629,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\ByteArray.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\wtf\ByteArray.h"
-			>
-		</File>
-		<File
 			RelativePath="..\wtf\CheckedArithmetic.h"
 			>
 		</File>

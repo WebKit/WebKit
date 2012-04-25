@@ -37,7 +37,6 @@
 #include "SVGStyledElement.h"
 #include "SVGUnitTypes.h"
 
-#include <wtf/ByteArray.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 

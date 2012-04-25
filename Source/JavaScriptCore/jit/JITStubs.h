@@ -367,7 +367,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_get_by_id_self_fail(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_id_string_fail(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_val(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_val_byte_array(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_val_string(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_in(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_instanceof(STUB_ARGS_DECLARATION);
@@ -445,7 +444,6 @@ extern "C" {
     void JIT_STUB cti_op_put_by_id_direct_generic(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_index(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION);
-    void JIT_STUB cti_op_put_by_val_byte_array(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_put_getter_setter(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);

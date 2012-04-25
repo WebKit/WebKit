@@ -700,11 +700,6 @@ struct Node {
         return isArrayPrediction(prediction());
     }
     
-    bool shouldSpeculateByteArray()
-    {
-        return !!(prediction() & PredictByteArray);
-    }
-    
     bool shouldSpeculateInt8Array()
     {
         return isInt8ArrayPrediction(prediction());

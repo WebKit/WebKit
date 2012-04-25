@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DFGSpeculativeJIT.h"
 
-#include "JSByteArray.h"
-
 #if ENABLE(DFG_JIT)
 
 namespace JSC { namespace DFG {
@@ -2021,16 +2019,6 @@ void SpeculativeJIT::compile(Node& node)
                 valueSourceReferenceForOperand(node.local()) = ValueSource(CellInRegisterFile);
                 break;
             }
-            if (isByteArrayPrediction(predictedType)) {
-                SpeculateCellOperand cell(this, node.child1());
-                GPRReg cellGPR = cell.gpr();
-                if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
-                    speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSByteArray::s_info)));
-                m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
-                noResult(m_compileIndex);
-                valueSourceReferenceForOperand(node.local()) = ValueSource(CellInRegisterFile);
-                break;
-            }
             if (isBooleanPrediction(predictedType)) {
                 SpeculateBooleanOperand boolean(this, node.child1());
                 m_jit.storePtr(boolean.gpr(), JITCompiler::addressFor(node.local()));
@@ -2351,13 +2339,6 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
 
-        if (at(node.child1()).shouldSpeculateByteArray()) {
-            compileGetByValOnByteArray(node);
-            if (!m_compileOkay)
-                return;
-            break;            
-        }
-        
         if (at(node.child1()).shouldSpeculateInt8Array()) {
             compileGetByValOnIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), node, sizeof(int8_t), isInt8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
             if (!m_compileOkay)
@@ -2472,11 +2453,6 @@ void SpeculativeJIT::compile(Node& node)
 
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
-        if (at(node.child1()).shouldSpeculateByteArray()) {
-            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
-            break;
-        }
-        
         if (at(node.child1()).shouldSpeculateInt8Array()) {
             compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int8_t), isInt8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
             if (!m_compileOkay)
@@ -2610,11 +2586,6 @@ void SpeculativeJIT::compile(Node& node)
 
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
-        if (at(node.child1()).shouldSpeculateByteArray()) {
-            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
-            break;
-        }
-
         if (at(node.child1()).shouldSpeculateInt8Array()) {
             compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int8_t), NoTypedArraySpecCheck, SignedTypedArray);
             if (!m_compileOkay)
@@ -3335,22 +3306,6 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case GetByteArrayLength: {
-        SpeculateCellOperand base(this, node.child1());
-        GPRTemporary result(this);
-        
-        GPRReg baseGPR = base.gpr();
-        GPRReg resultGPR = result.gpr();
-        
-        if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
-            speculationCheck(BadType, JSValueRegs(baseGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSByteArray::s_info)));
-        
-        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSByteArray::offsetOfStorage()), resultGPR);
-        m_jit.load32(MacroAssembler::Address(resultGPR, ByteArray::offsetOfSize()), resultGPR);
-
-        integerResult(resultGPR, m_compileIndex);
-        break;
-    }
     case GetInt8ArrayLength: {
         compileGetTypedArrayLength(m_jit.globalData()->int8ArrayDescriptor(), node, !isInt8ArrayPrediction(m_state.forNode(node.child1()).m_type));
         break;
