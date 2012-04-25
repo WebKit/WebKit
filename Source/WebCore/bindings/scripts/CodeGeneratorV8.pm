@@ -1112,7 +1112,7 @@ END
             push(@implContentDecls, "        return;\n");
         }
     } else {
-        my $value = JSValueToNative($attribute->signature, "value");
+        my $value = JSValueToNative($attribute->signature, "value", "info.GetIsolate()");
         my $arrayType = $codeGenerator->GetArrayType($nativeType);
 
         if ($nativeType =~ /^V8Parameter/) {
@@ -1629,21 +1629,21 @@ sub GenerateParametersCheck
             }
             $parameterCheckString .= "    bool ${parameterName}DidThrow = false;\n";
             if (!$useTransferList) {
-                    $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], 0, 0, ${parameterName}DidThrow);\n";
+                    $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], 0, 0, ${parameterName}DidThrow, args.GetIsolate());\n";
             } else {
-                    $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], &messagePortArray$TransferListName, &arrayBufferArray$TransferListName, ${parameterName}DidThrow);\n";
+                    $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], &messagePortArray$TransferListName, &arrayBufferArray$TransferListName, ${parameterName}DidThrow, args.GetIsolate());\n";
             }
             $parameterCheckString .= "    if (${parameterName}DidThrow)\n";
             $parameterCheckString .= "        return v8::Undefined();\n";
         } elsif (TypeCanFailConversion($parameter)) {
             $parameterCheckString .= "    $nativeType $parameterName = " .
-                 JSValueToNative($parameter, "args[$paramIndex]") . ";\n";
+                 JSValueToNative($parameter, "args[$paramIndex]", "args.GetIsolate()") . ";\n";
             $parameterCheckString .= "    if (UNLIKELY(!$parameterName)) {\n";
             $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
             $parameterCheckString .= "        goto fail;\n";
             $parameterCheckString .= "    }\n";
         } elsif ($nativeType =~ /^V8Parameter/) {
-            my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)");
+            my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()");
             $parameterCheckString .= "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n";
         } else {
             AddToImplIncludes("V8BindingMacros.h");
@@ -1664,7 +1664,7 @@ sub GenerateParametersCheck
                 }
             }
             $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
-                 JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)") . ");\n";
+                 JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()") . ");\n";
             if ($nativeType eq 'Dictionary') {
                $parameterCheckString .= "    if (args.Length() > $paramIndex && !$parameterName.isUndefinedOrNull() && !$parameterName.isObject()) {\n";
                if (@{$function->raisesExceptions}) {
@@ -3507,6 +3507,7 @@ sub JSValueToNative
 {
     my $signature = shift;
     my $value = shift;
+    my $getIsolate = shift;
 
     my $type = GetTypeFromSignature($signature);
 
@@ -3537,7 +3538,7 @@ sub JSValueToNative
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h");
-        return "SerializedScriptValue::create($value)";
+        return "SerializedScriptValue::create($value, $getIsolate)";
     }
 
     if ($type eq "IDBKey") {

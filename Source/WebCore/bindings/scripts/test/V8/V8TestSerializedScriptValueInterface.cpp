@@ -56,7 +56,7 @@ static void valueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> val
 {
     INC_STATS("DOM.TestSerializedScriptValueInterface.value._set");
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value);
+    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
     imp->setValue(WTF::getPtr(v));
     return;
 }
@@ -86,7 +86,7 @@ static void cachedValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
 {
     INC_STATS("DOM.TestSerializedScriptValueInterface.cachedValue._set");
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value);
+    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
     imp->setCachedValue(WTF::getPtr(v));
     info.Holder()->DeleteHiddenValue(v8::String::NewSymbol("cachedValue")); // Invalidate the cached value.
     return;
@@ -133,7 +133,7 @@ static v8::Handle<v8::Value> acceptTransferListCallback(const v8::Arguments& arg
             return throwError("Could not extract transferables", V8Proxy::TypeError);
     }
     bool dataDidThrow = false;
-    RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[0], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow);
+    RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[0], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());
     if (dataDidThrow)
         return v8::Undefined();
     if (args.Length() <= 1) {
@@ -159,7 +159,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
             return throwError("Could not extract transferables", V8Proxy::TypeError);
     }
     bool firstDidThrow = false;
-    RefPtr<SerializedScriptValue> first = SerializedScriptValue::create(args[0], &messagePortArrayTx, &arrayBufferArrayTx, firstDidThrow);
+    RefPtr<SerializedScriptValue> first = SerializedScriptValue::create(args[0], &messagePortArrayTx, &arrayBufferArrayTx, firstDidThrow, args.GetIsolate());
     if (firstDidThrow)
         return v8::Undefined();
     if (args.Length() <= 1) {
@@ -177,7 +177,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
             return throwError("Could not extract transferables", V8Proxy::TypeError);
     }
     bool secondDidThrow = false;
-    RefPtr<SerializedScriptValue> second = SerializedScriptValue::create(args[2], &messagePortArrayTxx, &arrayBufferArrayTxx, secondDidThrow);
+    RefPtr<SerializedScriptValue> second = SerializedScriptValue::create(args[2], &messagePortArrayTxx, &arrayBufferArrayTxx, secondDidThrow, args.GetIsolate());
     if (secondDidThrow)
         return v8::Undefined();
     if (args.Length() <= 3) {
@@ -227,7 +227,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
             return throwError("Could not extract transferables", V8Proxy::TypeError);
     }
     bool dataDidThrow = false;
-    RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[1], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow);
+    RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[1], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());
     if (dataDidThrow)
         return v8::Undefined();
 

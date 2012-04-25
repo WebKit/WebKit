@@ -239,7 +239,7 @@ static v8::Handle<v8::Value> intSequenceAttrAttrGetter(v8::Local<v8::String> nam
 {
     INC_STATS("DOM.TestObj.intSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->intSequenceAttr());
+    return v8Array(imp->intSequenceAttr(), info.GetIsolate());
 }
 
 static void intSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -255,7 +255,7 @@ static v8::Handle<v8::Value> shortSequenceAttrAttrGetter(v8::Local<v8::String> n
 {
     INC_STATS("DOM.TestObj.shortSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->shortSequenceAttr());
+    return v8Array(imp->shortSequenceAttr(), info.GetIsolate());
 }
 
 static void shortSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -271,7 +271,7 @@ static v8::Handle<v8::Value> longSequenceAttrAttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestObj.longSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->longSequenceAttr());
+    return v8Array(imp->longSequenceAttr(), info.GetIsolate());
 }
 
 static void longSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -287,7 +287,7 @@ static v8::Handle<v8::Value> longLongSequenceAttrAttrGetter(v8::Local<v8::String
 {
     INC_STATS("DOM.TestObj.longLongSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->longLongSequenceAttr());
+    return v8Array(imp->longLongSequenceAttr(), info.GetIsolate());
 }
 
 static void longLongSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -303,7 +303,7 @@ static v8::Handle<v8::Value> unsignedIntSequenceAttrAttrGetter(v8::Local<v8::Str
 {
     INC_STATS("DOM.TestObj.unsignedIntSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->unsignedIntSequenceAttr());
+    return v8Array(imp->unsignedIntSequenceAttr(), info.GetIsolate());
 }
 
 static void unsignedIntSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -319,7 +319,7 @@ static v8::Handle<v8::Value> unsignedShortSequenceAttrAttrGetter(v8::Local<v8::S
 {
     INC_STATS("DOM.TestObj.unsignedShortSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->unsignedShortSequenceAttr());
+    return v8Array(imp->unsignedShortSequenceAttr(), info.GetIsolate());
 }
 
 static void unsignedShortSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -335,7 +335,7 @@ static v8::Handle<v8::Value> unsignedLongSequenceAttrAttrGetter(v8::Local<v8::St
 {
     INC_STATS("DOM.TestObj.unsignedLongSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->unsignedLongSequenceAttr());
+    return v8Array(imp->unsignedLongSequenceAttr(), info.GetIsolate());
 }
 
 static void unsignedLongSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -351,7 +351,7 @@ static v8::Handle<v8::Value> unsignedLongLongSequenceAttrAttrGetter(v8::Local<v8
 {
     INC_STATS("DOM.TestObj.unsignedLongLongSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->unsignedLongLongSequenceAttr());
+    return v8Array(imp->unsignedLongLongSequenceAttr(), info.GetIsolate());
 }
 
 static void unsignedLongLongSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -367,7 +367,7 @@ static v8::Handle<v8::Value> floatSequenceAttrAttrGetter(v8::Local<v8::String> n
 {
     INC_STATS("DOM.TestObj.floatSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->floatSequenceAttr());
+    return v8Array(imp->floatSequenceAttr(), info.GetIsolate());
 }
 
 static void floatSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -383,7 +383,7 @@ static v8::Handle<v8::Value> doubleSequenceAttrAttrGetter(v8::Local<v8::String> 
 {
     INC_STATS("DOM.TestObj.doubleSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->doubleSequenceAttr());
+    return v8Array(imp->doubleSequenceAttr(), info.GetIsolate());
 }
 
 static void doubleSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -399,7 +399,7 @@ static v8::Handle<v8::Value> booleanSequenceAttrAttrGetter(v8::Local<v8::String>
 {
     INC_STATS("DOM.TestObj.booleanSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->booleanSequenceAttr());
+    return v8Array(imp->booleanSequenceAttr(), info.GetIsolate());
 }
 
 static void booleanSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -415,7 +415,7 @@ static v8::Handle<v8::Value> voidSequenceAttrAttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestObj.voidSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->voidSequenceAttr());
+    return v8Array(imp->voidSequenceAttr(), info.GetIsolate());
 }
 
 static void voidSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -431,7 +431,7 @@ static v8::Handle<v8::Value> dateSequenceAttrAttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestObj.dateSequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Array(imp->dateSequenceAttr());
+    return v8Array(imp->dateSequenceAttr(), info.GetIsolate());
 }
 
 static void dateSequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -1325,7 +1325,7 @@ static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     bool serializedArgDidThrow = false;
-    RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(args[0], 0, 0, serializedArgDidThrow);
+    RefPtr<SerializedScriptValue> serializedArg = SerializedScriptValue::create(args[0], 0, 0, serializedArgDidThrow, args.GetIsolate());
     if (serializedArgDidThrow)
         return v8::Undefined();
     imp->serializedValue(serializedArg);
