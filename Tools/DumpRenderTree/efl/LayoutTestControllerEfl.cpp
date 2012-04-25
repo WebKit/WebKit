@@ -223,22 +223,14 @@ void LayoutTestController::setScrollbarPolicy(JSStringRef, JSStringRef)
     notImplemented();
 }
 
-void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
+void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef, JSStringRef, JSStringRef, bool)
 {
-    WebCore::KURL kurl;
-    kurl.setProtocol(String(protocol->characters(), protocol->length()));
-    kurl.setHost(String(host->characters(), host->length()));
-
-    ewk_security_policy_whitelist_origin_add(sourceOrigin->ustring().utf8().data(), kurl.string().utf8().data(), includeSubdomains);
+    notImplemented();
 }
 
-void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
+void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef, JSStringRef, JSStringRef, bool)
 {
-    WebCore::KURL kurl;
-    kurl.setProtocol(String(protocol->characters(), protocol->length()));
-    kurl.setHost(String(host->characters(), host->length()));
-
-    ewk_security_policy_whitelist_origin_del(sourceOrigin->ustring().utf8().data(), kurl.string().utf8().data(), includeSubdomains);
+    notImplemented();
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool)

@@ -1,3 +1,14 @@
+2012-04-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r115222.
+        http://trac.webkit.org/changeset/115222
+        https://bugs.webkit.org/show_bug.cgi?id=84874
+
+        Caused test regressions on the EFL build (Requested by rakuco
+        on #webkit).
+
+        * platform/efl/Skipped:
+
 2012-04-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r112177): listStyleType CSS property gets converted into listStyle
