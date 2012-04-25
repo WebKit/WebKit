@@ -1,0 +1,25 @@
+| "
+  "
+| <thead>
+|   "
+  "
+| "
+  "
+| <tfoot>
+|   "
+  "
+| "
+  "
+| <tbody>
+|   title="tbody1"
+|   "
+  "
+| "
+  "
+| <tbody>
+|   title="tbody2"
+|   "
+  "
+| <tbody>
+| "
+"

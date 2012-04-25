@@ -1,3 +1,19 @@
+2012-04-24  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Implement createTBody for table element.
+        https://bugs.webkit.org/show_bug.cgi?id=84465
+
+        Reviewed by Ojan Vafai.
+
+        Add test to cover the new createTBody method.
+
+        * fast/table/table-create-tbody-existing-tbody-expected.txt: Added.
+        * fast/table/table-create-tbody-existing-tbody.html: Added.
+        * fast/table/table-create-tbody-expected.txt: Added.
+        * fast/table/table-create-tbody-multiple-tbody-expected.txt: Added.
+        * fast/table/table-create-tbody-multiple-tbody.html: Added.
+        * fast/table/table-create-tbody.html: Added.
+
 2012-04-24  Yong Li  <yoli@rim.com>
 
         ASSERT failure in RenderLayer::computeRepaintRects

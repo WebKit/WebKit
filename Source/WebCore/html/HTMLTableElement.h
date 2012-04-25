@@ -53,6 +53,7 @@ public:
     void deleteTHead();
     PassRefPtr<HTMLElement> createTFoot();
     void deleteTFoot();
+    PassRefPtr<HTMLElement> createTBody();
     PassRefPtr<HTMLElement> createCaption();
     void deleteCaption();
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);

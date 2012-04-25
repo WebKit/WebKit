@@ -155,6 +155,14 @@ void HTMLTableElement::deleteTFoot()
     removeChild(tFoot(), ec);
 }
 
+PassRefPtr<HTMLElement> HTMLTableElement::createTBody()
+{
+    RefPtr<HTMLTableSectionElement> body = HTMLTableSectionElement::create(tbodyTag, document());
+    Node* referenceElement = lastBody() ? lastBody()->nextSibling() : 0;
+    insertBefore(body, referenceElement, ASSERT_NO_EXCEPTION);
+    return body.release();
+}
+
 PassRefPtr<HTMLElement> HTMLTableElement::createCaption()
 {
     if (HTMLTableCaptionElement* existingCaption = caption())
