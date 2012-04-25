@@ -251,7 +251,7 @@ public:
     void selectionCancelled();
     bool selectionContains(const Platform::IntPoint&);
 
-    void popupListClosed(int size, bool* selecteds);
+    void popupListClosed(int size, const bool* selecteds);
     void popupListClosed(int index);
     void setDateTimeInput(const WebString& value);
     void setColorInput(const WebString& value);

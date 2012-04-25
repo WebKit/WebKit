@@ -101,13 +101,10 @@ FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry()
     , m_hasSentResponseToPlugin(false)
     , m_cancelLoadOnNextData(false)
 {
-    m_deferredJobsTimer = new Timer<FrameLoaderClientBlackBerry>(this, &FrameLoaderClientBlackBerry::deferredJobsTimerFired);
 }
 
 FrameLoaderClientBlackBerry::~FrameLoaderClientBlackBerry()
 {
-    delete m_deferredJobsTimer;
-    m_deferredJobsTimer = 0;
 }
 
 int FrameLoaderClientBlackBerry::playerId() const
@@ -1114,8 +1111,6 @@ PolicyAction FrameLoaderClientBlackBerry::decidePolicyForExternalLoad(const Reso
 
 void FrameLoaderClientBlackBerry::willDeferLoading()
 {
-    m_deferredJobsTimer->stop();
-
     if (!isMainFrame())
         return;
 
@@ -1124,34 +1119,10 @@ void FrameLoaderClientBlackBerry::willDeferLoading()
 
 void FrameLoaderClientBlackBerry::didResumeLoading()
 {
-    if (!m_deferredManualScript.isNull())
-        m_deferredJobsTimer->startOneShot(0);
-
     if (!isMainFrame())
         return;
 
     m_webPagePrivate->didResumeLoading();
-}
-
-void FrameLoaderClientBlackBerry::setDeferredManualScript(const KURL& script)
-{
-    ASSERT(!m_deferredJobsTimer->isActive());
-    m_deferredManualScript = script;
-}
-
-void FrameLoaderClientBlackBerry::deferredJobsTimerFired(Timer<FrameLoaderClientBlackBerry>*)
-{
-    ASSERT(!m_frame->page()->defersLoading());
-
-    if (!m_deferredManualScript.isNull()) {
-        // Executing the script will set deferred loading, which could trigger this timer again if a script is set. So clear the script first.
-        KURL script = m_deferredManualScript;
-        m_deferredManualScript = KURL();
-
-        m_frame->script()->executeIfJavaScriptURL(script);
-    }
-
-    ASSERT(!m_frame->page()->defersLoading());
 }
 
 void FrameLoaderClientBlackBerry::readyToRender(bool pageIsVisuallyNonEmpty)

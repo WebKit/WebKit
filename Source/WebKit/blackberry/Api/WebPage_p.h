@@ -24,6 +24,7 @@
 #include "GLES2Context.h"
 #include "LayerRenderer.h"
 #endif
+#include "KURL.h"
 #include "PageClientBlackBerry.h"
 #include "PlatformMouseEvent.h"
 #include "ScriptSourceCode.h"
@@ -40,7 +41,6 @@ class Document;
 class Frame;
 class GeolocationControllerClientBlackBerry;
 class JavaScriptDebuggerBlackBerry;
-class KURL;
 class Node;
 class Page;
 class PluginView;
@@ -415,6 +415,8 @@ public:
 #endif
     void notifyAppActivationStateChange(ActivationStateType);
 
+    void deferredTasksTimerFired(WebCore::Timer<WebPagePrivate>*);
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::Page* m_page;
@@ -535,6 +537,46 @@ public:
     RefPtr<WebCore::DOMWrapperWorld> m_isolatedWorld;
     bool m_hasInRegionScrollableAreas;
     bool m_updateDelegatedOverlaysDispatched;
+
+    // There is no need to initialize the following members in WebPagePrivate's constructor,
+    // because they are only used by WebPageTasks and the tasks will initialize them when
+    // being constructed.
+    bool m_wouldPopupListSelectMultiple;
+    bool m_wouldPopupListSelectSingle;
+    bool m_wouldSetDateTimeInput;
+    bool m_wouldSetColorInput;
+    bool m_wouldCancelSelection;
+    bool m_wouldSetFocused;
+    bool m_wouldSetPageVisibilityState;
+    Vector<bool> m_cachedPopupListSelecteds;
+    int m_cachedPopupListSelectedIndex;
+    WebString m_cachedDateTimeInput;
+    WebString m_cachedColorInput;
+    WebCore::KURL m_cachedManualScript;
+    bool m_cachedFocused;
+
+    class DeferredTaskBase {
+    public:
+        void perform(WebPagePrivate* webPagePrivate)
+        {
+            if (!(webPagePrivate->*m_isActive))
+                return;
+            performInternal(webPagePrivate);
+        }
+    protected:
+        DeferredTaskBase(WebPagePrivate* webPagePrivate, bool WebPagePrivate::*isActive)
+            : m_isActive(isActive)
+        {
+            webPagePrivate->*m_isActive = true;
+        }
+
+        virtual void performInternal(WebPagePrivate*) = 0;
+
+        bool WebPagePrivate::*m_isActive;
+    };
+
+    Vector<OwnPtr<DeferredTaskBase> > m_deferredTasks;
+    WebCore::Timer<WebPagePrivate> m_deferredTasksTimer;
 
 protected:
     virtual ~WebPagePrivate();

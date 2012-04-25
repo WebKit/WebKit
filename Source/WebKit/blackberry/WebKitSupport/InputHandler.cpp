@@ -1189,7 +1189,7 @@ void InputHandler::setPopupListIndex(int index)
     clearCurrentFocusElement();
 }
 
-void InputHandler::setPopupListIndexes(int size, bool* selecteds)
+void InputHandler::setPopupListIndexes(int size, const bool* selecteds)
 {
     if (!isActiveSelectPopup())
         return clearCurrentFocusElement();

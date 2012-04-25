@@ -289,6 +289,21 @@ void WebPage::resetUserViewportArguments()
     d->m_userViewportArguments = ViewportArguments();
 }
 
+template <bool WebPagePrivate::* isActive>
+class DeferredTask: public WebPagePrivate::DeferredTaskBase {
+public:
+    static void finishOrCancel(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->*isActive = false;
+    }
+protected:
+    DeferredTask(WebPagePrivate* webPagePrivate)
+        : DeferredTaskBase(webPagePrivate, isActive)
+    {
+    }
+    typedef DeferredTask<isActive> DeferredTaskType;
+};
+
 WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const IntRect& rect)
     : m_webPage(webPage)
     , m_client(client)
@@ -356,6 +371,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_fullscreenVideoNode(0)
     , m_hasInRegionScrollableAreas(false)
     , m_updateDelegatedOverlaysDispatched(false)
+    , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
 {
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -527,9 +543,24 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #endif
 }
 
+class DeferredTaskLoadManualScript: public DeferredTask<&WebPagePrivate::m_wouldSetFocused> {
+public:
+    explicit DeferredTaskLoadManualScript(WebPagePrivate* webPagePrivate, const KURL& url)
+        : DeferredTaskType(webPagePrivate)
+    {
+        webPagePrivate->m_cachedManualScript = url;
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->m_mainFrame->script()->executeIfJavaScriptURL(webPagePrivate->m_cachedManualScript, DoNotReplaceDocumentIfJavaScriptURL);
+    }
+};
+
 void WebPagePrivate::load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally, bool forceDownload, const char* overrideContentType)
 {
     stopCurrentLoad();
+    DeferredTaskLoadManualScript::finishOrCancel(this);
 
     String urlString(url);
     if (urlString.startsWith("vs:", false)) {
@@ -541,10 +572,9 @@ void WebPagePrivate::load(const char* url, const char* networkToken, const char*
     KURL kurl = parseUrl(urlString);
     if (protocolIs(kurl, "javascript")) {
         // Never run javascript while loading is deferred.
-        if (m_page->defersLoading()) {
-            FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(m_mainFrame->loader()->client());
-            frameLoaderClient->setDeferredManualScript(kurl);
-        } else
+        if (m_page->defersLoading())
+            m_deferredTasks.append(adoptPtr(new DeferredTaskLoadManualScript(this, kurl)));
+        else
             m_mainFrame->script()->executeIfJavaScriptURL(kurl, DoNotReplaceDocumentIfJavaScriptURL);
         return;
     }
@@ -751,8 +781,7 @@ void WebPagePrivate::stopCurrentLoad()
     m_mainFrame->loader()->stopAllLoaders();
 
     // Cancel any deferred script that hasn't been processed yet.
-    FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(m_mainFrame->loader()->client());
-    frameLoaderClient->setDeferredManualScript(KURL());
+    DeferredTaskLoadManualScript::finishOrCancel(this);
 }
 
 void WebPage::stopLoading()
@@ -1220,12 +1249,30 @@ bool WebPagePrivate::shouldSendResizeEvent()
 
 void WebPagePrivate::willDeferLoading()
 {
+    m_deferredTasksTimer.stop();
     m_client->willDeferLoading();
 }
 
 void WebPagePrivate::didResumeLoading()
 {
+    if (!m_deferredTasks.isEmpty())
+        m_deferredTasksTimer.startOneShot(0);
     m_client->didResumeLoading();
+}
+
+void WebPagePrivate::deferredTasksTimerFired(WebCore::Timer<WebPagePrivate>*)
+{
+    ASSERT(!m_deferredTasks.isEmpty());
+    if (!m_deferredTasks.isEmpty())
+        return;
+
+    OwnPtr<DeferredTaskBase> task = m_deferredTasks[0].release();
+    m_deferredTasks.remove(0);
+
+    if (!m_deferredTasks.isEmpty())
+        m_deferredTasksTimer.startOneShot(0);
+
+    task->perform(this);
 }
 
 bool WebPagePrivate::scrollBy(int deltaX, int deltaY, bool scrollMainFrame)
@@ -2449,6 +2496,8 @@ void WebPagePrivate::assignFocus(Platform::FocusDirection direction)
 
 void WebPage::assignFocus(Platform::FocusDirection direction)
 {
+    if (d->m_page->defersLoading())
+       return;
     d->assignFocus(direction);
 }
 
@@ -2982,12 +3031,31 @@ bool WebPage::isVisible() const
 }
 
 #if ENABLE(PAGE_VISIBILITY_API)
+class DeferredTaskSetPageVisibilityState: public DeferredTask<&WebPagePrivate::m_wouldSetPageVisibilityState> {
+public:
+    explicit DeferredTaskSetPageVisibilityState(WebPagePrivate* webPagePrivate)
+        : DeferredTaskType(webPagePrivate)
+    {
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->setPageVisibilityState();
+    }
+};
+
 void WebPagePrivate::setPageVisibilityState()
 {
-    static bool s_initialVisibilityState = true;
+    if (m_page->defersLoading())
+        m_deferredTasks.append(adoptPtr(new DeferredTaskSetPageVisibilityState(this)));
+    else {
+        DeferredTaskSetPageVisibilityState::finishOrCancel(this);
 
-    m_page->setVisibilityState(m_visible && m_activationState == ActivationActive ? PageVisibilityStateVisible : PageVisibilityStateHidden, s_initialVisibilityState);
-    s_initialVisibilityState = false;
+        static bool s_initialVisibilityState = true;
+
+        m_page->setVisibilityState(m_visible && m_activationState == ActivationActive ? PageVisibilityStateVisible : PageVisibilityStateHidden, s_initialVisibilityState);
+        s_initialVisibilityState = false;
+    }
 }
 #endif
 
@@ -3093,6 +3161,8 @@ bool WebPage::setBatchEditingActive(bool active)
 
 bool WebPage::setInputSelection(unsigned start, unsigned end)
 {
+    if (d->m_page->defersLoading())
+        return false;
     return d->m_inputHandler->setSelection(start, end);
 }
 
@@ -3101,23 +3171,101 @@ int WebPage::inputCaretPosition() const
     return d->m_inputHandler->caretPosition();
 }
 
-void WebPage::popupListClosed(int size, bool* selecteds)
+class DeferredTaskPopupListSelectMultiple: public DeferredTask<&WebPagePrivate::m_wouldPopupListSelectMultiple> {
+public:
+    DeferredTaskPopupListSelectMultiple(WebPagePrivate* webPagePrivate, int size, const bool* selecteds) 
+        : DeferredTaskType(webPagePrivate)
+    {
+        webPagePrivate->m_cachedPopupListSelecteds.append(selecteds, size);
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->m_webPage->popupListClosed(webPagePrivate->m_cachedPopupListSelecteds.size(), webPagePrivate->m_cachedPopupListSelecteds.data());
+    }
+};
+
+class DeferredTaskPopupListSelectSingle: public DeferredTask<&WebPagePrivate::m_wouldPopupListSelectSingle> {
+public:
+    explicit DeferredTaskPopupListSelectSingle(WebPagePrivate* webPagePrivate, int index)
+        : DeferredTaskType(webPagePrivate)
+    {
+        webPagePrivate->m_cachedPopupListSelectedIndex = index;
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->m_webPage->popupListClosed(webPagePrivate->m_cachedPopupListSelectedIndex);
+    }
+};
+
+void WebPage::popupListClosed(int size, const bool* selecteds)
 {
+    DeferredTaskPopupListSelectSingle::finishOrCancel(d);
+    if (d->m_page->defersLoading()) {
+        d->m_deferredTasks.append(adoptPtr(new DeferredTaskPopupListSelectMultiple(d, size, selecteds)));
+        return;
+    }
+    DeferredTaskPopupListSelectMultiple::finishOrCancel(d);
     d->m_inputHandler->setPopupListIndexes(size, selecteds);
 }
 
 void WebPage::popupListClosed(int index)
 {
+    DeferredTaskPopupListSelectMultiple::finishOrCancel(d);
+    if (d->m_page->defersLoading()) {
+        d->m_deferredTasks.append(adoptPtr(new DeferredTaskPopupListSelectSingle(d, index)));
+        return;
+    }
+    DeferredTaskPopupListSelectSingle::finishOrCancel(d);
     d->m_inputHandler->setPopupListIndex(index);
 }
 
+class DeferredTaskSetDateTimeInput: public DeferredTask<&WebPagePrivate::m_wouldSetDateTimeInput> {
+public:
+    explicit DeferredTaskSetDateTimeInput(WebPagePrivate* webPagePrivate, WebString value)
+        : DeferredTaskType(webPagePrivate)
+    {
+        webPagePrivate->m_cachedDateTimeInput = value;
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->m_webPage->setDateTimeInput(webPagePrivate->m_cachedDateTimeInput);
+    }
+};
+
 void WebPage::setDateTimeInput(const WebString& value)
 {
+    if (d->m_page->defersLoading()) {
+        d->m_deferredTasks.append(adoptPtr(new DeferredTaskSetDateTimeInput(d, value)));
+        return;
+    }
+    DeferredTaskSetDateTimeInput::finishOrCancel(d);
     d->m_inputHandler->setInputValue(String(value.impl()));
 }
 
+class DeferredTaskSetColorInput: public DeferredTask<&WebPagePrivate::m_wouldSetColorInput> {
+public:
+    explicit DeferredTaskSetColorInput(WebPagePrivate* webPagePrivate, WebString value)
+        : DeferredTaskType(webPagePrivate)
+    {
+        webPagePrivate->m_cachedColorInput = value;
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->m_webPage->setColorInput(webPagePrivate->m_cachedColorInput);
+    }
+};
+
 void WebPage::setColorInput(const WebString& value)
 {
+    if (d->m_page->defersLoading()) {
+        d->m_deferredTasks.append(adoptPtr(new DeferredTaskSetColorInput(d, value)));
+        return;
+    }
+    DeferredTaskSetColorInput::finishOrCancel(d);
     d->m_inputHandler->setInputValue(String(value.impl()));
 }
 
@@ -3553,6 +3701,9 @@ bool WebPage::mouseEvent(const Platform::MouseEvent& mouseEvent, bool* wheelDelt
     if (!d->m_mainFrame->view())
         return false;
 
+    if (d->m_page->defersLoading())
+        return false;
+
     PluginView* pluginView = d->m_fullScreenPluginView.get();
     if (pluginView)
         return d->dispatchMouseEventToFullScreenPlugin(pluginView, mouseEvent);
@@ -3729,12 +3880,15 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
+    if (!d->m_mainFrame)
+        return false;
+
+    if (d->m_page->defersLoading())
+        return false;
+
     PluginView* pluginView = d->m_fullScreenPluginView.get();
     if (pluginView)
         return d->dispatchTouchEventToFullScreenPlugin(pluginView, event);
-
-    if (!d->m_mainFrame)
-        return false;
 
     Platform::TouchEvent tEvent = event;
     for (unsigned i = 0; i < event.m_points.size(); i++) {
@@ -3853,6 +4007,9 @@ bool WebPagePrivate::dispatchTouchEventToFullScreenPlugin(PluginView* plugin, co
 
 bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point)
 {
+    if (d->m_page->defersLoading())
+        return false;
+
     PluginView* pluginView = d->m_fullScreenPluginView.get();
     if (pluginView)
         return d->dispatchTouchPointAsMouseEventToFullScreenPlugin(pluginView, point);
@@ -3898,11 +4055,15 @@ bool WebPagePrivate::dispatchTouchPointAsMouseEventToFullScreenPlugin(PluginView
 void WebPage::touchEventCancel()
 {
     d->m_pluginMayOpenNewTab = false;
+    if (d->m_page->defersLoading())
+        return;
     d->m_touchEventHandler->touchEventCancel();
 }
 
 void WebPage::touchEventCancelAndClearFocusedNode()
 {
+    if (d->m_page->defersLoading())
+        return;
     d->m_touchEventHandler->touchEventCancelAndClearFocusedNode();
 }
 
@@ -4121,6 +4282,9 @@ bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
     if (!d->m_mainFrame->view())
         return false;
 
+    if (d->m_page->defersLoading())
+        return false;
+
     ASSERT(d->m_page->focusController());
 
     bool handled = d->m_inputHandler->handleKeyboardInput(keyboardEvent);
@@ -4136,6 +4300,9 @@ bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
 
 bool WebPage::deleteTextRelativeToCursor(unsigned int leftOffset, unsigned int rightOffset)
 {
+    if (d->m_page->defersLoading())
+        return false;
+
     return d->m_inputHandler->deleteTextRelativeToCursor(leftOffset, rightOffset);
 }
 
@@ -4171,11 +4338,15 @@ int32_t WebPage::finishComposition()
 
 int32_t WebPage::setComposingText(spannable_string_t* spannableString, int32_t relativeCursorPosition)
 {
+    if (d->m_page->defersLoading())
+        return -1;
     return d->m_inputHandler->setComposingText(spannableString, relativeCursorPosition);
 }
 
 int32_t WebPage::commitText(spannable_string_t* spannableString, int32_t relativeCursorPosition)
 {
+    if (d->m_page->defersLoading())
+        return -1;
     return d->m_inputHandler->commitText(spannableString, relativeCursorPosition);
 }
 
@@ -4184,8 +4355,26 @@ void WebPage::setSpellCheckingEnabled(bool enabled)
     static_cast<EditorClientBlackBerry*>(d->m_page->editorClient())->enableSpellChecking(enabled);
 }
 
+class DeferredTaskSelectionCancelled: public DeferredTask<&WebPagePrivate::m_wouldCancelSelection> {
+public:
+    explicit DeferredTaskSelectionCancelled(WebPagePrivate* webPagePrivate)
+        : DeferredTaskType(webPagePrivate)
+    {
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->m_webPage->selectionCancelled();
+    }
+};
+
 void WebPage::selectionCancelled()
 {
+    if (d->m_page->defersLoading()) {
+        d->m_deferredTasks.append(adoptPtr(new DeferredTaskSelectionCancelled(d)));
+        return;
+    }
+    DeferredTaskSelectionCancelled::finishOrCancel(d);
     d->m_selectionHandler->cancelSelection();
 }
 
@@ -4209,23 +4398,29 @@ WebString WebPage::selectedText() const
 WebString WebPage::cutSelectedText()
 {
     WebString selectedText = d->m_selectionHandler->selectedText();
-    if (!selectedText.isEmpty())
+    if (!d->m_page->defersLoading() && !selectedText.isEmpty())
         d->m_inputHandler->deleteSelection();
     return selectedText;
 }
 
 void WebPage::insertText(const WebString& string)
 {
+    if (d->m_page->defersLoading())
+        return;
     d->m_inputHandler->insertText(string);
 }
 
 void WebPage::clearCurrentInputField()
 {
+    if (d->m_page->defersLoading())
+        return;
     d->m_inputHandler->clearField();
 }
 
 void WebPage::cut()
 {
+    if (d->m_page->defersLoading())
+        return;
     d->m_inputHandler->cut();
 }
 
@@ -4236,11 +4431,15 @@ void WebPage::copy()
 
 void WebPage::paste()
 {
+    if (d->m_page->defersLoading())
+        return;
     d->m_inputHandler->paste();
 }
 
 void WebPage::setSelection(const Platform::IntPoint& startPoint, const Platform::IntPoint& endPoint)
 {
+    if (d->m_page->defersLoading())
+        return;
     // Transform this events coordinates to webkit content coordinates.
     // FIXME: Don't transform the sentinel, because it may be transformed to a floating number
     // which could be rounded to 0 or other numbers. This workaround should be removed after
@@ -4250,18 +4449,22 @@ void WebPage::setSelection(const Platform::IntPoint& startPoint, const Platform:
     invalidPoint = IntPoint(endPoint) == DOMSupport::InvalidPoint;
     IntPoint end = invalidPoint ? DOMSupport::InvalidPoint : d->mapFromTransformed(endPoint);
 
-    d->m_selectionHandler->setSelection(start, end);
+    return d->m_selectionHandler->setSelection(start, end);
 }
 
 void WebPage::setCaretPosition(const Platform::IntPoint& position)
 {
+    if (d->m_page->defersLoading())
+        return;
     // Handled by selection handler as it's point based.
     // Transform this events coordinates to webkit content coordinates.
-    d->m_selectionHandler->setCaretPosition(d->mapFromTransformed(position));
+    return d->m_selectionHandler->setCaretPosition(d->mapFromTransformed(position));
 }
 
 void WebPage::selectAtPoint(const Platform::IntPoint& location)
 {
+    if (d->m_page->defersLoading())
+        return;
     // Transform this events coordinates to webkit content coordinates if it
     // is not the sentinel value.
     IntPoint selectionLocation =
@@ -4695,8 +4898,27 @@ bool WebPage::zoomToOneOne()
     return d->zoomAboutPoint(scale, d->centerOfVisibleContentsRect());
 }
 
+class DeferredTaskSetFocused: public DeferredTask<&WebPagePrivate::m_wouldSetFocused> {
+public:
+    explicit DeferredTaskSetFocused(WebPagePrivate* webPagePrivate, bool focused)
+        : DeferredTaskType(webPagePrivate)
+    {
+        webPagePrivate->m_cachedFocused = focused;
+    }
+private:
+    virtual void performInternal(WebPagePrivate* webPagePrivate)
+    {
+        webPagePrivate->m_webPage->setFocused(webPagePrivate->m_cachedFocused);
+    }
+};
+
 void WebPage::setFocused(bool focused)
 {
+    if (d->m_page->defersLoading()) {
+        d->m_deferredTasks.append(adoptPtr(new DeferredTaskSetFocused(d, focused)));
+        return;
+    }
+    DeferredTaskSetFocused::finishOrCancel(d);
     FocusController* focusController = d->m_page->focusController();
     focusController->setActive(focused);
     if (focused) {

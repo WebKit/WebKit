@@ -1,3 +1,70 @@
+2012-04-25  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Possible JS re-entrancy caused by UI events.
+        https://bugs.webkit.org/show_bug.cgi?id=84862
+
+        Reviewed by Antonio Gomes.
+
+        1. block UI events when running in nested event loop
+        2. defer some tasks we still want to perform when it is safe to do,
+           with cached data.
+        3. deferred task can be cancelled by clearing the flag. duplicate tasks
+           is not a problem because they share same flag and data.
+        4. move deferred manual script from FrameLoaderClientBlackBerry to WebPagePrivate
+           and make it a deferred task
+
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::load):
+        (BlackBerry::WebKit::WebPagePrivate::stopCurrentLoad):
+        (BlackBerry::WebKit::WebPagePrivate::willDeferLoading):
+        (BlackBerry::WebKit::WebPagePrivate::didResumeLoading):
+        (BlackBerry::WebKit::WebPagePrivate::deferredTasksTimerFired):
+        (BlackBerry::WebKit::WebPage::assignFocus):
+        (BlackBerry::WebKit::WebPagePrivate::setPageVisibilityState):
+        (BlackBerry::WebKit::WebPage::setInputSelection):
+        (BlackBerry::WebKit::WebPage::popupListClosed):
+        (BlackBerry::WebKit::WebPage::setDateTimeInput):
+        (BlackBerry::WebKit::WebPage::setColorInput):
+        (BlackBerry::WebKit::WebPage::mouseEvent):
+        (BlackBerry::WebKit::WebPage::touchEvent):
+        (BlackBerry::WebKit::WebPage::touchPointAsMouseEvent):
+        (BlackBerry::WebKit::WebPage::touchEventCancel):
+        (BlackBerry::WebKit::WebPage::touchEventCancelAndClearFocusedNode):
+        (BlackBerry::WebKit::WebPage::keyEvent):
+        (BlackBerry::WebKit::WebPage::deleteTextRelativeToCursor):
+        (BlackBerry::WebKit::WebPage::setComposingText):
+        (BlackBerry::WebKit::WebPage::commitText):
+        (BlackBerry::WebKit::WebPage::selectionCancelled):
+        (BlackBerry::WebKit::WebPage::cutSelectedText):
+        (BlackBerry::WebKit::WebPage::insertText):
+        (BlackBerry::WebKit::WebPage::clearCurrentInputField):
+        (BlackBerry::WebKit::WebPage::cut):
+        (BlackBerry::WebKit::WebPage::paste):
+        (BlackBerry::WebKit::WebPage::setSelection):
+        (BlackBerry::WebKit::WebPage::setCaretPosition):
+        (BlackBerry::WebKit::WebPage::selectAtPoint):
+        (BlackBerry::WebKit::WebPage::setFocused):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+        (DeferredTaskBase):
+        (BlackBerry::WebKit::WebPagePrivate::DeferredTaskBase::perform):
+        (BlackBerry::WebKit::WebPagePrivate::DeferredTaskBase::DeferredTaskBase):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry):
+        (WebCore::FrameLoaderClientBlackBerry::~FrameLoaderClientBlackBerry):
+        (WebCore::FrameLoaderClientBlackBerry::willDeferLoading):
+        (WebCore::FrameLoaderClientBlackBerry::didResumeLoading):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setPopupListIndexes):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-04-24  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Perform spellcheck before handling TouchRelease event
