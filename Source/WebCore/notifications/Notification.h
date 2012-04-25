@@ -156,7 +156,7 @@ private:
     void finishLoadingIcon();
 
 #if ENABLE(NOTIFICATIONS)
-    void showTaskTimerFired(Timer<Notification>*);
+    void taskTimerFired(Timer<Notification>*);
 #endif
     
     bool m_isHTML;
@@ -184,7 +184,7 @@ private:
     EventTargetData m_eventTargetData;
 
 #if ENABLE(NOTIFICATIONS)
-    OwnPtr<Timer<Notification> > m_showTaskTimer;
+    OwnPtr<Timer<Notification> > m_taskTimer;
 #endif
 };
 

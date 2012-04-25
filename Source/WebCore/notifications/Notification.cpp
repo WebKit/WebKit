@@ -104,13 +104,13 @@ Notification::Notification(ScriptExecutionContext* context, const String& title)
     , m_isHTML(false)
     , m_title(title)
     , m_state(Idle)
-    , m_showTaskTimer(adoptPtr(new Timer<Notification>(this, &Notification::showTaskTimerFired)))
+    , m_taskTimer(adoptPtr(new Timer<Notification>(this, &Notification::taskTimerFired)))
 {
     ASSERT(context->isDocument());
     m_notificationCenter = DOMWindowNotifications::webkitNotifications(static_cast<Document*>(context)->domWindow());
     
     ASSERT(m_notificationCenter->client());
-    m_showTaskTimer->startOneShot(0);
+    m_taskTimer->startOneShot(0);
 }
 #endif
 
@@ -231,13 +231,17 @@ void Notification::dispatchCloseEvent()
 
 void Notification::dispatchErrorEvent()
 {
-    dispatchEvent(ErrorEvent::create());
+    dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
 #if ENABLE(NOTIFICATIONS)
-void Notification::showTaskTimerFired(Timer<Notification>* timer)
+void Notification::taskTimerFired(Timer<Notification>* timer)
 {
-    ASSERT_UNUSED(timer, timer == m_showTaskTimer.get());
+    ASSERT_UNUSED(timer, timer == m_taskTimer.get());
+    if (m_notificationCenter->checkPermission() != NotificationClient::PermissionAllowed) {
+        dispatchErrorEvent();
+        return;
+    }
     show();
 }
 #endif
