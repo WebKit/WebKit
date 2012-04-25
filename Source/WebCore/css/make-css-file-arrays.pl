@@ -41,7 +41,7 @@ print HEADER "namespace WebCore {\n";
 print OUT "namespace WebCore {\n";
 
 for my $in (@ARGV) {
-    $in =~ /(\w+)\.css$/ or die;
+    $in =~ /(\w+)\.css$/ or $in =~ /(\w+)\.js$/ or die;
     my $name = $1;
 
     # Slurp in the CSS file.
@@ -72,8 +72,13 @@ for my $in (@ARGV) {
 
     # Write out a C array of the characters.
     my $length = length $text;
-    print HEADER "extern const char ${name}UserAgentStyleSheet[${length}];\n";
-    print OUT "extern const char ${name}UserAgentStyleSheet[${length}] = {\n";
+    if ($in =~ /(\w+)\.css$/) {
+        print HEADER "extern const char ${name}UserAgentStyleSheet[${length}];\n";
+        print OUT "extern const char ${name}UserAgentStyleSheet[${length}] = {\n";
+    } else {
+        print HEADER "extern const char ${name}JavaScript[${length}];\n";
+        print OUT "extern const char ${name}JavaScript[${length}] = {\n";
+    }
     my $i = 0;
     while ($i < $length) {
         print OUT "    ";
