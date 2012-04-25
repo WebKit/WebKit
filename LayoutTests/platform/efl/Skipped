@@ -2119,7 +2119,6 @@ http/tests/security/cross-origin-xsl-BLOCKED.html
 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/frameNavigation/not-opener.html
-http/tests/security/local-image-from-remote-whitelisted.html
 http/tests/security/local-user-CSS-from-remote.html
 http/tests/security/mixedContent/insecure-image-in-main-frame.html
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
@@ -2156,11 +2155,6 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/logout.html
-http/tests/xmlhttprequest/origin-whitelisting-all.html
-http/tests/xmlhttprequest/origin-whitelisting-exact-match.html
-http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html
-http/tests/xmlhttprequest/origin-whitelisting-removal.html
-http/tests/xmlhttprequest/origin-whitelisting-subdomains.html
 http/tests/xmlhttprequest/remember-bad-password.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 http/tests/xmlviewer/extensions-api.html
