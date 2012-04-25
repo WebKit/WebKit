@@ -92,7 +92,8 @@ namespace JSC {
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
         int m_numCapturedArgs;
-        int m_numCapturedVars : 31;
+        int m_numCapturedVars : 30;
+        bool m_isTornOff : 1;
         bool m_requiresDynamicChecks : 1;
         int m_argumentsRegister;
     };
@@ -133,6 +134,7 @@ namespace JSC {
             registers[i].set(globalData, this, m_registers[i].get());
 
         setRegisters(registers, registerArray.release());
+        m_isTornOff = true;
     }
 
 } // namespace JSC

@@ -45,6 +45,7 @@ JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExe
     : Base(callFrame->globalData(), callFrame->globalData().activationStructure.get(), functionExecutable->symbolTable(), callFrame->registers())
     , m_numCapturedArgs(max(callFrame->argumentCount(), functionExecutable->parameterCount()))
     , m_numCapturedVars(functionExecutable->capturedVariableCount())
+    , m_isTornOff(false)
     , m_requiresDynamicChecks(functionExecutable->usesEval() && !functionExecutable->isStrictMode())
     , m_argumentsRegister(functionExecutable->generatedBytecode().argumentsRegister())
 {
@@ -94,7 +95,7 @@ inline bool JSActivation::symbolTableGet(const Identifier& propertyName, Propert
     SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
     if (entry.isNull())
         return false;
-    if (entry.getIndex() >= m_numCapturedVars)
+    if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
         return false;
 
     slot.setValue(registerAt(entry.getIndex()).get());
@@ -114,7 +115,7 @@ inline bool JSActivation::symbolTablePut(ExecState* exec, const Identifier& prop
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return true;
     }
-    if (entry.getIndex() >= m_numCapturedVars)
+    if (m_isTornOff && entry.getIndex() >= m_numCapturedVars)
         return false;
 
     registerAt(entry.getIndex()).set(globalData, this, value);

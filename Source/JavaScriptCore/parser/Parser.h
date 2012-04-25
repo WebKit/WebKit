@@ -162,7 +162,7 @@ struct Scope {
     ALWAYS_INLINE ScopeFlags usesFlags() const { return m_scopeFlags & AllScopeUsesFlags; }
     ALWAYS_INLINE void setFlags(ScopeFlags scopeFlags) { m_scopeFlags |= scopeFlags; }
 
-    ALWAYS_INLINE bool needsFullActivation() const { return m_scopeFlags & (UsesEvalFlag | UsesWithFlag | UsesCatchFlag); }
+    ALWAYS_INLINE bool usesEval() const { return m_scopeFlags & UsesEvalFlag; }
     ALWAYS_INLINE bool strictMode() const { return m_scopeFlags & StrictModeFlag; }
     ALWAYS_INLINE bool shadowsArguments() const { return m_scopeFlags & ShadowsArgumentsFlag; }
     ALWAYS_INLINE bool isFunction() const { return m_scopeFlags & FunctionModeFlag; }
@@ -269,7 +269,7 @@ struct Scope {
 
     void getCapturedVariables(IdentifierSet& capturedVariables)
     {
-        if (needsFullActivation()) {
+        if (usesEval()) {
             capturedVariables.swap(m_declaredVariables);
             return;
         }

@@ -1,3 +1,29 @@
+2012-04-25  Michael Saboff  <msaboff@apple.com>
+
+        Closure in try {} with catch captures all locals from the enclosing function
+        https://bugs.webkit.org/show_bug.cgi?id=84804
+
+        Reviewed by Oliver Hunt.
+
+        Changed the capturing of local variables from capturing when eval is used,
+        within a "with" or within a "catch" to be just when an eval is used.
+        Renamed the function returning that we should capture from
+        getCapturedVariables() to usesEval(), since that what it noew returns.
+        Needed to fix the "with" code to only range check when the activation
+        has actually been torn off.  Added m_isTornOff to JSActivation to
+        track this.
+
+        * parser/Parser.h:
+        (JSC::Scope::usesEval):
+        (JSC::Scope::getCapturedVariables):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        * runtime/JSActivation.h:
+        (JSActivation):
+        (JSC::JSActivation::tearOff):
+
 2012-04-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GC Activity Callback timer should be based on how much has been allocated since the last collection
