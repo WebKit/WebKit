@@ -196,6 +196,12 @@ LIST(APPEND WebCore_SOURCES
     dom/TouchList.cpp
 )
 
+IF (ENABLE_SMOOTH_SCROLLING)
+    LIST(APPEND WebCore_SOURCES
+        platform/blackberry/ScrollAnimatorBlackBerry.cpp
+    )
+ENDIF ()
+
 LIST(APPEND WEBDOM_IDL_HEADERS
     bindings/cpp/WebDOMCString.h
     bindings/cpp/WebDOMEventTarget.h

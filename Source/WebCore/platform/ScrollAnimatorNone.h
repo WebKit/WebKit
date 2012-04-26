@@ -101,6 +101,9 @@ public:
     virtual void scrollBy(const IntPoint&);
 
 protected:
+    virtual void animationWillStart() { }
+    virtual void animationDidFinish() { }
+
     friend class ::ScrollAnimatorNoneTest;
 
     struct PerAxisData {

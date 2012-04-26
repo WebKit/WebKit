@@ -59,12 +59,14 @@ const double kTickTime = 1 / kFrameRate;
 const double kMinimumTimerInterval = .001;
 const double kZoomTicks = 11;
 
+#if !(PLATFORM(BLACKBERRY))
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
     if (scrollableArea && scrollableArea->scrollAnimatorEnabled())
         return adoptPtr(new ScrollAnimatorNone(scrollableArea));
     return adoptPtr(new ScrollAnimator(scrollableArea));
 }
+#endif
 
 ScrollAnimatorNone::Parameters::Parameters()
     : m_isEnabled(false)
@@ -467,6 +469,7 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     bool needToScroll = data.updateDataFromParameters(step, multiplier, scrollableSize, WTF::monotonicallyIncreasingTime(), &parameters);
     if (needToScroll && !animationTimerActive()) {
         m_startTime = data.m_startTime;
+        animationWillStart();
         animationTimerFired();
     }
     return needToScroll;
@@ -565,6 +568,9 @@ void ScrollAnimatorNone::animationTimerFired()
     TRACE_EVENT("ScrollAnimatorNone::notifyPositionChanged", this, 0);
 #endif
     notifyPositionChanged();
+
+    if (!continueAnimation)
+        animationDidFinish();
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
