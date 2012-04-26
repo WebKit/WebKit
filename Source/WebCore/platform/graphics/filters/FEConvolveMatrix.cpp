@@ -48,6 +48,8 @@ FEConvolveMatrix::FEConvolveMatrix(Filter* filter, const IntSize& kernelSize,
     , m_preserveAlpha(preserveAlpha)
     , m_kernelMatrix(kernelMatrix)
 {
+    ASSERT(m_kernelSize.width() > 0);
+    ASSERT(m_kernelSize.height() > 0);
 }
 
 PassRefPtr<FEConvolveMatrix> FEConvolveMatrix::create(Filter* filter, const IntSize& kernelSize,
@@ -66,7 +68,9 @@ IntSize FEConvolveMatrix::kernelSize() const
 
 void FEConvolveMatrix::setKernelSize(const IntSize& kernelSize)
 {
-    m_kernelSize = kernelSize; 
+    ASSERT(kernelSize.width() > 0);
+    ASSERT(kernelSize.height() > 0);
+    m_kernelSize = kernelSize;
 }
 
 const Vector<float>& FEConvolveMatrix::kernel() const
@@ -86,6 +90,7 @@ float FEConvolveMatrix::divisor() const
 
 bool FEConvolveMatrix::setDivisor(float divisor)
 {
+    ASSERT(divisor);
     if (m_divisor == divisor)
         return false;
     m_divisor = divisor;
@@ -138,6 +143,8 @@ FloatPoint FEConvolveMatrix::kernelUnitLength() const
 
 bool FEConvolveMatrix::setKernelUnitLength(const FloatPoint& kernelUnitLength)
 {
+    ASSERT(kernelUnitLength.x() > 0);
+    ASSERT(kernelUnitLength.y() > 0);
     if (m_kernelUnitLength == kernelUnitLength)
         return false;
     m_kernelUnitLength = kernelUnitLength;

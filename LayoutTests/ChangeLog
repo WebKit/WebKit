@@ -1,3 +1,44 @@
+2012-04-26  Stephen Chenney  <schenney@chromium.org>
+
+        SVG FEConvolveMatrix does not check for invalid property values
+        https://bugs.webkit.org/show_bug.cgi?id=84363
+
+        Reviewed by Dirk Schulze.
+
+        Adding code to check for valid input values on SVG feConvolveMatrix properties.
+
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/efl/svg/filters/feConvolveFilter-y-bounds-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/gtk/svg/custom/convolution-crash-expected.txt:
+        * platform/gtk/svg/filters/feConvolveFilter-y-bounds-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/mac/svg/custom/convolution-crash-expected.txt:
+        * platform/mac/svg/filters/feConvolveFilter-y-bounds-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * platform/qt/svg/custom/convolution-crash-expected.txt:
+        * platform/qt/svg/filters/feConvolveFilter-y-bounds-expected.txt:
+        * svg/filters/feConvolveMatrix-invalid-targetX-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-invalid-targetX.svg: Added.
+        * svg/filters/feConvolveMatrix-invalid-targetY-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-invalid-targetY.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-kernelUnitLengthX-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-kernelUnitLengthX.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-kernelUnitLengthY-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-kernelUnitLengthY.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-orderX-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-orderX.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-orderY-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-negative-orderY.svg: Added.
+        * svg/filters/feConvolveMatrix-non-integral-order-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-non-integral-order.svg: Added.
+        * svg/filters/feConvolveMatrix-zero-divisor-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-zero-divisor.svg: Added.
+
 2012-04-26  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [EFL][DRT] Unskip media tests that were already fixed in r113178
