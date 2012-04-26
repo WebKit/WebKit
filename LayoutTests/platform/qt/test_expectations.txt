@@ -36,5 +36,3 @@ BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
 BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
-
-BUGWK84992 : css2.1/20110323/abspos-replaced-width-margin-000.htm = FAIL

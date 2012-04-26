@@ -1,3 +1,12 @@
+2012-04-26  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, rolling out r115342.
+        http://trac.webkit.org/changeset/115342
+
+        r115340 was rolled out
+
+        * platform/qt/test_expectations.txt:
+
 2012-04-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r115349.
