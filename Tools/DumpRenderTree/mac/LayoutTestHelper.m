@@ -65,6 +65,11 @@ static void installLayoutTestColorProfile()
         if (profileInfo) {
             sUserColorProfileURL = (CFURLRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
             CFRetain(sUserColorProfileURL);
+        } else {
+            profileInfo = (CFDictionaryRef)CFDictionaryGetValue(deviceInfo, kColorSyncFactoryProfiles);
+            CFDictionaryRef factoryProfile = (CFDictionaryRef)CFDictionaryGetValue(profileInfo, CFSTR("1"));
+            sUserColorProfileURL = (CFURLRef)CFDictionaryGetValue(factoryProfile, kColorSyncDeviceProfileURL);
+            CFRetain(sUserColorProfileURL);
         }
         
         CFRelease(deviceInfo);

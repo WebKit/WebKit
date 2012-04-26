@@ -1,3 +1,14 @@
+2012-04-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Teach LayoutTestHelper to correctly restore the color profile when it's a factory profile
+        https://bugs.webkit.org/show_bug.cgi?id=84931
+
+        Reviewed by Filip Pizlo.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (installLayoutTestColorProfile): Account for the possibility of the default
+        profile being a factory profile.
+
 2012-04-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r115240.
