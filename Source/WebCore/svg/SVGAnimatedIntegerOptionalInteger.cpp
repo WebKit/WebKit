@@ -79,11 +79,11 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::addAnimatedTypes(SVGAnimatedType
     ASSERT(from->type() == AnimatedIntegerOptionalInteger);
     ASSERT(from->type() == to->type());
 
-    pair<int, int>& fromNumberPair = from->integerOptionalInteger();
-    pair<int, int>& toNumberPair = to->integerOptionalInteger();
+    pair<int, int>& fromIntegerPair = from->integerOptionalInteger();
+    pair<int, int>& toIntegerPair = to->integerOptionalInteger();
 
-    toNumberPair.first += fromNumberPair.first;
-    toNumberPair.second += fromNumberPair.second;
+    toIntegerPair.first += fromIntegerPair.first;
+    toIntegerPair.second += fromIntegerPair.second;
 }
 
 void SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
@@ -96,8 +96,8 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue(float per
     pair<int, int>& animatedIntegerPair = animated->integerOptionalInteger();
     m_animationElement->adjustFromToValues<pair<int, int> >(0, fromIntegerPair, toIntegerPair, animatedIntegerPair, percentage, m_contextElement);
 
-    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, animatedIntegerPair.first, fromIntegerPair.first, toIntegerPair.first);
-    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, animatedIntegerPair.second, fromIntegerPair.second, toIntegerPair.second);
+    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromIntegerPair.first, toIntegerPair.first, animatedIntegerPair.first);
+    SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromIntegerPair.second, toIntegerPair.second, animatedIntegerPair.second);
 }
 
 float SVGAnimatedIntegerOptionalIntegerAnimator::calculateDistance(const String&, const String&)

@@ -141,27 +141,10 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
     // Regular from angle to angle animation, with all features like additive etc.
     animatedAngleAndEnumeration.second = SVGMarkerOrientAngle;
 
-    // Replace 'inherit' by their computed property values.
-    float number;
-
-    float fromAngle = fromAngleAndEnumeration.first.value();
-    float toAngle = toAngleAndEnumeration.first.value();
-
-    if (m_animationElement->calcMode() == CalcModeDiscrete)
-        number = percentage < 0.5f ? fromAngle : toAngle;
-    else
-        number = (toAngle - fromAngle) * percentage + fromAngle;
-    
-    // FIXME: This is not correct for values animation.
-    if (m_animationElement->isAccumulated() && repeatCount)
-        number += toAngle * repeatCount;
     SVGAngle& animatedSVGAngle = animatedAngleAndEnumeration.first;
-    if (m_animationElement->isAdditive() && m_animationElement->animationMode() != ToAnimation) {
-        float animatedSVGAngleValue = animatedSVGAngle.value();
-        animatedSVGAngleValue += number;
-        animatedSVGAngle.setValue(animatedSVGAngleValue);
-    } else
-        animatedSVGAngle.setValue(number);
+    float animatedAngle = animatedSVGAngle.value();
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromAngleAndEnumeration.first.value(), toAngleAndEnumeration.first.value(), animatedAngle);
+    animatedSVGAngle.setValue(animatedAngle);
 }
 
 float SVGAnimatedAngleAnimator::calculateDistance(const String& fromString, const String& toString)

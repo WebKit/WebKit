@@ -32,8 +32,6 @@ public:
     SVGAnimatedNumberOptionalNumberAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedNumberOptionalNumberAnimator() { }
     
-    static void calculateAnimatedNumberOptionalNumber(SVGAnimationElement*, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber);
-    
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
     virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
     virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&);

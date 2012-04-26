@@ -82,27 +82,16 @@ void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned 
     FloatRect& animatedRect = animated->rect();
     m_animationElement->adjustFromToValues<FloatRect>(0, fromRect, toRect, animatedRect, percentage, m_contextElement);
 
-    FloatRect newRect;    
-    if (m_animationElement->calcMode() == CalcModeDiscrete)
-        newRect = percentage < 0.5 ? fromRect : toRect;
-    else
-        newRect = FloatRect((toRect.x() - fromRect.x()) * percentage + fromRect.x(),
-                            (toRect.y() - fromRect.y()) * percentage + fromRect.y(),
-                            (toRect.width() - fromRect.width()) * percentage + fromRect.width(),
-                            (toRect.height() - fromRect.height()) * percentage + fromRect.height());
+    float animatedX = animatedRect.x();
+    float animatedY = animatedRect.y();
+    float animatedWidth = animatedRect.width();
+    float animatedHeight = animatedRect.height();
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.x(), toRect.x(), animatedX);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.y(), toRect.y(), animatedY);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.width(), toRect.width(), animatedWidth);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.height(), toRect.height(), animatedHeight);
 
-    // FIXME: This is not correct for values animation. Right now we transform values-animation to multiple from-to-animations and
-    // accumulate every single value to the previous one. But accumulation should just take into account after a complete cycle
-    // of values-animaiton. See example at: http://www.w3.org/TR/2001/REC-smil-animation-20010904/#RepeatingAnim
-    if (m_animationElement->isAccumulated() && repeatCount) {
-        newRect += toRect;
-        newRect.scale(repeatCount);
-    }
-    
-    if (m_animationElement->isAdditive() && m_animationElement->animationMode() != ToAnimation)
-        animatedRect += newRect;
-    else
-        animatedRect = newRect;
+    animatedRect = FloatRect(animatedX, animatedY, animatedWidth, animatedHeight);
 }
 
 float SVGAnimatedRectAnimator::calculateDistance(const String&, const String&)

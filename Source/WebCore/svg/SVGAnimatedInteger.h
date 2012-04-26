@@ -45,8 +45,8 @@ class SVGAnimatedIntegerAnimator : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedIntegerAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedIntegerAnimator() { }
-    
-    static void calculateAnimatedInteger(SVGAnimationElement*, float percentage, unsigned repeatCount, int& animatedNumber, int fromNumber, int toNumber);
+
+    static void calculateAnimatedInteger(SVGAnimationElement*, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int& animatedInteger);
 
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
     virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);

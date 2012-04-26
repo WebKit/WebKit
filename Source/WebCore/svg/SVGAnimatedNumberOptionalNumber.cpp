@@ -78,7 +78,7 @@ void SVGAnimatedNumberOptionalNumberAnimator::addAnimatedTypes(SVGAnimatedType* 
 
     pair<float, float>& fromNumberPair = from->numberOptionalNumber();
     pair<float, float>& toNumberPair = to->numberOptionalNumber();
-    
+
     toNumberPair.first += fromNumberPair.first;
     toNumberPair.second += fromNumberPair.second;
 }
@@ -93,8 +93,8 @@ void SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue(float perce
     pair<float, float>& animatedNumberPair = animated->numberOptionalNumber();
     m_animationElement->adjustFromToValues<pair<float, float> >(0, fromNumberPair, toNumberPair, animatedNumberPair, percentage, m_contextElement);
 
-    SVGAnimatedNumberAnimator::calculateAnimatedNumber(m_animationElement, percentage, repeatCount, animatedNumberPair.first, fromNumberPair.first, toNumberPair.first);
-    SVGAnimatedNumberAnimator::calculateAnimatedNumber(m_animationElement, percentage, repeatCount, animatedNumberPair.second, fromNumberPair.second, toNumberPair.second);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.first, toNumberPair.first, animatedNumberPair.first);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.second, toNumberPair.second, animatedNumberPair.second);
 }
 
 float SVGAnimatedNumberOptionalNumberAnimator::calculateDistance(const String&, const String&)

@@ -96,7 +96,7 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
         animatedNumberList.resize(itemsCount);
 
     for (unsigned i = 0; i < itemsCount; ++i)
-        SVGAnimatedNumberAnimator::calculateAnimatedNumber(m_animationElement, percentage, repeatCount, animatedNumberList[i], fromNumberList[i], toNumberList[i]);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberList[i], toNumberList[i], animatedNumberList[i]);
 }
 
 float SVGAnimatedNumberListAnimator::calculateDistance(const String&, const String&)

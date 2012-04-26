@@ -73,10 +73,10 @@ void SVGAnimatedIntegerAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnim
     to->integer() += from->integer();
 }
 
-void SVGAnimatedIntegerAnimator::calculateAnimatedInteger(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, int& animatedInteger, int fromInteger, int toInteger)
+void SVGAnimatedIntegerAnimator::calculateAnimatedInteger(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int& animatedInteger)
 {
     float animatedNumber = animatedInteger;
-    SVGAnimatedNumberAnimator::calculateAnimatedNumber(animationElement, percentage, repeatCount, animatedNumber, fromInteger, toInteger);
+    animationElement->animateAdditiveNumber(percentage, repeatCount, fromInteger, toInteger, animatedNumber);
     animatedInteger = static_cast<int>(roundf(animatedNumber));
 }
 
@@ -90,7 +90,7 @@ void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsign
     int& animatedInteger = animated->integer();
     m_animationElement->adjustFromToValues<int>(0, fromInteger, toInteger, animatedInteger, percentage, m_contextElement);
 
-    calculateAnimatedInteger(m_animationElement, percentage, repeatCount, animatedInteger, fromInteger, toInteger);
+    calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromInteger, toInteger, animatedInteger);
 }
 
 float SVGAnimatedIntegerAnimator::calculateDistance(const String& fromString, const String& toString)

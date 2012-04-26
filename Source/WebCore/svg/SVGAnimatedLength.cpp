@@ -102,12 +102,12 @@ void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigne
     m_animationElement->adjustFromToValues<SVGLength>(parseLengthFromString, fromSVGLength, toSVGLength, animatedSVGLength, percentage, m_contextElement);
 
     SVGLengthContext lengthContext(m_contextElement);
-    float result = animatedSVGLength.value(lengthContext);
+    float animatedNumber = animatedSVGLength.value(lengthContext);
     SVGLengthType unitType = percentage < 0.5 ? fromSVGLength.unitType() : toSVGLength.unitType();
-    SVGAnimatedNumberAnimator::calculateAnimatedNumber(m_animationElement, percentage, repeatCount, result, fromSVGLength.value(lengthContext), toSVGLength.value(lengthContext));
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromSVGLength.value(lengthContext), toSVGLength.value(lengthContext), animatedNumber);
 
     ExceptionCode ec = 0;
-    animatedSVGLength.setValue(lengthContext, result, m_lengthMode, unitType, ec);
+    animatedSVGLength.setValue(lengthContext, animatedNumber, m_lengthMode, unitType, ec);
     ASSERT(!ec);
 }
 

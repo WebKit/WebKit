@@ -165,6 +165,26 @@ public:
         animatedType = AnimatedType(fromType);
     }
 
+    void animateAdditiveNumber(float percentage, unsigned repeatCount, float fromNumber, float toNumber, float& animatedNumber)
+    {
+        float number;
+        if (calcMode() == CalcModeDiscrete)
+            number = percentage < 0.5 ? fromNumber : toNumber;
+        else
+            number = (toNumber - fromNumber) * percentage + fromNumber;
+
+        // FIXME: This is not correct for values animation. Right now we transform values-animation to multiple from-to-animations and
+        // accumulate every single value to the previous one. But accumulation should just take into account after a complete cycle
+        // of values-animaiton. See example at: http://www.w3.org/TR/2001/REC-smil-animation-20010904/#RepeatingAnim
+        if (isAccumulated() && repeatCount)
+            number += toNumber * repeatCount;
+
+        if (isAdditive() && animationMode() != ToAnimation)
+            animatedNumber += number;
+        else
+            animatedNumber = number;
+    }
+
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
 
