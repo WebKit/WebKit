@@ -1,3 +1,19 @@
+2012-04-26  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [cairo] CairoGraphicsContext fillRect (with Color) overrides composite operator
+        https://bugs.webkit.org/show_bug.cgi?id=84848
+
+        Reviewed by Martin Robinson.
+
+        Unskipping and baselining feDropShadow test,
+        now works because of composite operator fix.
+        Fixed png baseline result for drop shadow test on GTK.
+
+        * platform/efl/svg/filters/feDropShadow-expected.png: Added.
+        * platform/efl/svg/filters/feDropShadow-expected.txt: Added.
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/svg/filters/feDropShadow-expected.png:
+
 2012-04-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Fix additive by animations for most SMIL list types

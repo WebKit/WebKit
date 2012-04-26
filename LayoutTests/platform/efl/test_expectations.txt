@@ -120,9 +120,6 @@ BUGWK83274 : fast/repaint/transform-rotate-and-remove.html = PASS
 // Not able to generate a meaningful expected result, since complex font rendering fails.
 BUGWK83275 : fast/text/international/text-spliced-font.html = FAIL MISSING
 
-// SVG dropShadow failure. Needs rebaseline after fixing.
-BUGWK83580 : svg/filters/feDropShadow.svg = FAIL MISSING
-
 // CSS Regions support not yet enabled, tracking in a separate EFL bug.
 BUGWK83897 SKIP : fast/regions = FAIL
 
