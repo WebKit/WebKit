@@ -1230,15 +1230,15 @@ void ewk_frame_redirect_cancelled(Evas_Object* ewkFrame)
  * changing values in @param request.
  *
  * @param ewkFrame Frame.
- * @param request Request details that user may override. Whenever values on
- * this struct changes, it must be properly malloc'd as it will be freed
- * afterwards.
+ * @param @param messages Messages containing the request details that user may override and a
+ * possible redirect reponse. Whenever values on this struct changes, it must be properly
+ * malloc'd as it will be freed afterwards.
  *
  * Emits signal: "resource,request,willsend"
  */
-void ewk_frame_request_will_send(Evas_Object* ewkFrame, Ewk_Frame_Resource_Request* request)
+void ewk_frame_request_will_send(Evas_Object* ewkFrame, Ewk_Frame_Resource_Messages* messages)
 {
-    evas_object_smart_callback_call(ewkFrame, "resource,request,willsend", request);
+    evas_object_smart_callback_call(ewkFrame, "resource,request,willsend", messages);
 }
 
 /**

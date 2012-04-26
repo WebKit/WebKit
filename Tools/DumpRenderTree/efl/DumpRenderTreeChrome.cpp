@@ -241,6 +241,72 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setEditingBehavior(mainView(), defaultEditingBehavior());
 }
 
+static CString pathSuitableForTestResult(const char* uriString)
+{
+    if (!uriString)
+        return CString();
+
+    KURL uri = KURL(ParsedURLString, uriString);
+
+    if (!uri.isLocalFile())
+        return uri.string().utf8();
+
+    String pathString = uri.path();
+    size_t indexBaseName = pathString.reverseFind('/');
+    String baseName;
+    if (indexBaseName == notFound)
+        baseName = pathString;
+    else
+        baseName = pathString.substring(indexBaseName + 1);
+
+    String dirName;
+    if (indexBaseName != notFound) {
+        size_t indexDirName = pathString.reverseFind('/', indexBaseName - 1);
+        if (indexDirName != notFound)
+            dirName = pathString.substring(indexDirName + 1, indexBaseName - indexDirName - 1);
+    }
+
+    String ret = dirName + "/" + baseName;
+    return ret.utf8();
+}
+
+static CString urlSuitableForTestResult(const char* uriString)
+{
+    KURL uri = KURL(ParsedURLString, uriString);
+    if (!uri.isLocalFile())
+        return CString(uriString);
+
+    unsigned startIndex = uri.pathAfterLastSlash();
+    return uri.string().substring(startIndex).utf8();
+}
+
+static CString descriptionSuitableForTestResult(Ewk_Frame_Resource_Request* request)
+{
+    String ret = "<NSURLRequest URL ";
+    ret += pathSuitableForTestResult(request->url).data();
+    ret += ", main document URL ";
+    ret += urlSuitableForTestResult(request->first_party).data();
+    ret += ", http method ";
+    ret += request->http_method ? String(request->http_method) : "(none)";
+    ret += ">";
+
+    return ret.utf8();
+}
+
+static CString descriptionSuitableForTestResult(const Ewk_Frame_Resource_Response* response)
+{
+    if (!response)
+        return CString("(null)");
+
+    String ret = "<NSURLResponse ";
+    ret += pathSuitableForTestResult(response->url).data();
+    ret += ", http status code ";
+    ret += String::number(response->status_code);
+    ret += ">";
+
+    return ret.utf8();
+}
+
 // Smart Callbacks
 // ---------------
 
@@ -334,23 +400,29 @@ void DumpRenderTreeChrome::onDocumentLoadFinished(void*, Evas_Object*, void* eve
 
 void DumpRenderTreeChrome::onWillSendRequest(void*, Evas_Object*, void* eventInfo)
 {
-    Ewk_Frame_Resource_Request* request = static_cast<Ewk_Frame_Resource_Request*>(eventInfo);
+    Ewk_Frame_Resource_Messages* messages = static_cast<Ewk_Frame_Resource_Messages*>(eventInfo);
+
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
+        printf("%s - willSendRequest %s redirectResponse %s\n",
+               pathSuitableForTestResult(messages->request->url).data(),
+               descriptionSuitableForTestResult(messages->request).data(),
+               descriptionSuitableForTestResult(messages->redirect_response).data());
 
     if (!done && gLayoutTestController->willSendRequestReturnsNull()) {
         // As requested by the LayoutTestController, don't perform the request.
-        request->url = 0;
+        messages->request->url = 0;
         return;
     }
 
-    KURL url = KURL(ParsedURLString, request->url);
+    KURL url = KURL(ParsedURLString, messages->request->url);
 
     if (url.isValid()
         && url.protocolIsInHTTPFamily()
         && url.host() != "127.0.0.1"
         && url.host() != "255.255.255.255"
         && url.host().lower() != "localhost") {
-        printf("Blocked access to external URL %s\n", request->url);
-        request->url = 0;
+        printf("Blocked access to external URL %s\n", messages->request->url);
+        messages->request->url = 0;
     }
 }
 

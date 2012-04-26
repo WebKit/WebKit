@@ -68,8 +68,8 @@
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
  *  - "onload,event", Evas_Object*: a frame onload event has been received.
  *  - "ready", void: page is fully loaded.
- *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will
- *    be requested.
+ *  - "resource,request,willsend", Ewk_Frame_Resource_Messages*: a resource will be requested.
+ *    and the possible redirect response.
  *  - "scrollbars,visible,get", Eina_Bool *: expects a @c EINA_TRUE if scrollbars
  *    are visible; @c EINA_FALSE, otherwise.
  *  - "scrollbars,visible,set", Eina_Bool: sets scrollbars visibility.

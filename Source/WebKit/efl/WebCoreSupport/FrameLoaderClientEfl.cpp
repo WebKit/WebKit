@@ -170,7 +170,9 @@ void FrameLoaderClientEfl::dispatchDidCancelAuthenticationChallenge(DocumentLoad
 void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& coreRequest, const ResourceResponse& coreResponse)
 {
     CString url = coreRequest.url().string().utf8();
-    DBG("Resource url=%s", url.data());
+    CString firstParty = coreRequest.firstPartyForCookies().string().utf8();
+    CString httpMethod = coreRequest.httpMethod().utf8();
+    DBG("Resource url=%s, first_party=%s, http_method=%s", url.data(), firstParty.data(), httpMethod.data());
 
     // We want to distinguish between a request for a document to be loaded into
     // the main frame, a sub-frame, or the sub-objects in that document.
@@ -180,14 +182,27 @@ void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsig
             isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->isLoadingMainFrame());
     }
 
-    Ewk_Frame_Resource_Request request = { 0, identifier, m_frame, isMainFrameRequest };
+    Ewk_Frame_Resource_Request request = { 0, firstParty.data(), httpMethod.data(), identifier, m_frame, isMainFrameRequest };
     Ewk_Frame_Resource_Request orig = request; /* Initialize const fields. */
 
     orig.url = request.url = url.data();
 
-    ewk_frame_request_will_send(m_frame, &request);
+    Ewk_Frame_Resource_Response* redirectResponse;
+    Ewk_Frame_Resource_Response responseBuffer;
+    CString redirectUrl;
 
-    evas_object_smart_callback_call(m_view, "resource,request,willsend", &request);
+    if (coreResponse.isNull())
+        redirectResponse = 0;
+    else {
+        redirectUrl = coreResponse.url().string().utf8();
+        responseBuffer.url = redirectUrl.data();
+        responseBuffer.status_code = coreResponse.httpStatusCode();
+        redirectResponse = &responseBuffer;
+    }
+
+    Ewk_Frame_Resource_Messages messages = { &request, redirectResponse };
+    ewk_frame_request_will_send(m_frame, &messages);
+    evas_object_smart_callback_call(m_view, "resource,request,willsend", &messages);
 
     if (request.url != orig.url) {
         coreRequest.setURL(KURL(KURL(), request.url));
@@ -207,7 +222,9 @@ bool FrameLoaderClientEfl::shouldUseCredentialStorage(DocumentLoader*, unsigned 
 void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& coreRequest)
 {
     CString url = coreRequest.url().string().utf8();
-    DBG("Resource url=%s", url.data());
+    CString firstParty = coreRequest.firstPartyForCookies().string().utf8();
+    CString httpMethod = coreRequest.httpMethod().utf8();
+    DBG("Resource url=%s, First party=%s, HTTP method=%s", url.data(), firstParty.data(), httpMethod.data());
 
     bool isMainFrameRequest = false;
     if (loader) {
@@ -215,7 +232,7 @@ void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identi
             isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->isLoadingMainFrame());
     }
 
-    Ewk_Frame_Resource_Request request = { 0, identifier, m_frame, isMainFrameRequest };
+    Ewk_Frame_Resource_Request request = { url.data(), firstParty.data(), httpMethod.data(), identifier, m_frame, isMainFrameRequest };
     ewk_frame_request_assign_identifier(m_frame, &request);
 }
 
@@ -298,10 +315,11 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
 
     // if not acceptNavigationRequest - look at Qt -> PolicyIgnore;
     // FIXME: do proper check and only reset forms when on PolicyIgnore
-    char* url = strdup(resourceRequest.url().string().utf8().data());
-    Ewk_Frame_Resource_Request request = { url, 0, m_frame, false };
+    CString url = resourceRequest.url().string().utf8();
+    CString firstParty = resourceRequest.firstPartyForCookies().string().utf8();
+    CString httpMethod = resourceRequest.httpMethod().utf8();
+    Ewk_Frame_Resource_Request request = { url.data(), firstParty.data(), httpMethod.data(), 0, m_frame, false };
     bool ret = ewk_view_navigation_policy_decision(m_view, &request);
-    free(url);
 
     PolicyAction policy;
     if (!ret)

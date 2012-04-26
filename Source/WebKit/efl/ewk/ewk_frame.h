@@ -59,8 +59,8 @@
  *  - "redirect,cancelled", void: client redirect was cancelled.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
  *    there's a new resource request.
- *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will
- *    be requested.
+ *  - "resource,request,willsend", Ewk_Frame_Resource_Messages*: a resource will be requested.
+ *    and the possible redirect response.
  *  - "state,save", void: frame's state will be saved as a history item.
  *  - "title,changed", const char*: title of the main frame was changed.
  *  - "uri,changed", const char*: uri of the main frame was changed.
@@ -102,17 +102,40 @@ struct _Ewk_Frame_Load_Error {
 /// Creates a type name for _Ewk_Frame_Resource_Request.
 typedef struct _Ewk_Frame_Resource_Request Ewk_Frame_Resource_Request;
 /**
- * @brief   Structure used to report resource request.
+ * @brief   Structure containing details about a resource request.
  *
- * Details given before a resource is loaded on a given frame. It's used by
- * ewk_frame_request_will_send() to inform the details of a to-be-loaded
- * resource, allowing them to be overridden.
+ * Details given before a resource is loaded on a given frame. It's used in
+ * Ewk_Frame_Resource_Messages to inform about the details of a resource request.
  */
 struct _Ewk_Frame_Resource_Request {
     const char *url; /**< url of the resource */
+    const char *first_party; /**< first party for cookies, can not be changed */
+    const char *http_method; /**< http method, can not be changed */
     const unsigned long identifier; /**< identifier of resource, can not be changed */
     Evas_Object *frame; /**< frame where the resource is requested */
     Eina_Bool is_main_frame_request; /** < indicates if the request is for the main frame */
+};
+
+/// Creates a type name for _Ewk_Frame_Resource_Response.
+typedef struct _Ewk_Frame_Resource_Response Ewk_Frame_Resource_Response;
+
+/**
+ * @brief Structure containing details about a response to a resource request.
+ *
+ * Details given in the response to a resource request. It's used by
+ * ewk_frame_response_received() to inform about the details of a response.
+ */
+struct _Ewk_Frame_Resource_Response {
+    const char *url; /**< url of the resource */
+    int status_code; /**< http status code */
+};
+
+/// Creates a type name for _Ewk_Frame_Resource_Messages.
+typedef struct _Ewk_Frame_Resource_Messages Ewk_Frame_Resource_Messages;
+
+struct _Ewk_Frame_Resource_Messages {
+    Ewk_Frame_Resource_Request *request; /**< resource request */
+    Ewk_Frame_Resource_Response *redirect_response; /**< redirect response, can not be changed */
 };
 
 /// Creates a type name for Ewk_Frame_Xss_Notification.
