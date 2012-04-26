@@ -1,3 +1,31 @@
+2012-04-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=84909
+        Background tabs are fuzzy until repaint when deviceScaleFactor > 1
+        -and corresponding-
+        <rdar://problem/11312064>
+
+        Reviewed by Darin Adler.
+
+        BackingStoreMac paints into a Bitmap instead of a CGLayer when there is no 
+        containing window. That bitmap is used for the initial paint when a background tab 
+        first comes to he foreground, so it needs to be HiDPI-aware.  
+
+        paintBitmapContext() now takes a scale factor that it passes along to paintImage 
+        rather than hardcoding a scale factor of 1 for paintImage.
+        * Platform/cg/CGUtilities.cpp:
+        (WebKit::paintBitmapContext):
+        * Platform/cg/CGUtilities.h:
+        (WebKit):
+
+        When these functions fall into the bitmap case, they need to adopt the device 
+        scale factor, which means they need to scale in size by the scale factor, and also 
+        scale their context. 
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::resetScrolledRect):
+        (WebKit::BackingStore::paint):
+        (WebKit::BackingStore::backingStoreContext):
+
 2012-04-25  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION (r110494): Dragging images from Safari to Finder results in .webloc rather than image file
