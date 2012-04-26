@@ -1,3 +1,9 @@
+2012-04-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Remove expectation of failure for a fixed test.
+
+        * platform/chromium/test_expectations.txt: Now passing.
+
 2012-04-26  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed gardening, remove tests that now pass from test_expectations.txt

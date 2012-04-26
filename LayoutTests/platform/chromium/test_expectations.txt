@@ -1372,9 +1372,6 @@ BUGWK75276 : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 // Fails on webkit windows as well.
 BUGCR24207 : fast/events/attempt-scroll-with-no-scrollbars.html = FAIL
 
-// Needs a fix in V8. V8 bug: http://code.google.com/p/v8/issues/detail?id=1983&thanks=1983&ts=1330565749
-BUGWK79938 : fast/js/kde/RegExp.html = TEXT
-
 // No glyph for U+FFFD (Replacement Character : black diamond with
 // question mark) in them on Win XP.
 BUGCR10315 XP : fast/encoding/invalid-UTF-8.html = IMAGE+TEXT
