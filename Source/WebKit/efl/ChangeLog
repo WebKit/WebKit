@@ -1,3 +1,19 @@
+2012-04-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] WebGL support ewk_view setting
+        https://bugs.webkit.org/show_bug.cgi?id=84534
+
+        Reviewed by Antonio Gomes.
+
+        Exporting new ewk_view setting: webGLEnabled - enbles/disables WebGL support.
+
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_enable_webgl_get):
+        (ewk_view_setting_enable_webgl_set):
+        * ewk/ewk_view.h:
+
 2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] "resource,request,willsend" signal needs to provide more information
