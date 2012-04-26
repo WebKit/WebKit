@@ -48,7 +48,7 @@ void paintImage(CGContextRef context, CGImageRef image, CGFloat scaleFactor, CGP
     CGContextRestoreGState(context);
 }
 
-void paintBitmapContext(CGContextRef context, CGContextRef bitmapContext, CGPoint destination, CGRect source, CGFloat scaleFactor)
+void paintBitmapContext(CGContextRef context, CGContextRef bitmapContext, CGFloat scaleFactor, CGPoint destination, CGRect source)
 {
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(bitmapContext));
     paintImage(context, image.get(), scaleFactor, destination, source);

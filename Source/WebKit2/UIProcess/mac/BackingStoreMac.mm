@@ -111,7 +111,7 @@ void BackingStore::resetScrolledRect()
     paint(context.get(), m_scrolledRect);
 
     IntRect sourceRect(IntPoint(), m_scrolledRect.size());
-    paintBitmapContext(backingStoreContext(), context.get(), m_scrolledRect.location(), sourceRect, m_deviceScaleFactor);
+    paintBitmapContext(backingStoreContext(), context.get(), m_deviceScaleFactor, m_scrolledRect.location(), sourceRect);
 
     m_scrolledRect = IntRect();
     m_scrolledRectOffset = IntSize();
@@ -137,7 +137,7 @@ void BackingStore::paint(PlatformGraphicsContext context, const IntRect& rect)
         source = part;
         source.origin.x += offset.width();
         source.origin.y += offset.height();
-        paintBitmapContext(context, m_bitmapContext.get(), part.location(), source, m_deviceScaleFactor);
+        paintBitmapContext(context, m_bitmapContext.get(), m_deviceScaleFactor, part.location(), source);
     });
 }
 
@@ -159,7 +159,7 @@ CGContextRef BackingStore::backingStoreContext()
 
         if (m_bitmapContext) {
             // Paint the contents of the bitmap into the layer context.
-            paintBitmapContext(layerContext, m_bitmapContext.get(), CGPointZero, CGRectMake(0, 0, m_size.width(), m_size.height()), m_deviceScaleFactor);
+            paintBitmapContext(layerContext, m_bitmapContext.get(), m_deviceScaleFactor, CGPointZero, CGRectMake(0, 0, m_size.width(), m_size.height()));
             m_bitmapContext = nullptr;
         }
 

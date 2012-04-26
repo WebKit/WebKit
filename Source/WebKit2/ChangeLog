@@ -5,6 +5,25 @@
         -and corresponding-
         <rdar://problem/11312064>
 
+        Rubber-stamped by Darin Adler.
+
+        Re-order the parameters of paintBitmapContext to match paintImage.
+        * Platform/cg/CGUtilities.cpp:
+        (WebKit::paintBitmapContext):
+        * Platform/cg/CGUtilities.h:
+        (WebKit):
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::resetScrolledRect):
+        (WebKit::BackingStore::paint):
+        (WebKit::BackingStore::backingStoreContext):
+
+2012-04-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=84909
+        Background tabs are fuzzy until repaint when deviceScaleFactor > 1
+        -and corresponding-
+        <rdar://problem/11312064>
+
         Reviewed by Darin Adler.
 
         BackingStoreMac paints into a Bitmap instead of a CGLayer when there is no 
