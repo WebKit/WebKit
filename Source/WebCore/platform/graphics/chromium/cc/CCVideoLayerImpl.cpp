@@ -123,7 +123,24 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     ASSERT(CCProxy::isImplThread());
     CCLayerImpl::willDraw(layerRenderer);
 
-    MutexLocker locker(m_providerMutex);
+    // Explicitly lock and unlock the provider mutex so it can be held from
+    // willDraw to didDraw. Since the compositor thread is in the middle of
+    // drawing, the layer will not be destroyed before didDraw is called.
+    // Therefore, the only thing that will prevent this lock from being released
+    // is the GPU process locking it. As the GPU process can't cause the
+    // destruction of the provider (calling stopUsingProvider), holding this
+    // lock should not cause a deadlock.
+    m_providerMutex.lock();
+
+    willDrawInternal(layerRenderer);
+
+    if (!m_frame)
+        m_providerMutex.unlock();
+}
+
+void CCVideoLayerImpl::willDrawInternal(LayerRendererChromium* layerRenderer)
+{
+    ASSERT(CCProxy::isImplThread());
 
     if (!m_provider) {
         m_frame = 0;
@@ -151,6 +168,8 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 
 void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
+    ASSERT(CCProxy::isImplThread());
+
     if (!m_frame)
         return;
 
@@ -168,15 +187,15 @@ void CCVideoLayerImpl::didDraw()
     ASSERT(CCProxy::isImplThread());
     CCLayerImpl::didDraw();
 
-    MutexLocker locker(m_providerMutex);
-
-    if (!m_provider || !m_frame)
+    if (!m_frame)
         return;
 
     for (unsigned plane = 0; plane < m_frame->planes(); ++plane)
         m_textures[plane].m_texture->unreserve();
     m_provider->putCurrentFrame(m_frame);
     m_frame = 0;
+
+    m_providerMutex.unlock();
 }
 
 static int videoFrameDimension(int originalDimension, unsigned plane, int format)

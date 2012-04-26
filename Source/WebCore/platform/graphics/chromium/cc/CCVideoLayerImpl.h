@@ -90,9 +90,11 @@ private:
     static IntSize computeVisibleSize(const WebKit::WebVideoFrame&, unsigned plane);
     virtual const char* layerTypeAsString() const OVERRIDE { return "VideoLayer"; }
 
+    void willDrawInternal(LayerRendererChromium*);
     bool reserveTextures(const WebKit::WebVideoFrame&, GC3Denum format, LayerRendererChromium*);
 
-    Mutex m_providerMutex; // Guards m_provider below.
+    // Guards the destruction of m_provider and the frame that it provides
+    Mutex m_providerMutex;
     WebKit::WebVideoFrameProvider* m_provider;
 
     Texture m_textures[MaxPlanes];
