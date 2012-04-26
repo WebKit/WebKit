@@ -1,3 +1,28 @@
+2012-04-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ARMv7 backend should optimize Float32 arrays
+        https://bugs.webkit.org/show_bug.cgi?id=85000
+        <rdar://problem/10652827>
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::flds):
+        (JSC::ARMv7Assembler::fsts):
+        (JSC::ARMv7Assembler::vcvtds):
+        (JSC::ARMv7Assembler::vcvtsd):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadFloat):
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::storeFloat):
+        (JSC::MacroAssemblerARMv7::convertFloatToDouble):
+        (JSC::MacroAssemblerARMv7::convertDoubleToFloat):
+        * bytecode/PredictedType.h:
+        (JSC::isActionableFloatMutableArrayPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateFloat32Array):
+
 2012-04-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a version of StringImpl::find() without offset

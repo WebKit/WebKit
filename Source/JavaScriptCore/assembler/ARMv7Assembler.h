@@ -572,7 +572,9 @@ private:
         OP_CMP_reg_T2   = 0xEBB0,
         OP_VMOV_CtoD    = 0xEC00,
         OP_VMOV_DtoC    = 0xEC10,
+        OP_FSTS         = 0xED00,
         OP_VSTR         = 0xED00,
+        OP_FLDS         = 0xED10,
         OP_VLDR         = 0xED10,
         OP_VMOV_CtoS    = 0xEE00,
         OP_VMOV_StoC    = 0xEE10,
@@ -588,6 +590,8 @@ private:
         OP_VMRS         = 0xEEB0,
         OP_VNEG_T2      = 0xEEB0,
         OP_VSQRT_T1     = 0xEEB0,
+        OP_VCVTSD_T1    = 0xEEB0,
+        OP_VCVTDS_T1    = 0xEEB0,
         OP_B_T3a        = 0xF000,
         OP_B_T4a        = 0xF000,
         OP_AND_imm_T1   = 0xF000,
@@ -642,10 +646,12 @@ private:
     typedef enum {
         OP_VADD_T2b     = 0x0A00,
         OP_VDIVb        = 0x0A00,
+        OP_FLDSb        = 0x0A00,
         OP_VLDRb        = 0x0A00,
         OP_VMOV_IMM_T2b = 0x0A00,
         OP_VMOV_T2b     = 0x0A40,
         OP_VMUL_T2b     = 0x0A00,
+        OP_FSTSb        = 0x0A00,
         OP_VSTRb        = 0x0A00,
         OP_VMOV_StoCb   = 0x0A10,
         OP_VMOV_CtoSb   = 0x0A10,
@@ -658,6 +664,8 @@ private:
         OP_VNEG_T2b     = 0x0A40,
         OP_VSUB_T2b     = 0x0A40,
         OP_VSQRT_T1b    = 0x0A40,
+        OP_VCVTSD_T1b   = 0x0A40,
+        OP_VCVTDS_T1b   = 0x0A40,
         OP_NOP_T2b      = 0x8000,
         OP_B_T3b        = 0x8000,
         OP_B_T4b        = 0x9000,
@@ -1720,6 +1728,11 @@ public:
     {
         m_formatter.vfpMemOp(OP_VLDR, OP_VLDRb, true, rn, rd, imm);
     }
+    
+    void flds(FPSingleRegisterID rd, RegisterID rn, int32_t imm)
+    {
+        m_formatter.vfpMemOp(OP_FLDS, OP_FLDSb, false, rn, rd, imm);
+    }
 
     void vmov(RegisterID rd, FPSingleRegisterID rn)
     {
@@ -1768,6 +1781,11 @@ public:
         m_formatter.vfpMemOp(OP_VSTR, OP_VSTRb, true, rn, rd, imm);
     }
 
+    void fsts(FPSingleRegisterID rd, RegisterID rn, int32_t imm)
+    {
+        m_formatter.vfpMemOp(OP_FSTS, OP_FSTSb, false, rn, rd, imm);
+    }
+
     void vsub(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VSUB_T2, OP_VSUB_T2b, true, rn, rd, rm);
@@ -1786,6 +1804,16 @@ public:
     void vsqrt(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VSQRT_T1, OP_VSQRT_T1b, true, VFPOperand(17), rd, rm);
+    }
+    
+    void vcvtds(FPDoubleRegisterID rd, FPSingleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VCVTDS_T1, OP_VCVTDS_T1b, false, VFPOperand(23), rd, rm);
+    }
+
+    void vcvtsd(FPSingleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VCVTSD_T1, OP_VCVTSD_T1b, true, VFPOperand(23), rd, rm);
     }
 
     void nop()

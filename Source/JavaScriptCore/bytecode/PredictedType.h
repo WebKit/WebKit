@@ -166,10 +166,7 @@ inline bool isActionableIntMutableArrayPrediction(PredictedType value)
 
 inline bool isActionableFloatMutableArrayPrediction(PredictedType value)
 {
-    return false
-#if CPU(X86) || CPU(X86_64)
-        || isFloat32ArrayPrediction(value)
-#endif
+    return isFloat32ArrayPrediction(value)
         || isFloat64ArrayPrediction(value);
 }
 

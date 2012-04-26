@@ -770,6 +770,21 @@ public:
         m_assembler.vldr(dest, base, offset);
     }
 
+    void loadFloat(ImplicitAddress address, FPRegisterID dest)
+    {
+        RegisterID base = address.base;
+        int32_t offset = address.offset;
+
+        // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
+        if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
+            add32(TrustedImm32(offset), base, addressTempRegister);
+            base = addressTempRegister;
+            offset = 0;
+        }
+        
+        m_assembler.flds(ARMRegisters::asSingle(dest), base, offset);
+    }
+
     void loadDouble(BaseIndex address, FPRegisterID dest)
     {
         move(address.index, addressTempRegister);
@@ -780,9 +795,10 @@ public:
     
     void loadFloat(BaseIndex address, FPRegisterID dest)
     {
-        UNUSED_PARAM(address);
-        UNUSED_PARAM(dest);
-        unreachableForPlatform();
+        move(address.index, addressTempRegister);
+        lshift32(TrustedImm32(address.scale), addressTempRegister);
+        add32(address.base, addressTempRegister);
+        loadFloat(Address(addressTempRegister, address.offset), dest);
     }
 
     void moveDouble(FPRegisterID src, FPRegisterID dest)
@@ -812,6 +828,21 @@ public:
         m_assembler.vstr(src, base, offset);
     }
 
+    void storeFloat(FPRegisterID src, ImplicitAddress address)
+    {
+        RegisterID base = address.base;
+        int32_t offset = address.offset;
+
+        // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
+        if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
+            add32(TrustedImm32(offset), base, addressTempRegister);
+            base = addressTempRegister;
+            offset = 0;
+        }
+        
+        m_assembler.fsts(ARMRegisters::asSingle(src), base, offset);
+    }
+
     void storeDouble(FPRegisterID src, const void* address)
     {
         move(TrustedImmPtr(address), addressTempRegister);
@@ -829,11 +860,11 @@ public:
     void storeFloat(FPRegisterID src, BaseIndex address)
     {
         move(address.index, addressTempRegister);
-        mul32(TrustedImm32(1 << address.scale), addressTempRegister, addressTempRegister);
+        lshift32(TrustedImm32(address.scale), addressTempRegister);
         add32(address.base, addressTempRegister);
-        storeDouble(src, Address(addressTempRegister, address.offset));
+        storeFloat(src, Address(addressTempRegister, address.offset));
     }
-
+    
     void addDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.vadd(dest, dest, src);
@@ -937,16 +968,12 @@ public:
     
     void convertFloatToDouble(FPRegisterID src, FPRegisterID dst)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dst);
-        unreachableForPlatform();
+        m_assembler.vcvtds(dst, ARMRegisters::asSingle(src));
     }
     
     void convertDoubleToFloat(FPRegisterID src, FPRegisterID dst)
     {
-        UNUSED_PARAM(src);
-        UNUSED_PARAM(dst);
-        unreachableForPlatform();
+        m_assembler.vcvtsd(ARMRegisters::asSingle(dst), src);
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
