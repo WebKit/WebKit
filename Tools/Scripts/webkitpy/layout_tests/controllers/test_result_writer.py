@@ -265,5 +265,4 @@ Difference between images: <a href="%(diff_filename)s">diff</a><br>
         assert fs.exists(src_filepath), 'src_filepath: %s' % src_filepath
         dst_filepath = fs.join(self._root_output_dir, self._port.relative_test_filename(src_filepath))
         self._make_output_directory()
-        fs.maybe_make_directory(fs.dirname(dst_filepath))
         fs.copyfile(src_filepath, dst_filepath)

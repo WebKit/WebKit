@@ -1,3 +1,24 @@
+2012-04-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r115340.
+        http://trac.webkit.org/changeset/115340
+        https://bugs.webkit.org/show_bug.cgi?id=83048
+
+        Does not work with Windows.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (copy_file):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._parse_reftest_list):
+        (Port.reference_files):
+        (Port._real_tests):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_reference_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_write_command_and_read_line):
+
 2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable VIDEO_TRACK feature

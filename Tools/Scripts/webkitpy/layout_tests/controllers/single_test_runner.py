@@ -287,7 +287,6 @@ class SingleTestRunner:
 
         putAllMismatchBeforeMatch = sorted
         for expectation, reference_filename in putAllMismatchBeforeMatch(self._reference_files):
-            assert(self._filesystem.exists(reference_filename))
             reference_test_name = self._port.relative_test_filename(reference_filename)
             reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, test_output.image_hash, should_run_pixel_test=True))
             test_result = self._compare_output_with_reference(test_output, reference_output, reference_filename, expectation == '!=')
