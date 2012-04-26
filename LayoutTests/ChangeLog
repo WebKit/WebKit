@@ -1,3 +1,10 @@
+2012-04-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] media/video-currentTime-set.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=85003
+
+        * platform/chromium/test_expectations.txt: Added expectation of flakiness.
+
 2012-04-26  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, rolling out r115342.
