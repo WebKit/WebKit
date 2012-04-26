@@ -855,19 +855,26 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         if (!m_frame || !m_frame->loader() || !m_frame->loader()->client())
             return false;
 
-        // Before asking the user for credentials, we check if the URL contains that.
-        if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
-            username = m_handle->getInternal()->m_user.utf8().data();
-            password = m_handle->getInternal()->m_pass.utf8().data();
+        if (type == ProtectionSpaceProxyHTTP) {
+            username = BlackBerry::Platform::Client::get()->getProxyUsername().c_str();
+            password = BlackBerry::Platform::Client::get()->getProxyPassword().c_str();
+        }
 
-            // Prevent them from been used again if they are wrong.
-            // If they are correct, they will the put into CredentialStorage.
-            m_handle->getInternal()->m_user = "";
-            m_handle->getInternal()->m_pass = "";
-        } else {
-            Credential inputCredential = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace);
-            username = inputCredential.user();
-            password = inputCredential.password();
+        if (username.isEmpty() || password.isEmpty()) {
+            // Before asking the user for credentials, we check if the URL contains that.
+            if (!m_handle->getInternal()->m_user.isEmpty() && !m_handle->getInternal()->m_pass.isEmpty()) {
+                username = m_handle->getInternal()->m_user.utf8().data();
+                password = m_handle->getInternal()->m_pass.utf8().data();
+
+                // Prevent them from been used again if they are wrong.
+                // If they are correct, they will the put into CredentialStorage.
+                m_handle->getInternal()->m_user = "";
+                m_handle->getInternal()->m_pass = "";
+            } else {
+                Credential inputCredential = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace);
+                username = inputCredential.user();
+                password = inputCredential.password();
+            }
         }
 
         if (username.isEmpty() && password.isEmpty())
