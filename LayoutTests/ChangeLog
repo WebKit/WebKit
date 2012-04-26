@@ -1,3 +1,12 @@
+2012-04-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed, rolling out r113703 because of crashing tests.
+        http://trac.webkit.org/changeset/113703
+        https://bugs.webkit.org/show_bug.cgi?id=83024
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fast/dom/prototype-inheritance-2-expected.txt:
+
 2012-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         fast/js/random-array-gc-stress times out in debug mode

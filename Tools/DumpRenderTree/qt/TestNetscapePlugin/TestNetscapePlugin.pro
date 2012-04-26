@@ -7,8 +7,6 @@
 TEMPLATE = lib
 TARGET = TestNetscapePlugIn
 
-load(features)
-
 CONFIG += plugin
 
 SOURCES += \
@@ -56,7 +54,7 @@ mac {
     LIBS += -framework Carbon -framework Cocoa -framework QuartzCore
 }
 
-xlibAvailable() {
-    PKGCONFIG += x11
+!win32:!embedded:!mac {
+    LIBS += -lX11
     DEFINES += XP_UNIX
 }

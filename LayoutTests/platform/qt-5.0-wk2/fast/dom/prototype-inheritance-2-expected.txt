@@ -169,12 +169,9 @@ PASS MediaListConstructor from inner.document.forms.testForm.0.ownerDocument.sty
 PASS MediaListPrototype from inner.document.forms.testForm.0.ownerDocument.styleSheets.0.media.__proto__
 PASS MemoryInfo from inner.document.forms.testForm.0.ownerDocument.defaultView.performance.memory
 PASS MemoryInfoPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.performance.memory.__proto__
-PASS MimeType from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0
 PASS MimeTypeArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes
 PASS MimeTypeArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.constructor
 PASS MimeTypeArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.__proto__
-PASS MimeTypeConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.constructor
-PASS MimeTypePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.__proto__
 PASS NamedNodeMap from inner.document.forms.testForm.0.parentNode.attributes
 PASS NamedNodeMapPrototype from inner.document.forms.testForm.0.parentNode.attributes.__proto__
 PASS Navigator from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation
@@ -190,12 +187,9 @@ PASS PerformanceNavigationPrototype from inner.document.forms.testForm.0.ownerDo
 PASS PerformancePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.performance.__proto__
 PASS PerformanceTiming from inner.document.forms.testForm.0.ownerDocument.defaultView.performance.timing
 PASS PerformanceTimingPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.performance.timing.__proto__
-PASS Plugin from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin
 PASS PluginArray from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins
 PASS PluginArrayConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.constructor
 PASS PluginArrayPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.__proto__
-PASS PluginConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.plugins.0.constructor
-PASS PluginPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.enabledPlugin.__proto__
 PASS RGBColor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor
 PASS RGBColorConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.constructor
 PASS RGBColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.__proto__
@@ -302,11 +296,13 @@ Never found ImageData
 Never found MediaController
 Never found MessageChannel
 Never found MessagePort
+Never found MimeType
 Never found Node
 Never found NodeFilter
 Never found Notation
 Never found Notification
 Never found Option
+Never found Plugin
 Never found ProcessingInstruction
 Never found Range
 Never found SVGAElement

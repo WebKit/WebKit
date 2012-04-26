@@ -18,7 +18,7 @@ SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
                WebKitTestRunner/WebKitTestRunner.pro
 }
 
-!win32:contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1)|contains(DEFINES, PLUGIN_ARCHITECTURE_UNSUPPORTED=0) {
+!win32:contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
     SUBDIRS += DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro
 }
 
