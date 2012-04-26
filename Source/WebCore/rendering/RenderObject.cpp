@@ -103,6 +103,8 @@ COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObj
 
 bool RenderObject::s_affectsParentBlock = false;
 
+RenderObjectAncestorLineboxDirtySet* RenderObject::s_ancestorLineboxDirtySet = 0;
+
 void* RenderObject::operator new(size_t sz, RenderArena* renderArena)
 {
     return renderArena->allocate(sz);
@@ -2323,6 +2325,8 @@ void RenderObject::willBeDestroyed()
         setHasLayer(false);
         toRenderBoxModelObject(this)->destroyLayer();
     }
+
+    setAncestorLineBoxDirty(false);
 
     clearLayoutRootIfNeeded();
 }

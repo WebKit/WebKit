@@ -1,3 +1,15 @@
+2012-04-25 Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from removal of line break object after layout
+        https://bugs.webkit.org/show_bug.cgi?id=75461
+
+        Reviewed by David Hyatt.
+
+        Test exercising crashing condition in bug 75461.
+
+        * fast/block/line-layout/line-break-obj-removal-crash-expected.txt: Added
+        * fast/block/line-layout/line-break-obj-removal-crash.html: Added
+
 2012-04-26  Robert Hogan  <robert@webkit.org>
 
         Update Qt expectations after r115340

@@ -321,9 +321,9 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
     if (!firstBox) {
         // For an empty inline, go ahead and propagate the check up to our parent, unless the parent
         // is already dirty.
-        if (container->isInline() && !container->parent()->selfNeedsLayout()) {
+        if (container->isInline() && !container->parent()->ancestorLineBoxDirty()) {
             container->parent()->dirtyLinesFromChangedChild(container);
-            container->setNeedsLayout(true); // Mark the container as needing layout to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
+            container->setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
         }
         return;
     }
@@ -361,9 +361,9 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
             // we won't find a previous sibling, but firstBox can be pointing to a following sibling.
             // This isn't good enough, since we won't locate the root line box that encloses the removed
             // <br>. We have to just over-invalidate a bit and go up to our parent.
-            if (!inlineContainer->parent()->selfNeedsLayout()) {
+            if (!inlineContainer->parent()->ancestorLineBoxDirty()) {
                 inlineContainer->parent()->dirtyLinesFromChangedChild(inlineContainer);
-                inlineContainer->setNeedsLayout(true); // Mark the container as needing layout to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
+                inlineContainer->setAncestorLineBoxDirty(); // Mark the container to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
             }
             return;
         }
