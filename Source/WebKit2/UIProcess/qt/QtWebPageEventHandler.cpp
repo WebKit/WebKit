@@ -488,11 +488,16 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
     const int activeTouchPointCount = activeTouchPoints.size();
 
     if (!activeTouchPointCount) {
-        if (touchPointCount == 1)
-           // No active touch points, one finger released.
-           m_panGestureRecognizer.finish(touchPoints.first(), eventTimestampMillis);
-        else
-           m_pinchGestureRecognizer.finish();
+        if (touchPointCount == 1) {
+            // No active touch points, one finger released.
+            if (!m_panGestureRecognizer.isRecognized())
+                m_tapGestureRecognizer.update(ev->type(), touchPoints.first());
+            m_panGestureRecognizer.finish(touchPoints.first(), eventTimestampMillis);
+        } else
+            m_pinchGestureRecognizer.finish();
+
+        // Early return since this was a touch-end event.
+        return;
     } else if (activeTouchPointCount == 1) {
         // If the pinch gesture recognizer was previously in active state the content might
         // be out of valid zoom boundaries, thus we need to finish the pinch gesture here.
@@ -504,7 +509,7 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
         m_pinchGestureRecognizer.update(activeTouchPoints.first(), activeTouchPoints.last());
     }
 
-    if (m_panGestureRecognizer.isRecognized() || m_pinchGestureRecognizer.isRecognized())
+    if (m_panGestureRecognizer.isRecognized() || m_pinchGestureRecognizer.isRecognized() || m_webView->isMoving())
         m_tapGestureRecognizer.cancel();
     else if (touchPointCount == 1)
         m_tapGestureRecognizer.update(ev->type(), touchPoints.first());

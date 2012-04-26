@@ -58,7 +58,7 @@ bool QtTapGestureRecognizer::update(QEvent::Type eventType, const QTouchEvent::T
         else {
             m_candidate = SingleTapCandidate;
             // The below in facts resets any previous single tap event.
-            m_eventHandler->handlePotentialSingleTapEvent(touchPoint);
+            m_highlightTimer.start(highlightDelay, this);
             m_lastTouchPoint = touchPoint;
             m_doubleTapTimer.start(maxDoubleTapInterval, this);
         }
@@ -99,6 +99,15 @@ void QtTapGestureRecognizer::cancel()
     reset();
 }
 
+void QtTapGestureRecognizer::highlightTimeout()
+{
+    if (m_candidate != SingleTapCandidate)
+        return;
+
+    ASSERT(m_lastTouchPoint.id() != -1);
+    m_eventHandler->handlePotentialSingleTapEvent(m_lastTouchPoint);
+}
+
 void QtTapGestureRecognizer::singleTapTimeout()
 {
     // Finger is still pressed, ignore.
@@ -130,9 +139,10 @@ void QtTapGestureRecognizer::reset()
         m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
 
     m_candidate = Invalid;
-    m_tapAndHoldTimer.stop();
-    m_doubleTapTimer.stop();
     m_lastTouchPoint.setId(-1);
+    m_highlightTimer.stop();
+    m_doubleTapTimer.stop();
+    m_tapAndHoldTimer.stop();
 
     QtGestureRecognizer::reset();
 }
@@ -140,7 +150,9 @@ void QtTapGestureRecognizer::reset()
 void QtTapGestureRecognizer::timerEvent(QTimerEvent* ev)
 {
     int timerId = ev->timerId();
-    if (timerId == m_doubleTapTimer.timerId())
+    if (timerId == m_highlightTimer.timerId())
+        highlightTimeout();
+    else if (timerId == m_doubleTapTimer.timerId())
         singleTapTimeout();
     else if (timerId == m_tapAndHoldTimer.timerId())
         tapAndHoldTimeout();

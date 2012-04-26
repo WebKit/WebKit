@@ -32,10 +32,11 @@
 #include <QtCore/QObject>
 
 // FIXME: These constants should possibly depend on DPI.
-const int maxPanDistance = 5;
+const int maxPanDistance = 10;
 const int maxDoubleTapDistance = 120;
 const int tapAndHoldTime = 800;
 const int maxDoubleTapInterval = 400;
+const int highlightDelay = 80;
 
 namespace WebKit {
 
@@ -49,6 +50,7 @@ public:
 
 protected:
     void timerEvent(QTimerEvent*);
+    void highlightTimeout();
     void singleTapTimeout();
     void tapAndHoldTimeout();
 
@@ -56,6 +58,7 @@ private:
     void reset();
     bool withinDistance(const QTouchEvent::TouchPoint&, int distance);
 
+    QBasicTimer m_highlightTimer;
     QBasicTimer m_doubleTapTimer;
     QBasicTimer m_tapAndHoldTimer;
     QTouchEvent::TouchPoint m_lastTouchPoint;
