@@ -1,3 +1,9 @@
+2012-04-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Remove expectation of a test failure after the test itself was removed in r115340.
+
+        * platform/chromium/test_expectations.txt: Removed failure expectation.
+
 2012-04-25 Ken Buchanan  <kenrb@chromium.org>
 
         Crash from removal of line break object after layout
