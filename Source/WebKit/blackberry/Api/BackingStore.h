@@ -20,6 +20,7 @@
 #define BackingStore_h
 
 #include "BlackBerryGlobal.h"
+#include <BlackBerryPlatformGraphics.h>
 
 namespace WebCore {
 class ChromeClientBlackBerry;
@@ -76,6 +77,8 @@ public:
 
     void createBackingStoreMemory();
     void releaseBackingStoreMemory();
+
+    void drawContents(BlackBerry::Platform::Graphics::Drawable*, double /*scale*/, const BlackBerry::Platform::IntRect&);
 
 private:
     friend class BlackBerry::WebKit::BackingStoreClient;

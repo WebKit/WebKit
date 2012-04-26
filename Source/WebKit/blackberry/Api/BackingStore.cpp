@@ -42,6 +42,7 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
+#include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformWindow.h>
 
 #include <wtf/CurrentTime.h>
@@ -57,8 +58,6 @@
 #define DEBUG_VISUALIZE 0
 #define DEBUG_TILEMATRIX 0
 #define DEBUG_COMPOSITING_DIRTY_REGION 0
-
-#include <BlackBerryPlatformScreen.h>
 
 using namespace WebCore;
 using namespace std;
@@ -2146,6 +2145,38 @@ Platform::IntRect BackingStorePrivate::tileRect()
     return Platform::IntRect(0, 0, tileWidth(), tileHeight());
 }
 
+void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Drawable* drawable,
+                                         double scale,
+                                         const Platform::IntRect& contentsRect) const
+{
+    if (!drawable || contentsRect.isEmpty())
+        return;
+    PlatformGraphicsContext* platformGraphicsContext = SurfacePool::globalSurfacePool()->createPlatformGraphicsContext(drawable);
+    GraphicsContext graphicsContext(platformGraphicsContext);
+
+    graphicsContext.translate(-contentsRect.x(), -contentsRect.y());
+
+    WebCore::IntRect transformedContentsRect(contentsRect.x(), contentsRect.y(), contentsRect.width(), contentsRect.height());
+
+    if (scale != 1.0) {
+        TransformationMatrix matrix;
+        matrix.scale(1.0 / scale);
+        transformedContentsRect = matrix.mapRect(transformedContentsRect);
+
+        // We extract from the contentsRect but draw a slightly larger region than
+        // we were told to, in order to avoid pixels being rendered only partially.
+        const int atLeastOneDevicePixel = static_cast<int>(ceilf(1.0 / scale));
+        transformedContentsRect.inflate(atLeastOneDevicePixel);
+
+        graphicsContext.scale(FloatSize(scale, scale));
+    }
+
+    graphicsContext.clip(transformedContentsRect);
+    m_client->frame()->view()->paintContents(&graphicsContext, transformedContentsRect);
+
+    delete platformGraphicsContext;
+}
+
 void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer* tileBuffer,
                                          const Platform::IntPoint& surfaceOffset,
                                          const Platform::IntRect& contentsRect) const
@@ -2732,6 +2763,11 @@ Platform::Graphics::Buffer* BackingStorePrivate::buffer() const
 #endif
 
     return 0;
+}
+
+void BackingStore::drawContents(BlackBerry::Platform::Graphics::Drawable* drawable, double scale, const Platform::IntRect& contentsRect)
+{
+    d->renderContents(drawable, scale, contentsRect);
 }
 
 }
