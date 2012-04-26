@@ -52,7 +52,7 @@ public:
     static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestNamedConstructor>);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestNamedConstructor>, v8::Isolate*);
 };
 
 v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl, v8::Isolate* isolate)
@@ -60,7 +60,7 @@ v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl, 
         v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestNamedConstructor::wrapSlow(impl);
+    return V8TestNamedConstructor::wrapSlow(impl, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestNamedConstructor* impl, v8::Isolate* isolate = 0)

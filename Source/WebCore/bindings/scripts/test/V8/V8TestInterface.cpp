@@ -305,7 +305,7 @@ ActiveDOMObject* V8TestInterface::toActiveDOMObject(v8::Handle<v8::Object> objec
     return toNative(object);
 }      
 
-v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl)
+v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;

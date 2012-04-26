@@ -47,7 +47,7 @@ public:
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestEventConstructor>);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestEventConstructor>, v8::Isolate*);
 };
 
 v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl, v8::Isolate* isolate)
@@ -55,7 +55,7 @@ v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl, 
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestEventConstructor::wrapSlow(impl);
+    return V8TestEventConstructor::wrapSlow(impl, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestEventConstructor* impl, v8::Isolate* isolate = 0)

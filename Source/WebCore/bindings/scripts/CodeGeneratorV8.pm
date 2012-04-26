@@ -414,7 +414,7 @@ END
     my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
     push(@headerContent, <<END);
 private:
-    static v8::Handle<v8::Object> wrapSlow(${wrapSlowArgumentType});
+    static v8::Handle<v8::Object> wrapSlow(${wrapSlowArgumentType}, v8::Isolate*);
 };
 
 END
@@ -432,7 +432,7 @@ END
 END
     push(@headerContent, "    }\n") if IsDOMNodeType($interfaceName);
     push(@headerContent, <<END);
-    return ${className}::wrapSlow(impl);
+    return ${className}::wrapSlow(impl, isolate);
 }
 END
 
@@ -3116,7 +3116,7 @@ sub GenerateToV8Converters
 
     push(@implContent, <<END);
 
-v8::Handle<v8::Object> ${className}::wrapSlow(${wrapSlowArgumentType} impl)
+v8::Handle<v8::Object> ${className}::wrapSlow(${wrapSlowArgumentType} impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
 END
@@ -3139,7 +3139,7 @@ END
         push(@implContent, <<END);
     if (proxy && proxy->windowShell()->context().IsEmpty() && proxy->windowShell()->initContextIfNeeded()) {
         // initContextIfNeeded may have created a wrapper for the object, retry from the start.
-        return ${className}::wrap(impl.get());
+        return ${className}::wrap(impl.get(), isolate);
     }
 END
     }

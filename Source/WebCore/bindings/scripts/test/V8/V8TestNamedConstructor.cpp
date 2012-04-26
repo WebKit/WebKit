@@ -154,7 +154,7 @@ ActiveDOMObject* V8TestNamedConstructor::toActiveDOMObject(v8::Handle<v8::Object
     return toNative(object);
 }      
 
-v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(PassRefPtr<TestNamedConstructor> impl)
+v8::Handle<v8::Object> V8TestNamedConstructor::wrapSlow(PassRefPtr<TestNamedConstructor> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;

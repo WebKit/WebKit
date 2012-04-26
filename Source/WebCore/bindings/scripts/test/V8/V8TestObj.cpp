@@ -2389,7 +2389,7 @@ bool V8TestObj::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestObj::wrapSlow(PassRefPtr<TestObj> impl)
+v8::Handle<v8::Object> V8TestObj::wrapSlow(PassRefPtr<TestObj> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;

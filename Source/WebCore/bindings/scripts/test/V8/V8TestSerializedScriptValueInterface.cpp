@@ -293,7 +293,7 @@ bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> val
 }
 
 
-v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(PassRefPtr<TestSerializedScriptValueInterface> impl)
+v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(PassRefPtr<TestSerializedScriptValueInterface> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;

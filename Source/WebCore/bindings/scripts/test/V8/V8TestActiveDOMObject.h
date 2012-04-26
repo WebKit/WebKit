@@ -47,7 +47,7 @@ public:
     static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
     static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestActiveDOMObject>);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestActiveDOMObject>, v8::Isolate*);
 };
 
 v8::Handle<v8::Object> V8TestActiveDOMObject::wrap(TestActiveDOMObject* impl, v8::Isolate* isolate)
@@ -55,7 +55,7 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrap(TestActiveDOMObject* impl, v8
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestActiveDOMObject::wrapSlow(impl);
+    return V8TestActiveDOMObject::wrapSlow(impl, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestActiveDOMObject* impl, v8::Isolate* isolate = 0)

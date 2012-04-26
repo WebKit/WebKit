@@ -45,7 +45,7 @@ public:
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
 private:
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestMediaQueryListListener>);
+    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestMediaQueryListListener>, v8::Isolate*);
 };
 
 v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListListener* impl, v8::Isolate* isolate)
@@ -53,7 +53,7 @@ v8::Handle<v8::Object> V8TestMediaQueryListListener::wrap(TestMediaQueryListList
         v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
-    return V8TestMediaQueryListListener::wrapSlow(impl);
+    return V8TestMediaQueryListListener::wrapSlow(impl, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestMediaQueryListListener* impl, v8::Isolate* isolate = 0)

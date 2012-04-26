@@ -120,7 +120,7 @@ bool V8Float64Array::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8Float64Array::wrapSlow(PassRefPtr<Float64Array> impl)
+v8::Handle<v8::Object> V8Float64Array::wrapSlow(PassRefPtr<Float64Array> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;

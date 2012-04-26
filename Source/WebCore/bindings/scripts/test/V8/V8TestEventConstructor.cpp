@@ -146,7 +146,7 @@ bool V8TestEventConstructor::HasInstance(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Object> V8TestEventConstructor::wrapSlow(PassRefPtr<TestEventConstructor> impl)
+v8::Handle<v8::Object> V8TestEventConstructor::wrapSlow(PassRefPtr<TestEventConstructor> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
