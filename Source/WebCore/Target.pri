@@ -2889,8 +2889,6 @@ SOURCES += \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \
     platform/qt/PlatformScreenQt.cpp \
-    platform/qt/PlatformTouchEventQt.cpp \
-    platform/qt/PlatformTouchPointQt.cpp \
     platform/qt/RenderThemeQt.cpp \
     platform/qt/RenderThemeQtMobile.cpp \
     platform/qt/ScrollbarThemeQt.cpp \

@@ -1,3 +1,20 @@
+2012-04-26  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Move WebKit1 specific conversion of touch-events to WebKit1.
+        https://bugs.webkit.org/show_bug.cgi?id=84951
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::touchEvent):
+        * WebCoreSupport/WebEventConversion.cpp:
+        (WebKitPlatformTouchEvent):
+        (WebKitPlatformTouchPoint):
+        (WebCore::WebKitPlatformTouchEvent::WebKitPlatformTouchEvent):
+        (WebCore::WebKitPlatformTouchPoint::WebKitPlatformTouchPoint):
+        (WebCore::convertTouchEvent):
+        * WebCoreSupport/WebEventConversion.h:
+
 2012-04-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         Rename CSSStyleSelector files to StyleResolver.

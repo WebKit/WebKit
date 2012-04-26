@@ -62,9 +62,7 @@ public:
     {
     }
 
-#if PLATFORM(QT)
-    PlatformTouchPoint(const QTouchEvent::TouchPoint&, State);
-#elif PLATFORM(EFL)
+#if PLATFORM(EFL)
     PlatformTouchPoint(unsigned id, const IntPoint& windowPos, State);
 #elif PLATFORM(BLACKBERRY)
     PlatformTouchPoint(const BlackBerry::Platform::TouchPoint&);

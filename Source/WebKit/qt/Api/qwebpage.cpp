@@ -1347,7 +1347,7 @@ bool QWebPagePrivate::touchEvent(QTouchEvent* event)
     event->setAccepted(true);
 
     // Return whether the default action was cancelled in the JS event handler
-    return frame->eventHandler()->handleTouchEvent(PlatformTouchEvent(event));
+    return frame->eventHandler()->handleTouchEvent(convertTouchEvent(event));
 #else
     event->ignore();
     return false;

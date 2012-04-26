@@ -23,9 +23,12 @@
 #include "WebEventConversion.h"
 
 #include "PlatformMouseEvent.h"
+#include "PlatformTouchEvent.h"
+#include "PlatformTouchPoint.h"
 #include "PlatformWheelEvent.h"
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
+#include <QTouchEvent>
 #include <QWheelEvent>
 #include <wtf/CurrentTime.h>
 
@@ -218,6 +221,88 @@ WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QWheelEvent* e)
 }
 
 
+class WebKitPlatformTouchEvent : public PlatformTouchEvent {
+public:
+    WebKitPlatformTouchEvent(QTouchEvent*);
+};
+
+class WebKitPlatformTouchPoint : public PlatformTouchPoint {
+public:
+    WebKitPlatformTouchPoint(const QTouchEvent::TouchPoint&, State);
+};
+
+WebKitPlatformTouchEvent::WebKitPlatformTouchEvent(QTouchEvent* event)
+{
+    switch (event->type()) {
+    case QEvent::TouchBegin:
+        m_type = PlatformEvent::TouchStart;
+        break;
+    case QEvent::TouchUpdate:
+        m_type = PlatformEvent::TouchMove;
+        break;
+    case QEvent::TouchEnd:
+        m_type = PlatformEvent::TouchEnd;
+        break;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    case QEvent::TouchCancel:
+        m_type = PlatformEvent::TouchCancel;
+        break;
+#endif
+    }
+
+    const QList<QTouchEvent::TouchPoint>& points = event->touchPoints();
+    for (int i = 0; i < points.count(); ++i) {
+        PlatformTouchPoint::State state = PlatformTouchPoint::TouchStateEnd;
+
+        switch (points.at(i).state()) {
+        case Qt::TouchPointReleased:
+            state = PlatformTouchPoint::TouchReleased;
+            break;
+        case Qt::TouchPointMoved:
+            state = PlatformTouchPoint::TouchMoved;
+            break;
+        case Qt::TouchPointPressed:
+            state = PlatformTouchPoint::TouchPressed;
+            break;
+        case Qt::TouchPointStationary:
+            state = PlatformTouchPoint::TouchStationary;
+            break;
+        }
+
+        // Qt does not have a Qt::TouchPointCancelled point state, so if we receive a touch cancel event,
+        // simply cancel all touch points here.
+        if (m_type == PlatformEvent::TouchCancel)
+            state = PlatformTouchPoint::TouchCancelled;
+
+        m_touchPoints.append(WebKitPlatformTouchPoint(points.at(i), state));
+    }
+
+    mouseEventModifiersFromQtKeyboardModifiers(event->modifiers(), m_modifiers);
+
+    m_timestamp = WTF::currentTime();
+}
+
+WebKitPlatformTouchPoint::WebKitPlatformTouchPoint(const QTouchEvent::TouchPoint& point, State state)
+{
+    // The QTouchEvent::TouchPoint API states that ids will be >= 0.
+    m_id = point.id();
+    m_state = state;
+    m_screenPos = point.screenPos().toPoint();
+    m_pos = point.pos().toPoint();
+    // Qt reports touch point size as rectangles, but we will pretend it is an oval.
+    QRect touchRect = point.rect().toAlignedRect();
+    if (touchRect.isValid()) {
+        m_radiusX = point.rect().width() / 2;
+        m_radiusY = point.rect().height() / 2;
+    } else {
+        // http://www.w3.org/TR/2011/WD-touch-events-20110505: 1 if no value is known.
+        m_radiusX = 1;
+        m_radiusY = 1;
+    }
+    m_force = point.pressure();
+    // FIXME: Support m_rotationAngle if QTouchEvent at some point supports it.
+}
+
 PlatformWheelEvent convertWheelEvent(QWheelEvent* event)
 {
     return WebKitPlatformWheelEvent(event);
@@ -226,6 +311,11 @@ PlatformWheelEvent convertWheelEvent(QWheelEvent* event)
 PlatformWheelEvent convertWheelEvent(QGraphicsSceneWheelEvent* event)
 {
     return WebKitPlatformWheelEvent(event);
+}
+
+PlatformTouchEvent convertTouchEvent(QTouchEvent* event)
+{
+    return WebKitPlatformTouchEvent(event);
 }
 
 }
