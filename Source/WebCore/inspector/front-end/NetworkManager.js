@@ -266,10 +266,9 @@ WebInspector.NetworkDispatcher.prototype = {
      * @param {NetworkAgent.Request} request
      * @param {NetworkAgent.Timestamp} time
      * @param {NetworkAgent.Initiator} initiator
-     * @param {ConsoleAgent.StackTrace=} stackTrace
      * @param {NetworkAgent.Response=} redirectResponse
      */
-    requestWillBeSent: function(requestId, frameId, loaderId, documentURL, request, time, initiator, stackTrace, redirectResponse)
+    requestWillBeSent: function(requestId, frameId, loaderId, documentURL, request, time, initiator, redirectResponse)
     {
         var networkRequest = this._inflightRequestsById[requestId];
         if (networkRequest) {
@@ -279,7 +278,7 @@ WebInspector.NetworkDispatcher.prototype = {
             this.responseReceived(requestId, frameId, loaderId, time, "Other", redirectResponse);
             networkRequest = this._appendRedirect(requestId, time, request.url);
         } else
-            networkRequest = this._createNetworkRequest(requestId, frameId, loaderId, request.url, documentURL, initiator, stackTrace);
+            networkRequest = this._createNetworkRequest(requestId, frameId, loaderId, request.url, documentURL, initiator);
         networkRequest.hasNetworkData = true;
         this._updateNetworkRequestWithRequest(networkRequest, request);
         networkRequest.startTime = time;
@@ -395,7 +394,7 @@ WebInspector.NetworkDispatcher.prototype = {
      */
     requestServedFromMemoryCache: function(requestId, frameId, loaderId, documentURL, time, initiator, cachedResource)
     {
-        var networkRequest = this._createNetworkRequest(requestId, frameId, loaderId, cachedResource.url, documentURL, initiator, null);
+        var networkRequest = this._createNetworkRequest(requestId, frameId, loaderId, cachedResource.url, documentURL, initiator);
         this._updateNetworkRequestWithCachedResource(networkRequest, cachedResource);
         networkRequest.cached = true;
         networkRequest.requestMethod = "GET";
@@ -482,7 +481,7 @@ WebInspector.NetworkDispatcher.prototype = {
             originalNetworkRequest.redirectSource = previousRedirects[previousRedirects.length - 1];
         this._finishNetworkRequest(originalNetworkRequest, time);
         var newNetworkRequest = this._createNetworkRequest(requestId, originalNetworkRequest.frameId, originalNetworkRequest.loaderId,
-             redirectURL, originalNetworkRequest.documentURL, originalNetworkRequest.initiator, originalNetworkRequest.stackTrace);
+             redirectURL, originalNetworkRequest.documentURL, originalNetworkRequest.initiator);
         newNetworkRequest.redirects = previousRedirects.concat(originalNetworkRequest);
         return newNetworkRequest;
     },
@@ -540,7 +539,6 @@ WebInspector.NetworkDispatcher.prototype = {
     {
         var networkRequest = new WebInspector.NetworkRequest(requestId, url, documentURL, frameId, loaderId);
         networkRequest.initiator = initiator;
-        networkRequest.stackTrace = stackTrace;
         return networkRequest;
     }
 }
