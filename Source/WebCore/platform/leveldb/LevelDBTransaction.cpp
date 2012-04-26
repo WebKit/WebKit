@@ -370,9 +370,7 @@ void LevelDBTransaction::TransactionIterator::refreshTreeIterator() const
 {
     ASSERT(m_treeChanged);
 
-    m_treeChanged = false;
-
-    if (m_treeIterator->isValid() && m_treeIterator == m_current) {
+    if (m_treeIterator->isValid()) {
         m_treeIterator->reset();
         return;
     }
@@ -395,16 +393,8 @@ void LevelDBTransaction::TransactionIterator::refreshTreeIterator() const
                 m_treeIterator->prev();
         }
     }
-}
 
-bool LevelDBTransaction::TransactionIterator::treeIteratorIsLower() const
-{
-    return m_comparator->compare(m_treeIterator->key(), m_dbIterator->key()) < 0;
-}
-
-bool LevelDBTransaction::TransactionIterator::treeIteratorIsHigher() const
-{
-    return m_comparator->compare(m_treeIterator->key(), m_dbIterator->key()) > 0;
+    m_treeChanged = false;
 }
 
 void LevelDBTransaction::TransactionIterator::handleConflictsAndDeletes()
@@ -422,15 +412,14 @@ void LevelDBTransaction::TransactionIterator::handleConflictsAndDeletes()
                 m_dbIterator->prev();
         }
 
-        // Skip over delete markers in the tree iterator until it catches up with the db iterator.
         if (m_treeIterator->isValid() && m_treeIterator->isDeleted()) {
-            if (m_direction == kForward && (!m_dbIterator->isValid() || treeIteratorIsLower())) {
+            // If the tree iterator is on a delete marker, take another step.
+            if (m_direction == kForward)
                 m_treeIterator->next();
-                loop = true;
-            } else if (m_direction == kReverse && (!m_dbIterator->isValid() || treeIteratorIsHigher())) {
+            else
                 m_treeIterator->prev();
-                loop = true;
-            }
+
+            loop = true;
         }
     }
 }
