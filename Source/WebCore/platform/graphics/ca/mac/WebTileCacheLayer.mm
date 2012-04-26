@@ -48,12 +48,7 @@ using namespace WebCore;
 
 - (void)dealloc
 {
-    if (!isMainThread()) {
-        TileCache* tileCache = _tileCache.leakPtr();
-        dispatch_async(dispatch_get_main_queue(), ^{
-            delete tileCache;
-        });
-    }
+    ASSERT(!_tileCache);
 
     [super dealloc];
 }
@@ -114,6 +109,13 @@ using namespace WebCore;
 - (WebCore::TiledBacking*)tiledBacking
 {
     return _tileCache.get();
+}
+
+- (void)invalidate
+{
+    ASSERT(isMainThread());
+    ASSERT(_tileCache);
+    _tileCache = nullptr;
 }
 
 - (void)setBorderColor:(CGColorRef)borderColor

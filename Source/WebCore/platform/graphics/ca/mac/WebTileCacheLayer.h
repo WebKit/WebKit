@@ -38,5 +38,6 @@ namespace WebCore {
 
 - (CALayer *)tileContainerLayer;
 - (WebCore::TiledBacking*)tiledBacking;
+- (void)invalidate;
 
 @end
