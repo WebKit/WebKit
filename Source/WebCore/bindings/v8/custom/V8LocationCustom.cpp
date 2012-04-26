@@ -278,7 +278,7 @@ v8::Handle<v8::Value> toV8(Location* impl, v8::Isolate* isolate)
         return v8::Null();
     v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
     if (wrapper.IsEmpty()) {
-        wrapper = V8Location::wrap(impl);
+        wrapper = V8Location::wrap(impl, isolate);
         if (!wrapper.IsEmpty())
             V8DOMWrapper::setNamedHiddenWindowReference(impl->frame(), "location", wrapper);
     }

@@ -102,7 +102,7 @@ v8::Handle<v8::Value> toV8(SVGPathSeg* impl, v8::Isolate* isolate)
         return toV8(static_cast<SVGPathSegCurvetoQuadraticSmoothRel*>(impl), isolate);
     }
     ASSERT_NOT_REACHED();
-    return V8SVGPathSeg::wrap(impl);
+    return V8SVGPathSeg::wrap(impl, isolate);
 }
 
 } // namespace WebCore

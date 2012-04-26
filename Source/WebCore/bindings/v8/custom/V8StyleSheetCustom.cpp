@@ -43,7 +43,7 @@ v8::Handle<v8::Value> toV8(StyleSheet* impl, v8::Isolate* isolate)
         return v8::Null();
     if (impl->isCSSStyleSheet())
         return toV8(static_cast<CSSStyleSheet*>(impl), isolate);
-    v8::Handle<v8::Object> wrapper = V8StyleSheet::wrap(impl);
+    v8::Handle<v8::Object> wrapper = V8StyleSheet::wrap(impl, isolate);
     // Add a hidden reference from stylesheet object to its owner node.
     Node* ownerNode = impl->ownerNode();
     if (ownerNode && !wrapper.IsEmpty())

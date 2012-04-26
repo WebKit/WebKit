@@ -75,7 +75,7 @@ v8::Handle<v8::Value> toV8(NamedNodeMap* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
-    v8::Handle<v8::Object> wrapper = V8NamedNodeMap::wrap(impl);
+    v8::Handle<v8::Object> wrapper = V8NamedNodeMap::wrap(impl, isolate);
     // Add a hidden reference from named node map to its owner node.
     Element* element = impl->element();
     if (!wrapper.IsEmpty() && element)
