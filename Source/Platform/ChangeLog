@@ -1,3 +1,25 @@
+2012-04-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove guarded virtual methods from WebFilterOperation API
+        https://bugs.webkit.org/show_bug.cgi?id=84926
+
+        Reviewed by James Robinson.
+
+        We remove the virtual methods from the WebFilterOperation class,
+        and use an enum in the base class to distinguish which subclass
+        the object is. Then WebFilterOperations can access the correct
+        subclass to get the filter operation's data and construct a
+        WebCore::FilterOperation to store internally.
+
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::WebFilterOperation):
+        (WebKit::WebBasicColorMatrixFilterOperation::WebBasicColorMatrixFilterOperation):
+        (WebBasicColorMatrixFilterOperation):
+        (WebKit::WebBasicComponentTransferFilterOperation::WebBasicComponentTransferFilterOperation):
+        (WebBasicComponentTransferFilterOperation):
+        (WebKit::WebBlurFilterOperation::WebBlurFilterOperation):
+        (WebKit::WebDropShadowFilterOperation::WebDropShadowFilterOperation):
+
 2012-04-25  Gavin Peters  <gavinp@chromium.org>
 
         [Chromium] Fix some conditional compilation logic in Platform

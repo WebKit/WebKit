@@ -42,7 +42,28 @@ void WebFilterOperations::initialize()
 
 void WebFilterOperations::append(const WebFilterOperation& filter)
 {
-    m_private->operations().append(filter.toFilterOperation());
+    switch (filter.type) {
+    case WebFilterOperation::FilterTypeBasicColorMatrix: {
+        const WebBasicColorMatrixFilterOperation& colorFilter = static_cast<const WebBasicColorMatrixFilterOperation&>(filter);
+        m_private->operations().append(BasicColorMatrixFilterOperation::create(colorFilter.amount, static_cast<FilterOperation::OperationType>(colorFilter.subtype)));
+        break;
+    }
+    case WebFilterOperation::FilterTypeBasicComponentTransfer: {
+        const WebBasicComponentTransferFilterOperation& componentFilter = static_cast<const WebBasicComponentTransferFilterOperation&>(filter);
+        m_private->operations().append(BasicComponentTransferFilterOperation::create(componentFilter.amount, static_cast<FilterOperation::OperationType>(componentFilter.subtype)));
+        break;
+    }
+    case WebFilterOperation::FilterTypeBlur: {
+        const WebBlurFilterOperation& blurFilter = static_cast<const WebBlurFilterOperation&>(filter);
+        m_private->operations().append(BlurFilterOperation::create(Length(blurFilter.pixelRadius, Fixed), FilterOperation::BLUR));
+        break;
+    }
+    case WebFilterOperation::FilterTypeDropShadow: {
+        const WebDropShadowFilterOperation& shadowFilter = static_cast<const WebDropShadowFilterOperation&>(filter);
+        m_private->operations().append(DropShadowFilterOperation::create(IntPoint(shadowFilter.x, shadowFilter.y), shadowFilter.stdDeviation, shadowFilter.color, FilterOperation::DROP_SHADOW));
+        break;
+    }
+    }
 }
 
 void WebFilterOperations::clear()

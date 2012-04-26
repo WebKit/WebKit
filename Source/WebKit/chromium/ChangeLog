@@ -1,3 +1,12 @@
+2012-04-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove guarded virtual methods from WebFilterOperation API
+        https://bugs.webkit.org/show_bug.cgi?id=84926
+
+        Reviewed by James Robinson.
+
+        * src/AssertMatchingEnums.cpp:
+
 2012-04-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(112286) Compositor initialization blocks for program compilation / linking

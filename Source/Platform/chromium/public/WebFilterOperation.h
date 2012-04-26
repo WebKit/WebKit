@@ -34,86 +34,77 @@
 #include <wtf/PassRefPtr.h>
 #endif
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore {
-class FilterOperation;
-}
-#endif
-
 namespace WebKit {
 
 struct WebFilterOperation {
-#if WEBKIT_IMPLEMENTATION
-    virtual PassRefPtr<WebCore::FilterOperation> toFilterOperation() const = 0;
-#endif
+    enum FilterType {
+        FilterTypeBasicColorMatrix,
+        FilterTypeBasicComponentTransfer,
+        FilterTypeBlur,
+        FilterTypeDropShadow
+    };
+
+    FilterType type;
 
 protected:
-    WebFilterOperation() { }
+    WebFilterOperation(FilterType type)
+        : type(type)
+    { }
 };
 
 struct WebBasicColorMatrixFilterOperation : public WebFilterOperation {
-    enum FilterType {
-        FilterTypeGrayscale = 1,
-        FilterTypeSepia = 2,
-        FilterTypeSaturate = 3,
-        FilterTypeHueRotate = 4
+    enum BasicColorMatrixFilterType {
+        BasicColorMatrixFilterTypeGrayscale = 1,
+        BasicColorMatrixFilterTypeSepia = 2,
+        BasicColorMatrixFilterTypeSaturate = 3,
+        BasicColorMatrixFilterTypeHueRotate = 4
     };
 
-    WebBasicColorMatrixFilterOperation(FilterType type, float amount)
-        : type(type)
+    WebBasicColorMatrixFilterOperation(BasicColorMatrixFilterType type, float amount)
+        : WebFilterOperation(FilterTypeBasicColorMatrix)
+        , subtype(type)
         , amount(amount)
     { }
 
-#if WEBKIT_IMPLEMENTATION
-    virtual PassRefPtr<WebCore::FilterOperation> toFilterOperation() const OVERRIDE;
-#endif
-
-    FilterType type;
+    BasicColorMatrixFilterType subtype;
     float amount;
 };
 
 struct WebBasicComponentTransferFilterOperation : public WebFilterOperation {
-    enum FilterType {
-        FilterTypeInvert = 5,
-        FilterTypeBrightness = 7,
-        FilterTypeContrast = 8
+    enum BasicComponentTransferFilterType {
+        BasicComponentTransferFilterTypeInvert = 5,
+        BasicComponentTransferFilterTypeBrightness = 7,
+        BasicComponentTransferFilterTypeContrast = 8
         // Opacity is missing because this is more expensive than just setting opacity on the layer.
     };
 
-    WebBasicComponentTransferFilterOperation(FilterType type, float amount)
-        : type(type)
+    WebBasicComponentTransferFilterOperation(BasicComponentTransferFilterType type, float amount)
+        : WebFilterOperation(FilterTypeBasicComponentTransfer)
+        , subtype(type)
         , amount(amount)
     { }
 
-#if WEBKIT_IMPLEMENTATION
-    virtual PassRefPtr<WebCore::FilterOperation> toFilterOperation() const OVERRIDE;
-#endif
-
-    FilterType type;
+    BasicComponentTransferFilterType subtype;
     float amount;
 };
 
 struct WebBlurFilterOperation : public WebFilterOperation {
-    explicit WebBlurFilterOperation(int pixelRadius) : pixelRadius(pixelRadius) { }
-
-#if WEBKIT_IMPLEMENTATION
-    virtual PassRefPtr<WebCore::FilterOperation> toFilterOperation() const OVERRIDE;
-#endif
+    explicit WebBlurFilterOperation(int pixelRadius)
+        : WebFilterOperation(FilterTypeBlur)
+        , pixelRadius(pixelRadius)
+    { }
 
     int pixelRadius;
 };
 
-class WebDropShadowFilterOperation : public WebFilterOperation {
-    WebDropShadowFilterOperation(int x, int y, int stdDeviation, WebColor color)
-        : x(x)
+struct WebDropShadowFilterOperation : public WebFilterOperation {
+    WebDropShadowFilterOperation(int x, int y, int stdDeviation, WebColor color) 
+        : WebFilterOperation(FilterTypeDropShadow)
+        , x(x)
         , y(y)
         , stdDeviation(stdDeviation)
         , color(color)
     { }
-
-#if WEBKIT_IMPLEMENTATION
-    virtual PassRefPtr<WebCore::FilterOperation> toFilterOperation() const OVERRIDE;
-#endif
 
     int x;
     int y;
