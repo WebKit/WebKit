@@ -231,6 +231,8 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_cookies_clear();
     ewk_cookies_policy_set(EWK_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
 
+    ewk_security_policy_whitelist_origin_reset();
+
     DumpRenderTreeSupportEfl::clearFrameName(mainFrame());
     DumpRenderTreeSupportEfl::clearOpener(mainFrame());
     DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(mainView(), true);
