@@ -503,7 +503,8 @@ BUGWK84675 : editing/pasteboard/subframe-dragndrop-1.html = TEXT PASS
 BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = PASS TEXT
 BUGWK84700 : fast/dom/Window/window-postmessage-clone-frames.html = PASS TEXT
 
-BUGWK84702 : fast/forms/form-collection-radio-node-list.html = PASS TEXT
+// Path not found error in style checker.
+//BUGWK84702 : fast/forms/form-collection-radio-node-list.html = PASS TEXT
 
 BUGWK84856 : media/media-controller-playback.html = PASS TEXT
 BUGWK84858 : media/video-seek-past-end-playing.html = PASS TEXT
@@ -1555,6 +1556,21 @@ BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 BUGWK84857 : fast/repaint/moving-shadow-on-container.html = FAIL
 BUGWK84857 : fast/repaint/moving-shadow-on-path.html = FAIL
 
+BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
+BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
+BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE
+BUGWK84764 : ietestcenter/css3/multicolumn/column-width-applies-to-001.htm = IMAGE
+BUGWK84767 : ietestcenter/css3/multicolumn/column-width-applies-to-002.htm = IMAGE
+BUGWK84768 : ietestcenter/css3/multicolumn/column-width-applies-to-003.htm = IMAGE
+BUGWK84769 : ietestcenter/css3/multicolumn/column-width-applies-to-004.htm = IMAGE
+BUGWK84770 : ietestcenter/css3/multicolumn/column-width-applies-to-007.htm = IMAGE
+BUGWK84771 : ietestcenter/css3/multicolumn/column-width-applies-to-009.htm = IMAGE
+BUGWK84772 : ietestcenter/css3/multicolumn/column-width-applies-to-010.htm = IMAGE
+BUGWK84773 : ietestcenter/css3/multicolumn/column-width-applies-to-012.htm = IMAGE
+BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMAGE
+BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
+BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
+BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

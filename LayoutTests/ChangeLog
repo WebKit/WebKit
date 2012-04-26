@@ -1,3 +1,61 @@
+2012-04-26  Dave Tharp  <dtharp@codeaurora.org>
+
+        Integrate IETC CSS : multicolumn tests
+        https://bugs.webkit.org/show_bug.cgi?id=84784
+
+        Reviewed by Beth Dakin.
+
+        Adding IETC CSS Multicolumn tests along with corresponding reference tests.
+        Failures are noted in port-specific test_expectations.txt.
+
+        * ietestcenter/css3/multicolumn/column-block-formatting-context-001-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-block-formatting-context-001.htm: Added.
+        * ietestcenter/css3/multicolumn/column-containing-block-001-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-containing-block-001.htm: Added.
+        * ietestcenter/css3/multicolumn/column-containing-block-002-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-containing-block-002.htm: Added.
+        * ietestcenter/css3/multicolumn/column-containing-block-003-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-containing-block-003.htm: Added.
+        * ietestcenter/css3/multicolumn/column-filling-001-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-filling-001.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-001-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-001.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-002-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-002.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-003-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-003.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-004-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-004.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-005-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-005.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-006-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-006.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-007-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-007.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-008-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-008.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-009-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-009.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-010-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-010.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-012-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-012.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-013-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-013.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-014-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-014.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-015-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-applies-to-015.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-negative-001-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-negative-001.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-percentage-001-expected.htm: Added.
+        * ietestcenter/css3/multicolumn/column-width-percentage-001.htm: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+
 2012-04-26  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed gardening.
