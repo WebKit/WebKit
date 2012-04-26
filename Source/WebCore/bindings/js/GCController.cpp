@@ -49,14 +49,34 @@ GCController& gcController()
 }
 
 GCController::GCController()
+#if !USE(CF)
+    : m_GCTimer(this, &GCController::gcTimerFired)
+#endif
 {
 }
 
 void GCController::garbageCollectSoon()
 {
+    // We only use reportAbandonedObjectGraph on systems with CoreFoundation 
+    // since it uses a runloop-based timer that is currently only available on 
+    // systems with CoreFoundation. If and when the notion of a run loop is pushed 
+    // down into WTF so that more platforms can take advantage of it, we will be 
+    // able to use reportAbandonedObjectGraph on more platforms.
+#if USE(CF)
     JSLock lock(SilenceAssertionsOnly);
     JSDOMWindow::commonJSGlobalData()->heap.reportAbandonedObjectGraph();
+#else
+    if (!m_GCTimer.isActive())
+        m_GCTimer.startOneShot(0);
+#endif
 }
+
+#if !USE(CF)
+void GCController::gcTimerFired(Timer<GCController>*)
+{
+    collect(0);
+}
+#endif
 
 void GCController::garbageCollectNow()
 {
