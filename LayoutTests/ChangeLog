@@ -1,3 +1,15 @@
+2012-04-26  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] LayoutTestController needs implementation of setJavaScriptProfilingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=84576
+
+        Reviewed by Martin Robinson.
+
+        Unskip test cases which rely on LayoutTestController's
+        setJavaScriptProfilingEnabled implementation.
+
+        * platform/efl/Skipped:
+
 2012-04-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] webaudio/audioparam-exponentialRampToValueAtTime.html is occasionally crashing

@@ -73,6 +73,7 @@ public:
 
     static void addUserStyleSheet(const Evas_Object* ewkView, const char* sourceCode, bool allFrames);
     static bool findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions);
+    static void setJavaScriptProfilingEnabled(const Evas_Object* ewkView, bool enabled);
     static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);
     static void setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled);
 

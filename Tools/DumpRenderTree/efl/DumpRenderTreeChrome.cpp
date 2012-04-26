@@ -241,6 +241,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setDefersLoading(mainView(), false);
     DumpRenderTreeSupportEfl::setEditingBehavior(mainView(), defaultEditingBehavior());
+    DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(mainView(), false);
 }
 
 static CString pathSuitableForTestResult(const char* uriString)

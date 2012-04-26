@@ -454,9 +454,12 @@ void LayoutTestController::setIconDatabaseEnabled(bool enabled)
         ewk_settings_icon_database_path_set(databasePath.utf8().data());
 }
 
-void LayoutTestController::setJavaScriptProfilingEnabled(bool)
+void LayoutTestController::setJavaScriptProfilingEnabled(bool enabled)
 {
-    notImplemented();
+    if (enabled)
+        setDeveloperExtrasEnabled(enabled);
+
+    DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(browser->mainView(), enabled);
 }
 
 void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)

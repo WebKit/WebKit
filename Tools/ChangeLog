@@ -1,3 +1,18 @@
+2012-04-26  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] LayoutTestController needs implementation of setJavaScriptProfilingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=84576
+
+        Reviewed by Martin Robinson.
+
+        Add missing implementation setJavaScriptProfilingEnabled to EFL's
+        LayoutTestController in order to unskip tests rely on this setting.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setJavaScriptProfilingEnabled):
+
 2012-04-26  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Add Jing Zhao, Min Qin, Tien-Ren Chen and Hao Zheng into contributors list.

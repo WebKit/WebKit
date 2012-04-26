@@ -34,6 +34,7 @@
 #include <FloatSize.h>
 #include <FrameView.h>
 #include <HTMLInputElement.h>
+#include <InspectorController.h>
 #include <IntRect.h>
 #include <JSCSSStyleDeclaration.h>
 #include <JSElement.h>
@@ -405,6 +406,24 @@ bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const char
         return false;
 
     return page->findString(String::fromUTF8(text), options);
+}
+
+void DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(const Evas_Object* ewkView, bool enabled)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+    WebCore::Page* corePage = EWKPrivate::corePage(ewkView);
+    if (!corePage)
+        return;
+
+    WebCore::InspectorController* controller = corePage->inspectorController();
+    if (!controller)
+        return;
+
+    if (enabled)
+        controller->enableProfiler();
+    else
+        controller->disableProfiler();
+#endif
 }
 
 void DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled)
