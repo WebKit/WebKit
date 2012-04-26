@@ -74,15 +74,20 @@ class TestRunner:
                     82868,
                     ["/webkit2/WebKitWebView/resources"]),
         SkippedTest("TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayout",
-                    "Test times out"),
+                    "Test times out",
+                    84957),
         SkippedTest("TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutForImages",
-                    "Test times out"),
+                    "Test times out",
+                    84958),
         SkippedTest("TestWebKitAPI/WebKit2/TestWKConnectionTest",
-                    "Test times out"),
+                    "Test times out",
+                    84959),
         SkippedTest("TestWebKitAPI/WebKit2/TestRestoreSessionStateContainingFormData",
-                    "Session State is not implemented in GTK+ port"),
+                    "Session State is not implemented in GTK+ port",
+                    84960),
         SkippedTest("TestWebKitAPI/WebKit2/TestSpacebarScrolling",
-                    "Test fails")
+                    "Test fails",
+                    84961)
     ]
 
     def __init__(self, options, tests=[]):
