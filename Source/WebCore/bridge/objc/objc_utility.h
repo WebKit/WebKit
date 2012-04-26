@@ -74,8 +74,6 @@ JSValue convertNSStringToString(ExecState* exec, NSString *nsstring);
 JSValue convertObjcValueToValue(ExecState*, void* buffer, ObjcValueType, RootObject*);
 ObjcValueType objcValueTypeForType(const char *type);
 
-bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSize);
-
 JSObject *throwError(ExecState *, NSString *message);
 
 } // namespace Bindings
