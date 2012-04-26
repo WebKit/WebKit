@@ -1,3 +1,15 @@
+2012-04-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [CRASH] WebViewImpl::setZoomLevel when emulating device metrics
+        https://bugs.webkit.org/show_bug.cgi?id=84938
+
+        Check for the presence of a live Frame/FrameView before invoking methods that depend on them.
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DeviceMetricsSupport::restore):
+
 2012-04-25  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove guarded virtual methods from WebFilterOperation API

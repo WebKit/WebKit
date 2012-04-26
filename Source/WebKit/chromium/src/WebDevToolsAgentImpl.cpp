@@ -274,15 +274,12 @@ private:
 
     void restore()
     {
+        WebCore::FrameView* view = frameView();
+        if (!view)
+            return;
+
         m_webView->setZoomLevel(false, 0);
         m_webView->setEmulatedTextZoomFactor(1);
-
-        WebCore::FrameView* view = frameView();
-        if (!view) {
-            m_webView->sendResizeEventAndRepaint();
-            return;
-        }
-
         view->setHorizontalScrollbarLock(false);
         view->setVerticalScrollbarLock(false);
         view->setScrollbarModes(ScrollbarAuto, ScrollbarAuto, false, false);
