@@ -78,41 +78,30 @@ static bool isRangeControlElement(Element* element)
     return inputElement->isRangeControl();
 }
 
-static bool elementExpectsMouseEvents(Element* element)
-{
-    // If the shadow tree contains a Range Control, like the MediaControlTimeline,
-    // MediaContolVolumeElement, etc, they expect natual elements. Otherwise, we
-    // won't operate on the shadow node, because the webpages aren't able to attach
-    // listeners to shadow content.
-    ASSERT(element);
-    while (element->isInShadowTree()) {
-        element = toElement(element->shadowAncestorNode());
-      
-        if (isRangeControlElement(element))
-            return true;
-    }
-    return hasMouseMoveListener(element) && !hasTouchListener(element);
-}
-
 static bool shouldConvertTouchToMouse(Element* element)
 {
     if (!element)
         return false;
 
-    // Range element is a special case that requires natural mouse events in order to allow
-    // dragging of the slider handle.
-    if (isRangeControlElement(element))
-        return true;
-
     if ((element->hasTagName(HTMLNames::objectTag) || element->hasTagName(HTMLNames::embedTag)) && static_cast<HTMLPlugInElement*>(element))
         return true;
 
+    // Input Range element is a special case that requires natural mouse events
+    // in order to allow dragging of the slider handle.
+    // Input Range element might appear in the webpage, or it might appear in the shadow tree,
+    // like the timeline and volume media controls all use Input Range.
+    // won't operate on the shadow node of other element type, because the webpages
+    // aren't able to attach listeners to shadow content.
+    do {
+        element = toElement(element->shadowAncestorNode()); // If an element is not in shadow tree, shadowAncestorNode returns itself.
+        if (isRangeControlElement(element))
+            return true;
+    } while (element->isInShadowTree());
+
     // Check if the element has a mouse listener and no touch listener. If so,
     // the field will require touch events be converted to mouse events to function properly.
-    if (elementExpectsMouseEvents(element))
-        return true;
+    return hasMouseMoveListener(element) && !hasTouchListener(element);
 
-    return false;
 }
 
 TouchEventHandler::TouchEventHandler(WebPagePrivate* webpage)

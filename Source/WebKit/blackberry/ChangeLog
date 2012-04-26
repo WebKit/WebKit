@@ -1,3 +1,16 @@
+2012-04-25  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Input Range element expects mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=84571
+
+        Reviewed by Antonio Gomes.
+
+        This just cleans up the code a bit to make it less code and more readable.
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::shouldConvertTouchToMouse):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        (BlackBerry::WebKit::TouchEventHandler::spellCheck):
+
 2012-04-25  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Possible JS re-entrancy caused by UI events.
