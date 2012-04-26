@@ -1,3 +1,10 @@
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Skip unit test failing in debug bot.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] "resource,request,willsend" signal needs to provide more information

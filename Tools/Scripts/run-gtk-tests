@@ -71,6 +71,10 @@ class TestRunner:
                     "Test is flaky in GTK Linux 32-bit Release bot",
                     82868,
                     ["/webkit2/WebKitWebView/resources"]),
+        SkippedTest("TestWebKitAPI/WTF/TestFunctional",
+                    "Asserts in Debug bot",
+                    84868,
+                    ["FunctionalTest.RefCountedStorage"]),
     ]
 
     def __init__(self, options, tests=[]):
