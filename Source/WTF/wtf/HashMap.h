@@ -25,6 +25,7 @@
 
 namespace WTF {
 
+    template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits;
     template<typename PairType> struct PairFirstExtractor;
 
     template<typename T> struct ReferenceTypeMaker {
@@ -41,7 +42,7 @@ namespace WTF {
     private:
         typedef KeyTraitsArg KeyTraits;
         typedef MappedTraitsArg MappedTraits;
-        typedef PairHashTraits<KeyTraits, MappedTraits> ValueTraits;
+        typedef HashMapValueTraits<KeyTraits, MappedTraits> ValueTraits;
 
     public:
         typedef typename KeyTraits::TraitType KeyType;
@@ -201,6 +202,14 @@ namespace WTF {
         };
 
         HashTableType m_impl;
+    };
+
+    template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits : PairHashTraits<KeyTraits, MappedTraits> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const typename PairHashTraits<KeyTraits, MappedTraits>::TraitType& value)
+        {
+            return isHashTraitsEmptyValue<KeyTraits>(value.first);
+        }
     };
 
     template<typename PairType> struct PairFirstExtractor {

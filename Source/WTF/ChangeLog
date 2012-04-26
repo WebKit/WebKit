@@ -1,3 +1,15 @@
+2012-04-25  Darin Adler  <darin@apple.com>
+
+        Iterating a HashMap<String, X> involves a string equality comparison to check for the empty value
+        https://bugs.webkit.org/show_bug.cgi?id=84524
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/HashMap.h: Added a struct template, HashMapValueTraits, that derives from
+        PairHashTraits, adds an isEmptyValue function that looks only at the key, not
+        the mapped value, in the hash table value, and uses the isHashTraitsEmptyValue
+        function template to check if the key is empty.
+
 2012-04-25  Landry Breuil  <landry@openbsd.org>
 
         Include <sys/param.h>, needed for sysctl() on OpenBSD/NetBSD
