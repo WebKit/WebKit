@@ -2382,6 +2382,11 @@ void FrameView::performPostLayoutTasks()
             scrollingCoordinator->frameViewLayoutUpdated(this);
     }
 
+#if USE(ACCELERATED_COMPOSITING)
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->setCanHaveScrollbars(canHaveScrollbars());
+#endif
+
     scrollToAnchor();
 
     m_actionScheduler->resume();

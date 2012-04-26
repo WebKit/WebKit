@@ -115,8 +115,10 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
 
     if (m_usingTiledCacheLayer) {
         if (Page* page = renderer()->frame()->page()) {
-            if (TiledBacking* tiledBacking = m_graphicsLayer->tiledBacking())
+            if (TiledBacking* tiledBacking = m_graphicsLayer->tiledBacking()) {
                 tiledBacking->setIsInWindow(page->isOnscreen());
+                tiledBacking->setCanHaveScrollbars(renderer()->frame()->view()->canHaveScrollbars());
+            }
         }
     }
 }

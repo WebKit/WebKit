@@ -57,6 +57,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     , m_scale(1)
     , m_deviceScaleFactor(1)
     , m_isInWindow(true)
+    , m_canHaveScrollbars(true)
     , m_acceleratesDrawing(false)
     , m_tileDebugBorderWidth(0)
 {
@@ -240,6 +241,15 @@ void TileCache::setIsInWindow(bool isInWindow)
         const double tileRevalidationTimeout = 4;
         scheduleTileRevalidation(tileRevalidationTimeout);
     }
+}
+
+void TileCache::setCanHaveScrollbars(bool canHaveScrollbars)
+{
+    if (m_canHaveScrollbars == canHaveScrollbars)
+        return;
+
+    m_canHaveScrollbars = canHaveScrollbars;
+    scheduleTileRevalidation(0);
 }
 
 void TileCache::setTileDebugBorderWidth(float borderWidth)
