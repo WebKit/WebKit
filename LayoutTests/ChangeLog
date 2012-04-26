@@ -1,3 +1,14 @@
+2012-04-26  Robert Hogan  <robert@webkit.org>
+
+        Update Qt expectations after r115340
+
+        css2.1/20110323/abspos-replaced-width-margin-000.htm fails the reftest due to
+        scrollbar artefacts.
+
+        Unreviewed.
+
+        * platform/qt/test_expectations.txt:
+
 2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable VIDEO_TRACK feature
