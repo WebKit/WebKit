@@ -43,8 +43,14 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& o)
     while (!current->isLastInSelectorList())
         ++current;
     unsigned length = (current - o.m_selectorArray) + 1;
+    if (length == 1) {
+        // Destructor expects a single selector to be allocated by new, multiple with fastMalloc.
+        m_selectorArray = new CSSSelector(o.m_selectorArray[0]);
+        return;
+    }
     m_selectorArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * length));
-    memcpy(m_selectorArray, o.m_selectorArray, sizeof(CSSSelector) * length);
+    for (unsigned i = 0; i < length; ++i)
+        new (&m_selectorArray[i]) CSSSelector(o.m_selectorArray[i]);
 }
 
 void CSSSelectorList::adopt(CSSSelectorList& list)
