@@ -28,7 +28,6 @@
 
 #include "platform/WebCommon.h"
 #include "platform/WebPrivateOwnPtr.h"
-#include "platform/WebString.h"
 #include "platform/WebVector.h"
 
 namespace WTF {
@@ -38,31 +37,14 @@ class String;
 
 namespace WebKit {
 
+class WebString;
+
 class WebIDBKeyPath {
 public:
     WEBKIT_EXPORT static WebIDBKeyPath create(const WebString&);
-
-    // FIXME: Array-type key paths not yet supported. http://webkit.org/b/84207
-    static WebIDBKeyPath create(const WebVector<WebString>&) { WEBKIT_ASSERT_NOT_REACHED(); return createNull(); }
-    WEBKIT_EXPORT static WebIDBKeyPath createNull();
     WebIDBKeyPath(const WebIDBKeyPath& keyPath) { assign(keyPath); }
     ~WebIDBKeyPath() { reset(); }
 
-    enum Type {
-        NullType = 0,
-        StringType,
-        ArrayType,
-    };
-
-    WEBKIT_EXPORT bool isValid() const;
-    WEBKIT_EXPORT Type type() const;
-    // FIXME: Array-type key paths not yet supported. http://webkit.org/b/84207
-    WebVector<WebString> array() const { WEBKIT_ASSERT_NOT_REACHED(); return WebVector<WebString>(); }
-    WEBKIT_EXPORT WebString string() const;
-
-    // FIXME: Remove these once callers are updated. http://webkit.org/b/84207
-    WebIDBKeyPath(const WebString&);
-    operator const WebString () const { return string(); }
     WEBKIT_EXPORT int parseError() const;
     WEBKIT_EXPORT void assign(const WebIDBKeyPath&);
     WEBKIT_EXPORT void reset();

@@ -27,7 +27,6 @@
 #define WebIDBIndex_h
 
 #include "WebExceptionCode.h"
-#include "WebIDBKeyPath.h"
 #include "WebIDBTransaction.h"
 #include "platform/WebString.h"
 
@@ -52,14 +51,14 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }
-    virtual WebIDBKeyPath keyPath() const
+    virtual WebString keyPath() const
     {
-        return WebIDBKeyPath(keyPathString());
+        return keyPathString();
     }
-    // FIXME: Remove method once callers are updated.
-    // http://webkit.org/b/84207
     virtual WebString keyPathString() const
     {
+        // FIXME: Temporary to allow keyPath()'s return type to change.
+        // http://webkit.org/b/84207
         WEBKIT_ASSERT_NOT_REACHED();
         return WebString();
     }

@@ -1,3 +1,44 @@
+2012-04-25  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed, rolling out r115262.
+        http://trac.webkit.org/changeset/115262
+        https://bugs.webkit.org/show_bug.cgi?id=84631
+
+        r115262 is causing link error in WebKit Win Builder (dbg)
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createObjectStore):
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::keyPath):
+        (WebKit::WebIDBIndex::keyPathString):
+        * public/WebIDBKeyPath.h:
+        (WebKit):
+        (WebIDBKeyPath):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::keyPath):
+        (WebKit::WebIDBObjectStore::keyPathString):
+        (WebKit::WebIDBObjectStore::createIndex):
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit::WebKitPlatformSupport::createIDBKeysFromSerializedValuesAndKeyPath):
+        (WebKit::WebKitPlatformSupport::injectIDBKeyIntoSerializedValue):
+        * src/IDBIndexBackendProxy.cpp:
+        (WebKit::IDBIndexBackendProxy::keyPath):
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::keyPath):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * src/WebIDBIndexImpl.cpp:
+        * src/WebIDBIndexImpl.h:
+        (WebIDBIndexImpl):
+        * src/WebIDBKeyPath.cpp:
+        (WebKit::WebIDBKeyPath::create):
+        (WebKit::WebIDBKeyPath::assign):
+        (WebKit::WebIDBKeyPath::operator const WTF::Vector<WTF::String, 0>&):
+        * src/WebIDBObjectStoreImpl.cpp:
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+
 2012-04-24  Adrienne Walker  <enne@google.com>
 
         [chromium] Prevent CCLayerImpl::willDraw/didDraw mismatches

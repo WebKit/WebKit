@@ -66,7 +66,7 @@ String IDBObjectStoreBackendProxy::name() const
 
 String IDBObjectStoreBackendProxy::keyPath() const
 {
-    return m_webIDBObjectStore->keyPath().string();
+    return m_webIDBObjectStore->keyPath();
 }
 
 PassRefPtr<DOMStringList> IDBObjectStoreBackendProxy::indexNames() const

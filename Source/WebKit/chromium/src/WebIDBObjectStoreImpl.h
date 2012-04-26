@@ -46,9 +46,6 @@ public:
     ~WebIDBObjectStoreImpl();
 
     WebString name() const;
-    WebIDBKeyPath keyPath() const;
-    // FIXME: Remove this method once callers are updated.
-    // http://webkit.org/b/84207
     WebString keyPathString() const;
     WebDOMStringList indexNames() const;
 
@@ -58,10 +55,9 @@ public:
     void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
-    // FIXME: Remove WebString keyPath overload once callers are updated.
-    // http://webkit.org/b/84207
-    WebIDBIndex* createIndex(const WebString&, const WebString&, bool, bool, const WebIDBTransaction&, WebExceptionCode&);
-    WebIDBIndex* createIndex(const WebString& name, const WebIDBKeyPath& keyPath, bool unique, bool multiEntry, const WebIDBTransaction& transaction, WebExceptionCode& ec) { return createIndex(name, keyPath.string(), unique, multiEntry, transaction, ec); }
+    // FIXME: Remove once callers are updated.
+    WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode& ec) { return createIndex(name, keyPath, unique, false, transaction, ec); }
+    WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multiEntry, const WebIDBTransaction&, WebExceptionCode&);
     WebIDBIndex* index(const WebString& name, WebExceptionCode&);
     void deleteIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
 
