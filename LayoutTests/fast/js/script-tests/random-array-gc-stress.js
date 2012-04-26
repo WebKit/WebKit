@@ -38,7 +38,7 @@ var test = function() {
 };
 
 var runs = 0; 
-while (runs < 30) {
+while (runs < 20) {
     test();
     runs += 1;
     global = [];
