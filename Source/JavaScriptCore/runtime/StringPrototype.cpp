@@ -240,7 +240,7 @@ static NEVER_INLINE UString substituteBackreferencesSlow(const UString& replacem
 
 static inline UString substituteBackreferences(const UString& replacement, const UString& source, const int* ovector, RegExp* reg)
 {
-    size_t i = replacement.find('$', 0);
+    size_t i = replacement.find('$');
     if (UNLIKELY(i != notFound)) {
         if (replacement.is8Bit() && source.is8Bit())
             return substituteBackreferencesSlow<LChar>(replacement, source, ovector, reg, i);
@@ -754,26 +754,30 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toString(exec)->value(exec);
-    int len = s.length();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
     UString u2 = a0.toString(exec)->value(exec);
-    int pos;
+
+    size_t result;
     if (a1.isUndefined())
-        pos = 0;
-    else if (a1.isUInt32())
-        pos = min<uint32_t>(a1.asUInt32(), len);
+        result = s.find(u2);
     else {
-        double dpos = a1.toInteger(exec);
-        if (dpos < 0)
-            dpos = 0;
-        else if (dpos > len)
-            dpos = len;
-        pos = static_cast<int>(dpos);
+        unsigned pos;
+        int len = s.length();
+        if (a1.isUInt32())
+            pos = min<uint32_t>(a1.asUInt32(), len);
+        else {
+            double dpos = a1.toInteger(exec);
+            if (dpos < 0)
+                dpos = 0;
+            else if (dpos > len)
+                dpos = len;
+            pos = static_cast<unsigned>(dpos);
+        }
+        result = s.find(u2, pos);
     }
 
-    size_t result = s.find(u2, pos);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));

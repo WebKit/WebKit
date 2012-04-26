@@ -630,7 +630,7 @@ static bool isControlCharacter(UChar c)
 
 static inline String trimToNextSeparator(const String& str)
 {
-    return str.substring(0, str.find(isCacheHeaderSeparator, 0));
+    return str.substring(0, str.find(isCacheHeaderSeparator));
 }
 
 static void parseCacheHeader(const String& header, Vector<pair<String, String> >& result)
@@ -666,7 +666,7 @@ static void parseCacheHeader(const String& header, Vector<pair<String, String> >
                 }
             } else {
                 // The value is a token until the next comma
-                size_t nextCommaPosition2 = value.find(',', 0);
+                size_t nextCommaPosition2 = value.find(',');
                 if (nextCommaPosition2 != notFound) {
                     // The value is delimited by the next comma
                     result.append(pair<String, String>(directive, trimToNextSeparator(value.substring(0, nextCommaPosition2).stripWhiteSpace())));

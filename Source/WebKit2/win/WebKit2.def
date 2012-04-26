@@ -168,6 +168,7 @@ EXPORTS
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@I@Z
+        ?find@StringImpl@WTF@@QAEIPAV12@@Z
         ?frameDestroyed@FrameDestructionObserver@WebCore@@UAEXXZ
         ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z

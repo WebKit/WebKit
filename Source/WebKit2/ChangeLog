@@ -1,3 +1,13 @@
+2012-04-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a version of StringImpl::find() without offset
+        https://bugs.webkit.org/show_bug.cgi?id=83968
+
+        Update the symbols files.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         WebCore shouldn't call collectAllGarbage directly

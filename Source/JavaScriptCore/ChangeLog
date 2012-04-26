@@ -1,3 +1,22 @@
+2012-04-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a version of StringImpl::find() without offset
+        https://bugs.webkit.org/show_bug.cgi?id=83968
+
+        Reviewed by Sam Weinig.
+
+        Add support for the new StringImpl::find() to UString.
+
+        Change stringProtoFuncIndexOf() to specifically take advatage of the feature.
+        This gives a 12% gains on a distribution of strings between 30 and 100 characters.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferences):
+        (JSC::stringProtoFuncIndexOf):
+        * runtime/UString.h:
+        (UString):
+        (JSC::UString::find):
+
 2012-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         WebCore shouldn't call collectAllGarbage directly

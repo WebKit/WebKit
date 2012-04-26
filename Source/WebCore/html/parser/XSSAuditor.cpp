@@ -211,7 +211,7 @@ void XSSAuditor::init()
 
     TextResourceDecoder* decoder = m_parser->document()->decoder();
     m_decodedURL = fullyDecodeString(url.string(), decoder);
-    if (m_decodedURL.find(isRequiredForInjection, 0) == notFound)
+    if (m_decodedURL.find(isRequiredForInjection) == notFound)
         m_decodedURL = String();
 
     if (DocumentLoader* documentLoader = m_parser->document()->frame()->loader()->documentLoader()) {
@@ -223,7 +223,7 @@ void XSSAuditor::init()
             String httpBodyAsString = httpBody->flattenToString();
             if (!httpBodyAsString.isEmpty()) {
                 m_decodedHTTPBody = fullyDecodeString(httpBodyAsString, decoder);
-                if (m_decodedHTTPBody.find(isRequiredForInjection, 0) == notFound)
+                if (m_decodedHTTPBody.find(isRequiredForInjection) == notFound)
                     m_decodedHTTPBody = String();
                 if (m_decodedHTTPBody.length() >= miniumLengthForSuffixTree)
                     m_decodedHTTPBodySuffixTree = adoptPtr(new SuffixTree<ASCIICodebook>(m_decodedHTTPBody, suffixTreeDepth));

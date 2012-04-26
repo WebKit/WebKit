@@ -1,3 +1,27 @@
+2012-04-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add a version of StringImpl::find() without offset
+        https://bugs.webkit.org/show_bug.cgi?id=83968
+
+        Reviewed by Sam Weinig.
+
+        This patch add a version of StringImpl::find() without offset, Instead of using the default
+        value for the index.
+
+        By not having the index, we can skip a couple of branches and a few instructions. This gives
+        significant gains when the strings are short-ish.
+
+        The case of empty string is moved below (matchLength == 1) since it is a less common operation.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        (WTF):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        * wtf/text/WTFString.h:
+        (String):
+        (WTF::String::find):
+
 2012-04-25  Darin Adler  <darin@apple.com>
 
         Iterating a HashMap<String, X> involves a string equality comparison to check for the empty value
