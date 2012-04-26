@@ -1,3 +1,31 @@
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] run-gtk-tests: Use a timeout per test instead of a global timeout
+        https://bugs.webkit.org/show_bug.cgi?id=84695
+
+        Reviewed by Philippe Normand.
+
+        It also adds a command line option to be able to pass a custom
+        timeout value, instead of hard-coding it. The default timeout is 10
+        seconds if no other value is passed to the script.
+
+        * Scripts/run-gtk-tests:
+        (TestTimeout): Exception raised when a test times out.
+        (TestRunner._get_child_pid_from_test_output): Helper function to
+        get the pid of the running test from gtester output.
+        (TestRunner._kill_process): Helper funtion ot kill a process
+        ignoring exceptions if the process is already died.
+        (TestRunner._run_test_command): Run the test command raising
+        TestTimeout exception if the test doesn't finish before the given
+        timeout in seconds.
+        (TestRunner._run_test_command.alarm_handler): Alarm handler that
+        raises TestTimeout exception.
+        (TestRunner._run_test_glib): Use _run_test_command() to run the test.
+        (TestRunner._run_test_google): Ditto.
+        (TestRunner.run_tests): Add current test to the list of timed out
+        test if TestTimeout exception is raised. Show the list of timed
+        out test at the end.
+
 2012-04-26  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] LayoutTestController needs implementation of addOriginAccessWhitelistEntry and removeOriginAccessWhitelistEntry

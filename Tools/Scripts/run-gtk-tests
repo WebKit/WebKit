@@ -20,11 +20,10 @@
 import subprocess
 import os
 import sys
-import time
 import optparse
+import re
+from signal import alarm, signal, SIGALRM, SIGKILL
 from gi.repository import Gio, GLib
-
-TIMEOUT=180 # seconds
 
 class SkippedTest:
     def __init__(self, test, reason, bug=None, test_cases=[]):
@@ -41,6 +40,9 @@ class SkippedTest:
         if self.bug is not None:
             skipped_test_str += "(https://bugs.webkit.org/show_bug.cgi?id=%d)" % self.bug
         return skipped_test_str
+
+class TestTimeout(Exception):
+    pass
 
 class TestRunner:
 
@@ -242,6 +244,46 @@ class TestRunner:
         # Run only skipped tests.
         return skipped is not None
 
+    def _get_child_pid_from_test_output(self, output):
+        if not output:
+            return -1
+        match = re.search(r'\(pid=(?P<child_pid>[0-9]+)\)', output)
+        if not match:
+            return -1
+        return int(match.group('child_pid'))
+
+    def _kill_process(self, pid):
+        try:
+            os.kill(pid, SIGKILL)
+        except OSError:
+            # Process already died.
+            pass
+
+    def _run_test_command(self, command, timeout=-1):
+        def alarm_handler(signum, frame):
+            raise TestTimeout
+
+        p = self._create_process(command, stdout=subprocess.PIPE, env=self._test_env)
+        if timeout > 0:
+            signal(SIGALRM, alarm_handler)
+            alarm(timeout)
+
+        stdout = ""
+        try:
+            stdout = p.communicate()[0]
+            if timeout > 0:
+                alarm(0)
+            sys.stdout.write(stdout)
+            sys.stdout.flush()
+        except TestTimeout:
+            self._kill_process(p.pid)
+            child_pid = self._get_child_pid_from_test_output(stdout)
+            if child_pid > 0:
+                self._kill_process(child_pid)
+            raise
+
+        return not p.returncode
+
     def _run_test_glib(self, test):
         tester_command = ['gtester']
         if self._options.verbose:
@@ -250,7 +292,7 @@ class TestRunner:
             tester_command.extend(['-s', test_case])
         tester_command.append(test)
 
-        return not self._create_process(tester_command, env=self._test_env).wait()
+        return self._run_test_command(tester_command, self._options.timeout)
 
     def _run_test_google(self, test):
         tester_command = [test, "--gtest_throw_on_failure"]
@@ -258,7 +300,7 @@ class TestRunner:
         if skipped_tests_cases:
             tester_command.append("--gtest_filter=-%s" % ":".join(skipped_tests_cases))
 
-        return not self._create_process(tester_command, env=self._test_env).wait()
+        return self._run_test_command(tester_command, self._options.timeout)
 
     def _run_test(self, test):
         if "unittests" in test or "WebKit2APITests" in test:
@@ -283,23 +325,30 @@ class TestRunner:
         self._tests = [test for test in self._tests if self._should_run_test(test)]
 
         failed_tests = []
+        timed_out_tests = []
         try:
-            start_time = time.time()
             for test in self._tests:
-                if not self._run_test(test):
-                    failed_tests.append(test)
-
-                if time.time() - start_time >= TIMEOUT:
-                    sys.stdout.write("Tests timed out after %d seconds\n" % TIMEOUT)
+                success = True
+                try:
+                    success = self._run_test(test)
+                except TestTimeout:
+                    sys.stdout.write("TEST: %s: TIMEOUT\n" % test)
                     sys.stdout.flush()
-                    return 1
+                    timed_out_tests.append(test)
 
+                if not success:
+                    failed_tests.append(test)
         finally:
             self._tear_down_testing_environment()
 
         if failed_tests:
             names = [test.replace(self._programs_path, '', 1) for test in failed_tests]
             sys.stdout.write("Tests failed: %s\n" % ", ".join(names))
+            sys.stdout.flush()
+
+        if timed_out_tests:
+            names = [test.replace(self._programs_path, '', 1) for test in timed_out_tests]
+            sys.stdout.write("Tests that timed out: %s\n" % ", ".join(names))
             sys.stdout.flush()
 
         if self._skipped_tests and self._options.skipped_action == 'skip':
@@ -325,6 +374,9 @@ if __name__ == "__main__":
                              choices=['skip', 'ignore', 'only'], default='skip',
                              metavar='skip|ignore|only',
                              help='Specifies how to treat the skipped tests')
+    option_parser.add_option('-t', '--timeout',
+                             action='store', type='int', dest='timeout', default=10,
+                             help='Time in seconds until a test times out')
     options, args = option_parser.parse_args()
 
     sys.exit(TestRunner(options, args).run_tests())
