@@ -39,6 +39,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     m_view = WKViewCreate(contextRef, pageGroupRef);
     gtk_container_add(GTK_CONTAINER(m_window), GTK_WIDGET(m_view));
     gtk_widget_show(GTK_WIDGET(m_view));
+    gtk_widget_show(m_window);
 }
 
 PlatformWebView::~PlatformWebView()
