@@ -3679,3 +3679,4 @@ BUGWK83568 : svg/custom/path-zero-strokewidth.svg = IMAGE
 BUGWK83568 : svg/custom/js-update-style.svg = IMAGE
 
 BUGWK84877 : fast/css/getPropertyValue-border.html = TEXT
+BUGWK84972 MAC WIN DEBUG : webaudio/audioparam-exponentialRampToValueAtTime.html = PASS CRASH
