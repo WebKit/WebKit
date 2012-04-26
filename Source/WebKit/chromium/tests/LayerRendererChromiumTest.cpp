@@ -199,3 +199,78 @@ TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatredForScopeDuratio
     swapBuffers();
     EXPECT_EQ(1, m_mockContext.frameCount());
 }
+
+class ForbidSynchronousCallContext : public FakeWebGraphicsContext3D {
+public:
+    ForbidSynchronousCallContext() { }
+
+    virtual bool getActiveAttrib(WebGLId program, WGC3Duint index, ActiveInfo&) { ADD_FAILURE(); return false; }
+    virtual bool getActiveUniform(WebGLId program, WGC3Duint index, ActiveInfo&) { ADD_FAILURE(); return false; }
+    virtual void getAttachedShaders(WebGLId program, WGC3Dsizei maxCount, WGC3Dsizei* count, WebGLId* shaders) { ADD_FAILURE(); }
+    virtual WGC3Dint getAttribLocation(WebGLId program, const WGC3Dchar* name) { ADD_FAILURE(); return 0; }
+    virtual void getBooleanv(WGC3Denum pname, WGC3Dboolean* value) { ADD_FAILURE(); }
+    virtual void getBufferParameteriv(WGC3Denum target, WGC3Denum pname, WGC3Dint* value) { ADD_FAILURE(); }
+    virtual Attributes getContextAttributes() { ADD_FAILURE(); return m_attrs; }
+    virtual WGC3Denum getError() { ADD_FAILURE(); return 0; }
+    virtual void getFloatv(WGC3Denum pname, WGC3Dfloat* value) { ADD_FAILURE(); }
+    virtual void getFramebufferAttachmentParameteriv(WGC3Denum target, WGC3Denum attachment, WGC3Denum pname, WGC3Dint* value) { ADD_FAILURE(); }
+    virtual void getIntegerv(WGC3Denum pname, WGC3Dint* value)
+    {
+        if (pname == WebCore::GraphicsContext3D::MAX_TEXTURE_SIZE)
+            *value = 1024; // MAX_TEXTURE_SIZE is cached client side, so it's OK to query.
+        else
+            ADD_FAILURE();
+    }
+
+    // We allow querying the shader compilation and program link status in debug mode, but not release.
+    virtual void getProgramiv(WebGLId program, WGC3Denum pname, WGC3Dint* value)
+    {
+#ifndef NDEBUG
+        *value = 1;
+#else
+        ADD_FAILURE();
+#endif
+    }
+
+    virtual void getShaderiv(WebGLId shader, WGC3Denum pname, WGC3Dint* value)
+    {
+#ifndef NDEBUG
+        *value = 1;
+#else
+        ADD_FAILURE();
+#endif
+    }
+
+    virtual WebString getString(WGC3Denum name)
+    {
+        // We allow querying the extension string.
+        // FIXME: It'd be better to check that we only do this before starting any other expensive work (like starting a compilation)
+        if (name != WebCore::GraphicsContext3D::EXTENSIONS)
+            ADD_FAILURE();
+        return WebString();
+    }
+
+    virtual WebString getProgramInfoLog(WebGLId program) { ADD_FAILURE(); return WebString(); }
+    virtual void getRenderbufferParameteriv(WGC3Denum target, WGC3Denum pname, WGC3Dint* value) { ADD_FAILURE(); }
+
+    virtual WebString getShaderInfoLog(WebGLId shader) { ADD_FAILURE(); return WebString(); }
+    virtual void getShaderPrecisionFormat(WGC3Denum shadertype, WGC3Denum precisiontype, WGC3Dint* range, WGC3Dint* precision) { ADD_FAILURE(); }
+    virtual WebString getShaderSource(WebGLId shader) { ADD_FAILURE(); return WebString(); }
+    virtual void getTexParameterfv(WGC3Denum target, WGC3Denum pname, WGC3Dfloat* value) { ADD_FAILURE(); }
+    virtual void getTexParameteriv(WGC3Denum target, WGC3Denum pname, WGC3Dint* value) { ADD_FAILURE(); }
+    virtual void getUniformfv(WebGLId program, WGC3Dint location, WGC3Dfloat* value) { ADD_FAILURE(); }
+    virtual void getUniformiv(WebGLId program, WGC3Dint location, WGC3Dint* value) { ADD_FAILURE(); }
+    virtual WGC3Dint getUniformLocation(WebGLId program, const WGC3Dchar* name) { ADD_FAILURE(); return 0; }
+    virtual void getVertexAttribfv(WGC3Duint index, WGC3Denum pname, WGC3Dfloat* value) { ADD_FAILURE(); }
+    virtual void getVertexAttribiv(WGC3Duint index, WGC3Denum pname, WGC3Dint* value) { ADD_FAILURE(); }
+    virtual WGC3Dsizeiptr getVertexAttribOffset(WGC3Duint index, WGC3Denum pname) { ADD_FAILURE(); return 0; }
+};
+
+// This test isn't using the same fixture as LayerRendererChromiumTest, and you can't mix TEST() and TEST_F() with the same name, hence LRC2.
+TEST(LayerRendererChromiumTest2, initializationDoesNotMakeSynchronousCalls)
+{
+    FakeLayerRendererChromiumClient mockClient;
+    FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ForbidSynchronousCallContext), GraphicsContext3D::RenderDirectlyToHostWindow));
+
+    EXPECT_TRUE(layerRendererChromium.initialize());
+}

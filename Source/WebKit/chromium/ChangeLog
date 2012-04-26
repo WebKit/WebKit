@@ -1,3 +1,28 @@
+2012-04-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] REGRESSION(112286) Compositor initialization blocks for program compilation / linking
+        https://bugs.webkit.org/show_bug.cgi?id=84822
+
+        Reviewed by Adrienne Walker.
+
+        Add a test that makes sure we don't make blocking calls during LayerRendererChromium initialization.
+
+        * tests/LayerRendererChromiumTest.cpp:
+        (ForbidSynchronousCallContext):
+        (ForbidSynchronousCallContext::ForbidSynchronousCallContext):
+        (ForbidSynchronousCallContext::finish):
+        (ForbidSynchronousCallContext::getActiveAttrib):
+        (ForbidSynchronousCallContext::getActiveUniform):
+        (ForbidSynchronousCallContext::getAttachedShaders):
+        (ForbidSynchronousCallContext::getAttribLocation):
+        (ForbidSynchronousCallContext::getBooleanv):
+        (ForbidSynchronousCallContext::getBufferParameteriv):
+        (ForbidSynchronousCallContext::getContextAttributes):
+        (ForbidSynchronousCallContext::getError):
+        (ForbidSynchronousCallContext::getFloatv):
+        (ForbidSynchronousCallContext::getFramebufferAttachmentParameteriv):
+        (TEST):
+
 2012-04-25  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: implement cursor.advance()

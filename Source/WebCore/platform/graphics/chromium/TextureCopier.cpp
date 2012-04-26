@@ -49,7 +49,6 @@ AcceleratedTextureCopier::AcceleratedTextureCopier(PassRefPtr<GraphicsContext3D>
     GLC(m_context.get(), m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0));
 
     m_blitProgram = adoptPtr(new BlitProgram(m_context.get()));
-    m_blitProgram->initialize(m_context.get());
 }
 
 AcceleratedTextureCopier::~AcceleratedTextureCopier()
@@ -79,6 +78,9 @@ void AcceleratedTextureCopier::copyTexture(GraphicsContext3D* context, unsigned 
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, sourceTextureId));
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
+
+    if (!m_blitProgram->initialized())
+        m_blitProgram->initialize(context);
 
     // TODO: Use EXT_framebuffer_blit if available.
     GLC(context, context->useProgram(m_blitProgram->program()));

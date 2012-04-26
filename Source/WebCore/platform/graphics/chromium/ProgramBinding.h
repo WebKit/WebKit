@@ -43,7 +43,7 @@ public:
     void init(GraphicsContext3D*, const String& vertexShader, const String& fragmentShader);
     void cleanup(GraphicsContext3D*);
 
-    unsigned program() const { return m_program; }
+    unsigned program() const { ASSERT(m_initialized); return m_program; }
     bool initialized() const { return m_initialized; }
 
 protected:
@@ -67,6 +67,7 @@ public:
     {
         ASSERT(context);
         ASSERT(m_program);
+        ASSERT(!m_initialized);
 
         m_vertexShader.init(context, m_program);
         m_fragmentShader.init(context, m_program);
