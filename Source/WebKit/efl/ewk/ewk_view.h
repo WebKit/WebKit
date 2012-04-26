@@ -2463,6 +2463,69 @@ EAPI Eina_Bool ewk_view_setting_enable_xss_auditor_get(const Evas_Object *o);
  */
 EAPI void ewk_view_setting_enable_xss_auditor_set(Evas_Object *o, Eina_Bool enable);
 
+/**
+ * Returns whether video captions display feature is enabled.
+ *
+ * @param o view object to query whether video captions display feature is enabled.
+ *
+ * @return @c EINA_TRUE if the video captions display feature is enabled,
+ *         @c EINA_FALSE if not or on failure.
+ */
+EAPI Eina_Bool ewk_view_setting_should_display_captions_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the video captions display feature.
+ *
+ * The video captions display feature is part of track support for HTML5 video.
+ *
+ * @param o view object to set the video captions display feature.
+ * @param enable @c EINA_TRUE to enable the video captions display feature,
+ * @c EINA_FALSE to disable.
+ */
+EAPI void ewk_view_setting_should_display_captions_set(Evas_Object *o, Eina_Bool enable);
+
+/**
+ * Returns whether video subtitles display feature is enabled.
+ *
+ * @param o view object to query whether video subtitles display feature is enabled.
+ *
+ * @return @c EINA_TRUE if the video subtitles display feature is enabled,
+ *         @c EINA_FALSE if not or on failure.
+ */
+EAPI Eina_Bool ewk_view_setting_should_display_subtitles_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the video subtitles display feature.
+ *
+ * The video subtitles display feature is part of track support for HTML5 video.
+ *
+ * @param o view object to set the video subtitles display feature.
+ * @param enable @c EINA_TRUE to enable the video subtitles display feature,
+ * @c EINA_FALSE to disable.
+ */
+EAPI void ewk_view_setting_should_display_subtitles_set(Evas_Object *o, Eina_Bool enable);
+
+/**
+ * Returns whether video text descriptions display feature is enabled.
+ *
+ * @param o view object to query whether video text descriptions display feature is enabled.
+ *
+ * @return @c EINA_TRUE if the video text descriptions display feature is enabled,
+ *         @c EINA_FALSE if not or on failure.
+ */
+EAPI Eina_Bool ewk_view_setting_should_display_text_descriptions_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the video text descriptions display feature.
+ *
+ * The video text descriptions display feature is part of track support for HTML5 video.
+ *
+ * @param o view object to set the video text descriptions display feature.
+ * @param enable @c EINA_TRUE to enable the video text descriptions display feature,
+ * @c EINA_FALSE to disable.
+ */
+EAPI void ewk_view_setting_should_display_text_descriptions_set(Evas_Object *o, Eina_Bool enable);
+
 #ifdef __cplusplus
 }
 #endif

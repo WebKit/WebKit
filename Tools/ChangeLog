@@ -1,3 +1,15 @@
+2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Enable VIDEO_TRACK feature
+        https://bugs.webkit.org/show_bug.cgi?id=84830
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Enable VIDEO_TRACK by default on EFL port whenever build-webkit is
+        used.
+
+        * Scripts/build-webkit:
+
 2012-04-08  Robert Hogan  <robert@webkit.org>
 
         new-webkit-run-tests: handle ref tests from the CSS test suite

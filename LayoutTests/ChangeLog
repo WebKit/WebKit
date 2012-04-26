@@ -1,3 +1,15 @@
+2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Enable VIDEO_TRACK feature
+        https://bugs.webkit.org/show_bug.cgi?id=84830
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskip test cases which requires the VIDEO_TRACK feature now that it
+        is enabled by default for EFL port.
+
+        * platform/efl/Skipped:
+
 2012-04-03  Robert Hogan  <robert@webkit.org>
 
         new-webkit-run-tests: handle ref tests from the CSS test suite

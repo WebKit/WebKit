@@ -230,6 +230,16 @@ IF (ENABLE_WORKERS)
     )
 ENDIF ()
 
+IF (ENABLE_VIDEO_TRACK)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSTextTrackCueCustom.cpp
+        bindings/js/JSTextTrackCustom.cpp
+        bindings/js/JSTextTrackListCustom.cpp
+        bindings/js/JSTrackCustom.cpp
+        bindings/js/JSTrackEventCustom.cpp
+    )
+ENDIF ()
+
 IF (ENABLE_SHARED_WORKERS)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSSharedWorkerCustom.cpp

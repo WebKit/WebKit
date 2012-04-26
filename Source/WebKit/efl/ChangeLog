@@ -1,3 +1,24 @@
+2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Enable VIDEO_TRACK feature
+        https://bugs.webkit.org/show_bug.cgi?id=84830
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add functions on the ewk_view to toggle runtime support for text
+        tracks in HTML5 video.
+
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_should_display_subtitles_get):
+        (ewk_view_setting_should_display_subtitles_set):
+        (ewk_view_setting_should_display_captions_get):
+        (ewk_view_setting_should_display_captions_set):
+        (ewk_view_setting_should_display_text_descriptions_get):
+        (ewk_view_setting_should_display_text_descriptions_set):
+        * ewk/ewk_view.h:
+
 2012-04-26  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] LayoutTestController needs implementation of setJavaScriptProfilingEnabled

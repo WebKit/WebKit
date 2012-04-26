@@ -179,7 +179,7 @@ bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL)
     bool RuntimeEnabledFeatures::isVideoTrackEnabled = true;
 #else
     bool RuntimeEnabledFeatures::isVideoTrackEnabled = false;

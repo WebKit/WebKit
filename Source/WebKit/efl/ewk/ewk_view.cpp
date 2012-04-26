@@ -211,6 +211,11 @@ struct _Ewk_View_Private_Data {
         bool encodingDetector : 1;
         bool scriptsCanOpenWindows : 1;
         bool scriptsCanCloseWindows : 1;
+#if ENABLE(VIDEO_TRACK)
+        bool shouldDisplayCaptions : 1;
+        bool shouldDisplaySubtitles : 1;
+        bool shouldDisplayTextDescriptions: 1;
+#endif
         bool resizableTextareas : 1;
         bool privateBrowsing : 1;
         bool caretBrowsing : 1;
@@ -718,6 +723,11 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.enableXSSAuditor = priv->pageSettings->xssAuditorEnabled();
     priv->settings.scriptsCanOpenWindows = priv->pageSettings->javaScriptCanOpenWindowsAutomatically();
     priv->settings.scriptsCanCloseWindows = priv->pageSettings->allowScriptsToCloseWindows();
+#if ENABLE(VIDEO_TRACK)
+    priv->settings.shouldDisplayCaptions = priv->pageSettings->shouldDisplayCaptions();
+    priv->settings.shouldDisplaySubtitles = priv->pageSettings->shouldDisplaySubtitles();
+    priv->settings.shouldDisplayTextDescriptions = priv->pageSettings->shouldDisplayTextDescriptions();
+#endif
     priv->settings.resizableTextareas = priv->pageSettings->textAreasAreResizable();
     priv->settings.privateBrowsing = priv->pageSettings->privateBrowsingEnabled();
     priv->settings.caretBrowsing = priv->pageSettings->caretBrowsingEnabled();
@@ -4087,6 +4097,78 @@ void ewk_view_setting_enable_xss_auditor_set(Evas_Object* ewkView, Eina_Bool ena
         priv->pageSettings->setXSSAuditorEnabled(enable);
         priv->settings.enableXSSAuditor = enable;
     }
+}
+
+Eina_Bool ewk_view_setting_should_display_subtitles_get(const Evas_Object *ewkView)
+{
+#if ENABLE(VIDEO_TRACK)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.shouldDisplaySubtitles;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_setting_should_display_captions_get(const Evas_Object *ewkView)
+{
+#if ENABLE(VIDEO_TRACK)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.shouldDisplayCaptions;
+#else
+    return false;
+#endif
+}
+
+void ewk_view_setting_should_display_captions_set(Evas_Object *ewkView, Eina_Bool enable)
+{
+#if ENABLE(VIDEO_TRACK)
+    EWK_VIEW_SD_GET(ewkView, smartData);
+    EWK_VIEW_PRIV_GET(smartData, priv);
+    enable = !!enable;
+    if (priv->settings.shouldDisplayCaptions != enable) {
+        priv->pageSettings->setShouldDisplayCaptions(enable);
+        priv->settings.shouldDisplayCaptions = enable;
+    }
+#endif
+}
+
+void ewk_view_setting_should_display_subtitles_set(Evas_Object *ewkView, Eina_Bool enable)
+{
+#if ENABLE(VIDEO_TRACK)
+    EWK_VIEW_SD_GET(ewkView, smartData);
+    EWK_VIEW_PRIV_GET(smartData, priv);
+    enable = !!enable;
+    if (priv->settings.shouldDisplaySubtitles != enable) {
+        priv->pageSettings->setShouldDisplaySubtitles(enable);
+        priv->settings.shouldDisplaySubtitles = enable;
+    }
+#endif
+}
+
+Eina_Bool ewk_view_setting_should_display_text_descriptions_get(const Evas_Object *ewkView)
+{
+#if ENABLE(VIDEO_TRACK)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.shouldDisplayTextDescriptions;
+#else
+    return false;
+#endif
+}
+
+void ewk_view_setting_should_display_text_descriptions_set(Evas_Object *ewkView, Eina_Bool enable)
+{
+#if ENABLE(VIDEO_TRACK)
+    EWK_VIEW_SD_GET(ewkView, smartData);
+    EWK_VIEW_PRIV_GET(smartData, priv);
+    enable = !!enable;
+    if (priv->settings.shouldDisplayTextDescriptions != enable) {
+        priv->pageSettings->setShouldDisplayTextDescriptions(enable);
+        priv->settings.shouldDisplayTextDescriptions = enable;
+    }
+#endif
 }
 
 #if USE(ACCELERATED_COMPOSITING)
