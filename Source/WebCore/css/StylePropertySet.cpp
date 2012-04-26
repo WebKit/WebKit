@@ -261,7 +261,7 @@ String StylePropertySet::get4Values(const StylePropertyShorthand& shorthand) con
     // All 4 properties must be specified.
     if (!top || !top->value() || !right || !right->value() || !bottom || !bottom->value() || !left || !left->value())
         return String();
-    if (top->value()->isInitialValue() || right->value()->isInitialValue() || bottom->value()->isInitialValue() || bottom->value()->isInitialValue())
+    if (top->value()->isInitialValue() || right->value()->isInitialValue() || bottom->value()->isInitialValue() || left->value()->isInitialValue())
         return String();
     if (top->isImportant() != right->isImportant() || right->isImportant() != bottom->isImportant() || bottom->isImportant() != left->isImportant())
         return String();
