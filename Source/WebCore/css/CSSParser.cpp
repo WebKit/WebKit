@@ -204,6 +204,18 @@ CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, cons
 {
 }
 
+bool operator==(const CSSParserContext& a, const CSSParserContext& b)
+{
+    return a.baseURL == b.baseURL
+        && a.charset == b.charset
+        && a.mode == b.mode
+        && a.isHTMLDocument == b.isHTMLDocument
+        && a.isCSSCustomFilterEnabled == b.isCSSCustomFilterEnabled
+        && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
+        && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
+        && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode;
+}
+
 CSSParser::CSSParser(const CSSParserContext& context)
     : m_context(context)
     , m_important(false)
@@ -9075,7 +9087,9 @@ void CSSParser::addNamespace(const AtomicString& prefix, const AtomicString& uri
     if (!m_styleSheet || !m_allowNamespaceDeclarations)
         return;
     m_allowImportRules = false;
-    m_styleSheet->addNamespace(this, prefix, uri);
+    m_styleSheet->parserAddNamespace(prefix, uri);
+    if (prefix.isEmpty() && !uri.isNull())
+        m_defaultNamespace = uri;
 }
 
 void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector* specifiers)

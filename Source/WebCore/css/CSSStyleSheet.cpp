@@ -24,7 +24,6 @@
 #include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
-#include "CSSNamespace.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
@@ -82,13 +81,62 @@ StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String&
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
     , m_usesRemUnits(false)
+    , m_hasMutated(false)
     , m_parserContext(context)
 {
+}
+
+StyleSheetInternal::StyleSheetInternal(const StyleSheetInternal& o)
+    : RefCounted<StyleSheetInternal>()
+    , m_ownerRule(0)
+    , m_originalURL(o.m_originalURL)
+    , m_finalURL(o.m_finalURL)
+    , m_title(o.m_title)
+    , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
+    , m_importRules(o.m_importRules.size())
+    , m_childRules(o.m_childRules.size())
+    , m_namespaces(o.m_namespaces)
+    , m_mediaQueries(o.m_mediaQueries ? o.m_mediaQueries->copy() : 0)
+    , m_loadCompleted(true)
+    , m_isUserStyleSheet(o.m_isUserStyleSheet)
+    , m_hasSyntacticallyValidCSSHeader(o.m_hasSyntacticallyValidCSSHeader)
+    , m_didLoadErrorOccur(false)
+    , m_usesRemUnits(o.m_usesRemUnits)
+    , m_hasMutated(false)
+    , m_parserContext(o.m_parserContext)
+{
+    ASSERT(o.isCacheable());
+
+    // FIXME: Copy import rules.
+    ASSERT(o.m_importRules.isEmpty());
+
+    for (unsigned i = 0; i < m_childRules.size(); ++i)
+        m_childRules[i] = o.m_childRules[i]->copy();
 }
 
 StyleSheetInternal::~StyleSheetInternal()
 {
     clearRules();
+}
+
+bool StyleSheetInternal::isCacheable() const
+{
+    // FIXME: Support copying import rules.
+    if (!m_importRules.isEmpty())
+        return false;
+    // This would require dealing with multiple clients for load callbacks.
+    if (!m_loadCompleted)
+        return false;
+    if (m_didLoadErrorOccur)
+        return false;
+    // It is not the original sheet anymore.
+    if (m_hasMutated)
+        return false;
+    // If the header is valid we are not going to need to check the SecurityOrigin.
+    // FIXME: Valid mime type avoids the check too.
+    if (!m_hasSyntacticallyValidCSSHeader)
+        return false;
+    return true;
 }
 
 void StyleSheetInternal::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
@@ -217,17 +265,11 @@ void StyleSheetInternal::wrapperDeleteRule(unsigned index)
     styleSheetChanged();
 }
 
-void StyleSheetInternal::addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri)
+void StyleSheetInternal::parserAddNamespace(const AtomicString& prefix, const AtomicString& uri)
 {
-    if (uri.isNull())
+    if (uri.isNull() || prefix.isNull())
         return;
-
-    m_namespaces = adoptPtr(new CSSNamespace(prefix, uri, m_namespaces.release()));
-
-    if (prefix.isEmpty())
-        // Set the default namespace on the parser so that selectors that omit namespace info will
-        // be able to pick it up easily.
-        p->m_defaultNamespace = uri;
+    m_namespaces.add(prefix, uri);
 }
 
 const AtomicString& StyleSheetInternal::determineNamespace(const AtomicString& prefix)
@@ -236,11 +278,10 @@ const AtomicString& StyleSheetInternal::determineNamespace(const AtomicString& p
         return nullAtom; // No namespace. If an element/attribute has a namespace, we won't match it.
     if (prefix == starAtom)
         return starAtom; // We'll match any namespace.
-    if (m_namespaces) {
-        if (CSSNamespace* namespaceForPrefix = m_namespaces->namespaceForPrefix(prefix))
-            return namespaceForPrefix->uri;
-    }
-    return nullAtom; // Assume we won't match any namespaces.
+    PrefixNamespaceURIMap::const_iterator it = m_namespaces.find(prefix);
+    if (it == m_namespaces.end())
+        return nullAtom;
+    return it->second;
 }
 
 void StyleSheetInternal::parseUserStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)
@@ -365,6 +406,8 @@ void StyleSheetInternal::setMediaQueries(PassRefPtr<MediaQuerySet> mediaQueries)
 
 void StyleSheetInternal::styleSheetChanged()
 {
+    m_hasMutated = true;
+
     Document* ownerDocument = singleOwnerDocument();
     if (!ownerDocument)
         return;

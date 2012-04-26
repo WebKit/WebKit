@@ -23,6 +23,8 @@
 
 #include "CSSParserMode.h"
 #include "StyleSheet.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
@@ -39,7 +41,6 @@ class MediaQuerySet;
 class SecurityOrigin;
 class StyleRuleBase;
 class StyleRuleImport;
-struct CSSNamespace;
 
 typedef int ExceptionCode;
 
@@ -62,7 +63,6 @@ public:
     
     const CSSParserContext& parserContext() const { return m_parserContext; }
 
-    void addNamespace(CSSParser*, const AtomicString& prefix, const AtomicString& uri);
     const AtomicString& determineNamespace(const AtomicString& prefix);
 
     void styleSheetChanged();
@@ -70,6 +70,8 @@ public:
     void parseUserStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     bool parseString(const String&);
     bool parseStringAtLine(const String&, int startLineNumber);
+
+    bool isCacheable() const;
 
     bool isLoading() const;
 
@@ -92,6 +94,7 @@ public:
     void setHasSyntacticallyValidCSSHeader(bool b) { m_hasSyntacticallyValidCSSHeader = b; }
     bool hasSyntacticallyValidCSSHeader() const { return m_hasSyntacticallyValidCSSHeader; }
 
+    void parserAddNamespace(const AtomicString& prefix, const AtomicString& uri);
     void parserAppendRule(PassRefPtr<StyleRuleBase>);
     void parserSetEncodingFromCharsetRule(const String& encoding); 
     void parserSetUsesRemUnits(bool b) { m_usesRemUnits = b; }
@@ -130,12 +133,15 @@ public:
 
     PassRefPtr<CSSRule> createChildRuleCSSOMWrapper(unsigned index, CSSStyleSheet* parentWrapper);
 
+    PassRefPtr<StyleSheetInternal> copy() const { return adoptRef(new StyleSheetInternal(*this)); }
+
     void registerClient(CSSStyleSheet*);
     void unregisterClient(CSSStyleSheet*);
 
 private:
     StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& baseURL, const CSSParserContext&);
-    
+    StyleSheetInternal(const StyleSheetInternal&);
+
     void clearCharsetRule();
     bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
     
@@ -150,7 +156,8 @@ private:
     String m_encodingFromCharsetRule;
     Vector<RefPtr<StyleRuleImport> > m_importRules;
     Vector<RefPtr<StyleRuleBase> > m_childRules;
-    OwnPtr<CSSNamespace> m_namespaces;
+    typedef HashMap<AtomicString, AtomicString> PrefixNamespaceURIMap;
+    PrefixNamespaceURIMap m_namespaces;
     RefPtr<MediaQuerySet> m_mediaQueries;
 
     bool m_loadCompleted : 1;
@@ -158,6 +165,7 @@ private:
     bool m_hasSyntacticallyValidCSSHeader : 1;
     bool m_didLoadErrorOccur : 1;
     bool m_usesRemUnits : 1;
+    bool m_hasMutated : 1;
     
     CSSParserContext m_parserContext;
 

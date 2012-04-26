@@ -68,6 +68,9 @@ struct CSSParserContext {
     bool enforcesCSSMIMETypeInNoQuirksMode;
 };
 
+bool operator==(const CSSParserContext&, const CSSParserContext&);
+inline bool operator!=(const CSSParserContext& a, const CSSParserContext& b) { return !(a == b); }
+
 const CSSParserContext& strictCSSParserContext();
 
 };
