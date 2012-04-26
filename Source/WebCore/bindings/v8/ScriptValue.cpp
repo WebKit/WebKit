@@ -32,9 +32,11 @@
 #include "ScriptValue.h"
 
 #include "InspectorValues.h"
+#include "MessagePort.h"
 #include "ScriptScope.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
+#include <wtf/ArrayBuffer.h>
 
 namespace WebCore {
 
@@ -42,6 +44,13 @@ PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptStat
 {
     ScriptScope scope(scriptState);
     return SerializedScriptValue::create(v8Value());
+}
+
+PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState,
+                                                         MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
+{
+    ScriptScope scope(scriptState);
+    return SerializedScriptValue::create(v8Value(), messagePorts, arrayBuffers, didThrow);
 }
 
 ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptValue* value)

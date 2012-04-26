@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/web-intents-testing.js"></script>
+    <script>
+    function shouldNotThrow(expression)
+    {
+        try {
+            eval(expression);
+            testPassed(expression + " did not throw exception.");
+        } catch(e) {
+            testFailed(expression + " should not throw exception. Threw exception " + e);
+        }
+    }
+
+    function dummy() {}
+
+    function buttonClicked() {
+        // |action| and |type| are required to be present and non-empty.
+        shouldThrow("new WebKitIntent({})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(dummy)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(null)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(undefined)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(5)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent('six')", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(['six'])", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'a':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'type':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'', 'type':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'a', 'type':''})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldBeEqualToString("(new WebKitIntent({'action':'a','type':'b'})).action", "a");
+        shouldBeEqualToString("(new WebKitIntent({'action':'a','type':'b'})).type", "b");
+
+        // These will get converted to literals "null" and "undefined". Awkward
+        // names, but idiomatic usage.
+        shouldBeEqualToString("(new WebKitIntent({'action':null,'type':'b'})).action", "null");
+        shouldBeEqualToString("(new WebKitIntent({'action':undefined,'type':'b'})).action", "undefined");
+        shouldBeEqualToString("(new WebKitIntent({'action':'a','type':null})).type", "null");
+        shouldBeEqualToString("(new WebKitIntent({'action':'a','type':undefined})).type", "undefined");
+
+        // |service|, if present, must be a valid url.
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','service':''})");
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':null})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':undefined})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':'not a url'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','service':'url://a url'})");
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','service':'htttp://a url'})");
+
+        // |data| must be cloneable.
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','data':window})", "'Error: DATA_CLONE_ERR: DOM Exception 25'");
+
+        // |extras|, if present, must be a dictionary.
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','extras':null})");
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','extras':undefined})");
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','extras':''})");
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','extras':'not a dict'})");
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','extras':42})");
+        shouldNotThrow("new WebKitIntent({'action':'a','type':'b','extras':['a','b']})");
+
+        var simpleIntent = new WebKitIntent(
+            {"action":"action1",
+             "type":"text/plain",
+             "data":"message"});
+        navigator.webkitStartActivity(simpleIntent);
+        debug("* sent object intent");
+
+        var explicitIntent = new WebKitIntent(
+            {"action":"action1",
+             "type":"text/plain+explicit",
+             "data":"message",
+             "service" : "http://explicit.com/"});
+        navigator.webkitStartActivity(explicitIntent);
+        debug("* sent explicit intent");
+
+        var extrasIntent = new WebKitIntent(
+            {"action":"action1",
+             "type":"text/plain+extras",
+             "data":"message",
+             "extras":{"a":"b"}});
+        navigator.webkitStartActivity(extrasIntent);
+        debug("* sent intent with extras");
+
+        var channel = new MessageChannel();
+        channel.port2.onMessage = function() {
+            debug("* got message");
+        };
+        var portIntent = new WebKitIntent(
+            {"action":"action1",
+             "type":"text/plain+port",
+             "data":channel.port1,
+             "transfer":[channel.port1]});
+        navigator.webkitStartActivity(portIntent);
+        debug("* sent intent with port");
+    }
+    </script>
+  </head>
+<body onload="simulateButtonPress()">
+<input type="button" id="button" value="Start Web Intent" onmouseup="buttonClicked()">
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

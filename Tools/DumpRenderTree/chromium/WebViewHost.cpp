@@ -1335,6 +1335,13 @@ void WebViewHost::dispatchIntent(WebFrame* source, const WebIntentRequest& reque
             (*ports)[i]->destroy();
         delete ports;
     }
+    if (!request.intent().service().isEmpty())
+        printf("Explicit intent service: %s\n", request.intent().service().spec().data());
+    WebVector<WebString> extras = request.intent().extrasNames();
+    for (size_t i = 0; i < extras.size(); ++i) {
+        printf("Extras[%s] = %s\n", extras[i].utf8().data(),
+               request.intent().extrasValue(extras[i]).utf8().data());
+    }
 }
 
 // Public functions -----------------------------------------------------------

@@ -412,4 +412,44 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResultList>& val
 
 #endif
 
+bool Dictionary::get(const String& key, Dictionary& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    if (v8Value->IsObject())
+        value = Dictionary(v8Value);
+
+    return true;
+}
+
+
+bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& hashMap) const
+{
+    if (!isObject())
+        return false;
+
+    v8::Handle<v8::Object> options = m_options->ToObject();
+    if (options.IsEmpty())
+        return false;
+
+    v8::Local<v8::Array> properties = options->GetOwnPropertyNames();
+    if (properties.IsEmpty())
+        return true;
+    for (uint32_t i = 0; i < properties->Length(); ++i) {
+        v8::Local<v8::String> key = properties->Get(i)->ToString();
+        if (!options->Has(key))
+            continue;
+
+        v8::Local<v8::Value> value = options->Get(key);
+        String stringKey = v8ValueToWebCoreString(key);
+        String stringValue = v8ValueToWebCoreString(value);
+        if (!stringKey.isEmpty())
+            hashMap.set(stringKey, stringValue);
+    }
+
+    return true;
+}
+
 } // namespace WebCore

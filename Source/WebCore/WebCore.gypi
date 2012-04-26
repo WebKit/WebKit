@@ -2280,6 +2280,7 @@
             'bindings/v8/custom/V8Int16ArrayCustom.cpp',
             'bindings/v8/custom/V8Int32ArrayCustom.cpp',
             'bindings/v8/custom/V8Int8ArrayCustom.cpp',
+            'bindings/v8/custom/V8IntentConstructor.cpp',
             'bindings/v8/custom/V8JavaScriptCallFrameCustom.cpp',
             'bindings/v8/custom/V8LocationCustom.cpp',
             'bindings/v8/custom/V8MessageChannelConstructor.cpp',

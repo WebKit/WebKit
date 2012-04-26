@@ -35,6 +35,7 @@
 #include "platform/WebCommon.h"
 #include "platform/WebPrivatePtr.h"
 #include "platform/WebString.h"
+#include "platform/WebURL.h"
 #include "platform/WebVector.h"
 
 namespace WebCore { class Intent; }
@@ -63,6 +64,16 @@ public:
     WEBKIT_EXPORT WebString action() const;
     WEBKIT_EXPORT WebString type() const;
     WEBKIT_EXPORT WebString data() const;
+    WEBKIT_EXPORT WebURL service() const;
+
+    // Retrieve a list of the names of extra metadata associated with the
+    // intent.
+    WEBKIT_EXPORT WebVector<WebString> extrasNames() const;
+
+    // Retrieve the value of an extra metadata element. The argument should
+    // be one of the names retrieved with |extrasNames|. Returns an empty
+    // string if the name is invalid.
+    WEBKIT_EXPORT WebString extrasValue(const WebString&) const;
 
     // Caller takes ownership of the ports.
     WEBKIT_EXPORT WebMessagePortChannelArray* messagePortChannelsRelease() const;

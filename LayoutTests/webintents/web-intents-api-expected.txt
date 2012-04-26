@@ -1,6 +1,6 @@
 PASS navigator.webkitStartActivity is defined.
 PASS var intent = new WebKitIntent() threw exception TypeError: Not enough arguments.
-PASS new WebKitIntent('a') threw exception TypeError: Not enough arguments.
+PASS new WebKitIntent('a') threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS new WebKitIntent('','','') threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS new WebKitIntent('','b','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.
 PASS new WebKitIntent('','','c') threw exception Error: SYNTAX_ERR: DOM Exception 12.

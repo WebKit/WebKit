@@ -31,6 +31,7 @@
 #include "PlatformString.h"
 #include "ScriptValue.h"
 #include <v8.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
 
@@ -83,6 +84,8 @@ public:
     bool get(const String&, RefPtr<SpeechRecognitionResultList>&) const;
 #endif
     bool get(const String&, HashSet<AtomicString>&) const;
+    bool get(const String&, Dictionary&) const;
+    bool getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>&) const;
 
     bool getWithUndefinedOrNullCheck(const String&, String&) const;
 

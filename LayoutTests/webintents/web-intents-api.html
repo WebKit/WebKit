@@ -8,7 +8,7 @@
       shouldBeDefined("navigator.webkitStartActivity");
       
       shouldThrow("var intent = new WebKitIntent()", "'TypeError: Not enough arguments'");;
-      shouldThrow("new WebKitIntent('a')", "'TypeError: Not enough arguments'");
+      shouldThrow("new WebKitIntent('a')", "'Error: SYNTAX_ERR: DOM Exception 12'");
       shouldThrow("new WebKitIntent('','','')", "'Error: SYNTAX_ERR: DOM Exception 12'");
       shouldThrow("new WebKitIntent('','b','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");
       shouldThrow("new WebKitIntent('','','c')", "'Error: SYNTAX_ERR: DOM Exception 12'");

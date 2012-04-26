@@ -33,23 +33,10 @@
 
 #include "ExceptionCode.h"
 #include "MessagePort.h"
+#include "ScriptState.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
-
-PassRefPtr<Intent> Intent::create(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, ExceptionCode& ec)
-{
-    if (action.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return 0;
-    }
-    if (type.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return 0;
-    }
-
-    return adoptRef(new Intent(action, type, data));
-}
 
 PassRefPtr<Intent> Intent::create(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, const MessagePortArray& ports, ExceptionCode& ec)
 {
@@ -64,48 +51,73 @@ PassRefPtr<Intent> Intent::create(const String& action, const String& type, Pass
 
     OwnPtr<MessagePortChannelArray> channels = MessagePort::disentanglePorts(&ports, ec);
 
-    return adoptRef(new Intent(action, type, data, channels.release()));
+    WTF::HashMap<String, String> extras;
+    KURL serviceUrl;
+
+    return adoptRef(new Intent(action, type, data, channels.release(), extras, serviceUrl));
 }
 
-Intent::Intent(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data)
-    : m_action(action)
-    , m_type(type)
+PassRefPtr<Intent> Intent::create(ScriptState* scriptState, const Dictionary& options, ExceptionCode& ec)
 {
-    if (data)
-        m_data = data;
-    else
-        m_data = SerializedScriptValue::nullValue();
+    String action;
+    if (!options.get("action", action) || action.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    String type;
+    if (!options.get("type", type) || type.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    String service;
+    KURL serviceUrl;
+    if (options.get("service", service) && !service.isEmpty()) {
+      serviceUrl = KURL(KURL(), service);
+      if (!serviceUrl.isValid()) {
+          ec = SYNTAX_ERR;
+          return 0;
+      }
+    }
+
+    MessagePortArray ports;
+    OwnPtr<MessagePortChannelArray> channels;
+    if (options.get("transfer", ports))
+        channels = MessagePort::disentanglePorts(&ports, ec);
+
+    ScriptValue dataValue;
+    RefPtr<SerializedScriptValue> serializedData;
+    if (options.get("data", dataValue)) {
+        bool didThrow = false;
+        serializedData = dataValue.serialize(scriptState, &ports, 0, didThrow);
+        if (didThrow) {
+            ec = DATA_CLONE_ERR;
+            return 0;
+        }
+    }
+
+    WTF::HashMap<String, String> extras;
+    Dictionary extrasDictionary;
+    if (options.get("extras", extrasDictionary))
+        extrasDictionary.getOwnPropertiesAsStringHashMap(extras);
+
+    return adoptRef(new Intent(action, type, serializedData.release(), channels.release(), extras, serviceUrl));
 }
 
-Intent::Intent(const String& action, const String& type, PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortChannelArray> ports)
+Intent::Intent(const String& action, const String& type,
+               PassRefPtr<SerializedScriptValue> data, PassOwnPtr<MessagePortChannelArray> ports,
+               const WTF::HashMap<String, String>& extras, const KURL& service)
     : m_action(action)
     , m_type(type)
     , m_ports(ports)
+    , m_service(service)
+    , m_extras(extras)
 {
     if (data)
         m_data = data;
     else
         m_data = SerializedScriptValue::nullValue();
-}
-
-const String& Intent::action() const
-{
-    return m_action;
-}
-
-const String& Intent::type() const
-{
-    return m_type;
-}
-
-SerializedScriptValue* Intent::data() const
-{
-    return m_data.get();
-}
-
-MessagePortChannelArray* Intent::messagePorts() const
-{
-    return m_ports.get();
 }
 
 } // namespace WebCore

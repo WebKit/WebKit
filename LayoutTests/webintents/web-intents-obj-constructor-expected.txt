@@ -1,0 +1,46 @@
+Received Web Intent: action=action1 type=text/plain
+Received Web Intent: action=action1 type=text/plain+explicit
+Explicit intent service: http://explicit.com/
+Received Web Intent: action=action1 type=text/plain+extras
+Extras[a] = b
+Received Web Intent: action=action1 type=text/plain+port
+Have 1 ports
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS new WebKitIntent({}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent(dummy) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent(null) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent(undefined) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent(5) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent('six') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent(['six']) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'a':'b'}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'action':'b'}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'type':'b'}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'action':'', 'type':'b'}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'action':'a', 'type':''}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS (new WebKitIntent({'action':'a','type':'b'})).action is "a"
+PASS (new WebKitIntent({'action':'a','type':'b'})).type is "b"
+PASS (new WebKitIntent({'action':null,'type':'b'})).action is "null"
+PASS (new WebKitIntent({'action':undefined,'type':'b'})).action is "undefined"
+PASS (new WebKitIntent({'action':'a','type':null})).type is "null"
+PASS (new WebKitIntent({'action':'a','type':undefined})).type is "undefined"
+PASS new WebKitIntent({'action':'a','type':'b','service':''}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','service':null}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'action':'a','type':'b','service':undefined}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'action':'a','type':'b','service':'not a url'}) threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebKitIntent({'action':'a','type':'b','service':'url://a url'}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','service':'htttp://a url'}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','data':window}) threw exception Error: DATA_CLONE_ERR: DOM Exception 25.
+PASS new WebKitIntent({'action':'a','type':'b','extras':null}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','extras':undefined}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','extras':''}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','extras':'not a dict'}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','extras':42}) did not throw exception.
+PASS new WebKitIntent({'action':'a','type':'b','extras':['a','b']}) did not throw exception.
+* sent object intent
+* sent explicit intent
+* sent intent with extras
+* sent intent with port
+

@@ -36,15 +36,24 @@
 
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 #ifndef NDEBUG
 #include "V8Proxy.h"  // for register and unregister global handles.
 #endif
 
+namespace WTF {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
 class InspectorValue;
+class MessagePort;
 class SerializedScriptValue;
+typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
+typedef Vector<RefPtr<WTF::ArrayBuffer>, 1> ArrayBufferArray;
 
 class ScriptValue {
 public:
@@ -131,6 +140,7 @@ public:
     }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*);
+    PassRefPtr<SerializedScriptValue> serialize(ScriptState*, MessagePortArray*, ArrayBufferArray*, bool&);
     static ScriptValue deserialize(ScriptState*, SerializedScriptValue*);
 
     void clear()

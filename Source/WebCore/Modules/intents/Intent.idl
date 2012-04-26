@@ -26,6 +26,7 @@
 module window {
   interface [
       Conditional=WEB_INTENTS,
+      CustomConstructor,
       Constructor(in DOMString action, in DOMString type, in [Optional=DefaultIsNullString, TransferList=transferList] SerializedScriptValue data, in [Optional=DefaultIsUndefined] Array transferList),
       ConstructorRaisesException
   ] Intent {
