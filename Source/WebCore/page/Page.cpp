@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All Rights Reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Page.h"
 
+#include "AlternativeTextClient.h"
 #include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "Base64.h"
@@ -188,6 +189,8 @@ Page::~Page()
     }
 
     m_editorClient->pageDestroyed();
+    if (m_alternativeTextClient)
+        m_alternativeTextClient->pageDestroyed();
 
 #if ENABLE(INSPECTOR)
     m_inspectorController->inspectedPageDestroyed();

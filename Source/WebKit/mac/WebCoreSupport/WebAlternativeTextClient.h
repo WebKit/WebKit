@@ -36,6 +36,7 @@ class WebAlternativeTextClient : public WebCore::AlternativeTextClient {
 public:
     WebAlternativeTextClient(WebView *);
     virtual ~WebAlternativeTextClient();
+    virtual void pageDestroyed() OVERRIDE;
     virtual void showCorrectionAlternative(WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) OVERRIDE;
     virtual void dismissAlternative(WebCore::ReasonForDismissingAlternativeText) OVERRIDE;
     virtual String dismissAlternativeSoon(WebCore::ReasonForDismissingAlternativeText) OVERRIDE;
