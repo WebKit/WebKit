@@ -1,3 +1,9 @@
+2012-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove Chromium test expectation after r115244.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-26  Dave Tharp  <dtharp@codeaurora.org>
 
         Integrate IETC CSS : multicolumn tests
