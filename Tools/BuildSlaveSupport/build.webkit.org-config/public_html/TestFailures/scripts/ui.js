@@ -44,10 +44,15 @@ ui.urlForTest = function(testName)
     return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
 }
 
-ui.urlForFlakinessDashboard = function(testNameList)
+ui.urlForFlakinessDashboard = function(opt_testNameList)
 {
-    var testsParameter = testNameList.join(',');
+    var testsParameter = opt_testNameList ? opt_testNameList.join(',') : '';
     return 'http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=' + encodeURIComponent(testsParameter);
+}
+
+ui.urlForEmbeddedFlakinessDashboard = function(opt_testNameList)
+{
+    return ui.urlForFlakinessDashboard(opt_testNameList) + '&showChrome=false';
 }
 
 ui.rolloutReasonForTestNameList = function(testNameList)

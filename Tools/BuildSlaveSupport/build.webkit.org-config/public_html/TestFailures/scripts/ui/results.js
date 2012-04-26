@@ -191,12 +191,41 @@ function isAnyReftest(testName, resultsByTest)
     });
 }
 
+ui.results.FlakinessData = base.extends('iframe', {
+    init: function()
+    {
+        this.className = 'flakiness-iframe';
+        this.src = ui.urlForEmbeddedFlakinessDashboard();
+        this.addEventListener('load', function() {
+            window.addEventListener('message', this._handleMessage.bind(this));
+        });
+    },
+    _handleMessage: function(event) {
+        if (!this.contentWindow)
+            return;
+
+        // Check for null event.origin so that the unittests can get past this point.
+        // FIXME: Is this safe? In practice, there's no meaningful harm that can come from
+        // a malicious page sending us heightChanged commands, so it doesn't really matter.
+        if (event.origin !== 'null' && event.origin != 'http://test-results.appspot.com') {
+            console.log('Invalid origin: ' + event.origin);
+            return;
+        }
+
+        if (event.data.command != 'heightChanged') {
+            console.log('Unknown postMessage command: ' + event.data);
+            return;
+        }
+
+        this.style.height = event.data.height + 'px';
+    }
+});
+
 ui.results.TestSelector = base.extends('div', {
     init: function(delegate, resultsByTest)
     {
         this.className = 'test-selector';
         this._delegate = delegate;
-        this._resultsByTest = resultsByTest;
 
         var topPanel = document.createElement('div');
         topPanel.className = 'top-panel';
@@ -207,6 +236,9 @@ ui.results.TestSelector = base.extends('div', {
         var bottomPanel = document.createElement('div');
         bottomPanel.className = 'bottom-panel';
         this.appendChild(bottomPanel);
+
+        this._flakinessData = new ui.results.FlakinessData();
+        this.appendChild(this._flakinessData);
 
         Object.keys(resultsByTest).sort().forEach(function(testName) {
             var nonLinkTitle = document.createElement('a');
@@ -259,9 +291,12 @@ ui.results.TestSelector = base.extends('div', {
             activeHeader.classList.remove('active');
         header.classList.add('active');
 
+        var testName = this.currentTestName();
+        this._flakinessData.src = ui.urlForEmbeddedFlakinessDashboard([testName]);
+
         var bottomPanel = this.querySelector('.bottom-panel')
         bottomPanel.innerHTML = '';
-        bottomPanel.appendChild(this._delegate.contentForTest(this.currentTestName()));
+        bottomPanel.appendChild(this._delegate.contentForTest(testName));
 
         var topPanel = this.querySelector('.top-panel');
         topPanel.scrollTop = header.offsetTop;

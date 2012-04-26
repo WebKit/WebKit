@@ -25,7 +25,7 @@
 
 (function () {
 
-module("iu");
+module("ui");
 
 var kExampleResultsByTest = {
     "scrollbars/custom-scrollbar-with-incomplete-style.html": {

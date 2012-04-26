@@ -145,6 +145,7 @@ html, body, #onebar, .results-view, .test-selector {
 }
 
 #results {
+    /* FIXME: We really should use flexbox so we don't have to do this. But that requires restructuring the DOM a bit. */;
     height: -webkit-calc(100% - 39px);
     box-sizing: border-box;
 }
@@ -191,4 +192,10 @@ html, body, #onebar, .results-view, .test-selector {
 .status-content:last-child {
     border-bottom: 0;
     margin-bottom: 0;
+}
+
+.flakiness-iframe, .flakiness-iframe-placeholder {
+    border: none;
+    height: 0;
+    width: 100%;
 }

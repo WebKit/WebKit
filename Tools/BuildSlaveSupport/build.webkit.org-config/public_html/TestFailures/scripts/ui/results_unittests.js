@@ -25,7 +25,24 @@
 
 (function () {
 
-module("iu.results");
+module('ui.results');
+
+asyncTest('FlakinessData', 1, function() {
+    var dashboard = new ui.results.FlakinessData();
+    dashboard.addEventListener('load', function() {
+        // setTimeout to be after the FlakinessData's load handler.
+        setTimeout(function() {
+            window.postMessage({command: 'heightChanged', height: 15}, '*');
+            // setTimeout to be after the postMessage has been handled.
+            setTimeout(function() {
+                equals(dashboard.offsetHeight, 15);
+                $(dashboard).detach();
+                start();
+            }, 0);
+        }, 0);
+    });
+    document.body.appendChild(dashboard);
+});
 
 var kExampleResultsByTest = {
     "scrollbars/custom-scrollbar-with-incomplete-style.html": {
