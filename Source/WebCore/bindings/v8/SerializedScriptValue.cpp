@@ -1588,7 +1588,7 @@ private:
         ASSERT(pixelArray->length() >= pixelDataLength);
         memcpy(pixelArray->data(), m_buffer + m_position, pixelDataLength);
         m_position += pixelDataLength;
-        *value = toV8(imageData.release());
+        *value = toV8(imageData.release(), m_isolate);
         return true;
     }
 
@@ -1610,7 +1610,7 @@ private:
         RefPtr<ArrayBuffer> arrayBuffer = doReadArrayBuffer();
         if (!arrayBuffer)
             return false;
-        *value = toV8(arrayBuffer.release());
+        *value = toV8(arrayBuffer.release(), m_isolate);
         return true;
     }
 
@@ -1636,58 +1636,58 @@ private:
             return false;
         switch (subTag) {
         case ByteArrayTag:
-            *value = toV8(Int8Array::create(arrayBuffer.release(), byteOffset, byteLength));
+            *value = toV8(Int8Array::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
             break;
         case UnsignedByteArrayTag:
-            *value = toV8(Uint8Array::create(arrayBuffer.release(), byteOffset, byteLength));
+            *value = toV8(Uint8Array::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
             break;
         case UnsignedByteClampedArrayTag:
-            *value = toV8(Uint8ClampedArray::create(arrayBuffer.release(), byteOffset, byteLength));
+            *value = toV8(Uint8ClampedArray::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
             break;
         case ShortArrayTag: {
             uint32_t shortLength = byteLength / sizeof(int16_t);
             if (shortLength * sizeof(int16_t) != byteLength)
                 return false;
-            *value = toV8(Int16Array::create(arrayBuffer.release(), byteOffset, shortLength));
+            *value = toV8(Int16Array::create(arrayBuffer.release(), byteOffset, shortLength), m_isolate);
             break;
         }
         case UnsignedShortArrayTag: {
             uint32_t shortLength = byteLength / sizeof(uint16_t);
             if (shortLength * sizeof(uint16_t) != byteLength)
                 return false;
-            *value = toV8(Uint16Array::create(arrayBuffer.release(), byteOffset, shortLength));
+            *value = toV8(Uint16Array::create(arrayBuffer.release(), byteOffset, shortLength), m_isolate);
             break;
         }
         case IntArrayTag: {
             uint32_t intLength = byteLength / sizeof(int32_t);
             if (intLength * sizeof(int32_t) != byteLength)
                 return false;
-            *value = toV8(Int32Array::create(arrayBuffer.release(), byteOffset, intLength));
+            *value = toV8(Int32Array::create(arrayBuffer.release(), byteOffset, intLength), m_isolate);
             break;
         }
         case UnsignedIntArrayTag: {
             uint32_t intLength = byteLength / sizeof(uint32_t);
             if (intLength * sizeof(uint32_t) != byteLength)
                 return false;
-            *value = toV8(Uint32Array::create(arrayBuffer.release(), byteOffset, intLength));
+            *value = toV8(Uint32Array::create(arrayBuffer.release(), byteOffset, intLength), m_isolate);
             break;
         }
         case FloatArrayTag: {
             uint32_t floatLength = byteLength / sizeof(float);
             if (floatLength * sizeof(float) != byteLength)
                 return false;
-            *value = toV8(Float32Array::create(arrayBuffer.release(), byteOffset, floatLength));
+            *value = toV8(Float32Array::create(arrayBuffer.release(), byteOffset, floatLength), m_isolate);
             break;
         }
         case DoubleArrayTag: {
             uint32_t floatLength = byteLength / sizeof(double);
             if (floatLength * sizeof(double) != byteLength)
                 return false;
-            *value = toV8(Float64Array::create(arrayBuffer.release(), byteOffset, floatLength));
+            *value = toV8(Float64Array::create(arrayBuffer.release(), byteOffset, floatLength), m_isolate);
             break;
         }
         case DataViewTag:
-            *value = toV8(DataView::create(arrayBuffer.release(), byteOffset, byteLength));
+            *value = toV8(DataView::create(arrayBuffer.release(), byteOffset, byteLength), m_isolate);
             break;
         default:
             return false;
@@ -1722,7 +1722,7 @@ private:
         if (!doReadUint64(&size))
             return false;
         PassRefPtr<Blob> blob = Blob::create(KURL(ParsedURLString, url), type, size);
-        *value = toV8(blob);
+        *value = toV8(blob, m_isolate);
         return true;
     }
 
@@ -1738,7 +1738,7 @@ private:
         if (!readWebCoreString(&type))
             return false;
         PassRefPtr<File> file = File::create(path, KURL(ParsedURLString, url), type);
-        *value = toV8(file);
+        *value = toV8(file, m_isolate);
         return true;
     }
 
@@ -1760,7 +1760,7 @@ private:
                 return false;
             fileList->append(File::create(path, KURL(ParsedURLString, urlString), type));
         }
-        *value = toV8(fileList);
+        *value = toV8(fileList, m_isolate);
         return true;
     }
 
