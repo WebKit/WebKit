@@ -370,13 +370,14 @@ void LevelDBTransaction::TransactionIterator::refreshTreeIterator() const
 {
     ASSERT(m_treeChanged);
 
-    if (m_treeIterator->isValid()) {
+    m_treeChanged = false;
+
+    if (m_treeIterator->isValid() && m_treeIterator == m_current) {
         m_treeIterator->reset();
         return;
     }
 
     if (m_dbIterator->isValid()) {
-        ASSERT(!m_treeIterator->isValid());
 
         // There could be new nodes in the tree that we should iterate over.
 
@@ -393,8 +394,16 @@ void LevelDBTransaction::TransactionIterator::refreshTreeIterator() const
                 m_treeIterator->prev();
         }
     }
+}
 
-    m_treeChanged = false;
+bool LevelDBTransaction::TransactionIterator::treeIteratorIsLower() const
+{
+    return m_comparator->compare(m_treeIterator->key(), m_dbIterator->key()) < 0;
+}
+
+bool LevelDBTransaction::TransactionIterator::treeIteratorIsHigher() const
+{
+    return m_comparator->compare(m_treeIterator->key(), m_dbIterator->key()) > 0;
 }
 
 void LevelDBTransaction::TransactionIterator::handleConflictsAndDeletes()
@@ -412,14 +421,15 @@ void LevelDBTransaction::TransactionIterator::handleConflictsAndDeletes()
                 m_dbIterator->prev();
         }
 
+        // Skip over delete markers in the tree iterator until it catches up with the db iterator.
         if (m_treeIterator->isValid() && m_treeIterator->isDeleted()) {
-            // If the tree iterator is on a delete marker, take another step.
-            if (m_direction == kForward)
+            if (m_direction == kForward && (!m_dbIterator->isValid() || treeIteratorIsLower())) {
                 m_treeIterator->next();
-            else
+                loop = true;
+            } else if (m_direction == kReverse && (!m_dbIterator->isValid() || treeIteratorIsHigher())) {
                 m_treeIterator->prev();
-
-            loop = true;
+                loop = true;
+            }
         }
     }
 }

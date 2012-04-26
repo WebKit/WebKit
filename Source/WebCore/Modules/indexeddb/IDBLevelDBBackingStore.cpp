@@ -1076,11 +1076,6 @@ bool CursorImplCommon::continueFunction(const IDBKey* key, IteratorState nextSta
             return false;
         }
 
-        // The iterator will contain values deleted during iteration.
-        Vector<char> trash;
-        if (!m_transaction->get(m_iterator->key(), trash))
-            continue;
-
         if (isPastBounds()) {
             if (!forward && lastDuplicateKey.get()) {
                 // We need to walk forward because now we're beyond the

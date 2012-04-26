@@ -1,3 +1,21 @@
+2012-04-26  Douglas Stockwell  <dstockwell@chromium.org>
+
+        IndexedDB: cursor does not correctly iterate over keys added and removed during iteration
+        https://bugs.webkit.org/show_bug.cgi?id=84467
+
+        Reviewed by Ojan Vafai.
+
+        New test for keys added in reverse order during cursor iteration.
+
+        * storage/indexeddb/cursor-added-bug-expected.txt: Added.
+        * storage/indexeddb/cursor-added-bug.html: Added.
+        * storage/indexeddb/resources/cursor-added-bug.js: Added.
+        (test):
+        (openSuccess):
+        (setVersionSuccess):
+        (openCursor):
+        (cursorSuccess):
+
 2012-04-26  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] LayoutTestController needs implementation of setJavaScriptProfilingEnabled
