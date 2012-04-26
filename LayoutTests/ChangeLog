@@ -1,3 +1,12 @@
+2012-04-26  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL][DRT] Unskip media tests that were already fixed in r113178
+        https://bugs.webkit.org/show_bug.cgi?id=84947
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/Skipped: Removed a group of media tests.
+
 2012-04-26  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] LayoutTestController needs implementation of addOriginAccessWhitelistEntry and removeOriginAccessWhitelistEntry

@@ -2019,40 +2019,6 @@ transitions/move-after-transition.html
 transitions/svg-text-shadow-transition.html
 transitions/svg-transitions.html
 
-# EFL port doesn't support web audio/video API fully. Timeout error happens in these test cases.
-media/W3C/audio/events/event_canplay.html
-media/W3C/audio/events/event_canplay_manual.html
-media/W3C/audio/events/event_canplaythrough.html
-media/W3C/audio/events/event_canplaythrough_manual.html
-media/W3C/audio/events/event_loadeddata.html
-media/W3C/audio/events/event_loadeddata_manual.html
-media/W3C/audio/events/event_loadedmetadata.html
-media/W3C/audio/events/event_loadedmetadata_manual.html
-media/W3C/audio/events/event_loadstart.html
-media/W3C/audio/events/event_loadstart_manual.html
-media/W3C/audio/events/event_order_canplay_canplaythrough.html
-media/W3C/audio/events/event_order_canplay_playing.html
-media/W3C/audio/events/event_order_loadedmetadata_loadeddata.html
-media/W3C/audio/events/event_order_loadstart_progress.html
-media/W3C/audio/events/event_pause_manual.html
-media/W3C/audio/events/event_play.html
-media/W3C/audio/events/event_playing.html
-media/W3C/audio/events/event_playing_manual.html
-media/W3C/audio/events/event_play_manual.html
-media/W3C/audio/events/event_progress.html
-media/W3C/audio/events/event_progress_manual.html
-media/W3C/audio/paused/paused_false_during_play.html
-media/W3C/audio/readyState/readyState_during_canplay.html
-media/W3C/audio/readyState/readyState_during_canplaythrough.html
-media/W3C/audio/readyState/readyState_during_loadeddata.html
-media/W3C/audio/readyState/readyState_during_loadedmetadata.html
-media/W3C/audio/readyState/readyState_during_playing.html
-media/W3C/audio/readyState/readyState_initial.html
-media/W3C/audio/readyState/readyState_property_exists.html
-media/W3C/video/events/event_timeupdate.html
-media/W3C/video/events/event_timeupdate_manual.html
-media/W3C/video/networkState/networkState_during_progress.html
-
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 editing/input/reveal-contenteditable-on-input-vertically.html
 editing/input/reveal-edit-on-input-vertically.html
