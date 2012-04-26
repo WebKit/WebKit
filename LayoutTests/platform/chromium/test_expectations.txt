@@ -2791,7 +2791,10 @@ BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
 
-// This started failing with r88913.
+// These started failing with r88913.  The results are visibly wrong, and the
+// checked-in pixel results for Safari (platform/mac) are wrong too.
+BUGWK62754 LINUX WIN : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
+// Probably related to the above, but just flaky (esp. in debug)
 BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE TEXT IMAGE+TEXT
 
 // Has been timing out since r88913.
