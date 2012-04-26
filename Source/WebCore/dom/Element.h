@@ -483,6 +483,8 @@ private:
     void updateNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
     void updateExtraNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
 
+    void unregisterNamedFlowContentNode();
+
 private:
     mutable OwnPtr<ElementAttributeData> m_attributeData;
 };

@@ -322,6 +322,10 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
     if (!m_node->isElementNode() || !m_style || m_style->flowThread().isEmpty())
         return;
 
+    // FIXME: Do not collect elements if they are in shadow tree.
+    if (m_node->isInShadowTree())
+        return;
+
 #if ENABLE(SVG)
     // Allow only svg root elements to be directly collected by a render flow thread.
     if (m_node->isSVGElement()

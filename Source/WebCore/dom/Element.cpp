@@ -124,6 +124,15 @@ PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* docu
 
 Element::~Element()
 {
+#ifndef NDEBUG
+    if (document() && document()->renderer()) {
+        // When the document is not destroyed, an element that was part of a named flow
+        // content nodes should have been removed from the content nodes collection
+        // and the inNamedFlow flag reset.
+        ASSERT(!inNamedFlow());
+    }
+#endif
+
     if (shadowTree())
         rareData()->m_shadowTree.clear();
     if (m_attributeData)
@@ -983,15 +992,18 @@ void Element::attach()
     resumePostAttachCallbacks();
 }
 
-void Element::detach()
+void Element::unregisterNamedFlowContentNode()
 {
-    RenderWidget::suspendWidgetHierarchyUpdates();
-
     if (document()->cssRegionsEnabled() && inNamedFlow()) {
         if (document()->renderer() && document()->renderer()->view())
             document()->renderer()->view()->flowThreadController()->unregisterNamedFlowContentNode(this);
     }
+}
 
+void Element::detach()
+{
+    RenderWidget::suspendWidgetHierarchyUpdates();
+    unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
     if (hasRareData())
         rareData()->resetComputedStyle();
