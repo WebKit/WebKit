@@ -32,10 +32,9 @@ namespace WebCore {
 
 NativeImagePtr ImageFrame::asNewNativeImage() const
 {
-    return cairo_image_surface_create_for_data(
-        reinterpret_cast<unsigned char*>(const_cast<PixelData*>(
-            m_bytes)), CAIRO_FORMAT_ARGB32, width(), height(),
-        width() * sizeof(PixelData));
+    return new NativeImageCairo(cairo_image_surface_create_for_data(
+        reinterpret_cast<unsigned char*>(const_cast<PixelData*>(m_bytes)),
+        CAIRO_FORMAT_ARGB32, width(), height(), width() * sizeof(PixelData)));
 }
 
 } // namespace WebCore

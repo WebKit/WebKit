@@ -46,8 +46,7 @@ QT_BEGIN_NAMESPACE
 class QPixmap;
 QT_END_NAMESPACE
 #elif USE(CAIRO)
-struct _cairo_surface;
-typedef struct _cairo_surface cairo_surface_t;
+#include "NativeImageCairo.h"
 #elif USE(SKIA)
 namespace WebCore {
 class NativeImageSkia;
@@ -90,7 +89,7 @@ typedef wxGraphicsBitmap* NativeImagePtr;
 typedef wxBitmap* NativeImagePtr;
 #endif
 #elif USE(CAIRO)
-typedef cairo_surface_t* NativeImagePtr;
+typedef WebCore::NativeImageCairo* NativeImagePtr;
 #elif USE(SKIA)
 typedef WebCore::NativeImageSkia* NativeImagePtr;
 #elif OS(WINCE)

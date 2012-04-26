@@ -71,10 +71,11 @@ static bool decodeImage(ArgumentDecoder* decoder, GRefPtr<GdkPixbuf>& pixbuf)
     if (!image)
         return false;
 
-    cairo_surface_t* surface = image->nativeImageForCurrentFrame();
-    if (!surface)
+    NativeImageCairo* nativeImage = image->nativeImageForCurrentFrame();
+    if (!nativeImage)
         return false;
 
+    cairo_surface_t* surface = nativeImage->surface();
     pixbuf = adoptGRef(gdk_pixbuf_get_from_surface(surface, 0, 0,
                                                    cairo_image_surface_get_width(surface),
                                                    cairo_image_surface_get_height(surface)));

@@ -1,3 +1,12 @@
+2012-04-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [Cairo] Wrap cairo surfaces in a class when storing native images
+        https://bugs.webkit.org/show_bug.cgi?id=83611
+
+        Reviewed by Alejandro G. Castro.
+
+        * Shared/gtk/ArgumentCodersGtk.cpp: Updated to reflect the addition of NativeImageCairo.
+
 2012-04-26  Jon Lee  <jonlee@apple.com>
 
         [WK2] AlternativeTextClient leaks when the page is destroyed

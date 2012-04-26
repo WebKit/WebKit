@@ -157,9 +157,9 @@ bool GraphicsContext3D::getImageData(Image* image, unsigned int format, unsigned
         decoder.setData(image->data(), true);
         if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
             return false;
-        imageSurface = decoder.createFrameAtIndex(0);
+        imageSurface = decoder.createFrameAtIndex(0)->surface();
     } else {
-        imageSurface = image->nativeImageForCurrentFrame();
+        imageSurface = image->nativeImageForCurrentFrame()->surface();
         if (!premultiplyAlpha)
             alphaOp = AlphaDoUnmultiply;
     }

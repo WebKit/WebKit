@@ -225,7 +225,8 @@ cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char* url)
         return 0;
     }
 
-    return icon->nativeImageForCurrentFrame();
+    WebCore::NativeImageCairo* nativeImage = icon->nativeImageForCurrentFrame();
+    return nativeImage ? nativeImage->surface() : 0;
 }
 
 Evas_Object* ewk_settings_icon_database_icon_object_get(const char* url, Evas* canvas)
@@ -235,15 +236,14 @@ Evas_Object* ewk_settings_icon_database_icon_object_get(const char* url, Evas* c
 
     WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(url));
     WebCore::Image* icon = WebCore::iconDatabase().synchronousIconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
-    cairo_surface_t* surface;
 
     if (!icon) {
         ERR("no icon for url %s", url);
         return 0;
     }
 
-    surface = icon->nativeImageForCurrentFrame();
-    return ewk_util_image_from_cairo_surface_add(canvas, surface);
+    WebCore::NativeImageCairo* nativeImage = icon->nativeImageForCurrentFrame();
+    return nativeImage ? ewk_util_image_from_cairo_surface_add(canvas, nativeImage->surface()) : 0;
 }
 
 void ewk_settings_object_cache_capacity_set(unsigned minDeadCapacity, unsigned maxDeadCapacity, unsigned totalCapacity)

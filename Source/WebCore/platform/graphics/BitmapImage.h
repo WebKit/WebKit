@@ -160,6 +160,10 @@ public:
     virtual bool getHBITMAPOfSize(HBITMAP, LPSIZE);
 #endif
 
+#if USE(CAIRO)
+    static PassRefPtr<BitmapImage> create(cairo_surface_t*);
+#endif
+
 #if PLATFORM(GTK)
     virtual GdkPixbuf* getGdkPixbuf();
 #endif

@@ -1,3 +1,13 @@
+2012-04-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [Cairo] Wrap cairo surfaces in a class when storing native images
+        https://bugs.webkit.org/show_bug.cgi?id=83611
+
+        Reviewed by Alejandro G. Castro.
+
+        * ewk/ewk_history.cpp: Updated to reflect addition of NativeImageCario.
+        * ewk/ewk_settings.cpp: Ditto.
+
 2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable VIDEO_TRACK feature

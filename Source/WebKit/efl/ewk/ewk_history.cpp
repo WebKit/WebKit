@@ -341,7 +341,9 @@ cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
         ERR("icon is NULL.");
         return 0;
     }
-    return icon->nativeImageForCurrentFrame();
+
+    WebCore::NativeImageCairo* nativeImage = icon->nativeImageForCurrentFrame();
+    return nativeImage ? nativeImage->surface() : 0;
 }
 
 Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas* canvas)
@@ -349,15 +351,14 @@ Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
     WebCore::Image* icon = WebCore::iconDatabase().synchronousIconForPageURL(core->url(), WebCore::IntSize(16, 16));
-    cairo_surface_t* surface;
 
     if (!icon) {
         ERR("icon is NULL.");
         return 0;
     }
 
-    surface = icon->nativeImageForCurrentFrame();
-    return ewk_util_image_from_cairo_surface_add(canvas, surface);
+    WebCore::NativeImageCairo* nativeImage = icon->nativeImageForCurrentFrame();
+    return nativeImage ? ewk_util_image_from_cairo_surface_add(canvas, nativeImage->surface()) : 0;
 }
 
 Eina_Bool ewk_history_item_page_cache_exists(const Ewk_History_Item* item)
