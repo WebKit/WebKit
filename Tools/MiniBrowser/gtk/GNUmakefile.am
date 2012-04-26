@@ -17,6 +17,8 @@ Programs_MiniBrowser_CPPFLAGS = \
 Programs_MiniBrowser_SOURCES = \
 	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.h \
 	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.c \
+	Tools/MiniBrowser/gtk/BrowserDownloadsBar.h \
+	Tools/MiniBrowser/gtk/BrowserDownloadsBar.c \
 	Tools/MiniBrowser/gtk/BrowserSettingsDialog.h \
 	Tools/MiniBrowser/gtk/BrowserSettingsDialog.c \
 	Tools/MiniBrowser/gtk/BrowserWindow.h \

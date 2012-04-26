@@ -26,6 +26,8 @@
  */
 
 #include "BrowserWindow.h"
+
+#include "BrowserDownloadsBar.h"
 #include "BrowserSettingsDialog.h"
 #include <string.h>
 
@@ -48,7 +50,7 @@ struct _BrowserWindow {
     GtkWidget *statusLabel;
     GtkWidget *settingsDialog;
     WebKitWebView *webView;
-
+    GtkWidget *downloadsBar;
 };
 
 struct _BrowserWindowClass {
@@ -132,6 +134,18 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
     gtk_entry_set_progress_fraction(GTK_ENTRY(window->uriEntry), progress);
     if (progress == 1.0)
         g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
+}
+
+static void downloadStarted(WebKitWebContext *webContext, WebKitDownload *download, BrowserWindow *window)
+{
+    if (!window->downloadsBar) {
+        window->downloadsBar = browser_downloads_bar_new();
+        gtk_box_pack_start(GTK_BOX(window->mainBox), window->downloadsBar, FALSE, FALSE, 0);
+        gtk_box_reorder_child(GTK_BOX(window->mainBox), window->downloadsBar, 0);
+        g_object_add_weak_pointer(G_OBJECT(window->downloadsBar), (gpointer *)&(window->downloadsBar));
+        gtk_widget_show(window->downloadsBar);
+    }
+    browser_downloads_bar_add_download(BROWSER_DOWNLOADS_BAR(window->downloadsBar), download);
 }
 
 static void browserWindowHistoryItemSelected(BrowserWindow *window, GtkMenuItem *item)
@@ -422,6 +436,8 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "decide-policy", G_CALLBACK(webViewDecidePolicy), window);
     g_signal_connect(window->webView, "mouse-target-changed", G_CALLBACK(webViewMouseTargetChanged), window);
     g_signal_connect(window->webView, "notify::zoom-level", G_CALLBACK(webViewZoomLevelChanged), window);
+
+    g_signal_connect(webkit_web_view_get_context(window->webView), "download-started", G_CALLBACK(downloadStarted), window);
 
     WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
     g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);
