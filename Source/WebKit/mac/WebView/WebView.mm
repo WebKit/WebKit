@@ -846,6 +846,7 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
     _private = [[WebViewPrivate alloc] init];
     [self _commonInitializationWithFrameName:frameName groupName:groupName];
     [self setMaintainsBackForwardList: YES];
+    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
     return self;
 }
 
@@ -3964,6 +3965,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     _private->hostWindow = [hostWindow retain];
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
         [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
+    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
 }
 
 - (NSWindow *)hostWindow
@@ -5664,13 +5666,18 @@ static WebFrameView *containingFrameView(NSView *view)
         return _private->customDeviceScaleFactor;
 
     NSWindow *window = [self window];
+    NSWindow *hostWindow = [self hostWindow];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (window)
         return [window backingScaleFactor];
+    if (hostWindow)
+        return [hostWindow backingScaleFactor];
     return [[NSScreen mainScreen] backingScaleFactor];
 #else
     if (window)
         return [window userSpaceScaleFactor];
+    if (hostWindow)
+        return [hostWindow userSpaceScaleFactor];
     return [[NSScreen mainScreen] userSpaceScaleFactor];
 #endif
 }

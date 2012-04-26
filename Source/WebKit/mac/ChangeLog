@@ -1,3 +1,21 @@
+2012-04-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=84913
+        WebKit 1: Initialize deviceScaleFactor on creation of the WebView
+        -and corresponding-
+        <rdar://problem/11322716>
+
+        Reviewed by Darin Adler.
+
+        Before this patch, we weren't setting the deviceScaleFactor until 
+        viewDidMoveToWindow which is quite late for background tabs. setHostWindow will 
+        happen early on though. For applications that don't use host windows, also set it 
+        from _initWithFrame.
+        * WebView/WebView.mm:
+        (-[WebView _initWithFrame:frameName:groupName:usesDocumentViews:]):
+        (-[WebView setHostWindow:]):
+        (-[WebView _deviceScaleFactor]):
+
 2012-04-24  Alexis Menard  <alexis.menard@openbossa.org>
 
         Replace occurences of style selector from variables and methods names by style resolver.
