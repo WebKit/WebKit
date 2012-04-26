@@ -1,3 +1,20 @@
+2012-04-25  David Barton  <dbarton@mathscribe.com>
+
+        Rebaseline *.png pixel test files after bug 84649 fix
+        https://bugs.webkit.org/show_bug.cgi?id=84905
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac/mathml/presentation/fenced-expected.png:
+        * platform/mac/mathml/presentation/fenced-mi-expected.png:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-expected.png:
+        * platform/mac/mathml/presentation/sub-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+
 2012-04-25  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: implement cursor.advance()
