@@ -113,6 +113,8 @@ public:
     // FIXME: Expand the concept of mutable/immutable StylePropertySet.
     bool isMutable() const { return m_ownsCSSOMWrapper; }
 
+    static unsigned averageSizeInBytes();
+
 private:
     StylePropertySet(CSSParserMode);
     StylePropertySet(const Vector<CSSProperty>&);

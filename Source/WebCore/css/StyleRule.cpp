@@ -143,6 +143,11 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     return rule.release();
 }
 
+unsigned StyleRule::averageSizeInBytes()
+{
+    return sizeof(StyleRule) + StylePropertySet::averageSizeInBytes();
+}
+
 StyleRule::StyleRule(int sourceLine)
     : StyleRuleBase(Style, sourceLine)
 {

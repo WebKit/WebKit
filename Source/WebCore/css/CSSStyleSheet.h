@@ -127,6 +127,8 @@ public:
     unsigned ruleCount() const;
     
     bool usesRemUnits() const { return m_usesRemUnits; }
+
+    unsigned estimatedSizeInBytes() const;
     
     bool wrapperInsertRule(PassRefPtr<StyleRuleBase>, unsigned index);
     void wrapperDeleteRule(unsigned index);

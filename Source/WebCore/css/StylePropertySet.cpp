@@ -1000,6 +1000,13 @@ void StylePropertySet::clearParentElement(StyledElement* element)
     propertySetCSSOMWrapperMap().get(this)->clearParentElement();
 }
 
+unsigned StylePropertySet::averageSizeInBytes()
+{
+    // Please update this if the storage scheme changes so that this longer reflects the actual size.
+    return sizeof(StylePropertySet);
+}
+
+// See the function above if you need to update this.
 class SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {
     Vector<CSSProperty, 4> properties;
     unsigned bitfield;

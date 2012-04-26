@@ -72,6 +72,24 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 }
 #endif
 
+// Rough size estimate for the memory cache.
+unsigned StyleSheetInternal::estimatedSizeInBytes() const
+{
+    // Note that this does not take into account size of the strings hanging from various objects. 
+    // The assumption is that nearly all of of them are atomic and would exist anyway.
+    unsigned size = sizeof(*this);
+
+    // FIXME: This ignores the children of media and region rules.
+    // Most rules are StyleRules.
+    size += ruleCount() * StyleRule::averageSizeInBytes();
+
+    for (unsigned i = 0; i < m_importRules.size(); ++i) {
+        if (StyleSheetInternal* sheet = m_importRules[i]->styleSheet())
+            size += sheet->estimatedSizeInBytes();
+    }
+    return size;
+}
+
 StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& finalURL, const CSSParserContext& context)
     : m_ownerRule(ownerRule)
     , m_originalURL(originalURL)

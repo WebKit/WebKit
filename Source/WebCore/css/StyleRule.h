@@ -102,6 +102,8 @@ public:
 
     PassRefPtr<StyleRule> copy() const { return adoptRef(new StyleRule(*this)); }
 
+    static unsigned averageSizeInBytes();
+
 private:
     StyleRule(int sourceLine);
     StyleRule(const StyleRule&);

@@ -27,12 +27,14 @@
 #include "config.h"
 #include "CachedCSSStyleSheet.h"
 
-#include "MemoryCache.h"
+#include "CSSStyleSheet.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedStyleSheetClient.h"
 #include "HTTPParsers.h"
-#include "TextResourceDecoder.h"
+#include "MemoryCache.h"
 #include "SharedBuffer.h"
+#include "TextResourceDecoder.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -148,5 +150,38 @@ bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType, bool* hasValidMIMETy
         return true;
     return typeOK;
 }
- 
+
+void CachedCSSStyleSheet::destroyDecodedData()
+{
+    m_parsedStyleSheetCache.clear();
+    setDecodedSize(0);
+}
+
+PassRefPtr<StyleSheetInternal> CachedCSSStyleSheet::restoreParsedStyleSheet(const CSSParserContext& context)
+{
+    if (!m_parsedStyleSheetCache)
+        return 0;
+    // Cached parsed stylesheet has mutated, kick it out.
+    if (!m_parsedStyleSheetCache->isCacheable()) {
+        m_parsedStyleSheetCache.clear();
+        setDecodedSize(0);
+        return 0;
+    }
+    // Contexts must be identical so we know we would get the same exact result if we parsed again.
+    if (m_parsedStyleSheetCache->parserContext() != context)
+        return 0;
+
+    didAccessDecodedData(currentTime());
+    // FIXME: Implement copy-on-write to avoid copying when not necessary.
+    return m_parsedStyleSheetCache->copy();
+}
+
+void CachedCSSStyleSheet::saveParsedStyleSheet(PassRefPtr<StyleSheetInternal> sheet)
+{
+    ASSERT(sheet && sheet->isCacheable());
+    m_parsedStyleSheetCache = sheet;
+
+    setDecodedSize(m_parsedStyleSheetCache->estimatedSizeInBytes());
+}
+
 }

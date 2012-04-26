@@ -33,7 +33,9 @@ namespace WebCore {
 
     class CachedResourceClient;
     class SharedBuffer;
+    class StyleSheetInternal;
     class TextResourceDecoder;
+    struct CSSParserContext;
 
     class CachedCSSStyleSheet : public CachedResource {
     public:
@@ -51,7 +53,12 @@ namespace WebCore {
         virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
         virtual void error(CachedResource::Status);
 
+        virtual void destroyDecodedData() OVERRIDE;
+
         void checkNotify();
+
+        PassRefPtr<StyleSheetInternal> restoreParsedStyleSheet(const CSSParserContext&);
+        void saveParsedStyleSheet(PassRefPtr<StyleSheetInternal>);
     
     private:
         bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;
@@ -60,6 +67,8 @@ namespace WebCore {
     protected:
         RefPtr<TextResourceDecoder> m_decoder;
         String m_decodedSheetText;
+
+        RefPtr<StyleSheetInternal> m_parsedStyleSheetCache;
     };
 
 }

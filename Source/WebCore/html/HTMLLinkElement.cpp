@@ -295,6 +295,23 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     }
 
     CSSParserContext parserContext(document(), baseURL, charset);
+
+    if (RefPtr<StyleSheetInternal> restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext)) {
+        ASSERT(restoredSheet->isCacheable());
+        ASSERT(!restoredSheet->isLoading());
+
+        // restoreParsedStyleSheet() currently returns a copy so it is ok to mutate the queries and the title like this.
+        RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
+        restoredSheet->setMediaQueries(media.release());
+        restoredSheet->setTitle(title());
+
+        m_sheet = CSSStyleSheet::create(restoredSheet, this);
+        m_loading = false;
+        sheetLoaded();
+        notifyLoadedSheetAndAllCriticalSubresources(false);
+        return;
+    }
+
     RefPtr<StyleSheetInternal> styleSheet = StyleSheetInternal::create(href, baseURL, parserContext);
     m_sheet = CSSStyleSheet::create(styleSheet, this);
 
@@ -307,6 +324,9 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     m_loading = false;
     styleSheet->notifyLoadedSheet(cachedStyleSheet);
     styleSheet->checkLoaded();
+
+    if (styleSheet->isCacheable())
+        const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->saveParsedStyleSheet(styleSheet);
 }
 
 bool HTMLLinkElement::styleSheetIsLoading() const
