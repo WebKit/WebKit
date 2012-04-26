@@ -121,6 +121,7 @@ static GC3Denum convertVFCFormatToGC3DFormat(const WebKit::WebVideoFrame& frame)
 void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 {
     ASSERT(CCProxy::isImplThread());
+    CCLayerImpl::willDraw(layerRenderer);
 
     MutexLocker locker(m_providerMutex);
 
@@ -165,6 +166,7 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 void CCVideoLayerImpl::didDraw()
 {
     ASSERT(CCProxy::isImplThread());
+    CCLayerImpl::didDraw();
 
     MutexLocker locker(m_providerMutex);
 

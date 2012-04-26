@@ -84,9 +84,13 @@ public:
 #endif
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
-    virtual void willDraw(LayerRendererChromium*) { }
+    // willDraw must be called before appendQuads. If willDraw is called,
+    // didDraw is guaranteed to be called before another willDraw or before
+    // the layer is destroyed. To enforce this, any class that overrides
+    // willDraw/didDraw must call the base class version.
+    virtual void willDraw(LayerRendererChromium*);
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) { }
-    virtual void didDraw() { }
+    virtual void didDraw();
     void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
 
     virtual void bindContentsTexture(LayerRendererChromium*);
@@ -346,6 +350,10 @@ private:
     TransformationMatrix m_screenSpaceTransform;
     bool m_drawTransformIsAnimating;
     bool m_screenSpaceTransformIsAnimating;
+
+#ifndef NDEBUG
+    bool m_betweenWillDrawAndDidDraw;
+#endif
 
     // The rect that contributes to the scissor when this layer is drawn.
     // Inherited by the parent layer and further restricted if this layer masks

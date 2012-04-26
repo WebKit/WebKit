@@ -321,6 +321,7 @@ bool CCSingleThreadProxy::doComposite()
       CCLayerTreeHostImpl::FrameData frame;
       m_layerTreeHostImpl->prepareToDraw(frame);
       m_layerTreeHostImpl->drawLayers(frame);
+      m_layerTreeHostImpl->didDrawAllLayers(frame);
     }
 
     if (m_layerTreeHostImpl->isContextLost()) {

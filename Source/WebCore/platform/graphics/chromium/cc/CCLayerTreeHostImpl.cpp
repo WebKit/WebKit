@@ -416,14 +416,6 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     for (size_t i = 0; i < frame.renderPasses.size(); ++i)
         m_layerRenderer->drawRenderPass(frame.renderPasses[i].get());
 
-    typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
-
-    CCLayerIteratorType end = CCLayerIteratorType::end(&frame.renderSurfaceLayerList);
-    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&frame.renderSurfaceLayerList); it != end; ++it) {
-        if (it.representsItself() && !it->visibleLayerRect().isEmpty())
-            it->didDraw();
-    }
-
     if (m_debugRectHistory->enabled(settings()))
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), frame.renderSurfaceLayerList, settings());
 
@@ -436,6 +428,17 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 
     // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
     m_rootLayerImpl->resetAllChangeTrackingForSubtree();
+}
+
+void CCLayerTreeHostImpl::didDrawAllLayers(const FrameData& frame)
+{
+    typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
+
+    CCLayerIteratorType end = CCLayerIteratorType::end(&frame.renderSurfaceLayerList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&frame.renderSurfaceLayerList); it != end; ++it) {
+        if (it.representsItself() && !it->visibleLayerRect().isEmpty())
+            it->didDraw();
+    }
 }
 
 void CCLayerTreeHostImpl::finishAllRendering()

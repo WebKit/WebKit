@@ -1,3 +1,17 @@
+2012-04-24  Adrienne Walker  <enne@google.com>
+
+        [chromium] Prevent CCLayerImpl::willDraw/didDraw mismatches
+        https://bugs.webkit.org/show_bug.cgi?id=84812
+
+        Reviewed by James Robinson.
+
+        Update all tests to call CCLayerTreeHostImpl::didDrawAllLayers if they
+        call CCLayerTreeHostImpl::prepareToDraw.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::CCLayerTreeHostImplTest::initializeLayerRendererAndDrawFrame):
+        (WebKitTests::TEST_F):
+
 2012-04-25  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Use WebIDBKeyPath type for key paths in WebKit API

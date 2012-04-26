@@ -609,6 +609,7 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
         m_layerTreeHostImpl->drawLayers(frame);
         result.didDraw = true;
     }
+    m_layerTreeHostImpl->didDrawAllLayers(frame);
 
     // Check for a pending compositeAndReadback.
     if (m_readbackRequestOnImplThread) {

@@ -59,6 +59,8 @@ CCTextureLayerImpl::~CCTextureLayerImpl()
 
 void CCTextureLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 {
+    CCLayerImpl::willDraw(layerRenderer);
+
     if (m_ioSurfaceChanged) {
         GraphicsContext3D* context = layerRenderer->context();
         Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());

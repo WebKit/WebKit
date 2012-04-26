@@ -92,9 +92,15 @@ public:
     virtual void beginCommit();
     virtual void commitComplete();
     virtual void animate(double monotonicTime, double wallClockTime);
-    // Returns false if problems occured preparing the frame, and we should try to avoid displaying the frame.
+
+    // Returns false if problems occured preparing the frame, and we should try
+    // to avoid displaying the frame. If prepareToDraw is called,
+    // didDrawAllLayers must also be called, regardless of whether drawLayers is
+    // called between the two.
     virtual bool prepareToDraw(FrameData&);
     virtual void drawLayers(const FrameData&);
+    // Must be called if and only if prepareToDraw was called.
+    void didDrawAllLayers(const FrameData&);
 
     // LayerRendererChromiumClient implementation
     virtual const IntSize& viewportSize() const OVERRIDE { return m_viewportSize; }
@@ -177,7 +183,10 @@ private:
     void updateMaxScrollPosition();
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
     void calculateRenderSurfaceLayerList(CCLayerList&);
-    // Returns false if the frame should not be displayed.
+
+    // Returns false if the frame should not be displayed. This function should
+    // only be called from prepareToDraw, as didDrawAllLayers must be called
+    // if this helper function is called.
     bool calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
     void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector*, bool& didAnimate, bool& needsAnimateLayers);
     IntSize contentSize() const;

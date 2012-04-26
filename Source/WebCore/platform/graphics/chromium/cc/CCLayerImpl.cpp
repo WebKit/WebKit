@@ -69,6 +69,9 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_debugBorderWidth(0)
     , m_drawTransformIsAnimating(false)
     , m_screenSpaceTransformIsAnimating(false)
+#ifndef NDEBUG
+    , m_betweenWillDrawAndDidDraw(false)
+#endif
     , m_layerAnimationController(CCLayerAnimationController::create(this))
 {
     ASSERT(CCProxy::isImplThread());
@@ -77,6 +80,9 @@ CCLayerImpl::CCLayerImpl(int id)
 CCLayerImpl::~CCLayerImpl()
 {
     ASSERT(CCProxy::isImplThread());
+#ifndef NDEBUG
+    ASSERT(!m_betweenWillDrawAndDidDraw);
+#endif
 }
 
 void CCLayerImpl::addChild(PassOwnPtr<CCLayerImpl> child)
@@ -134,6 +140,23 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
     if (usesLayerClipping())
         layerClipRect = clipRect();
     return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), layerClipRect, drawOpacity(), opaque());
+}
+
+void CCLayerImpl::willDraw(LayerRendererChromium*)
+{
+#ifndef NDEBUG
+    // willDraw/didDraw must be matched.
+    ASSERT(!m_betweenWillDrawAndDidDraw);
+    m_betweenWillDrawAndDidDraw = true;
+#endif
+}
+
+void CCLayerImpl::didDraw()
+{
+#ifndef NDEBUG
+    ASSERT(m_betweenWillDrawAndDidDraw);
+    m_betweenWillDrawAndDidDraw = false;
+#endif
 }
 
 void CCLayerImpl::appendDebugBorderQuad(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState) const

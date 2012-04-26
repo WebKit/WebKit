@@ -52,6 +52,8 @@ CCScrollbarLayerImpl::CCScrollbarLayerImpl(int id)
 
 void CCScrollbarLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 {
+    CCLayerImpl::willDraw(layerRenderer);
+
     if (bounds().isEmpty() || contentBounds().isEmpty())
         return;
 
@@ -94,6 +96,8 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQua
 
 void CCScrollbarLayerImpl::didDraw()
 {
+    CCLayerImpl::didDraw();
+
     m_texture->unreserve();
 }
 
