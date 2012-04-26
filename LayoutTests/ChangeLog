@@ -1,3 +1,18 @@
+2012-04-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        http/tests/security/cross-frame-access-put.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=82751
+
+        Reviewed by Kentaro Hara.
+
+        * http/tests/security/cross-frame-access-put-expected.txt: Correct
+        expected value for window.frameElement. It is now 'null' instead of
+        'undefined' when shouldAllowAccessToNode() check fails, since bug
+        80205 fix.
+        * platform/gtk/http/tests/security/cross-frame-access-put-expected.txt: Removed.
+        It is now identifical to the global expectation.
+        * platform/qt/http/tests/security/cross-frame-access-put-expected.txt: Removed. Ditto.
+
 2012-04-26  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Crash when collecting svg symbol element in named flow.
