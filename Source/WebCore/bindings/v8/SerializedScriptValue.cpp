@@ -504,6 +504,7 @@ public:
         doWriteUint32(length);
     }
 
+    v8::Isolate* getIsolate() { return m_isolate; }
 
 private:
     void doWriteArrayBuffer(const ArrayBuffer& arrayBuffer)
@@ -618,11 +619,11 @@ public:
         ASSERT(!tryCatch.HasCaught());
         if (messagePorts) {
             for (size_t i = 0; i < messagePorts->size(); i++)
-                m_transferredMessagePorts.set(V8MessagePort::wrap(messagePorts->at(i).get()), i);
+                m_transferredMessagePorts.set(V8MessagePort::wrap(messagePorts->at(i).get(), m_writer.getIsolate()), i);
         }
         if (arrayBuffers) {
             for (size_t i = 0; i < arrayBuffers->size(); i++)  {
-                v8::Handle<v8::Object> v8ArrayBuffer = V8ArrayBuffer::wrap(arrayBuffers->at(i).get());
+                v8::Handle<v8::Object> v8ArrayBuffer = V8ArrayBuffer::wrap(arrayBuffers->at(i).get(), m_writer.getIsolate());
                 // Coalesce multiple occurences of the same buffer to the first index.
                 if (!m_transferredArrayBuffers.contains(v8ArrayBuffer))
                     m_transferredArrayBuffers.set(v8ArrayBuffer, i);
@@ -1024,7 +1025,7 @@ private:
             return 0;
         if (!arrayBufferView->buffer())
             return handleError(DataCloneError, next);
-        v8::Handle<v8::Value> underlyingBuffer = toV8(arrayBufferView->buffer());
+        v8::Handle<v8::Value> underlyingBuffer = toV8(arrayBufferView->buffer(), m_writer.getIsolate());
         if (underlyingBuffer.IsEmpty())
             return handleError(DataCloneError, next);
         StateBase* stateOut = doSerialize(underlyingBuffer, 0);
@@ -1467,6 +1468,8 @@ public:
     {
         m_version = version;
     }
+
+    v8::Isolate* getIsolate() { return m_isolate; }
 
 private:
     bool readTag(SerializationTag* tag)
@@ -1958,7 +1961,7 @@ public:
             return false;
         if (index >= m_transferredMessagePorts->size())
             return false;
-        *object = V8MessagePort::wrap(m_transferredMessagePorts->at(index).get());
+        *object = V8MessagePort::wrap(m_transferredMessagePorts->at(index).get(), m_reader.getIsolate());
         return true;
     }
 
@@ -1970,7 +1973,7 @@ public:
             return false;
         v8::Handle<v8::Object> result = m_arrayBuffers.at(index);
         if (result.IsEmpty()) {
-            result = V8ArrayBuffer::wrap(ArrayBuffer::create(m_arrayBufferContents->at(index)).get());
+            result = V8ArrayBuffer::wrap(ArrayBuffer::create(m_arrayBufferContents->at(index)).get(), m_reader.getIsolate());
             m_arrayBuffers[index] = result;
         }
         *object = result;
