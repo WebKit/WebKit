@@ -546,6 +546,7 @@ public:
     bool m_wouldSetDateTimeInput;
     bool m_wouldSetColorInput;
     bool m_wouldCancelSelection;
+    bool m_wouldLoadManualScript;
     bool m_wouldSetFocused;
     bool m_wouldSetPageVisibilityState;
     Vector<bool> m_cachedPopupListSelecteds;

@@ -543,7 +543,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #endif
 }
 
-class DeferredTaskLoadManualScript: public DeferredTask<&WebPagePrivate::m_wouldSetFocused> {
+class DeferredTaskLoadManualScript: public DeferredTask<&WebPagePrivate::m_wouldLoadManualScript> {
 public:
     explicit DeferredTaskLoadManualScript(WebPagePrivate* webPagePrivate, const KURL& url)
         : DeferredTaskType(webPagePrivate)
