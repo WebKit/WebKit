@@ -1,3 +1,13 @@
+2012-04-26  Chris Fleizach2  <cfleizach@apple.com>
+
+        CrashTracer: [USER] 157 crashes in WebProcess at com.apple.WebCore: WebCore::AccessibilityRenderObject::isAttachment const + 29
+        https://bugs.webkit.org/show_bug.cgi?id=84463
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (WebKit):
+
 2012-04-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a version of StringImpl::find() without offset

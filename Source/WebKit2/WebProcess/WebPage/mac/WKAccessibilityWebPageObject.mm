@@ -43,6 +43,9 @@ using namespace WebKit;
 
 - (id)accessibilityRootObjectWrapper
 {
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        WebCore::AXObjectCache::enableAccessibility();
+
     WebCore::Page* page = m_page->corePage();
     if (!page)
         return nil;

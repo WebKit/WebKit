@@ -129,6 +129,9 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     
 AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
 {
+    if (!gAccessibilityEnabled)
+        return 0;
+
     // get the focused node in the page
     Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
     Node* focusedNode = focusedDocument->focusedNode();
@@ -288,11 +291,17 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     
 AccessibilityObject* AXObjectCache::rootObject()
 {
+    if (!gAccessibilityEnabled)
+        return 0;
+    
     return getOrCreate(m_document->view());
 }
 
 AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
 {
+    if (!gAccessibilityEnabled)
+        return 0;
+
     if (!frame)
         return 0;
     return getOrCreate(frame->view());
