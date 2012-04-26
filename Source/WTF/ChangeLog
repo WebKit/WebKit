@@ -1,3 +1,13 @@
+2012-04-26  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] properly disable DRAG_SUPPORT
+        https://bugs.webkit.org/show_bug.cgi?id=84952
+
+        Reviewed by Daniel Bates.
+
+        * wtf/Platform.h: Remove the line that disables drag support from here
+        for the BlackBerry port.
+
 2012-04-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a version of StringImpl::find() without offset

@@ -1,5 +1,21 @@
 2012-04-26  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] properly disable DRAG_SUPPORT
+        https://bugs.webkit.org/show_bug.cgi?id=84952
+
+        Reviewed by Daniel Bates.
+
+        Add CMake build options to toggle DRAG_SUPPORT on/off,
+        and set its value for BlackBerry port.
+
+        * Source/cmake/OptionsBlackBerry.cmake: Toggled in ON.
+        * Source/cmake/OptionsBlackBerry.cmake: Toggled OFF.
+        * Source/cmake/OptionsWinCE.cmake: Toggled it OFF.
+        * Source/cmake/OptionsWindows.cmake: Toggled it ON.
+        * Source/cmakeconfig.h.cmake:
+
+2012-04-26  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] Add smooth_scrolling options to CMAKE and enable it for Blackberry
         https://bugs.webkit.org/show_bug.cgi?id=84954
 
