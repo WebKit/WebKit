@@ -1,3 +1,135 @@
+2012-04-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Fix additive by animations for most SMIL list types
+        https://bugs.webkit.org/show_bug.cgi?id=84968
+
+        Reviewed by Antti Koivisto.
+
+        Add lots of new tests covering SMIL by-animations on all primitives.
+
+        * svg/animations/additive-type-by-animation-expected.txt: Added.
+        * svg/animations/additive-type-by-animation.html: Added.
+        * svg/animations/length-list-animation-expected.svg: Added.
+        * svg/animations/length-list-animation.svg: Added.
+        * svg/animations/non-additive-type-by-animation-expected.txt:
+        * svg/animations/resources/additive-type-by-animation.svg: Added.
+        * svg/animations/resources/non-additive-type-by-animation.svg:
+        * svg/animations/resources/svglength-additive-by-1.svg: Added.
+        * svg/animations/resources/svglength-additive-by-2.svg: Added.
+        * svg/animations/resources/svglength-additive-by-3.svg: Added.
+        * svg/animations/resources/svglength-additive-by-4.svg: Added.
+        * svg/animations/resources/svglength-additive-by-5.svg: Added.
+        * svg/animations/resources/svglength-additive-by-6.svg: Added.
+        * svg/animations/resources/svglength-additive-from-by-1.svg: Added.
+        * svg/animations/resources/svglength-additive-from-by-2.svg: Added.
+        * svg/animations/resources/svglength-additive-from-by-3.svg: Added.
+        * svg/animations/resources/svglength-additive-from-by-4.svg: Added.
+        * svg/animations/script-tests/additive-type-by-animation.js: Added.
+        (checkBaseVal):
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/non-additive-type-by-animation.js:
+        (sample):
+        * svg/animations/script-tests/svglength-additive-by-1.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-by-2.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-by-3.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-by-4.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-by-5.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-by-6.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-from-by-1.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-from-by-2.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-from-by-3.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (executeTest):
+        * svg/animations/script-tests/svglength-additive-from-by-4.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (executeTest):
+        * svg/animations/svglength-additive-by-1-expected.txt: Added.
+        * svg/animations/svglength-additive-by-1.html: Added.
+        * svg/animations/svglength-additive-by-2-expected.txt: Added.
+        * svg/animations/svglength-additive-by-2.html: Added.
+        * svg/animations/svglength-additive-by-3-expected.txt: Added.
+        * svg/animations/svglength-additive-by-3.html: Added.
+        * svg/animations/svglength-additive-by-4-expected.txt: Added.
+        * svg/animations/svglength-additive-by-4.html: Added.
+        * svg/animations/svglength-additive-by-5-expected.txt: Added.
+        * svg/animations/svglength-additive-by-5.html: Added.
+        * svg/animations/svglength-additive-by-6-expected.txt: Added.
+        * svg/animations/svglength-additive-by-6.html: Added.
+        * svg/animations/svglength-additive-from-by-1-expected.txt: Added.
+        * svg/animations/svglength-additive-from-by-1.html: Added.
+        * svg/animations/svglength-additive-from-by-2-expected.txt: Added.
+        * svg/animations/svglength-additive-from-by-2.html: Added.
+        * svg/animations/svglength-additive-from-by-3-expected.txt: Added.
+        * svg/animations/svglength-additive-from-by-3.html: Added.
+        * svg/animations/svglength-additive-from-by-4-expected.txt: Added.
+        * svg/animations/svglength-additive-from-by-4.html: Added.
+
 2012-04-26  Stephen Chenney  <schenney@chromium.org>
 
         SVG FEConvolveMatrix does not check for invalid property values

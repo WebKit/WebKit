@@ -72,40 +72,39 @@ void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAn
 
     SVGPointList& fromPointList = from->pointList();
     SVGPointList& toPointList = to->pointList();
-    unsigned itemCount = fromPointList.size();
-    if (!itemCount || itemCount != toPointList.size())
+
+    unsigned fromPointListSize = fromPointList.size();
+    if (!fromPointListSize || fromPointListSize != toPointList.size())
         return;
-    for (unsigned n = 0; n < itemCount; ++n) {
-        FloatPoint& to = toPointList.at(n);
-        to += fromPointList.at(n);
-    }
+
+    for (unsigned i = 0; i < fromPointListSize; ++i)
+        toPointList[i] += fromPointList[i];
 }
 
-void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    
+
     SVGPointList& fromPointList = from->pointList();
     SVGPointList& toPointList = to->pointList();
     SVGPointList& animatedPointList = animated->pointList();
     if (!m_animationElement->adjustFromToListValues<SVGPointList>(0, fromPointList, toPointList, animatedPointList, percentage, m_contextElement))
         return;
 
-    if (!percentage)
-        animatedPointList = fromPointList;
-    else if (percentage == 1)
-        animatedPointList = toPointList;
-    else {
-        animatedPointList.clear();
-        if (!fromPointList.isEmpty() && !toPointList.isEmpty())
-            SVGPointList::createAnimated(fromPointList, toPointList, animatedPointList, percentage);
-            
-        // Fall back to discrete animation if the points are not compatible
-        AnimationMode animationMode = m_animationElement->animationMode();
-        if (animatedPointList.isEmpty())
-            animatedPointList = ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1) 
-            ? toPointList : fromPointList;
+    unsigned fromPointListSize = fromPointList.size();
+    unsigned toPointListSize = toPointList.size();
+
+    for (unsigned i = 0; i < toPointListSize; ++i) {
+        FloatPoint effectiveFrom;
+        if (fromPointListSize)
+            effectiveFrom = fromPointList[i];
+
+        float animatedX = animatedPointList[i].x();
+        float animatedY = animatedPointList[i].y();
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.x(), toPointList[i].x(), animatedX);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.y(), toPointList[i].y(), animatedY);
+        animatedPointList[i] = FloatPoint(animatedX, animatedY);
     }
 }
 

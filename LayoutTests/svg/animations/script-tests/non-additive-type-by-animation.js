@@ -7,11 +7,13 @@ function sample() {
     shouldBe("filter.filterUnits.animVal", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
     shouldBe("svg.preserveAspectRatio.animVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_NONE");
     shouldBe("svg.preserveAspectRatio.animVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
+    shouldBeEqualToString("feConvolveMatrix.result.animVal", "");
 
     shouldBe("feConvolveMatrix.preserveAlpha.baseVal", "false");
     shouldBe("filter.filterUnits.baseVal", "SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX");
     shouldBe("svg.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_NONE");
     shouldBe("svg.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
+    shouldBeEqualToString("feConvolveMatrix.result.baseVal", "");
 }
 
 function executeTest() {

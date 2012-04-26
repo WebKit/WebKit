@@ -71,12 +71,12 @@ void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
 
     SVGNumberList& fromNumberList = from->numberList();
     SVGNumberList& toNumberList = to->numberList();
-    
-    unsigned size = fromNumberList.size();
-    if (size != toNumberList.size())
+
+    unsigned fromNumberListSize = fromNumberList.size();
+    if (!fromNumberListSize || fromNumberListSize != toNumberList.size())
         return;
 
-    for (unsigned i = 0; i < size; ++i)
+    for (unsigned i = 0; i < fromNumberListSize; ++i)
         toNumberList[i] += fromNumberList[i];
 }
 
@@ -91,12 +91,13 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
     if (!m_animationElement->adjustFromToListValues<SVGNumberList>(0, fromNumberList, toNumberList, animatedNumberList, percentage, m_contextElement))
         return;
 
-    unsigned itemsCount = fromNumberList.size();
-    if (itemsCount != animatedNumberList.size())
-        animatedNumberList.resize(itemsCount);
+    unsigned fromNumberListSize = fromNumberList.size();
+    unsigned toNumberListSize = toNumberList.size();
 
-    for (unsigned i = 0; i < itemsCount; ++i)
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberList[i], toNumberList[i], animatedNumberList[i]);
+    for (unsigned i = 0; i < toNumberListSize; ++i) {
+        float effectiveFrom = fromNumberListSize ? fromNumberList[i] : 0;
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toNumberList[i], animatedNumberList[i]);
+    }
 }
 
 float SVGAnimatedNumberListAnimator::calculateDistance(const String&, const String&)

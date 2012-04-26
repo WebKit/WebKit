@@ -137,12 +137,14 @@ public:
     {
         adjustFromToValues(parseTypeFromString, fromList, toList, animatedList, percentage, contextElement);
 
-        // If no to value is given, nothing to animate.
-        if (!toList.size())
+        // If no 'to' value is given, nothing to animate.
+        unsigned toListSize = toList.size();
+        if (!toListSize)
             return false;
 
-        // If the from value is given and doesn't match the to value, fallback to a discrete animation.
-        if (fromList.size() != toList.size() && fromList.size()) {
+        // If the 'from' value is given and it's length doesn't match the 'to' value list length, fallback to a discrete animation.
+        unsigned fromListSize = fromList.size();
+        if (fromListSize != toListSize && fromListSize) {
             if (percentage < 0.5) {
                 if (animationMode() != ToAnimation)
                     animatedList = fromList;
@@ -151,6 +153,10 @@ public:
 
             return false;
         }
+
+        ASSERT(!fromListSize || fromListSize == toListSize);
+        if (animatedList.size() < toListSize)
+            animatedList.resize(toListSize);
 
         return true;
     }

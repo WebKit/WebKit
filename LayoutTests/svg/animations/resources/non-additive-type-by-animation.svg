@@ -15,10 +15,10 @@
 <!-- AnimatedEnumeration -->
 <animate xlink:href="#filter" attributeName="filterUnits" begin="0s" dur="4s" by="userSpaceOnUse" fill="freeze"/>
 
-<!-- AnimatedString -->
-<animateColor xlink:href="#rect" attributeName="fill" begin="0s" dur="4s" by="green" fill="freeze"/>
-
 <!-- AnimatedPreserveAspectRatio -->
 <animate xlink:href="#svg" attributeName="preserveAspectRatio" begin="0s" dur="4s" by="xMaxYMax slice" fill="freeze"/>
+
+<!-- AnimatedString -->
+<animate xlink:href="#feConvolveMatrix" attributeName="result" begin="0s" dur="4s" by="test" fill="freeze"/>
 
 </svg>
