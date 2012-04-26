@@ -452,7 +452,7 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
     [otherView setAutoresizingMask:[view autoresizingMask]];
     [otherView removeFromSuperview];
     [[view superview] addSubview:otherView positioned:NSWindowAbove relativeTo:otherView];
-    [otherView removeFromSuperview];
+    [view removeFromSuperview];
     [CATransaction commit];
 }
 

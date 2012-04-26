@@ -455,7 +455,7 @@ static IntRect screenRectOfContents(Element* element)
     [otherView setAutoresizingMask:[view autoresizingMask]];
     [otherView removeFromSuperview];
     [[view superview] addSubview:otherView positioned:NSWindowAbove relativeTo:otherView];
-    [otherView removeFromSuperview];
+    [view removeFromSuperview];
     [CATransaction commit];
 }
 
