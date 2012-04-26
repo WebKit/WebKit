@@ -2168,6 +2168,12 @@ IF (ENABLE_WEB_SOCKETS)
     )
 ENDIF ()
 
+IF (ENABLE_SMOOTH_SCROLLING)
+    LIST(APPEND WebCore_SOURCES
+        platform/ScrollAnimatorNone.cpp
+    )
+ENDIF ()
+
 IF (ENABLE_WEB_SOCKETS AND ENABLE_WORKERS)
     LIST(APPEND WebCore_SOURCES
         Modules/websockets/WorkerThreadableWebSocketChannel.cpp
