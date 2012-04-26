@@ -444,6 +444,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSPeerConnection00.h \
 	DerivedSources/WebCore/JSPerformance.cpp \
 	DerivedSources/WebCore/JSPerformance.h \
+	DerivedSources/WebCore/JSPerformanceEntry.cpp \
+	DerivedSources/WebCore/JSPerformanceEntry.h \
+	DerivedSources/WebCore/JSPerformanceEntryList.cpp \
+	DerivedSources/WebCore/JSPerformanceEntryList.h \
 	DerivedSources/WebCore/JSPerformanceNavigation.cpp \
 	DerivedSources/WebCore/JSPerformanceNavigation.h \
 	DerivedSources/WebCore/JSPerformanceTiming.cpp \
@@ -938,6 +942,8 @@ dom_binding_idls += \
 	$(WebCore)/page/MemoryInfo.idl \
 	$(WebCore)/page/Navigator.idl \
 	$(WebCore)/page/Performance.idl \
+	$(WebCore)/page/PerformanceEntry.idl \
+	$(WebCore)/page/PerformanceEntryList.idl \
 	$(WebCore)/page/PerformanceNavigation.idl \
 	$(WebCore)/page/PerformanceTiming.idl \
 	$(WebCore)/page/Screen.idl \
@@ -2979,6 +2985,10 @@ webcore_sources += \
 	Source/WebCore/page/PageVisibilityState.h \
 	Source/WebCore/page/Performance.cpp \
 	Source/WebCore/page/Performance.h \
+	Source/WebCore/page/PerformanceEntry.cpp \
+	Source/WebCore/page/PerformanceEntry.h \
+	Source/WebCore/page/PerformanceEntryList.cpp \
+	Source/WebCore/page/PerformanceEntryList.h \
 	Source/WebCore/page/PerformanceNavigation.cpp \
 	Source/WebCore/page/PerformanceNavigation.h \
 	Source/WebCore/page/PerformanceTiming.cpp \

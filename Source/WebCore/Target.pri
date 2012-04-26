@@ -1032,6 +1032,8 @@ SOURCES += \
     page/PageGroupLoadDeferrer.cpp \
     page/PageVisibilityState.cpp \
     page/Performance.cpp \
+    page/PerformanceEntry.cpp \
+    page/PerformanceEntryList.cpp \
     page/PerformanceNavigation.cpp \
     page/PerformanceTiming.cpp \
     page/PrintContext.cpp \

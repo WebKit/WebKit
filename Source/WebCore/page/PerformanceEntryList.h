@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,46 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Performance_h
-#define Performance_h
+#ifndef PerformanceEntryList_h
+#define PerformanceEntryList_h
 
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
 
-#include "DOMWindowProperty.h"
-#include "MemoryInfo.h"
-#include "PerformanceEntryList.h"
-#include "PerformanceNavigation.h"
-#include "PerformanceTiming.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Performance : public RefCounted<Performance>, public DOMWindowProperty {
+class PerformanceEntry;
+
+class PerformanceEntryList : public RefCounted<PerformanceEntryList> {
 public:
-    static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
+    static PassRefPtr<PerformanceEntryList> create() { return adoptRef(new PerformanceEntryList); }
+    ~PerformanceEntryList();
 
-    PassRefPtr<MemoryInfo> memory() const;
-    PerformanceNavigation* navigation() const;
-    PerformanceTiming* timing() const;
+    unsigned length() const;
+    PerformanceEntry* item(unsigned index);
 
-#if ENABLE(PERFORMANCE_TIMELINE)
-    PassRefPtr<PerformanceEntryList> webkitGetEntries() const;
-    PassRefPtr<PerformanceEntryList> webkitGetEntriesByType(const String& entryType);
-    PassRefPtr<PerformanceEntryList> webkitGetEntriesByName(const String& name, const String& entryType);
-#endif
+    void append(PassRefPtr<PerformanceEntry>);
 
 private:
-    explicit Performance(Frame*);
+    PerformanceEntryList();
 
-    mutable RefPtr<PerformanceNavigation> m_navigation;
-    mutable RefPtr<PerformanceTiming> m_timing;
+    Vector<RefPtr<PerformanceEntry> > m_entries;
 };
 
-}
+} // namespace WebCore
 
-#endif // ENABLE(WEB_TIMING)
-
-#endif // Performance_h
+#endif // !ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#endif // PerformanceEntryList_h

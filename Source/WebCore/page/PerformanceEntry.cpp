@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,46 +28,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Performance_h
-#define Performance_h
+#include "config.h"
+#include "PerformanceEntry.h"
 
-#if ENABLE(WEB_TIMING)
-
-#include "DOMWindowProperty.h"
-#include "MemoryInfo.h"
-#include "PerformanceEntryList.h"
-#include "PerformanceNavigation.h"
-#include "PerformanceTiming.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
 
 namespace WebCore {
 
-class Performance : public RefCounted<Performance>, public DOMWindowProperty {
-public:
-    static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
-
-    PassRefPtr<MemoryInfo> memory() const;
-    PerformanceNavigation* navigation() const;
-    PerformanceTiming* timing() const;
-
-#if ENABLE(PERFORMANCE_TIMELINE)
-    PassRefPtr<PerformanceEntryList> webkitGetEntries() const;
-    PassRefPtr<PerformanceEntryList> webkitGetEntriesByType(const String& entryType);
-    PassRefPtr<PerformanceEntryList> webkitGetEntriesByName(const String& name, const String& entryType);
-#endif
-
-private:
-    explicit Performance(Frame*);
-
-    mutable RefPtr<PerformanceNavigation> m_navigation;
-    mutable RefPtr<PerformanceTiming> m_timing;
-};
-
+PerformanceEntry::PerformanceEntry(const String& name, const String& entryType, double startTime, double duration)
+    : m_name(name)
+    , m_entryType(entryType)
+    , m_startTime(startTime)
+    , m_duration(duration)
+{
 }
 
-#endif // ENABLE(WEB_TIMING)
+String PerformanceEntry::name() const
+{
+    return m_name;
+}
 
-#endif // Performance_h
+String PerformanceEntry::entryType() const
+{
+    return m_entryType;
+}
+
+double PerformanceEntry::startTime() const
+{
+    return m_startTime;
+}
+
+double PerformanceEntry::duration() const
+{
+    return m_duration;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)

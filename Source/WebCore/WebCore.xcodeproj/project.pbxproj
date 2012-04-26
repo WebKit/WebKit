@@ -2866,6 +2866,10 @@
 		861C2EA413FB4FDD00062ABB /* DocumentLoadTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 861C2EA313FB4FDD00062ABB /* DocumentLoadTiming.cpp */; };
 		861C2EA613FB4FFF00062ABB /* ResourceLoadTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 861C2EA513FB4FFF00062ABB /* ResourceLoadTiming.cpp */; };
 		86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */; };
+		86BE340015058CB200CE0FD8 /* PerformanceEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BE33FA15058CB200CE0FD8 /* PerformanceEntry.cpp */; };
+		86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */; };
+		86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BE33FD15058CB200CE0FD8 /* PerformanceEntryList.cpp */; };
+		86BE340415058CB200CE0FD8 /* PerformanceEntryList.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */; };
 		86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D982F6125C154000AD9E3D /* DocumentTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		890AE0E11256A07900F5968C /* DirectoryReaderBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 890AE0E01256A07900F5968C /* DirectoryReaderBase.h */; };
 		892CF192134C620D00AAEDA1 /* StorageInfoErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF18D134C620D00AAEDA1 /* StorageInfoErrorCallback.h */; };
@@ -9843,6 +9847,12 @@
 		861C2EA313FB4FDD00062ABB /* DocumentLoadTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoadTiming.cpp; sourceTree = "<group>"; };
 		861C2EA513FB4FFF00062ABB /* ResourceLoadTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadTiming.cpp; sourceTree = "<group>"; };
 		86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferViewHelper.h; sourceTree = "<group>"; };
+		86BE33FA15058CB200CE0FD8 /* PerformanceEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceEntry.cpp; sourceTree = "<group>"; };
+		86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceEntry.h; sourceTree = "<group>"; };
+		86BE33FC15058CB200CE0FD8 /* PerformanceEntry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceEntry.idl; sourceTree = "<group>"; };
+		86BE33FD15058CB200CE0FD8 /* PerformanceEntryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceEntryList.cpp; sourceTree = "<group>"; };
+		86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceEntryList.h; sourceTree = "<group>"; };
+		86BE33FF15058CB200CE0FD8 /* PerformanceEntryList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceEntryList.idl; sourceTree = "<group>"; };
 		86D982F6125C154000AD9E3D /* DocumentTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTiming.h; sourceTree = "<group>"; };
 		890AE0E01256A07900F5968C /* DirectoryReaderBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryReaderBase.h; path = Modules/filesystem/DirectoryReaderBase.h; sourceTree = "<group>"; };
 		892CF18D134C620D00AAEDA1 /* StorageInfoErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageInfoErrorCallback.h; sourceTree = "<group>"; };
@@ -15421,6 +15431,12 @@
 				8A844D0111D3C18E0014065C /* Performance.cpp */,
 				8A844D0211D3C18E0014065C /* Performance.h */,
 				8A844D0311D3C18E0014065C /* Performance.idl */,
+				86BE33FA15058CB200CE0FD8 /* PerformanceEntry.cpp */,
+				86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */,
+				86BE33FC15058CB200CE0FD8 /* PerformanceEntry.idl */,
+				86BE33FD15058CB200CE0FD8 /* PerformanceEntryList.cpp */,
+				86BE33FE15058CB200CE0FD8 /* PerformanceEntryList.h */,
+				86BE33FF15058CB200CE0FD8 /* PerformanceEntryList.idl */,
 				8AF4E55211DC5A36000ED3DE /* PerformanceNavigation.cpp */,
 				8AF4E55311DC5A36000ED3DE /* PerformanceNavigation.h */,
 				8AF4E55411DC5A36000ED3DE /* PerformanceNavigation.idl */,
@@ -23850,6 +23866,8 @@
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
 				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
+				86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */,
+				86BE340415058CB200CE0FD8 /* PerformanceEntryList.h in Headers */,
 				8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */,
 				8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */,
 				49D5DC2E0F423A73008F20FD /* PerspectiveTransformOperation.h in Headers */,
@@ -27049,6 +27067,8 @@
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
 				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
 				8A844D0411D3C18E0014065C /* Performance.cpp in Sources */,
+				86BE340015058CB200CE0FD8 /* PerformanceEntry.cpp in Sources */,
+				86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */,
 				8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */,
 				8AF4E55B11DC5A63000ED3DE /* PerformanceTiming.cpp in Sources */,
 				49D5DC2D0F423A73008F20FD /* PerspectiveTransformOperation.cpp in Sources */,

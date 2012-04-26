@@ -67,6 +67,28 @@ PerformanceTiming* Performance::timing() const
     return m_timing.get();
 }
 
+#if ENABLE(PERFORMANCE_TIMELINE)
+
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntries() const
+{
+    RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+    return entries;
+}
+
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByType(const String&)
+{
+    RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+    return entries;
+}
+
+PassRefPtr<PerformanceEntryList> Performance::webkitGetEntriesByName(const String&, const String&)
+{
+    RefPtr<PerformanceEntryList> entries = PerformanceEntryList::create();
+    return entries;
+}
+
+#endif // ENABLE(PERFORMANCE_TIMELINE)
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_TIMING)

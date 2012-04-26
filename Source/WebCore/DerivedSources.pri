@@ -411,6 +411,8 @@ IDL_BINDINGS += \
     $$PWD/page/MemoryInfo.idl \
     $$PWD/page/Navigator.idl \
     $$PWD/page/Performance.idl \
+    $$PWD/page/PerformanceEntry.idl \
+    $$PWD/page/PerformanceEntryList.idl \
     $$PWD/page/PerformanceNavigation.idl \
     $$PWD/page/PerformanceTiming.idl \
     $$PWD/page/Screen.idl \

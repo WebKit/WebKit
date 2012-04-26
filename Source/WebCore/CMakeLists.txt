@@ -374,6 +374,8 @@ SET(WebCore_IDL_FILES
     page/MemoryInfo.idl
     page/Navigator.idl
     page/Performance.idl
+    page/PerformanceEntry.idl
+    page/PerformanceEntryList.idl
     page/PerformanceNavigation.idl
     page/PerformanceTiming.idl
     page/Screen.idl
@@ -1056,6 +1058,8 @@ SET(WebCore_SOURCES
     page/PageSerializer.cpp
     page/PageVisibilityState.cpp
     page/Performance.cpp
+    page/PerformanceEntry.cpp
+    page/PerformanceEntryList.cpp
     page/PerformanceNavigation.cpp
     page/PerformanceTiming.cpp
     page/PrintContext.cpp

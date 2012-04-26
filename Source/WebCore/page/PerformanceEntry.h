@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,46 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Performance_h
-#define Performance_h
+#ifndef PerformanceEntry_h
+#define PerformanceEntry_h
 
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
 
-#include "DOMWindowProperty.h"
-#include "MemoryInfo.h"
-#include "PerformanceEntryList.h"
-#include "PerformanceNavigation.h"
-#include "PerformanceTiming.h"
+#include "Performance.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Performance : public RefCounted<Performance>, public DOMWindowProperty {
+class PerformanceEntry : public RefCounted<PerformanceEntry> {
 public:
-    static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
+    String name() const;
+    String entryType() const;
+    double startTime() const;
+    double duration() const;
 
-    PassRefPtr<MemoryInfo> memory() const;
-    PerformanceNavigation* navigation() const;
-    PerformanceTiming* timing() const;
-
-#if ENABLE(PERFORMANCE_TIMELINE)
-    PassRefPtr<PerformanceEntryList> webkitGetEntries() const;
-    PassRefPtr<PerformanceEntryList> webkitGetEntriesByType(const String& entryType);
-    PassRefPtr<PerformanceEntryList> webkitGetEntriesByName(const String& name, const String& entryType);
-#endif
+protected:
+    PerformanceEntry(const String& name, const String& entryType, double startTime, double duration);
 
 private:
-    explicit Performance(Frame*);
-
-    mutable RefPtr<PerformanceNavigation> m_navigation;
-    mutable RefPtr<PerformanceTiming> m_timing;
+    const String m_name;
+    const String m_entryType;
+    const double m_startTime;
+    const double m_duration;
 };
 
 }
 
-#endif // ENABLE(WEB_TIMING)
-
-#endif // Performance_h
+#endif // !ENABLE(WEB_TIMING) && ENABLE(PERFORMANCE_TIMELINE)
+#endif // !defined(PerformanceEntry_h)
