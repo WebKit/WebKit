@@ -1,3 +1,31 @@
+2012-04-25  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] change DRT's "DRT" output to match the other ports
+        https://bugs.webkit.org/show_bug.cgi?id=84904
+
+        Reviewed by Kent Tamura.
+
+        Since we run Chromium's DRT in --test-shell mode, the
+        non-test-shell output has never been really beaten on to make
+        sure it's right. This fixes a few issues and will be tested
+        with upcoming NRWT changes that'll land in a separate patch.
+        In particular we should never output framing text like "\n"
+        or "#EOF" outside of something outside of TestEventPrinter,
+        and we weren't handling audio output properly at all.
+
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (DRTPrinter):
+        (TestShellPrinter):
+        (DRTPrinter::handleTextFooter):
+        (DRTPrinter::handleAudioFooter):
+        (DRTPrinter::handleTestFooter):
+        (TestShellPrinter::handleAudioFooter):
+        * DumpRenderTree/chromium/TestEventPrinter.h:
+        (TestEventPrinter):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::dump):
+
 2012-04-25  Joshua Bell  <jsbell@chromium.org>
 
         Unreviewed: Adding Alec Flett as a contributor (non-committer).

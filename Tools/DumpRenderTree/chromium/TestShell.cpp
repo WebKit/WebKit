@@ -127,7 +127,7 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableEncryptedMedia(true);
     WebRuntimeFeatures::enableMediaStream(true);
     WebRuntimeFeatures::enablePeerConnection(true);
-    WebRuntimeFeatures::enableWebAudio(true); 
+    WebRuntimeFeatures::enableWebAudio(true);
     WebRuntimeFeatures::enableVideoTrack(true);
     WebRuntimeFeatures::enableGamepad(true);
     WebRuntimeFeatures::enableShadowDOM(true);
@@ -556,8 +556,7 @@ void TestShell::dump()
 
         if (fwrite(webArrayBufferView.baseAddress(), 1, webArrayBufferView.byteLength(), stdout) != webArrayBufferView.byteLength())
             FATAL("Short write to stdout, disk full?\n");
-        printf("\n");
-
+        m_printer->handleAudioFooter();
         m_printer->handleTestFooter(true);
 
         fflush(stdout);
@@ -642,7 +641,6 @@ void TestShell::dump()
 
         dumpImage(m_webViewHost->canvas());
     }
-    m_printer->handleImageFooter();
     m_printer->handleTestFooter(dumpedAnything);
     fflush(stdout);
     fflush(stderr);

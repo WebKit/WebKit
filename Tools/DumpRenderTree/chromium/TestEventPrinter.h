@@ -44,8 +44,8 @@ public:
     virtual void handleTextHeader() const = 0;
     virtual void handleTextFooter() const = 0;
     virtual void handleAudioHeader() const = 0;
+    virtual void handleAudioFooter() const = 0;
     virtual void handleImage(const char* actualHash, const char* expectedHash, const unsigned char* imageData, size_t imageSize, const char* fileName) const = 0;
-    virtual void handleImageFooter() const = 0;
     virtual void handleTestFooter(bool dumpedAnything) const = 0;
 };
 
