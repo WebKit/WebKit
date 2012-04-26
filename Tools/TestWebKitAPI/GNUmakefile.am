@@ -1,3 +1,11 @@
+BUILT_SOURCES += \
+	generate-testwebkitapi-forwarding-headers
+
+wk2_tests_sources = $(shell ls $(srcdir)/Tools/TestWebKitAPI/Tests/WebKit2/*.cpp)
+generate-testwebkitapi-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(wk2_tests_sources)
+	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI $(GENSOURCES_WEBKIT2)/include gtk
+	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/TestWebKitAPI $(GENSOURCES_WEBKIT2)/include soup
+
 TEST_PROGS += \
 	Programs/TestWebKitAPI/WTF/TestCheckedArithmeticOperations \
 	Programs/TestWebKitAPI/WTF/TestFunctional \
@@ -10,11 +18,63 @@ TEST_PROGS += \
 	Programs/TestWebKitAPI/WTF/TestVector \
 	Programs/TestWebKitAPI/WTF/TestVectorReverse
 
+if ENABLE_WEBKIT2
+TEST_PROGS += \
+	Programs/TestWebKitAPI/WebKit2/TestCookieManager \
+	Programs/TestWebKitAPI/WebKit2/TestDocumentStartUserScriptAlertCrash \
+	Programs/TestWebKitAPI/WebKit2/TestDownloadDecideDestinationCrash \
+	Programs/TestWebKitAPI/WebKit2/TestEvaluateJavaScript \
+	Programs/TestWebKitAPI/WebKit2/TestFailedLoad \
+	Programs/TestWebKitAPI/WebKit2/TestForceRepaint \
+	Programs/TestWebKitAPI/WebKit2/TestFrameMIMETypeHTML \
+	Programs/TestWebKitAPI/WebKit2/TestFrameMIMETypePNG \
+	Programs/TestWebKitAPI/WebKit2/TestHitTestResultNodeHandle \
+	Programs/TestWebKitAPI/WebKit2/TestInjectedBundleBasic \
+	Programs/TestWebKitAPI/WebKit2/TestLoadAlternateHTMLStringWithNonDirectoryURL \
+	Programs/TestWebKitAPI/WebKit2/TestLoadCanceledNoServerRedirectCallback \
+	Programs/TestWebKitAPI/WebKit2/TestMouseMoveAfterCrash \
+	Programs/TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayout \
+	Programs/TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutFails \
+	Programs/TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutForImages \
+	Programs/TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutFrames \
+	Programs/TestWebKitAPI/WebKit2/TestPageLoadBasic \
+	Programs/TestWebKitAPI/WebKit2/TestPageLoadDidChangeLocationWithinPageForFrame \
+	Programs/TestWebKitAPI/WebKit2/TestParentFrame \
+	Programs/TestWebKitAPI/WebKit2/TestPreventEmptyUserAgent \
+	Programs/TestWebKitAPI/WebKit2/TestPrivateBrowsingPushStateNoHistoryCallback \
+	Programs/TestWebKitAPI/WebKit2/TestResponsivenessTimerDoesntFireEarly \
+	Programs/TestWebKitAPI/WebKit2/TestRestoreSessionStateContainingFormData \
+	Programs/TestWebKitAPI/WebKit2/TestShouldGoToBackForwardListItem \
+	Programs/TestWebKitAPI/WebKit2/TestSpacebarScrolling \
+	Programs/TestWebKitAPI/WebKit2/TestUserMessage \
+	Programs/TestWebKitAPI/WebKit2/TestWKConnection \
+	Programs/TestWebKitAPI/WebKit2/TestWKPreferences \
+	Programs/TestWebKitAPI/WebKit2/TestWKString \
+	Programs/TestWebKitAPI/WebKit2/TestWKStringJSString
+endif
+
 noinst_PROGRAMS += $(TEST_PROGS)
+
+noinst_LTLIBRARIES += \
+	Libraries/libTestWebKitAPIMain.la
+
+Libraries_libTestWebKitAPIMain_la_SOURCES = \
+	Tools/TestWebKitAPI/TestsController.cpp \
+	Tools/TestWebKitAPI/TestsController.h \
+	Tools/TestWebKitAPI/gtk/main.cpp
 
 # Use -isystem gcc flag so that gcc considers gtest headers as system headers.
 # We need this to avoid a lot of compile warnings due to -Wundef.
 # See http://code.google.com/p/googletest/issues/detail?id=258
+Libraries_libTestWebKitAPIMain_la_CPPFLAGS = \
+	-isystem $(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(srcdir)/Tools/TestWebKitAPI \
+	-I$(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(GLIB_CFLAGS)
+
 testwebkitapi_wtf_tests_cppflags = \
 	-isystem $(srcdir)/Source/ThirdParty/gtest/include \
 	-I$(srcdir)/Tools/TestWebKitAPI \
@@ -25,12 +85,100 @@ testwebkitapi_wtf_tests_cppflags = \
 
 testwebkitapi_wtf_tests_ldadd = \
 	Libraries/libgtest.la \
-	Libraries/libgtest_main.la \
+	Libraries/libTestWebKitAPIMain.la \
 	libWTF.la
 
 testwebkitapi_wtf_tests_ldflags = \
 	-no-install \
 	-no-fast-install
+
+testwebkitapi_webkit2_tests_cppflags = \
+	$(testwebkitapi_wtf_tests_cppflags) \
+	$(CAIRO_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+
+testwebkitapi_webkit2_tests_ldadd = \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	Libraries/libgtest.la \
+	Libraries/libTestWebKitAPIMain.la \
+	Libraries/libTestWebKitAPIWebKit2Tests.la \
+	$(CAIRO_LIBS) \
+	$(GTK_LIBS) \
+	$(GLIB_LIBS) \
+	$(LIBSOUP_LIBS)
+
+testwebkitapi_webkit2_tests_ldflags = $(testwebkitapi_wtf_tests_ldflags)
+
+if ENABLE_WEBKIT2
+noinst_LTLIBRARIES += \
+	Libraries/libTestWebKitAPIWebKit2Tests.la \
+	Libraries/libTestWebKitAPIInjectedBundle.la
+endif
+
+# TestWebKitAPIWebKit2Tests
+Libraries_libTestWebKitAPIWebKit2Tests_la_SOURCES = \
+	Tools/TestWebKitAPI/PlatformUtilities.cpp \
+	Tools/TestWebKitAPI/PlatformUtilities.h \
+	Tools/TestWebKitAPI/PlatformWebView.h \
+	Tools/TestWebKitAPI/JavaScriptTest.cpp \
+	Tools/TestWebKitAPI/JavaScriptTest.h \
+	Tools/TestWebKitAPI/gtk/PlatformUtilitiesGtk.cpp \
+	Tools/TestWebKitAPI/gtk/PlatformWebViewGtk.cpp
+
+Libraries_libTestWebKitAPIWebKit2Tests_la_CPPFLAGS = \
+	-isystem $(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(srcdir)/Tools/TestWebKitAPI \
+	-I$(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(GTK_CFLAGS)
+
+# TestWebKitAPIInjectedBundle
+Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES = \
+	Tools/TestWebKitAPI/InjectedBundleController.cpp \
+	Tools/TestWebKitAPI/InjectedBundleController.h \
+	Tools/TestWebKitAPI/InjectedBundleMain.cpp \
+	Tools/TestWebKitAPI/InjectedBundleTest.h \
+	Tools/TestWebKitAPI/PlatformUtilities.cpp \
+	Tools/TestWebKitAPI/PlatformUtilities.h \
+	Tools/TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/ParentFrame_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/UserMessage_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/WKConnection_Bundle.cpp \
+	Tools/TestWebKitAPI/gtk/InjectedBundleControllerGtk.cpp \
+	Tools/TestWebKitAPI/gtk/PlatformUtilitiesGtk.cpp
+
+Libraries_libTestWebKitAPIInjectedBundle_la_LDFLAGS = \
+	-rpath ${shell pwd}/$(top_builddir)/Libraries/.libs \
+	$(no_undefined) \
+	-avoid-version \
+	-module
+
+Libraries_libTestWebKitAPIInjectedBundle_la_CPPFLAGS = \
+	-isystem $(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(srcdir)/Tools/TestWebKitAPI \
+	-I$(srcdir)/Source/ThirdParty/gtest/include \
+	-I$(top_builddir)/DerivedSources/InjectedBundle \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(GTK_CFLAGS)
+
+Libraries_libTestWebKitAPIInjectedBundle_la_CXXFLAGS = $(global_cxxflags)
+Libraries_libTestWebKitAPIInjectedBundle_la_CFLAGS = $(global_cflags)
 
 Programs_TestWebKitAPI_WTF_TestCheckedArithmeticOperations_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp
@@ -92,3 +240,189 @@ Programs_TestWebKitAPI_WTF_TestVectorReverse_CPPFLAGS = $(testwebkitapi_wtf_test
 Programs_TestWebKitAPI_WTF_TestVectorReverse_LDADD = $(testwebkitapi_wtf_tests_ldadd)
 Programs_TestWebKitAPI_WTF_TestVectorReverse_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
 
+# WebKit2 Tests
+Programs_TestWebKitAPI_WebKit2_TestCookieManager_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/CookieManager.cpp
+Programs_TestWebKitAPI_WebKit2_TestCookieManager_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestCookieManager_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestCookieManager_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestDocumentStartUserScriptAlertCrash_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp
+Programs_TestWebKitAPI_WebKit2_TestDocumentStartUserScriptAlertCrash_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestDocumentStartUserScriptAlertCrash_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestDocumentStartUserScriptAlertCrash_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestDownloadDecideDestinationCrash_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/DownloadDecideDestinationCrash.cpp
+Programs_TestWebKitAPI_WebKit2_TestDownloadDecideDestinationCrash_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestDownloadDecideDestinationCrash_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestDownloadDecideDestinationCrash_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestEvaluateJavaScript_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/EvaluateJavaScript.cpp
+Programs_TestWebKitAPI_WebKit2_TestEvaluateJavaScript_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestEvaluateJavaScript_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestEvaluateJavaScript_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestFailedLoad_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp
+Programs_TestWebKitAPI_WebKit2_TestFailedLoad_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestFailedLoad_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestFailedLoad_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestForceRepaint_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/ForceRepaint.cpp
+Programs_TestWebKitAPI_WebKit2_TestForceRepaint_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestForceRepaint_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestForceRepaint_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypeHTML_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypeHTML_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypeHTML_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypeHTML_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypePNG_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypePNG_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypePNG_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestFrameMIMETypePNG_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestHitTestResultNodeHandle_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp
+Programs_TestWebKitAPI_WebKit2_TestHitTestResultNodeHandle_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestHitTestResultNodeHandle_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestHitTestResultNodeHandle_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestInjectedBundleBasic_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp
+Programs_TestWebKitAPI_WebKit2_TestInjectedBundleBasic_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestInjectedBundleBasic_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestInjectedBundleBasic_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestLoadAlternateHTMLStringWithNonDirectoryURL_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/LoadAlternateHTMLStringWithNonDirectoryURL.cpp
+Programs_TestWebKitAPI_WebKit2_TestLoadAlternateHTMLStringWithNonDirectoryURL_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestLoadAlternateHTMLStringWithNonDirectoryURL_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestLoadAlternateHTMLStringWithNonDirectoryURL_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestLoadCanceledNoServerRedirectCallback_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback.cpp
+Programs_TestWebKitAPI_WebKit2_TestLoadCanceledNoServerRedirectCallback_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestLoadCanceledNoServerRedirectCallback_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestLoadCanceledNoServerRedirectCallback_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestMouseMoveAfterCrash_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp
+Programs_TestWebKitAPI_WebKit2_TestMouseMoveAfterCrash_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestMouseMoveAfterCrash_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestMouseMoveAfterCrash_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayout_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout.cpp
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayout_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayout_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayout_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFails_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails.cpp
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFails_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFails_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFails_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutForImages_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages.cpp
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutForImages_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutForImages_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutForImages_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFrames_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames.cpp
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFrames_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFrames_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestNewFirstVisuallyNonEmptyLayoutFrames_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestPageLoadBasic_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp
+Programs_TestWebKitAPI_WebKit2_TestPageLoadBasic_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestPageLoadBasic_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestPageLoadBasic_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestPageLoadDidChangeLocationWithinPageForFrame_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp
+Programs_TestWebKitAPI_WebKit2_TestPageLoadDidChangeLocationWithinPageForFrame_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestPageLoadDidChangeLocationWithinPageForFrame_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestPageLoadDidChangeLocationWithinPageForFrame_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestParentFrame_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/ParentFrame.cpp
+Programs_TestWebKitAPI_WebKit2_TestParentFrame_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestParentFrame_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestParentFrame_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestPreventEmptyUserAgent_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp
+Programs_TestWebKitAPI_WebKit2_TestPreventEmptyUserAgent_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestPreventEmptyUserAgent_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestPreventEmptyUserAgent_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestPrivateBrowsingPushStateNoHistoryCallback_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/PrivateBrowsingPushStateNoHistoryCallback.cpp
+Programs_TestWebKitAPI_WebKit2_TestPrivateBrowsingPushStateNoHistoryCallback_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestPrivateBrowsingPushStateNoHistoryCallback_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestPrivateBrowsingPushStateNoHistoryCallback_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestResponsivenessTimerDoesntFireEarly_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly.cpp
+Programs_TestWebKitAPI_WebKit2_TestResponsivenessTimerDoesntFireEarly_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestResponsivenessTimerDoesntFireEarly_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestResponsivenessTimerDoesntFireEarly_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestRestoreSessionStateContainingFormData_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp
+Programs_TestWebKitAPI_WebKit2_TestRestoreSessionStateContainingFormData_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestRestoreSessionStateContainingFormData_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestRestoreSessionStateContainingFormData_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestShouldGoToBackForwardListItem_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem.cpp
+Programs_TestWebKitAPI_WebKit2_TestShouldGoToBackForwardListItem_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestShouldGoToBackForwardListItem_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestShouldGoToBackForwardListItem_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestSpacebarScrolling_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp
+Programs_TestWebKitAPI_WebKit2_TestSpacebarScrolling_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestSpacebarScrolling_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestSpacebarScrolling_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestUserMessage_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/UserMessage.cpp
+Programs_TestWebKitAPI_WebKit2_TestUserMessage_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestUserMessage_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestUserMessage_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestWKConnection_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/WKConnection.cpp
+Programs_TestWebKitAPI_WebKit2_TestWKConnection_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestWKConnection_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestWKConnection_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestWKPreferences_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp
+Programs_TestWebKitAPI_WebKit2_TestWKPreferences_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestWKPreferences_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestWKPreferences_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestWKString_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/WKString.cpp
+Programs_TestWebKitAPI_WebKit2_TestWKString_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestWKString_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestWKString_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)
+
+Programs_TestWebKitAPI_WebKit2_TestWKStringJSString_SOURCES = \
+	Tools/TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp
+Programs_TestWebKitAPI_WebKit2_TestWKStringJSString_CPPFLAGS = $(testwebkitapi_webkit2_tests_cppflags)
+Programs_TestWebKitAPI_WebKit2_TestWKStringJSString_LDADD = $(testwebkitapi_webkit2_tests_ldadd)
+Programs_TestWebKitAPI_WebKit2_TestWKStringJSString_LDFLAGS = $(testwebkitapi_webkit2_tests_ldflags)

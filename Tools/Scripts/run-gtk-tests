@@ -46,7 +46,7 @@ class TestTimeout(Exception):
 
 class TestRunner:
 
-    TEST_DIRS = [ "unittests", "WebKit2APITests", "TestWebKitAPI/WTF" ]
+    TEST_DIRS = [ "unittests", "WebKit2APITests", "TestWebKitAPI/WTF", "TestWebKitAPI/WebKit2" ]
 
     SKIPPED = [
         SkippedTest("unittests/testdownload",
@@ -73,10 +73,16 @@ class TestRunner:
                     "Test is flaky in GTK Linux 32-bit Release bot",
                     82868,
                     ["/webkit2/WebKitWebView/resources"]),
-        SkippedTest("TestWebKitAPI/WTF/TestFunctional",
-                    "Asserts in Debug bot",
-                    84868,
-                    ["FunctionalTest.RefCountedStorage"]),
+        SkippedTest("TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayout",
+                    "Test times out"),
+        SkippedTest("TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutForImages",
+                    "Test times out"),
+        SkippedTest("TestWebKitAPI/WebKit2/TestWKConnectionTest",
+                    "Test times out"),
+        SkippedTest("TestWebKitAPI/WebKit2/TestRestoreSessionStateContainingFormData",
+                    "Session State is not implemented in GTK+ port"),
+        SkippedTest("TestWebKitAPI/WebKit2/TestSpacebarScrolling",
+                    "Test fails")
     ]
 
     def __init__(self, options, tests=[]):
@@ -193,6 +199,9 @@ class TestRunner:
         self._test_env["DISPLAY"] = self._options.display
         self._test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
         self._test_env['GSETTINGS_BACKEND'] = 'memory'
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = os.path.join(self._get_top_level_directory(), "Tools", "TestWebKitAPI", "Tests", "WebKit2")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = os.path.abspath(os.path.join(self._get_build_directory(), "Libraries"))
+        self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
         try:
             self._xvfb = self._create_process(["Xvfb", self._options.display, "-screen", "0", "800x600x24", "-nolisten", "tcp"],

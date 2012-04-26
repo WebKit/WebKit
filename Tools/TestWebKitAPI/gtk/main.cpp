@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,37 +24,13 @@
  */
 
 #include "config.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include "Test.h"
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKSerializedScriptValue.h>
+#include "TestsController.h"
 
-namespace TestWebKitAPI {
+#include <glib-object.h>
 
-static bool testDone;
-
-static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
+int main(int argc, char** argv)
 {
-    EXPECT_EQ(reinterpret_cast<void*>(0x1234578), context);
-    EXPECT_NULL(resultSerializedScriptValue);
+    g_type_init();
 
-    // FIXME: We should also check the error, but right now it's always null.
-    // Assert that it's null so we can revisit when this changes.
-    EXPECT_NULL(error);
-
-    testDone = true;
+    return TestWebKitAPI::TestsController::shared().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-TEST(WebKit2, EvaluateJavaScriptThatThrowsAnException)
-{
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    PlatformWebView webView(context.get());
-
-    WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("throw 'Hello'"));
-    WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);
-
-    Util::run(&testDone);
-}
-
-} // namespace TestWebKitAPI

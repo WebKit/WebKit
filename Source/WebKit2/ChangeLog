@@ -1,3 +1,13 @@
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Build and run TestWebKitAPI WebKit2 unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=84446
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/C/WKNativeEvent.h: Define WKNativeEventPtr as
+        GdkEvent for the GTK+ port.
+
 2012-04-26  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Tap highlight should have a delay not to interfere with panning

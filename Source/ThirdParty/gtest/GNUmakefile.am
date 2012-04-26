@@ -1,7 +1,6 @@
 
 noinst_LTLIBRARIES += \
-	Libraries/libgtest.la \
-	Libraries/libgtest_main.la
+	Libraries/libgtest.la
 
 Libraries_libgtest_la_SOURCES = \
 	Source/ThirdParty/gtest/include/gtest/gtest.h \
@@ -40,23 +39,6 @@ Libraries_libgtest_la_CPPFLAGS = \
 Libraries_libgtest_la_CXXFLAGS = -DGTEST_HAS_PTHREAD=1
 Libraries_libgtest_la_LIBADD = \
 	-lpthread
-
-Libraries_libgtest_main_la_SOURCES = \
-	Source/ThirdParty/gtest/src/gtest_main.cc
-
-Libraries_libgtest_main_la_CPPFLAGS = \
-	$(global_cppflags) \
-	$(javascriptcore_cppflags) \
-	-isystem $(srcdir)/Source/ThirdParty/gtest \
-	-isystem $(srcdir)/Source/ThirdParty/gtest/include \
-	-I$(srcdir)/Source/WTF \
-	-I$(srcdir)/Source/ThirdParty/gtest \
-	-I$(srcdir)/Source/ThirdParty/gtest/include
-
-Libraries_libgtest_main_la_LIBADD = \
-	-lpthread
-
-Libraries_libgtest_main_la_CXXFLAGS = -DGTEST_HAS_PTHREAD=1
 
 # gtest source files that we don't compile directly.  They are
 # #included by gtest-all.cc.

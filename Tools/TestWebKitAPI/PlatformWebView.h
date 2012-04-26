@@ -43,6 +43,9 @@ typedef NSWindow *PlatformWindow;
 #elif defined(WIN32) || defined(_WIN32)
 typedef WKViewRef PlatformWKView;
 typedef HWND PlatformWindow;
+#elif PLATFORM(GTK)
+typedef WKViewRef PlatformWKView;
+typedef GtkWidget *PlatformWindow;
 #endif
 
 namespace TestWebKitAPI {

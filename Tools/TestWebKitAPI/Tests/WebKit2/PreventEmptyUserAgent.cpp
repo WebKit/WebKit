@@ -27,7 +27,7 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
-#include <JavaScriptCore/JavaScriptCore.h>
+#include <JavaScriptCore/JSContextRef.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKSerializedScriptValue.h>
 
