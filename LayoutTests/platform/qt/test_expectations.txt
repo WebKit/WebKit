@@ -61,3 +61,4 @@ BUGDTHARP : ietestcenter/css3/multicolumn/column-width-applies-to-005.htm = IMAG
 BUGDTHARP : ietestcenter/css3/multicolumn/column-width-applies-to-006.htm = IMAGE
 BUGDTHARP : ietestcenter/css3/multicolumn/column-width-applies-to-008.htm = IMAGE
 BUGDTHARP : ietestcenter/css3/multicolumn/column-width-percentage-001.htm = IMAGE
+BUGDTHARP : ietestcenter/css3/multicolumn/column-containing-block-003.htm = IMAGE
