@@ -1,5 +1,32 @@
 2012-04-25  Alexandru Chiculita  <achicu@adobe.com>
 
+        [Chromium] Layout Test css3/filters/custom/custom-filter-property-computed-style.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=84067
+
+        Reviewed by Ryosuke Niwa.
+
+        All the CSS filters/shaders script tests expected to have a document.styleSheets.item(0) that they could change.
+        The script-tests add a <link> that references a CSS file from a different parent folder, so the script
+        has no access to the actual rules anymore. Updated all the tests to use createElement("style")
+        and get the styleSheet by using el.sheet instead of assuming that there's one style already created.
+
+        * css3/filters/script-tests/custom-filter-property-computed-style.js:
+        * css3/filters/script-tests/custom-filter-property-parsing-invalid.js:
+        (testInvalidFilterRule):
+        * css3/filters/script-tests/effect-custom-disabled.js:
+        (testInvalidFilterRule):
+        * css3/filters/script-tests/filter-property-computed-style.js:
+        (testComputedFilterRule):
+        * css3/filters/script-tests/filter-property-parsing-invalid.js:
+        (testInvalidFilterRule):
+        * css3/filters/script-tests/filter-property-parsing.js:
+        (testFilterRule):
+        * css3/filters/script-tests/filter-property.js:
+        * platform/chromium/test_expectations.txt: Removed reference to this bug.
+        * platform/mac/css3/filters/custom/custom-filter-property-computed-style-expected.txt: Removed. This is not necessary anymore.
+
+2012-04-25  Alexandru Chiculita  <achicu@adobe.com>
+
         CSS Shaders: Use u_texture instead of s_texture. It was updated in the spec
         https://bugs.webkit.org/show_bug.cgi?id=82618
 

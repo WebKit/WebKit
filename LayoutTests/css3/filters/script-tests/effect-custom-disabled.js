@@ -5,12 +5,14 @@ if (window.layoutTestController)
 
 // These have to be global for the test helpers to see them.
 var stylesheet, cssRule, declaration;
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+stylesheet = styleElement.sheet;
 
 function testInvalidFilterRule(description, rule)
 {
     debug(description + " : " + rule);
 
-    stylesheet = document.styleSheets.item(0);
     stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
   

@@ -21,13 +21,15 @@ function shouldBeType(expression, className, prototypeName, constructorName)
 
 // These have to be global for the test helpers to see them.
 var stylesheet, cssRule, declaration, filterRule, subRule;
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+stylesheet = styleElement.sheet;
 
 function testFilterRule(description, rule, expectedLength, expectedValue, expectedTypes, expectedTexts)
 {
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet = document.styleSheets.item(0);
     stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
     cssRule = stylesheet.cssRules.item(0);
   

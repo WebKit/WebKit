@@ -2774,8 +2774,6 @@ BUGWK82783 SKIP : css3/filters/filter-with-transform.html = FAIL
 BUGWK82783 SKIP : css3/filters/filter-repaint-sepia.html = FAIL
 BUGWK82783 SKIP : css3/filters/nested-filter.html = FAIL
 
-BUGWK84067 : css3/filters/custom/custom-filter-property-computed-style.html = TEXT
-
 // Following tests need baselines on Win and Linux
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = FAIL
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = FAIL

@@ -2,13 +2,15 @@ description("Test the computed style of the -webkit-filter property.");
 
 // These have to be global for the test helpers to see them.
 var stylesheet, filterStyle, subRule;
+var styleElement = document.createElement("style");
+document.head.appendChild(styleElement);
+stylesheet = styleElement.sheet;
 
 function testComputedFilterRule(description, rule, expectedLength, expectedTypes, expectedTexts)
 {
     debug("");
     debug(description + " : " + rule);
 
-    stylesheet = document.styleSheets.item(0);
     stylesheet.insertRule("body { -webkit-filter: " + rule + "; }", 0);
 
     filterStyle = window.getComputedStyle(document.body).getPropertyCSSValue('-webkit-filter');
