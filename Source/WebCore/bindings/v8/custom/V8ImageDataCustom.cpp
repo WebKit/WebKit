@@ -39,7 +39,7 @@ v8::Handle<v8::Value> toV8(ImageData* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
-    v8::Handle<v8::Object> wrapper = V8ImageData::wrap(impl);
+    v8::Handle<v8::Object> wrapper = V8ImageData::wrap(impl, isolate);
     if (!wrapper.IsEmpty()) {
         // Create a V8 Uint8ClampedArray object.
         v8::Handle<v8::Value> pixelArray = toV8(impl->data(), isolate);

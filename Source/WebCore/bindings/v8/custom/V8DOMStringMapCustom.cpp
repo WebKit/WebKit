@@ -88,7 +88,7 @@ v8::Handle<v8::Value> toV8(DOMStringMap* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
-    v8::Handle<v8::Object> wrapper = V8DOMStringMap::wrap(impl);
+    v8::Handle<v8::Object> wrapper = V8DOMStringMap::wrap(impl, isolate);
     // Add a hidden reference from the element to the DOMStringMap.
     Element* element = impl->element();
     if (!wrapper.IsEmpty() && element) {

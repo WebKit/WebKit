@@ -46,7 +46,7 @@ v8::Handle<v8::Value> toV8(Blob* impl, v8::Isolate* isolate)
     if (impl->isFile())
         return toV8(static_cast<File*>(impl), isolate);
 
-    return V8Blob::wrap(impl);
+    return V8Blob::wrap(impl, isolate);
 }
 
 } // namespace WebCore

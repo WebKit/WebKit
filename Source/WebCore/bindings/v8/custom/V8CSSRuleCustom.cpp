@@ -52,7 +52,7 @@ v8::Handle<v8::Value> toV8(CSSRule* impl, v8::Isolate* isolate)
         // CSSUnknownRule.idl is explicitly excluded as it doesn't add anything
         // over CSSRule.idl (see WebCore.gyp/WebCore.gyp: 'bindings_idl_files').
         // -> Use the base class wrapper here.
-        return V8CSSRule::wrap(impl);
+        return V8CSSRule::wrap(impl, isolate);
     case CSSRule::STYLE_RULE:
         return toV8(static_cast<CSSStyleRule*>(impl), isolate);
     case CSSRule::CHARSET_RULE:
@@ -72,7 +72,7 @@ v8::Handle<v8::Value> toV8(CSSRule* impl, v8::Isolate* isolate)
     case CSSRule::WEBKIT_REGION_RULE:
         return toV8(static_cast<WebKitCSSRegionRule*>(impl), isolate);
     }
-    return V8CSSRule::wrap(impl);
+    return V8CSSRule::wrap(impl, isolate);
 }
 
 } // namespace WebCore

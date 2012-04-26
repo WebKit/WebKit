@@ -42,7 +42,7 @@ v8::Handle<v8::Value> toV8(DOMTokenList* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
-    v8::Handle<v8::Object> wrapper = V8DOMTokenList::wrap(impl);
+    v8::Handle<v8::Object> wrapper = V8DOMTokenList::wrap(impl, isolate);
     // Add a hidden reference from the element to the DOMTokenList.
     Element* element = impl->element();
     if (!wrapper.IsEmpty() && element) {

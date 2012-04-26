@@ -82,11 +82,11 @@ v8::Handle<v8::Value> toV8(Event* event, v8::Isolate *isolate)
 
     // We need to check Event first to avoid infinite recursion.
     if (eventNames().interfaceForEvent == desiredInterface)
-        return V8Event::wrap(event);
+        return V8Event::wrap(event, isolate);
 
     DOM_EVENT_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
-    return V8Event::wrap(event);
+    return V8Event::wrap(event, isolate);
 }
 
 } // namespace WebCore

@@ -58,7 +58,7 @@ v8::Handle<v8::Value> toV8(Float32Array* impl, v8::Isolate* isolate)
 {
     if (!impl)
         return v8::Null();
-    v8::Handle<v8::Object> wrapper = V8Float32Array::wrap(impl);
+    v8::Handle<v8::Object> wrapper = V8Float32Array::wrap(impl, isolate);
     if (!wrapper.IsEmpty())
         wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalFloatArray, impl->length());
     return wrapper;

@@ -84,7 +84,7 @@ v8::Handle<v8::Value> toV8(HTMLCollection* impl, v8::Isolate* isolate)
 {
     if (impl->type() == DocAll)
         return toV8(static_cast<HTMLAllCollection*>(impl), isolate);
-    return V8HTMLCollection::wrap(impl);
+    return V8HTMLCollection::wrap(impl, isolate);
 }
 
 } // namespace WebCore

@@ -58,7 +58,7 @@ v8::Handle<v8::Value> toV8(CSSValue* impl, v8::Isolate* isolate)
     if (impl->isSVGColor())
         return toV8(static_cast<SVGColor*>(impl), isolate);
 #endif
-    return V8CSSValue::wrap(impl);
+    return V8CSSValue::wrap(impl, isolate);
 }
 
 } // namespace WebCore
