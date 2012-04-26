@@ -1,3 +1,20 @@
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r115314.
+
+        For some reason it fails while bulding GtkVersioning for WTR, but
+        it didn't fail neither in EWS nor in my laptop. We don't really
+        need GtkVersioning in WTR since it already depends on GTK+3
+        unconditionally.
+
+        * WebKitTestRunner/GNUmakefile.am: Remove GtkVersioning.c from
+        compilation.
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::createMouseButtonEvent): Use GTK+ 3 API
+        directly instead of getDefaultGDKPointerDevice() helper.
+        (WTR::EventSenderProxy::keyDown): Ditto.
+        (WTR::EventSenderProxy::mouseMoveTo): Ditto.
+
 2012-04-24  Ojan Vafai  <ojan@chromium.org>
 
         Show flakiness dashboard data in garden-o-matic

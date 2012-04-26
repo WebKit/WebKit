@@ -35,7 +35,6 @@
 
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include <GtkVersioning.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <gdk/gdkkeysyms.h>
@@ -113,7 +112,7 @@ GdkEvent* EventSenderProxy::createMouseButtonEvent(GdkEventType eventType, unsig
     mouseEvent->button.y = m_position.y;
     mouseEvent->button.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(mouseEvent->button.window);
-    mouseEvent->button.device = getDefaultGDKPointerDevice(mouseEvent->button.window);
+    gdk_event_set_device(mouseEvent, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(mouseEvent->button.window))));
     mouseEvent->button.state = modifiers | getMouseButtonModifiers(mouseEvent->button.button);
     mouseEvent->button.time = GDK_CURRENT_TIME;
     mouseEvent->button.axes = 0;
@@ -289,7 +288,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     pressEvent->key.state = modifiers;
     pressEvent->key.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformWindow()));
     g_object_ref(pressEvent->key.window);
-    gdk_event_set_device(pressEvent, getDefaultGDKPointerDevice(pressEvent->key.window));
+    gdk_event_set_device(pressEvent, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(pressEvent->key.window))));
 
     GOwnPtr<GdkKeymapKey> keys;
     gint nKeys;
@@ -358,7 +357,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     event->motion.time = GDK_CURRENT_TIME;
     event->motion.window = gtk_widget_get_window(GTK_WIDGET(m_testController->mainWebView()->platformView()));
     g_object_ref(event->motion.window);
-    event->button.device = getDefaultGDKPointerDevice(event->motion.window);
+    gdk_event_set_device(event, gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gdk_window_get_display(event->motion.window))));
     event->motion.state = 0 | getMouseButtonModifiers(m_mouseButtonCurrentlyDown);
     event->motion.axes = 0;
 
