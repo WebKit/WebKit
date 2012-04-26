@@ -40,7 +40,7 @@
 #include <wtf/Vector.h>
 
 #ifndef NDEBUG
-#include "V8Proxy.h"  // for register and unregister global handles.
+#include "V8GCController.h"
 #endif
 
 namespace WTF {
