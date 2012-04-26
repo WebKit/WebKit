@@ -1,3 +1,17 @@
+2012-04-25  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Shaders: Use u_texture instead of s_texture. It was updated in the spec
+        https://bugs.webkit.org/show_bug.cgi?id=82618
+
+        Reviewed by Dean Jackson.
+
+        Changed the uniform name passed to the CSS Shaders from s_texture to u_texture.
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html
+
+        * css3/filters/resources/color-add.fs:
+        * css3/filters/resources/color-offset-parameters.fs:
+        * css3/filters/resources/color-offset.fs:
+
 2012-04-25  Douglas Stockwell  <dstockwell@chromium.org>
 
         IndexedDB: cursor does not correctly iterate over keys added and removed during iteration
