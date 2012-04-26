@@ -31,11 +31,16 @@ SVGAnimatedBooleanAnimator::SVGAnimatedBooleanAnimator(SVGAnimationElement* anim
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::constructFromString(const String& string)
+static inline bool isTrueString(const String& string)
 {
     DEFINE_STATIC_LOCAL(const String, trueString, ("true"));
+    return string == trueString;
+}
+
+PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::constructFromString(const String& string)
+{
     OwnPtr<SVGAnimatedType> animtedType = SVGAnimatedType::createBoolean(new bool);
-    animtedType->boolean() = string == trueString;
+    animtedType->boolean() = isTrueString(string);
     return animtedType.release();
 }
 
@@ -64,10 +69,9 @@ void SVGAnimatedBooleanAnimator::animValDidChange(const Vector<SVGAnimatedProper
     animValDidChangeForType<SVGAnimatedBoolean>(properties);
 }
 
-void SVGAnimatedBooleanAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)
+void SVGAnimatedBooleanAnimator::addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*)
 {
-    ASSERT_UNUSED(from, from->type() == AnimatedBoolean);
-    ASSERT_UNUSED(to, from->type() == to->type());
+    ASSERT_NOT_REACHED();
 }
 
 void SVGAnimatedBooleanAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
@@ -80,11 +84,7 @@ void SVGAnimatedBooleanAnimator::calculateAnimatedValue(float percentage, unsign
     bool& animatedBoolean = animated->boolean();
     m_animationElement->adjustFromToValues<bool>(0, fromBoolean, toBoolean, animatedBoolean, percentage, m_contextElement);
 
-    AnimationMode animationMode = m_animationElement->animationMode();
-    if ((animationMode == FromToAnimation && percentage > 0.5) || animationMode == ToAnimation || percentage == 1)
-        animatedBoolean = bool(toBoolean);
-    else
-        animatedBoolean = bool(fromBoolean);
+    m_animationElement->animateDiscreteType<bool>(percentage, fromBoolean, toBoolean, animatedBoolean);
 }
 
 float SVGAnimatedBooleanAnimator::calculateDistance(const String&, const String&)

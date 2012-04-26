@@ -85,7 +85,7 @@ public:
 
     static bool isTargetAttributeCSSProperty(SVGElement*, const QualifiedName&);
 
-    bool isAdditive() const;
+    virtual bool isAdditive() const;
     bool isAccumulated() const;
     AnimationMode animationMode() const;
     CalcMode calcMode() const;
@@ -153,6 +153,16 @@ public:
         }
 
         return true;
+    }
+
+    template<typename AnimatedType>
+    void animateDiscreteType(float percentage, AnimatedType& fromType, AnimatedType& toType, AnimatedType& animatedType)
+    {
+        if ((animationMode() == FromToAnimation && percentage > 0.5) || animationMode() == ToAnimation || percentage == 1) {
+            animatedType = AnimatedType(toType);
+            return;
+        }
+        animatedType = AnimatedType(fromType);
     }
 
 protected:

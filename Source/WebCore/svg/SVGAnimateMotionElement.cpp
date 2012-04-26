@@ -185,6 +185,8 @@ bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString,
     
 bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString, const String& byString)
 {
+    if (animationMode() == ByAnimation && !isAdditive())
+        return false;
     parsePoint(fromString, m_fromPoint);
     FloatPoint byPoint;
     parsePoint(byString, byPoint);

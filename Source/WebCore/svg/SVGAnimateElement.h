@@ -49,6 +49,7 @@ protected:
     virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
     virtual void applyResultsToTarget();
     virtual float calculateDistance(const String& fromString, const String& toString);
+    virtual bool isAdditive() const OVERRIDE;
 
     virtual void targetElementWillChange(SVGElement* currentTarget, SVGElement* oldTarget) OVERRIDE;
 

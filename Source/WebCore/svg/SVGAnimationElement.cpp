@@ -607,11 +607,11 @@ void SVGAnimationElement::startedActiveInterval()
     else if (animationMode == ToAnimation) {
         // For to-animations the from value is the current accumulated value from lower priority animations.
         // The value is not static and is determined during the animation.
-        m_animationValid = calculateFromAndToValues(String(), to);
+        m_animationValid = calculateFromAndToValues(emptyString(), to);
     } else if (animationMode == FromByAnimation)
         m_animationValid = calculateFromAndByValues(from, by);
     else if (animationMode == ByAnimation)
-        m_animationValid = calculateFromAndByValues(String(), by);
+        m_animationValid = calculateFromAndByValues(emptyString(), by);
     else if (animationMode == ValuesAnimation) {
         m_animationValid = m_values.size() > 1
             && (calcMode == CalcModePaced || !fastHasAttribute(SVGNames::keyTimesAttr) || fastHasAttribute(SVGNames::keyPointsAttr) || (m_values.size() == m_keyTimes.size()))

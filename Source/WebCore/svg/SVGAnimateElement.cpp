@@ -153,6 +153,9 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     if (!targetElement)
         return false;
 
+    if (animationMode() == ByAnimation && !isAdditive())
+        return false;
+
     ASSERT(!hasTagName(SVGNames::setTag));
 
     determinePropertyValueTypes(fromString, byString); 
@@ -223,6 +226,25 @@ void SVGAnimateElement::applyResultsToTarget()
 
     // SVG DOM animVal animation code-path.
     m_animator->animValDidChange(m_animatedProperties);
+}
+
+bool SVGAnimateElement::isAdditive() const
+{
+    if (animationMode() == ByAnimation || animationMode() == FromByAnimation) {
+        // Spec: http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties.
+        switch (m_animatedPropertyType) {
+        case AnimatedBoolean:
+        case AnimatedEnumeration:
+        case AnimatedPreserveAspectRatio:
+        case AnimatedString:
+        case AnimatedUnknown:
+            return false;
+        default:
+            break;
+        }
+    }
+
+    return SVGAnimationElement::isAdditive();
 }
 
 float SVGAnimateElement::calculateDistance(const String& fromString, const String& toString)
