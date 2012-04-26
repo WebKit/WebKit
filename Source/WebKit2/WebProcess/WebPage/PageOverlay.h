@@ -98,6 +98,7 @@ private:
 
     FadeAnimationType m_fadeAnimationType;
     float m_fractionFadedIn;
+    bool m_pageOverlayShouldApplyFadeWhenPainting;
 };
 
 } // namespace WebKit

@@ -222,6 +222,13 @@ void LayerTreeHostQt::setPageOverlayNeedsDisplay(const WebCore::IntRect& rect)
     scheduleLayerFlush();
 }
 
+void LayerTreeHostQt::setPageOverlayOpacity(float value)
+{
+    ASSERT(m_pageOverlayLayer);
+    m_pageOverlayLayer->setOpacity(value);
+    scheduleLayerFlush();
+}
+
 bool LayerTreeHostQt::flushPendingLayerChanges()
 {
     bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();

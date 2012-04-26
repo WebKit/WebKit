@@ -1,3 +1,40 @@
+2012-04-26  Lars Knudsen  <lars.knudsen@nokia.com>
+
+        Make it possible to use accelerated compositing for page overlay fading
+        https://bugs.webkit.org/show_bug.cgi?id=82336
+
+        Reviewed by Noam Rosenthal.
+
+        Page overlay fading will use AC where possible.  Otherwise, it will
+        fall back to the previous method of redrawing each frame in the animation.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setPageOverlayOpacity):
+        (DrawingArea):
+        (WebKit::DrawingArea::pageOverlayShouldApplyFadeWhenPainting):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setPageOverlayOpacity):
+        (WebKit):
+        (WebKit::DrawingAreaImpl::pageOverlayShouldApplyFadeWhenPainting):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setPageOverlayOpacity):
+        (WebKit::LayerTreeHost::pageOverlayShouldApplyFadeWhenPainting):
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::PageOverlay):
+        (WebKit::PageOverlay::setPage):
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+        * WebProcess/WebPage/PageOverlay.h:
+        * WebProcess/WebPage/TapHighlightController.cpp:
+        (WebKit::TapHighlightController::drawRect):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::setPageOverlayOpacity):
+        (WebKit):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::pageOverlayShouldApplyFadeWhenPainting):
+
 2012-04-26  Alexander Færøy  <ahf@0x90.dk>
 
         [Qt] r115300 broke the Qt build on Mac OS X.

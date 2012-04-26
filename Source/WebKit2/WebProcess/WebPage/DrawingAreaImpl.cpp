@@ -223,6 +223,20 @@ void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
     setNeedsDisplay(rect);
 }
 
+void DrawingAreaImpl::setPageOverlayOpacity(float value)
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->setPageOverlayOpacity(value);
+}
+
+bool DrawingAreaImpl::pageOverlayShouldApplyFadeWhenPainting() const
+{
+    if (m_layerTreeHost && !m_layerTreeHost->pageOverlayShouldApplyFadeWhenPainting())
+        return false;
+
+    return true;
+}
+
 void DrawingAreaImpl::pageCustomRepresentationChanged()
 {
     if (!m_alwaysUseCompositing)

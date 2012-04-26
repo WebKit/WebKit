@@ -102,11 +102,12 @@ void TapHighlightController::drawRect(PageOverlay* pageOverlay, GraphicsContext&
     if (m_path.isEmpty())
         return;
 
-    float fractionFadedIn = pageOverlay->fractionFadedIn();
-
     {
         GraphicsContextStateSaver stateSaver(context);
-        context.setFillColor(highlightColor(m_color, fractionFadedIn), ColorSpaceSRGB);
+        if (m_webPage->drawingArea()->pageOverlayShouldApplyFadeWhenPainting())
+            context.setFillColor(highlightColor(m_color, pageOverlay->fractionFadedIn()), ColorSpaceSRGB);
+        else
+            context.setFillColor(m_color, ColorSpaceSRGB);
         context.fillPath(m_path);
     }
 }
