@@ -80,57 +80,37 @@ ObjcClass* ObjcClass::classForIsA(ClassStructPtr isa)
     This function performs the inverse of that operation.
 
     @result Fills 'buffer' with the ObjectiveC method name that corresponds to 'JSName'.
-            Returns true for success, false for failure. (Failure occurs when 'buffer'
-            is not big enough to hold the result.)
 */
-static bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSize)
+typedef Vector<char, 256> JSNameConversionBuffer;
+static inline void convertJSMethodNameToObjc(const CString& jsName, JSNameConversionBuffer& buffer)
 {
-    ASSERT(JSName && buffer);
+    buffer.reserveInitialCapacity(jsName.length() + 1);
 
-    const char *sp = JSName; // source pointer
-    char *dp = buffer; // destination pointer
-
-    char *end = buffer + bufferSize;
-    while (dp < end) {
-        if (*sp == '$') {
-            ++sp;
-            *dp = *sp;
-        } else if (*sp == '_')
-            *dp = ':';
+    const char* source = jsName.data();
+    while (true) {
+        if (*source == '$') {
+            ++source;
+            buffer.uncheckedAppend(*source);
+        } else if (*source == '_')
+            buffer.uncheckedAppend(':');
         else
-            *dp = *sp;
+            buffer.uncheckedAppend(*source);
 
-        // If a future coder puts funny ++ operators above, we might write off the end
-        // of the buffer in the middle of this loop. Let's make sure to check for that.
-        ASSERT(dp < end);
+        if (!*source)
+            return;
 
-        if (*sp == 0) { // We finished converting JSName
-            ASSERT(strlen(JSName) < bufferSize);
-            return true;
-        }
-
-        ++sp;
-        ++dp;
+        ++source;
     }
-
-    return false; // We ran out of buffer before converting JSName
 }
 
 MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) const
 {
-    MethodList methodList;
-    char fixedSizeBuffer[1024];
-    char* buffer = fixedSizeBuffer;
     CString jsName = identifier.ascii();
-    if (!convertJSMethodNameToObjc(jsName.data(), buffer, sizeof(fixedSizeBuffer))) {
-        int length = jsName.length() + 1;
-        buffer = new char[length];
-        if (!buffer || !convertJSMethodNameToObjc(jsName.data(), buffer, length))
-            return methodList;
-    }
+    JSNameConversionBuffer buffer;
+    convertJSMethodNameToObjc(jsName, buffer);
 
-    
-    RetainPtr<CFStringRef> methodName(AdoptCF, CFStringCreateWithCString(NULL, buffer, kCFStringEncodingASCII));
+    MethodList methodList;
+    RetainPtr<CFStringRef> methodName(AdoptCF, CFStringCreateWithCString(NULL, buffer.data(), kCFStringEncodingASCII));
     Method* method = (Method*)CFDictionaryGetValue(_methods.get(), methodName.get());
     if (method) {
         methodList.append(method);
@@ -158,7 +138,7 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
             if ([thisClass respondsToSelector:@selector(webScriptNameForSelector:)])
                 mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
 
-            if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer) == 0) {
+            if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer.data()) == 0) {
                 Method* aMethod = new ObjcMethod(thisClass, objcMethodSelector); // deleted when the dictionary is destroyed
                 CFDictionaryAddValue(_methods.get(), methodName.get(), aMethod);
                 methodList.append(aMethod);
@@ -168,9 +148,6 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
         thisClass = class_getSuperclass(thisClass);
         free(objcMethodList);
     }
-
-    if (buffer != fixedSizeBuffer)
-        delete [] buffer;
 
     return methodList;
 }

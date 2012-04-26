@@ -142,7 +142,14 @@ static BOOL _allowsScriptsFullAccess = NO;
         return NO;
 
     if (aSelector == @selector(throwIfArgumentIsNotHello:))
-      return NO;
+        return NO;
+
+    if (aSelector == @selector(methodMappedToLongName))
+        return NO;
+
+    NSString *selectorName = NSStringFromSelector(aSelector);
+    if ([selectorName hasPrefix:@"testConversion"])
+        return NO;
 
     return YES;
 }
@@ -153,7 +160,10 @@ static BOOL _allowsScriptsFullAccess = NO;
         return @"echo";
 
     if (aSelector == @selector(throwIfArgumentIsNotHello:))
-      return @"throwIfArgumentIsNotHello";
+        return @"throwIfArgumentIsNotHello";
+
+    if (aSelector == @selector(methodMappedToLongName))
+        return [@"" stringByPaddingToLength:4096 withString: @"long" startingAtIndex:0];
 
     return nil;
 }
@@ -194,6 +204,21 @@ static BOOL _allowsScriptsFullAccess = NO;
 {
     if (![str isEqualToString:@"Hello"]) 
         [WebScriptObject throwException:[NSString stringWithFormat:@"%@ != Hello", str]];
+}
+
+- (NSString *)methodMappedToLongName
+{
+    return @"methodMappedToLongName";
+}
+
+- (NSString *)testConversionColon:(int)useless
+{
+    return @"testConversionColon:(int)useless";
+}
+
+- (NSString *)testConversionEscapeChar$a_b$_:(int)useless
+{
+    return @"testConversionEscapeChar$a_b$_:(int)useless";
 }
 
 - (void)dealloc
