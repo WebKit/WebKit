@@ -47,6 +47,7 @@ public:
     virtual PassRefPtr<WebCore::IDBKey> primaryKey() const;
     virtual PassRefPtr<WebCore::SerializedScriptValue> value() const;
     virtual void update(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
+    virtual void advance(unsigned long, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
     virtual void continueFunction(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
     virtual void prefetchContinue(int numberToFetch, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&) { ASSERT_NOT_REACHED(); } // Only used in the backend.

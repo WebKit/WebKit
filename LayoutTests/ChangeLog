@@ -1,3 +1,29 @@
+2012-04-25  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: implement cursor.advance()
+        https://bugs.webkit.org/show_bug.cgi?id=84174
+
+        Reviewed by Ojan Vafai.
+
+        Tests for cursor.advance().
+
+        * storage/indexeddb/cursor-advance-expected.txt: Added.
+        * storage/indexeddb/cursor-advance.html: Added.
+        * storage/indexeddb/resources/cursor-advance.js: Added.
+        (test):
+        (openSuccess):
+        (createAndPopulateObjectStore):
+        (makeAdvanceTest.continueToTest):
+        (makeAdvanceTest.request.onerror):
+        (makeAdvanceTest):
+        (mkCursor):
+        (runTest):
+        (testAll):
+        (testSimple):
+        (testContinueThenAdvance):
+        (testAdvanceMultiple):
+        (testAdvanceToEnd):
+
 2012-04-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r115260.

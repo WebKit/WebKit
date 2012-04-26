@@ -116,6 +116,34 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
     return request.release();
 }
 
+void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBCursor::advance");
+    if (!m_gotValue) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!m_request) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return;
+    }
+
+    if (!count) {
+        // FIXME: spec says we should throw a JavaScript TypeError
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
+    if (!m_request->resetReadyState(m_transaction.get())) {
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        return;
+    }
+    m_request->setCursor(this);
+    m_gotValue = false;
+    m_backend->advance(count, m_request, ec);
+}
+
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::continue");

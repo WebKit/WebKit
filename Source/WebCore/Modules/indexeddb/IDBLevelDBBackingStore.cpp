@@ -980,7 +980,8 @@ struct CursorOptions {
 class CursorImplCommon : public IDBBackingStore::Cursor {
 public:
     // IDBBackingStore::Cursor
-    virtual bool continueFunction(const IDBKey*, IteratorState);
+    virtual bool advance(unsigned long);
+    virtual bool continueFunction(const IDBKey* = 0, IteratorState = Seek);
     virtual PassRefPtr<IDBKey> key() { return m_currentKey; }
     virtual PassRefPtr<IDBKey> primaryKey() { return m_currentKey; }
     virtual String value() = 0;
@@ -1033,6 +1034,15 @@ bool CursorImplCommon::firstSeek()
         m_iterator->seek(m_cursorOptions.highKey);
 
     return continueFunction(0, Ready);
+}
+
+bool CursorImplCommon::advance(unsigned long count)
+{
+    while (count--) {
+        if (!continueFunction())
+            return false;
+    }
+    return true;
 }
 
 bool CursorImplCommon::continueFunction(const IDBKey* key, IteratorState nextState)

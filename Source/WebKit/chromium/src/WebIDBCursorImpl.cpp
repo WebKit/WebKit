@@ -74,7 +74,7 @@ void WebIDBCursorImpl::update(const WebSerializedScriptValue& value, WebIDBCallb
 
 void WebIDBCursorImpl::advance(unsigned long count, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
-    // FIXME: not implemented in indexeddb yet
+    m_idbCursorBackend->advance(count, IDBCallbacksProxy::create(adoptPtr(callbacks)), ec);
 }
 
 void WebIDBCursorImpl::continueFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks, WebExceptionCode& ec)

@@ -124,8 +124,27 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
-// IMPORTANT: If this ever 1) fires an 'error' event and 2) it's possible to fire another event afterwards,
-//            IDBRequest::hasPendingActivity() will need to be modified to handle this!!!
+void IDBCursorBackendImpl::advance(unsigned long count, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBCursorBackendImpl::advance");
+
+    if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::advanceInternal, this, count, prpCallbacks)))
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+}
+
+void IDBCursorBackendImpl::advanceInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
+{
+    IDB_TRACE("IDBCursorBackendImpl::advanceInternal");
+    RefPtr<IDBCursorBackendImpl> cursor = prpCursor;
+    if (!cursor->m_cursor || !cursor->m_cursor->advance(count)) {
+        cursor->m_cursor = 0;
+        callbacks->onSuccess(SerializedScriptValue::nullValue());
+        return;
+    }
+
+    callbacks->onSuccessWithContinuation();
+}
+
 void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> callbacks)
 {
     IDB_TRACE("IDBCursorBackendImpl::continueInternal");

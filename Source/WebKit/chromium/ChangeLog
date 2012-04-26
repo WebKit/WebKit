@@ -1,3 +1,20 @@
+2012-04-25  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: implement cursor.advance()
+        https://bugs.webkit.org/show_bug.cgi?id=84174
+
+        Reviewed by Ojan Vafai.
+
+        Hook up chromium IPC to IDBCursor.advance().
+
+        * src/IDBCursorBackendProxy.cpp:
+        (WebKit::IDBCursorBackendProxy::advance):
+        (WebKit):
+        * src/IDBCursorBackendProxy.h:
+        (IDBCursorBackendProxy):
+        * src/WebIDBCursorImpl.cpp:
+        (WebKit::WebIDBCursorImpl::advance):
+
 2012-04-25  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r115262.

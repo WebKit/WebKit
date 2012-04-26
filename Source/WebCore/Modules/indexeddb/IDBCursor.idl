@@ -40,6 +40,8 @@ module storage {
 
         [CallWith=ScriptExecutionContext] IDBRequest update(in SerializedScriptValue value)
             raises (IDBDatabaseException);
+        void advance(in unsigned long count)
+            raises (IDBDatabaseException);
         [ImplementedAs=continueFunction] void continue(in [Optional] IDBKey key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete()

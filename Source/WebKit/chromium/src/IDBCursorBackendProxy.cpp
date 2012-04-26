@@ -79,6 +79,11 @@ void IDBCursorBackendProxy::update(PassRefPtr<SerializedScriptValue> value, Pass
     m_idbCursor->update(value, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
+void IDBCursorBackendProxy::advance(unsigned long count, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
+{
+    m_idbCursor->advance(count, new WebIDBCallbacksImpl(callbacks), ec);
+}
+
 void IDBCursorBackendProxy::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
     m_idbCursor->continueFunction(key, new WebIDBCallbacksImpl(callbacks), ec);
