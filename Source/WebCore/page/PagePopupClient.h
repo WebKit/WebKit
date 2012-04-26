@@ -48,7 +48,6 @@ public:
     // source is rendered in a PagePopup.
     // The content HTML supports:
     //  - No <select> popups
-    //  - No window.resizeBy() and resizeTo()
     //  - window.setValueAndClosePopup(number, string).
     virtual void writeDocument(DocumentWriter&) = 0;
 

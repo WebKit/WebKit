@@ -30,7 +30,7 @@
 
 body {
     -webkit-user-select: none;
-    background-color: purple;
+    background-color: white;
     font: -webkit-small-control;
     margin: 0;
     overflow: hidden;
@@ -46,13 +46,17 @@ body {
     box-shadow: inset 2px 2px 2px white,
         inset -2px -2px 1px rgba(0,0,0,0.1);
     padding: 6px;
+    whitespace: nowrap;
+    /* width and opacity are reset in the JS code. */
+    width: 500px;
+    opacity: 0;
 }
 
 .year-month-area {
 }
 
 .year-month-upper {
-    display: -webkit-box;
+    /* display:-webkit-box; is added in the JS code. */
 }
 
 .year-selector {
@@ -61,7 +65,7 @@ body {
 }
 
 .month-selector-box {
-    display: inline-box;
+    display: inline-block;
     text-align: center;
     -webkit-box-flex: 2;
 }
@@ -141,8 +145,7 @@ body {
     border-collapse: separate;
     border-spacing: 0px;
     font: -webkit-small-control;
-    table-layout: fixed;
-    width: 100%;
+    /* table-layout:fixed and width:100% are added in the JS code. */
 }
 
 .day-label { /* <th> */

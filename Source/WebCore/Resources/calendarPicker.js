@@ -286,12 +286,40 @@ function initialize(args) {
             initialDate = global.maximumDate;
         global.daysTable.selectDate(initialDate);
 
-        setTimeout(function() {
-            if (window.frameElement)
-                window.frameElement.style.height = main.offsetHeight + "px";
-            else
-                window.resizeTo(window.outerWidth, main.offsetTop + main.offsetHeight);
-        }, 0);
+        setTimeout(fixWindowSize, 0);
+    }
+}
+
+function fixWindowSize() {
+    var yearMonthRightElement = document.getElementsByClassName(ClassNames.YearMonthButtonRight)[0];
+    var daysAreaElement = document.getElementsByClassName(ClassNames.DaysArea)[0];
+    var headers = daysAreaElement.getElementsByClassName(ClassNames.DayLabel);
+    var maxCellWidth = 0;
+    for (var i = 0; i < headers.length; ++i) {
+        if (maxCellWidth < headers[i].offsetWidth)
+            maxCellWidth = headers[i].offsetWidth;
+    }
+    var DaysAreaContainerBorder = 1;
+    var maxRight = Math.max(yearMonthRightElement.offsetLeft + yearMonthRightElement.offsetWidth,
+                            daysAreaElement.offsetLeft + maxCellWidth * 7 + DaysAreaContainerBorder);
+    var MainPadding = 6;
+    var MainBorder = 1;
+    var desiredBodyWidth = maxRight + MainPadding + MainBorder;
+
+    var main = $("main");
+    var mainHeight = main.offsetHeight;
+    main.style.width = "auto";
+    daysAreaElement.style.width = "100%";
+    daysAreaElement.style.tableLayout = "fixed";
+    document.getElementsByClassName(ClassNames.YearMonthUpper)[0].style.display = "-webkit-box";
+    document.getElementsByClassName(ClassNames.MonthSelectorBox)[0].style.display = "block";
+    main.style.webkitTransition = "opacity 0.1s ease";
+    main.style.opacity = "1";
+    if (window.frameElement) {
+        window.frameElement.style.width = desiredBodyWidth + "px";
+        window.frameElement.style.height = mainHeight + "px";
+    } else {
+        window.resizeTo(desiredBodyWidth, mainHeight);
     }
 }
 
@@ -397,6 +425,16 @@ YearMonthController.prototype.attachTo = function(main) {
     this._wall = createElement("div", ClassNames.MonthSelectorWall);
     this._wall.addEventListener("click", bind(this._closePopup, this), false);
     main.appendChild(this._wall);
+
+    // The maximum year which <input type=date> supports is 275,760.
+    // See WebCore/platform/DateComponents.h
+    var MaximumYear = 275760;
+    var maxWidth = 0;
+    for (var m = 0; m < 12; ++m) {
+        this._month.textContent = formatYearMonth(MaximumYear, m);
+        maxWidth = Math.max(maxWidth, this._month.offsetWidth);
+    }
+    this._month.style.minWidth = maxWidth + 'px';
 
     global.firstFocusableControl = this._left2; // FIXME: Shoud it be this.month?
 };
@@ -513,7 +551,7 @@ YearMonthController.prototype._showPopup = function() {
     this._monthPopup.style.display = "block";
     this._monthPopup.style.position = "absolute";
     this._monthPopup.style.zIndex = "1000"; // Larger than the days area.
-    this._monthPopup.style.left = this._month.offsetLeft + "px";
+    this._monthPopup.style.left = this._month.offsetLeft + (this._month.offsetWidth - this._monthPopup.offsetWidth) / 2 + "px";
     this._monthPopup.style.top = this._month.offsetTop + this._month.offsetHeight + "px";
     this._monthPopup.focus();
 

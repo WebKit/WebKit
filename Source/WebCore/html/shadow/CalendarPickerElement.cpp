@@ -129,7 +129,7 @@ void CalendarPickerElement::detach()
 
 IntSize CalendarPickerElement::contentSize()
 {
-    return IntSize(320, 256);
+    return IntSize(100, 100);
 }
 
 #define addLiteral(literal, writer)    writer.addData(literal, sizeof(literal) - 1)
