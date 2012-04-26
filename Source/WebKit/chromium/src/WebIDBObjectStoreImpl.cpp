@@ -57,6 +57,13 @@ WebString WebIDBObjectStoreImpl::name() const
     return m_objectStore->name();
 }
 
+WebIDBKeyPath WebIDBObjectStoreImpl::keyPath() const
+{
+    return WebIDBKeyPath(m_objectStore->keyPath());
+}
+
+// FIXME: Remove this method once callers are updated.
+// http://webkit.org/b/84207
 WebString WebIDBObjectStoreImpl::keyPathString() const
 {
     return m_objectStore->keyPath();

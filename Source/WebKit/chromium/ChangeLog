@@ -1,3 +1,60 @@
+2012-04-25  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Use WebIDBKeyPath type for key paths in WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=84631
+
+        Reviewed by James Robinson.
+
+        WebIDBKeyPath was previously a utility class for parsing key paths into components,
+        but the API exposed key paths only as nullable strings. To support array-type keypaths,
+        WebIDBKeyPath becomes a value class with type flags. For landing, several legacy methods
+        are retained but will be cleaned up after all callers have been updated, tracked as
+        the bug: http://webkit.org/b/84207
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createObjectStore): Add WebIDBKeyPath overload; WebString overload delegates so implementers can switch.
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::keyPath): Calls keyPathString if not overridden.
+        (WebKit::WebIDBIndex::keyPathString): Comment change.
+        * public/WebIDBKeyPath.h:
+        (WebKit::WebIDBKeyPath::create): Overload added for creating array-type key paths.
+        (WebKit::WebIDBKeyPath::array): Accessor for array-type key paths.
+        (WebKit::WebIDBKeyPath::operator const WebString ): Temporary, for compatibility.
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::keyPath): Calls keyPathString if not overridden.
+        (WebKit::WebIDBObjectStore::keyPathString): Comment change.
+        (WebKit::WebIDBObjectStore::createIndex): Add WebIDBKeyPath overload; WebString overload delegates so implementers can switch.
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKitPlatformSupport): WebIDBKeyPath overloads for these methods added, delegate to WebString version until implementers are updated.
+        (WebKit::WebKitPlatformSupport::createIDBKeysFromSerializedValuesAndKeyPath):
+        (WebKit::WebKitPlatformSupport::injectIDBKeyIntoSerializedValue):
+        * src/IDBIndexBackendProxy.cpp:
+        (WebKit::IDBIndexBackendProxy::keyPath): Returns the string version until WebCore is updated.
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::keyPath): Returns the string version until WebCore is updated.
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl): Add createObjectStore overload for WebIDBKeyPath type, delegates to WebString version until callers are updated.
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::keyPath): Implements the new WebIDBKeyPath return type.
+        (WebKit):
+        * src/WebIDBIndexImpl.h:
+        (WebIDBIndexImpl): Implements the new WebIDBKeyPath return type.
+        * src/WebIDBKeyPath.cpp:
+        (WebKit::WebIDBKeyPath::create): Support null key path types.
+        (WebKit::WebIDBKeyPath::createNull): New API.
+        (WebKit):
+        (WebKit::WebIDBKeyPath::isValid): New API.
+        (WebKit::WebIDBKeyPath::type): New API.
+        (WebKit::WebIDBKeyPath::string): New API (value accessor).
+        (WebKit::WebIDBKeyPath::WebIDBKeyPath):
+        (WebKit::WebIDBKeyPath::assign): This API will be removed.
+        (WebKit::WebIDBKeyPath::operator const WTF::Vector<WTF::String, 0>&): Ensure it is non-null - only used in copy constructor which guards against this.
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::keyPath): Implement the new WebIDBKeyPath return type.
+        (WebKit):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl): Add createIndex overload for WebIDBKeyPath type, delegates to WebString version until callers are updated.
+
 2012-04-25  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Add support for animation finished events.

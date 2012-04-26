@@ -39,16 +39,62 @@ namespace WebKit {
 
 WebIDBKeyPath WebIDBKeyPath::create(const WebString& keyPath)
 {
+    if (keyPath.isNull())
+        return createNull();
+
     WTF::Vector<WTF::String> idbElements;
     IDBKeyPathParseError idbError;
     IDBParseKeyPath(keyPath, idbElements, idbError);
     return WebIDBKeyPath(idbElements, static_cast<int>(idbError));
 }
 
+WebIDBKeyPath WebIDBKeyPath::createNull()
+{
+    return WebIDBKeyPath(WebString());
+}
+
 WebIDBKeyPath::WebIDBKeyPath(const WTF::Vector<WTF::String>& elements, int parseError)
     : m_private(new WTF::Vector<WTF::String>(elements))
     , m_parseError(parseError)
 {
+}
+
+bool WebIDBKeyPath::isValid() const
+{
+    return m_parseError == IDBKeyPathParseErrorNone;
+}
+
+WebIDBKeyPath::Type WebIDBKeyPath::type() const
+{
+    return m_private.get() ? StringType : NullType;
+}
+
+WebString WebIDBKeyPath::string() const
+{
+    if (!m_private.get())
+        return WebString();
+
+    // FIXME: Store the complete string instead of rebuilding it.
+    // http://webkit.org/b/84207
+    WTF::String string("");
+    WTF::Vector<WTF::String>& array = *m_private.get();
+    for (size_t i = 0; i < array.size(); ++i) {
+        if (i)
+            string.append(".");
+        string.append(array[i]);
+    }
+    return WebString(string);
+}
+
+WebIDBKeyPath::WebIDBKeyPath(const WebString& keyPath)
+    : m_parseError(IDBKeyPathParseErrorNone)
+{
+    if (!keyPath.isNull()) {
+        m_private.reset(new WTF::Vector<WTF::String>());
+        IDBKeyPathParseError idbParseError;
+        IDBParseKeyPath(keyPath, *m_private.get(), idbParseError);
+        m_parseError = idbParseError;
+    }
 }
 
 int WebIDBKeyPath::parseError() const
@@ -59,7 +105,10 @@ int WebIDBKeyPath::parseError() const
 void WebIDBKeyPath::assign(const WebIDBKeyPath& keyPath)
 {
     m_parseError = keyPath.m_parseError;
-    m_private.reset(new WTF::Vector<WTF::String>(keyPath));
+    if (keyPath.m_private.get())
+        m_private.reset(new WTF::Vector<WTF::String>(keyPath));
+    else
+        m_private.reset(0);
 }
 
 void WebIDBKeyPath::reset()
@@ -69,6 +118,7 @@ void WebIDBKeyPath::reset()
 
 WebIDBKeyPath::operator const WTF::Vector<WTF::String, 0>&() const
 {
+    ASSERT(m_private.get());
     return *m_private.get();
 }
 
