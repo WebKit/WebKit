@@ -27,6 +27,7 @@
 #define KJS_BINDINGS_OBJC_CLASS_H
 
 #include "objc_runtime.h"
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 namespace Bindings {
@@ -50,7 +51,7 @@ public:
 private:
     ClassStructPtr _isa;
     RetainPtr<CFMutableDictionaryRef> _methods;
-    mutable HashMap<RefPtr<StringImpl>, OwnPtr<Field> > m_fieldCache;
+    mutable HashMap<String, OwnPtr<Field> > m_fieldCache;
 };
 
 } // namespace Bindings
