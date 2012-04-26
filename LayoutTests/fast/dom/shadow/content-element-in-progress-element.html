@@ -29,17 +29,12 @@ testFuncs.push(function contentElementInProgressElement(callIfDone) {
 
     var sr = new WebKitShadowRoot(div);
 
-    var f = (function(sr, callIfDone) {
-        return function() {
-            var progress = document.createElement('progress');
-            var content = document.createElement('content');
-            progress.appendChild(content);
-            sr.appendChild(progress);
-            callIfDone();
-        };
-    })(sr, callIfDone);
-
-    setTimeout(f, 0);
+    var progress = document.createElement('progress');
+    var content = document.createElement('content');
+    progress.appendChild(content);
+    sr.appendChild(progress);
+    document.body.offsetWidth; // force style recalc.
+    callIfDone();
 });
 
 </script>

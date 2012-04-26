@@ -29,17 +29,12 @@ testFuncs.push(function contentElementInVideoElement(callIfDone) {
 
     var sr = new WebKitShadowRoot(div);
 
-    var f = (function(sr, callIfDone) {
-        return function() {
-            var video = document.createElement('video');
-            var content = document.createElement('content');
-            video.appendChild(content);
-            sr.appendChild(video);
-            callIfDone();
-        };
-    })(sr, callIfDone);
-
-    setTimeout(f, 0);
+    var video = document.createElement('video');
+    var content = document.createElement('content');
+    video.appendChild(content);
+    sr.appendChild(video);
+    document.body.offsetWidth; // force style recalc.
+    callIfDone();
 });
 
 </script>

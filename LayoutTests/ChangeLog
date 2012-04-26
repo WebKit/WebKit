@@ -1,3 +1,17 @@
+2012-04-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove unnecessary timeouts (and closures) from content-element-in-* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=84896
+
+        These tests don't need any of them. Not sure how they got there in the first place. Oh wait. I reviewed this code. /me hands head in shame.
+
+        Reviewed by Ojan Vafai.
+
+        * fast/dom/shadow/content-element-in-media-element.html: Removed the timeout and extra closures.
+        * fast/dom/shadow/content-element-in-meter-element.html: Ditto.
+        * fast/dom/shadow/content-element-in-progress-element.html: Ditto.
+        * fast/dom/shadow/content-element-in-select-element.html: Ditto.
+
 2012-04-25  Alexandru Chiculita  <achicu@adobe.com>
 
         [Chromium] Layout Test css3/filters/custom/custom-filter-property-computed-style.html is failing

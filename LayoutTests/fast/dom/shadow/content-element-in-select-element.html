@@ -29,17 +29,12 @@ testFuncs.push(function contentElementInSelectElement(callIfDone) {
 
     var sr = new WebKitShadowRoot(div);
 
-    var f = (function(sr, callIfDone) {
-        return function() {
-            var select = document.createElement('select');
-            var content = document.createElement('content');
-            select.appendChild(content);
-            sr.appendChild(select);
-            callIfDone();
-        };
-    })(sr, callIfDone);
-
-    setTimeout(f, 0);
+    var select = document.createElement('select');
+    var content = document.createElement('content');
+    select.appendChild(content);
+    sr.appendChild(select);
+    document.body.offsetWidth; // force style recalc.
+    callIfDone();
 });
 
 </script>

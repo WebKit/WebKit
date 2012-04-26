@@ -29,17 +29,12 @@ testFuncs.push(function contentElementInMeterElement(callIfDone) {
 
     var sr = new WebKitShadowRoot(div);
 
-    var f = (function(sr, callIfDone) {
-        return function() {
-            var meter = document.createElement('meter');
-            var content = document.createElement('content');
-            meter.appendChild(content);
-            sr.appendChild(meter);
-            callIfDone();
-        };
-    })(sr, callIfDone);
-
-    setTimeout(f, 0);
+    var meter = document.createElement('meter');
+    var content = document.createElement('content');
+    meter.appendChild(content);
+    sr.appendChild(meter);
+    document.body.offsetWidth; // force style recalc.
+    callIfDone();
 });
 
 </script>
