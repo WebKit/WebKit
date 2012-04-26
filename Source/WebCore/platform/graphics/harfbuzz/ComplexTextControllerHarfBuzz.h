@@ -105,6 +105,7 @@ private:
     // Return the width (in px) of the current script run.
     unsigned width() const { return m_pixelWidth; }
 
+    const FontPlatformData* getComplexFontPlatformData();
     void setupFontForScriptRun();
     void deleteGlyphArrays();
     void createGlyphArrays(int);

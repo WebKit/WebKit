@@ -39,7 +39,7 @@
 #include "SimpleFontData.h"
 
 #include "SkPaint.h"
-#include "SkTypeface.h"
+#include "SkTypeface_android.h"
 #include "SkUtils.h"
 
 #include <unicode/locid.h>
@@ -164,33 +164,46 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     if (fontDescription.italic())
         style |= SkTypeface::kItalic;
 
-    SkTypeface* typeface = SkTypeface::CreateFromName(name, SkTypeface::kNormal);
+    SkTypeface* typeface = 0;
     FontPlatformData* result = 0;
+    FallbackScripts fallbackScript = SkGetFallbackScriptFromID(name);
+    if (SkTypeface_ValidScript(fallbackScript)) {
+        typeface = SkCreateTypefaceForScript(fallbackScript);
+        if (typeface)
+            result = new FontPlatformData(typeface, name, fontDescription.computedSize(),
+                                          (style & SkTypeface::kBold) && !typeface->isBold(),
+                                          (style & SkTypeface::kItalic) && !typeface->isItalic(),
+                                          fontDescription.orientation(),
+                                          fontDescription.textOrientation());
+    } else {
+        typeface = SkTypeface::CreateFromName(name, SkTypeface::kNormal);
 
-    // CreateFromName always returns a typeface, falling back to a default font
-    // if the one requested could not be found. Calling Equal() with a null
-    // pointer will compare the returned font against the default, with the
-    // caveat that the default is always of normal style. When that happens,
-    // ignore the default font and allow WebCore to provide the next font on the
-    // CSS fallback list. The only exception to this occurs when the family name
-    // is a commonly used generic family, which is the case when called by
-    // getSimilarFontPlatformData() or getLastResortFallbackFont(). In that case
-    // the default font is an acceptable result.
+        // CreateFromName always returns a typeface, falling back to a default font
+        // if the one requested could not be found. Calling Equal() with a null
+        // pointer will compare the returned font against the default, with the
+        // caveat that the default is always of normal style. When that happens,
+        // ignore the default font and allow WebCore to provide the next font on the
+        // CSS fallback list. The only exception to this occurs when the family name
+        // is a commonly used generic family, which is the case when called by
+        // getSimilarFontPlatformData() or getLastResortFallbackFont(). In that case
+        // the default font is an acceptable result.
 
-    if (!SkTypeface::Equal(typeface, 0) || isFallbackFamily(family.string())) {
-        if (style != SkTypeface::kNormal) {
-            typeface->unref();
-            typeface = SkTypeface::CreateFromName(name, static_cast<SkTypeface::Style>(style));
+        if (!SkTypeface::Equal(typeface, 0) || isFallbackFamily(family.string())) {
+            // We had to use normal styling to see if this was a default font. If
+            // we need bold or italic, replace with the corrected typeface.
+            if (style != SkTypeface::kNormal) {
+                typeface->unref();
+                typeface = SkTypeface::CreateFromName(name, static_cast<SkTypeface::Style>(style));
+            }
+            result = new FontPlatformData(typeface, name, fontDescription.computedSize(),
+                                          (style & SkTypeface::kBold) && !typeface->isBold(),
+                                          (style & SkTypeface::kItalic) && !typeface->isItalic(),
+                                          fontDescription.orientation(),
+                                          fontDescription.textOrientation());
         }
-
-        result = new FontPlatformData(typeface, name, fontDescription.computedSize(),
-                                      (style & SkTypeface::kBold) && !typeface->isBold(),
-                                      (style & SkTypeface::kItalic) && !typeface->isItalic(),
-                                      fontDescription.orientation(),
-                                      fontDescription.textOrientation());
     }
 
-    typeface->unref();
+    SkSafeUnref(typeface);
     return result;
 }
 

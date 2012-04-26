@@ -36,6 +36,11 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 
+#if OS(ANDROID)
+#include "FontCache.h"
+#include "SkTypeface_android.h"
+#endif
+
 extern "C" {
 #include "harfbuzz-unicode.h"
 }
@@ -191,6 +196,53 @@ static UChar32 surrogatePairAwareFirstCharacter(const UChar* characters, unsigne
     return characters[0];
 }
 
+const FontPlatformData* ComplexTextController::getComplexFontPlatformData()
+{
+#if OS(ANDROID)
+    // There are 2 kinds of font on Android: system fonts and fallback fonts.
+    // System fonts have a name, and are accessible in FontPlatformData.
+    // Fallback fonts do not have specific names, so they are not accessible
+    // from WebKit directly. To feed Harfbuzz, use a trick to get correct
+    // SkTypeface based on script.
+    FallbackScripts fallbackScript = kFallbackScriptNumber; // invalid script value.
+    switch (m_item.item.script) {
+    case HB_Script_Arabic:
+        fallbackScript = kArabic_FallbackScript;
+        break;
+    case HB_Script_Hebrew:
+        if (m_font->fontDescription().weight() >= FontWeightBold)
+            fallbackScript = kHebrewBold_FallbackScript;
+        else
+            fallbackScript = kHebrewRegular_FallbackScript;
+        break;
+    case HB_Script_Thai:
+        fallbackScript = kThai_FallbackScript;
+        break;
+    case HB_Script_Armenian:
+        fallbackScript = kArmenian_FallbackScript;
+        break;
+    case HB_Script_Georgian:
+        fallbackScript = kGeorgian_FallbackScript;
+        break;
+    case HB_Script_Devanagari:
+        fallbackScript = kDevanagari_FallbackScript;
+        break;
+    case HB_Script_Bengali:
+        fallbackScript = kBengali_FallbackScript;
+        break;
+    case HB_Script_Tamil:
+        fallbackScript = kTamil_FallbackScript;
+        break;
+    default:
+        return 0;
+    }
+    return fontCache()->getCachedFontPlatformData(m_font->fontDescription(), SkGetFallbackScriptID(fallbackScript), true);
+#else
+    // Only Android needs the extra logic.
+    return 0;
+#endif
+}
+
 void ComplexTextController::setupFontForScriptRun()
 {
     FontDataVariant fontDataVariant = AutoVariant;
@@ -205,23 +257,26 @@ void ComplexTextController::setupFontForScriptRun()
         m_item.item.pos = 0;
         fontDataVariant = SmallCapsVariant;
     }
-    UChar32 current = surrogatePairAwareFirstCharacter(static_cast<const UChar*>(&m_item.string[m_item.item.pos]), m_item.item.length - m_item.item.pos);
-    const FontData* fontData = m_font->glyphDataForCharacter(current, false, fontDataVariant).fontData;
-    const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
-    m_item.face = platformData.harfbuzzFace()->face();
+    const FontPlatformData* platformData = getComplexFontPlatformData();
+    if (!platformData) {
+        UChar32 current = surrogatePairAwareFirstCharacter(static_cast<const UChar*>(&m_item.string[m_item.item.pos]), m_item.item.length - m_item.item.pos);
+        const FontData* fontData = m_font->glyphDataForCharacter(current, false, fontDataVariant).fontData;
+        platformData = &fontData->fontDataForCharacter(' ')->platformData();
+    }
+    m_item.face = platformData->harfbuzzFace()->face();
     // We only need to setup font features at the beginning of the run.
     if (!m_item.item.pos)
         setupFontFeatures(m_font->fontDescription().featureSettings(), m_item.face);
-    void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
+    void* opaquePlatformData = const_cast<FontPlatformData*>(platformData);
     m_item.font->userData = opaquePlatformData;
 
-    int size = platformData.size();
+    int size = platformData->size();
     m_item.font->x_ppem = size;
     m_item.font->y_ppem = size;
     // x_ and y_scale are the conversion factors from font design space (fEmSize) to 1/64th of device pixels in 16.16 format.
     const int devicePixelFraction = 64;
     const int multiplyFor16Dot16 = 1 << 16;
-    int scale = devicePixelFraction * size * multiplyFor16Dot16 / platformData.emSizeInFontUnits();
+    int scale = devicePixelFraction * size * multiplyFor16Dot16 / platformData->emSizeInFontUnits();
     m_item.font->x_scale = scale;
     m_item.font->y_scale = scale;
 }
