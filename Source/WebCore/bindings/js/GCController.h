@@ -26,7 +26,8 @@
 #ifndef GCController_h
 #define GCController_h
 
-#include "Timer.h"
+#include <wtf/FastAllocBase.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -44,9 +45,6 @@ namespace WebCore {
 
     private:
         GCController(); // Use gcController() instead
-        void gcTimerFired(Timer<GCController>*);
-        
-        Timer<GCController> m_GCTimer;
     };
 
     // Function to obtain the global GC controller.

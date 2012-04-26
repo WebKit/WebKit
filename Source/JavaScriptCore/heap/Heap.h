@@ -119,7 +119,7 @@ namespace JSC {
         void collect(SweepToggle);
 
         void reportExtraMemoryCost(size_t cost);
-        void reportAbandonedObjectGraph();
+        JS_EXPORT_PRIVATE void reportAbandonedObjectGraph();
 
         JS_EXPORT_PRIVATE void protect(JSValue);
         JS_EXPORT_PRIVATE bool unprotect(JSValue); // True when the protect count drops to 0.

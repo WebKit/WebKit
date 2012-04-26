@@ -49,26 +49,20 @@ GCController& gcController()
 }
 
 GCController::GCController()
-    : m_GCTimer(this, &GCController::gcTimerFired)
 {
 }
 
 void GCController::garbageCollectSoon()
 {
-    if (!m_GCTimer.isActive())
-        m_GCTimer.startOneShot(0);
-}
-
-void GCController::gcTimerFired(Timer<GCController>*)
-{
-    collect(0);
+    JSLock lock(SilenceAssertionsOnly);
+    JSDOMWindow::commonJSGlobalData()->heap.reportAbandonedObjectGraph();
 }
 
 void GCController::garbageCollectNow()
 {
     JSLock lock(SilenceAssertionsOnly);
     if (!JSDOMWindow::commonJSGlobalData()->heap.isBusy())
-        collect(0);
+        JSDOMWindow::commonJSGlobalData()->heap.collectAllGarbage();
 }
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)

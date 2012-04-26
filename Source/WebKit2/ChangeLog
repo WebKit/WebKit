@@ -1,3 +1,14 @@
+2012-04-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        WebCore shouldn't call collectAllGarbage directly
+        https://bugs.webkit.org/show_bug.cgi?id=84897
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose): Changed to call garbageCollectSoon. This is the 
+        function that causes us to do so much collection on page navigation.
+
 2012-04-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=84909

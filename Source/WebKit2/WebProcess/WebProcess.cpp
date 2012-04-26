@@ -686,7 +686,7 @@ void WebProcess::didClose(CoreIPC::Connection*)
         pages[i]->close();
     pages.clear();
 
-    gcController().garbageCollectNow();
+    gcController().garbageCollectSoon();
     memoryCache()->setDisabled(true);
 #endif    
 
