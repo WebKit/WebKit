@@ -1,3 +1,12 @@
+2012-04-26  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        Update expectations in security/ after r115294.
+
+        * platform/efl/security/block-test-expected.txt:
+        * platform/efl/security/block-test-no-port-expected.txt:
+
 2012-04-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Remove expectation of failure for a fixed test.
