@@ -67,7 +67,7 @@ String IDBIndexBackendProxy::storeName()
 
 String IDBIndexBackendProxy::keyPath()
 {
-    return m_webIDBIndex->keyPath();
+    return m_webIDBIndex->keyPath().string();
 }
 
 bool IDBIndexBackendProxy::unique()

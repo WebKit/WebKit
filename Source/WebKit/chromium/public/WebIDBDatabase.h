@@ -28,6 +28,7 @@
 
 #include "WebDOMStringList.h"
 #include "WebExceptionCode.h"
+#include "WebIDBKeyPath.h"
 #include "platform/WebCommon.h"
 
 namespace WebKit {
@@ -58,7 +59,13 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebDOMStringList();
     }
-    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&)
+    // FIXME: Remove WebString keyPath overload once callers are updated.
+    // http://webkit.org/b/84207
+    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+    {
+        return createObjectStore(name, WebIDBKeyPath(keyPath), autoIncrement, transaction, ec);
+    }
+    virtual WebIDBObjectStore* createObjectStore(const WebString&, const WebIDBKeyPath&, bool, const WebIDBTransaction&, WebExceptionCode&)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
