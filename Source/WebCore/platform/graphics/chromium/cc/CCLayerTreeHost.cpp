@@ -192,6 +192,12 @@ void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* alloc
         m_contentsTextureManager->evictAndDeleteAllTextures(allocator);
 }
 
+void CCLayerTreeHost::acquireLayerTextures()
+{
+    ASSERT(CCProxy::isMainThread());
+    m_proxy->acquireLayerTextures();
+}
+
 void CCLayerTreeHost::updateAnimations(double monotonicFrameBeginTime)
 {
     m_animating = true;

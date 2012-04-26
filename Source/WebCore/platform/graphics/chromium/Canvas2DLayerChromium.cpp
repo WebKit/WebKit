@@ -46,30 +46,55 @@
 
 namespace WebCore {
 
-PassRefPtr<Canvas2DLayerChromium> Canvas2DLayerChromium::create(PassRefPtr<GraphicsContext3D> context, const IntSize& size)
+PassRefPtr<Canvas2DLayerChromium> Canvas2DLayerChromium::create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode)
 {
-    return adoptRef(new Canvas2DLayerChromium(context, size));
+    return adoptRef(new Canvas2DLayerChromium(context, size, deferralMode));
 }
 
-Canvas2DLayerChromium::Canvas2DLayerChromium(PassRefPtr<GraphicsContext3D> context, const IntSize& size)
+Canvas2DLayerChromium::Canvas2DLayerChromium(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode)
     : CanvasLayerChromium()
     , m_context(context)
     , m_contextLost(false)
     , m_size(size)
     , m_backTextureId(0)
-    , m_useDoubleBuffering(CCProxy::hasImplThread())
     , m_canvas(0)
+    , m_deferralMode(deferralMode)
 {
+    // FIXME: We currently turn off double buffering when canvas rendering is
+    // deferred. What we should be doing is to use a smarter heuristic based
+    // on GPU resource monitoring and other factors to chose between single
+    // and double buffering.
+    m_useDoubleBuffering = CCProxy::hasImplThread() && deferralMode == NonDeferred;
+
+    // The threaded compositor is self rate-limiting when rendering
+    // to a single buffered canvas layer.
+    m_useRateLimiter = !CCProxy::hasImplThread() || m_useDoubleBuffering;
 }
 
 Canvas2DLayerChromium::~Canvas2DLayerChromium()
 {
-    if (m_context && layerTreeHost())
+    setTextureId(0);
+    if (m_context && m_useRateLimiter && layerTreeHost())
         layerTreeHost()->stopRateLimiter(m_context.get());
+}
+
+bool Canvas2DLayerChromium::drawingIntoImplThreadTexture() const
+{
+    return !m_useDoubleBuffering && CCProxy::hasImplThread() && layerTreeHost();
 }
 
 void Canvas2DLayerChromium::setTextureId(unsigned textureId)
 {
+    if (m_backTextureId == textureId)
+        return;
+
+    if (m_backTextureId && drawingIntoImplThreadTexture()) {
+        // The impl tree may be referencing the old m_backTexture, which may
+        // soon be deleted. We must make sure the layer tree on the impl thread
+        // is not drawn until the next commit, which will re-synchronize the
+        // layer trees.
+        layerTreeHost()->acquireLayerTextures();
+    }
     m_backTextureId = textureId;
     setNeedsCommit();
 }
@@ -78,7 +103,7 @@ void Canvas2DLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
     LayerChromium::setNeedsDisplayRect(dirtyRect);
 
-    if (layerTreeHost())
+    if (m_useRateLimiter && layerTreeHost())
         layerTreeHost()->startRateLimiter(m_context.get());
 }
 
@@ -129,6 +154,15 @@ void Canvas2DLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionT
     TRACE_EVENT0("cc", "GraphicsContext3D::flush");
     m_context->flush();
 }
+
+void Canvas2DLayerChromium::layerWillDraw(WillDrawCondition condition) const
+{
+    if (drawingIntoImplThreadTexture()) {
+        if (condition == WillDrawUnconditionally || m_deferralMode == NonDeferred)
+            layerTreeHost()->acquireLayerTextures();
+    }
+}
+
 
 void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {

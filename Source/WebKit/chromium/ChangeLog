@@ -1,3 +1,33 @@
+2012-04-26  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Single buffered canvas layers with the threaded compositor
+        https://bugs.webkit.org/show_bug.cgi?id=80540
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::AcquireLayerTextures):
+        (CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::dispatchAcquireLayerTextures):
+        (WTF::TEST_F):
+        (WTF):
+        (CCLayerTreeHostTestWriteLayersRedraw):
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::CCLayerTreeHostTestWriteLayersRedraw):
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::beginTest):
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestWriteLayersRedraw::afterTest):
+        (CCLayerTreeHostTestWriteLayersAfterVisible):
+        (WTF::CCLayerTreeHostTestWriteLayersAfterVisible::CCLayerTreeHostTestWriteLayersAfterVisible):
+        (WTF::CCLayerTreeHostTestWriteLayersAfterVisible::beginTest):
+        (WTF::CCLayerTreeHostTestWriteLayersAfterVisible::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestWriteLayersAfterVisible::afterTest):
+        * tests/CCSchedulerTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (Canvas2DLayerChromiumTest::fullLifecycleTest):
+
 2012-04-26  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Use WebIDBKeyPath type for key paths in WebKit API

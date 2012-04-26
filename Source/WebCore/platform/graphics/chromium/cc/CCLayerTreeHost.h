@@ -162,6 +162,7 @@ public:
     void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
+    void acquireLayerTextures();
     // Returns false if we should abort this frame due to initialization failure.
     bool updateLayers(CCTextureUpdater&);
 

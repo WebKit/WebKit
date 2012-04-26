@@ -69,11 +69,13 @@ CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_compositorIdentifier(-1)
     , m_layerRendererInitialized(false)
     , m_started(false)
+    , m_texturesAcquired(true)
     , m_mainThreadProxy(CCScopedThreadProxy::create(CCProxy::mainThread()))
     , m_beginFrameCompletionEventOnImplThread(0)
     , m_readbackRequestOnImplThread(0)
     , m_finishAllRenderingCompletionEventOnImplThread(0)
     , m_commitCompletionEventOnImplThread(0)
+    , m_textureAcquisitionCompletionEventOnImplThread(0)
     , m_nextFrameIsNewlyCommittedFrameOnImplThread(false)
 {
     TRACE_EVENT("CCThreadProxy::CCThreadProxy", this, 0);
@@ -497,6 +499,10 @@ void CCThreadProxy::beginFrame()
     if (!m_layerTreeHost->updateLayers(*request->updater))
         return;
 
+    // Once single buffered layers are committed, they cannot be modified until
+    // they are drawn by the impl thread.
+    m_texturesAcquired = false;
+
     // Before applying scrolls and calling animate, we set m_animateRequested to false.
     // If it is true now, it means setNeedAnimate was called again. Call setNeedsCommit
     // now so that we get begin frame when this one is done.
@@ -639,6 +645,42 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
 
     ASSERT(drawFrame || (!drawFrame && !forcedDraw));
     return result;
+}
+
+void CCThreadProxy::acquireLayerTextures()
+{
+    // Called when the main thread needs to modify a layer texture that is used
+    // directly by the compositor.
+    // This method will block until the next compositor draw if there is a
+    // previously committed frame that is still undrawn. This is necessary to
+    // ensure that the main thread does not monopolize access to the textures.
+    ASSERT(isMainThread());
+
+    if (m_texturesAcquired)
+        return;
+
+    TRACE_EVENT("CCThreadProxy::acquireLayerTextures", this, 0);
+    CCCompletionEvent completion;
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::acquireLayerTexturesForMainThreadOnImplThread, AllowCrossThreadAccess(&completion)));
+    completion.wait(); // Block until it is safe to write to layer textures from the main thread.
+
+    m_texturesAcquired = true;
+}
+
+void CCThreadProxy::acquireLayerTexturesForMainThreadOnImplThread(CCCompletionEvent* completion)
+{
+    ASSERT(isImplThread());
+    ASSERT(!m_textureAcquisitionCompletionEventOnImplThread);
+
+    m_textureAcquisitionCompletionEventOnImplThread = completion;
+    m_schedulerOnImplThread->setMainThreadNeedsLayerTextures();
+}
+
+void CCThreadProxy::scheduledActionAcquireLayerTexturesForMainThread()
+{
+    ASSERT(m_textureAcquisitionCompletionEventOnImplThread);
+    m_textureAcquisitionCompletionEventOnImplThread->signal();
+    m_textureAcquisitionCompletionEventOnImplThread = 0;
 }
 
 CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapIfPossible()

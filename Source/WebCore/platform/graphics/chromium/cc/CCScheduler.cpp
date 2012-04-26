@@ -80,6 +80,12 @@ void CCScheduler::setNeedsForcedRedraw()
     processScheduledActions();
 }
 
+void CCScheduler::setMainThreadNeedsLayerTextures()
+{
+    m_stateMachine.setMainThreadNeedsLayerTextures();
+    processScheduledActions();
+}
+
 void CCScheduler::beginFrameComplete()
 {
     TRACE_EVENT("CCScheduler::beginFrameComplete", this, 0);
@@ -182,6 +188,9 @@ void CCScheduler::processScheduledActions()
             break;
         } case CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION:
             m_client->scheduledActionBeginContextRecreation();
+            break;
+        case CCSchedulerStateMachine::ACTION_ACQUIRE_LAYER_TEXTURES_FOR_MAIN_THREAD:
+            m_client->scheduledActionAcquireLayerTexturesForMainThread();
             break;
         }
     } while (action != CCSchedulerStateMachine::ACTION_NONE);

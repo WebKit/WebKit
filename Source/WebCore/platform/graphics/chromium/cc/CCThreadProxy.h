@@ -71,6 +71,7 @@ public:
     virtual void start() OVERRIDE;
     virtual void stop() OVERRIDE;
     virtual size_t maxPartialTextureUpdates() const OVERRIDE;
+    virtual void acquireLayerTextures() OVERRIDE;
     virtual void setFontAtlas(PassOwnPtr<CCFontAtlas>) OVERRIDE;
     virtual void forceSerializeOnSwapBuffers() OVERRIDE;
 
@@ -90,6 +91,7 @@ public:
     virtual void scheduledActionUpdateMoreResources() OVERRIDE;
     virtual void scheduledActionCommit() OVERRIDE;
     virtual void scheduledActionBeginContextRecreation() OVERRIDE;
+    virtual void scheduledActionAcquireLayerTexturesForMainThread() OVERRIDE;
 
 private:
     explicit CCThreadProxy(CCLayerTreeHost*);
@@ -136,6 +138,7 @@ private:
     void setVisibleOnImplThread(CCCompletionEvent*, bool visible);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
     void setFullRootLayerDamageOnImplThread();
+    void acquireLayerTexturesForMainThreadOnImplThread(CCCompletionEvent*);
     void recreateContextOnImplThread(CCCompletionEvent*, GraphicsContext3D*, bool* recreateSucceeded, LayerRendererCapabilities*);
     CCScheduledActionDrawAndSwapResult scheduledActionDrawAndSwapInternal(bool forcedDraw);
     void setFontAtlasOnImplThread(PassOwnPtr<CCFontAtlas>);
@@ -151,8 +154,8 @@ private:
     bool m_layerRendererInitialized;
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
     bool m_started;
+    bool m_texturesAcquired;
 
-    // Used on the CCThread only.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
 
     OwnPtr<CCInputHandler> m_inputHandlerOnImplThread;
@@ -168,7 +171,7 @@ private:
     // Set when the main thread is waiting on a scheduledActionBeginFrame to be issued.
     CCCompletionEvent* m_beginFrameCompletionEventOnImplThread;
 
-    // Set when the main thread is waiing on a readback.
+    // Set when the main thread is waiting on a readback.
     ReadbackRequest* m_readbackRequestOnImplThread;
 
     // Set when the main thread is waiting on a finishAllRendering call.
@@ -176,6 +179,10 @@ private:
 
     // Set when the main thread is waiting on a commit to complete.
     CCCompletionEvent* m_commitCompletionEventOnImplThread;
+
+    // Set when the main thread is waiting on layers to be drawn.
+    CCCompletionEvent* m_textureAcquisitionCompletionEventOnImplThread;
+
     OwnPtr<CCTextureUpdater> m_currentTextureUpdaterOnImplThread;
 
     // Set when the next draw should post didCommitAndDrawFrame to the main thread.

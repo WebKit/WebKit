@@ -51,6 +51,12 @@ public:
         COMMIT_STATE_WAITING_FOR_FIRST_DRAW,
     };
 
+    enum TextureState {
+        LAYER_TEXTURE_STATE_UNLOCKED,
+        LAYER_TEXTURE_STATE_ACQUIRED_BY_MAIN_THREAD,
+        LAYER_TEXTURE_STATE_ACQUIRED_BY_IMPL_THREAD,
+    };
+
     enum ContextState {
         CONTEXT_ACTIVE,
         CONTEXT_LOST,
@@ -71,7 +77,8 @@ public:
         ACTION_COMMIT,
         ACTION_DRAW_IF_POSSIBLE,
         ACTION_DRAW_FORCED,
-        ACTION_BEGIN_CONTEXT_RECREATION
+        ACTION_BEGIN_CONTEXT_RECREATION,
+        ACTION_ACQUIRE_LAYER_TEXTURES_FOR_MAIN_THREAD,
     };
     Action nextAction() const;
     void updateState(Action);
@@ -117,6 +124,12 @@ public:
     // from nextState. Indicates that the specific update request completed.
     void beginUpdateMoreResourcesComplete(bool morePending);
 
+    // Request exclusive access to the textures that back single buffered
+    // layers on behalf of the main thread. Upon acqusition,
+    // ACTION_DRAW_IF_POSSIBLE will not draw until the main thread releases the
+    // textures to the impl thread by committing the layers.
+    void setMainThreadNeedsLayerTextures();
+
     // Indicates whether we can successfully begin a frame at this time.
     void setCanBeginFrame(bool can) { m_canBeginFrame = can; }
 
@@ -130,7 +143,10 @@ public:
 
 protected:
     bool shouldDrawForced() const;
+    bool drawSuspendedUntilCommit() const;
+    bool scheduledToDraw() const;
     bool shouldDraw() const;
+    bool shouldAcquireLayerTexturesForMainThread() const;
     bool hasDrawnThisFrame() const;
 
     CommitState m_commitState;
@@ -141,12 +157,14 @@ protected:
     bool m_needsForcedRedraw;
     bool m_needsCommit;
     bool m_needsForcedCommit;
+    bool m_mainThreadNeedsLayerTextures;
     bool m_updateMoreResourcesPending;
     bool m_insideVSync;
     bool m_visible;
     bool m_canBeginFrame;
     bool m_canDraw;
     bool m_drawIfPossibleFailed;
+    TextureState m_textureState;
     ContextState m_contextState;
 };
 

@@ -319,6 +319,11 @@ public:
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsCommit, this);
     }
 
+    void AcquireLayerTextures()
+    {
+        callOnMainThread(CCLayerTreeHostTest::dispatchAcquireLayerTextures, this);
+    }
+
     void postSetNeedsRedrawToMainThread()
     {
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsRedraw, this);
@@ -407,6 +412,15 @@ protected:
         ASSERT_TRUE(test);
         if (test->m_layerTreeHost)
             test->m_layerTreeHost->setNeedsCommit();
+    }
+
+    static void dispatchAcquireLayerTextures(void* self)
+    {
+      ASSERT(isMainThread());
+      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+      ASSERT_TRUE(test);
+      if (test->m_layerTreeHost)
+          test->m_layerTreeHost->acquireLayerTextures();
     }
 
     static void dispatchSetNeedsRedraw(void* self)
@@ -822,6 +836,94 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, runMultiThread)
+{
+    runTestThreaded();
+}
+
+
+// beginLayerWrite should prevent draws from executing until a commit occurs
+class CCLayerTreeHostTestWriteLayersRedraw : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestWriteLayersRedraw()
+        : m_numCommits(0)
+        , m_numDraws(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        AcquireLayerTextures();
+        postSetNeedsRedrawToMainThread(); // should be inhibited without blocking
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        EXPECT_EQ(1, impl->sourceFrameNumber());
+        m_numDraws++;
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    {
+        m_numCommits++;
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+        EXPECT_EQ(0, m_numDraws);
+        EXPECT_EQ(1, m_numCommits);
+    }
+
+private:
+    int m_numCommits;
+    int m_numDraws;
+};
+
+TEST_F(CCLayerTreeHostTestWriteLayersRedraw, runMultiThread)
+{
+    runTestThreaded();
+}
+
+// Verify that when resuming visibility, requesting layer write permission
+// will not deadlock the main thread even though there are not yet any
+// scheduled redraws. This behavior is critical for reliably surviving tab
+// switching. There are no failure conditions to this test, it just passes
+// by not timing out.
+class CCLayerTreeHostTestWriteLayersAfterVisible : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestWriteLayersAfterVisible()
+        : m_numCommits(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    {
+        m_numCommits++;
+        if (m_numCommits == 2)
+            endTest();
+        else {
+            postSetVisibleToMainThread(false);
+            postSetVisibleToMainThread(true);
+            AcquireLayerTextures();
+            postSetNeedsCommitToMainThread();
+        }
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    int m_numCommits;
+};
+
+TEST_F(CCLayerTreeHostTestWriteLayersAfterVisible, runMultiThread)
 {
     runTestThreaded();
 }

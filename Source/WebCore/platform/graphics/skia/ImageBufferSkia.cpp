@@ -36,7 +36,6 @@
 #include "Base64.h"
 #include "BitmapImage.h"
 #include "BitmapImageSingleFrameSkia.h"
-#include "Canvas2DLayerChromium.h"
 #include "GrContext.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
@@ -50,6 +49,10 @@
 #include "SkGpuDevice.h"
 #include "SkiaUtils.h"
 #include "WEBPImageEncoder.h"
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "Canvas2DLayerChromium.h"
+#endif
 
 #include <wtf/text/WTFString.h>
 
@@ -66,22 +69,29 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 class AcceleratedDeviceContext : public SkDeferredCanvas::DeviceContext {
 public:
-    AcceleratedDeviceContext(GraphicsContext3D* context3D)
+    AcceleratedDeviceContext(GraphicsContext3D* context3D, Canvas2DLayerChromium* layer)
+        : m_platformLayer(layer)
+        , m_context3D()
     {
         ASSERT(context3D);
+        ASSERT(layer);
         m_context3D = context3D;
     }
 
     virtual void prepareForDraw()
     {
+        m_platformLayer->layerWillDraw(Canvas2DLayerChromium::WillDrawUnconditionally);
         m_context3D->makeContextCurrent();
     }
 
 private:
+    Canvas2DLayerChromium* m_platformLayer;
     GraphicsContext3D* m_context3D;
 };
+#endif
 
 static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data, DeferralMode deferralMode)
 {
@@ -103,14 +113,18 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
         return 0;
     SkCanvas* canvas;
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(gr, texture.get()));
+#if USE(ACCELERATED_COMPOSITING)
+    data->m_platformLayer = Canvas2DLayerChromium::create(context3D, size, deferralMode);
     if (deferralMode == Deferred) {
-        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(context3D.get()));
+        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(context3D.get(), data->m_platformLayer.get()));
         canvas = new SkDeferredCanvas(device.get(), deviceContext.get());
     } else
         canvas = new SkCanvas(device.get());
+#else
+    canvas = new SkCanvas(device.get());
+#endif
     data->m_platformContext.setAccelerated(true);
 #if USE(ACCELERATED_COMPOSITING)
-    data->m_platformLayer = Canvas2DLayerChromium::create(context3D.release(), size);
     data->m_platformLayer->setTextureId(texture.get()->getTextureHandle());
     data->m_platformLayer->setCanvas(canvas);
 #endif
@@ -168,6 +182,10 @@ ImageBuffer::~ImageBuffer()
 
 GraphicsContext* ImageBuffer::context() const
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_data.m_platformLayer)
+        m_data.m_platformLayer->layerWillDraw(Canvas2DLayerChromium::WillDrawIfLayerNotDeferred);
+#endif
     return m_context.get();
 }
 

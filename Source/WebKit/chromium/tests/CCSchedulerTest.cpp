@@ -84,6 +84,7 @@ public:
     virtual void scheduledActionUpdateMoreResources() OVERRIDE { m_actions.push_back("scheduledActionUpdateMoreResources"); }
     virtual void scheduledActionCommit() OVERRIDE { m_actions.push_back("scheduledActionCommit"); }
     virtual void scheduledActionBeginContextRecreation() OVERRIDE { m_actions.push_back("scheduledActionBeginContextRecreation"); }
+    virtual void scheduledActionAcquireLayerTexturesForMainThread() OVERRIDE { m_actions.push_back("scheduledActionAcquireLayerTexturesForMainThread"); }
 
     void setDrawWillHappen(bool drawWillHappen) { m_drawWillHappen = drawWillHappen; }
     void setSwapWillHappenIfDrawHappens(bool swapWillHappenIfDrawHappens) { m_swapWillHappenIfDrawHappens = swapWillHappenIfDrawHappens; }
@@ -165,6 +166,72 @@ TEST(CCSchedulerTest, RequestCommitAfterBeginFrame)
     EXPECT_EQ(2, client.numActions());
     EXPECT_STREQ("scheduledActionDrawAndSwapIfPossible", client.action(0));
     EXPECT_STREQ("scheduledActionBeginFrame", client.action(1));
+    client.reset();
+}
+
+TEST(CCSchedulerTest, TextureAcquisitionCollision)
+{
+    FakeCCSchedulerClient client;
+    RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
+    OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
+    scheduler->setCanBeginFrame(true);
+    scheduler->setVisible(true);
+
+    scheduler->setNeedsCommit();
+    scheduler->setMainThreadNeedsLayerTextures();
+    EXPECT_EQ(2, client.numActions());
+    EXPECT_STREQ("scheduledActionBeginFrame", client.action(0));
+    EXPECT_STREQ("scheduledActionAcquireLayerTexturesForMainThread", client.action(1));
+    client.reset();
+
+    // Compositor not scheduled to draw because textures are locked by main thread
+    EXPECT_EQ(false, timeSource->active());
+
+    // Trigger the commit
+    scheduler->beginFrameComplete();
+    EXPECT_EQ(true, timeSource->active());
+    client.reset();
+
+    // Between commit and draw, texture acquisition for main thread delayed,
+    // and main thread blocks.
+    scheduler->setMainThreadNeedsLayerTextures();
+    EXPECT_EQ(0, client.numActions());
+    client.reset();
+
+    // Once compositor draw complete, the delayed texture acquisition fires.
+    timeSource->tick();
+    EXPECT_EQ(3, client.numActions());
+    EXPECT_STREQ("scheduledActionDrawAndSwapIfPossible", client.action(0));
+    EXPECT_STREQ("scheduledActionAcquireLayerTexturesForMainThread", client.action(1));
+    EXPECT_STREQ("scheduledActionBeginFrame", client.action(2));
+    client.reset();
+}
+
+TEST(CCSchedulerTest, VisibilitySwitchWithTextureAcquisition)
+{
+    FakeCCSchedulerClient client;
+    RefPtr<FakeCCTimeSource> timeSource = adoptRef(new FakeCCTimeSource());
+    OwnPtr<CCScheduler> scheduler = CCScheduler::create(&client, adoptPtr(new CCFrameRateController(timeSource)));
+    scheduler->setCanBeginFrame(true);
+    scheduler->setVisible(true);
+
+    scheduler->setNeedsCommit();
+    scheduler->beginFrameComplete();
+    scheduler->setMainThreadNeedsLayerTextures();
+    client.reset();
+    // Verify that pending texture acquisition fires when visibility
+    // is lost in order to avoid a deadlock.
+    scheduler->setVisible(false);
+    EXPECT_EQ(1, client.numActions());
+    EXPECT_STREQ("scheduledActionAcquireLayerTexturesForMainThread", client.action(0));
+    client.reset();
+
+    // Regaining visibility with textures acquired by main thread while
+    // compositor is waiting for first draw should result in a request
+    // for a new frame in order to escape a deadlock.
+    scheduler->setVisible(true);
+    EXPECT_EQ(1, client.numActions());
+    EXPECT_STREQ("scheduledActionBeginFrame", client.action(0));
     client.reset();
 }
 

@@ -35,6 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CanvasLayerChromium.h"
+#include "ImageBuffer.h"
 #include "ManagedTexture.h"
 
 class SkCanvas;
@@ -47,7 +48,12 @@ class Region;
 // A layer containing an accelerated 2d canvas
 class Canvas2DLayerChromium : public CanvasLayerChromium {
 public:
-    static PassRefPtr<Canvas2DLayerChromium> create(PassRefPtr<GraphicsContext3D>, const IntSize&);
+    enum WillDrawCondition {
+        WillDrawUnconditionally,
+        WillDrawIfLayerNotDeferred,
+    };
+
+    static PassRefPtr<Canvas2DLayerChromium> create(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode);
     virtual ~Canvas2DLayerChromium();
 
     void setTextureId(unsigned);
@@ -59,11 +65,11 @@ public:
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
     void setCanvas(SkCanvas*);
+    void layerWillDraw(WillDrawCondition) const;
 
 private:
-    Canvas2DLayerChromium(PassRefPtr<GraphicsContext3D>, const IntSize&);
-
-    friend class Canvas2DLayerChromiumTest;
+    Canvas2DLayerChromium(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode);
+    bool drawingIntoImplThreadTexture() const;
 
     RefPtr<GraphicsContext3D> m_context;
     bool m_contextLost;
@@ -75,6 +81,8 @@ private:
     bool m_useDoubleBuffering;
     OwnPtr<ManagedTexture> m_frontTexture;
     SkCanvas* m_canvas;
+    bool m_useRateLimiter;
+    DeferralMode m_deferralMode;
 };
 
 }

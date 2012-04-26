@@ -61,6 +61,7 @@ public:
     virtual void scheduledActionUpdateMoreResources() = 0;
     virtual void scheduledActionCommit() = 0;
     virtual void scheduledActionBeginContextRecreation() = 0;
+    virtual void scheduledActionAcquireLayerTexturesForMainThread() = 0;
 
 protected:
     virtual ~CCSchedulerClient() { }
@@ -86,6 +87,8 @@ public:
     void setNeedsForcedCommit();
 
     void setNeedsRedraw();
+
+    void setMainThreadNeedsLayerTextures();
 
     // Like setNeedsRedraw(), but ensures the draw will definitely happen even if we are not visible.
     void setNeedsForcedRedraw();

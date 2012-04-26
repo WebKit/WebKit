@@ -93,9 +93,11 @@ public:
     MOCK_METHOD5(uploadTexture, void(GraphicsContext3D*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect, const IntRect));
 };
 
+} // namespace
+
 class Canvas2DLayerChromiumTest : public Test {
 protected:
-    void fullLifecycleTest(bool threaded)
+    void fullLifecycleTest(bool threaded, bool deferred)
     {
         GraphicsContext3D::Attributes attrs;
 
@@ -130,8 +132,8 @@ protected:
             EXPECT_CALL(mainMock, flush());
 
             // Note that the canvas backing texture is doublebuffered only when using the threaded
-            // compositor.
-            if (threaded) {
+            // compositor and not using deferred canvas rendering
+            if (threaded && !deferred) {
                 // Create texture and do the copy (on the impl thread).
                 EXPECT_CALL(allocatorMock, createTexture(size, GraphicsContext3D::RGBA))
                     .WillOnce(Return(frontTextureId));
@@ -143,7 +145,7 @@ protected:
             }
         }
 
-        RefPtr<Canvas2DLayerChromium> canvas = Canvas2DLayerChromium::create(mainContext.get(), size);
+        RefPtr<Canvas2DLayerChromium> canvas = Canvas2DLayerChromium::create(mainContext.get(), size, deferred ? Deferred : NonDeferred);
         canvas->setIsDrawable(true);
         canvas->setLayerTreeHost(layerTreeHost.get());
         canvas->setBounds(IntSize(600, 300));
@@ -162,7 +164,7 @@ protected:
             updater.update(implContext.get(), &allocatorMock, &copierMock, &uploaderMock, 1);
             canvas->pushPropertiesTo(layerImpl.get());
 
-            if (threaded)
+            if (threaded && !deferred)
                 EXPECT_EQ(frontTextureId, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
             else
                 EXPECT_EQ(backTextureId, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
@@ -175,14 +177,26 @@ protected:
     }
 };
 
+namespace {
+
 TEST_F(Canvas2DLayerChromiumTest, testFullLifecycleSingleThread)
 {
-    fullLifecycleTest(false);
+    fullLifecycleTest(false, false);
 }
 
 TEST_F(Canvas2DLayerChromiumTest, testFullLifecycleThreaded)
 {
-    fullLifecycleTest(true);
+    fullLifecycleTest(true, false);
+}
+
+TEST_F(Canvas2DLayerChromiumTest, testFullLifecycleSingleThreadDeferred)
+{
+    fullLifecycleTest(false, true);
+}
+
+TEST_F(Canvas2DLayerChromiumTest, testFullLifecycleThreadedDeferred)
+{
+    fullLifecycleTest(true, true);
 }
 
 } // namespace
