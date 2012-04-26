@@ -1,3 +1,15 @@
+2012-04-26  Alexander Færøy  <ahf@0x90.dk>
+
+        [Qt] r115300 broke the Qt build on Mac OS X.
+
+        This patch adds guards around the createPluginContainer and
+        windowedPluginGeometryDidChange member functions in WebPageProxy.
+
+        Unreviewed build fix.
+
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit):
+
 2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WebKit2] Initial windowed plugins implementation

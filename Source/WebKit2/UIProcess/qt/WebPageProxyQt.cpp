@@ -102,6 +102,7 @@ void WebPageProxy::sendApplicationSchemeReply(const QQuickNetworkReply* reply)
     }
 }
 
+#if PLUGIN_ARCHITECTURE(X11)
 void WebPageProxy::createPluginContainer(uint64_t& windowID)
 {
     notImplemented();
@@ -111,5 +112,6 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frame
 {
     notImplemented();
 }
+#endif
 
 } // namespace WebKit
