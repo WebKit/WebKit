@@ -1081,6 +1081,9 @@ class Port(object):
             '\n'.join(('STDOUT: ' + l) for l in stdout_lines),
             '\n'.join(('STDERR: ' + l) for l in stderr_lines))
 
+    def sample_process(self, name, pid):
+        pass
+
     def virtual_test_suites(self):
         return []
 

@@ -33,6 +33,7 @@ import subprocess
 import time
 
 from webkitpy.common.system.crashlogs import CrashLogs
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port.apple import ApplePort
 from webkitpy.layout_tests.port.leakdetector import LeakDetector
 
@@ -197,6 +198,20 @@ class MacPort(ApplePort):
             crash_log = 'no crash log found for %s:%d' % (name, pid)
             _log.warning(crash_log)
         return crash_log
+
+    def sample_process(self, name, pid):
+        try:
+            hang_report = self._filesystem.join(self.results_directory(), "%s-%s.sample.txt" % (name, pid))
+            self._executive.run_command([
+                "/usr/bin/sample",
+                pid,
+                10,
+                10,
+                "-file",
+                hang_report,
+            ])
+        except ScriptError, e:
+            _log.warning('Unable to sample process.')
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper'

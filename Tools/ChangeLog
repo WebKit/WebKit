@@ -1,3 +1,45 @@
+2012-04-26  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: clean up server process, webkit driver so chromium can use it
+        https://bugs.webkit.org/show_bug.cgi?id=84910
+
+        Reviewed by Ojan Vafai.
+
+        This change moves the "sample a process" logic out of
+        server_process.py and into a port-specific class (where really
+        only the mac has an implementation), and also preemptively kills
+        DRT when a test times out in WebKitDriver (rather than waiting through the
+        additional delays caused by calling stop() when we would want to
+        restart the driver generically in worker.py).
+
+        These changes will make it possible for the chromium port to
+        switch over to the stock WebKitDriver implementation, at least
+        on mac and linux.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.sample_process):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.sample_process):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_helper_fails_to_stop):
+        (test_sample_process):
+        (test_sample_process.logging_run_command):
+        (test_sample_process_throws_exception):
+        (test_sample_process_throws_exception.throwing_run_command):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._log):
+        (ServerProcess._handle_timeout):
+        (ServerProcess.stop):
+        (ServerProcess):
+        (ServerProcess.kill): Here we add a method to immediately stop
+        the process rather than trying to shut it down cleanly.
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TestServerProcess.test_broken_pipe):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.run_test): Fix an issue where we weren't passing
+        along any per-test args (only needed for Chromium, but still).
+        Also, kill the driver immediately if we time out a test.
+
 2012-04-26  Benjamin Poulain  <bpoulain@apple.com>
 
         ObjcClass::methodsNamed() can leak if buffer is dynamically allocated

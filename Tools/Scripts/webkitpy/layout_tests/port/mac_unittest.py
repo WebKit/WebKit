@@ -31,7 +31,7 @@ from webkitpy.layout_tests.port import port_testcase
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.common.system.executive_mock import MockExecutive, MockProcess
+from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, MockProcess, ScriptError
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 
@@ -234,3 +234,22 @@ java/
         port.start_helper()
         port.stop_helper()
         oc.restore_output()
+
+    def test_sample_process(self):
+
+        def logging_run_command(args):
+            print args
+
+        port = self.make_port()
+        port._executive = MockExecutive2(run_command_fn=logging_run_command)
+        expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/mock-build/layout-test-results/test-42.sample.txt']\n"
+        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+
+    def test_sample_process_throws_exception(self):
+
+        def throwing_run_command(args):
+            raise ScriptError("MOCK script error")
+
+        port = self.make_port()
+        port._executive = MockExecutive2(run_command_fn=throwing_run_command)
+        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])

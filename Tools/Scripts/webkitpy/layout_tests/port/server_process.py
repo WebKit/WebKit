@@ -179,25 +179,10 @@ class ServerProcess:
         _log.info('')
         _log.info(message)
 
-    def _sample(self):
-        if sys.platform != "darwin":
-            return
-        try:
-            hang_report = os.path.join(self._port.results_directory(), "%s-%s.sample.txt" % (self._name, self._proc.pid))
-            self._executive.run_command([
-                "/usr/bin/sample",
-                self._proc.pid,
-                10,
-                10,
-                "-file",
-                hang_report,
-            ])
-        except ScriptError, e:
-            self._log('Unable to sample process.')
 
     def _handle_timeout(self):
         self.timed_out = True
-        self._sample()
+        self._port.sample_process(self._name, self._proc.pid)
 
     def _split_string_after_index(self, string, index):
         return string[:index], string[index:]
@@ -277,6 +262,13 @@ class ServerProcess:
                 time.sleep(0.01)
             if self._proc.poll() is None:
                 _log.warning('stopping %s timed out, killing it' % self._name)
-                self._executive.kill_process(self._proc.pid)
+                self.kill()
                 _log.warning('killed')
         self._reset()
+
+    def kill(self):
+        if self._proc:
+            self._executive.kill_process(self._proc.pid)
+            if self._proc.poll() is not None:
+                self._proc.wait()
+            self._reset()

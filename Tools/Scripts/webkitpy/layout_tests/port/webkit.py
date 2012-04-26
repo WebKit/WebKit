@@ -543,7 +543,7 @@ class WebKitDriver(Driver):
     def run_test(self, driver_input):
         start_time = time.time()
         if not self._server_process:
-            self._start(driver_input.should_run_pixel_test, [])
+            self._start(driver_input.should_run_pixel_test, driver_input.args)
         self.error_from_test = str()
         self.err_seen_eof = False
 
@@ -565,9 +565,15 @@ class WebKitDriver(Driver):
             crash_log = self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, text, self.error_from_test,
                                                   newer_than=start_time)
 
+        timeout = self._server_process.timed_out
+        if timeout:
+            # DRT doesn't have a built in timer to abort the test, so we might as well
+            # kill the process directly and not wait for it to shut down cleanly (since it may not).
+            self._server_process.kill()
+
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=self.has_crashed(), test_time=time.time() - start_time,
-            timeout=self._server_process.timed_out, error=self.error_from_test,
+            timeout=timeout, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log)
 
