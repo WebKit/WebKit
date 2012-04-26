@@ -1,3 +1,11 @@
+2012-04-26  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Add Jing Zhao, Min Qin, Tien-Ren Chen and Hao Zheng into contributors list.
+
+        Not reviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayout times out
