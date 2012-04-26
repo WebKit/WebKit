@@ -1,3 +1,34 @@
+2012-04-08  Robert Hogan  <robert@webkit.org>
+
+        new-webkit-run-tests: handle ref tests from the CSS test suite
+        https://bugs.webkit.org/show_bug.cgi?id=83048
+
+        Reviewed by Ryosuke Niwa.
+
+        This allows new-run-webkit-tests to run reference tests created for the CSS test suite. It removes a big swathe
+        of pixel and text results that are no longer required now that the reference results are used and adds in the support
+        files from the CSS test suite that allow the ref tests to run.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_reftest): Assert that the reference result exists. Previously the test would
+         run without it and report a pass!
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (copy_file): ensure the output directory exists, it may not if the reference test is
+          contained in a folder that contains nothing but reference tests.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.available_reference_files): Add as a helper. Handle embedded relative paths, e.g: some/../path
+        (Port.reference_files): Only return reference results in the reftest list that actually exist on
+          disk. Also, don't ignore potential reference results on disk that are not in the reftest list, and
+          don't ignore them just because we have a reftest list for the test's directory.
+        (Port._real_tests): ignore anything that looks like a test in a 'support' directory, this semantic
+          is used by the CSS 2.1 test suite.
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_reference_files_when_reftestlist_and_reference_file_present): Ensure that a test with a reference result
+          on disk but no reference result listed in the directory's reftest list picks up its reference result.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_strip_uri): Test that some/test.html and some/other/../test.html are treated
+         as the same file.
+
 2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r115314.

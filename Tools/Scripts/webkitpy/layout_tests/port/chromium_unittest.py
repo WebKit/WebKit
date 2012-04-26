@@ -92,6 +92,13 @@ class ChromiumDriverTest(unittest.TestCase):
         self.driver._proc.stdout.readline = mock_readline
         self._assert_write_command_and_read_line(expected_crash=True)
 
+    def test_strip_uri(self):
+        self.driver._proc = Mock()
+        self.driver._proc.stdout = StringIO.StringIO("#URL:file:///some/test.html")
+        self.driver.test_to_uri = lambda test: 'file:///some/other/../test.html'
+        self.driver._port.driver_name = lambda: 'mockdriver'
+        driver_output = self.driver.run_test(DriverInput(test_name='some/other/test.html', timeout=1, image_hash=None, is_reftest=False))
+
     def test_crash_log(self):
         self.driver._proc = Mock()
 

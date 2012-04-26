@@ -471,20 +471,29 @@ class Port(object):
             parsed_list.setdefault(filesystem.join(test_dirpath, test_file), []).append((expectation_type, filesystem.join(test_dirpath, ref_file)))
         return parsed_list
 
+    def available_reference_files(self, reftest_list, test_name):
+        reference_files = []
+        for expectation, ref_test in reftest_list.get(self.abspath_for_test(test_name), []):
+            ref_test = self._filesystem.abspath(ref_test)
+            if self._filesystem.exists(ref_test):
+                reference_files.append((expectation, ref_test))
+        return reference_files
+
     def reference_files(self, test_name):
         """Return a list of expectation (== or !=) and filename pairs"""
 
         reftest_list = self._get_reftest_list(test_name)
-        if not reftest_list:
-            reftest_list = []
-            for expectation, prefix in (('==', ''), ('!=', '-mismatch')):
-                for extention in Port._supported_file_extensions:
-                    path = self.expected_filename(test_name, prefix + extention)
-                    if self._filesystem.exists(path):
-                        reftest_list.append((expectation, path))
-            return reftest_list
+        reference_files = []
+        if reftest_list:
+            reference_files = self.available_reference_files(reftest_list, test_name)
 
-        return reftest_list.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])
+        for expectation, prefix in (('==', ''), ('!=', '-mismatch')):
+            for extention in Port._supported_file_extensions:
+                path = self.expected_filename(test_name, prefix + extention)
+                if self._filesystem.exists(path):
+                    reference_files.append((expectation, path))
+        return reference_files
+
 
     def tests(self, paths):
         """Return the list of tests found."""
@@ -492,7 +501,7 @@ class Port(object):
 
     def _real_tests(self, paths):
         # When collecting test cases, skip these directories
-        skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests', 'reference', 'reftest'])
+        skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests', 'reference', 'reftest', 'support'])
         files = find_files.find(self._filesystem, self.layout_tests_dir(), paths, skipped_directories, Port._is_test_file)
         return set([self.relative_test_filename(f) for f in files])
 
