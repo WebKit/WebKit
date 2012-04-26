@@ -380,8 +380,11 @@ sub GenerateProperty {
     my $attribute = shift;
     my $interfaceName = shift;
     my @writeableProperties = @{shift @_};
+    my $parentNode = shift;
 
     my $conditionalString = GenerateConditionalString($attribute->signature);
+    my $parentConditionalString = GenerateConditionalString($parentNode);
+    my @parentConditionalWarn = GenerateConditionalWarning($parentNode);
     my $camelPropName = $attribute->signature->name;
     my $setPropNameFunction = $codeGenerator->WK_ucfirst($camelPropName);
     my $getPropNameFunction = $codeGenerator->WK_lcfirst($camelPropName);
@@ -443,14 +446,19 @@ sub GenerateProperty {
     if (grep {$_ eq $attribute} @writeableProperties) {
         push(@txtSetProps, "#if ${conditionalString}\n") if $conditionalString;
         push(@txtSetProps, "    case ${propEnum}:\n    {\n");
+        push(@txtSetProps, "#if ${parentConditionalString}\n") if $parentConditionalString;
         push(@txtSetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
         push(@txtSetProps, "        ${setterFunctionName}(" . join(", ", @setterArguments) . ");\n");
+        push(@txtSetProps, "#else\n") if $parentConditionalString;
+        push(@txtSetProps, @parentConditionalWarn) if scalar(@parentConditionalWarn);
+        push(@txtSetProps, "#endif /* ${parentConditionalString} */\n") if $parentConditionalString;
         push(@txtSetProps, "        break;\n    }\n");
         push(@txtSetProps, "#endif /* ${conditionalString} */\n") if $conditionalString;
     }
 
     push(@txtGetProps, "#if ${conditionalString}\n") if $conditionalString;
     push(@txtGetProps, "    case ${propEnum}:\n    {\n");
+    push(@txtGetProps, "#if ${parentConditionalString}\n") if $parentConditionalString;
     push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->getterExceptions};
 
     my $postConvertFunction = "";
@@ -480,6 +488,9 @@ sub GenerateProperty {
         }
     }
 
+    push(@txtGetProps, "#else\n") if $parentConditionalString;
+    push(@txtGetProps, @parentConditionalWarn) if scalar(@parentConditionalWarn);
+    push(@txtGetProps, "#endif /* ${parentConditionalString} */\n") if $parentConditionalString;
     push(@txtGetProps, "        break;\n    }\n");
     push(@txtGetProps, "#endif /* ${conditionalString} */\n") if $conditionalString;
 
@@ -551,7 +562,9 @@ EOF
     ${className}* self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
 EOF
+        push(@txtGetProps, "$conditionGuardStart\n") if $conditionGuardStart;
         push(@txtGetProps, $txtGetProp);
+        push(@txtGetProps, "$conditionGuardEnd\n") if $conditionGuardEnd;
     }
 
     $txtGetProp = << "EOF";
@@ -573,7 +586,9 @@ EOF
     ${className}* self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
 EOF
+        push(@txtSetProps, "$conditionGuardStart\n") if $conditionGuardStart;
         push(@txtSetProps, $txtSetProps);
+        push(@txtSetProps, "$conditionGuardEnd\n") if $conditionGuardEnd;
     }
 
     $txtSetProps = << "EOF";
@@ -584,7 +599,7 @@ EOF
     foreach my $attribute (@readableProperties) {
         if ($attribute->signature->type ne "EventListener" &&
             $attribute->signature->type ne "MediaQueryListListener") {
-            GenerateProperty($attribute, $interfaceName, \@writeableProperties);
+            GenerateProperty($attribute, $interfaceName, \@writeableProperties, $dataNode);
         }
     }
 

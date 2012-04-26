@@ -114,13 +114,20 @@ static void webkit_dom_test_interface_finalize(GObject* object)
 static void webkit_dom_test_interface_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (prop_id) {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     case PROP_SUPPLEMENTAL_STR2:
     {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         TestSupplemental::setSupplementalStr2(coreSelf, WTF::String::fromUTF8(g_value_get_string(value)));
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
@@ -134,20 +141,32 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint prop_i
 static void webkit_dom_test_interface_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (prop_id) {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     case PROP_SUPPLEMENTAL_STR1:
     {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         g_value_take_string(value, convertToUTF8String(TestSupplemental::supplementalStr1(coreSelf)));
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 #if ENABLE(Condition11) || ENABLE(Condition12)
     case PROP_SUPPLEMENTAL_STR2:
     {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         g_value_take_string(value, convertToUTF8String(TestSupplemental::supplementalStr2(coreSelf)));
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */

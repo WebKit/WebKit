@@ -1,3 +1,24 @@
+2012-04-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] WebKitGTK+ 1.8.1 fails to build when disabling HTML Video feature
+        https://bugs.webkit.org/show_bug.cgi?id=84838
+
+        Reviewed by Martin Robinson.
+
+        Wrap WebCore objects and functions in GObject property setters and getters
+        with conditional guards (if present) to avoid compilation errors.
+
+        No new tests - changes covered by existing bindings tests.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperty):
+        (GenerateProperties):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp: Rebaseline.
+        (webkit_dom_test_interface_set_property):
+        (webkit_dom_test_interface_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp: Ditto.
+        (webkit_dom_test_serialized_script_value_interface_get_property):
+
 2012-04-22  Martin Robinson  <mrobinson@igalia.com>
 
         REGRESSION(113604): [Soup] Some pages that use synchronous XMLHttpRequests freeze the browser
