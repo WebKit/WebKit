@@ -1,3 +1,9 @@
+2012-04-26  Eric Carlson  <eric.carlson@apple.com>
+
+        Unreviewed gardening, remove tests that now pass from test_expectations.txt
+
+        * platform/mac/test_expectations.txt:
+
 2012-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test for crash in DOMSelection::deleteFromDocument
