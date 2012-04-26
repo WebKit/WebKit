@@ -1,3 +1,64 @@
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WebKit2] Initial windowed plugins implementation
+        https://bugs.webkit.org/show_bug.cgi?id=61065
+
+        Reviewed by Philippe Normand.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::createPluginContainer):
+        (WebKit::PluginControllerProxy::windowedPluginGeometryDidChange):
+        * PluginProcess/PluginControllerProxy.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerAdd): Implement GtkContainer::add().
+        (webkitWebViewBaseContainerRemove): Implement GtkContainer::remove().
+        (webkitWebViewBaseContainerForall): Implement GtkContainer::forall().
+        (webkitWebViewBaseChildMoveResize): Set a new geometry for a child widget.
+        (webkitWebViewBaseChildAllocate): Allocate a child widget.
+        (resizeWebKitWebViewBaseFromAllocation): Allocate child widgets.
+        (webkit_web_view_base_class_init):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Add webkitWebViewBaseSizeAllocate().
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Add createPluginContainer
+        and windowedPluginGeometryDidChange messages.
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::pluginWindowMap):
+        (WebKit::pluginContainerPlugRemoved): Remove the socket from the
+        hash map when its plug is removed.
+        (WebKit::WebPageProxy::createPluginContainer): Create a GtkSocket
+        as container widget for windowed plugins.
+        (WebKit::WebPageProxy::windowedPluginGeometryDidChange): Call
+        webkitWebViewBaseSizeAllocate() to update the plugin widget
+        geometry.
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::createPluginContainer):
+        (WebKit::WebPageProxy::windowedPluginGeometryDidChange):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::socketPlugRemovedCallback): Return TRUE to avoid the
+        socket to be destroyed, since we need to reuse it.
+        (WebKit::NetscapePlugin::platformPostInitializeWindowed): Ask the
+        ui process to create a plugin container.
+        (WebKit::NetscapePlugin::platformPostInitializeWindowless):
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        (WebKit::NetscapePlugin::platformGeometryDidChange): For windowed
+        plugins notify the ui process that the plugin geometry has
+        changed.
+        (WebKit::NetscapePlugin::platformPaint): Do nothing for windowed
+        plugins, the caller already calls callSetWindow().
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::createPluginContainer):
+        (WebKit::PluginProxy::windowedPluginGeometryDidChange):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createPluginContainer):
+        (WebKit::PluginView::windowedPluginGeometryDidChange):
+        * WebProcess/Plugins/PluginView.h:
+
 2012-04-26  Chris Fleizach2  <cfleizach@apple.com>
 
         CrashTracer: [USER] 157 crashes in WebProcess at com.apple.WebCore: WebCore::AccessibilityRenderObject::isAttachment const + 29

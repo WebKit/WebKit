@@ -234,6 +234,11 @@ private:
     void scheduleWindowedGeometryUpdate();
 #endif
 
+#if PLUGIN_ARCHITECTURE(X11)
+    bool platformPostInitializeWindowed(bool needsXEmbed, uint64_t windowID);
+    bool platformPostInitializeWindowless();
+#endif
+
     uint64_t m_nextRequestID;
 
     typedef HashMap<uint64_t, std::pair<String, void*> > PendingURLNotifyMap;
@@ -343,6 +348,9 @@ private:
 #elif PLUGIN_ARCHITECTURE(X11)
     Pixmap m_drawable;
     Display* m_pluginDisplay;
+#if PLATFORM(GTK)
+    GtkWidget* m_platformPluginWidget;
+#endif
 
 public: // Need to call it in the NPN_GetValue browser callback.
     static Display* x11HostDisplay();

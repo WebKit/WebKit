@@ -30,6 +30,8 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
+#include "WebKitWebViewBasePrivate.h"
+#include <gtk/gtkx.h>
 
 namespace WebKit {
 
@@ -62,6 +64,47 @@ void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)
 void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
 {
     notImplemented();
+}
+
+typedef HashMap<uint64_t, GtkWidget* > PluginWindowMap;
+static PluginWindowMap& pluginWindowMap()
+{
+    DEFINE_STATIC_LOCAL(PluginWindowMap, map, ());
+    return map;
+}
+
+static gboolean pluginContainerPlugRemoved(GtkSocket* socket)
+{
+    uint64_t windowID = static_cast<uint64_t>(gtk_socket_get_id(socket));
+    pluginWindowMap().remove(windowID);
+    return FALSE;
+}
+
+void WebPageProxy::createPluginContainer(uint64_t& windowID)
+{
+    GtkWidget* socket = gtk_socket_new();
+    g_signal_connect(socket, "plug-removed", G_CALLBACK(pluginContainerPlugRemoved), 0);
+    gtk_container_add(GTK_CONTAINER(viewWidget()), socket);
+    gtk_widget_show(socket);
+
+    windowID = static_cast<uint64_t>(gtk_socket_get_id(GTK_SOCKET(socket)));
+    pluginWindowMap().set(windowID, socket);
+}
+
+void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID)
+{
+    GtkWidget* plugin = pluginWindowMap().get(windowID);
+    if (!plugin)
+        return;
+
+    if (gtk_widget_get_realized(plugin)) {
+        GdkRectangle clip = clipRect;
+        cairo_region_t* clipRegion = cairo_region_create_rectangle(&clip);
+        gdk_window_shape_combine_region(gtk_widget_get_window(plugin), clipRegion, 0, 0);
+        cairo_region_destroy(clipRegion);
+    }
+
+    webkitWebViewBaseChildMoveResize(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugin, frameRect);
 }
 
 } // namespace WebKit

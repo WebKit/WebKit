@@ -160,6 +160,10 @@ private:
     virtual bool isPrivateBrowsingEnabled();
     virtual void protectPluginFromDestruction();
     virtual void unprotectPluginFromDestruction();
+#if PLUGIN_ARCHITECTURE(X11)
+    virtual uint64_t createPluginContainer();
+    virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID);
+#endif
 
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);

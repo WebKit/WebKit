@@ -41,6 +41,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGrou
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
 void webkitWebViewBaseStartDrag(WebKitWebViewBase*, const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
+void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseInitializeFullScreenClient(WebKitWebViewBase*, const WKFullScreenClientGtk*);

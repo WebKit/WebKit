@@ -103,6 +103,10 @@ private:
     virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password);
     virtual void protectPluginFromDestruction();
     virtual void unprotectPluginFromDestruction();
+#if PLUGIN_ARCHITECTURE(X11)
+    virtual uint64_t createPluginContainer();
+    virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID);
+#endif
     
     // Message handlers.
     void frameDidFinishLoading(uint64_t requestID);

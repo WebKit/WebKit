@@ -540,6 +540,20 @@ void PluginControllerProxy::getFormValue(bool& returnValue, String& formValue)
     returnValue = m_plugin->getFormValue(formValue);
 }
 
+#if PLUGIN_ARCHITECTURE(X11)
+uint64_t PluginControllerProxy::createPluginContainer()
+{
+    uint64_t windowID = 0;
+    m_connection->connection()->sendSync(Messages::PluginProxy::CreatePluginContainer(), Messages::PluginProxy::CreatePluginContainer::Reply(windowID), m_pluginInstanceID);
+    return windowID;
+}
+
+void PluginControllerProxy::windowedPluginGeometryDidChange(const IntRect& frameRect, const IntRect& clipRect, uint64_t windowID)
+{
+    m_connection->connection()->send(Messages::PluginProxy::WindowedPluginGeometryDidChange(frameRect, clipRect, windowID), m_pluginInstanceID);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

@@ -89,6 +89,9 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 #elif PLUGIN_ARCHITECTURE(X11)
     , m_drawable(0)
     , m_pluginDisplay(0)
+#if PLATFORM(GTK)
+    , m_platformPluginWidget(0)
+#endif
 #endif
 {
     m_npp.ndata = this;

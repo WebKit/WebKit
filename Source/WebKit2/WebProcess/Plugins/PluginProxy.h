@@ -135,6 +135,10 @@ private:
     void setComplexTextInputState(uint64_t);
     void setLayerHostingContextID(uint32_t);
 #endif
+#if PLUGIN_ARCHITECTURE(X11)
+    void createPluginContainer(uint64_t& windowID);
+    void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID);
+#endif
 
     String m_pluginPath;
 

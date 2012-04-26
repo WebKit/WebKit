@@ -55,6 +55,7 @@
 #include <WebCore/Region.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <wtf/HashMap.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -66,7 +67,10 @@
 using namespace WebKit;
 using namespace WebCore;
 
+typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
+
 struct _WebKitWebViewBasePrivate {
+    WebKitWebViewChildrenMap children;
     OwnPtr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
     bool isPageActive;
@@ -163,7 +167,51 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
 
 static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* widget)
 {
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
+    WebKitWebViewBasePrivate* priv = webView->priv;
+
+    GtkAllocation childAllocation;
+    gtk_widget_get_allocation(widget, &childAllocation);
+    priv->children.set(widget, childAllocation);
+
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
+}
+
+static void webkitWebViewBaseContainerRemove(GtkContainer* container, GtkWidget* widget)
+{
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
+    WebKitWebViewBasePrivate* priv = webView->priv;
+    GtkWidget* widgetContainer = GTK_WIDGET(container);
+
+    ASSERT(priv->children.contains(widget));
+    gboolean wasVisible = gtk_widget_get_visible(widget);
+    gtk_widget_unparent(widget);
+
+    priv->children.remove(widget);
+    if (wasVisible && gtk_widget_get_visible(widgetContainer))
+        gtk_widget_queue_resize(widgetContainer);
+}
+
+static void webkitWebViewBaseContainerForall(GtkContainer* container, gboolean includeInternals, GtkCallback callback, gpointer callbackData)
+{
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(container);
+    WebKitWebViewBasePrivate* priv = webView->priv;
+
+    WebKitWebViewChildrenMap children = priv->children;
+    WebKitWebViewChildrenMap::const_iterator end = children.end();
+    for (WebKitWebViewChildrenMap::const_iterator current = children.begin(); current != end; ++current)
+        (*callback)(current->first, callbackData);
+}
+
+void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* child, const IntRect& childRect)
+{
+    const IntRect& geometry = webView->priv->children.get(child);
+
+    if (geometry == childRect)
+        return;
+
+    webView->priv->children.set(child, childRect);
+    gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webView));
 }
 
 static void webkitWebViewBaseFinalize(GObject* gobject)
@@ -214,10 +262,27 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     return FALSE;
 }
 
+static void webkitWebViewBaseChildAllocate(GtkWidget* child, gpointer userData)
+{
+    if (!gtk_widget_get_visible(child))
+        return;
+
+    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(userData);
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    const IntRect& geometry = priv->children.get(child);
+    if (geometry.isEmpty())
+        return;
+
+    GtkAllocation childAllocation = geometry;
+    gtk_widget_size_allocate(child, &childAllocation);
+    priv->children.set(child, IntRect());
+}
+
 static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase, GtkAllocation* allocation)
 {
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    gtk_container_foreach(GTK_CONTAINER(webViewBase), webkitWebViewBaseChildAllocate, webViewBase);
 
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->pageProxy->drawingArea())
         priv->pageProxy->drawingArea()->setSize(IntSize(allocation->width, allocation->height), IntSize());
 
@@ -250,7 +315,6 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
     gtk_widget_get_allocation(widget, &allocation);
     resizeWebKitWebViewBaseFromAllocation(webViewBase, &allocation);
     webViewBase->priv->needsResizeOnMap = false;
-
 }
 
 static gboolean webkitWebViewBaseFocusInEvent(GtkWidget* widget, GdkEventFocus* event)
@@ -527,6 +591,8 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webkitWebViewBaseClass);
     containerClass->add = webkitWebViewBaseContainerAdd;
+    containerClass->remove = webkitWebViewBaseContainerRemove;
+    containerClass->forall = webkitWebViewBaseContainerForall;
 
     g_type_class_add_private(webkitWebViewBaseClass, sizeof(WebKitWebViewBasePrivate));
 }

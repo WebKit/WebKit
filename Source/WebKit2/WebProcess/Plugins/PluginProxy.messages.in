@@ -66,6 +66,14 @@ messages -> PluginProxy {
     # Update the layer hosting context ID. Called whenever the layer hosting state changes.
     SetLayerHostingContextID(uint32_t layerHostingContextID)
 #endif
+
+#if PLUGIN_ARCHITECTURE(X11)
+    # Create the plugin container for windowed plugins
+    CreatePluginContainer() -> (uint64_t windowID)
+
+    # Update geometry of windowed plugin widget
+    WindowedPluginGeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, uint64_t windowID)
+#endif
 }
 
 #endif
