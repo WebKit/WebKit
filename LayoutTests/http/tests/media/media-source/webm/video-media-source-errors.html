@@ -24,6 +24,12 @@
                         break;
                 }
                 consoleWrite("EVENT(error) : " + errorString);
+
+                if (videoTag.webkitSourceState != HTMLMediaElement.SOURCE_CLOSED) {
+                    consoleWrite("Unexpected source state. Expected SOURCE_CLOSED" +
+                                 " got " + getSourceStateName(videoTag.webkitSourceState));
+                }
+
                 runNextTestCase(videoTag);
             }
 
@@ -36,90 +42,94 @@
                 appendCluster(videoTag, nextClusterIndex++);
                 appendCluster(videoTag, nextClusterIndex++);
 
-                var eventHandler = function(event) {
+                var eventHandler = function(event)
+                {
                     videoTag.removeEventListener('loadedmetadata', eventHandler);
                     doneCallback();
                 };
                 videoTag.addEventListener('loadedmetadata', eventHandler);
             }
 
-            // Test appending cluster data before sending the headers.
             function didNotSendHeadersFirst(event)
             {
+                consoleWrite("Test appending cluster data before sending the headers.");
                 appendCluster(event.target, 0);
             }
 
-            // Test appending the same cluster twice.
             function appendSameClusterTwice(event)
             {
+                consoleWrite("Test appending the same cluster twice.");
                 var videoTag = event.target;
 
                 appendHeaders(videoTag);
-                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function()
+                {
+                    consoleWrite("Appending the last appended cluster again.");
                     appendCluster(videoTag, nextClusterIndex - 1);
                 });
             }
 
-            // Test clusters appended out of order.
             function appendClustersOutOfOrder(event)
             {
+                consoleWrite("Test clusters appended out of order.");
                 var videoTag = event.target;
 
                 appendHeaders(videoTag);
-                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
-                    // Append 1 past the next cluster.
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function()
+                {
+                    consoleWrite("Append 1 past the next cluster.");
                     appendCluster(videoTag, nextClusterIndex + 1);
 
-                    // Append the next cluster.
+                    consoleWrite("Append the next cluster.");
                     appendCluster(videoTag, nextClusterIndex);
                 });
             }
 
-            // Test signalling a decode error with webkitSourceEndOfStream.
             function immediateDecodeErrorViaEndOfStream(event)
             {
+                 consoleWrite("Test signalling a decode error with webkitSourceEndOfStream.");
                  var videoTag = event.target;
                  videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
             }
 
-            // Test signalling a network error with webkitSourceEndOfStream.
             function immediateNetworkErrorViaEndOfStream(event)
             {
+                consoleWrite("Test signalling a network error with webkitSourceEndOfStream.");
                 var videoTag = event.target;
                 videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
             }
 
-            // Test signalling a decode error with webkitSourceEndOfStream after we
-            // have appended enough data to get to the HAVE_METADATA state.
             function decodeErrorAfterHaveMetadata(event)
             {
+                consoleWrite("Test signalling a decode error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.");
                 var videoTag = event.target;
                 appendHeaders(videoTag);
 
-                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function()
+                {
                     videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
                 });
             }
 
-            // Test signalling a network error with webkitSourceEndOfStream after we
-            // have appended enough data to get to the HAVE_METADATA state.
             function networkErrorAfterHaveMetadata(event)
             {
+                consoleWrite("Test signalling a network error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.");
                 var videoTag = event.target;
                 appendHeaders(videoTag);
-                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function() {
+                appendEnoughClustersToTriggerMetadataLoaded(videoTag, function()
+                {
                     videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
                 });
             }
 
             var testCases = [
-                "didNotSendHeadersFirst",
-                "appendSameClusterTwice",
-                "appendClustersOutOfOrder",
-                "immediateDecodeErrorViaEndOfStream",
-                "immediateNetworkErrorViaEndOfStream",
-                "decodeErrorAfterHaveMetadata",
-                "networkErrorAfterHaveMetadata"
+                didNotSendHeadersFirst,
+                appendSameClusterTwice,
+                appendClustersOutOfOrder,
+                immediateDecodeErrorViaEndOfStream,
+                immediateNetworkErrorViaEndOfStream,
+                decodeErrorAfterHaveMetadata,
+                networkErrorAfterHaveMetadata
             ];
 
             var testCaseIndex = 0;
@@ -131,8 +141,8 @@
                     return;
                 }
 
-                var functionName = testCases[testCaseIndex];
-                var onOpenFunction = eval(functionName);
+                var onOpenFunction = testCases[testCaseIndex];
+                var functionName = onOpenFunction.name;
                 testCaseIndex++;
 
                 var eventHandlerFunction = function (event) {
@@ -159,7 +169,8 @@
 
                 video.addEventListener('error', onError);
 
-                loadWebMData(function(success) {
+                loadWebMData(function(success)
+                {
                     if (!success) {
                         failTest("Failed to load WebM data");
                         return;

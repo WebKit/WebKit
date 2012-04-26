@@ -1395,6 +1395,11 @@ void HTMLMediaElement::noneSupported()
     // 7 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
 
+#if ENABLE(MEDIA_SOURCE)
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
+#endif
+
     // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
     setShouldDelayLoadEvent(false);
 

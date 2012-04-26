@@ -4,26 +4,33 @@ EVENT(loadstart)
 EVENT(webkitsourceopen)
 
 running didNotSendHeadersFirst
+Test appending cluster data before sending the headers.
 EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
 EVENT(emptied)
 EVENT(loadstart)
 EVENT(webkitsourceopen)
 
 running appendSameClusterTwice
+Test appending the same cluster twice.
 EVENT(loadedmetadata)
+Appending the last appended cluster again.
 EVENT(error) : MEDIA_ERR_DECODE
 EVENT(emptied)
 EVENT(loadstart)
 EVENT(webkitsourceopen)
 
 running appendClustersOutOfOrder
+Test clusters appended out of order.
 EVENT(loadedmetadata)
+Append 1 past the next cluster.
+Append the next cluster.
 EVENT(error) : MEDIA_ERR_DECODE
 EVENT(emptied)
 EVENT(loadstart)
 EVENT(webkitsourceopen)
 
 running immediateDecodeErrorViaEndOfStream
+Test signalling a decode error with webkitSourceEndOfStream.
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
 EVENT(emptied)
@@ -31,6 +38,7 @@ EVENT(loadstart)
 EVENT(webkitsourceopen)
 
 running immediateNetworkErrorViaEndOfStream
+Test signalling a network error with webkitSourceEndOfStream.
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
 EVENT(emptied)
@@ -38,6 +46,7 @@ EVENT(loadstart)
 EVENT(webkitsourceopen)
 
 running decodeErrorAfterHaveMetadata
+Test signalling a decode error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.
 EVENT(loadedmetadata)
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_DECODE
@@ -46,6 +55,7 @@ EVENT(loadstart)
 EVENT(webkitsourceopen)
 
 running networkErrorAfterHaveMetadata
+Test signalling a network error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.
 EVENT(loadedmetadata)
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_NETWORK
