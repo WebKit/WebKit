@@ -1,3 +1,15 @@
+2012-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test for crash in DOMSelection::deleteFromDocument
+        https://bugs.webkit.org/show_bug.cgi?id=84991
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test for the bug 44153 (fixed in r65587).
+
+        * editing/selection/deleteFromDocument-after-document-open-crash-expected.txt: Added.
+        * editing/selection/deleteFromDocument-after-document-open-crash.html: Added.
+
 2012-04-26  Benjamin Poulain  <bpoulain@apple.com>
 
         ObjcClass::methodsNamed() can leak if buffer is dynamically allocated
