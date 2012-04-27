@@ -176,6 +176,7 @@ private:
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
     void drawTextureQuad(const CCTextureDrawQuad*);
+    void drawIOSurfaceQuad(const CCIOSurfaceDrawQuad*);
     void drawTileQuad(const CCTileDrawQuad*);
     void drawVideoQuad(const CCVideoDrawQuad*);
 

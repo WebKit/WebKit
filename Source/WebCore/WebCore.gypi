@@ -3637,6 +3637,8 @@
             'platform/graphics/chromium/cc/CCGestureCurve.h',
             'platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp',
             'platform/graphics/chromium/cc/CCHeadsUpDisplay.h',
+            'platform/graphics/chromium/cc/CCIOSurfaceDrawQuad.cpp',
+            'platform/graphics/chromium/cc/CCIOSurfaceDrawQuad.h',
             'platform/graphics/chromium/cc/CCInputHandler.h',
             'platform/graphics/chromium/cc/CCKeyframedAnimationCurve.cpp',
             'platform/graphics/chromium/cc/CCKeyframedAnimationCurve.h',

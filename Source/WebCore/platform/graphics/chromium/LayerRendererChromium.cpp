@@ -34,6 +34,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerRendererChromium.h"
 
+#include "Extensions3D.h"
 #include "Extensions3DChromium.h"
 #include "FloatQuad.h"
 #include "GeometryBinding.h"
@@ -42,8 +43,10 @@
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
 #include "ManagedTexture.h"
+#include "NativeImageSkia.h"
 #include "NotImplemented.h"
 #include "PlatformColor.h"
+#include "PlatformContextSkia.h"
 #include "RenderSurfaceChromium.h"
 #include "TextStream.h"
 #include "TextureCopier.h"
@@ -54,6 +57,7 @@
 #include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
+#include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCMathUtil.h"
@@ -64,9 +68,6 @@
 #include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
-#include "Extensions3D.h"
-#include "NativeImageSkia.h"
-#include "PlatformContextSkia.h"
 #include <public/WebVideoFrame.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -473,6 +474,9 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& su
         break;
     case CCDrawQuad::DebugBorder:
         drawDebugBorderQuad(quad->toDebugBorderDrawQuad());
+        break;
+    case CCDrawQuad::IOSurfaceContent:
+        drawIOSurfaceQuad(quad->toIOSurfaceDrawQuad());
         break;
     case CCDrawQuad::RenderSurface:
         drawRenderSurfaceQuad(quad->toRenderSurfaceDrawQuad());
@@ -1015,22 +1019,7 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
     ASSERT(CCProxy::isImplThread());
     unsigned matrixLocation = 0;
     unsigned alphaLocation = 0;
-    if (quad->ioSurfaceTextureId()) {
-        TexTransformTextureProgramBinding binding;
-        if (quad->flipped())
-            binding.set(textureLayerTexRectProgramFlip());
-        else
-            binding.set(textureLayerTexRectProgram());
-
-        GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-
-        GLC(context(), context()->useProgram(binding.programId));
-        GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
-        GLC(context(), context()->uniform4f(binding.texTransformLocation, 0, 0, quad->ioSurfaceSize().width(), quad->ioSurfaceSize().height()));
-
-        matrixLocation = binding.matrixLocation;
-        alphaLocation = binding.alphaLocation;
-    } else if (quad->flipped() && quad->uvRect() == FloatRect(0, 0, 1, 1)) {
+    if (quad->flipped() && quad->uvRect() == FloatRect(0, 0, 1, 1)) {
         // A flipped quad with the default UV mapping is common enough to use a special shader.
         // Canvas 2d and WebGL layers use this path always and plugin/external texture layers use this by default.
         const CCTextureLayerImpl::ProgramFlip* program = textureLayerProgramFlip();
@@ -1054,10 +1043,7 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
     }
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
 
-    if (quad->ioSurfaceTextureId())
-        GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, quad->ioSurfaceTextureId()));
-    else
-        GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
 
     // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
     // where it will only happen once per texture.
@@ -1073,10 +1059,38 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
 
     drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(), matrixLocation, alphaLocation, -1);
 
-    GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    if (!quad->premultipliedAlpha())
+        GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+}
 
-    if (quad->ioSurfaceTextureId())
-        GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
+void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
+{
+    ASSERT(CCProxy::isImplThread());
+    TexTransformTextureProgramBinding binding;
+    if (quad->flipped())
+        binding.set(textureLayerTexRectProgramFlip());
+    else
+        binding.set(textureLayerTexRectProgram());
+
+    GLC(context(), context()->useProgram(binding.programId));
+    GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
+    GLC(context(), context()->uniform4f(binding.texTransformLocation, 0, 0, quad->ioSurfaceSize().width(), quad->ioSurfaceSize().height()));
+
+    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
+    GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, quad->ioSurfaceTextureId()));
+
+    // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
+    // where it will only happen once per texture.
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+
+    const IntSize& bounds = quad->quadRect().size();
+
+    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
+
+    GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
 }
 
 void LayerRendererChromium::drawHeadsUpDisplay(ManagedTexture* hudTexture, const IntSize& hudSize)

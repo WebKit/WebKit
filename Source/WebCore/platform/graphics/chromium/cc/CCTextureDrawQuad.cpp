@@ -29,19 +29,17 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCTextureDrawQuad> CCTextureDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+PassOwnPtr<CCTextureDrawQuad> CCTextureDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
 {
-    return adoptPtr(new CCTextureDrawQuad(sharedQuadState, quadRect, textureId, premultipliedAlpha, uvRect, flipped, ioSurfaceSize, ioSurfaceTextureId));
+    return adoptPtr(new CCTextureDrawQuad(sharedQuadState, quadRect, textureId, premultipliedAlpha, uvRect, flipped));
 }
 
-CCTextureDrawQuad::CCTextureDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+CCTextureDrawQuad::CCTextureDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::TextureContent, quadRect)
     , m_textureId(textureId)
     , m_premultipliedAlpha(premultipliedAlpha)
     , m_uvRect(uvRect)
     , m_flipped(flipped)
-    , m_ioSurfaceSize(ioSurfaceSize)
-    , m_ioSurfaceTextureId(ioSurfaceTextureId)
 {
 }
 

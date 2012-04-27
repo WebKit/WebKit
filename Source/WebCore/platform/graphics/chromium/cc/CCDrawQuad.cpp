@@ -29,10 +29,11 @@
 
 #include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
+#include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCTextureDrawQuad.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
+#include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
 
@@ -75,6 +76,12 @@ const CCDebugBorderDrawQuad* CCDrawQuad::toDebugBorderDrawQuad() const
 {
     ASSERT(m_material == DebugBorder);
     return static_cast<const CCDebugBorderDrawQuad*>(this);
+}
+
+const CCIOSurfaceDrawQuad* CCDrawQuad::toIOSurfaceDrawQuad() const
+{
+    ASSERT(m_material == IOSurfaceContent);
+    return static_cast<const CCIOSurfaceDrawQuad*>(this);
 }
 
 const CCRenderSurfaceDrawQuad* CCDrawQuad::toRenderSurfaceDrawQuad() const

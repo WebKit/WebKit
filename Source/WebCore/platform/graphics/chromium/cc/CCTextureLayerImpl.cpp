@@ -32,6 +32,7 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCTextureDrawQuad.h"
@@ -94,7 +95,10 @@ void CCTextureLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_premultipliedAlpha, m_uvRect, m_flipped, m_ioSurfaceSize, m_ioSurfaceTextureId));
+    if (m_textureId)
+        quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_premultipliedAlpha, m_uvRect, m_flipped));
+    else if (m_ioSurfaceTextureId)
+        quadList.append(CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, m_flipped, m_ioSurfaceSize, m_ioSurfaceTextureId));
 }
 
 void CCTextureLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const

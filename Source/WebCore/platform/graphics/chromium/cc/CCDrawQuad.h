@@ -32,6 +32,7 @@ namespace WebCore {
 
 class CCCheckerboardDrawQuad;
 class CCDebugBorderDrawQuad;
+class CCIOSurfaceDrawQuad;
 class CCRenderSurfaceDrawQuad;
 class CCSolidColorDrawQuad;
 class CCTextureDrawQuad;
@@ -65,6 +66,7 @@ public:
         Invalid,
         Checkerboard,
         DebugBorder,
+        IOSurfaceContent,
         RenderSurface,
         TextureContent,
         SolidColor,
@@ -76,6 +78,7 @@ public:
 
     const CCCheckerboardDrawQuad* toCheckerboardDrawQuad() const;
     const CCDebugBorderDrawQuad* toDebugBorderDrawQuad() const;
+    const CCIOSurfaceDrawQuad* toIOSurfaceDrawQuad() const;
     const CCRenderSurfaceDrawQuad* toRenderSurfaceDrawQuad() const;
     const CCSolidColorDrawQuad* toSolidColorDrawQuad() const;
     const CCTextureDrawQuad* toTextureDrawQuad() const;

@@ -23,33 +23,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureDrawQuad_h
-#define CCTextureDrawQuad_h
+#include "config.h"
 
-#include "cc/CCDrawQuad.h"
-#include <wtf/PassOwnPtr.h>
+#include "cc/CCIOSurfaceDrawQuad.h"
 
 namespace WebCore {
 
-class CCTextureDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCTextureDrawQuad);
-public:
-    static PassOwnPtr<CCTextureDrawQuad> create(const CCSharedQuadState*, const IntRect&, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped);
-
-    unsigned textureId() const { return  m_textureId; }
-    bool premultipliedAlpha() const { return  m_premultipliedAlpha; }
-    FloatRect uvRect() const { return m_uvRect; }
-    bool flipped() const { return m_flipped; }
-
-private:
-    CCTextureDrawQuad(const CCSharedQuadState*, const IntRect&, unsigned texture_id, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped);
-    
-    unsigned m_textureId;
-    bool m_premultipliedAlpha;
-    FloatRect m_uvRect;
-    bool m_flipped;
-};
-
+PassOwnPtr<CCIOSurfaceDrawQuad> CCIOSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+{
+    return adoptPtr(new CCIOSurfaceDrawQuad(sharedQuadState, quadRect, flipped, ioSurfaceSize, ioSurfaceTextureId));
 }
 
-#endif
+CCIOSurfaceDrawQuad::CCIOSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::IOSurfaceContent, quadRect)
+    , m_flipped(flipped)
+    , m_ioSurfaceSize(ioSurfaceSize)
+    , m_ioSurfaceTextureId(ioSurfaceTextureId)
+{
+}
+
+}
