@@ -1063,8 +1063,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
                     // Since elem must have been fully selected, and it is at the end
                     // of the selection, it is clear we can set the new e offset to
                     // the max range offset of prev.
-                    ASSERT(s.anchorType() == Position::PositionIsAfterAnchor
-                           || s.offsetInContainerNode() >= lastOffsetInNode(s.containerNode()));
+                    ASSERT(s.anchorType() == Position::PositionIsAfterAnchor || !offsetIsBeforeLastNodeOffset(s.offsetInContainerNode(), s.containerNode()));
                     e = lastPositionInOrAfterNode(prev.get());
                 }
             }
@@ -1227,7 +1226,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position& start, const
     int endOffset = end.computeOffsetInContainerNode();
 
     if (isAtomicNode(endNode)) {
-        if (endOffset < lastOffsetInNode(endNode))
+        if (offsetIsBeforeLastNodeOffset(endOffset, endNode))
             return false;
 
         unsigned parentLastOffset = end.deprecatedNode()->parentNode()->childNodes()->length() - 1;

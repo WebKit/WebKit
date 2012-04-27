@@ -286,6 +286,31 @@ inline Position lastPositionInNode(Node* anchorNode)
     return Position(anchorNode, Position::PositionIsAfterChildren);
 }
 
+inline int minOffsetForNode(Node* anchorNode, int offset)
+{
+    if (anchorNode->offsetInCharacters())
+        return std::min(offset, anchorNode->maxCharacterOffset());
+
+    int newOffset = 0;
+    for (Node* node = anchorNode->firstChild(); node && newOffset < offset; node = node->nextSibling())
+        newOffset++;
+    
+    return newOffset;
+}
+
+inline bool offsetIsBeforeLastNodeOffset(int offset, Node* anchorNode)
+{
+    if (anchorNode->offsetInCharacters())
+        return offset < anchorNode->maxCharacterOffset();
+
+    int currentOffset = 0;
+    for (Node* node = anchorNode->firstChild(); node && currentOffset < offset; node = node->nextSibling())
+        currentOffset++;
+    
+    
+    return offset < currentOffset;
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

@@ -177,7 +177,7 @@ int Position::computeOffsetInContainerNode() const
     case PositionIsAfterChildren:
         return lastOffsetInNode(m_anchorNode.get());
     case PositionIsOffsetInAnchor:
-        return std::min(lastOffsetInNode(m_anchorNode.get()), m_offset);
+        return minOffsetForNode(m_anchorNode.get(), m_offset);
     case PositionIsBeforeAnchor:
         return m_anchorNode->nodeIndex();
     case PositionIsAfterAnchor:
