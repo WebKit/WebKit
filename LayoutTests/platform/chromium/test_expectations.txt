@@ -3696,6 +3696,9 @@ BUGWK85038 : http/tests/inspector/network/network-initiator.html = TEXT TIMEOUT
 BUGWK85073 : fast/images/gif-large-checkerboard.html = CRASH PASS
 BUGWK85082 XP DEBUG : platform/chromium/media/video-capture-preview.html = CRASH PASS
 
+// This appears to be sensitive to --test-shell vs "drt mode" in DRT for some reason
+BUGWK85085 MAC LINUX : svg/custom/clip-path-referencing-use2.svg = TEXT
+
 BUGWK85090 : fast/js/dfg-float64array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint16array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint8array.html = PASS TIMEOUT

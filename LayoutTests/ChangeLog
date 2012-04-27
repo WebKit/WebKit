@@ -1,3 +1,14 @@
+2012-04-27  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] use "drt-style" output, not "test-shell-style" output, on mac and linux DRT
+        https://bugs.webkit.org/show_bug.cgi?id=84917
+
+        Unreviewed, build fix.
+
+        Reland the change in r115453 with a fix for chromium win.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-27  Eric Carlson  <eric.carlson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=85038
