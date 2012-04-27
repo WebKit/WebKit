@@ -1,3 +1,16 @@
+2012-04-27  Gavin Peters  <gavinp@chromium.org>
+
+        [Chromium] Remove Webkit/chromium/public/WebReferrerPolicy.h thunk.
+        https://bugs.webkit.org/show_bug.cgi?id=84552
+
+        After http://codereview.chromium.org/10139023/ lands, this thunk is no
+        longer needed.
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        * public/WebReferrerPolicy.h: Removed.
+
 2012-04-27  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Disables a few more webkit_unittests.

@@ -226,7 +226,6 @@
                 'public/WebPopupMenuInfo.h',
                 'public/WebPopupType.h',
                 'public/WebRange.h',
-                'public/WebReferrerPolicy.h',
                 'public/WebRegularExpression.h',
                 'public/WebRuntimeFeatures.h',
                 'public/WebScopedMicrotaskSuppression.h',
