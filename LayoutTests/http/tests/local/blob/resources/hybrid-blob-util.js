@@ -131,16 +131,19 @@ var HybridBlobTestUtil = function(testFunc, opt_filePaths) {
 
     this.appendAndCreateBlob = function(items, opt_ending, opt_type)
     {
-        var bb = new WebKitBlobBuilder();
+        var builder = [];
         for (var i = 0; i < items.length; i++) {
             if (items[i] instanceof Array) {
                 // If it's an array, combine its elements and append as a blob.
-                bb.append(this.appendAndCreateBlob(items[i], opt_ending, opt_type));
-            } else if (items[i].type == "data" && opt_ending)
-                bb.append(items[i].value, opt_ending);
-            else
-                bb.append(items[i].value);
+                builder.push(this.appendAndCreateBlob(items[i], opt_ending, opt_type));
+            } else
+                builder.push(items[i].value);
         }
-        return bb.getBlob(opt_type);
+        var options = {};
+        if (opt_ending)
+            options.endings = opt_ending;
+        if (opt_type)
+            options.type = opt_type;
+        return new Blob(builder, options);
     };
 };

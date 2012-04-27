@@ -15,9 +15,7 @@ shouldThrow('reader.readAsBinaryString()');
 shouldThrow('reader.readAsText()');
 shouldThrow('reader.readAsDataURL()');
 
-var blobBuilder = new WebKitBlobBuilder();
-
-shouldThrow('blobBuilder.append()');
+shouldThrow('new Blob()');
 
 var fileInput = document.getElementsByTagName('input')[0];
 

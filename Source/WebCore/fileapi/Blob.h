@@ -43,6 +43,11 @@ namespace WebCore {
 
 class Blob : public RefCounted<Blob> {
 public:
+    static PassRefPtr<Blob> create()
+    {
+        return adoptRef(new Blob);
+    }
+
     static PassRefPtr<Blob> create(PassOwnPtr<BlobData> blobData, long long size)
     {
         return adoptRef(new Blob(blobData, size));
@@ -67,6 +72,7 @@ public:
 #endif
 
 protected:
+    Blob();
     Blob(PassOwnPtr<BlobData>, long long size);
 
     // For deserialization.

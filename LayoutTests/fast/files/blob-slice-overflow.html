@@ -5,19 +5,22 @@ a truncated slice being returned.
 <pre id='console'></pre>
 <script>
 if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone()
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone()
 }
-var builder =  new WebKitBlobBuilder();
+
 var text = '';
-for (var i = 0; i < 2000; ++i) text += 'A';
-builder.append(text);
-blob = builder.getBlob();
+for (var i = 0; i < 2000; ++i)
+    text += 'A';
+
+blob = new Blob([text]);
 slicedBlob = blob.webkitSlice(1999, 9223372036854775000);
+
 document.getElementById('console').appendChild(document.createTextNode('Blob slice length: ' + slicedBlob.size));
 if (slicedBlob.size != 1) {
-  document.getElementById('console').appendChild(document.createTextNode('FAIL'));
+    document.getElementById('console').appendChild(document.createTextNode('FAIL'));
 }
+
 if (window.layoutTestController) {
   layoutTestController.notifyDone();
 }

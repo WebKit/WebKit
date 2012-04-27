@@ -49,4 +49,71 @@ v8::Handle<v8::Value> toV8(Blob* impl, v8::Isolate* isolate)
     return V8Blob::wrap(impl, isolate);
 }
 
+v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.Blob.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
+    // Get the script execution context.
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return throwError("Blob constructor's associated frame is not available", V8Proxy::ReferenceError);
+
+    if (!args.Length())
+        RefPtr<Blob> blob = Blob::create();
+        return toV8(blob.get());
+    }
+
+    v8::Local<v8::Value> firstArg = args[0];
+    if (!firstArg->IsArray())
+        return throwError("First argument of the constructor is not of type Array", V8Proxy::TypeError);
+
+    EXCEPTION_BLOCK(v8::Local<v8::Array>, blobParts, v8::Local<v8::Array>::Cast(firstArg));
+
+    String type;
+    String endings = "transparent";
+
+    if (args.Length() > 1 && args[1]->IsObject()) {
+        Dictionary dictionary(args[1]);
+        dictionary.get("type", type);
+        if (dictionary.get("endings", endings)) {
+            if (endings != "transparent" && endings != "native") {
+                V8Proxy::setDOMException(INVALID_STATE_ERR);
+                return v8::Undefined();
+            }
+        }
+    }
+
+    ASSERT(endings == "transparent" || endings == "native");
+
+    RefPtr<WebKitBlobBuilder> blobBuilder = WebKitBlobBuilder::create();
+    for (uint32_t i = 0; i < blobParts->Length(); ++i) {
+        v8::Local<v8::Value> item = blobParts->Get(v8::Uint32::New(i));
+        ASSERT(!item.IsEmpty());
+#if ENABLE(BLOB)
+        if (V8ArrayBuffer::HasInstance(item)) {
+            ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(item));
+            ASSERT(arrayBuffer);
+            blobBuilder->append(arrayBuffer);
+        } else
+#endif
+        if (V8Blob::HasInstance(item)) {
+            Blob* blob = V8Blob::toNative(v8::Handle<v8::Object>::Cast(item));
+            ASSERT(blob);
+            blobBuilder->append(blob);
+        } else {
+            EXCEPTION_BLOCK(String, stringValue, toWebCoreString(item->ToString()));
+            blobBuilder->append(stringValue, endings, ASSERT_NO_EXCEPTION);
+        }
+    }
+
+    RefPtr<Blob> blob = blobBuilder->getBlob(type);
+    return toV8(blob.get());
+}
+
 } // namespace WebCore
