@@ -1,5 +1,12 @@
 2012-04-27  Oliver Hunt  <oliver@apple.com>
 
+        Correct assertion.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+
+2012-04-27  Oliver Hunt  <oliver@apple.com>
+
         Lazy link phase of baseline jit fails to propagate exception
         https://bugs.webkit.org/show_bug.cgi?id=85092
 
