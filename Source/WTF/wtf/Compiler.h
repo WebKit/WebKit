@@ -66,7 +66,7 @@
 #endif
 
 /* Specific compiler features */
-#if _MSC_VER >= 1600
+#if !COMPILER(CLANG) && _MSC_VER >= 1600
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1
 #endif
 

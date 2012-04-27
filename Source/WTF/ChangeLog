@@ -1,3 +1,17 @@
+2012-04-26  Nico Weber  <thakis@chromium.org>
+
+        Don't define WTF_COMPILER_SUPPORTS_CXX_NULLPTR twice when building with clang on windows.
+        https://bugs.webkit.org/show_bug.cgi?id=85018
+
+        Reviewed by Anders Carlsson.
+
+        Clang sets _MSC_VER when compiling for a -pc-win32 target (just like it sets __GNUC__ on unix).
+        As a result, WTF_COMPILER_SUPPORTS_CXX_NULLPTR gets currently set twice, once for clang and
+        once for _MSC_VER. Guard the second instance with !COMPILER(CLANG). This matches the gcc code
+        for WTF_COMPILER_SUPPORTS_CXX_NULLPTR in the same file.
+
+        * wtf/Compiler.h:
+
 2012-04-26  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] properly disable DRAG_SUPPORT
