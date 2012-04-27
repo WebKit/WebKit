@@ -15,8 +15,10 @@ removeAllInDirectorySync(fileSystem.root);
 var entry = fileSystem.root.getFile('a', {create:true, exclusive:true});
 var writer = entry.createWriter();
 assert(!writer.position);
+var builder = new WebKitBlobBuilder();
 var testData = "test data";
-writer.write(new Blob([testData]));
+builder.append(testData);
+writer.write(builder.getBlob());
 assert(writer.length == testData.length);
 assert(writer.position == writer.length);
 

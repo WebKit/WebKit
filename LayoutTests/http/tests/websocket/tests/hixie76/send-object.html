@@ -15,7 +15,8 @@ if (window.layoutTestController)
 
 function createEmptyBlob()
 {
-    return new Blob([]);
+    var builder = new WebKitBlobBuilder();
+    return builder.getBlob();
 }
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/echo");

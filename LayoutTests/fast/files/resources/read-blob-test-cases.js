@@ -170,11 +170,11 @@ function testReadingSlicedHybridBlob(testFiles)
 function testReadingTripleSlicedHybridBlob(testFiles)
 {
     log("Test reading a triple-sliced hybrid blob");
+    var builder = new WebKitBlobBuilder();
     var array = new Uint8Array([48, 49, 50]);
-    var items = ['First', testFiles['file1'].webkitSlice(1, 11), testFiles['empty-file'], 'Second', testFiles['file2'], testFiles['file3'], 'Third', array.buffer];
-    var blob = buildBlob(items);
+    var blob = buildBlob(['First', testFiles['file1'].webkitSlice(1, 11), testFiles['empty-file'], 'Second', testFiles['file2'], testFiles['file3'], 'Third', array.buffer], undefined, builder);
     var blob = blob.webkitSlice(7, 19);
-    var blob2 = buildBlob(items.concat(['Foo', blob, 'Bar']));
+    var blob2 = buildBlob(['Foo', blob, 'Bar'], undefined, builder);
     var blob2 = blob2.webkitSlice(12, 42);
     readBlobAsBinaryString(testFiles, blob2);
 }

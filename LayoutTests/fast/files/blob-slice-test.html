@@ -82,7 +82,9 @@ function runNextTest()
 
 function runTests()
 {
-    blob = new Blob(["0123456789"]);
+    var builder = new WebKitBlobBuilder();
+    builder.append("0123456789");
+    blob = builder.getBlob();
 
     runNextTest();
 }

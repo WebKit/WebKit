@@ -1,11 +1,14 @@
 function createBlobContainingHelloWorld()
 {
-    return new Blob(["Hello, world!"]);
+    var builder = new WebKitBlobBuilder();
+    builder.append("Hello, world!");
+    return builder.getBlob();
 }
 
 function createEmptyBlob()
 {
-    return new Blob([]);
+    var builder = new WebKitBlobBuilder();
+    return builder.getBlob();
 }
 
 function createBlobContainingAllDistinctBytes()
@@ -13,7 +16,9 @@ function createBlobContainingAllDistinctBytes()
     var array = new Uint8Array(256);
     for (var i = 0; i < 256; ++i)
         array[i] = i;
-    return new Blob([array.buffer]);
+    var builder = new WebKitBlobBuilder();
+    builder.append(array.buffer);
+    return builder.getBlob();
 }
 
 var url = "ws://127.0.0.1:8880/websocket/tests/hybi/workers/resources/check-binary-messages";

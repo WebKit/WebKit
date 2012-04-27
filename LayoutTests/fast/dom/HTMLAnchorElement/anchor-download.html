@@ -24,8 +24,9 @@ function click(elmt)
 
 function runTest()
 {
-    var string = "<!doctype html><html><head><title>Title</title><script>if (window.layoutTestController) layoutTestController.dumpAsText(); </" + "script></head><body>PASS</body><script>if (window.layoutTestController) layoutTestController.notifyDone();</scr" + "ipt></html>";
-    var blob = new Blob([string], {type: "text/html"});
+    var bb = new WebKitBlobBuilder();
+    bb.append("<!doctype html><html><head><title>Title</title><script>if (window.layoutTestController) layoutTestController.dumpAsText(); </" + "script></head><body>PASS</body><script>if (window.layoutTestController) layoutTestController.notifyDone();</scr" + "ipt></html>");
+    var blob = bb.getBlob("text/html", "inline");
     var link = document.getElementById("blob-url");
     link.href = window.webkitURL.createObjectURL(blob);
     click(link);

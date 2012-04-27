@@ -59,7 +59,9 @@ function didGetFileWriter(writer)
     };
     writer.onwrite = function()
     {
-        writer.write(new Blob([messageToWrite]));
+        var builder = new WebKitBlobBuilder();
+        builder.append(messageToWrite);
+        writer.write(builder.getBlob());
         writer.onwrite = didWriteFile;
     };
 }

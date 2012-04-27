@@ -12,11 +12,11 @@ var sawWriteEnd;
 var writer;
 
 function tenXBlob(blob) {
-    var bb = [];
+    var bb = new WebKitBlobBuilder();
     for (var i = 0; i < 10; ++i) {
-        bb.push(blob);
+        bb.append(blob);
     }
-    return new Blob(bb);
+    return bb.getBlob();
 }
 
 function onWriteStart(e) {
@@ -62,7 +62,9 @@ function onWriteEnd(e) {
 
 function startWrite(fileWriter) {
     // Let's make it about a megabyte.
-    var blob = tenXBlob(new Blob(["lorem ipsum"]));
+    var bb = new WebKitBlobBuilder();
+    bb.append("lorem ipsum");
+    var blob = tenXBlob(bb.getBlob());
     blob = tenXBlob(blob);
     blob = tenXBlob(blob);
     blob = tenXBlob(blob);

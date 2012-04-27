@@ -23,7 +23,9 @@ function createStringWithLength(length)
 
 function createBlobWithLength(length)
 {
-    return new Blob([new ArrayBuffer(length)]);
+    var builder = new WebKitBlobBuilder();
+    builder.append(new ArrayBuffer(length));
+    return builder.getBlob();
 }
 
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/simple");

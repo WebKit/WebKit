@@ -24,7 +24,9 @@
       writer.onwriteend = function() {
         callback(rand);
       };
-      writer.write(new Blob(['document.getElementById("result").innerHTML = (expected == ' + rand + ') ? "SUCCESS" : "FAILURE";'], {type:'text/plain'}));
+      var bb = new WebKitBlobBuilder();
+      bb.append('document.getElementById("result").innerHTML = (expected == ' + rand + ') ? "SUCCESS" : "FAILURE";');
+      writer.write(bb.getBlob('text/plain'));
     }
 
     getFileWriter(function(file, writer) {

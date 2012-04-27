@@ -10,12 +10,13 @@ function log(message)
 function runTest()
 {
     log("Test inline web worker via blob URL.");
-    var string = [
+    var blobBuilder = new WebKitBlobBuilder();
+    blobBuilder.append([
         "onmessage = function(e) {",
         "    postMessage('Hello from worker');",
         "};"
     ].join('\n'));
-    var blobURL = webkitURL.createObjectURL(new Blob([string]));
+    var blobURL = webkitURL.createObjectURL(blobBuilder.getBlob());
     var worker = new Worker(blobURL);
     worker.onmessage = function(event) {
         log(event.data);

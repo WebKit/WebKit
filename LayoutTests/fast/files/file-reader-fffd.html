@@ -10,8 +10,9 @@
 <script>
 description("Throw various bad bytes at file reader.");
 
+bb = evalAndLog("bb = new WebKitBlobBuilder();");
 array = evalAndLog("array = new Uint8Array([65, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 66]);");
-blob = evalAndLog("blob = new Blob([array.buffer]);");
+blob = evalAndLog("blob = buildBlob([array.buffer]);");
 reader = evalAndLog("reader = new FileReader();");
 reader.onload = function(event) {
   fileString = event.target.result;

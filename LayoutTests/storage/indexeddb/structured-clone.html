@@ -376,9 +376,13 @@ function testBlob(callback)
     callback();
     return;
 
+    evalAndLog("BlobBuilder = self.BlobBuilder || self.WebKitBlobBuilder");
+    shouldBeTrue("BlobBuilder != null");
     shouldBeTrue("FileReader != null");
+    evalAndLog("builder = new BlobBuilder()");
     evalAndLog("test_content = 'This is a test. This is only a test.'");
-    evalAndLog("test_data = new Blob([test_content])");
+    evalAndLog("builder.append(test_content)");
+    evalAndLog("test_data = builder.getBlob()");
     testValue(test_data, function(result) {
         self.result = result;
         shouldBeTrue("test_data !== result");
