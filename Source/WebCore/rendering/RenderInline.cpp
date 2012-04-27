@@ -1058,7 +1058,7 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
             }
         }
 
-        if (continuation() && !continuation()->isInline()) {
+        if (continuation() && !continuation()->isInline() && continuation()->parent()) {
             LayoutRect contRect = continuation()->rectWithOutlineForRepaint(repaintContainer, ow);
             r.unite(contRect);
         }

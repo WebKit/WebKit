@@ -1,3 +1,13 @@
+2012-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        NULL-deref in RenderBox::clippedOverflowRectForRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=84774
+
+        Reviewed by Tony Chang.
+
+        * fast/inline/crash-new-continuation-with-outline-expected.txt: Added.
+        * fast/inline/crash-new-continuation-with-outline.html: Added.
+
 2012-04-27  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] use "drt-style" output, not "test-shell-style" output, on mac and linux DRT
