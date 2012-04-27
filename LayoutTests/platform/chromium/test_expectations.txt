@@ -3702,3 +3702,4 @@ BUGWK85090 : fast/js/dfg-float64array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint16array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint8array.html = PASS TIMEOUT
 BUGWK85106 : tables/mozilla/other/slashlogo.html = PASS TIMEOUT
+BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
