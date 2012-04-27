@@ -1,3 +1,16 @@
+2012-04-27  Peter Beverloo  <peter@chromium.org>
+
+        Add John Grabowski as a non-committer to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=85080
+
+        Reviewed by Dirk Pranke.
+
+        He's being CC'ed often enough because of his involvement in the Chromium
+        side of Chrome for Android upstreaming.
+
+        * Scripts/webkitpy/common/config/committers.py:
+          add jrg@chromium.org
+
 2012-04-27  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Fix minimal build.

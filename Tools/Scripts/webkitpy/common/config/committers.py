@@ -141,6 +141,7 @@ contributors_who_are_not_committers = [
     Contributor("Jing Zhao", "jingzhao@chromium.org"),
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
+    Contributor("John Grabowski", "jrg@chromium.org"),
     Contributor("Kulanthaivel Palanichamy", "kulanthaivel@codeaurora.org", "kvel"),
     Contributor(u"Michael Br\u00fcning", "michael.bruning@nokia.com", "mibrunin"),
     Contributor("Min Qin", "qinmin@chromium.org"),
