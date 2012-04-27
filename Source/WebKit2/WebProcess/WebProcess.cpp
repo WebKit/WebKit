@@ -151,6 +151,9 @@ WebProcess::WebProcess()
 #if ENABLE(PLUGIN_PROCESS)
     , m_disablePluginProcessMessageTimeout(false)
 #endif
+#if USE(SOUP)
+    , m_soupRequestManager(this)
+#endif
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -652,6 +655,13 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
     }
+
+#if USE(SOUP)
+    if (messageID.is<CoreIPC::MessageClassWebSoupRequestManager>()) {
+        m_soupRequestManager.didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
 
     if (messageID.is<CoreIPC::MessageClassInjectedBundle>()) {
         if (!m_injectedBundle)

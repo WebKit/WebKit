@@ -1,3 +1,14 @@
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add a way to register custom uri schemes in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=84130
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration): Add webkit_soup prefix to
+        the list of exceptions to the underscores in identifiers rule.
+
 2012-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract PerfTestFactory

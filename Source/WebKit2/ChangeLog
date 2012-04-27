@@ -1,3 +1,122 @@
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add a way to register custom uri schemes in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=84130
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * Platform/CoreIPC/MessageID.h: Add
+        MessageClassWebSoupRequestManager and
+        MessageClassWebSoupRequestManagerProxy message types to identify
+        WebSoupRequestManager messages.
+        * Shared/API/c/WKBase.h: Include WKBaseSoup.h when building with
+        soup network backend.
+        * Shared/API/c/soup/WKBaseSoup.h: Added.
+        * Shared/APIObject.h: Add SoupRequestManager type when using soup.
+        * UIProcess/API/C/WKAPICast.h: Include WKAPICastSoup.h when
+        building with soup network backend.
+        * UIProcess/API/C/soup/WKAPICastSoup.h: Added.
+        (WebKit): Map WKSoupRequestManagerRef to
+        WebSoupRequestManagerProxy.
+        * UIProcess/API/C/soup/WKContextSoup.cpp: Added.
+        (WKContextGetSoupRequestManager): Return WKSoupRequestManagerRef
+        associated to the context.
+        * UIProcess/API/C/soup/WKContextSoup.h: Added.
+        * UIProcess/API/C/soup/WKSoupRequestManager.cpp: Added.
+        (WKSoupRequestManagerGetTypeID): Return the
+        WebSoupRequestManagerProxy API type.
+        (WKSoupRequestManagerSetClient): Set the WKSoupRequestManagerClient.
+        (WKSoupRequestManagerRegisterURIScheme): Call
+        WebSoupRequestManagerProxy::registerURIScheme().
+        (WKSoupRequestManagerHandleURIRequest): Call
+        WebSoupRequestManagerProxy::handleURIRequest().
+        * UIProcess/API/C/soup/WKSoupRequestManager.h: Added.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Initialize
+        m_soupRequestManagerProxy when using soup.
+        (WebKit::WebContext::~WebContext): Invalidate and clear the
+        m_soupRequestManagerProxy when using soup.
+        (WebKit::WebContext::disconnectProcess): Invalidate the
+        m_soupRequestManagerProxy when using soup.
+        (WebKit::WebContext::didReceiveMessage): Forward the message to
+        m_soupRequestManagerProxy if it's a
+        MessageClassWebSoupRequestManagerProxy message.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::soupRequestManagerProxy): Return
+        m_soupRequestManagerProxy.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage): Forward message to
+        the web context if it's a MessageClassWebSoupRequestManagerProxy
+        message.
+        * UIProcess/soup/WebSoupRequestManagerClient.cpp: Added.
+        (WebKit::WebSoupRequestManagerClient::didReceiveURIRequest): Call
+        didReceiveURIRequest callback if it has an implementation.
+        * UIProcess/soup/WebSoupRequestManagerClient.h: Added.
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp: Added.
+        (WebKit::WebSoupRequestManagerProxy::create): Create a new
+        WebSoupRequestManagerProxy.
+        (WebKit::WebSoupRequestManagerProxy::WebSoupRequestManagerProxy):
+        (WebKit::WebSoupRequestManagerProxy::~WebSoupRequestManagerProxy):
+        (WebKit::WebSoupRequestManagerProxy::invalidate):
+        (WebKit::WebSoupRequestManagerProxy::initializeClient):
+        (WebKit::WebSoupRequestManagerProxy::didReceiveMessage):
+        (WebKit::WebSoupRequestManagerProxy::registerURIScheme): Send
+        RegisterURIScheme message to the WebProcess to register the given
+        URI scheme.
+        (WebKit::WebSoupRequestManagerProxy::handleURIRequest): Send
+        HandleURIRequest message to the WebProcess with the given data and
+        data type.
+        (WebKit::WebSoupRequestManagerProxy::didReceiveURIRequest): Call
+        didReceiveURIRequest callback to allow the user to handle the
+        request.
+        * UIProcess/soup/WebSoupRequestManagerProxy.h: Added.
+        * UIProcess/soup/WebSoupRequestManagerProxy.messages.in: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Initialize m_soupRequestManager
+        when using soup.
+        (WebKit::WebProcess::didReceiveMessage): Forward the message to
+        m_soupRequestManager if it's a MessageClassWebSoupRequestManager
+        message.
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::soupRequestManager): Return m_soupRequestManager.
+        * WebProcess/soup/WebKitSoupRequestGeneric.cpp: Added.
+        (webkitSoupRequestGenericFinalize):
+        (webkit_soup_request_generic_init):
+        (webkitSoupRequestGenericSendAsync): Create a GSimpleAsyncResult
+        to handle the request and pass it to the WebSoupRequestManager.
+        (webkitSoupRequestGenericSendFinish): Finish the async operation
+        started by webkitSoupRequestGenericSendAsync() and return the
+        contents of the request as returned by WebSoupRequestManager.
+        (webkitSoupRequestGenericGetContentLength): Get the request
+        contents length.
+        (webkitSoupRequestGenericGetContentType): Get the request mime
+        type.
+        (webkit_soup_request_generic_class_init):
+        (webkitSoupRequestGenericSetContentLength): Set the request
+        contents length.
+        (webkitSoupRequestGenericSetContentType): Set the request mime
+        type.
+        * WebProcess/soup/WebKitSoupRequestGeneric.h: Added.
+        * WebProcess/soup/WebSoupRequestManager.cpp: Added.
+        (WebKit::generateSoupRequestID): Helper function to generate a
+        unique request identifier.
+        (WebKit::WebSoupRequestManager::WebSoupRequestManager):
+        (WebKit::WebSoupRequestManager::~WebSoupRequestManager):
+        (WebKit::WebSoupRequestManager::didReceiveMessage):
+        (WebKit::WebSoupRequestManager::registerURIScheme): Add the scheme
+        to the schemes array and add a new WebKitSoupRequestGeneric
+        feature with the new scheme list to the SoupRequester feature.
+        (WebKit::WebSoupRequestManager::handleURIRequest): Complete the
+        async operation by creating a GInputStream with the request data,
+        or setting an error in case of failure.
+        (WebKit::WebSoupRequestManager::send): Send DidReceiveURIRequest
+        message to the UI process.
+        (WebKit::WebSoupRequestManager::finish): Return the GInputStream
+        containing the request data.
+        * WebProcess/soup/WebSoupRequestManager.h: Added.
+        * WebProcess/soup/WebSoupRequestManager.messages.in: Added.
+
 2012-04-26  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] A GraphicsSurface instance is created with every update

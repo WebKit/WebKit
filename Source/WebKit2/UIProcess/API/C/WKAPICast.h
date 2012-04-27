@@ -359,4 +359,9 @@ inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& gram
 #if defined(BUILDING_GTK__)
 #include "WKAPICastGtk.h"
 #endif
+
+#if USE(SOUP)
+#include "WKAPICastSoup.h"
+#endif
+
 #endif // WKAPICast_h

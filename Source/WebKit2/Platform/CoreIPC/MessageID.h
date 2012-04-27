@@ -53,7 +53,10 @@ enum MessageClass {
     MessageClassWebProcess,
     MessageClassWebResourceCacheManager,
     MessageClassEventDispatcher,
-    
+#if USE(SOUP)
+    MessageClassWebSoupRequestManager,
+#endif
+
     // Messages sent by the web process to the UI process.
     MessageClassDownloadProxy,
     MessageClassDrawingAreaProxy,
@@ -73,6 +76,9 @@ enum MessageClass {
     MessageClassWebPageProxy,
     MessageClassWebProcessProxy,
     MessageClassWebResourceCacheManagerProxy,
+#if USE(SOUP)
+    MessageClassWebSoupRequestManagerProxy,
+#endif
 
     // Messages sent to a WebConnection
     MessageClassWebConnectionLegacy,

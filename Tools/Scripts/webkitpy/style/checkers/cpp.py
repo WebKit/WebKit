@@ -3109,6 +3109,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not (filename.find('gtk') >= 0 and modified_identifier.startswith('webkit_') >= 0)
                 and not modified_identifier.startswith('tst_')
                 and not modified_identifier.startswith('webkit_dom_object_')
+                and not modified_identifier.startswith('webkit_soup')
                 and not modified_identifier.startswith('NPN_')
                 and not modified_identifier.startswith('NPP_')
                 and not modified_identifier.startswith('NP_')

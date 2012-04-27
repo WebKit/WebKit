@@ -107,6 +107,19 @@ template <> void derefGPtr(GSource* ptr)
         g_source_unref(ptr);
 }
 
+template <> GPtrArray* refGPtr(GPtrArray* ptr)
+{
+    if (ptr)
+        g_ptr_array_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GPtrArray* ptr)
+{
+    if (ptr)
+        g_ptr_array_unref(ptr);
+}
+
 } // namespace WTF
 
 #endif // ENABLE(GLIB_SUPPORT)

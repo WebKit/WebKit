@@ -208,6 +208,8 @@ template <> GVariant* refGPtr(GVariant* ptr);
 template <> void derefGPtr(GVariant* ptr);
 template <> GSource* refGPtr(GSource* ptr);
 template <> void derefGPtr(GSource* ptr);
+template <> GPtrArray* refGPtr(GPtrArray*);
+template <> void derefGPtr(GPtrArray*);
 
 template <typename T> inline T* refGPtr(T* ptr)
 {

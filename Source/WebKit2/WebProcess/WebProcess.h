@@ -44,6 +44,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
+#if USE(SOUP)
+#include "WebSoupRequestManager.h"
+#endif
+
 #if PLATFORM(QT)
 class QNetworkAccessManager;
 #endif
@@ -151,6 +155,10 @@ public:
 #endif
 
     EventDispatcher& eventDispatcher() { return m_eventDispatcher; }
+
+#if USE(SOUP)
+    WebSoupRequestManager& soupRequestManager() { return m_soupRequestManager; }
+#endif
 
 private:
     WebProcess();
@@ -285,6 +293,10 @@ private:
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessConnectionManager m_pluginProcessConnectionManager;
     bool m_disablePluginProcessMessageTimeout;
+#endif
+
+#if USE(SOUP)
+    WebSoupRequestManager m_soupRequestManager;
 #endif
 
 };

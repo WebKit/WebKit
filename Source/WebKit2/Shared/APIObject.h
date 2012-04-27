@@ -120,7 +120,10 @@ public:
 
         // Platform specific
         TypeEditCommandProxy,
-        TypeView
+        TypeView,
+#if USE(SOUP)
+        TypeSoupRequestManager,
+#endif
     };
 
     virtual ~APIObject()

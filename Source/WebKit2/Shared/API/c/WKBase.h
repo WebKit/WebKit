@@ -37,6 +37,10 @@
 #include <WebKit2/WKBaseGtk.h>
 #endif
 
+#if defined(BUILDING_SOUP__)
+#include <WebKit2/WKBaseSoup.h>
+#endif
+
 /* WebKit2 shared types */
 
 typedef uint32_t WKTypeID;

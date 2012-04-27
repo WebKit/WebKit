@@ -58,6 +58,9 @@ class WebNotificationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebResourceCacheManagerProxy;
+#if USE(SOUP)
+class WebSoupRequestManagerProxy;
+#endif
 struct StatisticsData;
 struct WebProcessCreationParameters;
     
@@ -161,6 +164,9 @@ public:
     WebNotificationManagerProxy* notificationManagerProxy() const { return m_notificationManagerProxy.get(); }
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
     WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
+#if USE(SOUP)
+    WebSoupRequestManagerProxy* soupRequestManagerProxy() const { return m_soupRequestManagerProxy.get(); }
+#endif
 
     struct Statistics {
         unsigned wkViewCount;
@@ -296,6 +302,9 @@ private:
     RefPtr<WebNotificationManagerProxy> m_notificationManagerProxy;
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
     RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
+#if USE(SOUP)
+    RefPtr<WebSoupRequestManagerProxy> m_soupRequestManagerProxy;
+#endif
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
