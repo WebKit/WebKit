@@ -3699,6 +3699,7 @@ BUGWK85082 XP DEBUG : platform/chromium/media/video-capture-preview.html = CRASH
 BUGWK85085 MAC LINUX : svg/custom/clip-path-referencing-use2.svg = TEXT
 
 BUGWK85090 : fast/js/dfg-float64array.html = PASS TIMEOUT
+BUGWK85090 : fast/js/dfg-uint32array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint16array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint8array.html = PASS TIMEOUT
 BUGWK85106 : tables/mozilla/other/slashlogo.html = PASS TIMEOUT

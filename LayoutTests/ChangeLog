@@ -1,5 +1,12 @@
 2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] fast/js/dfg-uint32array.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=85090
+
+        * platform/chromium/test_expectations.txt: Added.
+
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Mark svg/as-image/svg-as-relative-image-with-explicit-size.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=85107
 
