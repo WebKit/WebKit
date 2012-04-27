@@ -1,3 +1,10 @@
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] fast/images/gif-large-checkerboard.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=85073
+
+        * platform/chromium/test_expectations.txt: Marked flaky crash.
+
 2012-04-26  Andreas Kling  <kling@webkit.org>
 
         Avoid mutating Element attribute storage in StepRange constructor.
