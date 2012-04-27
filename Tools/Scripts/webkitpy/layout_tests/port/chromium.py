@@ -46,7 +46,8 @@ from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port, VirtualTestSuite
-from webkitpy.layout_tests.port.driver import Driver, DriverOutput
+from webkitpy.layout_tests.port.driver import DriverOutput
+from webkitpy.layout_tests.port.webkit import WebKitDriver
 from webkitpy.layout_tests.port import builders
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -403,20 +404,28 @@ class ChromiumPort(Port):
         return self._build_path(self.get_option('configuration'), binary_name)
 
 
-# FIXME: This should inherit from WebKitDriver now that Chromium has a DumpRenderTree process like the rest of WebKit.
-class ChromiumDriver(Driver):
+class ChromiumDriver(WebKitDriver):
+    KILL_TIMEOUT_DEFAULT = 3.0
+
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
-        Driver.__init__(self, port, worker_number, pixel_tests, no_timeout)
+        WebKitDriver.__init__(self, port, worker_number, pixel_tests, no_timeout)
         self._proc = None
         self._image_path = None
+
+        # FIXME: Make the regular webkit driver work on win as well so we can delete all of this driver code.
+        self._test_shell = '--test-shell' in port.get_option('additional_drt_flag', []) or self._port.host.platform.is_win()
 
     def _wrapper_options(self, pixel_tests):
         cmd = []
         if pixel_tests:
-            if not self._image_path:
-                self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
-            # See note above in diff_image() for why we need _convert_path().
-            cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
+            if self._test_shell:
+                if not self._image_path:
+                    self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
+                 # See note above in diff_image() for why we need _convert_path().
+                cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
+            else:
+                cmd.append('--pixel-tests')
+
         # FIXME: This is not None shouldn't be necessary, unless --js-flags="''" changes behavior somehow?
         if self._port.get_option('js_flags') is not None:
             cmd.append('--js-flags="' + self._port.get_option('js_flags') + '"')
@@ -450,15 +459,18 @@ class ChromiumDriver(Driver):
     def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
-        # FIXME: Why does --test-shell exist?  TestShell is dead, shouldn't this be removed?
-        # It seems it's still in use in Tools/DumpRenderTree/chromium/DumpRenderTree.cpp as of 8/10/11.
-        cmd.append('--test-shell')
         cmd.extend(self._wrapper_options(pixel_tests))
         cmd.extend(per_test_args)
+
+        if not self._test_shell:
+            cmd.append('-')
 
         return cmd
 
     def _start(self, pixel_tests, per_test_args):
+        if not self._test_shell:
+            return super(ChromiumDriver, self)._start(pixel_tests, per_test_args)
+
         assert not self._proc
         # FIXME: This should use ServerProcess like WebKitDriver does.
         # FIXME: We should be reading stderr and stdout separately like how WebKitDriver does.
@@ -466,6 +478,9 @@ class ChromiumDriver(Driver):
         self._proc = subprocess.Popen(self.cmd_line(pixel_tests, per_test_args), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=close_fds)
 
     def has_crashed(self):
+        if not self._test_shell:
+            return super(ChromiumDriver, self).has_crashed()
+
         if self._proc is None:
             return False
         return self._proc.poll() is not None
@@ -523,6 +538,9 @@ class ChromiumDriver(Driver):
             self._port._filesystem.remove(self._image_path)
 
     def run_test(self, driver_input):
+        if not self._test_shell:
+            return super(ChromiumDriver, self).run_test(driver_input)
+
         if not self._proc:
             self._start(driver_input.should_run_pixel_test, driver_input.args)
 
@@ -624,9 +642,11 @@ class ChromiumDriver(Driver):
             self._start(pixel_tests, per_test_args)
 
     def stop(self):
+        if not self._test_shell:
+            return super(ChromiumDriver, self).stop()
+
         if not self._proc:
             return
-        # FIXME: If we used ServerProcess all this would happen for free with ServerProces.stop()
         self._proc.stdin.close()
         self._proc.stdout.close()
         if self._proc.stderr:
@@ -634,9 +654,9 @@ class ChromiumDriver(Driver):
         time_out_ms = self._port.get_option('time_out_ms')
         if time_out_ms and not self._no_timeout:
             timeout_ratio = float(time_out_ms) / self._port.default_test_timeout_ms()
-            kill_timeout_seconds = 3.0 * timeout_ratio if timeout_ratio > 1.0 else 3.0
+            kill_timeout_seconds = self.KILL_TIMEOUT_DEFAULT * timeout_ratio if timeout_ratio > 1.0 else self.KILL_TIMEOUT_DEFAULT
         else:
-            kill_timeout_seconds = 3.0
+            kill_timeout_seconds = self.KILL_TIMEOUT_DEFAULT
 
         # Closing stdin/stdout/stderr hangs sometimes on OS X,
         # (see __init__(), above), and anyway we don't want to hang

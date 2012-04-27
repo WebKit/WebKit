@@ -1,5 +1,36 @@
 2012-04-27  Dirk Pranke  <dpranke@chromium.org>
 
+        [chromium] use "drt-style" output, not "test-shell-style" output, on mac and linux DRT
+        https://bugs.webkit.org/show_bug.cgi?id=84917
+
+        Reviewed by Ojan Vafai.
+
+        This change changes the chromium new-run-webkit-tests
+        implementation to use the code in WebKitDriver and ServerProcess
+        by default on Mac and Linux, instead of using the old-style
+        Chromium/test_shell style of output.
+
+        We will still use the test_shell style on Windows for now
+        and you can still get the old style of behavior with
+        new-run-webkit-tests --additional-drt-flag --test-shell
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver):
+        (ChromiumDriver.__init__):
+        (ChromiumDriver._wrapper_options):
+        (ChromiumDriver.cmd_line):
+        (ChromiumDriver._start):
+        (ChromiumDriver.has_crashed):
+        (ChromiumDriver.run_test):
+        (ChromiumDriver.stop):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.setUp):
+        (ChromiumDriverTest.test_stop):
+        (ChromiumDriverTest.test_two_drivers.MockDriver.__init__):
+        (ChromiumDriverTest.test_two_drivers):
+
+2012-04-27  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: fix race in unit tests for manager_worker_broker
         https://bugs.webkit.org/show_bug.cgi?id=84925
 
