@@ -1,3 +1,18 @@
+2012-04-27  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Fix Vector use failure
+        https://bugs.webkit.org/show_bug.cgi?id=85069
+
+        Reviewed by Tony Gentilcore.
+
+        Fix think-o in code copying from WebVector to Vector.
+
+        * src/SpeechRecognitionClientProxy.cpp:
+        (WebKit::SpeechRecognitionClientProxy::didReceiveResult):
+        (WebKit::SpeechRecognitionClientProxy::didDeleteResult):
+        * src/WebSpeechRecognitionResult.cpp:
+        (WebKit::WebSpeechRecognitionResult::assign):
+
 2012-04-27  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Selectively retrieve text around a touched point.

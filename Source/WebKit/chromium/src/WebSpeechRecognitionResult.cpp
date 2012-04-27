@@ -44,7 +44,7 @@ void WebSpeechRecognitionResult::assign(const WebVector<WebString>& transcripts,
 
     Vector<RefPtr<WebCore::SpeechRecognitionAlternative> > alternatives(transcripts.size());
     for (size_t i = 0; i < transcripts.size(); ++i)
-        alternatives.append(WebCore::SpeechRecognitionAlternative::create(transcripts[i], confidences[i]));
+        alternatives[i] = WebCore::SpeechRecognitionAlternative::create(transcripts[i], confidences[i]);
 
     m_private = WebCore::SpeechRecognitionResult::create(alternatives, final);
 }
