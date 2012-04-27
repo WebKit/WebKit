@@ -136,14 +136,16 @@ class _TestsMixin(object):
         worker.cancel()
         worker.join(0.1)
         self.assertFalse(worker.is_alive())
+        self._broker.cleanup()
 
     def test_cancel(self):
         self.make_broker()
         worker = self._broker.start_worker()
-        worker.cancel()
         self._broker.post_message('test', 1, 'hello, world')
+        worker.cancel()
         worker.join(0.1)
         self.assertFalse(worker.is_alive())
+        self._broker.cleanup()
 
     def test_done(self):
         self.make_broker()
@@ -156,6 +158,7 @@ class _TestsMixin(object):
         self.assertTrue(self.is_done())
         self.assertEqual(self._an_int, 2)
         self.assertEqual(self._a_str, 'hi, everybody')
+        self._broker.cleanup()
 
     def test_unknown_message(self):
         self.make_broker()
@@ -170,6 +173,7 @@ class _TestsMixin(object):
         finally:
             worker.join(0.5)
         self.assertFalse(worker.is_alive())
+        self._broker.cleanup()
 
 
 class InlineBrokerTests(_TestsMixin, unittest.TestCase):

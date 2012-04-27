@@ -1,3 +1,32 @@
+2012-04-27  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: fix race in unit tests for manager_worker_broker
+        https://bugs.webkit.org/show_bug.cgi?id=84925
+
+        Reviewed by Ojan Vafai.
+
+        I have been intermittently seeing hangs when running
+        test-webkitpy on Mac SL; it appears that there's a bug (?) in
+        the multiprocessing module where queue references are getting
+        leaked or not cleaned up somehow. By explicitly closing the
+        queues, things seem to be happy, so this patch adds a cleanup()
+        method to the message broker and modifies the manager (and the
+        unit tests) to call it. This may get rid of the intermittent
+        error on shutdown on Linux I've seen as well.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_Broker.__del__):
+        (_Broker):
+        (_Broker.cleanup):
+        (_BrokerConnection.cleanup):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (_TestsMixin.test_name):
+        (_TestsMixin.test_cancel):
+        (_TestsMixin.test_done):
+        (_TestsMixin.test_unknown_message):
+
 2012-04-27  Gavin Peters  <gavinp@chromium.org>
 
         Add new ENABLE_LINK_PRERENDER define to control the Prerendering API

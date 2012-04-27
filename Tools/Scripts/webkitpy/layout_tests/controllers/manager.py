@@ -816,6 +816,7 @@ class Manager(object):
             self.cancel_workers()
             raise
         finally:
+            manager_connection.cleanup()
             self.stop_servers_with_lock()
 
         thread_timings = [worker_state.stats for worker_state in self._worker_states.values()]

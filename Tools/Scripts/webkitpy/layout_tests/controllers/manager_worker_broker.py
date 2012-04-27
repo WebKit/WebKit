@@ -143,6 +143,15 @@ class _Broker(object):
         self._queue_maker = queue_maker
         self._topics = {}
 
+    def __del__(self):
+        self.cleanup()
+
+    def cleanup(self):
+        for queue in self._topics.values():
+            if hasattr(queue, 'close'):
+                queue.close()
+        self._topics = {}
+
     def add_topic(self, topic_name):
         if topic_name not in self._topics:
             self._topics[topic_name] = self._queue_maker()
@@ -225,6 +234,10 @@ class _BrokerConnection(object):
         self._run_topic = run_topic
         broker.add_topic(run_topic)
         broker.add_topic(post_topic)
+
+    def cleanup(self):
+        self._broker.cleanup()
+        self._broker = None
 
     def run_message_loop(self, delay_secs=None):
         self._broker.run_message_loop(self._run_topic, self._client, delay_secs)
