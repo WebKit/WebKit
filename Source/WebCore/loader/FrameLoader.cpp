@@ -3090,10 +3090,10 @@ void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
     if (!m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
 
-    Vector<DOMWrapperWorld*> worlds;
+    Vector<RefPtr<DOMWrapperWorld> > worlds;
     ScriptController::getAllWorlds(worlds);
     for (size_t i = 0; i < worlds.size(); ++i)
-        dispatchDidClearWindowObjectInWorld(worlds[i]);
+        dispatchDidClearWindowObjectInWorld(worlds[i].get());
 }
 
 void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
@@ -3113,10 +3113,10 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 
 void FrameLoader::dispatchGlobalObjectAvailableInAllWorlds()
 {
-    Vector<DOMWrapperWorld*> worlds;
+    Vector<RefPtr<DOMWrapperWorld> > worlds;
     ScriptController::getAllWorlds(worlds);
     for (size_t i = 0; i < worlds.size(); ++i)
-        m_client->dispatchGlobalObjectAvailable(worlds[i]);
+        m_client->dispatchGlobalObjectAvailable(worlds[i].get());
 }
 
 SandboxFlags FrameLoader::effectiveSandboxFlags() const

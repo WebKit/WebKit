@@ -186,7 +186,7 @@ public:
 
     // Dummy method to avoid a bunch of ifdef's in WebCore.
     void evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
-    static void getAllWorlds(Vector<DOMWrapperWorld*>& worlds);
+    static void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds);
 
 private:
     Frame* m_frame;

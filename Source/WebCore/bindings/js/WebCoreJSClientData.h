@@ -47,7 +47,7 @@ public:
 
     DOMWrapperWorld* normalWorld() { return m_normalWorld.get(); }
 
-    void getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
+    void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds)
     {
         copyToVector(m_worldSet, worlds);
     }

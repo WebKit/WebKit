@@ -377,7 +377,7 @@ void ScriptController::cleanupScriptObjectsForPlugin(Widget* nativeHandle)
     m_pluginObjects.remove(it);
 }
 
-void ScriptController::getAllWorlds(Vector<DOMWrapperWorld*>& worlds)
+void ScriptController::getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds)
 {
     worlds.append(mainThreadNormalWorld());
 }
