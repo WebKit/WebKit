@@ -1,3 +1,17 @@
+2012-04-26  Ilya Sherman  <isherman@chromium.org>
+
+        [Chromium] Security: Autofill info can be captured by innocuous social engineering
+        Prevent users from interacting with invisible popups rendered outside the main frame's contents view.
+        https://bugs.webkit.org/show_bug.cgi?id=84420
+        https://code.google.com/p/chromium/issues/detail?id=122925
+
+        Reviewed by Kent Tamura.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened): Hide popups rendered outside the main frame's contents view.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutofillSuggestions): Fix up order of operations to support immediately hiding a popup if it would not be visible
+
 2012-04-26  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Some background filters require inflating damage on the surface behind them
