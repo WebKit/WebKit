@@ -49,7 +49,6 @@ TextureLayerChromium::TextureLayerChromium(TextureLayerChromiumClient* client)
     , m_rateLimitContext(false)
     , m_contextLost(false)
     , m_textureId(0)
-    , m_ioSurfaceId(0)
 {
 }
 
@@ -96,13 +95,6 @@ void TextureLayerChromium::setTextureId(unsigned id)
     setNeedsCommit();
 }
 
-void TextureLayerChromium::setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId)
-{
-    m_ioSurfaceSize = IntSize(width, height);
-    m_ioSurfaceId = ioSurfaceId;
-    setNeedsCommit();
-}
-
 void TextureLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
     LayerChromium::setNeedsDisplayRect(dirtyRect);
@@ -113,7 +105,7 @@ void TextureLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 
 bool TextureLayerChromium::drawsContent() const
 {
-    return (m_client || m_textureId || m_ioSurfaceId) && !m_contextLost && LayerChromium::drawsContent();
+    return (m_client || m_textureId) && !m_contextLost && LayerChromium::drawsContent();
 }
 
 void TextureLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*)
@@ -135,7 +127,6 @@ void TextureLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     textureLayer->setUVRect(m_uvRect);
     textureLayer->setPremultipliedAlpha(m_premultipliedAlpha);
     textureLayer->setTextureId(m_textureId);
-    textureLayer->setIOSurfaceProperties(m_ioSurfaceSize, m_ioSurfaceId);
 }
 
 }

@@ -55,6 +55,7 @@
             'chromium/public/WebHTTPLoadInfo.h',
             'chromium/public/WebICECandidateDescriptor.h',
             'chromium/public/WebICEOptions.h',
+            'chromium/public/WebIOSurfaceLayer.h',
             'chromium/public/WebLayer.h',
             'chromium/public/WebLayerTreeView.h',
             'chromium/public/WebLayerTreeViewClient.h',

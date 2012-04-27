@@ -1,3 +1,23 @@
+2012-04-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Separate IOSurface layer type from texture layers
+        https://bugs.webkit.org/show_bug.cgi?id=85030
+
+        Reviewed by Adrienne Walker.
+
+        Adds a new layer type for IOSurface backed layers, instead of sharing that functionality in
+        WebExternalTextureLayer. IOSurface backed layers do not share any other properties with external texture layers.
+
+        * Platform.gypi:
+        * chromium/public/WebExternalTextureLayer.h:
+        (WebExternalTextureLayer):
+        * chromium/public/WebIOSurfaceLayer.h:
+        (WebCore):
+        (WebKit):
+        (WebIOSurfaceLayer):
+        (WebKit::WebIOSurfaceLayer::WebIOSurfaceLayer):
+        (WebKit::WebIOSurfaceLayer::~WebIOSurfaceLayer):
+
 2012-04-25  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove guarded virtual methods from WebFilterOperation API

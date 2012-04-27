@@ -1,3 +1,30 @@
+2012-04-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Separate IOSurface layer type from texture layers
+        https://bugs.webkit.org/show_bug.cgi?id=85030
+
+        Reviewed by Adrienne Walker.
+
+        Update WebPluginContainerImpl to support having either a texture or IOSurface layer (but never both) depending
+        on the plugin's contents.
+
+        * WebKit.gyp:
+        * src/WebExternalTextureLayer.cpp:
+        * src/WebIOSurfaceLayer.cpp:
+        (WebKit):
+        (WebKit::WebIOSurfaceLayer::create):
+        (WebKit::WebIOSurfaceLayer::setIOSurfaceProperties):
+        (WebKit::WebIOSurfaceLayer::WebIOSurfaceLayer):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setBackingTextureId):
+        (WebKit::WebPluginContainerImpl::setBackingIOSurfaceId):
+        (WebKit::WebPluginContainerImpl::commitBackingTexture):
+        (WebKit::WebPluginContainerImpl::setOpaque):
+        (WebKit::WebPluginContainerImpl::platformLayer):
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-04-27  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Fix Vector use failure

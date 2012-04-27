@@ -53,10 +53,6 @@ public:
     // compositor context.
     WEBKIT_EXPORT void setTextureId(unsigned);
 
-    // Sets the IO surface id that represents this layer. setTextureId() and setIOSurfaceProperties() are mutually
-    // exclusive - a layer can be either backed by a texture or an IO surface, but not both.
-    WEBKIT_EXPORT void setIOSurfaceProperties(const WebSize&, unsigned ioSurfaceId);
-
     // Sets whether or not the texture should be flipped in the Y direction when
     // rendered.
     WEBKIT_EXPORT void setFlipped(bool);

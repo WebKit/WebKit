@@ -77,9 +77,6 @@ public:
     // Code path for plugins which supply their own texture ID.
     void setTextureId(unsigned);
 
-    // Code path for plugins which render via an IOSurface.
-    void setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId);
-
     virtual void setNeedsDisplayRect(const FloatRect&) OVERRIDE;
 
     virtual bool drawsContent() const OVERRIDE;
@@ -99,9 +96,6 @@ private:
     bool m_contextLost;
 
     unsigned m_textureId;
-
-    IntSize m_ioSurfaceSize;
-    uint32_t m_ioSurfaceId;
 };
 
 }

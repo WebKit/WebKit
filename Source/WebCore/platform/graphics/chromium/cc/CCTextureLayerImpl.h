@@ -40,7 +40,6 @@ public:
 
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
-    virtual void willDraw(LayerRendererChromium*) OVERRIDE;
     virtual void didLoseContext() OVERRIDE;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
@@ -50,8 +49,6 @@ public:
     void setPremultipliedAlpha(bool premultipliedAlpha) { m_premultipliedAlpha = premultipliedAlpha; }
     void setFlipped(bool flipped) { m_flipped = flipped; }
     void setUVRect(const FloatRect& rect) { m_uvRect = rect; }
-    void setIOSurfaceProperties(const IntSize&, unsigned ioSurfaceId);
-
 
 private:
     explicit CCTextureLayerImpl(int);
@@ -62,12 +59,6 @@ private:
     bool m_premultipliedAlpha;
     bool m_flipped;
     FloatRect m_uvRect;
-
-    // Internals for IOSurface-backed textures.
-    unsigned m_ioSurfaceId;
-    IntSize m_ioSurfaceSize;
-    bool m_ioSurfaceChanged;
-    unsigned m_ioSurfaceTextureId;
 };
 
 }

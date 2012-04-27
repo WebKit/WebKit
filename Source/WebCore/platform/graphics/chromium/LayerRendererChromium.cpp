@@ -1023,10 +1023,7 @@ void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
 {
     ASSERT(CCProxy::isImplThread());
     TexTransformTextureProgramBinding binding;
-    if (quad->flipped())
-        binding.set(textureIOSurfaceProgramFlip());
-    else
-        binding.set(textureIOSurfaceProgram());
+    binding.set(textureIOSurfaceProgram());
 
     GLC(context(), context()->useProgram(binding.programId));
     GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
@@ -1567,17 +1564,6 @@ const LayerRendererChromium::TextureIOSurfaceProgram* LayerRendererChromium::tex
     return m_textureIOSurfaceProgram.get();
 }
 
-const LayerRendererChromium::TextureIOSurfaceProgramFlip* LayerRendererChromium::textureIOSurfaceProgramFlip()
-{
-    if (!m_textureIOSurfaceProgramFlip)
-        m_textureIOSurfaceProgramFlip = adoptPtr(new TextureIOSurfaceProgramFlip(m_context.get()));
-    if (!m_textureIOSurfaceProgramFlip->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureIOSurfaceProgramFlip::initialize", this, 0);
-        m_textureIOSurfaceProgramFlip->initialize(m_context.get());
-    }
-    return m_textureIOSurfaceProgramFlip.get();
-}
-
 const LayerRendererChromium::VideoYUVProgram* LayerRendererChromium::videoYUVProgram()
 {
     if (!m_videoYUVProgram)
@@ -1636,8 +1622,6 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_textureProgramFlip->cleanup(m_context.get());
     if (m_textureIOSurfaceProgram)
         m_textureIOSurfaceProgram->cleanup(m_context.get());
-    if (m_textureIOSurfaceProgramFlip)
-        m_textureIOSurfaceProgramFlip->cleanup(m_context.get());
 
     if (m_videoYUVProgram)
         m_videoYUVProgram->cleanup(m_context.get());

@@ -34,16 +34,14 @@ namespace WebCore {
 class CCIOSurfaceDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCIOSurfaceDrawQuad);
 public:
-    static PassOwnPtr<CCIOSurfaceDrawQuad> create(const CCSharedQuadState*, const IntRect&, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
+    static PassOwnPtr<CCIOSurfaceDrawQuad> create(const CCSharedQuadState*, const IntRect&, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
 
-    bool flipped() const { return m_flipped; }
     const IntSize& ioSurfaceSize() const { return m_ioSurfaceSize; }
     unsigned ioSurfaceTextureId() const { return m_ioSurfaceTextureId; }
 
 private:
-    CCIOSurfaceDrawQuad(const CCSharedQuadState*, const IntRect&, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
+    CCIOSurfaceDrawQuad(const CCSharedQuadState*, const IntRect&, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
 
-    bool m_flipped;
     IntSize m_ioSurfaceSize;
     unsigned m_ioSurfaceTextureId;
 };

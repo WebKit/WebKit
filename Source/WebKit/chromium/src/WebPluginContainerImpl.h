@@ -36,6 +36,7 @@
 #include "Widget.h"
 
 #include <public/WebExternalTextureLayer.h>
+#include <public/WebIOSurfaceLayer.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -173,9 +174,13 @@ private:
     Vector<WebPluginLoadObserver*> m_pluginLoadObservers;
 
 #if USE(ACCELERATED_COMPOSITING)
-    WebExternalTextureLayer m_layer;
+    // A composited plugin will either have no composited layer, a texture layer, or an IOSurface layer.
+    // It will never have both a texture and IOSurface output.
     unsigned m_textureId;
+    WebExternalTextureLayer m_textureLayer;
+
     unsigned m_ioSurfaceId;
+    WebIOSurfaceLayer m_ioSurfaceLayer;
 #endif
 
     // The associated scrollbar group object, created lazily. Used for Pepper

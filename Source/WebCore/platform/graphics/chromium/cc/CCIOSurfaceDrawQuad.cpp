@@ -29,14 +29,13 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCIOSurfaceDrawQuad> CCIOSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+PassOwnPtr<CCIOSurfaceDrawQuad> CCIOSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
 {
-    return adoptPtr(new CCIOSurfaceDrawQuad(sharedQuadState, quadRect, flipped, ioSurfaceSize, ioSurfaceTextureId));
+    return adoptPtr(new CCIOSurfaceDrawQuad(sharedQuadState, quadRect, ioSurfaceSize, ioSurfaceTextureId));
 }
 
-CCIOSurfaceDrawQuad::CCIOSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+CCIOSurfaceDrawQuad::CCIOSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::IOSurfaceContent, quadRect)
-    , m_flipped(flipped)
     , m_ioSurfaceSize(ioSurfaceSize)
     , m_ioSurfaceTextureId(ioSurfaceTextureId)
 {

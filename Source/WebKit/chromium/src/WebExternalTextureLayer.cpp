@@ -46,11 +46,6 @@ void WebExternalTextureLayer::setTextureId(unsigned id)
     unwrap<TextureLayerChromium>()->setTextureId(id);
 }
 
-void WebExternalTextureLayer::setIOSurfaceProperties(const WebSize& size, unsigned ioSurfaceId)
-{
-    unwrap<TextureLayerChromium>()->setIOSurfaceProperties(size.width, size.height, ioSurfaceId);
-}
-
 void WebExternalTextureLayer::setFlipped(bool flipped)
 {
     unwrap<TextureLayerChromium>()->setFlipped(flipped);

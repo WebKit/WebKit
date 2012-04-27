@@ -223,8 +223,7 @@ private:
     // Texture shaders.
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexAlpha> TextureProgram;
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> TextureProgramFlip;
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectAlpha> TextureIOSurfaceProgram;
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectFlipAlpha> TextureIOSurfaceProgramFlip;
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectFlipAlpha> TextureIOSurfaceProgram;
 
     // Video shaders.
     typedef ProgramBinding<VertexShaderVideoTransform, FragmentShaderOESImageExternal> VideoStreamTextureProgram;
@@ -253,7 +252,6 @@ private:
     const TextureProgram* textureProgram();
     const TextureProgramFlip* textureProgramFlip();
     const TextureIOSurfaceProgram* textureIOSurfaceProgram();
-    const TextureIOSurfaceProgramFlip* textureIOSurfaceProgramFlip();
 
     const VideoYUVProgram* videoYUVProgram();
     const VideoStreamTextureProgram* videoStreamTextureProgram();
@@ -278,7 +276,6 @@ private:
     OwnPtr<TextureProgram> m_textureProgram;
     OwnPtr<TextureProgramFlip> m_textureProgramFlip;
     OwnPtr<TextureIOSurfaceProgram> m_textureIOSurfaceProgram;
-    OwnPtr<TextureIOSurfaceProgramFlip> m_textureIOSurfaceProgramFlip;
 
     OwnPtr<VideoYUVProgram> m_videoYUVProgram;
     OwnPtr<VideoStreamTextureProgram> m_videoStreamTextureProgram;

@@ -582,6 +582,7 @@
                 'src/WebIDBTransactionImpl.h',
                 'src/WebIDBTransactionCallbacksImpl.cpp',
                 'src/WebIDBTransactionCallbacksImpl.h',
+                'src/WebIOSurfaceLayer.cpp',
                 'src/WebImageCG.cpp',
                 'src/WebImageDecoder.cpp',
                 'src/WebImageSkia.cpp',
