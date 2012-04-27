@@ -1,3 +1,15 @@
+2012-04-26  Jeffrey Pfau  <jpfau@apple.com>
+
+        Invalid cast in WebCore::HTMLCollection::isAcceptableElement
+        https://bugs.webkit.org/show_bug.cgi?id=84626
+
+        Reviewed by Darin Adler.
+
+        Add tests to make sure only HTML elements are present in most HTMLCollection objects.
+
+        * fast/dom/htmlcollection-non-html-option-expected.txt: Added.
+        * fast/dom/htmlcollection-non-html.html: Added.
+
 2012-04-26  Benjamin Poulain  <bpoulain@apple.com>
 
         Skip the new ObjC tests for WebKit2
