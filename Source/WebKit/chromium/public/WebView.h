@@ -51,6 +51,7 @@ class WebGraphicsContext3D;
 class WebNode;
 class WebPageOverlay;
 class WebPermissionClient;
+class WebRange;
 class WebSettings;
 class WebSpellCheckClient;
 class WebString;

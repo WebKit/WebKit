@@ -1,3 +1,60 @@
+2012-04-27  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Selectively retrieve text around a touched point.
+        https://bugs.webkit.org/show_bug.cgi?id=82460
+
+        Reviewed by Darin Fisher.
+
+        Implements an embedding API to WebCore's SurroundingText, adding also
+        the possibility of select and highlight the retrieved text range.
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebHitTestResult.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebHitTestResult):
+        (WebKit::WebHitTestResult::WebHitTestResult):
+        (WebKit::WebHitTestResult::~WebHitTestResult):
+        * public/WebRange.h:
+        (WebKit):
+        (WebRange):
+        * public/WebSurroundingText.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSurroundingText):
+        (WebKit::WebSurroundingText::WebSurroundingText):
+        (WebKit::WebSurroundingText::~WebSurroundingText):
+        * public/WebView.h:
+        (WebKit):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectRange):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebHitTestResult.cpp: Added.
+        (WebKit):
+        (WebKit::WebHitTestResult::node):
+        (WebKit::WebHitTestResult::localPoint):
+        (WebKit::WebHitTestResult::WebHitTestResult):
+        (WebKit::WebHitTestResult::operator=):
+        (WebKit::WebHitTestResult::operator HitTestResult):
+        (WebKit::WebHitTestResult::isNull):
+        (WebKit::WebHitTestResult::assign):
+        (WebKit::WebHitTestResult::reset):
+        * src/WebRange.cpp:
+        (WebKit::WebRange::textQuads):
+        (WebKit):
+        * src/WebSurroundingText.cpp: Added.
+        (WebKit):
+        (WebKit::WebSurroundingText::initialize):
+        (WebKit::WebSurroundingText::textContent):
+        (WebKit::WebSurroundingText::hitOffsetInTextContent):
+        (WebKit::WebSurroundingText::rangeFromContentOffsets):
+        (WebKit::WebSurroundingText::isNull):
+        (WebKit::WebSurroundingText::reset):
+
 2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r115463.
