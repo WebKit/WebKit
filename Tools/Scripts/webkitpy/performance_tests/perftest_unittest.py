@@ -31,6 +31,7 @@ import StringIO
 import math
 import unittest
 
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.driver import DriverOutput
 from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
 from webkitpy.performance_tests.perftest import PageLoadingPerfTest
@@ -38,18 +39,8 @@ from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftest import PerfTestFactory
 
 
-class MockPrinter(object):
-    def __init__(self):
-        self.written_lines = []
-
-    def write(self, line):
-        self.written_lines.append(line)
-
-
 class MainTest(unittest.TestCase):
     def test_parse_output(self):
-        printer = MockPrinter()
-        buildbot_output = StringIO.StringIO()
         output = DriverOutput('\n'.join([
             'Running 20 times',
             'Ignoring warm-up run (1115)',
@@ -59,14 +50,19 @@ class MainTest(unittest.TestCase):
             'stdev 11',
             'min 1080',
             'max 1120']), image=None, image_hash=None, audio=None)
-        test = PerfTest('some-test', '/path/some-dir/some-test')
-        self.assertEqual(test.parse_output(output, printer, buildbot_output),
-            {'some-test': {'avg': 1100.0, 'median': 1101.0, 'min': 1080.0, 'max': 1120.0, 'stdev': 11.0, 'unit': 'ms'}})
-        self.assertEqual(printer.written_lines, [])
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            test = PerfTest('some-test', '/path/some-dir/some-test')
+            self.assertEqual(test.parse_output(output),
+                {'some-test': {'avg': 1100.0, 'median': 1101.0, 'min': 1080.0, 'max': 1120.0, 'stdev': 11.0, 'unit': 'ms'}})
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, 'RESULT some-test= 1100.0 ms\nmedian= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms\n')
 
     def test_parse_output_with_failing_line(self):
-        printer = MockPrinter()
-        buildbot_output = StringIO.StringIO()
         output = DriverOutput('\n'.join([
             'Running 20 times',
             'Ignoring warm-up run (1115)',
@@ -78,15 +74,19 @@ class MainTest(unittest.TestCase):
             'stdev 11',
             'min 1080',
             'max 1120']), image=None, image_hash=None, audio=None)
-        test = PerfTest('some-test', '/path/some-dir/some-test')
-        self.assertEqual(test.parse_output(output, printer, buildbot_output), None)
-        self.assertEqual(printer.written_lines, ['some-unrecognizable-line'])
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            test = PerfTest('some-test', '/path/some-dir/some-test')
+            self.assertEqual(test.parse_output(output), None)
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, 'some-unrecognizable-line\n')
 
 
 class TestPageLoadingPerfTest(unittest.TestCase):
-    def assertWritten(self, stream, contents):
-        self.assertEquals(stream.buflist, contents)
-
     class MockDriver(object):
         def __init__(self, values):
             self._values = values
@@ -101,22 +101,31 @@ class TestPageLoadingPerfTest(unittest.TestCase):
                 return DriverOutput('some output', image=None, image_hash=None, audio=None, test_time=self._values[self._index - 1])
 
     def test_run(self):
-        printer = MockPrinter()
-        buildbot_output = StringIO.StringIO()
         test = PageLoadingPerfTest('some-test', '/path/some-dir/some-test')
         driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
-        self.assertEqual(test.run(driver, None, printer, buildbot_output),
-            {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': math.sqrt(570 * 1000 * 1000), 'min': 2000, 'unit': 'ms'}})
-        self.assertEqual(printer.written_lines, [])
-        self.assertWritten(buildbot_output, ['RESULT some-test= 11000.0 ms\n', 'median= 11000 ms, stdev= 23874.6727726 ms, min= 2000 ms, max= 20000 ms\n'])
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            self.assertEqual(test.run(driver, None),
+                {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': math.sqrt(570 * 1000 * 1000), 'min': 2000, 'unit': 'ms'}})
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, 'RESULT some-test= 11000.0 ms\nmedian= 11000 ms, stdev= 23874.6727726 ms, min= 2000 ms, max= 20000 ms\n')
 
     def test_run_with_bad_output(self):
-        printer = MockPrinter()
-        buildbot_output = StringIO.StringIO()
-        test = PageLoadingPerfTest('some-test', '/path/some-dir/some-test')
-        driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
-        self.assertEqual(test.run(driver, None, printer, buildbot_output), None)
-        self.assertEqual(printer.written_lines, ['error: some-test\nsome error'])
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            test = PageLoadingPerfTest('some-test', '/path/some-dir/some-test')
+            driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+            self.assertEqual(test.run(driver, None), None)
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, 'error: some-test\nsome error\n')
 
 
 class TestPerfTestFactory(unittest.TestCase):

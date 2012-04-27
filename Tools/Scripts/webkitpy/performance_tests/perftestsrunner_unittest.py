@@ -111,15 +111,12 @@ max 1120
         def stop(self):
             """do nothing"""
 
-    def create_runner(self, buildbot_output=None, args=[], regular_output=None, driver_class=TestDriver):
-        buildbot_output = buildbot_output or StringIO.StringIO()
-        regular_output = regular_output or StringIO.StringIO()
-
+    def create_runner(self, args=[], driver_class=TestDriver):
         options, parsed_args = PerfTestsRunner._parse_args(args)
         test_port = TestPort(host=MockHost(), options=options)
         test_port.create_driver = lambda worker_number=None, no_timeout=False: driver_class()
 
-        runner = PerfTestsRunner(regular_output, buildbot_output, args=args, port=test_port)
+        runner = PerfTestsRunner(args=args, port=test_port)
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'inspector')
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Bindings')
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Parser')
@@ -161,13 +158,17 @@ max 1120
         return tests
 
     def test_run_test_set(self):
-        buildbot_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output)
+        runner = self.create_runner()
         tests = self._tests_for_runner(runner, ['inspector/pass.html', 'inspector/silent.html', 'inspector/failed.html',
             'inspector/tonguey.html', 'inspector/timeout.html', 'inspector/crash.html'])
-        unexpected_result_count = runner._run_tests_set(tests, runner._port)
+        output = OutputCapture()
+        output.capture_output()
+        try:
+            unexpected_result_count = runner._run_tests_set(tests, runner._port)
+        finally:
+            stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, len(tests) - 1)
-        self.assertWritten(buildbot_output, ['RESULT group_name: test_name= 42 ms\n'])
+        self.assertTrue('\nRESULT group_name: test_name= 42 ms\n' in log)
 
     def test_run_test_set_kills_drt_per_run(self):
 
@@ -177,12 +178,12 @@ max 1120
             def stop(self):
                 TestDriverWithStopCount.stop_count += 1
 
-        buildbot_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output, driver_class=TestDriverWithStopCount)
+        runner = self.create_runner(driver_class=TestDriverWithStopCount)
+
         tests = self._tests_for_runner(runner, ['inspector/pass.html', 'inspector/silent.html', 'inspector/failed.html',
             'inspector/tonguey.html', 'inspector/timeout.html', 'inspector/crash.html'])
-
         unexpected_result_count = runner._run_tests_set(tests, runner._port)
+
         self.assertEqual(TestDriverWithStopCount.stop_count, 6)
 
     def test_run_test_pause_before_testing(self):
@@ -192,42 +193,58 @@ max 1120
             def start(self):
                 TestDriverWithStartCount.start_count += 1
 
-        buildbot_output = StringIO.StringIO()
-        regular_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output, args=["--pause-before-testing"], regular_output=regular_output, driver_class=TestDriverWithStartCount)
+        runner = self.create_runner(args=["--pause-before-testing"], driver_class=TestDriverWithStartCount)
         tests = self._tests_for_runner(runner, ['inspector/pass.html'])
 
+        output = OutputCapture()
+        output.capture_output()
         try:
-            output = OutputCapture()
-            output.capture_output()
             unexpected_result_count = runner._run_tests_set(tests, runner._port)
             self.assertEqual(TestDriverWithStartCount.start_count, 1)
         finally:
-            _, stderr, _ = output.restore_output()
-            self.assertEqual(stderr, "Ready to run test?\n")
-            self.assertTrue("Running inspector/pass.html (1 of 1)" in regular_output.getvalue())
+            stdout, stderr, log = output.restore_output()
+        self.assertEqual(stderr, "Ready to run test?\n")
+        self.assertEqual(log, "Running inspector/pass.html (1 of 1)\nRESULT group_name: test_name= 42 ms\n\n")
 
     def test_run_test_set_for_parser_tests(self):
-        buildbot_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output)
+        runner = self.create_runner()
         tests = self._tests_for_runner(runner, ['Bindings/event-target-wrapper.html', 'Parser/some-parser.html'])
-        unexpected_result_count = runner._run_tests_set(tests, runner._port)
+        output = OutputCapture()
+        output.capture_output()
+        try:
+            unexpected_result_count = runner._run_tests_set(tests, runner._port)
+        finally:
+            stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)
-        self.assertWritten(buildbot_output, ['RESULT Bindings: event-target-wrapper= 1489.05 ms\n',
-                                             'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms\n',
-                                             'RESULT Parser: some-parser= 1100.0 ms\n',
-                                             'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms\n'])
+        self.assertEqual(log, '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
+        'RESULT Bindings: event-target-wrapper= 1489.05 ms',
+        'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
+        '',
+        'Running Parser/some-parser.html (2 of 2)',
+        'RESULT Parser: some-parser= 1100.0 ms',
+        'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
+        '', '']))
 
     def test_run_test_set_with_json_output(self):
-        buildbot_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output, args=['--output-json-path=/mock-checkout/output.json'])
+        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
         runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
         runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
         runner._timestamp = 123456789
-        self.assertEqual(runner.run(), 0)
-        self.assertWritten(buildbot_output, ['RESULT Bindings: event-target-wrapper= 1489.05 ms\n',
-                                             'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms\n',
-                                             'RESULT group_name: test_name= 42 ms\n'])
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            self.assertEqual(runner.run(), 0)
+        finally:
+            stdout, stderr, logs = output_capture.restore_output()
+
+        self.assertEqual(logs,
+            '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
+                       'RESULT Bindings: event-target-wrapper= 1489.05 ms',
+                       'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
+                       '',
+                       'Running inspector/pass.html (2 of 2)',
+                       'RESULT group_name: test_name= 42 ms',
+                       '', '']))
 
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
@@ -236,17 +253,25 @@ max 1120
             "webkit-revision": 5678})
 
     def test_run_test_set_with_json_source(self):
-        buildbot_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output, args=['--output-json-path=/mock-checkout/output.json',
-            '--source-json-path=/mock-checkout/source.json'])
+        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json', '--source-json-path=/mock-checkout/source.json'])
         runner._host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
         runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
         runner._host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
         runner._timestamp = 123456789
-        self.assertEqual(runner.run(), 0)
-        self.assertWritten(buildbot_output, ['RESULT Bindings: event-target-wrapper= 1489.05 ms\n',
-                                             'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms\n',
-                                             'RESULT group_name: test_name= 42 ms\n'])
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            self.assertEqual(runner.run(), 0)
+        finally:
+            stdout, stderr, logs = output_capture.restore_output()
+
+        self.assertEqual(logs, '\n'.join(['Running Bindings/event-target-wrapper.html (1 of 2)',
+            'RESULT Bindings: event-target-wrapper= 1489.05 ms',
+            'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
+            '',
+            'Running inspector/pass.html (2 of 2)',
+            'RESULT group_name: test_name= 42 ms',
+            '', '']))
 
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
@@ -256,13 +281,11 @@ max 1120
             "key": "value"})
 
     def test_run_test_set_with_multiple_repositories(self):
-        buildbot_output = StringIO.StringIO()
-        runner = self.create_runner(buildbot_output, args=['--output-json-path=/mock-checkout/output.json'])
+        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
         runner._host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
         runner._timestamp = 123456789
         runner._port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
         self.assertEqual(runner.run(), 0)
-
         self.assertEqual(json.loads(runner._host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results": {"inspector/pass.html:group_name:test_name": 42.0}, "webkit-revision": 5678, "some-revision": 5678})
 
@@ -297,8 +320,7 @@ max 1120
         self.assertEqual(runner.run(), -3)
 
     def test_upload_json(self):
-        regular_output = StringIO.StringIO()
-        runner = self.create_runner(regular_output=regular_output)
+        runner = self.create_runner()
         runner._host.filesystem.files['/mock-checkout/some.json'] = 'some content'
 
         called = []
@@ -390,7 +412,6 @@ max 1120
     def test_parse_args(self):
         runner = self.create_runner()
         options, args = PerfTestsRunner._parse_args([
-                '--verbose',
                 '--build-directory=folder42',
                 '--platform=platform42',
                 '--builder-name', 'webkit-mac-1',
@@ -399,17 +420,14 @@ max 1120
                 '--output-json-path=a/output.json',
                 '--source-json-path=a/source.json',
                 '--test-results-server=somehost',
-                '--debug', 'an_arg'])
+                '--debug'])
         self.assertEqual(options.build, True)
-        self.assertEqual(options.verbose, True)
-        self.assertEqual(options.help_printing, None)
         self.assertEqual(options.build_directory, 'folder42')
         self.assertEqual(options.platform, 'platform42')
         self.assertEqual(options.builder_name, 'webkit-mac-1')
         self.assertEqual(options.build_number, '56')
         self.assertEqual(options.time_out_ms, '42')
         self.assertEqual(options.configuration, 'Debug')
-        self.assertEqual(options.print_options, None)
         self.assertEqual(options.output_json_path, 'a/output.json')
         self.assertEqual(options.source_json_path, 'a/source.json')
         self.assertEqual(options.test_results_server, 'somehost')

@@ -28,10 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import logging
 import math
 import re
 
 from webkitpy.layout_tests.port.driver import DriverInput
+
+
+_log = logging.getLogger(__name__)
 
 
 class PerfTest(object):
@@ -45,24 +49,24 @@ class PerfTest(object):
     def path_or_url(self):
         return self._path_or_url
 
-    def run(self, driver, timeout_ms, printer, buildbot_output):
+    def run(self, driver, timeout_ms):
         output = driver.run_test(DriverInput(self.path_or_url(), timeout_ms, None, False))
-        if self.run_failed(output, printer):
+        if self.run_failed(output):
             return None
-        return self.parse_output(output, printer, buildbot_output)
+        return self.parse_output(output)
 
-    def run_failed(self, output, printer):
+    def run_failed(self, output):
         if output.text == None or output.error:
             pass
         elif output.timeout:
-            printer.write('timeout: %s' % self.test_name())
+            _log.error('timeout: %s' % self.test_name())
         elif output.crash:
-            printer.write('crash: %s' % self.test_name())
+            _log.error('crash: %s' % self.test_name())
         else:
             return False
 
         if output.error:
-            printer.write('error: %s\n%s' % (self.test_name(), output.error))
+            _log.error('error: %s\n%s' % (self.test_name(), output.error))
 
         return True
 
@@ -86,7 +90,7 @@ class PerfTest(object):
                 return True
         return False
 
-    def parse_output(self, output, printer, buildbot_output):
+    def parse_output(self, output):
         got_a_result = False
         test_failed = False
         results = {}
@@ -103,7 +107,7 @@ class PerfTest(object):
 
             if not self._should_ignore_line_in_parser_test_result(line):
                 test_failed = True
-                printer.write("%s" % line)
+                _log.error(line)
 
         if test_failed or set(self._statistics_keys) != set(results.keys()):
             return None
@@ -111,14 +115,14 @@ class PerfTest(object):
         results['unit'] = unit
 
         test_name = re.sub(r'\.\w+$', '', self._test_name)
-        self.output_statistics(test_name, results, buildbot_output)
+        self.output_statistics(test_name, results)
 
         return {test_name: results}
 
-    def output_statistics(self, test_name, results, buildbot_output):
+    def output_statistics(self, test_name, results):
         unit = results['unit']
-        buildbot_output.write('RESULT %s= %s %s\n' % (test_name.replace('/', ': '), results['avg'], unit))
-        buildbot_output.write(', '.join(['%s= %s %s' % (key, results[key], unit) for key in self._statistics_keys[1:]]) + '\n')
+        _log.info('RESULT %s= %s %s' % (test_name.replace('/', ': '), results['avg'], unit))
+        _log.info(', '.join(['%s= %s %s' % (key, results[key], unit) for key in self._statistics_keys[1:]]))
 
 
 class ChromiumStylePerfTest(PerfTest):
@@ -127,7 +131,7 @@ class ChromiumStylePerfTest(PerfTest):
     def __init__(self, test_name, path_or_url):
         super(ChromiumStylePerfTest, self).__init__(test_name, path_or_url)
 
-    def parse_output(self, output, printer, buildbot_output):
+    def parse_output(self, output):
         test_failed = False
         got_a_result = False
         results = {}
@@ -136,10 +140,10 @@ class ChromiumStylePerfTest(PerfTest):
             if resultLine:
                 # FIXME: Store the unit
                 results[self.test_name() + ':' + resultLine.group('name').replace(' ', '')] = float(resultLine.group('value'))
-                buildbot_output.write("%s\n" % line)
+                _log.info(line)
             elif not len(line) == 0:
                 test_failed = True
-                printer.write("%s" % line)
+                _log.error(line)
         return results if results and not test_failed else None
 
 
@@ -147,12 +151,12 @@ class PageLoadingPerfTest(PerfTest):
     def __init__(self, test_name, path_or_url):
         super(PageLoadingPerfTest, self).__init__(test_name, path_or_url)
 
-    def run(self, driver, timeout_ms, printer, buildbot_output):
+    def run(self, driver, timeout_ms):
         test_times = []
 
         for i in range(0, 20):
             output = driver.run_test(DriverInput(self.path_or_url(), timeout_ms, None, False))
-            if self.run_failed(output, printer):
+            if self.run_failed(output):
                 return None
             if i == 0:
                 continue
@@ -177,7 +181,7 @@ class PageLoadingPerfTest(PerfTest):
             'median': test_times[middle] if len(test_times) % 2 else (test_times[middle - 1] + test_times[middle]) / 2,
             'stdev': math.sqrt(squareSum),
             'unit': 'ms'}
-        self.output_statistics(self.test_name(), results, buildbot_output)
+        self.output_statistics(self.test_name(), results)
         return {self.test_name(): results}
 
 
