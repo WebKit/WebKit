@@ -33,12 +33,15 @@ namespace WebCore {
 
 class PlatformMouseEvent;
 class PlatformWheelEvent;
-class PlatformTouchEvent;
+
 
 PlatformMouseEvent convertMouseEvent(QInputEvent*, int clickCount);
 PlatformMouseEvent convertMouseEvent(QGraphicsSceneMouseEvent*, int clickCount);
 PlatformWheelEvent convertWheelEvent(QWheelEvent*);
 PlatformWheelEvent convertWheelEvent(QGraphicsSceneWheelEvent*);
-PlatformTouchEvent convertTouchEvent(QTouchEvent*);
 
+#if ENABLE(TOUCH_EVENTS)
+class PlatformTouchEvent;
+PlatformTouchEvent convertTouchEvent(QTouchEvent*);
+#endif
 }

@@ -220,7 +220,7 @@ WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QWheelEvent* e)
     applyDelta(e->delta(), e->orientation());
 }
 
-
+#if ENABLE(TOUCH_EVENTS)
 class WebKitPlatformTouchEvent : public PlatformTouchEvent {
 public:
     WebKitPlatformTouchEvent(QTouchEvent*);
@@ -302,6 +302,7 @@ WebKitPlatformTouchPoint::WebKitPlatformTouchPoint(const QTouchEvent::TouchPoint
     m_force = point.pressure();
     // FIXME: Support m_rotationAngle if QTouchEvent at some point supports it.
 }
+#endif
 
 PlatformWheelEvent convertWheelEvent(QWheelEvent* event)
 {
@@ -313,9 +314,11 @@ PlatformWheelEvent convertWheelEvent(QGraphicsSceneWheelEvent* event)
     return WebKitPlatformWheelEvent(event);
 }
 
+#if ENABLE(TOUCH_EVENTS)
 PlatformTouchEvent convertTouchEvent(QTouchEvent* event)
 {
     return WebKitPlatformTouchEvent(event);
 }
+#endif
 
 }

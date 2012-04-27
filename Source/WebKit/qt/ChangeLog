@@ -1,3 +1,17 @@
+2012-04-27  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Move WebKit1 specific conversion of touch-events to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=84951
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix compile when touch-events are disabled.
+
+        * WebCoreSupport/WebEventConversion.cpp:
+        (WebCore):
+        * WebCoreSupport/WebEventConversion.h:
+        (WebCore):
+
 2012-04-26  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Move WebKit1 specific conversion of touch-events to WebKit1.
