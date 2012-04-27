@@ -289,7 +289,7 @@ EXPORTS
     ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
     ?resize@StringBuilder@WTF@@QAEXI@Z
     ?resizeOutOfLine@BitVector@WTF@@AAEXI@Z
-    ?resolveRope@JSString@JSC@@ABEXPAVExecState@2@@Z
+    ?resolveRope@JSRopeString@JSC@@ABEXPAVExecState@2@@Z
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCallerFromVMCode@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z

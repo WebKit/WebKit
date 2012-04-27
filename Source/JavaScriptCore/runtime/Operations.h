@@ -47,7 +47,7 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        return JSString::create(globalData, s1, s2);
+        return JSRopeString::create(globalData, s1, s2);
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
@@ -69,13 +69,13 @@ namespace JSC {
         if ((length1 + length2 + length3) < length3)
             return throwOutOfMemoryError(exec);
 
-        return JSString::create(exec->globalData(), jsString(globalData, u1), jsString(globalData, u2), jsString(globalData, u3));
+        return JSRopeString::create(exec->globalData(), jsString(globalData, u1), jsString(globalData, u2), jsString(globalData, u3));
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
     {
         JSGlobalData* globalData = &exec->globalData();
-        JSString::RopeBuilder ropeBuilder(*globalData);
+        JSRopeString::RopeBuilder ropeBuilder(*globalData);
 
         unsigned oldLength = 0;
 
@@ -93,7 +93,7 @@ namespace JSC {
     ALWAYS_INLINE JSValue jsStringFromArguments(ExecState* exec, JSValue thisValue)
     {
         JSGlobalData* globalData = &exec->globalData();
-        JSString::RopeBuilder ropeBuilder(*globalData);
+        JSRopeString::RopeBuilder ropeBuilder(*globalData);
         ropeBuilder.append(thisValue.toString(exec));
 
         unsigned oldLength = 0;

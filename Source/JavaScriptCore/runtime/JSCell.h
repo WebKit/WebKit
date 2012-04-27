@@ -328,7 +328,6 @@ namespace JSC {
     void* allocateCell(Heap& heap)
     {
 #if ENABLE(GC_VALIDATION)
-        ASSERT(sizeof(T) == T::s_info.cellSize);
         ASSERT(!heap.globalData()->isInitializingObject());
         heap.globalData()->setInitializingObjectClass(&T::s_info);
 #endif

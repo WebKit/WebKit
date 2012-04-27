@@ -1,3 +1,66 @@
+2012-04-27  Michael Saboff  <msaboff@apple.com>
+
+        Memory wasted in JSString for non-rope strings
+        https://bugs.webkit.org/show_bug.cgi?id=84907
+
+        Reviewed by Geoffrey Garen.
+
+        Split JSString into two classes, JSString as a base class that does not
+        include the fibers of a Rope, and a subclass JSRopeString that has the
+        rope functionality.  Both classes "share" the same ClassInfo.  Added
+        a bool to JSString to indicate that the string was allocated as a JSRopeString
+        to properly handle visiting the fiber children when the rope is resolved and
+        the JSRopeString appears as a JSString.  Didn't change the interface of JSString
+        to require any JIT changes.
+
+        As part of this change, removed "cellSize" from ClassInfo since both classes
+        share the same ClassInfo, but have different sizes.  The only use I could find
+        for cellSize was an ASSERT in allocateCell().
+
+        This appears to be neutral on performance tests.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Changed JSString::resolveRope
+                to JSRopeString::resolveRope
+        * runtime/ClassInfo.h:
+        (JSC):
+        (ClassInfo):
+        * runtime/JSCell.h:
+        (JSC::allocateCell):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::RopeBuilder::expand):
+        (JSC::JSString::visitChildren):
+        (JSC):
+        (JSC::JSRopeString::visitFibers):
+        (JSC::JSRopeString::resolveRope):
+        (JSC::JSRopeString::resolveRopeSlowCase8):
+        (JSC::JSRopeString::resolveRopeSlowCase):
+        (JSC::JSRopeString::outOfMemory):
+        (JSC::JSRopeString::getIndexSlowCase):
+        * runtime/JSString.h:
+        (JSC):
+        (JSString):
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::create):
+        (JSC::JSString::isRope):
+        (JSC::JSString::is8Bit):
+        (JSRopeString):
+        (RopeBuilder):
+        (JSC::JSRopeString::RopeBuilder::RopeBuilder):
+        (JSC::JSRopeString::RopeBuilder::append):
+        (JSC::JSRopeString::RopeBuilder::release):
+        (JSC::JSRopeString::RopeBuilder::length):
+        (JSC::JSRopeString::JSRopeString):
+        (JSC::JSRopeString::finishCreation):
+        (JSC::JSRopeString::createNull):
+        (JSC::JSRopeString::create):
+        (JSC::JSString::value):
+        (JSC::JSString::tryGetValue):
+        (JSC::JSString::getIndex):
+        (JSC::jsStringBuilder):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::jsStringFromArguments):
+
 2012-04-27  Oliver Hunt  <oliver@apple.com>
 
         Correct assertion.

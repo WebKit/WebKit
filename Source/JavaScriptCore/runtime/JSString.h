@@ -32,6 +32,7 @@
 namespace JSC {
 
     class JSString;
+    class JSRopeString;
     class LLIntOffsetsExtractor;
 
     JSString* jsEmptyString(JSGlobalData*);
@@ -58,54 +59,19 @@ namespace JSC {
     JSString* jsOwnedString(JSGlobalData*, const UString&); 
     JSString* jsOwnedString(ExecState*, const UString&); 
 
-    JSString* jsStringBuilder(JSGlobalData*);
+    JSRopeString* jsStringBuilder(JSGlobalData*);
 
     class JSString : public JSCell {
     public:
         friend class JIT;
         friend class JSGlobalData;
         friend class SpecializedThunkJIT;
+        friend class JSRopeString;
         friend struct ThunkHelpers;
-        friend JSString* jsStringBuilder(JSGlobalData*);
 
         typedef JSCell Base;
 
         static void destroy(JSCell*);
-
-        class RopeBuilder {
-        public:
-            RopeBuilder(JSGlobalData& globalData)
-                : m_globalData(globalData)
-                , m_jsString(jsStringBuilder(&globalData))
-                , m_index(0)
-            {
-            }
-
-            void append(JSString* jsString)
-            {
-                if (m_index == JSString::s_maxInternalRopeLength)
-                    expand();
-                m_jsString->m_fibers[m_index++].set(m_globalData, m_jsString, jsString);
-                m_jsString->m_length += jsString->m_length;
-                m_jsString->m_is8Bit = m_jsString->m_is8Bit && jsString->m_is8Bit;
-            }
-
-            JSString* release()
-            {
-                JSString* tmp = m_jsString;
-                m_jsString = 0;
-                return tmp;
-            }
-
-            unsigned length() { return m_jsString->m_length; }
-
-        private:
-            void expand();
-
-            JSGlobalData& m_globalData;
-            JSString* m_jsString;
-            size_t m_index;
-        };
 
     private:
         JSString(JSGlobalData& globalData, PassRefPtr<StringImpl> value)
@@ -117,13 +83,6 @@ namespace JSC {
         JSString(JSGlobalData& globalData)
             : JSCell(globalData, globalData.stringStructure.get())
         {
-        }
-
-        void finishCreation(JSGlobalData& globalData)
-        {
-            Base::finishCreation(globalData);
-            m_length = 0;
-            m_is8Bit = true;
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length)
@@ -143,32 +102,14 @@ namespace JSC {
             Heap::heap(this)->reportExtraMemoryCost(cost);
         }
 
-        void finishCreation(JSGlobalData& globalData, JSString* s1, JSString* s2)
+    protected:
+        void finishCreation(JSGlobalData& globalData)
         {
             Base::finishCreation(globalData);
-            m_length = s1->length() + s2->length();
-            m_is8Bit = (s1->is8Bit() && s2->is8Bit());
-            m_fibers[0].set(globalData, this, s1);
-            m_fibers[1].set(globalData, this, s2);
+            m_length = 0;
+            m_is8Bit = true;
         }
-
-        void finishCreation(JSGlobalData& globalData, JSString* s1, JSString* s2, JSString* s3)
-        {
-            Base::finishCreation(globalData);
-            m_length = s1->length() + s2->length() + s3->length();
-            m_is8Bit = (s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
-            m_fibers[0].set(globalData, this, s1);
-            m_fibers[1].set(globalData, this, s2);
-            m_fibers[2].set(globalData, this, s3);
-        }
-
-        static JSString* createNull(JSGlobalData& globalData)
-        {
-            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData);
-            newString->finishCreation(globalData);
-            return newString;
-        }
-
+        
     public:
         static JSString* create(JSGlobalData& globalData, PassRefPtr<StringImpl> value)
         {
@@ -177,18 +118,6 @@ namespace JSC {
             size_t cost = value->cost();
             JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
             newString->finishCreation(globalData, length, cost);
-            return newString;
-        }
-        static JSString* create(JSGlobalData& globalData, JSString* s1, JSString* s2)
-        {
-            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData);
-            newString->finishCreation(globalData, s1, s2);
-            return newString;
-        }
-        static JSString* create(JSGlobalData& globalData, JSString* s1, JSString* s2, JSString* s3)
-        {
-            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData);
-            newString->finishCreation(globalData, s1, s2, s3);
             return newString;
         }
         static JSString* createHasOtherOwner(JSGlobalData& globalData, PassRefPtr<StringImpl> value)
@@ -200,18 +129,8 @@ namespace JSC {
             return newString;
         }
 
-        const UString& value(ExecState* exec) const
-        {
-            if (isRope())
-                resolveRope(exec);
-            return m_value;
-        }
-        const UString& tryGetValue() const
-        {
-            if (isRope())
-                resolveRope(0);
-            return m_value;
-        }
+        const UString& value(ExecState*) const;
+        const UString& tryGetValue() const;
         unsigned length() { return m_length; }
 
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
@@ -226,7 +145,6 @@ namespace JSC {
 
         bool canGetIndex(unsigned i) { return i < m_length; }
         JSString* getIndex(ExecState*, unsigned);
-        JSString* getIndexSlowCase(ExecState*, unsigned);
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
@@ -240,36 +158,137 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
+    protected:
+        bool isRope() const { return m_value.isNull(); }
+        bool is8Bit() const { return m_is8Bit; }
+
+        // A string is represented either by a UString or a rope of fibers.
+        bool m_is8Bit : 1;
+        unsigned m_length;
+        mutable UString m_value;
+
     private:
         friend class LLIntOffsetsExtractor;
         
-        JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;
-        void resolveRopeSlowCase8(LChar*) const;
-        void resolveRopeSlowCase(UChar*) const;
-        void outOfMemory(ExecState*) const;
-
         static JSObject* toThisObject(JSCell*, ExecState*);
 
         // Actually getPropertySlot, not getOwnPropertySlot (see JSCell).
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
 
-        static const unsigned s_maxInternalRopeLength = 3;
-
-        // A string is represented either by a UString or a rope of fibers.
-        bool m_is8Bit : 1;
-        unsigned m_length;
-        mutable UString m_value;
-        mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
-
-        bool isRope() const { return m_value.isNull(); }
-        bool is8Bit() const { return m_is8Bit; }
         UString& string() { ASSERT(!isRope()); return m_value; }
 
         friend JSValue jsString(ExecState*, JSString*, JSString*);
-        friend JSValue jsString(ExecState*, Register*, unsigned count);
-        friend JSValue jsStringFromArguments(ExecState*, JSValue thisValue);
         friend JSString* jsSubstring(ExecState*, JSString*, unsigned offset, unsigned length);
+    };
+
+    class JSRopeString : public JSString {
+        friend class JSString;
+
+        friend JSRopeString* jsStringBuilder(JSGlobalData*);
+
+        class RopeBuilder {
+        public:
+            RopeBuilder(JSGlobalData& globalData)
+            : m_globalData(globalData)
+            , m_jsString(jsStringBuilder(&globalData))
+            , m_index(0)
+            {
+            }
+
+            void append(JSString* jsString)
+            {
+                if (m_index == JSRopeString::s_maxInternalRopeLength)
+                    expand();
+                m_jsString->m_fibers[m_index++].set(m_globalData, m_jsString, jsString);
+                m_jsString->m_length += jsString->m_length;
+                m_jsString->m_is8Bit = m_jsString->m_is8Bit && jsString->m_is8Bit;
+            }
+
+            JSRopeString* release()
+            {
+                JSRopeString* tmp = m_jsString;
+                m_jsString = 0;
+                return tmp;
+            }
+
+            unsigned length() { return m_jsString->m_length; }
+
+        private:
+            void expand();
+            
+            JSGlobalData& m_globalData;
+            JSRopeString* m_jsString;
+            size_t m_index;
+        };
+        
+    private:
+        JSRopeString(JSGlobalData& globalData)
+            : JSString(globalData)
+        {
+        }
+
+        void finishCreation(JSGlobalData& globalData, JSString* s1, JSString* s2)
+        {
+            Base::finishCreation(globalData);
+            m_length = s1->length() + s2->length();
+            m_is8Bit = (s1->is8Bit() && s2->is8Bit());
+            m_fibers[0].set(globalData, this, s1);
+            m_fibers[1].set(globalData, this, s2);
+        }
+        
+        void finishCreation(JSGlobalData& globalData, JSString* s1, JSString* s2, JSString* s3)
+        {
+            Base::finishCreation(globalData);
+            m_length = s1->length() + s2->length() + s3->length();
+            m_is8Bit = (s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
+            m_fibers[0].set(globalData, this, s1);
+            m_fibers[1].set(globalData, this, s2);
+            m_fibers[2].set(globalData, this, s3);
+        }
+
+        void finishCreation(JSGlobalData& globalData)
+        {
+            JSString::finishCreation(globalData);
+        }
+
+        static JSRopeString* createNull(JSGlobalData& globalData)
+        {
+            JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(globalData.heap)) JSRopeString(globalData);
+            newString->finishCreation(globalData);
+            return newString;
+        }
+
+    public:
+        static JSString* create(JSGlobalData& globalData, JSString* s1, JSString* s2)
+        {
+            JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(globalData.heap)) JSRopeString(globalData);
+            newString->finishCreation(globalData, s1, s2);
+            return newString;
+        }
+        static JSString* create(JSGlobalData& globalData, JSString* s1, JSString* s2, JSString* s3)
+        {
+            JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(globalData.heap)) JSRopeString(globalData);
+            newString->finishCreation(globalData, s1, s2, s3);
+            return newString;
+        }
+
+        void visitFibers(SlotVisitor&);
+
+    private:
+        friend JSValue jsString(ExecState*, Register*, unsigned);
+        friend JSValue jsStringFromArguments(ExecState*, JSValue);
+
+        JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;
+        void resolveRopeSlowCase8(LChar*) const;
+        void resolveRopeSlowCase(UChar*) const;
+        void outOfMemory(ExecState*) const;
+        
+        JSString* getIndexSlowCase(ExecState*, unsigned);
+
+        static const unsigned s_maxInternalRopeLength = 3;
+        
+        mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
     };
 
     JSString* asString(JSValue);
@@ -316,11 +335,25 @@ namespace JSC {
         return JSString::create(*globalData, s.impl());
     }
 
+    inline const UString& JSString::value(ExecState* exec) const
+    {
+        if (isRope())
+            static_cast<const JSRopeString*>(this)->resolveRope(exec);
+        return m_value;
+    }
+
+    inline const UString& JSString::tryGetValue() const
+    {
+        if (isRope())
+            static_cast<const JSRopeString*>(this)->resolveRope(0);
+        return m_value;
+    }
+
     inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
     {
         ASSERT(canGetIndex(i));
         if (isRope())
-            return getIndexSlowCase(exec, i);
+            return static_cast<JSRopeString*>(this)->getIndexSlowCase(exec, i);
         ASSERT(i < m_value.length());
         return jsSingleCharacterSubstring(exec, m_value, i);
     }
@@ -392,9 +425,9 @@ namespace JSC {
         return JSString::createHasOtherOwner(*globalData, s.impl());
     }
 
-    inline JSString* jsStringBuilder(JSGlobalData* globalData)
+    inline JSRopeString* jsStringBuilder(JSGlobalData* globalData)
     {
-        return JSString::createNull(*globalData);
+        return JSRopeString::createNull(*globalData);
     }
 
     inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->globalData()); }
