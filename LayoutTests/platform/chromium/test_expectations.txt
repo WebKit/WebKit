@@ -147,7 +147,6 @@ BUGWK73528 SKIP : networkinformation = PASS FAIL
 WONTFIX : platform/gtk = FAIL PASS
 WONTFIX : platform/mac = FAIL PASS TIMEOUT
 WONTFIX : platform/mac-wk2 = FAIL PASS TIMEOUT
-WONTFIX : platform/mac-leopard = FAIL PASS
 WONTFIX : platform/qt = FAIL PASS MISSING
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS

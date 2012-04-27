@@ -1,3 +1,9 @@
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Remove remaining mentions of platform/mac-leopard.
+
+        * platform/chromium/test_expectations.txt: Removed.
+
 2012-04-27  Nat Duca  <nduca@chromium.org>
 
         Implement high-resolution time via window.performance.now()
