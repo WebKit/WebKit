@@ -783,6 +783,7 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
         }
     
         ASSERT(callType == CallTypeNone);
+        NativeCallFrameTracer tracer(globalData, exec);
         exec->globalData().exception = createNotAFunctionError(exec, callee);
         return 0;
     }
@@ -805,6 +806,7 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
     }
     
     ASSERT(constructType == ConstructTypeNone);
+    NativeCallFrameTracer tracer(globalData, exec);
     exec->globalData().exception = createNotAConstructorError(exec, callee);
     return 0;
 }
@@ -813,13 +815,14 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
 {
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
+    TopCallFrameSetter tracer(*globalData, exec);
     
     JSValue calleeAsValue = execCallee->calleeAsValue();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell)
         return handleHostCall(execCallee, calleeAsValue, kind);
-
+    
+    TopCallFrameSetter calleeTracer(*globalData, execCallee);
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     execCallee->setScopeChain(callee->scopeUnchecked());
     ExecutableBase* executable = callee->executable();
@@ -832,6 +835,7 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
         if (error) {
+            TopCallFrameSetter tracer(*globalData, exec);
             globalData->exception = createStackOverflowError(exec);
             return 0;
         }

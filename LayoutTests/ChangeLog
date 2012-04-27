@@ -1,3 +1,19 @@
+2012-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Remove RegisterFile::end()/m_end
+        https://bugs.webkit.org/show_bug.cgi?id=85011
+
+        Reviewed by Gavin Barraclough.
+
+        Now that we recurse on the top of the used portion of the stack we
+        can provide an error message even when the stack is completely full.
+
+        Also made sure we were consistent in which callframe we used when
+        creating stack overflow errors.
+
+        * fast/js/global-recursion-on-full-stack-expected.txt:
+        * fast/js/stack-trace-expected.txt:
+
 2012-04-26  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Unreviewed gardening

@@ -388,10 +388,11 @@ LLINT_SLOW_PATH_DECL(register_file_check)
     dataLog("Num vars = %u.\n", exec->codeBlock()->m_numVars);
     dataLog("Current end is at %p.\n", exec->globalData().interpreter->registerFile().end());
 #endif
-    ASSERT(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters] > exec->globalData().interpreter->registerFile().end());
+    ASSERT(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters] > exec->globalData().interpreter->registerFile().commitEnd());
     if (UNLIKELY(!globalData.interpreter->registerFile().grow(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters]))) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
+        exec->globalData().topCallFrame = exec;
         globalData.exception = createStackOverflowError(exec);
         interpreterThrowInCaller(exec, returnPC);
         pc = returnToThrowForThrownException(exec);
@@ -406,6 +407,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_arityCheck)
     if (!newExec) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
+        exec->globalData().topCallFrame = exec;
         globalData.exception = createStackOverflowError(exec);
         interpreterThrowInCaller(exec, returnPC);
         LLINT_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
@@ -420,6 +422,7 @@ LLINT_SLOW_PATH_DECL(slow_path_construct_arityCheck)
     if (!newExec) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
+        exec->globalData().topCallFrame = exec;
         globalData.exception = createStackOverflowError(exec);
         interpreterThrowInCaller(exec, returnPC);
         LLINT_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
@@ -1237,6 +1240,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 #endif
 
         ASSERT(callType == CallTypeNone);
+        NativeCallFrameTracer tracer(&globalData, exec);
         LLINT_CALL_THROW(exec, pc, createNotAFunctionError(exec, callee));
     }
 
@@ -1260,6 +1264,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 #endif
 
     ASSERT(constructType == ConstructTypeNone);
+    NativeCallFrameTracer tracer(&globalData, exec);
     LLINT_CALL_THROW(exec, pc, createNotAConstructorError(exec, callee));
 }
 

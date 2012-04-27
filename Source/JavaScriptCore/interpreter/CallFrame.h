@@ -171,7 +171,7 @@ namespace JSC  {
             CallFrame* callerFrame, int argc, JSObject* callee)
         {
             ASSERT(callerFrame); // Use noCaller() rather than 0 for the outer host call frame caller.
-            ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->registerFile()->end() >= this);
+            ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->registerFile()->commitEnd() >= this);
 
             setCodeBlock(codeBlock);
             setScopeChain(scopeChain);
@@ -254,14 +254,21 @@ namespace JSC  {
         // happening.
         CallFrame* trueCallFrameFromVMCode() { return trueCallFrame(AbstractPC()); }
 
+        Register* startOfReusableRegisterFile()
+        {
+            CallFrame* result = globalData().topCallFrame;
+            if (result == noCaller() || result == registerFile()->begin())
+                return registerFile()->begin();
+            return result->frameExtent();
+        }
+        
     private:
         static const intptr_t HostCallFrameFlag = 1;
         static const int s_thisArgumentOffset = -1 - RegisterFile::CallFrameHeaderSize;
         static const int s_firstArgumentOffset = s_thisArgumentOffset - 1;
 
-#ifndef NDEBUG
         RegisterFile* registerFile();
-#endif
+
 #if ENABLE(DFG_JIT)
         bool isInlineCallFrameSlow();
 #endif

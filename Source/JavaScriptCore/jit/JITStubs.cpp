@@ -1369,8 +1369,14 @@ DEFINE_STUB_FUNCTION(void*, register_file_check)
     STUB_INIT_STACK_FRAME(stackFrame);
     CallFrame* callFrame = stackFrame.callFrame;
 
-    if (UNLIKELY(!stackFrame.registerFile->grow(&callFrame->registers()[callFrame->codeBlock()->m_numCalleeRegisters])))
-        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
+    if (UNLIKELY(!stackFrame.registerFile->grow(&callFrame->registers()[callFrame->codeBlock()->m_numCalleeRegisters]))) {
+        JSValue value;
+        {
+            TopCallFrameSetter tracer(callFrame->globalData(), callFrame->callerFrame());
+            value = createStackOverflowError(callFrame->callerFrame());
+        }
+        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, value);
+    }
 
     return callFrame;
 }
@@ -2153,6 +2159,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
 inline void* jitCompileFor(CallFrame* callFrame, CodeSpecializationKind kind)
 {
     JSFunction* function = jsCast<JSFunction*>(callFrame->callee());
+    callFrame->setCodeBlock(0);
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
     ScopeChainNode* callDataScopeChain = function->scope();
@@ -2204,8 +2211,14 @@ DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
     CallFrame* callFrame = stackFrame.callFrame;
 
     CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.registerFile, CodeForCall);
-    if (!newCallFrame)
-        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
+    if (!newCallFrame) {
+        JSValue value;
+        {
+            TopCallFrameSetter tracer(callFrame->globalData(), callFrame->callerFrame());
+            value = createStackOverflowError(callFrame->callerFrame());
+        }
+        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, value);
+    }
 
     return newCallFrame;
 }
@@ -2217,8 +2230,14 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
     CallFrame* callFrame = stackFrame.callFrame;
 
     CallFrame* newCallFrame = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.registerFile, CodeForConstruct);
-    if (!newCallFrame)
-        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createStackOverflowError(callFrame->callerFrame()));
+    if (!newCallFrame) {
+        JSValue value;
+        {
+            TopCallFrameSetter tracer(callFrame->globalData(), callFrame->callerFrame());
+            value = createStackOverflowError(callFrame->callerFrame());
+        }
+        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, value);
+    }
 
     return newCallFrame;
 }
@@ -2227,6 +2246,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
 {
     JSFunction* callee = jsCast<JSFunction*>(callFrame->callee());
     ExecutableBase* executable = callee->executable();
+    callFrame->setCodeBlock(0);
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
@@ -2302,7 +2322,12 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_NotJSFunction)
     ASSERT(callType != CallTypeJS);
     if (callType != CallTypeHost) {
         ASSERT(callType == CallTypeNone);
-        return throwExceptionFromOpCall<EncodedJSValue>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createNotAFunctionError(callFrame->callerFrame(), callee));
+        JSValue value;
+        {
+            NativeCallFrameTracer tracer(&callFrame->globalData(), callFrame->callerFrame());
+            value = createNotAFunctionError(callFrame->callerFrame(), callee);
+        }
+        return throwExceptionFromOpCall<EncodedJSValue>(stackFrame, callFrame, STUB_RETURN_ADDRESS, value);
     }
 
     EncodedJSValue returnValue;
@@ -2408,7 +2433,12 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
     ASSERT(constructType != ConstructTypeJS);
     if (constructType != ConstructTypeHost) {
         ASSERT(constructType == ConstructTypeNone);
-        return throwExceptionFromOpCall<EncodedJSValue>(stackFrame, callFrame, STUB_RETURN_ADDRESS, createNotAConstructorError(callFrame->callerFrame(), callee));
+        JSValue value;
+        {
+            NativeCallFrameTracer tracer(&callFrame->globalData(), callFrame->callerFrame());
+            value = createNotAConstructorError(callFrame->callerFrame(), callee);
+        }
+        return throwExceptionFromOpCall<EncodedJSValue>(stackFrame, callFrame, STUB_RETURN_ADDRESS, value);
     }
 
     EncodedJSValue returnValue;

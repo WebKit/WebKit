@@ -567,7 +567,7 @@ void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
         CRASH();
     m_operationInProgress = Collection;
     ConservativeRoots registerFileRoots(&m_objectSpace.blocks(), &m_storageSpace);
-    registerFile().gatherConservativeRoots(registerFileRoots);
+    registerFile().gatherConservativeRoots(*m_globalData, registerFileRoots);
     size_t registerFileRootCount = registerFileRoots.size();
     JSCell** registerRoots = registerFileRoots.roots();
     for (size_t i = 0; i < registerFileRootCount; i++) {
@@ -602,7 +602,7 @@ void Heap::markRoots(bool fullGC)
     m_dfgCodeBlocks.clearMarks();
     {
         GCPHASE(GatherRegisterFileRoots);
-        registerFile().gatherConservativeRoots(registerFileRoots, m_dfgCodeBlocks);
+        registerFile().gatherConservativeRoots(*m_globalData, registerFileRoots, m_dfgCodeBlocks);
     }
 #if ENABLE(GGC)
     MarkedBlock::DirtyCellVector dirtyCells;

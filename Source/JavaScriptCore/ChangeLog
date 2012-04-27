@@ -1,3 +1,59 @@
+2012-04-26  Oliver Hunt  <oliver@apple.com>
+
+        Remove RegisterFile::end()/m_end
+        https://bugs.webkit.org/show_bug.cgi?id=85011
+
+        Reviewed by Gavin Barraclough.
+
+        Get rid of end() and m_end from RegisterFile.  From now on
+        we only care about the end of the committed region when calling
+        code.  When re-entering the VM we now plant the new CallFrame
+        immediately after whatever the current topCallFrame is.  This
+        required adding a routine to CallFrame to determine exactly what
+        we should be doing (in the absence of an existing CallFrame, we
+        can't reason about the frameExtent() so we check for that).
+
+        This also now means that the GC only marks the portion of the
+        RegisterFile that is actually in use, and that VM re-entry doesn't
+        exhaust the RegisterFile as rapidly.
+
+        * dfg/DFGOperations.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::getConservativeRegisterRoots):
+        (JSC::Heap::markRoots):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        (JSC::ExecState::startOfReusableRegisterFile):
+        (ExecState):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::execute):
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::growSlowCase):
+        (JSC::RegisterFile::gatherConservativeRoots):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::commitEnd):
+        (JSC::RegisterFile::addressOfEnd):
+        (RegisterFile):
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::shrink):
+        (JSC::RegisterFile::grow):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::jitCompileFor):
+        (JSC::lazyLinkFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+
 2012-04-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ARMv7 backend should optimize Float32 arrays

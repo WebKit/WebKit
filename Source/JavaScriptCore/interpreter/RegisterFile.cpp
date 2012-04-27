@@ -52,10 +52,7 @@ RegisterFile::~RegisterFile()
 
 bool RegisterFile::growSlowCase(Register* newEnd)
 {
-    if (newEnd <= m_commitEnd) {
-        m_end = newEnd;
-        return true;
-    }
+    ASSERT(newEnd > m_commitEnd);
 
     long delta = roundUpAllocationSize(reinterpret_cast<char*>(newEnd) - reinterpret_cast<char*>(m_commitEnd), commitSize);
     if (reinterpret_cast<char*>(m_commitEnd) + delta > static_cast<char*>(m_reservation.base()) + m_reservation.size())
@@ -64,18 +61,21 @@ bool RegisterFile::growSlowCase(Register* newEnd)
     m_reservation.commit(m_commitEnd, delta);
     addToCommittedByteCount(delta);
     m_commitEnd = reinterpret_cast_ptr<Register*>(reinterpret_cast<char*>(m_commitEnd) + delta);
-    m_end = newEnd;
     return true;
 }
 
-void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
+void RegisterFile::gatherConservativeRoots(JSGlobalData& globalData, ConservativeRoots& conservativeRoots)
 {
-    conservativeRoots.add(begin(), end());
+    if (globalData.topCallFrame == CallFrame::noCaller())
+        return;
+    conservativeRoots.add(begin(), globalData.topCallFrame->frameExtent());
 }
 
-void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots, DFGCodeBlocks& dfgCodeBlocks)
+void RegisterFile::gatherConservativeRoots(JSGlobalData& globalData, ConservativeRoots& conservativeRoots, DFGCodeBlocks& dfgCodeBlocks)
 {
-    conservativeRoots.add(begin(), end(), dfgCodeBlocks);
+    if (globalData.topCallFrame == CallFrame::noCaller())
+        return;
+    conservativeRoots.add(begin(), globalData.topCallFrame->frameExtent(), dfgCodeBlocks);
 }
 
 void RegisterFile::releaseExcessCapacity()
