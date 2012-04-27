@@ -1393,6 +1393,8 @@ platform/mac/fast/objc/dom-html-select-live-pseudo-selectors.html
 platform/mac/fast/objc/longlongTest.html
 platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html
 platform/mac/plugins/bindings-array-apply-crash.html
+platform/mac/plugins/bindings-objc-long-method-name.html
+platform/mac/plugins/bindings-objc-method-name-conversion.html
 platform/mac/plugins/bindings-test-objc.html
 platform/mac/plugins/call-as-function-test.html
 platform/mac/plugins/root-object-premature-delete-crash.html

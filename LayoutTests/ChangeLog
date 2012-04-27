@@ -1,3 +1,14 @@
+2012-04-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        Skip the new ObjC tests for WebKit2
+
+        Reviewed by Andreas Kling.
+
+        WebKitTestRunner doesn't have objCController, the new tests for
+        the Objective-C bindings should be skipped on WebKit2.
+
+        * platform/wk2/Skipped:
+
 2012-04-26  Oliver Hunt  <oliver@apple.com>
 
         Remove RegisterFile::end()/m_end
