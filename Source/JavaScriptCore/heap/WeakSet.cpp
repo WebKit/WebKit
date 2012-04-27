@@ -95,16 +95,6 @@ WeakBlock::FreeCell* WeakSet::findAllocator()
     if (WeakBlock::FreeCell* allocator = tryFindAllocator())
         return allocator;
 
-    // FIXME: This reporting of the amount allocated isn't quite accurate and 
-    // probably should be reworked eventually.
-    m_heap->didAllocate(WeakBlock::blockSize);
-    if (m_heap->shouldCollect()) {
-        m_heap->collect(Heap::DoNotSweep);
-
-        if (WeakBlock::FreeCell* allocator = tryFindAllocator())
-            return allocator;
-    }
-
     return addAllocator();
 }
 
@@ -126,6 +116,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 WeakBlock::FreeCell* WeakSet::addAllocator()
 {
     WeakBlock* block = WeakBlock::create();
+    m_heap->didAllocate(WeakBlock::blockSize);
     m_blocks.append(block);
     WeakBlock::SweepResult sweepResult = block->takeSweepResult();
     ASSERT(!sweepResult.isNull() && sweepResult.freeList);

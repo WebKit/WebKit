@@ -1,5 +1,22 @@
 2012-04-26  Oliver Hunt  <oliver@apple.com>
 
+        Allocating WeakImpl should not trigger GC, as that makes the world very tricksy.
+        https://bugs.webkit.org/show_bug.cgi?id=85020
+
+        Reviewed by Gavin Barraclough.
+
+        Now in the event that we are unable to find an allocator for a new handle, just
+        add a new allocator rather than trying to recover "dead" handles through a GC.
+
+        Find allocator is now much simpler, and addAllocator directly reports the
+        increased memory usage to the heap without causing any GC to happen immediately.
+
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::findAllocator):
+        (JSC::WeakSet::addAllocator):
+
+2012-04-26  Oliver Hunt  <oliver@apple.com>
+
         Remove RegisterFile::end()/m_end
         https://bugs.webkit.org/show_bug.cgi?id=85011
 
