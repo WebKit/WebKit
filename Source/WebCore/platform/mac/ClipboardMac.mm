@@ -88,6 +88,10 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
         // special case because UTI doesn't work with Cocoa's URL type
         return String(NSURLPboardType); // note special case in getData to read NSFilenamesType
 
+    // Blacklist types that might contain subframe information
+    if (qType == "text/rtf" || qType == "public.rtf" || qType == "com.apple.traditional-mac-plain-text")
+        return String();
+
     // Try UTI now
     String mimeType = qType;
     RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString(), NULL));

@@ -1,3 +1,14 @@
+2012-04-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        Disable RTF in JavaScript drag-and-drop
+        https://bugs.webkit.org/show_bug.cgi?id=76597
+
+        Reviewed by Maciej Stachowiak.
+
+        * fast/events/drag-and-drop-subframe-dataTransfer-expected.txt: Added.
+        * fast/events/drag-and-drop-subframe-dataTransfer.html: Added.
+        * fast/events/resources/file-for-drag-and-drop-subframe-dataTransfer.html: Added.
+
 2012-04-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Unskip passing tests related to editing commands
