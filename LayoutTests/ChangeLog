@@ -1,3 +1,16 @@
+2012-04-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        FormatBlock crashes when body element is removed prior to the command execution
+        https://bugs.webkit.org/show_bug.cgi?id=84937
+
+        Reviewed by Tony Chang.
+
+        Add a regression test for executing FormatCommand immediately after removing
+        the body element thereby turning the selection end points to non-candidates.
+
+        * editing/execCommand/format-block-without-body-crash-expected.txt: Added.
+        * editing/execCommand/format-block-without-body-crash.html: Added.
+
 2012-04-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         NULL-deref in RenderBox::clippedOverflowRectForRepaint

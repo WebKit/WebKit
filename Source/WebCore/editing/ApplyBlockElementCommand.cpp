@@ -56,14 +56,14 @@ ApplyBlockElementCommand::ApplyBlockElementCommand(Document* document, const Qua
 
 void ApplyBlockElementCommand::doApply()
 {
-    if (!endingSelection().isNonOrphanedCaretOrRange())
-        return;
-
     if (!endingSelection().rootEditableElement())
         return;
 
     VisiblePosition visibleEnd = endingSelection().visibleEnd();
     VisiblePosition visibleStart = endingSelection().visibleStart();
+    if (visibleStart.isNull() || visibleStart.isOrphan() || visibleEnd.isNull() || visibleEnd.isOrphan())
+        return;
+
     // When a selection ends at the start of a paragraph, we rarely paint 
     // the selection gap before that paragraph, because there often is no gap.  
     // In a case like this, it's not obvious to the user that the selection 
