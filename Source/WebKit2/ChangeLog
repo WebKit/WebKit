@@ -1,3 +1,20 @@
+2012-04-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Don't call syncRemoteContents from WebLayerTreeRenderer::paintToCurrentGLContext
+        https://bugs.webkit.org/show_bug.cgi?id=85088
+
+        Reviewed by Noam Rosenthal.
+
+        Remove the call to syncRemoteContents from WebLayerTreeRenderer::paintToCurrentGLContext,
+        since it was moved to QQuickWebPage::updatePaintNode.
+        To make sure that we always sync before painting, this patch also calls page->update()
+        when the viewport changes.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::_q_contentViewportChanged):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+
 2012-04-27  Gavin Peters  <gavinp@chromium.org>
 
         Add new ENABLE_LINK_PRERENDER define to control the Prerendering API

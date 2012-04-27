@@ -109,7 +109,6 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
 
-    syncRemoteContent();
     adjustPositionForFixedLayers();
     GraphicsLayer* currentRootLayer = rootLayer();
     if (!currentRootLayer)
