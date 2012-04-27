@@ -446,26 +446,25 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     else
         radix = static_cast<int>(radixValue.toInteger(exec)); // nan -> 0
 
-    if (radix == 10)
-        return JSValue::encode(jsNumber(x).toString(exec));
-
-    // Fast path for number to character conversion.
-    if (radix == 36) {
-        unsigned c = static_cast<unsigned>(x);
-        if (c == x && c < 36) {
-            JSGlobalData* globalData = &exec->globalData();
-            return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[c]));
-        }
-    }
-
     if (radix < 2 || radix > 36)
         return throwVMError(exec, createRangeError(exec, "toString() radix argument must be between 2 and 36"));
+
+    // Fast path for number to character conversion.
+    unsigned c = static_cast<unsigned>(x);
+    unsigned unsignedRadix = static_cast<unsigned>(radix);
+    if (c == x && c < unsignedRadix) {
+        JSGlobalData* globalData = &exec->globalData();
+        return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[c]));
+    }
+
+    if (radix == 10)
+        return JSValue::encode(jsNumber(x).toString(exec));
 
     if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     RadixBuffer s;
-    return JSValue::encode(jsString(exec, toStringWithRadix(s, x, radix)));
+    return JSValue::encode(jsString(exec, toStringWithRadix(s, x, unsignedRadix)));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)

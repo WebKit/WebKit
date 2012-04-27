@@ -1,3 +1,21 @@
+2012-04-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Generalize the single character optimization of numberProtoFuncToString
+        https://bugs.webkit.org/show_bug.cgi?id=85027
+
+        Reviewed by Geoffrey Garen.
+
+        The function numberProtoFuncToString() has an optimization to use SmallStrings::singleCharacterString()
+        when the radix is 36.
+
+        This patch generalize the optimization for any radix. Any positive number smaller than its radix
+        can be represented by a single character of radixDigits.
+
+        This makes numberProtoFuncToString() about twice as fast for this case of single digit conversion.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+
 2012-04-27  Gavin Peters  <gavinp@chromium.org>
 
         Add new ENABLE_LINK_PRERENDER define to control the Prerendering API
