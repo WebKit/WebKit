@@ -1,3 +1,12 @@
+2012-04-27  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] Update test expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=85038
+
+        Unreviewed, chromium test_expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-27  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Allow inspection of Web Socket Frames
