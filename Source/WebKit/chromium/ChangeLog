@@ -1,3 +1,14 @@
+2012-04-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r115436.
+        http://trac.webkit.org/changeset/115436
+        https://bugs.webkit.org/show_bug.cgi?id=85079
+
+        "broke the build" (Requested by tonyg-cr on #webkit).
+
+        * WebKit.gyp:
+        * public/WebReferrerPolicy.h: Added.
+
 2012-04-27  Gavin Peters  <gavinp@chromium.org>
 
         Add new ENABLE_LINK_PRERENDER define to control the Prerendering API
