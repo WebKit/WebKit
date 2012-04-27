@@ -1,5 +1,12 @@
 2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Mark tables/mozilla/other/slashlogo.html as flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=85106
+
+        * platform/chromium/test_expectations.txt: Marked.
+
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Remove remaining mentions of platform/mac-leopard.
 
         * platform/chromium/test_expectations.txt: Removed.
