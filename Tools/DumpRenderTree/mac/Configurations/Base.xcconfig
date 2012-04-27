@@ -26,7 +26,7 @@
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include ForwardingHeaders mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
 FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
 GCC_PREPROCESSOR_DEFINITIONS = ENABLE_DASHBOARD_SUPPORT WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST;
-DEBUG_INFORMATION_FORMAT = dwarf
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 PREBINDING = NO
 GCC_C_LANGUAGE_STANDARD = gnu99
 GCC_ENABLE_CPP_RTTI = NO;

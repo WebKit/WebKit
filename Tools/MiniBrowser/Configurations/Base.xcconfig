@@ -23,7 +23,7 @@
 
 #include "CompilerVersion.xcconfig"
 
-DEBUG_INFORMATION_FORMAT = dwarf
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 PREBINDING = NO
 GCC_C_LANGUAGE_STANDARD = gnu99
 GCC_ENABLE_CPP_EXCEPTIONS = NO;
