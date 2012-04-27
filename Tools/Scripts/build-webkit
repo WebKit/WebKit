@@ -106,6 +106,7 @@ my (
     $javaScriptDebuggerSupport,
     $legacyNotificationsSupport,
     $linkPrefetchSupport,
+    $linkPrerenderSupport,
     $mathmlSupport,
     $mediaSourceSupport,
     $mediaStatisticsSupport,
@@ -267,6 +268,9 @@ my @features = (
 
     { option => "link-prefetch", desc => "Toggle pre fetching support",
       define => "ENABLE_LINK_PREFETCH", default => 0, value => \$linkPrefetchSupport },
+
+    { option => "link-prerender", desc => "Toggle pre rendering support",
+      define => "ENABLE_LINK_PRERENDER", default => 0, value => \$linkPrerenderSupport },
 
     { option => "mathml", desc => "Toggle MathML support",
       define => "ENABLE_MATHML", default => 1, value => \$mathmlSupport },

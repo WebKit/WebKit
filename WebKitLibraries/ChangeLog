@@ -1,3 +1,17 @@
+2012-04-27  Gavin Peters  <gavinp@chromium.org>
+
+        Add new ENABLE_LINK_PRERENDER define to control the Prerendering API
+        https://bugs.webkit.org/show_bug.cgi?id=84871
+
+        Reviewed by Adam Barth.
+
+        Prerendering is currently covered by the ENABLE_LINK_PREFETCH macro, but the new Prerendering
+        API separates it from prefetching.  Having separate include guards lets ports enable prefetching,
+        a relatively easy change, without needing to build the infrastructure for prerendering, which
+        is considerably more complicated.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2012-04-10  Adam Barth  <abarth@webkit.org>
 
         Limit -apple- and -khtml- to ENABLE(DASHBOARD_SUPPORT)
