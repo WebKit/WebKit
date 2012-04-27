@@ -105,9 +105,9 @@ namespace WebCore {
             return static_cast<V8BindingPerIsolateData*>(isolate->GetData()); 
         }
 
-        static V8BindingPerIsolateData* current()
+        static V8BindingPerIsolateData* current(v8::Isolate* isolate = 0)
         {
-            return get(v8::Isolate::GetCurrent());
+            return isolate ? static_cast<V8BindingPerIsolateData*>(isolate->GetData()) : get(v8::Isolate::GetCurrent());
         }
         static void dispose(v8::Isolate*);
 
@@ -250,7 +250,7 @@ namespace WebCore {
         if (!stringImpl)
             return v8::String::Empty();
 
-        V8BindingPerIsolateData* data = isolate ? static_cast<V8BindingPerIsolateData*>(isolate->GetData()) : V8BindingPerIsolateData::current();
+        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current(isolate);
         return data->stringCache()->v8ExternalString(stringImpl);
     }
 
