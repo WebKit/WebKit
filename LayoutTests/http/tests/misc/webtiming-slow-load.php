@@ -11,7 +11,7 @@
 <script>
 description("Verifies that requestStart and responseStart are available before the main document has finished loading.");
 
-var performance = window.performance || {};
+window.performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 

@@ -1,4 +1,4 @@
-var performance = window.performance || {};
+window.performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 var originalTiming = {};

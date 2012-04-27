@@ -9,7 +9,7 @@
 <script>
 description("Web Timing should report zeros for redirects and unload since there was no preceding page.");
 
-var performance = window.performance || {};
+window.performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 

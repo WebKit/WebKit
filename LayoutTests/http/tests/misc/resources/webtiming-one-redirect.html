@@ -9,7 +9,7 @@
 <script>
 description("This test checks that Web Timing reports redirectCount correctly and has reasonable values for redirectStart and redirectCount.");
 
-var performance = window.performance || {};
+window.performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 

@@ -16,8 +16,8 @@
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    target.style.resize = "both";
     var target = document.getElementById("target");
+    target.style.resize = "both";
     var computedStyle = getComputedStyle(target);
     log(computedStyle.resize === "both" ? "PASS" : "FAIL");
 </script>

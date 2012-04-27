@@ -9,7 +9,7 @@
 <script>
 description("If the destination and previous page have the same origin, then Web Timing should report unload timing.");
 
-var performance = window.performance || {};
+window.performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 
