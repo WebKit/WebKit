@@ -129,28 +129,53 @@ static void webkit_dom_test_serialized_script_value_interface_get_property(GObje
     WebCore::TestSerializedScriptValueInterface* coreSelf = WebKit::core(self);
     switch (propertyId) {
     case PROP_VALUE: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->value();
         g_value_set_object(value, WebKit::kit(ptr.get()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
     case PROP_READONLY_VALUE: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->readonlyValue();
         g_value_set_object(value, WebKit::kit(ptr.get()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
     case PROP_CACHED_VALUE: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->cachedValue();
         g_value_set_object(value, WebKit::kit(ptr.get()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
     case PROP_PORTS: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         RefPtr<WebCore::MessagePortArray> ptr = coreSelf->ports();
         g_value_set_object(value, WebKit::kit(ptr.get()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
     case PROP_CACHED_READONLY_VALUE: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
         RefPtr<WebCore::SerializedScriptValue> ptr = coreSelf->cachedReadonlyValue();
         g_value_set_object(value, WebKit::kit(ptr.get()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
     default:

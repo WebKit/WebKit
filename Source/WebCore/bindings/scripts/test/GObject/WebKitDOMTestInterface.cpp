@@ -85,15 +85,9 @@ G_DEFINE_TYPE(WebKitDOMTestInterface, webkit_dom_test_interface, WEBKIT_TYPE_DOM
 
 enum {
     PROP_0,
-#if ENABLE(Condition11) || ENABLE(Condition12)
     PROP_SUPPLEMENTAL_STR1,
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
-#if ENABLE(Condition11) || ENABLE(Condition12)
     PROP_SUPPLEMENTAL_STR2,
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
-#if ENABLE(Condition11) || ENABLE(Condition12)
     PROP_SUPPLEMENTAL_NODE,
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 };
 
 static void webkit_dom_test_interface_finalize(GObject* object)
@@ -120,12 +114,20 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint proper
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
     switch (propertyId) {
-#if ENABLE(Condition11) || ENABLE(Condition12)
     case PROP_SUPPLEMENTAL_STR2: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition11) || ENABLE(Condition12)
         WebCore::TestSupplemental::setSupplementalStr2(coreSelf, WTF::String::fromUTF8(g_value_get_string(value)));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -139,25 +141,49 @@ static void webkit_dom_test_interface_get_property(GObject* object, guint proper
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
     switch (propertyId) {
-#if ENABLE(Condition11) || ENABLE(Condition12)
     case PROP_SUPPLEMENTAL_STR1: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition11) || ENABLE(Condition12)
         g_value_take_string(value, convertToUTF8String(WebCore::TestSupplemental::supplementalStr1(coreSelf)));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
-#if ENABLE(Condition11) || ENABLE(Condition12)
     case PROP_SUPPLEMENTAL_STR2: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition11) || ENABLE(Condition12)
         g_value_take_string(value, convertToUTF8String(WebCore::TestSupplemental::supplementalStr2(coreSelf)));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
-#if ENABLE(Condition11) || ENABLE(Condition12)
     case PROP_SUPPLEMENTAL_NODE: {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition11) || ENABLE(Condition12)
         RefPtr<WebCore::Node> ptr = WebCore::TestSupplemental::supplementalNode(coreSelf);
         g_value_set_object(value, WebKit::kit(ptr.get()));
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+#else
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
+        WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
+#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -180,7 +206,6 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
     gobjectClass->get_property = webkit_dom_test_interface_get_property;
     gobjectClass->constructed = webkit_dom_test_interface_constructed;
 
-#if ENABLE(Condition11) || ENABLE(Condition12)
     g_object_class_install_property(gobjectClass,
                                     PROP_SUPPLEMENTAL_STR1,
                                     g_param_spec_string("supplemental-str1", /* name */
@@ -188,8 +213,6 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
                                                            "read-only  gchar* TestInterface.supplemental-str1", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READABLE));
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
-#if ENABLE(Condition11) || ENABLE(Condition12)
     g_object_class_install_property(gobjectClass,
                                     PROP_SUPPLEMENTAL_STR2,
                                     g_param_spec_string("supplemental-str2", /* name */
@@ -197,8 +220,6 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
                                                            "read-write  gchar* TestInterface.supplemental-str2", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READWRITE));
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
-#if ENABLE(Condition11) || ENABLE(Condition12)
     g_object_class_install_property(gobjectClass,
                                     PROP_SUPPLEMENTAL_NODE,
                                     g_param_spec_object("supplemental-node", /* name */
@@ -206,7 +227,6 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
                                                            "read-write  WebKitDOMNode* TestInterface.supplemental-node", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_NODE, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 
 
 }
