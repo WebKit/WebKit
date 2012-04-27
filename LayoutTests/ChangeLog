@@ -1,3 +1,21 @@
+2012-04-27  Rob Buis  <rbuis@rim.com>
+
+        SVG inline style of 'marker-*' does not override
+        https://bugs.webkit.org/show_bug.cgi?id=84824
+
+        Add tests for clip-path, filter, mask and marker-* properties.
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/custom/inline-style-overrides-clipPath-expected.svg: Added.
+        * svg/custom/inline-style-overrides-clipPath.svg: Added.
+        * svg/custom/inline-style-overrides-filter-expected.svg: Added.
+        * svg/custom/inline-style-overrides-filter.svg: Added.
+        * svg/custom/inline-style-overrides-markers-expected.svg: Added.
+        * svg/custom/inline-style-overrides-markers.svg: Added.
+        * svg/custom/inline-style-overrides-mask-expected.svg: Added.
+        * svg/custom/inline-style-overrides-mask.svg: Added.
+
 2012-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Support values animation mode with just a single value

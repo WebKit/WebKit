@@ -357,8 +357,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue();
-            else
-                return;
 
             svgstyle->setMarkerStartResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
@@ -373,8 +371,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue();
-            else
-                return;
 
             svgstyle->setMarkerMidResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
@@ -389,8 +385,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue();
-            else
-                return;
 
             svgstyle->setMarkerEndResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
@@ -428,8 +422,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue();
-            else
-                return;
 
             svgstyle->setFilterResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
@@ -444,8 +436,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue();
-            else
-                return;
 
             svgstyle->setMaskerResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
@@ -460,8 +450,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue();
-            else
-                return;
 
             svgstyle->setClipperResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
