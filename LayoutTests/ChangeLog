@@ -1,3 +1,17 @@
+2012-04-27  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Implement CSS Animations and Transitions for CSS Shaders
+        https://bugs.webkit.org/show_bug.cgi?id=71406
+
+        Reviewed by Dean Jackson.
+
+        * animations/resources/animation-test-helpers.js: Added a check for the "custom" function and used the parser in custom-filter-parser.js instead.
+        (getFilterParameters):
+        (filterParametersMatch):
+        * css3/filters/custom/custom-filter-animation-expected.txt: Added.
+        * css3/filters/custom/custom-filter-animation.html: Added.
+        * css3/filters/resources/custom-filter-parser.js: Added a simple parser for the "custom" function, so that multiple types can be checked correctly.
+
 2012-04-26  Sam Weinig  <sam@webkit.org>
 
         Add support for the Blob constructor

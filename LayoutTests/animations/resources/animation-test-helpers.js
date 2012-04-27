@@ -62,7 +62,15 @@ function parseCrossFade(s)
 // Return an array of numeric filter params in 0-1.
 function getFilterParameters(s)
 {
-    var filterParams = s.match(/\((.+)\)/)[1];
+    var filterResult = s.match(/(\w+)\((.+)\)/);
+    if (!filterResult)
+        throw new Error("There's no filter in \"" + s + "\"");
+    var filterParams = filterResult[2];
+    if (filterResult[1] == "custom") {
+        if (!window.getCustomFilterParameters)
+            throw new Error("getCustomFilterParameters not found. Did you include custom-filter-parser.js?");
+        return getCustomFilterParameters(filterParams);
+    }
     var paramList = filterParams.split(' '); // FIXME: the spec may allow comma separation at some point.
     
     // Normalize percentage values.
@@ -80,9 +88,29 @@ function filterParametersMatch(paramList1, paramList2, tolerance)
 {
     if (paramList1.length != paramList2.length)
         return false;
-
     for (var i = 0; i < paramList1.length; ++i) {
-        var match = isCloseEnough(paramList1[i], paramList2[i], tolerance);
+        var param1 = paramList1[i], 
+            param2 = paramList2[i];
+        if (typeof param1 == "object") {
+            // This is a custom filter parameter.
+            if (param1.type != "parameter") {
+                // Checking for shader uris and other keywords. They need to be exactly the same.
+                if (param1.type != param2.type
+                    || param1.value != param2.value)
+                    return false;
+                continue;
+            }
+            if (param1.name != param2.name
+                || param1.value.length != param2.value.length)
+                return false;
+            // For now we only support floats.
+            for (var j = 0; j < param1.value.length; ++j) {
+                if (!isCloseEnough(param1.value[j].value, param2.value[j].value, tolerance))
+                    return false;
+            }
+            continue;
+        }
+        var match = isCloseEnough(param1, param2, tolerance);
         if (!match)
             return false;
     }

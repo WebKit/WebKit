@@ -43,6 +43,9 @@ namespace WebCore {
 class CustomFilterParameter;
 typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
 
+bool customFilterParametersEqual(const CustomFilterParameterList&, const CustomFilterParameterList&);
+void blendCustomFilterParameters(const CustomFilterParameterList& listFrom, const CustomFilterParameterList& listTo, double progress, CustomFilterParameterList& resultList);
+
 class CustomFilterOperation : public FilterOperation {
 public:
     enum MeshBoxType {
@@ -83,6 +86,8 @@ public:
     
     virtual bool affectsOpacity() const { return true; }
     virtual bool movesPixels() const { return true; }
+    
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
 private:
     virtual bool operator==(const FilterOperation& o) const
     {
@@ -90,18 +95,15 @@ private:
             return false;
 
         const CustomFilterOperation* other = static_cast<const CustomFilterOperation*>(&o);
-        return m_program.get() == other->m_program.get()
+        return *m_program.get() == *other->m_program.get()
                && m_meshRows == other->m_meshRows
                && m_meshColumns == other->m_meshColumns
                && m_meshBoxType == other->m_meshBoxType
-               && m_meshType == other->m_meshType;
+               && m_meshType == other->m_meshType
+               && customFilterParametersEqual(m_parameters, other->m_parameters);
     }
     
     CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, MeshBoxType, MeshType);
-    
-#ifndef NDEBUG
-    bool hasSortedParameterList();
-#endif
 
     RefPtr<CustomFilterProgram> m_program;
     CustomFilterParameterList m_parameters;

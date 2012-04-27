@@ -113,6 +113,16 @@ public:
         if (isLoaded())
             notifyClients();
     }
+    
+    CachedShader* cachedVertexShader() const { return m_vertexShader ? m_vertexShader->cachedShader() : 0; }
+    CachedShader* cachedFragmentShader() const { return m_fragmentShader ? m_fragmentShader->cachedShader() : 0; }
+    
+    virtual bool operator==(const CustomFilterProgram& o) const 
+    {
+        // The following cast is ugly, but StyleCustomFilterProgram is the single implementation of CustomFilterProgram.
+        const StyleCustomFilterProgram* other = static_cast<const StyleCustomFilterProgram*>(&o);
+        return cachedVertexShader() == other->cachedVertexShader() && cachedFragmentShader() == other->cachedFragmentShader();
+    }
 
 private:
     StyleCustomFilterProgram(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader)

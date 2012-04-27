@@ -48,6 +48,27 @@ public:
 
     void addValue(double value) { m_data.append(value); }
     
+    virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter* from, double progress)
+    {
+        if (!from || !isSameType(*from))
+            return this;
+        const CustomFilterNumberParameter* fromNumber = static_cast<const CustomFilterNumberParameter*>(from);
+        if (size() != fromNumber->size())
+            return this;
+        RefPtr<CustomFilterNumberParameter> result = CustomFilterNumberParameter::create(name());
+        for (size_t i = 0; i < size(); ++i)
+            result->addValue(WebCore::blend(fromNumber->valueAt(i), valueAt(i), progress));
+        return result.release();
+    }
+    
+    virtual bool operator==(const CustomFilterParameter& o) const
+    {
+        if (!isSameType(o))
+            return false;
+        const CustomFilterNumberParameter* other = static_cast<const CustomFilterNumberParameter*>(&o);
+        return m_data == other->m_data;
+    }
+    
 private:
     CustomFilterNumberParameter(const String& name)
         : CustomFilterParameter(NUMBER, name)
