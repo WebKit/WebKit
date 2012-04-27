@@ -365,7 +365,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBlurredSurface)
     CCLayerImpl* child = root->children()[0].get();
 
     FilterOperations filters;
-    filters.operations().append(BlurFilterOperation::create(Length(5, WebCore::Percent), FilterOperation::BLUR));
+    filters.operations().append(BlurFilterOperation::create(Length(5, WebCore::Fixed), FilterOperation::BLUR));
     int outsetTop, outsetRight, outsetBottom, outsetLeft;
     filters.getOutsets(outsetTop, outsetRight, outsetBottom, outsetLeft);
     root->setFilters(filters);
@@ -382,6 +382,77 @@ TEST_F(CCDamageTrackerTest, verifyDamageForBlurredSurface)
     FloatRect expectedDamageRect = FloatRect(110, 111, 12, 13);
     expectedDamageRect.move(-outsetLeft, -outsetTop);
     expectedDamageRect.expand(outsetLeft + outsetRight, outsetTop + outsetBottom);
+    EXPECT_FLOAT_RECT_EQ(expectedDamageRect, rootDamageRect);
+}
+
+TEST_F(CCDamageTrackerTest, verifyDamageForBackgroundBlurredChild)
+{
+    OwnPtr<CCLayerImpl> root = createAndSetUpTestTreeWithTwoSurfaces();
+    CCLayerImpl* child1 = root->children()[0].get();
+    CCLayerImpl* child2 = root->children()[1].get();
+
+    FilterOperations filters;
+    filters.operations().append(BlurFilterOperation::create(Length(2, WebCore::Fixed), FilterOperation::BLUR));
+    int outsetTop, outsetRight, outsetBottom, outsetLeft;
+    filters.getOutsets(outsetTop, outsetRight, outsetBottom, outsetLeft);
+    child1->setBackgroundFilters(filters);
+
+    // Setting the filter will damage the whole surface.
+    emulateDrawingOneFrame(root.get());
+
+    // CASE 1: Setting the update rect should cause the corresponding damage to
+    // the surface, blurred based on the size of the child's background blur
+    // filter.
+    root->setUpdateRect(FloatRect(297, 297, 2, 2));
+
+    emulateDrawingOneFrame(root.get());
+
+    FloatRect rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    // Damage position on the surface should be a composition of the damage on the root and on child2.
+    // Damage on the root should be: position of updateRect (297, 297), but expanded by the blur outsets.
+    FloatRect expectedDamageRect = FloatRect(297, 297, 2, 2);
+    expectedDamageRect.move(-outsetLeft, -outsetTop);
+    expectedDamageRect.expand(outsetLeft + outsetRight, outsetTop + outsetBottom);
+    EXPECT_FLOAT_RECT_EQ(expectedDamageRect, rootDamageRect);
+
+    // CASE 2: Setting the update rect should cause the corresponding damage to
+    // the surface, blurred based on the size of the child's background blur
+    // filter. Since the damage extends to the right/bottom outside of the
+    // blurred layer, only the left/top should end up expanded.
+    root->setUpdateRect(FloatRect(297, 297, 30, 30));
+
+    emulateDrawingOneFrame(root.get());
+
+    rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    // Damage position on the surface should be a composition of the damage on the root and on child2.
+    // Damage on the root should be: position of updateRect (297, 297), but expanded on the left/top
+    // by the blur outsets.
+    expectedDamageRect = FloatRect(297, 297, 30, 30);
+    expectedDamageRect.move(-outsetLeft, -outsetTop);
+    expectedDamageRect.expand(outsetLeft, outsetTop);
+    EXPECT_FLOAT_RECT_EQ(expectedDamageRect, rootDamageRect);
+
+    // CASE 3: Setting this update rect outside the contentBounds of the blurred
+    // child1 will not cause it to be expanded.
+    root->setUpdateRect(FloatRect(30, 30, 2, 2));
+
+    emulateDrawingOneFrame(root.get());
+
+    rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    // Damage on the root should be: position of updateRect (30, 30), not
+    // expanded.
+    expectedDamageRect = FloatRect(30, 30, 2, 2);
+    EXPECT_FLOAT_RECT_EQ(expectedDamageRect, rootDamageRect);
+
+    // CASE 4: Setting the update rect on child2, which is above child1, will
+    // not get blurred by child1, so it does not need to get expanded.
+    child2->setUpdateRect(FloatRect(0, 0, 1, 1));
+
+    emulateDrawingOneFrame(root.get());
+
+    rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
+    // Damage on child2 should be: position of updateRect offset by the child's position (11, 11), and not expanded by anything.
+    expectedDamageRect = FloatRect(11, 11, 1, 1);
     EXPECT_FLOAT_RECT_EQ(expectedDamageRect, rootDamageRect);
 }
 

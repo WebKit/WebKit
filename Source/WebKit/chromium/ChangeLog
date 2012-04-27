@@ -1,3 +1,14 @@
+2012-04-26  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Some background filters require inflating damage on the surface behind them
+        https://bugs.webkit.org/show_bug.cgi?id=84479
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        (WebKitTests):
+
 2012-04-26  Aaron Colwell  <acolwell@chromium.org>
 
         Cleanup WebMediaPlayer enum values that didn't match Chromium style guidelines

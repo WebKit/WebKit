@@ -62,8 +62,6 @@ private:
     void extendDamageForLayer(CCLayerImpl*, FloatRect& targetDamageRect);
     void extendDamageForRenderSurface(CCLayerImpl*, FloatRect& targetDamageRect);
 
-    void expandDamageRectWithForegroundFilters(const FilterOperations&);
-
     // To correctly track exposed regions, two hashtables of rects are maintained.
     // The "current" map is used to compute exposed regions of the current frame, while
     // the "next" map is used to collect layer rects that are used in the next frame.
