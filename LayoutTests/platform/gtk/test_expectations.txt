@@ -469,13 +469,13 @@ BUGWK54210 : fast/text/atsui-spacing-features.html = PASS TEXT
 
 BUGWK83800 : plugins/get-url-with-blank-target.html = PASS TEXT
 
-BUGWK83891 : css2.1/20110323/at-import-002.htm = PASS TEXT
-BUGWK83891 : css2.1/20110323/at-import-004.htm = PASS TEXT
-BUGWK83891 : css2.1/20110323/at-import-005.htm = PASS TEXT
-BUGWK83891 : css2.1/20110323/at-import-006.htm = PASS TEXT
-BUGWK83891 : css2.1/20110323/at-import-007.htm = PASS TEXT
-BUGWK83891 : css2.1/20110323/at-import-009.htm = PASS TEXT
-BUGWK83891 : css2.1/20110323/eof-005.htm = PASS TEXT
+BUGWK83891 : css2.1/20110323/at-import-002.htm = PASS IMAGE
+BUGWK83891 : css2.1/20110323/at-import-004.htm = PASS IMAGE
+BUGWK83891 : css2.1/20110323/at-import-005.htm = PASS IMAGE
+BUGWK83891 : css2.1/20110323/at-import-006.htm = PASS IMAGE
+BUGWK83891 : css2.1/20110323/at-import-007.htm = PASS IMAGE
+BUGWK83891 : css2.1/20110323/at-import-009.htm = PASS IMAGE
+BUGWK83891 : css2.1/20110323/eof-005.htm = PASS IMAGE
 
 BUGWK83704 : media/event-attributes.html = PASS TEXT
 
@@ -502,9 +502,6 @@ BUGWK84675 : editing/pasteboard/subframe-dragndrop-1.html = TEXT PASS
 
 BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = PASS TEXT
 BUGWK84700 : fast/dom/Window/window-postmessage-clone-frames.html = PASS TEXT
-
-// Path not found error in style checker.
-//BUGWK84702 : fast/forms/form-collection-radio-node-list.html = PASS TEXT
 
 BUGWK84856 : media/media-controller-playback.html = PASS TEXT
 BUGWK84858 : media/video-seek-past-end-playing.html = PASS TEXT

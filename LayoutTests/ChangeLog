@@ -1,3 +1,10 @@
+2012-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/test_expectations.txt: Fix expected results of
+        css2.1 results and remove non-existant fast/form test.
+
 2012-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r94497): Pressing Command+A when inline (Marked Text) is not empty will clean whole content
