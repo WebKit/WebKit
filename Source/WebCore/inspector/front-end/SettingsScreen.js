@@ -38,16 +38,15 @@ WebInspector.SettingsScreen = function()
 
     this._leftColumnElement = document.createElement("td");
     this._rightColumnElement = document.createElement("td");
-    var p = this._appendSection(WebInspector.UIString("General"));
-    if (Preferences.showDockToRight)
-        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
-    if (Preferences.exposeDisableCache)
-        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
-    var disableJSElement = this._createCheckboxSetting(WebInspector.UIString("Disable JavaScript"), WebInspector.settings.javaScriptDisabled);
-    p.appendChild(disableJSElement);
-    WebInspector.settings.javaScriptDisabled.addChangeListener(this._javaScriptDisabledChanged, this);
-    this._disableJSCheckbox = disableJSElement.getElementsByTagName("input")[0];
-    this._updateScriptDisabledCheckbox();
+    var p;
+
+    if (Preferences.showDockToRight || Preferences.exposeDisableCache) {
+        p = this._appendSection(WebInspector.UIString("General"));
+        if (Preferences.showDockToRight)
+            p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
+        if (Preferences.exposeDisableCache)
+            p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
+    }
     
     p = this._appendSection(WebInspector.UIString("Rendering"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show paint rectangles"), WebInspector.settings.showPaintRects));
@@ -407,36 +406,6 @@ WebInspector.SettingsScreen.prototype = {
     _showPaintRectsChanged: function()
     {
         PageAgent.setShowPaintRects(WebInspector.settings.showPaintRects.get());
-    },
-
-    _updateScriptDisabledCheckbox: function()
-    {
-        function executionStatusCallback(error, status)
-        {
-            if (error || !status)
-                return;
-
-            switch (status) {
-            case "forbidden":
-                this._disableJSCheckbox.checked = true;
-                this._disableJSCheckbox.disabled = true;
-                break;
-            case "disabled":
-                this._disableJSCheckbox.checked = true;
-                break;
-            default:
-                this._disableJSCheckbox.checked = false;
-                break;
-            }
-        }
-
-        PageAgent.getScriptExecutionStatus(executionStatusCallback.bind(this));
-    },
-
-    _javaScriptDisabledChanged: function()
-    {
-        // We need to manually update the checkbox state, since enabling JavaScript in the page can actually uncover the "forbidden" state.
-        PageAgent.setScriptExecutionDisabled(WebInspector.settings.javaScriptDisabled.get(), this._updateScriptDisabledCheckbox.bind(this));
     },
 
     _createDeviceMetricsControl: function()

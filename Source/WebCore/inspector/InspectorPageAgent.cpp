@@ -66,7 +66,6 @@
 #include "RegularExpression.h"
 #include "ScriptObject.h"
 #include "SecurityOrigin.h"
-#include "Settings.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
@@ -82,7 +81,6 @@ namespace WebCore {
 
 namespace PageAgentState {
 static const char pageAgentEnabled[] = "pageAgentEnabled";
-static const char pageAgentScriptExecutionDisabled[] = "pageAgentScriptExecutionDisabled";
 static const char pageAgentScriptsToEvaluateOnLoad[] = "pageAgentScriptsToEvaluateOnLoad";
 static const char pageAgentScreenWidthOverride[] = "pageAgentScreenWidthOverride";
 static const char pageAgentScreenHeightOverride[] = "pageAgentScreenHeightOverride";
@@ -349,8 +347,6 @@ void InspectorPageAgent::restore()
 void InspectorPageAgent::enable(ErrorString*)
 {
     m_state->setBoolean(PageAgentState::pageAgentEnabled, true);
-    bool scriptExecutionDisabled = m_state->getBoolean(PageAgentState::pageAgentScriptExecutionDisabled);
-    setScriptExecutionDisabled(0, scriptExecutionDisabled);
     m_instrumentingAgents->setInspectorPageAgent(this);
 }
 
@@ -358,8 +354,6 @@ void InspectorPageAgent::disable(ErrorString*)
 {
     m_state->setBoolean(PageAgentState::pageAgentEnabled, false);
     m_instrumentingAgents->setInspectorPageAgent(0);
-
-    setScriptExecutionDisabled(0, false);
 
     // When disabling the agent, reset the override values.
     m_state->setLong(PageAgentState::pageAgentScreenWidthOverride, 0);
@@ -692,39 +686,6 @@ void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
     m_state->setBoolean(PageAgentState::showPaintRects, show);
     if (!show)
         m_page->mainFrame()->view()->invalidate();
-}
-
-void InspectorPageAgent::getScriptExecutionStatus(ErrorString*, PageCommandHandler::Result::Enum* status)
-{
-    bool disabledByScriptController = false;
-    bool disabledInSettings = false;
-    Frame* frame = mainFrame();
-    if (frame) {
-        disabledByScriptController = !frame->script()->canExecuteScripts(NotAboutToExecuteScript);
-        if (frame->settings())
-            disabledInSettings = !frame->settings()->isScriptEnabled();
-    }
-
-    if (!disabledByScriptController) {
-        *status = PageCommandHandler::Result::Allowed;
-        return;
-    }
-
-    if (disabledInSettings)
-        *status = PageCommandHandler::Result::Disabled;
-    else
-        *status = PageCommandHandler::Result::Forbidden;
-}
-
-void InspectorPageAgent::setScriptExecutionDisabled(ErrorString*, bool value)
-{
-    m_state->setBoolean(PageAgentState::pageAgentScriptExecutionDisabled, value);
-    if (!mainFrame())
-        return;
-
-    Settings* settings = mainFrame()->settings();
-    if (settings)
-        settings->setScriptEnabled(!value);
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)

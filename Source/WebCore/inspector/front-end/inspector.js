@@ -481,9 +481,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     if (WebInspector.settings.showPaintRects.get())
         PageAgent.setShowPaintRects(true);
 
-    if (WebInspector.settings.javaScriptDisabled.get())
-        PageAgent.setScriptExecutionDisabled(true);
-
     WebInspector.WorkerManager.loadCompleted();
     InspectorFrontendAPI.loadCompleted();
 }
