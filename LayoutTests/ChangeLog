@@ -1,3 +1,15 @@
+2012-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r94497): Pressing Command+A when inline (Marked Text) is not empty will clean whole content
+        https://bugs.webkit.org/show_bug.cgi?id=84501
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a regression test for selecting all when there is a composition text.
+
+        * editing/input/select-all-clear-input-method-expected.txt: Added.
+        * editing/input/select-all-clear-input-method.html: Added.
+
 2012-04-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardening, skip a new failing test.
