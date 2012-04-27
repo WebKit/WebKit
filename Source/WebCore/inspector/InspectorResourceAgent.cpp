@@ -59,6 +59,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptableDocumentParser.h"
+#include "WebSocketFrame.h"
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 
@@ -455,6 +456,31 @@ void InspectorResourceAgent::didCloseWebSocket(unsigned long identifier)
 {
     m_frontend->webSocketClosed(IdentifiersFactory::requestId(identifier), currentTime());
 }
+void InspectorResourceAgent::didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
+{
+    String payload = frame.payload;
+    RefPtr<TypeBuilder::Network::WebSocketFrame> frameObject = TypeBuilder::Network::WebSocketFrame::create()
+        .setOpcode(frame.opCode)
+        .setMask(frame.masked)
+        .setPayloadData(payload.substring(0, frame.payloadLength));
+    m_frontend->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), currentTime(), frameObject);
+}
+
+void InspectorResourceAgent::didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
+{
+    String payload = frame.payload;
+    RefPtr<TypeBuilder::Network::WebSocketFrame> frameObject = TypeBuilder::Network::WebSocketFrame::create()
+        .setOpcode(frame.opCode)
+        .setMask(frame.masked)
+        .setPayloadData(payload.substring(0, frame.payloadLength));
+    m_frontend->webSocketFrameSent(IdentifiersFactory::requestId(identifier), currentTime(), frameObject);
+}
+
+void InspectorResourceAgent::didReceiveWebSocketFrameError(unsigned long identifier, const String& errorMessage)
+{
+    m_frontend->webSocketFrameError(IdentifiersFactory::requestId(identifier), currentTime(), errorMessage);
+}
+
 #endif // ENABLE(WEB_SOCKETS)
 
 // called from Internals for layout test purposes.

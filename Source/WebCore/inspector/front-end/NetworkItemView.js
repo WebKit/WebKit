@@ -57,6 +57,11 @@ WebInspector.NetworkItemView = function(request)
         this.appendTab("timing", WebInspector.UIString("Timing"), timingView);
     }
 
+    if (request.frames().length > 0) {
+        var frameView = new WebInspector.ResourceWebSocketFrameView(request);
+        this.appendTab("webSocketFrames", WebInspector.UIString("WebSocket Frames"), frameView);
+    }
+
     this.addEventListener(WebInspector.TabbedPane.EventTypes.TabSelected, this._tabSelected, this);
 }
 

@@ -212,8 +212,10 @@ void WebSocketChannel::fail(const String& reason)
 {
     LOG(Network, "WebSocketChannel %p fail: %s", this, reason.utf8().data());
     ASSERT(!m_suspended);
-    if (m_document)
+    if (m_document) {
+        InspectorInstrumentation::didReceiveWebSocketFrameError(m_document, m_identifier, reason);
         m_document->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, m_handshake->clientOrigin());
+    }
     if (!m_useHixie76Protocol) {
         // Hybi-10 specification explicitly states we must not continue to handle incoming data
         // once the WebSocket connection is failed (section 7.1.7).
@@ -598,6 +600,8 @@ bool WebSocketChannel::processFrame()
         return false;
     }
 
+    InspectorInstrumentation::didReceiveWebSocketFrame(m_document, m_identifier, frame);
+
     switch (frame.opCode) {
     case WebSocketFrame::OpCodeContinuation:
         // An unexpected continuation frame is received without any leading frame.
@@ -918,6 +922,7 @@ bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     ASSERT(!m_suspended);
 
     WebSocketFrame frame(opCode, true, false, true, data, dataLength);
+    InspectorInstrumentation::didSendWebSocketFrame(m_document, m_identifier, frame);
 
     OwnPtr<DeflateResultHolder> deflateResult = m_deflateFramer.deflate(frame);
     if (!deflateResult->succeeded()) {

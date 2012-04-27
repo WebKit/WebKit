@@ -6414,6 +6414,7 @@
             'inspector/front-end/ResourceType.js',
             'inspector/front-end/ResourceUtils.js',
             'inspector/front-end/ResourceView.js',
+            'inspector/front-end/ResourceWebSocketFrameView.js',
             'inspector/front-end/ResourcesPanel.js',
             'inspector/front-end/ScopeChainSidebarPane.js',
             'inspector/front-end/Script.js',

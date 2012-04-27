@@ -456,6 +456,57 @@ WebInspector.NetworkDispatcher.prototype = {
     /**
      * @param {NetworkAgent.RequestId} requestId
      * @param {NetworkAgent.Timestamp} time
+     * @param {NetworkAgent.WebSocketFrame} response
+     */
+    webSocketFrameReceived: function(requestId, time, response)
+    {
+        var networkRequest = this._inflightRequestsById[requestId];
+        if (!networkRequest)
+            return;
+
+        networkRequest.addFrame(response, time);
+        networkRequest.responseReceivedTime = time;
+
+        this._updateNetworkRequest(networkRequest);
+    },
+
+    /**
+     * @param {NetworkAgent.RequestId} requestId
+     * @param {NetworkAgent.Timestamp} time
+     * @param {NetworkAgent.WebSocketFrame} response
+     */
+    webSocketFrameSent: function(requestId, time, response)
+    {
+        var networkRequest = this._inflightRequestsById[requestId];
+        if (!networkRequest)
+            return;
+
+        networkRequest.addFrame(response, time, true);
+        networkRequest.responseReceivedTime = time;
+
+        this._updateNetworkRequest(networkRequest);
+    },
+
+    /**
+     * @param {NetworkAgent.RequestId} requestId
+     * @param {NetworkAgent.Timestamp} time
+     * @param {string} errorMessage
+     */
+    webSocketFrameError: function(requestId, time, errorMessage)
+    {
+        var networkRequest = this._inflightRequestsById[requestId];
+        if (!networkRequest)
+            return;
+
+        networkRequest.addFrameError(errorMessage, time);
+        networkRequest.responseReceivedTime = time;
+
+        this._updateNetworkRequest(networkRequest);
+    },
+
+    /**
+     * @param {NetworkAgent.RequestId} requestId
+     * @param {NetworkAgent.Timestamp} time
      */
     webSocketClosed: function(requestId, time)
     {

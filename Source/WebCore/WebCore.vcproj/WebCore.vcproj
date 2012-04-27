@@ -74449,6 +74449,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ResourceWebSocketFrameView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ScopeChainSidebarPane.js"
 					>
 				</File>

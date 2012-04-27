@@ -58,6 +58,7 @@ WebInspector.NetworkRequest = function(requestId, url, documentURL, frameId, loa
     this._content = undefined;
     this._contentEncoded = false;
     this._pendingContentCallbacks = [];
+    this._frames = [];
 }
 
 WebInspector.NetworkRequest.Events = {
@@ -804,6 +805,56 @@ WebInspector.NetworkRequest.prototype = {
     resource: function()
     {
         return this._resource;
+    },
+
+    /**
+     * @return {Object}
+     */
+    frames: function()
+    {
+        return this._frames;
+    },
+
+    /**
+     * @param {number} position
+     * @return {Object}
+     */
+    frame: function(position)
+    {
+        return this._frames[position];
+    },
+
+    /**
+     * @param {string} errorMessage
+     * @param {number} time
+     */
+    addFrameError: function(errorMessage, time)
+    {
+        errorObject = {};
+        errorObject.errorMessage = errorMessage;
+        errorObject.time = time;
+        this._pushFrame(errorObject);
+    },
+
+    /**
+     * @param {Object} response
+     * @param {number} time
+     * @param {boolean} sent
+     */
+    addFrame: function(response, time, sent)
+    {
+        response.time = time;
+        if (sent)
+            response.sent = true;
+        this._pushFrame(response);
+    },
+
+    _pushFrame: function(object)
+    {
+        if (this._frames.length >= 100) {
+            this._frames.splice(0, 10);
+        }
+        this._frames.push(object);
     }
 }
 

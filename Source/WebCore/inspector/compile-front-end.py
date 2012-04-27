@@ -188,6 +188,7 @@ modules = [
             "RequestTimingView.js",
             "RequestView.js",
             "ResourceView.js",
+            "ResourceWebSocketFrameView.js",
             "NetworkPanel.js",
         ]
     },

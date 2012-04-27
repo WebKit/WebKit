@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unexpected response code: 404
+Closed.
+Tests that WebSocketFrames errors are visible to Web Inspector.
+
+1: Unexpected response code: 404
+

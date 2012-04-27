@@ -691,6 +691,17 @@
                 ]
             },
             {
+                "id": "WebSocketFrame",
+                "type": "object",
+                "description": "WebSocket frame data.",
+                "hidden": true,
+                "properties": [
+                    { "name": "opcode", "type": "number", "description": "WebSocket frame opcode." },
+                    { "name": "mask", "type": "boolean", "description": "WebSocke frame mask." },
+                    { "name": "payloadData", "type": "string", "description": "WebSocke frame payload data." }
+                ]
+            },
+            {
                 "id": "CachedResource",
                 "type": "object",
                 "description": "Information about the cached resource.",
@@ -887,6 +898,36 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "webSocketFrameReceived",
+                "description": "Fired when WebSocket frame is received.",
+                "parameters": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
+                    { "name": "response", "$ref": "WebSocketFrame", "description": "WebSocket response data." }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "webSocketFrameError",
+                "description": "Fired when WebSocket frame error occurs.",
+                "parameters": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
+                    { "name": "errorMessage", "type": "string", "description": "WebSocket frame error message." }
+                ],
+                "hidden": true
+            },
+            {
+                "name": "webSocketFrameSent",
+                "description": "Fired when WebSocket frame is sent.",
+                "parameters": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
+                    { "name": "timestamp", "$ref": "Timestamp", "description": "Timestamp." },
+                    { "name": "response", "$ref": "WebSocketFrame", "description": "WebSocket response data." }
                 ],
                 "hidden": true
             }

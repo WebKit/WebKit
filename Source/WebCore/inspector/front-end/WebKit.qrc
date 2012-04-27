@@ -122,6 +122,7 @@
     <file>ResourceType.js</file>
     <file>ResourceUtils.js</file>
     <file>ResourceView.js</file>
+    <file>ResourceWebSocketFrameView.js</file>
     <file>ResourcesPanel.js</file>
     <file>ScopeChainSidebarPane.js</file>
     <file>Script.js</file>

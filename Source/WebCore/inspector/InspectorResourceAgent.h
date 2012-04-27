@@ -67,6 +67,7 @@ class ResourceResponse;
 class SharedBuffer;
 
 #if ENABLE(WEB_SOCKETS)
+struct WebSocketFrame;
 class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
@@ -117,6 +118,9 @@ public:
     void willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest&);
     void didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse&);
     void didCloseWebSocket(unsigned long identifier);
+    void didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
+    void didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
+    void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
 #endif
 
     // called from Internals for layout test purposes.

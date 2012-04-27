@@ -1,3 +1,15 @@
+2012-04-27  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Allow inspection of Web Socket Frames
+        https://bugs.webkit.org/show_bug.cgi?id=83282
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/web-socket-frame-error-expected.txt: Added.
+        * http/tests/inspector/web-socket-frame-error.html: Added.
+        * http/tests/inspector/web-socket-frame-expected.txt: Added.
+        * http/tests/inspector/web-socket-frame.html: Added.
+
 2012-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Fix repetitions & by animation support for SVGAnimateTransformElement
