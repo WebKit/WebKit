@@ -1,3 +1,18 @@
+2012-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Support values animation mode with just a single value
+        https://bugs.webkit.org/show_bug.cgi?id=85064
+
+        Reviewed by Antti Koivisto.
+
+        * svg/animations/resources/single-values-animation.svg: Added.
+        * svg/animations/script-tests/single-values-animation.js: Added.
+        (sample1):
+        (sample2):
+        (executeTest):
+        * svg/animations/single-values-animation-expected.txt: Added.
+        * svg/animations/single-values-animation.html: Added.
+
 2012-04-27  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Update test expectation.

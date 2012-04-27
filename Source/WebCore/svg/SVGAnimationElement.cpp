@@ -393,7 +393,9 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
     ASSERT(animationMode() == ValuesAnimation);
 
     unsigned valuesCount = m_values.size();
-    ASSERT(valuesCount > 1);
+    ASSERT(valuesCount >= 1);
+    if (valuesCount == 1)
+        return;
     Vector<float> keyTimesForPaced;
     float totalDistance = 0;
     keyTimesForPaced.append(0);
@@ -495,9 +497,9 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
 {
     unsigned valuesCount = m_values.size();
     ASSERT(m_animationValid);
-    ASSERT(valuesCount > 1);
-    
-    if (percent == 1) {
+    ASSERT(valuesCount >= 1);
+
+    if (percent == 1 || valuesCount == 1) {
         from = m_values[valuesCount - 1];
         to = m_values[valuesCount - 1];
         effectivePercent = 1;
@@ -593,7 +595,7 @@ void SVGAnimationElement::startedActiveInterval()
     else if (animationMode == ByAnimation)
         m_animationValid = calculateFromAndByValues(emptyString(), by);
     else if (animationMode == ValuesAnimation) {
-        m_animationValid = m_values.size() > 1
+        m_animationValid = m_values.size() >= 1
             && (calcMode == CalcModePaced || !fastHasAttribute(SVGNames::keyTimesAttr) || fastHasAttribute(SVGNames::keyPointsAttr) || (m_values.size() == m_keyTimes.size()))
             && (calcMode == CalcModeDiscrete || !m_keyTimes.size() || m_keyTimes.last() == 1)
             && (calcMode != CalcModeSpline || ((m_keySplines.size() && (m_keySplines.size() == m_values.size() - 1)) || m_keySplines.size() == m_keyPoints.size() - 1))
