@@ -1,3 +1,16 @@
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r115400.
+        http://trac.webkit.org/changeset/115400
+        https://bugs.webkit.org/show_bug.cgi?id=84420
+
+        Broke unit tests.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+
 2012-04-27  Gavin Peters  <gavinp@chromium.org>
 
         [Chromium] Remove Webkit/chromium/public/WebReferrerPolicy.h thunk.

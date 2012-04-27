@@ -779,20 +779,6 @@ void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
                                    const IntRect& bounds,
                                    bool handleExternally)
 {
-    FrameView* view = m_webView->page()->mainFrame()->view();
-    IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
-    // |bounds| is in screen coordinates, so make sure to convert it to content
-    // coordinates prior to comparing to |visibleRect|.
-    IntRect screenRect = bounds;
-    screenRect.setLocation(view->screenToContents(bounds.location()));
-    if (!visibleRect.contains(screenRect)) {
-        // If the popup will not be fully visible, we shouldn't show it at all.
-        // Among other things, this prevents users from being able to interact
-        // via the keyboard with an invisible popup.
-        m_webView->hidePopups();
-        return;
-    }
-
     if (!m_webView->client())
         return;
 
