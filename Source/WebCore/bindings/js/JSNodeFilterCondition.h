@@ -46,7 +46,7 @@ namespace WebCore {
             virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
         };
         WeakOwner m_weakOwner;
-        mutable JSC::Weak<JSC::Unknown> m_filter;
+        mutable JSC::Weak<JSC::JSObject> m_filter;
     };
 
 } // namespace WebCore

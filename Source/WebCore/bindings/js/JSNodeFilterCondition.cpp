@@ -34,32 +34,30 @@ using namespace JSC;
 ASSERT_CLASS_FITS_IN_CELL(JSNodeFilterCondition);
 
 JSNodeFilterCondition::JSNodeFilterCondition(JSGlobalData& globalData, NodeFilter* owner, JSValue filter)
-    : m_filter(globalData, filter, &m_weakOwner, owner)
 {
+    if (!filter.isObject())
+        return;
+    m_filter = PassWeak<JSObject>(globalData, jsCast<JSObject*>(filter), &m_weakOwner, owner);
 }
 
 short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) const
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    if (!m_filter || !m_filter->isObject())
+    if (!m_filter)
         return NodeFilter::FILTER_ACCEPT;
 
-   // The exec argument here should only be null if this was called from a
-   // non-JavaScript language, and this is a JavaScript filter, and the document
-   // in question is not associated with the frame. In that case, we're going to
-   // behave incorrectly, and just reject nodes instead of calling the filter function.
-   // To fix that we'd need to come up with a way to find a suitable JavaScript
-   // execution context for the filter function to run in.
+    // Exec is null if we've been called from a non-JavaScript language and the document
+    // is no longer able to run JavaScript (e.g., it's disconnected from its frame).
     if (!exec)
         return NodeFilter::FILTER_REJECT;
 
-    JSValue function = m_filter.get();
+    JSValue filter = m_filter.get();
     CallData callData;
-    CallType callType = getCallData(function, callData);
+    CallType callType = getCallData(filter, callData);
     if (callType == CallTypeNone) {
-        function = m_filter.get().get(exec, Identifier(exec, "acceptNode"));
-        callType = getCallData(function, callData);
+        filter = filter.get(exec, Identifier(exec, "acceptNode"));
+        callType = getCallData(filter, callData);
         if (callType == CallTypeNone) {
             throwError(exec, createTypeError(exec, "NodeFilter object does not have an acceptNode function"));
             return NodeFilter::FILTER_REJECT;
@@ -73,7 +71,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 
-    JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, m_filter.get(), args);
+    JSValue result = JSMainThreadExecState::call(exec, filter, callType, callData, m_filter.get(), args);
     if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
 
