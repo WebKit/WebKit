@@ -42,20 +42,6 @@
 
 namespace WebCore {
 
-template<typename LayerType>
-static inline bool backFaceIsVisible(LayerType* layer)
-{
-    // This is checked by computing the transformed normal of the layer in screen space.
-    FloatRect layerRect(FloatPoint(0, 0), FloatSize(layer->bounds()));
-    FloatQuad mappedLayer = layer->screenSpaceTransform().mapQuad(FloatQuad(layerRect));
-    FloatSize horizontalDir = mappedLayer.p2() - mappedLayer.p1();
-    FloatSize verticalDir = mappedLayer.p4() - mappedLayer.p1();
-    FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
-    FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
-    FloatPoint3D zAxis = xAxis.cross(yAxis);
-    return zAxis.z() < 0;
-}
-
 IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
 {
     // Is this layer fully contained within the target surface?
@@ -86,7 +72,7 @@ static IntRect calculateVisibleLayerRect(LayerType* layer)
 
     // Animated layers can exist in the render surface tree that are not visible currently
     // and have their back face showing. In this case, their visible rect should be empty.
-    if (!layer->doubleSided() && backFaceIsVisible(layer))
+    if (!layer->doubleSided() && layer->screenSpaceTransform().isBackFaceVisible())
         return IntRect();
 
     IntRect targetSurfaceRect = layer->targetRenderSurface()->contentRect();
@@ -174,7 +160,7 @@ static bool layerShouldBeSkipped(LayerType* layer)
         return true;
 
     // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is known to be facing the screen.
-    if (!layer->doubleSided() && transformToScreenIsKnown(layer) && backFaceIsVisible(layer))
+    if (!layer->doubleSided() && transformToScreenIsKnown(layer) && layer->screenSpaceTransform().isBackFaceVisible())
         return true;
 
     return false;

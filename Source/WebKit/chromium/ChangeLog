@@ -1,3 +1,15 @@
+2012-04-26  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] re-implement backFaceVisibility to avoid dealing with perspective w<0 problem
+        https://bugs.webkit.org/show_bug.cgi?id=84059
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/CCMathUtilTest.cpp: Added.
+        (WebCore):
+        (WebCore::TEST):
+
 2012-04-26  Justin Novosad  <junov@chromium.org>
 
         [Chromium] Single buffered canvas layers with the threaded compositor
