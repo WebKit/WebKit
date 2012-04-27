@@ -53,7 +53,7 @@ namespace WebCore {
         static void removeObjectsFromWrapperMap(DOMDataStore* store, AbstractWeakReferenceMap<T, v8::Object>& domMap);
 
 
-        static DOMDataStore& getCurrentStore();
+        static DOMDataStore& getCurrentStore(v8::Isolate* = 0);
     private:
         DOMData();
         static void derefObject(WrapperTypeInfo* type, void* domObject);

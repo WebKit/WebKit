@@ -151,17 +151,17 @@ namespace WebCore {
     };
 
     // A map from DOM node to its JS wrapper.
-    DOMNodeMapping& getDOMNodeMap();
-    DOMNodeMapping& getActiveDOMNodeMap();
+    DOMNodeMapping& getDOMNodeMap(v8::Isolate* = 0);
+    DOMNodeMapping& getActiveDOMNodeMap(v8::Isolate* = 0);
     void visitDOMNodes(DOMWrapperMap<Node>::Visitor*);
     void visitActiveDOMNodes(DOMWrapperMap<Node>::Visitor*);
 
     // A map from a DOM object (non-node) to its JS wrapper. This map does not contain the DOM objects which can have pending activity (active dom objects).
-    DOMWrapperMap<void>& getDOMObjectMap();
+    DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* = 0);
     void visitDOMObjects(DOMWrapperMap<void>::Visitor*);
 
     // A map from a DOM object to its JS wrapper for DOM objects which can have pending activity.
-    DOMWrapperMap<void>& getActiveDOMObjectMap();
+    DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* = 0);
     void visitActiveDOMObjects(DOMWrapperMap<void>::Visitor*);
 
     // This should be called to remove all DOM objects associated with the current thread when it is tearing down.

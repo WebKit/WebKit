@@ -50,38 +50,33 @@ DOMDataStoreHandle::~DOMDataStoreHandle()
     V8BindingPerIsolateData::current()->unregisterDOMDataStore(m_store.get());
 }
 
-static inline DOMDataStore& getDOMDataStore()
-{
-    return DOMData::getCurrentStore();
-}
-
 void enableFasterDOMStoreAccess()
 {
 }
 
-DOMNodeMapping& getDOMNodeMap()
+DOMNodeMapping& getDOMNodeMap(v8::Isolate* isolate)
 {
-    return getDOMDataStore().domNodeMap();
+    return DOMData::getCurrentStore(isolate).domNodeMap();
 }
 
-DOMNodeMapping& getActiveDOMNodeMap()
+DOMNodeMapping& getActiveDOMNodeMap(v8::Isolate* isolate)
 {
-    return getDOMDataStore().activeDomNodeMap();
+    return DOMData::getCurrentStore(isolate).activeDomNodeMap();
 }
 
-DOMWrapperMap<void>& getDOMObjectMap()
+DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* isolate)
 {
-    return getDOMDataStore().domObjectMap();
+    return DOMData::getCurrentStore(isolate).domObjectMap();
 }
 
-DOMWrapperMap<void>& getActiveDOMObjectMap()
+DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* isolate)
 {
-    return getDOMDataStore().activeDomObjectMap();
+    return DOMData::getCurrentStore(isolate).activeDomObjectMap();
 }
 
 void removeAllDOMObjects()
 {
-    DOMDataStore& store = getDOMDataStore();
+    DOMDataStore& store = DOMData::getCurrentStore();
 
     v8::HandleScope scope;
 
