@@ -34,9 +34,8 @@ public:
     
     SVGTransformDistance scaledDistance(float scaleFactor) const;
     SVGTransform addToSVGTransform(const SVGTransform&) const;
-    void addSVGTransform(const SVGTransform&, bool absoluteValue = false);
-    
-    static SVGTransform addSVGTransforms(const SVGTransform&, const SVGTransform&);
+
+    static SVGTransform addSVGTransforms(const SVGTransform&, const SVGTransform&, unsigned repeatCount = 1);
     
     bool isZero() const;
     

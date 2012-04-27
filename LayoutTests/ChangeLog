@@ -1,5 +1,59 @@
 2012-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Fix repetitions & by animation support for SVGAnimateTransformElement
+        https://bugs.webkit.org/show_bug.cgi?id=85051
+
+        Reviewed by Antti Koivisto.
+
+        Enable <animateTransform> test in additive-type-by-animation, which was disabled as it triggered assertions before this patch.
+        Add lots of new <animateTransform> covering additive/accumulative animations using reftests, for all animateTransform types (translate/rotate/skewX/skewY/scale).
+
+        * svg/animations/additive-type-by-animation-expected.txt:
+        * svg/animations/animateTransform-accumulation-expected.svg: Added.
+        * svg/animations/animateTransform-accumulation.svg: Added.
+        * svg/animations/animateTransform-by-scale-expected.svg: Added.
+        * svg/animations/animateTransform-by-scale.svg: Added.
+        * svg/animations/animateTransform-from-by-from-to-comparision-expected.svg: Added.
+        * svg/animations/animateTransform-from-by-from-to-comparision.svg: Added.
+        * svg/animations/animateTransform-from-by-scale-additive-sum-expected.svg: Added.
+        * svg/animations/animateTransform-from-by-scale-additive-sum.svg: Added.
+        * svg/animations/animateTransform-from-by-scale-expected.svg: Added.
+        * svg/animations/animateTransform-from-by-scale.svg: Added.
+        * svg/animations/animateTransform-rotate-around-point-expected.svg: Added.
+        * svg/animations/animateTransform-rotate-around-point.svg: Added.
+        * svg/animations/animateTransform-skewX-expected.svg: Added.
+        * svg/animations/animateTransform-skewX.svg: Added.
+        * svg/animations/animateTransform-skewY-expected.svg: Added.
+        * svg/animations/animateTransform-skewY.svg: Added.
+        * svg/animations/animateTransform-translate-expected.svg: Added.
+        * svg/animations/animateTransform-translate.svg: Added.
+        * svg/animations/multiple-animateTransform-additive-sum-expected.svg: Added.
+        * svg/animations/multiple-animateTransform-additive-sum.svg: Added.
+        * svg/animations/resources/additive-type-by-animation.svg:
+        * svg/animations/script-tests/additive-type-by-animation.js:
+        (checkBaseVal):
+        (sample1):
+        (sample2):
+        (sample3):
+        * svg/animations/script-tests/svgtransform-animation-1.js:
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (sample7):
+        (executeTest):
+        * svg/animations/script-tests/svgtransform-animation-discrete.js:
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/svgtransform-animation-1-expected.txt:
+        * svg/animations/svgtransform-animation-discrete-expected.txt:
+
+2012-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         SVG Animations update baseVal instead of animVal
         https://bugs.webkit.org/show_bug.cgi?id=12437
 

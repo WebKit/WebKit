@@ -40,10 +40,12 @@ SVGTransform::SVGTransform()
 {
 }
 
-SVGTransform::SVGTransform(SVGTransformType type)
+SVGTransform::SVGTransform(SVGTransformType type, ConstructionMode mode)
     : m_type(type)
     , m_angle(0)
 {
+    if (mode == ConstructZeroTransform)
+        m_matrix = AffineTransform(0, 0, 0, 0, 0, 0);
 }
 
 SVGTransform::SVGTransform(const AffineTransform& matrix)

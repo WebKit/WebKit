@@ -67,6 +67,8 @@ void SVGAnimateTransformElement::parseAttribute(Attribute* attr)
 
     if (attr->name() == SVGNames::typeAttr) {
         m_type = SVGTransformable::parseTransformType(attr->value());
+        if (m_type == SVGTransform::SVG_TRANSFORM_MATRIX)
+            m_type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
         return;
     }
 

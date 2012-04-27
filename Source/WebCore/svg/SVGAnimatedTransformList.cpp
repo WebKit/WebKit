@@ -81,12 +81,16 @@ void SVGAnimatedTransformListAnimator::addAnimatedTypes(SVGAnimatedType* from, S
 
     SVGTransformList& fromTransformList = from->transformList();
     SVGTransformList& toTransformList = to->transformList();
-    unsigned itemsCount = fromTransformList.size();
-    if (!itemsCount || itemsCount != toTransformList.size())
+    unsigned fromTransformListSize = fromTransformList.size();
+    if (!fromTransformListSize || fromTransformListSize != toTransformList.size())
         return;
 
-    ASSERT(itemsCount == 1);
-    toTransformList[0] = SVGTransformDistance::addSVGTransforms(fromTransformList[0], toTransformList[0]);
+    ASSERT(fromTransformListSize == 1);
+    SVGTransform& fromTransform = fromTransformList[0];
+    SVGTransform& toTransform = toTransformList[0];
+
+    ASSERT(fromTransform.type() == toTransform.type());
+    toTransform = SVGTransformDistance::addSVGTransforms(fromTransform, toTransform);
 }
 
 void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
@@ -99,29 +103,24 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     // FIXME: This is not taken into account yet.
     SVGTransformList& fromTransformList = from->transformList();
     SVGTransformList& toTransformList = to->transformList();
-    ASSERT(fromTransformList.size() <= 1);
-    ASSERT(toTransformList.size() <= 1);
-    ASSERT(fromTransformList[0].type() == toTransformList[0].type());
-
-    SVGTransform fromTransform;
-    SVGTransform toTransform;
-    if (!toTransformList.isEmpty() && !fromTransformList.isEmpty()) {
-        fromTransform = fromTransformList[0];
-        toTransform = toTransformList[0];
-        ASSERT(fromTransform.type() == toTransform.type());
-    }
-
-    if (m_animationElement->calcMode() == CalcModeDiscrete)
-        percentage = percentage < 0.5 ? 0 : 1;
-
-    if (m_animationElement->isAccumulated() && repeatCount)
-        percentage += repeatCount;
-
     SVGTransformList& animatedTransformList = animated->transformList();
-    if (!m_animationElement->isAdditive())
+
+    // Pass false to 'resizeAnimatedListIfNeeded' here, as the special post-multiplication behavior of <animateTransform> needs to be respected below.
+    if (!m_animationElement->adjustFromToListValues<SVGTransformList>(0, fromTransformList, toTransformList, animatedTransformList, percentage, m_contextElement, false))
+        return;
+
+    // Never resize the animatedTransformList to the toTransformList size, instead either clear the list or append to it.
+    if (!animatedTransformList.isEmpty() && !m_animationElement->isAdditive())
         animatedTransformList.clear();
 
-    animatedTransformList.append(SVGTransformDistance(fromTransform, toTransform).scaledDistance(percentage).addToSVGTransform(fromTransform));
+    unsigned fromTransformListSize = fromTransformList.size();
+    SVGTransform& toTransform = toTransformList[0];
+    SVGTransform effectiveFrom = fromTransformListSize ? fromTransformList[0] : SVGTransform(toTransform.type());
+    SVGTransform currentTransform = SVGTransformDistance(effectiveFrom, toTransform).scaledDistance(percentage).addToSVGTransform(effectiveFrom);
+    if (m_animationElement->isAccumulated() && repeatCount)
+        animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, toTransform, repeatCount));
+    else
+        animatedTransformList.append(currentTransform);
 }
 
 float SVGAnimatedTransformListAnimator::calculateDistance(const String& fromString, const String& toString)

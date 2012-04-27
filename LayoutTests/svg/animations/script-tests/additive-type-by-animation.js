@@ -39,11 +39,9 @@ function checkBaseVal() {
     shouldBe("polyline.points.getItem(1).y", "5");
     shouldBe("polyline.points.getItem(2).x", "0");
     shouldBe("polyline.points.getItem(2).y", "10");
-    /* FIXME: Turn this on, once animateTransform is fixed
     shouldBe("path.transform.baseVal.numberOfItems", "1");
     shouldBe("path.transform.baseVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_ROTATE");
     shouldBe("path.transform.baseVal.getItem(0).angle", "45");
-    */
 }
 
 function sample1() {
@@ -83,13 +81,11 @@ function sample1() {
     shouldBeCloseEnough("polyline.animatedPoints.getItem(1).y", "5");
     shouldBeCloseEnough("polyline.animatedPoints.getItem(2).x", "0");
     shouldBeCloseEnough("polyline.animatedPoints.getItem(2).y", "10");
-    /* FIXME: Turn this on, once animateTransform is fixed
     shouldBe("path.transform.animVal.numberOfItems", "2");
     shouldBe("path.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_ROTATE");
     shouldBe("path.transform.animVal.getItem(0).angle", "45");
     shouldBe("path.transform.animVal.getItem(1).type", "SVGTransform.SVG_TRANSFORM_ROTATE");
     shouldBeCloseEnough("path.transform.animVal.getItem(1).angle", "0");
-    */
     expectFillColor(rect, 0, 0, 0);
     checkBaseVal();
 }
@@ -131,13 +127,11 @@ function sample2() {
     shouldBeCloseEnough("polyline.animatedPoints.getItem(1).y", "7.5");
     shouldBeCloseEnough("polyline.animatedPoints.getItem(2).x", "0");
     shouldBeCloseEnough("polyline.animatedPoints.getItem(2).y", "15");
-    /* FIXME: Turn this on, once animateTransform is fixed
     shouldBe("path.transform.animVal.numberOfItems", "2");
     shouldBe("path.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_ROTATE");
     shouldBe("path.transform.animVal.getItem(0).angle", "45");
     shouldBe("path.transform.animVal.getItem(1).type", "SVGTransform.SVG_TRANSFORM_ROTATE");
     shouldBeCloseEnough("path.transform.animVal.getItem(1).angle", "-22.5");
-    */
     expectFillColor(rect, 0, 63, 0);
     checkBaseVal();
 }
@@ -179,13 +173,11 @@ function sample3() {
     shouldBeCloseEnough("polyline.animatedPoints.getItem(1).y", "10");
     shouldBeCloseEnough("polyline.animatedPoints.getItem(2).x", "0");
     shouldBeCloseEnough("polyline.animatedPoints.getItem(2).y", "20");
-    /* FIXME: Turn this on, once animateTransform is fixed
     shouldBe("path.transform.animVal.numberOfItems", "2");
     shouldBe("path.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_ROTATE");
     shouldBe("path.transform.animVal.getItem(0).angle", "45");
     shouldBe("path.transform.animVal.getItem(1).type", "SVGTransform.SVG_TRANSFORM_ROTATE");
     shouldBeCloseEnough("path.transform.animVal.getItem(1).angle", "-45");
-    */
     expectFillColor(rect, 0, 128, 0);
     checkBaseVal();
 }

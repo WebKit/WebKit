@@ -133,7 +133,7 @@ public:
     template<typename AnimatedType>
     bool adjustFromToListValues(AnimatedType (*parseTypeFromString)(SVGAnimationElement*, const String&), 
                                 AnimatedType& fromList, AnimatedType& toList, AnimatedType& animatedList,
-                                float& percentage, SVGElement* contextElement)
+                                float& percentage, SVGElement* contextElement, bool resizeAnimatedListIfNeeded = true)
     {
         adjustFromToValues(parseTypeFromString, fromList, toList, animatedList, percentage, contextElement);
 
@@ -155,7 +155,7 @@ public:
         }
 
         ASSERT(!fromListSize || fromListSize == toListSize);
-        if (animatedList.size() < toListSize)
+        if (resizeAnimatedListIfNeeded && animatedList.size() < toListSize)
             animatedList.resize(toListSize);
 
         return true;

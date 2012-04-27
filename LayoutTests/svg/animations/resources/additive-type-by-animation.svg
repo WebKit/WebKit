@@ -53,8 +53,6 @@
 <animate xlink:href="#svg" attributeName="viewBox" begin="0s" dur="4s" by="0 0 -100 -100" fill="freeze"/>
 
 <!-- AnimatedTransformList -->
-<!-- FIXME: Disabled due to assertions, will be fixed in a follow-up patch.
 <animateTransform xlink:href="#path" attributeName="transform" type="rotate" begin="0s" dur="4s" by="-45" fill="freeze"/>
--->
 
 </svg>

@@ -42,6 +42,11 @@ PASS polyline.animatedPoints.getItem(1).x is 10
 PASS polyline.animatedPoints.getItem(1).y is 5
 PASS polyline.animatedPoints.getItem(2).x is 0
 PASS polyline.animatedPoints.getItem(2).y is 10
+PASS path.transform.animVal.numberOfItems is 2
+PASS path.transform.animVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.animVal.getItem(0).angle is 45
+PASS path.transform.animVal.getItem(1).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.animVal.getItem(1).angle is 0
 PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
@@ -81,6 +86,9 @@ PASS polyline.points.getItem(1).x is 10
 PASS polyline.points.getItem(1).y is 5
 PASS polyline.points.getItem(2).x is 0
 PASS polyline.points.getItem(2).y is 10
+PASS path.transform.baseVal.numberOfItems is 1
+PASS path.transform.baseVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.baseVal.getItem(0).angle is 45
 PASS marker.orientAngle.animVal.value is -22.5
 PASS feConvolveMatrix.divisor.animVal is 28.75
 PASS feConvolveMatrix.orderX.animVal is 5
@@ -117,6 +125,11 @@ PASS polyline.animatedPoints.getItem(1).x is 15
 PASS polyline.animatedPoints.getItem(1).y is 7.5
 PASS polyline.animatedPoints.getItem(2).x is 0
 PASS polyline.animatedPoints.getItem(2).y is 15
+PASS path.transform.animVal.numberOfItems is 2
+PASS path.transform.animVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.animVal.getItem(0).angle is 45
+PASS path.transform.animVal.getItem(1).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.animVal.getItem(1).angle is -22.5
 PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 63
 PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
@@ -156,6 +169,9 @@ PASS polyline.points.getItem(1).x is 10
 PASS polyline.points.getItem(1).y is 5
 PASS polyline.points.getItem(2).x is 0
 PASS polyline.points.getItem(2).y is 10
+PASS path.transform.baseVal.numberOfItems is 1
+PASS path.transform.baseVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.baseVal.getItem(0).angle is 45
 PASS marker.orientAngle.animVal.value is 0
 PASS feConvolveMatrix.divisor.animVal is 20
 PASS feConvolveMatrix.orderX.animVal is 3
@@ -192,6 +208,11 @@ PASS polyline.animatedPoints.getItem(1).x is 20
 PASS polyline.animatedPoints.getItem(1).y is 10
 PASS polyline.animatedPoints.getItem(2).x is 0
 PASS polyline.animatedPoints.getItem(2).y is 20
+PASS path.transform.animVal.numberOfItems is 2
+PASS path.transform.animVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.animVal.getItem(0).angle is 45
+PASS path.transform.animVal.getItem(1).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.animVal.getItem(1).angle is -45
 PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
 PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
@@ -231,6 +252,9 @@ PASS polyline.points.getItem(1).x is 10
 PASS polyline.points.getItem(1).y is 5
 PASS polyline.points.getItem(2).x is 0
 PASS polyline.points.getItem(2).y is 10
+PASS path.transform.baseVal.numberOfItems is 1
+PASS path.transform.baseVal.getItem(0).type is SVGTransform.SVG_TRANSFORM_ROTATE
+PASS path.transform.baseVal.getItem(0).angle is 45
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -40,9 +40,14 @@ public:
         SVG_TRANSFORM_SKEWX = 5,
         SVG_TRANSFORM_SKEWY = 6
     };
- 
+
+    enum ConstructionMode {
+        ConstructIdentityTransform,
+        ConstructZeroTransform
+    };
+
     SVGTransform();
-    SVGTransform(SVGTransformType);
+    SVGTransform(SVGTransformType, ConstructionMode = ConstructIdentityTransform);
     explicit SVGTransform(const AffineTransform&);
 
     SVGTransformType type() const { return m_type; }

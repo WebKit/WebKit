@@ -56,45 +56,45 @@ SVGTransformDistance::SVGTransformDistance(const SVGTransform& fromSVGTransform,
     ASSERT(m_type == toSVGTransform.type());
     
     switch (m_type) {
-    case SVGTransform::SVG_TRANSFORM_UNKNOWN:
-        return;
     case SVGTransform::SVG_TRANSFORM_MATRIX:
-        // FIXME: need to be able to subtract to matrices
-        return;
+        ASSERT_NOT_REACHED();
+    case SVGTransform::SVG_TRANSFORM_UNKNOWN:
+        break;
     case SVGTransform::SVG_TRANSFORM_ROTATE: {
         FloatSize centerDistance = toSVGTransform.rotationCenter() - fromSVGTransform.rotationCenter();
         m_angle = toSVGTransform.angle() - fromSVGTransform.angle();
         m_cx = centerDistance.width();
         m_cy = centerDistance.height();
-        return;
+        break;
     }
     case SVGTransform::SVG_TRANSFORM_TRANSLATE: {
         FloatSize translationDistance = toSVGTransform.translate() - fromSVGTransform.translate();
         m_transform.translate(translationDistance.width(), translationDistance.height());
-        return;
+        break;
     }
     case SVGTransform::SVG_TRANSFORM_SCALE: {
         float scaleX = toSVGTransform.scale().width() - fromSVGTransform.scale().width();        
         float scaleY = toSVGTransform.scale().height() - fromSVGTransform.scale().height();
         m_transform.scaleNonUniform(scaleX, scaleY);
-        return;
+        break;
     }
     case SVGTransform::SVG_TRANSFORM_SKEWX:
     case SVGTransform::SVG_TRANSFORM_SKEWY:
         m_angle = toSVGTransform.angle() - fromSVGTransform.angle();
-        return;
+        break;
     }
 }
 
 SVGTransformDistance SVGTransformDistance::scaledDistance(float scaleFactor) const
 {
     switch (m_type) {
+    case SVGTransform::SVG_TRANSFORM_MATRIX:
+        ASSERT_NOT_REACHED();
     case SVGTransform::SVG_TRANSFORM_UNKNOWN:
         return SVGTransformDistance();
     case SVGTransform::SVG_TRANSFORM_ROTATE:
         return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, AffineTransform());
     case SVGTransform::SVG_TRANSFORM_SCALE:
-    case SVGTransform::SVG_TRANSFORM_MATRIX:
         return SVGTransformDistance(m_type, m_angle * scaleFactor, m_cx * scaleFactor, m_cy * scaleFactor, AffineTransform(m_transform).scale(scaleFactor));
     case SVGTransform::SVG_TRANSFORM_TRANSLATE: {
         AffineTransform newTransform(m_transform);
@@ -111,85 +111,43 @@ SVGTransformDistance SVGTransformDistance::scaledDistance(float scaleFactor) con
     return SVGTransformDistance();
 }
 
-SVGTransform SVGTransformDistance::addSVGTransforms(const SVGTransform& first, const SVGTransform& second)
+SVGTransform SVGTransformDistance::addSVGTransforms(const SVGTransform& first, const SVGTransform& second, unsigned repeatCount)
 {
     ASSERT(first.type() == second.type());
     
     SVGTransform transform;
     
     switch (first.type()) {
+    case SVGTransform::SVG_TRANSFORM_MATRIX:
+        ASSERT_NOT_REACHED();
     case SVGTransform::SVG_TRANSFORM_UNKNOWN:
         return SVGTransform();
     case SVGTransform::SVG_TRANSFORM_ROTATE: {
-        transform.setRotate(first.angle() + second.angle(), first.rotationCenter().x() + second.rotationCenter().x(),
-                            first.rotationCenter().y() + second.rotationCenter().y());
+        transform.setRotate(first.angle() + second.angle() * repeatCount, first.rotationCenter().x() + second.rotationCenter().x() * repeatCount, first.rotationCenter().y() + second.rotationCenter().y() * repeatCount);
         return transform;
     }
-    case SVGTransform::SVG_TRANSFORM_MATRIX:
-        transform.setMatrix(first.matrix() * second.matrix());
-        return transform;
     case SVGTransform::SVG_TRANSFORM_TRANSLATE: {
-        float dx = first.translate().x() + second.translate().x();
-        float dy = first.translate().y() + second.translate().y();
+        float dx = first.translate().x() + second.translate().x() * repeatCount;
+        float dy = first.translate().y() + second.translate().y() * repeatCount;
         transform.setTranslate(dx, dy);
         return transform;
     }
     case SVGTransform::SVG_TRANSFORM_SCALE: {
-        FloatSize scale = first.scale() + second.scale();
+        FloatSize scale = second.scale();
+        scale.scale(repeatCount);
+        scale += first.scale();
         transform.setScale(scale.width(), scale.height());
         return transform;
     }
     case SVGTransform::SVG_TRANSFORM_SKEWX:
-        transform.setSkewX(first.angle() + second.angle());
+        transform.setSkewX(first.angle() + second.angle() * repeatCount);
         return transform;
     case SVGTransform::SVG_TRANSFORM_SKEWY:
-        transform.setSkewY(first.angle() + second.angle());
+        transform.setSkewY(first.angle() + second.angle() * repeatCount);
         return transform;
     }
-    
     ASSERT_NOT_REACHED();
     return SVGTransform();
-}
-
-void SVGTransformDistance::addSVGTransform(const SVGTransform& transform, bool absoluteValue)
-{
-    // If this is the first add, set the type for this SVGTransformDistance
-    if (m_type == SVGTransform::SVG_TRANSFORM_UNKNOWN)
-        m_type = transform.type();
-    
-    ASSERT(m_type == transform.type());
-    
-    switch (m_type) {
-    case SVGTransform::SVG_TRANSFORM_UNKNOWN:
-        return;
-    case SVGTransform::SVG_TRANSFORM_MATRIX:
-        m_transform *= transform.matrix(); // FIXME: what does 'distance' between two transforms mean?  how should we respect 'absoluteValue' here?
-        return;
-    case SVGTransform::SVG_TRANSFORM_ROTATE:
-        m_angle += absoluteValue ? fabsf(transform.angle()) : transform.angle();
-        m_cx += absoluteValue ? fabsf(transform.rotationCenter().x()) : transform.rotationCenter().x();
-        m_cy += absoluteValue ? fabsf(transform.rotationCenter().y()) : transform.rotationCenter().y();
-        // fall through
-    case SVGTransform::SVG_TRANSFORM_TRANSLATE: {
-        float dx = absoluteValue ? fabsf(transform.translate().x()) : transform.translate().x();
-        float dy = absoluteValue ? fabsf(transform.translate().y()) : transform.translate().y();
-        m_transform.translate(dx, dy);
-        return;
-    }
-    case SVGTransform::SVG_TRANSFORM_SCALE: {
-        float scaleX = absoluteValue ? fabsf(transform.scale().width()) : transform.scale().width();
-        float scaleY = absoluteValue ? fabsf(transform.scale().height()) : transform.scale().height();
-        m_transform.scaleNonUniform(scaleX, scaleY);
-        return;
-    }
-    case SVGTransform::SVG_TRANSFORM_SKEWX:
-    case SVGTransform::SVG_TRANSFORM_SKEWY:
-        m_angle += absoluteValue ? fabsf(transform.angle()) : transform.angle();
-        return;
-    }
-    
-    ASSERT_NOT_REACHED();
-    return;
 }
 
 SVGTransform SVGTransformDistance::addToSVGTransform(const SVGTransform& transform) const
@@ -199,10 +157,10 @@ SVGTransform SVGTransformDistance::addToSVGTransform(const SVGTransform& transfo
     SVGTransform newTransform(transform);
     
     switch (m_type) {
+    case SVGTransform::SVG_TRANSFORM_MATRIX:
+        ASSERT_NOT_REACHED();
     case SVGTransform::SVG_TRANSFORM_UNKNOWN:
         return SVGTransform();
-    case SVGTransform::SVG_TRANSFORM_MATRIX:
-        return SVGTransform(transform.matrix() * m_transform);
     case SVGTransform::SVG_TRANSFORM_TRANSLATE: {
         FloatPoint translation = transform.translate();
         translation += FloatSize::narrowPrecision(m_transform.e(), m_transform.f());
@@ -216,11 +174,8 @@ SVGTransform SVGTransformDistance::addToSVGTransform(const SVGTransform& transfo
         return newTransform;
     }
     case SVGTransform::SVG_TRANSFORM_ROTATE: {
-        // FIXME: I'm not certain the translation is calculated correctly here
         FloatPoint center = transform.rotationCenter();
-        newTransform.setRotate(transform.angle() + m_angle,
-                               center.x() + m_cx,
-                               center.y() + m_cy);
+        newTransform.setRotate(transform.angle() + m_angle, center.x() + m_cx, center.y() + m_cy);
         return newTransform;
     }
     case SVGTransform::SVG_TRANSFORM_SKEWX:
@@ -243,12 +198,12 @@ bool SVGTransformDistance::isZero() const
 float SVGTransformDistance::distance() const
 {
     switch (m_type) {
+    case SVGTransform::SVG_TRANSFORM_MATRIX:
+        ASSERT_NOT_REACHED();
     case SVGTransform::SVG_TRANSFORM_UNKNOWN:
         return 0;
     case SVGTransform::SVG_TRANSFORM_ROTATE:
         return sqrtf(m_angle * m_angle + m_cx * m_cx + m_cy * m_cy);
-    case SVGTransform::SVG_TRANSFORM_MATRIX:
-        return 0; // I'm not quite sure yet what distance between two matrices means.
     case SVGTransform::SVG_TRANSFORM_SCALE:
         return static_cast<float>(sqrt(m_transform.a() * m_transform.a() + m_transform.d() * m_transform.d()));
     case SVGTransform::SVG_TRANSFORM_TRANSLATE:
