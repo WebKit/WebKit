@@ -1,5 +1,16 @@
 2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r115433.
+        http://trac.webkit.org/changeset/115433
+        https://bugs.webkit.org/show_bug.cgi?id=85052
+
+        Enable unit tests again.
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TEST_F):
+
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r115421.
         http://trac.webkit.org/changeset/115421
         https://bugs.webkit.org/show_bug.cgi?id=85052
