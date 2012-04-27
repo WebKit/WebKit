@@ -1591,6 +1591,8 @@
             'Modules/webaudio/AudioParamTimeline.h',
             'Modules/webaudio/AudioProcessingEvent.cpp',
             'Modules/webaudio/AudioProcessingEvent.h',
+            'Modules/webaudio/AudioScheduledSourceNode.cpp',
+            'Modules/webaudio/AudioScheduledSourceNode.h',
             'Modules/webaudio/AudioSourceNode.h',
             'Modules/webaudio/AsyncAudioDecoder.cpp',
             'Modules/webaudio/AsyncAudioDecoder.h',

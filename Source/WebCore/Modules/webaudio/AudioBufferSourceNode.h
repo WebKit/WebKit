@@ -29,7 +29,7 @@
 #include "AudioBus.h"
 #include "AudioGain.h"
 #include "AudioPannerNode.h"
-#include "AudioSourceNode.h"
+#include "AudioScheduledSourceNode.h"
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -42,25 +42,8 @@ class AudioContext;
 // AudioBufferSourceNode is an AudioNode representing an audio source from an in-memory audio asset represented by an AudioBuffer.
 // It generally will be used for short sounds which require a high degree of scheduling flexibility (can playback in rhythmically perfect ways).
 
-class AudioBufferSourceNode : public AudioSourceNode {
-public:
-    // These are the possible states an AudioBufferSourceNode can be in:
-    //
-    // UNSCHEDULED_STATE - Initial playback state. Created, but not yet scheduled.
-    // SCHEDULED_STATE - Scheduled to play (via noteOn() or noteGrainOn()), but not yet playing.
-    // PLAYING_STATE - Generating sound.
-    // FINISHED_STATE - Finished generating sound.
-    //
-    // The state can only transition to the next state, except for the FINISHED_STATE which can
-    // never be changed.
-    enum PlaybackState {
-        // These must be defined with the same names and values as in the .idl file.
-        UNSCHEDULED_STATE = 0,
-        SCHEDULED_STATE = 1,
-        PLAYING_STATE = 2,
-        FINISHED_STATE = 3
-    };
-    
+class AudioBufferSourceNode : public AudioScheduledSourceNode {
+public:    
     static PassRefPtr<AudioBufferSourceNode> create(AudioContext*, float sampleRate);
 
     virtual ~AudioBufferSourceNode();
@@ -80,13 +63,7 @@ public:
                     
     // Play-state
     // noteOn(), noteGrainOn(), and noteOff() must all be called from the main thread.
-    void noteOn(double when);
     void noteGrainOn(double when, double grainOffset, double grainDuration);
-    void noteOff(double when);
-
-    unsigned short playbackState() const { return static_cast<unsigned short>(m_playbackState); }
-    bool isPlayingOrScheduled() const { return m_playbackState == PLAYING_STATE || m_playbackState == SCHEDULED_STATE; }
-    bool hasFinished() const { return m_playbackState == FINISHED_STATE; }
 
     // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
     // and with how it's described in the specification, the proper attribute name is .loop
@@ -130,14 +107,6 @@ private:
     // If true, it will wrap around to the start of the buffer each time it reaches the end.
     bool m_isLooping;
 
-    // m_startTime is the time to start playing based on the context's timeline (0.0 or a time less than the context's current time means "now").
-    double m_startTime; // in seconds
-
-    // m_endTime is the time to stop playing based on the context's timeline (0.0 or a time less than the context's current time means "now").
-    // If it hasn't been set explicitly, then the sound will not stop playing (if looping) or will stop when the end of the AudioBuffer
-    // has been reached.
-    double m_endTime; // in seconds
-    
     // m_virtualReadIndex is a sample-frame index into our buffer representing the current playback position.
     // Since it's floating-point, it has sub-sample accuracy.
     double m_virtualReadIndex;
@@ -159,11 +128,6 @@ private:
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
     mutable Mutex m_processLock;
-
-    // Handles the time when we reach the end of sample data (non-looping) or the noteOff() time has been reached.
-    void finish();
-
-    PlaybackState m_playbackState;
 };
 
 } // namespace WebCore
