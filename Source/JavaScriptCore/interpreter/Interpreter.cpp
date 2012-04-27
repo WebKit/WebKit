@@ -1009,6 +1009,13 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     CodeBlock* codeBlock = callFrame->codeBlock();
     bool isInterrupt = false;
 
+    ASSERT(exceptionValue.isEmpty());
+    ASSERT(!exceptionValue.isCell() || exceptionValue.asCell());
+    // This shouldn't be possible (hence the assertions), but we're already in the slowest of
+    // slow cases, so let's harden against it anyway to be safe.
+    if (exceptionValue.isEmpty() || (exceptionValue.isCell() && !exceptionValue.asCell()))
+        exceptionValue = jsNull();
+
     // Set up the exception object
     if (exceptionValue.isObject()) {
         JSObject* exception = asObject(exceptionValue);

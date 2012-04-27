@@ -1,3 +1,20 @@
+2012-04-27  Oliver Hunt  <oliver@apple.com>
+
+        Lazy link phase of baseline jit fails to propagate exception
+        https://bugs.webkit.org/show_bug.cgi?id=85092
+
+        Reviewed by Filip Pizlo.
+
+        Very simple patch, when linking produces an error we need to actually store
+        the exception prior to throwing it.  I can't find any other examples of this,
+        but as we're already in the slow path when throwing an exception I've hardened
+        exception throwing against null exceptions.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        * jit/JITStubs.cpp:
+        (JSC::lazyLinkFor):
+
 2012-04-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Generalize the single character optimization of numberProtoFuncToString

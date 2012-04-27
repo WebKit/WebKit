@@ -2256,9 +2256,10 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
         codePtr = executable->generatedJITCodeFor(kind).addressForCall();
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->compileFor(callFrame, callee->scope(), kind);
-        if (error)
+        if (JSObject* error = functionExecutable->compileFor(callFrame, callee->scope(), kind)) {
+            callFrame->globalData().exception = error;
             return 0;
+        }
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);
         if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters())
             || callLinkInfo->callType == CallLinkInfo::CallVarargs)
