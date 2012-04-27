@@ -4449,7 +4449,7 @@ void WebPage::setSelection(const Platform::IntPoint& startPoint, const Platform:
     invalidPoint = IntPoint(endPoint) == DOMSupport::InvalidPoint;
     IntPoint end = invalidPoint ? DOMSupport::InvalidPoint : d->mapFromTransformed(endPoint);
 
-    return d->m_selectionHandler->setSelection(start, end);
+    d->m_selectionHandler->setSelection(start, end);
 }
 
 void WebPage::setCaretPosition(const Platform::IntPoint& position)
@@ -4458,7 +4458,7 @@ void WebPage::setCaretPosition(const Platform::IntPoint& position)
         return;
     // Handled by selection handler as it's point based.
     // Transform this events coordinates to webkit content coordinates.
-    return d->m_selectionHandler->setCaretPosition(d->mapFromTransformed(position));
+    d->m_selectionHandler->setCaretPosition(d->mapFromTransformed(position));
 }
 
 void WebPage::selectAtPoint(const Platform::IntPoint& location)
