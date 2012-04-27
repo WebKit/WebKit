@@ -249,10 +249,10 @@ private:
     void computeCompositingRequirements(RenderLayer*, OverlapMap*, struct CompositingState&, bool& layersChanged);
     
     // Recurses down the tree, parenting descendant compositing layers and collecting an array of child layers for the current compositing layer.
-    void rebuildCompositingLayerTree(RenderLayer*, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer);
+    void rebuildCompositingLayerTree(RenderLayer*, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer, int depth);
 
     // Recurses down the tree, updating layer geometry only.
-    void updateLayerTreeGeometry(RenderLayer*);
+    void updateLayerTreeGeometry(RenderLayer*, int depth);
     
     // Hook compositing layers together
     void setCompositingParent(RenderLayer* childLayer, RenderLayer* parentLayer);
@@ -302,7 +302,7 @@ private:
 
 #if !LOG_DISABLED
     const char* reasonForCompositing(const RenderLayer*);
-    void logLayerInfo(const RenderLayer*);
+    void logLayerInfo(const RenderLayer*, int depth);
 #endif
 
 private:
@@ -350,7 +350,8 @@ private:
     int m_rootLayerUpdateCount;
     int m_obligateCompositedLayerCount; // count of layer that have to be composited.
     int m_secondaryCompositedLayerCount; // count of layers that have to be composited because of stacking or overlap.
-    double m_backingAreaMegaPixels;
+    double m_obligatoryBackingAreaMegaPixels;
+    double m_secondaryBackingAreaMegaPixels;
 #endif
 };
 

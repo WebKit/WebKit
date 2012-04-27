@@ -177,7 +177,8 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_rootLayerUpdateCount(0)
     , m_obligateCompositedLayerCount(0)
     , m_secondaryCompositedLayerCount(0)
-    , m_backingAreaMegaPixels(0)
+    , m_obligatoryBackingAreaMegaPixels(0)
+    , m_secondaryBackingAreaMegaPixels(0)
 #endif
 {
 }
@@ -394,7 +395,8 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (compositingLogEnabled() && isFullUpdate && (needHierarchyUpdate || needGeometryUpdate)) {
         m_obligateCompositedLayerCount = 0;
         m_secondaryCompositedLayerCount = 0;
-        m_backingAreaMegaPixels = 0;
+        m_obligatoryBackingAreaMegaPixels = 0;
+        m_secondaryBackingAreaMegaPixels = 0;
 
         Frame* frame = m_renderView->frameView()->frame();
         bool isMainFrame = !m_renderView->document()->ownerElement();
@@ -406,7 +408,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (needHierarchyUpdate) {
         // Update the hierarchy of the compositing layers.
         Vector<GraphicsLayer*> childList;
-        rebuildCompositingLayerTree(updateRoot, childList);
+        rebuildCompositingLayerTree(updateRoot, childList, 0);
 
         // Host the document layer in the RenderView's root layer.
         if (isFullUpdate) {
@@ -420,15 +422,17 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     } else if (needGeometryUpdate) {
         // We just need to do a geometry update. This is only used for position:fixed scrolling;
         // most of the time, geometry is updated via RenderLayer::styleChanged().
-        updateLayerTreeGeometry(updateRoot);
+        updateLayerTreeGeometry(updateRoot, 0);
     }
     
 #if !LOG_DISABLED
     if (compositingLogEnabled() && isFullUpdate && (needHierarchyUpdate || needGeometryUpdate)) {
         double endTime = currentTime();
-        LOG(Compositing, "%d layers (%d primary, %d secondary), total backing area %.2fMP, update took %.2fms, \n",
+        LOG(Compositing, "Total layers   primary   secondary   obligatory backing (MP)   secondary backing(MP)   total backing (MP)  update time (ms)\n");
+
+        LOG(Compositing, "%8d %11d %9d %20.2f %22.2f %22.2f %18.2f\n",
             m_obligateCompositedLayerCount + m_secondaryCompositedLayerCount, m_obligateCompositedLayerCount,
-            m_secondaryCompositedLayerCount, m_backingAreaMegaPixels, 1000.0 * (endTime - startTime));
+            m_secondaryCompositedLayerCount, m_obligatoryBackingAreaMegaPixels, m_secondaryBackingAreaMegaPixels, m_obligatoryBackingAreaMegaPixels + m_secondaryBackingAreaMegaPixels, 1000.0 * (endTime - startTime));
     }
 #endif
     ASSERT(updateRoot || !m_compositingLayersNeedRebuild);
@@ -438,21 +442,21 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 }
 
 #if !LOG_DISABLED
-void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer)
+void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer, int depth)
 {
     if (!compositingLogEnabled())
         return;
         
-    if (requiresCompositingLayer(layer) || layer->isRootLayer())
-        ++m_obligateCompositedLayerCount;
-    else
-        ++m_secondaryCompositedLayerCount;
-
     RenderLayerBacking* backing = layer->backing();
-    
-    m_backingAreaMegaPixels += backing->backingStoreArea() / PIXELS_PER_MEGAPIXEL;
+    if (requiresCompositingLayer(layer) || layer->isRootLayer()) {
+        ++m_obligateCompositedLayerCount;
+        m_obligatoryBackingAreaMegaPixels += backing->backingStoreArea() / PIXELS_PER_MEGAPIXEL;
+    } else {
+        ++m_secondaryCompositedLayerCount;
+        m_secondaryBackingAreaMegaPixels += backing->backingStoreArea() / PIXELS_PER_MEGAPIXEL;
+    }
 
-    LOG(Compositing, "  Layer %p %dx%d %.3fMP (%s) %s\n", layer, backing->compositedBounds().width(), backing->compositedBounds().height(),
+    LOG(Compositing, "%*p %dx%d %.3fMP (%s) %s\n", 12 + depth * 2, layer, backing->compositedBounds().width(), backing->compositedBounds().height(),
         backing->backingStoreArea() / PIXELS_PER_MEGAPIXEL,
         reasonForCompositing(layer), layer->backing()->nameForLayer().utf8().data());
 }
@@ -890,7 +894,7 @@ bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo* o) const
 }
 #endif
 
-void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer)
+void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer, int depth)
 {
     // Make the layer compositing if necessary, and set up clipping and content layers.
     // Note that we can only do work here that is independent of whether the descendant layers
@@ -914,7 +918,9 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
             updateRootLayerPosition();
 
 #if !LOG_DISABLED
-        logLayerInfo(layer);
+        logLayerInfo(layer, depth);
+#else
+        UNUSED_PARAM(depth);
 #endif
     }
 
@@ -934,7 +940,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
-                rebuildCompositingLayerTree(curLayer, childList);
+                rebuildCompositingLayerTree(curLayer, childList, depth + 1);
             }
         }
 
@@ -948,7 +954,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
-            rebuildCompositingLayerTree(curLayer, childList);
+            rebuildCompositingLayerTree(curLayer, childList, depth + 1);
         }
     }
     
@@ -957,7 +963,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
-                rebuildCompositingLayerTree(curLayer, childList);
+                rebuildCompositingLayerTree(curLayer, childList, depth + 1);
             }
         }
     }
@@ -1082,7 +1088,7 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderPart* renderer)
 }
 
 // This just updates layer geometry without changing the hierarchy.
-void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer)
+void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer, int depth)
 {
     if (RenderLayerBacking* layerBacking = layer->backing()) {
         // The compositing state of all our children has been updated already, so now
@@ -1101,7 +1107,9 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer)
             updateRootLayerPosition();
 
 #if !LOG_DISABLED
-        logLayerInfo(layer);
+        logLayerInfo(layer, depth);
+#else
+        UNUSED_PARAM(depth);
 #endif
     }
 
@@ -1115,7 +1123,7 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer)
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i)
-                updateLayerTreeGeometry(negZOrderList->at(i));
+                updateLayerTreeGeometry(negZOrderList->at(i), depth + 1);
         }
     }
 
@@ -1123,14 +1131,14 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer)
     if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i)
-            updateLayerTreeGeometry(normalFlowList->at(i));
+            updateLayerTreeGeometry(normalFlowList->at(i), depth + 1);
     }
     
     if (layer->isStackingContext()) {
         if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i)
-                updateLayerTreeGeometry(posZOrderList->at(i));
+                updateLayerTreeGeometry(posZOrderList->at(i), depth + 1);
         }
     }
 }
@@ -1441,7 +1449,13 @@ const char* RenderLayerCompositor::reasonForCompositing(const RenderLayer* layer
         layer = toRenderBoxModelObject(renderer)->layer();
     }
 
-    if (requiresCompositingForTransform(renderer))
+    if (renderer->hasTransform() && renderer->style()->hasPerspective())
+        return "perspective";
+
+    if (renderer->hasTransform() && (renderer->style()->transformStyle3D() == TransformStyle3DPreserve3D))
+        return "preserve-3d";
+
+    if (renderer->hasTransform())
         return "transform";
 
     if (requiresCompositingForVideo(renderer))
