@@ -361,6 +361,8 @@ BUGWK63611 DEBUG : editing/selection/directionality-after-undo-replace.html = CR
 BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin.html = CRASH
 BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin-in-subframe.html = CRASH
 
+BUGWK85043 : http/tests/inspector-enabled/console-clear-arguments-on-frame-remove.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////

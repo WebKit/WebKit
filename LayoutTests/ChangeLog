@@ -1,3 +1,9 @@
+2012-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/test_expectations.txt: Flag http test hitting an ASSERT.
+
 2012-04-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] DRT should support LayoutTestController's dumpResourceLoadCallbacks()
