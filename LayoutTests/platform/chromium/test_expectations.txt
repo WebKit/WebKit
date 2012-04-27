@@ -3619,8 +3619,6 @@ BUGWK84550 SNOWLEOPARD : fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = 
 
 BUGWK84596 : media/encrypted-media/encrypted-media-events.html = PASS CRASH
 
-BUGCR124777 : media/video-colorspace-yuv422.html = IMAGE+TEXT TIMEOUT
-
 BUGCR124779 DEBUG : media/media-controller-playback.html = CRASH
 BUGCR124779 DEBUG : media/track/track-cues-missed.html = CRASH
 BUGCR124779 DEBUG : media/track/track-cues-pause-on-exit.html = CRASH

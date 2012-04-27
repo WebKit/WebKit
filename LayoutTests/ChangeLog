@@ -1,5 +1,11 @@
 2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Remove passing test from expectations.
+
+        * platform/chromium/test_expectations.txt: Another one bites the dust.
+
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Layout Tests fast/js/dfg-float64array.html, fast/js/dfg-uint16array.html, and fast/js/dfg-uint8array.html are flaky timeouts.
         https://bugs.webkit.org/show_bug.cgi?id=85090
 
