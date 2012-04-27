@@ -324,8 +324,8 @@
                         '<(tools_dir)/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.def',
                         '<(tools_dir)/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc',
                     ],
-                    # The .rc file requires that the name of the dll is npTestNetscapePlugin.dll.
-                    'product_name': 'npTestNetscapePlugin',
+                    # The .rc file requires that the name of the dll is npTestNetscapePlugIn.dll.
+                    'product_name': 'npTestNetscapePlugIn',
                 }],
             ],
         },
