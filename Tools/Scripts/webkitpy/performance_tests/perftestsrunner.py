@@ -40,17 +40,13 @@ from webkitpy.common import find_files
 from webkitpy.common.host import Host
 from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.layout_tests.views import printing
-from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
-from webkitpy.performance_tests.perftest import PageLoadingPerfTest
-from webkitpy.performance_tests.perftest import PerfTest
+from webkitpy.performance_tests.perftest import PerfTestFactory
 
 
 _log = logging.getLogger(__name__)
 
 
 class PerfTestsRunner(object):
-    _pattern_for_chromium_style_tests = re.compile('^inspector/')
-    _pattern_for_page_loading_tests = re.compile('^PageLoad/')
     _default_branch = 'webkit-trunk'
     _EXIT_CODE_BAD_BUILD = -1
     _EXIT_CODE_BAD_JSON = -2
@@ -129,17 +125,10 @@ class PerfTestsRunner(object):
         test_files = find_files.find(filesystem, self._base_path, paths, skipped_directories, _is_test_file)
         tests = []
         for path in test_files:
-            relative_path = self._port.relative_perf_test_filename(path)
+            relative_path = self._port.relative_perf_test_filename(path).replace('\\', '/')
             if self._port.skips_perf_test(relative_path):
                 continue
-            test_name = relative_path.replace('\\', '/')
-            dirname = filesystem.dirname(path)
-            if self._pattern_for_chromium_style_tests.match(relative_path):
-                tests.append(ChromiumStylePerfTest(test_name, dirname, path))
-            elif self._pattern_for_page_loading_tests.match(relative_path):
-                tests.append(PageLoadingPerfTest(test_name, dirname, path))
-            else:
-                tests.append(PerfTest(test_name, dirname, path))
+            tests.append(PerfTestFactory.create_perf_test(relative_path, path))
 
         return tests
 

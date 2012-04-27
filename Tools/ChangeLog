@@ -1,3 +1,39 @@
+2012-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract PerfTestFactory
+        https://bugs.webkit.org/show_bug.cgi?id=83944
+
+        Reviewed by Dirk Pranke.
+        
+        Extracted PerfTestFactory out of PerfTest. This class creates appropriate PerfTest object given
+        a test name and a path. Also removed dirname from the constructors of PerfTest and its subclasses.
+
+        Also added simple test cases to sanity check PerfTestFactory.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.__init__):
+        (PerfTest.test_name):
+        (ChromiumStylePerfTest.__init__):
+        (PageLoadingPerfTest.__init__):
+        (PageLoadingPerfTest.run):
+        (PerfTestFactory):
+        (PerfTestFactory.create_perf_test):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest.test_parse_output):
+        (MainTest.test_parse_output_with_failing_line):
+        (TestPageLoadingPerfTest.test_run):
+        (TestPageLoadingPerfTest.test_run_with_bad_output):
+        (TestPerfTestFactory):
+        (TestPerfTestFactory.test_regular_test):
+        (TestPerfTestFactory.test_inspector_test):
+        (TestPerfTestFactory.test_page_loading_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner._collect_tests):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (run_test):
+        (_tests_for_runner):
+
 2012-04-26  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: clean up server process, webkit driver so chromium can use it

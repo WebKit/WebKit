@@ -35,16 +35,12 @@ from webkitpy.layout_tests.port.driver import DriverInput
 
 
 class PerfTest(object):
-    def __init__(self, test_name, dirname, path_or_url):
+    def __init__(self, test_name, path_or_url):
         self._test_name = test_name
-        self._dirname = dirname
         self._path_or_url = path_or_url
 
     def test_name(self):
         return self._test_name
-
-    def dirname(self):
-        return self._dirname
 
     def path_or_url(self):
         return self._path_or_url
@@ -128,8 +124,8 @@ class PerfTest(object):
 class ChromiumStylePerfTest(PerfTest):
     _chromium_style_result_regex = re.compile(r'^RESULT\s+(?P<name>[^=]+)\s*=\s+(?P<value>\d+(\.\d+)?)\s*(?P<unit>\w+)$')
 
-    def __init__(self, test_name, dirname, path_or_url):
-        super(ChromiumStylePerfTest, self).__init__(test_name, dirname, path_or_url)
+    def __init__(self, test_name, path_or_url):
+        super(ChromiumStylePerfTest, self).__init__(test_name, path_or_url)
 
     def parse_output(self, output, printer, buildbot_output):
         test_failed = False
@@ -148,8 +144,8 @@ class ChromiumStylePerfTest(PerfTest):
 
 
 class PageLoadingPerfTest(PerfTest):
-    def __init__(self, test_name, dirname, path_or_url):
-        super(PageLoadingPerfTest, self).__init__(test_name, dirname, path_or_url)
+    def __init__(self, test_name, path_or_url):
+        super(PageLoadingPerfTest, self).__init__(test_name, path_or_url)
 
     def run(self, driver, timeout_ms, printer, buildbot_output):
         test_times = []
@@ -183,3 +179,18 @@ class PageLoadingPerfTest(PerfTest):
             'unit': 'ms'}
         self.output_statistics(self.test_name(), results, buildbot_output)
         return {self.test_name(): results}
+
+
+class PerfTestFactory(object):
+
+    _pattern_map = [
+        (re.compile('^inspector/'), ChromiumStylePerfTest),
+        (re.compile('^PageLoad/'), PageLoadingPerfTest),
+    ]
+
+    @classmethod
+    def create_perf_test(cls, test_name, path):
+        for (pattern, test_class) in cls._pattern_map:
+            if pattern.match(test_name):
+                return test_class(test_name, path)
+        return PerfTest(test_name, path)

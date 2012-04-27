@@ -128,8 +128,7 @@ max 1120
     def run_test(self, test_name):
         runner = self.create_runner()
         driver = MainTest.TestDriver()
-        return runner._run_single_test(ChromiumStylePerfTest(test_name, 'some-dir',
-            runner._host.filesystem.join('some-dir', test_name)), driver)
+        return runner._run_single_test(ChromiumStylePerfTest(test_name, runner._host.filesystem.join('some-dir', test_name)), driver)
 
     def test_run_passing_test(self):
         self.assertTrue(self.run_test('pass.html'))
@@ -156,9 +155,9 @@ max 1120
             path = filesystem.join(runner._base_path, test)
             dirname = filesystem.dirname(path)
             if test.startswith('inspector/'):
-                tests.append(ChromiumStylePerfTest(test, dirname, path))
+                tests.append(ChromiumStylePerfTest(test, path))
             else:
-                tests.append(PerfTest(test, dirname, path))
+                tests.append(PerfTest(test, path))
         return tests
 
     def test_run_test_set(self):

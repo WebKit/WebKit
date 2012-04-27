@@ -35,6 +35,7 @@ from webkitpy.layout_tests.port.driver import DriverOutput
 from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
 from webkitpy.performance_tests.perftest import PageLoadingPerfTest
 from webkitpy.performance_tests.perftest import PerfTest
+from webkitpy.performance_tests.perftest import PerfTestFactory
 
 
 class MockPrinter(object):
@@ -58,7 +59,7 @@ class MainTest(unittest.TestCase):
             'stdev 11',
             'min 1080',
             'max 1120']), image=None, image_hash=None, audio=None)
-        test = PerfTest('some-test', 'some-dir/some-test', '/path/some-dir/some-test')
+        test = PerfTest('some-test', '/path/some-dir/some-test')
         self.assertEqual(test.parse_output(output, printer, buildbot_output),
             {'some-test': {'avg': 1100.0, 'median': 1101.0, 'min': 1080.0, 'max': 1120.0, 'stdev': 11.0, 'unit': 'ms'}})
         self.assertEqual(printer.written_lines, [])
@@ -77,7 +78,7 @@ class MainTest(unittest.TestCase):
             'stdev 11',
             'min 1080',
             'max 1120']), image=None, image_hash=None, audio=None)
-        test = PerfTest('some-test', 'some-dir/some-test', '/path/some-dir/some-test')
+        test = PerfTest('some-test', '/path/some-dir/some-test')
         self.assertEqual(test.parse_output(output, printer, buildbot_output), None)
         self.assertEqual(printer.written_lines, ['some-unrecognizable-line'])
 
@@ -102,7 +103,7 @@ class TestPageLoadingPerfTest(unittest.TestCase):
     def test_run(self):
         printer = MockPrinter()
         buildbot_output = StringIO.StringIO()
-        test = PageLoadingPerfTest('some-test', 'some-dir/some-test', '/path/some-dir/some-test')
+        test = PageLoadingPerfTest('some-test', '/path/some-dir/some-test')
         driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
         self.assertEqual(test.run(driver, None, printer, buildbot_output),
             {'some-test': {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': math.sqrt(570 * 1000 * 1000), 'min': 2000, 'unit': 'ms'}})
@@ -112,10 +113,25 @@ class TestPageLoadingPerfTest(unittest.TestCase):
     def test_run_with_bad_output(self):
         printer = MockPrinter()
         buildbot_output = StringIO.StringIO()
-        test = PageLoadingPerfTest('some-test', 'some-dir/some-test', '/path/some-dir/some-test')
+        test = PageLoadingPerfTest('some-test', '/path/some-dir/some-test')
         driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
         self.assertEqual(test.run(driver, None, printer, buildbot_output), None)
         self.assertEqual(printer.written_lines, ['error: some-test\nsome error'])
+
+
+class TestPerfTestFactory(unittest.TestCase):
+    def test_regular_test(self):
+        test = PerfTestFactory.create_perf_test('some-dir/some-test', '/path/some-dir/some-test')
+        self.assertEqual(test.__class__, PerfTest)
+
+    def test_inspector_test(self):
+        test = PerfTestFactory.create_perf_test('inspector/some-test', '/path/inspector/some-test')
+        self.assertEqual(test.__class__, ChromiumStylePerfTest)
+
+    def test_page_loading_test(self):
+        test = PerfTestFactory.create_perf_test('PageLoad/some-test', '/path/PageLoad/some-test')
+        self.assertEqual(test.__class__, PageLoadingPerfTest)
+
 
 if __name__ == '__main__':
     unittest.main()
