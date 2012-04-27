@@ -34,9 +34,8 @@ import subprocess
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.server_process import ServerProcess
 from webkitpy.layout_tests.port.webkit import WebKitDriver, WebKitPort
+from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.common.system.executive import Executive
-
-_log = logging.getLogger(__name__)
 
 
 class GtkDriver(WebKitDriver):
@@ -75,7 +74,7 @@ class GtkDriver(WebKitDriver):
             self._xvfb_process = None
 
 
-class GtkPort(WebKitPort):
+class GtkPort(WebKitPort, PulseAudioSanitizer):
     port_name = "gtk"
 
     def _port_flag_for_scripts(self):
@@ -83,54 +82,6 @@ class GtkPort(WebKitPort):
 
     def _driver_class(self):
         return GtkDriver
-
-    def _unload_pulseaudio_module(self):
-        # Unload pulseaudio's module-stream-restore, since it remembers
-        # volume settings from different runs, and could affect
-        # multimedia tests results
-        self._pa_module_index = -1
-        with open(os.devnull, 'w') as devnull:
-            try:
-                pactl_process = subprocess.Popen(["pactl", "list", "short", "modules"], stdout=subprocess.PIPE, stderr=devnull)
-                pactl_process.wait()
-            except OSError:
-                # pactl might not be available.
-                _log.debug('pactl not found. Please install pulseaudio-utils to avoid some potential media test failures.')
-                return
-        modules_list = pactl_process.communicate()[0]
-        for module in modules_list.splitlines():
-            if module.find("module-stream-restore") >= 0:
-                # Some pulseaudio-utils versions don't provide
-                # the index, just an empty string
-                self._pa_module_index = module.split('\t')[0] or -1
-                try:
-                    # Since they could provide other stuff (not an index
-                    # nor an empty string, let's make sure this is an int.
-                    if int(self._pa_module_index) != -1:
-                        pactl_process = subprocess.Popen(["pactl", "unload-module", self._pa_module_index])
-                        pactl_process.wait()
-                        if pactl_process.returncode == 0:
-                            _log.debug('Unloaded module-stream-restore successfully')
-                        else:
-                            _log.debug('Unloading module-stream-restore failed')
-                except ValueError:
-                        # pactl should have returned an index if the module is found
-                        _log.debug('Unable to parse module index. Please check if your pulseaudio-utils version is too old.')
-                return
-
-    def _restore_pulseaudio_module(self):
-        # If pulseaudio's module-stream-restore was previously unloaded,
-        # restore it back. We shouldn't need extra checks here, since an
-        # index != -1 here means we successfully unloaded it previously.
-        if self._pa_module_index != -1:
-            with open(os.devnull, 'w') as devnull:
-                pactl_process = subprocess.Popen(["pactl", "load-module", "module-stream-restore"], stdout=devnull, stderr=devnull)
-                pactl_process.wait()
-                if pactl_process.returncode == 0:
-                    _log.debug('Restored module-stream-restore successfully')
-                else:
-                    _log.debug('Restoring module-stream-restore failed')
-
 
     def setup_test_run(self):
         self._unload_pulseaudio_module()

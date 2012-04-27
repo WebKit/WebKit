@@ -1,5 +1,6 @@
 # Copyright (C) 2011 ProFUSION Embedded Systems. All rights reserved.
 # Copyright (C) 2011 Samsung Electronics. All rights reserved.
+# Copyright (C) 2012 Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -32,9 +33,7 @@ import subprocess
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitDriver, WebKitPort
-
-
-_log = logging.getLogger(__name__)
+from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
 
 
 class EflDriver(WebKitDriver):
@@ -43,7 +42,7 @@ class EflDriver(WebKitDriver):
         return [wrapper_path] + WebKitDriver.cmd_line(self, pixel_tests, per_test_args)
 
 
-class EflPort(WebKitPort):
+class EflPort(WebKitPort, PulseAudioSanitizer):
     port_name = 'efl'
 
     def _port_flag_for_scripts(self):
@@ -51,6 +50,12 @@ class EflPort(WebKitPort):
 
     def _driver_class(self):
         return EflDriver
+
+    def setup_test_run(self):
+        self._unload_pulseaudio_module()
+
+    def clean_up_test_run(self):
+        self._restore_pulseaudio_module()
 
     def _generate_all_test_configurations(self):
         return [TestConfiguration(version=self._version, architecture='x86', build_type=build_type) for build_type in self.ALL_BUILD_TYPES]

@@ -1,3 +1,23 @@
+2012-04-27  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL][DRT] EFL should sanitize pulseaudio module configuration too
+        https://bugs.webkit.org/show_bug.cgi?id=85047
+
+        Reviewed by Dirk Pranke.
+
+        PulseAudio test setup sanitization shared between EFL and GTK.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort):
+        (EflPort.setup_test_run):
+        (EflPort.clean_up_test_run):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort): Moving pulseaudio unload/restore out to shared class.
+        * Scripts/webkitpy/layout_tests/port/pulseaudio_sanitizer.py: Added.
+        (PulseAudioSanitizer):
+        (PulseAudioSanitizer._unload_pulseaudio_module):
+        (PulseAudioSanitizer._restore_pulseaudio_module):
+
 2012-04-27  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, revert r115453 - broke chromium win bots
