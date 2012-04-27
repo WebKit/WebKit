@@ -1,3 +1,22 @@
+2012-04-27  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Improve log output in InputHandler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=85007
+
+        Reviewed by Antonio Gomes.
+
+        PR 138292
+        Improving logging in InputHandler.
+        In setText we had an early return which wasn't being captured.
+        Also, cleaning up the output to make it more clear and descriptive.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::learnText):
+        (BlackBerry::WebKit::InputHandler::enableInputMode):
+        (BlackBerry::WebKit::InputHandler::setText):
+
 2012-04-27  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [Blackberry] remove redundant returns
