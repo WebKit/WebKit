@@ -234,6 +234,7 @@ void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identi
 
     Ewk_Frame_Resource_Request request = { url.data(), firstParty.data(), httpMethod.data(), identifier, m_frame, isMainFrameRequest };
     ewk_frame_request_assign_identifier(m_frame, &request);
+    evas_object_smart_callback_call(m_view, "resource,request,new", &request);
 }
 
 void FrameLoaderClientEfl::postProgressStartedNotification()
@@ -261,13 +262,20 @@ void FrameLoaderClientEfl::frameLoaderDestroyed()
     delete this;
 }
 
-void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long, const ResourceResponse& response)
+void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long, const ResourceResponse& coreResponse)
 {
     // Update our knowledge of request soup flags - some are only set
     // after the request is done.
-    loader->request().setSoupMessageFlags(response.soupMessageFlags());
+    loader->request().setSoupMessageFlags(coreResponse.soupMessageFlags());
 
-    m_response = response;
+    m_response = coreResponse;
+
+    Ewk_Frame_Resource_Response response = { 0, coreResponse.httpStatusCode() };
+    CString url = coreResponse.url().string().utf8();
+    response.url = url.data();
+
+    ewk_frame_response_received(m_frame, &response);
+    evas_object_smart_callback_call(m_view, "resource,response,received", &response);
 }
 
 void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest& resourceRequest)
@@ -748,12 +756,31 @@ void FrameLoaderClientEfl::dispatchDidReceiveContentLength(DocumentLoader*, unsi
 
 void FrameLoaderClientEfl::dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier)
 {
-    notImplemented();
+    ewk_frame_load_resource_finished(m_frame, identifier);
+    evas_object_smart_callback_call(m_view, "load,resource,finished", &identifier);
 }
 
-void FrameLoaderClientEfl::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& err)
+void FrameLoaderClientEfl::dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError& err)
 {
-    notImplemented();
+    Ewk_Frame_Load_Error error;
+    CString errorDomain = err.domain().utf8();
+    CString errorDescription = err.localizedDescription().utf8();
+    CString failingUrl = err.failingURL().utf8();
+
+    DBG("ewkFrame=%p, resource=%ld, error=%s (%d, cancellation=%hhu) \"%s\", url=%s",
+        m_frame, identifier, errorDomain.data(), err.errorCode(), err.isCancellation(),
+        errorDescription.data(), failingUrl.data());
+
+    error.code = err.errorCode();
+    error.is_cancellation = err.isCancellation();
+    error.domain = errorDomain.data();
+    error.description = errorDescription.data();
+    error.failing_url = failingUrl.data();
+    error.resource_identifier = identifier;
+    error.frame = m_frame;
+
+    ewk_frame_load_resource_failed(m_frame, &error);
+    evas_object_smart_callback_call(m_view, "load,resource,failed", &error);
 }
 
 bool FrameLoaderClientEfl::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length)

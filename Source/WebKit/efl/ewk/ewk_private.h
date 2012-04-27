@@ -220,12 +220,15 @@ void ewk_frame_load_firstlayout_finished(Evas_Object* ewkFrame);
 void ewk_frame_load_firstlayout_nonempty_finished(Evas_Object* ewkFrame);
 void ewk_frame_load_document_finished(Evas_Object* ewkFrame);
 void ewk_frame_load_finished(Evas_Object* ewkFrame, const char* errorDomain, int errorCode, bool isCancellation, const char* errorDescription, const char* failingUrl);
+void ewk_frame_load_resource_finished(Evas_Object* ewkFrame, unsigned long identifier);
+void ewk_frame_load_resource_failed(Evas_Object* ewkFrame, Ewk_Frame_Load_Error* error);
 void ewk_frame_load_error(Evas_Object* ewkFrame, const char* errorDomain, int errorCode, bool isCancellation, const char* errorDescription, const char* failingUrl);
 void ewk_frame_load_progress_changed(Evas_Object* ewkFrame);
 
 void ewk_frame_redirect_cancelled(Evas_Object* ewkFrame);
 void ewk_frame_request_will_send(Evas_Object* ewkFrame, Ewk_Frame_Resource_Messages* messages);
 void ewk_frame_request_assign_identifier(Evas_Object* ewkFrame, const Ewk_Frame_Resource_Request* request);
+void ewk_frame_response_received(Evas_Object* ewkFrame, Ewk_Frame_Resource_Response* response);
 void ewk_frame_view_state_save(Evas_Object* ewkFrame, WebCore::HistoryItem* item);
 
 void ewk_frame_did_perform_first_navigation(Evas_Object* ewkFrame);

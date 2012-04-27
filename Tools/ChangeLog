@@ -1,3 +1,26 @@
+2012-04-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] DRT should support LayoutTestController's dumpResourceLoadCallbacks()
+        https://bugs.webkit.org/show_bug.cgi?id=81891
+
+        Reviewed by Philippe Normand.
+
+        Implement support for LayoutTestController's
+        dumpResourceLoadCallbacks() in EFL's DumpRenderTree by catching new
+        ewk_view signals about resource loading and print out the expected
+        information. This allows for several test cases to be removed from the
+        skip list.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (descriptionSuitableForTestResult):
+        (DumpRenderTreeChrome::onResponseReceived):
+        (DumpRenderTreeChrome::onResourceLoadFinished):
+        (DumpRenderTreeChrome::onResourceLoadFailed):
+        (DumpRenderTreeChrome::onNewResourceRequest):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-04-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK typo fix.

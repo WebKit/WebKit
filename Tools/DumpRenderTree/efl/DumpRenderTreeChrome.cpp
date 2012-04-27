@@ -47,6 +47,8 @@
 
 using namespace WebCore;
 
+HashMap<unsigned long, CString> DumpRenderTreeChrome::m_dumpAssignedUrls;
+
 PassOwnPtr<DumpRenderTreeChrome> DumpRenderTreeChrome::create(Evas* evas)
 {
     OwnPtr<DumpRenderTreeChrome> chrome = adoptPtr(new DumpRenderTreeChrome(evas));
@@ -89,12 +91,16 @@ Evas_Object* DumpRenderTreeChrome::createView() const
 
     ewk_view_theme_set(view, DATA_DIR"/default.edj");
 
+    evas_object_smart_callback_add(view, "load,resource,failed", onResourceLoadFailed, 0);
+    evas_object_smart_callback_add(view, "load,resource,finished", onResourceLoadFinished, 0);
     evas_object_smart_callback_add(view, "load,started", onLoadStarted, 0);
     evas_object_smart_callback_add(view, "title,changed", onTitleChanged, 0);
     evas_object_smart_callback_add(view, "window,object,cleared", onWindowObjectCleared, m_gcController.get());
     evas_object_smart_callback_add(view, "statusbar,text,set", onStatusbarTextSet, 0);
     evas_object_smart_callback_add(view, "load,document,finished", onDocumentLoadFinished, 0);
+    evas_object_smart_callback_add(view, "resource,request,new", onNewResourceRequest, 0);
     evas_object_smart_callback_add(view, "resource,request,willsend", onWillSendRequest, 0);
+    evas_object_smart_callback_add(view, "resource,response,received", onResponseReceived, 0);
     evas_object_smart_callback_add(view, "onload,event", onWebViewOnloadEvent, 0);
     evas_object_smart_callback_add(view, "mixedcontent,run", onInsecureContentRun, 0);
     evas_object_smart_callback_add(view, "mixedcontent,displayed", onInsecureContentDisplayed, 0);
@@ -305,6 +311,22 @@ static CString descriptionSuitableForTestResult(const Ewk_Frame_Resource_Respons
     ret += pathSuitableForTestResult(response->url).data();
     ret += ", http status code ";
     ret += String::number(response->status_code);
+    ret += ">";
+
+    return ret.utf8();
+}
+
+static CString descriptionSuitableForTestResult(Ewk_Frame_Load_Error* error)
+{
+    String ret = "<NSError domain ";
+    ret += error->domain;
+    ret += ", code ";
+    ret += String::number(error->code);
+    if (error->failing_url && *error->failing_url != '\0') {
+        ret += ", failing URL \"";
+        ret += error->failing_url;
+        ret += "\"";
+    }
     ret += ">";
 
     return ret.utf8();
@@ -521,4 +543,43 @@ void DumpRenderTreeChrome::onDidDetectXSS(void*, Evas_Object* view, void*)
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("didDetectXSS\n");
+}
+
+void DumpRenderTreeChrome::onResponseReceived(void*, Evas_Object*, void* eventInfo)
+{
+    Ewk_Frame_Resource_Response* response = static_cast<Ewk_Frame_Resource_Response*>(eventInfo);
+
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+        CString responseDescription(descriptionSuitableForTestResult(response));
+        printf("%s - didReceiveResponse %s\n",
+               pathSuitableForTestResult(response->url).data(),
+               responseDescription.data());
+    }
+}
+
+void DumpRenderTreeChrome::onResourceLoadFinished(void*, Evas_Object*, void* eventInfo)
+{
+    unsigned long identifier = *static_cast<unsigned long*>(eventInfo);
+
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
+        printf("%s - didFinishLoading\n",
+               (m_dumpAssignedUrls.contains(identifier) ? m_dumpAssignedUrls.take(identifier).data() : "<unknown>"));
+}
+
+void DumpRenderTreeChrome::onResourceLoadFailed(void*, Evas_Object*, void* eventInfo)
+{
+    Ewk_Frame_Load_Error* error = static_cast<Ewk_Frame_Load_Error*>(eventInfo);
+
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
+        printf("%s - didFailLoadingWithError: %s\n",
+               (m_dumpAssignedUrls.contains(error->resource_identifier) ? m_dumpAssignedUrls.take(error->resource_identifier).data() : "<unknown>"),
+               descriptionSuitableForTestResult(error).data());
+}
+
+void DumpRenderTreeChrome::onNewResourceRequest(void*, Evas_Object*, void* eventInfo)
+{
+    Ewk_Frame_Resource_Request* request = static_cast<Ewk_Frame_Resource_Request*>(eventInfo);
+
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
+        m_dumpAssignedUrls.add(request->identifier, pathSuitableForTestResult(request->url));
 }

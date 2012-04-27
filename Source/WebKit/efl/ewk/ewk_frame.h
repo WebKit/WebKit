@@ -46,6 +46,10 @@
  *  - "load,finished", const Ewk_Frame_Load_Error*: reports load
  *    finished and it gives @c NULL on success or pointer to
  *    structure defining the error.
+ *  - "load,resource,finished", unsigned long*: reports resource load finished and it gives
+ *    a pointer to its identifier.
+ *  - "load,resource,failed", Ewk_Frame_Load_Error*: reports resource load failure and it
+ *    gives a pointer to structure defining the error as an argument.
  *  - "load,firstlayout,finished", void: frame finished first layout.
  *  - "load,nonemptylayout,finished", void: frame finished first
  *    non-empty layout.
@@ -61,6 +65,8 @@
  *    there's a new resource request.
  *  - "resource,request,willsend", Ewk_Frame_Resource_Messages*: a resource will be requested.
  *    and the possible redirect response.
+ *  - "resource,response,received", Ewk_Frame_Resource_Response*: reports that a response
+ *    to a resource request was received.
  *  - "state,save", void: frame's state will be saved as a history item.
  *  - "title,changed", const char*: title of the main frame was changed.
  *  - "uri,changed", const char*: uri of the main frame was changed.
@@ -96,6 +102,7 @@ struct _Ewk_Frame_Load_Error {
     const char *domain; /**< error domain name */
     const char *description; /**< error description already localized */
     const char *failing_url; /**< the url that failed to load */
+    unsigned long resource_identifier; /**< identifier of resource */
     Evas_Object *frame; /**< frame where the failure happened */
 };
 

@@ -1230,7 +1230,7 @@ void ewk_frame_redirect_cancelled(Evas_Object* ewkFrame)
  * changing values in @param request.
  *
  * @param ewkFrame Frame.
- * @param @param messages Messages containing the request details that user may override and a
+ * @param messages Messages containing the request details that user may override and a
  * possible redirect reponse. Whenever values on this struct changes, it must be properly
  * malloc'd as it will be freed afterwards.
  *
@@ -1253,6 +1253,20 @@ void ewk_frame_request_will_send(Evas_Object* ewkFrame, Ewk_Frame_Resource_Messa
 void ewk_frame_request_assign_identifier(Evas_Object* ewkFrame, const Ewk_Frame_Resource_Request* request)
 {
     evas_object_smart_callback_call(ewkFrame, "resource,request,new", (void*)request);
+}
+
+/**
+ * @internal
+ * Reports that a response to a resource request was received.
+ *
+ * @param ewkFrame Frame.
+ * @param request Response details. No changes are allowed to fields.
+ *
+ * Emits signal: "resource,response,received"
+ */
+void ewk_frame_response_received(Evas_Object* ewkFrame, Ewk_Frame_Resource_Response* response)
+{
+    evas_object_smart_callback_call(ewkFrame, "resource,response,received", response);
 }
 
 /**
@@ -1392,12 +1406,36 @@ void ewk_frame_load_finished(Evas_Object* ewkFrame, const char* errorDomain, int
         buffer.is_cancellation = isCancellation;
         buffer.description = errorDescription;
         buffer.failing_url = failingUrl;
+        buffer.resource_identifier = 0;
         buffer.frame = ewkFrame;
         error = &buffer;
     }
     evas_object_smart_callback_call(ewkFrame, "load,finished", error);
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
     ewk_view_load_finished(smartData->view, error);
+}
+
+/**
+ * @internal
+ * Reports resource load finished.
+ *
+ * Emits signal: "load,resource,finished" with the resource
+ * request identifier.
+ */
+void ewk_frame_load_resource_finished(Evas_Object* ewkFrame, unsigned long identifier)
+{
+    evas_object_smart_callback_call(ewkFrame, "load,resource,finished", &identifier);
+}
+
+/**
+ * @internal
+ * Reports resource load failure, with error information.
+ *
+ * Emits signal: "load,resource,failed" with the error information.
+ */
+void ewk_frame_load_resource_failed(Evas_Object* ewkFrame, Ewk_Frame_Load_Error* error)
+{
+    evas_object_smart_callback_call(ewkFrame, "load,resource,failed", error);
 }
 
 /**
@@ -1421,6 +1459,7 @@ void ewk_frame_load_error(Evas_Object* ewkFrame, const char* errorDomain, int er
     error.domain = errorDomain;
     error.description = errorDescription;
     error.failing_url = failingUrl;
+    error.resource_identifier = 0;
     error.frame = ewkFrame;
     evas_object_smart_callback_call(ewkFrame, "load,error", &error);
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);

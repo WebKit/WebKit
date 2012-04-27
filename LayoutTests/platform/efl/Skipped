@@ -640,10 +640,6 @@ fast/history/back-forward-reset-after-error-handling.html
 # Missing delegates: tests which need proper frame loader callbacks reporting
 fast/loader/file-protocol-fragment.html
 
-# Missing delegates: tests failing because of missing resource load delegate callbacks.
-fast/loader/main-document-url-for-non-http-loads.html
-http/tests/misc/link-rel-icon-beforeload.html
-
 # Missing delegates: tests failing because of missing policy delegate callbacks.
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
@@ -696,7 +692,6 @@ http/tests/loading/preload-slow-loading.php
 
 # BUG: Missing resource load callback ability in DRT
 http/tests/loading/redirect-methods.html
-http/tests/misc/favicon-loads-with-images-disabled.html
 
 # Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
 http/tests/misc/will-send-request-returns-null-on-redirect.html
@@ -998,9 +993,18 @@ http/tests/media/video-play-stall.html
 http/tests/misc/acid3.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/redirect-to-external-url.html
-http/tests/misc/window-dot-stop.html
 http/tests/multipart/policy-ignore-crash.php
 http/tests/security/feed-urls-from-remote.html
+
+# ResourceError domain needs to be properly set in FrameLoaderClient
+# https://bugs.webkit.org/show_bug.cgi?id=84129
+http/tests/misc/window-dot-stop.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
+http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
+http/tests/security/XFrameOptions/x-frame-options-deny.html
+http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
+http/tests/xmlhttprequest/abort-should-cancel-load.html
 
 # Test times out (via GTK+)
 # https://bugs.webkit.org/show_bug.cgi?id=64085
@@ -2094,18 +2098,10 @@ http/tests/security/referrer-policy-https-origin.html
 http/tests/security/referrer-policy-redirect.html
 http/tests/security/xss-DENIED-xsl-document-redirect.xml
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
-http/tests/security/XFrameOptions/x-frame-options-deny.html
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
 http/tests/ssl/referer-301.html
 http/tests/ssl/referer-303.html
 http/tests/ssl/verify-ssl-enabled.php
 http/tests/workers/terminate-during-sync-operation.html
-http/tests/xmlhttprequest/abort-should-cancel-load.html
 http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html
 http/tests/xmlhttprequest/basic-auth-nouser.html

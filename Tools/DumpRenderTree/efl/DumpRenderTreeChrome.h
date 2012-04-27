@@ -31,9 +31,11 @@
 
 #include <Eina.h>
 #include <Evas.h>
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 class DumpRenderTreeChrome {
 public:
@@ -61,6 +63,7 @@ private:
     Evas* m_evas;
     OwnPtr<GCController> m_gcController;
     Vector<Evas_Object*> m_extraViews;
+    static HashMap<unsigned long, CString> m_dumpAssignedUrls;
 
     // Smart callbacks
     static void onWindowObjectCleared(void*, Evas_Object*, void*);
@@ -96,6 +99,14 @@ private:
 
     static void onFrameLoadError(void*, Evas_Object*, void*);
     static void onDidDetectXSS(void*, Evas_Object*, void*);
+
+    static void onResponseReceived(void*, Evas_Object*, void*);
+
+    static void onResourceLoadFinished(void*, Evas_Object*, void*);
+
+    static void onResourceLoadFailed(void*, Evas_Object*, void*);
+
+    static void onNewResourceRequest(void*, Evas_Object*, void*);
 };
 
 #endif // DumpRenderTreeChrome_h

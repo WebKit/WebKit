@@ -60,6 +60,10 @@
  *  - "load,progress", double*: load progress is changed (overall value
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,provisional", void: view started provisional load.
+ *  - "load,resource,finished", unsigned long*: reports resource load finished and it gives
+ *    a pointer to its identifier.
+ *  - "load,resource,failed", Ewk_Frame_Load_Error*: reports resource load failure and it
+ *    gives a pointer to structure defining the error as an argument.
  *  - "load,started", Evas_Object*: frame started loading the document.
  *  - "menubar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if menubar is
  *    visible; @c EINA_FALSE, otherwise.
@@ -68,8 +72,11 @@
  *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
  *  - "onload,event", Evas_Object*: a frame onload event has been received.
  *  - "ready", void: page is fully loaded.
+ *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
+ *    there's a new resource request.
  *  - "resource,request,willsend", Ewk_Frame_Resource_Messages*: a resource will be requested.
  *    and the possible redirect response.
+ *  - "resource,response,received", Ewk_Frame_Resource_Response*: the network response for a resource.
  *  - "scrollbars,visible,get", Eina_Bool *: expects a @c EINA_TRUE if scrollbars
  *    are visible; @c EINA_FALSE, otherwise.
  *  - "scrollbars,visible,set", Eina_Bool: sets scrollbars visibility.
