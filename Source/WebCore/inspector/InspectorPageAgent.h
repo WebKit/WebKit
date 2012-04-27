@@ -105,6 +105,8 @@ public:
     virtual void canOverrideDeviceMetrics(ErrorString*, bool*);
     virtual void setDeviceMetricsOverride(ErrorString*, int width, int height, double fontScaleFactor, bool fitWindow);
     virtual void setShowPaintRects(ErrorString*, bool show);
+    virtual void getScriptExecutionStatus(ErrorString*, PageCommandHandler::Result::Enum*);
+    virtual void setScriptExecutionDisabled(ErrorString*, bool);
 
     // InspectorInstrumentation API
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);

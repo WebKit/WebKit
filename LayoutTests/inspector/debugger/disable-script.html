@@ -1,0 +1,85 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+var count = 0;
+
+function updateCount()
+{
+    setTimeout(function() {
+        count++;
+    }, 0);
+}
+
+function recordExecutions()
+{
+    document.getElementById("main").textContent = "Execution count: " + count;
+}
+
+function test()
+{
+    function dumpState(next)
+    {
+        PageAgent.getScriptExecutionStatus(statusCallback);
+        function statusCallback(error, status)
+        {
+            if (error) {
+                InspectorTest.addResult("Error: " + JSON.stringify(error));
+                return;
+            }
+
+            InspectorTest.addResult("Script execution status: " + status);
+            next();
+        }
+   }
+
+    function updateCount(next)
+    {
+        InspectorTest.addResult("Attempting execution...");
+        InspectorTest.evaluateInPage("updateCount()", next);
+    }
+
+    function setJSDisabled(disabled, next)
+    {
+        PageAgent.setScriptExecutionDisabled(disabled, next);
+    }
+
+    InspectorTest.runTestSuite([
+        function init(next)
+        {
+            PageAgent.enable();
+            dumpState(next);
+        },
+
+        function tryWithEnabled(next)
+        {
+            updateCount(dumpState.bind(null, next));
+        },
+
+        function tryWithDisabled(next)
+        {
+            setJSDisabled(true, updateCount.bind(null, dumpState.bind(null, next)));
+        },
+
+        function tryWithRestored(next)
+        {
+            setJSDisabled(false, updateCount.bind(null, dumpState.bind(null, next)));
+        },
+
+        function finalize(next)
+        {
+            InspectorTest.evaluateInPage("recordExecutions()", next);
+        }
+    ]);
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that inspector effectively disables script execution in the inspected page.
+</p>
+
+<div id="main">Original text.</div>
+</body>
+</html>
