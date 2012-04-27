@@ -57,13 +57,6 @@ public:
         NetworkStateFormatError,
         NetworkStateNetworkError,
         NetworkStateDecodeError,
-        Empty = NetworkStateEmpty,
-        Idle = NetworkStateIdle,
-        Loading = NetworkStateLoading,
-        Loaded = NetworkStateLoaded,
-        FormatError = NetworkStateFormatError,
-        NetworkError = NetworkStateNetworkError,
-        DecodeError = NetworkStateDecodeError,
     };
 
     enum ReadyState {
@@ -72,11 +65,6 @@ public:
         ReadyStateHaveCurrentData,
         ReadyStateHaveFutureData,
         ReadyStateHaveEnoughData,
-        HaveNothing = ReadyStateHaveNothing,
-        HaveMetadata = ReadyStateHaveMetadata,
-        HaveCurrentData = ReadyStateHaveCurrentData,
-        HaveFutureData = ReadyStateHaveFutureData,
-        HaveEnoughData = ReadyStateHaveEnoughData,
     };
 
     enum MovieLoadType {
@@ -84,19 +72,12 @@ public:
         MovieLoadTypeDownload,
         MovieLoadTypeStoredStream,
         MovieLoadTypeLiveStream,
-        Unknown = MovieLoadTypeUnknown,
-        Download = MovieLoadTypeDownload,
-        StoredStream = MovieLoadTypeStoredStream,
-        LiveStream = MovieLoadTypeLiveStream,
     };
 
     enum Preload {
         PreloadNone,
         PreloadMetaData,
         PreloadAuto,
-        None = PreloadNone,
-        MetaData = PreloadMetaData,
-        Auto = PreloadAuto,
     };
 
     enum AddIdStatus {
@@ -109,9 +90,6 @@ public:
         EndOfStreamStatusNoError,
         EndOfStreamStatusNetworkError,
         EndOfStreamStatusDecodeError,
-        EosNoError = EndOfStreamStatusNoError,
-        EosNetworkError = EndOfStreamStatusNetworkError,
-        EosDecodeError = EndOfStreamStatusDecodeError,
     };
 
     // Represents synchronous exceptions that can be thrown from the Encrypted
@@ -120,9 +98,6 @@ public:
         MediaKeyExceptionNoError,
         MediaKeyExceptionInvalidPlayerState,
         MediaKeyExceptionKeySystemNotSupported,
-        NoError = MediaKeyExceptionNoError,
-        InvalidPlayerState = MediaKeyExceptionInvalidPlayerState,
-        KeySystemNotSupported = MediaKeyExceptionKeySystemNotSupported,
     };
 
     virtual ~WebMediaPlayer() {}
@@ -205,9 +180,9 @@ public:
 
     // Returns whether keySystem is supported. If true, the result will be
     // reported by an event.
-    virtual MediaKeyException generateKeyRequest(const WebString& keySystem, const unsigned char* initData, unsigned initDataLength) { return KeySystemNotSupported; }
-    virtual MediaKeyException addKey(const WebString& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const WebString& sessionId) { return KeySystemNotSupported; }
-    virtual MediaKeyException cancelKeyRequest(const WebString& keySystem, const WebString& sessionId) { return KeySystemNotSupported; }
+    virtual MediaKeyException generateKeyRequest(const WebString& keySystem, const unsigned char* initData, unsigned initDataLength) { return MediaKeyExceptionKeySystemNotSupported; }
+    virtual MediaKeyException addKey(const WebString& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const WebString& sessionId) { return MediaKeyExceptionKeySystemNotSupported; }
+    virtual MediaKeyException cancelKeyRequest(const WebString& keySystem, const WebString& sessionId) { return MediaKeyExceptionKeySystemNotSupported; }
 };
 
 } // namespace WebKit
