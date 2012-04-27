@@ -46,6 +46,9 @@ public:
     {
     }
 
+    // NOTE: The references returned by these functions are only valid for as long
+    // as the Attribute stays in place. For example, calling a function that mutates
+    // an Element's internal attribute storage may invalidate them.
     const AtomicString& value() const { return m_value; }
     const AtomicString& prefix() const { return m_name.prefix(); }
     const AtomicString& localName() const { return m_name.localName(); }

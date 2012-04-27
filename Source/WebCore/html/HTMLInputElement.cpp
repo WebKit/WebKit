@@ -532,9 +532,10 @@ void HTMLInputElement::updateType()
         setAttribute(valueAttr, m_valueIfDirty);
         m_valueIfDirty = String();
     }
-    if (!didStoreValue && willStoreValue)
-        m_valueIfDirty = sanitizeValue(fastGetAttribute(valueAttr));
-    else
+    if (!didStoreValue && willStoreValue) {
+        AtomicString valueString = fastGetAttribute(valueAttr);
+        m_valueIfDirty = sanitizeValue(valueString);
+    } else
         updateValueIfNeeded();
 
     setFormControlValueMatchesRenderer(false);
@@ -991,7 +992,8 @@ String HTMLInputElement::value() const
     if (!value.isNull())
         return value;
 
-    value = sanitizeValue(fastGetAttribute(valueAttr));
+    AtomicString valueString = fastGetAttribute(valueAttr);
+    value = sanitizeValue(valueString);
     if (!value.isNull())
         return value;
 

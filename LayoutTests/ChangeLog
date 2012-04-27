@@ -1,3 +1,13 @@
+2012-04-26  Andreas Kling  <kling@webkit.org>
+
+        Avoid mutating Element attribute storage in StepRange constructor.
+        <http://webkit.org/b/84797>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/selectors/querySelector-in-range-crash-expected.txt: Added.
+        * fast/selectors/querySelector-in-range-crash.html: Added.
+
 2012-04-27  Rob Buis  <rbuis@rim.com>
 
         SVG inline style of 'marker-*' does not override
