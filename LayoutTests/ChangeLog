@@ -1,3 +1,11 @@
+2012-04-27  Eric Carlson  <eric.carlson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=85038
+
+        Unreviewed, Mac test_expectations update.
+
+        * platform/mac/test_expectations.txt: Skip http/tests/inspector/network/network-initiator.html.
+
 2012-04-27  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Implement CSS Animations and Transitions for CSS Shaders
