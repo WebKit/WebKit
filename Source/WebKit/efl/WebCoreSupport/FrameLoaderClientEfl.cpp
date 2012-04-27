@@ -839,9 +839,13 @@ enum {
     WebKitErrorPluginWillHandleLoad = 204
 };
 
+// Domains used for ResourceError
+const char* const NSURLErrorDomain = "NSURLErrorDomain";
+const char* const WebKitErrorDomain = "WebKitErrorDomain";
+
 ResourceError FrameLoaderClientEfl::cancelledError(const ResourceRequest& request)
 {
-    ResourceError error("Error", -999, request.url().string(),
+    ResourceError error(NSURLErrorDomain, -999, request.url().string(),
                         "Request cancelled");
     error.setIsCancellation(true);
     return error;
@@ -849,37 +853,37 @@ ResourceError FrameLoaderClientEfl::cancelledError(const ResourceRequest& reques
 
 ResourceError FrameLoaderClientEfl::blockedError(const ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorCannotUseRestrictedPort, request.url().string(),
+    return ResourceError(WebKitErrorDomain, WebKitErrorCannotUseRestrictedPort, request.url().string(),
                          "Request blocked");
 }
 
 ResourceError FrameLoaderClientEfl::cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorCannotShowURL, request.url().string(),
+    return ResourceError(WebKitErrorDomain, WebKitErrorCannotShowURL, request.url().string(),
                          "Cannot show URL");
 }
 
 ResourceError FrameLoaderClientEfl::interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorFrameLoadInterruptedByPolicyChange,
+    return ResourceError(WebKitErrorDomain, WebKitErrorFrameLoadInterruptedByPolicyChange,
                          request.url().string(), "Frame load interrupted by policy change");
 }
 
 ResourceError FrameLoaderClientEfl::cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError("Error", WebKitErrorCannotShowMIMEType, response.url().string(),
+    return ResourceError(NSURLErrorDomain, WebKitErrorCannotShowMIMEType, response.url().string(),
                          "Cannot show mimetype");
 }
 
 ResourceError FrameLoaderClientEfl::fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError("Error", -998 /* ### */, response.url().string(),
+    return ResourceError(NSURLErrorDomain, -998 /* ### */, response.url().string(),
                          "File does not exist");
 }
 
 ResourceError FrameLoaderClientEfl::pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError("Error", WebKitErrorPluginWillHandleLoad, response.url().string(),
+    return ResourceError(WebKitErrorDomain, WebKitErrorPluginWillHandleLoad, response.url().string(),
                          "Plugin will handle load");
 }
 

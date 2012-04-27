@@ -1,3 +1,24 @@
+2012-04-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] ResourceError domain needs to be properly set in FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=84129
+
+        Reviewed by Nate Chapin.
+
+        Properly set ResourceError objects' domain instead of using a generic
+        one. This allows WebKit and NSURL errors to be distinguished, which is
+        required to properly print out information in EFL's DumpRenderTree
+        when dumpResourceLoadCallbacks() returns true.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::cancelledError):
+        (WebCore::FrameLoaderClientEfl::blockedError):
+        (WebCore::FrameLoaderClientEfl::cannotShowURLError):
+        (WebCore::FrameLoaderClientEfl::interruptedForPolicyChangeError):
+        (WebCore::FrameLoaderClientEfl::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientEfl::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientEfl::pluginWillHandleLoadError):
+
 2012-04-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] tabsToLinks ewk_view setting
