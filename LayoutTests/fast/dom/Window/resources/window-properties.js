@@ -70,6 +70,7 @@ var propertyInfo = [
     ["HTMLButtonElement", "object"],
     ["HTMLCanvasElement", "object"],
     ["HTMLDListElement", "object"],
+    ["HTMLDataListElement", "object"],
     ["HTMLDirectoryElement", "object"],
     ["HTMLDivElement", "object"],
     ["HTMLDocument", "object"],

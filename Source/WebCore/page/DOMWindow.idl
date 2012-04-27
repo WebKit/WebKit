@@ -404,6 +404,7 @@ module window {
         attribute HTMLButtonElementConstructor HTMLButtonElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;
         attribute HTMLDListElementConstructor HTMLDListElement;
+        attribute [Conditional=DATALIST] HTMLDataListElementConstructor HTMLDataListElement;
         attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
         attribute HTMLDivElementConstructor HTMLDivElement;
         attribute HTMLEmbedElementConstructor HTMLEmbedElement;
