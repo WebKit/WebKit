@@ -3,6 +3,13 @@
         Unreviewed, GTK gardening.
 
         * Scripts/run-gtk-tests:
+        (TestRunner): Skip flaky WebKit2 API test.
+
+2012-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * Scripts/run-gtk-tests:
         (TestRunner): Fix another typo. So easy to get confused by a Test
         name and the actual name of the executable...
 

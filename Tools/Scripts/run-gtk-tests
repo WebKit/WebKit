@@ -84,7 +84,10 @@ class TestRunner:
                     84961),
         SkippedTest("TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutFrames",
                     "Test fails",
-                    85037)
+                    85037),
+        SkippedTest("TestWebKitAPI/WebKit2/TestMouseMoveAfterCrash",
+                    "Test is flaky",
+                    85066)
     ]
 
     def __init__(self, options, tests=[]):
