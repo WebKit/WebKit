@@ -1,3 +1,21 @@
+2012-04-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] tabsToLinks ewk_view setting
+        https://bugs.webkit.org/show_bug.cgi?id=84340
+
+        Exporting new ewk_view setting: tabsToLinks - enbles/disables tab key focusing of page elements.
+
+        Reviewed by Antonio Gomes.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::keyboardUIMode):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_include_links_in_focus_chain_get):
+        (ewk_view_setting_include_links_in_focus_chain_set):
+        * ewk/ewk_view.h:
+
 2012-04-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] DRT should support LayoutTestController's dumpResourceLoadCallbacks()

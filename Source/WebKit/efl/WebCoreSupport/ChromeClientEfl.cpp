@@ -306,7 +306,7 @@ bool ChromeClientEfl::shouldInterruptJavaScript()
 
 KeyboardUIMode ChromeClientEfl::keyboardUIMode()
 {
-    return KeyboardAccessTabsToLinks;
+    return ewk_view_setting_include_links_in_focus_chain_get(m_view) ? KeyboardAccessTabsToLinks : KeyboardAccessDefault;
 }
 
 IntRect ChromeClientEfl::windowResizerRect() const

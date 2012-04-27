@@ -225,6 +225,7 @@ struct _Ewk_View_Private_Data {
         bool pageCache : 1;
         bool enableXSSAuditor : 1;
         bool webGLEnabled : 1;
+        bool tabsToLinks : 1;
         struct {
             float minScale;
             float maxScale;
@@ -737,6 +738,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.pageCache = priv->pageSettings->usesPageCache();
     priv->settings.encodingDetector = priv->pageSettings->usesEncodingDetector();
     priv->settings.webGLEnabled = priv->pageSettings->webGLEnabled();
+    priv->settings.tabsToLinks = true;
 
     priv->settings.userAgent = ewk_settings_default_user_agent_get();
 
@@ -2487,6 +2489,22 @@ Eina_Bool ewk_view_setting_enable_webgl_set(Evas_Object* ewkView, Eina_Bool enab
         priv->pageSettings->setWebGLEnabled(enable);
         priv->settings.webGLEnabled = enable;
     }
+    return true;
+}
+
+Eina_Bool ewk_view_setting_include_links_in_focus_chain_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.tabsToLinks;
+}
+
+Eina_Bool ewk_view_setting_include_links_in_focus_chain_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    enable = !!enable;
+    priv->settings.tabsToLinks = enable;
     return true;
 }
 

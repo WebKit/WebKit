@@ -2019,6 +2019,33 @@ EAPI Eina_Bool ewk_view_setting_enable_webgl_get(const Evas_Object *o);
 EAPI Eina_Bool ewk_view_setting_enable_webgl_set(Evas_Object *o, Eina_Bool enable);
 
 /**
+ * Queries if tab key focusing of page elements is enabled.
+ *
+ * When this setting is enabled, the elements in the page (links and form controls) will be cycled through by pressing the tab key.
+ * Tab key focusing of page elements is enabled by default.
+ *
+ * @param o view object to query if tab key focusing of page elements is enabled
+ *
+ * @return @c EINA_TRUE if tab key focusing of page elements is enabled, @c EINA_FALSE
+ *         otherwise
+ */
+EAPI Eina_Bool ewk_view_setting_include_links_in_focus_chain_get(const Evas_Object *o);
+
+/**
+ * Enables/disables tab key focusing of page elements.
+ *
+ * When this setting is enabled, the elements in the page (links and form controls) will be cycled through by pressing the tab key.
+ * Tab key focusing of page elements is enabled by default.
+ *
+ * @param o view object to set tab key focusing of page elements
+ * @param enable @c EINA_TRUE to enable tab key focusing of page elements, @c EINA_FALSE to
+ *               disable
+ *
+ * @return @c EINA_TRUE on success or @EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_setting_include_links_in_focus_chain_set(Evas_Object *o, Eina_Bool enable);
+
+/**
  * Gets the internal data of @a o.
  *
  * This is similar to evas_object_smart_data_get(), but additionally does type checking.
