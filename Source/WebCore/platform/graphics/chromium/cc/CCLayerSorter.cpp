@@ -233,7 +233,7 @@ void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::itera
             continue;
 
 #if !defined( NDEBUG )
-        LOG(CCLayerSorter, "Layer %d (%d x %d)\n", node.layer->debugID(), node.layer->bounds().width(), node.layer->bounds().height());
+        LOG(CCLayerSorter, "Layer %d (%d x %d)\n", node.layer->id(), node.layer->bounds().width(), node.layer->bounds().height());
 #endif
 
         TransformationMatrix drawTransform;
@@ -289,7 +289,7 @@ void CCLayerSorter::createGraphEdges()
 
             if (startNode) {
 #if !defined( NDEBUG )
-                LOG(CCLayerSorter, "%d -> %d\n", startNode->layer->debugID(), endNode->layer->debugID());
+                LOG(CCLayerSorter, "%d -> %d\n", startNode->layer->id(), endNode->layer->id());
 #endif
                 m_edges.append(GraphEdge(startNode, endNode, weight));
             }
@@ -375,7 +375,7 @@ void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
             sortedList.append(fromNode);
 
 #if !defined( NDEBUG )
-            LOG(CCLayerSorter, "%d, ", fromNode->layer->debugID());
+            LOG(CCLayerSorter, "%d, ", fromNode->layer->id());
 #endif
 
             // Remove all its outgoing edges from the graph.
@@ -420,7 +420,7 @@ void CCLayerSorter::sort(LayerList::iterator first, LayerList::iterator last)
         nextNode->incomingEdgeWeight = 0;
         noIncomingEdgeNodeList.append(nextNode);
 #if !defined( NDEBUG )
-        LOG(CCLayerSorter, "Breaking cycle by cleaning up incoming edges from %d (weight = %f)\n", nextNode->layer->debugID(), minIncomingEdgeWeight);
+        LOG(CCLayerSorter, "Breaking cycle by cleaning up incoming edges from %d (weight = %f)\n", nextNode->layer->id(), minIncomingEdgeWeight);
 #endif
     }
 

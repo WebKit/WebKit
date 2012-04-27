@@ -79,10 +79,6 @@ public:
     void setReplicaLayer(PassOwnPtr<CCLayerImpl>);
     CCLayerImpl* replicaLayer() const { return m_replicaLayer.get(); }
 
-#ifndef NDEBUG
-    int debugID() const { return m_debugID; }
-#endif
-
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     // willDraw must be called before appendQuads. If willDraw is called,
     // didDraw is guaranteed to be called before another willDraw or before
@@ -317,12 +313,6 @@ private:
     IntSize m_sentScrollDelta;
     IntSize m_maxScrollPosition;
     float m_pageScaleDelta;
-
-    // Properties owned exclusively by this CCLayerImpl.
-    // Debugging.
-#ifndef NDEBUG
-    int m_debugID;
-#endif
 
     // Render surface this layer draws into. This is a surface that can belong
     // either to this layer (if m_targetRenderSurface == m_renderSurface) or
