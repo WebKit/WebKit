@@ -21,8 +21,6 @@
 #include "config.h"
 #include "WebKitDOMTestCallback.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
@@ -48,6 +46,8 @@
 #include <glib-object.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+
+#if ENABLE(SQL_DATABASE)
 
 namespace WebKit {
 

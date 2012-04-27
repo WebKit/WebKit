@@ -1413,7 +1413,6 @@ EOF
     print IMPL @cPrefix;
     print IMPL "#include \"config.h\"\n";
     print IMPL "#include \"$installedHeaderFilename\"\n\n";
-    print IMPL "#if ${conditionalString}\n\n" if $conditionalString;
 
     # Remove the implementation header from the list of included files.
     %includesCopy = %implIncludes;
@@ -1423,6 +1422,7 @@ EOF
     print IMPL "#include <glib-object.h>\n";
     print IMPL "#include <wtf/GetPtr.h>\n";
     print IMPL "#include <wtf/RefPtr.h>\n\n";
+    print IMPL "#if ${conditionalString}\n\n" if $conditionalString;
 
     print IMPL "namespace WebKit {\n\n";
     print IMPL @cBodyPriv;

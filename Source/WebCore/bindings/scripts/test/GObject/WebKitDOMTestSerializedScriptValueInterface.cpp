@@ -21,8 +21,6 @@
 #include "config.h"
 #include "WebKitDOMTestSerializedScriptValueInterface.h"
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
-
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
@@ -44,6 +42,8 @@
 #include <glib-object.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
 
 namespace WebKit {
 
