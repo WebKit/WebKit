@@ -129,7 +129,7 @@ void LayerTreeHostProxy::setContentsSize(const FloatSize& contentsSize)
 
 void LayerTreeHostProxy::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
-    m_renderer->setVisibleContentsRect(rect, scale);
+    dispatchUpdate(bind(&WebLayerTreeRenderer::setVisibleContentsRect, m_renderer.get(), rect, scale));
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentsRect(rect, scale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
 }
 
