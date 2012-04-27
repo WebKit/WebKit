@@ -82,7 +82,7 @@ class TestRunner:
         SkippedTest("TestWebKitAPI/WebKit2/TestSpacebarScrolling",
                     "Test fails",
                     84961),
-        SkippedTest("TestWebKitAPI/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames",
+        SkippedTest("TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutFrames",
                     "Test fails",
                     85037)
     ]
