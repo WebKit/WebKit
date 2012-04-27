@@ -1,3 +1,10 @@
+2012-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/test_expectations.txt: Mark another http/inspector
+        test as crashing.
+
 2012-04-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Implement the "Disable JavaScript" option in the settings dialog

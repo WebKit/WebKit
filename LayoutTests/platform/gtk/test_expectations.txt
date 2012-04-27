@@ -362,6 +362,7 @@ BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin.html = CRASH
 BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin-in-subframe.html = CRASH
 
 BUGWK85043 : http/tests/inspector-enabled/console-clear-arguments-on-frame-remove.html = CRASH
+BUGWK85043 : http/tests/inspector-enabled/console-log-before-frame-navigation.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
