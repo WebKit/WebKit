@@ -32,6 +32,7 @@
 #define WebRange_h
 
 #include "platform/WebCommon.h"
+#include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class Range; }
@@ -40,6 +41,7 @@ namespace WTF { template <typename T> class PassRefPtr; }
 
 namespace WebKit {
 
+class WebFloatQuad;
 class WebFrame;
 class WebNode;
 class WebRangePrivate;
@@ -72,6 +74,8 @@ public:
     WEBKIT_EXPORT WebString toPlainText() const;
 
     WEBKIT_EXPORT static WebRange fromDocumentRange(WebFrame*, int start, int length);
+
+    WEBKIT_EXPORT WebVector<WebFloatQuad> textQuads() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebRange(const WTF::PassRefPtr<WebCore::Range>&);

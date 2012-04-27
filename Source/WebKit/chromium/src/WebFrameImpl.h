@@ -175,6 +175,7 @@ public:
     virtual WebString selectionAsMarkup() const;
     virtual bool selectWordAroundCaret();
     virtual void selectRange(const WebPoint& start, const WebPoint& end);
+    virtual void selectRange(const WebRange&);
     virtual int printBegin(const WebSize& pageSize,
                            const WebNode& constrainToNode,
                            int printerDPI,
