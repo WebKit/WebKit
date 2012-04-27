@@ -50,7 +50,7 @@ public:
     
 private:
     ClassStructPtr _isa;
-    RetainPtr<CFMutableDictionaryRef> _methods;
+    mutable HashMap<String, OwnPtr<Method> > m_methodCache;
     mutable HashMap<String, OwnPtr<Field> > m_fieldCache;
 };
 

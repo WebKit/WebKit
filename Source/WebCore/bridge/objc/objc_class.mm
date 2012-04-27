@@ -31,17 +31,9 @@
 
 namespace JSC {
 namespace Bindings {
-    
-static void deleteMethod(CFAllocatorRef, const void* value)
-{
-    delete static_cast<const Method*>(value);
-}
 
-const CFDictionaryValueCallBacks MethodDictionaryValueCallBacks = { 0, 0, &deleteMethod, 0 , 0 };
-    
 ObjcClass::ObjcClass(ClassStructPtr aClass)
     : _isa(aClass)
-    , _methods(AdoptCF, CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &MethodDictionaryValueCallBacks))
 {
 }
 
@@ -105,17 +97,16 @@ static inline void convertJSMethodNameToObjc(const CString& jsName, JSNameConver
 
 MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) const
 {
-    CString jsName = identifier.ascii();
-    JSNameConversionBuffer buffer;
-    convertJSMethodNameToObjc(jsName, buffer);
-
     MethodList methodList;
-    RetainPtr<CFStringRef> methodName(AdoptCF, CFStringCreateWithCString(NULL, buffer.data(), kCFStringEncodingASCII));
-    Method* method = (Method*)CFDictionaryGetValue(_methods.get(), methodName.get());
-    if (method) {
+    if (Method* method = m_methodCache.get(identifier.impl())) {
         methodList.append(method);
         return methodList;
     }
+
+    CString jsName = identifier.ascii();
+    JSNameConversionBuffer buffer;
+    convertJSMethodNameToObjc(jsName, buffer);
+    RetainPtr<CFStringRef> methodName(AdoptCF, CFStringCreateWithCString(NULL, buffer.data(), kCFStringEncodingASCII));
 
     ClassStructPtr thisClass = _isa;
     while (thisClass && methodList.isEmpty()) {
@@ -139,9 +130,9 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
                 mappedName = [thisClass webScriptNameForSelector:objcMethodSelector];
 
             if ((mappedName && [mappedName isEqual:(NSString*)methodName.get()]) || strcmp(objcMethodSelectorName, buffer.data()) == 0) {
-                Method* aMethod = new ObjcMethod(thisClass, objcMethodSelector); // deleted when the dictionary is destroyed
-                CFDictionaryAddValue(_methods.get(), methodName.get(), aMethod);
-                methodList.append(aMethod);
+                OwnPtr<Method> method = adoptPtr(new ObjcMethod(thisClass, objcMethodSelector));
+                methodList.append(method.get());
+                m_methodCache.add(identifier.impl(), method.release());
                 break;
             }
         }
