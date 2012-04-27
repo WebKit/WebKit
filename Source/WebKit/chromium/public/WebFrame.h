@@ -450,8 +450,6 @@ public:
 
     virtual void selectRange(const WebPoint& start, const WebPoint& end) = 0;
 
-    virtual void selectRange(const WebRange&) = 0;
-
 
     // Printing ------------------------------------------------------------
 

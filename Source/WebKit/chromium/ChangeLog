@@ -1,3 +1,27 @@
+2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r115463.
+        http://trac.webkit.org/changeset/115463
+        https://bugs.webkit.org/show_bug.cgi?id=82460
+
+        Broke Mac build.
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebHitTestResult.h: Removed.
+        * public/WebRange.h:
+        (WebRange):
+        * public/WebSurroundingText.h: Removed.
+        * public/WebView.h:
+        (WebKit):
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebHitTestResult.cpp: Removed.
+        * src/WebRange.cpp:
+        * src/WebSurroundingText.cpp: Removed.
+
 2012-04-27  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
 
         Added a chromium webkit public header file to support different web print scaling options.

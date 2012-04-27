@@ -1413,13 +1413,6 @@ void WebFrameImpl::selectRange(const WebPoint& start, const WebPoint& end)
         frame()->selection()->setSelection(selection, CharacterGranularity);
 }
 
-void WebFrameImpl::selectRange(const WebRange& webRange)
-{
-    RefPtr<Range> range = static_cast<PassRefPtr<Range> >(webRange);
-    if (range)
-        frame()->selection()->setSelectedRange(range.get(), WebCore::VP_DEFAULT_AFFINITY, false);
-}
-
 VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& point)
 {
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::Move;
