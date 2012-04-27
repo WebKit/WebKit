@@ -80,6 +80,7 @@ void CanvasLayerWebKitThread::updateTextureContentsIfNeeded()
     pthread_mutex_lock(m_frontBufferLock);
     glBindTexture(GL_TEXTURE_2D, m_texID);
     glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, m_device->width(), m_device->height(), 0);
+    glFinish(); // This might be implicit in the CopyTexImage2D, but explicit Finish is required on some architectures
     glBindTexture(GL_TEXTURE_2D, previousTexture);
     pthread_mutex_unlock(m_frontBufferLock);
 }

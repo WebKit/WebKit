@@ -166,14 +166,15 @@ LayerRenderer::LayerRenderer(GLES2Context* context)
 
 LayerRenderer::~LayerRenderer()
 {
-    makeContextCurrent();
-    if (m_fbo)
-        glDeleteFramebuffers(1, &m_fbo);
-    glDeleteProgram(m_colorProgramObject);
-    glDeleteProgram(m_checkerProgramObject);
-    for (int i = 0; i < LayerData::NumberOfLayerProgramShaders; ++i)
-        glDeleteProgram(m_layerProgramObject[i]);
     if (m_hardwareCompositing) {
+        makeContextCurrent();
+        if (m_fbo)
+            glDeleteFramebuffers(1, &m_fbo);
+        glDeleteProgram(m_colorProgramObject);
+        glDeleteProgram(m_checkerProgramObject);
+        for (int i = 0; i < LayerData::NumberOfLayerProgramShaders; ++i)
+            glDeleteProgram(m_layerProgramObject[i]);
+
         // Free up all GL textures.
         while (m_layers.begin() != m_layers.end()) {
             LayerSet::iterator iter = m_layers.begin();
@@ -210,6 +211,8 @@ static inline bool compareLayerZ(const LayerCompositingThread* a, const LayerCom
 void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layoutRect, const IntSize& contentsSize, const IntRect& dstRect)
 {
     ASSERT(m_hardwareCompositing);
+    if (!m_hardwareCompositing)
+        return;
 
     bool wasEmpty = m_lastRenderingResults.isEmpty();
     m_lastRenderingResults = LayerRenderingResults();
@@ -268,7 +271,8 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
         return;
 
     // Okay, we're going to do some drawing.
-    makeContextCurrent();
+    if (!makeContextCurrent())
+        return;
 
     // Get rid of any bound buffer that might affect the interpretation of our
     // glVertexAttribPointer calls.
@@ -314,10 +318,12 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
 #endif
 
     glClearStencil(0);
+    glClearColor(0, 0, 0, 0);
+    GLenum buffersToClear = GL_STENCIL_BUFFER_BIT;
     if (m_clearSurfaceOnDrawLayers) {
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        buffersToClear |= GL_COLOR_BUFFER_BIT;
     }
+    glClear(buffersToClear);
 
     // Don't render the root layer, the BlackBerry port uses the BackingStore to draw the
     // root layer.
@@ -327,12 +333,23 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
         compositeLayersRecursive(sublayers[i].get(), currentStencilValue, clipRect);
     }
 
+    // We need to make sure that all texture resource usage is finished before
+    // unlocking the texture resources, so force a glFinish() in that case.
+    if (m_layersLockingTextureResources.size())
+        glFinish();
+
     m_context->swapBuffers();
 
 #if ENABLE_SCISSOR
     glDisable(GL_SCISSOR_TEST);
 #endif
     glDisable(GL_STENCIL_TEST);
+
+    // PR 147254, the EGL implementation crashes when the last bound texture
+    // was an EGLImage, and you try to bind another texture and the pixmap
+    // backing the EGLImage was deleted in between. Make this easier for the
+    // driver by unbinding early (when the pixmap is hopefully still around).
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     LayerSet::iterator iter = m_layersLockingTextureResources.begin();
     for (; iter != m_layersLockingTextureResources.end(); ++iter)
@@ -979,7 +996,8 @@ bool LayerRenderer::initializeSharedGLObjects()
     tmp.replace("GRID", String::format("%.3f", (float)checkerSize));
     CString checkerFragmentShaderString = tmp.latin1();
 
-    makeContextCurrent();
+    if (!makeContextCurrent())
+        return false;
 
     m_layerProgramObject[LayerData::LayerProgramShaderRGBA] =
         loadShaderProgram(vertexShaderString, fragmentShaderStringRGBA);
