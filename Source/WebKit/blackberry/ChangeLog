@@ -1,3 +1,20 @@
+2012-04-27  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] Find-in-page fails to deactivate the old active match when moving backwards
+        https://bugs.webkit.org/show_bug.cgi?id=84892
+
+        Reviewed by Antonio Gomes.
+
+        Find in page fails to deactivate the old active match when moving backwards
+        because searchStartingPoint was incorrectly initialized.
+        Create a real range object instead of referencing other range object.
+        PR 152009
+
+        Internally reviewed by Yongxin Dai.
+
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+
 2012-04-26  Yong Li  <yoli@rim.com>
 
         [BlackBerry] A quick fix to the previous patch r115245.

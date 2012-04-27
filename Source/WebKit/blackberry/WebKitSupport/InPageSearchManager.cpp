@@ -26,6 +26,7 @@
 #include "Frame.h"
 #include "Node.h"
 #include "Page.h"
+#include "Range.h"
 #include "TextIterator.h"
 #include "Timer.h"
 #include "WebPage_p.h"
@@ -99,7 +100,8 @@ bool InPageSearchManager::findNextString(const String& text, FindOptions findOpt
     if (m_activeMatch && !m_activeMatch->boundaryPointsValid())
         m_activeMatch = 0;
 
-    RefPtr<Range> searchStartingPoint(m_activeMatch);
+    ExceptionCode ec = 0;
+    RefPtr<Range> searchStartingPoint = m_activeMatch ? m_activeMatch->cloneRange(ec) : 0;
     bool newSearch = m_activeSearchString != text;
     bool forward = !(findOptions & WebCore::Backwards);
     if (newSearch) { // Start a new search.
