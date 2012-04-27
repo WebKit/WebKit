@@ -335,6 +335,20 @@
                     { "name": "result", "type": "boolean", "description": "True for showing paint rectangles" }
                 ],
                 "hidden": true
+            },
+            {
+                "name": "getScriptExecutionStatus",
+                "description": "Determines if scripts can be executed in the page.",
+                "returns": [
+                    { "name": "result", "type": "string", "enum": ["allowed", "disabled", "forbidden"], "description": "Script execution status: \"allowed\" if scripts can be executed, \"disabled\" if script execution has been disabled through page settings, \"forbidden\" if script execution for the given page is not possible for other reasons." }
+                ]
+            },
+            {
+                "name": "setScriptExecutionDisabled",
+                "description": "Switches script execution in the page.",
+                "parameters": [
+                    { "name": "value", "type": "boolean", "description": "Whether script execution should be disabled in the page." }
+                ]
             }
         ],
         "events": [
