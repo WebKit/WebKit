@@ -329,9 +329,15 @@ IntPoint ScrollView::adjustScrollPositionWithinRange(const IntPoint& scrollPoint
 
 int ScrollView::scrollSize(ScrollbarOrientation orientation) const
 {
-    IntSize scrollSize = m_contentsSize - visibleContentRect().size();
-    scrollSize.clampNegativeToZero();
-    return orientation == HorizontalScrollbar ? scrollSize.width() : scrollSize.height();
+    // If no scrollbars are present, it does not indicate content is not be scrollable.
+    if (!m_horizontalScrollbar && !m_verticalScrollbar && !prohibitsScrolling()) {
+        IntSize scrollSize = m_contentsSize - visibleContentRect().size();
+        scrollSize.clampNegativeToZero();
+        return orientation == HorizontalScrollbar ? scrollSize.width() : scrollSize.height();
+    }
+
+    Scrollbar* scrollbar = ((orientation == HorizontalScrollbar) ? m_horizontalScrollbar : m_verticalScrollbar).get();
+    return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
 }
 
 void ScrollView::notifyPageThatContentAreaWillPaint() const
