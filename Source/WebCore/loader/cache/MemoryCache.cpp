@@ -44,6 +44,7 @@
 #include "WorkerThread.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
 using namespace std;
@@ -66,7 +67,7 @@ MemoryCache* memoryCache()
 MemoryCache::MemoryCache()
     : m_disabled(false)
     , m_pruneEnabled(true)
-    , m_inPruneDeadResources(false)
+    , m_inPruneResources(false)
     , m_capacity(cDefaultCacheCapacity)
     , m_minDeadCapacity(0)
     , m_maxDeadCapacity(cDefaultCacheCapacity)
@@ -208,6 +209,10 @@ void MemoryCache::pruneLiveResourcesToPercentage(float prunePercentage)
 
 void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize)
 {
+    if (m_inPruneResources)
+        return;
+    TemporaryChange<bool> reentrancyProtector(m_inPruneResources, true);
+
     double currentTime = FrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
         currentTime = WTF::currentTime();
@@ -270,29 +275,30 @@ void MemoryCache::pruneDeadResourcesToPercentage(float prunePercentage)
 }
 
 void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
-{ 
+{
+    if (m_inPruneResources)
+        return;
+    TemporaryChange<bool> reentrancyProtector(m_inPruneResources, true);
+
     int size = m_allResources.size();
  
-    if (!m_inPruneDeadResources) {
-        // See if we have any purged resources we can evict.
-        for (int i = 0; i < size; i++) {
-            CachedResource* current = m_allResources[i].m_tail;
-            while (current) {
-                CachedResource* prev = current->m_prevInAllResourcesList;
-                if (current->wasPurged()) {
-                    ASSERT(!current->hasClients());
-                    ASSERT(!current->isPreloaded());
-                    evict(current);
-                }
-                current = prev;
+    // See if we have any purged resources we can evict.
+    for (int i = 0; i < size; i++) {
+        CachedResource* current = m_allResources[i].m_tail;
+        while (current) {
+            CachedResource* prev = current->m_prevInAllResourcesList;
+            if (current->wasPurged()) {
+                ASSERT(!current->hasClients());
+                ASSERT(!current->isPreloaded());
+                evict(current);
             }
+            current = prev;
         }
-        if (targetSize && m_deadSize <= targetSize)
-            return;
     }
-    
+    if (targetSize && m_deadSize <= targetSize)
+        return;
+
     bool canShrinkLRULists = true;
-    m_inPruneDeadResources = true;
     for (int i = size - 1; i >= 0; i--) {
         // Remove from the tail, since this is the least frequently accessed of the objects.
         CachedResource* current = m_allResources[i].m_tail;
@@ -306,10 +312,8 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
                 // LRU list in m_allResources.
                 current->destroyDecodedData();
                 
-                if (targetSize && m_deadSize <= targetSize) {
-                    m_inPruneDeadResources = false;
+                if (targetSize && m_deadSize <= targetSize)
                     return;
-                }
             }
             current = prev;
         }
@@ -322,15 +326,8 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
                 if (!makeResourcePurgeable(current))
                     evict(current);
 
-                // If evict() caused pruneDeadResources() to be re-entered, bail out. This can happen when removing an
-                // SVG CachedImage that has subresources.
-                if (!m_inPruneDeadResources)
+                if (targetSize && m_deadSize <= targetSize)
                     return;
-
-                if (targetSize && m_deadSize <= targetSize) {
-                    m_inPruneDeadResources = false;
-                    return;
-                }
             }
             current = prev;
         }
@@ -342,7 +339,6 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
         else if (canShrinkLRULists)
             m_allResources.resize(i);
     }
-    m_inPruneDeadResources = false;
 }
 
 void MemoryCache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned totalBytes)
