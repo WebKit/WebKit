@@ -53,6 +53,8 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
     display: -webkit-box;
     width: 20px;
     height: 20px;
+    position: relative;
+    z-index: 2;
     background-color: initial;
     border: initial;
     color: inherit;
@@ -108,10 +110,16 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 }
 
 audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container {
-    display: none;
+    -webkit-appearance: media-volume-slider-container;
+    position: absolute;
+    height: 100px;
+    width: 20px;
+    bottom: 20px;
+    z-index: 1;
 }
 
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
+    -webkit-appearance: media-volume-slider;
     display: none;
     background-color: initial;
     border: initial;
