@@ -1,3 +1,14 @@
+2012-04-27  Kausalya Madhusudhanan  <kmadhusu@chromium.org>
+
+        Added a chromium webkit public header file to support different web print scaling options.
+        https://bugs.webkit.org/show_bug.cgi?id=84608
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebPrintScalingOption.h: Added.
+        (WebKit):
+
 2012-04-27  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Selectively retrieve text around a touched point.
