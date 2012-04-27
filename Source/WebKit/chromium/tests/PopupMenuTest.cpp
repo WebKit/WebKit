@@ -290,7 +290,7 @@ protected:
 
 // Tests that show/hide and repeats.  Select popups are reused in web pages when
 // they are reopened, that what this is testing.
-TEST_F(SelectPopupMenuTest, ShowThenHide)
+TEST_F(SelectPopupMenuTest, DISABLED_ShowThenHide)
 {
     for (int i = 0; i < 3; i++) {
         showPopup();
@@ -300,14 +300,14 @@ TEST_F(SelectPopupMenuTest, ShowThenHide)
 
 // Tests that showing a select popup and deleting it does not cause problem.
 // This happens in real-life if a page navigates while a select popup is showing.
-TEST_F(SelectPopupMenuTest, ShowThenDelete)
+TEST_F(SelectPopupMenuTest, DISABLED_ShowThenDelete)
 {
     showPopup();
     // Nothing else to do, TearDown() deletes the popup.
 }
 
 // Tests that losing focus closes the select popup.
-TEST_F(SelectPopupMenuTest, ShowThenLoseFocus)
+TEST_F(SelectPopupMenuTest, DISABLED_ShowThenLoseFocus)
 {
     showPopup();
     // Simulate losing focus.
@@ -318,7 +318,7 @@ TEST_F(SelectPopupMenuTest, ShowThenLoseFocus)
 }
 
 // Tests that pressing ESC closes the popup.
-TEST_F(SelectPopupMenuTest, ShowThenPressESC)
+TEST_F(SelectPopupMenuTest, DISABLED_ShowThenPressESC)
 {
     showPopup();
     simulateKeyDownEvent(VKEY_ESCAPE);
@@ -327,7 +327,7 @@ TEST_F(SelectPopupMenuTest, ShowThenPressESC)
 }
 
 // Tests selecting an item with the arrows and enter/esc/tab.
-TEST_F(SelectPopupMenuTest, SelectWithKeys)
+TEST_F(SelectPopupMenuTest, DISABLED_SelectWithKeys)
 {
     showPopup();
     // Simulate selecting the 2nd item by pressing Down, Down, enter.
@@ -356,7 +356,7 @@ TEST_F(SelectPopupMenuTest, SelectWithKeys)
 
 // Tests that selecting an item with the mouse does select the item and close
 // the popup.
-TEST_F(SelectPopupMenuTest, ClickItem)
+TEST_F(SelectPopupMenuTest, DISABLED_ClickItem)
 {
     showPopup();
 
