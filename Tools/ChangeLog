@@ -1,3 +1,10 @@
+2012-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skip failing WebKit2 API test.
+
 2012-04-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] DRT should support LayoutTestController's dumpResourceLoadCallbacks()

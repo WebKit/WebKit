@@ -81,7 +81,10 @@ class TestRunner:
                     84960),
         SkippedTest("TestWebKitAPI/WebKit2/TestSpacebarScrolling",
                     "Test fails",
-                    84961)
+                    84961),
+        SkippedTest("TestWebKitAPI/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames",
+                    "Test fails",
+                    85037)
     ]
 
     def __init__(self, options, tests=[]):
