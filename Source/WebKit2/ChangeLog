@@ -1,3 +1,22 @@
+2012-04-26  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] A GraphicsSurface instance is created with every update
+        https://bugs.webkit.org/show_bug.cgi?id=85014
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Keep a copy of the GraphicsSurface in the UI process, and reuse it for
+        subsequent updates. This ensure that the texture and other data associated
+        with the GraphicsSurface does not need to be reconstructed.
+
+        * Shared/ShareableSurface.h:
+        (Handle):
+        (WebKit::ShareableSurface::Handle::graphicsSurfaceToken):
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::updateTileForLayer):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+
 2012-04-26  Martin Robinson  <mrobinson@igalia.com>
 
         [Cairo] Wrap cairo surfaces in a class when storing native images

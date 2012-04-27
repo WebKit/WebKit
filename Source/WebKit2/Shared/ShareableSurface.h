@@ -52,6 +52,10 @@ public:
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
+#if USE(GRAPHICS_SURFACE)
+        uint32_t graphicsSurfaceToken() const { return m_graphicsSurfaceToken; }
+#endif
+
     private:
         friend class ShareableSurface;
         mutable ShareableBitmap::Handle m_bitmapHandle;

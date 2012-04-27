@@ -63,7 +63,18 @@ void LayerTreeHostProxy::createTileForLayer(int layerID, int tileID, const IntRe
 
 void LayerTreeHostProxy::updateTileForLayer(int layerID, int tileID, const IntRect& targetRect, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
-    RefPtr<ShareableSurface> surface = ShareableSurface::create(updateInfo.surfaceHandle);
+    RefPtr<ShareableSurface> surface;
+#if USE(GRAPHICS_SURFACE)
+    uint32_t token = updateInfo.surfaceHandle.graphicsSurfaceToken();
+    HashMap<uint32_t, RefPtr<ShareableSurface> >::iterator it = m_surfaces.find(token);
+    if (it == m_surfaces.end()) {
+        surface = ShareableSurface::create(updateInfo.surfaceHandle);
+        m_surfaces.add(token, surface);
+    } else
+        surface = it->second;
+#else
+    surface = ShareableSurface::create(updateInfo.surfaceHandle);
+#endif
     dispatchUpdate(bind(&WebLayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, WebLayerTreeRenderer::TileUpdate(updateInfo.updateRect, targetRect, surface, updateInfo.surfaceOffset)));
 }
 
