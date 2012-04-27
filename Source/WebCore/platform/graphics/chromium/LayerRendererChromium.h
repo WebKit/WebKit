@@ -34,18 +34,12 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ContentLayerChromium.h"
 #include "FloatQuad.h"
 #include "IntRect.h"
-#include "LayerChromium.h"
 #include "TextureCopier.h"
 #include "TextureUploader.h"
 #include "TrackingTextureAllocator.h"
-#include "cc/CCDrawQuad.h"
-#include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCTextureLayerImpl.h"
-#include "cc/CCVideoLayerImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -54,12 +48,20 @@
 
 namespace WebCore {
 
+class CCCheckerboardDrawQuad;
+class CCDebugBorderDrawQuad;
+class CCDrawQuad;
+class CCIOSurfaceDrawQuad;
 class CCRenderPass;
+class CCRenderSurfaceDrawQuad;
+class CCSolidColorDrawQuad;
 class CCTextureDrawQuad;
+class CCTileDrawQuad;
+class CCVideoDrawQuad;
 class GeometryBinding;
 class GraphicsContext3D;
-class LayerRendererSwapBuffersCompleteCallbackAdapter;
 class LayerRendererGpuMemoryAllocationChangedCallbackAdapter;
+class LayerRendererSwapBuffersCompleteCallbackAdapter;
 class ScopedEnsureFramebufferAllocation;
 
 class LayerRendererChromiumClient {
@@ -112,30 +114,6 @@ public:
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const FloatQuad& sharedGeometryQuad() const { return m_sharedGeometryQuad; }
 
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderCheckerboard> CheckerboardProgram;
-
-    const CheckerboardProgram* checkerboardProgram();
-    const LayerChromium::BorderProgram* borderProgram();
-    const CCHeadsUpDisplay::Program* headsUpDisplayProgram();
-    const CCRenderSurface::Program* renderSurfaceProgram();
-    const CCRenderSurface::ProgramAA* renderSurfaceProgramAA();
-    const CCRenderSurface::MaskProgram* renderSurfaceMaskProgram();
-    const CCRenderSurface::MaskProgramAA* renderSurfaceMaskProgramAA();
-    const CCTextureLayerImpl::ProgramFlip* textureLayerProgramFlip();
-    const CCTextureLayerImpl::ProgramStretch* textureLayerProgramStretch();
-    const CCTextureLayerImpl::ProgramStretchFlip* textureLayerProgramStretchFlip();
-    const CCTextureLayerImpl::TexRectProgram* textureLayerTexRectProgram();
-    const CCTextureLayerImpl::TexRectProgramFlip* textureLayerTexRectProgramFlip();
-    const CCTiledLayerImpl::Program* tilerProgram();
-    const CCTiledLayerImpl::ProgramOpaque* tilerProgramOpaque();
-    const CCTiledLayerImpl::ProgramAA* tilerProgramAA();
-    const CCTiledLayerImpl::ProgramSwizzle* tilerProgramSwizzle();
-    const CCTiledLayerImpl::ProgramSwizzleOpaque* tilerProgramSwizzleOpaque();
-    const CCTiledLayerImpl::ProgramSwizzleAA* tilerProgramSwizzleAA();
-    const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
-    const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
-    const CCVideoLayerImpl::NativeTextureProgram* videoLayerNativeTextureProgram();
-    const CCVideoLayerImpl::StreamTextureProgram* streamTextureLayerProgram();
 
     void getFramebufferPixels(void *pixels, const IntRect&);
     bool getFramebufferTexture(ManagedTexture*, const IntRect& deviceRect);
@@ -220,33 +198,93 @@ private:
     ManagedTexture* m_currentManagedTexture;
     unsigned m_offscreenFramebufferId;
 
-    // Store values that are shared between instances of each layer type
-    // associated with this instance of the compositor. Since there can be
-    // multiple instances of the compositor running in the same renderer process
-    // we cannot store these values in static variables.
     OwnPtr<GeometryBinding> m_sharedGeometry;
-    OwnPtr<CheckerboardProgram> m_checkerboardProgram;
-    OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
-    OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
-    OwnPtr<CCTextureLayerImpl::ProgramFlip> m_textureLayerProgramFlip;
-    OwnPtr<CCTextureLayerImpl::ProgramStretch> m_textureLayerProgramStretch;
-    OwnPtr<CCTextureLayerImpl::ProgramStretchFlip> m_textureLayerProgramStretchFlip;
-    OwnPtr<CCTextureLayerImpl::TexRectProgram> m_textureLayerTexRectProgram;
-    OwnPtr<CCTextureLayerImpl::TexRectProgramFlip> m_textureLayerTexRectProgramFlip;
-    OwnPtr<CCTiledLayerImpl::Program> m_tilerProgram;
-    OwnPtr<CCTiledLayerImpl::ProgramOpaque> m_tilerProgramOpaque;
-    OwnPtr<CCTiledLayerImpl::ProgramSwizzle> m_tilerProgramSwizzle;
-    OwnPtr<CCTiledLayerImpl::ProgramSwizzleOpaque> m_tilerProgramSwizzleOpaque;
-    OwnPtr<CCTiledLayerImpl::ProgramAA> m_tilerProgramAA;
-    OwnPtr<CCTiledLayerImpl::ProgramSwizzleAA> m_tilerProgramSwizzleAA;
-    OwnPtr<CCRenderSurface::MaskProgram> m_renderSurfaceMaskProgram;
-    OwnPtr<CCRenderSurface::Program> m_renderSurfaceProgram;
-    OwnPtr<CCRenderSurface::MaskProgramAA> m_renderSurfaceMaskProgramAA;
-    OwnPtr<CCRenderSurface::ProgramAA> m_renderSurfaceProgramAA;
-    OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
-    OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
-    OwnPtr<CCVideoLayerImpl::NativeTextureProgram> m_videoLayerNativeTextureProgram;
-    OwnPtr<CCVideoLayerImpl::StreamTextureProgram> m_streamTextureLayerProgram;
+
+    // This block of bindings defines all of the programs used by the compositor itself.
+
+    // Tiled layer shaders.
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlpha> TileProgram;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampAlphaAA> TileProgramAA;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampSwizzleAlphaAA> TileProgramSwizzleAA;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexOpaque> TileProgramOpaque;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleAlpha> TileProgramSwizzle;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleOpaque> TileProgramSwizzleOpaque;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderCheckerboard> TileCheckerboardProgram;
+
+    // Render surface shaders.
+    // CCRenderSurface::drawLayers() needs to see these programs currently.
+    // FIXME: Draw with a quad type for render surfaces and get rid of this friendlyness.
+    friend class CCRenderSurface;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> RenderSurfaceProgram;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> RenderSurfaceMaskProgram;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaAA> RenderSurfaceProgramAA;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaMaskAA> RenderSurfaceMaskProgramAA;
+
+    // Texture shaders.
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexAlpha> TextureProgram;
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> TextureProgramFlip;
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectAlpha> TextureIOSurfaceProgram;
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectFlipAlpha> TextureIOSurfaceProgramFlip;
+
+    // Video shaders.
+    typedef ProgramBinding<VertexShaderVideoTransform, FragmentShaderOESImageExternal> VideoStreamTextureProgram;
+    typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> VideoYUVProgram;
+
+    // Special purpose / effects shaders.
+    typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> SolidColorProgram;
+
+    // Debugging shaders.
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexSwizzleAlpha> HeadsUpDisplayProgram;
+
+
+    const TileProgram* tileProgram();
+    const TileProgramOpaque* tileProgramOpaque();
+    const TileProgramAA* tileProgramAA();
+    const TileProgramSwizzle* tileProgramSwizzle();
+    const TileProgramSwizzleOpaque* tileProgramSwizzleOpaque();
+    const TileProgramSwizzleAA* tileProgramSwizzleAA();
+    const TileCheckerboardProgram* tileCheckerboardProgram();
+
+    const RenderSurfaceProgram* renderSurfaceProgram();
+    const RenderSurfaceProgramAA* renderSurfaceProgramAA();
+    const RenderSurfaceMaskProgram* renderSurfaceMaskProgram();
+    const RenderSurfaceMaskProgramAA* renderSurfaceMaskProgramAA();
+
+    const TextureProgram* textureProgram();
+    const TextureProgramFlip* textureProgramFlip();
+    const TextureIOSurfaceProgram* textureIOSurfaceProgram();
+    const TextureIOSurfaceProgramFlip* textureIOSurfaceProgramFlip();
+
+    const VideoYUVProgram* videoYUVProgram();
+    const VideoStreamTextureProgram* videoStreamTextureProgram();
+
+    const SolidColorProgram* solidColorProgram();
+
+    const HeadsUpDisplayProgram* headsUpDisplayProgram();
+
+    OwnPtr<TileProgram> m_tileProgram;
+    OwnPtr<TileProgramOpaque> m_tileProgramOpaque;
+    OwnPtr<TileProgramAA> m_tileProgramAA;
+    OwnPtr<TileProgramSwizzle> m_tileProgramSwizzle;
+    OwnPtr<TileProgramSwizzleOpaque> m_tileProgramSwizzleOpaque;
+    OwnPtr<TileProgramSwizzleAA> m_tileProgramSwizzleAA;
+    OwnPtr<TileCheckerboardProgram> m_tileCheckerboardProgram;
+
+    OwnPtr<RenderSurfaceProgram> m_renderSurfaceProgram;
+    OwnPtr<RenderSurfaceProgramAA> m_renderSurfaceProgramAA;
+    OwnPtr<RenderSurfaceMaskProgram> m_renderSurfaceMaskProgram;
+    OwnPtr<RenderSurfaceMaskProgramAA> m_renderSurfaceMaskProgramAA;
+
+    OwnPtr<TextureProgram> m_textureProgram;
+    OwnPtr<TextureProgramFlip> m_textureProgramFlip;
+    OwnPtr<TextureIOSurfaceProgram> m_textureIOSurfaceProgram;
+    OwnPtr<TextureIOSurfaceProgramFlip> m_textureIOSurfaceProgramFlip;
+
+    OwnPtr<VideoYUVProgram> m_videoYUVProgram;
+    OwnPtr<VideoStreamTextureProgram> m_videoStreamTextureProgram;
+
+    OwnPtr<SolidColorProgram> m_solidColorProgram;
+    OwnPtr<HeadsUpDisplayProgram> m_headsUpDisplayProgram;
 
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
     OwnPtr<AcceleratedTextureCopier> m_textureCopier;

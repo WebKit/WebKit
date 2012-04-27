@@ -194,8 +194,6 @@ public:
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
-    typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
-
     void clearRenderSurface() { m_renderSurface.clear(); }
     RenderSurfaceChromium* renderSurface() const { return m_renderSurface.get(); }
     void createRenderSurface();

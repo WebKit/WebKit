@@ -26,8 +26,6 @@
 #ifndef CCTextureLayerImpl_h
 #define CCTextureLayerImpl_h
 
-#include "ProgramBinding.h"
-#include "ShaderChromium.h"
 #include "cc/CCLayerImpl.h"
 
 namespace WebCore {
@@ -41,12 +39,6 @@ public:
     virtual ~CCTextureLayerImpl();
 
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
-
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
-    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> ProgramStretch;
-    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexFlipAlpha> ProgramStretchFlip;
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectAlpha> TexRectProgram;
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectFlipAlpha> TexRectProgramFlip;
 
     virtual void willDraw(LayerRendererChromium*) OVERRIDE;
     virtual void didLoseContext() OVERRIDE;

@@ -169,9 +169,9 @@ IntRect CCRenderSurface::readbackDeviceContentRect(LayerRendererChromium* layerR
     return computeReadbackDeviceBoundingBox(layerRenderer, drawTransform);
 }
 
-static void copyTextureToFramebuffer(LayerRendererChromium* layerRenderer, int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix)
+void CCRenderSurface::copyTextureToFramebuffer(LayerRendererChromium* layerRenderer, int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix)
 {
-    const CCRenderSurface::Program* program = layerRenderer->renderSurfaceProgram();
+    const LayerRendererChromium::RenderSurfaceProgram* program = layerRenderer->renderSurfaceProgram();
 
     GLC(layerRenderer->context(), layerRenderer->context()->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(layerRenderer->context(), layerRenderer->context()->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
@@ -291,18 +291,18 @@ void CCRenderSurface::drawLayer(LayerRendererChromium* layerRenderer, CCLayerImp
 
     if (useMask) {
         if (useAA) {
-            const MaskProgramAA* program = layerRenderer->renderSurfaceMaskProgramAA();
+            const LayerRendererChromium::RenderSurfaceMaskProgramAA* program = layerRenderer->renderSurfaceMaskProgramAA();
             drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, contentsTextureId, program, program->fragmentShader().maskSamplerLocation(), program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
         } else {
-            const MaskProgram* program = layerRenderer->renderSurfaceMaskProgram();
+            const LayerRendererChromium::RenderSurfaceMaskProgram* program = layerRenderer->renderSurfaceMaskProgram();
             drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, contentsTextureId, program, program->fragmentShader().maskSamplerLocation(), -1, -1);
         }
     } else {
         if (useAA) {
-            const ProgramAA* program = layerRenderer->renderSurfaceProgramAA();
+            const LayerRendererChromium::RenderSurfaceProgramAA* program = layerRenderer->renderSurfaceProgramAA();
             drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, contentsTextureId, program, -1, program->vertexShader().pointLocation(), program->fragmentShader().edgeLocation());
         } else {
-            const Program* program = layerRenderer->renderSurfaceProgram();
+            const LayerRendererChromium::RenderSurfaceProgram* program = layerRenderer->renderSurfaceProgram();
             drawSurface(layerRenderer, maskLayer, drawTransform, deviceMatrix, deviceRect, layerQuad, contentsTextureId, program, -1, -1, -1);
         }
     }

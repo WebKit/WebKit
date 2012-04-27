@@ -59,19 +59,6 @@ public:
     virtual Region visibleContentOpaqueRegion() const OVERRIDE;
     virtual void didLoseContext() OVERRIDE;
 
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlpha> Program;
-    // Shader program that swaps red and blue components of texture.
-    // Used when texture format does not match native color format.
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleAlpha> ProgramSwizzle;
-
-    // Same as above but ignoring alpha and writing out 1.0 for the alpha channel.
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexOpaque> ProgramOpaque;
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleOpaque> ProgramSwizzleOpaque;
-
-    // Shader program that produces anti-aliased layer edges.
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampAlphaAA> ProgramAA;
-    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexClampSwizzleAlphaAA> ProgramSwizzleAA;
-
 protected:
     explicit CCTiledLayerImpl(int id);
     // Exposed for testing.

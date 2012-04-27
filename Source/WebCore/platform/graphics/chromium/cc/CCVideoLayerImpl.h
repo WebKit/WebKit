@@ -27,8 +27,6 @@
 #define CCVideoLayerImpl_h
 
 #include "ManagedTexture.h"
-#include "ShaderChromium.h"
-#include "VideoLayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #include <public/WebVideoFrameProvider.h>
 
@@ -40,8 +38,6 @@ namespace WebCore {
 
 class CCLayerTreeHostImpl;
 class CCVideoLayerImpl;
-
-template<class VertexShader, class FragmentShader> class ProgramBinding;
 
 class CCVideoLayerImpl : public CCLayerImpl
                        , public WebKit::WebVideoFrameProvider::Client {
@@ -55,11 +51,6 @@ public:
     virtual void willDraw(LayerRendererChromium*) OVERRIDE;
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
     virtual void didDraw() OVERRIDE;
-
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
-    typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> NativeTextureProgram;
-    typedef ProgramBinding<VertexShaderVideoTransform, FragmentShaderOESImageExternal> StreamTextureProgram;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
 

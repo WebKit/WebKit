@@ -25,7 +25,6 @@
 #include "config.h"
 
 #include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCQuadCuller.h"
 
 #include "CCAnimationTestCommon.h"
 #include "CCLayerTestCommon.h"
@@ -33,10 +32,17 @@
 #include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCLayerTilingData.h"
+#include "cc/CCQuadCuller.h"
 #include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
+#include "cc/CCTextureLayerImpl.h"
 #include "cc/CCTileDrawQuad.h"
+#include "cc/CCTiledLayerImpl.h"
+#include "cc/CCVideoLayerImpl.h"
 #include <gtest/gtest.h>
+#include <public/WebVideoFrame.h>
+#include <public/WebVideoFrameProvider.h>
 
 using namespace CCLayerTestCommon;
 using namespace WebCore;

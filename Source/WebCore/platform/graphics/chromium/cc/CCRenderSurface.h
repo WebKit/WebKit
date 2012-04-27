@@ -32,8 +32,6 @@
 #include "FilterOperations.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-#include "ProgramBinding.h"
-#include "ShaderChromium.h"
 #include "SkBitmap.h"
 #include "TextureManager.h"
 #include "TransformationMatrix.h"
@@ -136,11 +134,6 @@ public:
 
     void setMaskLayer(CCLayerImpl* maskLayer) { m_maskLayer = maskLayer; }
 
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> MaskProgram;
-    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaAA> ProgramAA;
-    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlphaMaskAA> MaskProgramAA;
-
     ManagedTexture* contentsTexture() const { return m_contentsTexture.get(); }
     ManagedTexture* backgroundTexture() const { return m_backgroundTexture.get(); }
 
@@ -164,6 +157,8 @@ private:
     void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&, int contentsTextureId);
     template <class T>
     void drawSurface(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix& drawTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad&, int contentsTextureId, const T* program, int shaderMaskSamplerLocation, int shaderQuadLocation, int shaderEdgeLocation);
+
+    static void copyTextureToFramebuffer(LayerRendererChromium*, int textureId, const IntSize& bounds, const TransformationMatrix& drawMatrix);
 
     CCLayerImpl* m_owningLayer;
     CCLayerImpl* m_maskLayer;

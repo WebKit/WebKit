@@ -43,6 +43,7 @@ class CCCompletionEvent;
 class CCDebugRectHistory;
 class CCFontAtlas;
 class CCFrameRateCounter;
+class CCHeadsUpDisplay;
 class CCPageScaleAnimation;
 class CCLayerImpl;
 class CCLayerTreeHostImplTimeSourceAdapter;

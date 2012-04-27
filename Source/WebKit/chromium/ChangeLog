@@ -1,3 +1,14 @@
+2012-04-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move ProgramBinding definitions to LayerRendererChromium and normalize naming
+        https://bugs.webkit.org/show_bug.cgi?id=84808
+
+        Reviewed by Adrienne Walker.
+
+        Add some includes needed by this test that were previously picked up by upstream headers.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-04-26  Ilya Sherman  <isherman@chromium.org>
 
         [Chromium] Security: Autofill info can be captured by innocuous social engineering

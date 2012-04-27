@@ -40,20 +40,16 @@
 #include "GeometryBinding.h"
 #include "GrTexture.h"
 #include "GraphicsContext3D.h"
-#include "LayerChromium.h"
-#include "LayerPainterChromium.h"
 #include "ManagedTexture.h"
 #include "NativeImageSkia.h"
 #include "NotImplemented.h"
 #include "PlatformColor.h"
 #include "PlatformContextSkia.h"
 #include "RenderSurfaceChromium.h"
-#include "TextStream.h"
 #include "TextureCopier.h"
 #include "TextureManager.h"
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
-#include "TreeSynchronizer.h"
 #include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
@@ -498,7 +494,7 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& su
 
 void LayerRendererChromium::drawCheckerboardQuad(const CCCheckerboardDrawQuad* quad)
 {
-    const CheckerboardProgram* program = checkerboardProgram();
+    const TileCheckerboardProgram* program = tileCheckerboardProgram();
     ASSERT(program && program->initialized());
     GLC(context(), context()->useProgram(program->program()));
 
@@ -527,7 +523,7 @@ void LayerRendererChromium::drawCheckerboardQuad(const CCCheckerboardDrawQuad* q
 void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* quad)
 {
     static float glMatrix[16];
-    const LayerChromium::BorderProgram* program = borderProgram();
+    const SolidColorProgram* program = solidColorProgram();
     ASSERT(program && program->initialized());
     GLC(context(), context()->useProgram(program->program()));
 
@@ -621,8 +617,8 @@ void LayerRendererChromium::drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*
 
 void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
 {
-    const LayerChromium::BorderProgram* solidColorProgram = borderProgram();
-    GLC(context(), context()->useProgram(solidColorProgram->program()));
+    const SolidColorProgram* program = solidColorProgram();
+    GLC(context(), context()->useProgram(program->program()));
 
     IntRect tileRect = quad->quadRect();
 
@@ -633,11 +629,11 @@ void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
     float opacity = quad->opacity();
     float alpha = (color.alpha() / 255.0) * opacity;
 
-    GLC(context(), context()->uniform4f(solidColorProgram->fragmentShader().colorLocation(), (color.red() / 255.0) * alpha, (color.green() / 255.0) * alpha, (color.blue() / 255.0) * alpha, alpha));
+    GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (color.red() / 255.0) * alpha, (color.green() / 255.0) * alpha, (color.blue() / 255.0) * alpha, alpha));
 
     drawTexturedQuad(tileTransform,
                      tileRect.width(), tileRect.height(), 1.0, FloatQuad(),
-                     solidColorProgram->vertexShader().matrixLocation(),
+                     program->vertexShader().matrixLocation(),
                      -1, -1);
 }
 
@@ -664,39 +660,6 @@ static void tileUniformLocation(T program, TileProgramUniforms& uniforms)
     uniforms.alphaLocation = program->fragmentShader().alphaLocation();
     uniforms.fragmentTexTransformLocation = program->fragmentShader().fragmentTexTransformLocation();
     uniforms.edgeLocation = program->fragmentShader().edgeLocation();
-}
-
-static void findTileProgramUniforms(LayerRendererChromium* layerRenderer, const CCTileDrawQuad* quad, TileProgramUniforms& uniforms, bool quadIsClipped)
-{
-    // For now, we simply skip anti-aliasing with the quad is clipped. This only happens
-    // on perspective transformed layers that go partially behind the camera.
-    if (quad->isAntialiased() && !quadIsClipped) {
-        if (quad->swizzleContents()) {
-            const CCTiledLayerImpl::ProgramSwizzleAA* program = layerRenderer->tilerProgramSwizzleAA();
-            tileUniformLocation(program, uniforms);
-        } else {
-            const CCTiledLayerImpl::ProgramAA* program = layerRenderer->tilerProgramAA();
-            tileUniformLocation(program, uniforms);
-        }
-    } else {
-        if (quad->needsBlending()) {
-            if (quad->swizzleContents()) {
-                const CCTiledLayerImpl::ProgramSwizzle* program = layerRenderer->tilerProgramSwizzle();
-                tileUniformLocation(program, uniforms);
-            } else {
-                const CCTiledLayerImpl::Program* program = layerRenderer->tilerProgram();
-                tileUniformLocation(program, uniforms);
-            }
-        } else {
-            if (quad->swizzleContents()) {
-                const CCTiledLayerImpl::ProgramSwizzleOpaque* program = layerRenderer->tilerProgramSwizzleOpaque();
-                tileUniformLocation(program, uniforms);
-            } else {
-                const CCTiledLayerImpl::ProgramOpaque* program = layerRenderer->tilerProgramOpaque();
-                tileUniformLocation(program, uniforms);
-            }
-        }
-    }
 }
 
 void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
@@ -743,7 +706,26 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
     FloatQuad deviceLayerQuad = CCMathUtil::mapQuad(deviceTransform, FloatQuad(quad->layerRect()), clipped);
 
     TileProgramUniforms uniforms;
-    findTileProgramUniforms(this, quad, uniforms, clipped);
+    // For now, we simply skip anti-aliasing with the quad is clipped. This only happens
+    // on perspective transformed layers that go partially behind the camera.
+    if (quad->isAntialiased() && !clipped) {
+        if (quad->swizzleContents())
+            tileUniformLocation(tileProgramSwizzleAA(), uniforms);
+        else
+            tileUniformLocation(tileProgramAA(), uniforms);
+    } else {
+        if (quad->needsBlending()) {
+            if (quad->swizzleContents())
+                tileUniformLocation(tileProgramSwizzle(), uniforms);
+            else
+                tileUniformLocation(tileProgram(), uniforms);
+        } else {
+            if (quad->swizzleContents())
+                tileUniformLocation(tileProgramSwizzleOpaque(), uniforms);
+            else
+                tileUniformLocation(tileProgramOpaque(), uniforms);
+        }
+    }
 
     GLC(context(), context()->useProgram(uniforms.program));
     GLC(context(), context()->uniform1i(uniforms.samplerLocation, 0));
@@ -832,7 +814,7 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
 
 void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
 {
-    const CCVideoLayerImpl::YUVProgram* program = videoLayerYUVProgram();
+    const VideoYUVProgram* program = videoYUVProgram();
     ASSERT(program && program->initialized());
 
     const CCVideoLayerImpl::Texture& yTexture = quad->textures()[WebKit::WebVideoFrame::yPlane];
@@ -892,7 +874,7 @@ void LayerRendererChromium::drawSingleTextureVideoQuad(const CCVideoDrawQuad* qu
 
 void LayerRendererChromium::drawRGBA(const CCVideoDrawQuad* quad)
 {
-    const CCVideoLayerImpl::RGBAProgram* program = videoLayerRGBAProgram();
+    const TextureProgram* program = textureProgram();
     const CCVideoLayerImpl::Texture& texture = quad->textures()[WebKit::WebVideoFrame::rgbPlane];
     float widthScaleFactor = static_cast<float>(texture.m_visibleSize.width()) / texture.m_texture->size().width();
     drawSingleTextureVideoQuad(quad, program, widthScaleFactor, texture.m_texture->textureId(), GraphicsContext3D::TEXTURE_2D);
@@ -900,15 +882,14 @@ void LayerRendererChromium::drawRGBA(const CCVideoDrawQuad* quad)
 
 void LayerRendererChromium::drawNativeTexture2D(const CCVideoDrawQuad* quad)
 {
-    const CCVideoLayerImpl::NativeTextureProgram* program = videoLayerNativeTextureProgram();
-    drawSingleTextureVideoQuad(quad, program, 1, quad->frame()->textureId(), GraphicsContext3D::TEXTURE_2D);
+    drawSingleTextureVideoQuad(quad, textureProgram(), 1, quad->frame()->textureId(), GraphicsContext3D::TEXTURE_2D);
 }
 
 void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
 {
     ASSERT(context()->getExtensions()->supports("GL_OES_EGL_image_external") && context()->getExtensions()->isEnabled("GL_OES_EGL_image_external"));
 
-    const CCVideoLayerImpl::StreamTextureProgram* program = streamTextureLayerProgram();
+    const VideoStreamTextureProgram* program = videoStreamTextureProgram();
     GLC(context(), context()->useProgram(program->program()));
     ASSERT(quad->matrix());
     GLC(context(), context()->uniformMatrix4fv(program->vertexShader().texMatrixLocation(), 1, false, const_cast<float*>(quad->matrix())));
@@ -994,17 +975,6 @@ struct TextureProgramBinding {
     int alphaLocation;
 };
 
-struct TexStretchTextureProgramBinding : TextureProgramBinding {
-    template<class Program> void set(Program* program)
-    {
-        TextureProgramBinding::set(program);
-        offsetLocation = program->vertexShader().offsetLocation();
-        scaleLocation = program->vertexShader().scaleLocation();
-    }
-    int offsetLocation;
-    int scaleLocation;
-};
-
 struct TexTransformTextureProgramBinding : TextureProgramBinding {
     template<class Program> void set(Program* program)
     {
@@ -1017,32 +987,18 @@ struct TexTransformTextureProgramBinding : TextureProgramBinding {
 void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
 {
     ASSERT(CCProxy::isImplThread());
-    unsigned matrixLocation = 0;
-    unsigned alphaLocation = 0;
-    if (quad->flipped() && quad->uvRect() == FloatRect(0, 0, 1, 1)) {
-        // A flipped quad with the default UV mapping is common enough to use a special shader.
-        // Canvas 2d and WebGL layers use this path always and plugin/external texture layers use this by default.
-        const CCTextureLayerImpl::ProgramFlip* program = textureLayerProgramFlip();
-        GLC(context(), context()->useProgram(program->program()));
-        GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
-        matrixLocation = program->vertexShader().matrixLocation();
-        alphaLocation = program->fragmentShader().alphaLocation();
-    } else {
-        TexStretchTextureProgramBinding binding;
-        if (quad->flipped())
-            binding.set(textureLayerProgramStretchFlip());
-        else
-            binding.set(textureLayerProgramStretch());
-        GLC(context(), context()->useProgram(binding.programId));
-        GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
-        GLC(context(), context()->uniform2f(binding.offsetLocation, quad->uvRect().x(), quad->uvRect().y()));
-        GLC(context(), context()->uniform2f(binding.scaleLocation, quad->uvRect().width(), quad->uvRect().height()));
 
-        matrixLocation = binding.matrixLocation;
-        alphaLocation = binding.alphaLocation;
-    }
+    TexTransformTextureProgramBinding binding;
+    if (quad->flipped())
+        binding.set(textureProgramFlip());
+    else
+        binding.set(textureProgram());
+    GLC(context(), context()->useProgram(binding.programId));
+    GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
+    const FloatRect& uvRect = quad->uvRect();
+    GLC(context(), context()->uniform4f(binding.texTransformLocation, uvRect.x(), uvRect.y(), uvRect.width(), uvRect.height()));
+
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-
     GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
 
     // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
@@ -1057,7 +1013,7 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
 
     const IntSize& bounds = quad->quadRect().size();
 
-    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(), matrixLocation, alphaLocation, -1);
+    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
 
     if (!quad->premultipliedAlpha())
         GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
@@ -1068,9 +1024,9 @@ void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
     ASSERT(CCProxy::isImplThread());
     TexTransformTextureProgramBinding binding;
     if (quad->flipped())
-        binding.set(textureLayerTexRectProgramFlip());
+        binding.set(textureIOSurfaceProgramFlip());
     else
-        binding.set(textureLayerTexRectProgram());
+        binding.set(textureIOSurfaceProgram());
 
     GLC(context(), context()->useProgram(binding.programId));
     GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
@@ -1100,7 +1056,7 @@ void LayerRendererChromium::drawHeadsUpDisplay(ManagedTexture* hudTexture, const
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     useRenderSurface(m_defaultRenderSurface);
 
-    const CCHeadsUpDisplay::Program* program = headsUpDisplayProgram();
+    const HeadsUpDisplayProgram* program = headsUpDisplayProgram();
     ASSERT(program && program->initialized());
     GLC(m_context, m_context->activeTexture(GraphicsContext3D::TEXTURE0));
     hudTexture->bindTexture(m_context.get(), renderSurfaceTextureAllocator());
@@ -1415,9 +1371,9 @@ bool LayerRendererChromium::initializeSharedObjects()
     // We will always need these programs to render, so create the programs eagerly so that the shader compilation can
     // start while we do other work. Other programs are created lazily on first access.
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
-    m_renderSurfaceProgram = adoptPtr(new CCRenderSurface::Program(m_context.get()));
-    m_tilerProgram = adoptPtr(new CCTiledLayerImpl::Program(m_context.get()));
-    m_tilerProgramOpaque = adoptPtr(new CCTiledLayerImpl::ProgramOpaque(m_context.get()));
+    m_renderSurfaceProgram = adoptPtr(new RenderSurfaceProgram(m_context.get()));
+    m_tileProgram = adoptPtr(new TileProgram(m_context.get()));
+    m_tileProgramOpaque = adoptPtr(new TileProgramOpaque(m_context.get()));
 
     GLC(m_context, m_context->flush());
 
@@ -1438,32 +1394,32 @@ bool LayerRendererChromium::initializeSharedObjects()
     return true;
 }
 
-const LayerRendererChromium::CheckerboardProgram* LayerRendererChromium::checkerboardProgram()
+const LayerRendererChromium::TileCheckerboardProgram* LayerRendererChromium::tileCheckerboardProgram()
 {
-    if (!m_checkerboardProgram)
-        m_checkerboardProgram = adoptPtr(new CheckerboardProgram(m_context.get()));
-    if (!m_checkerboardProgram->initialized()) {
+    if (!m_tileCheckerboardProgram)
+        m_tileCheckerboardProgram = adoptPtr(new TileCheckerboardProgram(m_context.get()));
+    if (!m_tileCheckerboardProgram->initialized()) {
         TRACE_EVENT("LayerRendererChromium::checkerboardProgram::initalize", this, 0);
-        m_checkerboardProgram->initialize(m_context.get());
+        m_tileCheckerboardProgram->initialize(m_context.get());
     }
-    return m_checkerboardProgram.get();
+    return m_tileCheckerboardProgram.get();
 }
 
-const LayerChromium::BorderProgram* LayerRendererChromium::borderProgram()
+const LayerRendererChromium::SolidColorProgram* LayerRendererChromium::solidColorProgram()
 {
-    if (!m_borderProgram)
-        m_borderProgram = adoptPtr(new LayerChromium::BorderProgram(m_context.get()));
-    if (!m_borderProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
-        m_borderProgram->initialize(m_context.get());
+    if (!m_solidColorProgram)
+        m_solidColorProgram = adoptPtr(new SolidColorProgram(m_context.get()));
+    if (!m_solidColorProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::solidColorProgram::initialize", this, 0);
+        m_solidColorProgram->initialize(m_context.get());
     }
-    return m_borderProgram.get();
+    return m_solidColorProgram.get();
 }
 
-const CCHeadsUpDisplay::Program* LayerRendererChromium::headsUpDisplayProgram()
+const LayerRendererChromium::HeadsUpDisplayProgram* LayerRendererChromium::headsUpDisplayProgram()
 {
     if (!m_headsUpDisplayProgram)
-        m_headsUpDisplayProgram = adoptPtr(new CCHeadsUpDisplay::Program(m_context.get()));
+        m_headsUpDisplayProgram = adoptPtr(new HeadsUpDisplayProgram(m_context.get()));
     if (!m_headsUpDisplayProgram->initialized()) {
         TRACE_EVENT("LayerRendererChromium::headsUpDisplayProgram::initialize", this, 0);
         m_headsUpDisplayProgram->initialize(m_context.get());
@@ -1471,7 +1427,7 @@ const CCHeadsUpDisplay::Program* LayerRendererChromium::headsUpDisplayProgram()
     return m_headsUpDisplayProgram.get();
 }
 
-const CCRenderSurface::Program* LayerRendererChromium::renderSurfaceProgram()
+const LayerRendererChromium::RenderSurfaceProgram* LayerRendererChromium::renderSurfaceProgram()
 {
     ASSERT(m_renderSurfaceProgram);
     if (!m_renderSurfaceProgram->initialized()) {
@@ -1481,10 +1437,10 @@ const CCRenderSurface::Program* LayerRendererChromium::renderSurfaceProgram()
     return m_renderSurfaceProgram.get();
 }
 
-const CCRenderSurface::ProgramAA* LayerRendererChromium::renderSurfaceProgramAA()
+const LayerRendererChromium::RenderSurfaceProgramAA* LayerRendererChromium::renderSurfaceProgramAA()
 {
     if (!m_renderSurfaceProgramAA)
-        m_renderSurfaceProgramAA = adoptPtr(new CCRenderSurface::ProgramAA(m_context.get()));
+        m_renderSurfaceProgramAA = adoptPtr(new RenderSurfaceProgramAA(m_context.get()));
     if (!m_renderSurfaceProgramAA->initialized()) {
         TRACE_EVENT("LayerRendererChromium::renderSurfaceProgramAA::initialize", this, 0);
         m_renderSurfaceProgramAA->initialize(m_context.get());
@@ -1492,10 +1448,10 @@ const CCRenderSurface::ProgramAA* LayerRendererChromium::renderSurfaceProgramAA(
     return m_renderSurfaceProgramAA.get();
 }
 
-const CCRenderSurface::MaskProgram* LayerRendererChromium::renderSurfaceMaskProgram()
+const LayerRendererChromium::RenderSurfaceMaskProgram* LayerRendererChromium::renderSurfaceMaskProgram()
 {
     if (!m_renderSurfaceMaskProgram)
-        m_renderSurfaceMaskProgram = adoptPtr(new CCRenderSurface::MaskProgram(m_context.get()));
+        m_renderSurfaceMaskProgram = adoptPtr(new RenderSurfaceMaskProgram(m_context.get()));
     if (!m_renderSurfaceMaskProgram->initialized()) {
         TRACE_EVENT("LayerRendererChromium::renderSurfaceMaskProgram::initialize", this, 0);
         m_renderSurfaceMaskProgram->initialize(m_context.get());
@@ -1503,10 +1459,10 @@ const CCRenderSurface::MaskProgram* LayerRendererChromium::renderSurfaceMaskProg
     return m_renderSurfaceMaskProgram.get();
 }
 
-const CCRenderSurface::MaskProgramAA* LayerRendererChromium::renderSurfaceMaskProgramAA()
+const LayerRendererChromium::RenderSurfaceMaskProgramAA* LayerRendererChromium::renderSurfaceMaskProgramAA()
 {
     if (!m_renderSurfaceMaskProgramAA)
-        m_renderSurfaceMaskProgramAA = adoptPtr(new CCRenderSurface::MaskProgramAA(m_context.get()));
+        m_renderSurfaceMaskProgramAA = adoptPtr(new RenderSurfaceMaskProgramAA(m_context.get()));
     if (!m_renderSurfaceMaskProgramAA->initialized()) {
         TRACE_EVENT("LayerRendererChromium::renderSurfaceMaskProgramAA::initialize", this, 0);
         m_renderSurfaceMaskProgramAA->initialize(m_context.get());
@@ -1514,167 +1470,134 @@ const CCRenderSurface::MaskProgramAA* LayerRendererChromium::renderSurfaceMaskPr
     return m_renderSurfaceMaskProgramAA.get();
 }
 
-const CCTiledLayerImpl::Program* LayerRendererChromium::tilerProgram()
+const LayerRendererChromium::TileProgram* LayerRendererChromium::tileProgram()
 {
-    ASSERT(m_tilerProgram);
-    if (!m_tilerProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tilerProgram::initialize", this, 0);
-        m_tilerProgram->initialize(m_context.get());
+    ASSERT(m_tileProgram);
+    if (!m_tileProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tileProgram::initialize", this, 0);
+        m_tileProgram->initialize(m_context.get());
     }
-    return m_tilerProgram.get();
+    return m_tileProgram.get();
 }
 
-const CCTiledLayerImpl::ProgramOpaque* LayerRendererChromium::tilerProgramOpaque()
+const LayerRendererChromium::TileProgramOpaque* LayerRendererChromium::tileProgramOpaque()
 {
-    ASSERT(m_tilerProgramOpaque);
-    if (!m_tilerProgramOpaque->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tilerProgramOpaque::initialize", this, 0);
-        m_tilerProgramOpaque->initialize(m_context.get());
+    ASSERT(m_tileProgramOpaque);
+    if (!m_tileProgramOpaque->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tileProgramOpaque::initialize", this, 0);
+        m_tileProgramOpaque->initialize(m_context.get());
     }
-    return m_tilerProgramOpaque.get();
+    return m_tileProgramOpaque.get();
 }
 
-const CCTiledLayerImpl::ProgramAA* LayerRendererChromium::tilerProgramAA()
+const LayerRendererChromium::TileProgramAA* LayerRendererChromium::tileProgramAA()
 {
-    if (!m_tilerProgramAA)
-        m_tilerProgramAA = adoptPtr(new CCTiledLayerImpl::ProgramAA(m_context.get()));
-    if (!m_tilerProgramAA->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tilerProgramAA::initialize", this, 0);
-        m_tilerProgramAA->initialize(m_context.get());
+    if (!m_tileProgramAA)
+        m_tileProgramAA = adoptPtr(new TileProgramAA(m_context.get()));
+    if (!m_tileProgramAA->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tileProgramAA::initialize", this, 0);
+        m_tileProgramAA->initialize(m_context.get());
     }
-    return m_tilerProgramAA.get();
+    return m_tileProgramAA.get();
 }
 
-const CCTiledLayerImpl::ProgramSwizzle* LayerRendererChromium::tilerProgramSwizzle()
+const LayerRendererChromium::TileProgramSwizzle* LayerRendererChromium::tileProgramSwizzle()
 {
-    if (!m_tilerProgramSwizzle)
-        m_tilerProgramSwizzle = adoptPtr(new CCTiledLayerImpl::ProgramSwizzle(m_context.get()));
-    if (!m_tilerProgramSwizzle->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzle::initialize", this, 0);
-        m_tilerProgramSwizzle->initialize(m_context.get());
+    if (!m_tileProgramSwizzle)
+        m_tileProgramSwizzle = adoptPtr(new TileProgramSwizzle(m_context.get()));
+    if (!m_tileProgramSwizzle->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tileProgramSwizzle::initialize", this, 0);
+        m_tileProgramSwizzle->initialize(m_context.get());
     }
-    return m_tilerProgramSwizzle.get();
+    return m_tileProgramSwizzle.get();
 }
 
-const CCTiledLayerImpl::ProgramSwizzleOpaque* LayerRendererChromium::tilerProgramSwizzleOpaque()
+const LayerRendererChromium::TileProgramSwizzleOpaque* LayerRendererChromium::tileProgramSwizzleOpaque()
 {
-    if (!m_tilerProgramSwizzleOpaque)
-        m_tilerProgramSwizzleOpaque = adoptPtr(new CCTiledLayerImpl::ProgramSwizzleOpaque(m_context.get()));
-    if (!m_tilerProgramSwizzleOpaque->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzleOpaque::initialize", this, 0);
-        m_tilerProgramSwizzleOpaque->initialize(m_context.get());
+    if (!m_tileProgramSwizzleOpaque)
+        m_tileProgramSwizzleOpaque = adoptPtr(new TileProgramSwizzleOpaque(m_context.get()));
+    if (!m_tileProgramSwizzleOpaque->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tileProgramSwizzleOpaque::initialize", this, 0);
+        m_tileProgramSwizzleOpaque->initialize(m_context.get());
     }
-    return m_tilerProgramSwizzleOpaque.get();
+    return m_tileProgramSwizzleOpaque.get();
 }
 
-const CCTiledLayerImpl::ProgramSwizzleAA* LayerRendererChromium::tilerProgramSwizzleAA()
+const LayerRendererChromium::TileProgramSwizzleAA* LayerRendererChromium::tileProgramSwizzleAA()
 {
-    if (!m_tilerProgramSwizzleAA)
-        m_tilerProgramSwizzleAA = adoptPtr(new CCTiledLayerImpl::ProgramSwizzleAA(m_context.get()));
-    if (!m_tilerProgramSwizzleAA->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzleAA::initialize", this, 0);
-        m_tilerProgramSwizzleAA->initialize(m_context.get());
+    if (!m_tileProgramSwizzleAA)
+        m_tileProgramSwizzleAA = adoptPtr(new TileProgramSwizzleAA(m_context.get()));
+    if (!m_tileProgramSwizzleAA->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tileProgramSwizzleAA::initialize", this, 0);
+        m_tileProgramSwizzleAA->initialize(m_context.get());
     }
-    return m_tilerProgramSwizzleAA.get();
+    return m_tileProgramSwizzleAA.get();
 }
 
-const CCTextureLayerImpl::ProgramFlip* LayerRendererChromium::textureLayerProgramFlip()
+const LayerRendererChromium::TextureProgram* LayerRendererChromium::textureProgram()
 {
-    if (!m_textureLayerProgramFlip)
-        m_textureLayerProgramFlip = adoptPtr(new CCTextureLayerImpl::ProgramFlip(m_context.get()));
-    if (!m_textureLayerProgramFlip->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureLayerProgram::initialize", this, 0);
-        m_textureLayerProgramFlip->initialize(m_context.get());
+    if (!m_textureProgram)
+        m_textureProgram = adoptPtr(new TextureProgram(m_context.get()));
+    if (!m_textureProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureProgram::initialize", this, 0);
+        m_textureProgram->initialize(m_context.get());
     }
-    return m_textureLayerProgramFlip.get();
+    return m_textureProgram.get();
 }
 
-const CCTextureLayerImpl::ProgramStretch* LayerRendererChromium::textureLayerProgramStretch()
+const LayerRendererChromium::TextureProgramFlip* LayerRendererChromium::textureProgramFlip()
 {
-    if (!m_textureLayerProgramStretch)
-        m_textureLayerProgramStretch = adoptPtr(new CCTextureLayerImpl::ProgramStretch(m_context.get()));
-    if (!m_textureLayerProgramStretch->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureLayerProgram::initialize", this, 0);
-        m_textureLayerProgramStretch->initialize(m_context.get());
+    if (!m_textureProgramFlip)
+        m_textureProgramFlip = adoptPtr(new TextureProgramFlip(m_context.get()));
+    if (!m_textureProgramFlip->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureProgramFlip::initialize", this, 0);
+        m_textureProgramFlip->initialize(m_context.get());
     }
-    return m_textureLayerProgramStretch.get();
+    return m_textureProgramFlip.get();
 }
 
-const CCTextureLayerImpl::ProgramStretchFlip* LayerRendererChromium::textureLayerProgramStretchFlip()
+const LayerRendererChromium::TextureIOSurfaceProgram* LayerRendererChromium::textureIOSurfaceProgram()
 {
-    if (!m_textureLayerProgramStretchFlip)
-        m_textureLayerProgramStretchFlip = adoptPtr(new CCTextureLayerImpl::ProgramStretchFlip(m_context.get()));
-    if (!m_textureLayerProgramStretchFlip->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureLayerProgramStretchFlip::initialize", this, 0);
-        m_textureLayerProgramStretchFlip->initialize(m_context.get());
+    if (!m_textureIOSurfaceProgram)
+        m_textureIOSurfaceProgram = adoptPtr(new TextureIOSurfaceProgram(m_context.get()));
+    if (!m_textureIOSurfaceProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureIOSurfaceProgram::initialize", this, 0);
+        m_textureIOSurfaceProgram->initialize(m_context.get());
     }
-    return m_textureLayerProgramStretchFlip.get();
+    return m_textureIOSurfaceProgram.get();
 }
 
-const CCTextureLayerImpl::TexRectProgram* LayerRendererChromium::textureLayerTexRectProgram()
+const LayerRendererChromium::TextureIOSurfaceProgramFlip* LayerRendererChromium::textureIOSurfaceProgramFlip()
 {
-    if (!m_textureLayerTexRectProgram)
-        m_textureLayerTexRectProgram = adoptPtr(new CCTextureLayerImpl::TexRectProgram(m_context.get()));
-    if (!m_textureLayerTexRectProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureLayerTexRectProgram::initialize", this, 0);
-        m_textureLayerTexRectProgram->initialize(m_context.get());
+    if (!m_textureIOSurfaceProgramFlip)
+        m_textureIOSurfaceProgramFlip = adoptPtr(new TextureIOSurfaceProgramFlip(m_context.get()));
+    if (!m_textureIOSurfaceProgramFlip->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureIOSurfaceProgramFlip::initialize", this, 0);
+        m_textureIOSurfaceProgramFlip->initialize(m_context.get());
     }
-    return m_textureLayerTexRectProgram.get();
+    return m_textureIOSurfaceProgramFlip.get();
 }
 
-const CCTextureLayerImpl::TexRectProgramFlip* LayerRendererChromium::textureLayerTexRectProgramFlip()
+const LayerRendererChromium::VideoYUVProgram* LayerRendererChromium::videoYUVProgram()
 {
-    if (!m_textureLayerTexRectProgramFlip)
-        m_textureLayerTexRectProgramFlip = adoptPtr(new CCTextureLayerImpl::TexRectProgramFlip(m_context.get()));
-    if (!m_textureLayerTexRectProgramFlip->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::textureLayerTexRectProgramFlip::initialize", this, 0);
-        m_textureLayerTexRectProgramFlip->initialize(m_context.get());
+    if (!m_videoYUVProgram)
+        m_videoYUVProgram = adoptPtr(new VideoYUVProgram(m_context.get()));
+    if (!m_videoYUVProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::videoYUVProgram::initialize", this, 0);
+        m_videoYUVProgram->initialize(m_context.get());
     }
-    return m_textureLayerTexRectProgramFlip.get();
+    return m_videoYUVProgram.get();
 }
 
-const CCVideoLayerImpl::RGBAProgram* LayerRendererChromium::videoLayerRGBAProgram()
+const LayerRendererChromium::VideoStreamTextureProgram* LayerRendererChromium::videoStreamTextureProgram()
 {
-    if (!m_videoLayerRGBAProgram)
-        m_videoLayerRGBAProgram = adoptPtr(new CCVideoLayerImpl::RGBAProgram(m_context.get()));
-    if (!m_videoLayerRGBAProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::videoLayerRGBAProgram::initialize", this, 0);
-        m_videoLayerRGBAProgram->initialize(m_context.get());
+    if (!m_videoStreamTextureProgram)
+        m_videoStreamTextureProgram = adoptPtr(new VideoStreamTextureProgram(m_context.get()));
+    if (!m_videoStreamTextureProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::streamTextureProgram::initialize", this, 0);
+        m_videoStreamTextureProgram->initialize(m_context.get());
     }
-    return m_videoLayerRGBAProgram.get();
-}
-
-const CCVideoLayerImpl::YUVProgram* LayerRendererChromium::videoLayerYUVProgram()
-{
-    if (!m_videoLayerYUVProgram)
-        m_videoLayerYUVProgram = adoptPtr(new CCVideoLayerImpl::YUVProgram(m_context.get()));
-    if (!m_videoLayerYUVProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::videoLayerYUVProgram::initialize", this, 0);
-        m_videoLayerYUVProgram->initialize(m_context.get());
-    }
-    return m_videoLayerYUVProgram.get();
-}
-
-const CCVideoLayerImpl::NativeTextureProgram* LayerRendererChromium::videoLayerNativeTextureProgram()
-{
-    if (!m_videoLayerNativeTextureProgram)
-        m_videoLayerNativeTextureProgram = adoptPtr(new CCVideoLayerImpl::NativeTextureProgram(m_context.get()));
-    if (!m_videoLayerNativeTextureProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::videoLayerNativeTextureProgram::initialize", this, 0);
-        m_videoLayerNativeTextureProgram->initialize(m_context.get());
-    }
-    return m_videoLayerNativeTextureProgram.get();
-}
-
-const CCVideoLayerImpl::StreamTextureProgram* LayerRendererChromium::streamTextureLayerProgram()
-{
-    if (!m_streamTextureLayerProgram)
-        m_streamTextureLayerProgram = adoptPtr(new CCVideoLayerImpl::StreamTextureProgram(m_context.get()));
-    if (!m_streamTextureLayerProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::streamTextureLayerProgram::initialize", this, 0);
-        m_streamTextureLayerProgram->initialize(m_context.get());
-    }
-    return m_streamTextureLayerProgram.get();
+    return m_videoStreamTextureProgram.get();
 }
 
 void LayerRendererChromium::cleanupSharedObjects()
@@ -1683,34 +1606,21 @@ void LayerRendererChromium::cleanupSharedObjects()
 
     m_sharedGeometry.clear();
 
-    if (m_checkerboardProgram)
-        m_checkerboardProgram->cleanup(m_context.get());
-    if (m_borderProgram)
-        m_borderProgram->cleanup(m_context.get());
-    if (m_headsUpDisplayProgram)
-        m_headsUpDisplayProgram->cleanup(m_context.get());
-    if (m_textureLayerProgramFlip)
-        m_textureLayerProgramFlip->cleanup(m_context.get());
-    if (m_textureLayerProgramStretch)
-        m_textureLayerProgramStretch->cleanup(m_context.get());
-    if (m_textureLayerProgramStretchFlip)
-        m_textureLayerProgramStretchFlip->cleanup(m_context.get());
-    if (m_textureLayerTexRectProgram)
-        m_textureLayerTexRectProgram->cleanup(m_context.get());
-    if (m_textureLayerTexRectProgramFlip)
-        m_textureLayerTexRectProgramFlip->cleanup(m_context.get());
-    if (m_tilerProgram)
-        m_tilerProgram->cleanup(m_context.get());
-    if (m_tilerProgramOpaque)
-        m_tilerProgramOpaque->cleanup(m_context.get());
-    if (m_tilerProgramSwizzle)
-        m_tilerProgramSwizzle->cleanup(m_context.get());
-    if (m_tilerProgramSwizzleOpaque)
-        m_tilerProgramSwizzleOpaque->cleanup(m_context.get());
-    if (m_tilerProgramAA)
-        m_tilerProgramAA->cleanup(m_context.get());
-    if (m_tilerProgramSwizzleAA)
-        m_tilerProgramSwizzleAA->cleanup(m_context.get());
+    if (m_tileProgram)
+        m_tileProgram->cleanup(m_context.get());
+    if (m_tileProgramOpaque)
+        m_tileProgramOpaque->cleanup(m_context.get());
+    if (m_tileProgramSwizzle)
+        m_tileProgramSwizzle->cleanup(m_context.get());
+    if (m_tileProgramSwizzleOpaque)
+        m_tileProgramSwizzleOpaque->cleanup(m_context.get());
+    if (m_tileProgramAA)
+        m_tileProgramAA->cleanup(m_context.get());
+    if (m_tileProgramSwizzleAA)
+        m_tileProgramSwizzleAA->cleanup(m_context.get());
+    if (m_tileCheckerboardProgram)
+        m_tileCheckerboardProgram->cleanup(m_context.get());
+
     if (m_renderSurfaceMaskProgram)
         m_renderSurfaceMaskProgram->cleanup(m_context.get());
     if (m_renderSurfaceProgram)
@@ -1719,38 +1629,30 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_renderSurfaceMaskProgramAA->cleanup(m_context.get());
     if (m_renderSurfaceProgramAA)
         m_renderSurfaceProgramAA->cleanup(m_context.get());
-    if (m_videoLayerRGBAProgram)
-        m_videoLayerRGBAProgram->cleanup(m_context.get());
-    if (m_videoLayerYUVProgram)
-        m_videoLayerYUVProgram->cleanup(m_context.get());
-    if (m_videoLayerNativeTextureProgram)
-        m_videoLayerNativeTextureProgram->cleanup(m_context.get());
-    if (m_streamTextureLayerProgram)
-        m_streamTextureLayerProgram->cleanup(m_context.get());
 
-    m_borderProgram.clear();
-    m_headsUpDisplayProgram.clear();
-    m_textureLayerProgramFlip.clear();
-    m_textureLayerProgramStretch.clear();
-    m_textureLayerProgramStretchFlip.clear();
-    m_textureLayerTexRectProgram.clear();
-    m_textureLayerTexRectProgramFlip.clear();
-    m_tilerProgram.clear();
-    m_tilerProgramOpaque.clear();
-    m_tilerProgramSwizzle.clear();
-    m_tilerProgramSwizzleOpaque.clear();
-    m_tilerProgramAA.clear();
-    m_tilerProgramSwizzleAA.clear();
-    m_renderSurfaceMaskProgram.clear();
-    m_renderSurfaceProgram.clear();
-    m_renderSurfaceMaskProgramAA.clear();
-    m_renderSurfaceProgramAA.clear();
-    m_videoLayerRGBAProgram.clear();
-    m_videoLayerYUVProgram.clear();
-    m_videoLayerNativeTextureProgram.clear();
-    m_streamTextureLayerProgram.clear();
+    if (m_textureProgram)
+        m_textureProgram->cleanup(m_context.get());
+    if (m_textureProgramFlip)
+        m_textureProgramFlip->cleanup(m_context.get());
+    if (m_textureIOSurfaceProgram)
+        m_textureIOSurfaceProgram->cleanup(m_context.get());
+    if (m_textureIOSurfaceProgramFlip)
+        m_textureIOSurfaceProgramFlip->cleanup(m_context.get());
+
+    if (m_videoYUVProgram)
+        m_videoYUVProgram->cleanup(m_context.get());
+    if (m_videoStreamTextureProgram)
+        m_videoStreamTextureProgram->cleanup(m_context.get());
+
+    if (m_solidColorProgram)
+        m_solidColorProgram->cleanup(m_context.get());
+
+    if (m_headsUpDisplayProgram)
+        m_headsUpDisplayProgram->cleanup(m_context.get());
+
     if (m_offscreenFramebufferId)
         GLC(m_context, m_context->deleteFramebuffer(m_offscreenFramebufferId));
+
     m_textureCopier.clear();
     m_textureUploader.clear();
 

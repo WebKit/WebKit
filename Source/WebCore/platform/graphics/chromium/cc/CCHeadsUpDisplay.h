@@ -27,8 +27,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ProgramBinding.h"
-#include "ShaderChromium.h"
 #include "cc/CCFontAtlas.h"
 
 namespace WebCore {
@@ -55,8 +53,6 @@ public:
 
     bool enabled(const CCSettings&) const;
     void draw(CCLayerTreeHostImpl*);
-
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexSwizzleAlpha> Program;
 
 private:
     CCHeadsUpDisplay() { };
