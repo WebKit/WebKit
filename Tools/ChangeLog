@@ -1,3 +1,14 @@
+2012-04-27  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Fix minimal build.
+        https://bugs.webkit.org/show_bug.cgi?id=85045
+
+        Reviewed by Tor Arne Vestbø.
+
+        Do not set conflicting values of ENABLE_XSLT.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-04-27  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [EFL][DRT] EFL should sanitize pulseaudio module configuration too

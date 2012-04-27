@@ -2904,7 +2904,12 @@ SOURCES += \
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WidgetQt.cpp
 
-!contains(DEFINES, WTF_USE_LIBXML2=1) {
+contains(DEFINES, WTF_USE_LIBXML2=1) {
+    HEADERS += xml/parser/XMLDocumentParserScope.h
+    SOURCES += \
+            xml/parser/XMLDocumentParserLibxml2.cpp \
+            xml/parser/XMLDocumentParserScope.cpp
+} else {
     SOURCES += xml/parser/XMLDocumentParserQt.cpp
 }
 
@@ -3329,16 +3334,13 @@ contains(DEFINES, ENABLE_XSLT=1) {
             xml/XSLImportRule.cpp \
             xml/XSLTExtensions.cpp \
             xml/XSLImportRule.cpp \
-            xml/XSLTUnicodeSort.cpp \
-            xml/parser/XMLDocumentParserLibxml2.cpp \
-            xml/parser/XMLDocumentParserScope.cpp
+            xml/XSLTUnicodeSort.cpp
 
             HEADERS += \
                 xml/XSLImportRule.h \
                 xml/XSLTExtensions.h \
                 xml/XSLImportRule.h \
-                xml/XSLTUnicodeSort.h \
-                xml/parser/XMLDocumentParserScope.h
+                xml/XSLTUnicodeSort.h
 
     } else {
         SOURCES += \
