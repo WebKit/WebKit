@@ -373,7 +373,7 @@ TEST_F(SelectPopupMenuTest, DISABLED_ClickItem)
 
 // Tests that moving the mouse over an item and then clicking outside the select popup
 // leaves the seleted item unchanged.
-TEST_F(SelectPopupMenuTest, MouseOverItemClickOutside)
+TEST_F(SelectPopupMenuTest, DISABLED_MouseOverItemClickOutside)
 {
     showPopup();
 
@@ -394,7 +394,7 @@ TEST_F(SelectPopupMenuTest, MouseOverItemClickOutside)
 
 // Tests that selecting an item with the keyboard and then clicking outside the select
 // popup does select that item.
-TEST_F(SelectPopupMenuTest, SelectItemWithKeyboardItemClickOutside)
+TEST_F(SelectPopupMenuTest, DISABLED_SelectItemWithKeyboardItemClickOutside)
 {
     showPopup();
 
@@ -455,7 +455,7 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
     EXPECT_STREQ("upclickchangeupclick", std::string(element.innerText().utf8()).c_str());
 }
 
-TEST_F(SelectPopupMenuTest, FLAKY_SelectItemKeyEvent)
+TEST_F(SelectPopupMenuTest, DISABLED_SelectItemKeyEvent)
 {
     registerMockedURLLoad("select_event.html");
     m_webView->settings()->setJavaScriptEnabled(true);
@@ -476,7 +476,7 @@ TEST_F(SelectPopupMenuTest, FLAKY_SelectItemKeyEvent)
     EXPECT_STREQ("change", std::string(element.innerText().utf8()).c_str());
 }
 
-TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnChange)
+TEST_F(SelectPopupMenuTest, DISABLED_SelectItemRemoveSelectOnChange)
 {
     // Make sure no crash, even if select node is removed on 'change' event handler.
     registerMockedURLLoad("select_event_remove_on_change.html");
@@ -498,7 +498,7 @@ TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnChange)
     EXPECT_STREQ("change", std::string(element.innerText().utf8()).c_str());
 }
 
-TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnClick)
+TEST_F(SelectPopupMenuTest, DISABLED_SelectItemRemoveSelectOnClick)
 {
     // Make sure no crash, even if select node is removed on 'click' event handler.
     registerMockedURLLoad("select_event_remove_on_click.html");
