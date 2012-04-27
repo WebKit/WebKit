@@ -1,3 +1,23 @@
+2012-04-27  Nat Duca  <nduca@chromium.org>
+
+        Implement high-resolution time via window.performance.now()
+        https://bugs.webkit.org/show_bug.cgi?id=66684
+
+        This implements the high resolution time spec from
+        http://www.w3.org/TR/hr-time/, giving javascript access to
+        sub-millisecond timestamps that increase over time instead of being
+        subject to skewing, for example when the host machine's clock changes.
+
+        Reviewed by Tony Gentilcore.
+
+        * fast/dom/Window/window-properties-performance-expected.txt:
+        * fast/performance/performance-now-timestamps-expected.txt: Added.
+        * fast/performance/performance-now-timestamps.html: Added.
+        * fast/performance/script-tests/TEMPLATE.html: Added.
+        * fast/performance/script-tests/performance-now-timestamps.js: Added.
+        (busyWait):
+        * platform/qt/fast/dom/Window/window-properties-performance-expected.txt:
+
 2012-04-27  Tony Chang  <tony@chromium.org>
 
         remove LayoutTests/platform/mac-leopard

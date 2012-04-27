@@ -44,6 +44,8 @@ module window {
         PerformanceEntryList webkitGetEntriesByType(in DOMString entryType);
         PerformanceEntryList webkitGetEntriesByName(in DOMString name, in [Optional=DefaultIsNullString] DOMString entryType);
 #endif
+        // See http://www.w3.org/TR/hr-time/ for details.
+        double webkitNow();
     };
 
 }

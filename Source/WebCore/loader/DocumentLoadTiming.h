@@ -40,7 +40,12 @@ public:
     void markNavigationStart(Frame*);
     void setNavigationStart(double);
     void addRedirect(const KURL& redirectingUrl, const KURL& redirectedUrl);
-    double convertMonotonicTimeToDocumentTime(double monotonicTime) const;
+    double convertMonotonicTimeToDocumentTime(double) const;
+
+    // FIXME: Once convertMonotonicTimeToDocumentTime is zero-based, then this
+    // function and convertMonotonicTimeToDocumentTime can be merged. See
+    // https://bugs.webkit.org/show_bug.cgi?id=84912 for more details.
+    double convertMonotonicTimeToZeroBasedDocumentTime(double) const;
 
     void markUnloadEventStart() { m_unloadEventStart = monotonicallyIncreasingTime(); }
     void markUnloadEventEnd() { m_unloadEventEnd = monotonicallyIncreasingTime(); }
