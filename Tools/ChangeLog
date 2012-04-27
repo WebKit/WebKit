@@ -1,3 +1,10 @@
+2012-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK typo fix.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Fix-up skipped WebKit2 API test name TestWKConnection.
+
 2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add a way to register custom uri schemes in WebKit2

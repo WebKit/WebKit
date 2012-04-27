@@ -73,7 +73,7 @@ class TestRunner:
                     "Test is flaky in GTK Linux 32-bit Release bot",
                     82868,
                     ["/webkit2/WebKitWebView/resources"]),
-        SkippedTest("TestWebKitAPI/WebKit2/TestWKConnectionTest",
+        SkippedTest("TestWebKitAPI/WebKit2/TestWKConnection",
                     "Test times out",
                     84959),
         SkippedTest("TestWebKitAPI/WebKit2/TestRestoreSessionStateContainingFormData",
