@@ -2620,3 +2620,6 @@ inspector/debugger/linkifier.html
 # [Qt] REGRESSION(r115086): inspector/network-status-non-http.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=84566
 inspector/network-status-non-http.html
+
+# REGRESSION(r115379) - https://bugs.webkit.org/show_bug.cgi?id=85004
+http/tests/inspector/network/network-initiator.html
