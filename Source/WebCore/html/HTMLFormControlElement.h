@@ -51,7 +51,7 @@ public:
     void setFormMethod(const String&);
     bool formNoValidate() const;
 
-    void updateFieldSetAndLegendAncestor() const;
+    void updateAncestors() const;
 
     virtual void reset() { }
 
@@ -153,7 +153,7 @@ private:
     mutable HTMLFieldSetElement* m_fieldSetAncestor;
     mutable HTMLLegendElement* m_legendAncestor;
     OwnPtr<ValidationMessage> m_validationMessage;
-    mutable bool m_fieldSetAncestorValid : 1;
+    mutable bool m_ancestorsValid : 1;
     bool m_disabled : 1;
     bool m_readOnly : 1;
     bool m_required : 1;
@@ -172,6 +172,7 @@ private:
     bool m_wasChangedSinceLastFormControlChangeEvent : 1;
 
     bool m_hasAutofocused : 1;
+    mutable bool m_hasDataListAncestor : 1;
 };
 
 } // namespace

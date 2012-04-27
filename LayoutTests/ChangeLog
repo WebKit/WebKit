@@ -1,3 +1,13 @@
+2012-04-26  Keishi Hattori  <keishi@webkit.org>
+
+        datalist: Form control in a <datalist> should be barred from constraint validation
+        https://bugs.webkit.org/show_bug.cgi?id=84359
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/datalist/datalist-child-validation-expected.txt: Added.
+        * fast/forms/datalist/datalist-child-validation.html: Added. Tests that willValidate changes from false to true when we move the element out of the datalist.
+
 2012-04-26  Jeffrey Pfau  <jpfau@apple.com>
 
         Invalid cast in WebCore::HTMLCollection::isAcceptableElement

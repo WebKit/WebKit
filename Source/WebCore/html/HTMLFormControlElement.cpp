@@ -50,7 +50,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     : LabelableElement(tagName, document)
     , m_fieldSetAncestor(0)
     , m_legendAncestor(0)
-    , m_fieldSetAncestorValid(false)
+    , m_ancestorsValid(false)
     , m_disabled(false)
     , m_readOnly(false)
     , m_required(false)
@@ -60,6 +60,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_isValid(true)
     , m_wasChangedSinceLastFormControlChangeEvent(false)
     , m_hasAutofocused(false)
+    , m_hasDataListAncestor(false)
 {
     setForm(form ? form : findFormAncestor());
     setHasCustomWillOrDidRecalcStyle();
@@ -100,19 +101,22 @@ bool HTMLFormControlElement::formNoValidate() const
     return fastHasAttribute(formnovalidateAttr);
 }
 
-void HTMLFormControlElement::updateFieldSetAndLegendAncestor() const
+void HTMLFormControlElement::updateAncestors() const
 {
+    m_hasDataListAncestor = false;
     m_fieldSetAncestor = 0;
     m_legendAncestor = 0;
     for (ContainerNode* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (!m_hasDataListAncestor && ancestor->hasTagName(datalistTag))
+            m_hasDataListAncestor = true;
         if (!m_legendAncestor && ancestor->hasTagName(legendTag))
             m_legendAncestor = static_cast<HTMLLegendElement*>(ancestor);
-        if (ancestor->hasTagName(fieldsetTag)) {
+        if (!m_fieldSetAncestor && ancestor->hasTagName(fieldsetTag))
             m_fieldSetAncestor = static_cast<HTMLFieldSetElement*>(ancestor);
+        if (m_hasDataListAncestor && m_fieldSetAncestor)
             break;
-        }
     }
-    m_fieldSetAncestorValid = true;
+    m_ancestorsValid = true;
 }
 
 void HTMLFormControlElement::parseAttribute(Attribute* attr)
@@ -223,6 +227,8 @@ void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)
 
 Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Node* insertionPoint)
 {
+    m_ancestorsValid = false;
+    setNeedsWillValidateCheck();
     HTMLElement::insertedInto(insertionPoint);
     FormAssociatedElement::insertedInto(insertionPoint);
     return InsertionDone;
@@ -230,7 +236,8 @@ Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Node* in
 
 void HTMLFormControlElement::removedFrom(Node* insertionPoint)
 {
-    m_fieldSetAncestorValid = false;
+    m_ancestorsValid = false;
+    setNeedsWillValidateCheck();
     HTMLElement::removedFrom(insertionPoint);
     FormAssociatedElement::removedFrom(insertionPoint);
 }
@@ -273,8 +280,8 @@ bool HTMLFormControlElement::disabled() const
     if (m_disabled)
         return true;
 
-    if (!m_fieldSetAncestorValid)
-        updateFieldSetAndLegendAncestor();
+    if (!m_ancestorsValid)
+        updateAncestors();
 
     // Form controls in the first legend element inside a fieldset are not affected by fieldset.disabled.
     if (m_fieldSetAncestor && m_fieldSetAncestor->disabled())
@@ -355,7 +362,7 @@ bool HTMLFormControlElement::recalcWillValidate() const
 {
     // FIXME: Should return false if this element has a datalist element as an
     // ancestor. See HTML5 4.10.10 'The datalist element.'
-    return !m_disabled && !m_readOnly;
+    return !m_hasDataListAncestor && !m_disabled && !m_readOnly;
 }
 
 bool HTMLFormControlElement::willValidate() const
@@ -374,6 +381,9 @@ bool HTMLFormControlElement::willValidate() const
 
 void HTMLFormControlElement::setNeedsWillValidateCheck()
 {
+    if (!m_ancestorsValid)
+        updateAncestors();
+
     // We need to recalculate willValidate immediately because willValidate change can causes style change.
     bool newWillValidate = recalcWillValidate();
     if (m_willValidateInitialized && m_willValidate == newWillValidate)
