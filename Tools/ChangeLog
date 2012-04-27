@@ -1,3 +1,20 @@
+2012-04-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, revert r115453 - broke chromium win bots
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._path_to_image_diff):
+        (ChromiumDriver):
+        (ChromiumDriver.__init__):
+        (ChromiumDriver._wrapper_options):
+        (ChromiumDriver.cmd_line):
+        (ChromiumDriver.stop):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.setUp):
+        (ChromiumDriverTest.test_stop):
+        (ChromiumDriverTest.test_two_drivers):
+        (ChromiumDriverTest.test_two_drivers.MockDriver.__init__):
+
 2012-04-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Windows Perf bots timeout due to not output

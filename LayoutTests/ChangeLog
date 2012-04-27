@@ -1,3 +1,9 @@
+2012-04-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, revert r115453 - broke chromium win bots
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Layout Test media/video-currentTime-set.html is still flaky
