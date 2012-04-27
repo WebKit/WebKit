@@ -25,7 +25,6 @@
 #if ENABLE(SVG)
 #include "SVGAnimateElement.h"
 
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "QualifiedName.h"
@@ -141,7 +140,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     if (!targetElement)
         return false;
 
-    determinePropertyValueTypes(fromString, toString); 
+    determinePropertyValueTypes(fromString, toString);
     ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
     ASSERT(m_animatedPropertyType == m_animator->type());
     return true;
@@ -158,7 +157,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
 
     ASSERT(!hasTagName(SVGNames::setTag));
 
-    determinePropertyValueTypes(fromString, byString); 
+    determinePropertyValueTypes(fromString, byString);
     ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
     ASSERT(m_animatedPropertyType == m_animator->type());
     return true;
@@ -179,36 +178,40 @@ static inline bool propertyTypesAreConsistent(AnimatedPropertyType expectedPrope
 }
 #endif
 
-void SVGAnimateElement::resetToBaseValue(const String& baseString)
+void SVGAnimateElement::resetToBaseValue()
 {
-    // If animatedProperty is not null, we're dealing with a SVG DOM primitive animation.
-    // In that case we don't need any base value strings, but can directly operate on these
-    // SVG DOM primitives, like SVGLength.
     SVGAnimatedTypeAnimator* animator = ensureAnimator();
     ASSERT(m_animatedPropertyType == animator->type());
 
     SVGElement* targetElement = this->targetElement();
     const QualifiedName& attributeName = this->attributeName();
     ShouldApplyAnimation shouldApply = shouldApplyAnimation(targetElement, attributeName);
-    if (shouldApply == ApplyXMLAnimation)
+    if (shouldApply == ApplyXMLAnimation) {
+        // SVG DOM animVal animation code-path.
         m_animatedProperties = animator->findAnimatedPropertiesForAttributeName(targetElement, attributeName);
-    else
-        ASSERT(m_animatedProperties.isEmpty());
+        ASSERT(!m_animatedProperties.isEmpty());
 
-    if (m_animatedProperties.isEmpty()) {
-        // Legacy fallback code path, uses the passed-in baseString, which is cached.
+        ASSERT(propertyTypesAreConsistent(m_animatedPropertyType, m_animatedProperties));
         if (!m_animatedType)
-            m_animatedType = animator->constructFromString(baseString);
+            m_animatedType = animator->startAnimValAnimation(m_animatedProperties);
         else
-            m_animatedType->setValueAsString(attributeName, baseString);
+            animator->resetAnimValToBaseVal(m_animatedProperties, m_animatedType.get());
         return;
     }
 
-    ASSERT(propertyTypesAreConsistent(m_animatedPropertyType, m_animatedProperties));
+    // CSS properties animation code-path.
+    ASSERT(m_animatedProperties.isEmpty());
+    String baseValue;
+
+    if (shouldApply == ApplyCSSAnimation) {
+        ASSERT(SVGAnimationElement::isTargetAttributeCSSProperty(targetElement, attributeName));
+        computeCSSPropertyValue(targetElement, cssPropertyID(attributeName.localName()), baseValue, false);
+    }
+
     if (!m_animatedType)
-        m_animatedType = animator->startAnimValAnimation(m_animatedProperties);
+        m_animatedType = animator->constructFromString(baseValue);
     else
-        animator->resetAnimValToBaseVal(m_animatedProperties, m_animatedType.get());
+        m_animatedType->setValueAsString(attributeName, baseValue);
 }
 
 void SVGAnimateElement::applyResultsToTarget()
@@ -219,8 +222,8 @@ void SVGAnimateElement::applyResultsToTarget()
     ASSERT(m_animator);
 
     if (m_animatedProperties.isEmpty()) {
-        // CSS / legacy XML change code-path.
-        setTargetAttributeAnimatedValue(m_animatedType.get());
+        // CSS properties animation code-path.
+        setTargetAttributeAnimatedCSSValue(m_animatedType.get());
         return;
     }
 

@@ -194,6 +194,7 @@ public:
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
 
+    void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value, bool includeSMILProperties);
     virtual void determinePropertyValueTypes(const String& from, const String& to);
 
     bool isSupportedAttribute(const QualifiedName&);
@@ -212,7 +213,7 @@ protected:
     String fromValue() const;
 
     String targetAttributeBaseValue();
-    void setTargetAttributeAnimatedValue(SVGAnimatedType*);
+    void setTargetAttributeAnimatedCSSValue(SVGAnimatedType*);
 
     // from SVGSMILElement
     virtual void startedActiveInterval();

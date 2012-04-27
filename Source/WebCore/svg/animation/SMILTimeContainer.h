@@ -73,9 +73,6 @@ private:
     void updateDocumentOrderIndexes();
     void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);
     
-    typedef pair<SVGElement*, QualifiedName> ElementAttributePair;
-    String baseValueFor(ElementAttributePair);
-    
     double m_beginTime;
     double m_pauseTime;
     double m_accumulatedPauseTime;
@@ -87,9 +84,6 @@ private:
 
     typedef HashSet<SVGSMILElement*> TimingElementSet;
     TimingElementSet m_scheduledAnimations;
-    
-    typedef HashMap<ElementAttributePair, String> BaseValueMap;
-    BaseValueMap m_savedBaseValues;
 
     SVGSVGElement* m_ownerSVGElement;
 };

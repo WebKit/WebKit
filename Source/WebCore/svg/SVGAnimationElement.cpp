@@ -341,53 +341,33 @@ bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement
     return SVGStyledElement::isAnimatableCSSProperty(attributeName);
 }
 
-static inline void setTargetAttributeAnimatedCSSValue(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
+static inline void applyCSSPropertyToTarget(SVGElement* targetElement, CSSPropertyID id, const String& value)
 {
     StylePropertySet* propertySet = targetElement->ensureAnimatedSMILStyleProperties();
-    if (propertySet->setProperty(cssPropertyID(attributeName.localName()), value, false, 0))
-        targetElement->setNeedsStyleRecalc();
+    if (propertySet->setProperty(id, value, false, 0))
+        targetElement->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
-void SVGAnimationElement::applyAnimatedValue(SVGAnimationElement::ShouldApplyAnimation shouldApply, SVGElement* targetElement, const QualifiedName& attributeName, SVGAnimatedType* animatedType)
+void SVGAnimationElement::setTargetAttributeAnimatedCSSValue(SVGAnimatedType* animatedType)
 {
     ASSERT(animatedType);
-
-    switch (shouldApply) {
-    case DontApplyAnimation:
-        ASSERT_NOT_REACHED();
-        break;
-    case ApplyCSSAnimation:
-        setTargetAttributeAnimatedCSSValue(targetElement, attributeName, animatedType->valueAsString());
-        break;
-    case ApplyXMLAnimation:
-        // FIXME: Deprecated legacy code path which mutates the DOM.
-        targetElement->setAttribute(attributeName, animatedType->valueAsString());
-        break;
-    }
-}
-
-void SVGAnimationElement::setTargetAttributeAnimatedValue(SVGAnimatedType* animatedType)
-{
-    ASSERT(animatedType);
-
     SVGElement* targetElement = this->targetElement();
-    const QualifiedName& attributeName = this->attributeName();
-    ShouldApplyAnimation shouldApply = shouldApplyAnimation(targetElement, attributeName);
-    if (shouldApply == DontApplyAnimation)
-        return;
+    ASSERT(targetElement);
 
-    // Scope this block, so instances updates will be unblocked, before we try to update the instances.
-    {
-        SVGElementInstance::InstanceUpdateBlocker blocker(targetElement);
-        applyAnimatedValue(shouldApply, targetElement, attributeName, animatedType);
-    }
+    const QualifiedName& attributeName = this->attributeName();
+    ASSERT(attributeName != anyQName());
+    CSSPropertyID id = cssPropertyID(attributeName.localName());
+
+    const String& valueAsString = animatedType->valueAsString();
+    SVGElementInstance::InstanceUpdateBlocker blocker(targetElement);
+    applyCSSPropertyToTarget(targetElement, id, valueAsString);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
     const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
     for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
         if (SVGElement* shadowTreeElement = (*it)->shadowTreeElement())
-            applyAnimatedValue(shouldApply, shadowTreeElement, attributeName, animatedType);
+            applyCSSPropertyToTarget(shadowTreeElement, id, valueAsString);
     }
 }
 
@@ -654,6 +634,22 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeat, SVGSMI
     calculateAnimatedValue(effectivePercent, repeat, resultElement);
 }
 
+void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& value, bool includeSMILProperties)
+{
+    ASSERT(element);
+    ASSERT(element->isStyled());
+
+    // If includeSMILProperties=false, don't include any properties resulting from SMIL animations, as we want to retrieve the "base value".
+    if (!includeSMILProperties) {
+        ASSERT(element == targetElement());
+        element->setUseOverrideComputedStyle(true);
+    }
+
+    value = CSSComputedStyleDeclaration::create(element)->getPropertyValue(id);
+    if (!includeSMILProperties)
+        element->setUseOverrideComputedStyle(false);
+}
+
 void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String& value)
 {
     // FIXME: At the moment the computed style gets returned as a String and needs to get parsed again.
@@ -665,8 +661,9 @@ void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const 
         return;
 
     SVGElement* svgParent = static_cast<SVGElement*>(parent);
-    if (svgParent->isStyled())
-        value = CSSComputedStyleDeclaration::create(svgParent)->getPropertyValue(cssPropertyID(attributeName.localName()));
+    if (!svgParent->isStyled())
+        return;
+    computeCSSPropertyValue(svgParent, cssPropertyID(attributeName.localName()), value, true);
 }
 
 static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)

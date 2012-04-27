@@ -105,7 +105,7 @@ public:
     void setDocumentOrderIndex(unsigned index) { m_documentOrderIndex = index; }
 
     virtual bool isAdditive() const = 0;
-    virtual void resetToBaseValue(const String&) = 0;
+    virtual void resetToBaseValue() = 0;
     virtual void applyResultsToTarget() = 0;
 
 protected:

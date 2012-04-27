@@ -166,7 +166,7 @@ static bool parsePoint(const String& s, FloatPoint& point)
     return !skipOptionalSVGSpaces(cur, end);
 }
     
-void SVGAnimateMotionElement::resetToBaseValue(const String&)
+void SVGAnimateMotionElement::resetToBaseValue()
 {
     if (!hasValidAttributeType())
         return;

@@ -1075,7 +1075,7 @@ void StyleResolver::sortMatchedRules()
     std::sort(m_matchedRules.begin(), m_matchedRules.end(), compareRules);
 }
 
-void StyleResolver::matchAllRules(MatchResult& result)
+void StyleResolver::matchAllRules(MatchResult& result, bool includeSMILProperties)
 {
     matchUARules(result);
 
@@ -1115,7 +1115,7 @@ void StyleResolver::matchAllRules(MatchResult& result)
 
 #if ENABLE(SVG)
     // Now check SMIL animation override style.
-    if (m_matchAuthorAndUserStyles && m_styledElement && m_styledElement->isSVGElement())
+    if (includeSMILProperties && m_matchAuthorAndUserStyles && m_styledElement && m_styledElement->isSVGElement())
         addElementStyleProperties(result, static_cast<SVGElement*>(m_styledElement)->animatedSMILStyleProperties(), false /* isCacheable */);
 #endif
 }
@@ -1623,7 +1623,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     if (matchingBehavior == MatchOnlyUserAgentRules)
         matchUARules(matchResult);
     else
-        matchAllRules(matchResult);
+        matchAllRules(matchResult, matchingBehavior != MatchAllRulesExcludingSMIL);
 
     applyMatchedProperties(matchResult);
 

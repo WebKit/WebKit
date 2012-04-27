@@ -39,7 +39,7 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
-    virtual void resetToBaseValue(const String&);
+    virtual void resetToBaseValue();
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
     virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);

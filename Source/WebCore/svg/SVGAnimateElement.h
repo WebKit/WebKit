@@ -43,7 +43,7 @@ public:
 protected:
     SVGAnimateElement(const QualifiedName&, Document*);
 
-    virtual void resetToBaseValue(const String&);
+    virtual void resetToBaseValue();
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
     virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
@@ -55,7 +55,7 @@ protected:
 
 private:
     SVGAnimatedTypeAnimator* ensureAnimator();
-    
+
     virtual bool hasValidAttributeType();
     AnimatedPropertyType m_animatedPropertyType;
 

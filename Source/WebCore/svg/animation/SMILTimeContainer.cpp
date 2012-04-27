@@ -27,10 +27,7 @@
 #include "SMILTimeContainer.h"
 
 #if ENABLE(SVG)
-#include "CSSComputedStyleDeclaration.h"
-#include "CSSParser.h"
 #include "Document.h"
-#include "SVGAnimationElement.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
@@ -205,27 +202,6 @@ static void sortByApplyOrder(Vector<SVGSMILElement*>& smilElements)
     std::sort(smilElements.begin(), smilElements.end(), applyOrderSortFunction);
 }
 
-String SMILTimeContainer::baseValueFor(ElementAttributePair key)
-{
-    // FIXME: We wouldn't need to do this if we were keeping base values around properly in DOM.
-    // Currently animation overwrites them so we need to save them somewhere.
-    BaseValueMap::iterator it = m_savedBaseValues.find(key);
-    if (it != m_savedBaseValues.end())
-        return it->second;
-    
-    SVGElement* targetElement = key.first;
-    QualifiedName attributeName = key.second;
-    ASSERT(targetElement);
-    ASSERT(attributeName != anyQName());
-    String baseValue;
-    if (SVGAnimationElement::isTargetAttributeCSSProperty(targetElement, attributeName))
-        baseValue = CSSComputedStyleDeclaration::create(targetElement)->getPropertyValue(cssPropertyID(attributeName.localName()));
-    else
-        baseValue = targetElement->getAttribute(attributeName);
-    m_savedBaseValues.add(key, baseValue);
-    return baseValue;
-}
-
 void SMILTimeContainer::updateAnimations(SMILTime elapsed)
 {
     SMILTime earliersFireTime = SMILTime::unresolved();
@@ -240,6 +216,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
     sortByPriority(toAnimate, elapsed);
     
     // Calculate animation contributions.
+    typedef pair<SVGElement*, QualifiedName> ElementAttributePair;
     typedef HashMap<ElementAttributePair, RefPtr<SVGSMILElement> > ResultElementMap;
     ResultElementMap resultsElements;
     for (unsigned n = 0; n < toAnimate.size(); ++n) {
@@ -265,11 +242,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
             if (!animation->hasValidAttributeType())
                 continue;
             resultElement = animation;
-            // FIXME: As soon as we stop mutating the DOM, we can stop passing the cached baseValue here.
-            // Caching the baseValue results in wrong additive="sum" behaviour. Reason: the m_savedBaseValues
-            // is NEVER reset, it always contains the state of the baseValue, at the point where we first
-            // called baseValueFor(), typically at the beginning of the animation.
-            resultElement->resetToBaseValue(baseValueFor(key));
+            resultElement->resetToBaseValue();
             resultsElements.add(key, resultElement);
         }
 

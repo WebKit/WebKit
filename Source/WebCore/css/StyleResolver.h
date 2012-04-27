@@ -114,6 +114,7 @@ enum StyleSharingBehavior {
 
 enum RuleMatchingBehavior {
     MatchAllRules,
+    MatchAllRulesExcludingSMIL,
     MatchOnlyUserAgentRules,
 };
 
@@ -336,7 +337,7 @@ private:
     static void addMatchedProperties(MatchResult&, StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, bool inRegionRule = false);
     void addElementStyleProperties(MatchResult&, StylePropertySet*, bool isCacheable = true);
 
-    void matchAllRules(MatchResult&);
+    void matchAllRules(MatchResult&, bool includeSMILProperties);
     void matchUARules(MatchResult&);
     void matchUARules(MatchResult&, RuleSet*);
     void matchAuthorRules(MatchResult&, bool includeEmptyRules);

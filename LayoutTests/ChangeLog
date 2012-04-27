@@ -1,3 +1,33 @@
+2012-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVG Animations update baseVal instead of animVal
+        https://bugs.webkit.org/show_bug.cgi?id=12437
+
+        Reviewed by Dirk Schulze.
+
+        Add tests that change the CSS property while an animation is running, finally fixed now for both SVG DOM & CSS animations.
+
+        * svg/animations/change-css-property-while-animating-fill-freeze-expected.txt: Added.
+        * svg/animations/change-css-property-while-animating-fill-freeze.html: Added.
+        * svg/animations/change-css-property-while-animating-fill-remove-expected.txt: Added.
+        * svg/animations/change-css-property-while-animating-fill-remove.html: Added.
+        * svg/animations/resources/change-css-property-while-animating-fill-freeze.svg: Added.
+        * svg/animations/resources/change-css-property-while-animating-fill-remove.svg: Added.
+        * svg/animations/script-tests/change-css-property-while-animating-fill-freeze.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (executeTest):
+        * svg/animations/script-tests/change-css-property-while-animating-fill-remove.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (executeTest):
+
 2012-04-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK test_expectations update.

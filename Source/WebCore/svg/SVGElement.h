@@ -109,6 +109,7 @@ public:
 
     StylePropertySet* animatedSMILStyleProperties() const;
     StylePropertySet* ensureAnimatedSMILStyleProperties();
+    void setUseOverrideComputedStyle(bool);
 
     virtual bool haveLoadedRequiredResources();
 
@@ -130,6 +131,10 @@ protected:
 
 private:
     friend class SVGElementInstance;
+
+    RenderStyle* computedStyle(PseudoId = NOPSEUDO);
+    virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return computedStyle(pseudoElementSpecifier); }
+    virtual bool willRecalcStyle(StyleChange);
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 
