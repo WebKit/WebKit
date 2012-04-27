@@ -1,3 +1,15 @@
+2012-04-27  Shawn Singh  <shawnsingh@chromium.org>
+
+        Infinite backgroundClipRect should not be scrolled.
+        https://bugs.webkit.org/show_bug.cgi?id=84979
+
+        Reviewed by Adrienne Walker.
+
+        * compositing/iframes/resources/fixed-position-transformed-subframe.html: Added.
+        * compositing/iframes/scroll-fixed-transformed-element-expected.png: Added.
+        * compositing/iframes/scroll-fixed-transformed-element-expected.txt: Added.
+        * compositing/iframes/scroll-fixed-transformed-element.html: Added.
+
 2012-04-27  Erik Arvidsson  <arv@chromium.org>
 
         Clean up tests in preparation for ES5.2 global scope fix
