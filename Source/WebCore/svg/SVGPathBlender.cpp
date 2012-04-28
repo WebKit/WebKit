@@ -132,7 +132,7 @@ bool SVGPathBlender::blendLineToSegment()
 bool SVGPathBlender::blendLineToHorizontalSegment()
 {
     float fromX = 0;
-    float toX;
+    float toX = 0;
     if ((m_fromSource->hasMoreData() && !m_fromSource->parseLineToHorizontalSegment(fromX))
         || !m_toSource->parseLineToHorizontalSegment(toX))
         return false;
@@ -146,7 +146,7 @@ bool SVGPathBlender::blendLineToHorizontalSegment()
 bool SVGPathBlender::blendLineToVerticalSegment()
 {
     float fromY = 0;
-    float toY;
+    float toY = 0;
     if ((m_fromSource->hasMoreData() && !m_fromSource->parseLineToVerticalSegment(fromY))
         || !m_toSource->parseLineToVerticalSegment(toY))
         return false;
@@ -236,11 +236,11 @@ bool SVGPathBlender::blendArcToSegment()
     bool fromLargeArc = false;
     bool fromSweep = false;
     FloatPoint fromTargetPoint;
-    float toRx;
-    float toRy;
-    float toAngle;
-    bool toLargeArc;
-    bool toSweep;
+    float toRx = 0;
+    float toRy = 0;
+    float toAngle = 0;
+    bool toLargeArc = false;
+    bool toSweep = false;
     FloatPoint toTargetPoint;
     if ((m_fromSource->hasMoreData() && !m_fromSource->parseArcToSegment(fromRx, fromRy, fromAngle, fromLargeArc, fromSweep, fromTargetPoint))
         || !m_toSource->parseArcToSegment(toRx, toRy, toAngle, toLargeArc, toSweep, toTargetPoint))
@@ -315,7 +315,7 @@ bool SVGPathBlender::blendAnimatedPath(float progress, SVGPathSource* fromSource
     m_progress = progress;
 
     bool fromSourceHadData = m_fromSource->hasMoreData();
-    while (true) {
+    while (m_toSource->hasMoreData()) {
         SVGPathSegType fromCommand;
         SVGPathSegType toCommand;
         if ((fromSourceHadData && !m_fromSource->parseSVGSegmentType(fromCommand)) || !m_toSource->parseSVGSegmentType(toCommand))
@@ -378,17 +378,18 @@ bool SVGPathBlender::blendAnimatedPath(float progress, SVGPathSource* fromSource
             if (!blendArcToSegment())
                 return false;
             break;
-        default:
-            return false;
+        case PathSegUnknown:
+            return false;;
         }
-        if (fromSourceHadData) {
-            if (m_fromSource->hasMoreData() != m_toSource->hasMoreData())
-                return false;
-            if (!m_fromSource->hasMoreData() || !m_toSource->hasMoreData())
-                break;
-        } else if (!m_toSource->hasMoreData())
-            break;
+
+        if (!fromSourceHadData)
+            continue;
+        if (m_fromSource->hasMoreData() != m_toSource->hasMoreData())
+            return false;
+        if (!m_fromSource->hasMoreData() || !m_toSource->hasMoreData())
+            return true;
     }
+
     return true;
 }
 
