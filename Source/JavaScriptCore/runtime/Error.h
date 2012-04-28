@@ -45,6 +45,7 @@ namespace JSC {
     JSObject* createReferenceError(JSGlobalObject*, const UString&);
     JSObject* createSyntaxError(JSGlobalObject*, const UString&);
     JSObject* createTypeError(JSGlobalObject*, const UString&);
+    JSObject* createNotEnoughArgumentsError(JSGlobalObject*);
     JSObject* createURIError(JSGlobalObject*, const UString&);
     // ExecState wrappers.
     JS_EXPORT_PRIVATE JSObject* createError(ExecState*, const UString&);
@@ -53,6 +54,7 @@ namespace JSC {
     JS_EXPORT_PRIVATE JSObject* createReferenceError(ExecState*, const UString&);
     JS_EXPORT_PRIVATE JSObject* createSyntaxError(ExecState*, const UString&);
     JS_EXPORT_PRIVATE JSObject* createTypeError(ExecState*, const UString&);
+    JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(ExecState*);
     JSObject* createURIError(ExecState*, const UString&);
 
     // Methods to add 

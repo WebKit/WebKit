@@ -48,7 +48,7 @@ namespace WebCore {
 JSValue JSDirectoryEntry::getFile(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return throwError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwError(exec, createNotEnoughArgumentsError(exec));
 
     DirectoryEntry* imp = static_cast<DirectoryEntry*>(impl());
     const String& path = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
@@ -96,7 +96,7 @@ JSValue JSDirectoryEntry::getFile(ExecState* exec)
 JSValue JSDirectoryEntry::getDirectory(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return throwError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwError(exec, createNotEnoughArgumentsError(exec));
 
     DirectoryEntry* imp = static_cast<DirectoryEntry*>(impl());
     const String& path = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));

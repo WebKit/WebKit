@@ -46,7 +46,7 @@ EncodedJSValue JSC_HOST_CALL JSDeprecatedPeerConnectionConstructor::constructJSD
         return throwVMError(exec, createReferenceError(exec, "DeprecatedPeerConnection constructor associated document is unavailable"));
 
     if (exec->argumentCount() < 2)
-        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
 
     String serverConfiguration = ustringToString(exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())

@@ -51,7 +51,7 @@ namespace WebCore {
 EncodedJSValue JSC_HOST_CALL JSWebKitMutationObserverConstructor::constructJSWebKitMutationObserver(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
 
     JSObject* object = exec->argument(0).getObject();
     if (!object) {
@@ -83,7 +83,7 @@ static const size_t numBooleanOptions = sizeof(booleanOptions) / sizeof(BooleanO
 JSValue JSWebKitMutationObserver::observe(ExecState* exec)
 {
     if (exec->argumentCount() < 2)
-        return throwError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwError(exec, createNotEnoughArgumentsError(exec));
     Node* target = toNode(exec->argument(0));
     if (exec->hadException())
         return jsUndefined();

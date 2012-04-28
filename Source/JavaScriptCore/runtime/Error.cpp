@@ -79,6 +79,11 @@ JSObject* createTypeError(JSGlobalObject* globalObject, const UString& message)
     return ErrorInstance::create(globalObject->globalData(), globalObject->typeErrorConstructor()->errorStructure(), message);
 }
 
+JSObject* createNotEnoughArgumentsError(JSGlobalObject* globalObject)
+{
+    return createTypeError(globalObject, "Not enough arguments");
+}
+
 JSObject* createURIError(JSGlobalObject* globalObject, const UString& message)
 {
     ASSERT(!message.isEmpty());
@@ -113,6 +118,11 @@ JSObject* createSyntaxError(ExecState* exec, const UString& message)
 JSObject* createTypeError(ExecState* exec, const UString& message)
 {
     return createTypeError(exec->lexicalGlobalObject(), message);
+}
+
+JSObject* createNotEnoughArgumentsError(ExecState* exec)
+{
+    return createNotEnoughArgumentsError(exec->lexicalGlobalObject());
 }
 
 JSObject* createURIError(ExecState* exec, const UString& message)
