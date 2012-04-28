@@ -484,6 +484,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     if (WebInspector.settings.javaScriptDisabled.get())
         PageAgent.setScriptExecutionDisabled(true);
 
+    this.domAgent._emulateTouchEventsChanged();
+
     WebInspector.WorkerManager.loadCompleted();
     InspectorFrontendAPI.loadCompleted();
 }

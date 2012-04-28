@@ -3,6 +3,8 @@ This tests single touch event emulation using mouse events.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS 'ontouchstart' in window is true
+PASS 'ontouchend' in document is true
 PASS lastEvent.type is "touchstart"
 PASS lastEvent.touches.length is 1
 PASS lastEvent.changedTouches.length is 1

@@ -1182,7 +1182,36 @@ WebInspector.DOMAgent.prototype = {
 
     _emulateTouchEventsChanged: function()
     {
-        DOMAgent.setTouchEmulationEnabled(WebInspector.settings.emulateTouchEvents.get());
+        const injectedFunction = function() {
+            const touchEvents = ["ontouchstart", "ontouchend", "ontouchmove", "ontouchcancel"];
+            for (var i = 0; i < touchEvents.length; ++i) {
+                if (!(touchEvents[i] in window.__proto__))
+                    Object.defineProperty(window.__proto__, touchEvents[i], { value: null, writable: true, configurable: true, enumerable: true });
+                if (!(touchEvents[i] in document.__proto__))
+                    Object.defineProperty(document.__proto__, touchEvents[i], { value: null, writable: true, configurable: true, enumerable: true });
+            }
+        }
+
+        var emulationEnabled = WebInspector.settings.emulateTouchEvents.get();
+        if (emulationEnabled && !this._addTouchEventsScriptInjecting) {
+            this._addTouchEventsScriptInjecting = true;
+            PageAgent.addScriptToEvaluateOnLoad("(" + injectedFunction.toString() + ")", scriptAddedCallback.bind(this));
+        } else {
+            if (typeof this._addTouchEventsScriptId !== "undefined") {
+                PageAgent.removeScriptToEvaluateOnLoad(this._addTouchEventsScriptId);
+                delete this._addTouchEventsScriptId;
+            }
+        }
+
+        function scriptAddedCallback(error, scriptId)
+        {
+            delete this._addTouchEventsScriptInjecting;
+            if (error)
+                return;
+            this._addTouchEventsScriptId = scriptId;
+        }
+
+        DOMAgent.setTouchEmulationEnabled(emulationEnabled);
     },
 
     markUndoableState: function()

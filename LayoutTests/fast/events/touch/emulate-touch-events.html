@@ -89,6 +89,10 @@ if (window.eventSender && window.internals && window.internals.settings) {
     window.eventSender.dragMode = false;
     window.jsTestIsAsync = true;
     window.internals.settings.setTouchEventEmulationEnabled(true);
+
+    shouldBe("'ontouchstart' in window", "true");
+    shouldBe("'ontouchend' in document", "true");
+
     mouseEventSequence();
 } else
     debug("This test requires DumpRenderTree. Tap on the blue rect to log.");

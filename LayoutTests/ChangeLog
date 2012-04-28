@@ -1,3 +1,13 @@
+2012-04-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Enable touch events feature fails touch feature detection
+        https://bugs.webkit.org/show_bug.cgi?id=84397
+
+        Reviewed by Pavel Feldman.
+
+        * fast/events/touch/emulate-touch-events-expected.txt:
+        * fast/events/touch/emulate-touch-events.html:
+
 2012-04-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         <animateTransform type="scale"> should use '0' as effective from value not '1', if no base value is specified and from is not given
