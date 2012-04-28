@@ -366,7 +366,7 @@ void Heap::lastChanceToFinalize()
 
     // FIXME: Make this a release-mode crash once we're sure no one's doing this.
     if (size_t size = m_protectedValues.size())
-        WTFLogAlways("ERROR: JavaScriptCore heap deallocated while %ld values were still protected", size);
+        WTFLogAlways("ERROR: JavaScriptCore heap deallocated while %ld values were still protected", static_cast<unsigned long>(size));
 
     m_weakSet.finalizeAll();
     canonicalizeCellLivenessData();
