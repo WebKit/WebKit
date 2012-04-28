@@ -1,3 +1,13 @@
+2012-04-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        <animateTransform type="scale"> should use '0' as effective from value not '1', if no base value is specified and from is not given
+        https://bugs.webkit.org/show_bug.cgi?id=85133
+
+        Reviewed by Antti Koivisto.
+
+        * svg/animations/animateTransform-by-scale-1-expected.svg: Added.
+        * svg/animations/animateTransform-by-scale-1.svg: Added.
+
 2012-04-28  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] http/tests/websocket/tests/hixie76/url-parsing.html is failing
