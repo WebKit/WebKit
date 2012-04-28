@@ -1,3 +1,14 @@
+2012-04-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r115407.
+        http://trac.webkit.org/changeset/115407
+        https://bugs.webkit.org/show_bug.cgi?id=85126
+
+        Caused heap use after free (Requested by keishi_ on #webkit).
+
+        * fast/forms/datalist/datalist-child-validation-expected.txt: Removed.
+        * fast/forms/datalist/datalist-child-validation.html: Removed.
+
 2012-04-27  Kentaro Hara  <haraken@chromium.org>
 
         "Not enough arguments" error should be TypeError
