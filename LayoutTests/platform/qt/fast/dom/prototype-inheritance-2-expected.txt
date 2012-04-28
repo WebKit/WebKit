@@ -122,6 +122,9 @@ PASS HTMLCollectionPrototype from inner.document.forms.testForm.0.0.children.__p
 PASS HTMLDListElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling
 PASS HTMLDListElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.constructor
 PASS HTMLDListElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.__proto__
+PASS HTMLDataListElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.nextElementSibling
+PASS HTMLDataListElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.nextElementSibling.constructor
+PASS HTMLDataListElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.nextElementSibling.__proto__
 PASS HTMLDocument from inner.document.forms.testForm.0.ownerDocument
 PASS HTMLDocumentConstructor from inner.document.forms.testForm.0.ownerDocument.constructor
 PASS HTMLDocumentPrototype from inner.document.forms.testForm.0.ownerDocument.__proto__

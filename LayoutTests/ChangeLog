@@ -1,3 +1,16 @@
+2012-04-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, update expected files after r115446.
+
+        * fast/dom/Window/window-lookup-precedence-expected.txt: Updated after r115446.
+        * platform/qt-4.8/fast/dom/Window/window-properties-expected.txt: Updated after r115446.
+        * platform/qt-5.0-wk2/fast/dom/Window/window-properties-expected.txt: Updated after r115446.
+        * platform/qt-5.0-wk2/fast/dom/prototype-inheritance-2-expected.txt: Updated after r115446.
+        * platform/qt-5.0/fast/dom/Window/window-properties-expected.txt: Updated after r115446.
+        * platform/qt-5.0/fast/dom/prototype-inheritance-2-expected.txt: Updated after r115446.
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.txt: Updated after r115446.
+        * platform/qt/fast/js/global-constructors-expected.txt: Updated after r115446.
+
 2012-04-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, rebaselining after revisions 115446, 115510 and 115533.
