@@ -38,29 +38,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedStringAnimator::constructFromString(const
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedStringAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedStringAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createString(constructFromBaseValue<SVGAnimatedString>(properties));
+    return SVGAnimatedType::createString(constructFromBaseValue<SVGAnimatedString>(animatedTypes));
 }
 
-void SVGAnimatedStringAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedStringAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedString>(properties);
+    stopAnimValAnimationForType<SVGAnimatedString>(animatedTypes);
 }
 
-void SVGAnimatedStringAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedStringAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedString>(properties, type, &SVGAnimatedType::string);
+    resetFromBaseValue<SVGAnimatedString>(animatedTypes, type, &SVGAnimatedType::string);
 }
 
-void SVGAnimatedStringAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedStringAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedString>(properties);
+    animValWillChangeForType<SVGAnimatedString>(animatedTypes);
 }
 
-void SVGAnimatedStringAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedStringAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedString>(properties);
+    animValDidChangeForType<SVGAnimatedString>(animatedTypes);
 }
 
 void SVGAnimatedStringAnimator::addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*)

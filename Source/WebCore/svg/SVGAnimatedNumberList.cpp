@@ -39,29 +39,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(c
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createNumberList(constructFromBaseValue<SVGAnimatedNumberList>(properties));
+    return SVGAnimatedType::createNumberList(constructFromBaseValue<SVGAnimatedNumberList>(animatedTypes));
 }
 
-void SVGAnimatedNumberListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedNumberListAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedNumberList>(properties);
+    stopAnimValAnimationForType<SVGAnimatedNumberList>(animatedTypes);
 }
 
-void SVGAnimatedNumberListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedNumberListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedNumberList>(properties, type, &SVGAnimatedType::numberList);
+    resetFromBaseValue<SVGAnimatedNumberList>(animatedTypes, type, &SVGAnimatedType::numberList);
 }
 
-void SVGAnimatedNumberListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedNumberListAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedNumberList>(properties);
+    animValWillChangeForType<SVGAnimatedNumberList>(animatedTypes);
 }
 
-void SVGAnimatedNumberListAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedNumberListAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedNumberList>(properties);
+    animValDidChangeForType<SVGAnimatedNumberList>(animatedTypes);
 }
 
 void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

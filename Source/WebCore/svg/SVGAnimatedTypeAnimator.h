@@ -29,6 +29,21 @@
 
 namespace WebCore {
 
+struct SVGElementAnimatedProperties {
+    SVGElementAnimatedProperties()
+        : element(0)
+    { }
+
+    SVGElementAnimatedProperties(SVGElement* element, Vector<RefPtr<SVGAnimatedProperty> >& properties)
+        : element(element)
+        , properties(properties)
+    { }
+
+    SVGElement* element;
+    Vector<RefPtr<SVGAnimatedProperty> > properties;
+};
+typedef Vector<SVGElementAnimatedProperties> SVGElementAnimatedPropertyList;
+
 class SVGAnimationElement;
 
 class SVGAnimatedTypeAnimator {
@@ -36,12 +51,14 @@ class SVGAnimatedTypeAnimator {
 public:
     virtual ~SVGAnimatedTypeAnimator() { }
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&) = 0;
-    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&) = 0;
-    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&) = 0;
-    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*) = 0;
-    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&) = 0;
-    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&) = 0;
+
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
+    virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
+    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) = 0;
+    virtual void animValWillChange(const SVGElementAnimatedPropertyList&) = 0;
+    virtual void animValDidChange(const SVGElementAnimatedPropertyList&) = 0;
     virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) = 0;
+
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
                                         OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue) = 0;
     virtual float calculateDistance(const String& fromString, const String& toString) = 0;
@@ -62,29 +79,50 @@ public:
     void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
     AnimatedPropertyType type() const { return m_type; }
 
-    Vector<SVGAnimatedProperty*> findAnimatedPropertiesForAttributeName(SVGElement* targetElement, const QualifiedName& attributeName)
+    SVGElementAnimatedPropertyList findAnimatedPropertiesForAttributeName(SVGElement* targetElement, const QualifiedName& attributeName)
     {
         ASSERT(targetElement);
 
-        Vector<RefPtr<SVGAnimatedProperty> > properties;
-        targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, properties);
+        SVGElementAnimatedPropertyList propertiesByInstance;
+
+        Vector<RefPtr<SVGAnimatedProperty> > targetProperties;
+        targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, targetProperties);
 
         if (!SVGAnimatedType::supportsAnimVal(m_type))
-            return Vector<SVGAnimatedProperty*>();
+            return SVGElementAnimatedPropertyList();
 
-        Vector<SVGAnimatedProperty*> result;
-        size_t propertiesSize = properties.size();
-        for (size_t i = 0; i < propertiesSize; ++i) {
-            SVGAnimatedProperty* property = properties[i].get();
-            if (property->animatedPropertyType() != m_type) {
-                ASSERT(m_type == AnimatedAngle);
-                ASSERT(property->animatedPropertyType() == AnimatedEnumeration);
-            }
+        SVGElementAnimatedProperties propertiesPair(targetElement, targetProperties);
+        propertiesByInstance.append(propertiesPair);
 
-            result.append(property);
+        const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
+        const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+        for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+            SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
+            if (!shadowTreeElement)
+                continue;
+
+            Vector<RefPtr<SVGAnimatedProperty> > instanceProperties;
+            targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(shadowTreeElement, attributeName, instanceProperties);
+
+            SVGElementAnimatedProperties instancePropertiesPair(shadowTreeElement, instanceProperties);
+            propertiesByInstance.append(instancePropertiesPair);
         }
 
-        return result;
+#if !ASSERT_DISABLED
+        SVGElementAnimatedPropertyList::const_iterator propertiesEnd = propertiesByInstance.end();
+        for (SVGElementAnimatedPropertyList::const_iterator it = propertiesByInstance.begin(); it != propertiesEnd; ++it) {
+            size_t propertiesSize = it->properties.size();
+            for (size_t i = 0; i < propertiesSize; ++i) {
+                RefPtr<SVGAnimatedProperty> property = it->properties[i];
+                if (property->animatedPropertyType() != m_type) {
+                    ASSERT(m_type == AnimatedAngle);
+                    ASSERT(property->animatedPropertyType() == AnimatedEnumeration);
+                }
+            }
+        }
+#endif
+
+        return propertiesByInstance;
     }
 
 protected:
@@ -97,94 +135,94 @@ protected:
 
     // Helpers for animators that operate on single types, eg. just one SVGAnimatedInteger.
     template<typename AnimValType>
-    typename AnimValType::ContentType* constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties)
+    typename AnimValType::ContentType* constructFromBaseValue(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 1);
-        const typename AnimValType::ContentType& animatedType = castAnimatedPropertyToActualType<AnimValType>(properties[0])->currentBaseValue();
+        ASSERT(animatedTypes[0].properties.size() == 1);
+        const typename AnimValType::ContentType& animatedType = castAnimatedPropertyToActualType<AnimValType>(animatedTypes[0].properties[0].get())->currentBaseValue();
 
         typename AnimValType::ContentType* copy = new typename AnimValType::ContentType(animatedType);
-        executeAction<AnimValType>(StartAnimationAction, properties, 0, copy);
+        executeAction<AnimValType>(StartAnimationAction, animatedTypes, 0, copy);
         return copy;
     }
 
     template<typename AnimValType>
-    void resetFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type, typename AnimValType::ContentType& (SVGAnimatedType::*getter)())
+    void resetFromBaseValue(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type, typename AnimValType::ContentType& (SVGAnimatedType::*getter)())
     {
-        ASSERT(properties.size() == 1);
+        ASSERT(animatedTypes[0].properties.size() == 1);
         ASSERT(type);
         ASSERT(type->type() == m_type);
-        (type->*getter)() = castAnimatedPropertyToActualType<AnimValType>(properties[0])->currentBaseValue();
+        (type->*getter)() = castAnimatedPropertyToActualType<AnimValType>(animatedTypes[0].properties[0].get())->currentBaseValue();
     }
 
     template<typename AnimValType>
-    void stopAnimValAnimationForType(const Vector<SVGAnimatedProperty*>& properties)
+    void stopAnimValAnimationForType(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 1);
-        executeAction<AnimValType>(StopAnimationAction, properties, 0);
+        ASSERT(animatedTypes[0].properties.size() == 1);
+        executeAction<AnimValType>(StopAnimationAction, animatedTypes, 0);
     }
 
     template<typename AnimValType>
-    void animValDidChangeForType(const Vector<SVGAnimatedProperty*>& properties)
+    void animValDidChangeForType(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 1);
-        executeAction<AnimValType>(AnimValDidChangeAction, properties, 0);
+        ASSERT(animatedTypes[0].properties.size() == 1);
+        executeAction<AnimValType>(AnimValDidChangeAction, animatedTypes, 0);
     }
 
     template<typename AnimValType>
-    void animValWillChangeForType(const Vector<SVGAnimatedProperty*>& properties)
+    void animValWillChangeForType(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 1);
-        executeAction<AnimValType>(AnimValWillChangeAction, properties, 0);
+        ASSERT(animatedTypes[0].properties.size() == 1);
+        executeAction<AnimValType>(AnimValWillChangeAction, animatedTypes, 0);
     }
 
     // Helpers for animators that operate on pair types, eg. a pair of SVGAnimatedIntegers.
     template<typename AnimValType1, typename AnimValType2>
-    pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>* constructFromBaseValues(const Vector<SVGAnimatedProperty*>& properties)
+    pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>* constructFromBaseValues(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 2);
-        const typename AnimValType1::ContentType& firstType = castAnimatedPropertyToActualType<AnimValType1>(properties[0])->currentBaseValue();
-        const typename AnimValType2::ContentType& secondType = castAnimatedPropertyToActualType<AnimValType2>(properties[1])->currentBaseValue();
+        ASSERT(animatedTypes[0].properties.size() == 2);
+        const typename AnimValType1::ContentType& firstType = castAnimatedPropertyToActualType<AnimValType1>(animatedTypes[0].properties[0].get())->currentBaseValue();
+        const typename AnimValType2::ContentType& secondType = castAnimatedPropertyToActualType<AnimValType2>(animatedTypes[0].properties[1].get())->currentBaseValue();
 
         pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>* copy = new pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>(firstType, secondType);
-        executeAction<AnimValType1>(StartAnimationAction, properties, 0, &copy->first);
-        executeAction<AnimValType2>(StartAnimationAction, properties, 1, &copy->second);
+        executeAction<AnimValType1>(StartAnimationAction, animatedTypes, 0, &copy->first);
+        executeAction<AnimValType2>(StartAnimationAction, animatedTypes, 1, &copy->second);
         return copy;
     }
 
     template<typename AnimValType1, typename AnimValType2>
-    void resetFromBaseValues(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type, pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& (SVGAnimatedType::*getter)())
+    void resetFromBaseValues(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type, pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& (SVGAnimatedType::*getter)())
     {
-        ASSERT(properties.size() == 2);
+        ASSERT(animatedTypes[0].properties.size() == 2);
         ASSERT(type);
         ASSERT(type->type() == m_type);
 
         pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& animatedTypeValue = (type->*getter)();
-        animatedTypeValue.first = castAnimatedPropertyToActualType<AnimValType1>(properties[0])->currentBaseValue();
-        animatedTypeValue.second = castAnimatedPropertyToActualType<AnimValType2>(properties[1])->currentBaseValue();
+        animatedTypeValue.first = castAnimatedPropertyToActualType<AnimValType1>(animatedTypes[0].properties[0].get())->currentBaseValue();
+        animatedTypeValue.second = castAnimatedPropertyToActualType<AnimValType2>(animatedTypes[0].properties[1].get())->currentBaseValue();
     }
 
     template<typename AnimValType1, typename AnimValType2>
-    void stopAnimValAnimationForTypes(const Vector<SVGAnimatedProperty*>& properties)
+    void stopAnimValAnimationForTypes(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 2);
-        executeAction<AnimValType1>(StopAnimationAction, properties, 0);
-        executeAction<AnimValType2>(StopAnimationAction, properties, 1);
+        ASSERT(animatedTypes[0].properties.size() == 2);
+        executeAction<AnimValType1>(StopAnimationAction, animatedTypes, 0);
+        executeAction<AnimValType2>(StopAnimationAction, animatedTypes, 1);
     }
 
     template<typename AnimValType1, typename AnimValType2>
-    void animValDidChangeForTypes(const Vector<SVGAnimatedProperty*>& properties)
+    void animValDidChangeForTypes(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 2);
-        executeAction<AnimValType1>(AnimValDidChangeAction, properties, 0);
-        executeAction<AnimValType2>(AnimValDidChangeAction, properties, 1);
+        ASSERT(animatedTypes[0].properties.size() == 2);
+        executeAction<AnimValType1>(AnimValDidChangeAction, animatedTypes, 0);
+        executeAction<AnimValType2>(AnimValDidChangeAction, animatedTypes, 1);
     }
 
     template<typename AnimValType1, typename AnimValType2>
-    void animValWillChangeForTypes(const Vector<SVGAnimatedProperty*>& properties)
+    void animValWillChangeForTypes(const SVGElementAnimatedPropertyList& animatedTypes)
     {
-        ASSERT(properties.size() == 2);
-        executeAction<AnimValType1>(AnimValWillChangeAction, properties, 0);
-        executeAction<AnimValType2>(AnimValWillChangeAction, properties, 1);
+        ASSERT(animatedTypes[0].properties.size() == 2);
+        executeAction<AnimValType1>(AnimValWillChangeAction, animatedTypes, 0);
+        executeAction<AnimValType2>(AnimValWillChangeAction, animatedTypes, 1);
     }
 
     template<typename AnimValType>
@@ -200,25 +238,6 @@ protected:
         return static_cast<AnimValType*>(property);
     }
 
-    template<typename AnimValType>
-    void collectAnimatedPropertiesFromInstances(Vector<AnimValType*>& result, unsigned whichProperty, SVGElement* targetElement, const QualifiedName& attributeName)
-    {
-        ASSERT(targetElement);
-
-        // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-        const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
-        const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-        for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-            SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
-            if (!shadowTreeElement)
-                continue;
-
-            Vector<SVGAnimatedProperty*> propertiesInstance = findAnimatedPropertiesForAttributeName(shadowTreeElement, attributeName);
-            ASSERT(whichProperty < propertiesInstance.size());
-            result.append(castAnimatedPropertyToActualType<AnimValType>(propertiesInstance[whichProperty]));
-        }
-    }
-
     AnimatedPropertyType m_type;
     SVGAnimationElement* m_animationElement;
     SVGElement* m_contextElement;
@@ -232,34 +251,31 @@ private:
     };
 
     template<typename AnimValType>
-    void executeAction(AnimationAction action, const Vector<SVGAnimatedProperty*>& properties, unsigned whichProperty, typename AnimValType::ContentType* type = 0)
+    void executeAction(AnimationAction action, const SVGElementAnimatedPropertyList& animatedTypes, unsigned whichProperty, typename AnimValType::ContentType* type = 0)
     {
-        ASSERT(whichProperty < properties.size());
-        AnimValType* property = castAnimatedPropertyToActualType<AnimValType>(properties[whichProperty]);
-        SVGElementInstance::InstanceUpdateBlocker blocker(property->contextElement());
+        SVGElementInstance::InstanceUpdateBlocker blocker(animatedTypes[0].element);
 
-        Vector<AnimValType*> result;
-        result.append(property);
-        collectAnimatedPropertiesFromInstances(result, whichProperty, property->contextElement(), property->attributeName());
+        SVGElementAnimatedPropertyList::const_iterator end = animatedTypes.end();
+        for (SVGElementAnimatedPropertyList::const_iterator it = animatedTypes.begin(); it != end; ++it) {
+            ASSERT(whichProperty < it->properties.size());
+            AnimValType* property = castAnimatedPropertyToActualType<AnimValType>(it->properties[whichProperty].get());
 
-        size_t resultSize = result.size();
-        for (size_t i = 0; i < resultSize; ++i) {
             switch (action) {
             case StartAnimationAction:
                 ASSERT(type);
-                result[i]->animationStarted(type);
+                property->animationStarted(type);
                 break;
             case StopAnimationAction:
                 ASSERT(!type);
-                result[i]->animationEnded();
+                property->animationEnded();
                 break;
             case AnimValWillChangeAction:
                 ASSERT(!type);
-                result[i]->animValWillChange();
+                property->animValWillChange();
                 break;
             case AnimValDidChangeAction:
                 ASSERT(!type);
-                result[i]->animValDidChange();
+                property->animValDidChange();
                 break;
             }
         }

@@ -44,29 +44,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::constructFromString(cons
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedBooleanAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createBoolean(constructFromBaseValue<SVGAnimatedBoolean>(properties));
+    return SVGAnimatedType::createBoolean(constructFromBaseValue<SVGAnimatedBoolean>(animatedTypes));
 }
 
-void SVGAnimatedBooleanAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedBooleanAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedBoolean>(properties);
+    stopAnimValAnimationForType<SVGAnimatedBoolean>(animatedTypes);
 }
 
-void SVGAnimatedBooleanAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedBooleanAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedBoolean>(properties, type, &SVGAnimatedType::boolean);
+    resetFromBaseValue<SVGAnimatedBoolean>(animatedTypes, type, &SVGAnimatedType::boolean);
 }
 
-void SVGAnimatedBooleanAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedBooleanAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedBoolean>(properties);
+    animValWillChangeForType<SVGAnimatedBoolean>(animatedTypes);
 }
 
-void SVGAnimatedBooleanAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedBooleanAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedBoolean>(properties);
+    animValDidChangeForType<SVGAnimatedBoolean>(animatedTypes);
 }
 
 void SVGAnimatedBooleanAnimator::addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*)

@@ -49,29 +49,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromStrin
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createTransformList(constructFromBaseValue<SVGAnimatedTransformList>(properties));
+    return SVGAnimatedType::createTransformList(constructFromBaseValue<SVGAnimatedTransformList>(animatedTypes));
 }
 
-void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedTransformList>(properties);
+    stopAnimValAnimationForType<SVGAnimatedTransformList>(animatedTypes);
 }
 
-void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedTransformList>(properties, type, &SVGAnimatedType::transformList);
+    resetFromBaseValue<SVGAnimatedTransformList>(animatedTypes, type, &SVGAnimatedType::transformList);
 }
 
-void SVGAnimatedTransformListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedTransformListAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedTransformList>(properties);
+    animValWillChangeForType<SVGAnimatedTransformList>(animatedTypes);
 }
 
-void SVGAnimatedTransformListAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedTransformListAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedTransformList>(properties);
+    animValDidChangeForType<SVGAnimatedTransformList>(animatedTypes);
 }
 
 void SVGAnimatedTransformListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

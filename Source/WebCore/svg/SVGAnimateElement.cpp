@@ -164,16 +164,20 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
 }
 
 #ifndef NDEBUG
-static inline bool propertyTypesAreConsistent(AnimatedPropertyType expectedPropertyType, const Vector<SVGAnimatedProperty*>& properties)
+static inline bool propertyTypesAreConsistent(AnimatedPropertyType expectedPropertyType, const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    for (size_t i = 0; i < properties.size(); ++i) {
-        if (expectedPropertyType != properties[i]->animatedPropertyType()) {
-            // This is the only allowed inconsistency. SVGAnimatedAngleAnimator handles both SVGAnimatedAngle & SVGAnimatedEnumeration for markers orient attribute.
-            if (expectedPropertyType == AnimatedAngle && properties[i]->animatedPropertyType() == AnimatedEnumeration)
-                return true;
-            return false;
+    SVGElementAnimatedPropertyList::const_iterator end = animatedTypes.end();
+    for (SVGElementAnimatedPropertyList::const_iterator it = animatedTypes.begin(); it != end; ++it) {
+        for (size_t i = 0; i < it->properties.size(); ++i) {
+            if (expectedPropertyType != it->properties[i]->animatedPropertyType()) {
+                // This is the only allowed inconsistency. SVGAnimatedAngleAnimator handles both SVGAnimatedAngle & SVGAnimatedEnumeration for markers orient attribute.
+                if (expectedPropertyType == AnimatedAngle && it->properties[i]->animatedPropertyType() == AnimatedEnumeration)
+                    return true;
+                return false;
+            }
         }
     }
+
     return true;
 }
 #endif

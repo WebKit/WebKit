@@ -40,29 +40,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(c
     return animateType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createLengthList(constructFromBaseValue<SVGAnimatedLengthList>(properties));
+    return SVGAnimatedType::createLengthList(constructFromBaseValue<SVGAnimatedLengthList>(animatedTypes));
 }
 
-void SVGAnimatedLengthListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedLengthListAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedLengthList>(properties);
+    stopAnimValAnimationForType<SVGAnimatedLengthList>(animatedTypes);
 }
 
-void SVGAnimatedLengthListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedLengthListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedLengthList>(properties, type, &SVGAnimatedType::lengthList);
+    resetFromBaseValue<SVGAnimatedLengthList>(animatedTypes, type, &SVGAnimatedType::lengthList);
 }
 
-void SVGAnimatedLengthListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedLengthListAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedLengthList>(properties);
+    animValWillChangeForType<SVGAnimatedLengthList>(animatedTypes);
 }
 
-void SVGAnimatedLengthListAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedLengthListAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedLengthList>(properties);
+    animValDidChangeForType<SVGAnimatedLengthList>(animatedTypes);
 }
 
 void SVGAnimatedLengthListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

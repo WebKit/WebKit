@@ -63,7 +63,7 @@ private:
     OwnPtr<SVGAnimatedType> m_toType;
     OwnPtr<SVGAnimatedType> m_animatedType;
 
-    Vector<SVGAnimatedProperty*> m_animatedProperties;
+    SVGElementAnimatedPropertyList m_animatedProperties;
     OwnPtr<SVGAnimatedTypeAnimator> m_animator;
 };
 

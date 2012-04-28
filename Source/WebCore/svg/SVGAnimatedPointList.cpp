@@ -40,29 +40,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPointListAnimator::constructFromString(co
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedPointListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedPointListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createPointList(constructFromBaseValue<SVGAnimatedPointList>(properties));
+    return SVGAnimatedType::createPointList(constructFromBaseValue<SVGAnimatedPointList>(animatedTypes));
 }
 
-void SVGAnimatedPointListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedPointListAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedPointList>(properties);
+    stopAnimValAnimationForType<SVGAnimatedPointList>(animatedTypes);
 }
 
-void SVGAnimatedPointListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedPointListAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedPointList>(properties, type, &SVGAnimatedType::pointList);
+    resetFromBaseValue<SVGAnimatedPointList>(animatedTypes, type, &SVGAnimatedType::pointList);
 }
 
-void SVGAnimatedPointListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedPointListAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedPointList>(properties);
+    animValWillChangeForType<SVGAnimatedPointList>(animatedTypes);
 }
 
-void SVGAnimatedPointListAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedPointListAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedPointList>(properties);
+    animValDidChangeForType<SVGAnimatedPointList>(animatedTypes);
 }
 
 void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

@@ -38,29 +38,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::constructFro
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createPreserveAspectRatio(constructFromBaseValue<SVGAnimatedPreserveAspectRatio>(properties));
+    return SVGAnimatedType::createPreserveAspectRatio(constructFromBaseValue<SVGAnimatedPreserveAspectRatio>(animatedTypes));
 }
 
-void SVGAnimatedPreserveAspectRatioAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedPreserveAspectRatioAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedPreserveAspectRatio>(properties);
+    stopAnimValAnimationForType<SVGAnimatedPreserveAspectRatio>(animatedTypes);
 }
 
-void SVGAnimatedPreserveAspectRatioAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedPreserveAspectRatioAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedPreserveAspectRatio>(properties, type, &SVGAnimatedType::preserveAspectRatio);
+    resetFromBaseValue<SVGAnimatedPreserveAspectRatio>(animatedTypes, type, &SVGAnimatedType::preserveAspectRatio);
 }
 
-void SVGAnimatedPreserveAspectRatioAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedPreserveAspectRatioAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedPreserveAspectRatio>(properties);
+    animValWillChangeForType<SVGAnimatedPreserveAspectRatio>(animatedTypes);
 }
 
-void SVGAnimatedPreserveAspectRatioAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedPreserveAspectRatioAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedPreserveAspectRatio>(properties);
+    animValDidChangeForType<SVGAnimatedPreserveAspectRatio>(animatedTypes);
 }
 
 void SVGAnimatedPreserveAspectRatioAnimator::addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*)

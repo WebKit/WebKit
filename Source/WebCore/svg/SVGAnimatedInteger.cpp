@@ -40,29 +40,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerAnimator::constructFromString(cons
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createInteger(constructFromBaseValue<SVGAnimatedInteger>(properties));
+    return SVGAnimatedType::createInteger(constructFromBaseValue<SVGAnimatedInteger>(animatedTypes));
 }
 
-void SVGAnimatedIntegerAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedIntegerAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedInteger>(properties);
+    stopAnimValAnimationForType<SVGAnimatedInteger>(animatedTypes);
 }
 
-void SVGAnimatedIntegerAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedIntegerAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedInteger>(properties, type, &SVGAnimatedType::integer);
+    resetFromBaseValue<SVGAnimatedInteger>(animatedTypes, type, &SVGAnimatedType::integer);
 }
 
-void SVGAnimatedIntegerAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedIntegerAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedInteger>(properties);
+    animValWillChangeForType<SVGAnimatedInteger>(animatedTypes);
 }
 
-void SVGAnimatedIntegerAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedIntegerAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedInteger>(properties);
+    animValDidChangeForType<SVGAnimatedInteger>(animatedTypes);
 }
 
 void SVGAnimatedIntegerAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

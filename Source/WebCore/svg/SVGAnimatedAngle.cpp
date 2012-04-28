@@ -54,29 +54,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(const 
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createAngleAndEnumeration(constructFromBaseValues<SVGAnimatedAngle, SVGAnimatedEnumeration>(properties));
+    return SVGAnimatedType::createAngleAndEnumeration(constructFromBaseValues<SVGAnimatedAngle, SVGAnimatedEnumeration>(animatedTypes));
 }
 
-void SVGAnimatedAngleAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedAngleAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForTypes<SVGAnimatedAngle, SVGAnimatedEnumeration>(properties);
+    stopAnimValAnimationForTypes<SVGAnimatedAngle, SVGAnimatedEnumeration>(animatedTypes);
 }
 
-void SVGAnimatedAngleAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedAngleAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValues<SVGAnimatedAngle, SVGAnimatedEnumeration>(properties, type, &SVGAnimatedType::angleAndEnumeration);
+    resetFromBaseValues<SVGAnimatedAngle, SVGAnimatedEnumeration>(animatedTypes, type, &SVGAnimatedType::angleAndEnumeration);
 }
 
-void SVGAnimatedAngleAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedAngleAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForTypes<SVGAnimatedAngle, SVGAnimatedEnumeration>(properties);
+    animValWillChangeForTypes<SVGAnimatedAngle, SVGAnimatedEnumeration>(animatedTypes);
 }
 
-void SVGAnimatedAngleAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedAngleAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForTypes<SVGAnimatedAngle, SVGAnimatedEnumeration>(properties);
+    animValDidChangeForTypes<SVGAnimatedAngle, SVGAnimatedEnumeration>(animatedTypes);
 }
 
 void SVGAnimatedAngleAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

@@ -39,29 +39,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::constructFromString(const S
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createRect(constructFromBaseValue<SVGAnimatedRect>(properties));
+    return SVGAnimatedType::createRect(constructFromBaseValue<SVGAnimatedRect>(animatedTypes));
 }
 
-void SVGAnimatedRectAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedRectAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedRect>(properties);
+    stopAnimValAnimationForType<SVGAnimatedRect>(animatedTypes);
 }
 
-void SVGAnimatedRectAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedRectAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedRect>(properties, type, &SVGAnimatedType::rect);
+    resetFromBaseValue<SVGAnimatedRect>(animatedTypes, type, &SVGAnimatedType::rect);
 }
 
-void SVGAnimatedRectAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedRectAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedRect>(properties);
+    animValWillChangeForType<SVGAnimatedRect>(animatedTypes);
 }
 
-void SVGAnimatedRectAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedRectAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedRect>(properties);
+    animValDidChangeForType<SVGAnimatedRect>(animatedTypes);
 }
 
 void SVGAnimatedRectAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

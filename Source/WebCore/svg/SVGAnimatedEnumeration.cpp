@@ -115,29 +115,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::constructFromString(
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    return SVGAnimatedType::createEnumeration(constructFromBaseValue<SVGAnimatedEnumeration>(properties));
+    return SVGAnimatedType::createEnumeration(constructFromBaseValue<SVGAnimatedEnumeration>(animatedTypes));
 }
 
-void SVGAnimatedEnumerationAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedEnumerationAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    stopAnimValAnimationForType<SVGAnimatedEnumeration>(properties);
+    stopAnimValAnimationForType<SVGAnimatedEnumeration>(animatedTypes);
 }
 
-void SVGAnimatedEnumerationAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedEnumerationAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    resetFromBaseValue<SVGAnimatedEnumeration>(properties, type, &SVGAnimatedType::enumeration);
+    resetFromBaseValue<SVGAnimatedEnumeration>(animatedTypes, type, &SVGAnimatedType::enumeration);
 }
 
-void SVGAnimatedEnumerationAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedEnumerationAnimator::animValWillChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValWillChangeForType<SVGAnimatedEnumeration>(properties);
+    animValWillChangeForType<SVGAnimatedEnumeration>(animatedTypes);
 }
 
-void SVGAnimatedEnumerationAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+void SVGAnimatedEnumerationAnimator::animValDidChange(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    animValDidChangeForType<SVGAnimatedEnumeration>(properties);
+    animValDidChangeForType<SVGAnimatedEnumeration>(animatedTypes);
 }
 
 void SVGAnimatedEnumerationAnimator::addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*)

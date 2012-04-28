@@ -47,7 +47,7 @@ public:
     virtual bool isAnimatedListTearOff() const { return false; }
 
     // Caching facilities.
-    typedef HashMap<SVGAnimatedPropertyDescription, RefPtr<SVGAnimatedProperty>, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
+    typedef HashMap<SVGAnimatedPropertyDescription, SVGAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
 
     virtual ~SVGAnimatedProperty()
     {
@@ -87,9 +87,9 @@ public:
             RefPtr<SVGAnimatedProperty> wrapper = animatedPropertyCache()->get(key);
             if (!wrapper) {
                 wrapper = TearOffType::create(element, info->attributeName, info->animatedPropertyType, property);
-                animatedPropertyCache()->set(key, wrapper);
+                animatedPropertyCache()->set(key, wrapper.get());
             }
-            return static_pointer_cast<TearOffType>(wrapper).release();
+            return static_pointer_cast<TearOffType>(wrapper);
         }
     };
 
@@ -117,7 +117,7 @@ public:
         {
             ASSERT(info);
             SVGAnimatedPropertyDescription key(const_cast<SVGElement*>(element), info->propertyIdentifier);
-            return static_pointer_cast<TearOffType>(animatedPropertyCache()->get(key)).get();
+            return static_cast<TearOffType*>(animatedPropertyCache()->get(key));
         }
     };
 

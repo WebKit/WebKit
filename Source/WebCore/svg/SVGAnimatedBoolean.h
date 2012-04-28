@@ -43,11 +43,11 @@ public:
     virtual ~SVGAnimatedBooleanAnimator() { }
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
-    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
-    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
-    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&);
-    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&);
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&);
+    virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&);
+    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*);
+    virtual void animValWillChange(const SVGElementAnimatedPropertyList&);
+    virtual void animValDidChange(const SVGElementAnimatedPropertyList&);
 
     virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*);
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
