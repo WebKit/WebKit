@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+  <title>Test of -webkit-animation-direction reverse on non-composited elements</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .box {
+      position: relative;
+      left: 20px;
+      top: 10px;
+      height: 50px;
+      width: 250px;
+      margin-bottom: 10px;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-iteration-count: 8;
+    }
+    
+    .move1 {
+      -webkit-animation-name: move1;
+      background-color: blue;
+      color: white;
+    }
+
+    .move2 {
+      -webkit-animation-name: move2;
+      background-color: orange;
+    }
+
+    .normal {
+      -webkit-animation-direction: normal;
+    }
+
+    .alternate {
+      -webkit-animation-direction: alternate;
+    }
+
+    .reverse {
+      -webkit-animation-direction: reverse;
+    }
+
+    .alternate-reverse {
+      -webkit-animation-direction: alternate-reverse;
+    }
+    
+    @-webkit-keyframes move1 {
+      from { left: 0px; }
+      to { left: 200px; }
+    }
+
+    @-webkit-keyframes move2 {
+      0% { left: 0px; }
+      40% { left: 160px; }
+      60% { left: 120px; }
+      100% { left: 200px; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js"></script>
+  <script>
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move1", 0.2, "box1", "left",  20, 20],
+      ["move1", 0.2, "box2", "left",  20, 20],
+      ["move1", 0.2, "box3", "left",  180, 20],
+      ["move1", 0.2, "box4", "left",  180, 20],
+      ["move1", 2.2, "box1", "left",  20, 20],
+      ["move1", 2.2, "box2", "left",  180, 20],
+      ["move1", 2.2, "box3", "left",  180, 20],
+      ["move1", 2.2, "box4", "left",  20, 20],
+      ["move2", 0.2, "box5", "left",  40, 20],
+      ["move2", 0.2, "box6", "left",  40, 20],
+      ["move2", 0.2, "box7", "left",  180, 20],
+      ["move2", 0.2, "box8", "left",  180, 20],
+      ["move2", 2.2, "box5", "left",  40, 20],
+      ["move2", 2.2, "box6", "left",  180, 20],
+      ["move2", 2.2, "box7", "left",  180, 20],
+      ["move2", 2.2, "box8", "left",  40, 20],
+    ];
+
+    runAnimationTest(expectedValues);
+
+  </script>
+</head>
+<body>
+<div id="box1" class="box move1 normal">2 keyframes: normal</div>
+<div id="box2" class="box move1 alternate">2 keyframes: alternate</div>
+<div id="box3" class="box move1 reverse">2 keyframes: reverse</div>
+<div id="box4" class="box move1 alternate-reverse">2 keyframes: alternate-reverse</div>
+<div id="box5" class="box move2 normal">4 keyframes: normal</div>
+<div id="box6" class="box move2 alternate">4 keyframes: alternate</div>
+<div id="box7" class="box move2 reverse">4 keyframes: reverse</div>
+<div id="box8" class="box move2 alternate-reverse">4 keyframes: alternate-reverse</div>
+<div id="result"></div>
+</div>
+</body>
+</html>

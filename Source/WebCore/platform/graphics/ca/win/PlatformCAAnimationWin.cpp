@@ -288,8 +288,9 @@ void PlatformCAAnimation::setFillMode(FillModeType value)
     CACFAnimationSetFillMode(m_animation.get(), toCACFFillModeType(value));
 }
 
-void PlatformCAAnimation::setTimingFunction(const TimingFunction* value)
+void PlatformCAAnimation::setTimingFunction(const TimingFunction* value, bool reverse)
 {
+    UNUSED_PARAM(reverse);
     CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(value).get());
 }
 
@@ -533,8 +534,9 @@ void PlatformCAAnimation::copyKeyTimesFrom(const PlatformCAAnimation* value)
     CACFAnimationSetKeyTimes(m_animation.get(), CACFAnimationGetKeyTimes(value->platformAnimation()));
 }
 
-void PlatformCAAnimation::setTimingFunctions(const Vector<const TimingFunction*>& value)
+void PlatformCAAnimation::setTimingFunctions(const Vector<const TimingFunction*>& value, bool reverse)
 {
+    UNUSED_PARAM(reverse);
     if (animationType() != Keyframe)
         return;
 

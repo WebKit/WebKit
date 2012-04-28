@@ -1,3 +1,39 @@
+2012-04-27  Dean Jackson  <dino@apple.com>
+
+        Support reverse and alternate-reverse in CA animations
+        https://bugs.webkit.org/show_bug.cgi?id=78041
+
+        Reviewed by Beth Dakin.
+
+        Tests support for reverse and alternate-reverse animations on
+        CoreAnimation objects, as well as filling out some of the software
+        animator tests. There are three variables to exercise: reverse vs
+        forward direction animations, whether reversed timing functions are
+        inverted correctly, and that fill mode respects the direction of
+        animation.
+
+        Refactored the animation test helper class so we could reuse
+        property parsing and evaluation.
+
+        * animations/animation-direction-reverse-fill-mode-expected.txt: Added.
+        * animations/animation-direction-reverse-fill-mode-hardware-expected.txt: Added.
+        * animations/animation-direction-reverse-fill-mode-hardware.html: Added.
+        * animations/animation-direction-reverse-fill-mode.html: Added.
+        * animations/animation-direction-reverse-hardware-expected.txt: Added.
+        * animations/animation-direction-reverse-hardware-opacity-expected.txt: Added.
+        * animations/animation-direction-reverse-hardware-opacity.html: Added.
+        * animations/animation-direction-reverse-hardware.html: Added.
+        * animations/animation-direction-reverse-non-hardware-expected.txt: Added.
+        * animations/animation-direction-reverse-non-hardware.html: Added.
+        * animations/animation-direction-reverse-timing-functions-expected.txt: Added.
+        * animations/animation-direction-reverse-timing-functions-hardware-expected.txt: Added.
+        * animations/animation-direction-reverse-timing-functions-hardware.html: Added.
+        * animations/animation-direction-reverse-timing-functions.html: Added.
+        * animations/resources/animation-test-helpers.js:
+        (checkExpectedValue):
+        (getPropertyValue):
+        (comparePropertyValue):
+
 2012-04-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r115407.

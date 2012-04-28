@@ -93,7 +93,7 @@ public:
     FillModeType fillMode() const;
     void setFillMode(FillModeType);
     
-    void setTimingFunction(const TimingFunction*);
+    void setTimingFunction(const TimingFunction*, bool reverse = false);
     void copyTimingFunctionFrom(const PlatformCAAnimation*);
 
     bool isRemovedOnCompletion() const;
@@ -137,7 +137,7 @@ public:
     void setKeyTimes(const Vector<float>&);
     void copyKeyTimesFrom(const PlatformCAAnimation*);
 
-    void setTimingFunctions(const Vector<const TimingFunction*>&);
+    void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false);
     void copyTimingFunctionsFrom(const PlatformCAAnimation*);
     
 #if ENABLE(CSS_FILTERS)

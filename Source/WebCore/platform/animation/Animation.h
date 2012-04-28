@@ -107,6 +107,7 @@ public:
         AnimationDirectionAlternateReverse
     };
     AnimationDirection direction() const { return static_cast<AnimationDirection>(m_direction); }
+    bool directionIsForwards() const { return m_direction == AnimationDirectionNormal || m_direction == AnimationDirectionAlternate; }
 
     unsigned fillMode() const { return m_fillMode; }
 

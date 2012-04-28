@@ -134,13 +134,19 @@ static PlatformCAAnimation::ValueFunctionType fromCAValueFunctionType(NSString* 
 }
 #endif
 
-static CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction* timingFunction)
+static CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction* timingFunction, bool reverse)
 {
     ASSERT(timingFunction);
     if (timingFunction->isCubicBezierTimingFunction()) {
         const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
-        return [CAMediaTimingFunction functionWithControlPoints:static_cast<float>(ctf->x1()) :static_cast<float>(ctf->y1())
-                                                               :static_cast<float>(ctf->x2()) :static_cast<float>(ctf->y2())];
+        float x1 = static_cast<float>(ctf->x1());
+        float y1 = static_cast<float>(ctf->y1());
+        float x2 = static_cast<float>(ctf->x2());
+        float y2 = static_cast<float>(ctf->y2());
+        return [CAMediaTimingFunction functionWithControlPoints:(reverse ? 1 - x2 : x1)
+                                                               :(reverse ? 1 - y2 : y1)
+                                                               :(reverse ? 1 - x1 : x2)
+                                                               :(reverse ? 1 - y1 : y2)];
     }
     
     return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
@@ -306,9 +312,9 @@ void PlatformCAAnimation::setFillMode(FillModeType value)
     [m_animation.get() setFillMode:toCAFillModeType(value)];
 }
 
-void PlatformCAAnimation::setTimingFunction(const TimingFunction* value)
+void PlatformCAAnimation::setTimingFunction(const TimingFunction* value, bool reverse)
 {
-    [m_animation.get() setTimingFunction:toCAMediaTimingFunction(value)];
+    [m_animation.get() setTimingFunction:toCAMediaTimingFunction(value, reverse)];
 }
 
 void PlatformCAAnimation::copyTimingFunctionFrom(const PlatformCAAnimation* value)
@@ -694,12 +700,12 @@ void PlatformCAAnimation::copyKeyTimesFrom(const PlatformCAAnimation* value)
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setKeyTimes:[other keyTimes]];
 }
 
-void PlatformCAAnimation::setTimingFunctions(const Vector<const TimingFunction*>& value)
+void PlatformCAAnimation::setTimingFunctions(const Vector<const TimingFunction*>& value, bool reverse)
 {
     NSMutableArray* array = [NSMutableArray array];
 
     for (size_t i = 0; i < value.size(); ++i)
-        [array addObject:toCAMediaTimingFunction(value[i])];
+        [array addObject:toCAMediaTimingFunction(value[i], reverse)];
     
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setTimingFunctions:array];
 }
