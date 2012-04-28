@@ -21,6 +21,7 @@
 #include "SVGPathData.h"
 
 #if ENABLE(SVG)
+#include "Path.h"
 #include "SVGCircleElement.h"
 #include "SVGEllipseElement.h"
 #include "SVGLineElement.h"
