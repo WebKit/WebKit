@@ -81,7 +81,7 @@ void DisplayRefreshMonitor::displayLinkFired()
 
     m_previousFrameDone = false;
 
-    m_timestamp = currentTime();
+    m_monotonicAnimationStartTime = monotonicallyIncreasingTime();
 
     callOnMainThread(refreshDisplayOnMainThread, this);
 }

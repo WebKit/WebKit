@@ -61,7 +61,7 @@ public:
 
     CallbackId registerCallback(PassRefPtr<RequestAnimationFrameCallback>);
     void cancelCallback(CallbackId);
-    void serviceScriptedAnimations(DOMTimeStamp);
+    void serviceScriptedAnimations(double monotonicTimeNow);
 
     void suspend();
     void resume();
@@ -70,7 +70,7 @@ public:
 
 private:
     ScriptedAnimationController(Document*, PlatformDisplayID);
-    
+
     typedef Vector<RefPtr<RequestAnimationFrameCallback> > CallbackList;
     CallbackList m_callbacks;
 
@@ -83,11 +83,11 @@ private:
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
     void animationTimerFired(Timer<ScriptedAnimationController>*);
     Timer<ScriptedAnimationController> m_animationTimer;
-    double m_lastAnimationFrameTime;
+    double m_lastAnimationFrameTimeMonotonic;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Override for DisplayRefreshMonitorClient
-    virtual void displayRefreshFired(double timestamp) { serviceScriptedAnimations(convertSecondsToDOMTimeStamp(timestamp)); }
+    virtual void displayRefreshFired(double timestamp);
 
     bool m_useTimer;
 #endif
@@ -99,4 +99,3 @@ private:
 #endif // ENABLE(REQUEST_ANIMATION_FRAME)
 
 #endif // ScriptedAnimationController_h
-
