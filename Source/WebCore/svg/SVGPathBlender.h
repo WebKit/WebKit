@@ -36,6 +36,7 @@ class SVGPathBlender {
 public:
     SVGPathBlender();
 
+    bool addAnimatedPath(SVGPathSource*, SVGPathSource*, SVGPathConsumer*, unsigned repeatCount);
     bool blendAnimatedPath(float, SVGPathSource*, SVGPathSource*, SVGPathConsumer*);
     void cleanup();
 
@@ -63,6 +64,7 @@ private:
     PathCoordinateMode m_fromMode;
     PathCoordinateMode m_toMode;
     float m_progress;
+    unsigned m_addTypesCount;
     bool m_isInFirstHalfOfAnimation;
 };
 

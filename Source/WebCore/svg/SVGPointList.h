@@ -35,8 +35,6 @@ public:
     SVGPointList() { }
 
     String valueAsString() const;
-
-    static bool createAnimated(const SVGPointList& fromList, const SVGPointList& toList, SVGPointList& resultList, float progress);
 };
 
 template<>

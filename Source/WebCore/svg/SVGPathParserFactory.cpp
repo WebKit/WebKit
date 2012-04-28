@@ -239,8 +239,10 @@ bool SVGPathParserFactory::buildAnimatedSVGPathByteStream(SVGPathByteStream* fro
     ASSERT(fromStream);
     ASSERT(toStream);
     ASSERT(result);
+    ASSERT(toStream != result);
+
     result->clear();
-    if (fromStream->isEmpty() || toStream->isEmpty())
+    if (toStream->isEmpty())
         return false;
 
     SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(result);
@@ -249,6 +251,26 @@ bool SVGPathParserFactory::buildAnimatedSVGPathByteStream(SVGPathByteStream* fro
     OwnPtr<SVGPathByteStreamSource> toSource = SVGPathByteStreamSource::create(toStream);
     SVGPathBlender* blender = globalSVGPathBlender();
     bool ok = blender->blendAnimatedPath(progress, fromSource.get(), toSource.get(), builder);
+    blender->cleanup();
+    return ok;
+}
+
+bool SVGPathParserFactory::addToSVGPathByteStream(SVGPathByteStream* fromStream, SVGPathByteStream* byStream, unsigned repeatCount)
+{
+    ASSERT(fromStream);
+    ASSERT(byStream);
+    if (fromStream->isEmpty() || byStream->isEmpty())
+        return false;
+
+    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(fromStream);
+
+    OwnPtr<SVGPathByteStream> fromStreamCopy = fromStream->copy();
+    fromStream->clear();
+
+    OwnPtr<SVGPathByteStreamSource> fromSource = SVGPathByteStreamSource::create(fromStreamCopy.get());
+    OwnPtr<SVGPathByteStreamSource> bySource = SVGPathByteStreamSource::create(byStream);
+    SVGPathBlender* blender = globalSVGPathBlender();
+    bool ok = blender->addAnimatedPath(fromSource.get(), bySource.get(), builder, repeatCount);
     blender->cleanup();
     return ok;
 }
