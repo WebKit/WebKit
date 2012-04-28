@@ -50,15 +50,6 @@ public:
 #endif
 };
 
-template<typename Base> class WeakImplAccessor<Base, Unknown> {
-public:
-    typedef JSValue GetType;
-
-    const JSValue* operator->() const;
-    const JSValue& operator*() const;
-    GetType get() const;
-};
-
 template<typename T> class PassWeak : public WeakImplAccessor<PassWeak<T>, T> {
 public:
     friend class WeakImplAccessor<PassWeak<T>, T>;
@@ -66,7 +57,7 @@ public:
 
     PassWeak();
     PassWeak(std::nullptr_t);
-    PassWeak(JSGlobalData&, GetType = GetType(), WeakHandleOwner* = 0, void* context = 0);
+    PassWeak(JSGlobalData&, GetType, WeakHandleOwner* = 0, void* context = 0);
 
     // It somewhat breaks the type system to allow transfer of ownership out of
     // a const PassWeak. However, it makes it much easier to work with PassWeak
@@ -105,7 +96,7 @@ template<typename Base, typename T> inline T& WeakImplAccessor<Base, T>::operato
 
 template<typename Base, typename T> inline typename WeakImplAccessor<Base, T>::GetType WeakImplAccessor<Base, T>::get() const
 {
-    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live || !static_cast<const Base*>(this)->m_impl->jsValue())
+    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live)
         return GetType();
     return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
 }
@@ -116,25 +107,6 @@ template<typename Base, typename T> inline bool WeakImplAccessor<Base, T>::was(t
     return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell()) == other;
 }
 #endif
-
-template<typename Base> inline const JSValue* WeakImplAccessor<Base, Unknown>::operator->() const
-{
-    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
-    return &static_cast<const Base*>(this)->m_impl->jsValue();
-}
-
-template<typename Base> inline const JSValue& WeakImplAccessor<Base, Unknown>::operator*() const
-{
-    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
-    return static_cast<const Base*>(this)->m_impl->jsValue();
-}
-
-template<typename Base> inline typename WeakImplAccessor<Base, Unknown>::GetType WeakImplAccessor<Base, Unknown>::get() const
-{
-    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live)
-        return GetType();
-    return static_cast<const Base*>(this)->m_impl->jsValue();
-}
 
 template<typename T> inline PassWeak<T>::PassWeak()
     : m_impl(0)
@@ -147,7 +119,7 @@ template<typename T> inline PassWeak<T>::PassWeak(std::nullptr_t)
 }
 
 template<typename T> inline PassWeak<T>::PassWeak(JSGlobalData& globalData, typename PassWeak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(globalData.heap.weakSet()->allocate(getType, weakOwner, context))
+    : m_impl(getType ? globalData.heap.weakSet()->allocate(getType, weakOwner, context) : 0)
 {
 }
 

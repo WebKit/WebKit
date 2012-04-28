@@ -1,3 +1,44 @@
+2012-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Only allow non-null pointers in the WeakSet
+        https://bugs.webkit.org/show_bug.cgi?id=85119
+
+        Reviewed by Darin Adler.
+
+        This is a step toward more efficient finalization.
+
+        No clients put non-pointers (JSValues) into Weak<T> and PassWeak<T>.
+
+        Some clients put null pointers into Weak<T> and PassWeak<T>, but this is
+        more efficient and straight-forward to model with a null in the Weak<T>
+        or PassWeak<T> instead of allocating a WeakImpl just to hold null.
+
+        * heap/PassWeak.h:
+        (JSC): Removed the Unknown (JSValue) type of weak pointer because it's
+        unused now.
+
+        (PassWeak): Don't provide a default initializer for our JSCell* argument.
+        This feature was only used in one place, and it was a bug.
+
+        (JSC::::get): Don't check for a null stored inside our WeakImpl: that's 
+        not allowed anymore.
+
+        (JSC::PassWeak::PassWeak): Handle null as a null WeakImpl instead of
+        allocating a WeakImpl and storing null into it.
+
+        * heap/Weak.h:
+        (Weak):
+        (JSC::::Weak): Same changes as in PassWeak<T>.
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visitLiveWeakImpls):
+        (JSC::WeakBlock::visitDeadWeakImpls): Only non-null cells are valid in
+        the WeakSet now, so no need to check for non-cells and null cell pointers.
+
+        * heap/WeakImpl.h:
+        (JSC::WeakImpl::WeakImpl): Only non-null cells are valid in the WeakSet
+        now, so ASSERT that.
+
 2012-04-27  Gavin Barraclough  <barraclough@apple.com>
 
         <rdar://problem/7909395> Math in JavaScript is inaccurate on iOS

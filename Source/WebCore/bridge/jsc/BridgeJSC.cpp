@@ -54,7 +54,6 @@ Array::~Array()
 
 Instance::Instance(PassRefPtr<RootObject> rootObject)
     : m_rootObject(rootObject)
-    , m_runtimeObject(*WebCore::JSDOMWindowBase::commonJSGlobalData())
 {
     ASSERT(m_rootObject);
 }

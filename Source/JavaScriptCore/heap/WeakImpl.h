@@ -76,6 +76,7 @@ inline WeakImpl::WeakImpl(JSValue jsValue, WeakHandleOwner* weakHandleOwner, voi
     , m_context(context)
 {
     ASSERT(state() == Live);
+    ASSERT(m_jsValue && m_jsValue.isCell());
 }
 
 inline WeakImpl::State WeakImpl::state()
