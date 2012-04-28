@@ -1,3 +1,18 @@
+2012-04-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r115529.
+        http://trac.webkit.org/changeset/115529
+        https://bugs.webkit.org/show_bug.cgi?id=85125
+
+        Broke Clang build (Requested by enne on #webkit).
+
+        * WebKit.gypi:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::setVideoFrameProviderClient):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * tests/WebMediaPlayerClientImplTest.cpp: Removed.
+
 2012-04-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call highMemoryUsageMB directly
