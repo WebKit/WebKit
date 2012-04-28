@@ -73,6 +73,9 @@
     shouldThrow('req.send(null)');
     shouldThrow('req.setRequestHeader("Foo", "bar")');
     shouldThrow('req.getResponseHeader()');
+
+    shouldThrow('req.open()');
+    shouldThrow('req.open(null)');
    
 </script>
 </body>

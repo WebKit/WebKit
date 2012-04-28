@@ -12,3 +12,5 @@ send()
 PASS: req.send(null) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 PASS: req.setRequestHeader("Foo", "bar") threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
 PASS: req.getResponseHeader() threw exception TypeError: Not enough arguments.
+PASS: req.open() threw exception TypeError: Not enough arguments.
+PASS: req.open(null) threw exception TypeError: Not enough arguments.

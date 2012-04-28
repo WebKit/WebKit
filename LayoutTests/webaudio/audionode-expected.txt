@@ -12,6 +12,7 @@ PASS connect() exception thrown for illegal output index.
 PASS connect() exception thrown for illegal input index.
 PASS audioNode.connect(context.destination) succeeded.
 PASS exception thrown when connecting to other context's node.
+PASS exception thrown when creating audio context with not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE

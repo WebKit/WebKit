@@ -12,6 +12,9 @@ description("Test WebSocket URL parsing.");
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
+// Not enough arguments.
+shouldThrow('new WebSocket()');
+
 // Invalid url will fail to be parsed.
 shouldThrow('new WebSocket("ws://javascript:a")');
 

@@ -23,7 +23,7 @@ PASS length.convertToSpecifiedUnits(11) threw exception Error: NOT_SUPPORTED_ERR
 PASS length.convertToSpecifiedUnits('aString') threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS length.convertToSpecifiedUnits(length) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS length.convertToSpecifiedUnits(svgElement) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
-PASS length.convertToSpecifiedUnits() threw exception SyntaxError: Not enough arguments.
+PASS length.convertToSpecifiedUnits() threw exception TypeError: Not enough arguments.
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
 PASS length.value is 2
 PASS length.valueInSpecifiedUnits is 2

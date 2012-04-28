@@ -82,6 +82,14 @@ function runTest() {
         testPassed("exception thrown when connecting to other context's node.");
     }
 
+    // Create a new context with not enough arguments
+    try {
+        context2 = new webkitAudioContext(0, 0);
+        testFailed("exception should be thrown when creating audio context with not enough arguments.");
+    } catch(e) {
+        testPassed("exception thrown when creating audio context with not enough arguments.");
+    }
+
     finishJSTest();
 }
 

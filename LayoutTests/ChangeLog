@@ -1,3 +1,28 @@
+2012-04-27  Kentaro Hara  <haraken@chromium.org>
+
+        "Not enough arguments" error should be TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=84628
+
+        Reviewed by Darin Adler.
+
+        Currently, some custom bindings implement "Not enough arguments"
+        error as SyntaxError. The Web IDL spec requires that it should be
+        TypeError: http://www.w3.org/TR/WebIDL/#dfn-overload-resolution-algorithm
+        Thus, this patch changes SyntaxError to TypeError, and adds test
+        cases for the exception.
+
+        * http/tests/websocket/tests/hixie76/send-empty-expected.txt:
+        * http/tests/websocket/tests/hixie76/url-parsing.html:
+        * http/tests/websocket/tests/hybi/send-empty-expected.txt:
+        * http/tests/websocket/tests/hybi/url-parsing.html:
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * http/tests/xmlhttprequest/exceptions.html:
+        * platform/chromium-linux/http/tests/websocket/tests/hixie76/url-parsing-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+        * svg/dom/SVGLength-expected.txt:
+        * webaudio/audionode-expected.txt:
+        * webaudio/audionode.html:
+
 2012-04-27  Kenneth Russell  <kbr@google.com>
 
         Remove SHADER_COMPILER constant
