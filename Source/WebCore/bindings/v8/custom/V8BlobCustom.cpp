@@ -99,7 +99,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native") {
-                V8Proxy::setDOMException(INVALID_STATE_ERR);
+                V8Proxy::setDOMException(INVALID_STATE_ERR, args.GetIsolate());
                 return v8::Undefined();
             }
         }
