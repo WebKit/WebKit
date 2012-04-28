@@ -974,7 +974,7 @@ QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Struc
 {
 }
 
-void QtRuntimeMethod::finishCreation(ExecState*, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance)
 {
     Base::finishCreation(exec->globalData(), identifier);
     QW_D(QtRuntimeMethod);
