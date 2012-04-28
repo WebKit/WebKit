@@ -1,5 +1,11 @@
 2012-04-28  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-04-28  Geoffrey Garen  <ggaren@apple.com>
+
         Clarified JSGlobalData (JavaScript VM) lifetime
         https://bugs.webkit.org/show_bug.cgi?id=85142
 

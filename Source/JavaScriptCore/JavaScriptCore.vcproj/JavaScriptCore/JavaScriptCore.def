@@ -89,7 +89,6 @@ EXPORTS
     ?checksum@MD5@WTF@@QAEXAAV?$Vector@E$0BA@@2@@Z
     ?className@JSObject@JSC@@SA?AVUString@2@PBV12@@Z
     ?clear@SourceProviderCache@JSC@@QAEXXZ
-    ?clearBuiltinStructures@JSGlobalData@JSC@@QAEXXZ
     ?clearRareData@JSGlobalObject@JSC@@CAXPAVJSCell@2@@Z
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
@@ -146,7 +145,6 @@ EXPORTS
     ?deleteTable@HashTable@JSC@@QBEXXZ
     ?despecifyDictionaryFunction@Structure@JSC@@QAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
     ?despecifyFunctionTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@ABVIdentifier@2@@Z
-    ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@JSCell@JSC@@KAXPAV12@@Z
     ?destroy@JSGlobalObject@JSC@@SAXPAVJSCell@2@@Z
     ?destroy@OutOfLineBits@BitVector@WTF@@SAXPAV123@@Z
