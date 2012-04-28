@@ -142,6 +142,8 @@ PASS win['HTMLCanvasElement'] == '[object HTMLCanvasElementConstructor]' is true
 PASS win['HTMLCanvasElement'] == '[object HTMLCanvasElementConstructor]' is true
 PASS win['HTMLDListElement'] == '[object HTMLDListElementConstructor]' is true
 PASS win['HTMLDListElement'] == '[object HTMLDListElementConstructor]' is true
+FAIL win['HTMLDataListElement'] should be null (of type object). Was undefined (of type undefined).
+FAIL win['HTMLDataListElement'] should be null. Was [object HTMLInputElement].
 PASS win['HTMLDirectoryElement'] == '[object HTMLDirectoryElementConstructor]' is true
 PASS win['HTMLDirectoryElement'] == '[object HTMLDirectoryElementConstructor]' is true
 PASS win['HTMLDivElement'] == '[object HTMLDivElementConstructor]' is true
