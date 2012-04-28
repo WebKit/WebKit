@@ -4447,8 +4447,6 @@
             'platform/qt/PlatformScreenQt.cpp',
             'platform/qt/PlatformSupport.h',
             'platform/qt/PlatformSupportQt.cpp',
-            'platform/qt/PlatformTouchEventQt.cpp',
-            'platform/qt/PlatformTouchPointQt.cpp',
             'platform/qt/QWebPageClient.h',
             'platform/qt/RenderThemeQt.cpp',
             'platform/qt/RenderThemeQt.h',
