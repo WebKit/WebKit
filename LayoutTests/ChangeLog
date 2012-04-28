@@ -1,3 +1,25 @@
+2012-04-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        ScriptStateProtectedPtr should not keep a strong reference to the context
+        https://bugs.webkit.org/show_bug.cgi?id=85009
+
+        Test that after frame navigation all arguments passed to the console messages
+        created in that frame will be discarded and not prevent the frame context from
+        being GC'ed.
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector-enabled/console-clear-arguments-on-frame-navigation-expected.txt: Added.
+        * http/tests/inspector-enabled/console-clear-arguments-on-frame-navigation.html: Added.
+        * http/tests/inspector-enabled/console-clear-arguments-on-frame-remove-expected.txt:
+        * http/tests/inspector-enabled/console-clear-arguments-on-frame-remove.html:
+        * http/tests/inspector-enabled/resources/console-clear-arguments-test.js: Added.
+        (print):
+        (dumpConsoleMessageArgumentCounts):
+        * http/tests/inspector/console-test.js:
+        (initialize_ConsoleTest.InspectorTest.checkConsoleMessagesDontHaveParameters):
+        (initialize_ConsoleTest):
+
 2012-04-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed weekend gardening, skip new failing tests.

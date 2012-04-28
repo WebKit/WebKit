@@ -44,4 +44,22 @@ InspectorTest.expandConsoleMessages = function()
     }
 }
 
+InspectorTest.checkConsoleMessagesDontHaveParameters = function()
+{
+    var messages = WebInspector.console.messages;
+    for (var i = 0; i < messages.length; ++i) {
+        var m = messages[i];
+        InspectorTest.addResult("Message[" + i + "]:");
+        InspectorTest.addResult("Message: " + WebInspector.displayNameForURL(m.url) + ":" + m.line + " " + m.message);
+        if ("_parameters" in m) {
+            if (m._parameters)
+                InspectorTest.addResult("FAILED: message parameters list is not empty: " + m._parameters);
+            else
+                InspectorTest.addResult("SUCCESS: message parameters list is empty. ");
+        } else {
+            InspectorTest.addResult("FAILED: didn't find _parameters field in the message.");
+        }
+    }
+}
+
 }

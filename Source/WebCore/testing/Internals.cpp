@@ -42,9 +42,11 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
+#include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
+#include "InstrumentingAgents.h"
 #include "InternalSettings.h"
 #include "IntRect.h"
 #include "Language.h"
@@ -955,6 +957,21 @@ unsigned Internals::numberOfLiveNodes() const
 unsigned Internals::numberOfLiveDocuments() const
 {
     return InspectorCounters::counterValue(InspectorCounters::DocumentCounter);
+}
+
+Vector<String> Internals::consoleMessageArgumentCounts(Document* document) const
+{
+    InstrumentingAgents* instrumentingAgents = instrumentationForPage(document->page());
+    if (!instrumentingAgents)
+        return Vector<String>();
+    InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent();
+    if (!consoleAgent)
+        return Vector<String>();
+    Vector<unsigned> counts = consoleAgent->consoleMessageArgumentCounts();
+    Vector<String> result(counts.size());
+    for (size_t i = 0; i < counts.size(); i++)
+        result[i] = String::number(counts[i]);
+    return result;
 }
 #endif // ENABLE(INSPECTOR)
 

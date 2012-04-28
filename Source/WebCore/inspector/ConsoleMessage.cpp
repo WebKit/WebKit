@@ -205,6 +205,13 @@ void ConsoleMessage::windowCleared(DOMWindow* window)
     m_arguments.clear();
 }
 
+unsigned ConsoleMessage::argumentCount()
+{
+    if (m_arguments)
+        return m_arguments->argumentCount();
+    return 0;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

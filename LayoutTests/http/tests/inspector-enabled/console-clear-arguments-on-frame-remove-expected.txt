@@ -3,7 +3,7 @@ CONSOLE MESSAGE: line 3: 2011
 CONSOLE MESSAGE: line 4: [object Window]
 Tests that console message arguments will be cleared when iframe where the messages were created is removed.
 
-A message with first argument string resources/console-clear-arguments-iframe.html:2
-2011 resources/console-clear-arguments-iframe.html:3
-[object Window] resources/console-clear-arguments-iframe.html:4
-
+PASSED: found argument counts for 3 messages
+PASSED: message #0 has no arguments.
+PASSED: message #1 has no arguments.
+PASSED: message #2 has no arguments.

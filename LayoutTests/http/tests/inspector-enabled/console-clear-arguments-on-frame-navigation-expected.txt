@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 2: A message with first argument string
+CONSOLE MESSAGE: line 3: 2011
+CONSOLE MESSAGE: line 4: [object Window]
+Tests that Web Inspector will discard console message arguments when iframe where the message was logged is navigated to a different page.
+
+
+PASSED: found argument counts for 3 messages
+PASSED: message #0 has no arguments.
+PASSED: message #1 has no arguments.
+PASSED: message #2 has no arguments.

@@ -164,6 +164,7 @@ public:
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
+    Vector<String> consoleMessageArgumentCounts(Document*) const;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

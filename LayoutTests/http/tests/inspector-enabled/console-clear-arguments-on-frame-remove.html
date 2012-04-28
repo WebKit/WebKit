@@ -1,10 +1,11 @@
 <html>
 <head>
-<script src="../inspector/inspector-test.js"></script>
-<script src="../inspector/console-test.js"></script>
+<script src="resources/console-clear-arguments-test.js"></script>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
 
 function removeIFrame()
 {
@@ -14,9 +15,9 @@ function removeIFrame()
         container.removeChild(child);
         child = container.firstChild;
     }
+    dumpConsoleMessageArgumentCounts();
     if (window.layoutTestController)
-        layoutTestController.showWebInspector();
-    runTest();
+        layoutTestController.notifyDone();
 }
 
 function createIFrame()
@@ -27,13 +28,6 @@ function createIFrame()
     document.getElementById('container').appendChild(iframe);
 }
 
-function test()
-{
-    InspectorTest.expandConsoleMessages();
-    InspectorTest.dumpConsoleMessages();
-    InspectorTest.completeTest();
-}
-
 </script>
 </head>
 <body onload="createIFrame()">
@@ -41,6 +35,7 @@ function test()
 Tests that console message arguments will be cleared when iframe where the messages were
 created is removed.
 </p>
-<div id="container"/>
+<div id="container"></div>
+<div id="output"></div>
 </body>
 </html>

@@ -67,6 +67,8 @@ public:
 
     void windowCleared(DOMWindow*);
 
+    unsigned argumentCount();
+
 private:
     MessageSource m_source;
     MessageType m_type;

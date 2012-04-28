@@ -592,8 +592,10 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVe
 
 void Frame::clearDOMWindow()
 {
-    if (m_domWindow)
+    if (m_domWindow) {
+        InspectorInstrumentation::frameWindowDiscarded(this, m_domWindow.get());
         m_domWindow->clear();
+    }
     m_domWindow = 0;
 }
 
@@ -658,8 +660,10 @@ void Frame::clearTimers()
 
 void Frame::setDOMWindow(DOMWindow* domWindow)
 {
-    if (m_domWindow)
+    if (m_domWindow) {
+        InspectorInstrumentation::frameWindowDiscarded(this, m_domWindow.get());
         m_domWindow->clear();
+    }
     m_domWindow = domWindow;
 }
 
