@@ -45,7 +45,9 @@ CCActiveAnimation::CCActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, int ani
     , m_runState(WaitingForTargetAvailability)
     , m_iterations(1)
     , m_startTime(0)
+    , m_timeOffset(0)
     , m_needsSynchronizedStartTime(false)
+    , m_suspended(false)
     , m_pauseTime(0)
     , m_totalPausedTime(0)
 {
@@ -55,46 +57,49 @@ CCActiveAnimation::~CCActiveAnimation()
 {
 }
 
-void CCActiveAnimation::setRunState(RunState runState, double now)
+void CCActiveAnimation::setRunState(RunState runState, double monotonicTime)
 {
+    if (m_suspended)
+        return;
+
     if (runState == Running && m_runState == Paused)
-        m_totalPausedTime += now - m_pauseTime;
+        m_totalPausedTime += monotonicTime - m_pauseTime;
     else if (runState == Paused)
-        m_pauseTime = now;
+        m_pauseTime = monotonicTime;
     m_runState = runState;
 }
 
-bool CCActiveAnimation::isFinishedAt(double time) const
+void CCActiveAnimation::suspend(double monotonicTime)
+{
+    setRunState(Paused, monotonicTime);
+    m_suspended = true;
+}
+
+void CCActiveAnimation::resume(double monotonicTime)
+{
+    m_suspended = false;
+    setRunState(Running, monotonicTime);
+}
+
+bool CCActiveAnimation::isFinishedAt(double monotonicTime) const
 {
     if (m_runState == Finished || m_runState == Aborted)
         return true;
 
+    if (m_needsSynchronizedStartTime)
+        return false;
+
     return m_runState == Running
         && m_iterations >= 0
-        && m_iterations * m_curve->duration() <= time - startTime() - m_totalPausedTime;
+        && m_iterations * m_curve->duration() <= monotonicTime - startTime() - m_totalPausedTime;
 }
 
-bool CCActiveAnimation::isWaiting() const
+double CCActiveAnimation::trimTimeToCurrentIteration(double monotonicTime) const
 {
-    return m_runState == WaitingForNextTick
-        || m_runState == WaitingForTargetAvailability
-        || m_runState == WaitingForStartTime;
-}
-
-bool CCActiveAnimation::isRunningOrHasRun() const
-{
-    return m_runState == Running
-        || m_runState == Finished
-        || m_runState == Aborted
-        || m_runState == Paused;
-}
-
-double CCActiveAnimation::trimTimeToCurrentIteration(double now) const
-{
-    double trimmed = now;
+    double trimmed = monotonicTime + m_timeOffset;
 
     // If we're paused, time is 'stuck' at the pause time.
-    if (m_runState == Paused && trimmed > m_pauseTime)
+    if (m_runState == Paused)
         trimmed = m_pauseTime;
 
     // Returned time should always be relative to the start time and should subtract
@@ -129,28 +134,18 @@ PassOwnPtr<CCActiveAnimation> CCActiveAnimation::cloneForImplThread() const
     toReturn->m_startTime = m_startTime;
     toReturn->m_pauseTime = m_pauseTime;
     toReturn->m_totalPausedTime = m_totalPausedTime;
+    toReturn->m_timeOffset = m_timeOffset;
     return toReturn.release();
 }
 
-void CCActiveAnimation::synchronizeProperties(CCActiveAnimation* other)
+void CCActiveAnimation::pushPropertiesTo(CCActiveAnimation* other) const
 {
-    // It is possible for the impl thread to initiate a run state change.
-    // This happens when the animation was waiting for a future event to take
-    // place, and the event has happened. In that case, we want 'this' to
-    // assume the impl thread's run state and start time.
-    if (isWaiting() && other->isRunningOrHasRun()) {
-        m_runState = other->m_runState;
-        m_startTime = other->m_startTime;
-    } else {
+    // Currently, we only push changes due to pausing and resuming animations on the main thread.
+    if (m_runState == CCActiveAnimation::Paused || other->m_runState == CCActiveAnimation::Paused) {
         other->m_runState = m_runState;
-        other->m_startTime = m_startTime;
+        other->m_pauseTime = m_pauseTime;
+        other->m_totalPausedTime = m_totalPausedTime;
     }
-
-    // Change in state related to iterations and pause is always initiated from
-    // the main thread, so it is safe to push properties in that direction.
-    other->m_iterations = m_iterations;
-    other->m_pauseTime = m_pauseTime;
-    other->m_totalPausedTime = m_totalPausedTime;
 }
 
 } // namespace WebCore

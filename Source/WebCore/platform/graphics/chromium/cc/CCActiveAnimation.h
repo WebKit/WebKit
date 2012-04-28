@@ -72,7 +72,7 @@ public:
     TargetProperty targetProperty() const { return m_targetProperty; }
 
     RunState runState() const { return m_runState; }
-    void setRunState(RunState, double now);
+    void setRunState(RunState, double monotonicTime);
 
     // This is the number of times that the animation will play. If this
     // value is zero the animation will not play. If it is negative, then
@@ -81,14 +81,17 @@ public:
     void setIterations(int n) { m_iterations = n; }
 
     double startTime() const { return m_startTime; }
-    void setStartTime(double startTime) { m_startTime = startTime; }
+    void setStartTime(double monotonicTime) { m_startTime = monotonicTime; }
     bool hasSetStartTime() const { return m_startTime; }
 
-    bool isFinishedAt(double time) const;
-    bool isFinished() const { return m_runState == Finished || m_runState == Aborted; }
+    double timeOffset() const { return m_timeOffset; }
+    void setTimeOffset(double monotonicTime) { m_timeOffset = monotonicTime; }
 
-    bool isWaiting() const;
-    bool isRunningOrHasRun() const;
+    void suspend(double monotonicTime);
+    void resume(double monotonicTime);
+
+    bool isFinishedAt(double monotonicTime) const;
+    bool isFinished() const { return m_runState == Finished || m_runState == Aborted; }
 
     CCAnimationCurve* curve() { return m_curve.get(); }
     const CCAnimationCurve* curve() const { return m_curve.get(); }
@@ -100,11 +103,11 @@ public:
 
     // Takes the given absolute time, and using the start time and the number
     // of iterations, returns the relative time in the current iteration.
-    double trimTimeToCurrentIteration(double now) const;
+    double trimTimeToCurrentIteration(double monotonicTime) const;
 
     PassOwnPtr<CCActiveAnimation> cloneForImplThread() const;
 
-    void synchronizeProperties(CCActiveAnimation*);
+    void pushPropertiesTo(CCActiveAnimation*) const;
 
 private:
     CCActiveAnimation(PassOwnPtr<CCAnimationCurve>, int animationId, int groupId, TargetProperty);
@@ -126,7 +129,16 @@ private:
     int m_iterations;
     double m_startTime;
 
+    // The time offset effectively pushes the start of the animation back in time. This is
+    // used for resuming paused animations -- an animation is added with a non-zero time
+    // offset, causing the animation to skip ahead to the desired point in time.
+    double m_timeOffset;
+
     bool m_needsSynchronizedStartTime;
+
+    // When an animation is suspended, it behaves as if it is paused and it also ignores
+    // all run state changes until it is resumed. This is used for testing purposes.
+    bool m_suspended;
 
     // These are used in trimTimeToCurrentIteration to account for time
     // spent while paused. This is not included in AnimationState since it

@@ -621,15 +621,15 @@ void LayerChromium::removeAnimation(int animationId)
     setNeedsCommit();
 }
 
-void LayerChromium::suspendAnimations(double time)
+void LayerChromium::suspendAnimations(double monotonicTime)
 {
-    m_layerAnimationController->suspendAnimations(time);
+    m_layerAnimationController->suspendAnimations(monotonicTime);
     setNeedsCommit();
 }
 
-void LayerChromium::resumeAnimations()
+void LayerChromium::resumeAnimations(double monotonicTime)
 {
-    m_layerAnimationController->resumeAnimations();
+    m_layerAnimationController->resumeAnimations(monotonicTime);
     setNeedsCommit();
 }
 

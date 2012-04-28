@@ -420,14 +420,17 @@ void GraphicsLayerChromium::removeAnimation(const String& animationName)
     primaryLayer()->removeAnimation(mapAnimationNameToId(animationName));
 }
 
-void GraphicsLayerChromium::suspendAnimations(double time)
+void GraphicsLayerChromium::suspendAnimations(double wallClockTime)
 {
-    primaryLayer()->suspendAnimations(time);
+    // |wallClockTime| is in the wrong time base. Need to convert here.
+    // FIXME: find a more reliable way to do this.
+    double monotonicTime = wallClockTime + monotonicallyIncreasingTime() - currentTime();
+    primaryLayer()->suspendAnimations(monotonicTime);
 }
 
 void GraphicsLayerChromium::resumeAnimations()
 {
-    primaryLayer()->resumeAnimations();
+    primaryLayer()->resumeAnimations(monotonicallyIncreasingTime());
 }
 
 void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)

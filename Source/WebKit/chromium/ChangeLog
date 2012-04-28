@@ -1,3 +1,17 @@
+2012-04-27  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Add pause and resume support for accelerated css animations.
+        https://bugs.webkit.org/show_bug.cgi?id=84601
+
+        Reviewed by James Robinson.
+
+        * tests/CCActiveAnimationTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+
 2012-04-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Separate IOSurface layer type from texture layers

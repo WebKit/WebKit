@@ -102,7 +102,7 @@ public:
     virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String&, double timeOffset);
     virtual void pauseAnimation(const String& animationName, double timeOffset);
     virtual void removeAnimation(const String& animationName);
-    virtual void suspendAnimations(double time);
+    virtual void suspendAnimations(double wallClockTime);
     virtual void resumeAnimations();
 
     virtual PlatformLayer* platformLayer() const;

@@ -240,8 +240,8 @@ public:
     void pauseAnimation(int animationId, double timeOffset);
     void removeAnimation(int animationId);
 
-    void suspendAnimations(double time);
-    void resumeAnimations();
+    void suspendAnimations(double monotonicTime);
+    void resumeAnimations(double monotonicTime);
 
     CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
     void setLayerAnimationController(PassOwnPtr<CCLayerAnimationController>);

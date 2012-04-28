@@ -199,6 +199,47 @@ TEST(CCLayerAnimationControllerTest, doNotClobberStartTimes)
     EXPECT_EQ(controller->getActiveAnimation(0, CCActiveAnimation::Opacity)->startTime(), controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->startTime());
 }
 
+TEST(CCLayerAnimationControllerTest, syncPauseAndResume)
+{
+    FakeLayerAnimationControllerClient dummyImpl;
+    OwnPtr<CCLayerAnimationController> controllerImpl(CCLayerAnimationController::create(&dummyImpl));
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
+
+    EXPECT_FALSE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+
+    addOpacityTransitionToController(*controller, 1, 0, 1, false);
+
+    controller->pushAnimationUpdatesTo(controllerImpl.get());
+
+    EXPECT_TRUE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
+    EXPECT_EQ(CCActiveAnimation::WaitingForTargetAvailability, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+
+    // Start the animations on each controller.
+    CCAnimationEventsVector events;
+    controllerImpl->animate(0, &events);
+    controller->animate(0, 0);
+    EXPECT_EQ(CCActiveAnimation::Running, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+    EXPECT_EQ(CCActiveAnimation::Running, controller->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+
+    // Pause the main-thread animation.
+    controller->suspendAnimations(1);
+    EXPECT_EQ(CCActiveAnimation::Paused, controller->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+
+    // The pause run state change should make it to the impl thread controller.
+    controller->pushAnimationUpdatesTo(controllerImpl.get());
+    EXPECT_EQ(CCActiveAnimation::Paused, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+
+    // Resume the main-thread animation.
+    controller->resumeAnimations(2);
+    EXPECT_EQ(CCActiveAnimation::Running, controller->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+
+    // The pause run state change should make it to the impl thread controller.
+    controller->pushAnimationUpdatesTo(controllerImpl.get());
+    EXPECT_EQ(CCActiveAnimation::Running, controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity)->runState());
+}
+
+
 TEST(CCLayerAnimationControllerTest, doNotSyncFinishedAnimation)
 {
     FakeLayerAnimationControllerClient dummyImpl;

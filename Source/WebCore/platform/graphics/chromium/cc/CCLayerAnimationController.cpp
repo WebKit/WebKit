@@ -107,6 +107,9 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
     // the corresponding impl thread animation.
     anim->setNeedsSynchronizedStartTime(true);
 
+    // If timeOffset > 0, then the animation has started in the past.
+    anim->setTimeOffset(timeOffset);
+
     return anim.release();
 }
 
@@ -138,6 +141,13 @@ bool CCLayerAnimationController::addAnimation(const KeyframeValueList& valueList
         toAdd = createActiveAnimation<FloatAnimationValue, CCFloatKeyframe, CCKeyframedFloatAnimationCurve>(valueList, animation, animationId, groupId, timeOffset, CCActiveAnimation::Opacity);
 
     if (toAdd.get()) {
+        // Remove any existing animations with the same animation id and target property.
+        for (size_t i = 0; i < m_activeAnimations.size();) {
+            if (m_activeAnimations[i]->id() == animationId && m_activeAnimations[i]->targetProperty() == toAdd->targetProperty())
+                m_activeAnimations.remove(i);
+            else
+                i++;
+        }
         m_activeAnimations.append(toAdd.release());
         return true;
     }
@@ -149,7 +159,7 @@ void CCLayerAnimationController::pauseAnimation(int animationId, double timeOffs
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
         if (m_activeAnimations[i]->id() == animationId)
-            m_activeAnimations[i]->setRunState(CCActiveAnimation::Paused, timeOffset);
+            m_activeAnimations[i]->setRunState(CCActiveAnimation::Paused, timeOffset + m_activeAnimations[i]->startTime());
     }
 }
 
@@ -164,13 +174,21 @@ void CCLayerAnimationController::removeAnimation(int animationId)
 }
 
 // According to render layer backing, these are for testing only.
-void CCLayerAnimationController::suspendAnimations(double time)
+void CCLayerAnimationController::suspendAnimations(double monotonicTime)
 {
+    for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
+        if (m_activeAnimations[i]->runState() != CCActiveAnimation::Finished && m_activeAnimations[i]->runState() != CCActiveAnimation::Aborted)
+            m_activeAnimations[i]->setRunState(CCActiveAnimation::Paused, monotonicTime);
+    }
 }
 
 // Looking at GraphicsLayerCA, this appears to be the analog to suspendAnimations, which is for testing.
-void CCLayerAnimationController::resumeAnimations()
+void CCLayerAnimationController::resumeAnimations(double monotonicTime)
 {
+    for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
+        if (m_activeAnimations[i]->runState() == CCActiveAnimation::Paused)
+            m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, monotonicTime);
+    }
 }
 
 // Ensures that the list of active animations on the main thread and the impl thread
@@ -179,6 +197,7 @@ void CCLayerAnimationController::pushAnimationUpdatesTo(CCLayerAnimationControll
 {
     pushNewAnimationsToImplThread(controllerImpl);
     removeAnimationsCompletedOnMainThread(controllerImpl);
+    pushPropertiesToImplThread(controllerImpl);
 }
 
 void CCLayerAnimationController::animate(double monotonicTime, CCAnimationEventsVector* events)
@@ -197,7 +216,7 @@ void CCLayerAnimationController::add(PassOwnPtr<CCActiveAnimation> animation)
     m_activeAnimations.append(animation);
 }
 
-CCActiveAnimation* CCLayerAnimationController::getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty targetProperty)
+CCActiveAnimation* CCLayerAnimationController::getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty targetProperty) const
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i)
         if (m_activeAnimations[i]->group() == groupId && m_activeAnimations[i]->targetProperty() == targetProperty)
@@ -235,7 +254,7 @@ void CCLayerAnimationController::notifyAnimationStarted(const CCAnimationEvent& 
     }
 }
 
-void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationController* controllerImpl)
+void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationController* controllerImpl) const
 {
     // Any new animations owned by the main thread's controller are cloned and adde to the impl thread's controller.
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
@@ -258,7 +277,7 @@ void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationC
     }
 }
 
-void CCLayerAnimationController::removeAnimationsCompletedOnMainThread(CCLayerAnimationController* controllerImpl)
+void CCLayerAnimationController::removeAnimationsCompletedOnMainThread(CCLayerAnimationController* controllerImpl) const
 {
     // Delete all impl thread animations for which there is no corresponding main thread animation.
     // Each iteration, controller->m_activeAnimations.size() is decremented or i is incremented
@@ -269,6 +288,15 @@ void CCLayerAnimationController::removeAnimationsCompletedOnMainThread(CCLayerAn
             controllerImpl->m_activeAnimations.remove(i);
         else
             i++;
+    }
+}
+
+void CCLayerAnimationController::pushPropertiesToImplThread(CCLayerAnimationController* controllerImpl) const
+{
+    for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
+        CCActiveAnimation* currentImpl = controllerImpl->getActiveAnimation(m_activeAnimations[i]->group(), m_activeAnimations[i]->targetProperty());
+        if (currentImpl)
+            m_activeAnimations[i]->pushPropertiesTo(currentImpl);
     }
 }
 
@@ -404,7 +432,7 @@ void CCLayerAnimationController::purgeFinishedAnimations(double monotonicTime, C
 void CCLayerAnimationController::tickAnimations(double monotonicTime)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        if (m_activeAnimations[i]->runState() == CCActiveAnimation::Running) {
+        if (m_activeAnimations[i]->runState() == CCActiveAnimation::Running || m_activeAnimations[i]->runState() == CCActiveAnimation::Paused) {
             double trimmed = m_activeAnimations[i]->trimTimeToCurrentIteration(monotonicTime);
 
             // Animation assumes its initial value until it gets the synchronized start time
@@ -417,7 +445,7 @@ void CCLayerAnimationController::tickAnimations(double monotonicTime)
             case CCActiveAnimation::Transform: {
                 const CCTransformAnimationCurve* transformAnimationCurve = m_activeAnimations[i]->curve()->toTransformAnimationCurve();
                 const TransformationMatrix matrix = transformAnimationCurve->getValue(trimmed, m_client->bounds());
-                if (m_activeAnimations[i]->isFinishedAt(monotonicTime) && !m_activeAnimations[i]->needsSynchronizedStartTime())
+                if (m_activeAnimations[i]->isFinishedAt(monotonicTime))
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, monotonicTime);
 
                 m_client->setTransformFromAnimation(matrix);
@@ -427,7 +455,7 @@ void CCLayerAnimationController::tickAnimations(double monotonicTime)
             case CCActiveAnimation::Opacity: {
                 const CCFloatAnimationCurve* floatAnimationCurve = m_activeAnimations[i]->curve()->toFloatAnimationCurve();
                 const float opacity = floatAnimationCurve->getValue(trimmed);
-                if (m_activeAnimations[i]->isFinishedAt(monotonicTime) && !m_activeAnimations[i]->needsSynchronizedStartTime())
+                if (m_activeAnimations[i]->isFinishedAt(monotonicTime))
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, monotonicTime);
 
                 m_client->setOpacityFromAnimation(opacity);
