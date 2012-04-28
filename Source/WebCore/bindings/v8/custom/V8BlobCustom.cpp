@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     if (!context)
         return throwError("Blob constructor associated document is unavailable", V8Proxy::ReferenceError);
 
-    if (!args.Length())
+    if (!args.Length()) {
         RefPtr<Blob> blob = Blob::create();
         return toV8(blob.get(), args.GetIsolate());
     }
