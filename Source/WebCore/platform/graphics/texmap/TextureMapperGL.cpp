@@ -107,55 +107,7 @@ struct TextureMapperGLData {
             return adoptRef(new SharedGLData(getCurrentGLContext()));
         }
 
-        struct ClipState {
-            IntRect scissorBox;
-            int stencilIndex;
-            ClipState(const IntRect& scissors, int stencil)
-                : scissorBox(scissors)
-                , stencilIndex(stencil)
-            { }
 
-            ClipState()
-                : stencilIndex(1)
-            { }
-        };
-
-        ClipState clipState;
-        Vector<ClipState> clipStack;
-
-        void pushClipState()
-        {
-            clipStack.append(clipState);
-        }
-
-        void popClipState()
-        {
-            if (clipStack.isEmpty())
-                return;
-            clipState = clipStack.last();
-            clipStack.removeLast();
-        }
-
-        static void scissorClip(const IntRect& rect)
-        {
-            if (rect.isEmpty())
-                return;
-
-            GLint viewport[4];
-            GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport));
-            GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height()));
-        }
-
-        void applyCurrentClip()
-        {
-            scissorClip(clipState.scissorBox);
-            GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
-            GL_CMD(glStencilFunc(GL_EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1));
-            if (clipState.stencilIndex == 1)
-                GL_CMD(glDisable(GL_STENCIL_TEST));
-            else
-                GL_CMD(glEnable(GL_STENCIL_TEST));
-        }
 
         TextureMapperShaderManager textureMapperShaderManager;
 
@@ -208,6 +160,47 @@ struct TextureMapperGLData {
     RefPtr<BitmapTexture> currentSurface;
 };
 
+void TextureMapperGL::ClipStack::init(const IntRect& rect)
+{
+    clipStack.clear();
+    clipState = TextureMapperGL::ClipState(rect);
+}
+
+void TextureMapperGL::ClipStack::push()
+{
+    clipStack.append(clipState);
+}
+
+void TextureMapperGL::ClipStack::pop()
+{
+    if (clipStack.isEmpty())
+        return;
+    clipState = clipStack.last();
+    clipStack.removeLast();
+}
+
+static void scissorClip(const IntRect& rect)
+{
+    if (rect.isEmpty())
+        return;
+
+    GLint viewport[4];
+    GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport));
+    GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY(), rect.width(), rect.height()));
+}
+
+void TextureMapperGL::ClipStack::apply()
+{
+    scissorClip(clipState.scissorBox);
+    GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
+    GL_CMD(glStencilFunc(GL_EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1));
+    if (clipState.stencilIndex == 1)
+        GL_CMD(glDisable(GL_STENCIL_TEST));
+    else
+        GL_CMD(glEnable(GL_STENCIL_TEST));
+}
+
+
 void TextureMapperGLData::initializeStencil()
 {
     if (currentSurface) {
@@ -237,6 +230,11 @@ TextureMapperGL::TextureMapperGL()
 {
 }
 
+TextureMapperGL::ClipStack& TextureMapperGL::clipStack()
+{
+    return data().currentSurface ? toBitmapTextureGL(data().currentSurface.get())->m_clipStack : m_clipStack;
+}
+
 void TextureMapperGL::beginPainting(PaintFlags flags)
 {
     // Make sure that no GL error code stays from previous operations.
@@ -249,6 +247,7 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
     data().previousDepthState = glIsEnabled(GL_DEPTH_TEST);
     glDisable(GL_DEPTH_TEST);
+    glEnable(GL_SCISSOR_TEST);
 #if PLATFORM(QT)
     if (m_context) {
         QPainter* painter = m_context->platformContext();
@@ -260,9 +259,9 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     GL_CMD(glDepthMask(0));
     GL_CMD(glGetIntegerv(GL_VIEWPORT, data().viewport));
     GL_CMD(glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor));
-    data().sharedGLData().clipState.stencilIndex = 1;
-    data().sharedGLData().clipState.scissorBox = IntRect(0, 0, data().viewport[2], data().viewport[3]);
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
+    m_clipStack.init(IntRect(0, 0, data().viewport[2], data().viewport[3]));
+    GL_CMD(glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer));
     data().PaintFlags = flags;
     bindSurface(0);
 }
@@ -302,7 +301,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
     if (!texture.isValid())
         return;
 
-    if (data().sharedGLData().clipState.scissorBox.isEmpty())
+    if (clipStack().current().scissorBox.isEmpty())
         return;
 
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
@@ -413,7 +412,7 @@ void BitmapTextureGL::didReset()
     if (!m_id)
         GL_CMD(glGenTextures(1, &m_id));
 
-    m_surfaceNeedsReset = true;
+    m_shouldClear = true;
     if (m_textureSize == contentSize())
         return;
 
@@ -526,24 +525,38 @@ void BitmapTextureGL::initializeStencil()
     GL_CMD(glClear(GL_STENCIL_BUFFER_BIT));
 }
 
+void BitmapTextureGL::clearIfNeeded()
+{
+    if (!m_shouldClear)
+        return;
+
+    m_clipStack.init(IntRect(IntPoint::zero(), m_textureSize));
+    m_clipStack.apply();
+    GL_CMD(glClearColor(0, 0, 0, 0));
+    GL_CMD(glClear(GL_COLOR_BUFFER_BIT));
+    m_shouldClear = false;
+}
+
+void BitmapTextureGL::createFboIfNeeded()
+{
+    if (m_fbo)
+        return;
+
+    GL_CMD(glGenFramebuffers(1, &m_fbo));
+    GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+    GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0));
+    m_shouldClear = true;
+}
+
 void BitmapTextureGL::bind()
 {
-    if (m_surfaceNeedsReset || !m_fbo) {
-        if (!m_fbo)
-            GL_CMD(glGenFramebuffers(1, &m_fbo));
-        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
-        GL_CMD(glBindTexture(GL_TEXTURE_2D, 0));
-        GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0));
-        GL_CMD(glClearColor(0, 0, 0, 0));
-        GL_CMD(glClear(GL_COLOR_BUFFER_BIT));
-        m_surfaceNeedsReset = false;
-    } else
-        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
-
-    GL_CMD(glViewport(0, 0, size().width(), size().height()));
-    const bool mirrored = true;
-    m_textureMapper->data().projectionMatrix = createProjectionMatrix(size(), mirrored);
-    m_textureMapper->beginClip(TransformationMatrix(), FloatRect(IntPoint::zero(), contentSize()));
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, 0));
+    createFboIfNeeded();
+    GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+    GL_CMD(glViewport(0, 0, m_textureSize.width(), m_textureSize.height()));
+    clearIfNeeded();
+    m_textureMapper->data().projectionMatrix = createProjectionMatrix(m_textureSize, true /* mirrored */);
+    m_clipStack.apply();
 }
 
 BitmapTextureGL::~BitmapTextureGL()
@@ -573,33 +586,29 @@ TextureMapperGL::~TextureMapperGL()
     delete m_data;
 }
 
-void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
+void TextureMapperGL::bindDefaultSurface()
 {
-    BitmapTextureGL* surface = static_cast<BitmapTextureGL*>(surfacePointer);
+    GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer));
+    IntSize viewportSize(data().viewport[2], data().viewport[3]);
+    data().projectionMatrix = createProjectionMatrix(viewportSize, data().PaintFlags & PaintingMirrored);
+    GL_CMD(glViewport(data().viewport[0], data().viewport[1], viewportSize.width(), viewportSize.height()));
+    m_clipStack.apply();
+    data().currentSurface.clear();
+}
 
+void TextureMapperGL::bindSurface(BitmapTexture *surface)
+{
     if (!surface) {
-        GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer));
-
-        IntSize viewportSize(data().viewport[2], data().viewport[3]);
-        const bool mirorred = data().PaintFlags & PaintingMirrored;
-        data().projectionMatrix = createProjectionMatrix(viewportSize, mirorred);
-        GL_CMD(glViewport(0, 0, viewportSize.width(), viewportSize.height()));
-
-        if (data().currentSurface)
-            endClip();
-        data().currentSurface.clear();
+        bindDefaultSurface();
         return;
     }
 
-
-    surface->bind();
+    static_cast<BitmapTextureGL*>(surface)->bind();
     data().currentSurface = surface;
 }
 
 bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
 {
-    glEnable(GL_SCISSOR_TEST);
-
     // 3D transforms are currently not supported in scissor clipping
     // resulting in cropped surfaces when z>0.
     if (!modelViewMatrix.isAffine())
@@ -612,14 +621,14 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
     if (!quad.isRectilinear() || rect.isEmpty())
         return false;
 
-    data().sharedGLData().clipState.scissorBox.intersect(rect);
-    data().sharedGLData().applyCurrentClip();
+    clipStack().current().scissorBox.intersect(rect);
+    clipStack().apply();
     return true;
 }
 
 void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
 {
-    data().sharedGLData().pushClipState();
+    clipStack().push();
     if (beginScissorClip(modelViewMatrix, targetRect))
         return;
 
@@ -653,7 +662,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
         -1, -1, 0, 1
     };
 
-    int& stencilIndex = data().sharedGLData().clipState.stencilIndex;
+    int& stencilIndex = clipStack().current().stencilIndex;
 
     GL_CMD(glEnable(GL_STENCIL_TEST));
 
@@ -679,13 +688,13 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     // Increase stencilIndex and apply stencil testing.
     stencilIndex *= 2;
-    data().sharedGLData().applyCurrentClip();
+    clipStack().apply();
 }
 
 void TextureMapperGL::endClip()
 {
-    data().sharedGLData().popClipState();
-    data().sharedGLData().applyCurrentClip();
+    clipStack().pop();
+    clipStack().apply();
 }
 
 PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()

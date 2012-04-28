@@ -66,10 +66,36 @@ public:
     virtual AccelerationMode accelerationMode() const { return OpenGLMode; }
 
 private:
+
+    struct ClipState {
+        IntRect scissorBox;
+        int stencilIndex;
+        ClipState(const IntRect& scissors = IntRect(), int stencil = 1)
+            : scissorBox(scissors)
+            , stencilIndex(stencil)
+        { }
+    };
+
+    class ClipStack {
+    public:
+        void push();
+        void pop();
+        void apply();
+        inline ClipState& current() { return clipState; }
+        void init(const IntRect&);
+
+    private:
+        ClipState clipState;
+        Vector<ClipState> clipStack;
+    };
+
     bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
+    void bindDefaultSurface();
+    ClipStack& clipStack();
     inline TextureMapperGLData& data() { return *m_data; }
     TextureMapperGLData* m_data;
     GraphicsContext* m_context;
+    ClipStack m_clipStack;
     friend class BitmapTextureGL;
 };
 
@@ -96,16 +122,20 @@ private:
     IntRect m_dirtyRect;
     GLuint m_fbo;
     GLuint m_rbo;
-    bool m_surfaceNeedsReset;
+    bool m_shouldClear;
     TextureMapperGL* m_textureMapper;
+    TextureMapperGL::ClipStack m_clipStack;
     BitmapTextureGL()
         : m_id(0)
         , m_fbo(0)
         , m_rbo(0)
-        , m_surfaceNeedsReset(true)
+        , m_shouldClear(true)
         , m_textureMapper(0)
     {
     }
+
+    void clearIfNeeded();
+    void createFboIfNeeded();
 
     friend class TextureMapperGL;
 };
