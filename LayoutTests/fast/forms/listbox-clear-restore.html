@@ -26,19 +26,6 @@ function clearList()
     }
 }
 
-function populateListTimeout()
-{
-    populateList();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
-
-function clearListTimeout()
-{
-    clearList();
-    setTimeout(populateListTimeout, 0);
-}
-
 function test()
 {
     if (window.layoutTestController)
@@ -46,9 +33,14 @@ function test()
 
     populateList();
     document.getElementById("myList").selectedIndex = 19;
-    window.setTimeout(clearListTimeout, 0);
-}
+    document.body.offsetWidth; // Force a layout.
+    clearList();
+    document.body.offsetWidth; // Force a layout.
+    populateList();
 
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
 </script>
 </body>
 </html>

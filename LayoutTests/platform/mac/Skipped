@@ -731,9 +731,6 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82818
-fast/forms/listbox-clear-restore.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=82923
 inspector/styles/override-screen-size.html
 
