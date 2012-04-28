@@ -1,3 +1,19 @@
+2012-04-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVGAnimateColorElement doesn't support by/to animations properly
+        https://bugs.webkit.org/show_bug.cgi?id=36704
+
+        Reviewed by Antti Koivisto.
+
+        * svg/animations/animateColor-additive-2a-expected.svg: Added.
+        * svg/animations/animateColor-additive-2a.svg: Added.
+        * svg/animations/animateColor-additive-2b-expected.svg: Added.
+        * svg/animations/animateColor-additive-2b.svg: Added.
+        * svg/animations/animateColor-additive-2c-expected.svg: Added.
+        * svg/animations/animateColor-additive-2c.svg: Added.
+        * svg/animations/animateColor-additive-2d-expected.svg: Added.
+        * svg/animations/animateColor-additive-2d.svg: Added.
+
 2012-04-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Fix repetitions & by animation support for path animations

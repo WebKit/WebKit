@@ -194,7 +194,7 @@ public:
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
 
-    void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value, bool includeSMILProperties);
+    void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value);
     virtual void determinePropertyValueTypes(const String& from, const String& to);
 
     bool isSupportedAttribute(const QualifiedName&);

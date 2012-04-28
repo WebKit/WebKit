@@ -32,18 +32,19 @@ public:
     ColorDistance(int redDiff, int blueDiff, int greenDiff);
 
     ColorDistance scaledDistance(float scaleFactor) const;
-    Color addToColorAndClamp(const Color&) const;
+    Color addToColor(const Color&) const;
         
-    static Color addColorsAndClamp(const Color&, const Color&);
-        
+    static Color addColors(const Color&, const Color&);
+    static Color clampColor(int red, int green, int blue, int alpha);
+
     bool isZero() const;
 
     float distance() const;
         
 private:
-    short m_redDiff;
-    short m_greenDiff;
-    short m_blueDiff;
+    int m_redDiff;
+    int m_greenDiff;
+    int m_blueDiff;
 };
 }
 

@@ -636,20 +636,15 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeat, SVGSMI
     calculateAnimatedValue(effectivePercent, repeat, resultElement);
 }
 
-void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& value, bool includeSMILProperties)
+void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& value)
 {
     ASSERT(element);
     ASSERT(element->isStyled());
 
-    // If includeSMILProperties=false, don't include any properties resulting from SMIL animations, as we want to retrieve the "base value".
-    if (!includeSMILProperties) {
-        ASSERT(element == targetElement());
-        element->setUseOverrideComputedStyle(true);
-    }
-
+    // Don't include any properties resulting from CSS Transitions/Animations or SMIL animations, as we want to retrieve the "base value".
+    element->setUseOverrideComputedStyle(true);
     value = CSSComputedStyleDeclaration::create(element)->getPropertyValue(id);
-    if (!includeSMILProperties)
-        element->setUseOverrideComputedStyle(false);
+    element->setUseOverrideComputedStyle(false);
 }
 
 void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String& value)
@@ -665,7 +660,7 @@ void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const 
     SVGElement* svgParent = static_cast<SVGElement*>(parent);
     if (!svgParent->isStyled())
         return;
-    computeCSSPropertyValue(svgParent, cssPropertyID(attributeName.localName()), value, true);
+    computeCSSPropertyValue(svgParent, cssPropertyID(attributeName.localName()), value);
 }
 
 static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)

@@ -45,9 +45,7 @@ void SVGAnimatedColorAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimat
 {
     ASSERT(from->type() == AnimatedColor);
     ASSERT(from->type() == to->type());
-
-    // FIXME: We clamp too early.
-    to->color() = ColorDistance::addColorsAndClamp(from->color(), to->color());
+    to->color() = ColorDistance::addColors(from->color(), to->color());
 }
 
 static inline void adjustForCurrentColor(SVGElement* targetElement, Color& color)
@@ -65,11 +63,11 @@ static Color parseColorFromString(SVGAnimationElement*, const String& string)
     return SVGColor::colorFromRGBColorString(string);
 }
 
-void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    
+
     Color& fromColor = from->color();
     Color& toColor = to->color();
     Color& animatedColor = animated->color();
@@ -81,17 +79,19 @@ void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned
     if (m_animationElement->toPropertyValueType() == CurrentColorValue)
         adjustForCurrentColor(m_contextElement, toColor);
 
-    Color color;
-    if (m_animationElement->calcMode() == CalcModeDiscrete)
-        color = percentage < 0.5 ? fromColor : toColor;
-    else
-        color = ColorDistance(fromColor, toColor).scaledDistance(percentage).addToColorAndClamp(fromColor);
-    
-    // FIXME: Accumulate colors.
-    if (m_animationElement->isAdditive() && m_animationElement->animationMode() != ToAnimation)
-        animatedColor = ColorDistance::addColorsAndClamp(animatedColor, color);
-    else
-        animatedColor = color;
+    float animatedRed = animatedColor.red();
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromColor.red(), toColor.red(), animatedRed);
+
+    float animatedGreen = animatedColor.green();
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromColor.green(), toColor.green(), animatedGreen);
+
+    float animatedBlue = animatedColor.blue();
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromColor.blue(), toColor.blue(), animatedBlue);
+
+    float animatedAlpha = animatedColor.alpha();
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromColor.alpha(), toColor.alpha(), animatedAlpha);
+
+    animatedColor = ColorDistance::clampColor(static_cast<int>(roundf(animatedRed)), static_cast<int>(roundf(animatedGreen)), static_cast<int>(roundf(animatedBlue)), static_cast<int>(roundf(animatedAlpha)));
 }
 
 float SVGAnimatedColorAnimator::calculateDistance(const String& fromString, const String& toString)

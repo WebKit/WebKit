@@ -209,7 +209,7 @@ void SVGAnimateElement::resetToBaseValue()
 
     if (shouldApply == ApplyCSSAnimation) {
         ASSERT(SVGAnimationElement::isTargetAttributeCSSProperty(targetElement, attributeName));
-        computeCSSPropertyValue(targetElement, cssPropertyID(attributeName.localName()), baseValue, false);
+        computeCSSPropertyValue(targetElement, cssPropertyID(attributeName.localName()), baseValue);
     }
 
     if (!m_animatedType)
