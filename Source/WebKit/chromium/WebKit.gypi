@@ -134,6 +134,7 @@
             'tests/WebCompositorInputHandlerImplTest.cpp',
             'tests/WebFrameTest.cpp',
             'tests/WebLayerTest.cpp',
+            'tests/WebMediaPlayerClientImplTest.cpp',
             'tests/WebPageNewSerializerTest.cpp',
             'tests/WebPageSerializerTest.cpp',
             'tests/WebSocketDeflaterTest.cpp',

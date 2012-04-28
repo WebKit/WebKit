@@ -165,8 +165,9 @@ public:
     virtual void didReceiveFrame();
     virtual void didUpdateMatrix(const float*);
 
-private:
+protected:
     WebMediaPlayerClientImpl();
+private:
     void startDelayedLoad();
     void loadInternal();
 
