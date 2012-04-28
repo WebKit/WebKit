@@ -7,7 +7,6 @@ PASS reader.readAsArrayBuffer() threw exception TypeError: Not enough arguments.
 PASS reader.readAsBinaryString() threw exception TypeError: Not enough arguments.
 PASS reader.readAsText() threw exception TypeError: Not enough arguments.
 PASS reader.readAsDataURL() threw exception TypeError: Not enough arguments.
-PASS blobBuilder.append() threw exception TypeError: Type error.
 PASS fileInput.files.item() threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 

@@ -32,8 +32,15 @@
 #include "JSBlob.h"
 
 #include "Blob.h"
+#include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
+#include "JSArrayBuffer.h"
 #include "JSDOMBinding.h"
+#include "JSDictionary.h"
 #include "JSFile.h"
+#include "WebKitBlobBuilder.h"
+#include <runtime/Error.h>
+#include <runtime/JSArray.h>
 #include <wtf/Assertions.h>
 
 using namespace JSC;
@@ -49,6 +56,85 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Blob* blob)
         return CREATE_DOM_WRAPPER(exec, globalObject, File, blob);
 
     return CREATE_DOM_WRAPPER(exec, globalObject, Blob, blob);
+}
+
+EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
+{
+    JSBlobConstructor* jsConstructor = jsCast<JSBlobConstructor*>(exec->callee());
+    ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
+    if (!context)
+        return throwVMError(exec, createReferenceError(exec, "Blob constructor associated document is unavailable"));
+
+    if (!exec->argumentCount()) {
+        RefPtr<Blob> blob = Blob::create();
+        return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), Blob, blob.get()));
+    }
+
+    JSValue firstArg = exec->argument(0);
+    if (!isJSArray(firstArg))
+        return throwVMError(exec, createTypeError(exec, "First argument of the constructor is not of type Array"));
+
+    String type;
+    String endings = "transparent";
+
+    if (exec->argumentCount() > 1) {
+        JSValue blobPropertyBagValue = exec->argument(1);
+
+        // FIXME: Should we throw if the blobPropertyBag is not an object?
+
+        if (blobPropertyBagValue.isObject()) {
+            // Given the above test, this will always yield an object.
+            JSObject* blobPropertyBagObject = blobPropertyBagValue.toObject(exec);
+
+            // Create the dictionary wrapper from the initializer object.
+            JSDictionary dictionary(exec, blobPropertyBagObject);
+
+            // Attempt to get the type property.
+            dictionary.get("type", type);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+
+            // Attempt to get the endings property and validate it.
+            bool containsEndings = dictionary.get("endings", endings);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+
+            if (containsEndings) {
+                if (endings != "transparent" && endings != "native") {
+                    setDOMException(exec, INVALID_STATE_ERR);
+                    return JSValue::encode(jsUndefined());
+                }
+            }
+        }
+    }
+
+    ASSERT(endings == "transparent" || endings == "native");
+
+    // FIXME: this would be better if the WebKitBlobBuilder were a stack object to avoid the allocation.
+    RefPtr<WebKitBlobBuilder> blobBuilder = WebKitBlobBuilder::create();
+
+    JSArray* array = asArray(firstArg);
+    unsigned length = array->length();
+
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue item = array->getIndex(i);
+#if ENABLE(BLOB)
+        if (item.inherits(&JSArrayBuffer::s_info))
+            blobBuilder->append(toArrayBuffer(item));
+        else
+#endif
+        if (item.inherits(&JSBlob::s_info))
+            blobBuilder->append(toBlob(item));
+        else {
+            String string = ustringToString(item.toString(exec)->value(exec));
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+            blobBuilder->append(string, endings, ASSERT_NO_EXCEPTION);
+        }
+    }
+
+    RefPtr<Blob> blob = blobBuilder->getBlob(type);
+    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), Blob, blob.get()));
 }
 
 } // namespace WebCore

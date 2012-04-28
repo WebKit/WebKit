@@ -58,13 +58,9 @@ function testBlob()
     debug("");
     debug("testBlob():");
 
-    evalAndLog("BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder");
-    shouldBeTrue("BlobBuilder != null");
     shouldBeTrue("FileReader != null");
-    evalAndLog("builder = new BlobBuilder()");
     evalAndLog("test_content = 'This is a test. This is only a test.'");
-    evalAndLog("builder.append(test_content)");
-    evalAndLog("blob = builder.getBlob()");
+    evalAndLog("blob = new Blob([test_content])");
     validateExceptions("blob", testFile);
 }
 

@@ -33,7 +33,9 @@ module html {
     interface [
         JSGenerateIsReachable=Impl,
         CustomToJSObject,
-        JSNoStaticTables
+        JSNoStaticTables,
+        CustomConstructor,
+        ConstructorParameters=2
     ] Blob {
         readonly attribute unsigned long long size;
         readonly attribute DOMString type;

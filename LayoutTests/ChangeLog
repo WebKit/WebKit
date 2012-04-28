@@ -1,3 +1,57 @@
+2012-04-28  Sam Weinig  <sam@webkit.org>
+
+        Add support for the Blob constructor
+        https://bugs.webkit.org/show_bug.cgi?id=84555
+
+        Reviewed by Maciej Stachowiak.
+
+        Switch tests that were not directly testing BlobBuilder over to
+        using the Blob constructor, to get test coverage of standard way
+        constructing blobs.
+
+        * fast/files/blob-constructor.html: Added.
+        * fast/files/blob-constructor-expected.txt: Added.
+        * fast/files/script-tests/blob-constructor.js: Added.
+        New test.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-unset.html:
+        * fast/dom/HTMLAnchorElement/anchor-download.html:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set.html:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload.html:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/window-domurl-crash.html:
+        * fast/files/blob-slice-overflow.html:
+        * fast/files/blob-slice-test.html:
+        * fast/files/file-reader-fffd-expected.txt:
+        * fast/files/file-reader-fffd.html:
+        * fast/files/not-enough-arguments-expected.txt:
+        * fast/files/not-enough-arguments.html:
+        * fast/files/resources/read-blob-test-cases.js:
+        * fast/files/resources/read-common.js:
+        * fast/files/workers/inline-worker-via-blob-url.html:
+        * fast/filesystem/resources/file-writer-abort-continue.js:
+        * fast/filesystem/resources/file-writer-abort-depth.js:
+        * fast/filesystem/resources/file-writer-abort.js:
+        * fast/filesystem/resources/file-writer-events.js:
+        * fast/filesystem/resources/file-writer-gc-blob.js:
+        * fast/filesystem/resources/file-writer-sync-truncate-extend.js:
+        * fast/filesystem/resources/file-writer-sync-write-overlapped.js:
+        * fast/filesystem/resources/file-writer-utils.js:
+        * http/tests/fileapi/create-blob-url-from-data-url.html:
+        * http/tests/filesystem/no-cache-filesystem-url.html:
+        * http/tests/local/blob/resources/hybrid-blob-util.js:
+        * http/tests/security/resources/create-filesystem-file.html:
+        * http/tests/websocket/tests/hixie76/send-object.html:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close.html:
+        * http/tests/websocket/tests/hybi/send-blob.html:
+        * http/tests/websocket/tests/hybi/send-file-blob-fail.html:
+        * http/tests/websocket/tests/hybi/send-file-blob.html:
+        * http/tests/websocket/tests/hybi/workers/resources/send-blob.js:
+        * platform/mac/fast/dom/Window/window-properties-expected.txt:
+        * storage/indexeddb/noblobs.html:
+        * storage/indexeddb/structured-clone.html:
+
 2012-04-28  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, removing a Mac WebKit2-specific test result for

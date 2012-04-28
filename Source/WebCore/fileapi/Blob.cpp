@@ -37,6 +37,16 @@
 
 namespace WebCore {
 
+Blob::Blob()
+    : m_size(0)
+{
+    OwnPtr<BlobData> blobData = BlobData::create();
+
+    // Create a new internal URL and register it with the provided blob data.
+    m_internalURL = BlobURL::createInternalURL();
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, blobData.release());
+}
+
 Blob::Blob(PassOwnPtr<BlobData> blobData, long long size)
     : m_type(blobData->contentType())
     , m_size(size)
