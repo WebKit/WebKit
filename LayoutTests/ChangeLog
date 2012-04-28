@@ -1,3 +1,19 @@
+2012-04-27  Yi Shen  <yi.4.shen@nokia.com>
+
+        REGRESSION(113723): Pressing enter in this list example deletes the whole list
+        https://bugs.webkit.org/show_bug.cgi?id=85016
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by CompositeEditCommand::breakOutOfEmptyListItem, which calls isListItem
+        on the empty list's siblings to decide which part of the list should get removed. However,
+        the check fails when the empty list's sibling is a text node, or a list element (e.g. ul, ol).
+        Fixed it by skipping empty list's non-element sibling and calling isListElement to do further
+        check.
+
+        * editing/execCommand/break-out-of-empty-list-item-expected.txt:
+        * editing/execCommand/script-tests/break-out-of-empty-list-item.js:
+
 2012-04-27  Tim Horton  <timothy_horton@apple.com>
 
         SMIL animation causes leak of the related Document (and many elements)

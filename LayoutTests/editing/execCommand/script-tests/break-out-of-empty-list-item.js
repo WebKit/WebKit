@@ -51,6 +51,11 @@ testBreakOutOfEmptyListItem('<ul><li><ul><li id="target"><br></li></ul>world</li
 testBreakOutOfEmptyListItem('<ul><li><ul><li id="target"><br></li></ul></li></ul>', '<ul><li></li><li><br></li></ul>');
 testBreakOutOfEmptyListItem('<ul><li>hello</li><br id="target"></ul>', '<ul><li>hello</li></ul><div><br></div>');
 testBreakOutOfEmptyListItem('<ul><br id="target"></ul>', '<div><br></div>');
+testBreakOutOfEmptyListItem('<ul><li>hello</li>abc<li id="target"></li></ul>', '<ul><li>hello</li>abc</ul><div><br></div>');
+testBreakOutOfEmptyListItem('<ul><li>1</li><ul><li>2.1</li></ul><li id="target"></li></ul>', '<ul><li>1</li><ul><li>2.1</li></ul></ul><div><br></div>');
+testBreakOutOfEmptyListItem('<ul><li>1</li><ul><li>2.1</li><li>2.2</li><li id="target"></li></ul><li>3</li></ul>', '<ul><li>1</li><ul><li>2.1</li><li>2.2</li></ul><li><br></li><li>3</li></ul>');
+testBreakOutOfEmptyListItem('<ul><li>1</li><ul><li>2.1</li><li>2.2</li>abc<li id="target"></li></ul><li>3</li></ul>', '<ul><li>1</li><ul><li>2.1</li><li>2.2</li>abc</ul><li><br></li><li>3</li></ul>');
+testBreakOutOfEmptyListItem('<ul><li>1</li><li id="target"></li><li>3</li></ul>', '<ul><li>1</li></ul><div><br></div><ul><li>3</li></ul>');
 
 document.body.removeChild(testContainer);
 

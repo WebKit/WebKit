@@ -1267,21 +1267,23 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (!newBlock)
         newBlock = createDefaultParagraphElement(document());
 
-    if (isListItem(emptyListItem->nextSibling())) {
-        // If emptyListItem follows another list item, split the list node.
-        if (isListItem(emptyListItem->previousSibling()))
+    Node* previousListNode = emptyListItem->isElementNode() ? toElement(emptyListItem)->previousElementSibling(): emptyListItem->previousSibling();
+    Node* nextListNode = emptyListItem->isElementNode() ? toElement(emptyListItem)->nextElementSibling(): emptyListItem->nextSibling();
+    if (isListItem(nextListNode) || isListElement(nextListNode)) {
+        // If emptyListItem follows another list item or nested list, split the list node.
+        if (isListItem(previousListNode) || isListElement(previousListNode))
             splitElement(static_cast<Element*>(listNode), emptyListItem);
 
-        // If emptyListItem is followed by other list item, then insert newBlock before the list node.
+        // If emptyListItem is followed by other list item or nested list, then insert newBlock before the list node.
         // Because we have splitted the element, emptyListItem is the first element in the list node.
         // i.e. insert newBlock before ul or ol whose first element is emptyListItem
         insertNodeBefore(newBlock, listNode);
         removeNode(emptyListItem);
     } else {
-        // When emptyListItem does not follow any list item, insert newBlock after the enclosing list node.
+        // When emptyListItem does not follow any list item or nested list, insert newBlock after the enclosing list node.
         // Remove the enclosing node if emptyListItem is the only child; otherwise just remove emptyListItem.
         insertNodeAfter(newBlock, listNode);
-        removeNode(isListItem(emptyListItem->previousSibling()) ? emptyListItem : listNode);
+        removeNode(isListItem(previousListNode) || isListElement(previousListNode) ? emptyListItem : listNode);
     }
 
     appendBlockPlaceholder(newBlock);
