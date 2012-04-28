@@ -1,3 +1,40 @@
+2012-04-28  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed rebaseline for tests affected by Length change in r115573.
+
+        * fast/borders/border-radius-huge-assert-expected.txt: Added.
+        * fast/html/details-position-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac/fast/forms/001-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-win/fast/html/details-position-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/efl/fast/borders/border-radius-huge-assert-expected.txt: Removed.
+        * platform/efl/fast/html/details-position-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+        * platform/gtk/fast/borders/border-radius-huge-assert-expected.txt: Removed.
+        * platform/gtk/fast/html/details-position-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+        * svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+
 2012-04-26  Emil A Eklund  <eae@chromium.org>
 
         Move Length and CSS length computation to float
