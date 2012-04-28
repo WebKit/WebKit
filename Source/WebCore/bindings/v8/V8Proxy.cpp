@@ -593,6 +593,11 @@ v8::Handle<v8::Value> V8Proxy::throwTypeError()
     return throwError(TypeError, "Type error");
 }
 
+v8::Handle<v8::Value> V8Proxy::throwNotEnoughArgumentsError()
+{
+    return throwError(TypeError, "Not enough arguments");
+}
+
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 {
     v8::Local<v8::Context> context = V8Proxy::mainWorldContext(frame);

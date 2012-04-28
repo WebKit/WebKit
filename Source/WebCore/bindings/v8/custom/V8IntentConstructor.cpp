@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
     if (args.Length() == 1) {
         // Use the dictionary constructor. This block will return if the
         // argument isn't a valid Dictionary.

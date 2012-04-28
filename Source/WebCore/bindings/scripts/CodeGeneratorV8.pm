@@ -1526,7 +1526,7 @@ sub GenerateArgumentsCountCheck
     my $argumentsCountCheckString = "";
     if ($numMandatoryParams >= 1) {
         $argumentsCountCheckString .= "    if (args.Length() < $numMandatoryParams)\n";
-        $argumentsCountCheckString .= "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n";
+        $argumentsCountCheckString .= "        return V8Proxy::throwNotEnoughArgumentsError();\n";
     }
     return $argumentsCountCheckString;
 }
@@ -1805,7 +1805,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
         return args.Holder();
 
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
 
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     ${implClassName}Init eventInit;

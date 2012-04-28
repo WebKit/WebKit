@@ -124,7 +124,7 @@ static v8::Handle<v8::Value> acceptTransferListCallback(const v8::Arguments& arg
 {
     INC_STATS("DOM.TestSerializedScriptValueInterface.acceptTransferList");
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(args.Holder());
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;
@@ -218,7 +218,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
     if (args.Length() < 2)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, hello, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;

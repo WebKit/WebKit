@@ -51,7 +51,7 @@ static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestActiveDOMObject.excitingFunction");
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(args.Holder());
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
         return v8::Handle<v8::Value>();
@@ -64,7 +64,7 @@ static v8::Handle<v8::Value> postMessageCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestActiveDOMObject.postMessage");
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(args.Holder());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, message, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->postMessage(message);

@@ -64,7 +64,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     toV8(document, args.GetIsolate());
 
     if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
 
     ExceptionCode ec = 0;
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str1, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
