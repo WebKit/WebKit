@@ -61,10 +61,10 @@ WebInspector.KeyboardShortcut.Keys = {
     PageDown: { code: 34, name: { mac: "\u21df", other: "<PageDown>" } },   // also NUM_SOUTH_EAST
     End: { code: 35, name: { mac: "\u2197", other: "<End>" } },             // also NUM_SOUTH_WEST
     Home: { code: 36, name: { mac: "\u2196", other: "<Home>" } },           // also NUM_NORTH_WEST
-    Left: { code: 37, name: "\u2190" },           // also NUM_WEST
-    Up: { code: 38, name: "\u2191" },             // also NUM_NORTH
-    Right: { code: 39, name: "\u2192" },          // also NUM_EAST
-    Down: { code: 40, name: "\u2193" },           // also NUM_SOUTH
+    Left: { code: 37, name: "<Left>" },           // also NUM_WEST
+    Up: { code: 38, name: "<Up>" },             // also NUM_NORTH
+    Right: { code: 39, name: "<Right>" },          // also NUM_EAST
+    Down: { code: 40, name: "<Down>" },           // also NUM_SOUTH
     Delete: { code: 46, name: "<Del>" },
     Zero: { code: 48, name: "0" },
     F1: { code: 112, name: "F1" },

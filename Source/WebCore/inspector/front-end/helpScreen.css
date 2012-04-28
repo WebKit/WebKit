@@ -17,12 +17,11 @@ body.compact .help-window-outer {
 .help-window-main {
     max-height: 100%;
     color: white;
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(34, 34, 34, 0.85);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     border-top-width: 0;
-    border-radius: 15px;
-    -webkit-box-shadow: 10px 10px 8px rgba(40, 40, 40, 0.40);
+    border-radius: 10px;
 }
 
 body.compact .help-window-main {
@@ -36,7 +35,9 @@ body.compact .help-window-main {
 }
 
 .help-window-caption {
-    margin: 8px 8px 0 8px;
+    border-bottom: solid 1px rgb(153, 153, 153);
+    margin: 0 16px;
+    line-height: 36px;
 }
 
 body.compact .help-window-caption {
@@ -44,9 +45,8 @@ body.compact .help-window-caption {
 }
 
 .help-window-title {
-    border-bottom: solid 1px lightGrey;
-    font-size: 18px;
-    padding-bottom: 6px;
+    font-size: 16px;
+    margin: 0;
 }
 
 .help-content {
@@ -54,7 +54,7 @@ body.compact .help-window-caption {
     overflow-x: hidden;
     scrollbar-width: 11px;
     -webkit-box-flex: 1;
-    margin: 10px;
+    margin: 0px 16px 16px 16px;
     font-size: 13px;
 }
 
@@ -88,10 +88,11 @@ body.compact .help-window-caption {
     padding: 0;
     font-size: 14px;
     color: rgb(222, 222, 222);
-    background: -webkit-gradient(radial, 30% 30%, 1, 50% 50%, 8, from(rgb(128, 128, 128)), to(rgb(80, 80, 80)));
+    background: -webkit-gradient(radial, 30% 30%, 1, 50% 50%, 8, from(rgb(144, 144, 144)), to(rgb(96, 96, 96)));
     border-radius: 8px;
     height: 16px;
     width: 16px;
+    margin: 10px 0;
 }
 
 body.compact .help-close-button {
@@ -121,10 +122,14 @@ body:not(.platform-mac) .help-close-button {
     -webkit-user-select: auto;
 }
 
+.help-column-table {
+    border-collapse: collapse;
+}
+
 .help-table > tr > th {
     padding-top: 6px;
     text-align: left;
-    color: yellow;
+    color: rgb(221, 221, 0);
 }
 
 .help-table > tr > td {
@@ -138,25 +143,24 @@ body:not(.platform-mac) .help-close-button {
 }
 
 .help-key {
-    color: yellow;
-}
-
-body:not(.platform-mac) .help-key {
-    text-shadow: black 1px 1px 7px;
+    color: rgb(221, 221, 0);
 }
 
 body.platform-mac .help-key {
     font-family: Lucida Grande, sans-serif;
 }
 
-.help-combine-keys {
+.help-combine-keys, .help-key-delimiter {
     color: white;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+.help-combine-keys {
     margin: 0 0.3em;
-    font-size: 12px;
 }
 
 .help-key-delimiter {
-    color: white;
     margin: 0 0.5em;
 }
 
@@ -185,7 +189,9 @@ body.platform-mac .help-key {
 }
 
 .help-section-title {
-    color: yellow;
+    color: rgb(221, 221, 0);
+    text-align: left;
+    padding-top: 8px;
 }
 
 .settings-experiments-warning-subsection-warning {

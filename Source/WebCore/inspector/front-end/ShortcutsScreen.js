@@ -50,44 +50,57 @@ WebInspector.ShortcutsScreen.prototype = {
 
     show: function(onHide)
     {
-        this._buildTable(this.contentElement, 2);
+        this._buildTable(this.contentElement);
         WebInspector.HelpScreen.prototype.show.call(this, onHide);
     },
 
-    _buildTable: function(parent, nColumns)
+    /**
+     * @param parent{Node}
+     */
+    _buildTable: function(parent)
     {
         if (this._tableReady)
             return;
         this._tableReady = true;
 
-        var height = 0;
+        var totalHeight = 0;
         var orderedSections = [];
         for (var section in this._sections) {
-            height += this._sections[section]._height;
+            totalHeight += this._sections[section]._height;
             orderedSections.push(this._sections[section])
         }
         function compareSections(a, b)
         {
             return a.order - b.order;
         }
-        orderedSections = orderedSections.sort(compareSections);
+        orderedSections.sort(compareSections);
 
-        const wrapAfter = height / nColumns;
+        // We're minimizing the height of the tallest column.
+        var minMax = totalHeight;
+        var minMaxIndex = -1;
+        var sum = 0;
+        for (var sectionIndex = 0; sectionIndex < orderedSections.length; ++sectionIndex) {
+            sum += orderedSections[sectionIndex]._height;
+            var max = Math.max(sum, totalHeight - sum);
+            if (minMax > max) {
+                minMax = max;
+                minMaxIndex = sectionIndex;
+            }
+        }
+
         var table = document.createElement("table");
         table.className = "help-table";
         var row = table.createChild("tr");
 
-        // This manual layout ugliness should be gone once WebKit implements
-        // pagination hints for CSS columns (break-inside etc).
-        for (var section = 0; section < orderedSections.length;) {
+        var stopIndices = [0, minMaxIndex + 1, orderedSections.length];
+
+        for (var columnIndex = 1; columnIndex < stopIndices.length; ++columnIndex) {
             var td = row.createChild("td");
-            td.style.width = (100 / nColumns) + "%";
+            td.style.width = "50%";
             var column = td.createChild("table");
-            for (var columnHeight = 0;
-                columnHeight < wrapAfter && section < orderedSections.length;
-                columnHeight += orderedSections[section]._height, section++) {
-                orderedSections[section].renderSection(column);
-            }
+            column.className = "help-column-table";
+            for (var i = stopIndices[columnIndex - 1]; i < stopIndices[columnIndex]; ++i)
+                orderedSections[i].renderSection(column);
         }
         parent.appendChild(table);
     }
@@ -142,7 +155,7 @@ WebInspector.ShortcutsSection.prototype = {
             var tr = parent.createChild("tr");
             var td = tr.createChild("td", "help-key-cell");
             td.appendChild(this._lines[line].key);
-            td.appendChild(document.createTextNode(" : "));
+            td.appendChild(this._createSpan("help-key-delimiter", ":"));
             tr.createChild("td").textContent = this._lines[line].text;
         }
     },
@@ -150,9 +163,13 @@ WebInspector.ShortcutsSection.prototype = {
     _renderHeader: function(parent)
     {
         var trHead = parent.createChild("tr");
+        var thTitle;
 
         trHead.createChild("th");
-        trHead.createChild("th").textContent = this.name;
+
+        thTitle = trHead.createChild("th");
+        thTitle.className = "help-section-title";
+        thTitle.textContent = this.name;
     },
 
     _renderSequence: function(sequence, delimiter)
