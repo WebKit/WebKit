@@ -1,3 +1,20 @@
+2012-04-27  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Double tap zooming does nothing on table element on bustedtees.com
+        https://bugs.webkit.org/show_bug.cgi?id=85104
+
+        Reviewed by George Staikos.
+
+        PR: 147006
+        This was caused by the incorrect fix master_33/SHA:612caec4.
+        Calculations like this "originalArea / pageArea" would always return 0
+        so that the incorrect node and blockRect were used by block zoom. This
+        patch takes care of it.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::blockZoomRectForNode):
+        (BlackBerry::WebKit::WebPage::blockZoom):
+
 2012-04-27  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Improve log output in InputHandler.cpp

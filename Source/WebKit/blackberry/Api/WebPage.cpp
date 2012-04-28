@@ -2796,7 +2796,7 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
 
     int originalArea = originalRect.width() * originalRect.height();
     int pageArea = contentsSize().width() * contentsSize().height();
-    double blockToPageRatio = static_cast<double>(1 - originalArea / pageArea);
+    double blockToPageRatio = static_cast<double>(pageArea - originalArea) / pageArea;
     double blockExpansionRatio = 5.0 * blockToPageRatio * blockToPageRatio;
 
     if (!tnode->hasTagName(HTMLNames::imgTag) && !tnode->hasTagName(HTMLNames::inputTag) && !tnode->hasTagName(HTMLNames::textareaTag)) {
@@ -2805,7 +2805,7 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
             IntRect tRect = rectForNode(tnode);
             int tempBlockArea = tRect.width() * tRect.height();
             // Don't expand the block if it will be too large relative to the content.
-            if (static_cast<double>(1 - tempBlockArea / pageArea) < minimumExpandingRatio)
+            if (static_cast<double>(pageArea - tempBlockArea) / pageArea < minimumExpandingRatio)
                 break;
             if (tRect.isEmpty())
                 continue; // No renderer.
@@ -2813,7 +2813,7 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
                 continue; // The size of this parent is very close to the child, no need to go to this parent.
             // Don't expand the block if the parent node size is already almost the size of actual visible size.
             IntSize actualSize = actualVisibleSize();
-            if (static_cast<double>(1 - tRect.width() / actualSize.width()) < minimumExpandingRatio)
+            if (static_cast<double>(actualSize.width() - tRect.width()) / actualSize.width() < minimumExpandingRatio)
                 break;
             if (tempBlockArea < blockExpansionRatio * originalArea) {
                 blockRect = tRect;
@@ -4689,7 +4689,7 @@ bool WebPage::blockZoom(int x, int y)
             IntRect tRect = d->mapFromTransformed(blockRect);
             int blockArea = tRect.width() * tRect.height();
             int pageArea = d->contentsSize().width() * d->contentsSize().height();
-            double blockToPageRatio = static_cast<double>(1 - blockArea / pageArea);
+            double blockToPageRatio = static_cast<double>(pageArea - blockArea) / pageArea;
             if (blockToPageRatio < minimumExpandingRatio) {
                 // Restore old adjust node because zoom was canceled.
                 d->m_currentBlockZoomAdjustedNode = tempBlockZoomAdjustedNode;
