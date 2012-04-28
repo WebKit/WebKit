@@ -108,6 +108,7 @@ EXPORTS
         ??1ThreadCondition@WTF@@QAE@XZ
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
+        ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
         ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
@@ -117,6 +118,7 @@ EXPORTS
         ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
+        ?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z
         ?isMainThread@WTF@@YA_NXZ
         ?lock@Mutex@WTF@@QAEXXZ
         ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
