@@ -1,3 +1,10 @@
+2012-04-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, adding a Gtk-specific baseline for
+        fast/dom/Window/window-lookup-precedence.html.
+
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+
 2012-04-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Enable touch events feature fails touch feature detection
