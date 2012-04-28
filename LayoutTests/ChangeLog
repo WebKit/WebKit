@@ -1,3 +1,13 @@
+2012-04-27  Noel Gordon  <noel.gordon@gmail.com>
+
+        Layout Test fast/images/gif-large-checkerboard.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=85073
+
+        Unreviewed text expectations update. Test has been a solid PASS for past 12 hours
+        since the patch for bug 85077 rolled in.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, update expected files after r115446.

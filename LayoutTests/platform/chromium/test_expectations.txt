@@ -3692,7 +3692,6 @@ BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMA
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
 BUGWK85038 : http/tests/inspector/network/network-initiator.html = TEXT TIMEOUT
-BUGWK85073 : fast/images/gif-large-checkerboard.html = CRASH PASS
 BUGWK85082 XP DEBUG : platform/chromium/media/video-capture-preview.html = CRASH PASS
 
 // This appears to be sensitive to --test-shell vs "drt mode" in DRT for some reason
