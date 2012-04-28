@@ -185,11 +185,11 @@ TEST(CCSchedulerTest, TextureAcquisitionCollision)
     client.reset();
 
     // Compositor not scheduled to draw because textures are locked by main thread
-    EXPECT_EQ(false, timeSource->active());
+    EXPECT_FALSE(timeSource->active());
 
     // Trigger the commit
     scheduler->beginFrameComplete();
-    EXPECT_EQ(true, timeSource->active());
+    EXPECT_TRUE(timeSource->active());
     client.reset();
 
     // Between commit and draw, texture acquisition for main thread delayed,
