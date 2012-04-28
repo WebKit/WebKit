@@ -249,7 +249,7 @@ CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, Cop
     return true;
 }
 
-void CopiedSpace::destroy()
+void CopiedSpace::freeAllBlocks()
 {
     while (!m_toSpace->isEmpty()) {
         CopiedBlock* block = static_cast<CopiedBlock*>(m_toSpace->removeHead());

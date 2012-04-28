@@ -341,7 +341,11 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
 
 Heap::~Heap()
 {
-    // Destroy our block freeing thread.
+    delete m_markListSet;
+
+    m_objectSpace.shrink();
+    m_storageSpace.freeAllBlocks();
+    releaseFreeBlocks();
     {
         MutexLocker locker(m_freeBlockLock);
         m_blockFreeingThreadShouldQuit = true;
@@ -349,48 +353,31 @@ Heap::~Heap()
     }
     waitForThreadCompletion(m_blockFreeingThread);
 
-    // The destroy function must already have been called, so assert this.
-    ASSERT(!m_globalData);
+    ASSERT(!size());
+    ASSERT(!capacity());
 }
 
-void Heap::destroy()
+// The JSGlobalData is being destroyed and the collector will never run again.
+// Run all pending finalizers now because we won't get another chance.
+void Heap::lastChanceToFinalize()
 {
-    JSLock lock(SilenceAssertionsOnly);
-
-    if (!m_globalData)
-        return;
-
     ASSERT(!m_globalData->dynamicGlobalObject);
     ASSERT(m_operationInProgress == NoOperation);
-    
-    // The global object is not GC protected at this point, so sweeping may delete it
-    // (and thus the global data) before other objects that may use the global data.
-    RefPtr<JSGlobalData> protect(m_globalData);
 
-#if ENABLE(JIT)
-    m_globalData->jitStubs->clearHostFunctionStubs();
-#endif
-
-    delete m_markListSet;
-    m_markListSet = 0;
-
-    canonicalizeCellLivenessData();
-    clearMarks();
+    // FIXME: Make this a release-mode crash once we're sure no one's doing this.
+    if (size_t size = m_protectedValues.size())
+        LOG_ERROR("JavaScriptCore heap deallocated while %ld values were still protected", size);
 
     m_weakSet.finalizeAll();
+    canonicalizeCellLivenessData();
+    clearMarks();
+    sweep();
     m_globalData->smallStrings.finalizeSmallStrings();
-    m_objectSpace.shrink();
-    m_storageSpace.destroy();
-    ASSERT(!size());
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_slotVisitor.m_visitedTypeCounts.dump(WTF::dataFile(), "Visited Type Counts");
     m_destroyedTypeCounts.dump(WTF::dataFile(), "Destroyed Type Counts");
 #endif
-    
-    releaseFreeBlocks();
-
-    m_globalData = 0;
 }
 
 void Heap::waitForRelativeTimeWhileHoldingLock(double relative)

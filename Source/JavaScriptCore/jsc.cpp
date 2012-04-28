@@ -80,7 +80,6 @@
 using namespace JSC;
 using namespace WTF;
 
-static void cleanupGlobalData(JSGlobalData*);
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer);
 
 static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState*);
@@ -417,14 +416,8 @@ EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*)
     return JSValue::encode(jsNumber(currentTime()));
 }
 
-EncodedJSValue JSC_HOST_CALL functionQuit(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
 {
-    // Technically, destroying the heap in the middle of JS execution is a no-no,
-    // but we want to maintain compatibility with the Mozilla test suite, so
-    // we pretend that execution has terminated to avoid ASSERTs, then tear down the heap.
-    exec->globalData().dynamicGlobalObject = 0;
-
-    cleanupGlobalData(&exec->globalData());
     exit(EXIT_SUCCESS);
 
 #if COMPILER(MSVC) && OS(WINCE)
@@ -446,7 +439,7 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState* exec)
 #define EXCEPT(x)
 #endif
 
-int jscmain(int argc, char** argv, JSGlobalData*);
+int jscmain(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
@@ -491,21 +484,10 @@ int main(int argc, char** argv)
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
     int res = 0;
-    JSGlobalData* globalData = JSGlobalData::create(ThreadStackTypeLarge, LargeHeap).leakRef();
     TRY
-        res = jscmain(argc, argv, globalData);
+        res = jscmain(argc, argv);
     EXCEPT(res = 3)
-
-    cleanupGlobalData(globalData);
     return res;
-}
-
-static void cleanupGlobalData(JSGlobalData* globalData)
-{
-    JSLock lock(SilenceAssertionsOnly);
-    globalData->clearBuiltinStructures();
-    globalData->heap.destroy();
-    globalData->deref();
 }
 
 static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scripts, bool dump)
@@ -613,7 +595,7 @@ static void runInteractive(GlobalObject* globalObject)
     printf("\n");
 }
 
-static NO_RETURN void printUsageStatement(JSGlobalData* globalData, bool help = false)
+static NO_RETURN void printUsageStatement(bool help = false)
 {
     fprintf(stderr, "Usage: jsc [options] [files] [-- arguments]\n");
     fprintf(stderr, "  -d         Dumps bytecode (debug builds only)\n");
@@ -625,24 +607,23 @@ static NO_RETURN void printUsageStatement(JSGlobalData* globalData, bool help = 
     fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only)\n");
 #endif
 
-    cleanupGlobalData(globalData);
     exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
-static void parseArguments(int argc, char** argv, CommandLine& options, JSGlobalData* globalData)
+static void parseArguments(int argc, char** argv, CommandLine& options)
 {
     int i = 1;
     for (; i < argc; ++i) {
         const char* arg = argv[i];
         if (!strcmp(arg, "-f")) {
             if (++i == argc)
-                printUsageStatement(globalData);
+                printUsageStatement();
             options.scripts.append(Script(true, argv[i]));
             continue;
         }
         if (!strcmp(arg, "-e")) {
             if (++i == argc)
-                printUsageStatement(globalData);
+                printUsageStatement();
             options.scripts.append(Script(false, argv[i]));
             continue;
         }
@@ -668,7 +649,7 @@ static void parseArguments(int argc, char** argv, CommandLine& options, JSGlobal
             break;
         }
         if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
-            printUsageStatement(globalData, true);
+            printUsageStatement(true);
         options.scripts.append(Script(true, argv[i]));
     }
 
@@ -679,12 +660,14 @@ static void parseArguments(int argc, char** argv, CommandLine& options, JSGlobal
         options.arguments.append(argv[i]);
 }
 
-int jscmain(int argc, char** argv, JSGlobalData* globalData)
+int jscmain(int argc, char** argv)
 {
     JSLock lock(SilenceAssertionsOnly);
 
+    RefPtr<JSGlobalData> globalData = JSGlobalData::create(ThreadStackTypeLarge, LargeHeap);
+
     CommandLine options;
-    parseArguments(argc, argv, options, globalData);
+    parseArguments(argc, argv, options);
 
     GlobalObject* globalObject = GlobalObject::create(*globalData, GlobalObject::createStructure(*globalData, jsNull()), options.arguments);
     bool success = runWithScripts(globalObject, options.scripts, options.dump);

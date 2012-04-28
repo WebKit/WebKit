@@ -133,8 +133,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     
     structure()->disableSpecificFunctionTracking();
 
-    m_globalData = Heap::heap(this)->globalData();
-    m_globalScopeChain.set(*m_globalData, this, ScopeChainNode::create(0, this, m_globalData.get(), this, thisValue));
+    m_globalScopeChain.set(globalData(), this, ScopeChainNode::create(0, this, &globalData(), this, thisValue));
 
     JSGlobalObject::globalExec()->init(0, 0, m_globalScopeChain.get(), CallFrame::noCaller(), 0, 0);
 

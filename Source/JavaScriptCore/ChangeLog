@@ -1,3 +1,115 @@
+2012-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Clarified JSGlobalData (JavaScript VM) lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=85142
+
+        Reviewed by Anders Carlsson.
+
+        This was so confusing that I didn't feel like I could reason about 
+        memory lifetime in the heap without fixing it.
+
+        The rules are:
+
+        (1) JSGlobalData owns the virtual machine and all memory in it.
+
+        (2) Deleting a JSGlobalData frees the virtual machine and all memory 
+        in it.
+
+        (Caveat emptor: if you delete the virtual machine while you're running 
+        JIT code or accessing GC objects, you're gonna have a bad time.)
+
+        (I opted not to make arbitrary sub-objects keep the virtual machine 
+        alive automatically because:
+
+                (a) doing that right would be complex and slow;
+
+                (b) in the case of an exiting thread or process, there's no 
+                clear way to give the garbage collector a chance to try again 
+                later; 
+
+                (c) continuing to run the garbage collector after we've been 
+                asked to shut down the virtual machine seems rude;
+
+                (d) we've never really supported that feature, anyway.)
+
+        (3) Normal ref-counting will do. No need to call a battery of 
+        specialty functions to tear down a JSGlobalData. Its foibles 
+        notwithstanding, C++ does in fact know how to execute destructors in 
+        order.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate): Removed compatibility shim for older 
+        operating systems because it's no longer used.
+
+        (JSGlobalContextRelease): Now that we can rely on JSGlobalData to "do 
+        the right thing", this code is much simpler. We still have one special 
+        case to notify the garbage collector if we're removing the last 
+        reference to the global object, since this can improve memory behavior.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::freeAllBlocks):
+        * heap/CopiedSpace.h:
+        (CopiedSpace): Renamed "destroy" => "freeAllBlocks" because true 
+        destruction-time behaviors should be limited to our C++ destructor.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::~Heap):
+        (JSC):
+        (JSC::Heap::lastChanceToFinalize):
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::heap): Renamed "destroy" => "lastChanceToFinalize" because 
+        true destruction-time behaviors should be limited to our C++ 
+        destructor.
+
+        Reorganized the code, putting code that must run before any objects 
+        get torn down into lastChanceToFinalize, and code that just tears down 
+        objects into our destructor.
+
+        * heap/Local.h:
+        (JSC::LocalStack::LocalStack):
+        (JSC::LocalStack::push):
+        (LocalStack): See rule (2).
+
+        * jsc.cpp:
+        (functionQuit):
+        (main):
+        (printUsageStatement):
+        (parseArguments):
+        (jscmain):
+        * testRegExp.cpp:
+        (main):
+        (printUsageStatement):
+        (parseArguments):
+        (realMain): See rule (3).
+
+        I removed the feature of ensuring orderly tear-down when calling quit()
+        or running in --help mode because it didn't seem very useful and 
+        making it work with Windows structured exception handling and 
+        NO_RETURN didn't seem like a fun way to spend a Saturday.
+
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Moved heap to be the first data 
+        member in JSGlobalData to ensure that it's destructed last, so other 
+        objects that reference it destruct without crashing. This allowed me 
+        to remove clearBuiltinStructures() altogether, and helped guarantee 
+        rule (3).
+
+        (JSC::JSGlobalData::~JSGlobalData): Explicitly call 
+        lastChanceToFinalize() at the head of our destructor to ensure that 
+        all pending finalizers run while the virtual machine is still in a 
+        valid state. Trying to resurrect (re-ref) the virtual machine at this 
+        point is not valid, but all other operations are.
+
+        Changed a null to a 0xbbadbeef to clarify just how bad this beef is.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::globalData): See rule (3).
+
 2012-04-27  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Windows build.

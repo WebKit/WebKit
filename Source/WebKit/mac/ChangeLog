@@ -1,3 +1,15 @@
+2012-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Clarified JSGlobalData (JavaScript VM) lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=85142
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        (WebKit::NetscapePluginInstanceProxy::invokeDefault):
+        (WebKit::NetscapePluginInstanceProxy::construct):
+
 2012-04-27  Gavin Peters  <gavinp@chromium.org>
 
         Add new ENABLE_LINK_PRERENDER define to control the Prerendering API

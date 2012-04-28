@@ -102,7 +102,7 @@ template <typename T, unsigned inlineCapacity = 0> class LocalStack {
     typedef typename Handle<T>::ExternalType ExternalType;
 public:
     LocalStack(JSGlobalData& globalData)
-        : m_globalData(&globalData)
+        : m_globalData(globalData)
         , m_count(0)
     {
     }
@@ -122,7 +122,7 @@ public:
     void push(ExternalType value)
     {
         if (m_count == m_stack.size())
-            m_stack.append(Local<T>(*m_globalData, value));
+            m_stack.append(Local<T>(m_globalData, value));
         else
             m_stack[m_count] = value;
         m_count++;
@@ -132,7 +132,7 @@ public:
     unsigned size() const { return m_count; }
 
 private:
-    RefPtr<JSGlobalData> m_globalData;
+    JSGlobalData& m_globalData;
     Vector<Local<T>, inlineCapacity> m_stack;
     unsigned m_count;
 };

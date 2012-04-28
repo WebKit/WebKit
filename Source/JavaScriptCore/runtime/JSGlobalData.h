@@ -152,6 +152,8 @@ namespace JSC {
 
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
 
+        Heap heap; // The heap is our first data member to ensure that it's destructed after all the objects that reference it.
+
         GlobalDataType globalDataType;
         ClientData* clientData;
         CallFrame* topCallFrame;
@@ -252,7 +254,6 @@ namespace JSC {
 
         TimeoutChecker timeoutChecker;
         Terminator terminator;
-        Heap heap;
 
         JSValue exception;
 
@@ -329,7 +330,6 @@ namespace JSC {
         void addRegExpToTrace(PassRefPtr<RegExp> regExp);
 #endif
         JS_EXPORT_PRIVATE void dumpRegExpTrace();
-        JS_EXPORT_PRIVATE void clearBuiltinStructures();
 
         bool isCollectorBusy() { return heap.isBusy(); }
         JS_EXPORT_PRIVATE void releaseExecutableMemory();

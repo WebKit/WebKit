@@ -89,7 +89,8 @@ extern const HashTable stringTable;
 extern const HashTable stringConstructorTable;
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
-    : globalDataType(globalDataType)
+    : heap(this, heapSize)
+    , globalDataType(globalDataType)
     , clientData(0)
     , topCallFrame(CallFrame::noCaller())
     , arrayConstructorTable(fastNew<HashTable>(JSC::arrayConstructorTable))
@@ -119,7 +120,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , parserArena(adoptPtr(new ParserArena))
     , keywords(adoptPtr(new Keywords(this)))
     , interpreter(0)
-    , heap(this, heapSize)
     , jsArrayClassInfo(&JSArray::s_info)
     , jsFinalObjectClassInfo(&JSFinalObject::s_info)
 #if ENABLE(DFG_JIT)
@@ -210,38 +210,13 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     llintData.performAssertions(*this);
 }
 
-void JSGlobalData::clearBuiltinStructures()
-{
-    structureStructure.clear();
-    debuggerActivationStructure.clear();
-    activationStructure.clear();
-    interruptedExecutionErrorStructure.clear();
-    terminatedExecutionErrorStructure.clear();
-    staticScopeStructure.clear();
-    strictEvalActivationStructure.clear();
-    stringStructure.clear();
-    notAnObjectStructure.clear();
-    propertyNameIteratorStructure.clear();
-    getterSetterStructure.clear();
-    apiWrapperStructure.clear();
-    scopeChainNodeStructure.clear();
-    executableStructure.clear();
-    nativeExecutableStructure.clear();
-    evalExecutableStructure.clear();
-    programExecutableStructure.clear();
-    functionExecutableStructure.clear();
-    regExpStructure.clear();
-    structureChainStructure.clear();
-}
-
 JSGlobalData::~JSGlobalData()
 {
-    // By the time this is destroyed, heap.destroy() must already have been called.
+    heap.lastChanceToFinalize();
 
     delete interpreter;
 #ifndef NDEBUG
-    // Zeroing out to make the behavior more predictable when someone attempts to use a deleted instance.
-    interpreter = 0;
+    interpreter = reinterpret_cast<Interpreter*>(0xbbadbeef);
 #endif
 
     arrayPrototypeTable->deleteTable();

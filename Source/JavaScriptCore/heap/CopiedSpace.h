@@ -69,7 +69,7 @@ public:
     size_t size();
     size_t capacity();
 
-    void destroy();
+    void freeAllBlocks();
 
     static CopiedBlock* blockFor(void*);
 

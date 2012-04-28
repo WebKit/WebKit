@@ -64,9 +64,9 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
 
 WorkerScriptController::~WorkerScriptController()
 {
-    m_workerContextWrapper.clear(); // Unprotect the global object.
-    m_globalData->clearBuiltinStructures();
-    m_globalData->heap.destroy();
+    JSLock lock(SilenceAssertionsOnly);
+    m_workerContextWrapper.clear();
+    m_globalData.clear();
 }
 
 void WorkerScriptController::initScript()

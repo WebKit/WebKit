@@ -74,8 +74,8 @@ namespace JSC {
     public:
         friend class JIT;
         friend class MarkStackThreadSharedData;
-        static Heap* heap(JSValue); // 0 for immediate values
-        static Heap* heap(JSCell*);
+        static Heap* heap(const JSValue); // 0 for immediate values
+        static Heap* heap(const JSCell*);
 
         static bool isMarked(const void*);
         static bool testAndSetMarked(const void*);
@@ -87,7 +87,7 @@ namespace JSC {
 
         Heap(JSGlobalData*, HeapSize);
         ~Heap();
-        JS_EXPORT_PRIVATE void destroy(); // JSGlobalData must call destroy() before ~Heap().
+        JS_EXPORT_PRIVATE void lastChanceToFinalize();
 
         JSGlobalData* globalData() const { return m_globalData; }
         MarkedSpace& objectSpace() { return m_objectSpace; }
@@ -266,12 +266,12 @@ namespace JSC {
         return m_operationInProgress != NoOperation;
     }
 
-    inline Heap* Heap::heap(JSCell* cell)
+    inline Heap* Heap::heap(const JSCell* cell)
     {
         return MarkedBlock::blockFor(cell)->heap();
     }
 
-    inline Heap* Heap::heap(JSValue v)
+    inline Heap* Heap::heap(const JSValue v)
     {
         if (!v.isCell())
             return 0;

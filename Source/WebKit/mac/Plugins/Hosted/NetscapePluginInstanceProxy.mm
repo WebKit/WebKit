@@ -914,10 +914,7 @@ bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& me
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
-    globalData->timeoutChecker.start();
     JSValue value = call(exec, function, callType, callData, object->methodTable()->toThisObject(object, exec), argList);
-    globalData->timeoutChecker.stop();
         
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -949,10 +946,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
-    globalData->timeoutChecker.start();
     JSValue value = call(exec, object, callType, callData, object->methodTable()->toThisObject(object, exec), argList);
-    globalData->timeoutChecker.stop();
     
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
@@ -985,10 +979,7 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
     MarkedArgumentBuffer argList;
     demarshalValues(exec, argumentsData, argumentsLength, argList);
 
-    RefPtr<JSGlobalData> globalData = pluginWorld()->globalData();
-    globalData->timeoutChecker.start();
     JSValue value = JSC::construct(exec, object, constructType, constructData, argList);
-    globalData->timeoutChecker.stop();
     
     marshalValue(exec, value, resultData, resultLength);
     exec->clearException();
