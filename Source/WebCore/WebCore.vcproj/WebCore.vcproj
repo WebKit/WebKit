@@ -71334,10 +71334,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGPathParserFactory.h"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGPathSeg.h"
 				>
 			</File>
@@ -71407,6 +71403,10 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGPathTraversalStateBuilder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGPathUtilities.h"
 				>
 			</File>
 			<File

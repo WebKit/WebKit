@@ -1800,6 +1800,8 @@
 		7134496E146941B300720312 /* SVGLengthContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134496C146941B300720312 /* SVGLengthContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71537A01146BD9D7008BD615 /* SVGPathData.h in Headers */ = {isa = PBXBuildFile; fileRef = 715379FF146BD9D6008BD615 /* SVGPathData.h */; };
 		7157F062150B6564006EAABD /* SVGAnimatedTransformList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7157F061150B6564006EAABD /* SVGAnimatedTransformList.cpp */; };
+		71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */; };
+		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
 		71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */; };
 		71E623D1151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */; };
 		71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1954,8 +1956,6 @@
 		8422418E107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8422418B107E786F00766A87 /* DOMSVGFEMorphologyElementInternal.h */; };
 		84224193107E78A700766A87 /* SVGFEMorphologyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84224190107E78A700766A87 /* SVGFEMorphologyElement.cpp */; };
 		84224194107E78A700766A87 /* SVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224191107E78A700766A87 /* SVGFEMorphologyElement.h */; };
-		84300BD3120C9A710021954A /* SVGPathParserFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84300BD1120C9A710021954A /* SVGPathParserFactory.cpp */; };
-		84300BD4120C9A710021954A /* SVGPathParserFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 84300BD2120C9A710021954A /* SVGPathParserFactory.h */; };
 		84300BD6120C9AAC0021954A /* SVGPathStringSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84300BD5120C9AAC0021954A /* SVGPathStringSource.h */; };
 		84300BD8120C9AD40021954A /* SVGPathSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84300BD7120C9AD40021954A /* SVGPathSource.h */; };
 		84300BDA120C9AED0021954A /* SVGPathStringSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84300BD9120C9AED0021954A /* SVGPathStringSource.cpp */; };
@@ -8815,6 +8815,8 @@
 		715379FE146BD9D6008BD615 /* SVGPathData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathData.cpp; sourceTree = "<group>"; };
 		715379FF146BD9D6008BD615 /* SVGPathData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathData.h; sourceTree = "<group>"; };
 		7157F061150B6564006EAABD /* SVGAnimatedTransformList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTransformList.cpp; sourceTree = "<group>"; };
+		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
+		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
 		71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedEnumeration.cpp; sourceTree = "<group>"; };
 		71E623CE151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedIntegerOptionalInteger.cpp; sourceTree = "<group>"; };
 		71E623CF151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedIntegerOptionalInteger.h; sourceTree = "<group>"; };
@@ -8989,8 +8991,6 @@
 		84224190107E78A700766A87 /* SVGFEMorphologyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEMorphologyElement.cpp; sourceTree = "<group>"; };
 		84224191107E78A700766A87 /* SVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEMorphologyElement.h; sourceTree = "<group>"; };
 		84224192107E78A700766A87 /* SVGFEMorphologyElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEMorphologyElement.idl; sourceTree = "<group>"; };
-		84300BD1120C9A710021954A /* SVGPathParserFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathParserFactory.cpp; sourceTree = "<group>"; };
-		84300BD2120C9A710021954A /* SVGPathParserFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathParserFactory.h; sourceTree = "<group>"; };
 		84300BD5120C9AAC0021954A /* SVGPathStringSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathStringSource.h; sourceTree = "<group>"; };
 		84300BD7120C9AD40021954A /* SVGPathSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSource.h; sourceTree = "<group>"; };
 		84300BD9120C9AED0021954A /* SVGPathStringSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathStringSource.cpp; sourceTree = "<group>"; };
@@ -19025,8 +19025,6 @@
 				B22278C40D00BF200071B782 /* SVGPathElement.idl */,
 				8476C9ED11DF6A5800555B02 /* SVGPathParser.cpp */,
 				8476C9EE11DF6A5800555B02 /* SVGPathParser.h */,
-				84300BD1120C9A710021954A /* SVGPathParserFactory.cpp */,
-				84300BD2120C9A710021954A /* SVGPathParserFactory.h */,
 				B22278C50D00BF200071B782 /* SVGPathSeg.h */,
 				B22278C60D00BF200071B782 /* SVGPathSeg.idl */,
 				B22278C80D00BF200071B782 /* SVGPathSegArc.h */,
@@ -19073,6 +19071,8 @@
 				84300BD5120C9AAC0021954A /* SVGPathStringSource.h */,
 				84C5B2F81216DC810088B53A /* SVGPathTraversalStateBuilder.cpp */,
 				84C5B2F91216DC810088B53A /* SVGPathTraversalStateBuilder.h */,
+				71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */,
+				71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */,
 				B22278F10D00BF210071B782 /* SVGPatternElement.cpp */,
 				B22278F20D00BF210071B782 /* SVGPatternElement.h */,
 				B22278F30D00BF210071B782 /* SVGPatternElement.idl */,
@@ -24469,7 +24469,6 @@
 				71537A01146BD9D7008BD615 /* SVGPathData.h in Headers */,
 				B2227A590D00BF220071B782 /* SVGPathElement.h in Headers */,
 				8476C9F011DF6A5800555B02 /* SVGPathParser.h in Headers */,
-				84300BD4120C9A710021954A /* SVGPathParserFactory.h in Headers */,
 				B2227A5B0D00BF220071B782 /* SVGPathSeg.h in Headers */,
 				B2227A5E0D00BF220071B782 /* SVGPathSegArc.h in Headers */,
 				B2227A620D00BF220071B782 /* SVGPathSegClosePath.h in Headers */,
@@ -24830,6 +24829,7 @@
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
+				71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27570,7 +27570,6 @@
 				8419D2AC120D92FC00141F8F /* SVGPathByteStreamSource.cpp in Sources */,
 				B2227A580D00BF220071B782 /* SVGPathElement.cpp in Sources */,
 				8476C9EF11DF6A5800555B02 /* SVGPathParser.cpp in Sources */,
-				84300BD3120C9A710021954A /* SVGPathParserFactory.cpp in Sources */,
 				B2227A800D00BF220071B782 /* SVGPathSegList.cpp in Sources */,
 				8476C9E511DF6A0B00555B02 /* SVGPathSegListBuilder.cpp in Sources */,
 				08FF102012950F5A00F00276 /* SVGPathSegListPropertyTearOff.cpp in Sources */,
@@ -27845,6 +27844,7 @@
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */,
+				71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

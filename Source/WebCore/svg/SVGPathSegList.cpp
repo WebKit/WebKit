@@ -27,14 +27,14 @@
 
 #include "SVGNames.h"
 #include "SVGPathElement.h"
-#include "SVGPathParserFactory.h"
+#include "SVGPathUtilities.h"
 
 namespace WebCore {
 
 String SVGPathSegList::valueAsString() const
 {
     String pathString;
-    SVGPathParserFactory::self()->buildStringFromSVGPathSegList(*this, pathString, UnalteredParsing);
+    buildStringFromSVGPathSegList(*this, pathString, UnalteredParsing);
     return pathString;
 }
 

@@ -3638,13 +3638,13 @@ contains(DEFINES, ENABLE_SVG=1) {
                   svg/SVGPathByteStreamSource.cpp \
                   svg/SVGPathElement.cpp \
                   svg/SVGPathParser.cpp \
-                  svg/SVGPathParserFactory.cpp \
                   svg/SVGPathSegList.cpp \
                   svg/SVGPathSegListBuilder.cpp \
                   svg/SVGPathSegListSource.cpp \
                   svg/SVGPathStringBuilder.cpp \
                   svg/SVGPathStringSource.cpp \
                   svg/SVGPathTraversalStateBuilder.cpp \
+                  svg/SVGPathUtilities.cpp \
                   svg/SVGPatternElement.cpp \
                   svg/SVGPointList.cpp \
                   svg/SVGPolyElement.cpp \

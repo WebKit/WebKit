@@ -29,7 +29,7 @@
 #include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGParserUtilities.h"
-#include "SVGPathParserFactory.h"
+#include "SVGPathByteStream.h"
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGTransformList.h"

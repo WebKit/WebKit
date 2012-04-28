@@ -33,7 +33,7 @@
 #include "SVGParserUtilities.h"
 #include "SVGPathData.h"
 #include "SVGPathElement.h"
-#include "SVGPathParserFactory.h"
+#include "SVGPathUtilities.h"
 #include "SVGTransformList.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -103,8 +103,7 @@ void SVGAnimateMotionElement::parseAttribute(Attribute* attr)
 
     if (attr->name() == SVGNames::pathAttr) {
         m_path = Path();
-        SVGPathParserFactory* factory = SVGPathParserFactory::self();
-        factory->buildPathFromString(attr->value(), m_path);
+        buildPathFromString(attr->value(), m_path);
         return;
     }
 

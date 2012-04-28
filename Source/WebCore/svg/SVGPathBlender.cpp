@@ -379,7 +379,7 @@ bool SVGPathBlender::blendAnimatedPath(float progress, SVGPathSource* fromSource
                 return false;
             break;
         case PathSegUnknown:
-            return false;;
+            return false;
         }
 
         if (!fromSourceHadData)

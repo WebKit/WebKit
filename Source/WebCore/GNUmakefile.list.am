@@ -4399,8 +4399,6 @@ webcore_sources += \
 	Source/WebCore/svg/SVGPathElement.cpp \
 	Source/WebCore/svg/SVGPathElement.h \
 	Source/WebCore/svg/SVGPathParser.cpp \
-	Source/WebCore/svg/SVGPathParserFactory.cpp \
-	Source/WebCore/svg/SVGPathParserFactory.h \
 	Source/WebCore/svg/SVGPathParser.h \
 	Source/WebCore/svg/SVGPathSegArc.h \
 	Source/WebCore/svg/SVGPathSegClosePath.h \
@@ -4427,6 +4425,8 @@ webcore_sources += \
 	Source/WebCore/svg/SVGPathStringSource.h \
 	Source/WebCore/svg/SVGPathTraversalStateBuilder.cpp \
 	Source/WebCore/svg/SVGPathTraversalStateBuilder.h \
+	Source/WebCore/svg/SVGPathUtilities.cpp \
+	Source/WebCore/svg/SVGPathUtilities.h \
 	Source/WebCore/svg/SVGPatternElement.cpp \
 	Source/WebCore/svg/SVGPatternElement.h \
 	Source/WebCore/svg/SVGPointList.cpp \

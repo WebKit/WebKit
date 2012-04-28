@@ -65,7 +65,7 @@
 #include "SVGLinearGradientElement.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
-#include "SVGPathParserFactory.h"
+#include "SVGPathUtilities.h"
 #include "SVGPatternElement.h"
 #include "SVGPointList.h"
 #include "SVGPolyElement.h"
@@ -369,7 +369,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
         SVGPathElement* element = static_cast<SVGPathElement*>(svgElement);
         String pathString;
         // FIXME: We should switch to UnalteredParsing here - this will affect the path dumping output of dozens of tests.
-        SVGPathParserFactory::self()->buildStringFromByteStream(element->pathByteStream(), pathString, NormalizedParsing);
+        buildStringFromByteStream(element->pathByteStream(), pathString, NormalizedParsing);
         writeNameAndQuotedValue(ts, "data", pathString);
     } else
         ASSERT_NOT_REACHED();

@@ -28,7 +28,6 @@
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
-#include "SVGPathParserFactory.h"
 #include "SVGPathSegArc.h"
 #include "SVGPathSegClosePath.h"
 #include "SVGPathSegCurvetoCubic.h"
@@ -42,6 +41,7 @@
 #include "SVGPathSegListBuilder.h"
 #include "SVGPathSegListPropertyTearOff.h"
 #include "SVGPathSegMoveto.h"
+#include "SVGPathUtilities.h"
 #include "SVGSVGElement.h"
 
 namespace WebCore {
@@ -91,21 +91,21 @@ PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, 
 float SVGPathElement::getTotalLength()
 {
     float totalLength = 0;
-    SVGPathParserFactory::self()->getTotalLengthOfSVGPathByteStream(pathByteStream(), totalLength);
+    getTotalLengthOfSVGPathByteStream(pathByteStream(), totalLength);
     return totalLength;
 }
 
 FloatPoint SVGPathElement::getPointAtLength(float length)
 {
     FloatPoint point;
-    SVGPathParserFactory::self()->getPointAtLengthOfSVGPathByteStream(pathByteStream(), length, point);
+    getPointAtLengthOfSVGPathByteStream(pathByteStream(), length, point);
     return point;
 }
 
 unsigned SVGPathElement::getPathSegAtLength(float length)
 {
     unsigned pathSeg = 0;
-    SVGPathParserFactory::self()->getSVGPathSegAtLengthFromSVGPathByteStream(pathByteStream(), length, pathSeg);
+    getSVGPathSegAtLengthFromSVGPathByteStream(pathByteStream(), length, pathSeg);
     return pathSeg;
 }
 
@@ -225,8 +225,7 @@ void SVGPathElement::parseAttribute(Attribute* attr)
     }
 
     if (attr->name() == SVGNames::dAttr) {
-        SVGPathParserFactory* factory = SVGPathParserFactory::self();
-        if (!factory->buildSVGPathByteStreamFromString(attr->value(), m_pathByteStream.get(), UnalteredParsing))
+        if (!buildSVGPathByteStreamFromString(attr->value(), m_pathByteStream.get(), UnalteredParsing))
             document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + attr->value() + "\"");
         return;
     }
@@ -265,8 +264,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::dAttr) {
         if (m_pathSegList.shouldSynchronize && !SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff, true>(this, dPropertyInfo())->isAnimating()) {
             SVGPathSegList newList(PathSegUnalteredRole);
-            SVGPathParserFactory* factory = SVGPathParserFactory::self();
-            factory->buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, newList, UnalteredParsing);
+            buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, newList, UnalteredParsing);
             m_pathSegList.value = newList;
             m_cachedBBoxRectIsValid = false;
         }
@@ -296,8 +294,7 @@ PassRefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(void* con
         return property;
 
     // Build initial SVGPathSegList.
-    SVGPathParserFactory* factory = SVGPathParserFactory::self();
-    factory->buildSVGPathSegListFromByteStream(ownerType->m_pathByteStream.get(), ownerType, ownerType->m_pathSegList.value, UnalteredParsing);
+    buildSVGPathSegListFromByteStream(ownerType->m_pathByteStream.get(), ownerType, ownerType->m_pathSegList.value, UnalteredParsing);
 
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff, SVGPathSegList, true>
            (ownerType, dPropertyInfo(), ownerType->m_pathSegList.value);
@@ -339,14 +336,12 @@ SVGPathSegListPropertyTearOff* SVGPathElement::animatedNormalizedPathSegList()
 
 void SVGPathElement::pathSegListChanged(SVGPathSegRole role)
 {
-    SVGPathParserFactory* factory = SVGPathParserFactory::self();
-
     switch (role) {
     case PathSegNormalizedRole:
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
         break;
     case PathSegUnalteredRole:
-        factory->buildSVGPathByteStreamFromSVGPathSegList(m_pathSegList.value, m_pathByteStream.get(), UnalteredParsing);
+        buildSVGPathByteStreamFromSVGPathSegList(m_pathSegList.value, m_pathByteStream.get(), UnalteredParsing);
         break;
     case PathSegUndefinedRole:
         return;

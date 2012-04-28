@@ -26,7 +26,7 @@
 #include "SVGLineElement.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
-#include "SVGPathParserFactory.h"
+#include "SVGPathUtilities.h"
 #include "SVGPolygonElement.h"
 #include "SVGPolylineElement.h"
 #include "SVGRectElement.h"
@@ -73,7 +73,7 @@ static void updatePathFromLineElement(SVGElement* element, Path& path)
 static void updatePathFromPathElement(SVGElement* element, Path& path)
 {
     ASSERT(element->hasTagName(SVGNames::pathTag));
-    SVGPathParserFactory::self()->buildPathFromByteStream(static_cast<SVGPathElement*>(element)->pathByteStream(), path);
+    buildPathFromByteStream(static_cast<SVGPathElement*>(element)->pathByteStream(), path);
 }
 
 static void updatePathFromPolygonElement(SVGElement* element, Path& path)

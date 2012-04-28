@@ -24,9 +24,9 @@
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathElement.h"
-#include "SVGPathParserFactory.h"
 #include "SVGPathSegList.h"
 #include "SVGPathSegListPropertyTearOff.h"
+#include "SVGPathUtilities.h"
 
 namespace WebCore {
 
@@ -89,7 +89,7 @@ public:
         if (pathElement->isAnimValObserved()) {
             SVGPathSegList& animatedList = currentAnimatedValue();
             animatedList.clear();
-            SVGPathParserFactory::self()->buildSVGPathSegListFromByteStream(m_animatedPathByteStream, pathElement, animatedList, UnalteredParsing);
+            buildSVGPathSegListFromByteStream(m_animatedPathByteStream, pathElement, animatedList, UnalteredParsing);
         }
 
         SVGAnimatedListPropertyTearOff<SVGPathSegList>::animValDidChange();
