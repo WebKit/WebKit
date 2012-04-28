@@ -133,7 +133,8 @@ void LayoutTestController::display()
 
 void LayoutTestController::dumpAsText(bool dumpPixels)
 {
-    m_whatToDump = MainFrameText;
+    if (m_whatToDump < MainFrameText)
+        m_whatToDump = MainFrameText;
     m_dumpPixels = dumpPixels;
 }
 

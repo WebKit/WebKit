@@ -1,3 +1,17 @@
+2012-04-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        [WK2] http/tests/navigation/anchor-frames-gbk.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=76896
+
+        Reviewed by Darin Adler.
+
+        Only dump as text if currently dumping render tree. This ensures that
+        calling dumpAsText in a test with dumpChildFramesAsText already being
+        called doesn't override the first decision, possibly making tests fail.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::dumpAsText):
+
 2012-04-28  Dan Winship  <danw@gnome.org>
 
         Unreviewed; Add me to the SoupNetwork watchlist
