@@ -30,12 +30,14 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(QT) && QT_VERSION >= 0x050000
+#if PLATFORM(QT)
+#if QT_VERSION >= 0x050000
 #include <QOpenGLContext>
 #include <QPlatformPixmap>
-#endif
-
-#if OS(WINDOWS)
+#else
+#include <QGLContext>
+#endif // QT_VERSION
+#elif OS(WINDOWS)
 #include <windows.h>
 #elif OS(MAC_OS_X)
 #include <AGL/agl.h>
@@ -50,16 +52,23 @@
 #endif
 
 #define GL_CMD(...) do { __VA_ARGS__; ASSERT_ARG(__VA_ARGS__, !glGetError()); } while (0)
-
 namespace WebCore {
 struct TextureMapperGLData {
     struct SharedGLData : public RefCounted<SharedGLData> {
-#if PLATFORM(QT) && QT_VERSION >= 0x050000
+#if PLATFORM(QT)
+#if QT_VERSION >= 0x050000
         typedef QOpenGLContext* GLContext;
         static GLContext getCurrentGLContext()
         {
             return QOpenGLContext::currentContext();
         }
+#else
+        typedef const QGLContext* GLContext;
+        static GLContext getCurrentGLContext()
+        {
+            return QGLContext::currentContext();
+        }
+#endif
 #elif OS(WINDOWS)
         typedef HGLRC GLContext;
         static GLContext getCurrentGLContext()
