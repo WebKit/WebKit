@@ -245,6 +245,12 @@ void InspectorFrontendHost::save(const String& url, const String& content, bool 
         m_client->save(url, content, forceSaveAs);
 }
 
+void InspectorFrontendHost::append(const String& url, const String& content)
+{
+    if (m_client)
+        m_client->append(url, content);
+}
+
 void InspectorFrontendHost::sendMessageToBackend(const String& message)
 {
     if (m_client)

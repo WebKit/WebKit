@@ -70,6 +70,7 @@ public:
     virtual void openInNewTab(const String& url);
     virtual bool canSave() { return false; }
     virtual void save(const String&, const String&, bool) { }
+    virtual void append(const String&, const String&) { }
 
     virtual void attachWindow() = 0;
     virtual void detachWindow() = 0;

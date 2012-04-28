@@ -54,6 +54,7 @@ module core {
         void openInNewTab(in DOMString url);
         boolean canSave();
         void save(in DOMString url, in DOMString content, in boolean forceSaveAs);
+        void append(in DOMString url, in DOMString content);
 
         [Custom] DOMString platform();
         [Custom] DOMString port();

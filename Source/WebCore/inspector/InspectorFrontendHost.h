@@ -77,6 +77,7 @@ public:
     void openInNewTab(const String& url);
     bool canSave();
     void save(const String& url, const String& content, bool forceSaveAs);
+    void append(const String& url, const String& content);
 
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem*>& items);

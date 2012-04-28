@@ -51,6 +51,7 @@ public:
     virtual void moveWindowBy(const WebFloatPoint&) { }
     virtual void openInNewTab(const WebString& side) { }
     virtual void save(const WebString& url, const WebString& content, bool saveAs) { }
+    virtual void append(const WebString& url, const WebString& content) { }
 
 protected:
     virtual ~WebDevToolsFrontendClient() {}

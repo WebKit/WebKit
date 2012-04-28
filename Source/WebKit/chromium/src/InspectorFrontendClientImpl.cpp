@@ -139,6 +139,11 @@ void InspectorFrontendClientImpl::save(const String& url, const String& content,
     m_client->save(url, content, forceSaveAs);
 }
 
+void InspectorFrontendClientImpl::append(const String& url, const String& content)
+{
+    m_client->append(url, content);
+}
+
 void InspectorFrontendClientImpl::inspectedURLChanged(const String& url)
 {
     m_frontendPage->mainFrame()->document()->setTitle("Developer Tools - " + url);

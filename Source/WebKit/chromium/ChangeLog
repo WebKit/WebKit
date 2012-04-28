@@ -1,3 +1,23 @@
+2012-04-28  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: InspectorFrontendHost.append has to be implemented for saving heap snapshots.
+        https://bugs.webkit.org/show_bug.cgi?id=85137
+
+        We can save a file with help of InspectorFrontendHost.save method,
+        but it is suitable only for relatively small portions of data and
+        can't process the 6Gb heap snapshot.
+        These methods just pass the url and content into embedder.
+
+        Reviewed by Yury Semikhatsky.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::append):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::append):
+        (WebKit):
+        * src/InspectorFrontendClientImpl.h:
+        (InspectorFrontendClientImpl):
+
 2012-04-28  Andrey Kosyakov  <caseq@chromium.org>
 
         [chromium] add frame boundaries instrumentation for the threaded compositor
