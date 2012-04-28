@@ -32,6 +32,7 @@
 #include "AnimationBase.h"
 #include "AnimationControllerPrivate.h"
 #include "CSSParser.h"
+#include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -629,7 +630,7 @@ void AnimationController::endAnimationUpdate()
 bool AnimationController::supportsAcceleratedAnimationOfProperty(CSSPropertyID property)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    return AnimationBase::animationOfPropertyIsAccelerated(property);
+    return CSSPropertyAnimation::animationOfPropertyIsAccelerated(property);
 #else
     UNUSED_PARAM(property);
     return false;

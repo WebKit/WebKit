@@ -26130,6 +26130,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\animation\CSSPropertyAnimation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\animation\CSSPropertyAnimation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\BarInfo.cpp"
 				>
 			</File>

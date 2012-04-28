@@ -1862,6 +1862,8 @@
 		77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */; };
 		77EF62F312F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */; };
 		77EF62F412F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */; };
+		78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 78D02BC3154A18DF00B62D05 /* CSSPropertyAnimation.cpp */; };
+		78D02BC6154A18DF00B62D05 /* CSSPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 78D02BC4154A18DF00B62D05 /* CSSPropertyAnimation.h */; };
 		79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79AC9216109945C80021266E /* JSCompositionEvent.cpp */; };
 		79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 79AC9217109945C80021266E /* JSCompositionEvent.h */; };
 		79F2F5A11091939A000D87CB /* CompositionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F2F59E1091939A000D87CB /* CompositionEvent.cpp */; };
@@ -8887,6 +8889,8 @@
 		77A17AA312F28B2A004E02F6 /* JSOESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESVertexArrayObject.h; sourceTree = "<group>"; };
 		77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObjectOES.cpp; sourceTree = "<group>"; };
 		77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObjectOES.h; sourceTree = "<group>"; };
+		78D02BC3154A18DF00B62D05 /* CSSPropertyAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSPropertyAnimation.cpp; path = animation/CSSPropertyAnimation.cpp; sourceTree = "<group>"; };
+		78D02BC4154A18DF00B62D05 /* CSSPropertyAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSPropertyAnimation.h; path = animation/CSSPropertyAnimation.h; sourceTree = "<group>"; };
 		79AC9216109945C80021266E /* JSCompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCompositionEvent.cpp; sourceTree = "<group>"; };
 		79AC9217109945C80021266E /* JSCompositionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCompositionEvent.h; sourceTree = "<group>"; };
 		79F2F59E1091939A000D87CB /* CompositionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompositionEvent.cpp; sourceTree = "<group>"; };
@@ -14526,6 +14530,8 @@
 				0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */,
 				316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */,
 				316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */,
+				78D02BC3154A18DF00B62D05 /* CSSPropertyAnimation.cpp */,
+				78D02BC4154A18DF00B62D05 /* CSSPropertyAnimation.h */,
 				316FE10D0E6E1DA700BF6088 /* ImplicitAnimation.cpp */,
 				316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */,
 				316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */,
@@ -24830,6 +24836,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
 				71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */,
+				78D02BC6154A18DF00B62D05 /* CSSPropertyAnimation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27845,6 +27852,7 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */,
 				71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */,
+				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

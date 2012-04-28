@@ -1077,6 +1077,7 @@ SET(WebCore_SOURCES
     page/animation/AnimationBase.cpp
     page/animation/AnimationController.cpp
     page/animation/CompositeAnimation.cpp
+    page/animation/CSSPropertyAnimation.cpp
     page/animation/ImplicitAnimation.cpp
     page/animation/KeyframeAnimation.cpp
 

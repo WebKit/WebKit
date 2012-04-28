@@ -30,6 +30,7 @@
 #include "CompositeAnimation.h"
 
 #include "AnimationControllerPrivate.h"
+#include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
@@ -103,11 +104,11 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
 
             // Handle both the 'all' and single property cases. For the single prop case, we make only one pass
             // through the loop.
-            for (int propertyIndex = 0; propertyIndex < AnimationBase::getNumProperties(); ++propertyIndex) {
+            for (int propertyIndex = 0; propertyIndex < CSSPropertyAnimation::getNumProperties(); ++propertyIndex) {
                 if (all) {
                     // Get the next property which is not a shorthand.
                     bool isShorthand;
-                    prop = AnimationBase::getPropertyAtIndex(propertyIndex, isShorthand);
+                    prop = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
                     if (isShorthand)
                         continue;
                 }
@@ -144,7 +145,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
     #if USE(ACCELERATED_COMPOSITING)
                         // For accelerated animations we need to return a new RenderStyle with the _current_ value
                         // of the property, so that restarted transitions use the correct starting point.
-                        if (AnimationBase::animationOfPropertyIsAccelerated(prop) && implAnim->isAccelerated()) {
+                        if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(prop) && implAnim->isAccelerated()) {
                             if (!modifiedCurrentStyle)
                                 modifiedCurrentStyle = RenderStyle::clone(currentStyle);
 
@@ -157,7 +158,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                     }
                 } else {
                     // We need to start a transition if it is active and the properties don't match
-                    equal = !isActiveTransition || AnimationBase::propertiesEqual(prop, fromStyle, targetStyle);
+                    equal = !isActiveTransition || CSSPropertyAnimation::propertiesEqual(prop, fromStyle, targetStyle);
                 }
 
                 // We can be in this loop with an inactive transition (!isActiveTransition). We need
@@ -526,7 +527,7 @@ bool CompositeAnimation::pauseTransitionAtTime(CSSPropertyID property, double t)
     if (!implAnim) {
         // Check to see if this property is being animated via a shorthand.
         // This code is only used for testing, so performance is not critical here.
-        HashSet<CSSPropertyID> shorthandProperties = AnimationBase::animatableShorthandsAffectingProperty(property);
+        HashSet<CSSPropertyID> shorthandProperties = CSSPropertyAnimation::animatableShorthandsAffectingProperty(property);
         bool anyPaused = false;
         HashSet<CSSPropertyID>::const_iterator end = shorthandProperties.end();
         for (HashSet<CSSPropertyID>::const_iterator it = shorthandProperties.begin(); it != end; ++it) {

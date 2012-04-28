@@ -30,6 +30,7 @@
 #include "KeyframeAnimation.h"
 
 #include "AnimationControllerPrivate.h"
+#include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
@@ -185,7 +186,7 @@ void KeyframeAnimation::animate(CompositeAnimation*, RenderObject*, const Render
         double progress = 0.0;
         fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
     
-        bool needsAnim = blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
+        bool needsAnim = CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
         if (needsAnim)
             setAnimating();
         else {
@@ -220,7 +221,7 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
         double progress = 0.0;
         fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
 
-        blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
+        CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
     }
 }
 
@@ -449,7 +450,7 @@ double KeyframeAnimation::timeToNextService()
     bool acceleratedPropertiesOnly = true;
     
     for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {
-        if (!animationOfPropertyIsAccelerated(*it) || !isAccelerated()) {
+        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(*it) || !isAccelerated()) {
             acceleratedPropertiesOnly = false;
             break;
         }

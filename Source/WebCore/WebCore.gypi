@@ -3057,6 +3057,8 @@
             'page/animation/AnimationControllerPrivate.h',
             'page/animation/CompositeAnimation.cpp',
             'page/animation/CompositeAnimation.h',
+            'page/animation/CSSPropertyAnimation.cpp',
+            'page/animation/CSSPropertyAnimation.h',
             'page/animation/ImplicitAnimation.cpp',
             'page/animation/ImplicitAnimation.h',
             'page/animation/KeyframeAnimation.cpp',

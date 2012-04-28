@@ -29,6 +29,7 @@
 #include "config.h"
 
 #include "AnimationControllerPrivate.h"
+#include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
 #include "ImplicitAnimation.h"
@@ -77,7 +78,7 @@ void ImplicitAnimation::animate(CompositeAnimation*, RenderObject*, const Render
     if (!animatedStyle)
         animatedStyle = RenderStyle::clone(targetStyle);
 
-    bool needsAnim = blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
+    bool needsAnim = CSSPropertyAnimation::blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
     // FIXME: we also need to detect cases where we have to software animate for other reasons,
     // such as a child using inheriting the transform. https://bugs.webkit.org/show_bug.cgi?id=23902
     if (needsAnim)
@@ -101,7 +102,7 @@ void ImplicitAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
     if (!animatedStyle)
         animatedStyle = RenderStyle::clone(m_toStyle.get());
 
-    blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
+    CSSPropertyAnimation::blendProperties(this, m_animatingProperty, animatedStyle.get(), m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
 }
 
 bool ImplicitAnimation::startAnimation(double timeOffset)
@@ -223,7 +224,7 @@ bool ImplicitAnimation::isTargetPropertyEqual(CSSPropertyID prop, const RenderSt
     // So we check that here (see <https://bugs.webkit.org/show_bug.cgi?id=26706>)
     if (!m_toStyle)
         return false;
-    return propertiesEqual(prop, m_toStyle.get(), targetStyle);
+    return CSSPropertyAnimation::propertiesEqual(prop, m_toStyle.get(), targetStyle);
 }
 
 void ImplicitAnimation::blendPropertyValueInStyle(CSSPropertyID prop, RenderStyle* currentStyle)
@@ -234,7 +235,7 @@ void ImplicitAnimation::blendPropertyValueInStyle(CSSPropertyID prop, RenderStyl
     if (!m_toStyle)
         return;
         
-    blendProperties(this, prop, currentStyle, m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
+    CSSPropertyAnimation::blendProperties(this, prop, currentStyle, m_fromStyle.get(), m_toStyle.get(), progress(1, 0, 0));
 }
 
 void ImplicitAnimation::validateTransformFunctionList()
@@ -296,7 +297,7 @@ double ImplicitAnimation::timeToNextService()
         
     // A return value of 0 means we need service. But if this is an accelerated animation we 
     // only need service at the end of the transition.
-    if (animationOfPropertyIsAccelerated(m_animatingProperty) && isAccelerated()) {
+    if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(m_animatingProperty) && isAccelerated()) {
         bool isLooping;
         getTimeToNextEvent(t, isLooping);
     }

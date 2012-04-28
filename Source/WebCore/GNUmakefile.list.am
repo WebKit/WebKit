@@ -2894,6 +2894,8 @@ webcore_sources += \
 	Source/WebCore/page/animation/AnimationControllerPrivate.h \
 	Source/WebCore/page/animation/CompositeAnimation.cpp \
 	Source/WebCore/page/animation/CompositeAnimation.h \
+	Source/WebCore/page/animation/CSSPropertyAnimation.cpp \
+	Source/WebCore/page/animation/CSSPropertyAnimation.h \
 	Source/WebCore/page/animation/ImplicitAnimation.cpp \
 	Source/WebCore/page/animation/ImplicitAnimation.h \
 	Source/WebCore/page/animation/KeyframeAnimation.cpp \

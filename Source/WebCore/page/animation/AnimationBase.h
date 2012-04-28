@@ -50,6 +50,7 @@ class TimingFunction;
 
 class AnimationBase : public RefCounted<AnimationBase> {
     friend class CompositeAnimation;
+    friend class CSSPropertyAnimation;
 
 public:
     AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim);
@@ -191,12 +192,6 @@ public:
         updateStateMachine(AnimationBase::AnimationStateInputStyleAvailable, -1);
     }
 
-#if USE(ACCELERATED_COMPOSITING)
-    static bool animationOfPropertyIsAccelerated(CSSPropertyID);
-#endif
-
-    static HashSet<CSSPropertyID> animatableShorthandsAffectingProperty(CSSPropertyID);
-
     const Animation* animation() const { return m_animation.get(); }
 
 protected:
@@ -220,13 +215,6 @@ protected:
     void goIntoEndingOrLoopingState();
 
     bool isAccelerated() const { return m_isAccelerated; }
-
-    static bool propertiesEqual(CSSPropertyID, const RenderStyle* a, const RenderStyle* b);
-    static CSSPropertyID getPropertyAtIndex(int, bool& isShorthand);
-    static int getNumProperties();
-
-    // Return true if we need to start software animation timers
-    static bool blendProperties(const AnimationBase*, CSSPropertyID, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress);
 
     static void setNeedsStyleRecalc(Node*);
     
@@ -253,9 +241,6 @@ protected:
 
     RefPtr<Animation> m_animation;
     CompositeAnimation* m_compAnim;
-    
-private:
-    static void ensurePropertyMap();
 };
 
 } // namespace WebCore
