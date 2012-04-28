@@ -1,3 +1,9 @@
+2012-04-28  Dan Winship  <danw@gnome.org>
+
+        Unreviewed; Add me to the SoupNetwork watchlist
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-04-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] jhbuild cloning is not following WEBKITOUTPUTDIR.
