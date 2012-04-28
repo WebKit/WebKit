@@ -1,3 +1,9 @@
+2012-04-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening, skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2012-04-27  Noel Gordon  <noel.gordon@gmail.com>
 
         Layout Test fast/images/gif-large-checkerboard.html is a flaky crash

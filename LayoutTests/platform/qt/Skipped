@@ -521,6 +521,7 @@ fast/events/drag-parent-node.html
 fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
+fast/events/drag-and-drop-subframe-dataTransfer.html
 fast/events/drag-link.html
 fast/events/drag-text-with-clear.html
 fast/events/ondrop-text-html.html
@@ -2607,6 +2608,7 @@ fast/block/line-layout/selection-highlight-overlap.html
 fast/multicol/cell-shrinkback.html
 fast/table/td-width-fifty-percent-regression.html
 svg/custom/anchor-on-use.svg
+svg/animations/animateTransform-rotate-around-point.svg
 
 # REGRESSION(114309) - Exception stack traces aren't complete when the exception starts in native code
 # https://bugs.webkit.org/show_bug.cgi?id=84073
