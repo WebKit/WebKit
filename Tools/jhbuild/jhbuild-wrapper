@@ -35,10 +35,17 @@ def top_level_path(*args):
 
 jhbuild_revision = '1eedc423f75c605224b430579e4c303292199507'
 
-installation_prefix = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies', 'Root'))
-source_path = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies', 'Source'))
+if os.environ.has_key('WEBKITOUTPUTDIR'):
+    dependencies_path = os.path.abspath(os.path.join(os.environ['WEBKITOUTPUTDIR'], 'Dependencies', 'Root'))
+else:
+    dependencies_path = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies', 'Root'))
+
+installation_prefix = os.path.abspath(os.path.join(dependencies_path, 'Root'))
+source_path = os.path.abspath(os.path.join(dependencies_path, 'Source'))
 jhbuild_source_path = os.path.join(source_path, 'jhbuild')
-jhbuild_path = top_level_path('WebKitBuild', 'Dependencies', 'Root', 'bin', 'jhbuild')
+jhbuild_path = os.path.join(installation_prefix, 'bin', 'jhbuild')
+
+
 platform = None;
 
 

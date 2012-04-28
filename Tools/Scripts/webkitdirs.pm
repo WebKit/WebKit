@@ -1841,10 +1841,15 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     }
 }
 
+sub getJhbuildPath()
+{
+    return join(baseProductDir(), "Dependencies");
+}
+
 sub jhbuildConfigurationChanged()
 {
     foreach my $file (qw(jhbuildrc.md5sum jhbuild.modules.md5sum)) {
-        my $path = join('/', $sourceDir, "WebKitBuild", "Dependencies", $file);
+        my $path = join(getJhbuildPath(), $file);
         if (! -e $path) {
             return 1;
         }
@@ -1957,7 +1962,8 @@ sub buildAutotoolsProject($@)
         # If the configuration changed, dependencies may have been removed.
         # Since we lack a granular way of uninstalling those we wipe out the
         # jhbuild root and start from scratch.
-        if (system("rm -rf $baseProductDir/Dependencies/Root") ne 0) {
+        my $jhbuildPath = getJhbuildPath();
+        if (system("rm -rf $jhbuildPath/Root") ne 0) {
             die "Cleaning jhbuild root failed!";
         }
 
@@ -1982,7 +1988,7 @@ sub buildAutotoolsProject($@)
     # Save md5sum for jhbuild-related files.
     foreach my $file (qw(jhbuildrc jhbuild.modules)) {
         my $source = join('/', $sourceDir, "Tools", "gtk", $file);
-        my $destination = join('/', $sourceDir, "WebKitBuild", "Dependencies", $file);
+        my $destination = join(getJhbuildPath(), $file);
         open(SUM, ">$destination" . ".md5sum");
         print SUM getMD5HashForFile($source);
         close(SUM);
