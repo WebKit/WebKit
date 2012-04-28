@@ -515,7 +515,7 @@ void V8GCController::checkMemoryUsage()
 {
 #if PLATFORM(CHROMIUM) || PLATFORM(QT)
     const int lowMemoryUsageMB = MemoryUsageSupport::lowMemoryUsageMB();
-    const int highMemoryUsageMB = PlatformSupport::highMemoryUsageMB();
+    const int highMemoryUsageMB = MemoryUsageSupport::highMemoryUsageMB();
     const int highUsageDeltaMB = PlatformSupport::highUsageDeltaMB();
     int memoryUsageMB = getMemoryUsageInMB();
     if ((memoryUsageMB > lowMemoryUsageMB && memoryUsageMB > 2 * workingSetEstimateMB) || (memoryUsageMB > highMemoryUsageMB && memoryUsageMB > workingSetEstimateMB + highUsageDeltaMB))

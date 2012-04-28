@@ -48,4 +48,9 @@ int MemoryUsageSupport::lowMemoryUsageMB()
     return 0;
 }
 
+int MemoryUsageSupport::highMemoryUsageMB()
+{
+    return 0;
+}
+    
 } // namespace WebCore

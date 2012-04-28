@@ -50,4 +50,9 @@ int MemoryUsageSupport::lowMemoryUsageMB()
     return WebKit::Platform::current()->lowMemoryUsageMB();
 }
 
+int MemoryUsageSupport::highMemoryUsageMB()
+{
+    return WebKit::Platform::current()->highMemoryUsageMB();
+}
+
 } // namespace WebCore
