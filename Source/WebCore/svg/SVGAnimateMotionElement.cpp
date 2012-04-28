@@ -44,8 +44,6 @@ using namespace SVGNames;
 
 inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tagName, Document* document)
     : SVGAnimationElement(tagName, document)
-    , m_baseIndexInTransformList(0)
-    , m_angle(0)
 {
     ASSERT(hasTagName(animateMotionTag));
 }
@@ -194,7 +192,27 @@ bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString,
     return true;
 }
 
-void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned, SVGSMILElement*)
+void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transform, float percentage)
+{
+    Path path = animationPath();
+    ASSERT(!path.isEmpty());
+
+    bool ok = false;
+    float positionOnPath = path.length() * percentage;
+    FloatPoint position = path.pointAtLength(positionOnPath, ok);
+    if (!ok)
+        return;
+    transform->translate(position.x(), position.y());
+    RotateMode rotateMode = this->rotateMode();
+    if (rotateMode != RotateAuto && rotateMode != RotateAutoReverse)
+        return;
+    float angle = path.normalAngleAtLength(positionOnPath, ok);
+    if (rotateMode == RotateAutoReverse)
+        angle += 180;
+    transform->rotate(angle);
+}
+
+void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement*)
 {
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
@@ -208,31 +226,27 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned,
 
     if (!isAdditive())
         transform->makeIdentity();
-    
-    // FIXME: Implement accumulate.
-    
-    if (animationMode() == PathAnimation) {
-        ASSERT(!animationPath().isEmpty());
-        Path path = animationPath();
-        float positionOnPath = path.length() * percentage;
-        bool ok;
-        FloatPoint position = path.pointAtLength(positionOnPath, ok);
-        if (ok) {
-            transform->translate(position.x(), position.y());
-            RotateMode rotateMode = this->rotateMode();
-            if (rotateMode == RotateAuto || rotateMode == RotateAutoReverse) {
-                float angle = path.normalAngleAtLength(positionOnPath, ok);
-                if (rotateMode == RotateAutoReverse)
-                    angle += 180;
-                transform->rotate(angle);
-            }
-        }
+
+    if (animationMode() != PathAnimation) {
+        float animatedX = 0;
+        animateAdditiveNumber(percentage, repeatCount, m_fromPoint.x(), m_toPoint.x(), animatedX);
+
+        float animatedY = 0;
+        animateAdditiveNumber(percentage, repeatCount, m_fromPoint.y(), m_toPoint.y(), animatedY);
+
+        transform->translate(animatedX, animatedY);
         return;
     }
-    FloatSize diff = m_toPoint - m_fromPoint;
-    transform->translate(diff.width() * percentage + m_fromPoint.x(), diff.height() * percentage + m_fromPoint.y());
+
+    buildTransformForProgress(transform, percentage);
+
+    // Handle accumulate="sum".
+    if (isAccumulated() && repeatCount) {
+        for (unsigned i = 0; i < repeatCount; ++i)
+            buildTransformForProgress(transform, 1);
+    }
 }
-    
+
 void SVGAnimateMotionElement::applyResultsToTarget()
 {
     // We accumulate to the target element transform list so there is not much to do here.

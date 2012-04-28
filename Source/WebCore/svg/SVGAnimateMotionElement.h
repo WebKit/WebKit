@@ -53,21 +53,13 @@ private:
         RotateAutoReverse
     };
     RotateMode rotateMode() const;
-
-    FloatSize m_animatedTranslation;
-    float m_animatedAngle;
+    void buildTransformForProgress(AffineTransform*, float percentage);
 
     // Note: we do not support percentage values for to/from coords as the spec implies we should (opera doesn't either)
     FloatPoint m_fromPoint;
-    float m_fromAngle;
     FloatPoint m_toPoint;
-    float m_toAngle;
-
-    unsigned m_baseIndexInTransformList;
 
     Path m_path;
-    Vector<float> m_keyPoints;
-    float m_angle;
 };
     
 } // namespace WebCore

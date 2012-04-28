@@ -1,3 +1,39 @@
+2012-04-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        SVGAnimateMotion does not handle accumulation
+        https://bugs.webkit.org/show_bug.cgi?id=18564
+
+        Reviewed by Antti Koivisto.
+
+        Import mozilla <animateMotion> reftests, and two testscases from
+        Dr. Olaf Hoffmanns SVG test suite, covering all additive/accumulate modes
+        for <animateMotion>.
+
+        * svg/animations/animateMotion-additive-1-expected.svg: Added.
+        * svg/animations/animateMotion-additive-1.svg: Added.
+        * svg/animations/animateMotion-additive-2a-expected.svg: Added.
+        * svg/animations/animateMotion-additive-2a.svg: Added.
+        * svg/animations/animateMotion-additive-2b-expected.svg: Added.
+        * svg/animations/animateMotion-additive-2b.svg: Added.
+        * svg/animations/animateMotion-additive-2c-expected.svg: Added.
+        * svg/animations/animateMotion-additive-2c.svg: Added.
+        * svg/animations/animateMotion-additive-2d-expected.svg: Added.
+        * svg/animations/animateMotion-additive-2d.svg: Added.
+        * svg/animations/mozilla/animateMotion-by-1-expected.svg: Added.
+        * svg/animations/mozilla/animateMotion-by-1.svg: Added.
+        * svg/animations/mozilla/animateMotion-from-to-1-expected.svg: Added.
+        * svg/animations/mozilla/animateMotion-from-to-1.svg: Added.
+        * svg/animations/mozilla/animateMotion-indefinite-to-1-expected.svg: Added.
+        * svg/animations/mozilla/animateMotion-indefinite-to-1.svg: Added.
+        * svg/animations/mozilla/animateMotion-indefinite-to-2-expected.svg: Added.
+        * svg/animations/mozilla/animateMotion-indefinite-to-2.svg: Added.
+        * svg/animations/mozilla/animateMotion-mpath-pathLength-1-expected.svg: Added.
+        * svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg: Added.
+        * svg/animations/mozilla/animateMotion-mpath-targetChange-1-expected.svg: Added.
+        * svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg: Added.
+        * svg/animations/mozilla/animateMotion-to-overridden-1-expected.svg: Added.
+        * svg/animations/mozilla/animateMotion-to-overridden-1.svg: Added.
+
 2012-04-27  Yury Semikhatsky  <yurys@chromium.org>
 
         ScriptStateProtectedPtr should not keep a strong reference to the context
