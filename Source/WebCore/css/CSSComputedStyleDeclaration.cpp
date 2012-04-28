@@ -520,9 +520,9 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
     return createBorderImageValue(imageValue, imageSlices, borderSlices, outset, repeat);
 }
 
-inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(int value, const RenderStyle* style)
+inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle* style)
 {
-    return cssValuePool().createValue(adjustForAbsoluteZoom(value, style), CSSPrimitiveValue::CSS_PX);
+    return cssValuePool().createValue(adjustFloatForAbsoluteZoom(value, style), CSSPrimitiveValue::CSS_PX);
 }
 
 inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedNumberValue(double value, const RenderStyle* style)

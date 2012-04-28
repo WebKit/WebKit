@@ -7,7 +7,7 @@ PASS: 70%5 is mapped to 70%
 PASS: 60%% is mapped to 60%
 PASS: 50* is not mapped
 PASS: 40*5 is not mapped
-PASS: 30.5 is mapped to 30px
+PASS: 30.5 is mapped to 30.5px
 
 <col>:
 PASS: 90zz is mapped to 90px
@@ -16,5 +16,5 @@ PASS: 70%5 is mapped to 70%
 PASS: 60%% is mapped to 60%
 PASS: 50* is not mapped
 PASS: 40*5 is not mapped
-PASS: 30.5 is mapped to 30px
+PASS: 30.5 is mapped to 30.5px
 

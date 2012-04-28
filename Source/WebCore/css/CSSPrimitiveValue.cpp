@@ -431,7 +431,7 @@ template<> unsigned CSSPrimitiveValue::computeLength(RenderStyle* style, RenderS
 
 template<> Length CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)
 {
-    return Length(roundForImpreciseConversion<int>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize)), Fixed);
+    return Length(roundForImpreciseConversion<float>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize)), Fixed);
 }
 
 template<> short CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, float multiplier, bool computingFontSize)

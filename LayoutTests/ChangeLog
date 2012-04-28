@@ -1,3 +1,46 @@
+2012-04-26  Emil A Eklund  <eae@chromium.org>
+
+        Move Length and CSS length computation to float
+        https://bugs.webkit.org/show_bug.cgi?id=84801
+
+        Reviewed by Eric Seidel.
+
+        Change Length and CSS length computation to floating point. This gets us
+        closer to the goal of supporting subpixel layout and improves precision
+        for SVG which already uses floating point for its layout.
+
+        This change makes computedStyle return fractional values for pixel values
+        if a fraction is specified. It also changes the result of computations
+        where two or more values with fractional precision. Prior to this change
+        the result of Length(2.9) + Length(2.9) would be 4 as each value would be
+        floored. with this change the result is 5 as the addition is done with
+        floating point precision and then the result will be floored. Once we
+        enable subpixel layout the resulting value in this example would be 5.8.
+
+        * fast/dom/length-attribute-mapping-expected.txt:
+        * fast/dom/length-attribute-mapping.html:
+        * platform/mac-snowleopard/fast/forms/001-expected.png:
+        * platform/mac-snowleopard/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/mac/fast/forms/001-expected.txt:
+        * platform/mac/fast/html/details-position-expected.png:
+        * platform/mac/fast/html/details-position-expected.txt:
+        * platform/mac/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/mac/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/mac/fast/replaced/width100percent-radio-expected.png:
+        * platform/mac/fast/replaced/width100percent-radio-expected.txt:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+
 2012-04-28  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2] http/tests/navigation/anchor-frames-gbk.html fails
