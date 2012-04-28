@@ -384,7 +384,6 @@ module html {
 
         /* Shader Source */
         const unsigned int COMPILE_STATUS                 = 0x8B81;
-        const unsigned int SHADER_COMPILER                = 0x8DFA;
 
         /* Shader Precision-Specified Types */
         const unsigned int LOW_FLOAT                      = 0x8DF0;

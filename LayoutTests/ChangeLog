@@ -1,3 +1,13 @@
+2012-04-27  Kenneth Russell  <kbr@google.com>
+
+        Remove SHADER_COMPILER constant
+        https://bugs.webkit.org/show_bug.cgi?id=85115
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/webgl/constants-expected.txt: Updated expected results.
+        * fast/canvas/webgl/constants.html: Synced test with Khronos repository.
+
 2012-04-27  Joe Thomas  <joethomas@motorola.com>
 
         fast/forms/listbox-clear-restore.html is failing

@@ -372,7 +372,6 @@ VERTEX_ATTRIB_ARRAY_BUFFER_BINDING : 0x889F,
     
     /* Shader Source */
 COMPILE_STATUS                 : 0x8B81,
-SHADER_COMPILER                : 0x8DFA,
     
     /* Shader Precision-Specified Types */
 LOW_FLOAT                      : 0x8DF0,
@@ -436,9 +435,32 @@ UNPACK_COLORSPACE_CONVERSION_WEBGL : 0x9243,
 BROWSER_DEFAULT_WEBGL              : 0x9244
 };
 
+// Constants removed from the WebGL spec compared to ES 2.0
+var removedConstants = {
+NUM_COMPRESSED_TEXTURE_FORMATS : 0x86A2,
+FIXED                          : 0x140C,
+ACTIVE_UNIFORM_MAX_LENGTH      : 0x8B87,
+ACTIVE_ATTRIBUTE_MAX_LENGTH    : 0x8B8A,
+EXTENSIONS                     : 0x1F03,
+INFO_LOG_LENGTH                : 0x8B84,
+SHADER_SOURCE_LENGTH           : 0x8B88,
+SHADER_COMPILER                : 0x8DFA,
+SHADER_BINARY_FORMATS          : 0x8DF8,
+NUM_SHADER_BINARY_FORMATS      : 0x8DF9,
+};
+
 function assertProperty(v, p) {
-  if (v[p] == null) {
+  if (p in v) {
+    return true;
+  } else {
     testFailed("Property does not exist: " + p)
+    return false;
+  }
+}
+
+function assertNoProperty(v, p) {
+  if (p in v) {
+    testFailed("Property is defined and should not be: " + p)
     return false;
   } else {
     return true;
@@ -464,6 +486,14 @@ for (var i in constants) {
 if (passed) {
   testPassed("All WebGL constants found to have correct values.");
 }
+passed = true;
+for (var i in removedConstants) {
+  var r = assertNoProperty(gl, i);
+  passed = passed && r;
+}
+if (passed) {
+  testPassed("All constants removed from WebGL spec were absent from WebGL context.");
+}
 var extended = false;
 for (var i in gl) {
   if (i.match(/^[^a-z]/) && constants[i] == null) {
@@ -478,8 +508,6 @@ for (var i in gl) {
 debug("");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
-<script>
-</script>
 
 </body>
 </html>
