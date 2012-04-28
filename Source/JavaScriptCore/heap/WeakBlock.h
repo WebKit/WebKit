@@ -30,7 +30,7 @@
 #include "WeakHandleOwner.h"
 #include "WeakImpl.h"
 #include <wtf/DoublyLinkedList.h>
-#include <wtf/PageAllocationAligned.h>
+#include <wtf/PageAllocation.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -39,10 +39,10 @@ class HeapRootVisitor;
 class JSValue;
 class WeakHandleOwner;
 
-class WeakBlock : public HeapBlock {
+class WeakBlock : public DoublyLinkedListNode<WeakBlock> {
 public:
+    friend class DoublyLinkedListNode<WeakBlock>;
     static const size_t blockSize = 4 * KB;
-    static const size_t blockMask = ~(blockSize - 1);
 
     struct FreeCell {
         FreeCell* next;
@@ -59,14 +59,11 @@ public:
     static WeakBlock* create();
     static void destroy(WeakBlock*);
 
-    static WeakBlock* blockFor(WeakImpl*);
     static WeakImpl* asWeakImpl(FreeCell*);
 
     void sweep();
     const SweepResult& sweepResult();
     SweepResult takeSweepResult();
-
-    void deallocate(WeakImpl*);
 
     void visitLiveWeakImpls(HeapRootVisitor&);
     void visitDeadWeakImpls(HeapRootVisitor&);
@@ -76,13 +73,16 @@ public:
 private:
     static FreeCell* asFreeCell(WeakImpl*);
 
-    WeakBlock(PageAllocationAligned&);
+    WeakBlock(PageAllocation&);
     WeakImpl* firstWeakImpl();
     void finalize(WeakImpl*);
     WeakImpl* weakImpls();
     size_t weakImplCount();
     void addToFreeList(FreeCell**, WeakImpl*);
 
+    PageAllocation m_allocation;
+    WeakBlock* m_prev;
+    WeakBlock* m_next;
     SweepResult m_sweepResult;
 };
 
@@ -96,11 +96,6 @@ inline WeakBlock::SweepResult::SweepResult()
 inline bool WeakBlock::SweepResult::isNull() const
 {
     return blockIsFree && !freeList; // This state is impossible, so we can use it to mean null.
-}
-
-inline WeakBlock* WeakBlock::blockFor(WeakImpl* weakImpl)
-{
-    return reinterpret_cast<WeakBlock*>(reinterpret_cast<uintptr_t>(weakImpl) & blockMask);
 }
 
 inline WeakImpl* WeakBlock::asWeakImpl(FreeCell* freeCell)
@@ -124,11 +119,6 @@ inline const WeakBlock::SweepResult& WeakBlock::sweepResult()
 inline WeakBlock::FreeCell* WeakBlock::asFreeCell(WeakImpl* weakImpl)
 {
     return reinterpret_cast<FreeCell*>(weakImpl);
-}
-
-inline void WeakBlock::deallocate(WeakImpl* weakImpl)
-{
-    weakImpl->setState(WeakImpl::Deallocated);
 }
 
 inline void WeakBlock::finalize(WeakImpl* weakImpl)

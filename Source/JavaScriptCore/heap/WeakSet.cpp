@@ -33,8 +33,8 @@ namespace JSC {
 WeakSet::~WeakSet()
 {
     WeakBlock* next = 0;
-    for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = next) {
-        next = static_cast<WeakBlock*>(block->next());
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        next = block->next();
         WeakBlock::destroy(block);
     }
     m_blocks.clear();
@@ -42,27 +42,27 @@ WeakSet::~WeakSet()
 
 void WeakSet::finalizeAll()
 {
-    for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = static_cast<WeakBlock*>(block->next()))
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
         block->finalizeAll();
 }
 
 void WeakSet::visitLiveWeakImpls(HeapRootVisitor& visitor)
 {
-    for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = static_cast<WeakBlock*>(block->next()))
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
         block->visitLiveWeakImpls(visitor);
 }
 
 void WeakSet::visitDeadWeakImpls(HeapRootVisitor& visitor)
 {
-    for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = static_cast<WeakBlock*>(block->next()))
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
         block->visitDeadWeakImpls(visitor);
 }
 
 void WeakSet::sweep()
 {
     WeakBlock* next;
-    for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = next) {
-        next = static_cast<WeakBlock*>(block->next());
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        next = block->next();
 
         // If a block is completely empty, a new sweep won't have any effect.
         if (!block->sweepResult().isNull() && block->sweepResult().blockIsFree)
@@ -76,8 +76,8 @@ void WeakSet::sweep()
 void WeakSet::shrink()
 {
     WeakBlock* next;
-    for (WeakBlock* block = static_cast<WeakBlock*>(m_blocks.head()); block; block = next) {
-        next = static_cast<WeakBlock*>(block->next());
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        next = block->next();
 
         if (!block->sweepResult().isNull() && block->sweepResult().blockIsFree)
             removeAllocator(block);
@@ -87,7 +87,7 @@ void WeakSet::shrink()
 void WeakSet::resetAllocator()
 {
     m_allocator = 0;
-    m_nextAllocator = static_cast<WeakBlock*>(m_blocks.head());
+    m_nextAllocator = m_blocks.head();
 }
 
 WeakBlock::FreeCell* WeakSet::findAllocator()
@@ -102,7 +102,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 {
     while (m_nextAllocator) {
         WeakBlock* block = m_nextAllocator;
-        m_nextAllocator = static_cast<WeakBlock*>(m_nextAllocator->next());
+        m_nextAllocator = m_nextAllocator->next();
 
         block->sweep();
         WeakBlock::SweepResult sweepResult = block->takeSweepResult();

@@ -1,3 +1,45 @@
+2012-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Stop using aligned allocation for WeakBlock
+        https://bugs.webkit.org/show_bug.cgi?id=85124
+
+        Reviewed by Anders Carlsson.
+
+        We don't actually use the alignment for anything.
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::WeakBlock): Switched from aligned allocation to regular
+        allocation.
+
+        * heap/WeakBlock.h:
+        (WeakBlock): Don't use HeapBlock because HeapBlock requires aligned
+        allocation. This change required me to add some declarations that we used
+        to inherit from HeapBlock.
+
+        (WeakBlock::blockFor): Removed. This function relied on aligned allocation
+        but didn't do anything for us.
+
+        (WeakBlock::deallocate): Removed. WeakBlock doesn't own any of the deallocation
+        logic, so it shouldn't own the function.
+
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::~WeakSet):
+        (JSC::WeakSet::finalizeAll):
+        (JSC::WeakSet::visitLiveWeakImpls):
+        (JSC::WeakSet::visitDeadWeakImpls):
+        (JSC::WeakSet::sweep):
+        (JSC::WeakSet::shrink):
+        (JSC::WeakSet::resetAllocator):
+        (JSC::WeakSet::tryFindAllocator):
+        * heap/WeakSet.h:
+        (WeakSet): Updated declarations to reflect WeakBlock not inheriting from
+        HeapBlock. This allowed me to remove some casts, which was nice.
+
+        (JSC::WeakSet::deallocate): Directly set the deallocated flag instead of
+        asking WeakBlock to do it for us.  We don't need to have a WeakBlock
+        pointer to set the flag, so stop asking for one.
+
 2012-04-27  Kentaro Hara  <haraken@chromium.org>
 
         [JSC] Implement a helper method createNotEnoughArgumentsError()

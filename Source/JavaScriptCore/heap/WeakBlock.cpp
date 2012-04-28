@@ -36,7 +36,7 @@ namespace JSC {
 
 WeakBlock* WeakBlock::create()
 {
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, blockSize, OSAllocator::JSGCHeapPages);
+    PageAllocation allocation = PageAllocation::allocate(blockSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))
         CRASH();
     return new (NotNull, allocation.base()) WeakBlock(allocation);
@@ -47,8 +47,8 @@ void WeakBlock::destroy(WeakBlock* block)
     block->m_allocation.deallocate();
 }
 
-WeakBlock::WeakBlock(PageAllocationAligned& allocation)
-    : HeapBlock(allocation)
+WeakBlock::WeakBlock(PageAllocation& allocation)
+    : m_allocation(allocation)
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];

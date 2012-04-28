@@ -58,7 +58,7 @@ private:
 
     WeakBlock::FreeCell* m_allocator;
     WeakBlock* m_nextAllocator;
-    DoublyLinkedList<HeapBlock> m_blocks;
+    DoublyLinkedList<WeakBlock> m_blocks;
     Heap* m_heap;
 };
 
@@ -82,7 +82,7 @@ inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleO
 
 inline void WeakSet::deallocate(WeakImpl* weakImpl)
 {
-    WeakBlock::blockFor(weakImpl)->deallocate(weakImpl);
+    weakImpl->setState(WeakImpl::Deallocated);
 }
 
 } // namespace JSC
