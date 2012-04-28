@@ -1424,6 +1424,7 @@ void WebViewImpl::animate(double)
 
 void WebViewImpl::willBeginFrame()
 {
+    instrumentBeginFrame();
     m_client->willBeginCompositorFrame();
 }
 
