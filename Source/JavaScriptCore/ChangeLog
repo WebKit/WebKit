@@ -1,3 +1,16 @@
+2012-04-27  Gavin Barraclough  <barraclough@apple.com>
+
+        <rdar://problem/7909395> Math in JavaScript is inaccurate on iOS
+
+        By defalut IEEE754 denormal support is disabled on iOS;
+        turn it on.
+
+        Reviewed by Filip Pizlo.
+
+        * jsc.cpp:
+        (main):
+            - clear the appropriate bit in the fpscr.
+
 2012-04-27  Michael Saboff  <msaboff@apple.com>
 
         Memory wasted in JSString for non-rope strings

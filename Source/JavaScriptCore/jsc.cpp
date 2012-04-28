@@ -72,6 +72,11 @@
 #include <QDateTime>
 #endif
 
+#if PLATFORM(IOS)
+#include <fenv.h>
+#include <arm/arch.h>
+#endif
+
 using namespace JSC;
 using namespace WTF;
 
@@ -445,6 +450,14 @@ int jscmain(int argc, char** argv, JSGlobalData*);
 
 int main(int argc, char** argv)
 {
+#if PLATFORM(IOS)
+    // Enabled IEEE754 denormal support.
+    fenv_t env;
+    fegetenv( &env );
+    env.__fpscr &= ~0x01000000u;
+    fesetenv( &env );
+#endif
+
 #if OS(WINDOWS)
 #if !OS(WINCE)
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
