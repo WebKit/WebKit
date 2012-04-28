@@ -1,3 +1,15 @@
+2012-04-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Made WeakSet::allocate() static and removed its JSGlobalData argument
+        https://bugs.webkit.org/show_bug.cgi?id=85128
+
+        Reviewed by Anders Carlsson.
+
+        Mechanically removed JSGlobalData arguments from PassWeak<T> and Weak<T> allocation.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+
 2012-04-27  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][WK2] Don't call syncRemoteContents from WebLayerTreeRenderer::paintToCurrentGLContext

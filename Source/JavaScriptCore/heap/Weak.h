@@ -27,8 +27,8 @@
 #define Weak_h
 
 #include <wtf/Assertions.h>
-#include "JSGlobalData.h"
 #include "PassWeak.h"
+#include "WeakSetInlines.h"
 
 namespace JSC {
 
@@ -40,7 +40,7 @@ public:
 
     Weak();
     Weak(std::nullptr_t);
-    Weak(JSGlobalData&, GetType, WeakHandleOwner* = 0, void* context = 0);
+    Weak(GetType, WeakHandleOwner* = 0, void* context = 0);
 
     enum HashTableDeletedValueTag { HashTableDeletedValue };
     bool isHashTableDeletedValue() const;
@@ -78,8 +78,8 @@ template<typename T> inline Weak<T>::Weak(std::nullptr_t)
 {
 }
 
-template<typename T> inline Weak<T>::Weak(JSGlobalData& globalData, typename Weak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(getType ? globalData.heap.weakSet()->allocate(getType, weakOwner, context) : 0)
+template<typename T> inline Weak<T>::Weak(typename Weak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
+    : m_impl(getType ? WeakSet::allocate(getType, weakOwner, context) : 0)
 {
 }
 

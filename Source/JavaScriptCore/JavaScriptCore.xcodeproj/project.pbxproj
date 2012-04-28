@@ -195,6 +195,7 @@
 		141211340A48795800480255 /* minidom.c in Sources */ = {isa = PBXBuildFile; fileRef = 141211020A48780900480255 /* minidom.c */; };
 		141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 141448CC13A1783700F5BA1A /* TinyBloomFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14150133154BB13F005D8C98 /* WeakSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 14150132154BB13F005D8C98 /* WeakSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1420BE7B10AA6DDB00F455D2 /* WeakRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1421359A0A677F4F00A8195E /* JSBase.cpp */; };
 		14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8580255597D01FF60F7 /* Debugger.cpp */; };
@@ -862,6 +863,7 @@
 		141211200A48793C00480255 /* minidom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = minidom; sourceTree = BUILT_PRODUCTS_DIR; };
 		141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedBlockSet.h; sourceTree = "<group>"; };
 		141448CC13A1783700F5BA1A /* TinyBloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyBloomFilter.h; sourceTree = "<group>"; };
+		14150132154BB13F005D8C98 /* WeakSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakSetInlines.h; sourceTree = "<group>"; };
 		1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakRandom.h; sourceTree = "<group>"; };
 		1421359A0A677F4F00A8195E /* JSBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBase.cpp; sourceTree = "<group>"; };
 		142711380A460BBB0080EEEA /* JSBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBase.h; sourceTree = "<group>"; };
@@ -1558,14 +1560,14 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				A7521E121429169A003C8D0C /* CardSet.h */,
+				146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */,
+				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
 				C2EAD2FB14F0249800A4B159 /* CopiedAllocator.h */,
 				C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */,
 				C240305314B404C90079EB64 /* CopiedSpace.cpp */,
 				C2EAA3F8149A830800FCE112 /* CopiedSpace.h */,
 				C2C8D02B14A3C6B200578E65 /* CopiedSpaceInlineMethods.h */,
-				A7521E121429169A003C8D0C /* CardSet.h */,
-				146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */,
-				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
 				0F2C556D14738F2E00121E4F /* DFGCodeBlocks.cpp */,
 				0F2C556E14738F2E00121E4F /* DFGCodeBlocks.h */,
 				BCBE2CAD14E985AA000593AD /* GCAssertions.h */,
@@ -1606,10 +1608,11 @@
 				14E84F9A14EE1ACC00D6D5D4 /* WeakBlock.h */,
 				14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */,
 				14F7256414EE265E00B1652B /* WeakHandleOwner.h */,
-				14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */,
-				14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */,
 				14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */,
 				0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */,
+				14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */,
+				14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */,
+				14150132154BB13F005D8C98 /* WeakSetInlines.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
 			);
@@ -2563,6 +2566,7 @@
 				8612E4CD152389EC00C836BE /* MatchResult.h in Headers */,
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
 				0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */,
+				14150133154BB13F005D8C98 /* WeakSetInlines.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

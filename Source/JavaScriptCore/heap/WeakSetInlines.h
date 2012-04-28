@@ -23,57 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakSet_h
-#define WeakSet_h
+#ifndef WeakSetInlines_h
+#define WeakSetInlines_h
 
-#include "WeakBlock.h"
+#include "WeakSet.h"
 
 namespace JSC {
 
-class Heap;
-class WeakImpl;
-
-class WeakSet {
-public:
-    WeakSet(Heap*);
-    void finalizeAll();
-    ~WeakSet();
-
-    static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
-    static void deallocate(WeakImpl*);
-
-    void visitLiveWeakImpls(HeapRootVisitor&);
-    void visitDeadWeakImpls(HeapRootVisitor&);
-
-    void sweep();
-    void resetAllocator();
-
-    void shrink();
-
-private:
-    JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator();
-    WeakBlock::FreeCell* tryFindAllocator();
-    WeakBlock::FreeCell* addAllocator();
-    void removeAllocator(WeakBlock*);
-
-    WeakBlock::FreeCell* m_allocator;
-    WeakBlock* m_nextAllocator;
-    DoublyLinkedList<WeakBlock> m_blocks;
-    Heap* m_heap;
-};
-
-inline WeakSet::WeakSet(Heap* heap)
-    : m_allocator(0)
-    , m_nextAllocator(0)
-    , m_heap(heap)
+inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
 {
-}
+    WeakSet& weakSet = *Heap::heap(jsValue.asCell())->weakSet();
+    WeakBlock::FreeCell* allocator = weakSet.m_allocator;
+    if (UNLIKELY(!allocator))
+        allocator = weakSet.findAllocator();
+    weakSet.m_allocator = allocator->next;
 
-inline void WeakSet::deallocate(WeakImpl* weakImpl)
-{
-    weakImpl->setState(WeakImpl::Deallocated);
+    WeakImpl* weakImpl = WeakBlock::asWeakImpl(allocator);
+    return new (NotNull, weakImpl) WeakImpl(jsValue, weakHandleOwner, context);
 }
 
 } // namespace JSC
 
-#endif // WeakSet_h
+#endif // WeakSetInlines_h

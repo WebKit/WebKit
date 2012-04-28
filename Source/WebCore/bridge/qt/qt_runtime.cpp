@@ -974,12 +974,12 @@ QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Struc
 {
 }
 
-void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+void QtRuntimeMethod::finishCreation(ExecState*, const Identifier& identifier, PassRefPtr<QtInstance> instance)
 {
     Base::finishCreation(exec->globalData(), identifier);
     QW_D(QtRuntimeMethod);
     d->m_instance = instance;
-    d->m_finalizer = PassWeak<QtRuntimeMethod>(exec->globalData(), this, d);
+    d->m_finalizer = PassWeak<QtRuntimeMethod>(this, d);
 }
 
 QtRuntimeMethod::~QtRuntimeMethod()

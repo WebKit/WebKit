@@ -104,7 +104,7 @@ void JSCallbackObject<Parent>::init(ExecState* exec)
 
     for (JSClassRef jsClassPtr = classRef(); jsClassPtr; jsClassPtr = jsClassPtr->parentClass) {
         if (jsClassPtr->finalize) {
-            exec->globalData().heap.weakSet()->allocate(this, m_callbackObjectData.get(), classRef());
+            WeakSet::allocate(this, m_callbackObjectData.get(), classRef());
             break;
         }
     }

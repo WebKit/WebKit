@@ -27,6 +27,7 @@
 #define PassWeak_h
 
 #include "JSCell.h"
+#include "WeakSetInlines.h"
 #include <wtf/Assertions.h>
 #include <wtf/NullPtr.h>
 #include <wtf/TypeTraits.h>
@@ -57,7 +58,7 @@ public:
 
     PassWeak();
     PassWeak(std::nullptr_t);
-    PassWeak(JSGlobalData&, GetType, WeakHandleOwner* = 0, void* context = 0);
+    PassWeak(GetType, WeakHandleOwner* = 0, void* context = 0);
 
     // It somewhat breaks the type system to allow transfer of ownership out of
     // a const PassWeak. However, it makes it much easier to work with PassWeak
@@ -118,8 +119,8 @@ template<typename T> inline PassWeak<T>::PassWeak(std::nullptr_t)
 {
 }
 
-template<typename T> inline PassWeak<T>::PassWeak(JSGlobalData& globalData, typename PassWeak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(getType ? globalData.heap.weakSet()->allocate(getType, weakOwner, context) : 0)
+template<typename T> inline PassWeak<T>::PassWeak(typename PassWeak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
+    : m_impl(getType ? WeakSet::allocate(getType, weakOwner, context) : 0)
 {
 }
 

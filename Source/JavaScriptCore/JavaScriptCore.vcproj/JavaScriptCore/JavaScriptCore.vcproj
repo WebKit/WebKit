@@ -2146,6 +2146,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\WeakSetInlines.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\WeakImpl.h"
 				>
 			</File>

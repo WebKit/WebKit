@@ -258,6 +258,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/WeakImpl.h \
 	Source/JavaScriptCore/heap/WeakSet.cpp \
 	Source/JavaScriptCore/heap/WeakSet.h \
+	Source/JavaScriptCore/heap/WeakSetInlines.h \
 	Source/JavaScriptCore/heap/WeakReferenceHarvester.h \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.cpp \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.h \

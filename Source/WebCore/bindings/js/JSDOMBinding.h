@@ -141,7 +141,7 @@ enum ParameterDefaultPolicy {
     {
         if (setInlineCachedWrapper(world, domObject, wrapper))
             return;
-        JSC::PassWeak<JSDOMWrapper> passWeak(*world->globalData(), wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject));
+        JSC::PassWeak<JSDOMWrapper> passWeak(wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject));
         DOMObjectWrapperMap::AddResult result = world->m_wrappers.add(domObject, passWeak);
         ASSERT_UNUSED(result, result.isNewEntry);
     }

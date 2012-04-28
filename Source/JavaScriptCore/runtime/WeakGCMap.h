@@ -117,22 +117,22 @@ public:
         return HandleTypes<MappedType>::getFromSlot(const_cast<JSValue*>(&m_map.get(key)->jsValue()));
     }
 
-    AddResult add(JSGlobalData& globalData, const KeyType& key, ExternalType value)
+    AddResult add(JSGlobalData&, const KeyType& key, ExternalType value)
     {
         typename MapType::AddResult result = m_map.add(key, 0);
         if (result.isNewEntry)
-            result.iterator->second = globalData.heap.weakSet()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
+            result.iterator->second = WeakSet::allocate(value, this, FinalizerCallback::finalizerContextFor(key));
 
         // WeakGCMap exposes a different iterator, so we need to wrap it and create our own AddResult.
         return AddResult(iterator(result.iterator), result.isNewEntry);
     }
 
-    void set(JSGlobalData& globalData, const KeyType& key, ExternalType value)
+    void set(JSGlobalData&, const KeyType& key, ExternalType value)
     {
         typename MapType::AddResult result = m_map.add(key, 0);
         if (!result.isNewEntry)
             WeakSet::deallocate(result.iterator->second);
-        result.iterator->second = globalData.heap.weakSet()->allocate(value, this, FinalizerCallback::finalizerContextFor(key));
+        result.iterator->second = WeakSet::allocate(value, this, FinalizerCallback::finalizerContextFor(key));
     }
 
     ExternalType take(const KeyType& key)

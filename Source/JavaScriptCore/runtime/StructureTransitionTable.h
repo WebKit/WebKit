@@ -135,12 +135,12 @@ private:
         return 0;
     }
     
-    void setSingleTransition(JSGlobalData& globalData, Structure* structure)
+    void setSingleTransition(JSGlobalData&, Structure* structure)
     {
         ASSERT(isUsingSingleSlot());
         if (WeakImpl* impl = this->weakImpl())
             WeakSet::deallocate(impl);
-        WeakImpl* impl = globalData.heap.weakSet()->allocate(reinterpret_cast<JSCell*>(structure));
+        WeakImpl* impl = WeakSet::allocate(reinterpret_cast<JSCell*>(structure));
         m_data = reinterpret_cast<intptr_t>(impl) | UsingSingleSlotFlag;
     }
 

@@ -49,7 +49,7 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
 JSValue jsStringSlowCase(ExecState* exec, JSStringCache& stringCache, StringImpl* stringImpl)
 {
     JSString* wrapper = jsString(exec, UString(stringImpl));
-    stringCache.add(stringImpl, PassWeak<JSString>(exec->globalData(), wrapper, currentWorld(exec)->stringWrapperOwner(), stringImpl));
+    stringCache.add(stringImpl, PassWeak<JSString>(wrapper, currentWorld(exec)->stringWrapperOwner(), stringImpl));
     return wrapper;
 }
 

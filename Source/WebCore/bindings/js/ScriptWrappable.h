@@ -43,10 +43,10 @@ public:
         return m_wrapper.get();
     }
 
-    void setWrapper(JSC::JSGlobalData& globalData, JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
+    void setWrapper(JSC::JSGlobalData&, JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
     {
         ASSERT(!m_wrapper);
-        m_wrapper = JSC::PassWeak<JSDOMWrapper>(globalData, wrapper, wrapperOwner, context);
+        m_wrapper = JSC::PassWeak<JSDOMWrapper>(wrapper, wrapperOwner, context);
     }
 
     void clearWrapper(JSDOMWrapper* wrapper)

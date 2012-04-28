@@ -46,7 +46,7 @@ RegExp* RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags fl
     // We need to do a second lookup to add the RegExp as
     // allocating it may have caused a gc cycle, which in
     // turn may have removed items from the cache.
-    m_weakCache.add(key, PassWeak<RegExp>(*m_globalData, regExp, this));
+    m_weakCache.add(key, PassWeak<RegExp>(regExp, this));
     return regExp;
 }
 

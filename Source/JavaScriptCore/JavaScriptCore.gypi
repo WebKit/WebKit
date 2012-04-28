@@ -156,6 +156,7 @@
             'heap/WeakImpl.h',
             'heap/WeakReferenceHarvester.h',
             'heap/WeakSet.h',
+            'heap/WeakSetInlines.h',
             'heap/WriteBarrierSupport.h',
             'debugger/Debugger.h',
             'debugger/DebuggerActivation.h',

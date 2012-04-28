@@ -1,5 +1,30 @@
 2012-04-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Made WeakSet::allocate() static and removed its JSGlobalData argument
+        https://bugs.webkit.org/show_bug.cgi?id=85128
+
+        Reviewed by Anders Carlsson.
+
+        This is a step toward faster finalization.
+
+        WeakSet::allocate() now deduces which WeakSet to allocate from based on
+        its JSCell* argument. (Currently, there's only one WeakSet, but soon
+        there will be many.)
+
+        This was a global replace of "globalData.heap.weakSet()->allocate" with
+        "WeakSet::allocate", plus by-hand removal of the JSGlobalData argument.
+
+        * heap/WeakSetInlines.h: Copied from Source/JavaScriptCore/heap/WeakSet.h.
+
+        I had to split out WeakSet::allocate() in to a separate header to avoid
+        a cycle.
+
+        (JSC::WeakSet::allocate): We can mask the pointer we're passed to
+        figure out where to allocate our WeakImpl. (Soon, we'll use this to
+        associate the WeakImpl with the GC block it references.)
+
+2012-04-27  Geoffrey Garen  <ggaren@apple.com>
+
         Stop using aligned allocation for WeakBlock
         https://bugs.webkit.org/show_bug.cgi?id=85124
 

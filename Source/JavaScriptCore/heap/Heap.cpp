@@ -33,6 +33,7 @@
 #include "JSLock.h"
 #include "JSONObject.h"
 #include "Tracing.h"
+#include "WeakSetInlines.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 
@@ -953,7 +954,7 @@ void Heap::releaseFreeBlocks()
 
 void Heap::addFinalizer(JSCell* cell, Finalizer finalizer)
 {
-    weakSet()->allocate(cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
+    WeakSet::allocate(cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
 }
 
 void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
