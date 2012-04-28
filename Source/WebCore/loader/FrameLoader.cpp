@@ -217,6 +217,9 @@ void FrameLoader::init()
     // It would be better if this could be done with even fewer steps.
     m_stateMachine.advanceTo(FrameLoaderStateMachine::CreatingInitialEmptyDocument);
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(KURL(ParsedURLString, emptyString())), SubstituteData()).get());
+    // FIXME: Make this an ASSERT() instead once we figured out what's going wrong.
+    if (!m_policyDocumentLoader.get())
+        CRASH();
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader->setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
@@ -1115,6 +1118,9 @@ void FrameLoader::prepareForLoadStart()
 
 void FrameLoader::setupForReplace()
 {
+    // FIXME: Make this an ASSERT() instead once we figured out what's going wrong.
+    if (!m_documentLoader.get())
+        CRASH();
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader = m_documentLoader;
     m_documentLoader = 0;
@@ -1523,6 +1529,8 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
         m_documentLoader->stopLoading();
 
     setProvisionalDocumentLoader(0);
+    if (m_state == FrameStateProvisional)
+        setState(FrameStateComplete);
 
     m_checkTimer.stop();
 
@@ -1637,9 +1645,9 @@ void FrameLoader::setState(FrameState newState)
 
 void FrameLoader::clearProvisionalLoad()
 {
-    setProvisionalDocumentLoader(0);
     if (Page* page = m_frame->page())
         page->progress()->progressCompleted(m_frame);
+    setProvisionalDocumentLoader(0);
     setState(FrameStateComplete);
 }
 
@@ -2595,6 +2603,9 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     if (m_provisionalDocumentLoader && !equalIgnoringFragmentIdentifier(m_provisionalDocumentLoader->request().url(), request.url())) {
         m_provisionalDocumentLoader->stopLoading();
         setProvisionalDocumentLoader(0);
+        // FIXME: Make this an ASSERT() instead once we figured out what's going wrong.
+        if (m_state == FrameStateProvisional)
+            CRASH();
     }
 
     bool isRedirect = m_quickRedirectComing || policyChecker()->loadType() == FrameLoadTypeRedirectWithLockedBackForwardList;    
@@ -2757,6 +2768,9 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     }
 #endif
 
+    // FIXME: Make this an ASSERT() instead once we figured out what's going wrong.
+    if (!m_policyDocumentLoader.get())
+        CRASH();
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_loadType = type;
     setState(FrameStateProvisional);
