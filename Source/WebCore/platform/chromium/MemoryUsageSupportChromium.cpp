@@ -45,4 +45,9 @@ int MemoryUsageSupport::actualMemoryUsageMB()
     return WebKit::Platform::current()->actualMemoryUsageMB();
 }
 
+int MemoryUsageSupport::lowMemoryUsageMB()
+{
+    return WebKit::Platform::current()->lowMemoryUsageMB();
+}
+
 } // namespace WebCore

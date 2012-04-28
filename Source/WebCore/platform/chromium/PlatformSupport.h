@@ -195,8 +195,6 @@ public:
     static bool layoutTestMode();
 
     // Memory -------------------------------------------------------------
-    // If memory usage is below this threshold, do not bother forcing GC.
-    static int lowMemoryUsageMB();
     // If memory usage is above this threshold, force GC more aggressively.
     static int highMemoryUsageMB();
     // Delta of memory usage growth (vs. last actualMemoryUsageMB()) to force GC when memory usage is high.

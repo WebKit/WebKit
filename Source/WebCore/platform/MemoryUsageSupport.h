@@ -42,6 +42,9 @@ public:
     // Same as above, but always returns actual value, without any
     // caches.
     static int actualMemoryUsageMB();
+
+    // If memory usage is below this threshold, do not bother forcing GC.
+    static int lowMemoryUsageMB();
 };
 
 } // namespace WebCore
