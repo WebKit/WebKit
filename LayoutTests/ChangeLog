@@ -1,3 +1,13 @@
+2012-04-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, removing a Mac WebKit2-specific test result for
+        http/tests/xmlviewer/dumpAsText/frames.html that is not required
+        anymore after changes in r115572.
+
+        * platform/mac-wk2/http/tests/xmlviewer: Removed.
+        * platform/mac-wk2/http/tests/xmlviewer/dumpAsText: Removed.
+        * platform/mac-wk2/http/tests/xmlviewer/dumpAsText/frames-expected.txt: Removed.
+
 2012-04-28  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed rebaseline for tests affected by Length change in r115573.
