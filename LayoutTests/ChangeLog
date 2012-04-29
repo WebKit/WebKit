@@ -1,3 +1,21 @@
+2012-04-29  Sam Weinig  <sam@webkit.org>
+
+        Add support for the Blob constructor (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=84555
+
+        Address additional feedback on Blob construction.
+        - Add exception when the dictionary is not an object.
+        - Ensure the proper ordering of dictionary access. Tested via
+          throwing exceptions in toString, and ensuring correct one is
+          fired first.
+        - Changed type of exception throw for invalid enumeration to a
+          TypeError.
+
+        Reviewed by Kentaro Hara.
+
+        * fast/files/blob-constructor-expected.txt:
+        * fast/files/script-tests/blob-constructor.js:
+
 2012-04-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT needs an implementation of layoutTestController.setDomainRelaxationForbiddenForURLScheme

@@ -80,32 +80,29 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
     if (exec->argumentCount() > 1) {
         JSValue blobPropertyBagValue = exec->argument(1);
 
-        // FIXME: Should we throw if the blobPropertyBag is not an object?
+        if (!blobPropertyBagValue.isObject())
+            return throwVMError(exec, createTypeError(exec, "Second argument of the constructor is not of type Object"));
 
-        if (blobPropertyBagValue.isObject()) {
-            // Given the above test, this will always yield an object.
-            JSObject* blobPropertyBagObject = blobPropertyBagValue.toObject(exec);
+        // Given the above test, this will always yield an object.
+        JSObject* blobPropertyBagObject = blobPropertyBagValue.toObject(exec);
 
-            // Create the dictionary wrapper from the initializer object.
-            JSDictionary dictionary(exec, blobPropertyBagObject);
+        // Create the dictionary wrapper from the initializer object.
+        JSDictionary dictionary(exec, blobPropertyBagObject);
 
-            // Attempt to get the type property.
-            dictionary.get("type", type);
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
+        // Attempt to get the endings property and validate it.
+        bool containsEndings = dictionary.get("endings", endings);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
-            // Attempt to get the endings property and validate it.
-            bool containsEndings = dictionary.get("endings", endings);
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
-
-            if (containsEndings) {
-                if (endings != "transparent" && endings != "native") {
-                    setDOMException(exec, INVALID_STATE_ERR);
-                    return JSValue::encode(jsUndefined());
-                }
-            }
+        if (containsEndings) {
+            if (endings != "transparent" && endings != "native")
+                return throwVMError(exec, createTypeError(exec, "The endings property must be either \"transparent\" or \"native\""));
         }
+
+        // Attempt to get the type property.
+        dictionary.get("type", type);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
     }
 
     ASSERT(endings == "transparent" || endings == "native");

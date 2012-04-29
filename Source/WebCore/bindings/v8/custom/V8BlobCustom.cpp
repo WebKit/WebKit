@@ -79,18 +79,14 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     if (!firstArg->IsArray())
         return throwError("First argument of the constructor is not of type Array", V8Proxy::TypeError);
 
-    EXCEPTION_BLOCK(v8::Local<v8::Array>, blobParts, v8::Local<v8::Array>::Cast(firstArg));
-
     String type;
     String endings = "transparent";
 
-    if (args.Length() > 1 && args[1]->IsObject()) {
-        Dictionary dictionary(args[1]);
+    if (args.Length() > 1) {
+        if (!args[1]->IsObject())
+            return throwError("Second argument of the constructor is not of type Object", V8Proxy::TypeError);
 
-        v8::TryCatch tryCatchType;
-        dictionary.get("type", type);
-        if (tryCatchType.HasCaught())
-            return throwError(tryCatchType.Exception());
+        Dictionary dictionary(args[1]);
 
         v8::TryCatch tryCatchEndings;
         bool containsEndings = dictionary.get("endings", endings);
@@ -98,17 +94,24 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
             return throwError(tryCatchEndings.Exception());
 
         if (containsEndings) {
-            if (endings != "transparent" && endings != "native") {
-                V8Proxy::setDOMException(INVALID_STATE_ERR, args.GetIsolate());
-                return v8::Undefined();
-            }
+            if (endings != "transparent" && endings != "native")
+                return throwError("The endings property must be either \"transparent\" or \"native\"", V8Proxy::TypeError);
         }
+
+        v8::TryCatch tryCatchType;
+        dictionary.get("type", type);
+        if (tryCatchType.HasCaught())
+            return throwError(tryCatchType.Exception());
     }
 
     ASSERT(endings == "transparent" || endings == "native");
 
     RefPtr<WebKitBlobBuilder> blobBuilder = WebKitBlobBuilder::create();
-    for (uint32_t i = 0; i < blobParts->Length(); ++i) {
+
+    EXCEPTION_BLOCK(v8::Local<v8::Array>, blobParts, v8::Local<v8::Array>::Cast(firstArg));
+    uint32_t length = blobParts->Length();
+
+    for (uint32_t i = 0; i < length; ++i) {
         v8::Local<v8::Value> item = blobParts->Get(v8::Uint32::New(i));
         ASSERT(!item.IsEmpty());
 #if ENABLE(BLOB)
