@@ -1,3 +1,15 @@
+2012-04-28  Li Yin  <li.yin@intel.com>
+
+        MessagePort must set m_closed to be true at the end of MessagePort::close function
+        https://bugs.webkit.org/show_bug.cgi?id=85139
+
+        Test MessageChannel.port whether can receive message after it is closed.
+
+        Reviewed by Kentaro Hara.
+
+        * fast/events/message-port-close-expected.txt: Added.
+        * fast/events/message-port-close.html: Added.
+
 2012-04-28  Sam Weinig  <sam@webkit.org>
 
         Add support for the Blob constructor

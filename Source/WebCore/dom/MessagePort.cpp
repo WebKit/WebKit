@@ -133,10 +133,10 @@ void MessagePort::start()
 
 void MessagePort::close()
 {
-    m_closed = true;
     if (!isEntangled())
         return;
     m_entangledChannel->close();
+    m_closed = true;
 }
 
 void MessagePort::entangle(PassOwnPtr<MessagePortChannel> remote)
