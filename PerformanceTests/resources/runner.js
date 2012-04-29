@@ -52,7 +52,7 @@ PerfTestRunner.computeStatistics = function (times) {
     var data = times.slice();
 
     // Add values from the smallest to the largest to avoid the loss of significance
-    data.sort();
+    data.sort(function(a,b){return a-b;});
 
     var middle = Math.floor(data.length / 2);
     var result = {
