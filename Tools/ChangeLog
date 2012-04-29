@@ -1,3 +1,16 @@
+2012-04-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT needs an implementation of layoutTestController.setDomainRelaxationForbiddenForURLScheme
+        https://bugs.webkit.org/show_bug.cgi?id=85131
+
+        Reviewed by Martin Robinson.
+
+        Add missing implementation setDomainRelaxationForbiddenForURLScheme to
+        GTK's LayoutTestController.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setDomainRelaxationForbiddenForURLScheme):
+
 2012-04-28  Sam Weinig  <sam@webkit.org>
 
         Smooth scrolling needs a new key

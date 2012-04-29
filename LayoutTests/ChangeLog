@@ -1,3 +1,14 @@
+2012-04-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT needs an implementation of layoutTestController.setDomainRelaxationForbiddenForURLScheme
+        https://bugs.webkit.org/show_bug.cgi?id=85131
+
+        Reviewed by Martin Robinson.
+
+        Unskip http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
+
+        * platform/gtk/test_expectations.txt:
+
 2012-04-29  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, gardening after revisions 115573 and 115582.

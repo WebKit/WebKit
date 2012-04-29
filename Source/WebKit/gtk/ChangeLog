@@ -1,3 +1,18 @@
+2012-04-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT needs an implementation of layoutTestController.setDomainRelaxationForbiddenForURLScheme
+        https://bugs.webkit.org/show_bug.cgi?id=85131
+
+        Reviewed by Martin Robinson.
+
+        Add support for setDomainRelaxationForbiddenForURLScheme which allow
+        disabling domain relaxation.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-04-22  Adrian Bunk  <bunk@stusta.de>
 
         [GTK] Remove the obsolete Hildon UI extensions

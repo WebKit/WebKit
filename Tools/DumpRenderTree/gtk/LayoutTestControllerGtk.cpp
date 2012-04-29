@@ -741,9 +741,10 @@ void LayoutTestController::syncLocalStorage()
     // FIXME: implement
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
+void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
-    // FIXME: implement
+    GOwnPtr<gchar> urlScheme(JSStringCopyUTF8CString(scheme));
+    DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme(forbidden, urlScheme.get());
 }
 
 void LayoutTestController::goBack()

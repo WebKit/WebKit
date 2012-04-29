@@ -789,9 +789,6 @@ BUGWKGTK : http/tests/misc/will-send-request-returns-null-on-redirect.html = FAI
 // Requires willPerformClientRedirectToURL
 BUGWK58526 : http/tests/loading/onload-vs-immediate-refresh.pl = FAIL
 
-// GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
-BUGWKGTK : http/tests/security/setDomainRelaxationForbiddenForURLScheme.html = FAIL
-
 // New failure after http://trac.webkit.org/changeset/53758
 BUGWKGTK : scrollbars/scrollbar-middleclick-nopaste.html = FAIL
 
