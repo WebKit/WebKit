@@ -2609,6 +2609,7 @@ fast/multicol/cell-shrinkback.html
 fast/table/td-width-fifty-percent-regression.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
+svg/animations/animateMotion-additive-1.svg
 
 # REGRESSION(114309) - Exception stack traces aren't complete when the exception starts in native code
 # https://bugs.webkit.org/show_bug.cgi?id=84073

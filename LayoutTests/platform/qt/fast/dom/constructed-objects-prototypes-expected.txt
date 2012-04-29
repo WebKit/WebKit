@@ -7,6 +7,8 @@ PASS (new inner.Audio()).isInner is true
 PASS (new inner.Audio()).constructor.isInner is true
 PASS (new inner.BeforeLoadEvent()).isInner is true
 PASS (new inner.BeforeLoadEvent()).constructor.isInner is true
+PASS (new inner.Blob()).isInner is true
+PASS (new inner.Blob()).constructor.isInner is true
 PASS (new inner.CloseEvent()).isInner is true
 PASS (new inner.CloseEvent()).constructor.isInner is true
 PASS (new inner.CustomEvent()).isInner is true

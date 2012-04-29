@@ -1,3 +1,17 @@
+2012-04-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening, update test results, skip new failing tests.
+
+        * fast/files/workers/inline-worker-via-blob-url.html: Trivial typo fix after r115582.
+        * platform/qt-4.8/fast/dom/Window/window-properties-expected.txt: Updated after r115582.
+        * platform/qt-5.0-wk2/fast/dom/Window/window-properties-expected.txt: Updated after r115582.
+        * platform/qt-5.0/fast/dom/Window/window-properties-expected.txt: Updated after r115582.
+        * platform/qt/Skipped: Skip a new failing reftest after r115554.
+        * platform/qt/fast/dom/constructed-objects-prototypes-expected.txt:
+        * platform/qt/fast/html/details-position-expected.png: Updated after r115573.
+        * platform/qt/fast/html/details-position-expected.txt: Updated after r115573.
+        * platform/qt/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Updated after r115573.
+
 2012-04-28  Li Yin  <li.yin@intel.com>
 
         MessagePort must set m_closed to be true at the end of MessagePort::close function

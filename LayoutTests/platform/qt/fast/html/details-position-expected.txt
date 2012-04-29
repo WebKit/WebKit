@@ -6,8 +6,8 @@ layer at (0,0) size 800x584
       RenderBlock {DETAILS} at (0,0) size 784x0
       RenderBlock {DETAILS} at (0,0) size 784x21
       RenderBlock {DETAILS} at (0,21) size 784x0
-layer at (50,150) size 50x21
-  RenderBlock (positioned) {SUMMARY} at (50,150) size 50x21
+layer at (50,150) size 51x21
+  RenderBlock (positioned) {SUMMARY} at (50,150) size 51x21
     RenderDetailsMarker {DIV} at (0,6) size 10x10: right
     RenderText {#text} at (16,0) size 34x21
       text run at (16,0) width 34: "fixed"
@@ -16,8 +16,8 @@ layer at (158,158) size 784x21
     RenderDetailsMarker {DIV} at (0,6) size 10x10: right
     RenderText {#text} at (16,0) size 52x21
       text run at (16,0) width 52: "relative"
-layer at (250,150) size 77x21
-  RenderBlock (positioned) {SUMMARY} at (250,150) size 77x21
+layer at (250,150) size 78x21
+  RenderBlock (positioned) {SUMMARY} at (250,150) size 78x21
     RenderDetailsMarker {DIV} at (0,6) size 10x10: right
     RenderText {#text} at (16,0) size 61x21
       text run at (16,0) width 61: "absolute"
