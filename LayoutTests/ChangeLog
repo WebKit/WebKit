@@ -1,3 +1,17 @@
+2012-04-29  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, gardening after revisions 115573 and 115582.
+
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/constructed-objects-prototypes-expected.txt:
+        * platform/gtk/fast/forms/001-expected.txt:
+        * platform/gtk/fast/html/details-position-expected.txt: Added.
+        * platform/gtk/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-radio-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Added.
+        * platform/gtk/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug4527-expected.txt:
+
 2012-04-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed weekend gardening, update test results, skip new failing tests.
