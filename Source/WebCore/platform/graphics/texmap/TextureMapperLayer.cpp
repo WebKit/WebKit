@@ -147,10 +147,10 @@ void TextureMapperLayer::paint()
 void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 {
     // We apply the following transform to compensate for painting into a surface, and then apply the offset so that the painting fits in the target rect.
-    TransformationMatrix transform =
-            TransformationMatrix(options.transform)
-            .multiply(m_transform.combined())
-            .translate(options.offset.width(), options.offset.height());
+    TransformationMatrix transform;
+    transform.translate(options.offset.width(), options.offset.height());
+    transform.multiply(options.transform);
+    transform.multiply(m_transform.combined());
 
     float opacity = options.opacity;
     RefPtr<BitmapTexture> mask = options.mask;
@@ -319,8 +319,7 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
     options.textureMapper->bindSurface(surface.get());
     paintOptions.opacity = 1;
 
-    // We have to use combinedForChildren() and not combined(), otherwise preserve-3D doesn't work.
-    paintOptions.transform = m_transform.combinedForChildren().inverse();
+    paintOptions.transform = m_transform.combined().inverse();
     paintOptions.offset = -IntSize(surfaceRect.x(), surfaceRect.y());
 
     paintSelfAndChildrenWithReplica(paintOptions);
@@ -334,10 +333,11 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
 #endif
 
     options.textureMapper->bindSurface(options.surface.get());
-    TransformationMatrix targetTransform =
-            TransformationMatrix(options.transform)
-                .multiply(m_transform.combined())
-                .translate(options.offset.width(), options.offset.height());
+    TransformationMatrix targetTransform;
+    targetTransform.translate(options.offset.width(), options.offset.height());
+    targetTransform.multiply(options.transform);
+    targetTransform.multiply(m_transform.combined());
+
     options.textureMapper->drawTexture(*surface.get(), surfaceRect, targetTransform, opacity, maskTexture.get());
 }
 
