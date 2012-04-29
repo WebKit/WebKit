@@ -63,11 +63,7 @@ inline void CopiedSpace::startedCopying()
 
 inline void CopiedSpace::recycleBlock(CopiedBlock* block)
 {
-    {
-        MutexLocker locker(m_heap->m_freeBlockLock);
-        m_heap->m_freeBlocks.push(block);
-        m_heap->m_numberOfFreeBlocks++;
-    }
+    m_heap->blockAllocator().deallocate(block);
 
     {
         MutexLocker locker(m_loanedBlocksLock);

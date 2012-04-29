@@ -401,6 +401,7 @@
             'heap/DFGCodeBlocks.cpp',
             'heap/HandleSet.cpp',
             'heap/HandleStack.cpp',
+            'heap/BlockAllocator.cpp',
             'heap/Heap.cpp',
             'heap/MachineStackMarker.cpp',
             'heap/MarkedAllocator.cpp',

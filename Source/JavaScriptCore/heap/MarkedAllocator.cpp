@@ -82,17 +82,7 @@ void* MarkedAllocator::allocateSlowCase()
     
 MarkedBlock* MarkedAllocator::allocateBlock(AllocationEffort allocationEffort)
 {
-    MarkedBlock* block;
-    
-    {
-        MutexLocker locker(m_heap->m_freeBlockLock);
-        if (m_heap->m_numberOfFreeBlocks) {
-            block = static_cast<MarkedBlock*>(m_heap->m_freeBlocks.removeHead());
-            ASSERT(block);
-            m_heap->m_numberOfFreeBlocks--;
-        } else
-            block = 0;
-    }
+    MarkedBlock* block = static_cast<MarkedBlock*>(m_heap->blockAllocator().allocate());
     if (block)
         block = MarkedBlock::recycle(block, m_heap, m_cellSize, m_cellsNeedDestruction);
     else if (allocationEffort == AllocationCanFail)

@@ -79,9 +79,8 @@ void MarkedSpace::freeBlocks(MarkedBlock* head)
         
         m_blocks.remove(block);
         block->sweep();
-        MutexLocker locker(m_heap->m_freeBlockLock);
-        m_heap->m_freeBlocks.append(block);
-        m_heap->m_numberOfFreeBlocks++;
+
+        m_heap->blockAllocator().deallocate(block);
     }
 }
 

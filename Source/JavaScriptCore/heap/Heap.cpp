@@ -319,7 +319,6 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
     , m_storageSpace(this)
-    , m_blockFreeingThreadShouldQuit(false)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_machineThreads(this)
@@ -332,10 +331,6 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_lastGCLength(0)
     , m_lastCodeDiscardTime(WTF::currentTime())
 {
-    m_numberOfFreeBlocks = 0;
-    m_blockFreeingThread = createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree");
-    
-    ASSERT(m_blockFreeingThread);
     m_storageSpace.init();
 }
 
@@ -345,13 +340,6 @@ Heap::~Heap()
 
     m_objectSpace.shrink();
     m_storageSpace.freeAllBlocks();
-    releaseFreeBlocks();
-    {
-        MutexLocker locker(m_freeBlockLock);
-        m_blockFreeingThreadShouldQuit = true;
-        m_freeBlockCondition.broadcast();
-    }
-    waitForThreadCompletion(m_blockFreeingThread);
 
     ASSERT(!size());
     ASSERT(!capacity());
@@ -378,67 +366,6 @@ void Heap::lastChanceToFinalize()
     m_slotVisitor.m_visitedTypeCounts.dump(WTF::dataFile(), "Visited Type Counts");
     m_destroyedTypeCounts.dump(WTF::dataFile(), "Destroyed Type Counts");
 #endif
-}
-
-void Heap::waitForRelativeTimeWhileHoldingLock(double relative)
-{
-    if (m_blockFreeingThreadShouldQuit)
-        return;
-    m_freeBlockCondition.timedWait(m_freeBlockLock, currentTime() + relative);
-}
-
-void Heap::waitForRelativeTime(double relative)
-{
-    // If this returns early, that's fine, so long as it doesn't do it too
-    // frequently. It would only be a bug if this function failed to return
-    // when it was asked to do so.
-    
-    MutexLocker locker(m_freeBlockLock);
-    waitForRelativeTimeWhileHoldingLock(relative);
-}
-
-void Heap::blockFreeingThreadStartFunc(void* heap)
-{
-    static_cast<Heap*>(heap)->blockFreeingThreadMain();
-}
-
-void Heap::blockFreeingThreadMain()
-{
-    while (!m_blockFreeingThreadShouldQuit) {
-        // Generally wait for one second before scavenging free blocks. This
-        // may return early, particularly when we're being asked to quit.
-        waitForRelativeTime(1.0);
-        if (m_blockFreeingThreadShouldQuit)
-            break;
-        
-        // Now process the list of free blocks. Keep freeing until half of the
-        // blocks that are currently on the list are gone. Assume that a size_t
-        // field can be accessed atomically.
-        size_t currentNumberOfFreeBlocks = m_numberOfFreeBlocks;
-        if (!currentNumberOfFreeBlocks)
-            continue;
-        
-        size_t desiredNumberOfFreeBlocks = currentNumberOfFreeBlocks / 2;
-        
-        while (!m_blockFreeingThreadShouldQuit) {
-            MarkedBlock* block;
-            {
-                MutexLocker locker(m_freeBlockLock);
-                if (m_numberOfFreeBlocks <= desiredNumberOfFreeBlocks)
-                    block = 0;
-                else {
-                    block = static_cast<MarkedBlock*>(m_freeBlocks.removeHead());
-                    ASSERT(block);
-                    m_numberOfFreeBlocks--;
-                }
-            }
-            
-            if (!block)
-                break;
-            
-            MarkedBlock::destroy(block);
-        }
-    }
 }
 
 void Heap::reportExtraMemoryCostSlowCase(size_t cost)
@@ -910,33 +837,6 @@ bool Heap::isValidAllocation(size_t bytes)
         return false;
     
     return true;
-}
-
-void Heap::freeBlocks(MarkedBlock* head)
-{
-    m_objectSpace.freeBlocks(head);
-}
-
-void Heap::releaseFreeBlocks()
-{
-    while (true) {
-        MarkedBlock* block;
-        {
-            MutexLocker locker(m_freeBlockLock);
-            if (!m_numberOfFreeBlocks)
-                block = 0;
-            else {
-                block = static_cast<MarkedBlock*>(m_freeBlocks.removeHead());
-                ASSERT(block);
-                m_numberOfFreeBlocks--;
-            }
-        }
-        
-        if (!block)
-            break;
-        
-        MarkedBlock::destroy(block);
-    }
 }
 
 void Heap::addFinalizer(JSCell* cell, Finalizer finalizer)

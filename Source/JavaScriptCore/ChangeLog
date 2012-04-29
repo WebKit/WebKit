@@ -1,3 +1,22 @@
+2012-04-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Factored threaded block allocation into a separate object
+        https://bugs.webkit.org/show_bug.cgi?id=85148
+
+        Reviewed by Sam Weinig.
+
+        99% of this patch just moves duplicated block allocation and 
+        deallocation code into a new object named BlockAllocator, with these 
+        exceptions:
+
+        * heap/BlockAllocator.h: Added.
+        (BlockAllocator::BlockAllocator): The order of declarations here now 
+        guards us against an unlikely race condition during startup.
+
+        * heap/BlockAllocator.cpp:
+        JSC::BlockAllocator::blockFreeingThreadMain): Added a FIXME to 
+        highlight a lack of clarity we have in our block deallocation routines.
+
 2012-04-28  Sam Weinig  <sam@webkit.org>
 
         Try to fix the Qt build.

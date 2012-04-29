@@ -85,6 +85,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGThunks.cpp
     dfg/DFGVirtualRegisterAllocationPhase.cpp
 
+    heap/BlockAllocator.cpp
     heap/CopiedSpace.cpp
     heap/ConservativeRoots.cpp
     heap/DFGCodeBlocks.cpp

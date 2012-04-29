@@ -76,6 +76,7 @@ SOURCES += \
     heap/WeakBlock.cpp \
     heap/HandleSet.cpp \
     heap/HandleStack.cpp \
+    heap/BlockAllocator.cpp \
     heap/Heap.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \

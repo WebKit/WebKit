@@ -2170,6 +2170,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\BlockAllocator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\BlockAllocator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\Heap.cpp"
 				>
 			</File>

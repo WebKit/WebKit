@@ -22,6 +22,7 @@
 #ifndef Heap_h
 #define Heap_h
 
+#include "BlockAllocator.h"
 #include "DFGCodeBlocks.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
@@ -33,8 +34,6 @@
 #include "WeakHandleOwner.h"
 #include "WeakSet.h"
 #include "WriteBarrierSupport.h"
-#include <wtf/DoublyLinkedList.h>
-#include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 
@@ -184,7 +183,6 @@ namespace JSC {
         void canonicalizeCellLivenessData();
 
         void resetAllocators();
-        void freeBlocks(MarkedBlock*);
 
         void clearMarks();
         void markRoots(bool fullGC);
@@ -193,16 +191,11 @@ namespace JSC {
         void harvestWeakReferences();
         void finalizeUnconditionalFinalizers();
         
-        void releaseFreeBlocks();
         void sweep();
 
         RegisterFile& registerFile();
+        BlockAllocator& blockAllocator();
 
-        void waitForRelativeTimeWhileHoldingLock(double relative);
-        void waitForRelativeTime(double relative);
-        void blockFreeingThreadMain();
-        static void blockFreeingThreadStartFunc(void* heap);
-        
         const HeapSize m_heapSize;
         const size_t m_minBytesPerCycle;
         size_t m_sizeAfterLastCollect;
@@ -214,13 +207,7 @@ namespace JSC {
         MarkedSpace m_objectSpace;
         CopiedSpace m_storageSpace;
 
-        DoublyLinkedList<HeapBlock> m_freeBlocks;
-        size_t m_numberOfFreeBlocks;
-        
-        ThreadIdentifier m_blockFreeingThread;
-        Mutex m_freeBlockLock;
-        ThreadCondition m_freeBlockCondition;
-        bool m_blockFreeingThreadShouldQuit;
+        BlockAllocator m_blockAllocator;
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_destroyedTypeCounts;
@@ -370,6 +357,11 @@ namespace JSC {
     inline CheckedBoolean Heap::tryReallocateStorage(void** ptr, size_t oldSize, size_t newSize)
     {
         return m_storageSpace.tryReallocate(ptr, oldSize, newSize);
+    }
+
+    inline BlockAllocator& Heap::blockAllocator()
+    {
+        return m_blockAllocator;
     }
 
 } // namespace JSC

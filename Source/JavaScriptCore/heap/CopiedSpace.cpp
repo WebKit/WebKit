@@ -188,11 +188,7 @@ void CopiedSpace::doneCopying()
         }
 
         m_toSpaceSet.remove(block);
-        {
-            MutexLocker locker(m_heap->m_freeBlockLock);
-            m_heap->m_freeBlocks.push(block);
-            m_heap->m_numberOfFreeBlocks++;
-        }
+        m_heap->blockAllocator().deallocate(block);
     }
 
     CopiedBlock* curr = static_cast<CopiedBlock*>(m_oversizeBlocks.head());
@@ -215,16 +211,8 @@ void CopiedSpace::doneCopying()
 
 CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, CopiedBlock** outBlock)
 {
-    HeapBlock* heapBlock = 0;
     CopiedBlock* block = 0;
-    {
-        MutexLocker locker(m_heap->m_freeBlockLock);
-        if (!m_heap->m_freeBlocks.isEmpty()) {
-            heapBlock = m_heap->m_freeBlocks.removeHead();
-            m_heap->m_numberOfFreeBlocks--;
-        }
-    }
-    if (heapBlock)
+    if (HeapBlock* heapBlock = m_heap->blockAllocator().allocate())
         block = new (NotNull, heapBlock) CopiedBlock(heapBlock->m_allocation);
     else if (allocationEffort == AllocationMustSucceed) {
         if (!allocateNewBlock(&block)) {
@@ -251,24 +239,14 @@ CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, Cop
 
 void CopiedSpace::freeAllBlocks()
 {
-    while (!m_toSpace->isEmpty()) {
-        CopiedBlock* block = static_cast<CopiedBlock*>(m_toSpace->removeHead());
-        MutexLocker locker(m_heap->m_freeBlockLock);
-        m_heap->m_freeBlocks.append(block);
-        m_heap->m_numberOfFreeBlocks++;
-    }
+    while (!m_toSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(m_toSpace->removeHead());
 
-    while (!m_fromSpace->isEmpty()) {
-        CopiedBlock* block = static_cast<CopiedBlock*>(m_fromSpace->removeHead());
-        MutexLocker locker(m_heap->m_freeBlockLock);
-        m_heap->m_freeBlocks.append(block);
-        m_heap->m_numberOfFreeBlocks++;
-    }
+    while (!m_fromSpace->isEmpty())
+        m_heap->blockAllocator().deallocate(m_fromSpace->removeHead());
 
-    while (!m_oversizeBlocks.isEmpty()) {
-        CopiedBlock* block = static_cast<CopiedBlock*>(m_oversizeBlocks.removeHead());
-        block->m_allocation.deallocate();
-    }
+    while (!m_oversizeBlocks.isEmpty())
+        m_oversizeBlocks.removeHead()->m_allocation.deallocate();
 }
 
 size_t CopiedSpace::size()
