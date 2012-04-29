@@ -34,7 +34,11 @@ void InjectedBundle::platformInitialize(WKTypeRef)
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInteger:4],   @"AppleAntiAliasingThreshold",
         [NSNumber numberWithInteger:0],   @"AppleFontSmoothing",
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+        [NSNumber numberWithBool:NO],     @"NSScrollAnimationEnabled",
+#else
         [NSNumber numberWithBool:NO],     @"AppleScrollAnimationEnabled",
+#endif
         [NSNumber numberWithBool:NO],     @"NSOverlayScrollersEnabled",
         @"Always",                        @"AppleShowScrollBars",
         [NSArray arrayWithObject:@"en"],  @"AppleLanguages",

@@ -588,7 +588,13 @@ static void resetDefaultsToConsistentValues()
     GetThemeScrollBarArrowStyle(&style); // Force HIToolbox to read from CFPreferences
 #endif
 
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    [defaults setBool:NO forKey:@"NSScrollAnimationEnabled"];
+#else
     [defaults setBool:NO forKey:@"AppleScrollAnimationEnabled"];
+#endif
+
     [defaults setBool:NO forKey:@"NSOverlayScrollersEnabled"];
     [defaults setObject:@"Always" forKey:@"AppleShowScrollBars"];
 

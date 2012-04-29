@@ -1,3 +1,18 @@
+2012-04-28  Sam Weinig  <sam@webkit.org>
+
+        Smooth scrolling needs a new key
+        <rdar://problem/11331632>
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * TestWebKitAPI/mac/InjectedBundleControllerMac.mm:
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        Update for new key.
+
 2012-04-28  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2] http/tests/navigation/anchor-frames-gbk.html fails
