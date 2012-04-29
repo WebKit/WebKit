@@ -589,11 +589,20 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
     }
 }
 
+static bool scrollAnimationEnabledForSystem()
+{
+#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION)
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"AppleScrollAnimationEnabled"];
+#else
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
+#endif
+}
+
 bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
     m_haveScrolledSincePageLoad = true;
 
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"AppleScrollAnimationEnabled"] || !m_scrollableArea->scrollAnimatorEnabled())
+    if (!scrollAnimationEnabledForSystem() || !m_scrollableArea->scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     if (granularity == ScrollByPixel)
