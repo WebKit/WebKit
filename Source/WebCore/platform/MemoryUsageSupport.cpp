@@ -52,5 +52,10 @@ int MemoryUsageSupport::highMemoryUsageMB()
 {
     return 0;
 }
+
+int MemoryUsageSupport::highUsageDeltaMB()
+{
+    return 0;
+}
     
 } // namespace WebCore

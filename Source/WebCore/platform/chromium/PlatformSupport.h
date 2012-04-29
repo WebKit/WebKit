@@ -194,10 +194,6 @@ public:
     // LayoutTestMode -----------------------------------------------------
     static bool layoutTestMode();
 
-    // Memory -------------------------------------------------------------
-    // Delta of memory usage growth (vs. last actualMemoryUsageMB()) to force GC when memory usage is high.
-    static int highUsageDeltaMB();
-
     // Plugin -------------------------------------------------------------
     static bool plugins(bool refresh, Vector<PluginInfo>*);
     static NPObject* pluginScriptableObject(Widget*);

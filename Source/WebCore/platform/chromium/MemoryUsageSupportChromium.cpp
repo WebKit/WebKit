@@ -55,4 +55,9 @@ int MemoryUsageSupport::highMemoryUsageMB()
     return WebKit::Platform::current()->highMemoryUsageMB();
 }
 
+int MemoryUsageSupport::highUsageDeltaMB()
+{
+    return WebKit::Platform::current()->highUsageDeltaMB();
+}
+
 } // namespace WebCore

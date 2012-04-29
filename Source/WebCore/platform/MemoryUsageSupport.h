@@ -48,6 +48,10 @@ public:
 
     // If memory usage is above this threshold, force GC more aggressively.
     static int highMemoryUsageMB();
+
+    // Delta of memory usage growth (vs. last actualMemoryUsageMB())
+    // to force GC when memory usage is high.
+    static int highUsageDeltaMB();
 };
 
 } // namespace WebCore

@@ -914,11 +914,6 @@ void PlatformSupport::notifyJSOutOfMemory(Frame* frame)
     webFrame->client()->didExhaustMemoryAvailableForScript(webFrame);
 }
 
-int PlatformSupport::highUsageDeltaMB()
-{
-    return static_cast<int>(webKitPlatformSupport()->highUsageDeltaMB());
-}
-
 int PlatformSupport::screenHorizontalDPI(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);
