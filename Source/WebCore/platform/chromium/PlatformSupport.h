@@ -188,9 +188,6 @@ public:
     static void notifyJSOutOfMemory(Frame*);
     static bool allowScriptDespiteSettings(const KURL& documentURL);
 
-    // Language -----------------------------------------------------------
-    static String computedDefaultLanguage();
-
     // LayoutTestMode -----------------------------------------------------
     static bool layoutTestMode();
 

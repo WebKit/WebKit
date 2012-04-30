@@ -1,5 +1,17 @@
 2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Call defaultLocale directly
+        https://bugs.webkit.org/show_bug.cgi?id=85192
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
+2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Use new syntax to call callOnMainThread directly
         https://bugs.webkit.org/show_bug.cgi?id=85190
 

@@ -532,13 +532,6 @@ PassRefPtr<SerializedScriptValue> PlatformSupport::injectIDBKeyIntoSerializedVal
     return webKitPlatformSupport()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
-// Language -------------------------------------------------------------------
-
-String PlatformSupport::computedDefaultLanguage()
-{
-    return webKitPlatformSupport()->defaultLocale();
-}
-
 // LayoutTestMode -------------------------------------------------------------
 
 bool PlatformSupport::layoutTestMode()

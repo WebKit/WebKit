@@ -32,7 +32,7 @@
 #include "Language.h"
 
 #include "PlatformString.h"
-#include "PlatformSupport.h"
+#include <public/Platform.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ static String platformLanguage()
 {
     DEFINE_STATIC_LOCAL(String, computedDefaultLanguage, ());
     if (computedDefaultLanguage.isEmpty())
-        computedDefaultLanguage.append(PlatformSupport::computedDefaultLanguage());
+        computedDefaultLanguage.append(WebKit::Platform::current()->defaultLocale());
     return computedDefaultLanguage;
 }
 
