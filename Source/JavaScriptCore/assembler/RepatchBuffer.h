@@ -26,7 +26,7 @@
 #ifndef RepatchBuffer_h
 #define RepatchBuffer_h
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(JIT)
 
 #include "CodeBlock.h"
 #include <MacroAssembler.h>

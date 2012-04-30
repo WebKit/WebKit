@@ -57,7 +57,7 @@ static void initializeThreadingOnce()
 #if ENABLE(WRITE_BARRIER_PROFILING)
     WriteBarrierCounters::initialize();
 #endif
-#if ENABLE(JIT) && ENABLE(ASSEMBLER)
+#if ENABLE(ASSEMBLER)
     ExecutableAllocator::initializeAllocator();
 #endif
     RegisterFile::initializeThreading();

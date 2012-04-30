@@ -32,7 +32,7 @@
 #include "JSGlobalData.h"
 #include "JSValue.h"
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(JIT)
 
 namespace JSC {
 

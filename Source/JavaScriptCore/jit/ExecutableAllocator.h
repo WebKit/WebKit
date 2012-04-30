@@ -94,7 +94,7 @@ namespace JSC {
 
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
-#if ENABLE(JIT) && ENABLE(ASSEMBLER)
+#if ENABLE(ASSEMBLER)
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 class DemandExecutableAllocator;
