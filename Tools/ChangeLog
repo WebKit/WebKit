@@ -1,3 +1,11 @@
+2012-04-30  Ojan Vafai  <ojan@chromium.org>
+
+        Fix tests to not depend on the actual list of builders at build.chromium.org.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (testHtmlForIndividualTestOnAllBuildersWithChrome):
+        (testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster):
+
 2012-04-29  Sam Weinig  <sam@webkit.org>
 
         Remove BlobBuilder

@@ -404,6 +404,8 @@ function testHtmlForIndividualTestOnAllBuildersWithChrome()
     var test = 'dummytest.html';
     var builderName = 'dummyBuilder';
     g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
+    currentBuilderGroup().builders = {'Webkit Linux': '', 'Webkit Linux (dbg)': '', 'Webkit Mac10.5': '', 'Webkit Win': ''};
+
     assertEquals(htmlForIndividualTestOnAllBuildersWithChrome(test),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/dummytest.html" target="_blank">dummytest.html</a></h2>' +
         '<table class=test-table><thead><tr>' +
@@ -421,18 +423,8 @@ function testHtmlForIndividualTestOnAllBuildersWithChrome()
         '<div class=skipped-builder-list>' +
             '<div class=skipped-builder>Webkit Linux</div>' +
             '<div class=skipped-builder>Webkit Linux (dbg)</div>' +
-            '<div class=skipped-builder>Webkit Linux 32</div>' +
             '<div class=skipped-builder>Webkit Mac10.5</div>' +
-            '<div class=skipped-builder>Webkit Mac10.5 (dbg)(1)</div>' +
-            '<div class=skipped-builder>Webkit Mac10.5 (dbg)(2)</div>' +
-            '<div class=skipped-builder>Webkit Mac10.6</div>' +
-            '<div class=skipped-builder>Webkit Mac10.6 (dbg)</div>' +
-            '<div class=skipped-builder>Webkit Mac10.7</div>' +
-            '<div class=skipped-builder>Webkit Vista</div>' +
             '<div class=skipped-builder>Webkit Win</div>' +
-            '<div class=skipped-builder>Webkit Win (dbg)(1)</div>' +
-            '<div class=skipped-builder>Webkit Win (dbg)(2)</div>' +
-            '<div class=skipped-builder>Webkit Win7</div>' +
         '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
@@ -447,6 +439,8 @@ function testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster()
     var builderName = 'dummyBuilder';
     BUILDER_TO_MASTER[builderName] = WEBKIT_BUILDER_MASTER;
     g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
+        currentBuilderGroup().builders = {'Webkit Linux': '', 'Webkit Linux (dbg)': '', 'Webkit Mac10.5': '', 'Webkit Win': ''};
+
     assertEquals(htmlForIndividualTestOnAllBuildersWithChrome(test),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/dummytest.html" target="_blank">dummytest.html</a></h2>' +
             '<table class=test-table><thead><tr>' +
@@ -464,18 +458,8 @@ function testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster()
             '<div class=skipped-builder-list>' +
                 '<div class=skipped-builder>Webkit Linux</div>' +
                 '<div class=skipped-builder>Webkit Linux (dbg)</div>' +
-                '<div class=skipped-builder>Webkit Linux 32</div>' +
                 '<div class=skipped-builder>Webkit Mac10.5</div>' +
-                '<div class=skipped-builder>Webkit Mac10.5 (dbg)(1)</div>' +
-                '<div class=skipped-builder>Webkit Mac10.5 (dbg)(2)</div>' +
-                '<div class=skipped-builder>Webkit Mac10.6</div>' +
-                '<div class=skipped-builder>Webkit Mac10.6 (dbg)</div>' +
-                '<div class=skipped-builder>Webkit Mac10.7</div>' +
-                '<div class=skipped-builder>Webkit Vista</div>' +
                 '<div class=skipped-builder>Webkit Win</div>' +
-                '<div class=skipped-builder>Webkit Win (dbg)(1)</div>' +
-                '<div class=skipped-builder>Webkit Win (dbg)(2)</div>' +
-                '<div class=skipped-builder>Webkit Win7</div>' +
             '</div>' +
             '<div class=expectations test=dummytest.html>' +
                 '<div><span class=link onclick="setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +
