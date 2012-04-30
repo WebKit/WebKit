@@ -594,7 +594,9 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
     bool isRootBox = isRootInlineBox();
     if (isRootBox) {
         const FontMetrics& fontMetrics = renderer()->style(isFirstLineStyle())->fontMetrics();
-        setLogicalTop(top + maxAscent - fontMetrics.ascent(baselineType));
+        // RootInlineBoxes are always placed on at pixel boundaries in their logical y direction. Not doing
+        // so results in incorrect rendering of text decorations, most notably underlines.
+        setLogicalTop(roundToInt(top + maxAscent - fontMetrics.ascent(baselineType)));
     }
 
     LayoutUnit adjustmentForChildrenWithSameLineHeightAndBaseline = 0;
