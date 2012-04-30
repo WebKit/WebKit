@@ -1865,6 +1865,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
     }
 
     
+    StructureChain* prototypeChain = structure->prototypeChain(callFrame);
     switch (slot.cachedPropertyType()) {
     case PropertySlot::Getter:
         vPC[0] = getOpcode(op_get_by_id_getter_chain);
@@ -1880,7 +1881,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         break;
     }
     vPC[4].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure);
-    vPC[5].u.structureChain.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
+    vPC[5].u.structureChain.set(callFrame->globalData(), codeBlock->ownerExecutable(), prototypeChain);
     vPC[6] = count;
 }
 

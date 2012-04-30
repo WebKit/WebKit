@@ -1,3 +1,13 @@
+2012-04-30  Myles Maxfield  <mmaxfield@google.com>
+
+        End of Interpreter::tryCacheGetByID can trigger the garbage collector
+        https://bugs.webkit.org/show_bug.cgi?id=84927
+
+        Reviewed by Oliver Hunt.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCacheGetByID):
+
 2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
 
         jsSingleCharacterString and jsSingleCharacterSubstring are not inlined
