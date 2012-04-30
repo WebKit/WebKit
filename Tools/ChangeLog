@@ -1,3 +1,9 @@
+2012-04-30  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Unreviewed, move myself to reviewers
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
