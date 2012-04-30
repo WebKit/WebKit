@@ -40,7 +40,7 @@ namespace WTF {
 
 void ChromiumThreading::callOnMainThread(void (*func)(void*), void* context)
 {
-    WebKit::webKitPlatformSupport()->callOnMainThread(func, context);
+    WebKit::Platform::current()->callOnMainThread(func, context);
 }
 
 }  // namespace WTF
