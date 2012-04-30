@@ -44,7 +44,7 @@ public:
 
     virtual bool isFlexibleBox() const { return true; }
     virtual void computePreferredLogicalWidths();
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0, BlockLayoutPass = NormalLayoutPass);
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0);
 
     bool isHorizontalFlow() const;
 

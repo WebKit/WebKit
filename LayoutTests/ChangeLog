@@ -1,3 +1,13 @@
+2012-04-30  Abhishek Arya  <inferno@chromium.org>
+
+        Remove positioned float code.
+        https://bugs.webkit.org/show_bug.cgi?id=84795
+ 
+        Reviewed by Dan Bernstein.
+
+        * fast/block/float/positioned-float-crash-expected.txt: Added.
+        * fast/block/float/positioned-float-crash.html: Added.
+
 2012-04-30  Sam Weinig  <sam@webkit.org>
 
         Remove BlobBuilder

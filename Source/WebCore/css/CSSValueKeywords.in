@@ -876,9 +876,6 @@ off
 optimizeQuality
 -webkit-optimize-contrast
 
-// Positioned Floats
--webkit-positioned
-
 // -webkit-wrap-shape
 nonzero
 evenodd

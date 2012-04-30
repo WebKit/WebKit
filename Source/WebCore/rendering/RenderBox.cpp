@@ -419,7 +419,7 @@ void RenderBox::updateBoxModelInfoFromStyle()
         setHasBoxDecorations(true);
 
     setPositioned(styleToUse->isPositioned());
-    setFloating(styleToUse->isFloating() && (!isPositioned() || styleToUse->floating() == PositionedFloat));
+    setFloating(!isPositioned() && styleToUse->isFloating());
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
     if (styleToUse->overflowX() != OVISIBLE && !isRootObject && (isRenderBlock() || isTableRow() || isTableSection())) {

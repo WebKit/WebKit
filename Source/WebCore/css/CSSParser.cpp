@@ -564,8 +564,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueShow || valueID == CSSValueHide)
             return true;
         break;
-    case CSSPropertyFloat: // left | right | none | positioned | center (for buggy CSS, maps to none)
-        if (valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueNone || valueID == CSSValueCenter || valueID == CSSValueWebkitPositioned)
+    case CSSPropertyFloat: // left | right | none | center (for buggy CSS, maps to none)
+        if (valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueNone || valueID == CSSValueCenter)
             return true;
         break;
     case CSSPropertyFontStyle: // normal | italic | oblique | inherit
