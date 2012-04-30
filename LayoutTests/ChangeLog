@@ -1,3 +1,11 @@
+2012-04-30  Andreas Kling  <kling@webkit.org>
+
+        Add Mac expectation for fast/dom/Window/window-lookup-precedence.html.
+
+        Mac builds without ENABLE(DATALIST).
+
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+
 2012-04-29  Andreas Kling  <kling@webkit.org>
 
         Skip the fast/performance/ directory on Mac since the bots don't build with ENABLE(WEB_TIMING).

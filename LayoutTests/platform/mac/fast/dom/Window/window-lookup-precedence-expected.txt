@@ -1,0 +1,458 @@
+Tests lookup precedence for properties on Window objects in the presence of a child frame, and that IDL properties defined in the prototype (window.location, window.focus, etc) have higher lookup precedence than named document elements (such as input elements).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+ 
+
+PASS 'function alert() {    [native code]}' is 'function alert() {    [native code]}'
+PASS 'function alert() {    [native code]}' is 'function alert() {    [native code]}'
+PASS 'function atob() {    [native code]}' is 'function atob() {    [native code]}'
+PASS 'function atob() {    [native code]}' is 'function atob() {    [native code]}'
+PASS 'function blur() {    [native code]}' is 'function blur() {    [native code]}'
+PASS 'function blur() {    [native code]}' is 'function blur() {    [native code]}'
+PASS 'function btoa() {    [native code]}' is 'function btoa() {    [native code]}'
+PASS 'function btoa() {    [native code]}' is 'function btoa() {    [native code]}'
+PASS 'function captureEvents() {    [native code]}' is 'function captureEvents() {    [native code]}'
+PASS 'function captureEvents() {    [native code]}' is 'function captureEvents() {    [native code]}'
+PASS 'function clearInterval() {    [native code]}' is 'function clearInterval() {    [native code]}'
+PASS 'function clearInterval() {    [native code]}' is 'function clearInterval() {    [native code]}'
+PASS 'function clearTimeout() {    [native code]}' is 'function clearTimeout() {    [native code]}'
+PASS 'function clearTimeout() {    [native code]}' is 'function clearTimeout() {    [native code]}'
+PASS 'function close() {    [native code]}' is 'function close() {    [native code]}'
+PASS 'function close() {    [native code]}' is 'function close() {    [native code]}'
+PASS 'function confirm() {    [native code]}' is 'function confirm() {    [native code]}'
+PASS 'function confirm() {    [native code]}' is 'function confirm() {    [native code]}'
+PASS 'function find() {    [native code]}' is 'function find() {    [native code]}'
+PASS 'function find() {    [native code]}' is 'function find() {    [native code]}'
+PASS 'function focus() {    [native code]}' is 'function focus() {    [native code]}'
+PASS 'function focus() {    [native code]}' is 'function focus() {    [native code]}'
+PASS 'function getComputedStyle() {    [native code]}' is 'function getComputedStyle() {    [native code]}'
+PASS 'function getComputedStyle() {    [native code]}' is 'function getComputedStyle() {    [native code]}'
+PASS 'function getMatchedCSSRules() {    [native code]}' is 'function getMatchedCSSRules() {    [native code]}'
+PASS 'function getMatchedCSSRules() {    [native code]}' is 'function getMatchedCSSRules() {    [native code]}'
+PASS 'function getSelection() {    [native code]}' is 'function getSelection() {    [native code]}'
+PASS 'function getSelection() {    [native code]}' is 'function getSelection() {    [native code]}'
+PASS 'function moveBy() {    [native code]}' is 'function moveBy() {    [native code]}'
+PASS 'function moveBy() {    [native code]}' is 'function moveBy() {    [native code]}'
+PASS 'function moveTo() {    [native code]}' is 'function moveTo() {    [native code]}'
+PASS 'function moveTo() {    [native code]}' is 'function moveTo() {    [native code]}'
+PASS 'function open() {    [native code]}' is 'function open() {    [native code]}'
+PASS 'function open() {    [native code]}' is 'function open() {    [native code]}'
+PASS 'function print() {    [native code]}' is 'function print() {    [native code]}'
+PASS 'function print() {    [native code]}' is 'function print() {    [native code]}'
+PASS 'function prompt() {    [native code]}' is 'function prompt() {    [native code]}'
+PASS 'function prompt() {    [native code]}' is 'function prompt() {    [native code]}'
+PASS 'function releaseEvents() {    [native code]}' is 'function releaseEvents() {    [native code]}'
+PASS 'function releaseEvents() {    [native code]}' is 'function releaseEvents() {    [native code]}'
+PASS 'function resizeBy() {    [native code]}' is 'function resizeBy() {    [native code]}'
+PASS 'function resizeBy() {    [native code]}' is 'function resizeBy() {    [native code]}'
+PASS 'function resizeTo() {    [native code]}' is 'function resizeTo() {    [native code]}'
+PASS 'function resizeTo() {    [native code]}' is 'function resizeTo() {    [native code]}'
+PASS 'function scroll() {    [native code]}' is 'function scroll() {    [native code]}'
+PASS 'function scroll() {    [native code]}' is 'function scroll() {    [native code]}'
+PASS 'function scrollBy() {    [native code]}' is 'function scrollBy() {    [native code]}'
+PASS 'function scrollBy() {    [native code]}' is 'function scrollBy() {    [native code]}'
+PASS 'function scrollTo() {    [native code]}' is 'function scrollTo() {    [native code]}'
+PASS 'function scrollTo() {    [native code]}' is 'function scrollTo() {    [native code]}'
+PASS 'function setInterval() {    [native code]}' is 'function setInterval() {    [native code]}'
+PASS 'function setInterval() {    [native code]}' is 'function setInterval() {    [native code]}'
+PASS 'function setTimeout() {    [native code]}' is 'function setTimeout() {    [native code]}'
+PASS 'function setTimeout() {    [native code]}' is 'function setTimeout() {    [native code]}'
+PASS 'function stop() {    [native code]}' is 'function stop() {    [native code]}'
+PASS 'function stop() {    [native code]}' is 'function stop() {    [native code]}'
+PASS 'function toString() {    [native code]}' is 'function toString() {    [native code]}'
+PASS 'function toString() {    [native code]}' is 'function toString() {    [native code]}'
+PASS win['Attr'] == '[object AttrConstructor]' is true
+PASS win['Attr'] == '[object AttrConstructor]' is true
+PASS win['CDATASection'] == '[object CDATASectionConstructor]' is true
+PASS win['CDATASection'] == '[object CDATASectionConstructor]' is true
+PASS win['CSSCharsetRule'] == '[object CSSCharsetRuleConstructor]' is true
+PASS win['CSSCharsetRule'] == '[object CSSCharsetRuleConstructor]' is true
+PASS win['CSSFontFaceRule'] == '[object CSSFontFaceRuleConstructor]' is true
+PASS win['CSSFontFaceRule'] == '[object CSSFontFaceRuleConstructor]' is true
+PASS win['CSSImportRule'] == '[object CSSImportRuleConstructor]' is true
+PASS win['CSSImportRule'] == '[object CSSImportRuleConstructor]' is true
+PASS win['CSSMediaRule'] == '[object CSSMediaRuleConstructor]' is true
+PASS win['CSSMediaRule'] == '[object CSSMediaRuleConstructor]' is true
+PASS win['CSSPageRule'] == '[object CSSPageRuleConstructor]' is true
+PASS win['CSSPageRule'] == '[object CSSPageRuleConstructor]' is true
+PASS win['CSSPrimitiveValue'] == '[object CSSPrimitiveValueConstructor]' is true
+PASS win['CSSPrimitiveValue'] == '[object CSSPrimitiveValueConstructor]' is true
+PASS win['CSSRule'] == '[object CSSRuleConstructor]' is true
+PASS win['CSSRule'] == '[object CSSRuleConstructor]' is true
+PASS win['CSSRuleList'] == '[object CSSRuleListConstructor]' is true
+PASS win['CSSRuleList'] == '[object CSSRuleListConstructor]' is true
+PASS win['CSSStyleDeclaration'] == '[object CSSStyleDeclarationConstructor]' is true
+PASS win['CSSStyleDeclaration'] == '[object CSSStyleDeclarationConstructor]' is true
+PASS win['CSSStyleRule'] == '[object CSSStyleRuleConstructor]' is true
+PASS win['CSSStyleRule'] == '[object CSSStyleRuleConstructor]' is true
+PASS win['CSSStyleSheet'] == '[object CSSStyleSheetConstructor]' is true
+PASS win['CSSStyleSheet'] == '[object CSSStyleSheetConstructor]' is true
+PASS win['CSSValue'] == '[object CSSValueConstructor]' is true
+PASS win['CSSValue'] == '[object CSSValueConstructor]' is true
+PASS win['CSSValueList'] == '[object CSSValueListConstructor]' is true
+PASS win['CSSValueList'] == '[object CSSValueListConstructor]' is true
+PASS win['CharacterData'] == '[object CharacterDataConstructor]' is true
+PASS win['CharacterData'] == '[object CharacterDataConstructor]' is true
+PASS win['Comment'] == '[object CommentConstructor]' is true
+PASS win['Comment'] == '[object CommentConstructor]' is true
+PASS win['Counter'] == '[object CounterConstructor]' is true
+PASS win['Counter'] == '[object CounterConstructor]' is true
+PASS win['DOMException'] == '[object DOMExceptionConstructor]' is true
+PASS win['DOMException'] == '[object DOMExceptionConstructor]' is true
+PASS win['DOMImplementation'] == '[object DOMImplementationConstructor]' is true
+PASS win['DOMImplementation'] == '[object DOMImplementationConstructor]' is true
+PASS win['DOMParser'] == '[object DOMParserConstructor]' is true
+PASS win['DOMParser'] == '[object DOMParserConstructor]' is true
+PASS win['Document'] == '[object DocumentConstructor]' is true
+PASS win['Document'] == '[object DocumentConstructor]' is true
+PASS win['DocumentFragment'] == '[object DocumentFragmentConstructor]' is true
+PASS win['DocumentFragment'] == '[object DocumentFragmentConstructor]' is true
+PASS win['DocumentType'] == '[object DocumentTypeConstructor]' is true
+PASS win['DocumentType'] == '[object DocumentTypeConstructor]' is true
+PASS win['Element'] == '[object ElementConstructor]' is true
+PASS win['Element'] == '[object ElementConstructor]' is true
+PASS win['Entity'] == '[object EntityConstructor]' is true
+PASS win['Entity'] == '[object EntityConstructor]' is true
+PASS win['EntityReference'] == '[object EntityReferenceConstructor]' is true
+PASS win['EntityReference'] == '[object EntityReferenceConstructor]' is true
+PASS win['Event'] == '[object EventConstructor]' is true
+PASS win['Event'] == '[object EventConstructor]' is true
+PASS win['EventException'] == '[object EventExceptionConstructor]' is true
+PASS win['EventException'] == '[object EventExceptionConstructor]' is true
+PASS win['HTMLAnchorElement'] == '[object HTMLAnchorElementConstructor]' is true
+PASS win['HTMLAnchorElement'] == '[object HTMLAnchorElementConstructor]' is true
+PASS win['HTMLAppletElement'] == '[object HTMLAppletElementConstructor]' is true
+PASS win['HTMLAppletElement'] == '[object HTMLAppletElementConstructor]' is true
+PASS win['HTMLAreaElement'] == '[object HTMLAreaElementConstructor]' is true
+PASS win['HTMLAreaElement'] == '[object HTMLAreaElementConstructor]' is true
+PASS win['HTMLBRElement'] == '[object HTMLBRElementConstructor]' is true
+PASS win['HTMLBRElement'] == '[object HTMLBRElementConstructor]' is true
+PASS win['HTMLBaseElement'] == '[object HTMLBaseElementConstructor]' is true
+PASS win['HTMLBaseElement'] == '[object HTMLBaseElementConstructor]' is true
+PASS win['HTMLBaseFontElement'] == '[object HTMLBaseFontElementConstructor]' is true
+PASS win['HTMLBaseFontElement'] == '[object HTMLBaseFontElementConstructor]' is true
+PASS win['HTMLBodyElement'] == '[object HTMLBodyElementConstructor]' is true
+PASS win['HTMLBodyElement'] == '[object HTMLBodyElementConstructor]' is true
+PASS win['HTMLButtonElement'] == '[object HTMLButtonElementConstructor]' is true
+PASS win['HTMLButtonElement'] == '[object HTMLButtonElementConstructor]' is true
+PASS win['HTMLCanvasElement'] == '[object HTMLCanvasElementConstructor]' is true
+PASS win['HTMLCanvasElement'] == '[object HTMLCanvasElementConstructor]' is true
+PASS win['HTMLDListElement'] == '[object HTMLDListElementConstructor]' is true
+PASS win['HTMLDListElement'] == '[object HTMLDListElementConstructor]' is true
+FAIL win['HTMLDataListElement'] should be null (of type object). Was undefined (of type undefined).
+FAIL win['HTMLDataListElement'] should be null. Was [object HTMLInputElement].
+PASS win['HTMLDirectoryElement'] == '[object HTMLDirectoryElementConstructor]' is true
+PASS win['HTMLDirectoryElement'] == '[object HTMLDirectoryElementConstructor]' is true
+PASS win['HTMLDivElement'] == '[object HTMLDivElementConstructor]' is true
+PASS win['HTMLDivElement'] == '[object HTMLDivElementConstructor]' is true
+PASS win['HTMLDocument'] == '[object HTMLDocumentConstructor]' is true
+PASS win['HTMLDocument'] == '[object HTMLDocumentConstructor]' is true
+PASS win['HTMLElement'] == '[object HTMLElementConstructor]' is true
+PASS win['HTMLElement'] == '[object HTMLElementConstructor]' is true
+PASS win['HTMLEmbedElement'] == '[object HTMLEmbedElementConstructor]' is true
+PASS win['HTMLEmbedElement'] == '[object HTMLEmbedElementConstructor]' is true
+PASS win['HTMLFieldSetElement'] == '[object HTMLFieldSetElementConstructor]' is true
+PASS win['HTMLFieldSetElement'] == '[object HTMLFieldSetElementConstructor]' is true
+PASS win['HTMLFontElement'] == '[object HTMLFontElementConstructor]' is true
+PASS win['HTMLFontElement'] == '[object HTMLFontElementConstructor]' is true
+PASS win['HTMLFormElement'] == '[object HTMLFormElementConstructor]' is true
+PASS win['HTMLFormElement'] == '[object HTMLFormElementConstructor]' is true
+PASS win['HTMLFrameElement'] == '[object HTMLFrameElementConstructor]' is true
+PASS win['HTMLFrameElement'] == '[object HTMLFrameElementConstructor]' is true
+PASS win['HTMLFrameSetElement'] == '[object HTMLFrameSetElementConstructor]' is true
+PASS win['HTMLFrameSetElement'] == '[object HTMLFrameSetElementConstructor]' is true
+PASS win['HTMLHRElement'] == '[object HTMLHRElementConstructor]' is true
+PASS win['HTMLHRElement'] == '[object HTMLHRElementConstructor]' is true
+PASS win['HTMLHeadElement'] == '[object HTMLHeadElementConstructor]' is true
+PASS win['HTMLHeadElement'] == '[object HTMLHeadElementConstructor]' is true
+PASS win['HTMLHeadingElement'] == '[object HTMLHeadingElementConstructor]' is true
+PASS win['HTMLHeadingElement'] == '[object HTMLHeadingElementConstructor]' is true
+PASS win['HTMLHtmlElement'] == '[object HTMLHtmlElementConstructor]' is true
+PASS win['HTMLHtmlElement'] == '[object HTMLHtmlElementConstructor]' is true
+PASS win['HTMLIFrameElement'] == '[object HTMLIFrameElementConstructor]' is true
+PASS win['HTMLIFrameElement'] == '[object HTMLIFrameElementConstructor]' is true
+PASS win['HTMLImageElement'] == '[object HTMLImageElementConstructor]' is true
+PASS win['HTMLImageElement'] == '[object HTMLImageElementConstructor]' is true
+PASS win['HTMLInputElement'] == '[object HTMLInputElementConstructor]' is true
+PASS win['HTMLInputElement'] == '[object HTMLInputElementConstructor]' is true
+PASS win['HTMLLIElement'] == '[object HTMLLIElementConstructor]' is true
+PASS win['HTMLLIElement'] == '[object HTMLLIElementConstructor]' is true
+PASS win['HTMLLabelElement'] == '[object HTMLLabelElementConstructor]' is true
+PASS win['HTMLLabelElement'] == '[object HTMLLabelElementConstructor]' is true
+PASS win['HTMLLegendElement'] == '[object HTMLLegendElementConstructor]' is true
+PASS win['HTMLLegendElement'] == '[object HTMLLegendElementConstructor]' is true
+PASS win['HTMLLinkElement'] == '[object HTMLLinkElementConstructor]' is true
+PASS win['HTMLLinkElement'] == '[object HTMLLinkElementConstructor]' is true
+PASS win['HTMLMapElement'] == '[object HTMLMapElementConstructor]' is true
+PASS win['HTMLMapElement'] == '[object HTMLMapElementConstructor]' is true
+PASS win['HTMLMarqueeElement'] == '[object HTMLMarqueeElementConstructor]' is true
+PASS win['HTMLMarqueeElement'] == '[object HTMLMarqueeElementConstructor]' is true
+PASS win['HTMLMenuElement'] == '[object HTMLMenuElementConstructor]' is true
+PASS win['HTMLMenuElement'] == '[object HTMLMenuElementConstructor]' is true
+PASS win['HTMLMetaElement'] == '[object HTMLMetaElementConstructor]' is true
+PASS win['HTMLMetaElement'] == '[object HTMLMetaElementConstructor]' is true
+PASS win['HTMLModElement'] == '[object HTMLModElementConstructor]' is true
+PASS win['HTMLModElement'] == '[object HTMLModElementConstructor]' is true
+PASS win['HTMLOListElement'] == '[object HTMLOListElementConstructor]' is true
+PASS win['HTMLOListElement'] == '[object HTMLOListElementConstructor]' is true
+PASS win['HTMLObjectElement'] == '[object HTMLObjectElementConstructor]' is true
+PASS win['HTMLObjectElement'] == '[object HTMLObjectElementConstructor]' is true
+PASS win['HTMLOptGroupElement'] == '[object HTMLOptGroupElementConstructor]' is true
+PASS win['HTMLOptGroupElement'] == '[object HTMLOptGroupElementConstructor]' is true
+PASS win['HTMLOptionElement'] == '[object HTMLOptionElementConstructor]' is true
+PASS win['HTMLOptionElement'] == '[object HTMLOptionElementConstructor]' is true
+PASS win['HTMLParagraphElement'] == '[object HTMLParagraphElementConstructor]' is true
+PASS win['HTMLParagraphElement'] == '[object HTMLParagraphElementConstructor]' is true
+PASS win['HTMLParamElement'] == '[object HTMLParamElementConstructor]' is true
+PASS win['HTMLParamElement'] == '[object HTMLParamElementConstructor]' is true
+PASS win['HTMLPreElement'] == '[object HTMLPreElementConstructor]' is true
+PASS win['HTMLPreElement'] == '[object HTMLPreElementConstructor]' is true
+PASS win['HTMLQuoteElement'] == '[object HTMLQuoteElementConstructor]' is true
+PASS win['HTMLQuoteElement'] == '[object HTMLQuoteElementConstructor]' is true
+PASS win['HTMLScriptElement'] == '[object HTMLScriptElementConstructor]' is true
+PASS win['HTMLScriptElement'] == '[object HTMLScriptElementConstructor]' is true
+PASS win['HTMLSelectElement'] == '[object HTMLSelectElementConstructor]' is true
+PASS win['HTMLSelectElement'] == '[object HTMLSelectElementConstructor]' is true
+PASS win['HTMLStyleElement'] == '[object HTMLStyleElementConstructor]' is true
+PASS win['HTMLStyleElement'] == '[object HTMLStyleElementConstructor]' is true
+PASS win['HTMLTableCaptionElement'] == '[object HTMLTableCaptionElementConstructor]' is true
+PASS win['HTMLTableCaptionElement'] == '[object HTMLTableCaptionElementConstructor]' is true
+PASS win['HTMLTableCellElement'] == '[object HTMLTableCellElementConstructor]' is true
+PASS win['HTMLTableCellElement'] == '[object HTMLTableCellElementConstructor]' is true
+PASS win['HTMLTableColElement'] == '[object HTMLTableColElementConstructor]' is true
+PASS win['HTMLTableColElement'] == '[object HTMLTableColElementConstructor]' is true
+PASS win['HTMLTableElement'] == '[object HTMLTableElementConstructor]' is true
+PASS win['HTMLTableElement'] == '[object HTMLTableElementConstructor]' is true
+PASS win['HTMLTableRowElement'] == '[object HTMLTableRowElementConstructor]' is true
+PASS win['HTMLTableRowElement'] == '[object HTMLTableRowElementConstructor]' is true
+PASS win['HTMLTableSectionElement'] == '[object HTMLTableSectionElementConstructor]' is true
+PASS win['HTMLTableSectionElement'] == '[object HTMLTableSectionElementConstructor]' is true
+PASS win['HTMLTextAreaElement'] == '[object HTMLTextAreaElementConstructor]' is true
+PASS win['HTMLTextAreaElement'] == '[object HTMLTextAreaElementConstructor]' is true
+PASS win['HTMLTitleElement'] == '[object HTMLTitleElementConstructor]' is true
+PASS win['HTMLTitleElement'] == '[object HTMLTitleElementConstructor]' is true
+PASS win['HTMLUListElement'] == '[object HTMLUListElementConstructor]' is true
+PASS win['HTMLUListElement'] == '[object HTMLUListElementConstructor]' is true
+PASS win['KeyboardEvent'] == '[object KeyboardEventConstructor]' is true
+PASS win['KeyboardEvent'] == '[object KeyboardEventConstructor]' is true
+PASS win['MediaList'] == '[object MediaListConstructor]' is true
+PASS win['MediaList'] == '[object MediaListConstructor]' is true
+PASS win['MouseEvent'] == '[object MouseEventConstructor]' is true
+PASS win['MouseEvent'] == '[object MouseEventConstructor]' is true
+PASS win['MutationEvent'] == '[object MutationEventConstructor]' is true
+PASS win['MutationEvent'] == '[object MutationEventConstructor]' is true
+PASS win['NamedNodeMap'] == '[object NamedNodeMapConstructor]' is true
+PASS win['NamedNodeMap'] == '[object NamedNodeMapConstructor]' is true
+PASS win['Node'] == '[object NodeConstructor]' is true
+PASS win['Node'] == '[object NodeConstructor]' is true
+PASS win['NodeFilter'] == '[object NodeFilterConstructor]' is true
+PASS win['NodeFilter'] == '[object NodeFilterConstructor]' is true
+PASS win['NodeList'] == '[object NodeListConstructor]' is true
+PASS win['NodeList'] == '[object NodeListConstructor]' is true
+PASS win['Notation'] == '[object NotationConstructor]' is true
+PASS win['Notation'] == '[object NotationConstructor]' is true
+PASS win['OverflowEvent'] == '[object OverflowEventConstructor]' is true
+PASS win['OverflowEvent'] == '[object OverflowEventConstructor]' is true
+PASS win['ProcessingInstruction'] == '[object ProcessingInstructionConstructor]' is true
+PASS win['ProcessingInstruction'] == '[object ProcessingInstructionConstructor]' is true
+PASS win['ProgressEvent'] == '[object ProgressEventConstructor]' is true
+PASS win['ProgressEvent'] == '[object ProgressEventConstructor]' is true
+PASS win['Range'] == '[object RangeConstructor]' is true
+PASS win['Range'] == '[object RangeConstructor]' is true
+PASS win['RangeException'] == '[object RangeExceptionConstructor]' is true
+PASS win['RangeException'] == '[object RangeExceptionConstructor]' is true
+PASS win['Rect'] == '[object RectConstructor]' is true
+PASS win['Rect'] == '[object RectConstructor]' is true
+PASS win['SVGAngle'] == '[object SVGAngleConstructor]' is true
+PASS win['SVGAngle'] == '[object SVGAngleConstructor]' is true
+PASS win['SVGColor'] == '[object SVGColorConstructor]' is true
+PASS win['SVGColor'] == '[object SVGColorConstructor]' is true
+PASS win['SVGException'] == '[object SVGExceptionConstructor]' is true
+PASS win['SVGException'] == '[object SVGExceptionConstructor]' is true
+PASS win['SVGGradientElement'] == '[object SVGGradientElementConstructor]' is true
+PASS win['SVGGradientElement'] == '[object SVGGradientElementConstructor]' is true
+PASS win['SVGLength'] == '[object SVGLengthConstructor]' is true
+PASS win['SVGLength'] == '[object SVGLengthConstructor]' is true
+PASS win['SVGMarkerElement'] == '[object SVGMarkerElementConstructor]' is true
+PASS win['SVGMarkerElement'] == '[object SVGMarkerElementConstructor]' is true
+PASS win['SVGPaint'] == '[object SVGPaintConstructor]' is true
+PASS win['SVGPaint'] == '[object SVGPaintConstructor]' is true
+PASS win['SVGPathSeg'] == '[object SVGPathSegConstructor]' is true
+PASS win['SVGPathSeg'] == '[object SVGPathSegConstructor]' is true
+PASS win['SVGPreserveAspectRatio'] == '[object SVGPreserveAspectRatioConstructor]' is true
+PASS win['SVGPreserveAspectRatio'] == '[object SVGPreserveAspectRatioConstructor]' is true
+PASS win['SVGRenderingIntent'] == '[object SVGRenderingIntentConstructor]' is true
+PASS win['SVGRenderingIntent'] == '[object SVGRenderingIntentConstructor]' is true
+PASS win['SVGTextContentElement'] == '[object SVGTextContentElementConstructor]' is true
+PASS win['SVGTextContentElement'] == '[object SVGTextContentElementConstructor]' is true
+PASS win['SVGTextPathElement'] == '[object SVGTextPathElementConstructor]' is true
+PASS win['SVGTextPathElement'] == '[object SVGTextPathElementConstructor]' is true
+PASS win['SVGTransform'] == '[object SVGTransformConstructor]' is true
+PASS win['SVGTransform'] == '[object SVGTransformConstructor]' is true
+PASS win['SVGUnitTypes'] == '[object SVGUnitTypesConstructor]' is true
+PASS win['SVGUnitTypes'] == '[object SVGUnitTypesConstructor]' is true
+PASS win['StyleSheet'] == '[object StyleSheetConstructor]' is true
+PASS win['StyleSheet'] == '[object StyleSheetConstructor]' is true
+PASS win['StyleSheetList'] == '[object StyleSheetListConstructor]' is true
+PASS win['StyleSheetList'] == '[object StyleSheetListConstructor]' is true
+PASS win['Text'] == '[object TextConstructor]' is true
+PASS win['Text'] == '[object TextConstructor]' is true
+PASS win['TextEvent'] == '[object TextEventConstructor]' is true
+PASS win['TextEvent'] == '[object TextEventConstructor]' is true
+PASS win['UIEvent'] == '[object UIEventConstructor]' is true
+PASS win['UIEvent'] == '[object UIEventConstructor]' is true
+PASS win['WheelEvent'] == '[object WheelEventConstructor]' is true
+PASS win['WheelEvent'] == '[object WheelEventConstructor]' is true
+PASS win['XMLDocument'] == '[object DocumentConstructor]' is true
+PASS win['XMLDocument'] == '[object DocumentConstructor]' is true
+PASS win['XMLHttpRequest'] == '[object XMLHttpRequestConstructor]' is true
+PASS win['XMLHttpRequest'] == '[object XMLHttpRequestConstructor]' is true
+PASS win['XMLHttpRequestException'] == '[object XMLHttpRequestExceptionConstructor]' is true
+PASS win['XMLHttpRequestException'] == '[object XMLHttpRequestExceptionConstructor]' is true
+PASS win['XMLSerializer'] == '[object XMLSerializerConstructor]' is true
+PASS win['XMLSerializer'] == '[object XMLSerializerConstructor]' is true
+PASS win['XPathEvaluator'] == '[object XPathEvaluatorConstructor]' is true
+PASS win['XPathEvaluator'] == '[object XPathEvaluatorConstructor]' is true
+PASS win['XPathException'] == '[object XPathExceptionConstructor]' is true
+PASS win['XPathException'] == '[object XPathExceptionConstructor]' is true
+PASS win['XPathResult'] == '[object XPathResultConstructor]' is true
+PASS win['XPathResult'] == '[object XPathResultConstructor]' is true
+PASS win['XSLTProcessor'] == '[object XSLTProcessorConstructor]' is true
+PASS win['XSLTProcessor'] == '[object XSLTProcessorConstructor]' is true
+PASS win['onload'] is null
+PASS win['onload'] is null
+PASS win['frames'] == '[object Window]' is true
+PASS win['frames'] == '[object Window]' is true
+PASS win['parent'] == '[object Window]' is true
+PASS win['parent'] == '[object Window]' is true
+PASS win['self'] == '[object Window]' is true
+PASS win['self'] == '[object Window]' is true
+PASS win['top'] == '[object Window]' is true
+PASS win['top'] == '[object Window]' is true
+PASS win['window'] == '[object Window]' is true
+PASS win['window'] == '[object Window]' is true
+PASS win['locationbar'] == '[object BarInfo]' is true
+PASS win['locationbar'] == '[object BarInfo]' is true
+PASS win['menubar'] == '[object BarInfo]' is true
+PASS win['menubar'] == '[object BarInfo]' is true
+PASS win['personalbar'] == '[object BarInfo]' is true
+PASS win['personalbar'] == '[object BarInfo]' is true
+PASS win['scrollbars'] == '[object BarInfo]' is true
+PASS win['scrollbars'] == '[object BarInfo]' is true
+PASS win['statusbar'] == '[object BarInfo]' is true
+PASS win['statusbar'] == '[object BarInfo]' is true
+PASS win['toolbar'] == '[object BarInfo]' is true
+PASS win['toolbar'] == '[object BarInfo]' is true
+PASS win['console'] == '[object Console]' is true
+PASS win['history'] == '[object History]' is true
+PASS win['navigator'] == '[object Navigator]' is true
+PASS win['navigator'] == '[object Navigator]' is true
+PASS win['screen'] == '[object Screen]' is true
+PASS win['screen'] == '[object Screen]' is true
+PASS win['clientInformation'] == '[object Navigator]' is true
+PASS win['clientInformation'] == '[object Navigator]' is true
+PASS win['document'] == '[object HTMLDocument]' is true
+PASS win['document'] == '[object HTMLDocument]' is true
+PASS win['location'] matched original
+PASS win['location'] matched original
+PASS win['onabort'] is null
+PASS win['onabort'] is null
+PASS win['onbeforeunload'] is null
+PASS win['onbeforeunload'] is null
+PASS win['onblur'] is null
+PASS win['onblur'] is null
+PASS win['onchange'] is null
+PASS win['onchange'] is null
+PASS win['onclick'] is null
+PASS win['onclick'] is null
+PASS win['ondblclick'] is null
+PASS win['ondblclick'] is null
+PASS win['onerror'] is null
+PASS win['onerror'] is null
+PASS win['onfocus'] is null
+PASS win['onfocus'] is null
+PASS win['onkeydown'] is null
+PASS win['onkeydown'] is null
+PASS win['onkeypress'] is null
+PASS win['onkeypress'] is null
+PASS win['onkeyup'] is null
+PASS win['onkeyup'] is null
+PASS win['onmousedown'] is null
+PASS win['onmousedown'] is null
+PASS win['onmousemove'] is null
+PASS win['onmousemove'] is null
+PASS win['onmouseout'] is null
+PASS win['onmouseout'] is null
+PASS win['onmouseover'] is null
+PASS win['onmouseover'] is null
+PASS win['onmouseup'] is null
+PASS win['onmouseup'] is null
+PASS win['onmousewheel'] is null
+PASS win['onmousewheel'] is null
+PASS win['onreset'] is null
+PASS win['onreset'] is null
+PASS win['onresize'] is null
+PASS win['onresize'] is null
+PASS win['onscroll'] is null
+PASS win['onscroll'] is null
+PASS win['onsearch'] is null
+PASS win['onsearch'] is null
+PASS win['onselect'] is null
+PASS win['onselect'] is null
+PASS win['onsubmit'] is null
+PASS win['onsubmit'] is null
+PASS win['onunload'] is null
+PASS win['onunload'] is null
+PASS win['opener'] is null
+PASS win['opener'] is null
+FAIL win['defaultStatus'] should be undefined (of type undefined). Was  (of type string).
+FAIL win['defaultStatus'] should be undefined (of type undefined). Was  (of type string).
+FAIL win['defaultstatus'] should be undefined (of type undefined). Was  (of type string).
+FAIL win['defaultstatus'] should be undefined (of type undefined). Was  (of type string).
+FAIL win['name'] should be undefined (of type undefined). Was  (of type string).
+FAIL win['name'] should be undefined (of type undefined). Was  (of type string).
+FAIL win['status'] should be undefined (of type undefined). Was  (of type string).
+FAIL win['status'] should be undefined (of type undefined). Was  (of type string).
+PASS win['devicePixelRatio'] matched original
+PASS win['devicePixelRatio'] matched original
+PASS win['innerHeight'] matched original
+PASS win['innerHeight'] matched original
+PASS win['innerWidth'] matched original
+PASS win['innerWidth'] matched original
+PASS win['length'] matched original
+PASS win['length'] matched original
+PASS win['outerHeight'] matched original
+PASS win['outerHeight'] matched original
+PASS win['outerWidth'] matched original
+PASS win['outerWidth'] matched original
+PASS win['pageXOffset'] matched original
+PASS win['pageXOffset'] matched original
+PASS win['pageYOffset'] matched original
+PASS win['pageYOffset'] matched original
+PASS win['screenLeft'] matched original
+PASS win['screenLeft'] matched original
+PASS win['screenTop'] matched original
+PASS win['screenTop'] matched original
+PASS win['screenX'] matched original
+PASS win['screenX'] matched original
+PASS win['screenY'] matched original
+PASS win['screenY'] matched original
+PASS win['scrollX'] matched original
+PASS win['scrollX'] matched original
+PASS win['scrollY'] matched original
+PASS win['scrollY'] matched original
+PASS typeof win['closed'] is 'boolean'
+PASS win['closed'] is false
+PASS typeof win['closed'] is 'boolean'
+PASS win['closed'] is false
+PASS typeof win['offscreenBuffering'] is 'boolean'
+PASS win['offscreenBuffering'] is true
+PASS typeof win['offscreenBuffering'] is 'boolean'
+PASS win['offscreenBuffering'] is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
