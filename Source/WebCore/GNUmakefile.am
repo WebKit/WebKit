@@ -558,6 +558,14 @@ webcore_cppflags += -DENABLE_BLOB=1
 endif  # END ENABLE_BLOB
 
 # ---
+# Legacy WebKitBlobBuilder support
+# ---
+if ENABLE_LEGACY_WEBKIT_BLOB_BUILDER
+FEATURE_DEFINES += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
+webcore_cppflags += -DENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
+endif  # END ENABLE_LEGACY_WEBKIT_BLOB_BUILDER
+
+# ---
 # Animation API support
 # ---
 if ENABLE_ANIMATION_API

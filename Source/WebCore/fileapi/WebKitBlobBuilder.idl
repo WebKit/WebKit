@@ -30,6 +30,7 @@
 
 module html {
     interface [
+        Conditional=LEGACY_WEBKIT_BLOB_BUILDER,
         Constructor,
         JSGenerateToNativeObject,
         JSNoStaticTables

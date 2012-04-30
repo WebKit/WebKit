@@ -769,7 +769,7 @@ module window {
         attribute [Conditional=BLOB|FILE_SYSTEM] FileErrorConstructor FileError;
         attribute [Conditional=BLOB] FileReaderConstructor FileReader;
 
-        attribute [Conditional=BLOB] WebKitBlobBuilderConstructor WebKitBlobBuilder;
+        attribute [Conditional=BLOB&LEGACY_WEBKIT_BLOB_BUILDER] WebKitBlobBuilderConstructor WebKitBlobBuilder;
 
         attribute [Conditional=BLOB] DOMURLConstructor webkitURL;
 

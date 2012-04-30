@@ -1,3 +1,18 @@
+2012-04-30  Sam Weinig  <sam@webkit.org>
+
+        Remove BlobBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=84036
+
+        Reviewed by Anders Carlsson.
+
+        * fast/js/constructor-length.html:
+        * platform/mac/fast/js/constructor-length-expected.txt:
+        Remove WebKitBlobBuilder from this test, as it is not exposed on all platforms,
+        and add Blob, which is.
+
+        * platform/mac/Skipped:
+        Skip fast/files/blob-builder-crash.html, since we no longer support WebKitBlobBuilder.
+
 2012-04-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         fast/js/random-array-gc-stress times out in debug mode

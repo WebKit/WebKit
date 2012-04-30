@@ -1,3 +1,13 @@
+2012-04-29  Sam Weinig  <sam@webkit.org>
+
+        Remove BlobBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=84036
+
+        Reviewed by Anders Carlsson.
+
+        * features.gypi:
+        Keep WebKitBlobBuilder enabled for Chromium, since it has shipped it.
+
 2012-04-30  Min Qin  <qinmin@google.com>
 
         Expose a flag so that fullscreen video on android can work with FULLSCREEN_API

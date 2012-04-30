@@ -105,6 +105,7 @@ my (
     $inputTypeWeekSupport,
     $javaScriptDebuggerSupport,
     $legacyNotificationsSupport,
+    $legacyWebKitBlobBuilderSupport,
     $linkPrefetchSupport,
     $linkPrerenderSupport,
     $mathmlSupport,
@@ -265,6 +266,9 @@ my @features = (
 
     { option => "legacy-notifications", desc => "Toggle Legacy Desktop Notifications Support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => isBlackBerry(), value => \$legacyNotificationsSupport },
+
+    { option => "legacy-webkit-blob-builder", desc => "Toggle Legacy WebKitBlobBuilder Support",
+      define => "ENABLE_LEGACY_WEBKIT_BLOB_BUILDER", default => (isGtk() || isChromium() || isBlackBerry()), value => \$legacyWebKitBlobBuilderSupport },
 
     { option => "link-prefetch", desc => "Toggle pre fetching support",
       define => "ENABLE_LINK_PREFETCH", default => 0, value => \$linkPrefetchSupport },

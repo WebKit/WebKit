@@ -939,6 +939,14 @@ AC_ARG_ENABLE(blob,
               [],[enable_blob="yes"])
 AC_MSG_RESULT([$enable_blob])
 
+# check whether to enable Legacy WebKitBlobBuilder support
+AC_MSG_CHECKING([whether to enable Legacy WebKitBlobBuilder support])
+AC_ARG_ENABLE(legacy_webkit_blob_builder,
+              AC_HELP_STRING([--enable-legacy-webkit-blob-builder],
+                             [enable support for Legacy WebKitBlobBuilder [default=yes]]),
+              [],[enable_legacy_webkit_blob_builder="yes"])
+AC_MSG_RESULT([$legacy_webkit_blob_builder])
+
 # check whether to enable Fast Mobile Scrolling support
 AC_MSG_CHECKING([whether to enable Fast Mobile Scrolling])
 AC_ARG_ENABLE(fast_mobile_scrolling,
@@ -1320,6 +1328,7 @@ AM_CONDITIONAL([USE_OPENGL], [test "$with_accelerated_compositing" = "opengl" ||
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
+AM_CONDITIONAL([ENABLE_LEGACY_WEBKIT_BLOB_BUILDER],[test "$enable_legacy_webkit_blob_builder" = "yes"])
 AM_CONDITIONAL([ENABLE_METER_TAG],[test "$enable_meter_tag" = "yes"])
 AM_CONDITIONAL([ENABLE_MICRODATA],[test "$enable_microdata" = "yes"])
 AM_CONDITIONAL([ENABLE_PAGE_VISIBILITY_API],[test "$enable_page_visibility_api" = "yes"])
@@ -1428,6 +1437,7 @@ Build configuration:
 Features:
  WebGL                                                    : $enable_webgl
  Blob support                                             : $enable_blob
+ Legacy WebKitBlobBuilder support                         : $enable_legacy_webkit_blob_builder
  DOM mutation observer support                            : $enable_mutation_observers
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload

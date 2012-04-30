@@ -1,3 +1,16 @@
+2012-04-29  Sam Weinig  <sam@webkit.org>
+
+        Remove BlobBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=84036
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/build-webkit:
+        * qmake/mkspecs/features/features.prf:
+        Make exposing the WebKitBlobBuilder JS object conditional on a new
+        ENABLE_LEGACY_WEBKIT_BLOB_BUILDER flag. Don't enable this for the Mac,
+        but do for everyone else.
+
 2012-04-30  Amruth Raj Padmanabhuni  <amruthraj@motorola.com>
 
         [GTK] Add glib as a dependency to build glib-networking

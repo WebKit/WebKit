@@ -793,3 +793,6 @@ fast/profiler/dead-time.html
 
 # Requires rebaseline after bug 83978
 tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html
+
+# The Mac port does not support the legacy WebKitBlobBuilder class.
+fast/files/blob-builder-crash.html
