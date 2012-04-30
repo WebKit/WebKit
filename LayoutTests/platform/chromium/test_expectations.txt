@@ -3703,3 +3703,11 @@ BUGWK85090 : fast/js/dfg-uint16array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint8array.html = PASS TIMEOUT
 BUGWK85106 MAC LINUX SLOW : tables/mozilla/other/slashlogo.html = PASS
 BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
+
+BUGWK85174 : fast/files/blob-constructor.html = CRASH
+BUGWK85174 : fast/dom/HTMLAnchorElement/anchor-download-unset.html = TIMEOUT
+BUGWK85174 : fast/filesystem/file-writer-gc-blob.html = TIMEOUT
+BUGWK85174 : fast/filesystem/workers/file-writer-gc-blob.html = TEXT
+BUGWK85174 : fast/filesystem/workers/file-writer-sync-truncate-extend.html = TEXT
+BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
+BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
