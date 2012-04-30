@@ -69,6 +69,7 @@ public:
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
+    virtual float imageScaleFactor() const { return m_imageScaleFactor; }
     
 private:
     StyleCachedImageSet(CachedImage*, float imageScaleFactor, CSSImageSetValue*);

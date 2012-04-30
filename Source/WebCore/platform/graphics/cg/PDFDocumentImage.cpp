@@ -76,7 +76,7 @@ IntSize PDFDocumentImage::size() const
     return IntSize((int)(fabsf(rotWidth) + 0.5f), (int)(fabsf(rotHeight) + 0.5f));
 }
 
-void PDFDocumentImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio, float)
+void PDFDocumentImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     // FIXME: If we want size negotiation with PDF documents as-image, this is the place to implement it (https://bugs.webkit.org/show_bug.cgi?id=12095).
     Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);

@@ -42,7 +42,7 @@ public:
     virtual bool usesContainerSize() const { return true; }
     virtual bool hasRelativeWidth() const { return true; }
     virtual bool hasRelativeHeight() const { return true; }
-    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio, float scaleFactor = 1);
+    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual IntSize size() const { return m_size; }
 

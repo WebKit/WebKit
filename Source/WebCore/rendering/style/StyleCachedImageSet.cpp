@@ -88,7 +88,7 @@ bool StyleCachedImageSet::imageHasRelativeHeight() const
 
 void StyleCachedImageSet::computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
-    m_bestFitImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio, m_imageScaleFactor);
+    m_bestFitImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
 bool StyleCachedImageSet::usesImageContainerSize() const

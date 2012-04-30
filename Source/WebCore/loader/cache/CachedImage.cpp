@@ -270,10 +270,10 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
     return imageSize;
 }
 
-void CachedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio, float scaleFactor)
+void CachedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     if (m_image)
-        m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio, scaleFactor);
+        m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
 void CachedImage::notifyObservers(const IntRect* changeRect)
