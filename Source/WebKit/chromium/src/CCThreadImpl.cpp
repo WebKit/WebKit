@@ -103,7 +103,7 @@ ThreadIdentifier CCThreadImpl::threadID() const
 CCThreadImpl::CCThreadImpl(WebThread* thread)
     : m_thread(thread)
 {
-    if (thread == webKitPlatformSupport()->currentThread()) {
+    if (thread == WebKit::Platform::current()->currentThread()) {
         m_threadID = currentThread();
         return;
     }

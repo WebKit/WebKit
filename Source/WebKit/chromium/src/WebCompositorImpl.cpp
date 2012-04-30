@@ -58,7 +58,7 @@ void WebCompositorImpl::initialize(WebThread* implThread)
     ASSERT(!s_initialized);
     s_initialized = true;
 
-    s_mainThread = CCThreadImpl::create(webKitPlatformSupport()->currentThread()).leakPtr();
+    s_mainThread = CCThreadImpl::create(WebKit::Platform::current()->currentThread()).leakPtr();
     CCProxy::setMainThread(s_mainThread);
     if (implThread) {
         s_implThread = CCThreadImpl::create(implThread).leakPtr();
