@@ -287,3 +287,6 @@ BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMA
 BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
 BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
+
+// Test doesn't work when the machine is under heavy load.
+BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
