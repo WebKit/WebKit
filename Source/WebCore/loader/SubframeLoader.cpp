@@ -247,7 +247,9 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElemen
         frame->navigationScheduler()->scheduleLocationChange(m_frame->document()->securityOrigin(), url.string(), m_frame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList);
     else
         frame = loadSubframe(ownerElement, url, frameName, m_frame->loader()->outgoingReferrer());
-    return frame;
+
+    ASSERT(ownerElement->contentFrame() == frame || !ownerElement->contentFrame());
+    return ownerElement->contentFrame();
 }
 
 Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL& url, const String& name, const String& referrer)
