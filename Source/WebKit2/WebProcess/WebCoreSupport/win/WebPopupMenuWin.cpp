@@ -136,7 +136,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
         if (itemStyle.isVisible()) {
             int textX = std::max(0, data.m_clientPaddingLeft - data.m_clientInsetLeft);
             if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent() && itemStyle.textDirection() == LTR)
-                textX += minimumValueForLength(itemStyle.textIndent(), itemRect.width());
+                textX += minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
             int textY = itemRect.y() + itemFont.fontMetrics().ascent() + (itemRect.height() - itemFont.fontMetrics().height()) / 2;
 
             notSelectedBackingStoreContext->drawBidiText(itemFont, textRun, IntPoint(textX, textY));

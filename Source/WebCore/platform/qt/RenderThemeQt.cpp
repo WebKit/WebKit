@@ -737,7 +737,7 @@ bool RenderThemeQt::paintMediaVolumeSliderTrack(RenderObject *o, const PaintInfo
     if (!o->isSlider())
         return false;
 
-    IntRect b = toRenderBox(o)->contentBoxRect();
+    IntRect b = pixelSnappedIntRect(toRenderBox(o)->contentBoxRect());
 
     // Position the outer rectangle
     int top = r.y() + b.y();

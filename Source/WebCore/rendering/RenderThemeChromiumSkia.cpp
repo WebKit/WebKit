@@ -283,7 +283,7 @@ bool RenderThemeChromiumSkia::paintSearchFieldCancelButton(RenderObject* cancelB
     LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled button stays square and will fit in its parent's box.
-    LayoutUnit cancelButtonSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), r.height()));
+    LayoutUnit cancelButtonSize = std::min(inputContentBox.width(), std::min<LayoutUnit>(inputContentBox.height(), r.height()));
     // Calculate cancel button's coordinates relative to the input element.
     // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
@@ -326,7 +326,7 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsDecoration(RenderObject* ma
     LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled decoration stays square and will fit in its parent's box.
-    LayoutUnit magnifierSize = std::min(inputContentBox.width(), std::min(inputContentBox.height(), r.height()));
+    LayoutUnit magnifierSize = std::min(inputContentBox.width(), std::min<LayoutUnit>(inputContentBox.height(), r.height()));
     // Calculate decoration's coordinates relative to the input element.
     // Center the decoration vertically.  Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
@@ -361,7 +361,7 @@ bool RenderThemeChromiumSkia::paintSearchFieldResultsButton(RenderObject* magnif
     LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled decoration will fit in its parent's box.
-    LayoutUnit magnifierHeight = std::min(inputContentBox.height(), r.height());
+    LayoutUnit magnifierHeight = std::min<LayoutUnit>(inputContentBox.height(), r.height());
     LayoutUnit magnifierWidth = std::min<LayoutUnit>(inputContentBox.width(), magnifierHeight * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize);
     LayoutRect magnifierRect(magnifierObject->offsetFromAncestorContainer(inputRenderBox).width(),
                              inputContentBox.y() + (inputContentBox.height() - magnifierHeight + 1) / 2,

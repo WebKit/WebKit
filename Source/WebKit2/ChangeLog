@@ -1,3 +1,18 @@
+2012-04-30  Emil A Eklund  <eae@chromium.org>
+
+        [gtk, qt, chromium, win] Fix usage of LayoutUnits and rounding in platform code
+        https://bugs.webkit.org/show_bug.cgi?id=85222
+
+        Reviewed by Eric Seidel.
+
+        Update platform code to use the pixel snapped values for painting rects
+        to line up with device pixels and change platform specific hit testing
+        code to use roundedPoint as hit testing is still mostly done on integer
+        bounds.
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+
 2012-04-30  Anders Carlsson  <andersca@apple.com>
 
         Put all of TiledCoreAnimationDrawingArea in #if ENABLE(THREADED_SCROLLING)

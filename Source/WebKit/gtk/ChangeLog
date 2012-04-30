@@ -1,3 +1,23 @@
+2012-04-30  Emil A Eklund  <eae@chromium.org>
+
+        [gtk, qt, chromium, win] Fix usage of LayoutUnits and rounding in platform code
+        https://bugs.webkit.org/show_bug.cgi?id=85222
+
+        Reviewed by Eric Seidel.
+
+        Update platform code to use the pixel snapped values for painting rects
+        to line up with device pixels and change platform specific hit testing
+        code to use roundedPoint as hit testing is still mostly done on integer
+        bounds.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::mouseDidMoveOverElement):
+        * webkit/webkithittestresult.cpp:
+        (WebKit::kit):
+        * webkit/webkitwebview.cpp:
+        (getLocationForKeyboardGeneratedContextMenu):
+        (webkit_web_view_query_tooltip):
+
 2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.9.1 release
