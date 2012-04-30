@@ -1,3 +1,10 @@
+2012-04-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove an erroneous assertion after r115655.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::toUStringWithRadix):
+
 2012-04-30  Myles Maxfield  <mmaxfield@google.com>
 
         End of Interpreter::tryCacheGetByID can trigger the garbage collector

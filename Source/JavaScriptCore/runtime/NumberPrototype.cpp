@@ -354,7 +354,6 @@ static UString toUStringWithRadix(int32_t number, unsigned radix)
 
     while (positiveNumber) {
         uint32_t index = positiveNumber % radix;
-        ASSERT(index >= 0);
         ASSERT(index < sizeof(radixDigits));
         *--p = static_cast<LChar>(radixDigits[index]);
         positiveNumber /= radix;
