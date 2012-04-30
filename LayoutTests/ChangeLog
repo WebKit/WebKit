@@ -1,3 +1,9 @@
+2012-04-29  Andreas Kling  <kling@webkit.org>
+
+        Skip the fast/performance/ directory on Mac since the bots don't build with ENABLE(WEB_TIMING).
+
+        * platform/mac/Skipped:
+
 2012-04-29  Sam Weinig  <sam@webkit.org>
 
         Add support for the Blob constructor (Part 2)
