@@ -328,11 +328,8 @@ void ContainerNode::willRemove()
 
 static void willRemoveChild(Node* child)
 {
-    // update auxiliary doc info (e.g. iterators) to note that node is being removed
-    child->document()->nodeWillBeRemoved(child);
-
-    // fire removed from document mutation events.
     dispatchChildRemovalEvents(child);
+    child->document()->nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
     child->willRemove();
 }
 

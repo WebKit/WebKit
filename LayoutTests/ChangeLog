@@ -1,3 +1,16 @@
+2012-04-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        NULL ptr in WebCore::Range::getBorderAndTextQuads
+        https://bugs.webkit.org/show_bug.cgi?id=77218
+
+        Reviewed by Eric Seidel.
+
+        Add a regression test. We use alert here instead of innerHTML, textContent, etc...
+        because document element is no longer well-formed at the end of the test.
+
+        * fast/dom/Range/range-created-in-mutation-event-crash-expected.txt: Added.
+        * fast/dom/Range/range-created-in-mutation-event-crash.xhtml: Added.
+
 2012-04-30  Mark Rowe  <mrowe@apple.com>
 
         REGRESSION (r115544): platform/mac/fast/events/pointer-events-dashboard.html is failing
