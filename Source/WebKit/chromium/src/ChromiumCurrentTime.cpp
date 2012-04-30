@@ -38,7 +38,7 @@ namespace WTF {
 
 double currentTime()
 {
-    return WebKit::webKitPlatformSupport()->currentTime();
+    return WebKit::Platform::current()->currentTime();
 }
 
 double monotonicallyIncreasingTime()

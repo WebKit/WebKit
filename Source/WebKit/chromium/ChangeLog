@@ -1,5 +1,17 @@
 2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Use new syntax to call currentTime directly
+        https://bugs.webkit.org/show_bug.cgi?id=85187
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/ChromiumCurrentTime.cpp:
+        (WTF::currentTime):
+
+2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Use new syntax to call currentThread directly
         https://bugs.webkit.org/show_bug.cgi?id=85185
 
