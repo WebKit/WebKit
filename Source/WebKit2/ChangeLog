@@ -1,3 +1,24 @@
+2012-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Put all of TiledCoreAnimationDrawingArea in #if ENABLE(THREADED_SCROLLING)
+        https://bugs.webkit.org/show_bug.cgi?id=85232
+
+        Reviewed by Sam Weinig.
+
+        Stop pretending that TiledCoreAnimationDrawingArea works without threaded scrolling.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea):
+        (WebKit::dispatchBackToMainThread):
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Add String::startsWith() and endsWith() for string literals

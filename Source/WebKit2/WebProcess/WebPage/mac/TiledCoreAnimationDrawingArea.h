@@ -26,6 +26,8 @@
 #ifndef TiledCoreAnimationDrawingArea_h
 #define TiledCoreAnimationDrawingArea_h
 
+#if ENABLE(THREADED_SCROLLING)
+
 #include "DrawingArea.h"
 #include "LayerTreeContext.h"
 #include <WebCore/GraphicsLayerClient.h>
@@ -101,5 +103,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(THREADED_SCROLLING)
 
 #endif // TiledCoreAnimationDrawingArea_h
