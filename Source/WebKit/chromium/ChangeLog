@@ -1,3 +1,15 @@
+2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Use new syntax to call createSocketStreamHandle directly
+        https://bugs.webkit.org/show_bug.cgi?id=85184
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+        
+        * src/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandleInternal::connect):
+
 2012-04-29  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call highUsageDeltaMB directly

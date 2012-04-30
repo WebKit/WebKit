@@ -61,7 +61,7 @@ SocketStreamHandleInternal::~SocketStreamHandleInternal()
 
 void SocketStreamHandleInternal::connect(const KURL& url)
 {
-    m_socket = adoptPtr(webKitPlatformSupport()->createSocketStreamHandle());
+    m_socket = adoptPtr(WebKit::Platform::current()->createSocketStreamHandle());
     LOG(Network, "connect");
     ASSERT(m_socket);
     ASSERT(m_handle);
