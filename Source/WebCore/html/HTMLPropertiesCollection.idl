@@ -32,6 +32,7 @@ module html {
 
     interface [
         Conditional=MICRODATA,
+        JSGenerateToJSObject,
         IndexedGetter,
         NamedGetter
     ] HTMLPropertiesCollection : HTMLCollection {

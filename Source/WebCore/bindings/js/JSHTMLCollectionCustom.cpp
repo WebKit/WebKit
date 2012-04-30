@@ -33,11 +33,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
-#if ENABLE(MICRODATA)
-#include "HTMLPropertiesCollection.h"
-#include "JSHTMLPropertiesCollection.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -91,11 +86,6 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, HTMLCollection* c
         case DocAll:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLAllCollection, collection);
             break;
-#if ENABLE(MICRODATA)
-        case ItemProperties:
-            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLPropertiesCollection, collection);
-            break;
-#endif
         default:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, HTMLCollection, collection);
             break;
