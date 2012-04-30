@@ -161,7 +161,7 @@ const Vector<String>& monthLabels()
         return labels;
     }
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthFullName); ++i)
-        labels->append(WTF::monthFullName[i]);
+        labels.append(WTF::monthFullName[i]);
     return labels;
 }
 
