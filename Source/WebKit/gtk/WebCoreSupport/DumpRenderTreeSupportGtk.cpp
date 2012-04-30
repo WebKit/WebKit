@@ -623,6 +623,11 @@ void DumpRenderTreeSupportGtk::whiteListAccessFromOrigin(const gchar* sourceOrig
     SecurityPolicy::addOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
+void DumpRenderTreeSupportGtk::removeWhiteListAccessFromOrigin(const char* sourceOrigin, const char* destinationProtocol, const char* destinationHost, bool allowDestinationSubdomains)
+{
+    SecurityPolicy::removeOriginAccessWhitelistEntry(*SecurityOrigin::createFromString(sourceOrigin), destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
 void DumpRenderTreeSupportGtk::resetOriginAccessWhiteLists()
 {
     SecurityPolicy::resetOriginAccessWhitelists();

@@ -1,3 +1,18 @@
+2012-04-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT support for layoutTestController.removeOriginAccessWhitelistEntry
+        https://bugs.webkit.org/show_bug.cgi?id=85156
+
+        Reviewed by Martin Robinson.
+
+        Add support for removeOriginAccessWhitelistEntry which allow
+        layout tests to remove origins whitelisting.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::removeWhiteListAccessFromOrigin):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-04-29  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT needs an implementation of layoutTestController.setDomainRelaxationForbiddenForURLScheme

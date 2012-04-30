@@ -1,3 +1,14 @@
+2012-04-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT support for layoutTestController.removeOriginAccessWhitelistEntry
+        https://bugs.webkit.org/show_bug.cgi?id=85156
+
+        Reviewed by Martin Robinson.
+
+        Unskip http/tests/xmlhttprequest/origin-whitelisting-removal.html
+
+        * platform/gtk/test_expectations.txt:
+
 2012-04-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: chromium expectations updated.

@@ -114,6 +114,7 @@ public:
     static unsigned long gcCountJavascriptObjects();
 
     static void whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains);
+    static void removeWhiteListAccessFromOrigin(const char* sourceOrigin, const char* destinationProtocol, const char* destinationHost, bool allowDestinationSubdomains);
     static void resetOriginAccessWhiteLists();
     static unsigned int workerThreadCount();
 

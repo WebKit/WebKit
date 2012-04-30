@@ -286,7 +286,10 @@ void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigi
 
 void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
 {
-    // FIXME: implement
+    GOwnPtr<gchar> sourceOriginGChar(JSStringCopyUTF8CString(sourceOrigin));
+    GOwnPtr<gchar> protocolGChar(JSStringCopyUTF8CString(protocol));
+    GOwnPtr<gchar> hostGChar(JSStringCopyUTF8CString(host));
+    DumpRenderTreeSupportGtk::removeWhiteListAccessFromOrigin(sourceOriginGChar.get(), protocolGChar.get(), hostGChar.get(), includeSubdomains);
 }
 
 void LayoutTestController::setMainFrameIsFirstResponder(bool flag)

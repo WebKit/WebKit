@@ -778,9 +778,6 @@ BUGWKGTK : editing/selection/mixed-editability-10.html = FAIL
 BUGWKGTK : editing/selection/5825350-1.html = FAIL
 BUGWKGTK : editing/selection/5825350-2.html = FAIL
 
-// Missing layoutTestController.removeOriginAccessWhitelistEntry()
-BUGWKGTK : http/tests/xmlhttprequest/origin-whitelisting-removal.html = FAIL
-
 BUGWK55682 : fast/images/support-broken-image-delegate.html = FAIL
 
 // Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
