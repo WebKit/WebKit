@@ -1,3 +1,20 @@
+2012-04-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Validate keypress command names
+        https://bugs.webkit.org/show_bug.cgi?id=85204
+        <rdar://problem/11249368>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView doCommandBySelector:]):
+        (-[WKView insertText:replacementRange:]):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::registerKeypressCommandName):
+        (WebKit::WebPageProxy::isValidKeypressCommandName):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::executeSavedCommandBySelector):
+
 2012-04-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Implement WebUIClient's runOpenPanel in WebKit2GTK+

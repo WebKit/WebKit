@@ -402,6 +402,8 @@ void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInpu
 
 void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& handled)
 {
+    MESSAGE_CHECK(isValidKeypressCommandName(selector));
+
     handled = m_pageClient->executeSavedCommandBySelector(selector);
 }
 

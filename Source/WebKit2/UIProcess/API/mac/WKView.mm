@@ -1138,9 +1138,11 @@ static const short kIOHIDEventTypeScroll = 6;
     // As in insertText:replacementRange:, we assume that the call comes from an input method if there is marked text.
     bool isFromInputMethod = _data->_page->editorState().hasComposition;
 
-    if (parameters && !isFromInputMethod)
-        parameters->commands->append(KeypressCommand(NSStringFromSelector(selector)));
-    else {
+    if (parameters && !isFromInputMethod) {
+        KeypressCommand command(NSStringFromSelector(selector));
+        parameters->commands->append(command);
+        _data->_page->registerKeypressCommandName(command.commandName);
+    } else {
         // FIXME: Send the command to Editor synchronously and only send it along the
         // responder chain if it's a selector that does not correspond to an editing command.
         [super doCommandBySelector:selector];
@@ -1185,7 +1187,9 @@ static const short kIOHIDEventTypeScroll = 6;
     // then we also execute it immediately, as there will be no other chance.
     if (parameters && !isFromInputMethod) {
         ASSERT(replacementRange.location == NSNotFound);
-        parameters->commands->append(KeypressCommand("insertText:", text));
+        KeypressCommand command("insertText:", text);
+        parameters->commands->append(command);
+        _data->_page->registerKeypressCommandName(command.commandName);
         return;
     }
 

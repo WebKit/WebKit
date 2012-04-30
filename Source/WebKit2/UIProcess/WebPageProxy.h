@@ -555,6 +555,11 @@ public:
     bool isValidEditCommand(WebEditCommandProxy*);
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
 
+#if PLATFORM(MAC)
+    void registerKeypressCommandName(const String& name) { m_knownKeypressCommandNames.add(name); }
+    bool isValidKeypressCommandName(const String& name) const { return m_knownKeypressCommandNames.contains(name); }
+#endif
+
     WebProcessProxy* process() const;
     PlatformProcessIdentifier processIdentifier() const;
 
@@ -941,6 +946,10 @@ private:
 #endif
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
+
+#if PLATFORM(MAC)
+    HashSet<String> m_knownKeypressCommandNames;
+#endif
 
     RefPtr<WebPopupMenuProxy> m_activePopupMenu;
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
