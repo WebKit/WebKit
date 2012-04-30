@@ -558,7 +558,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                             }
                         }
                     }
-                } while (groupRemainingSpace);
+                } while (abs(groupRemainingSpace) >= 1);
             }
 
             // We didn't find any children that could grow.
@@ -809,7 +809,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                             }
                         }
                     }
-                } while (groupRemainingSpace);
+                } while (abs(groupRemainingSpace) >= 1);
             }
 
             // We didn't find any children that could grow.
