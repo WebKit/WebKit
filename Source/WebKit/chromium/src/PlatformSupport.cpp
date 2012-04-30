@@ -571,15 +571,6 @@ PassRefPtr<Image> PlatformSupport::loadPlatformImageResource(const char* name)
 
 #if ENABLE(WEB_AUDIO)
 
-PassOwnPtr<AudioBus> PlatformSupport::loadPlatformAudioResource(const char* name, double sampleRate)
-{
-    const WebData& resource = webKitPlatformSupport()->loadResource(name);
-    if (resource.isEmpty())
-        return nullptr;
-    
-    return decodeAudioFileData(resource.data(), resource.size(), sampleRate);
-}
-
 PassOwnPtr<AudioBus> PlatformSupport::decodeAudioFileData(const char* data, size_t size, double sampleRate)
 {
     WebAudioBus webAudioBus;

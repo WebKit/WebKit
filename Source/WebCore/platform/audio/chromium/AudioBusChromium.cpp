@@ -30,14 +30,20 @@
 
 #include "AudioFileReader.h"
 #include "PlatformSupport.h"
+#include <public/Platform.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float sampleRate)
 {
+    const WebKit::WebData& resource = WebKit::Platform::current()->loadResource(name);
+    if (resource.isEmpty())
+        return nullptr;
+    
     // FIXME: the sampleRate parameter is ignored. It should be removed from the API.
-    OwnPtr<AudioBus> audioBus = PlatformSupport::loadPlatformAudioResource(name, sampleRate);
+    OwnPtr<AudioBus> audioBus = PlatformSupport::decodeAudioFileData(resource.data(), resource.size(), sampleRate);
+
     if (!audioBus.get())
         return nullptr;
     
