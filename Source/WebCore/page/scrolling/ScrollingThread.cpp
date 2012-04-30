@@ -28,6 +28,8 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include <wtf/MainThread.h>
+
 namespace WebCore {
 
 ScrollingThread::ScrollingThread()
@@ -53,6 +55,17 @@ void ScrollingThread::dispatch(const Function<void()>& function)
     }
 
     shared().wakeUpRunLoop();
+}
+
+static void callFunctionOnMainThread(const Function<void()>* function)
+{
+    callOnMainThread(*function);
+    delete function;
+}
+
+void ScrollingThread::dispatchBarrier(const Function<void()>& function)
+{
+    dispatch(bind(callFunctionOnMainThread, new Function<void()>(function)));
 }
 
 ScrollingThread& ScrollingThread::shared()

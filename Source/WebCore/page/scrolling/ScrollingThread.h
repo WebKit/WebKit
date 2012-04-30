@@ -46,6 +46,10 @@ public:
     static bool isCurrentThread();
     static void dispatch(const Function<void()>&);
 
+    // Will dispatch the given function on the main thread once all pending functions
+    // on the scrolling thread have finished executing. Used for synchronization purposes.
+    static void dispatchBarrier(const Function<void()>&);
+
 private:
     ScrollingThread();
 
