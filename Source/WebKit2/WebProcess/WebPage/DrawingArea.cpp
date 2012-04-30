@@ -61,4 +61,10 @@ DrawingArea::~DrawingArea()
 {
 }
 
+void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>& function)
+{
+    // Scroll position updates are synchronous by default so we can just call the function right away here.
+    function();
+}
+
 } // namespace WebKit

@@ -66,6 +66,8 @@ private:
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void updatePreferences() OVERRIDE;
 
+    virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
+
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;
     virtual void notifySyncRequired(const WebCore::GraphicsLayer*) OVERRIDE;

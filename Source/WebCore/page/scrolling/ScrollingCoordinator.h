@@ -64,6 +64,7 @@ public:
 
 #if ENABLE(THREADED_SCROLLING)
     ScrollingTree* scrollingTree() const;
+    void commitTreeStateIfNeeded();
 #endif
 
     // Return whether this scrolling coordinator handles scrolling for the given frame view.
@@ -150,7 +151,6 @@ private:
     void scheduleTreeStateCommit();
 
     void scrollingTreeStateCommitterTimerFired(Timer<ScrollingCoordinator>*);
-    void commitTreeStateIfNeeded();
     void commitTreeState();
 
     OwnPtr<ScrollingTreeState> m_scrollingTreeState;

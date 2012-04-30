@@ -223,6 +223,25 @@ void TiledCoreAnimationDrawingArea::updatePreferences()
     ScrollingThread::dispatch(bind(&ScrollingTree::setDebugRootLayer, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), m_debugInfoLayer));
 }
 
+void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>& functionRef)
+{
+    m_webPage->ref();
+    m_webPage->corePage()->scrollingCoordinator()->commitTreeStateIfNeeded();
+
+    if (!m_layerTreeStateIsFrozen)
+        m_layerFlushScheduler.suspend();
+
+    Function<void ()> function = functionRef;
+    ScrollingThread::dispatchBarrier(bind(^{
+        function();
+
+        if (!m_layerTreeStateIsFrozen)
+            m_layerFlushScheduler.resume();
+
+        m_webPage->deref();
+    }));
+}
+
 void TiledCoreAnimationDrawingArea::notifyAnimationStarted(const GraphicsLayer*, double)
 {
 }

@@ -1,5 +1,25 @@
 2012-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Add a way to asynchronously call a function once the scroll position of a page has been updated
+        https://bugs.webkit.org/show_bug.cgi?id=85237
+
+        Reviewed by Sam Weinig.
+
+        Add DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition, which will call the given function object after
+        making sure that the scroll position has been updated correctly. This is important for TiledCoreAnimationDrawingArea,
+        which updates the scrolling position asynchronously.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        Since scroll position updates are synchronous by default, just call function directly.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        Commit the layer tree state and then use ScrollingThread::dispatchBarrier to make sure that the function is called when any
+        scroll position changes have been made. If possible, freeze the layer tree to make sure that the update is atomic.
+
+2012-04-30  Anders Carlsson  <andersca@apple.com>
+
         Fix ALL the build failures!
 
         * UIProcess/API/mac/WKView.mm:
