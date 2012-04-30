@@ -1394,7 +1394,7 @@ void FrameLoaderClientImpl::setTitle(const StringWithDirection& title, const KUR
 
 String FrameLoaderClientImpl::userAgent(const KURL& url)
 {
-    return webKitPlatformSupport()->userAgent(url);
+    return WebKit::Platform::current()->userAgent(url);
 }
 
 void FrameLoaderClientImpl::savePlatformDataToCachedFrame(CachedFrame*)
