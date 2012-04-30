@@ -1,3 +1,21 @@
+2012-04-30  Yi Shen  <yi.4.shen@nokia.com>
+
+        Inserting a paragraph between quoted lines in editing/deleting/delete-4038408-fix.html doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=78193
+
+        Reviewed by Ryosuke Niwa.
+
+        When pasting a copied portion of a blockquote with a newline at the end into an unquoted area,
+        the newline is inserted after the blockquote since we don't want it also to be quoted. However,
+        this behavior has also applied when we insert a paragraph between quoted lines, which is incorrect.
+        To figure out the right place to insert a paragraph, we need providing more information to the
+        InsertParagraphSeparatorCommand by introducing a boolean parameter "pasteBlockqutoeIntoUnquotedArea".
+
+        * editing/inserting/insert-paragraph-separator-in-blockquote-expected.txt: Added.
+        * editing/inserting/insert-paragraph-separator-in-blockquote.html: Added.
+        * editing/pasteboard/paste-wrapped-blockquote-into-nonblockquote-expected.txt: Added.
+        * editing/pasteboard/paste-wrapped-blockquote-into-nonblockquote.html: Added.
+
 2012-04-30  Antti Koivisto  <antti@apple.com>
 
         Protect current element in HTMLLinkElement::setCSSStyleSheet

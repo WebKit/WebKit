@@ -109,7 +109,7 @@ protected:
     void insertNodeAt(PassRefPtr<Node>, const Position&);
     void insertNodeAtTabSpanPosition(PassRefPtr<Node>, const Position&);
     void insertNodeBefore(PassRefPtr<Node>, PassRefPtr<Node> refChild);
-    void insertParagraphSeparator(bool useDefaultParagraphElement = false);
+    void insertParagraphSeparator(bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false);
     void insertLineBreak();
     void insertTextIntoNode(PassRefPtr<Text>, unsigned offset, const String& text);
     void mergeIdenticalElements(PassRefPtr<Element>, PassRefPtr<Element>);
