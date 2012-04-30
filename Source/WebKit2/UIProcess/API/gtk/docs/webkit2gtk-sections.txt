@@ -521,6 +521,30 @@ webkit_javascript_error_quark
 </SECTION>
 
 <SECTION>
+<FILE>WebKitFileChooserRequest</FILE>
+WebKitFileChooserRequest
+webkit_file_chooser_request_get_mime_types
+webkit_file_chooser_request_get_mime_types_filter
+webkit_file_chooser_request_get_select_multiple
+webkit_file_chooser_request_select_files
+webkit_file_chooser_request_get_selected_files
+webkit_file_chooser_request_cancel
+
+<SUBSECTION Standard>
+WebKitFileChooserRequestClass
+WEBKIT_TYPE_FILE_CHOOSER_REQUEST
+WEBKIT_FILE_CHOOSER_REQUEST
+WEBKIT_IS_FILE_CHOOSER_REQUEST
+WEBKIT_FILE_CHOOSER_REQUEST_CLASS
+WEBKIT_IS_FILE_CHOOSER_REQUEST_CLASS
+WEBKIT_FILE_CHOOSER_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitFileChooserRequestPrivate
+webkit_file_chooser_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitFindController</FILE>
 WebKitFindController
 WebKitFindOptions

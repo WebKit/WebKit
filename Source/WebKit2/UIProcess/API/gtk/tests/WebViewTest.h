@@ -47,6 +47,7 @@ public:
     void showInWindowAndWaitUntilMapped();
 
     void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);
+    void clickMouseButton(int x, int y, unsigned int button = 1, unsigned int mouseModifiers = 0);
     void keyStroke(unsigned int keyVal, unsigned int keyModifiers = 0);
 
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
@@ -65,6 +66,9 @@ public:
     CString m_expectedTitle;
     WebKitJavascriptResult* m_javascriptResult;
     GError** m_javascriptError;
+
+private:
+    void doMouseButtonEvent(GdkEventType, int, int, unsigned int, unsigned int);
 };
 
 #endif // WebViewTest_h

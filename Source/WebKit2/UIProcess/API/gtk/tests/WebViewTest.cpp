@@ -198,6 +198,12 @@ void WebViewTest::mouseMoveTo(int x, int y, unsigned int mouseModifiers)
     gtk_main_do_event(event.get());
 }
 
+void WebViewTest::clickMouseButton(int x, int y, unsigned int button, unsigned int mouseModifiers)
+{
+    doMouseButtonEvent(GDK_BUTTON_PRESS, x, y, button, mouseModifiers);
+    doMouseButtonEvent(GDK_BUTTON_RELEASE, x, y, button, mouseModifiers);
+}
+
 void WebViewTest::keyStroke(unsigned int keyVal, unsigned int keyModifiers)
 {
     g_assert(m_parentWindow);
@@ -221,6 +227,32 @@ void WebViewTest::keyStroke(unsigned int keyVal, unsigned int keyModifiers)
 
     gtk_main_do_event(event.get());
     event->key.type = GDK_KEY_RELEASE;
+    gtk_main_do_event(event.get());
+}
+
+void WebViewTest::doMouseButtonEvent(GdkEventType eventType, int x, int y, unsigned int button, unsigned int mouseModifiers)
+{
+    g_assert(m_parentWindow);
+    GtkWidget* viewWidget = GTK_WIDGET(m_webView);
+    g_assert(gtk_widget_get_realized(viewWidget));
+
+    GOwnPtr<GdkEvent> event(gdk_event_new(eventType));
+    event->button.window = gtk_widget_get_window(viewWidget);
+    g_object_ref(event->button.window);
+
+    event->button.time = GDK_CURRENT_TIME;
+    event->button.x = x;
+    event->button.y = y;
+    event->button.axes = 0;
+    event->button.state = mouseModifiers;
+    event->button.button = button;
+
+    event->button.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(viewWidget)));
+
+    int xRoot, yRoot;
+    gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &xRoot, &yRoot);
+    event->button.x_root = xRoot;
+    event->button.y_root = yRoot;
     gtk_main_do_event(event.get());
 }
 

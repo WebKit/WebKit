@@ -20,12 +20,14 @@
 #include "config.h"
 #include "WebKitUIClient.h"
 
+#include "WebKitFileChooserRequestPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/GtkUtilities.h>
+#include <wtf/gobject/GRefPtr.h>
 
 using namespace WebKit;
 
@@ -136,6 +138,12 @@ static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
     webkitWebViewPrintFrame(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), frame);
 }
 
+static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void *clientInfo)
+{
+    GRefPtr<WebKitFileChooserRequest> request = adoptGRef(webkitFileChooserRequestCreate(parameters, listener));
+    webkitWebViewRunFileChooserRequest(WEBKIT_WEB_VIEW(clientInfo), request.get());
+}
+
 void attachUIClientToView(WebKitWebView* webView)
 {
     WKPageUIClient wkUIClient = {
@@ -169,7 +177,7 @@ void attachUIClientToView(WebKitWebView* webView)
         0, // didDraw
         0, // pageDidScroll
         0, // exceededDatabaseQuota
-        0, // runOpenPanel
+        runOpenPanel,
         0, // decidePolicyForGeolocationPermissionRequest
         0, // headerHeight
         0, // footerHeight

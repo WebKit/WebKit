@@ -1,3 +1,91 @@
+2012-04-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Implement WebUIClient's runOpenPanel in WebKit2GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=78491
+
+        Reviewed by Martin Robinson.
+
+        Add a new public class to the API, WebKitFileChooserRequest, to be
+        emitted along with a new WebKitWebView::run-file-chooser signal to
+        let client applications to provide their own file chooser dialog
+        when the use interacts with HTML Input elements of type 'file'.
+
+        * GNUmakefile.am: Added new source files and headers.
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp: Added.
+        (_WebKitFileChooserRequestPrivate):
+        (webkit_file_chooser_request_init):
+        (webkitFileChooserRequestFinalize):
+        (webkitFileChooserRequestGetProperty):
+        (webkit_file_chooser_request_class_init):
+        (webkitFileChooserRequestCreate):
+        (webkit_file_chooser_request_get_mime_types):
+        (webkit_file_chooser_request_get_mime_types_filter):
+        (webkit_file_chooser_request_get_select_multiple):
+        (webkit_file_chooser_request_select_files):
+        (webkit_file_chooser_request_get_selected_files):
+        (webkit_file_chooser_request_cancel):
+        * UIProcess/API/gtk/WebKitFileChooserRequest.h: Added.
+        (_WebKitFileChooserRequest):
+        (_WebKitFileChooserRequestClass):
+        * UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h: Added,
+        containing the prototype of webkitFileChooserRequestCreate.
+
+        Provide private API to make a file chooser request from the
+        WebView, and provide a default handler for it.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (fileChooserDialogResponseCallback): Handler for the 'response'
+        signal for the GtkFileChooserDialog used in the default
+        handler. It will call to webkit_file_chooser_request_select_files
+        or webkit_file_chooser_request_cancel as needed.
+        (webkitWebViewRunFileChooser): Default handler for the new
+        'run-file-chooser' signal. It will create a GtkFileChooserDialog,
+        connect to the 'response' signal and show it.
+        (webkit_web_view_class_init): Connect the 'run-file-chooser'
+        signal to the default handler, webkitWebViewRunFileChooser.
+        (webkitWebViewRunFileChooserRequest):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        (_WebKitWebViewClass): Added prototype for the handler of the new
+        'run-file-chooser' signal.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h: Added prototype for
+        private new function webkitWebViewRunFileChooserRequest.
+
+        Provide an implementation for runOpenPanel in WebKitUIClient.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (runOpenPanel): New, implements runOpenPanel by creating an
+        instance of WebKitFileChooserRequest and asking the WebView to
+        emit the 'run-file-chooser' signal with it.
+        (attachUIClientToView): Reference the new runOpenPanel function.
+
+        Added the new publich header to the main header.
+
+        * UIProcess/API/gtk/webkit2.h: Added WebKitFileChooserRequest.h.
+
+        New unit tests for the new WebKitFileChooserRequest API. Also,
+        extended the WebViewTest class to allow simulating mouse clicks.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (checkMimeTypeForFilter): New, checks whether a GtkFileFilter
+        filters a given MIME type, as specified by RFC 2046.
+        (testWebViewFileChooserRequest): New unit test.
+        (beforeAll): Add the new unit test as an UIClientTest.
+
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::clickMouseButton): New public function to simulate a
+        mouse click through GdkEvents, as the combination of a 'press' and
+        a 'release' event. Used from the new unit test to simulate the
+        user pressing in the button rendered for a HTML Input element.
+        (WebViewTest::executeMouseButtonEvent): New private function to
+        simulate a mouse event through GdkEvents.
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+
+        Updated documentation related files with the new API.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Added new API.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Added new section.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Added get_type function.
+
 2012-04-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Added new exported symbols after r115553.

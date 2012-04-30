@@ -46,6 +46,7 @@ void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, W
 void webkitWebViewMouseTargetChanged(WebKitWebView*, WKHitTestResultRef, unsigned modifiers);
 void webkitWebViewPrintFrame(WebKitWebView*, WKFrameRef);
 void webkitWebViewResourceLoadStarted(WebKitWebView*, WKFrameRef, uint64_t resourceIdentifier, WebKitURIRequest*, bool isMainResource);
+void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView*, uint64_t resourceIdentifier);

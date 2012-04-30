@@ -31,9 +31,11 @@
 #include <JavaScriptCore/JSBase.h>
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitFileChooserRequest.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitJavascriptResult.h>
+#include <webkit2/WebKitPolicyDecision.h>
 #include <webkit2/WebKitScriptDialog.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
@@ -41,7 +43,6 @@
 #include <webkit2/WebKitWebResource.h>
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWindowProperties.h>
-#include <webkit2/WebKitPolicyDecision.h>
 
 G_BEGIN_DECLS
 
@@ -151,6 +152,8 @@ struct _WebKitWebViewClass {
                                           WebKitURIRequest          *request);
     gboolean   (* enter_fullscreen)      (WebKitWebView             *web_view);
     gboolean   (* leave_fullscreen)      (WebKitWebView             *web_view);
+    gboolean   (* run_file_chooser)      (WebKitWebView             *web_view,
+                                          WebKitFileChooserRequest  *request);
 
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);

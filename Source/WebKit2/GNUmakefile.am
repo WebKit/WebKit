@@ -96,6 +96,7 @@ libwebkit2gtkinclude_HEADERS = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDownload.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitEditingCommands.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitFileChooserRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFindController.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitHitTestResult.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitJavascriptResult.h \
@@ -577,6 +578,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitEditingCommands.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitError.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp \
