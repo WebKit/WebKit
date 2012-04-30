@@ -75,9 +75,6 @@ namespace WebCore {
         String m_sourceURL;
         Node* m_node;
         TextPosition m_position;
-#ifndef NDEBUG
-        bool m_prepared;
-#endif
     };
 
 } // namespace WebCore

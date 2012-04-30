@@ -59,9 +59,6 @@ V8LazyEventListener::V8LazyEventListener(const AtomicString& functionName, const
     , m_sourceURL(sourceURL)
     , m_node(node)
     , m_position(position)
-#ifndef NDEBUG
-    , m_prepared(false)
-#endif
 {
 }
 
@@ -219,15 +216,11 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 
     wrappedFunction->SetName(v8::String::New(fromWebCoreString(m_functionName), m_functionName.length()));
 
-    // FIXME: Remove m_prepared and the following comment-outs.
+    // FIXME: Remove the following comment-outs.
     // See https://bugs.webkit.org/show_bug.cgi?id=85152 for more details.
-#ifndef NDEBUG
-    // Checks if the second parsing never happens. Currently the second parsing can happen
-    // in a popup window.
-    ASSERT(!m_prepared);
-    m_prepared = true;
-#endif
-    // Comments out the following code since the second parsing can happen.
+    //
+    // For the time being, we comment out the following code since the
+    // second parsing can happen.
     // // Since we only parse once, there's no need to keep data used for parsing around anymore.
     // m_functionName = String();
     // m_code = String();
