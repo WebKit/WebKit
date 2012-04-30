@@ -1,3 +1,9 @@
+2012-04-30  Gavin Peters  <gavinp@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove PlatformSupport::loadPlatformAudioResource, call loadResource directly
