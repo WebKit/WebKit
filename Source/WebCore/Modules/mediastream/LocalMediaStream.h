@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStream.h"
-#include "Timer.h"
 
 namespace WebCore {
 
@@ -48,10 +47,6 @@ public:
 
 private:
     LocalMediaStream(ScriptExecutionContext*, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
-
-    void stopTimerFired(Timer<LocalMediaStream>*);
-
-    Timer<LocalMediaStream> m_stopTimer;
 };
 
 } // namespace WebCore
