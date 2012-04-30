@@ -1,3 +1,28 @@
+2012-04-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add fast patch for radix == 10 on numberProtoFuncToString
+        https://bugs.webkit.org/show_bug.cgi?id=85120
+
+        Reviewed by Darin Adler.
+
+        When radix, we use to turn the doubleValue into a JSValue just to convert
+        it to a String. The problem is that was using the slow path for conversion and
+        for the toString() operation.
+
+        This patch shortcuts the creation of a JSValue and uses NumericStrings directly.
+        The conversion is split between Integer and Double to ensure the fastest conversion
+        for the common case of integer arguments.
+
+        Converting number with radix 10 becomes 5% faster.
+
+        Due to the simpler conversion of number to string for integer, converting
+        integers that do not fall in the two previous optimizations get 32% faster.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::extractRadixFromArgs):
+        (JSC::integerValueToString):
+        (JSC::numberProtoFuncToString):
+
 2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

@@ -148,7 +148,7 @@ static ALWAYS_INLINE bool getIntegerArgumentInRange(ExecState* exec, int low, in
 typedef char RadixBuffer[2180];
 
 // Mapping from integers 0..35 to digit identifying this value, for radix 2..36.
-static const char* const radixDigits = "0123456789abcdefghijklmnopqrstuvwxyz";
+static const char radixDigits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radix)
 {
@@ -339,6 +339,32 @@ static char* toStringWithRadix(RadixBuffer& buffer, double number, unsigned radi
     return startOfResultString;
 }
 
+static UString toUStringWithRadix(int32_t number, unsigned radix)
+{
+    LChar buf[1 + 32]; // Worst case is radix == 2, which gives us 32 digits + sign.
+    LChar* end = buf + WTF_ARRAY_LENGTH(buf);
+    LChar* p = end;
+
+    bool negative = false;
+    uint32_t positiveNumber = number;
+    if (number < 0) {
+        negative = true;
+        positiveNumber = -number;
+    }
+
+    while (positiveNumber) {
+        uint32_t index = positiveNumber % radix;
+        ASSERT(index >= 0);
+        ASSERT(index < sizeof(radixDigits));
+        *--p = static_cast<LChar>(radixDigits[index]);
+        positiveNumber /= radix;
+    }
+    if (negative)
+        *--p = '-';
+
+    return UString(p, static_cast<unsigned>(end - p));
+}
+
 // toExponential converts a number to a string, always formatting as an expoential.
 // This method takes an optional argument specifying a number of *decimal places*
 // to round the significand to (or, put another way, this method optionally rounds
@@ -431,40 +457,63 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     return JSValue::encode(jsString(exec, UString(numberToFixedPrecisionString(x, significantFigures, buffer))));
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
+static inline int32_t extractRadixFromArgs(ExecState* exec)
 {
-    double x;
-    if (!toThisNumber(exec->hostThisValue(), x))
-        return throwVMTypeError(exec);
-
     JSValue radixValue = exec->argument(0);
-    int radix;
+    int32_t radix;
     if (radixValue.isInt32())
         radix = radixValue.asInt32();
     else if (radixValue.isUndefined())
         radix = 10;
     else
-        radix = static_cast<int>(radixValue.toInteger(exec)); // nan -> 0
+        radix = static_cast<int32_t>(radixValue.toInteger(exec)); // nan -> 0
 
+    return radix;
+}
+
+static inline EncodedJSValue integerValueToString(ExecState* exec, int32_t radix, int32_t value)
+{
+    // A negative value casted to unsigned would be bigger than 36 (the max radix).
+    if (static_cast<unsigned>(value) < static_cast<unsigned>(radix)) {
+        ASSERT(value <= 36);
+        ASSERT(value >= 0);
+        JSGlobalData* globalData = &exec->globalData();
+        return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[value]));
+    }
+
+    if (radix == 10) {
+        JSGlobalData* globalData = &exec->globalData();
+        return JSValue::encode(jsString(globalData, globalData->numericStrings.add(value)));
+    }
+
+    return JSValue::encode(jsString(exec, toUStringWithRadix(value, radix)));
+
+}
+
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
+{
+    double doubleValue;
+    if (!toThisNumber(exec->hostThisValue(), doubleValue))
+        return throwVMTypeError(exec);
+
+    int32_t radix = extractRadixFromArgs(exec);
     if (radix < 2 || radix > 36)
         return throwVMError(exec, createRangeError(exec, "toString() radix argument must be between 2 and 36"));
 
-    // Fast path for number to character conversion.
-    unsigned c = static_cast<unsigned>(x);
-    unsigned unsignedRadix = static_cast<unsigned>(radix);
-    if (c == x && c < unsignedRadix) {
+    int32_t integerValue = static_cast<int32_t>(doubleValue);
+    if (integerValue == doubleValue)
+        return integerValueToString(exec, radix, integerValue);
+
+    if (radix == 10) {
         JSGlobalData* globalData = &exec->globalData();
-        return JSValue::encode(globalData->smallStrings.singleCharacterString(globalData, radixDigits[c]));
+        return JSValue::encode(jsString(globalData, globalData->numericStrings.add(doubleValue)));
     }
 
-    if (radix == 10)
-        return JSValue::encode(jsNumber(x).toString(exec));
-
-    if (!isfinite(x))
-        return JSValue::encode(jsString(exec, UString::number(x)));
+    if (!isfinite(doubleValue))
+        return JSValue::encode(jsString(exec, UString::number(doubleValue)));
 
     RadixBuffer s;
-    return JSValue::encode(jsString(exec, toStringWithRadix(s, x, unsignedRadix)));
+    return JSValue::encode(jsString(exec, toStringWithRadix(s, doubleValue, radix)));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)

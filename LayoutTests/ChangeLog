@@ -1,3 +1,16 @@
+2012-04-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add fast path for radix == 10 to numberProtoFuncToString
+        https://bugs.webkit.org/show_bug.cgi?id=85120
+
+        Reviewed by Darin Adler.
+
+        Add more test coverage for Number.proto.toString.
+
+        * platform/chromium/test_expectations.txt: Mark the test as failing on Chromium.
+        * fast/js/toString-number-expected.txt: Added.
+        * fast/js/toString-number.html: Added.
+
 2012-04-30  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Adding a test for the experimental PeerConnection00
