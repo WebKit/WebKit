@@ -139,9 +139,13 @@ IntRect enclosingIntRect(const FractionalLayoutRect& rect)
 
 FractionalLayoutRect enclosingFractionalLayoutRect(const FloatRect& rect)
 {
+#if ENABLE(SUBPIXEL_LAYOUT)
     return FractionalLayoutRect(rect.x(), rect.y(),
                      rect.maxX() - rect.x() + FractionalLayoutUnit::epsilon(),
                      rect.maxY() - rect.y() + FractionalLayoutUnit::epsilon());
+#else
+    return enclosingIntRect(rect);
+#endif
 }
 
 IntRect pixelSnappedIntRect(const FractionalLayoutRect& rect)

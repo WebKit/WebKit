@@ -38,7 +38,11 @@
 
 namespace WebCore {
 
+#if ENABLE(SUBPIXEL_LAYOUT)
 static const int kFixedPointDenominator = 60;
+#else
+static const int kFixedPointDenominator = 1;
+#endif
 const int intMaxForLayoutUnit = INT_MAX / kFixedPointDenominator;
 const int intMinForLayoutUnit = -intMaxForLayoutUnit;
 
@@ -66,6 +70,12 @@ public:
     operator float() const { return toFloat(); }
     operator double() const { return toDouble(); }
     operator bool() const { return m_value; }
+
+    inline FractionalLayoutUnit operator++(int)
+    {
+        m_value += kFixedPointDenominator;
+        return *this;
+    }
 
     inline int rawValue() const { return m_value; }
     inline void setRawValue(int value) { m_value = value; }
@@ -388,6 +398,11 @@ inline float operator/(const float a, const FractionalLayoutUnit& b)
     return a / b.toFloat();
 }
 
+inline double operator/(const double a, const FractionalLayoutUnit& b)
+{
+    return a / b.toDouble();
+}
+
 inline FractionalLayoutUnit operator/(const int a, const FractionalLayoutUnit& b)
 {
     return FractionalLayoutUnit(a) / b;
@@ -428,6 +443,11 @@ inline FractionalLayoutUnit operator+(const int a, const FractionalLayoutUnit& b
 inline float operator+(const float a, const FractionalLayoutUnit& b)
 {
     return a + b.toFloat();
+}
+
+inline double operator+(const double a, const FractionalLayoutUnit& b)
+{
+    return a + b.toDouble();
 }
 
 inline FractionalLayoutUnit operator-(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
