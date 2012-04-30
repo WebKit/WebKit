@@ -62,7 +62,7 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
         return args.Holder();
 
     if (args.Length() == 0)
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
 
     v8::TryCatch tryCatch;
     v8::Handle<v8::String> urlstring = args[0]->ToString();
@@ -117,7 +117,7 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
     INC_STATS("DOM.WebSocket.send()");
 
     if (!args.Length())
-        return throwError("Not enough arguments", V8Proxy::TypeError);
+        return V8Proxy::throwNotEnoughArgumentsError();
 
     WebSocket* webSocket = V8WebSocket::toNative(args.Holder());
     v8::Handle<v8::Value> message = args[0];

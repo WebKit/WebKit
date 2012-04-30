@@ -58,7 +58,7 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
         return throwVMError(exec, createReferenceError(exec, "WebSocket constructor associated document is unavailable"));
 
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
 
     String urlString = ustringToString(exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
@@ -93,7 +93,7 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
 JSValue JSWebSocket::send(ExecState* exec)
 {
     if (!exec->argumentCount())
-        return throwError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwError(exec, createNotEnoughArgumentsError(exec));
 
     JSValue message = exec->argument(0);
     ExceptionCode ec = 0;

@@ -83,7 +83,7 @@ void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
 JSValue JSXMLHttpRequest::open(ExecState* exec)
 {
     if (exec->argumentCount() < 2)
-        return throwError(exec, createTypeError(exec, "Not enough arguments"));
+        return throwError(exec, createNotEnoughArgumentsError(exec));
 
     const KURL& url = impl()->scriptExecutionContext()->completeURL(ustringToString(exec->argument(1).toString(exec)->value(exec)));
     String method = ustringToString(exec->argument(0).toString(exec)->value(exec));

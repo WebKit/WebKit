@@ -80,7 +80,7 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
         if (exec->argumentCount() < 3)
-            return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+            return throwVMError(exec, createNotEnoughArgumentsError(exec));
 
         int32_t numberOfChannels = exec->argument(0).toInt32(exec);
         int32_t numberOfFrames = exec->argument(1).toInt32(exec);
