@@ -1,3 +1,13 @@
+2012-04-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        fast/js/random-array-gc-stress times out in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=84821
+
+        Reviewed by Darin Adler.
+
+        * fast/js/script-tests/random-array-gc-stress.js: Lowering the iterations even more.
+
+
 2012-04-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Add fast path for radix == 10 to numberProtoFuncToString
