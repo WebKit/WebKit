@@ -26,6 +26,8 @@
 #ifndef TiledCoreAnimationDrawingAreaProxy_h
 #define TiledCoreAnimationDrawingAreaProxy_h
 
+#if ENABLE(THREADED_SCROLLING)
+
 #include "DrawingAreaProxy.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -62,5 +64,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(THREADED_SCROLLING)
 
 #endif // TiledCoreAnimationDrawingAreaProxy_h

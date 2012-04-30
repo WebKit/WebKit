@@ -1,5 +1,14 @@
 2012-04-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix ALL the build failures!
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView WebKit::]):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+
+2012-04-30  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * Shared/DrawingAreaInfo.h:

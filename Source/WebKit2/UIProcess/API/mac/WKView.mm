@@ -2208,8 +2208,10 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
+#if ENABLE(THREADED_SCROLLING)
     if ([self _shouldUseTiledDrawingArea])
         return TiledCoreAnimationDrawingAreaProxy::create(_data->_page.get());
+#endif
 
     return DrawingAreaProxyImpl::create(_data->_page.get());
 }
