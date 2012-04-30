@@ -1,0 +1,15 @@
+Tests the JSEP PeerConnection related constructors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof webkitPeerConnection00 === 'function' is true
+PASS typeof SessionDescription === 'function' is true
+PASS typeof IceCandidate === 'function' is true
+PASS new webkitPeerConnection00('STUN foobar.com:12345', function(){}); did not throw exception.
+PASS new SessionDescription(''); did not throw exception.
+PASS new IceCandidate('', ''); did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

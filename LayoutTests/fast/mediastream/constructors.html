@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests the JSEP PeerConnection related constructors.");
+
+function shouldNotThrow(expression)
+{
+  try {
+    eval(expression);
+    testPassed(expression + " did not throw exception.");
+  } catch(e) {
+    testFailed(expression + " should not throw exception. Threw exception " + e);
+  }
+}
+
+shouldBeTrue("typeof webkitPeerConnection00 === 'function'");
+shouldBeTrue("typeof SessionDescription === 'function'");
+shouldBeTrue("typeof IceCandidate === 'function'");
+
+shouldNotThrow("new webkitPeerConnection00('STUN foobar.com:12345', function(){});");
+shouldNotThrow("new SessionDescription('');");
+shouldNotThrow("new IceCandidate('', '');");
+
+window.jsTestIsAsync = false;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

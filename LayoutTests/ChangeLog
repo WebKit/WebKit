@@ -1,3 +1,15 @@
+2012-04-30  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Adding a test for the experimental PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=82881
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests construction of objects.
+
+        * fast/mediastream/constructors-expected.txt: Added.
+        * fast/mediastream/constructors.html: Added.
+
 2012-04-30  Justin Schuh  <jschuh@chromium.org>
 
         loadOrRedirectSubframe should return the owner element's frame
