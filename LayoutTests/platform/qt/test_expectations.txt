@@ -54,11 +54,8 @@ BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMA
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
 // Following failing because of DRT not rendering monospace font for QT
-// This may be a local setup issue, will remove if the qt bots render monospace correctly
-// (which will cause unexpected passes). IF the bots do not render monospace correctly,
-// I'll file a bug and change the designators.
-BUGDTHARP : ietestcenter/css3/multicolumn/column-width-applies-to-005.htm = IMAGE
-BUGDTHARP : ietestcenter/css3/multicolumn/column-width-applies-to-006.htm = IMAGE
-BUGDTHARP : ietestcenter/css3/multicolumn/column-width-applies-to-008.htm = IMAGE
-BUGDTHARP : ietestcenter/css3/multicolumn/column-width-percentage-001.htm = IMAGE
-BUGDTHARP : ietestcenter/css3/multicolumn/column-containing-block-003.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-applies-to-005.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-applies-to-006.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-applies-to-008.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-width-percentage-001.htm = IMAGE
+BUGWK85203 : ietestcenter/css3/multicolumn/column-containing-block-003.htm = IMAGE

@@ -1,3 +1,9 @@
+2012-04-30  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Unreviewed gardening
+
+        * platform/qt/test_expectations.txt:
+
 2012-04-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Disable battery-status API support.
