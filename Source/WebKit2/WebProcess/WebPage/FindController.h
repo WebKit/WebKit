@@ -70,7 +70,8 @@ private:
     Vector<WebCore::IntRect> rectsForTextMatches();
     bool updateFindIndicator(WebCore::Frame* selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
 
-private:
+    void updateFindUIAfterPageScroll(bool found, const String&, FindOptions, unsigned maxMatchCount);
+
     WebPage* m_webPage;
     PageOverlay* m_findPageOverlay;
 

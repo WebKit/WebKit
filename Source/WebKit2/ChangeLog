@@ -1,5 +1,22 @@
 2012-04-30  Anders Carlsson  <andersca@apple.com>
 
+        ScrollingCoordinator::requestScrollPositionUpdate should not update the main frame scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=85240
+        <rdar://problem/11286609>
+
+        Reviewed by Sam Weinig.
+
+        The find machinery should cope with asynchronous scroll position updates.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        Split the code that handles updating the find indicator and find overlay out into a separate function.
+
+        (WebKit::FindController::findString):
+        Call updateFindUIAfterPageScroll once we know that the scroll position has been updated.
+
+2012-04-30  Anders Carlsson  <andersca@apple.com>
+
         Add a way to asynchronously call a function once the scroll position of a page has been updated
         https://bugs.webkit.org/show_bug.cgi?id=85237
 

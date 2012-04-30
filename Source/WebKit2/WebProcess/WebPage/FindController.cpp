@@ -33,6 +33,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/DocumentMarkerController.h>
+#include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -89,12 +90,8 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void FindController::findString(const String& string, FindOptions options, unsigned maxMatchCount)
+void FindController::updateFindUIAfterPageScroll(bool found, const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    m_webPage->corePage()->unmarkAllTextMatches();
-
-    bool found = m_webPage->corePage()->findString(string, core(options));
-
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
 
     bool shouldShowOverlay = false;
@@ -141,17 +138,25 @@ void FindController::findString(const String& string, FindOptions options, unsig
         }
         
         ASSERT(!m_findPageOverlay);
-        return;
-    }
-
-    if (!m_findPageOverlay) {
-        RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
-        m_findPageOverlay = findPageOverlay.get();
-        m_webPage->installPageOverlay(findPageOverlay.release());
     } else {
-        // The page overlay needs to be repainted.
-        m_findPageOverlay->setNeedsDisplay();
+        if (!m_findPageOverlay) {
+            RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
+            m_findPageOverlay = findPageOverlay.get();
+            m_webPage->installPageOverlay(findPageOverlay.release());
+        } else {
+            // The page overlay needs to be repainted.
+            m_findPageOverlay->setNeedsDisplay();
+        }
     }
+}
+
+void FindController::findString(const String& string, FindOptions options, unsigned maxMatchCount)
+{
+    m_webPage->corePage()->unmarkAllTextMatches();
+
+    bool found = m_webPage->corePage()->findString(string, core(options));
+
+    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition(bind(&FindController::updateFindUIAfterPageScroll, this, found, string, options, maxMatchCount));
 }
 
 void FindController::hideFindUI()
