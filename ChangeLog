@@ -1,5 +1,17 @@
 2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Update NEWS and configure.ac for 1.9.1 release
+        https://bugs.webkit.org/show_bug.cgi?id=85175
+
+        Reviewed by Philippe Normand.
+
+        * configure.ac: Bumped version number. Disable WebKit2 by default
+        for now, since we still don't use a different libtool version for
+        libwebkit2gtk. It will be enabled again after the release and the
+        library version will be reworked for the next release.
+
+2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix make distcheck.
 
         * GNUmakefile.am: Add ALL_MOFILES declaration.

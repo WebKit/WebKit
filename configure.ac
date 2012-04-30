@@ -2,14 +2,14 @@ AC_PREREQ(2.59)
 
 m4_define([webkit_major_version], [1])
 m4_define([webkit_minor_version], [9])
-m4_define([webkit_micro_version], [0])
+m4_define([webkit_micro_version], [1])
 
 # This is the version we'll be using as part of our User-Agent string
 # e.g., AppleWebKit/$(webkit_user_agent_version) ...
 #
 # Sourced from Source/WebCore/Configurations/Version.xcconfig
-m4_define([webkit_user_agent_major_version], [535])
-m4_define([webkit_user_agent_minor_version], [20])
+m4_define([webkit_user_agent_major_version], [536])
+m4_define([webkit_user_agent_minor_version], [10])
 
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
@@ -35,7 +35,7 @@ AC_CONFIG_SRCDIR([Source/WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
 dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
-LIBWEBKITGTK_VERSION=12:0:12
+LIBWEBKITGTK_VERSION=13:0:13
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects dist-xz no-dist-gzip tar-ustar])
@@ -1238,8 +1238,8 @@ fi
 # WebKit2
 AC_MSG_CHECKING([whether to build Webkit2])
 AC_ARG_ENABLE(webkit2,
-    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=yes]]),
-    [], [enable_webkit2="yes"])
+    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=no]]),
+    [], [enable_webkit2="no"])
 AC_MSG_RESULT([$enable_webkit2])
 if test "$enable_webkit2" = "yes"; then
    if test "$GTK_API_VERSION" = "2.0"; then

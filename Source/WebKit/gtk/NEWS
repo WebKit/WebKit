@@ -1,4 +1,72 @@
 =================
+WebKitGTK+ 1.9.1
+=================
+
+What's new in WebKitGTK+ 1.9.1?
+
+  - Geolocation support is built by default now. Use
+    --disable-geolocation during build to disable it.
+  - LINGUAS environment variable is honored now.
+  - Throttle DNS prefetching to avoid overloading the resolver.
+  - Remove defunct WebInspector GSettings mapping.
+  - Fix a crash when emitting signals with a GError parameter when
+    using GObject Introspection.
+  - Fix flickering during scrolling and resizing in newer versions of
+    GTK+.
+  - Fix a bug where the Content-Length header was not sent for certain
+    XMLHttpRequests.
+  - Fix a WebProcess segmentation fault related to clipboard handling.
+  - Fix a repainting error that occurred during interior frame
+    scrolling.
+  - Fix a crash when WebKitWebView is created without a WebContext.
+  - Fix a crash that could occur during synchronous XMLHttpRequests.
+  - Fix rendering of combobox / menulist buttons that do not have
+    separators.
+  - Fix the rendering of toggle buttons with larger-than-default
+    widths and heights with the Adwaita theme.
+  - Fix misrendering of text shadow extents in some situations.
+  - Fix a crash when closing browser with inspector window opened.
+  - Now interpret plugin metadata as UTF-8.
+  - Fix rendering of GtkWidgets embedded on WebKitWebView.
+  - Web content (except plugins) should no longer steal focus from
+    other GTK+ widgets.
+  - WebKit will try to use the default libsoup proxy resolver
+    automatically.
+  - Performance improvements in WebKitWebView by avoiding doing a lot
+    of work in size_allocate when the view is not mapped.
+  - Web Timing is now enabled.
+  - Add support for smooth scrolling.
+  - Implement unicode submenu items.
+  - FFTFrame implementation in GStreamer backend.
+  - More work on GStreamer 0.11 support.
+  - Add support for windowed plugins in WebKit2.
+  - Add full printing support to WebKit2.
+  - Add a new favicon database API that corrects the problems of the
+    old one.
+  - Add WebKitWebView::context-menu signal to allow applications to
+    handle its own context menu. WebKitWebView::populate-popup signal
+    and default-context setting are now deprecated.
+  - Well known names for menu items in the default context menu are
+    now exposed in an enumeration.
+  - Add entering/leaving fullscreen signals to WebKit API.
+  - Add enable-webaudio setting to WebKit2 GTK+ API.
+  - Add support for registering custom uri schemes in WebKit2.
+  - Add WebKitWebView::mouse-target-changed signal to WebKit2 GTK+
+    API.
+  - Add enter/leave fullscreen signals to WebKit2 GTK+ API.
+  - Add find API to WebKit2 GTK+ API.
+  - Use a single signal for script dialogs in WebKit2 GTK+ API.
+  - Add cookies API to WebKit2 GTK+ API.
+  - Add webkit_print_operation_print() to WebKit2 GTK+ API.
+  - Add resources API to WebKit2 GTK+ API.
+  - Add support for Response policy decisions to WebKit2 GTK+ API.
+  - Add javascript clipboard functionality settings to WebKit2 GTK+
+    API.
+  - Add cut, copy and paste methods to WebKit2 GTK+ API.
+  - Add zoom-text-only setting to WebKit2 GTK+ API.
+  - Add webkit_web_view_run_javascript() to WebKit2 GTK+ API.
+
+=================
 WebKitGTK+ 1.7.5
 =================
 
