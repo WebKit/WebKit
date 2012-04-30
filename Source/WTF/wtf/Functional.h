@@ -32,6 +32,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
+#include <Block.h>
 #include <objc/objc-runtime.h>
 #endif
 
@@ -275,6 +276,38 @@ public:
 private:
     R (C::*m_function)(P1, P2, P3, P4, P5);
 };
+
+#if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
+template<typename R>
+class FunctionWrapper<R (^)()> {
+public:
+    typedef R ResultType;
+    static const bool shouldRefFirstParameter = false;
+
+    explicit FunctionWrapper(R (^block)())
+        : m_block(Block_copy(block))
+    {
+    }
+
+    FunctionWrapper(const FunctionWrapper& other)
+        : m_block(Block_copy(other.m_block))
+    {
+    }
+
+    ~FunctionWrapper()
+    {
+        Block_release(m_block);
+    }
+
+    R operator()()
+    {
+        return m_block();
+    }
+
+private:
+    R (^m_block)();
+};
+#endif
 
 template<typename T, bool shouldRefAndDeref> struct RefAndDeref {
     static void ref(T) { }

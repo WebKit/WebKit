@@ -1,3 +1,14 @@
+2012-04-30  Anders Carlsson  <andersca@apple.com>
+
+        WTF::bind should work with blocks
+        https://bugs.webkit.org/show_bug.cgi?id=85227
+
+        Reviewed by Sam Weinig.
+
+        Add a block type FunctionWrapper specialization.
+
+        * wtf/Functional.h:
+
 2012-04-28  Emil A Eklund  <eae@chromium.org>
 
         Add ENABLE_SUBPIXEL_LAYOUT controlling FractionalLayoutUnit denominator
