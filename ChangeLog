@@ -1,3 +1,23 @@
+2012-04-25  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Add a proper license to FindSqlite.cmake.
+        https://bugs.webkit.org/show_bug.cgi?id=84901
+
+        Reviewed by Daniel Bates.
+
+        FindSqlite.cmake referenced COPYING-CMAKE-SCRIPTS, which was
+        supposed to contain its license. This file, however, was not
+        imported with FindSqlite.cmake into the tree.
+
+        Add it from kdelibs (where the Find file came from) at git
+        revision [1]. Also worth mentioning is that Alexander Neundorf
+        added Gilles Caulier as the script author in revision [2].
+
+        [1] https://projects.kde.org/projects/kde/kdelibs/repository/revisions/c27925edf98b9952aeada677dfc74ce9c809c48a
+        [2] https://projects.kde.org/projects/kde/kdelibs/repository/revisions/14d0a92e04e1a200d6e58397e57a29194a0819cf
+
+        * Source/cmake/FindSqlite.cmake:
+
 2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.9.1 release
