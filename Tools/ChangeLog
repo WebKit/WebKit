@@ -1,3 +1,10 @@
+2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * TestWebKitAPI/GNUmakefile.am: Add missing headers to compilation
+        and resources to EXTRA_DIST.
+
 2012-04-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT support for layoutTestController.removeOriginAccessWhitelistEntry

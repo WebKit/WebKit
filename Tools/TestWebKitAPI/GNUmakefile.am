@@ -59,6 +59,7 @@ noinst_LTLIBRARIES += \
 	Libraries/libTestWebKitAPIMain.la
 
 Libraries_libTestWebKitAPIMain_la_SOURCES = \
+	Tools/TestWebKitAPI/Test.h \
 	Tools/TestWebKitAPI/TestsController.cpp \
 	Tools/TestWebKitAPI/TestsController.h \
 	Tools/TestWebKitAPI/gtk/main.cpp
@@ -119,6 +120,7 @@ endif
 
 # TestWebKitAPIWebKit2Tests
 Libraries_libTestWebKitAPIWebKit2Tests_la_SOURCES = \
+	Tools/TestWebKitAPI/config.h \
 	Tools/TestWebKitAPI/PlatformUtilities.cpp \
 	Tools/TestWebKitAPI/PlatformUtilities.h \
 	Tools/TestWebKitAPI/PlatformWebView.h \
@@ -180,6 +182,23 @@ Libraries_libTestWebKitAPIInjectedBundle_la_CPPFLAGS = \
 Libraries_libTestWebKitAPIInjectedBundle_la_CXXFLAGS = $(global_cxxflags)
 Libraries_libTestWebKitAPIInjectedBundle_la_CFLAGS = $(global_cflags)
 
+EXTRA_DIST += \
+	Tools/TestWebKitAPI/Tests/WebKit2/18-characters.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/file-with-anchor.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/find.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/icon.png \
+	Tools/TestWebKitAPI/Tests/WebKit2/lots-of-iframes.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/lots-of-images.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/lots-of-text.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/mouse-move-listener.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/push-state.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/simple-accelerated-compositing.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/simple-form.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/simple.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/simple-iframe.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/simple-tall.html \
+	Tools/TestWebKitAPI/Tests/WebKit2/spacebar-scrolling.html
+
 Programs_TestWebKitAPI_WTF_TestCheckedArithmeticOperations_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp
 Programs_TestWebKitAPI_WTF_TestCheckedArithmeticOperations_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
@@ -205,7 +224,8 @@ Programs_TestWebKitAPI_WTF_TestRedBlackTree_LDADD = $(testwebkitapi_wtf_tests_ld
 Programs_TestWebKitAPI_WTF_TestRedBlackTree_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)
 
 Programs_TestWebKitAPI_WTF_TestStringBuilder_SOURCES = \
-	Tools/TestWebKitAPI/Tests/WTF/StringBuilder.cpp
+	Tools/TestWebKitAPI/Tests/WTF/StringBuilder.cpp \
+	Tools/TestWebKitAPI/WTFStringUtilities.h
 Programs_TestWebKitAPI_WTF_TestStringBuilder_CPPFLAGS = $(testwebkitapi_wtf_tests_cppflags)
 Programs_TestWebKitAPI_WTF_TestStringBuilder_LDADD = $(testwebkitapi_wtf_tests_ldadd)
 Programs_TestWebKitAPI_WTF_TestStringBuilder_LDFLAGS = $(testwebkitapi_wtf_tests_ldflags)

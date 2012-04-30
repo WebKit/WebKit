@@ -35,7 +35,7 @@ USE_LINGUAS += $(shell if test -n "$(USER_LINGUAS)" -o -n "$(LINGUAS)"; then LLI
 
 MOFILES += $(USE_LINGUAS:%=Source/WebKit/gtk/po/%.mo)
 
-ALL_MOFILES := $(shell echo $(POFILES) | tr ' ' '\n' | sed "s,^$(srcdir)/,,g" | sed 's/\.po/.mo/g')
+ALL_MOFILES += $(shell echo $(POFILES) | tr ' ' '\n' | sed "s,^$(srcdir)/,,g" | sed 's/\.po/.mo/g')
 
 .po.mo:
 	test -d Source/WebKit/gtk/po/ || mkdir -p Source/WebKit/gtk/po/

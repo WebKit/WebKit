@@ -1,3 +1,10 @@
+2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * gtest/GNUmakefile.am: Add source code files included by
+        gtest_all.cc to EXTRA_DIST.
+
 2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build and run TestWebKitAPI WebKit2 unit tests

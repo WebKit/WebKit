@@ -42,7 +42,7 @@ Libraries_libgtest_la_LIBADD = \
 
 # gtest source files that we don't compile directly.  They are
 # #included by gtest-all.cc.
-GTEST_SRC = \
+EXTRA_DIST += \
 	Source/ThirdParty/gtest/src/gtest.cc \
 	Source/ThirdParty/gtest/src/gtest-death-test.cc \
 	Source/ThirdParty/gtest/src/gtest-filepath.cc \
@@ -51,4 +51,3 @@ GTEST_SRC = \
 	Source/ThirdParty/gtest/src/gtest-test-part.cc \
 	Source/ThirdParty/gtest/src/gtest-typed-test.cc
 
-EXTRA_DIST += $(GTEST_SRC)

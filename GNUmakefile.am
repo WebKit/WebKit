@@ -58,6 +58,7 @@ PO_LINGUAS :=
 USER_LINGUAS :=
 USE_LINGUAS :=
 MOFILES :=
+ALL_MOFILES :=
 dom_binding_idls :=
 wtf_sources :=
 javascriptcore_h_api :=

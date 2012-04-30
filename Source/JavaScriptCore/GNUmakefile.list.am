@@ -227,6 +227,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HandleStack.h \
 	Source/JavaScriptCore/heap/HandleTypes.h \
 	Source/JavaScriptCore/heap/BlockAllocator.cpp \
+	Source/JavaScriptCore/heap/BlockAllocator.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
 	Source/JavaScriptCore/heap/ListableHandler.h \

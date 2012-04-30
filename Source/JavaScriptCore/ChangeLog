@@ -1,3 +1,9 @@
+2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header.
+
 2012-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         Factored threaded block allocation into a separate object

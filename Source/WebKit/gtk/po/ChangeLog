@@ -1,3 +1,10 @@
+2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Use += for ALL_MOFILES variable to make sure all
+        .mo files are cleaned by distclean.
+
 2012-03-24  Christian Kirbach  <Christian.Kirbach@googlemail.com>
 
         Updated German translation
