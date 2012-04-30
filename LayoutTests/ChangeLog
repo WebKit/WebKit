@@ -1,3 +1,9 @@
+2012-04-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromium expectations updated.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-30  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT support for layoutTestController.removeOriginAccessWhitelistEntry

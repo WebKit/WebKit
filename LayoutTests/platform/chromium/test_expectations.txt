@@ -3711,3 +3711,5 @@ BUGWK85174 : fast/filesystem/workers/file-writer-gc-blob.html = TEXT
 BUGWK85174 : fast/filesystem/workers/file-writer-sync-truncate-extend.html = TEXT
 BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
 BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
+
+BUGWK85176 MAC : fast/forms/date/input-date-commit-valid-only.html = TEXT
