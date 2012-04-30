@@ -1,3 +1,13 @@
+2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add String::startsWith() and endsWith() for string literals
+        https://bugs.webkit.org/show_bug.cgi?id=85154
+
+        Reviewed by Darin Adler.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::elementPatternMatches):
+
 2012-04-27  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Double tap zooming does nothing on table element on bustedtees.com

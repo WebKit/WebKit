@@ -164,7 +164,7 @@ static inline String pathExtension(const KURL& url)
 {
     String extension;
     String filename = url.lastPathComponent();
-    if (!filename.endsWith("/")) {
+    if (!filename.endsWith('/')) {
         int extensionPos = filename.reverseFind('.');
         if (extensionPos != -1)
             extension = filename.substring(extensionPos + 1);

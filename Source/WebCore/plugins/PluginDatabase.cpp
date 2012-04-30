@@ -283,7 +283,7 @@ PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
         return pluginForMIMEType(mimeType);
     
     String filename = url.lastPathComponent();
-    if (filename.endsWith("/"))
+    if (filename.endsWith('/'))
         return 0;
     
     int extensionPos = filename.reverseFind('.');

@@ -476,7 +476,7 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) con
     // FIXME: Passing a string that starts with "#" to the completeURL function does
     // not seem like it would work. The image element has similar but not identical code.
     const AtomicString& useMap = getAttribute(usemapAttr);
-    if (useMap.startsWith("#"))
+    if (useMap.startsWith('#'))
         addSubresourceURL(urls, document()->completeURL(useMap));
 }
 

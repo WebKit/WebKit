@@ -81,8 +81,19 @@ public:
     
     bool startsWith(const String& s, bool caseSensitive = true) const
         { return m_string.startsWith(s, caseSensitive); }
+    bool startsWith(UChar character) const
+        { return m_string.startsWith(character); }
+    template<unsigned matchLength>
+    bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const
+        { return m_string.startsWith<matchLength>(prefix, caseSensitive); }
+
     bool endsWith(const String& s, bool caseSensitive = true) const
         { return m_string.endsWith(s, caseSensitive); }
+    bool endsWith(UChar character) const
+        { return m_string.endsWith(character); }
+    template<unsigned matchLength>
+    bool endsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const
+        { return m_string.endsWith<matchLength>(prefix, caseSensitive); }
     
     WTF_EXPORT_PRIVATE AtomicString lower() const;
     AtomicString upper() const { return AtomicString(impl()->upper()); }

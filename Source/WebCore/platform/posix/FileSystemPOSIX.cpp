@@ -183,10 +183,9 @@ bool getFileModificationTime(const String& path, time_t& result)
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    if (path.endsWith("/"))
+    if (path.endsWith('/'))
         return path + component;
-    else
-        return path + "/" + component;
+    return path + "/" + component;
 }
 
 bool makeAllDirectories(const String& path)

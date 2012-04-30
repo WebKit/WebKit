@@ -1,3 +1,37 @@
+2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add String::startsWith() and endsWith() for string literals
+        https://bugs.webkit.org/show_bug.cgi?id=85154
+
+        Reviewed by Darin Adler.
+
+        When invoking StringImpl::startsWidth() or StringImpl::endsWith() with
+        a string literal, a new String was constructed implicitly, allocating
+        a new StringImpl and copying the characters for the operation.
+
+        This patch adds a version of those methods for single characters and
+        string literals.
+        This allows us to avoid allocating memory and use the characters in place,
+        and it permits some extra shortcuts in the implementation.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::startsWith):
+        (AtomicString):
+        (WTF::AtomicString::endsWith):
+        * wtf/text/StringImpl.cpp:
+        (WTF::equalInner):
+        (WTF):
+        (WTF::StringImpl::startsWith):
+        (WTF::StringImpl::endsWith):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::startsWith):
+        (StringImpl):
+        (WTF::StringImpl::endsWith):
+        * wtf/text/WTFString.h:
+        (WTF::String::startsWith):
+        (String):
+        (WTF::String::endsWith):
+
 2012-04-30  Anders Carlsson  <andersca@apple.com>
 
         WTF::bind should work with blocks

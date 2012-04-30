@@ -321,7 +321,7 @@ public:
         bool result = m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText, ec);
         m_oldText = oldText.stripWhiteSpace();
         // FIXME: remove this once the model handles this case.
-        if (!m_oldText.endsWith(";"))
+        if (!m_oldText.endsWith(';'))
             m_oldText += ";";
         return result;
     }

@@ -9310,9 +9310,9 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
         const unsigned end = m_propertyRange.end;
         ASSERT(start < end);
         String propertyString = String(m_dataStart.get() + start, end - start).stripWhiteSpace();
-        if (propertyString.endsWith(";", true))
+        if (propertyString.endsWith(';'))
             propertyString = propertyString.left(propertyString.length() - 1);
-        size_t colonIndex = propertyString.find(":");
+        size_t colonIndex = propertyString.find(':');
         ASSERT(colonIndex != notFound);
 
         String name = propertyString.left(colonIndex).stripWhiteSpace();

@@ -248,13 +248,13 @@ SMILTime SVGSMILElement::parseOffsetValue(const String& data)
     bool ok;
     double result = 0;
     String parse = data.stripWhiteSpace();
-    if (parse.endsWith("h"))
+    if (parse.endsWith('h'))
         result = parse.left(parse.length() - 1).toDouble(&ok) * 60 * 60;
     else if (parse.endsWith("min"))
         result = parse.left(parse.length() - 3).toDouble(&ok) * 60;
     else if (parse.endsWith("ms"))
         result = parse.left(parse.length() - 2).toDouble(&ok) / 1000;
-    else if (parse.endsWith("s"))
+    else if (parse.endsWith('s'))
         result = parse.left(parse.length() - 1).toDouble(&ok);
     else
         result = parse.toDouble(&ok);
@@ -345,7 +345,7 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
 
     Condition::Type type;
     int repeats = -1;
-    if (nameString.startsWith("repeat(") && nameString.endsWith(")")) {
+    if (nameString.startsWith("repeat(") && nameString.endsWith(')')) {
         // FIXME: For repeat events we just need to add the data carrying TimeEvent class and 
         // fire the events at appropiate times.
         repeats = nameString.substring(7, nameString.length() - 8).toUIntStrict(&ok);

@@ -1,3 +1,15 @@
+2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add String::startsWith() and endsWith() for string literals
+        https://bugs.webkit.org/show_bug.cgi?id=85154
+
+        Reviewed by Darin Adler.
+
+        Update WebKit2 to use String::endsWith(UChar).
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::pathExtension):
+
 2012-04-30  Alexey Proskuryakov  <ap@apple.com>
 
         Validate keypress command names

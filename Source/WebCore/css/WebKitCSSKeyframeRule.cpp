@@ -53,7 +53,7 @@ void StyleKeyframe::parseKeyString(const String& s, Vector<float>& keys)
             key = 0;
         else if (cur == "to")
             key = 1;
-        else if (cur.endsWith("%")) {
+        else if (cur.endsWith('%')) {
             float k = cur.substring(0, cur.length() - 1).toFloat();
             if (k >= 0 && k <= 100)
                 key = k/100;

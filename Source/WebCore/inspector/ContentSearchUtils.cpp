@@ -81,7 +81,7 @@ static Vector<pair<int, String> > getRegularExpressionMatchesByLines(const Regul
         String line = text.substring(start, lineEnd - start);
         if (line.endsWith("\r\n"))
             line = line.left(line.length() - 2);
-        if (line.endsWith("\n"))
+        if (line.endsWith('\n'))
             line = line.left(line.length() - 1);
 
         int matchLength;

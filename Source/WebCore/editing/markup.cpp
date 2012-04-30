@@ -859,7 +859,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     if (renderer && renderer->style()->preserveNewline()) {
         fragment->appendChild(document->createTextNode(string), ec);
         ASSERT(!ec);
-        if (string.endsWith("\n")) {
+        if (string.endsWith('\n')) {
             RefPtr<Element> element = createBreakElement(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
             fragment->appendChild(element.release(), ec);

@@ -498,7 +498,16 @@ public:
     WTF_EXPORT_PRIVATE size_t reverseFindIgnoringCase(StringImpl*, unsigned index = UINT_MAX);
 
     bool startsWith(StringImpl* str, bool caseSensitive = true) { return (caseSensitive ? reverseFind(str, 0) : reverseFindIgnoringCase(str, 0)) == 0; }
+    WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
+    WTF_EXPORT_PRIVATE bool startsWith(const char*, unsigned matchLength, bool caseSensitive) const;
+    template<unsigned matchLength>
+    bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return startsWith(prefix, matchLength - 1, caseSensitive); };
+
     WTF_EXPORT_PRIVATE bool endsWith(StringImpl*, bool caseSensitive = true);
+    WTF_EXPORT_PRIVATE bool endsWith(UChar) const;
+    WTF_EXPORT_PRIVATE bool endsWith(const char*, unsigned matchLength, bool caseSensitive) const;
+    template<unsigned matchLength>
+    bool endsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return endsWith(prefix, matchLength - 1, caseSensitive); }
 
     WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> replace(UChar, UChar);
     WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> replace(UChar, StringImpl*);

@@ -1095,6 +1095,35 @@ size_t StringImpl::reverseFindIgnoringCase(StringImpl* matchString, unsigned ind
     return delta;
 }
 
+ALWAYS_INLINE static bool equalInner(const StringImpl* stringImpl, unsigned startOffset, const char* matchString, unsigned matchLength, bool caseSensitive)
+{
+    ASSERT(stringImpl);
+    ASSERT(matchLength <= stringImpl->length());
+    ASSERT(startOffset + matchLength <= stringImpl->length());
+
+    if (caseSensitive) {
+        if (stringImpl->is8Bit())
+            return equal(stringImpl->characters8() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
+        return equal(stringImpl->characters16() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
+    }
+    if (stringImpl->is8Bit())
+        return equalIgnoringCase(stringImpl->characters8() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
+    return equalIgnoringCase(stringImpl->characters16() + startOffset, reinterpret_cast<const LChar*>(matchString), matchLength);
+}
+
+bool StringImpl::startsWith(UChar character) const
+{
+    return m_length && (*this)[0] == character;
+}
+
+bool StringImpl::startsWith(const char* matchString, unsigned matchLength, bool caseSensitive) const
+{
+    ASSERT(matchLength);
+    if (matchLength > length())
+        return false;
+    return equalInner(this, 0, matchString, matchLength, caseSensitive);
+}
+
 bool StringImpl::endsWith(StringImpl* matchString, bool caseSensitive)
 {
     ASSERT(matchString);
@@ -1103,6 +1132,20 @@ bool StringImpl::endsWith(StringImpl* matchString, bool caseSensitive)
         return (caseSensitive ? find(matchString, start) : findIgnoringCase(matchString, start)) == start;
     }
     return false;
+}
+
+bool StringImpl::endsWith(UChar character) const
+{
+    return m_length && (*this)[m_length - 1] == character;
+}
+
+bool StringImpl::endsWith(const char* matchString, unsigned matchLength, bool caseSensitive) const
+{
+    ASSERT(matchLength);
+    if (matchLength > length())
+        return false;
+    unsigned startOffset = length() - matchLength;
+    return equalInner(this, startOffset, matchString, matchLength, caseSensitive);
 }
 
 PassRefPtr<StringImpl> StringImpl::replace(UChar oldC, UChar newC)

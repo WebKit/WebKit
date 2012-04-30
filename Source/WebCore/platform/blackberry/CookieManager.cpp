@@ -184,7 +184,7 @@ bool CookieManager::shouldRejectForSecurityReason(const ParsedCookie* cookie, co
     // a.b.com matches b.com, a.b.com matches .B.com and a.b.com matches .A.b.Com
     // and so on.
     String hostDomainName = url.host();
-    hostDomainName = hostDomainName.startsWith(".") ? hostDomainName : "." + hostDomainName;
+    hostDomainName = hostDomainName.startsWith('.') ? hostDomainName : "." + hostDomainName;
     if (!hostDomainName.endsWith(cookie->domain(), false)) {
         LOG_ERROR("Cookie %s is rejected because its domain does not domain match the URL %s\n", cookie->toString().utf8().data(), url.string().utf8().data());
         return true;

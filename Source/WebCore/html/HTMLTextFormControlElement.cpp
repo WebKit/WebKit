@@ -473,7 +473,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
         innerTextElement()->setInnerText(value, ec);
         ASSERT(!ec);
 
-        if (value.endsWith("\n") || value.endsWith("\r")) {
+        if (value.endsWith('\n') || value.endsWith('\r')) {
             innerTextElement()->appendChild(HTMLBRElement::create(document()), ec);
             ASSERT(!ec);
         }

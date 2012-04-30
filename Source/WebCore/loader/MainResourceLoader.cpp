@@ -342,7 +342,7 @@ void MainResourceLoader::substituteMIMETypeFromPluginDatabase(const ResourceResp
         return;
 
     String filename = r.url().lastPathComponent();
-    if (filename.endsWith("/"))
+    if (filename.endsWith('/'))
         return;
 
     size_t extensionPos = filename.reverseFind('.');

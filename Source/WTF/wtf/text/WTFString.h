@@ -248,8 +248,19 @@ public:
 
     bool startsWith(const String& s, bool caseSensitive = true) const
         { return m_impl ? m_impl->startsWith(s.impl(), caseSensitive) : s.isEmpty(); }
+    bool startsWith(UChar character) const
+        { return m_impl ? m_impl->startsWith(character) : false; }
+    template<unsigned matchLength>
+    bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const
+        { return m_impl ? m_impl->startsWith<matchLength>(prefix, caseSensitive) : !matchLength; }
+
     bool endsWith(const String& s, bool caseSensitive = true) const
         { return m_impl ? m_impl->endsWith(s.impl(), caseSensitive) : s.isEmpty(); }
+    bool endsWith(UChar character) const
+        { return m_impl ? m_impl->endsWith(character) : false; }
+    template<unsigned matchLength>
+    bool endsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const
+        { return m_impl ? m_impl->endsWith<matchLength>(prefix, caseSensitive) : !matchLength; }
 
     WTF_EXPORT_PRIVATE void append(const String&);
     WTF_EXPORT_PRIVATE void append(LChar);
