@@ -33,6 +33,7 @@
 
 #include "LocalizedStrings.h"
 #include <limits>
+#include <wtf/DateMath.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -418,19 +419,9 @@ PassOwnPtr<Vector<String> > ICULocale::createLabelVector(UDateFormatSymbolType t
 static PassOwnPtr<Vector<String> > createFallbackMonthLabels()
 {
     OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
-    labels->reserveCapacity(12);
-    labels->append("January");
-    labels->append("February");
-    labels->append("March");
-    labels->append("April");
-    labels->append("May");
-    labels->append("June");
-    labels->append("July");
-    labels->append("August");
-    labels->append("September");
-    labels->append("October");
-    labels->append("November");
-    labels->append("December");
+    labels->reserveCapacity(WTF_ARRAY_LENGTH(WTF::monthFullName));
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(WTF::monthFullName); ++i)
+        labels->append(WTF::monthFullName[i]);
     return labels.release();
 }
 

@@ -4523,6 +4523,7 @@
             'platform/text/gtk/TextCodecGtk.cpp',
             'platform/text/gtk/TextCodecGtk.h',
             'platform/text/mac/HyphenationMac.mm',
+            'platform/text/mac/LocalizedDateMac.mm',
             'platform/text/mac/LocalizedNumberMac.mm',
             'platform/text/mac/ShapeArabic.c',
             'platform/text/mac/ShapeArabic.h',
