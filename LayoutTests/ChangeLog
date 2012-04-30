@@ -1,3 +1,15 @@
+2012-04-30  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (r115544): platform/mac/fast/events/pointer-events-dashboard.html is failing
+
+        Remove the test since r115544 removed the special behavior in Dashboard.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * platform/mac/fast/events/pointer-events-dashboard-expected.png: Removed.
+        * platform/mac/fast/events/pointer-events-dashboard-expected.txt: Removed.
+        * platform/mac/fast/events/pointer-events-dashboard.html: Removed.
+
 2012-04-30  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Unreviewed gardening
