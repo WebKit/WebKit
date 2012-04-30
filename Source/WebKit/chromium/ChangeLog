@@ -1,5 +1,19 @@
 2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Use new syntax to call createThread directly
+        https://bugs.webkit.org/show_bug.cgi?id=85186
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::runTest):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (Canvas2DLayerChromiumTest::fullLifecycleTest):
+
+2012-04-30  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Use new syntax to call createSocketStreamHandle directly
         https://bugs.webkit.org/show_bug.cgi?id=85184
 

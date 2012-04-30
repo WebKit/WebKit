@@ -116,7 +116,7 @@ protected:
 
         OwnPtr<WebThread> thread;
         if (threaded)
-           thread = adoptPtr(webKitPlatformSupport()->createThread("Canvas2DLayerChromiumTest"));
+            thread = adoptPtr(WebKit::Platform::current()->createThread("Canvas2DLayerChromiumTest"));
         WebCompositor::initialize(thread.get());
 
         OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());

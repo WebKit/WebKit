@@ -497,7 +497,7 @@ protected:
     virtual void runTest(bool threaded)
     {
         if (threaded) {
-            m_webThread = adoptPtr(webKitPlatformSupport()->createThread("CCLayerTreeHostTest"));
+            m_webThread = adoptPtr(WebKit::Platform::current()->createThread("CCLayerTreeHostTest"));
             WebCompositor::initialize(m_webThread.get());
         } else
             WebCompositor::initialize(0);
