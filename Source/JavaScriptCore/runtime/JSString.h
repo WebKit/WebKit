@@ -304,14 +304,14 @@ namespace JSC {
         return globalData->smallStrings.emptyString(globalData);
     }
 
-    inline JSString* jsSingleCharacterString(JSGlobalData* globalData, UChar c)
+    ALWAYS_INLINE JSString* jsSingleCharacterString(JSGlobalData* globalData, UChar c)
     {
         if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
         return JSString::create(*globalData, UString(&c, 1).impl());
     }
 
-    inline JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset)
+    ALWAYS_INLINE JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset)
     {
         JSGlobalData* globalData = &exec->globalData();
         ASSERT(offset < static_cast<unsigned>(s.length()));

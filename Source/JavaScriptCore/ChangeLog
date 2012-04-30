@@ -1,3 +1,19 @@
+2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        jsSingleCharacterString and jsSingleCharacterSubstring are not inlined
+        https://bugs.webkit.org/show_bug.cgi?id=85147
+
+        Reviewed by Darin Adler.
+
+        The functions jsSingleCharacterString() and jsSingleCharacterSubstring() were not inlined
+        by the compiler. This annihilate the gains of using SmallStrings.
+
+        On stringProtoFuncCharAt(), this patch improves the performance by 11%.
+
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterString):
+        (JSC::jsSingleCharacterSubstring):
+
 2012-04-30  Benjamin Poulain  <bpoulain@apple.com>
 
         Add fast patch for radix == 10 on numberProtoFuncToString
