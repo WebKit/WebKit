@@ -1,3 +1,35 @@
+2012-04-30  Min Qin  <qinmin@google.com>
+
+        Expose a flag so that fullscreen video on android can work with FULLSCREEN_API
+        https://bugs.webkit.org/show_bug.cgi?id=84414
+
+        Reviewed by Darin Fisher.
+
+        On android, the fullscreen video was implemented by passing a java
+        surfaceView to an android mediaplayer class.
+        The implementation of that logic should happen in WebKit::WebMediaPlayer.
+        This change makes it possble for WebViewImpl::enterFullScreenForElement()
+        to call WebMediaPlayer->enterFullscreen(), thus solving the issue.
+
+        Sorry, there is a merge error during the previous commit, resolved now
+
+        No new tests. This just exposes the flag so later it can be used by android.
+
+        * features.gypi:
+        * public/WebMediaPlayer.h:
+        (WebMediaPlayer):
+        (WebKit::WebMediaPlayer::enterFullscreen):
+        (WebKit::WebMediaPlayer::exitFullscreen):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::enterFullscreen):
+        (WebKit::WebMediaPlayerClientImpl::exitFullscreen):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::enterFullScreenForElement):
+        (WebKit::WebViewImpl::exitFullScreenForElement):
+
 2012-04-30  Gavin Peters  <gavinp@chromium.org>
 
         Unreviewed.  Rolled DEPS.

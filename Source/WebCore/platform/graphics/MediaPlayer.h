@@ -324,7 +324,10 @@ public:
     void deliverNotification(MediaPlayerProxyNotificationType notification);
     void setMediaPlayerProxy(WebMediaPlayerProxy* proxy);
     void setControls(bool);
-    void enterFullscreen();
+#endif
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || ENABLE(NATIVE_FULLSCREEN_VIDEO)
+    bool enterFullscreen() const;
     void exitFullscreen();
 #endif
 

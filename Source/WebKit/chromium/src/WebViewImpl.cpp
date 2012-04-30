@@ -1581,6 +1581,15 @@ void WebViewImpl::enterFullScreenForElement(WebCore::Element* element)
         return;
     }
 
+#if ENABLE(NATIVE_FULLSCREEN_VIDEO)
+    if (element && element->isMediaElement()) {
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        if (mediaElement->player() && mediaElement->player()->enterFullscreen())
+            m_provisionalFullScreenElement = element;
+        return;
+    }
+#endif
+
     // We need to transition to fullscreen mode.
     if (m_client && m_client->enterFullScreen())
         m_provisionalFullScreenElement = element;
@@ -1591,6 +1600,14 @@ void WebViewImpl::exitFullScreenForElement(WebCore::Element* element)
     // The client is exiting full screen, so don't send a notification.
     if (m_isCancelingFullScreen)
         return;
+#if ENABLE(NATIVE_FULLSCREEN_VIDEO)
+    if (element && element->isMediaElement()) {
+        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        if (mediaElement->player())
+            mediaElement->player()->exitFullscreen();
+        return;
+    }
+#endif
     if (m_client)
         m_client->exitFullScreen();
 }

@@ -766,17 +766,19 @@ void MediaPlayer::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
 void MediaPlayer::setControls(bool controls)
 {
     m_private->setControls(controls);
-}    
+}
+#endif
 
-void MediaPlayer::enterFullscreen()
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || ENABLE(NATIVE_FULLSCREEN_VIDEO)
+bool MediaPlayer::enterFullscreen() const
 {
-    m_private->enterFullscreen();
-}    
+    return m_private->enterFullscreen();
+}
 
 void MediaPlayer::exitFullscreen()
 {
     m_private->exitFullscreen();
-}    
+}
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)

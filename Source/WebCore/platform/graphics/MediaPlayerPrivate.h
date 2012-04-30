@@ -115,7 +115,10 @@ public:
     virtual void deliverNotification(MediaPlayerProxyNotificationType) = 0;
     virtual void setMediaPlayerProxy(WebMediaPlayerProxy*) = 0;
     virtual void setControls(bool) { }
-    virtual void enterFullscreen() { }
+#endif
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || ENABLE(NATIVE_FULLSCREEN_VIDEO)
+    virtual bool enterFullscreen() const { return false; }
     virtual void exitFullscreen() { }
 #endif
 

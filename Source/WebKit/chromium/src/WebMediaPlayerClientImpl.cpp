@@ -339,6 +339,21 @@ void WebMediaPlayerClientImpl::pause()
         m_webMediaPlayer->pause();
 }
 
+#if ENABLE(NATIVE_FULLSCREEN_VIDEO)
+bool WebMediaPlayerClientImpl::enterFullscreen() const
+{
+    if (m_webMediaPlayer)
+        return m_webMediaPlayer->enterFullscreen();
+    return false;
+}
+
+void WebMediaPlayerClientImpl::exitFullscreen()
+{
+    if (m_webMediaPlayer)
+        m_webMediaPlayer->exitFullscreen();
+}
+#endif
+
 #if ENABLE(MEDIA_SOURCE)
 WebCore::MediaPlayer::AddIdStatus WebMediaPlayerClientImpl::sourceAddId(const String& id, const String& type)
 {
