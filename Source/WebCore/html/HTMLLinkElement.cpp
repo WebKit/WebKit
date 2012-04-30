@@ -293,6 +293,8 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
         ASSERT(!m_sheet);
         return;
     }
+    // Completing the sheet load may cause scripts to execute.
+    RefPtr<Node> protector(this);
 
     CSSParserContext parserContext(document(), baseURL, charset);
 
