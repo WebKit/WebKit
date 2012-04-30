@@ -1,3 +1,9 @@
+2012-04-30  Andreas Kling  <kling@webkit.org>
+
+        Rebaseline svg/zoom/page/zoom-svg-through-object-with-percentage-size.svg for Mac after Length changes.
+
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+
 2012-04-30  Yi Shen  <yi.4.shen@nokia.com>
 
         Inserting a paragraph between quoted lines in editing/deleting/delete-4038408-fix.html doesn't work
