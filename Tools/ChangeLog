@@ -1,3 +1,12 @@
+2012-04-30  Amruth Raj Padmanabhuni  <amruthraj@motorola.com>
+
+        [GTK] Add glib as a dependency to build glib-networking
+        https://bugs.webkit.org/show_bug.cgi?id=85181
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules:
+
 2012-04-30  Alexis Menard  <alexis.menard@openbossa.org>
 
         Move myself to reviewers.
