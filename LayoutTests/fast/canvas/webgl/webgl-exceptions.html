@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<script>
+var gl = create3DContext();
+shouldThrow('gl.getBufferParameter()');
+shouldThrow('gl.getRenderbufferParameter()');
+shouldThrow('gl.getTexParameter()');
+shouldThrow('gl.getVertexAttrib()');
+shouldThrow('gl.getAttachedShaders()');
+shouldThrow('gl.getExtension()');
+shouldThrow('gl.getFramebufferAttachmentParameter()');
+shouldThrow('gl.getParameter()');
+shouldThrow('gl.getProgramParameter()');
+shouldThrow('gl.getShaderParameter()');
+shouldThrow('gl.getUniform()');
+shouldThrow('gl.uniform1iv()');
+shouldThrow('gl.uniformMatrix2fv()');
+shouldThrow('gl.uniform1fv()');
+shouldThrow('gl.vertexAttrib1fv()');
+</script>
+</body>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</html>

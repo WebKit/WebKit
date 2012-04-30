@@ -1,3 +1,20 @@
+2012-04-30  Kentaro Hara  <haraken@chromium.org>
+
+        WebGLRenderingContext methods should throw TypeError for not enough arguments
+        https://bugs.webkit.org/show_bug.cgi?id=84787
+
+        Reviewed by Kenneth Russell.
+
+        Currently, WebGLRenderingcontext methods implement
+        "Not enough arguments" error as SyntaxError. The Web IDL
+        spec requires that it should be TypeError:
+        http://www.w3.org/TR/WebIDL/#dfn-overload-resolution-algorithm
+
+        This patch changes SyntaxError to TypeError.
+
+        * fast/canvas/webgl/webgl-exceptions-expected.txt: Added.
+        * fast/canvas/webgl/webgl-exceptions.html: Added.
+
 2012-04-30  Abhishek Arya  <inferno@chromium.org>
 
         Remove positioned float code.
