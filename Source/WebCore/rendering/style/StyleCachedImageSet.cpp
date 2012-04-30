@@ -34,10 +34,10 @@
 
 namespace WebCore {
 
-StyleCachedImageSet::StyleCachedImageSet(CachedImage* image, float imageScaleFactor, PassRefPtr<CSSImageSetValue> value)
+StyleCachedImageSet::StyleCachedImageSet(CachedImage* image, float imageScaleFactor, CSSImageSetValue* value)
     : m_bestFitImage(image)
     , m_imageScaleFactor(imageScaleFactor)
-    , m_imageSetValue(value)  
+    , m_imageSetValue(value)
 {
     m_isCachedImageSet = true;
     m_bestFitImage->addClient(this);
