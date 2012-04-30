@@ -199,7 +199,8 @@ public:
 
     // Callbacks from DocumentWriter
     void didBeginDocument(bool dispatchWindowObjectAvailable);
-    void willSetEncoding();
+
+    void receivedFirstData();
 
     void handledOnloadEvents();
     String userAgent(const KURL&) const;
@@ -290,8 +291,6 @@ private:
     void loadDifferentDocumentItem(HistoryItem*, FrameLoadType);
     
     void loadProvisionalItemFromCachedPage();
-
-    void receivedFirstData();
 
     void updateFirstPartyForCookies();
     void setFirstPartyForCookies(const KURL&);
@@ -404,8 +403,6 @@ private:
     bool m_isComplete;
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
-
-    bool m_hasReceivedFirstData;
 
     bool m_needsClear;
 

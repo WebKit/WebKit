@@ -276,7 +276,7 @@ void DocumentLoader::setupForReplace()
 
 void DocumentLoader::commitIfReady()
 {
-    if (m_gotFirstByte && !m_committed) {
+    if (!m_committed) {
         m_committed = true;
         frameLoader()->commitProvisionalLoad();
     }
@@ -284,12 +284,17 @@ void DocumentLoader::commitIfReady()
 
 void DocumentLoader::finishedLoading()
 {
-    m_gotFirstByte = true;   
     commitIfReady();
     if (!frameLoader() || frameLoader()->stateMachine()->creatingInitialEmptyDocument())
         return;
     if (!maybeCreateArchive())
         frameLoader()->client()->finishedLoading(this);
+    
+    // If this is an empty document, it will not have actually been created yet. Commit dummy data so that
+    // DocumentWriter::begin() gets called and creates the Document.
+    if (!m_gotFirstByte)
+        commitData(0, 0);
+
     m_writer.end();
     if (!m_mainDocumentError.isNull())
         return;
@@ -317,14 +322,28 @@ void DocumentLoader::commitLoad(const char* data, int length)
 
 void DocumentLoader::commitData(const char* bytes, size_t length)
 {
-    // Set the text encoding.  This is safe to call multiple times.
-    bool userChosen = true;
-    String encoding = overrideEncoding();
-    if (encoding.isNull()) {
-        userChosen = false;
-        encoding = response().textEncodingName();
+    if (!m_gotFirstByte) {
+        m_gotFirstByte = true;
+        m_writer.begin(documentURL(), false);
+        m_writer.setDocumentWasLoadedAsPartOfNavigation();
+        
+#if ENABLE(MHTML)
+        // The origin is the MHTML file, we need to set the base URL to the document encoded in the MHTML so
+        // relative URLs are resolved properly.
+        if (m_archive && m_archive->type() == Archive::MHTML)
+            m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
+#endif
+
+        frameLoader()->receivedFirstData();
+
+        bool userChosen = true;
+        String encoding = overrideEncoding();
+        if (encoding.isNull()) {
+            userChosen = false;
+            encoding = response().textEncodingName();
+        }
+        m_writer.setEncoding(encoding, userChosen);
     }
-    m_writer.setEncoding(encoding, userChosen);
     ASSERT(m_frame->document()->parsing());
     m_writer.addData(bytes, length);
 }
@@ -335,8 +354,7 @@ bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const
 }
 
 void DocumentLoader::receivedData(const char* data, int length)
-{    
-    m_gotFirstByte = true;
+{
     if (doesProgressiveLoad(m_response.mimeType()))
         commitLoad(data, length);
 }
@@ -461,10 +479,7 @@ bool DocumentLoader::maybeCreateArchive()
     m_writer.setMIMEType(mainResource->mimeType());
     
     ASSERT(m_frame->document());
-    String userChosenEncoding = overrideEncoding();
-    bool encodingIsUserChosen = !userChosenEncoding.isNull();
-    m_writer.setEncoding(encodingIsUserChosen ? userChosenEncoding : mainResource->textEncoding(), encodingIsUserChosen);
-    m_writer.addData(mainResource->data()->data(), mainResource->data()->size());
+    commitData(mainResource->data()->data(), mainResource->data()->size());
     return true;
 #endif // !ENABLE(WEB_ARCHIVE) && !ENABLE(MHTML)
 }

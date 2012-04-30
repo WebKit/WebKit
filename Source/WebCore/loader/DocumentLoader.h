@@ -132,7 +132,6 @@ namespace WebCore {
 #endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-        Archive* archive() const { return m_archive.get(); }
         void setArchive(PassRefPtr<Archive>);
         void addAllArchiveResources(Archive*);
         void addArchiveResource(PassRefPtr<ArchiveResource>);

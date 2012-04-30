@@ -184,7 +184,6 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_wasUnloadEventEmitted(false)
     , m_pageDismissalEventBeingDispatched(NoDismissal)
     , m_isComplete(false)
-    , m_hasReceivedFirstData(false)
     , m_needsClear(false)
     , m_checkTimer(this, &FrameLoader::checkTimerFired)
     , m_shouldCallCheckCompleted(false)
@@ -409,8 +408,6 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         m_frame->document()->setParsing(false);
     }
 
-    m_hasReceivedFirstData = true;
-
     if (Document* doc = m_frame->document()) {
         // FIXME: HTML5 doesn't tell us to set the state to complete when aborting, but we do anyway to match legacy behavior.
         // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10537
@@ -475,7 +472,6 @@ bool FrameLoader::didOpenURL()
             window->setDefaultStatus(String());
         }
     }
-    m_hasReceivedFirstData = false;
 
     started();
 
@@ -561,17 +557,6 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
 
 void FrameLoader::receivedFirstData()
 {
-    KURL workingURL = activeDocumentLoader()->documentURL();
-    activeDocumentLoader()->writer()->begin(workingURL, false);
-    activeDocumentLoader()->writer()->setDocumentWasLoadedAsPartOfNavigation();
-
-#if ENABLE(MHTML)
-    // The origin is the MHTML file, we need to set the base URL to the document encoded in the MHTML so
-    // relative URLs are resolved properly.
-    if (activeDocumentLoader()->archive() && activeDocumentLoader()->archive()->type() == Archive::MHTML)
-        m_frame->document()->setBaseURLOverride(activeDocumentLoader()->archive()->mainResource()->url());
-#endif
-
     dispatchDidCommitLoad();
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
@@ -582,8 +567,6 @@ void FrameLoader::receivedFirstData()
         if (!ptitle.isNull())
             m_client->dispatchDidReceiveTitle(ptitle);
     }
-
-    m_hasReceivedFirstData = true;
 
     if (!m_documentLoader)
         return;
@@ -971,12 +954,6 @@ void FrameLoader::provisionalLoadStarted()
 void FrameLoader::resetMultipleFormSubmissionProtection()
 {
     m_submittedFormURL = KURL();
-}
-
-void FrameLoader::willSetEncoding()
-{
-    if (!m_hasReceivedFirstData)
-        receivedFirstData();
 }
 
 void FrameLoader::updateFirstPartyForCookies()
@@ -1933,8 +1910,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     // FIXME: I suspect this block of code doesn't do anything.
     if (url.protocolIsInHTTPFamily() && !url.host().isEmpty() && url.path().isEmpty())
         url.setPath("/");
-
-    m_hasReceivedFirstData = false;
 
     started();
     clear(true, true, cachedFrame.isMainFrame());
