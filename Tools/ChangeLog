@@ -1,3 +1,11 @@
+2012-04-30  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Move myself to reviewers.
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-04-30  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Unreviewed, move myself to reviewers
