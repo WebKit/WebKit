@@ -17,7 +17,6 @@ navigator.registerProtocolHandler() threw err TypeError: Not enough arguments
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
-navigator.webkitBattery is OK
 navigator.webkitGamepads is OK
 navigator.webkitPointer is OK
 navigator.webkitStartActivity() threw err TypeError: Not enough arguments
@@ -38,7 +37,6 @@ navigator.registerProtocolHandler() threw err TypeError: Not enough arguments
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
-navigator.webkitBattery is OK
 navigator.webkitGamepads is OK
 navigator.webkitPointer is OK
 navigator.webkitStartActivity() threw err TypeError: Not enough arguments

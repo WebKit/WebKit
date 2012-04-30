@@ -1,3 +1,13 @@
+2012-04-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Disable battery-status API support.
+        https://bugs.webkit.org/show_bug.cgi?id=84499
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2012-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         Arguments object resets attributes on redefinition of a parameter

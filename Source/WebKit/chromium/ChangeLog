@@ -1,3 +1,15 @@
+2012-04-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Disable battery-status API support.
+
+        The battery-status API support should not have view-dependency. So disable it until
+        that is fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=84499
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+
 2012-04-30  Gavin Peters  <gavinp@chromium.org>
 
         [Chromium] Remove Webkit/chromium/public/WebReferrerPolicy.h thunk.
