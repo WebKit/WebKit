@@ -43,7 +43,7 @@ double currentTime()
 
 double monotonicallyIncreasingTime()
 {
-    return WebKit::webKitPlatformSupport()->monotonicallyIncreasingTime();
+    return WebKit::Platform::current()->monotonicallyIncreasingTime();
 }
 
 }  // namespace WTF
