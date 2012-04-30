@@ -1,3 +1,9 @@
+2012-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * Shared/DrawingAreaInfo.h:
+
 2012-04-30  Emil A Eklund  <eae@chromium.org>
 
         [gtk, qt, chromium, win] Fix usage of LayoutUnits and rounding in platform code
