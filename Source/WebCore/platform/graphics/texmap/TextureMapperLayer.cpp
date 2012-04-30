@@ -214,6 +214,23 @@ IntRect TextureMapperLayer::intermediateSurfaceRect(const TransformationMatrix& 
     return rect;
 }
 
+TextureMapperLayer::ContentsLayerCount TextureMapperLayer::countPotentialLayersWithContents() const
+{
+    int selfLayersWithContents = (m_state.drawsContent ? 1 : 0) + (m_contentsLayer ? 1 : 0);
+    int potentialLayersWithContents = selfLayersWithContents + m_children.size();
+
+    if (!potentialLayersWithContents)
+        return NoLayersWithContent;
+
+    if (potentialLayersWithContents > 1)
+        return MultipleLayersWithContents;
+
+    if (m_children.isEmpty())
+        return SingleLayerWithContents;
+
+    return m_children.first()->countPotentialLayersWithContents();
+}
+
 bool TextureMapperLayer::shouldPaintToIntermediateSurface() const
 {
 #if ENABLE(CSS_FILTERS)
@@ -221,7 +238,7 @@ bool TextureMapperLayer::shouldPaintToIntermediateSurface() const
         return true;
 #endif
     bool hasOpacity = m_opacity < 0.99;
-    bool hasChildren = !m_children.isEmpty();
+    bool canHaveMultipleLayersWithContent = countPotentialLayersWithContents() == MultipleLayersWithContents;
     bool hasReplica = !!m_state.replicaLayer;
     bool hasMask = !!m_state.maskLayer;
 
@@ -231,13 +248,13 @@ bool TextureMapperLayer::shouldPaintToIntermediateSurface() const
 
     // We should use an intermediate surface when blending several items with an ancestor opacity.
     // Tested by compositing/reflections/reflection-opacity.html
-    if (hasOpacity && (hasChildren || hasReplica))
+    if (hasOpacity && (canHaveMultipleLayersWithContent || hasReplica))
         return true;
 
     // We should use an intermediate surface with a masked ancestor.
     // In the case of replicas the mask is applied before replicating.
     // Tested by compositing/masks/masked-ancestor.html
-    if (hasMask && hasChildren && !hasReplica)
+    if (hasMask && canHaveMultipleLayersWithContent && !hasReplica)
         return true;
 
     return false;

@@ -156,6 +156,13 @@ private:
 
     void syncAnimations();
     bool isVisible() const;
+    enum ContentsLayerCount {
+        NoLayersWithContent,
+        SingleLayerWithContents,
+        MultipleLayersWithContents
+    };
+
+    ContentsLayerCount countPotentialLayersWithContents() const;
     bool shouldPaintToIntermediateSurface() const;
 
     LayerTransform m_transform;
