@@ -409,7 +409,7 @@ public:
         }
     }
 
-    AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, const AttributeVector& attributes = AttributeVector())
+    AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, const Vector<Attribute>& attributes = Vector<Attribute>())
         : m_type(type)
         , m_name(name)
         , m_externalCharacters(0)
@@ -441,16 +441,16 @@ public:
     Attribute* getAttributeItem(const QualifiedName& attributeName)
     {
         ASSERT(usesAttributes());
-        return m_attributes.getAttributeItem(attributeName);
+        return findAttributeInVector(m_attributes, attributeName);
     }
 
-    AttributeVector& attributes()
+    Vector<Attribute>& attributes()
     {
         ASSERT(usesAttributes());
         return m_attributes;
     }
 
-    const AttributeVector& attributes() const
+    const Vector<Attribute>& attributes() const
     {
         ASSERT(usesAttributes());
         return m_attributes;
@@ -514,7 +514,7 @@ protected:
     // For StartTag and EndTag
     bool m_selfClosing;
 
-    AttributeVector m_attributes;
+    Vector<Attribute> m_attributes;
 };
 
 template<typename Token>
@@ -539,7 +539,9 @@ inline void AtomicMarkupTokenBase<Token>::initializeAttributes(const typename To
         ASSERT(attribute.m_valueRange.m_end);
 
         AtomicString value(attribute.m_value.data(), attribute.m_value.size());
-        m_attributes.insertAttribute(Attribute(nameForAttribute(attribute), value));
+        const QualifiedName& name = nameForAttribute(attribute);
+        if (!findAttributeInVector(m_attributes, name))
+            m_attributes.append(Attribute(name, value));
     }
 }
 
