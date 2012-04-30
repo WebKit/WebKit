@@ -1,3 +1,14 @@
+2012-04-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Arguments object resets attributes on redefinition of a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=84994
+
+        Rubber stamped by Oliver Hunt.
+
+        * fast/js/arguments-expected.txt:
+        * fast/js/script-tests/arguments.js:
+            - Added test cases.
+
 2012-04-30  Kentaro Hara  <haraken@chromium.org>
 
         WebGLRenderingContext methods should throw TypeError for not enough arguments

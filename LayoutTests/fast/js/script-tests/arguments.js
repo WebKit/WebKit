@@ -646,3 +646,21 @@ shouldBe("descriptor.configurable", 'true');
     shouldBeTrue(String( arguments[3] === 103 ));
 
 })(100,101,102,103);
+
+// Test cases for [[DefineOwnProperty]] applied to the arguments object.
+(function(arg){
+    shouldBeTrue(String( Object.getOwnPropertyDescriptor(arguments, 0).writable ));
+    shouldBeTrue(String( Object.getOwnPropertyDescriptor(arguments, 0).enumerable ));
+    Object.defineProperty(arguments, 0, { writable: false });
+    shouldBeFalse(String( Object.getOwnPropertyDescriptor(arguments, 0).writable ));
+    shouldBeTrue(String( Object.getOwnPropertyDescriptor(arguments, 0).enumerable ));
+    Object.defineProperty(arguments, 0, { enumerable: false });
+    shouldBeFalse(String( Object.getOwnPropertyDescriptor(arguments, 0).writable ));
+    shouldBeFalse(String( Object.getOwnPropertyDescriptor(arguments, 0).enumerable ));
+
+    delete arguments[1];
+    shouldBeUndefined(String( Object.getOwnPropertyDescriptor(arguments, 1) ));
+    Object.defineProperty(arguments, 1, { writable: true });
+    shouldBeTrue(String( Object.getOwnPropertyDescriptor(arguments, 1).writable ));
+    shouldBeFalse(String( Object.getOwnPropertyDescriptor(arguments, 1).enumerable ));
+})(0,1);

@@ -169,6 +169,15 @@ PASS true is true
 PASS true is true
 PASS true is true
 PASS true is true
+PASS true is true
+PASS true is true
+PASS false is false
+PASS true is true
+PASS false is false
+PASS false is false
+PASS undefined is undefined.
+PASS true is true
+PASS false is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

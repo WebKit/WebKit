@@ -306,7 +306,10 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, const Ident
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments) {
-        object->putDirect(exec->globalData(), propertyName, thisObject->argument(i).get(), 0);
+        // If the property is not yet present on the object, and is not yet marked as deleted, then add it now.
+        PropertySlot slot;
+        if ((!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i]) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot))
+            object->putDirect(exec->globalData(), propertyName, thisObject->argument(i).get(), 0);
         if (!Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow))
             return false;
 
