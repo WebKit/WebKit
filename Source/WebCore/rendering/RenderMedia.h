@@ -56,6 +56,7 @@ private:
     virtual const char* renderName() const { return "RenderMedia"; }
     virtual bool isMedia() const { return true; }
     virtual bool isImage() const { return false; }
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 

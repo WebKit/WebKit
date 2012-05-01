@@ -84,6 +84,10 @@ void RenderMedia::layout()
     statePusher.pop();
 }
 
+void RenderMedia::paintReplaced(PaintInfo&, const LayoutPoint&)
+{
+}
+
 } // namespace WebCore
 
 #endif

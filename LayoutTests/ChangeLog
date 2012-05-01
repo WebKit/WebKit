@@ -1,3 +1,35 @@
+2012-05-01  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Audio controls have a 1px surplus outline coming from RenderImage::paintReplaced base class,
+        which needs overwriting. All layout tests with an audio element need a
+        visual update.
+        https://bugs.webkit.org/show_bug.cgi?id=84570
+
+        Reviewed by Eric Carlson.
+
+        * platform/chromium-linux/media/audio-controls-rendering-expected.png:
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-layout-direction-expected.png:
+        * platform/chromium-linux/media/media-controls-clone-expected.png:
+        * platform/chromium-mac-leopard/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac-leopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-leopard/media/controls-after-reload-expected.png:
+        * platform/chromium-mac-snowleopard/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac-snowleopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-snowleopard/media/controls-layout-direction-expected.png:
+        * platform/chromium-mac-snowleopard/media/media-controls-clone-expected.png:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-layout-direction-expected.png:
+        * platform/chromium-mac/media/media-controls-clone-expected.png:
+        * platform/chromium-win/media/audio-controls-rendering-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-layout-direction-expected.png:
+        * platform/chromium-win/media/media-controls-clone-expected.png:
+
 2012-05-01  Aaron Colwell  <acolwell@chromium.org>
 
         Temporarily removing tests for webkitSourceAddId() & webkitSourceRemoveId()
