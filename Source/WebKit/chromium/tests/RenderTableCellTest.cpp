@@ -91,7 +91,9 @@ TEST_F(RenderTableCellDeathTest, CanSetColumn)
     EXPECT_EQ(columnIndex, m_cell->col());
 }
 
-TEST_F(RenderTableCellDeathTest, CanSetRow)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=85274.
+// row() returns 0 by test design.
+TEST_F(RenderTableCellDeathTest, DISABLED_CanSetRow)
 {
     static const unsigned rowIndex = 10;
     m_cell->row()->setRowIndex(rowIndex);

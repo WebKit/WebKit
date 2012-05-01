@@ -1,3 +1,15 @@
+2012-05-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        WebKit test RenderTableCellDeathTest.CanSetRow is failing as of r115705
+        https://bugs.webkit.org/show_bug.cgi?id=85274
+
+        Not reviewed: test disabled.
+
+        The test is based on the standalone cell, while the new logic
+        requires parent to be present upon the row index set.
+
+        * tests/RenderTableCellTest.cpp:
+
 2012-05-01  Hironori Bono  <hbono@chromium.org>
 
         [Chromium] Regression r113405 ContextMenuImpl does not set a misspelled word
