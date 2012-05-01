@@ -65,7 +65,7 @@ public:
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void syncRemoteContent();
     void setContentsSize(const WebCore::FloatSize&);
-    void setVisibleContentsRect(const WebCore::IntRect&, float scale);
+    void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint& accurateVisibleContentsPosition);
     void didChangeScrollPosition(const WebCore::IntPoint& position);
 
     void detach();
@@ -102,6 +102,7 @@ private:
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;
     WebCore::FloatSize m_contentsSize;
     WebCore::IntRect m_visibleContentsRect;
+    WebCore::FloatPoint m_accurateVisibleContentsPosition;
     float m_contentsScale;
 
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!

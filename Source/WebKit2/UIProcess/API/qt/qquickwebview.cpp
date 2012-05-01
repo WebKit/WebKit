@@ -545,7 +545,9 @@ QRect QQuickWebViewPrivate::visibleContentsRect() const
     Q_Q(const QQuickWebView);
     const QRectF visibleRect(q->boundingRect().intersected(pageView->boundingRect()));
 
-    return q->mapRectToWebContent(visibleRect).toAlignedRect();
+    // We avoid using toAlignedRect() because it produces inconsistent width and height.
+    QRectF mappedRect(q->mapRectToWebContent(visibleRect));
+    return QRect(floor(mappedRect.x()), floor(mappedRect.y()), floor(mappedRect.width()), floor(mappedRect.height()));
 }
 
 WebCore::IntSize QQuickWebViewPrivate::viewSize() const
@@ -780,7 +782,9 @@ void QQuickWebViewFlickablePrivate::_q_contentViewportChanged(const QPointF& tra
     const QRect visibleRect(visibleContentsRect());
     float scale = pageView->contentsScale();
 
-    drawingArea->setVisibleContentsRect(visibleRect, scale, trajectoryVector);
+    QRectF accurateVisibleRect(q->boundingRect());
+    accurateVisibleRect.translate(contentPos());
+    drawingArea->setVisibleContentsRect(visibleRect, scale, trajectoryVector, FloatPoint(accurateVisibleRect.x(), accurateVisibleRect.y()));
 
     // Ensure that updatePaintNode is always called before painting.
     pageView->update();

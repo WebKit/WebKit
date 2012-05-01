@@ -353,10 +353,10 @@ void DrawingAreaProxyImpl::didReceiveLayerTreeHostProxyMessage(CoreIPC::Connecti
         m_layerTreeHostProxy->didReceiveLayerTreeHostProxyMessage(connection, messageID, arguments);
 }
 
-void DrawingAreaProxyImpl::setVisibleContentsRect(const WebCore::IntRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectoryVector)
+void DrawingAreaProxyImpl::setVisibleContentsRect(const WebCore::IntRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectoryVector, const WebCore::FloatPoint& accurateVisibleContentsPosition)
 {
     if (m_layerTreeHostProxy)
-        m_layerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, scale, trajectoryVector);
+        m_layerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, scale, trajectoryVector, accurateVisibleContentsPosition);
 }
 
 #endif

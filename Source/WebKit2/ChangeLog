@@ -1,3 +1,35 @@
+2012-04-30  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Fixed layers are shaking when zoom level is not 1.0 due to a rounding error.
+        https://bugs.webkit.org/show_bug.cgi?id=84306
+
+        Reviewed by Noam Rosenthal.
+
+        When zooming, we need to be careful about how to convert the visible rect from float to int.
+        Using toAlignedRect can produce inconsistent width and height when we are scrolling.
+        This patch carefully modifies each piece of the visible rect, to avoid such rounding errors.
+        In addition, the TransformationMatrix we use for painting, needs to be adjusted for the same rounding error.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::visibleContentsRect):
+        (QQuickWebViewFlickablePrivate::_q_contentViewportChanged):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebCore):
+        (WebKit::DrawingAreaProxy::setVisibleContentsRect):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentsRect):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::setVisibleContentsRect):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+        (WebKit::WebLayerTreeRenderer::setVisibleContentsRect):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+
 2012-04-30  Anders Carlsson  <andersca@apple.com>
 
         ScrollingCoordinator::requestScrollPositionUpdate should not update the main frame scroll position

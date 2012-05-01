@@ -109,6 +109,12 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
 
+    // We need to compensate for the rounding error that happens due to m_visibleContentsRect being
+    // int and not float. We do that by moving the TransformationMatrix by the delta between the
+    // position of m_visibleContentsRect and the position it would have if it wasn't rounded.
+ 
+    TransformationMatrix newMatrix = matrix;
+    newMatrix.translate(m_accurateVisibleContentsPosition.x() / m_contentsScale - m_visibleContentsRect.x(), m_accurateVisibleContentsPosition.y() / m_contentsScale - m_visibleContentsRect.y());
     adjustPositionForFixedLayers();
     GraphicsLayer* currentRootLayer = rootLayer();
     if (!currentRootLayer)
@@ -123,9 +129,9 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
-    if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
+    if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != newMatrix) {
         currentRootLayer->setOpacity(opacity);
-        currentRootLayer->setTransform(matrix);
+        currentRootLayer->setTransform(newMatrix);
         currentRootLayer->syncCompositingStateForThisLayerOnly();
     }
 
@@ -158,10 +164,11 @@ void WebLayerTreeRenderer::setContentsSize(const WebCore::FloatSize& contentsSiz
     m_contentsSize = contentsSize;
 }
 
-void WebLayerTreeRenderer::setVisibleContentsRect(const IntRect& rect, float scale)
+void WebLayerTreeRenderer::setVisibleContentsRect(const IntRect& rect, float scale, const WebCore::FloatPoint& accurateVisibleContentsPosition)
 {
     m_visibleContentsRect = rect;
     m_contentsScale = scale;
+    m_accurateVisibleContentsPosition = accurateVisibleContentsPosition;
 }
 
 void WebLayerTreeRenderer::updateViewport()
