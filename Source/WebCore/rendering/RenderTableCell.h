@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-static const unsigned unsetColumnIndex = 0x7FFFFFFF;
-static const unsigned maxColumnIndex = 0x7FFFFFFE; // 2,147,483,646
+static const unsigned unsetColumnIndex = 0x3FFFFFFF;
+static const unsigned maxColumnIndex = 0x3FFFFFFE; // 1,073,741,823
 
 enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
@@ -181,8 +181,8 @@ private:
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
+    unsigned m_column : 30;
     bool m_cellWidthChanged : 1;
-    unsigned m_column : 31;
     bool m_hasAssociatedTableCellElement : 1;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
