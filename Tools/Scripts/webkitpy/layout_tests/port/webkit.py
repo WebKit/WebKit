@@ -207,6 +207,9 @@ class WebKitPort(Port):
                 output = sp.read_stdout_line(deadline)
                 break
 
+        stderr = sp.pop_all_buffered_stderr()
+        if stderr:
+            _log.warn("ImageDiff produced stderr output:\n" + stderr)
         if sp.timed_out:
             _log.error("ImageDiff timed out")
         if sp.has_crashed():

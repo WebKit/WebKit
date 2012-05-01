@@ -1,3 +1,17 @@
+2012-05-01  Zan Dobersek  <zandobersek@gmail.com>
+
+        Print out stderr output of ImageDiff if it is present
+        https://bugs.webkit.org/show_bug.cgi?id=85285
+
+        Reviewed by Philippe Normand.
+
+        Log the stderr output of ImageDiff as a warning if present. This is
+        especially helpful when ImageDiff crashes and stderr data might contain
+        relevant information about what caused the crash.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._read_image_diff):
+
 2012-05-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add an experimental extension to set the min. contents width
