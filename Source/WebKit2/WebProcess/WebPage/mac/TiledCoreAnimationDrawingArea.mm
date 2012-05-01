@@ -135,27 +135,15 @@ void TiledCoreAnimationDrawingArea::forceRepaint()
     [CATransaction synchronize];
 }
 
-static void forceRepaintAndSendMessage(uint64_t webPageID, uint64_t callbackID)
-{
-    WebPage* webPage = WebProcess::shared().webPage(webPageID);
-    if (!webPage)
-        return;
-
-    webPage->drawingArea()->forceRepaint();
-    webPage->send(Messages::WebPageProxy::VoidCallback(callbackID));
-}
-
-static void dispatchBackToMainThread(uint64_t webPageID, uint64_t callbackID)
-{
-    callOnMainThread(bind(forceRepaintAndSendMessage, webPageID, callbackID));
-}
-
 bool TiledCoreAnimationDrawingArea::forceRepaintAsync(uint64_t callbackID)
 {
     if (m_layerTreeStateIsFrozen)
         return false;
 
-    ScrollingThread::dispatch(bind(dispatchBackToMainThread, m_webPage->pageID(), callbackID));
+    dispatchAfterEnsuringUpdatedScrollPosition(bind(^{
+        m_webPage->drawingArea()->forceRepaint();
+        m_webPage->send(Messages::WebPageProxy::VoidCallback(callbackID));
+    }));
     return true;
 }
 

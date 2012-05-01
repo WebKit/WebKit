@@ -1,3 +1,17 @@
+2012-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Use the new barrier function in TiledCoreAnimationDrawingArea::forceRepaintAsync
+        https://bugs.webkit.org/show_bug.cgi?id=85313
+        <rdar://problem/10996039>
+
+        Reviewed by Sam Weinig.
+
+        Use the new dispatchAfterEnsuringUpdatedScrollPosition function in forceRepaintAsync to
+        ensure that the scroll position is up to date.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+
 2012-05-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add an experimental extension to set the min. contents width
