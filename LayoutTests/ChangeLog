@@ -1,3 +1,10 @@
+2012-05-01  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/test_expectations.txt: media/track/track-mode.html
+        is still flaky as per bug 83878.
+
 2012-04-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, rebaselining after r115666 and test expectations update
