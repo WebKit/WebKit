@@ -38,6 +38,7 @@ using namespace HTMLNames;
 
 RenderTableRow::RenderTableRow(Node* node)
     : RenderBox(node)
+    , m_rowIndex(unsetRowIndex)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
@@ -72,7 +73,7 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
         updateBeforeAndAfterContent();
 
     if (section() && oldStyle && style()->logicalHeight() != oldStyle->logicalHeight())
-        section()->rowLogicalHeightChanged(section()->rowIndexForRenderer(this));
+        section()->rowLogicalHeightChanged(rowIndex());
 
     // If border was changed, notify table.
     if (parent()) {

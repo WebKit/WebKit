@@ -176,7 +176,9 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
 
     ensureRows(m_cRow);
 
-    m_grid[insertionRow].rowRenderer = toRenderTableRow(child);
+    RenderTableRow* row = toRenderTableRow(child);
+    m_grid[insertionRow].rowRenderer = row;
+    row->setRowIndex(insertionRow);
 
     if (!beforeChild)
         setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
@@ -220,9 +222,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     unsigned cSpan = cell->colSpan();
     Vector<RenderTable::ColumnStruct>& columns = table()->columns();
     unsigned nCols = columns.size();
-    // addCell should be called only after m_cRow has been incremented.
-    ASSERT(m_cRow);
-    unsigned insertionRow = m_cRow - 1;
+    unsigned insertionRow = row->rowIndex();
 
     // ### mozilla still seems to do the old HTML way, even for strict DTD
     // (see the annotation on table cell layouting in the CSS specs and the testcase below:
@@ -266,7 +266,6 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
         cSpan -= currentSpan;
         inColSpan = true;
     }
-    cell->setRow(insertionRow);
     cell->setCol(table()->effColToCol(col));
 }
 
@@ -348,11 +347,11 @@ int RenderTableSection::calcRowLogicalHeight()
 
             // FIXME: We are always adding the height of a rowspan to the last rows which doesn't match
             // other browsers. See webkit.org/b/52185 for example.
-            if ((cell->row() + cell->rowSpan() - 1) != r)
+            if ((cell->rowIndex() + cell->rowSpan() - 1) != r)
                 continue;
 
             // For row spanning cells, |r| is the last row in the span.
-            unsigned cellStartRow = cell->row();
+            unsigned cellStartRow = cell->rowIndex();
 
             if (cell->hasOverrideHeight()) {
                 if (!statePusher.didPush()) {
@@ -554,7 +553,7 @@ void RenderTableSection::layoutRows()
             if (!cell || cs.inColSpan)
                 continue;
 
-            rindx = cell->row();
+            rindx = cell->rowIndex();
             rHeight = m_rowPos[rindx + cell->rowSpan()] - m_rowPos[rindx] - vspacing;
             
             // Force percent height children to lay themselves out again.
@@ -989,15 +988,15 @@ void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
 
 static inline bool compareCellPositions(RenderTableCell* elem1, RenderTableCell* elem2)
 {
-    return elem1->row() < elem2->row();
+    return elem1->rowIndex() < elem2->rowIndex();
 }
 
 // This comparison is used only when we have overflowing cells as we have an unsorted array to sort. We thus need
 // to sort both on rows and columns to properly repaint.
 static inline bool compareCellPositionsWithOverflowingCells(RenderTableCell* elem1, RenderTableCell* elem2)
 {
-    if (elem1->row() != elem2->row())
-        return elem1->row() < elem2->row();
+    if (elem1->rowIndex() != elem2->rowIndex())
+        return elem1->rowIndex() < elem2->rowIndex();
 
     return elem1->col() < elem2->col();
 }
@@ -1223,6 +1222,7 @@ void RenderTableSection::recalcCells()
 
             RenderTableRow* tableRow = toRenderTableRow(row);
             m_grid[insertionRow].rowRenderer = tableRow;
+            tableRow->setRowIndex(insertionRow);
             setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
             for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
@@ -1387,16 +1387,6 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     }
     return false;
 
-}
-
-unsigned RenderTableSection::rowIndexForRenderer(const RenderTableRow* row) const
-{
-    for (size_t i = 0; i < m_grid.size(); ++i) {
-        if (m_grid[i].rowRenderer == row)
-            return i;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 void RenderTableSection::removeCachedCollapsedBorders(const RenderTableCell* cell)

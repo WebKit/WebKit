@@ -152,8 +152,6 @@ public:
 
     void rowLogicalHeightChanged(unsigned rowIndex);
 
-    unsigned rowIndexForRenderer(const RenderTableRow*) const;
-
     void removeCachedCollapsedBorders(const RenderTableCell*);
     void setCachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide, CollapsedBorderValue);
     CollapsedBorderValue& cachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide);

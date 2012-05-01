@@ -29,6 +29,9 @@
 
 namespace WebCore {
 
+static const unsigned unsetRowIndex = 0x7FFFFFFF;
+static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
+
 class RenderTableRow : public RenderBox {
 public:
     explicit RenderTableRow(Node*);
@@ -46,6 +49,21 @@ public:
     virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const OVERRIDE
     {
         return createAnonymousWithParentRenderer(parent);
+    }
+
+    void setRowIndex(unsigned rowIndex)
+    {
+        if (UNLIKELY(rowIndex > maxRowIndex))
+            CRASH();
+
+        m_rowIndex = rowIndex;
+    }
+
+    bool rowIndexWasSet() const { return m_rowIndex != unsetRowIndex; }
+    unsigned rowIndex() const
+    {
+        ASSERT(rowIndexWasSet());
+        return m_rowIndex;
     }
 
 private:
@@ -73,6 +91,7 @@ private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     RenderObjectChildList m_children;
+    unsigned m_rowIndex : 31;
 };
 
 inline RenderTableRow* toRenderTableRow(RenderObject* object)

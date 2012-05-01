@@ -1,3 +1,13 @@
+2012-04-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Move RenderTableCell's row index to RenderTableRow
+        https://bugs.webkit.org/show_bug.cgi?id=85229
+
+        Reviewed by Ojan Vafai.
+
+        * tests/RenderTableCellTest.cpp:
+        Updated after the refactoring.
+
 2012-04-30  Gavin Peters  <gavinp@chromium.org>
 
         [Chromium] Add thunk headers for staging Prerendering API.

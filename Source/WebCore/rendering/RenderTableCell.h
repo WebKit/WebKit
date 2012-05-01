@@ -25,15 +25,13 @@
 #ifndef RenderTableCell_h
 #define RenderTableCell_h
 
+#include "RenderTableRow.h"
 #include "RenderTableSection.h"
 
 namespace WebCore {
 
 static const unsigned unsetColumnIndex = 0x7FFFFFFF;
 static const unsigned maxColumnIndex = 0x7FFFFFFE; // 2,147,483,646
-
-static const unsigned unsetRowIndex = 0x7FFFFFFF;
-static const unsigned maxRowIndex = 0x7FFFFFFE; // 2,147,483,646
 
 enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
@@ -65,23 +63,16 @@ public:
         return m_column;
     }
 
-    void setRow(unsigned row)
-    {
-        if (UNLIKELY(row > maxRowIndex))
-            CRASH();
-
-        m_row = row;
-    }
-
-    bool rowWasSet() const { return m_row != unsetRowIndex; }
-    unsigned row() const
-    {
-        ASSERT(rowWasSet());
-        return m_row;
-    }
-
+    RenderTableRow* row() const { return toRenderTableRow(parent()); }
     RenderTableSection* section() const { return toRenderTableSection(parent()->parent()); }
     RenderTable* table() const { return toRenderTable(parent()->parent()->parent()); }
+
+    unsigned rowIndex() const
+    {
+        // This function shouldn't be called on a detached cell.
+        ASSERT(row());
+        return row()->rowIndex();
+    }
 
     Length styleOrColLogicalWidth() const;
 
@@ -190,7 +181,6 @@ private:
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
-    unsigned m_row : 31;
     bool m_cellWidthChanged : 1;
     unsigned m_column : 31;
     bool m_hasAssociatedTableCellElement : 1;

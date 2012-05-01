@@ -43,7 +43,6 @@ using namespace HTMLNames;
 
 RenderTableCell::RenderTableCell(Node* node)
     : RenderBlock(node)
-    , m_row(unsetRowIndex)
     , m_cellWidthChanged(false)
     , m_column(unsetColumnIndex)
     , m_hasAssociatedTableCellElement(node && (node->hasTagName(tdTag) || node->hasTagName(thTag)))
@@ -327,12 +326,13 @@ LayoutUnit RenderTableCell::cellBaselinePosition() const
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     ASSERT(style()->display() == TABLE_CELL);
+    ASSERT(!row() || row()->rowIndexWasSet());
 
     RenderBlock::styleDidChange(diff, oldStyle);
     setHasBoxDecorations(true);
 
-    if (parent() && section() && oldStyle && style()->height() != oldStyle->height() && rowWasSet())
-        section()->rowLogicalHeightChanged(row());
+    if (parent() && section() && oldStyle && style()->height() != oldStyle->height())
+        section()->rowLogicalHeightChanged(rowIndex());
 
     // If border was changed, notify table.
     if (parent()) {
@@ -597,7 +597,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorder
     
     // Now check row groups.
     RenderTableSection* currSection = section();
-    if (!row()) {
+    if (!rowIndex()) {
         // (5) Our row group's before border.
         result = chooseBorder(result, CollapsedBorderValue(currSection->style()->borderBefore(), includeColor ? currSection->style()->visitedDependentColor(beforeColorProperty) : Color(), BROWGROUP));
         if (!result.exists())
@@ -675,7 +675,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
     
     // Now check row groups.
     RenderTableSection* currSection = section();
-    if (row() + rowSpan() >= currSection->numRows()) {
+    if (rowIndex() + rowSpan() >= currSection->numRows()) {
         // (5) Our row group's after border.
         result = chooseBorder(result, CollapsedBorderValue(currSection->style()->borderAfter(), includeColor ? currSection->style()->visitedDependentColor(afterColorProperty) : Color(), BROWGROUP));
         if (!result.exists())

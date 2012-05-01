@@ -1134,7 +1134,7 @@ RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
     recalcSectionsIfNeeded();
 
     // Find the section and row to look in
-    unsigned r = cell->row();
+    unsigned r = cell->rowIndex();
     RenderTableSection* section = 0;
     unsigned rAbove = 0;
     if (r > 0) {
@@ -1163,7 +1163,7 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
     recalcSectionsIfNeeded();
 
     // Find the section and row to look in
-    unsigned r = cell->row() + cell->rowSpan() - 1;
+    unsigned r = cell->rowIndex() + cell->rowSpan() - 1;
     RenderTableSection* section = 0;
     unsigned rBelow = 0;
     if (r < cell->section()->numRows() - 1) {
@@ -1195,7 +1195,7 @@ RenderTableCell* RenderTable::cellBefore(const RenderTableCell* cell) const
         return 0;
     
     // If we hit a colspan back up to a real cell.
-    RenderTableSection::CellStruct& prevCell = section->cellAt(cell->row(), effCol - 1);
+    RenderTableSection::CellStruct& prevCell = section->cellAt(cell->rowIndex(), effCol - 1);
     return prevCell.primaryCell();
 }
 
@@ -1206,7 +1206,7 @@ RenderTableCell* RenderTable::cellAfter(const RenderTableCell* cell) const
     unsigned effCol = colToEffCol(cell->col() + cell->colSpan());
     if (effCol >= numEffCols())
         return 0;
-    return cell->section()->primaryCellAt(cell->row(), effCol);
+    return cell->section()->primaryCellAt(cell->rowIndex(), effCol);
 }
 
 RenderBlock* RenderTable::firstLineBlock() const
