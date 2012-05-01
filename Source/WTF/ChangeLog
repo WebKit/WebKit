@@ -1,3 +1,17 @@
+2012-04-30  Oliver Hunt  <oliver@apple.com>
+
+        Investigate overflows in Canvas putImageData routine
+        https://bugs.webkit.org/show_bug.cgi?id=61373
+
+        Reviewed by Gavin Barraclough.
+
+        Allow floating point multiplies of checked types (complete with
+        bounds checks).
+
+        * wtf/CheckedArithmetic.h:
+        (Checked):
+        (WTF::Checked::operator*=):
+
 2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Add String::startsWith() and endsWith() for string literals

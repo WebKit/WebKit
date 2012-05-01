@@ -561,6 +561,21 @@ public:
             this->overflowed();
         return *this;
     }
+
+    const Checked operator*=(double rhs)
+    {
+        double result = rhs * m_value;
+        // Handle +/- infinity and NaN
+        if (!(std::numeric_limits<T>::min() <= result && std::numeric_limits<T>::max() >= result))
+            this->overflowed();
+        m_value = (T)result;
+        return *this;
+    }
+
+    const Checked operator*=(float rhs)
+    {
+        return *this *= (double)rhs;
+    }
     
     template <typename U, typename V> const Checked operator+=(Checked<U, V> rhs)
     {

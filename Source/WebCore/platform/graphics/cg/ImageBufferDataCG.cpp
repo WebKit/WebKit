@@ -118,16 +118,20 @@ static void premultitplyScanline(void* data, size_t tileNumber)
 
 PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
 {
-    float area = 4.0f * rect.width() * rect.height();
-    if (area > static_cast<float>(std::numeric_limits<int>::max()))
+    Checked<unsigned, RecordOverflow> area = 4;
+    area *= rect.width();
+    area *= rect.height();
+    if (area.hasOverflowed())
         return 0;
 
-    RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
+    RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
     unsigned char* data = result->data();
     
-    int endx = ceilf(rect.maxX() * resolutionScale);
-    int endy = ceilf(rect.maxY() * resolutionScale);
-    if (rect.x() < 0 || rect.y() < 0 || endx > size.width() || endy > size.height())
+    Checked<int> endx = rect.maxX();
+    endx *= ceilf(resolutionScale);
+    Checked<int> endy = rect.maxY();
+    endy *= resolutionScale;
+    if (rect.x() < 0 || rect.y() < 0 || endx.unsafeGet() > size.width() || endy.unsafeGet() > size.height())
         result->zeroFill();
     
     int originx = rect.x();
@@ -140,9 +144,9 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
     }
     destw = min<int>(destw, ceilf(size.width() / resolutionScale) - originx);
     originx *= resolutionScale;
-    if (endx > size.width())
+    if (endx.unsafeGet() > size.width())
         endx = size.width();
-    int width = endx - originx;
+    Checked<int> width = endx - originx;
     
     int originy = rect.y();
     int desty = 0;
@@ -154,11 +158,11 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
     }
     desth = min<int>(desth, ceilf(size.height() / resolutionScale) - originy);
     originy *= resolutionScale;
-    if (endy > size.height())
+    if (endy.unsafeGet() > size.height())
         endy = size.height();
-    int height = endy - originy;
+    Checked<int> height = endy - originy;
     
-    if (width <= 0 || height <= 0)
+    if (width.unsafeGet() <= 0 || height.unsafeGet() <= 0)
         return result.release();
     
     unsigned destBytesPerRow = 4 * rect.width();
@@ -174,8 +178,8 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
 #if USE(ACCELERATE)
         if (unmultiplied && haveVImageRoundingErrorFix()) {
             vImage_Buffer src;
-            src.height = height;
-            src.width = width;
+            src.height = height.unsafeGet();
+            src.width = width.unsafeGet();
             src.rowBytes = srcBytesPerRow;
             src.data = srcRows;
             
@@ -198,11 +202,11 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         }
 #endif
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
             RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
             if (!unmultiplied)
                 return result.release();
 
@@ -212,8 +216,10 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
             height = desth;
         }
         if (unmultiplied) {
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; x++) {
+            if ((width * 4).hasOverflowed())
+                CRASH();
+            for (int y = 0; y < height.unsafeGet(); ++y) {
+                for (int x = 0; x < width.unsafeGet(); x++) {
                     int basex = x * 4;
                     unsigned char alpha = srcRows[basex + 3];
                     if (alpha) {
@@ -228,8 +234,8 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
                 destRows += destBytesPerRow;
             }
         } else {
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width * 4; x += 4)
+            for (int y = 0; y < height.unsafeGet(); ++y) {
+                for (int x = 0; x < (width * 4).unsafeGet(); x += 4)
                     reinterpret_cast<uint32_t*>(destRows + x)[0] = reinterpret_cast<uint32_t*>(srcRows + x)[0];
                 srcRows += srcBytesPerRow;
                 destRows += destBytesPerRow;
@@ -244,8 +250,8 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
 
 #if USE(ACCELERATE)
         vImage_Buffer src;
-        src.height = height;
-        src.width = width;
+        src.height = height.unsafeGet();
+        src.width = width.unsafeGet();
         src.rowBytes = srcBytesPerRow;
         src.data = srcRows;
 
@@ -271,13 +277,13 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
 
         if (unmultiplied) {
             ScanlineData scanlineData;
-            scanlineData.scanlineWidth = width;
+            scanlineData.scanlineWidth = width.unsafeGet();
             scanlineData.srcData = srcRows;
             scanlineData.srcRowBytes = srcBytesPerRow;
             scanlineData.destData = destRows;
             scanlineData.destRowBytes = destBytesPerRow;
 
-            dispatch_apply_f(height, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
+            dispatch_apply_f(height.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
         } else {
             // Swap pixel channels from BGRA to RGBA.
             const uint8_t map[4] = { 2, 1, 0, 3 };
@@ -285,21 +291,24 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         }
 #else
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
             RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
 
             srcRows = destRows;
             srcBytesPerRow = destBytesPerRow;
             width = destw;
             height = desth;
         }
+        
+        if ((width * 4).hasOverflowed())
+            CRASH();
 
         if (unmultiplied) {
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height.unsafeGet(); ++y) {
+                for (int x = 0; x < width.unsafeGet(); x++) {
                     int basex = x * 4;
                     unsigned char b = srcRows[basex];
                     unsigned char alpha = srcRows[basex + 3];
@@ -319,8 +328,8 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
                 destRows += destBytesPerRow;
             }
         } else {
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height.unsafeGet(); ++y) {
+                for (int x = 0; x < width.unsafeGet(); x++) {
                     int basex = x * 4;
                     unsigned char b = srcRows[basex];
                     destRows[basex] = srcRows[basex + 2];
@@ -347,55 +356,59 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
     
-    int originx = sourceRect.x();
-    int destx = (destPoint.x() + sourceRect.x()) * resolutionScale;
-    ASSERT(destx >= 0);
-    ASSERT(destx < size.width());
-    ASSERT(originx >= 0);
-    ASSERT(originx <= sourceRect.maxX());
+    Checked<int> originx = sourceRect.x();
+    Checked<int> destx = (Checked<int>(destPoint.x()) + sourceRect.x());
+    destx *= resolutionScale;
+    ASSERT(destx.unsafeGet() >= 0);
+    ASSERT(destx.unsafeGet() < size.width());
+    ASSERT(originx.unsafeGet() >= 0);
+    ASSERT(originx.unsafeGet() <= sourceRect.maxX());
     
-    int endx = (destPoint.x() + sourceRect.maxX()) * resolutionScale;
-    ASSERT(endx <= size.width());
+    Checked<int> endx = (Checked<int>(destPoint.x()) + sourceRect.maxX());
+    endx *= resolutionScale;
+    ASSERT(endx.unsafeGet() <= size.width());
     
-    int width = sourceRect.width();
-    int destw = endx - destx;
+    Checked<int> width = sourceRect.width();
+    Checked<int> destw = endx - destx;
 
-    int originy = sourceRect.y();
-    int desty = (destPoint.y() + sourceRect.y()) * resolutionScale;
-    ASSERT(desty >= 0);
-    ASSERT(desty < size.height());
-    ASSERT(originy >= 0);
-    ASSERT(originy <= sourceRect.maxY());
+    Checked<int> originy = sourceRect.y();
+    Checked<int> desty = (Checked<int>(destPoint.y()) + sourceRect.y());
+    desty *= resolutionScale;
+    ASSERT(desty.unsafeGet() >= 0);
+    ASSERT(desty.unsafeGet() < size.height());
+    ASSERT(originy.unsafeGet() >= 0);
+    ASSERT(originy.unsafeGet() <= sourceRect.maxY());
     
-    int endy = (destPoint.y() + sourceRect.maxY()) * resolutionScale;
-    ASSERT(endy <= size.height());
+    Checked<int> endy = (Checked<int>(destPoint.y()) + sourceRect.maxY());
+    endy *= resolutionScale;
+    ASSERT(endy.unsafeGet() <= size.height());
 
-    int height = sourceRect.height();
-    int desth = endy - desty;
+    Checked<int> height = sourceRect.height();
+    Checked<int> desth = endy - desty;
     
     if (width <= 0 || height <= 0)
         return;
     
     unsigned srcBytesPerRow = 4 * sourceSize.width();
-    unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
+    unsigned char* srcRows = source->data() + (originy * srcBytesPerRow + originx * 4).unsafeGet();
     unsigned destBytesPerRow;
     unsigned char* destRows;
     
     if (!accelerateRendering) {
         destBytesPerRow = 4 * size.width();
-        destRows = reinterpret_cast<unsigned char*>(m_data) + desty * destBytesPerRow + destx * 4;
+        destRows = reinterpret_cast<unsigned char*>(m_data) + (desty * destBytesPerRow + destx * 4).unsafeGet();
         
-#if USE(ACCELERATE)
+#if  USE(ACCELERATE)
         if (haveVImageRoundingErrorFix() && unmultiplied) {
             vImage_Buffer src;
-            src.height = height;
-            src.width = width;
+            src.height = height.unsafeGet();
+            src.width = width.unsafeGet();
             src.rowBytes = srcBytesPerRow;
             src.data = srcRows;
             
             vImage_Buffer dst;
-            dst.height = desth;
-            dst.width = destw;
+            dst.height = desth.unsafeGet();
+            dst.width = destw.unsafeGet();
             dst.rowBytes = destBytesPerRow;
             dst.data = destRows;
 
@@ -412,11 +425,11 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         }
 #endif
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
             if (!unmultiplied)
                 return;
 
@@ -426,8 +439,8 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
             height = desth;
         }
 
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height.unsafeGet(); ++y) {
+            for (int x = 0; x < width.unsafeGet(); x++) {
                 int basex = x * 4;
                 unsigned char alpha = srcRows[basex + 3];
                 if (unmultiplied && alpha != 255) {
@@ -446,18 +459,18 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         IOSurfaceRef surface = m_surface.get();
         IOSurfaceLock(surface, 0, 0);
         destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
-        destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + desty * destBytesPerRow + destx * 4;
+        destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + (desty * destBytesPerRow + destx * 4).unsafeGet();
 
 #if USE(ACCELERATE)
         vImage_Buffer src;
-        src.height = height;
-        src.width = width;
+        src.height = height.unsafeGet();
+        src.width = width.unsafeGet();
         src.rowBytes = srcBytesPerRow;
         src.data = srcRows;
 
         vImage_Buffer dest;
-        dest.height = desth;
-        dest.width = destw;
+        dest.height = desth.unsafeGet();
+        dest.width = destw.unsafeGet();
         dest.rowBytes = destBytesPerRow;
         dest.data = destRows;
 
@@ -477,13 +490,13 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
 
         if (unmultiplied) {
             ScanlineData scanlineData;
-            scanlineData.scanlineWidth = width;
+            scanlineData.scanlineWidth = width.unsafeGet();
             scanlineData.srcData = srcRows;
             scanlineData.srcRowBytes = srcBytesPerRow;
             scanlineData.destData = destRows;
             scanlineData.destRowBytes = destBytesPerRow;
 
-            dispatch_apply_f(height, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, premultitplyScanline);
+            dispatch_apply_f(height.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, premultitplyScanline);
         } else {
             // Swap pixel channels from RGBA to BGRA.
             const uint8_t map[4] = { 2, 1, 0, 3 };
@@ -491,11 +504,11 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         }
 #else
         if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width, height, 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> sourceContext(AdoptCF, CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             RetainPtr<CGImageRef> sourceImage(AdoptCF, CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw, desth, 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
+            RetainPtr<CGContextRef> destinationContext(AdoptCF, CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, m_colorSpace, kCGImageAlphaPremultipliedLast));
             CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width / resolutionScale, height / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
+            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
 
             srcRows = destRows;
             srcBytesPerRow = destBytesPerRow;
@@ -503,8 +516,8 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
             height = desth;
         }
 
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height.unsafeGet(); ++y) {
+            for (int x = 0; x < width.unsafeGet(); x++) {
                 int basex = x * 4;
                 unsigned char b = srcRows[basex];
                 unsigned char alpha = srcRows[basex + 3];
