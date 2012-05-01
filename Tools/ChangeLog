@@ -1,3 +1,12 @@
+2012-05-01  Eric Seidel  <eric@webkit.org>
+
+        Add myself to the watchlist to watch all rendering changes, as well as sort the watchers in the list
+        https://bugs.webkit.org/show_bug.cgi?id=85305
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-05-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r115735.
