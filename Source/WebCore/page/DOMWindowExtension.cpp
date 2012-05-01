@@ -54,6 +54,13 @@ DOMWindowExtension::~DOMWindowExtension()
 
 void DOMWindowExtension::disconnectFrame()
 {
+    // The DOMWindow destructor calls disconnectFrame on all its DOMWindowProperties, even if it
+    // did that already when entering the page cache.
+    if (m_disconnectedFrame) {
+        ASSERT(!frame());
+        return;
+    }
+
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
     RefPtr<DOMWindowExtension> protector = this;
