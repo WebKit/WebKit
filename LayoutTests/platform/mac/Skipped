@@ -796,3 +796,7 @@ tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html
 
 # The Mac port does not support the legacy WebKitBlobBuilder class.
 fast/files/blob-builder-crash.html
+
+# [Mac] inspector/debugger/linkifier.html is flakey
+# https://bugs.webkit.org/show_bug.cgi?id=85319
+inspector/debugger/linkifier.html

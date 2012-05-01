@@ -1,3 +1,10 @@
+2012-05-01  Andy Estes  <aestes@apple.com>
+
+        [Mac] inspector/debugger/linkifier.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=85319
+
+        * platform/mac/Skipped: Skip the flakey test.
+
 2012-05-01  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Audio controls have a 1px surplus outline coming from RenderImage::paintReplaced base class,
