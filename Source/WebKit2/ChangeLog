@@ -1,3 +1,18 @@
+2012-05-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Stop repeating timers which should only fire once
+        https://bugs.webkit.org/show_bug.cgi?id=85277
+
+        Reviewed by Antonio Gomes.
+
+        The TapGestureRecognizer uses QBasicTimers which are
+        repeating timers, so stop then when they fire.
+
+        * UIProcess/qt/QtTapGestureRecognizer.cpp:
+        (WebKit::QtTapGestureRecognizer::highlightTimeout):
+        (WebKit::QtTapGestureRecognizer::singleTapTimeout):
+        (WebKit::QtTapGestureRecognizer::tapAndHoldTimeout):
+
 2012-04-30  Anders Carlsson  <andersca@apple.com>
 
         Crash when opening plug-ins in background tabs

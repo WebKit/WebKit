@@ -101,6 +101,8 @@ void QtTapGestureRecognizer::cancel()
 
 void QtTapGestureRecognizer::highlightTimeout()
 {
+    m_highlightTimer.stop();
+
     if (m_candidate != SingleTapCandidate)
         return;
 
@@ -110,6 +112,8 @@ void QtTapGestureRecognizer::highlightTimeout()
 
 void QtTapGestureRecognizer::singleTapTimeout()
 {
+    m_doubleTapTimer.stop();
+
     // Finger is still pressed, ignore.
     if (m_tapAndHoldTimer.isActive())
         return;
@@ -125,6 +129,8 @@ void QtTapGestureRecognizer::singleTapTimeout()
 
 void QtTapGestureRecognizer::tapAndHoldTimeout()
 {
+    m_tapAndHoldTimer.stop();
+
     ASSERT(m_lastTouchPoint.id() != -1);
 #if 0 // No support for synthetic context menus in WK2 yet.
     m_eventHandler->handlePotentialSingleTapEvent(QTouchEvent::TouchPoint());
