@@ -1,3 +1,23 @@
+2012-05-01  Oliver Hunt  <oliver@apple.com>
+
+        Physijs demo crashes due to DFG not updating topCallFrame correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=85311
+
+        Reviewed by Filip Pizlo.
+
+        A few of the dfg operations failed to correctly set the topCallFrame,
+        and so everything goes wrong.  This patch corrects the effected operations,
+        and makes debug builds poison topCallFrame before calling a dfg operation.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::prepareForExternalCall):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+
 2012-04-30  Gavin Barraclough  <barraclough@apple.com>
 
         Should be able to use YARR JIT without the JS language JIT

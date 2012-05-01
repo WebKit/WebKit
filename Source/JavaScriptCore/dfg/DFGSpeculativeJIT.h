@@ -1262,6 +1262,7 @@ private:
 #else
     JITCompiler::Call callOperation(Z_DFGOperation_D operation, GPRReg result, FPRReg arg1)
     {
+        prepareForExternalCall();
         m_jit.setupArguments(arg1);
         JITCompiler::Call call = m_jit.appendCall(operation);
         m_jit.zeroExtend32ToPtr(GPRInfo::returnValueGPR, result);
@@ -1455,10 +1456,21 @@ private:
         return appendCallSetResult(operation, result);
     }
 #endif
+    
+#ifndef NDEBUG
+    void prepareForExternalCall()
+    {
+        for (unsigned i = 0; i < sizeof(void*) / 4; i++)
+            m_jit.store32(TrustedImm32(0xbadbeef), reinterpret_cast<char*>(&m_jit.globalData()->topCallFrame) + i * 4);
+    }
+#else
+    void prepareForExternalCall() { }
+#endif
 
     // These methods add call instructions, with optional exception checks & setting results.
     JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
+        prepareForExternalCall();
         CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
         CallBeginToken token = m_jit.beginCall();
         JITCompiler::Call call = m_jit.appendCall(function);
@@ -1473,6 +1485,7 @@ private:
     }
     JITCompiler::Call appendCallSetResult(const FunctionPtr& function, GPRReg result)
     {
+        prepareForExternalCall();
         JITCompiler::Call call = m_jit.appendCall(function);
         m_jit.move(GPRInfo::returnValueGPR, result);
         return call;

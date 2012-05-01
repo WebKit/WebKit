@@ -148,12 +148,13 @@ namespace JSC { namespace DFG {
 template<bool strict>
 static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, JSValue value)
 {
-    JSGlobalData* globalData = &exec->globalData();
-
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+    
     if (isJSArray(baseValue)) {
         JSArray* array = asArray(baseValue);
         if (array->canSetIndex(index)) {
-            array->setIndex(*globalData, index, value);
+            array->setIndex(globalData, index, value);
             return;
         }
 
@@ -215,7 +216,8 @@ inline JSCell* createThis(ExecState* exec, JSCell* prototype, JSFunction* constr
 #endif
     
     JSGlobalData& globalData = exec->globalData();
-    
+    NativeCallFrameTracer tracer(&globalData, exec);
+
     Structure* structure;
     if (prototype->isObject())
         structure = asObject(prototype)->inheritorID(globalData);
@@ -278,6 +280,9 @@ EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
 
 static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
 {
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+    
     // FIXME: the JIT used to handle these in compiled code!
     if (isJSArray(base) && asArray(base)->canGetIndex(index))
         return JSValue::encode(asArray(base)->getIndex(index));
@@ -486,6 +491,9 @@ EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue 
 
 EncodedJSValue DFG_OPERATION operationRegExpExec(ExecState* exec, JSCell* base, JSCell* argument)
 {
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+    
     if (!base->inherits(&RegExpObject::s_info))
         return throwVMTypeError(exec);
 
@@ -496,6 +504,9 @@ EncodedJSValue DFG_OPERATION operationRegExpExec(ExecState* exec, JSCell* base, 
         
 size_t DFG_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* argument)
 {
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+
     if (!base->inherits(&RegExpObject::s_info)) {
         throwTypeError(exec);
         return false;
@@ -987,11 +998,15 @@ EncodedJSValue DFG_OPERATION operationNewArray(ExecState* exec, void* start, siz
 
 EncodedJSValue DFG_OPERATION operationNewArrayBuffer(ExecState* exec, size_t start, size_t size)
 {
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
     return JSValue::encode(constructArray(exec, exec->codeBlock()->constantBuffer(start), size));
 }
 
 EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)
 {
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
     if (!regexp->isValid()) {
         throwError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
@@ -1004,6 +1019,7 @@ EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
 JSCell* DFG_OPERATION operationCreateActivation(ExecState* exec)
 {
     JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
     JSActivation* activation = JSActivation::create(
         globalData, exec, static_cast<FunctionExecutable*>(exec->codeBlock()->ownerExecutable()));
     exec->setScopeChain(exec->scopeChain()->push(activation));
@@ -1014,12 +1030,16 @@ void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activatio
 {
     ASSERT(activation);
     ASSERT(activation->inherits(&JSActivation::s_info));
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
     jsCast<JSActivation*>(activation)->tearOff(exec->globalData());
 }
 
 JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
 {
     ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
     return static_cast<FunctionExecutable*>(functionExecutable)->make(exec, exec->scopeChain());
 }
 
