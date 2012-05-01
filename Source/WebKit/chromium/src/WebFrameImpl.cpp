@@ -79,7 +79,6 @@
 #include "DOMUtilitiesPrivate.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "DocumentFragment.h" // Only needed for ReplaceSelectionCommand.h :(
 #include "DocumentLoader.h"
 #include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
@@ -119,7 +118,6 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
-#include "ReplaceSelectionCommand.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "SchemeRegistry.h"

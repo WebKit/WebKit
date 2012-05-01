@@ -117,7 +117,6 @@
 #include "Timer.h"
 #include "TouchpadFlingPlatformGestureCurve.h"
 #include "TraceEvent.h"
-#include "TypingCommand.h"
 #include "UserGestureIndicator.h"
 #include "WebAccessibilityObject.h"
 #include "WebActiveWheelFlingParameters.h"

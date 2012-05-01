@@ -3065,11 +3065,11 @@
 		93309DDA099E64920056E581 /* BreakBlockquoteCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D8B099E64910056E581 /* BreakBlockquoteCommand.cpp */; };
 		93309DDB099E64920056E581 /* BreakBlockquoteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D8C099E64910056E581 /* BreakBlockquoteCommand.h */; };
 		93309DDC099E64920056E581 /* CompositeEditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D8D099E64910056E581 /* CompositeEditCommand.cpp */; };
-		93309DDD099E64920056E581 /* CompositeEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D8E099E64910056E581 /* CompositeEditCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309DDD099E64920056E581 /* CompositeEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D8E099E64910056E581 /* CompositeEditCommand.h */; };
 		93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D8F099E64910056E581 /* DeleteFromTextNodeCommand.cpp */; };
 		93309DDF099E64920056E581 /* DeleteFromTextNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D90099E64910056E581 /* DeleteFromTextNodeCommand.h */; };
 		93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D91099E64910056E581 /* DeleteSelectionCommand.cpp */; };
-		93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D92099E64910056E581 /* DeleteSelectionCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D92099E64910056E581 /* DeleteSelectionCommand.h */; };
 		93309DE2099E64920056E581 /* EditAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D93099E64910056E581 /* EditAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE3099E64920056E581 /* EditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D94099E64910056E581 /* EditCommand.cpp */; };
 		93309DE4099E64920056E581 /* EditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D95099E64910056E581 /* EditCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3092,7 +3092,7 @@
 		93309DF9099E64920056E581 /* MergeIdenticalElementsCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DAA099E64910056E581 /* MergeIdenticalElementsCommand.cpp */; };
 		93309DFA099E64920056E581 /* MergeIdenticalElementsCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DAB099E64910056E581 /* MergeIdenticalElementsCommand.h */; };
 		93309DFB099E64920056E581 /* MoveSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DAC099E64910056E581 /* MoveSelectionCommand.cpp */; };
-		93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DAD099E64910056E581 /* MoveSelectionCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DAD099E64910056E581 /* MoveSelectionCommand.h */; };
 		93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB1099E64910056E581 /* RemoveCSSPropertyCommand.cpp */; };
 		93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DB2099E64910056E581 /* RemoveCSSPropertyCommand.h */; };
 		93309E04099E64920056E581 /* RemoveNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB5099E64910056E581 /* RemoveNodeCommand.cpp */; };
@@ -3100,7 +3100,7 @@
 		93309E06099E64920056E581 /* RemoveNodePreservingChildrenCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DB7099E64910056E581 /* RemoveNodePreservingChildrenCommand.cpp */; };
 		93309E07099E64920056E581 /* RemoveNodePreservingChildrenCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DB8099E64910056E581 /* RemoveNodePreservingChildrenCommand.h */; };
 		93309E09099E64920056E581 /* ReplaceSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DBA099E64910056E581 /* ReplaceSelectionCommand.cpp */; };
-		93309E0A099E64920056E581 /* ReplaceSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DBB099E64910056E581 /* ReplaceSelectionCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309E0A099E64920056E581 /* ReplaceSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DBB099E64910056E581 /* ReplaceSelectionCommand.h */; };
 		93309E0D099E64920056E581 /* FrameSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DBE099E64910056E581 /* FrameSelection.cpp */; };
 		93309E0E099E64920056E581 /* FrameSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DBF099E64910056E581 /* FrameSelection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DC0099E64910056E581 /* SetNodeAttributeCommand.cpp */; };
@@ -3114,7 +3114,7 @@
 		93309E17099E64920056E581 /* TextAffinity.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DC8099E64910056E581 /* TextAffinity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309E18099E64920056E581 /* TextGranularity.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DC9099E64910056E581 /* TextGranularity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309E19099E64920056E581 /* TypingCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DCA099E64910056E581 /* TypingCommand.cpp */; };
-		93309E1A099E64920056E581 /* TypingCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCB099E64910056E581 /* TypingCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309E1A099E64920056E581 /* TypingCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCB099E64910056E581 /* TypingCommand.h */; };
 		93309E1B099E64920056E581 /* TextIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DCC099E64910056E581 /* TextIterator.cpp */; };
 		93309E1C099E64920056E581 /* TextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCD099E64910056E581 /* TextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309E1D099E64920056E581 /* visible_units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DCE099E64910056E581 /* visible_units.cpp */; };
@@ -3615,7 +3615,7 @@
 		9B375EDA14478A0100F3CAE5 /* MicroDataItemList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B375ED814478A0100F3CAE5 /* MicroDataItemList.cpp */; };
 		9B375EDB14478A0100F3CAE5 /* MicroDataItemList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B375ED914478A0100F3CAE5 /* MicroDataItemList.h */; };
 		9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B3A8871145632F9003AE8F5 /* DOMDOMSettableTokenList.h */; };
-		9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */; };
 		9B417065125662B3006B28FC /* ApplyBlockElementCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */; };
 		9B6C41531344949000085B62 /* StringWithDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6C41521344949000085B62 /* StringWithDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAB6C6A12550631001626D4 /* EditingStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5692,7 +5692,7 @@
 		C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F765B414E1D414006C899B /* PasteboardStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5A1EA7C152BCF04004D00B6 /* SimplifyMarkupCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5A1EA79152BC486004D00B6 /* SimplifyMarkupCommand.cpp */; };
-		C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = C5A1EA7A152BC486004D00B6 /* SimplifyMarkupCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C5A1EA7D152BCF08004D00B6 /* SimplifyMarkupCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = C5A1EA7A152BC486004D00B6 /* SimplifyMarkupCommand.h */; };
 		C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = C5B4C24B1509236C00A6EF37 /* WebCoreNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5B4C24C1509236C00A6EF37 /* WebCoreNSURLExtras.mm */; };
 		C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */ = {isa = PBXBuildFile; fileRef = C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5752,7 +5752,7 @@
 		CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC4153778FF00E37068 /* DictationCommand.cpp */; };
 		CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC5153778FF00E37068 /* DictationCommand.h */; };
 		CECADFCD1537791D00E37068 /* TextInsertionBaseCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFCB1537791D00E37068 /* TextInsertionBaseCommand.cpp */; };
-		CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFCC1537791D00E37068 /* TextInsertionBaseCommand.h */; };
 		CECCFC3B141973D5002A0AC1 /* DecodeEscapeSequences.h in Headers */ = {isa = PBXBuildFile; fileRef = CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */; };
 		CEDA12D7152CA1CB00D9E08D /* AlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12D6152CA1CB00D9E08D /* AlternativeTextClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEF418CC1179678C009D112C /* ViewportArguments.cpp */; };

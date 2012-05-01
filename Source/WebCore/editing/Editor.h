@@ -207,6 +207,10 @@ public:
     bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent* triggeringEvent);
     bool insertLineBreak();
     bool insertParagraphSeparator();
+
+#if PLATFORM(MAC)
+    bool insertParagraphSeparatorInQuotedContent();
+#endif
     
     bool isContinuousSpellCheckingEnabled();
     void toggleContinuousSpellChecking();

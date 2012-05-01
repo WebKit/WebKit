@@ -1,3 +1,13 @@
+2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        *Command.h files shouldn't be exported to WebKit layer
+        https://bugs.webkit.org/show_bug.cgi?id=74778
+
+        Reviewed by Eric Seidel.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _insertParagraphSeparatorInQuotedContent]):
+
 2012-04-28  Geoffrey Garen  <ggaren@apple.com>
 
         Clarified JSGlobalData (JavaScript VM) lifetime

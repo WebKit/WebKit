@@ -46,6 +46,7 @@
 #import "RenderBlock.h"
 #import "RuntimeApplicationChecks.h"
 #import "Sound.h"
+#import "TypingCommand.h"
 #import "htmlediting.h"
 #import "WebNSAttributedStringExtras.h"
 
@@ -100,6 +101,14 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     }
 #endif
     m_frame->editor()->client()->setInsertionPasteboard(String());
+}
+
+bool Editor::insertParagraphSeparatorInQuotedContent()
+{
+    // FIXME: Why is this missing calls to canEdit, canEditRichly, etc...
+    TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame->document());
+    revealSelectionAfterEditingOperation();
+    return true;
 }
 
 static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)

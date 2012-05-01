@@ -82,14 +82,12 @@
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderPart.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/ReplaceSelectionCommand.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
-#import <WebCore/TypingCommand.h>
 #import <WebCore/htmlediting.h>
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
@@ -766,9 +764,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (_private->coreFrame->selection()->isNone())
         return;
-    
-    TypingCommand::insertParagraphSeparatorInQuotedContent(_private->coreFrame->document());
-    _private->coreFrame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+
+    _private->coreFrame->editor()->insertParagraphSeparatorInQuotedContent();
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
