@@ -143,6 +143,11 @@ inline LayoutUnit ceiledLayoutUnit(float value)
     return ceilf(value);
 }
 
+inline LayoutUnit absoluteValue(const LayoutUnit& value)
+{
+    return abs(value);
+}
+
 inline LayoutSize toLayoutSize(const LayoutPoint& p)
 {
     return LayoutSize(p.x(), p.y());

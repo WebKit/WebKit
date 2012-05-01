@@ -155,7 +155,7 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, Layo
         block = renderer->containingBlock();
     LayoutUnit physicalStart = block->flipForWritingMode(logicalTop);
     LayoutUnit physicalEnd = block->flipForWritingMode(logicalBottom);
-    LayoutUnit physicalExtent = abs(physicalEnd - physicalStart);
+    LayoutUnit physicalExtent = absoluteValue(physicalEnd - physicalStart);
     physicalStart = min(physicalStart, physicalEnd);
     
     if (renderer->style()->isHorizontalWritingMode()) {

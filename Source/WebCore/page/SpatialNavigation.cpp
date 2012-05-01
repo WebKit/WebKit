@@ -645,19 +645,19 @@ void distanceDataForNode(FocusDirection direction, const FocusCandidate& current
     switch (direction) {
     case FocusDirectionLeft:
         sameAxisDistance = exitPoint.x() - entryPoint.x();
-        otherAxisDistance = abs(exitPoint.y() - entryPoint.y());
+        otherAxisDistance = absoluteValue(exitPoint.y() - entryPoint.y());
         break;
     case FocusDirectionUp:
         sameAxisDistance = exitPoint.y() - entryPoint.y();
-        otherAxisDistance = abs(exitPoint.x() - entryPoint.x());
+        otherAxisDistance = absoluteValue(exitPoint.x() - entryPoint.x());
         break;
     case FocusDirectionRight:
         sameAxisDistance = entryPoint.x() - exitPoint.x();
-        otherAxisDistance = abs(entryPoint.y() - exitPoint.y());
+        otherAxisDistance = absoluteValue(entryPoint.y() - exitPoint.y());
         break;
     case FocusDirectionDown:
         sameAxisDistance = entryPoint.y() - exitPoint.y();
-        otherAxisDistance = abs(entryPoint.x() - exitPoint.x());
+        otherAxisDistance = absoluteValue(entryPoint.x() - exitPoint.x());
         break;
     default:
         ASSERT_NOT_REACHED();

@@ -1757,7 +1757,7 @@ bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState
     while (RootInlineBox* nextLine = lastLine->nextRootBox())
         lastLine = nextLine;
 
-    LayoutUnit logicalBottom = lastLine->lineBottomWithLeading() + abs(lineDelta);
+    LayoutUnit logicalBottom = lastLine->lineBottomWithLeading() + absoluteValue(lineDelta);
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();

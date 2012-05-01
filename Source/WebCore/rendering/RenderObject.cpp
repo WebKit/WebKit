@@ -1429,7 +1429,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
     // two rectangles (but typically only one).
     RenderStyle* outlineStyle = outlineStyleForRepaint();
     LayoutUnit ow = outlineStyle->outlineSize();
-    LayoutUnit width = abs(newOutlineBox.width() - oldOutlineBox.width());
+    LayoutUnit width = absoluteValue(newOutlineBox.width() - oldOutlineBox.width());
     if (width) {
         LayoutUnit shadowLeft;
         LayoutUnit shadowRight;
@@ -1448,7 +1448,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
             repaintUsingContainer(repaintContainer, rightRect);
         }
     }
-    LayoutUnit height = abs(newOutlineBox.height() - oldOutlineBox.height());
+    LayoutUnit height = absoluteValue(newOutlineBox.height() - oldOutlineBox.height());
     if (height) {
         LayoutUnit shadowTop;
         LayoutUnit shadowBottom;
