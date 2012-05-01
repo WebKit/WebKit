@@ -894,6 +894,34 @@ void QQuickWebViewExperimental::setUseDefaultContentItemSize(bool enable)
     d->m_useDefaultContentItemSize = enable;
 }
 
+/*!
+   \brief Minimum contents width when not overriden by the page itself.
+
+   Unless the page defines how contents should be laid out, using e.g.
+   the viewport meta tag, it is laid out given the width of the viewport
+   (in CSS units).
+
+   This setting can be used to enforce a minimum width when the page
+   does not define a width itself. This is useful for laying out pages
+   designed for big screens, commonly knows as desktop pages, on small
+   devices.
+
+   The default value is 0, but the value of 980 is recommented for small
+   screens as it provides a good trade off between legitable pages and
+   non-broken content.
+ */
+int QQuickWebViewExperimental::preferredMinimumContentsWidth() const
+{
+    Q_D(const QQuickWebView);
+    return d->webPageProxy->pageGroup()->preferences()->layoutFallbackWidth();
+}
+
+void QQuickWebViewExperimental::setPreferredMinimumContentsWidth(int width)
+{
+    Q_D(QQuickWebView);
+    d->webPageProxy->pageGroup()->preferences()->setLayoutFallbackWidth(width);
+}
+
 void QQuickWebViewExperimental::setFlickableViewportEnabled(bool enable)
 {
     s_flickableViewportEnabled = enable;

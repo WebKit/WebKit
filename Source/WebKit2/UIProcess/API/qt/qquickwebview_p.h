@@ -250,6 +250,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
 
     Q_PROPERTY(bool transparentBackground WRITE setTransparentBackground READ transparentBackground)
     Q_PROPERTY(bool useDefaultContentItemSize WRITE setUseDefaultContentItemSize READ useDefaultContentItemSize)
+    Q_PROPERTY(int preferredMinimumContentsWidth WRITE setPreferredMinimumContentsWidth READ preferredMinimumContentsWidth)
 
     Q_PROPERTY(QWebNavigationHistory* navigationHistory READ navigationHistory CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeComponent* alertDialog READ alertDialog WRITE setAlertDialog NOTIFY alertDialogChanged)
@@ -315,6 +316,9 @@ public:
 
     bool useDefaultContentItemSize() const;
     void setUseDefaultContentItemSize(bool enable);
+
+    int preferredMinimumContentsWidth() const;
+    void setPreferredMinimumContentsWidth(int);
 
     // C++ only
     bool renderToOffscreenBuffer() const;

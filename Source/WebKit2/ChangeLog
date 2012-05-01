@@ -1,5 +1,25 @@
 2012-05-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [Qt] Add an experimental extension to set the min. contents width
+        https://bugs.webkit.org/show_bug.cgi?id=85281
+
+        Reviewed by Antonio Gomes.
+
+        Add the experimental property preferredMinimumContentsWidth: which
+        can be used to set the minimum contents width when not overriden by
+        the page itself.
+
+        Default value is set to 0, which defines normal [desktop] behaviour.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::preferredMinimumContentsWidth):
+        (QQuickWebViewExperimental::setPreferredMinimumContentsWidth):
+        * UIProcess/API/qt/qquickwebview_p.h:
+
+2012-05-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         [Qt] Stop repeating timers which should only fire once
         https://bugs.webkit.org/show_bug.cgi?id=85277
 

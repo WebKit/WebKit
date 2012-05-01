@@ -1,3 +1,14 @@
+2012-05-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add an experimental extension to set the min. contents width
+        https://bugs.webkit.org/show_bug.cgi?id=85281
+
+        Reviewed by Antonio Gomes.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
+        Set the value of preferredMinimumContentsWidth to 980.
+
 2012-04-30  Ojan Vafai  <ojan@chromium.org>
 
         Fix tests to not depend on the actual list of builders at build.chromium.org.

@@ -327,6 +327,7 @@ Rectangle {
                 webView.loadHtml("Failed to load " + loadRequest.url, "", loadRequest.url)
         }
 
+        experimental.preferredMinimumContentsWidth: 980
         experimental.itemSelector: ItemSelector { }
         experimental.alertDialog: AlertDialog { }
         experimental.confirmDialog: ConfirmDialog { }
