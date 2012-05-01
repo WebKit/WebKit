@@ -1285,8 +1285,10 @@ bool IndexKeyCursorImpl::loadCurrentRow()
     Vector<char> primaryLevelDBKey = ObjectStoreDataKey::encode(indexDataKey.databaseId(), indexDataKey.objectStoreId(), *m_primaryKey);
 
     Vector<char> result;
-    if (!m_transaction->get(primaryLevelDBKey, result))
+    if (!m_transaction->get(primaryLevelDBKey, result)) {
+        m_transaction->remove(m_iterator->key());
         return false;
+    }
 
     int64_t objectStoreDataVersion;
     const char* t = decodeVarInt(result.begin(), result.end(), objectStoreDataVersion);
@@ -1366,8 +1368,10 @@ bool IndexCursorImpl::loadCurrentRow()
     m_primaryLevelDBKey = ObjectStoreDataKey::encode(indexDataKey.databaseId(), indexDataKey.objectStoreId(), *m_primaryKey);
 
     Vector<char> result;
-    if (!m_transaction->get(m_primaryLevelDBKey, result))
+    if (!m_transaction->get(m_primaryLevelDBKey, result)) {
+        m_transaction->remove(m_iterator->key());
         return false;
+    }
 
     int64_t objectStoreDataVersion;
     const char* t = decodeVarInt(result.begin(), result.end(), objectStoreDataVersion);
