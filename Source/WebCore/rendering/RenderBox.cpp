@@ -253,10 +253,19 @@ void RenderBox::willBeDestroyed()
     if (styleToUse && (styleToUse->logicalHeight().isPercent() || styleToUse->logicalMinHeight().isPercent() || styleToUse->logicalMaxHeight().isPercent()))
         RenderBlock::removePercentHeightDescendant(this);
 
-    // If this renderer is owning renderer for the frameview's custom scrollbars,
-    // we need to clear it from the scrollbar. See webkit bug 64737.
-    if (styleToUse && styleToUse->hasPseudoStyle(SCROLLBAR) && frame() && frame()->view())
-        frame()->view()->clearOwningRendererForCustomScrollbars(this);
+    if (styleToUse) {
+        if (RenderView* view = this->view()) {
+            if (FrameView* frameView = view->frameView()) {
+                // If this renderer is owning renderer for the FrameView's custom scrollbars,
+                // we need to clear it from the scrollbar. See webkit bug 64737.
+                if (styleToUse->hasPseudoStyle(SCROLLBAR))
+                    frameView->clearOwningRendererForCustomScrollbars(this);
+
+                if (styleToUse->position() == FixedPosition)
+                    frameView->removeFixedObject();
+            }
+        }
+    }
 
     // If the following assertion fails, logicalHeight()/logicalMinHeight()/
     // logicalMaxHeight() values are changed from a percent value to a non-percent
