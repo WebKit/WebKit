@@ -227,6 +227,7 @@
                 'public/WebPopupMenu.h',
                 'public/WebPopupMenuInfo.h',
                 'public/WebPopupType.h',
+                'public/WebPrerendererClient.h',
                 'public/WebRange.h',
                 'public/WebRegularExpression.h',
                 'public/WebRuntimeFeatures.h',

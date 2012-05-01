@@ -1,3 +1,37 @@
+2012-04-30  Gavin Peters  <gavinp@chromium.org>
+
+        [Chromium] Add thunk headers for staging Prerendering API.
+        https://bugs.webkit.org/show_bug.cgi?id=84880
+
+        Reviewed by Adam Barth.
+
+        These empty headers will be replaced by the actual API when Bug 85005 is commited.
+
+        * Platform.gypi:
+        * chromium/public/WebPrerender.h: Added.
+        (WebKit):
+        (WebPrerender):
+        (ExtraData):
+        (WebKit::WebPrerender::ExtraData::~ExtraData):
+        (WebKit::WebPrerender::url):
+        (WebKit::WebPrerender::referrer):
+        (WebKit::WebPrerender::referrerPolicy):
+        (WebKit::WebPrerender::setExtraData):
+        (WebKit::WebPrerender::extraData):
+        (WebKit::WebPrerender::WebPrerender):
+        (WebKit::WebPrerender::~WebPrerender):
+        * chromium/public/WebPrerenderingSupport.h: Added.
+        (WebKit):
+        (WebPrerenderingSupport):
+        (WebKit::WebPrerenderingSupport::initialize):
+        (WebKit::WebPrerenderingSupport::shutdown):
+        (WebKit::WebPrerenderingSupport::current):
+        (WebKit::WebPrerenderingSupport::add):
+        (WebKit::WebPrerenderingSupport::cancel):
+        (WebKit::WebPrerenderingSupport::abandon):
+        (WebKit::WebPrerenderingSupport::WebPrerenderingSupport):
+        (WebKit::WebPrerenderingSupport::~WebPrerenderingSupport):
+
 2012-04-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Separate IOSurface layer type from texture layers

@@ -73,6 +73,8 @@
             'chromium/public/WebPeerConnectionHandler.h',
             'chromium/public/WebPeerConnectionHandlerClient.h',
             'chromium/public/WebPoint.h',
+            'chromium/public/WebPrerender.h',
+            'chromium/public/WebPrerenderingSupport.h',
             'chromium/public/WebPrivateOwnPtr.h',
             'chromium/public/WebPrivatePtr.h',
             'chromium/public/WebRect.h',

@@ -1,3 +1,20 @@
+2012-04-30  Gavin Peters  <gavinp@chromium.org>
+
+        [Chromium] Add thunk headers for staging Prerendering API.
+        https://bugs.webkit.org/show_bug.cgi?id=84880
+
+        Reviewed by Adam Barth.
+
+        These empty headers will be replaced by the actual API when Bug 85005 is commited.
+
+        * WebKit.gyp:
+        * public/WebPrerendererClient.h: Added.
+        (WebKit):
+        (WebPrerendererClient):
+        * public/WebView.h:
+        (WebKit):
+        (WebKit::WebView::setPrerendererClient):
+
 2012-04-30  Ilya Sherman  <isherman@chromium.org>
 
         [Chromium] Fix Autofill popup visibility behavior

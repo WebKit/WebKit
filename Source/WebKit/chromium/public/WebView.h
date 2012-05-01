@@ -51,6 +51,7 @@ class WebGraphicsContext3D;
 class WebNode;
 class WebPageOverlay;
 class WebPermissionClient;
+class WebPrerendererClient;
 class WebRange;
 class WebSettings;
 class WebSpellCheckClient;
@@ -106,6 +107,9 @@ public:
     virtual void setAutofillClient(WebAutofillClient*) = 0;
     virtual void setDevToolsAgentClient(WebDevToolsAgentClient*) = 0;
     virtual void setPermissionClient(WebPermissionClient*) = 0;
+    // FIXME: After the Prerendering API lands in chrome, remove this staging thunk
+    // for setPrerendererClient().
+    virtual void setPrerendererClient(WebPrerendererClient*) { }
     virtual void setSpellCheckClient(WebSpellCheckClient*) = 0;
     virtual void addTextFieldDecoratorClient(WebTextFieldDecoratorClient*) = 0;
 
