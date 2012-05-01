@@ -1,3 +1,9 @@
+2012-04-30  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-04-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         NULL ptr in WebCore::Range::getBorderAndTextQuads
