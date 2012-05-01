@@ -505,6 +505,8 @@ void Region::subtract(const Region& region)
 {
     if (region.isEmpty())
         return;
+    if (!m_bounds.intersects(region.m_bounds))
+        return;
 
     Shape subtractedShape = Shape::subtractShapes(m_shape, region.m_shape);
 
