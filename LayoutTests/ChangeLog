@@ -1,3 +1,11 @@
+2012-05-01  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update for r115713.
+        https://bugs.webkit.org/show_bug.cgi?id=84935
+
+        * platform/chromium/test_expectations.txt:
+        Mark TEXT for date-input-visible-strings.html
+
 2012-05-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK test_expectations update.

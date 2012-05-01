@@ -1091,6 +1091,8 @@ BUGWK29359 : fast/forms/time = PASS FAIL
 BUGWK29359 : fast/forms/week = PASS FAIL
 // Need rebaseline
 BUGWK83872 : fast/forms/date/date-appearance.html = FAIL
+// Need rebaseline?
+BUGWK84935 : fast/forms/date/date-input-visible-strings.html = TEXT
 
 BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 
