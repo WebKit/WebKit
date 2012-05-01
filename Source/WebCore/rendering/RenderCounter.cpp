@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 typedef HashMap<RefPtr<AtomicStringImpl>, RefPtr<CounterNode> > CounterMap;
-typedef HashMap<const RenderObject*, CounterMap*> CounterMaps;
+typedef HashMap<const RenderObject*, OwnPtr<CounterMap> > CounterMaps;
 
 static CounterNode* makeCounterNode(RenderObject*, const AtomicString& identifier, bool alwaysCreateCounter);
 
@@ -440,7 +440,7 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
         nodeMap = counterMaps().get(object);
     else {
         nodeMap = new CounterMap;
-        counterMaps().set(object, nodeMap);
+        counterMaps().set(object, adoptPtr(nodeMap));
         object->setHasCounterNodeMap(true);
     }
     nodeMap->set(identifier.impl(), newNode);
@@ -563,14 +563,13 @@ void RenderCounter::destroyCounterNodes(RenderObject* owner)
     CounterMaps::iterator mapsIterator = maps.find(owner);
     if (mapsIterator == maps.end())
         return;
-    CounterMap* map = mapsIterator->second;
+    CounterMap* map = mapsIterator->second.get();
     CounterMap::const_iterator end = map->end();
     for (CounterMap::const_iterator it = map->begin(); it != end; ++it) {
         AtomicString identifier(it->first.get());
         destroyCounterNodeWithoutMapRemoval(identifier, it->second.get());
     }
     maps.remove(mapsIterator);
-    delete map;
     owner->setHasCounterNodeMap(false);
 }
 
