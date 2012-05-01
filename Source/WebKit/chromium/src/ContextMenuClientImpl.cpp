@@ -290,7 +290,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                     }
                 }
                 data.dictionarySuggestions = suggestions;
-                data.misspelledWord = range->text();
+                data.misspelledWord = selectMisspelledWord(defaultMenu, selectedFrame);
             }
         } else if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
             data.isSpellCheckingEnabled = true;

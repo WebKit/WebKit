@@ -1,3 +1,16 @@
+2012-05-01  Hironori Bono  <hbono@chromium.org>
+
+        [Chromium] Regression r113405 ContextMenuImpl does not set a misspelled word
+        https://bugs.webkit.org/show_bug.cgi?id=85271
+
+        Reviewed by Kent Tamura.
+
+        This change calls selectMisspelledWord() to get a misspelled word so Chrome can
+        set the misspelledWord variable without selecting text.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-04-30  Kent Tamura  <tkent@chromium.org>
 
         [Chromium/Windows] Add LocalizedDateWin
