@@ -123,6 +123,7 @@
             'tests/PODRedBlackTreeTest.cpp',
             'tests/RegionTest.cpp',
             'tests/RenderTableCellTest.cpp',
+            'tests/RenderTableRowTest.cpp',
             'tests/ScrollbarLayerChromiumTest.cpp',
             'tests/TextureCopierTest.cpp',
             'tests/TextureManagerTest.cpp',

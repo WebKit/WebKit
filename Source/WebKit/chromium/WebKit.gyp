@@ -740,6 +740,7 @@
                                 'tests/LevelDBTest.cpp',
                                 'tests/PopupMenuTest.cpp',
                                 'tests/RenderTableCellTest.cpp',
+                                'tests/RenderTableRowTest.cpp',
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',

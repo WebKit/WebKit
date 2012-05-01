@@ -1,3 +1,26 @@
+2012-05-01  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        WebKit test RenderTableCellDeathTest.CanSetRow is failing as of r115705
+        https://bugs.webkit.org/show_bug.cgi?id=85274
+
+        Reviewed by Ojan Vafai.
+
+        The tests were crashing as we were creating a RenderTableCell without any RenderTableRow parent
+        which shouldn't happen inside the render tree.
+
+        Using RenderTableCell to access RenderTableRow was artificial and the checks have now been moved
+        to using a RenderTableRow directly.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        Added the new file.
+
+        * tests/RenderTableCellTest.cpp:
+        Removed the row index tests as they are now in the following file.
+
+        * tests/RenderTableRowTest.cpp: Copied from Source/WebKit/chromium/tests/RenderTableCellTest.cpp.
+        Changed a bit the row index tests and re-enabled them.
+
 2012-05-01  Pavel Feldman  <pfeldman@chromium.org>
 
         WebKit unit tests RenderTableCellDeathTest.CanSetRow* are failing as of r115705

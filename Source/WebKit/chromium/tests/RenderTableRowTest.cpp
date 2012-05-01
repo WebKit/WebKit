@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#include "RenderTableCell.h"
+#include "RenderTableRow.h"
 
 #include "Document.h"
 #include "Frame.h"
@@ -45,7 +45,7 @@ namespace WebCore {
 
 namespace {
 
-class RenderTableCellDeathTest : public testing::Test {
+class RenderTableRowDeathTest : public testing::Test {
     // It's unfortunate that we have to get the whole browser stack to test one RenderObject
     // but the code needs it.
     static Frame* frame()
@@ -72,43 +72,43 @@ class RenderTableCellDeathTest : public testing::Test {
 
     virtual void SetUp()
     {
-        m_cell = new (arena()) RenderTableCell(document());
+        m_row = new (arena()) RenderTableRow(document());
     }
 
     virtual void TearDown()
     {
-        m_cell->destroy();
+        m_row->destroy();
     }
 
 protected:
-    RenderTableCell* m_cell;
+    RenderTableRow* m_row;
 };
 
-TEST_F(RenderTableCellDeathTest, CanSetColumn)
+TEST_F(RenderTableRowDeathTest, CanSetRow)
 {
-    static const unsigned columnIndex = 10;
-    m_cell->setCol(columnIndex);
-    EXPECT_EQ(columnIndex, m_cell->col());
+    static const unsigned rowIndex = 10;
+    m_row->setRowIndex(rowIndex);
+    EXPECT_EQ(rowIndex, m_row->rowIndex());
 }
 
-TEST_F(RenderTableCellDeathTest, CanSetColumnToMaxColumnIndex)
+TEST_F(RenderTableRowDeathTest, CanSetRowToMaxRowIndex)
 {
-    m_cell->setCol(maxColumnIndex);
-    EXPECT_EQ(maxColumnIndex, m_cell->col());
+    m_row->setRowIndex(maxRowIndex);
+    EXPECT_EQ(maxRowIndex, m_row->rowIndex());
 }
 
 // FIXME: Re-enable these tests once ASSERT_DEATH is supported for Android.
 // See: https://bugs.webkit.org/show_bug.cgi?id=74089
 #if !OS(ANDROID)
 
-TEST_F(RenderTableCellDeathTest, CrashIfColumnOverflowOnSetting)
+TEST_F(RenderTableRowDeathTest, CrashIfRowOverflowOnSetting)
 {
-    ASSERT_DEATH(m_cell->setCol(maxColumnIndex + 1), "");
+    ASSERT_DEATH(m_row->setRowIndex(maxRowIndex + 1), "");
 }
 
-TEST_F(RenderTableCellDeathTest, CrashIfSettingUnsetColumnIndex)
+TEST_F(RenderTableRowDeathTest, CrashIfSettingUnsetRowIndex)
 {
-    ASSERT_DEATH(m_cell->setCol(unsetColumnIndex), "");
+    ASSERT_DEATH(m_row->setRowIndex(unsetRowIndex), "");
 }
 
 #endif
