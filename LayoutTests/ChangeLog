@@ -1,5 +1,19 @@
 2012-05-01  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Rebaseline for recent changes about <input type=date>.
+
+        * platform/chromium-linux/fast/forms/date/date-appearance-expected.png:
+        * platform/chromium-linux/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-mac/fast/forms/date/date-input-visible-strings-expected.txt: Copied from LayoutTests/platform/chromium/fast/forms/date/date-input-visible-strings-expected.txt.
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.png:
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-win/fast/forms/date/date-input-visible-strings-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/date/date-input-visible-strings-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
+2012-05-01  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Test expectation update for r115713.
         https://bugs.webkit.org/show_bug.cgi?id=84935
 
