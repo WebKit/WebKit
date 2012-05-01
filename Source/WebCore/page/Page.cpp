@@ -1039,14 +1039,15 @@ bool Page::isCountingRelevantRepaintedObjects() const
 
 void Page::startCountingRelevantRepaintedObjects()
 {
-    m_isCountingRelevantRepaintedObjects = true;
-
     // Reset everything in case we didn't hit the threshold last time.
     resetRelevantPaintedObjectCounter();
+
+    m_isCountingRelevantRepaintedObjects = true;
 }
 
 void Page::resetRelevantPaintedObjectCounter()
 {
+    m_isCountingRelevantRepaintedObjects = false;
     m_relevantUnpaintedRenderObjects.clear();
     m_relevantPaintedRegion = Region();
     m_relevantUnpaintedRegion = Region();
@@ -1067,8 +1068,9 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
 
     // If this object was previously counted as an unpainted object, remove it from that HashSet
     // and corresponding Region. FIXME: This doesn't do the right thing if the objects overlap.
-    if (m_relevantUnpaintedRenderObjects.contains(object)) {
-        m_relevantUnpaintedRenderObjects.remove(object);
+    HashSet<RenderObject*>::iterator it = m_relevantUnpaintedRenderObjects.find(object);
+    if (it != m_relevantUnpaintedRenderObjects.end()) {
+        m_relevantUnpaintedRenderObjects.remove(it);
         m_relevantUnpaintedRegion.subtract(snappedPaintRect);
     }
 

@@ -2102,8 +2102,12 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (m_stateMachine.creatingInitialEmptyDocument() || !m_stateMachine.committedFirstRealDocumentLoad())
                 return;
 
-            if (Page* page = m_frame->page())
+            if (Page* page = m_frame->page()) {
                 page->progress()->progressCompleted(m_frame);
+
+                if (m_frame == page->mainFrame())
+                    page->resetRelevantPaintedObjectCounter();
+            }
 
             const ResourceError& error = dl->mainDocumentError();
 

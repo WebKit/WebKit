@@ -286,9 +286,6 @@ void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition()
 
     IntPoint scrollPosition = m_scrollingTree->mainFrameScrollPosition();
 
-    // Make sure to update the main frame scroll position before changing the scroll layer position,
-    // otherwise we'll introduce jittering on pages with slow repaint objects (like background-attachment: fixed).
-    frameView->updateCompositingLayersAfterLayout();
     frameView->setConstrainsScrollingToContentEdge(false);
     frameView->notifyScrollPositionChanged(scrollPosition);
     frameView->setConstrainsScrollingToContentEdge(true);
