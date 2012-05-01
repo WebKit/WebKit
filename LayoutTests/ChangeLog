@@ -1,3 +1,11 @@
+2012-04-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, rebaselining after r115666 and test expectations update
+        after r115651.
+
+        * platform/gtk/fast/js/constructor-length-expected.txt:
+        * platform/gtk/test_expectations.txt:
+
 2012-04-30  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r115600): parseLocalizedDate() should fail for invalid inputs

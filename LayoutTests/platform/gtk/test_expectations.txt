@@ -1460,6 +1460,7 @@ BUGWK76564 : fast/workers/worker-crash-with-invalid-location.html = FAIL
 BUGWK78819 : fast/workers/shared-worker-load-error.html = FAIL
 
 BUGWK79203 : fast/mediastream/argument-types.html = FAIL
+BUGWK79203 : fast/mediastream/constructors.html = FAIL
 BUGWK79203 : fast/mediastream/peerconnection-Attributes.html = FAIL
 BUGWK79203 : fast/mediastream/peerconnection-argument-types.html = FAIL
 
