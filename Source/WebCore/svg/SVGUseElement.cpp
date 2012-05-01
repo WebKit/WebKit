@@ -595,6 +595,9 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
         foundProblem = hasCycleUseReferencing(static_cast<SVGUseElement*>(target), targetInstance, newTarget);
         if (foundProblem)
             return;
+    } else if (isDisallowedElement(target)) {
+        foundProblem = true;
+        return;
     }
 
     // A general description from the SVG spec, describing what buildInstanceTree() actually does.

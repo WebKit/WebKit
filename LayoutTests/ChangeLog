@@ -1,3 +1,17 @@
+2012-05-01  Philip Rogers  <pdr@google.com>
+
+        Skip building instance tree for disallowed target
+        https://bugs.webkit.org/show_bug.cgi?id=85202
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/gtk/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * svg/custom/animate-disallowed-mask-element-expected.txt: Added.
+        * svg/custom/animate-disallowed-mask-element.svg: Added.
+
 2012-04-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Accumulation for values-animation is broken
