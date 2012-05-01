@@ -1,5 +1,28 @@
 2012-04-30  Gavin Barraclough  <barraclough@apple.com>
 
+        Should be able to use YARR JIT without the JS language JIT
+        https://bugs.webkit.org/show_bug.cgi?id=85252
+
+        Reviewed by Geoff Garen.
+
+        Need to split canUseRegExpJIT out of canUseJIT.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC):
+        (JSC::useJIT):
+        (JSC::JSGlobalData::JSGlobalData):
+            - replace m_canUseJIT with m_canUseAssembler
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        (JSC::JSGlobalData::canUseRegExpJIT):
+            - Added canUseRegExpJIT, distinct from canUseJIT.
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+            - Call canUseRegExpJIT instead of canUseJIT.
+
+2012-04-30  Gavin Barraclough  <barraclough@apple.com>
+
         Should be able to build YARR JIT without the JS language JIT
         https://bugs.webkit.org/show_bug.cgi?id=85242
 

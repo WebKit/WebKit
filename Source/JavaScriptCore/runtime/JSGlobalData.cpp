@@ -88,6 +88,31 @@ extern const HashTable regExpPrototypeTable;
 extern const HashTable stringTable;
 extern const HashTable stringConstructorTable;
 
+#if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+static bool enableAssembler(ExecutableAllocator& executableAllocator)
+{
+    if (!executableAllocator.isValid() || !Options::useJIT)
+        return false;
+
+#if USE(CF)
+    CFStringRef canUseJITKey = CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman);
+    CFBooleanRef canUseJIT = (CFBooleanRef)CFPreferencesCopyAppValue(canUseJITKey, kCFPreferencesCurrentApplication);
+    if (canUseJIT) {
+        return kCFBooleanTrue == canUseJIT;
+        CFRelease(canUseJIT);
+    }
+    CFRelease(canUseJITKey);
+#endif
+
+#if USE(CF) || OS(UNIX)
+    char* canUseJITString = getenv("JavaScriptCoreUseJIT");
+    return !canUseJITString || atoi(canUseJITString);
+#else
+    return true;
+#endif
+}
+#endif
+
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
     : heap(this, heapSize)
     , globalDataType(globalDataType)
@@ -138,6 +163,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #if CPU(X86) && ENABLE(JIT)
     , m_timeoutCount(512)
 #endif
+#if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+    , m_canUseAssembler(enableAssembler(executableAllocator))
+#endif
 #if ENABLE(GC_VALIDATION)
     , m_initializingObjectClass(0)
 #endif
@@ -171,33 +199,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
-#if ENABLE(JIT) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
-#if USE(CF)
-    CFStringRef canUseJITKey = CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman);
-    CFBooleanRef canUseJIT = (CFBooleanRef)CFPreferencesCopyAppValue(canUseJITKey, kCFPreferencesCurrentApplication);
-    if (canUseJIT) {
-        m_canUseJIT = kCFBooleanTrue == canUseJIT;
-        CFRelease(canUseJIT);
-    } else {
-      char* canUseJITString = getenv("JavaScriptCoreUseJIT");
-      m_canUseJIT = !canUseJITString || atoi(canUseJITString);
-    }
-    CFRelease(canUseJITKey);
-#elif OS(UNIX)
-    char* canUseJITString = getenv("JavaScriptCoreUseJIT");
-    m_canUseJIT = !canUseJITString || atoi(canUseJITString);
-#else
-    m_canUseJIT = true;
-#endif
-#endif
 #if ENABLE(JIT)
-#if ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT)
-    if (m_canUseJIT)
-        m_canUseJIT = executableAllocator.isValid();
-    
-    if (!Options::useJIT)
-        m_canUseJIT = false;
-#endif
     jitStubs = adoptPtr(new JITThunks(this));
 #endif
     

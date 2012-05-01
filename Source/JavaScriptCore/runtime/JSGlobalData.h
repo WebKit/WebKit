@@ -236,7 +236,15 @@ namespace JSC {
 #elif !ENABLE(CLASSIC_INTERPRETER) && !ENABLE(LLINT)
         bool canUseJIT() { return true; } // jit only
 #else
-        bool canUseJIT() { return m_canUseJIT; }
+        bool canUseJIT() { return m_canUseAssembler; }
+#endif
+
+#if !ENABLE(YARR_JIT)
+        bool canUseRegExpJIT() { return false; } // interpreter only
+#elif !ENABLE(CLASSIC_INTERPRETER) && !ENABLE(LLINT)
+        bool canUseRegExpJIT() { return true; } // jit only
+#else
+        bool canUseRegExpJIT() { return m_canUseAssembler; }
 #endif
 
         OwnPtr<ParserArena> parserArena;
@@ -368,8 +376,8 @@ namespace JSC {
         JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
-#if ENABLE(JIT) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
-        bool m_canUseJIT;
+#if ENABLE(ASSEMBLER) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
+        bool m_canUseAssembler;
 #endif
 #if ENABLE(GC_VALIDATION)
         const ClassInfo* m_initializingObjectClass;

@@ -279,7 +279,7 @@ void RegExp::compile(JSGlobalData* globalData, Yarr::YarrCharSize charSize)
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.m_containsBackreferences && globalData->canUseJIT()) {
+    if (!pattern.m_containsBackreferences && globalData->canUseRegExpJIT()) {
         Yarr::jitCompile(pattern, charSize, globalData, m_regExpJITCode);
 #if ENABLE(YARR_JIT_DEBUG)
         if (!m_regExpJITCode.isFallBack())
@@ -401,7 +401,7 @@ void RegExp::compileMatchOnly(JSGlobalData* globalData, Yarr::YarrCharSize charS
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.m_containsBackreferences && globalData->canUseJIT()) {
+    if (!pattern.m_containsBackreferences && globalData->canUseRegExpJIT()) {
         Yarr::jitCompile(pattern, charSize, globalData, m_regExpJITCode, Yarr::MatchOnly);
 #if ENABLE(YARR_JIT_DEBUG)
         if (!m_regExpJITCode.isFallBack())
