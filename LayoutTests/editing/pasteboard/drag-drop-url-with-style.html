@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests dragging and dropping a URL. The content before and after the drag and drop should match.</p>
+<div contenteditable><a href="http://webkit.org/" title="some title" target="_blank" style="color:orange">drag me</a></div>
+<p>to the box blow:</p>
+<div id="destination" contenteditable ondrop="setTimeout(dump, 0);" style="border: solid 2px blue; padding: 5px;"><br></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.waitUntilDone();
+
+Markup.description(document.getElementById('description').textContent);
+
+var target = document.getElementsByTagName("a")[0];
+getSelection().selectAllChildren(target);
+Markup.dump(target.parentNode, 'before');
+
+function dump() {
+    Markup.dump('destination', 'after');
+    Markup.notifyDone();
+}
+
+if (window.eventSender) {
+    var x = target.offsetLeft + target.offsetWidth / 2;
+    var y = target.offsetTop + target.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+
+    var destination = document.getElementById("destination");
+    eventSender.leapForward(300);
+    eventSender.mouseMoveTo(destination.offsetLeft + 10, destination.offsetTop + destination.offsetHeight / 2);
+    eventSender.mouseUp();
+
+    setTimeout(function () { destination.innerHTML = 'FAIL'; dump(); }, 100);
+}
+
+</script>
+</body>
+</html>

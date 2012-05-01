@@ -1,3 +1,15 @@
+2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        drag of links with styled text drop as links with plain text
+        https://bugs.webkit.org/show_bug.cgi?id=19386
+
+        Reviewed by Hajime Morita.
+
+        Add a regression test since the said bug appears to have been fixed on ToT WebKit.
+
+        * editing/pasteboard/drag-drop-url-with-style-expected.txt: Added.
+        * editing/pasteboard/drag-drop-url-with-style.html: Added.
+
 2012-05-01  Andreas Kling  <kling@webkit.org>
 
         Remove Mac WK2-specific result for svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm.
