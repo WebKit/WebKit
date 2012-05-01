@@ -1,3 +1,13 @@
+2012-05-01  Landry Breuil  <landry@openbsd.org>
+
+        [GTK] Fix gstreamer detection during configure
+        https://bugs.webkit.org/show_bug.cgi?id=84325
+
+        Reviewed by Philippe Normand.
+
+        * configure.ac: Fix GSTREAMER_REQUIRED_VERSION and
+        GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION assignments.
+
 2012-05-01  Mike Fenton  <mifenton@rim.com>
 
         Add special attribute for alternate selection touch handling.
