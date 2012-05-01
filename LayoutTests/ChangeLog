@@ -1,3 +1,9 @@
+2012-05-01  Andreas Kling  <kling@webkit.org>
+
+        Remove Mac WK2-specific result for svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm.
+
+        * platform/mac-wk2/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Removed.
+
 2012-05-01  Yuzhu Shen  <yzshen@chromium.org>
 
         Fix test regression introduced by r115086.
