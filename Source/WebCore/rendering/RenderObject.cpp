@@ -2691,7 +2691,7 @@ bool RenderObject::willRenderImage(CachedImage*)
     return !document()->inPageCache() && !document()->view()->isOffscreen();
 }
 
-LayoutUnit RenderObject::maximalOutlineSize(PaintPhase p) const
+int RenderObject::maximalOutlineSize(PaintPhase p) const
 {
     if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline && p != PaintPhaseChildOutlines)
         return 0;
