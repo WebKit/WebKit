@@ -1,3 +1,13 @@
+2012-05-01  Yuzhu Shen  <yzshen@chromium.org>
+
+        Fix test regression introduced by r115086.
+        https://bugs.webkit.org/show_bug.cgi?id=84566
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/network-status-non-http.html:
+        * platform/qt/Skipped:
+
 2012-05-01  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for recent changes about <input type=date>.

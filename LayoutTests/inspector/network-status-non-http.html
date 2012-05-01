@@ -19,7 +19,11 @@ function test() {
             if (requestsToWatch.test(url)) {
                 var urlFragment = /^data:/.test(url) ? url.replace(/,.*$/, "") : url.replace(/.*\//, "");
                 var status = document.evaluate("ancestor::tr/td[position()=3]", urls.snapshotItem(i), null, XPathResult.STRING_TYPE, null);
-                outputStrings.push(urlFragment + ": " + status.stringValue);
+                var outputStatus = status.stringValue;
+                // Truncate the status string on failure, since the description following "(failed)" is platform-dependent.
+                if (outputStatus.indexOf("(failed)") == 0)
+                    outputStatus = "(failed)";
+                outputStrings.push(urlFragment + ": " + outputStatus);
             }
         }
         outputStrings.sort();
