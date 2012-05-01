@@ -115,7 +115,8 @@ void PluginControllerProxy::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
     m_plugin->setLayerHostingMode(layerHostingMode);
     updateLayerHostingContext(layerHostingMode);
 
-    m_connection->connection()->send(Messages::PluginProxy::SetLayerHostingContextID(m_layerHostingContext->contextID()), m_pluginInstanceID);
+    if (m_layerHostingContext)
+        m_connection->connection()->send(Messages::PluginProxy::SetLayerHostingContextID(m_layerHostingContext->contextID()), m_pluginInstanceID);
 }
 
 void PluginControllerProxy::updateLayerHostingContext(LayerHostingMode layerHostingMode)

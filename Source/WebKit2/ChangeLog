@@ -1,3 +1,15 @@
+2012-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Crash when opening plug-ins in background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=85255
+        <rdar://problem/11344053>
+
+        Reviewed by Dan Bernstein.
+        
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::setLayerHostingMode):
+        m_layerHostingContext can be null for plug-ins that don't use the Core Animation drawing model, so check for that.
+
 2012-04-30  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][WK2] Fixed layers are shaking when zoom level is not 1.0 due to a rounding error.
