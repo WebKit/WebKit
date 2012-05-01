@@ -657,7 +657,7 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
 #endif
 
     [m_imageGenerator.get() setMaximumSize:CGSize(rect.size())];
-    CGImageRef image = [m_imageGenerator.get() copyCGImageAtTime:CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil];
+    RetainPtr<CGImageRef> image = adoptCF([m_imageGenerator.get() copyCGImageAtTime:CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
 
 #if !LOG_DISABLED
     double duration = WTF::currentTime() - start;
