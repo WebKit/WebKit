@@ -107,7 +107,8 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
 
 static String utiTypeFromCocoaType(const String& type)
 {
-    RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, type.createCFString(), NULL));
+    RetainPtr<CFStringRef> typeCF = adoptCF(type.createCFString());
+    RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, typeCF.get(), 0));
     if (utiType) {
         RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType));
         if (mimeType)
