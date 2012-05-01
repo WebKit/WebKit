@@ -139,7 +139,7 @@ bool PluginPackage::fetchInfo()
     if (mimeTypesFileName && CFGetTypeID(mimeTypesFileName.get()) == CFStringGetTypeID()) {
 
         WTF::RetainPtr<CFStringRef> fileName = (CFStringRef)mimeTypesFileName.get();
-        WTF::RetainPtr<CFStringRef> homeDir = homeDirectoryPath().createCFString();
+        WTF::RetainPtr<CFStringRef> homeDir = adoptCF(homeDirectoryPath().createCFString());
         WTF::RetainPtr<CFStringRef> path(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%@/Library/Preferences/%@"), homeDir.get(), fileName.get()));
 
         WTF::RetainPtr<CFDictionaryRef> plist = readPListFile(path.get(), /*createFile*/ false, m_module);
