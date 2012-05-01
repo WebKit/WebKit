@@ -106,7 +106,9 @@ TEST_F(RenderTableCellDeathTest, CanSetColumnToMaxColumnIndex)
     EXPECT_EQ(maxColumnIndex, m_cell->col());
 }
 
-TEST_F(RenderTableCellDeathTest, CanSetRowToMaxRowIndex)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=85274.
+// row() returns 0 by test design.
+TEST_F(RenderTableCellDeathTest, DISABLED_CanSetRowToMaxRowIndex)
 {
     m_cell->row()->setRowIndex(maxRowIndex);
     EXPECT_EQ(maxRowIndex, m_cell->rowIndex());

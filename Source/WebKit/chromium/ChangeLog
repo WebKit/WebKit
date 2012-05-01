@@ -1,5 +1,14 @@
 2012-05-01  Pavel Feldman  <pfeldman@chromium.org>
 
+        WebKit unit tests RenderTableCellDeathTest.CanSetRow* are failing as of r115705
+        https://bugs.webkit.org/show_bug.cgi?id=85274
+
+        Not reviewed: test disabled.
+
+        * tests/RenderTableCellTest.cpp:
+
+2012-05-01  Pavel Feldman  <pfeldman@chromium.org>
+
         WebKit test RenderTableCellDeathTest.CanSetRow is failing as of r115705
         https://bugs.webkit.org/show_bug.cgi?id=85274
 
