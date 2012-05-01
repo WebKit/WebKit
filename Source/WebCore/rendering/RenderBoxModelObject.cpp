@@ -1238,13 +1238,13 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
 
     LayoutUnit xPosition = minimumValueForLength(fillLayer->xPosition(), positioningAreaSize.width() - geometry.tileSize().width(), renderView, true);
     if (backgroundRepeatX == RepeatFill)
-        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - (xPosition + left) % geometry.tileSize().width() : 0);
+        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - roundToInt(xPosition + left) % geometry.tileSize().width() : 0);
     else
         geometry.setNoRepeatX(xPosition + left);
 
     LayoutUnit yPosition = minimumValueForLength(fillLayer->yPosition(), positioningAreaSize.height() - geometry.tileSize().height(), renderView, true);
     if (backgroundRepeatY == RepeatFill)
-        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - (yPosition + top) % geometry.tileSize().height() : 0);
+        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - roundToInt(yPosition + top) % geometry.tileSize().height() : 0);
     else 
         geometry.setNoRepeatY(yPosition + top);
 
