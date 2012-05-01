@@ -99,10 +99,6 @@ module html {
     // URL passed to src attribute to enable the media source logic.
     readonly attribute [V8EnabledAtRuntime=mediaSource, URL] DOMString webkitMediaSourceURL;
 
-    // Manages IDs for appending media to the source.
-    [V8EnabledAtRuntime=mediaSource] void webkitSourceAddId(in DOMString id, in DOMString type) raises (DOMException);
-    [V8EnabledAtRuntime=mediaSource] void webkitSourceRemoveId(in DOMString id) raises (DOMException);
-
     // Appends media to to the source.
     [V8EnabledAtRuntime=mediaSource] void webkitSourceAppend(in Uint8Array data) raises (DOMException);
 

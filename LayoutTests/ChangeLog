@@ -1,3 +1,15 @@
+2012-05-01  Aaron Colwell  <acolwell@chromium.org>
+
+        Temporarily removing tests for webkitSourceAddId() & webkitSourceRemoveId()
+        until the rest of the Media Source v0.5 methods are implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=85295
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/media/media-source/webm/video-media-source-add-and-remove-ids-expected.txt: Removed.
+        * http/tests/media/media-source/webm/video-media-source-add-and-remove-ids.html: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-01  Eric Seidel  <eric@webkit.org>
 
         Add seamless test cases (all of these will pass as we land the implementation patches)

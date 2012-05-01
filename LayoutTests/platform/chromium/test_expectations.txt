@@ -3576,9 +3576,6 @@ BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 
 BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
 
-// Temporarily disabled until Chromium sourceAddId() & sourceRemoveId() code has been checked in.
-BUGWK83616 SKIP : http/tests/media/media-source/webm/video-media-source-add-and-remove-ids.html = FAIL
-
 BUGWK83503 LINUX DEBUG : plugins/inner-html-display-none.html = CRASH
 
 
