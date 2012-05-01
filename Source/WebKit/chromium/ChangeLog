@@ -1,3 +1,17 @@
+2012-04-30  Ilya Sherman  <isherman@chromium.org>
+
+        [Chromium] Fix Autofill popup visibility behavior
+        Prevent users from interacting with invisible Autofill popups rendered outside the main frame's contents view.
+        This is a recommit of r115400, restricted to just Autofill popups.
+        https://bugs.webkit.org/show_bug.cgi?id=84420
+
+        Reviewed by Abhishek Arya
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::popupOpened): Hide popups rendered outside the main frame's contents view.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::applyAutofillSuggestions): Fix up order of operations to support immediately hiding a popup if it would not be visible
+
 2012-04-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Disable battery-status API support.

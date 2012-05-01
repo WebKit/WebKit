@@ -2797,8 +2797,8 @@ void WebViewImpl::applyAutofillSuggestions(
     if (m_autofillPopupShowing) {
         refreshAutofillPopup();
     } else {
-        m_autofillPopup->showInRect(focusedNode->getPixelSnappedRect(), focusedNode->ownerDocument()->view(), 0);
         m_autofillPopupShowing = true;
+        m_autofillPopup->showInRect(focusedNode->getPixelSnappedRect(), focusedNode->ownerDocument()->view(), 0);
     }
 }
 
