@@ -145,7 +145,7 @@ void SVGAnimatedEnumerationAnimator::addAnimatedTypes(SVGAnimatedType*, SVGAnima
     ASSERT_NOT_REACHED();
 }
 
-void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, unsigned, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, unsigned, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType*, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);

@@ -171,7 +171,7 @@ public:
         animatedType = AnimatedType(fromType);
     }
 
-    void animateAdditiveNumber(float percentage, unsigned repeatCount, float fromNumber, float toNumber, float& animatedNumber)
+    void animateAdditiveNumber(float percentage, unsigned repeatCount, float fromNumber, float toNumber, float toAtEndOfDurationNumber, float& animatedNumber)
     {
         float number;
         if (calcMode() == CalcModeDiscrete)
@@ -179,11 +179,8 @@ public:
         else
             number = (toNumber - fromNumber) * percentage + fromNumber;
 
-        // FIXME: This is not correct for values animation. Right now we transform values-animation to multiple from-to-animations and
-        // accumulate every single value to the previous one. But accumulation should just take into account after a complete cycle
-        // of values-animaiton. See example at: http://www.w3.org/TR/2001/REC-smil-animation-20010904/#RepeatingAnim
         if (isAccumulated() && repeatCount)
-            number += toNumber * repeatCount;
+            number += toAtEndOfDurationNumber * repeatCount;
 
         if (isAdditive() && animationMode() != ToAnimation)
             animatedNumber += number;
@@ -227,11 +224,11 @@ private:
 
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
-    virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
+    virtual void calculateAnimatedValue(float percent, unsigned repeatCount, const String& toAtEndOfDurationString, SVGSMILElement* resultElement) = 0;
     virtual float calculateDistance(const String& /*fromString*/, const String& /*toString*/) { return -1.f; }
     virtual Path animationPath() const { return Path(); }
 
-    void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
+    void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to, String& toAtEndOfDuration);
     void calculateKeyTimesForCalcModePaced();
     float calculatePercentFromKeyPoints(float percent) const;
     void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;

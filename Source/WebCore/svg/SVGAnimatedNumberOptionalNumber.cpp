@@ -83,18 +83,19 @@ void SVGAnimatedNumberOptionalNumberAnimator::addAnimatedTypes(SVGAnimatedType* 
     toNumberPair.second += fromNumberPair.second;
 }
 
-void SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
     pair<float, float>& fromNumberPair = from->numberOptionalNumber();
     pair<float, float>& toNumberPair = to->numberOptionalNumber();
+    pair<float, float>& toAtEndOfDurationNumberPair = toAtEndOfDuration->numberOptionalNumber();
     pair<float, float>& animatedNumberPair = animated->numberOptionalNumber();
     m_animationElement->adjustFromToValues<pair<float, float> >(0, fromNumberPair, toNumberPair, animatedNumberPair, percentage, m_contextElement);
 
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.first, toNumberPair.first, animatedNumberPair.first);
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.second, toNumberPair.second, animatedNumberPair.second);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.first, toNumberPair.first, toAtEndOfDurationNumberPair.first, animatedNumberPair.first);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumberPair.second, toNumberPair.second, toAtEndOfDurationNumberPair.second, animatedNumberPair.second);
 }
 
 float SVGAnimatedNumberOptionalNumberAnimator::calculateDistance(const String&, const String&)

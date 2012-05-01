@@ -94,13 +94,14 @@ void SVGAnimatedAngleAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimat
     toAngle.setValue(toAngle.value() + fromAngle.value());
 }
 
-void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
     
     pair<SVGAngle, unsigned>& fromAngleAndEnumeration = from->angleAndEnumeration();
     pair<SVGAngle, unsigned>& toAngleAndEnumeration = to->angleAndEnumeration();
+    pair<SVGAngle, unsigned>& toAtEndOfDurationAngleAndEnumeration = toAtEndOfDuration->angleAndEnumeration();
     pair<SVGAngle, unsigned>& animatedAngleAndEnumeration = animated->angleAndEnumeration();
     m_animationElement->adjustFromToValues<pair<SVGAngle, unsigned> >(0, fromAngleAndEnumeration, toAngleAndEnumeration, animatedAngleAndEnumeration, percentage, m_contextElement);
 
@@ -142,8 +143,9 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
     animatedAngleAndEnumeration.second = SVGMarkerOrientAngle;
 
     SVGAngle& animatedSVGAngle = animatedAngleAndEnumeration.first;
+    SVGAngle& toAtEndOfDurationSVGAngle = toAtEndOfDurationAngleAndEnumeration.first;
     float animatedAngle = animatedSVGAngle.value();
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromAngleAndEnumeration.first.value(), toAngleAndEnumeration.first.value(), animatedAngle);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromAngleAndEnumeration.first.value(), toAngleAndEnumeration.first.value(), toAtEndOfDurationSVGAngle.value(), animatedAngle);
     animatedSVGAngle.setValue(animatedAngle);
 }
 

@@ -80,13 +80,14 @@ void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
         toNumberList[i] += fromNumberList[i];
 }
 
-void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
     SVGNumberList& fromNumberList = from->numberList();
     SVGNumberList& toNumberList = to->numberList();
+    SVGNumberList& toAtEndOfDurationNumberList = toAtEndOfDuration->numberList();
     SVGNumberList& animatedNumberList = animated->numberList();
     if (!m_animationElement->adjustFromToListValues<SVGNumberList>(0, fromNumberList, toNumberList, animatedNumberList, percentage, m_contextElement))
         return;
@@ -96,7 +97,7 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
 
     for (unsigned i = 0; i < toNumberListSize; ++i) {
         float effectiveFrom = fromNumberListSize ? fromNumberList[i] : 0;
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toNumberList[i], animatedNumberList[i]);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toNumberList[i], toAtEndOfDurationNumberList[i], animatedNumberList[i]);
     }
 }
 

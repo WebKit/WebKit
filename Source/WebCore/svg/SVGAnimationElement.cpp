@@ -493,12 +493,13 @@ void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effec
     to = m_values[index + 1];
 }
     
-void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to)
+void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to, String& toAtEndOfDuration)
 {
     unsigned valuesCount = m_values.size();
     ASSERT(m_animationValid);
     ASSERT(valuesCount >= 1);
 
+    toAtEndOfDuration = m_values.last();
     if (percent == 1 || valuesCount == 1) {
         from = m_values[valuesCount - 1];
         to = m_values[valuesCount - 1];
@@ -540,7 +541,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
         fromPercent = m_keyTimes[index];
         toPercent = m_keyTimes[index + 1];
     } else {        
-        index = static_cast<unsigned>(percent * (valuesCount - 1));
+        index = static_cast<unsigned>(floorf(percent * (valuesCount - 1)));
         fromPercent =  static_cast<float>(index) / (valuesCount - 1);
         toPercent =  static_cast<float>(index + 1) / (valuesCount - 1);
     }
@@ -551,7 +552,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     to = m_values[index + 1];
     ASSERT(toPercent > fromPercent);
     effectivePercent = (percent - fromPercent) / (toPercent - fromPercent);
-    
+
     if (calcMode == CalcModeSpline) {
         ASSERT(m_keySplines.size() == m_values.size() - 1);
         effectivePercent = calculatePercentForSpline(effectivePercent, index);
@@ -606,17 +607,18 @@ void SVGAnimationElement::startedActiveInterval()
         m_animationValid = calcMode == CalcModePaced || !fastHasAttribute(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size());
 }
 
-void SVGAnimationElement::updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement)
+void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, SVGSMILElement* resultElement)
 {    
     if (!m_animationValid)
         return;
-    
+
+    String toAtEndOfDuration;
     float effectivePercent;
     CalcMode mode = calcMode();
     if (animationMode() == ValuesAnimation) {
         String from;
         String to;
-        currentValuesForValuesAnimation(percent, effectivePercent, from, to);
+        currentValuesForValuesAnimation(percent, effectivePercent, from, to, toAtEndOfDuration);
         if (from != m_lastValuesAnimationFrom || to != m_lastValuesAnimationTo) {
             m_animationValid = calculateFromAndToValues(from, to);
             if (!m_animationValid)
@@ -633,7 +635,7 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeat, SVGSMI
     else
         effectivePercent = percent;
 
-    calculateAnimatedValue(effectivePercent, repeat, resultElement);
+    calculateAnimatedValue(effectivePercent, repeatCount, toAtEndOfDuration, resultElement);
 }
 
 void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& value)

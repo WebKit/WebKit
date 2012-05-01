@@ -1,3 +1,27 @@
+2012-04-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Accumulation for values-animation is broken
+        https://bugs.webkit.org/show_bug.cgi?id=85158
+
+        Reviewed by Darin Adler.
+
+        * svg/animations/accumulate-values-width-animation-expected.txt: Added.
+        * svg/animations/accumulate-values-width-animation.html: Added.
+        * svg/animations/resources/accumulate-values-width-animation.svg: Added.
+        * svg/animations/script-tests/accumulate-values-width-animation.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (sample7):
+        (sample8):
+        (sample9):
+        (sample10):
+        (sample11):
+        (executeTest):
+
 2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         drag of links with styled text drop as links with plain text

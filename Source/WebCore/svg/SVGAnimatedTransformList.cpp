@@ -93,7 +93,7 @@ void SVGAnimatedTransformListAnimator::addAnimatedTypes(SVGAnimatedType* from, S
     toTransform = SVGTransformDistance::addSVGTransforms(fromTransform, toTransform);
 }
 
-void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
 
@@ -103,6 +103,7 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     // FIXME: This is not taken into account yet.
     SVGTransformList& fromTransformList = from->transformList();
     SVGTransformList& toTransformList = to->transformList();
+    SVGTransformList& toAtEndOfDurationTransformList = toAtEndOfDuration->transformList();
     SVGTransformList& animatedTransformList = animated->transformList();
 
     // Pass false to 'resizeAnimatedListIfNeeded' here, as the special post-multiplication behavior of <animateTransform> needs to be respected below.
@@ -117,9 +118,10 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     SVGTransform& toTransform = toTransformList[0];
     SVGTransform effectiveFrom = fromTransformListSize ? fromTransformList[0] : SVGTransform(toTransform.type(), SVGTransform::ConstructZeroTransform);
     SVGTransform currentTransform = SVGTransformDistance(effectiveFrom, toTransform).scaledDistance(percentage).addToSVGTransform(effectiveFrom);
-    if (m_animationElement->isAccumulated() && repeatCount)
-        animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, toTransform, repeatCount));
-    else
+    if (m_animationElement->isAccumulated() && repeatCount) {
+        SVGTransform& toAtEndOfDurationTransform = toAtEndOfDurationTransformList[0];
+        animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, toAtEndOfDurationTransform, repeatCount));
+    } else
         animatedTransformList.append(currentTransform);
 }
 

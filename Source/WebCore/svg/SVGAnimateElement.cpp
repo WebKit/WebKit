@@ -92,7 +92,7 @@ AnimatedPropertyType SVGAnimateElement::determineAnimatedPropertyType(SVGElement
     return type;
 }
 
-void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement)
+void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeatCount, const String& toAtEndOfDurationString, SVGSMILElement* resultElement)
 {
     ASSERT(resultElement);
     SVGElement* targetElement = this->targetElement();
@@ -131,7 +131,15 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     // while detaching. This is covered by assertions, moving this down would fire them.
     if (!m_animatedProperties.isEmpty())
         m_animator->animValWillChange(m_animatedProperties);
-    m_animator->calculateAnimatedValue(percentage, repeat, m_fromType, m_toType, resultAnimationElement->m_animatedType);
+
+    if (toAtEndOfDurationString.isEmpty()) {
+        m_animator->calculateAnimatedValue(percentage, repeatCount, m_fromType.get(), m_toType.get(), m_toType.get(), resultAnimationElement->m_animatedType.get());
+        return;
+    }
+
+    // Values-animation accumulates using the last values entry corresponding to the end of duration time.
+    OwnPtr<SVGAnimatedType> toAtEndOfDurationType = m_animator->constructFromString(toAtEndOfDurationString);
+    m_animator->calculateAnimatedValue(percentage, repeatCount, m_fromType.get(), m_toType.get(), toAtEndOfDurationType.get(), resultAnimationElement->m_animatedType.get());
 }
 
 bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const String& toString)

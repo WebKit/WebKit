@@ -211,7 +211,7 @@ void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transfo
     transform->rotate(angle);
 }
 
-void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement*)
+void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeatCount, const String& toAtEndOfDurationString, SVGSMILElement*)
 {
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
@@ -227,11 +227,15 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
         transform->makeIdentity();
 
     if (animationMode() != PathAnimation) {
+        FloatPoint toPointAtEndOfDuration = m_toPoint;
+        if (isAccumulated() && repeatCount && !toAtEndOfDurationString.isEmpty())
+            parsePoint(toAtEndOfDurationString, toPointAtEndOfDuration);
+
         float animatedX = 0;
-        animateAdditiveNumber(percentage, repeatCount, m_fromPoint.x(), m_toPoint.x(), animatedX);
+        animateAdditiveNumber(percentage, repeatCount, m_fromPoint.x(), m_toPoint.x(), toPointAtEndOfDuration.x(), animatedX);
 
         float animatedY = 0;
-        animateAdditiveNumber(percentage, repeatCount, m_fromPoint.y(), m_toPoint.y(), animatedY);
+        animateAdditiveNumber(percentage, repeatCount, m_fromPoint.y(), m_toPoint.y(), toPointAtEndOfDuration.y(), animatedY);
 
         transform->translate(animatedX, animatedY);
         return;

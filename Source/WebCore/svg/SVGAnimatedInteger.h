@@ -46,7 +46,7 @@ public:
     SVGAnimatedIntegerAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedIntegerAnimator() { }
 
-    static void calculateAnimatedInteger(SVGAnimationElement*, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int& animatedInteger);
+    static void calculateAnimatedInteger(SVGAnimationElement*, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int toAtEndOfDurationInteger, int& animatedInteger);
 
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
     virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&);
@@ -56,8 +56,7 @@ public:
     virtual void animValDidChange(const SVGElementAnimatedPropertyList&);
 
     virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*);
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*);
     virtual float calculateDistance(const String& fromString, const String& toString);
 };
 

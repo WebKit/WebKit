@@ -81,13 +81,14 @@ void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAn
         toPointList[i] += fromPointList[i];
 }
 
-void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
     SVGPointList& fromPointList = from->pointList();
     SVGPointList& toPointList = to->pointList();
+    SVGPointList& toAtEndOfDurationPointList = toAtEndOfDuration->pointList();
     SVGPointList& animatedPointList = animated->pointList();
     if (!m_animationElement->adjustFromToListValues<SVGPointList>(0, fromPointList, toPointList, animatedPointList, percentage, m_contextElement))
         return;
@@ -102,8 +103,8 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsi
 
         float animatedX = animatedPointList[i].x();
         float animatedY = animatedPointList[i].y();
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.x(), toPointList[i].x(), animatedX);
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.y(), toPointList[i].y(), animatedY);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.x(), toPointList[i].x(), toAtEndOfDurationPointList[i].x(), animatedX);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.y(), toPointList[i].y(), toAtEndOfDurationPointList[i].y(), animatedY);
         animatedPointList[i] = FloatPoint(animatedX, animatedY);
     }
 }

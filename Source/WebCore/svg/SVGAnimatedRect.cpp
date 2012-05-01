@@ -72,13 +72,14 @@ void SVGAnimatedRectAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimate
     to->rect() += from->rect();
 }
 
-void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
     FloatRect& fromRect = from->rect();
     FloatRect& toRect = to->rect();
+    FloatRect& toAtEndOfDurationRect = toAtEndOfDuration->rect();
     FloatRect& animatedRect = animated->rect();
     m_animationElement->adjustFromToValues<FloatRect>(0, fromRect, toRect, animatedRect, percentage, m_contextElement);
 
@@ -86,10 +87,10 @@ void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned 
     float animatedY = animatedRect.y();
     float animatedWidth = animatedRect.width();
     float animatedHeight = animatedRect.height();
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.x(), toRect.x(), animatedX);
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.y(), toRect.y(), animatedY);
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.width(), toRect.width(), animatedWidth);
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.height(), toRect.height(), animatedHeight);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.x(), toRect.x(), toAtEndOfDurationRect.x(), animatedX);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.y(), toRect.y(), toAtEndOfDurationRect.y(), animatedY);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.width(), toRect.width(), toAtEndOfDurationRect.width(), animatedWidth);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromRect.height(), toRect.height(), toAtEndOfDurationRect.height(), animatedHeight);
 
     animatedRect = FloatRect(animatedX, animatedY, animatedWidth, animatedHeight);
 }

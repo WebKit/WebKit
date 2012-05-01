@@ -73,24 +73,25 @@ void SVGAnimatedIntegerAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnim
     to->integer() += from->integer();
 }
 
-void SVGAnimatedIntegerAnimator::calculateAnimatedInteger(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int& animatedInteger)
+void SVGAnimatedIntegerAnimator::calculateAnimatedInteger(SVGAnimationElement* animationElement, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int toAtEndOfDurationInteger, int& animatedInteger)
 {
     float animatedNumber = animatedInteger;
-    animationElement->animateAdditiveNumber(percentage, repeatCount, fromInteger, toInteger, animatedNumber);
+    animationElement->animateAdditiveNumber(percentage, repeatCount, fromInteger, toInteger, toAtEndOfDurationInteger, animatedNumber);
     animatedInteger = static_cast<int>(roundf(animatedNumber));
 }
 
-void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
     int& fromInteger = from->integer();
     int& toInteger = to->integer();
+    int& toAtEndOfDurationInteger = toAtEndOfDuration->integer();
     int& animatedInteger = animated->integer();
     m_animationElement->adjustFromToValues<int>(0, fromInteger, toInteger, animatedInteger, percentage, m_contextElement);
 
-    calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromInteger, toInteger, animatedInteger);
+    calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromInteger, toInteger, toAtEndOfDurationInteger, animatedInteger);
 }
 
 float SVGAnimatedIntegerAnimator::calculateDistance(const String& fromString, const String& toString)

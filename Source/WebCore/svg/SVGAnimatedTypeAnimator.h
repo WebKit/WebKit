@@ -59,8 +59,7 @@ public:
     virtual void animValDidChange(const SVGElementAnimatedPropertyList&) = 0;
     virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) = 0;
 
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
-                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue) = 0;
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) = 0;
     virtual float calculateDistance(const String& fromString, const String& toString) = 0;
 
     void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

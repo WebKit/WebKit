@@ -83,17 +83,18 @@ static float parseNumberFromString(SVGAnimationElement*, const String& string)
     return number;
 }
 
-void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, OwnPtr<SVGAnimatedType>& animated)
+void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
     float& fromNumber = from->number();
     float& toNumber = to->number();
+    float& toAtEndOfDurationNumber = toAtEndOfDuration->number();
     float& animatedNumber = animated->number();
     m_animationElement->adjustFromToValues<float>(parseNumberFromString, fromNumber, toNumber, animatedNumber, percentage, m_contextElement);
 
-    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumber, toNumber, animatedNumber);
+    m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumber, toNumber, toAtEndOfDurationNumber, animatedNumber);
 }
 
 float SVGAnimatedNumberAnimator::calculateDistance(const String& fromString, const String& toString)
