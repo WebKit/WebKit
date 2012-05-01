@@ -1,3 +1,12 @@
+2012-04-30  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r115600): parseLocalizedDate() should fail for invalid inputs
+        https://bugs.webkit.org/show_bug.cgi?id=85176
+
+        Reviewed by Kentaro Hara.
+
+        * platform/chromium/test_expectations.txt: Remove an entry for a fixed test.
+
 2012-04-30  Ilya Sherman  <isherman@chromium.org>
 
         Unreviewed, rolling out r113511.

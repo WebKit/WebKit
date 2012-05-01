@@ -57,7 +57,10 @@ double parseLocalizedDate(const String& input, DateComponents::Type type)
     switch (type) {
     case DateComponents::Date: {
         RetainPtr<NSDateFormatter> formatter(AdoptNS, createShortDateFormatter());
-        return [[formatter.get() dateFromString:input] timeIntervalSince1970] * msPerSecond;
+        NSDate *date = [formatter.get() dateFromString:input];
+        if (!date)
+            break;
+        return [date timeIntervalSince1970] * msPerSecond;
     }
     case DateComponents::DateTime:
     case DateComponents::DateTimeLocal:
