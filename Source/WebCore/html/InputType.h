@@ -80,6 +80,8 @@ public:
     static PassOwnPtr<InputType> createText(HTMLInputElement*);
     virtual ~InputType();
 
+    static bool themeSupportsDataListUI(InputType*);
+
     virtual const AtomicString& formControlType() const = 0;
     virtual bool canChangeFromAnotherType() const;
 

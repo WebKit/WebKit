@@ -125,6 +125,11 @@ bool RenderThemeChromiumSkia::supportsFocusRing(const RenderStyle* style) const
     return false;
 }
 
+bool RenderThemeChromiumSkia::supportsDataListUI(const AtomicString& type) const
+{
+    return RenderThemeChromiumCommon::supportsDataListUI(type);
+}
+
 Color RenderThemeChromiumSkia::platformActiveSelectionBackgroundColor() const
 {
     return Color(0x1e, 0x90, 0xff);

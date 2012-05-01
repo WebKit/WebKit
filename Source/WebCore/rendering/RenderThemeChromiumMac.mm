@@ -71,6 +71,11 @@ PassRefPtr<RenderTheme> RenderThemeChromiumMac::create()
     return adoptRef(new RenderThemeChromiumMac);
 }
 
+bool RenderThemeChromiumMac::supportsDataListUI(const AtomicString& type) const
+{
+    return RenderThemeChromiumCommon::supportsDataListUI(type);
+}
+
 bool RenderThemeChromiumMac::usesTestModeFocusRingColor() const
 {
     return PlatformSupport::layoutTestMode();

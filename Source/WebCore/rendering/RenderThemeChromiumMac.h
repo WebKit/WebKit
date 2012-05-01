@@ -24,6 +24,7 @@
 #ifndef RenderThemeChromiumMac_h
 #define RenderThemeChromiumMac_h
 
+#import "RenderThemeChromiumCommon.h"
 #import "RenderThemeMac.h"
 
 namespace WebCore {
@@ -31,6 +32,8 @@ namespace WebCore {
 class RenderThemeChromiumMac : public RenderThemeMac {
 public:
     static PassRefPtr<RenderTheme> create();
+
+    virtual bool supportsDataListUI(const AtomicString& type) const OVERRIDE;
 
 protected:
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);

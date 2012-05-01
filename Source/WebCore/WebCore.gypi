@@ -4863,6 +4863,8 @@
             'rendering/RenderTheme.h',
             'rendering/RenderThemeChromiumAndroid.cpp',
             'rendering/RenderThemeChromiumAndroid.h',
+            'rendering/RenderThemeChromiumCommon.cpp',
+            'rendering/RenderThemeChromiumCommon.h',
             'rendering/RenderThemeChromiumLinux.cpp',
             'rendering/RenderThemeChromiumLinux.h',
             'rendering/RenderThemeChromiumMac.h',

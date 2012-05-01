@@ -155,6 +155,11 @@ void ColorInputType::detach()
     endColorChooser();
 }
 
+bool ColorInputType::shouldRespectListAttribute()
+{
+    return InputType::themeSupportsDataListUI(this);
+}
+
 void ColorInputType::didChooseColor(const Color& color)
 {
     if (element()->disabled() || element()->readOnly() || color == valueAsColor())

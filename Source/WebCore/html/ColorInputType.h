@@ -58,6 +58,7 @@ private:
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;
     virtual void detach() OVERRIDE;
+    virtual bool shouldRespectListAttribute() OVERRIDE;
 
     Color valueAsColor() const;
     void endColorChooser();

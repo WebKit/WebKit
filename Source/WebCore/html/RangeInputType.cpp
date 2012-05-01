@@ -313,7 +313,7 @@ String RangeInputType::sanitizeValue(const String& proposedValue) const
 
 bool RangeInputType::shouldRespectListAttribute()
 {
-    return true;
+    return InputType::themeSupportsDataListUI(this);
 }
 
 } // namespace WebCore

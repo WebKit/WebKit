@@ -29,6 +29,7 @@
 #define RenderThemeChromiumSkia_h
 
 #include "RenderTheme.h"
+#include "RenderThemeChromiumCommon.h"
 
 namespace WebCore {
 
@@ -50,6 +51,8 @@ class RenderThemeChromiumSkia : public RenderTheme {
 
         // A method asking if the theme is able to draw the focus ring.
         virtual bool supportsFocusRing(const RenderStyle*) const;
+
+        virtual bool supportsDataListUI(const AtomicString& type) const OVERRIDE;
 
         // The platform selection color.
         virtual Color platformActiveSelectionBackgroundColor() const;

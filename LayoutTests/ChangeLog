@@ -1,3 +1,14 @@
+2012-04-30  Keishi Hattori  <keishi@webkit.org>
+
+        datalist: Inconsistent behavior of HTMLInputElement::list
+        https://bugs.webkit.org/show_bug.cgi?id=84351
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/datalist/input-list-expected.txt:
+        * fast/forms/datalist/input-list.html: Added tests for all input types.
+        * platform/chromium/fast/forms/datalist/input-list-expected.txt: Added.
+
 2012-04-30  Koji Ishii  <kojiishi@gmail.com>
 
         REGRESSION: editing/inserting/insert-bg-font.html fails on Lion

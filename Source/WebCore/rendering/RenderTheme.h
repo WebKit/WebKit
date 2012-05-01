@@ -131,6 +131,9 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle*) const { return false; }
 
+    // A method asking if the platform is able to show datalist suggestions for a given input type.
+    virtual bool supportsDataListUI(const AtomicString&) const { return false; }
+
     // Text selection colors.
     Color activeSelectionBackgroundColor() const;
     Color inactiveSelectionBackgroundColor() const;

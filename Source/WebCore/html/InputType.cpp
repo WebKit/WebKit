@@ -54,6 +54,7 @@
 #include "RangeInputType.h"
 #include "RegularExpression.h"
 #include "RenderObject.h"
+#include "RenderTheme.h"
 #include "ResetInputType.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SearchInputType.h"
@@ -138,6 +139,13 @@ PassOwnPtr<InputType> InputType::createText(HTMLInputElement* element)
 
 InputType::~InputType()
 {
+}
+
+bool InputType::themeSupportsDataListUI(InputType* type)
+{
+    Document* document = type->element()->document();
+    RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
+    return theme->supportsDataListUI(type->formControlType());
 }
 
 bool InputType::isTextField() const

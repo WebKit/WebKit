@@ -385,7 +385,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
 
 bool TextFieldInputType::shouldRespectListAttribute()
 {
-    return true;
+    return InputType::themeSupportsDataListUI(this);
 }
 
 void TextFieldInputType::updatePlaceholderText()
