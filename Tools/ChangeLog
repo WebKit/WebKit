@@ -1,3 +1,15 @@
+2012-05-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r115735.
+        http://trac.webkit.org/changeset/115735
+        https://bugs.webkit.org/show_bug.cgi?id=85314
+
+        cause two tests to crash due to an ASSERTION failure
+        (Requested by zhenyao on #webkit).
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::gestureEvent):
+
 2012-05-01  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Accept four parameters when dispatching a WebInputEvent::GestureTap in chromium DRT eventSender

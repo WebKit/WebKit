@@ -1134,8 +1134,6 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
         event.y = m_currentGestureLocation.y;
         break;
     case WebInputEvent::GestureTap:
-        event.deltaX = static_cast<float>(arguments[2].toDouble());
-        event.deltaY = static_cast<float>(arguments[3].toDouble());
         event.x = point.x;
         event.y = point.y;
         break;
