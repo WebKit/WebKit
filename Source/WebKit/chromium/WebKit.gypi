@@ -146,6 +146,7 @@
         'conditions': [
             ['OS=="win"', {
                 'webkit_unittest_files': [
+                    'tests/LocaleWinTest.cpp',
                     # FIXME: Port PopupMenuTest to Linux and Mac.
                     'tests/PopupMenuTest.cpp',
                     'tests/TransparencyWinTest.cpp',

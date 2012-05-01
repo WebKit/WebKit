@@ -1,3 +1,17 @@
+2012-04-30  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium/Windows] Add LocalizedDateWin
+        https://bugs.webkit.org/show_bug.cgi?id=84935
+
+        Reviewed by Kentaro Hara.
+
+        Add test for LocaleWin.cpp.
+
+        * WebKit.gypi:
+        * tests/LocaleWinTest.cpp: Added.
+        (msForDate): A helper function.
+        (TEST):
+
 2012-04-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Move RenderTableCell's row index to RenderTableRow
