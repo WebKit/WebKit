@@ -35,9 +35,6 @@ editing/text-iterator/findString-selection-disabled.html
 # Pasting replaces the three periods with an ellipsis on Lion
 editing/pasteboard/5478250.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=82079
-editing/inserting/insert-bg-font.html
-
 # --- Math ML ---
 
 # These have different metrics, and require investigation

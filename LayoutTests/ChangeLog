@@ -1,3 +1,17 @@
+2012-04-30  Koji Ishii  <kojiishi@gmail.com>
+
+        REGRESSION: editing/inserting/insert-bg-font.html fails on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=82079
+
+        Reviewed by Ryosuke Niwa.
+
+        The test fails only if "Correct spelling automatically" is turned on.
+        AutoCorrect kicks in because the test has "backgroundblue" as a word,
+        so changing it to "background blue" fixes the failure.
+
+        * editing/inserting/insert-bg-font-expected.txt: Change "backgroundblue" to "background blue".
+        * editing/inserting/insert-bg-font.html: Ditto.
+
 2012-04-30  Xingnan Wang  <xingnan.wang@intel.com>
 
         Add multichannel support for input of JavaScriptAudioNode
