@@ -1,3 +1,17 @@
+2012-04-30  Ilya Sherman  <isherman@chromium.org>
+
+        Unreviewed, rolling out r113511.
+        http://trac.webkit.org/changeset/113511
+        https://bugs.webkit.org/show_bug.cgi?id=66032
+        https://bugs.webkit.org/show_bug.cgi?id=85150
+
+        Regression: Many autofilled form fields lack the default
+        autofill background even when authors don’t override the
+        autofill colors
+
+        * fast/forms/input-autofilled-expected.txt:
+        * fast/forms/input-autofilled.html:
+
 2012-04-30  Keishi Hattori  <keishi@webkit.org>
 
         datalist: Inconsistent behavior of HTMLInputElement::list
