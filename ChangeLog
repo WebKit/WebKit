@@ -1,3 +1,18 @@
+2012-05-01  Mike Fenton  <mifenton@rim.com>
+
+        Add special attribute for alternate selection touch handling.
+        https://bugs.webkit.org/show_bug.cgi?id=85284
+
+        Reviewed by Antonio Gomes.
+
+        PR 152975.
+
+        Add manual test for -bb-selection-touchoverride.
+
+        Reviewed Internally by Gen Mak.
+
+        * ManualTests/blackberry/selection-touch-override.html: Added.
+
 2012-04-25  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Add a proper license to FindSqlite.cmake.

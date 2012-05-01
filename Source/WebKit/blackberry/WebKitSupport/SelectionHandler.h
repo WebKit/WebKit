@@ -81,6 +81,8 @@ private:
     unsigned short extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, WebCore::VisibleSelection& newSelection);
     WebCore::IntPoint clipPointToVisibleContainer(const WebCore::IntPoint&) const;
 
+    bool inputNodeOverridesTouch() const;
+
     WebPagePrivate* m_webPage;
 
     bool m_selectionActive;

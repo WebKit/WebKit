@@ -1,3 +1,25 @@
+2012-05-01  Mike Fenton  <mifenton@rim.com>
+
+        Add special attribute for alternate selection touch handling.
+        https://bugs.webkit.org/show_bug.cgi?id=85284
+
+        Reviewed by Antonio Gomes.
+
+        PR 152975.
+
+        Add attribute -bb-selection-touchoverride to override
+        touch handling on selection overlay.
+
+        Reviewed Internally by Gen Mak.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::inputNodeOverridesTouch):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2012-04-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Add String::startsWith() and endsWith() for string literals

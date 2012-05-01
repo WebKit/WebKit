@@ -146,7 +146,7 @@ public:
     virtual void checkSpellingOfString(const unsigned short* text, int length, int& misspellingLocation, int& misspellingLength) = 0;
     virtual void requestSpellingSuggestionsForString(unsigned start, unsigned end) = 0;
 
-    virtual void notifySelectionDetailsChanged(const Platform::IntRect& start, const Platform::IntRect& end, const Platform::IntRectRegion&) = 0;
+    virtual void notifySelectionDetailsChanged(const Platform::IntRect& start, const Platform::IntRect& end, const Platform::IntRectRegion&, bool overrideTouchHandling = false) = 0;
     virtual void cancelSelectionVisuals() = 0;
     virtual void notifySelectionHandlesReversed() = 0;
     virtual void notifyCaretChanged(const Platform::IntRect& caret, bool userTouchTriggered, bool singleLineInput = false, const Platform::IntRect& singleLineBoundingBox = Platform::IntRect()) = 0;

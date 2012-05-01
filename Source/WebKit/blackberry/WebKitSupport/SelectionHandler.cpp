@@ -817,6 +817,21 @@ static bool regionRectListContainsPoint(const IntRectRegion& region, const WebCo
     return false;
 }
 
+bool SelectionHandler::inputNodeOverridesTouch() const
+{
+    if (!m_webPage->m_inputHandler->isInputMode())
+        return false;
+
+    Node* focusedNode = m_webPage->focusedOrMainFrame()->document()->focusedNode();
+    if (!focusedNode || !focusedNode->isElementNode())
+        return false;
+
+    // TODO consider caching this in InputHandler so it is only calculated once per focus.
+    DEFINE_STATIC_LOCAL(QualifiedName, selectionTouchOverrideAttr, (nullAtom, "-bb-selection-touchoverride", nullAtom));
+    Element* element = static_cast<Element*>(focusedNode);
+    return DOMSupport::elementAttributeState(element, selectionTouchOverrideAttr) == DOMSupport::On;
+}
+
 // Note: This is the only function in SelectionHandler in which the coordinate
 // system is not entirely WebKit.
 void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
@@ -918,7 +933,7 @@ void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
                     startCaret.x(), startCaret.y(), startCaret.width(), startCaret.height(), endCaret.x(), endCaret.y(), endCaret.width(), endCaret.height());
 
 
-    m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, visibleSelectionRegion);
+    m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, visibleSelectionRegion, inputNodeOverridesTouch());
 }
 
 // NOTE: This function is not in WebKit coordinates.
