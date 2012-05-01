@@ -1,3 +1,21 @@
+2012-04-30  Xingnan Wang  <xingnan.wang@intel.com>
+
+        Add multichannel support for input of JavaScriptAudioNode
+        https://bugs.webkit.org/show_bug.cgi?id=84687
+
+        Reviewed by Chris Rogers.
+
+        * webaudio/javascriptaudionode-downmix8-2channel-input-expected.txt: Added.
+        * webaudio/javascriptaudionode-downmix8-2channel-input.html: Added.
+        * webaudio/javascriptaudionode-upmix2-8channel-input-expected.txt: Added.
+        * webaudio/javascriptaudionode-upmix2-8channel-input.html: Added.
+        * webaudio/resources/javascriptaudionode-testing.js: Added.
+        (createBuffer):
+        (processAudioData):
+        (fillData):
+        (checkStereoOnlyData):
+        (runJSNodeTest):
+
 2012-04-30  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

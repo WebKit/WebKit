@@ -26,6 +26,7 @@
 #define JavaScriptAudioNode_h
 
 #include "ActiveDOMObject.h"
+#include "AudioBus.h"
 #include "AudioNode.h"
 #include "EventListener.h"
 #include "EventTarget.h"
@@ -101,6 +102,11 @@ private:
     size_t m_bufferSize;
     unsigned m_bufferReadWriteIndex;
     volatile bool m_isRequestOutstanding;
+
+    unsigned m_numberOfInputChannels;
+    unsigned m_numberOfOutputChannels;
+
+    AudioBus m_internalInputBus;
 };
 
 } // namespace WebCore

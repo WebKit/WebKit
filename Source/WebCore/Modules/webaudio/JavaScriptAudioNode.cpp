@@ -58,8 +58,8 @@ PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* contex
         return 0;
     }
 
-    // FIXME: We still need to implement numberOfInputChannels.
-    ASSERT_UNUSED(numberOfInputChannels, numberOfInputChannels <= AudioContext::maxNumberOfChannels());
+    if (numberOfInputChannels > AudioContext::maxNumberOfChannels())
+        return 0;
 
     if (!numberOfOutputChannels || numberOfOutputChannels > AudioContext::maxNumberOfChannels())
         return 0;
@@ -74,13 +74,15 @@ JavaScriptAudioNode::JavaScriptAudioNode(AudioContext* context, float sampleRate
     , m_bufferSize(bufferSize)
     , m_bufferReadWriteIndex(0)
     , m_isRequestOutstanding(false)
+    , m_numberOfInputChannels(numberOfInputChannels)
+    , m_numberOfOutputChannels(numberOfOutputChannels)
+    , m_internalInputBus(numberOfInputChannels, AudioNode::ProcessingSizeInFrames, false)
 {
     // Regardless of the allowed buffer sizes, we still need to process at the granularity of the AudioNode.
     if (m_bufferSize < AudioNode::ProcessingSizeInFrames)
         m_bufferSize = AudioNode::ProcessingSizeInFrames;
 
-    // FIXME: We still need to implement numberOfInputChannels.
-    ASSERT_UNUSED(numberOfInputChannels, numberOfInputChannels > 0);
+    ASSERT(numberOfInputChannels <= AudioContext::maxNumberOfChannels());
 
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, numberOfOutputChannels)));
@@ -105,8 +107,11 @@ void JavaScriptAudioNode::initialize()
     // Create double buffers on both the input and output sides.
     // These AudioBuffers will be directly accessed in the main thread by JavaScript.
     for (unsigned i = 0; i < 2; ++i) {
-        m_inputBuffers.append(AudioBuffer::create(2, bufferSize(), sampleRate));
-        m_outputBuffers.append(AudioBuffer::create(this->output(0)->numberOfChannels(), bufferSize(), sampleRate));
+        RefPtr<AudioBuffer> inputBuffer = m_numberOfInputChannels ? AudioBuffer::create(m_numberOfInputChannels, bufferSize(), sampleRate) : 0;
+        RefPtr<AudioBuffer> outputBuffer = m_numberOfOutputChannels ? AudioBuffer::create(m_numberOfOutputChannels, bufferSize(), sampleRate) : 0;
+
+        m_inputBuffers.append(inputBuffer);
+        m_outputBuffers.append(outputBuffer);
     }
 
     AudioNode::initialize();
@@ -157,33 +162,24 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
     ASSERT(isFramesToProcessGood);
     if (!isFramesToProcessGood)
         return;
-        
-    unsigned numberOfInputChannels = inputBus->numberOfChannels();
+
+    unsigned numberOfInputChannels = m_internalInputBus.numberOfChannels();
     unsigned numberOfOutputChannels = outputBus->numberOfChannels();
-    
-    bool channelsAreGood = (numberOfInputChannels == 1 || numberOfInputChannels == 2);
+
+    bool channelsAreGood = (numberOfInputChannels == m_numberOfInputChannels) && (numberOfOutputChannels == m_numberOfOutputChannels);
     ASSERT(channelsAreGood);
     if (!channelsAreGood)
         return;
 
-    const float* sourceL = inputBus->channel(0)->data();
-    const float* sourceR = numberOfInputChannels > 1 ? inputBus->channel(1)->data() : 0;
+    for (unsigned i = 0; i < numberOfInputChannels; i++)
+        m_internalInputBus.setChannelMemory(i, inputBuffer->getChannelData(i)->data() + m_bufferReadWriteIndex, framesToProcess);
 
-    // Copy from the input to the input buffer.  See "buffersAreGood" check above for safety.
-    size_t bytesToCopy = sizeof(float) * framesToProcess;
-    memcpy(inputBuffer->getChannelData(0)->data() + m_bufferReadWriteIndex, sourceL, bytesToCopy);
-    
-    if (numberOfInputChannels == 2)
-        memcpy(inputBuffer->getChannelData(1)->data() + m_bufferReadWriteIndex, sourceR, bytesToCopy);
-    else if (numberOfInputChannels == 1) {
-        // If the input is mono, then also copy the mono input to the right channel of the AudioBuffer which the AudioProcessingEvent uses.
-        // FIXME: it is likely the audio API will evolve to present an AudioBuffer with the same number of channels as our input.
-        memcpy(inputBuffer->getChannelData(1)->data() + m_bufferReadWriteIndex, sourceL, bytesToCopy);
-    }
-    
+    if (numberOfInputChannels)
+        m_internalInputBus.copyFrom(*inputBus);
+
     // Copy from the output buffer to the output. 
     for (unsigned i = 0; i < numberOfOutputChannels; ++i)
-        memcpy(outputBus->channel(i)->mutableData(), outputBuffer->getChannelData(i)->data() + m_bufferReadWriteIndex, bytesToCopy);
+        memcpy(outputBus->channel(i)->mutableData(), outputBuffer->getChannelData(i)->data() + m_bufferReadWriteIndex, sizeof(float) * framesToProcess);
 
     // Update the buffering index.
     m_bufferReadWriteIndex = (m_bufferReadWriteIndex + framesToProcess) % bufferSize();
