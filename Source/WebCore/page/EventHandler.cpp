@@ -2429,12 +2429,11 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     return false;
 }
 
-bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
+bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent, Node* preTargetedNode)
 {
-    // FIXME: Refactor this code to not hit test multiple times.
     IntPoint adjustedPoint = gestureEvent.position();
 #if ENABLE(TOUCH_ADJUSTMENT)
-    if (!gestureEvent.area().isEmpty()) {
+    if (!gestureEvent.area().isEmpty() && !preTargetedNode) {
         Node* targetNode = 0;
         // For now we use the adjusted position to ensure the later redundant hit-tests hits the right node.
         bestClickableNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
@@ -2442,6 +2441,10 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
             return false;
     }
 #endif
+    // FIXME: Refactor to avoid hit testing multiple times (this is only an interim step).
+    if (preTargetedNode)
+        adjustedPoint = preTargetedNode->getRect().center();
+
     bool defaultPrevented = false;
     PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     PlatformMouseEvent fakeMouseDown(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
