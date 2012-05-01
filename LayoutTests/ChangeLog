@@ -1,3 +1,79 @@
+2012-05-01  Eric Seidel  <eric@webkit.org>
+
+        Add seamless test cases (all of these will pass as we land the implementation patches)
+        https://bugs.webkit.org/show_bug.cgi?id=85251
+
+        Reviewed by Adam Barth.
+
+        These are all test cases which were written as part of implementing seamless
+        on my github branch: https://github.com/eseidel/webkit/compare/master...seamless
+        All of these will pass once the implementation is landed, which I am uploading
+        as a series of patches as we speak.  Because the each of pieces
+        affects variety of tests, it seems easiest to read the implmentation
+        diffs if I land all the tests up-front.
+
+        * fast/frames/seamless/resources/css-cascade-child.html: Added.
+        * fast/frames/seamless/resources/done.html: Added.
+        * fast/frames/seamless/resources/nested-seamless.html: Added.
+        * fast/frames/seamless/resources/quirks-square.html: Added.
+        * fast/frames/seamless/resources/square.html: Added.
+        * fast/frames/seamless/resources/two-inline-blocks.html: Added.
+        * fast/frames/seamless/seamless-basic-expected.txt: Added.
+        * fast/frames/seamless/seamless-basic.html: Added.
+        * fast/frames/seamless/seamless-css-cascade-expected.txt: Added.
+        * fast/frames/seamless/seamless-css-cascade.html: Added.
+        * fast/frames/seamless/seamless-designMode-expected.txt: Added.
+        * fast/frames/seamless/seamless-designMode.html: Added.
+        * fast/frames/seamless/seamless-float-expected.txt: Added.
+        * fast/frames/seamless/seamless-float.html: Added.
+        * fast/frames/seamless/seamless-form-get-expected.txt: Added.
+        * fast/frames/seamless/seamless-form-get-named-expected.txt: Added.
+        * fast/frames/seamless/seamless-form-get-named.html: Added.
+        * fast/frames/seamless/seamless-form-get-override-expected.txt: Added.
+        * fast/frames/seamless/seamless-form-get-override.html: Added.
+        * fast/frames/seamless/seamless-form-get.html: Added.
+        * fast/frames/seamless/seamless-form-post-expected.txt: Added.
+        * fast/frames/seamless/seamless-form-post-named-expected.txt: Added.
+        * fast/frames/seamless/seamless-form-post-named.html: Added.
+        * fast/frames/seamless/seamless-form-post-override-expected.txt: Added.
+        * fast/frames/seamless/seamless-form-post-override.html: Added.
+        * fast/frames/seamless/seamless-form-post.html: Added.
+        * fast/frames/seamless/seamless-hyperlink-expected.txt: Added.
+        * fast/frames/seamless/seamless-hyperlink-named-expected.txt: Added.
+        * fast/frames/seamless/seamless-hyperlink-named.html: Added.
+        * fast/frames/seamless/seamless-hyperlink-override-expected.txt: Added.
+        * fast/frames/seamless/seamless-hyperlink-override.html: Added.
+        * fast/frames/seamless/seamless-hyperlink.html: Added.
+        * fast/frames/seamless/seamless-inline-expected.txt: Added.
+        * fast/frames/seamless/seamless-inline.html: Added.
+        * fast/frames/seamless/seamless-min-max-expected.txt: Added.
+        * fast/frames/seamless/seamless-min-max.html: Added.
+        * fast/frames/seamless/seamless-nested-expected.txt: Added.
+        * fast/frames/seamless/seamless-nested.html: Added.
+        * fast/frames/seamless/seamless-quirks-expected.txt: Added.
+        * fast/frames/seamless/seamless-quirks.html: Added.
+        * fast/frames/seamless/seamless-sandbox-flag-expected.txt: Added.
+        * fast/frames/seamless/seamless-sandbox-flag.html: Added.
+        * fast/frames/seamless/seamless-sandbox-srcdoc-expected.txt: Added.
+        * fast/frames/seamless/seamless-sandbox-srcdoc.html: Added.
+        * fast/frames/seamless/seamless-window-location-expected.txt: Added.
+        * fast/frames/seamless/seamless-window-location-href-expected.txt: Added.
+        * fast/frames/seamless/seamless-window-location-href.html: Added.
+        * fast/frames/seamless/seamless-window-location-replace-expected.txt: Added.
+        * fast/frames/seamless/seamless-window-location-replace.html: Added.
+        * fast/frames/seamless/seamless-window-location-sandbox-expected.txt: Added.
+        * fast/frames/seamless/seamless-window-location-sandbox.html: Added.
+        * fast/frames/seamless/seamless-window-location.html: Added.
+        * fast/frames/seamless/seamless-window-open-expected.txt: Added.
+        * fast/frames/seamless/seamless-window-open-override-expected.txt: Added.
+        * fast/frames/seamless/seamless-window-open-override.html: Added.
+        * fast/frames/seamless/seamless-window-open.html: Added.
+        * http/tests/security/seamless/resources/square.html: Added.
+        * http/tests/security/seamless/seamless-cross-origin-expected.txt: Added.
+        * http/tests/security/seamless/seamless-cross-origin.html: Added.
+        * http/tests/security/seamless/seamless-sandbox-srcdoc-expected.txt: Added.
+        * http/tests/security/seamless/seamless-sandbox-srcdoc.html: Added.
+
 2012-05-01  Philip Rogers  <pdr@google.com>
 
         Skip building instance tree for disallowed target

@@ -1,0 +1,10 @@
+FAIL frames[0].document.body.textContent should be DONE
+. Was Waiting...
+    
+        window.onload = function() {
+            frames[0].document.getElementsByTagName('a')[0].click();
+        }
+    
+    
+.
+

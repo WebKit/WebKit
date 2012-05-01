@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpChildFramesAsText();
+</script>
+This test should not cause any navigation.
+<iframe srcdoc="
+    PASS
+    <iframe seamless sandbox='allow-scripts'
+            srcdoc='
+                <script>
+                    window.location = &quot;resources/done.html&quot;;
+                </script>
+                PASS
+            '>
+    </iframe>
+"></iframe>

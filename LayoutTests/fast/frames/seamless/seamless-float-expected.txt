@@ -1,0 +1,7 @@
+Test that floated seamless iframes 'shrink-wrap' their contents, as floated divs would.
+FAIL window.getComputedStyle(iframe1).width should be 150px. Was 300px.
+FAIL window.getComputedStyle(iframe1).height should be 50px. Was 150px.
+FAIL window.getComputedStyle(iframe2).width should be 100px. Was 300px.
+FAIL window.getComputedStyle(iframe2).height should be 100px. Was 150px.
+
+

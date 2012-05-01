@@ -1,0 +1,8 @@
+FAIL iframe1.seamless should be true (of type boolean). Was undefined (of type undefined).
+FAIL iframe2.seamless should be true (of type boolean). Was undefined (of type undefined).
+FAIL window.getComputedStyle(iframe1).width should be 200px. Was 300px.
+FAIL window.getComputedStyle(iframe1).height should be 100px. Was 150px.
+PASS window.getComputedStyle(iframe2).width is "300px"
+PASS window.getComputedStyle(iframe2).height is "150px"
+
+
