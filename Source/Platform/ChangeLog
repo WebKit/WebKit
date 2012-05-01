@@ -1,3 +1,13 @@
+2012-05-01  Gavin Peters  <gavinp@chromium.org>
+
+        [Chromium] Fix WebPrerender::referrer() thunk.
+        https://bugs.webkit.org/show_bug.cgi?id=85290
+
+        Reviewed by Dimitri Glazkov.
+
+        * chromium/public/WebPrerender.h:
+        (WebKit::WebPrerender::referrer):
+
 2012-04-30  Gavin Peters  <gavinp@chromium.org>
 
         [Chromium] Add thunk headers for staging Prerendering API.

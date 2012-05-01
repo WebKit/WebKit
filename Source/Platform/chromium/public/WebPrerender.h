@@ -56,7 +56,7 @@ public:
         virtual ~ExtraData() { }
     };
     WebURL url() const { return WebURL(); }
-    WebString referrer() const { return ""; }
+    WebString referrer() const { return WebString(); }
     WebReferrerPolicy referrerPolicy() const { return WebReferrerPolicy(); }
     void setExtraData(ExtraData*) { }
     const ExtraData* extraData() const { return 0; }
