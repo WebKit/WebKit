@@ -1,3 +1,14 @@
+2012-05-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] fast/loader/file-protocol-fragment.html needs rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=85182
+
+        Unreviewed, add EFL expectation for fast/loader/file-protocol-fragment.html
+        and unskip the test.
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/loader/file-protocol-fragment-expected.txt: Added.
+
 2012-05-01  David Dorwin  <ddorwin@chromium.org>
 
         Remove expectations for media/encrypted-media/encrypted-media-events.html now that crash is fixed.

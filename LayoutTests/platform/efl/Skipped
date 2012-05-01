@@ -518,7 +518,6 @@ fast/viewport/viewport-warnings-6.html
 fast/viewport/viewport-133.html
 
 # EFL's LayoutTestController does not implement setSerializeHTTPLoads
-fast/loader/file-protocol-fragment.html
 fast/preloader/document-write-2.html
 fast/preloader/document-write.html
 http/tests/local/link-stylesheet-load-order-preload.html
@@ -575,9 +574,6 @@ fast/loader/null-request-after-willSendRequest.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
-
-# Missing delegates: tests which need proper frame loader callbacks reporting
-fast/loader/file-protocol-fragment.html
 
 # Missing delegates: tests failing because of missing policy delegate callbacks.
 fast/loader/onload-policy-ignore-for-frame.html
