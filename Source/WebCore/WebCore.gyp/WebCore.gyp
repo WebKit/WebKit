@@ -863,6 +863,24 @@
           ],
         },
         {
+          'action_name': 'CalendarPickerMac',
+          'inputs': [
+            '../Resources/calendarPickerMac.css',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.cpp',
+          ],
+          'action': [
+            'python',
+            '../make-file-arrays.py',
+            '--condition=ENABLE(CALENDAR_PICKER)',
+            '--out-h=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.h',
+            '--out-cpp=<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.cpp',
+            '<@(_inputs)',
+          ],
+        },
+        {
           'action_name': 'XLinkNames',
           'inputs': [
             '../dom/make_names.pl',
@@ -1144,6 +1162,9 @@
         ['OS=="mac"', {
           'include_dirs': [
             '<(chromium_src_dir)/third_party/apple_webkit',
+          ],
+          'sources': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.cpp',
           ],
         }],
         ['OS=="win"', {

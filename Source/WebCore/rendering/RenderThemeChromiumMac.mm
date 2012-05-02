@@ -19,6 +19,8 @@
  */
 
 #import "config.h"
+
+#import "CalendarPickerMac.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "RenderThemeChromiumMac.h"
 #import "PaintInfo.h"
@@ -195,6 +197,12 @@ String RenderThemeChromiumMac::extraDefaultStyleSheet()
            String(themeChromiumUserAgentStyleSheet, sizeof(themeChromiumUserAgentStyleSheet));
 }
 
+#if ENABLE(CALENDAR_PICKER)
+CString RenderThemeChromiumMac::extraCalendarPickerStyleSheet()
+{
+    return CString(calendarPickerMacCss, WTF_ARRAY_LENGTH(calendarPickerMacCss));
+}
+#endif
 
 bool RenderThemeChromiumMac::paintMediaVolumeSliderContainer(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {

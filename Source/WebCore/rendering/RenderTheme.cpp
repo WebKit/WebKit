@@ -613,6 +613,13 @@ Color RenderTheme::platformInactiveListBoxSelectionForegroundColor() const
     return platformInactiveSelectionForegroundColor();
 }
 
+#if ENABLE(CALENDAR_PICKER)
+CString RenderTheme::extraCalendarPickerStyleSheet()
+{
+    return CString();
+}
+#endif
+
 LayoutUnit RenderTheme::baselinePosition(const RenderObject* o) const
 {
     if (!o->isBox())

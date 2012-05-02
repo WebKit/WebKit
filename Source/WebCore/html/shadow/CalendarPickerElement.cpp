@@ -47,6 +47,7 @@
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "RenderDetailsMarker.h"
+#include "RenderTheme.h"
 #include <wtf/text/StringBuilder.h>
 
 using namespace WTF::Unicode;
@@ -208,6 +209,11 @@ void CalendarPickerElement::writeDocument(DocumentWriter& writer)
 
     addLiteral("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
     writer.addData(calendarPickerCss, sizeof(calendarPickerCss));
+    if (document()->page()) {
+        CString extraStyle = document()->page()->theme()->extraCalendarPickerStyleSheet();
+        if (extraStyle.length())
+            writer.addData(extraStyle.data(), extraStyle.length());
+    }
     addLiteral("</style></head><body><div id=main>Loading...</div><script>\n"
                "window.dialogArguments = {\n", writer);
     addProperty("min", minString, writer);

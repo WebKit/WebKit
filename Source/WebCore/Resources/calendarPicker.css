@@ -96,34 +96,6 @@ body {
     width: 100%;
 }
 
-/* FIXME: We'd like to use the standard button appearance for non-Mac. */
-.year-month-button {
-    -webkit-appearance: none;
-    background: -webkit-gradient(linear, left top, left bottom, from(#eee), color-stop(0.4, #fff), color-stop(0.6, #dddddd), to(#eee));
-    border: solid 1px #444;
-    border-radius: 3px;
-    box-shadow: inset 1px 1px 1px rgba(255,255,255,0.4), inset -1px -1px 1px rgba(255,255,255,0.4);
-    padding-left: 3px;
-    padding-right: 3px;
-}
-
-.year-month-button:hover {
-    background: -webkit-gradient(linear, left top, left bottom, from(#e0f0ff), color-stop(0.4, #e0f0ff), color-stop(0.6, #b0e0ff), to(#b0e0ff));
-    border: solid 1px #448;
-}
-
-.year-month-button:active {
-    border: solid 1px black;
-    box-shadow: inset 1px 1px 1px rgba(0,0,0,0.3), inset -1px -1px 1px rgba(0,0,0,0.3);
-}
-
-.year-month-button:disabled {
-    color: #888;
-    background: -webkit-gradient(linear, left top, left bottom, from(#eee), color-stop(0.4, #fff), color-stop(0.6, #dddddd), to(#eee));
-    border: solid 1px #ccc;
-    box-shadow: inset 1px 1px 1px rgba(255,255,255,0.4), inset -1px -1px 1px rgba(255,255,255,0.4);
-}
-
 .year-month-button-left {
     display: inline-block;
 }
