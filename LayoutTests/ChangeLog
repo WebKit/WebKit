@@ -1,3 +1,12 @@
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        Unreviewed, EFL rebaseline after r115415 and r115294.
+
+        * platform/efl/fast/images/support-broken-image-delegate-expected.txt:
+        * platform/efl/http/tests/loading/simple-subframe-expected.txt:
+        * platform/efl/security/block-test-expected.txt:
+        * platform/efl/security/block-test-no-port-expected.txt:
+
 2012-05-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r115825.
