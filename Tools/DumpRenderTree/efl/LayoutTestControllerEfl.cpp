@@ -663,9 +663,38 @@ void LayoutTestController::resumeAnimations() const
     DumpRenderTreeSupportEfl::resumeAnimations(browser->mainFrame());
 }
 
-void LayoutTestController::overridePreference(JSStringRef, JSStringRef)
+static inline bool toBool(JSStringRef value)
 {
-    notImplemented();
+    return equals(value, "true") || equals(value, "1");
+}
+
+static inline int toInt(JSStringRef value)
+{
+    return atoi(value->ustring().utf8().data());
+}
+
+void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
+{
+    if (equals(key, "WebKitJavaScriptEnabled"))
+        ewk_view_setting_enable_scripts_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitDefaultFontSize"))
+        ewk_view_setting_font_default_size_set(browser->mainView(), toInt(value));
+    else if (equals(key, "WebKitMinimumFontSize"))
+        ewk_view_setting_font_minimum_size_set(browser->mainView(), toInt(value));
+    else if (equals(key, "WebKitPluginsEnabled"))
+        ewk_view_setting_enable_plugins_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitWebGLEnabled"))
+        ewk_view_setting_enable_webgl_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitEnableCaretBrowsing"))
+        ewk_view_setting_caret_browsing_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitUsesPageCachePreferenceKey"))
+        ewk_view_setting_page_cache_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitHyperlinkAuditingEnabled"))
+        ewk_view_setting_enable_hyperlink_auditing_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitTabToLinksPreferenceKey"))
+        ewk_view_setting_include_links_in_focus_chain_set(browser->mainView(), toBool(value));
+    else
+        fprintf(stderr, "LayoutTestController::overridePreference tried to override unknown preference '%s'.\n", value->ustring().utf8().data());
 }
 
 void LayoutTestController::addUserScript(JSStringRef, bool, bool)

@@ -1,3 +1,17 @@
+2012-05-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] EFL's LayoutTestController overridePreference implementation
+        https://bugs.webkit.org/show_bug.cgi?id=83007
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (toBool): aux function converting JSStringRef to bool
+        (toInt): aux function converting JSStringRef to int
+        (LayoutTestController::overridePreference): added implementation
+
 2012-05-01  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Fix sys.platform check in find_files_unittest.
