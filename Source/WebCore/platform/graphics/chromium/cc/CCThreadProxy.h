@@ -81,6 +81,7 @@ public:
     virtual void setNeedsRedrawOnImplThread() OVERRIDE;
     virtual void setNeedsCommitOnImplThread() OVERRIDE;
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE;
+    virtual void postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t) OVERRIDE;
 
     // CCSchedulerClient implementation
     virtual bool canDraw() OVERRIDE;
@@ -116,6 +117,7 @@ private:
     void didCommitAndDrawFrame();
     void didCompleteSwapBuffers();
     void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
+    void setContentsMemoryAllocationLimitBytes(size_t);
     void beginContextRecreation();
     void tryToRecreateContext();
 

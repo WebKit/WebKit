@@ -65,6 +65,7 @@ public:
 
     static size_t memoryUseBytes(const IntSize&, GC3Denum format);
 
+    void setMemoryAllocationLimitBytes(size_t);
     void setMaxMemoryLimitBytes(size_t);
     size_t maxMemoryLimitBytes() { return m_maxMemoryLimitBytes; }
     void setPreferredMemoryLimitBytes(size_t);

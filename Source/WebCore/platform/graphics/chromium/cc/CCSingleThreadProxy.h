@@ -72,6 +72,7 @@ public:
     virtual void setNeedsRedrawOnImplThread() OVERRIDE { m_layerTreeHost->setNeedsCommit(); }
     virtual void setNeedsCommitOnImplThread() OVERRIDE { m_layerTreeHost->setNeedsCommit(); }
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE;
+    virtual void postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t) OVERRIDE;
 
     // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();

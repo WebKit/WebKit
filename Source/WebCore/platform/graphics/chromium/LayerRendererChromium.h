@@ -71,6 +71,7 @@ public:
     virtual void didLoseContext() = 0;
     virtual void onSwapBuffersComplete() = 0;
     virtual void setFullRootLayerDamage() = 0;
+    virtual void setContentsMemoryAllocationLimitBytes(size_t) = 0;
 };
 
 // Class that handles drawing of composited render layers using GL.

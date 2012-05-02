@@ -60,6 +60,7 @@ public:
     virtual void setNeedsRedrawOnImplThread() = 0;
     virtual void setNeedsCommitOnImplThread() = 0;
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) = 0;
+    virtual void postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t) = 0;
 };
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
@@ -109,6 +110,7 @@ public:
     virtual void didLoseContext() OVERRIDE;
     virtual void onSwapBuffersComplete() OVERRIDE;
     virtual void setFullRootLayerDamage() OVERRIDE;
+    virtual void setContentsMemoryAllocationLimitBytes(size_t) OVERRIDE;
 
     // Implementation
     bool canDraw();

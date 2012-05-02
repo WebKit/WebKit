@@ -357,10 +357,6 @@ void CCLayerTreeHost::setViewportSize(const IntSize& viewportSize)
     if (viewportSize == m_viewportSize)
         return;
 
-    if (m_contentsTextureManager) {
-        m_contentsTextureManager->setMaxMemoryLimitBytes(TextureManager::highLimitBytes(viewportSize));
-        m_contentsTextureManager->setPreferredMemoryLimitBytes(TextureManager::reclaimLimitBytes(viewportSize));
-    }
     m_viewportSize = viewportSize;
     setNeedsCommit();
 }
@@ -416,6 +412,16 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
         m_needsAnimateLayers = true;
     }
 }
+
+void CCLayerTreeHost::setContentsMemoryAllocationLimitBytes(size_t bytes)
+{
+    ASSERT(CCProxy::isMainThread());
+    if (!m_layerRendererInitialized)
+        return;
+
+    m_contentsTextureManager->setMemoryAllocationLimitBytes(bytes);
+}
+
 
 void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
 {

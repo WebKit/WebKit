@@ -400,6 +400,11 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
     return true;
 }
 
+void CCLayerTreeHostImpl::setContentsMemoryAllocationLimitBytes(size_t bytes)
+{
+    m_client->postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(bytes);
+}
+
 void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 {
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);

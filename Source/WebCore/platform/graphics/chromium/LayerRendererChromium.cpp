@@ -180,6 +180,7 @@ public:
             m_layerRenderer->discardFramebuffer();
         else
             m_layerRenderer->ensureFramebuffer();
+        m_layerRenderer->m_client->setContentsMemoryAllocationLimitBytes(allocation.gpuResourceSizeInBytes);
     }
 
 private:

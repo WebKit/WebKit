@@ -214,6 +214,7 @@ public:
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
 
     TextureManager* contentsTextureManager() const;
+    void setContentsMemoryAllocationLimitBytes(size_t);
 
     bool visible() const { return m_visible; }
     void setVisible(bool);

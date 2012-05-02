@@ -1,3 +1,13 @@
+2012-05-02  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Set contents texture manager preferred memory limit based on GpuMemoryManager suggestion.
+        https://bugs.webkit.org/show_bug.cgi?id=84270
+
+        Reviewed by Kenneth Russell.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+
 2012-05-02  Emil A Eklund  <eae@chromium.org>
 
         Fix usage of layout types in platform code

@@ -105,6 +105,20 @@ TextureManager::~TextureManager()
         (*it)->clearManager();
 }
 
+void TextureManager::setMemoryAllocationLimitBytes(size_t memoryLimitBytes)
+{
+    setMaxMemoryLimitBytes(memoryLimitBytes);
+#if defined(OS_ANDROID)
+    // On android, we are setting the preferred memory limit to half of our
+    // maximum allocation, because we would like to stay significantly below
+    // the absolute memory limit whenever we can. Specifically, by limitting
+    // prepainting only to the halfway memory mark.
+    setPreferredMemoryLimitBytes(memoryLimitBytes / 2);
+#else
+    setPreferredMemoryLimitBytes(memoryLimitBytes);
+#endif
+}
+
 void TextureManager::setMaxMemoryLimitBytes(size_t memoryLimitBytes)
 {
     reduceMemoryToLimit(memoryLimitBytes);

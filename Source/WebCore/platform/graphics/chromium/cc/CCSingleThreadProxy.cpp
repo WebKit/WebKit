@@ -279,6 +279,14 @@ void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr
     m_layerTreeHost->setAnimationEvents(events, wallClockTime);
 }
 
+void CCSingleThreadProxy::postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t bytes)
+{
+    // FIXME: This is called via a graphics context callback, on main thread in single threaded mode, because its hard to fake the impl thread. This should need to DebugScopedSetMainThread, but is actually already on the main thread.
+    ASSERT(CCProxy::isMainThread());
+    ASSERT(m_layerTreeHost);
+    m_layerTreeHost->setContentsMemoryAllocationLimitBytes(bytes);
+}
+
 // Called by the legacy scheduling path (e.g. where render_widget does the scheduling)
 void CCSingleThreadProxy::compositeImmediately()
 {

@@ -321,6 +321,12 @@ void CCThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAni
     m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::setAnimationEvents, events, wallClockTime));
 }
 
+void CCThreadProxy::postSetContentsMemoryAllocationLimitBytesToMainThreadOnImplThread(size_t bytes)
+{
+    ASSERT(isImplThread());
+    m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::setContentsMemoryAllocationLimitBytes, bytes));
+}
+
 void CCThreadProxy::setNeedsRedraw()
 {
     ASSERT(isMainThread());
@@ -717,6 +723,14 @@ void CCThreadProxy::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> event
     if (!m_layerTreeHost)
         return;
     m_layerTreeHost->setAnimationEvents(events, wallClockTime);
+}
+
+void CCThreadProxy::setContentsMemoryAllocationLimitBytes(size_t bytes)
+{
+    ASSERT(isMainThread());
+    if (!m_layerTreeHost)
+        return;
+    m_layerTreeHost->setContentsMemoryAllocationLimitBytes(bytes);
 }
 
 class CCThreadProxyContextRecreationTimer : public CCTimer, CCTimerClient {
