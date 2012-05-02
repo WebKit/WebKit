@@ -1,3 +1,9 @@
+2012-05-02  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r115825.
+
+        * platform/gtk/fast/lists/drag-into-marker-expected.txt:
+
 2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         Unreviewed, EFL rebaseline after r113885.
