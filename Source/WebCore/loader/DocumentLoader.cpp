@@ -287,13 +287,14 @@ void DocumentLoader::finishedLoading()
     commitIfReady();
     if (!frameLoader() || frameLoader()->stateMachine()->creatingInitialEmptyDocument())
         return;
-    if (!maybeCreateArchive())
+
+    if (!maybeCreateArchive()) {
+        // If this is an empty document, it will not have actually been created yet. Commit dummy data so that
+        // DocumentWriter::begin() gets called and creates the Document.
+        if (!m_gotFirstByte)
+            commitData(0, 0);
         frameLoader()->client()->finishedLoading(this);
-    
-    // If this is an empty document, it will not have actually been created yet. Commit dummy data so that
-    // DocumentWriter::begin() gets called and creates the Document.
-    if (!m_gotFirstByte)
-        commitData(0, 0);
+    }
 
     m_writer.end();
     if (!m_mainDocumentError.isNull())

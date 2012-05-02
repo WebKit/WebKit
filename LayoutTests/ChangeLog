@@ -1,3 +1,16 @@
+2012-05-01  Nate Chapin  <japhet@chromium.org>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=85275.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/loading/pdf-commit-load-callbacks-expected.txt: Added.
+        * http/tests/loading/pdf-commit-load-callbacks.html: Added.
+        * platform/chromium/http/tests/loading: Added.
+        * platform/chromium/http/tests/loading/pdf-commit-load-callbacks-expected.txt: Added.
+        * platform/wk2/Skipped: New test requires layoutTestController.dumpResourceLoadCallbacks(),
+            which isn't support for wk2 yet.
+
 2012-05-01  Eric Seidel  <eric@webkit.org>
 
         Add support for seamless attribute as well as seamless sandbox flag and default CSS styling

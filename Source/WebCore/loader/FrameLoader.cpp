@@ -1821,9 +1821,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     if (!m_stateMachine.committedFirstRealDocumentLoad())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
-
-    if (!m_client->hasHTMLView())
-        receivedFirstData();
 }
 
 void FrameLoader::clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress)

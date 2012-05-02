@@ -383,6 +383,7 @@ fast/loader/file-protocol-fragment.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/user-style-sheet-resource-load-callbacks.html
 http/tests/loading/307-after-303-after-post.html
+http/tests/loading/pdf-commit-load-callbacks.html
 http/tests/loading/redirect-methods.html
 http/tests/misc/favicon-loads-with-images-disabled.html
 http/tests/misc/favicon-loads-with-icon-loading-override.html
