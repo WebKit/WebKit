@@ -1,3 +1,10 @@
+2012-05-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, removing recent test expectations for changes in r115846
+        to get proper new baselines from the buildbots.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Chromium gardening.
