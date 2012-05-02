@@ -1,3 +1,9 @@
+2012-05-01  Andrew Scherkus  <scherkus@chromium.org>
+
+        [Chromium] Adjust baseline location for media/media-can-play-type-webm.html.
+
+        * platform/chromium/media/media-can-play-webm-expected.txt: Renamed from LayoutTests/media/media-can-play-webm-expected.txt.
+
 2012-04-27  Andrew Scherkus  <scherkus@chromium.org>
 
         Clean up media canPlayType() tests and add a test for WebM.
