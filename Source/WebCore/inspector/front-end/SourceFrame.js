@@ -506,8 +506,7 @@ WebInspector.SourceFrame.prototype = {
     didEditContent: function(error, content)
     {
         if (error) {
-            if (error.message)
-                WebInspector.log(error.message, WebInspector.ConsoleMessage.MessageLevel.Error, true);
+            WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
             return;
         }
     },

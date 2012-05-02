@@ -150,7 +150,9 @@ WebInspector.DatabaseQueryView.prototype = {
 
     _queryError: function(query, error)
     {
-        if (error.message)
+        if (typeof error === "string")
+            var message = error;
+        else if (error.message)
             var message = error.message;
         else if (error.code == 2)
             var message = WebInspector.UIString("Database no longer has expected version.");
