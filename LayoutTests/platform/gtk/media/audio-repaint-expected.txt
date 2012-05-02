@@ -17,7 +17,7 @@ layer at (8,62) size 300x20
 layer at (8,62) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (8,62) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x20
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
@@ -39,7 +39,7 @@ layer at (288,62) size 20x20
 layer at (8,42) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (8,42) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x20
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
@@ -63,7 +63,7 @@ layer at (8,134) size 300x20
 layer at (8,134) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (8,134) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x20
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30

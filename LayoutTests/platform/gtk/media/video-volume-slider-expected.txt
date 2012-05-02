@@ -17,10 +17,10 @@ layer at (8,62) size 320x240
   RenderVideo {VIDEO} at (0,54) size 320x240
 layer at (8,62) size 320x240
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,62) size 320x240 scrollHeight 250
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 320x240
-    RenderButton {INPUT} at (0,220) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,220) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+layer at (8,282) size 320x20 scrollHeight 30
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,220) size 320x20
+    RenderButton {INPUT} at (0,0) size 20x20
+    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
         RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
           RenderBlock (anonymous) at (5,5) size 55x20
@@ -30,20 +30,11 @@ layer at (8,62) size 320x240 scrollHeight 250
         RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
           RenderBlock {DIV} at (0,4) size 137x12
           RenderBlock {DIV} at (137,4) size 12x12
-    RenderButton {INPUT} at (240,220) size 20x20
-    RenderButton {INPUT} at (260,220) size 20x20
-    RenderButton {INPUT} at (280,220) size 20x20
-    RenderBlock {DIV} at (300,220) size 20x20
+    RenderButton {INPUT} at (240,0) size 20x20
+    RenderButton {INPUT} at (260,0) size 20x20
+    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (300,0) size 20x20
 layer at (96,286) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (308,182) size 20x100
-  RenderBlock (positioned) zI: 1 {DIV} at (300,120) size 20x100
-layer at (311,187) size 14x95
-  RenderSlider {INPUT} at (3,5) size 14x95
-    RenderDeprecatedFlexibleBox {DIV} at (0,0) size 14x95
-      RenderBlock {DIV} at (0,0) size 14x64
-      RenderBlock {DIV} at (0,64) size 14x31
-layer at (311,206) size 14x31
-  RenderBlock (relative positioned) {DIV} at (0,0) size 14x31
 layer at (308,282) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20

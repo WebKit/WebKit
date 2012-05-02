@@ -1,3 +1,27 @@
+2012-05-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] media/track/track-cue-rendering-snap-to-lines-not-set.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=84378
+
+        Reviewed by Eric Carlson.
+
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+        * platform/gtk/media/media-controls-clone-expected.txt:
+        * platform/gtk/media/media-document-audio-repaint-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-playing-and-pause-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+        * platform/gtk/test_expectations.txt: Unflag fixed test.
+
 2012-05-02  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] drag&drop related failures

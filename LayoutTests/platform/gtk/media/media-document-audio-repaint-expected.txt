@@ -18,10 +18,10 @@ layer at (0,0) size 800x600
             RenderVideo {VIDEO} at (40,164) size 300x1
           layer at (40,164) size 300x1
             RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x1
-          layer at (40,164) size 300x1 scrollHeight 20
-            RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x1
-              RenderButton {INPUT} at (0,-19) size 20x20
-              RenderDeprecatedFlexibleBox {DIV} at (20,-19) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+          layer at (40,164) size 300x20 scrollHeight 30
+            RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
+              RenderButton {INPUT} at (0,0) size 20x20
+              RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
                 RenderBlock (anonymous) at (1,0) size 65x30
                   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
                     RenderBlock (anonymous) at (5,5) size 55x20
@@ -31,10 +31,12 @@ layer at (0,0) size 800x600
                   RenderDeprecatedFlexibleBox {DIV} at (2,0) size 149x20
                     RenderBlock {DIV} at (0,4) size 137x12
                     RenderBlock {DIV} at (137,4) size 12x12
-              RenderButton {INPUT} at (240,-19) size 20x20
-              RenderButton {INPUT} at (260,-19) size 20x20
-              RenderBlock {DIV} at (280,-19) size 20x20
-          layer at (320,145) size 20x20 backgroundClip at (40,164) size 300x1 clip at (40,164) size 300x1 outlineClip at (40,164) size 300x1
+              RenderButton {INPUT} at (240,0) size 20x20
+              RenderButton {INPUT} at (260,0) size 20x20
+              RenderBlock {DIV} at (280,0) size 20x20
+          layer at (196,168) size 12x12
+            RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+          layer at (320,164) size 20x20
             RenderButton zI: 2 {INPUT} at (0,0) size 20x20
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

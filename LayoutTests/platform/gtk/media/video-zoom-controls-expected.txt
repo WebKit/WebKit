@@ -10,10 +10,10 @@ layer at (57,85) size 240x180
   RenderVideo {VIDEO} at (45,73) size 240x180
 layer at (57,85) size 240x180
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 240x180
-layer at (57,85) size 240x180 scrollHeight 194
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 240x180
-    RenderButton {INPUT} at (0,150) size 30x30
-    RenderDeprecatedFlexibleBox {DIV} at (30,150) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+layer at (57,235) size 240x30 scrollHeight 44
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,150) size 240x30
+    RenderButton {INPUT} at (0,0) size 30x30
+    RenderDeprecatedFlexibleBox {DIV} at (30,0) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 88x44
         RenderDeprecatedFlexibleBox {DIV} at (88,0) size 0x44
           RenderBlock (anonymous) at (7,7) size 74x30
@@ -24,10 +24,10 @@ layer at (57,85) size 240x180 scrollHeight 194
         RenderDeprecatedFlexibleBox {DIV} at (3,0) size 0x30
           RenderBlock {DIV} at (0,9) size 0x12
           RenderBlock {DIV} at (0,9) size 12x12
-    RenderButton {INPUT} at (120,150) size 30x30
-    RenderButton {INPUT} at (150,150) size 30x30
-    RenderButton {INPUT} at (180,150) size 30x30
-    RenderBlock {DIV} at (210,150) size 30x30
+    RenderButton {INPUT} at (120,0) size 30x30
+    RenderButton {INPUT} at (150,0) size 30x30
+    RenderButton {INPUT} at (180,0) size 30x30
+    RenderBlock {DIV} at (210,0) size 30x30
 layer at (179,244) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
 layer at (267,235) size 30x30
@@ -36,10 +36,10 @@ layer at (57,310) size 240x180
   RenderVideo {VIDEO} at (45,298) size 240x180
 layer at (57,310) size 240x180
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 240x180
-layer at (57,310) size 240x180 scrollHeight 194
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 240x180
-    RenderButton {INPUT} at (0,150) size 30x30
-    RenderDeprecatedFlexibleBox {DIV} at (30,150) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+layer at (57,460) size 240x30 scrollHeight 44
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,150) size 240x30
+    RenderButton {INPUT} at (0,0) size 30x30
+    RenderDeprecatedFlexibleBox {DIV} at (30,0) size 90x30 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 88x44
         RenderDeprecatedFlexibleBox {DIV} at (88,0) size 0x44
           RenderBlock (anonymous) at (7,7) size 74x30
@@ -50,11 +50,9 @@ layer at (57,310) size 240x180 scrollHeight 194
         RenderDeprecatedFlexibleBox {DIV} at (3,0) size 0x30
           RenderBlock {DIV} at (0,9) size 0x12
           RenderBlock {DIV} at (0,9) size 12x12
-    RenderButton {INPUT} at (120,150) size 30x30
-    RenderButton {INPUT} at (150,150) size 30x30
-    RenderButton {INPUT} at (180,150) size 30x30
-    RenderBlock {DIV} at (210,150) size 30x30
-layer at (179,469) size 12x12 backgroundClip at (74,291) size 240x180 clip at (74,291) size 240x180 outlineClip at (74,291) size 240x180
-  RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
-layer at (267,460) size 30x30 backgroundClip at (74,291) size 240x180 clip at (74,291) size 240x180 outlineClip at (74,291) size 240x180
+    RenderButton {INPUT} at (120,0) size 30x30
+    RenderButton {INPUT} at (150,0) size 30x30
+    RenderButton {INPUT} at (180,0) size 30x30
+    RenderBlock {DIV} at (210,0) size 30x30
+layer at (267,460) size 30x30 backgroundClip at (48,438) size 240x30 clip at (48,438) size 240x30 outlineClip at (48,438) size 240x30
   RenderButton zI: 2 {INPUT} at (0,0) size 30x30
