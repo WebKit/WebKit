@@ -45,9 +45,11 @@
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
+#if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionClientQt.h"
 #include "DeviceOrientationClientMock.h"
 #include "DeviceOrientationClientQt.h"
+#endif
 #include "DocumentLoader.h"
 #include "DragClientQt.h"
 #include "DragController.h"

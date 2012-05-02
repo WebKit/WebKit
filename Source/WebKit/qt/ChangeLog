@@ -1,3 +1,12 @@
+2012-05-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Buildfix after r115812 for !ENABLE(DEVICE_ORIENTATION) builds.
+        https://bugs.webkit.org/show_bug.cgi?id=64595
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qwebpage.cpp:
+
 2012-04-27  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Move WebKit1 specific conversion of touch-events to WebKit1
