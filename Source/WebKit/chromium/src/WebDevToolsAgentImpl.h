@@ -71,7 +71,7 @@ public:
     virtual ~WebDevToolsAgentImpl();
 
     // WebDevToolsAgentPrivate implementation.
-    virtual void didClearWindowObject(WebFrameImpl*);
+    virtual void didCreateScriptContext(WebFrameImpl*, int worldId);
     virtual void mainFrameViewCreated(WebFrameImpl*);
     virtual bool metricsOverridden();
     virtual void webViewResized();

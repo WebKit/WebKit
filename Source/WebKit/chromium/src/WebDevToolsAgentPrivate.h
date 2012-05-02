@@ -41,9 +41,10 @@ class WebDevToolsAgentPrivate : public WebDevToolsAgent {
 public:
 
     // Notification from FrameLoaderClientImpl:
-    // The window object for the frame has been cleared of any extra properties
-    // that may have been set by script from the previously loaded document.
-    virtual void didClearWindowObject(WebFrameImpl*) = 0;
+    // New context has been created for a given world in given frame. Any
+    // processing hat needs to happen before the first script is evaluated
+    // in this context should be done here.
+    virtual void didCreateScriptContext(WebFrameImpl*, int worldId) = 0;
 
     // A new FrameView has been created for the specified WebFrame using
     // the Frame::createView() call.

@@ -1,3 +1,26 @@
+2012-05-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: TypeError: Cannot call method 'createLiveLocation' of undefined
+        https://bugs.webkit.org/show_bug.cgi?id=85371
+
+        Standard extension scripts injected to the Chromium background page should have
+        correct script data which means that context debug id should be already set on
+        the context where they are compiled before the compilation. This patch moves
+        assignment of context debug id earlier where it is known that no scripts have
+        been evaluated in the context.
+
+        Reviewed by Pavel Feldman.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidClearWindowObjectInWorld):
+        (WebKit::FrameLoaderClientImpl::didCreateScriptContext):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::didCreateScriptContext):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+        * src/WebDevToolsAgentPrivate.h:
+        (WebDevToolsAgentPrivate):
+
 2012-05-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Changing webkitGetUserMedia to take an object instead of a string

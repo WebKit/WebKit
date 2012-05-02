@@ -415,10 +415,12 @@ void WebDevToolsAgentImpl::didNavigate()
     ClientMessageLoopAdapter::didNavigate();
 }
 
-void WebDevToolsAgentImpl::didClearWindowObject(WebFrameImpl* webframe)
+void WebDevToolsAgentImpl::didCreateScriptContext(WebFrameImpl* webframe, int worldId)
 {
-    WebCore::V8Proxy* proxy = WebCore::V8Proxy::retrieve(webframe->frame());
-    if (proxy && webframe->frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
+    // Skip non main world contexts.
+    if (worldId)
+        return;
+    if (WebCore::V8Proxy* proxy = WebCore::V8Proxy::retrieve(webframe->frame()))
         proxy->setContextDebugId(m_hostId);
 }
 

@@ -135,10 +135,6 @@ void FrameLoaderClientImpl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*
 {
     if (m_webFrame->client())
         m_webFrame->client()->didClearWindowObject(m_webFrame);
-
-    WebViewImpl* webview = m_webFrame->viewImpl();
-    if (webview->devToolsAgentPrivate())
-        webview->devToolsAgentPrivate()->didClearWindowObject(m_webFrame);
 }
 
 void FrameLoaderClientImpl::documentElementAvailable()
@@ -150,6 +146,9 @@ void FrameLoaderClientImpl::documentElementAvailable()
 #if USE(V8)
 void FrameLoaderClientImpl::didCreateScriptContext(v8::Handle<v8::Context> context, int extensionGroup, int worldId)
 {
+    WebViewImpl* webview = m_webFrame->viewImpl();
+    if (webview->devToolsAgentPrivate())
+        webview->devToolsAgentPrivate()->didCreateScriptContext(m_webFrame, worldId);
     if (m_webFrame->client())
         m_webFrame->client()->didCreateScriptContext(m_webFrame, context, extensionGroup, worldId);
 }
