@@ -183,13 +183,13 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 
 - (id)initWithDuration:(NSTimeInterval)duration window:(NSWindow *)window initialAlpha:(CGFloat)initialAlpha finalAlpha:(CGFloat)finalAlpha
 {
-    UNUSED_PARAM(duration);
     self = [self init];
     if (!self)
         return nil;    
     _window = window;
     _initialAlpha = initialAlpha;
     _finalAlpha = finalAlpha;
+    [self setDuration:duration];
     return self;
 }
 
