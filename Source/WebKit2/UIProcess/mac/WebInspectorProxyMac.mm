@@ -114,6 +114,9 @@ static bool inspectorReallyUsesWebKitUserInterface(WebPreferences* preferences)
     if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"])
         return true;
 
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
+        return false;
+
     return preferences->inspectorUsesWebKitUserInterface();
 }
 

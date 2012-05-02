@@ -1,3 +1,16 @@
+2012-05-01  Anders Carlsson  <andersca@apple.com>
+
+        inspectorReallyUsesWebKitUserInterface should be more robust against missing files
+        https://bugs.webkit.org/show_bug.cgi?id=85327
+        <rdar://problem/11332864>
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::inspectorReallyUsesWebKitUserInterface):
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::inspectorReallyUsesWebKitUserInterface):
+
 2012-05-01  Jeffrey Pfau  <jpfau@apple.com>
 
         <rdar://problem/10422318> Support for web content filter delegate for filtering https content
