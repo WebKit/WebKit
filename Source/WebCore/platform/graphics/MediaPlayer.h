@@ -326,7 +326,7 @@ public:
     void setControls(bool);
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || ENABLE(NATIVE_FULLSCREEN_VIDEO)
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || USE(NATIVE_FULLSCREEN_VIDEO)
     bool enterFullscreen() const;
     void exitFullscreen();
 #endif

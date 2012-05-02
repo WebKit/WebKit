@@ -117,7 +117,7 @@ public:
     virtual void setControls(bool) { }
 #endif
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || ENABLE(NATIVE_FULLSCREEN_VIDEO)
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || USE(NATIVE_FULLSCREEN_VIDEO)
     virtual bool enterFullscreen() const { return false; }
     virtual void exitFullscreen() { }
 #endif

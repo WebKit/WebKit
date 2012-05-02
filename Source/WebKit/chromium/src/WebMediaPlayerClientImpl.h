@@ -134,7 +134,7 @@ public:
     virtual unsigned droppedFrameCount() const;
     virtual unsigned audioDecodedByteCount() const;
     virtual unsigned videoDecodedByteCount() const;
-#if ENABLE(NATIVE_FULLSCREEN_VIDEO)
+#if USE(NATIVE_FULLSCREEN_VIDEO)
     virtual bool enterFullscreen() const;
     virtual void exitFullscreen();
 #endif

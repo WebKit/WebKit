@@ -339,7 +339,7 @@ void WebMediaPlayerClientImpl::pause()
         m_webMediaPlayer->pause();
 }
 
-#if ENABLE(NATIVE_FULLSCREEN_VIDEO)
+#if USE(NATIVE_FULLSCREEN_VIDEO)
 bool WebMediaPlayerClientImpl::enterFullscreen() const
 {
     if (m_webMediaPlayer)

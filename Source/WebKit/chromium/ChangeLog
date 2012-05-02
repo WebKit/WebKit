@@ -1,3 +1,24 @@
+2012-05-01  Min Qin  <qinmin@google.com>
+
+        use USE(NATIVE_FULLSCREEN_VIDEO) instead of ENABLE(NATIVE_FULLSCREEN_VIDEO)
+        https://bugs.webkit.org/show_bug.cgi?id=85316
+
+        Reviewed by Kent Tamura.
+
+        NATIVE_FULLSCREEN_VIDEO means the fullscreen video is implemented by native
+        system view instead of webkit
+        So it is more appropriate to use USE(NATIVE_FULLSCREEN_VIDEO).
+        Just rename the flag, no new tests
+
+        * features.gypi:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::enterFullScreenForElement):
+        (WebKit::WebViewImpl::exitFullScreenForElement):
+
 2012-05-01  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Additional instances of calling createAudioDevice directly
