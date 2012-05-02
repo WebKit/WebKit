@@ -1,3 +1,12 @@
+2012-05-02  Andy Estes  <aestes@apple.com>
+
+        Update more Mac baselines after r115846.
+
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/mac/fast/block/float/avoiding-float-centered-expected.txt:
+        * platform/mac/fast/block/float/float-not-removed-from-next-sibling3-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+
 2012-05-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         blockquote gets clobbered on delete, but the font-tag inside it doesn't
