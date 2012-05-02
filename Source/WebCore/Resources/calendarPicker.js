@@ -122,12 +122,22 @@ function getLanguage() {
     return result[1];
 }
 
+/*
+ * @const
+ * @type {number}
+ */
+var ImperialEraLimit = 2087;
+
 /**
  * @param {!number} year
  * @param {!number} month
  * @return {!string}
  */
 function formatJapaneseImperialEra(year, month) {
+    // We don't show an imperial era if it is greater than 99 becase of space
+    // limitation.
+    if (year > ImperialEraLimit)
+        return "";
     if (year > 1989)
         return "(平成" + (year - 1988) + "年)";
     if (year == 1989)
@@ -426,13 +436,17 @@ YearMonthController.prototype.attachTo = function(main) {
     this._wall.addEventListener("click", bind(this._closePopup, this), false);
     main.appendChild(this._wall);
 
-    // The maximum year which <input type=date> supports is 275,760.
-    // See WebCore/platform/DateComponents.h
-    var MaximumYear = 275760;
+    var maximumYear = global.maximumDate.getUTCFullYear();
     var maxWidth = 0;
     for (var m = 0; m < 12; ++m) {
-        this._month.textContent = formatYearMonth(MaximumYear, m);
+        this._month.textContent = formatYearMonth(maximumYear, m);
         maxWidth = Math.max(maxWidth, this._month.offsetWidth);
+    }
+    if (getLanguage() == "ja" && ImperialEraLimit < maximumYear) {
+        for (var m = 0; m < 12; ++m) {
+            this._month.textContent = formatYearMonth(ImperialEraLimit, m);
+            maxWidth = Math.max(maxWidth, this._month.offsetWidth);
+        }
     }
     this._month.style.minWidth = maxWidth + 'px';
 
