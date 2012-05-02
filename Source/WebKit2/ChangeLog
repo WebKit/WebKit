@@ -1,3 +1,16 @@
+2012-05-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add initial QML documentation
+        https://bugs.webkit.org/show_bug.cgi?id=85370
+
+        Reviewed by Simon Hausmann.
+
+        Add initial documentation which also serves as an example on how it
+        should be done.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qwebloadrequest.cpp:
+
 2012-05-02  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Remove redundant updateViewportArguments() call from HTMLBodyElement::didNotifyDescendantInseretions()

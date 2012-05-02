@@ -223,6 +223,10 @@ QPointF QQuickWebViewPrivate::pageItemPos()
     return pageView->pos();
 }
 
+/*!
+    \qmlsignal WebView::loadingChanged(WebLoadRequest request)
+*/
+
 void QQuickWebViewPrivate::loadDidSucceed()
 {
     Q_Q(QQuickWebView);
@@ -544,6 +548,15 @@ WebCore::IntSize QQuickWebViewPrivate::viewSize() const
     return WebCore::IntSize(pageView->width(), pageView->height());
 }
 
+/*!
+    \internal
+
+    \qmlsignal WebViewExperimental::onMessageReceived(var message)
+
+    \brief Emitted when JavaScript code executing on the web page calls navigator.qt.postMessage().
+
+    \sa postMessage
+*/
 void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& message)
 {
     QVariantMap variantMap;
@@ -808,15 +821,19 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 }
 
 /*!
-    \qmlsignal WebView::onNavigationRequested(request)
+    \qmlsignal WebView::onNavigationRequested(WebNavigationRequest request)
 
-    This signal is emitted for every navigation request. The request object contains url, button and modifiers properties
-    describing the navigation action, e.g. "a middle click with shift key pressed to 'http://qt-project.org'".
+    This signal is emitted for every navigation request. The request object contains url,
+    button and modifiers properties describing the navigation action, e.g. "a middle click
+    with shift key pressed to 'http://qt-project.org'".
 
-    The navigation will be accepted by default. To change that, one can set the action property to WebView.IgnoreRequest to reject
-    the request or WebView.DownloadRequest to trigger a download instead of navigating to the url.
+    The navigation will be accepted by default. To change that, one can set the action
+    property to WebView.IgnoreRequest to reject the request or WebView.DownloadRequest to
+    trigger a download instead of navigating to the url.
 
     The request object cannot be used after the signal handler function ends.
+
+    \sa WebNavigationRequest
 */
 
 QQuickWebViewAttached::QQuickWebViewAttached(QObject* object)
@@ -883,20 +900,23 @@ void QQuickWebViewExperimental::setUseDefaultContentItemSize(bool enable)
 }
 
 /*!
-   \brief Minimum contents width when not overriden by the page itself.
+    \internal
 
-   Unless the page defines how contents should be laid out, using e.g.
-   the viewport meta tag, it is laid out given the width of the viewport
-   (in CSS units).
+    \qmlproperty int WebViewExperimental::preferredMinimumContentsWidth
+    \brief Minimum contents width when not overriden by the page itself.
 
-   This setting can be used to enforce a minimum width when the page
-   does not define a width itself. This is useful for laying out pages
-   designed for big screens, commonly knows as desktop pages, on small
-   devices.
+    Unless the page defines how contents should be laid out, using e.g.
+    the viewport meta tag, it is laid out given the width of the viewport
+    (in CSS units).
 
-   The default value is 0, but the value of 980 is recommented for small
-   screens as it provides a good trade off between legitable pages and
-   non-broken content.
+    This setting can be used to enforce a minimum width when the page
+    does not define a width itself. This is useful for laying out pages
+    designed for big screens, commonly knows as desktop pages, on small
+    devices.
+
+    The default value is 0, but the value of 980 is recommented for small
+    screens as it provides a good trade off between legitable pages and
+    non-broken content.
  */
 int QQuickWebViewExperimental::preferredMinimumContentsWidth() const
 {
@@ -919,6 +939,17 @@ bool QQuickWebViewExperimental::flickableViewportEnabled()
 {
     return s_flickableViewportEnabled;
 }
+
+/*!
+    \internal
+
+    \qmlmethod void WebViewExperimental::postMessage(string message)
+
+    \brief Post a message to an onmessage function registered with the navigator.qt object
+           by JavaScript code executing on the page.
+
+    \sa onMessageReceived
+*/
 
 void QQuickWebViewExperimental::postMessage(const QString& message)
 {
@@ -1175,6 +1206,16 @@ QQuickWebPage* QQuickWebViewExperimental::page()
     return q_ptr->page();
 }
 
+/*!
+    \qmlclass WebView QWebView
+    \inqmlmodule QtWebKit 3.0
+*/
+
+/*!
+   \qmlmethod WebView(Item parent)
+   \brief Constructs a WebView with a parent.
+*/
+
 QQuickWebView::QQuickWebView(QQuickItem* parent)
     : QQuickFlickable(parent)
     , d_ptr(createPrivateObject(this))
@@ -1283,6 +1324,13 @@ QUrl QQuickWebView::icon() const
     return d->m_iconURL;
 }
 
+/*!
+    \qmlproperty int WebView::loadProgress
+    \brief The progress of loading the current web page.
+
+    The range is from 0 to 100.
+*/
+
 int QQuickWebView::loadProgress() const
 {
     Q_D(const QQuickWebView);
@@ -1301,6 +1349,11 @@ bool QQuickWebView::canGoForward() const
     return d->webPageProxy->canGoForward();
 }
 
+/*!
+    \qmlproperty bool WebView::loading
+    \brief True if the web view is currently loading a web page, false otherwise.
+*/
+
 bool QQuickWebView::loading() const
 {
     Q_D(const QQuickWebView);
@@ -1308,11 +1361,19 @@ bool QQuickWebView::loading() const
     return mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
 }
 
+/*!
+    \internal
+ */
+
 QPointF QQuickWebView::mapToWebContent(const QPointF& pointInViewCoordinates) const
 {
     Q_D(const QQuickWebView);
     return d->pageView->transformFromItem().map(pointInViewCoordinates);
 }
+
+/*!
+    \internal
+ */
 
 QRectF QQuickWebView::mapRectToWebContent(const QRectF& rectInViewCoordinates) const
 {
@@ -1320,17 +1381,29 @@ QRectF QQuickWebView::mapRectToWebContent(const QRectF& rectInViewCoordinates) c
     return d->pageView->transformFromItem().mapRect(rectInViewCoordinates);
 }
 
+/*!
+    \internal
+ */
+
 QPointF QQuickWebView::mapFromWebContent(const QPointF& pointInCSSCoordinates) const
 {
     Q_D(const QQuickWebView);
     return d->pageView->transformToItem().map(pointInCSSCoordinates);
 }
 
+/*!
+    \internal
+ */
 QRectF QQuickWebView::mapRectFromWebContent(const QRectF& rectInCSSCoordinates) const
 {
     Q_D(const QQuickWebView);
     return d->pageView->transformToItem().mapRect(rectInCSSCoordinates);
 }
+
+/*!
+    \qmlproperty string WebView::title
+    \brief The title of the loaded page.
+*/
 
 QString QQuickWebView::title() const
 {
@@ -1366,6 +1439,12 @@ QVariant QQuickWebView::inputMethodQuery(Qt::InputMethodQuery property) const
     }
 }
 
+/*!
+    \preliminary
+
+    The experimental module consisting on experimental API which will break
+    from version to version.
+*/
 QQuickWebViewExperimental* QQuickWebView::experimental() const
 {
     return m_experimental;
@@ -1376,6 +1455,9 @@ QQuickWebViewAttached* QQuickWebView::qmlAttachedProperties(QObject* object)
     return new QQuickWebViewAttached(object);
 }
 
+/*!
+    \internal
+*/
 void QQuickWebView::platformInitialize()
 {
     JSC::initializeThreading();
@@ -1578,7 +1660,8 @@ void QQuickWebView::handleFlickableMouseRelease(const QPointF& position, qint64 
 }
 
 /*!
-    Loads the specified \a html as the content of the web view.
+    \qmlmethod void WebView::loadHtml(string html, url baseUrl, url unreachableUrl)
+    \brief Loads the specified \a html as the content of the web view.
 
     External objects such as stylesheets or images referenced in the HTML
     document are located relative to \a baseUrl.
@@ -1587,8 +1670,9 @@ void QQuickWebView::handleFlickableMouseRelease(const QPointF& position, qint64 
     content. This is typically used to display error pages for a failed
     load.
 
-    \sa load()
+    \sa WebView::url
 */
+
 void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl, const QUrl& unreachableUrl)
 {
     Q_D(QQuickWebView);
