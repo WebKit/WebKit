@@ -1,3 +1,78 @@
+2012-05-02  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] CSS tests needs rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=85177
+
+        Unreviewed gardening.
+
+        * platform/efl/fast/css/disabled-author-styles-expected.png: Added.
+        * platform/efl/fast/css/import-rule-regression-11590-expected.txt:
+        * platform/efl/fast/css/inline-element-line-break-expected.txt:
+        * platform/efl/fast/css/inline-properties-important-expected.txt:
+        * platform/efl/fast/css/invalid-percentage-property-expected.txt:
+        * platform/efl/fast/css/invalidation-errors-3-expected.txt:
+        * platform/efl/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/last-of-type-pseudo-class-expected.txt:
+        * platform/efl/fast/css/layerZOrderCrash-expected.txt:
+        * platform/efl/fast/css/line-height-expected.txt:
+        * platform/efl/fast/css/line-height-overflow-expected.txt:
+        * platform/efl/fast/css/list-outline-expected.txt:
+        * platform/efl/fast/css/margin-bottom-form-element-quirk-expected.txt:
+        * platform/efl/fast/css/margin-bottom-form-element-strict-expected.txt:
+        * platform/efl/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/efl/fast/css/negative-leading-expected.txt:
+        * platform/efl/fast/css/negative-nth-child-expected.txt:
+        * platform/efl/fast/css/nested-floating-relative-position-percentages-expected.txt:
+        * platform/efl/fast/css/nested-layers-with-hover-expected.txt:
+        * platform/efl/fast/css/non-empty-span-expected.png:
+        * platform/efl/fast/css/non-empty-span-expected.txt:
+        * platform/efl/fast/css/nth-child-dynamic-expected.txt:
+        * platform/efl/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/only-of-type-pseudo-class-expected.txt:
+        * platform/efl/fast/css/outline-auto-location-expected.txt:
+        * platform/efl/fast/css/outline-narrowLine-expected.txt:
+        * platform/efl/fast/css/percent-top-relative-container-height-unspecified-expected.txt:
+        * platform/efl/fast/css/preserve-user-specified-zoom-level-on-reload-expected.png:
+        * platform/efl/fast/css/preserve-user-specified-zoom-level-on-reload-expected.txt:
+        * platform/efl/fast/css/pseudo-element-line-break-expected.txt:
+        * platform/efl/fast/css/quirk-orphaned-units-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-removed-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-removed-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-ancestor-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-parent-dynamic-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-parent-dynamic-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-parent-dynamic-removed-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-parent-dynamic-removed-expected.txt:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-parent-keeps-style-expected.png:
+        * platform/efl/fast/css/relative-positioned-block-with-inline-parent-keeps-style-expected.txt:
+        * platform/efl/fast/css/selector-set-attribute-expected.txt:
+        * platform/efl/fast/css/table-text-align-quirk-expected.txt:
+        * platform/efl/fast/css/table-text-align-strict-expected.txt:
+        * platform/efl/fast/css/text-align-expected.txt:
+        * platform/efl/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/efl/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/efl/fast/css/text-overflow-ellipsis-expected.txt:
+        * platform/efl/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/efl/fast/css/text-transform-select-expected.txt:
+        * platform/efl/fast/css/textCapitalizeEdgeCases-expected.txt:
+        * platform/efl/fast/css/universal-hover-quirk-expected.txt:
+        * platform/efl/fast/css/value-list-out-of-bounds-crash-expected.txt:
+        * platform/efl/fast/css/word-space-extra-expected.txt:
+        * platform/efl/fast/css/zoom-font-size-expected.txt:
+
 2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening, marked fast/js/random-array-gc-stress.html as SLOW on debug.

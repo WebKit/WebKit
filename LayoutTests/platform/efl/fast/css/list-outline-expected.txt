@@ -1,11 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x144
-  RenderBlock {HTML} at (0,0) size 800x144
-    RenderBody {BODY} at (8,23) size 784x98
-      RenderBlock {OL} at (0,0) size 784x98
-        RenderListItem {LI} at (40,0) size 744x98
-          RenderListMarker at (-31,23) size 24x26: "1"
-          RenderText {#text} at (23,23) size 656x52
-            text run at (23,23) width 656: "A single outline should only appear over the list element, and not over"
-            text run at (23,49) width 203: "internal text elements."
+layer at (0,0) size 800x82
+  RenderBlock {HTML} at (0,0) size 800x82
+    RenderBody {BODY} at (8,16) size 784x50
+      RenderBlock {OL} at (0,0) size 784x50
+        RenderListItem {LI} at (40,0) size 744x50
+          RenderListMarker at (-21,16) size 16x19: "1"
+          RenderText {#text} at (16,16) size 582x19
+            text run at (16,16) width 582: "A single outline should only appear over the list element, and not over internal text elements."

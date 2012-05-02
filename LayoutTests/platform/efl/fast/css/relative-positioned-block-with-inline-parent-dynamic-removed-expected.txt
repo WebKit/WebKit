@@ -1,25 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x158
-  RenderBlock {HTML} at (0,0) size 800x158
-    RenderBody {BODY} at (8,23) size 784x127
-      RenderBlock {P} at (0,0) size 784x52
-        RenderText {#text} at (0,0) size 752x52
-          text run at (0,0) width 752: "Test passes if the orange box sits atop the blue box and both are in the top left of"
-          text run at (0,26) width 85: "the view."
-      RenderBlock (anonymous) at (0,75) size 784x0
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 567x19
+          text run at (0,0) width 567: "Test passes if the orange box sits atop the blue box and both are in the top left of the view."
+      RenderBlock (anonymous) at (0,34) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0 [bgcolor=#0000FF]
           RenderText {#text} at (0,0) size 0x0
           RenderInline {I} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,75) size 784x26
-        RenderBlock {DIV} at (0,0) size 192x26 [bgcolor=#FFA500]
-          RenderText {#text} at (0,0) size 96x26
-            text run at (0,0) width 96: "Filler Text"
-      RenderBlock (anonymous) at (0,101) size 784x26
-        RenderInline {SPAN} at (0,0) size 96x26 [bgcolor=#0000FF]
-          RenderInline {I} at (0,0) size 96x26
-            RenderText {#text} at (0,0) size 96x26
-              text run at (0,0) width 96: "Filler Text"
+      RenderBlock (anonymous) at (0,34) size 784x18
+        RenderBlock {DIV} at (0,0) size 192x18 [bgcolor=#FFA500]
+          RenderText {#text} at (0,0) size 66x19
+            text run at (0,0) width 66: "Filler Text"
+      RenderBlock (anonymous) at (0,52) size 784x18
+        RenderInline {SPAN} at (0,0) size 66x19 [bgcolor=#0000FF]
+          RenderInline {I} at (0,0) size 66x19
+            RenderText {#text} at (0,0) size 66x19
+              text run at (0,0) width 66: "Filler Text"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

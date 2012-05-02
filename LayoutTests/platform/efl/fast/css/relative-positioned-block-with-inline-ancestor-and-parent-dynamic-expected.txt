@@ -1,25 +1,24 @@
 layer at (0,0) size 984x585
   RenderView at (0,0) size 800x585
-layer at (0,0) size 800x158
-  RenderBlock {HTML} at (0,0) size 800x158
-    RenderBody {BODY} at (8,23) size 784x127
-      RenderBlock {P} at (0,0) size 784x52
-        RenderText {#text} at (0,0) size 776x52
-          text run at (0,0) width 776: "Test passes if the orange box sits atop the blue box and both are in the center of the"
-          text run at (0,26) width 51: "view."
-      RenderBlock (anonymous) at (0,75) size 784x0
-      RenderBlock (anonymous) at (0,101) size 784x26
+layer at (0,0) size 800x94
+  RenderBlock {HTML} at (0,0) size 800x94
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 561x19
+          text run at (0,0) width 561: "Test passes if the orange box sits atop the blue box and both are in the center of the view."
+      RenderBlock (anonymous) at (0,34) size 784x0
+      RenderBlock (anonymous) at (0,52) size 784x18
         RenderText {#text} at (0,0) size 0x0
-layer at (200,290) size 784x26
-  RenderBlock (anonymous) at (0,75) size 784x26
-    RenderBlock {DIV} at (0,0) size 192x26 [bgcolor=#FFA500]
-      RenderText {#text} at (0,0) size 96x26
-        text run at (0,0) width 96: "Filler Text"
-layer at (200,316) size 96x26
-  RenderInline (relative positioned) {SPAN} at (0,0) size 96x26 [bgcolor=#FFFF00]
-    RenderInline {SPAN} at (0,0) size 96x26 [bgcolor=#0000FF]
-      RenderInline {I} at (0,0) size 96x26
-        RenderText {#text} at (0,0) size 96x26
-          text run at (0,0) width 96: "Filler Text"
+layer at (200,242) size 784x18
+  RenderBlock (anonymous) at (0,34) size 784x18
+    RenderBlock {DIV} at (0,0) size 192x18 [bgcolor=#FFA500]
+      RenderText {#text} at (0,0) size 66x19
+        text run at (0,0) width 66: "Filler Text"
+layer at (200,260) size 66x19
+  RenderInline (relative positioned) {SPAN} at (0,0) size 66x19 [bgcolor=#FFFF00]
+    RenderInline {SPAN} at (0,0) size 66x19 [bgcolor=#0000FF]
+      RenderInline {I} at (0,0) size 66x19
+        RenderText {#text} at (0,0) size 66x19
+          text run at (0,0) width 66: "Filler Text"
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

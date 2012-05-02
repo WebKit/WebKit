@@ -3,33 +3,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock (relative positioned) {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x52
-        RenderText {#text} at (0,0) size 781x52
-          text run at (0,0) width 781: "To reproduce this bug outside of DumpRenderTree, click the link below. If broken,"
-          text run at (0,26) width 135: "we will crash. "
-        RenderBR {BR} at (135,47) size 0x0
-layer at (8,60) size 80x120
-  RenderTable {TABLE} at (0,52) size 80x120
-    RenderTableSection {TBODY} at (0,0) size 80x120
-      RenderTableRow {TR} at (0,2) size 80x28
-        RenderTableCell {TD} at (2,2) size 76x28 [r=0 c=0 rs=1 cs=1]
-          RenderInline {A} at (0,0) size 36x26 [color=#0000EE]
-            RenderText {#text} at (1,1) size 36x26
-              text run at (1,1) width 36: "link"
-      RenderTableRow {TR} at (0,32) size 80x86
-        RenderTableCell {TD} at (2,32) size 76x86 [r=1 c=0 rs=1 cs=1]
-layer at (11,93) size 74x84
-  RenderTable {TABLE} at (1,1) size 74x84
-    RenderTableSection {TBODY} at (0,0) size 74x84
-      RenderTableRow {TR} at (0,2) size 74x80
-        RenderTableCell {TD} at (2,2) size 70x80 [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 68x26
-            text run at (1,1) width 68: "content"
-          RenderBR {BR} at (69,22) size 0x0
-          RenderText {#text} at (1,27) size 68x26
-            text run at (1,27) width 68: "content"
-          RenderBR {BR} at (69,48) size 0x0
-          RenderText {#text} at (1,53) size 68x26
-            text run at (1,53) width 68: "content"
-          RenderBR {BR} at (69,74) size 0x0
-caret: position 4 of child 0 {#text} of body
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 622x19
+          text run at (0,0) width 622: "To reproduce this bug outside of DumpRenderTree, click the link below. If broken, we will crash. "
+        RenderBR {BR} at (622,15) size 0x0
+layer at (8,26) size 58x88
+  RenderTable {TABLE} at (0,18) size 58x88
+    RenderTableSection {TBODY} at (0,0) size 58x88
+      RenderTableRow {TR} at (0,2) size 58x20
+        RenderTableCell {TD} at (2,2) size 54x20 [r=0 c=0 rs=1 cs=1]
+          RenderInline {A} at (0,0) size 24x19 [color=#0000EE]
+            RenderText {#text} at (1,1) size 24x19
+              text run at (1,1) width 24: "link"
+      RenderTableRow {TR} at (0,24) size 58x62
+        RenderTableCell {TD} at (2,24) size 54x62 [r=1 c=0 rs=1 cs=1]
+layer at (11,51) size 52x60
+  RenderTable {TABLE} at (1,1) size 52x60
+    RenderTableSection {TBODY} at (0,0) size 52x60
+      RenderTableRow {TR} at (0,2) size 52x56
+        RenderTableCell {TD} at (2,2) size 48x56 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 46x19
+            text run at (1,1) width 46: "content"
+          RenderBR {BR} at (47,16) size 0x0
+          RenderText {#text} at (1,19) size 46x19
+            text run at (1,19) width 46: "content"
+          RenderBR {BR} at (47,34) size 0x0
+          RenderText {#text} at (1,37) size 46x19
+            text run at (1,37) width 46: "content"
+          RenderBR {BR} at (47,52) size 0x0
+caret: position 5 of child 0 {#text} of body
