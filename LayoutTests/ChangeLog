@@ -1,5 +1,11 @@
 2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed gardening, marked fast/js/random-array-gc-stress.html as SLOW on debug.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed test rebaseline after r115749.
 
         * platform/chromium-mac-leopard/media/audio-controls-rendering-expected.png:

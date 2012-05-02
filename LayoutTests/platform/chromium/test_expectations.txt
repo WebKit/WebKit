@@ -3641,7 +3641,7 @@ BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 // Requires rebaseline after bug 83978
 BUGWK83978 WIN MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
 
-BUGWK84802 : fast/js/random-array-gc-stress.html = FAIL TIMEOUT
+BUGWK84802 DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
 BUGWK84810 LINUX WIN : svg/carto.net/window.svg = IMAGE+TEXT
 BUGWK84810 MAC : svg/carto.net/window.svg = IMAGE
 
