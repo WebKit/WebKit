@@ -62,6 +62,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     },
 
     // View events
+    wasShown: function()
+    {
+        WebInspector.SourceFrame.prototype.wasShown.call(this);
+        this._setScriptSourceIsDirty(this._isDirty);
+    },
+
     willHide: function()
     {
         WebInspector.SourceFrame.prototype.willHide.call(this);
@@ -165,9 +171,15 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         var isDirty = this.textModel.text !== this._originalContent;
         if (isDirty)
-            this._scriptsPanel.setScriptSourceIsDirty(this._uiSourceCode, true);
+            this._setScriptSourceIsDirty(true);
         else
             this.didEditContent(null, this._originalContent);
+    },
+
+    _setScriptSourceIsDirty: function(isDirty)
+    {
+        this._scriptsPanel.setScriptSourceIsDirty(this._uiSourceCode, isDirty);
+        this._isDirty = isDirty;
     },
 
     beforeTextChanged: function()
@@ -209,7 +221,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 this._setBreakpoint(lineNumber, breakpoint.condition, breakpoint.enabled);
             }
         }
-        this._scriptsPanel.setScriptSourceIsDirty(this._uiSourceCode, false);
+        this._setScriptSourceIsDirty(false);
     },
 
     _getPopoverAnchor: function(element, event)
