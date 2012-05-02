@@ -17,6 +17,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (127,18) size 4x18
           text run at (127,18) width 4: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,62) size 80x36
-        RenderText {#text} at (0,0) size 72x18
-          text run at (0,0) width 72: "Lorem ipsu"
+layer at (8,70) size 80x36
+  RenderBlock {DIV} at (0,62) size 80x36
+    RenderText {#text} at (0,0) size 72x18
+      text run at (0,0) width 72: "Lorem ipsu"

@@ -1,3 +1,24 @@
+2012-05-02  Andy Estes  <aestes@apple.com>
+
+        Update Mac baselines after r115846.
+
+        * platform/mac/fast/clip/008-expected.txt:
+        * platform/mac/fast/clip/011-expected.txt:
+        * platform/mac/fast/clip/012-expected.txt:
+        * platform/mac/fast/forms/input-text-double-click-expected.txt:
+        * platform/mac/fast/repaint/overflow-delete-line-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-playing-and-pause-expected.txt:
+        * platform/mac/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt: Added.
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/mac/svg/hixie/mixed/003-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/mac/transforms/3d/general/perspective-non-layer-expected.txt:
+
 2012-05-02  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, rebaseline pdf-commit-load-callbacks.html for chromium-linux.
