@@ -78,7 +78,6 @@ public:
     virtual void loadDidCommit() { }
     virtual void didFinishFirstNonEmptyLayout() { }
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr) { }
-    void didChangeLoadingState(QWebLoadRequest* loadRequest);
     void didChangeBackForwardList();
 
     void setNeedsDisplay();
@@ -191,7 +190,6 @@ protected:
     bool m_useDefaultContentItemSize;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
-    bool m_loadStartedSignalSent;
     bool m_dialogActive;
     QUrl m_iconURL;
     QUrl m_deferredUrlToLoad;

@@ -1,3 +1,42 @@
+2012-05-02  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Minibrowser's progress bar should reset when WebProcess crashes while loading.
+        https://bugs.webkit.org/show_bug.cgi?id=84445
+
+        Reviewed by Jocelyn Turcotte.
+
+        Progress value needs resetting, when WebProcess crashes.
+        This patch moves crash logic for loading to QtWebPageLoadClient. It
+        also simplifies the callback function names in QtWebPageLoadClient, as they
+        all valid only for main frames.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewFlickablePrivate::loadDidSucceed):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate):
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (WebKit::QtWebPageLoadClient::QtWebPageLoadClient):
+        (WebKit::QtWebPageLoadClient::completeLoadWhenProcessDidCrashIfNeeded):
+        (WebKit):
+        (WebKit::QtWebPageLoadClient::didStartProvisionalLoad):
+        (WebKit::QtWebPageLoadClient::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::QtWebPageLoadClient::didCommitLoad):
+        (WebKit::QtWebPageLoadClient::didSameDocumentNavigation):
+        (WebKit::QtWebPageLoadClient::didReceiveTitle):
+        (WebKit::QtWebPageLoadClient::didFirstVisuallyNonEmptyLayout):
+        (WebKit::QtWebPageLoadClient::didStartProvisionalLoadForFrame):
+        (WebKit::QtWebPageLoadClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::QtWebPageLoadClient::didCommitLoadForFrame):
+        (WebKit::QtWebPageLoadClient::didSameDocumentNavigationForFrame):
+        (WebKit::QtWebPageLoadClient::didReceiveTitleForFrame):
+        (WebKit::QtWebPageLoadClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        * UIProcess/qt/QtWebPageLoadClient.h:
+        (WebKit):
+        (QtWebPageLoadClient):
+
 2012-05-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] QQuickWebView does not allow for input from virtual keyboard

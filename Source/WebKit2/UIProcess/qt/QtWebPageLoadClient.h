@@ -32,23 +32,27 @@ class QQuickWebView;
 
 namespace WebKit {
 
+class WebPageProxy;
+
 class QtWebPageLoadClient {
 public:
     QtWebPageLoadClient(WKPageRef, QQuickWebView*);
 
     int loadProgress() const { return m_loadProgress; }
+    void completeLoadWhenProcessDidCrashIfNeeded();
 
 private:
-    void didStartProvisionalLoadForFrame(const QUrl&);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(const QUrl&);
-    void didCommitLoadForFrame();
-    void didSameDocumentNavigationForFrame();
-    void didReceiveTitleForFrame();
-    void didFirstVisuallyNonEmptyLayoutForFrame();
+    void didStartProvisionalLoad(const QUrl&);
+    void didReceiveServerRedirectForProvisionalLoad(const QUrl&);
+    void didCommitLoad();
+    void didSameDocumentNavigation();
+    void didReceiveTitle();
+    void didFirstVisuallyNonEmptyLayout();
     void didChangeBackForwardList();
 
     void dispatchLoadSucceeded();
     void dispatchLoadFailed(WKFrameRef, WKErrorRef);
+
     void setLoadProgress(int);
 
     // WKPageLoadClient callbacks.
@@ -67,6 +71,7 @@ private:
     static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef, WKArrayRef, const void *clientInfo);
 
     QQuickWebView* m_webView;
+    WebPageProxy* m_webPageProxy;
     int m_loadProgress;
 };
 

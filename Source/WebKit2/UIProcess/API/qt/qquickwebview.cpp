@@ -161,7 +161,6 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_useDefaultContentItemSize(true)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
-    , m_loadStartedSignalSent(false)
     , m_dialogActive(false)
 {
     viewport->setClip(true);
@@ -264,14 +263,6 @@ void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QUrl& pageURL, const
     setIcon(iconURL);
 }
 
-void QQuickWebViewPrivate::didChangeLoadingState(QWebLoadRequest* loadRequest)
-{
-    Q_Q(QQuickWebView);
-    ASSERT(q->loading() == (loadRequest->status() == QQuickWebView::LoadStartedStatus));
-    emit q->loadingChanged(loadRequest);
-    m_loadStartedSignalSent = loadRequest->status() == QQuickWebView::LoadStartedStatus;
-}
-
 void QQuickWebViewPrivate::didChangeBackForwardList()
 {
     navigationHistory->d->reset();
@@ -280,11 +271,9 @@ void QQuickWebViewPrivate::didChangeBackForwardList()
 void QQuickWebViewPrivate::processDidCrash()
 {
     pageView->eventHandler()->resetGestureRecognizers();
+    pageLoadClient->completeLoadWhenProcessDidCrashIfNeeded();
+
     QUrl url(KURL(WebCore::ParsedURLString, webPageProxy->urlAtProcessExit()));
-    if (m_loadStartedSignalSent) {
-        QWebLoadRequest loadRequest(url, QQuickWebView::LoadFailedStatus, QLatin1String("The web process crashed."), QQuickWebView::InternalErrorDomain, 0);
-        didChangeLoadingState(&loadRequest);
-    }
     qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(url.toString(QUrl::RemoveUserInfo)));
 }
 
@@ -702,7 +691,6 @@ void QQuickWebViewFlickablePrivate::loadDidSucceed()
         QQuickWebViewPrivate::loadDidSucceed();
     else
         loadSuccessDispatchIsPending = true;
-
 }
 
 void QQuickWebViewFlickablePrivate::loadDidCommit()
