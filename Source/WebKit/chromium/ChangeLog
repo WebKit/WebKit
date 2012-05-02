@@ -1,5 +1,17 @@
 2012-05-01  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Additional instances of calling createAudioDevice directly
+        https://bugs.webkit.org/show_bug.cgi?id=85321
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+
+2012-05-01  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Additional instances of calling mimeRegistry directly
         https://bugs.webkit.org/show_bug.cgi?id=85320
 
