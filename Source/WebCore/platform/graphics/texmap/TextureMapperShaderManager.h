@@ -31,6 +31,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(CSS_FILTERS)
+#include "FilterOperations.h"
+#endif
+
 namespace WebCore {
 
 class BitmapTexture;
@@ -64,6 +68,35 @@ protected:
     GLint m_sourceTextureVariable;
     GLint m_opacityVariable;
 };
+
+#if ENABLE(CSS_FILTERS)
+class StandardFilterProgram : public RefCounted<StandardFilterProgram> {
+public:
+    virtual ~StandardFilterProgram();
+    virtual void prepare(const FilterOperation&);
+    static PassRefPtr<StandardFilterProgram> create(FilterOperation::OperationType);
+    GLuint vertexAttrib() const { return m_vertexAttrib; }
+    GLuint texCoordAttrib() const { return m_texCoordAttrib; }
+    GLuint textureUniform() const { return m_textureUniformLocation; }
+private:
+    StandardFilterProgram(FilterOperation::OperationType);
+    GLuint m_id;
+    GLuint m_vertexShader;
+    GLuint m_fragmentShader;
+    GLuint m_vertexAttrib;
+    GLuint m_texCoordAttrib;
+    GLuint m_textureUniformLocation;
+    union {
+        GLuint amount;
+        GLuint stddev;
+        struct {
+            GLuint stddev;
+            GLuint color;
+            GLuint offset;
+        } shadow;
+    } m_uniformLocations;
+};
+#endif
 
 class TextureMapperShaderProgramSimple : public TextureMapperShaderProgram {
 public:
@@ -101,6 +134,8 @@ public:
     TextureMapperShaderManager();
     virtual ~TextureMapperShaderManager();
 
+    PassRefPtr<StandardFilterProgram> getShaderForFilter(const FilterOperation&);
+
     PassRefPtr<TextureMapperShaderProgram> getShaderProgram(ShaderType shaderType)
     {
         RefPtr<TextureMapperShaderProgram> program;
@@ -128,6 +163,12 @@ public:
 private:
     typedef HashMap<ShaderType, RefPtr<TextureMapperShaderProgram>, DefaultHash<int>::Hash, HashTraits<int> > TextureMapperShaderProgramMap;
     TextureMapperShaderProgramMap m_textureMapperShaderProgramMap;
+
+#if ENABLE(CSS_FILTERS)
+    typedef HashMap<FilterOperation::OperationType, RefPtr<StandardFilterProgram>, DefaultHash<int>::Hash, HashTraits<int> > FilterMap;
+    FilterMap m_filterMap;
+#endif
+
 };
 
 }

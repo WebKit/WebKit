@@ -57,6 +57,9 @@ public:
     virtual void releaseImageBackingStore(int64_t) = 0;
     virtual void syncLayerState(WebLayerID, const WebLayerInfo&) = 0;
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&) = 0;
+#if ENABLE(CSS_FILTERS)
+    virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&) = 0;
+#endif
     virtual void attachLayer(WebCore::WebGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::WebGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
@@ -104,6 +107,9 @@ public:
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
     virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
+#if ENABLE(CSS_FILTERS)
+    bool setFilters(const FilterOperations&);
+#endif
 
     void setRootLayer(bool);
 
@@ -138,6 +144,9 @@ public:
     void setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*);
     void syncChildren();
     void syncLayerState();
+#if ENABLE(CSS_FILTERS)
+    void syncFilters();
+#endif
     void ensureImageBackingStore();
 
     void adjustVisibleRect();
@@ -157,12 +166,17 @@ private:
     bool m_shouldUpdateVisibleRect: 1;
     bool m_shouldSyncLayerState: 1;
     bool m_shouldSyncChildren: 1;
+    bool m_shouldSyncFilters: 1;
     bool m_fixedToViewport : 1;
 
     void notifyChange();
     void didChangeGeometry();
     void didChangeLayerState();
     void didChangeChildren();
+#if ENABLE(CSS_FILTERS)
+    void didChangeFilters();
+#endif
+
     void createBackingStore();
 
     bool selfOrAncestorHaveNonAffineTransforms();

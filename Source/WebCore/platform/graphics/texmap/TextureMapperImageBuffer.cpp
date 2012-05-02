@@ -110,7 +110,7 @@ void TextureMapperImageBuffer::drawTexture(const BitmapTexture& texture, const F
 }
 
 #if ENABLE(CSS_FILTERS)
-void BitmapTextureImageBuffer::applyFilters(const BitmapTexture& contentTexture, const FilterOperations& filters)
+PassRefPtr<BitmapTexture> BitmapTextureImageBuffer::applyFilters(const BitmapTexture& contentTexture, const FilterOperations& filters)
 {
     RefPtr<FilterEffectRenderer> renderer = FilterEffectRenderer::create();
     renderer->setSourceImageRect(FloatRect(FloatPoint::zero(), contentTexture.size()));
@@ -122,6 +122,7 @@ void BitmapTextureImageBuffer::applyFilters(const BitmapTexture& contentTexture,
     context->drawImageBuffer(static_cast<const BitmapTextureImageBuffer&>(contentTexture).m_image.get(), ColorSpaceDeviceRGB, IntPoint::zero());
     renderer->apply();
     m_image->context()->drawImageBuffer(renderer->output(), ColorSpaceDeviceRGB, renderer->outputRect());
+    return this;
 }
 #endif
 

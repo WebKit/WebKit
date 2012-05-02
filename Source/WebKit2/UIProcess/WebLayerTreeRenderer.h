@@ -77,6 +77,10 @@ public:
     void setRootLayerID(WebLayerID);
     void setLayerChildren(WebLayerID, const Vector<WebLayerID>&);
     void setLayerState(WebLayerID, const WebLayerInfo&);
+#if ENABLE(CSS_FILTERS)
+    void setLayerFilters(WebLayerID, const WebCore::FilterOperations&);
+#endif
+
     void createTile(WebLayerID, int, float scale);
     void removeTile(WebLayerID, int);
     void updateTile(WebLayerID, int, const TileUpdate&);

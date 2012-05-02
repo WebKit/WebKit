@@ -1,3 +1,45 @@
+2012-05-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Enable css filters in TextureMapperGL
+        https://bugs.webkit.org/show_bug.cgi?id=75778
+
+        Add the plumbing in the ui-side compositing code in Qt to support filters.
+        Serialize the filter operations for a layer when it's changed.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC):
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        (WebCore):
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit):
+        (WebKit::LayerTreeHostProxy::setCompositingLayerFilters):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/LayerTreeHostProxy.messages.in:
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit):
+        (WebKit::WebLayerTreeRenderer::setLayerFilters):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore):
+        (WebCore::WebGraphicsLayer::didChangeFilters):
+        (WebCore::WebGraphicsLayer::setFilters):
+        (WebCore::WebGraphicsLayer::syncFilters):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        (WebGraphicsLayerClient):
+        (WebGraphicsLayer):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit):
+        (WebKit::LayerTreeHostQt::syncLayerFilters):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-05-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix vkb showing incorrect flags/keys when content changes

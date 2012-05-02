@@ -21,6 +21,9 @@
 messages -> LayerTreeHostProxy {
     SetCompositingLayerState(uint32_t id, WebKit::WebLayerInfo layerInfo)
     SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)
+#if ENABLE(CSS_FILTERS)
+    SetCompositingLayerFilters(uint32_t id, WebCore::FilterOperations filters)
+#endif
     SetRootCompositingLayer(uint32_t id)
     DeleteCompositingLayer(uint32_t id)
     CreateTileForLayer(uint32_t layerID, int tileID, WebCore::IntRect targetRect, WebKit::SurfaceUpdateInfo updateInfo)

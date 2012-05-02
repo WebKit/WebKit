@@ -76,6 +76,9 @@ public:
     virtual void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint&);
     virtual void syncLayerState(WebLayerID, const WebLayerInfo&);
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&);
+#if ENABLE(CSS_FILTERS)
+    virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&);
+#endif
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);
     virtual void syncFixedLayers();

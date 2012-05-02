@@ -213,6 +213,18 @@ void WebLayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayer
     layer->setChildren(children);
 }
 
+#if ENABLE(CSS_FILTERS)
+void WebLayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations& filters)
+{
+    ensureLayer(id);
+    LayerMap::iterator it = m_layers.find(id);
+    ASSERT(it != m_layers.end());
+
+    GraphicsLayer* layer = it->second;
+    layer->setFilters(filters);
+}
+#endif
+
 void WebLayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
 {
     ensureLayer(id);

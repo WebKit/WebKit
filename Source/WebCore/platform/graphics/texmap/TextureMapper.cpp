@@ -48,7 +48,7 @@ PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& s
         m_texturePool.append(selectedTexture);
     }
 
-    selectedTexture->reset(size);
+    selectedTexture->reset(size, BitmapTexture::SupportsAlpha);
     return selectedTexture;
 }
 

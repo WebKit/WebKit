@@ -304,8 +304,7 @@ static PassRefPtr<BitmapTexture> applyFilters(const FilterOperations& filters, T
         filterSurface = textureMapper->acquireTextureFromPool(targetRect.size());
     }
 
-    filterSurface->applyFilters(*source, filters);
-    return filterSurface;
+    return filterSurface->applyFilters(*source, filters);
 }
 #endif
 
@@ -442,7 +441,8 @@ void TextureMapperLayer::syncCompositingStateSelf(GraphicsLayerTextureMapper* gr
     m_state.childrenTransform = graphicsLayer->childrenTransform();
     m_state.opacity = graphicsLayer->opacity();
 #if ENABLE(CSS_FILTERS)
-    m_state.filters = graphicsLayer->filters();
+    if (changeMask & FilterChange)
+        m_state.filters = graphicsLayer->filters();
 #endif
     m_fixedToViewport = graphicsLayer->fixedToViewport();
 

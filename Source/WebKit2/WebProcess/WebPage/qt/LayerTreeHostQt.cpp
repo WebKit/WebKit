@@ -256,6 +256,14 @@ void LayerTreeHostQt::syncLayerChildren(WebLayerID id, const Vector<WebLayerID>&
     m_webPage->send(Messages::LayerTreeHostProxy::SetCompositingLayerChildren(id, children));
 }
 
+#if ENABLE(CSS_FILTERS)
+void LayerTreeHostQt::syncLayerFilters(WebLayerID id, const FilterOperations& filters)
+{
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeHostProxy::SetCompositingLayerFilters(id, filters));
+}
+#endif
+
 void LayerTreeHostQt::attachLayer(WebGraphicsLayer* layer)
 {
     ASSERT(!m_registeredLayers.contains(layer));

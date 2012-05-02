@@ -85,6 +85,12 @@ namespace WebCore {
 }
 #endif
 
+#if USE(UI_SIDE_COMPOSITING) && ENABLE(CSS_FILTERS)
+namespace WebCore {
+    class FilterOperations;
+}
+#endif
+
 namespace CoreIPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -298,6 +304,13 @@ template<> struct ArgumentCoder<WebCore::TransformOperations> {
 template<> struct ArgumentCoder<RefPtr<WebCore::Animation> > {
     static void encode(ArgumentEncoder*, const RefPtr<WebCore::Animation>&);
     static bool decode(ArgumentDecoder*, RefPtr<WebCore::Animation>&);
+};
+#endif
+
+#if USE(UI_SIDE_COMPOSITING) && ENABLE(CSS_FILTERS)
+template<> struct ArgumentCoder<WebCore::FilterOperations> {
+    static void encode(ArgumentEncoder*, const WebCore::FilterOperations&);
+    static bool decode(ArgumentDecoder*, WebCore::FilterOperations&);
 };
 #endif
 

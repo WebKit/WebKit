@@ -50,6 +50,9 @@ public:
     virtual ~LayerTreeHostProxy();
     void setCompositingLayerState(WebLayerID, const WebLayerInfo&);
     void setCompositingLayerChildren(WebLayerID, const Vector<WebLayerID>&);
+#if ENABLE(CSS_FILTERS)
+    void setCompositingLayerFilters(WebLayerID, const WebCore::FilterOperations&);
+#endif
     void deleteCompositingLayer(WebLayerID);
     void setRootCompositingLayer(WebLayerID);
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

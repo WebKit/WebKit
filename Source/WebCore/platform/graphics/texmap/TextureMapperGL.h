@@ -65,6 +65,11 @@ public:
     void platformUpdateContents(NativeImagePtr, const IntRect&, const IntRect&);
     virtual AccelerationMode accelerationMode() const { return OpenGLMode; }
 
+#if ENABLE(CSS_FILTERS)
+    void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation&);
+#endif
+
+
 private:
 
     struct ClipState {
@@ -115,6 +120,10 @@ public:
     void updateContents(Image*, const IntRect&, const IntPoint&);
     virtual void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine);
     virtual bool isBackedByOpenGL() const { return true; }
+
+#if ENABLE(CSS_FILTERS)
+    virtual PassRefPtr<BitmapTexture> applyFilters(const BitmapTexture& contentTexture, const FilterOperations&);
+#endif
 
 private:
     GLuint m_id;

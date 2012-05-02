@@ -503,8 +503,51 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
 #endif
 
     updateContents(imageData, targetRect, offset, bytesPerLine);
-
 }
+
+#if ENABLE(CSS_FILTERS)
+void TextureMapperGL::drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation& filter)
+{
+    // For standard filters, we always draw the whole texture without transformations.
+    RefPtr<StandardFilterProgram> program = data().sharedGLData().textureMapperShaderManager.getShaderForFilter(filter);
+    if (!program) {
+        drawTexture(sourceTexture, FloatRect(FloatPoint::zero(), sourceTexture.size()), TransformationMatrix(), 1, 0);
+        return;
+    }
+    GL_CMD(glEnableVertexAttribArray(program->vertexAttrib()));
+    GL_CMD(glEnableVertexAttribArray(program->texCoordAttrib()));
+    GL_CMD(glActiveTexture(GL_TEXTURE0));
+    GL_CMD(glBindTexture(GL_TEXTURE_2D, static_cast<const BitmapTextureGL&>(sourceTexture).id()));
+    glUniform1i(program->textureUniform(), 0);
+    const GLfloat targetVertices[] = {-1, -1, 1, -1, 1, 1, -1, 1};
+    const GLfloat sourceVertices[] = {0, 0, 1, 0, 1, 1, 0, 1};
+    GL_CMD(glVertexAttribPointer(program->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, targetVertices));
+    GL_CMD(glVertexAttribPointer(program->texCoordAttrib(), 2, GL_FLOAT, GL_FALSE, 0, sourceVertices));
+    GL_CMD(glDisable(GL_BLEND));
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4));
+    GL_CMD(glDisableVertexAttribArray(program->vertexAttrib()));
+    GL_CMD(glDisableVertexAttribArray(program->texCoordAttrib()));
+}
+
+PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(const BitmapTexture& contentTexture, const FilterOperations& filters)
+{
+    RefPtr<BitmapTexture> previousSurface = m_textureMapper->data().currentSurface;
+
+    RefPtr<BitmapTexture> source = this;
+    RefPtr<BitmapTexture> target = m_textureMapper->acquireTextureFromPool(m_textureSize);
+    for (int i = 0; i < filters.size(); ++i) {
+        const FilterOperation* filter = filters.at(i);
+        ASSERT(filter);
+
+        m_textureMapper->bindSurface(target.get());
+        m_textureMapper->drawFiltered(i ? *source.get() : contentTexture, contentTexture, *filter);
+        std::swap(source, target);
+    }
+
+    m_textureMapper->bindSurface(previousSurface.get());
+    return source;
+}
+#endif
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored)
 {

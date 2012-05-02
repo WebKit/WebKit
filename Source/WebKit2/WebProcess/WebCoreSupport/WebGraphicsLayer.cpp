@@ -74,6 +74,15 @@ void WebGraphicsLayer::didChangeChildren()
         client()->notifySyncRequired(this);
 }
 
+#if ENABLE(CSS_FILTERS)
+void WebGraphicsLayer::didChangeFilters()
+{
+    m_shouldSyncFilters = true;
+    if (client())
+        client()->notifySyncRequired(this);
+}
+#endif
+
 void WebGraphicsLayer::setShouldUpdateVisibleRect()
 {
     if (!transform().isAffine())
@@ -309,6 +318,17 @@ void WebGraphicsLayer::setContentsNeedsDisplay()
     setContentsToImage(image.get());
 }
 
+#if ENABLE(CSS_FILTERS)
+bool WebGraphicsLayer::setFilters(const FilterOperations& newFilters)
+{
+    if (filters() == newFilters)
+        return true;
+    didChangeFilters();
+    return GraphicsLayer::setFilters(newFilters);
+}
+#endif
+
+
 void WebGraphicsLayer::setContentsToImage(Image* image)
 {
     if (image == m_image)
@@ -413,6 +433,16 @@ void WebGraphicsLayer::syncChildren()
     m_webGraphicsLayerClient->syncLayerChildren(m_id, childIDs);
 }
 
+#if ENABLE(CSS_FILTERS)
+void WebGraphicsLayer::syncFilters()
+{
+    if (!m_shouldSyncFilters)
+        return;
+    m_shouldSyncFilters = false;
+    m_webGraphicsLayerClient->syncLayerFilters(m_id, filters());
+}
+#endif
+
 void WebGraphicsLayer::syncLayerState()
  {
     if (!m_shouldSyncLayerState)
@@ -452,6 +482,9 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     computeTransformedVisibleRect();
     syncChildren();
     syncLayerState();
+#if ENABLE(CSS_FILTERS)
+    syncFilters();
+#endif
     updateContentBuffers();
 }
 

@@ -105,6 +105,13 @@ void LayerTreeHostProxy::setCompositingLayerChildren(WebLayerID id, const Vector
     dispatchUpdate(bind(&WebLayerTreeRenderer::setLayerChildren, m_renderer.get(), id, children));
 }
 
+#if ENABLE(CSS_FILTERS)
+void LayerTreeHostProxy::setCompositingLayerFilters(WebLayerID id, const FilterOperations& filters)
+{
+    dispatchUpdate(bind(&WebLayerTreeRenderer::setLayerFilters, m_renderer.get(), id, filters));
+}
+#endif
+
 void LayerTreeHostProxy::didRenderFrame()
 {
     dispatchUpdate(bind(&WebLayerTreeRenderer::flushLayerChanges, m_renderer.get()));

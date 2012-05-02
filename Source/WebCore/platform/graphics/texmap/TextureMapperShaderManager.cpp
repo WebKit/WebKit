@@ -206,9 +206,220 @@ TextureMapperShaderManager::TextureMapperShaderManager()
 
 TextureMapperShaderManager::~TextureMapperShaderManager()
 {
-    m_textureMapperShaderProgramMap.clear();
 }
 
+#if ENABLE(CSS_FILTERS)
+StandardFilterProgram::~StandardFilterProgram()
+{
+    glDetachShader(m_id, m_vertexShader);
+    glDeleteShader(m_vertexShader);
+    glDetachShader(m_id, m_fragmentShader);
+    glDeleteShader(m_fragmentShader);
+    glDeleteProgram(m_id);
+}
+
+StandardFilterProgram::StandardFilterProgram(FilterOperation::OperationType type)
+    : m_id(0)
+{
+    const char* vertexShaderSource =
+            VERTEX_SHADER(
+                attribute vec4 a_vertex;
+                attribute vec4 a_texCoord;
+                varying highp vec2 v_texCoord;
+                void main(void)
+                {
+                    v_texCoord = vec2(a_texCoord);
+                    gl_Position = a_vertex;
+                }
+            );
+
+#define STANDARD_FILTER(x...) \
+        OES2_PRECISION_DEFINITIONS\
+        OES2_FRAGMENT_SHADER_DEFAULT_PRECISION\
+        "varying highp vec2 v_texCoord;\n"\
+        "uniform highp float u_amount;\n"\
+        "uniform sampler2D u_texture;\n"\
+        #x\
+        "void main(void)\n { gl_FragColor = shade(texture2D(u_texture, v_texCoord)); }"
+
+    const char* fragmentShaderSource = 0;
+    switch (type) {
+    case FilterOperation::GRAYSCALE:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp vec4 shade(lowp vec4 color)
+            {
+                lowp float amount = 1.0 - u_amount;
+                return vec4((0.2126 + 0.7874 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
+                            (0.2126 - 0.2126 * amount) * color.r + (0.7152 + 0.2848 * amount) * color.g + (0.0722 - 0.0722 * amount) * color.b,
+                            (0.2126 - 0.2126 * amount) * color.r + (0.7152 - 0.7152 * amount) * color.g + (0.0722 + 0.9278 * amount) * color.b,
+                            color.a);
+            }
+        );
+        break;
+    case FilterOperation::SEPIA:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp vec4 shade(lowp vec4 color)
+            {
+                lowp float amount = 1.0 - u_amount;
+                return vec4((0.393 + 0.607 * amount) * color.r + (0.769 - 0.769 * amount) * color.g + (0.189 - 0.189 * amount) * color.b,
+                            (0.349 - 0.349 * amount) * color.r + (0.686 + 0.314 * amount) * color.g + (0.168 - 0.168 * amount) * color.b,
+                            (0.272 - 0.272 * amount) * color.r + (0.534 - 0.534 * amount) * color.g + (0.131 + 0.869 * amount) * color.b,
+                            color.a);
+            }
+        );
+        break;
+    case FilterOperation::SATURATE:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp vec4 shade(lowp vec4 color)
+            {
+                return vec4((0.213 + 0.787 * u_amount) * color.r + (0.715 - 0.715 * u_amount) * color.g + (0.072 - 0.072 * u_amount) * color.b,
+                            (0.213 - 0.213 * u_amount) * color.r + (0.715 + 0.285 * u_amount) * color.g + (0.072 - 0.072 * u_amount) * color.b,
+                            (0.213 - 0.213 * u_amount) * color.r + (0.715 - 0.715 * u_amount) * color.g + (0.072 + 0.928 * u_amount) * color.b,
+                            color.a);
+            }
+        );
+        break;
+    case FilterOperation::HUE_ROTATE:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp vec4 shade(lowp vec4 color)
+            {
+                highp float pi = 3.14159265358979323846;
+                highp float c = cos(u_amount * pi / 180.0);
+                highp float s = sin(u_amount * pi / 180.0);
+                return vec4(color.r * (0.213 + c * 0.787 - s * 0.213) + color.g * (0.715 - c * 0.715 - s * 0.715) + color.b * (0.072 - c * 0.072 + s * 0.928),
+                            color.r * (0.213 - c * 0.213 + s * 0.143) + color.g * (0.715 + c * 0.285 + s * 0.140) + color.b * (0.072 - c * 0.072 - s * 0.283),
+                            color.r * (0.213 - c * 0.213 - s * 0.787) +  color.g * (0.715 - c * 0.715 + s * 0.715) + color.b * (0.072 + c * 0.928 + s * 0.072),
+                            color.a);
+            }
+        );
+        break;
+    case FilterOperation::INVERT:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp float invert(lowp float n) { return (1.0 - n) * u_amount + n * (1.0 - u_amount); }
+            lowp vec4 shade(lowp vec4 color)
+            {
+                return vec4(invert(color.r), invert(color.g), invert(color.b), color.a);
+            }
+        );
+        break;
+    case FilterOperation::BRIGHTNESS:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp vec4 shade(lowp vec4 color)
+            {
+                return vec4(color.rgb * (1.0 + u_amount), color.a);
+            }
+        );
+        break;
+    case FilterOperation::CONTRAST:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp float contrast(lowp float n) { return (n - 0.5) * u_amount + 0.5; }
+            lowp vec4 shade(lowp vec4 color)
+            {
+                return vec4(contrast(color.r), contrast(color.g), contrast(color.b), color.a);
+            }
+        );
+        break;
+    case FilterOperation::OPACITY:
+        fragmentShaderSource = STANDARD_FILTER(
+            lowp vec4 shade(lowp vec4 color)
+            {
+                return vec4(color.r, color.g, color.b, color.a * u_amount);
+            }
+        );
+        break;
+    default:
+        break;
+    }
+
+    if (!fragmentShaderSource)
+        return;
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, 0);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0);
+    GLchar log[100];
+    GLint len;
+    GLuint programID = glCreateProgram();
+    glCompileShader(vertexShader);
+    glCompileShader(fragmentShader);
+    glGetShaderInfoLog(fragmentShader, 100, &len, log);
+    glAttachShader(programID, vertexShader);
+    glAttachShader(programID, fragmentShader);
+    glLinkProgram(programID);
+
+    m_vertexAttrib = glGetAttribLocation(programID, "a_vertex");
+    m_texCoordAttrib = glGetAttribLocation(programID, "a_texCoord");
+    m_textureUniformLocation = glGetUniformLocation(programID, "u_texture");
+    switch (type) {
+    case FilterOperation::GRAYSCALE:
+    case FilterOperation::SEPIA:
+    case FilterOperation::SATURATE:
+    case FilterOperation::HUE_ROTATE:
+    case FilterOperation::INVERT:
+    case FilterOperation::BRIGHTNESS:
+    case FilterOperation::CONTRAST:
+    case FilterOperation::OPACITY:
+        m_uniformLocations.amount = glGetUniformLocation(programID, "u_amount");
+        break;
+    default:
+        break;
+    }
+    m_id = programID;
+    m_vertexShader = vertexShader;
+    m_fragmentShader = fragmentShader;
+}
+
+PassRefPtr<StandardFilterProgram> StandardFilterProgram::create(FilterOperation::OperationType type)
+{
+    RefPtr<StandardFilterProgram> program = adoptRef(new StandardFilterProgram(type));
+    if (!program->m_id)
+        return 0;
+
+    return program;
+}
+
+void StandardFilterProgram::prepare(const FilterOperation& operation)
+{
+    double amount = 0;
+    switch (operation.getOperationType()) {
+    case FilterOperation::GRAYSCALE:
+    case FilterOperation::SEPIA:
+    case FilterOperation::SATURATE:
+    case FilterOperation::HUE_ROTATE:
+        amount = static_cast<const BasicColorMatrixFilterOperation&>(operation).amount();
+        break;
+    case FilterOperation::INVERT:
+    case FilterOperation::BRIGHTNESS:
+    case FilterOperation::CONTRAST:
+    case FilterOperation::OPACITY:
+        amount = static_cast<const BasicComponentTransferFilterOperation&>(operation).amount();
+        break;
+    default:
+        break;
+    }
+    glUseProgram(m_id);
+    glUniform1f(m_uniformLocations.amount, amount);
+}
+
+PassRefPtr<StandardFilterProgram> TextureMapperShaderManager::getShaderForFilter(const FilterOperation& filter)
+{
+    RefPtr<StandardFilterProgram> program;
+    FilterOperation::OperationType type = filter.getOperationType();
+    FilterMap::iterator iterator = m_filterMap.find(type);
+    if (iterator == m_filterMap.end()) {
+        program = StandardFilterProgram::create(type);
+        if (!program)
+            return 0;
+
+        m_filterMap.add(type, program);
+    } else
+        program = iterator->second;
+
+    program->prepare(filter);
+    return program;
+}
+
+#endif
 };
 
 #endif
