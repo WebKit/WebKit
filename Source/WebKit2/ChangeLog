@@ -1,3 +1,16 @@
+2012-05-02  Anders Carlsson  <andersca@apple.com>
+
+        When viewing a PDF, the Safari Status Bar shows other text
+        https://bugs.webkit.org/show_bug.cgi?id=85395
+        <rdar://problem/11297250>
+
+        Reviewed by Beth Dakin.
+
+        Set the layer contents placement for the WKView so that its layer will get masksToBounds set.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+
 2012-05-02  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Unreviewed. Build fix for Qt port on mac.

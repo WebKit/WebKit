@@ -2919,8 +2919,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [self _registerDraggedTypes];
 
-    if ([self _shouldUseTiledDrawingArea])
+    if ([self _shouldUseTiledDrawingArea]) {
         self.wantsLayer = YES;
+
+        // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
+        self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
+    }
 
     WebContext::statistics().wkViewCount++;
 
