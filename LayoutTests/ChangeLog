@@ -1,5 +1,12 @@
 2012-05-02  Andy Estes  <aestes@apple.com>
 
+        Update two more Mac baselines.
+
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+
+2012-05-02  Andy Estes  <aestes@apple.com>
+
         Update more Mac baselines after r115846.
 
         * platform/mac/editing/selection/select-from-textfield-outwards-expected.txt:
