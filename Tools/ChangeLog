@@ -1,3 +1,12 @@
+2012-05-02  Terry Anderson  <tdanderson@chromium.org>
+
+        Addition of a contributor to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=85324
+
+        Reviewed by Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-05-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] EFL's LayoutTestController overridePreference implementation

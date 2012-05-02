@@ -154,6 +154,7 @@ contributors_who_are_not_committers = [
     Contributor("Szilard Ledan-Muntean", "szledan@inf.u-szeged.hu", "szledan"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
     Contributor("Tamas Czene", ["tczene@inf.u-szeged.hu", "Czene.Tamas@stud.u-szeged.hu"], "tczene"),
+    Contributor("Terry Anderson", "tdanderson@chromium.org", "tdanderson"),
     Contributor("Tien-Ren Chen", "trchen@chromium.org"),
     Contributor("Tom Hudson", "tomhudson@google.com"),
     Contributor("WebKit Review Bot", "webkit.review.bot@gmail.com", "sheriff-bot"),
