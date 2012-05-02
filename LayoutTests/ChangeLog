@@ -1,3 +1,15 @@
+2012-05-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        blockquote gets clobbered on delete, but the font-tag inside it doesn't
+        https://bugs.webkit.org/show_bug.cgi?id=19702
+
+        Reviewed by Enrica Casucci.
+
+        Add a regression test initially authored by Ojan Vafai since this bug appears to have been fixed already.
+
+        * editing/execCommand/delete-line-and-insert-text-in-font-inside-blockquote-expected.txt: Added.
+        * editing/execCommand/delete-line-and-insert-text-in-font-inside-blockquote.html: Added.
+
 2012-05-02  Keith Rosenblatt  <keith.rosenblatt@nokia.com>
 
         [Qt] ASSERT in FontCustomPlatformDataQt.cpp with invalid font in data URI
