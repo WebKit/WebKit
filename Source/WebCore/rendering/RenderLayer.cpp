@@ -4162,6 +4162,8 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         }
     }
 
+    const_cast<RenderLayer*>(layer)->updateLayerListsIfNeeded();
+
     if (RenderLayer* reflection = layer->reflectionLayer()) {
         if (!reflection->isComposited()) {
             IntRect childUnionBounds = calculateLayerBounds(reflection, layer);
@@ -4169,7 +4171,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         }
     }
     
-    ASSERT(layer->isStackingContext() || (!layer->m_posZOrderList || !layer->m_posZOrderList->size()));
+    ASSERT(layer->isStackingContext() || (!layer->posZOrderList() || !layer->posZOrderList()->size()));
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(layer));
@@ -4456,6 +4458,8 @@ static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
 void RenderLayer::dirtyZOrderLists()
 {
     ASSERT(m_layerListMutationAllowed);
+    // We cannot assume that we are called on a stacking context as it
+    // is called when we just got demoted from being a stacking context.
 
     if (m_posZOrderList)
         m_posZOrderList->clear();
@@ -4493,6 +4497,7 @@ void RenderLayer::dirtyNormalFlowList()
 void RenderLayer::rebuildZOrderLists()
 {
     ASSERT(m_layerListMutationAllowed);
+    ASSERT(isDirtyStackingContext());
 
 #if USE(ACCELERATED_COMPOSITING)
     bool includeHiddenLayers = compositor()->inCompositingMode();
@@ -4565,13 +4570,18 @@ void RenderLayer::updateLayerListsIfNeeded()
 {
     updateZOrderLists();
     updateNormalFlowList();
+
+    if (RenderLayer* reflectionLayer = this->reflectionLayer()) {
+        reflectionLayer->updateZOrderLists();
+        reflectionLayer->updateNormalFlowList();
+    }
 }
 
 void RenderLayer::updateCompositingAndLayerListsIfNeeded()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->inCompositingMode()) {
-        if ((isStackingContext() && m_zOrderListsDirty) || m_normalFlowListDirty)
+        if (isDirtyStackingContext() || m_normalFlowListDirty)
             compositor()->updateCompositingLayers(CompositingUpdateOnHitTest, this);
         return;
     }

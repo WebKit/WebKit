@@ -708,8 +708,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     l->calculateRects(rootLayer, 0, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, true);
 
     // Ensure our lists are up-to-date.
-    l->updateZOrderLists();
-    l->updateNormalFlowList();
+    l->updateLayerListsIfNeeded();
 
     bool shouldPaint = (behavior & RenderAsTextShowAllLayers) ? true : l->intersectsDamageRect(layerBounds, damageRect.rect(), rootLayer);
     Vector<RenderLayer*>* negList = l->negZOrderList();

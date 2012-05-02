@@ -385,13 +385,26 @@ public:
 
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
-    void updateZOrderLists();
-    Vector<RenderLayer*>* posZOrderList() const { return m_posZOrderList; }
-    Vector<RenderLayer*>* negZOrderList() const { return m_negZOrderList; }
+
+    Vector<RenderLayer*>* posZOrderList() const
+    {
+        ASSERT(!m_zOrderListsDirty);
+        ASSERT(isStackingContext() || !m_posZOrderList);
+        return m_posZOrderList;
+    }
+
+    Vector<RenderLayer*>* negZOrderList() const
+    {
+        ASSERT(!m_zOrderListsDirty);
+        ASSERT(isStackingContext() || !m_negZOrderList);
+        return m_negZOrderList;
+    }
 
     void dirtyNormalFlowList();
-    void updateNormalFlowList();
-    Vector<RenderLayer*>* normalFlowList() const { return m_normalFlowList; }
+    Vector<RenderLayer*>* normalFlowList() const { ASSERT(!m_normalFlowListDirty); return m_normalFlowList; }
+
+    // Update our normal and z-index lists.
+    void updateLayerListsIfNeeded();
 
     // FIXME: We should ASSERT(!m_visibleContentStatusDirty) here, but see https://bugs.webkit.org/show_bug.cgi?id=71044
     // ditto for hasVisibleDescendant(), see https://bugs.webkit.org/show_bug.cgi?id=71277
@@ -598,7 +611,13 @@ public:
 #endif
 
 private:
+    void updateZOrderLists();
     void rebuildZOrderLists();
+    void clearZOrderLists();
+
+    void updateNormalFlowList();
+
+    bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
 
     void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
     void clearRepaintRects();
@@ -630,7 +649,6 @@ private:
 
     void collectLayers(bool includeHiddenLayers, Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
-    void updateLayerListsIfNeeded();
     void updateCompositingAndLayerListsIfNeeded();
 
     void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect,
@@ -915,10 +933,30 @@ private:
 #endif
 };
 
+inline void RenderLayer::clearZOrderLists()
+{
+    if (m_posZOrderList) {
+        delete m_posZOrderList;
+        m_posZOrderList = 0;
+    }
+
+    if (m_negZOrderList) {
+        delete m_negZOrderList;
+        m_negZOrderList = 0;
+    }
+}
+
 inline void RenderLayer::updateZOrderLists()
 {
-    if (!m_zOrderListsDirty || !isStackingContext())
+    if (!m_zOrderListsDirty)
         return;
+
+    if (!isStackingContext()) {
+        clearZOrderLists();
+        m_zOrderListsDirty = false;
+        return;
+    }
+
     rebuildZOrderLists();
 }
 

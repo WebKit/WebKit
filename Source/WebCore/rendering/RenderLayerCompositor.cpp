@@ -657,7 +657,6 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
         }
     }
 
-    ASSERT(!layer->m_normalFlowListDirty);
     if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
@@ -689,9 +688,8 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
 void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, OverlapMap* overlapMap, struct CompositingState& compositingState, bool& layersChanged)
 {
     layer->updateLayerPosition();
-    layer->updateZOrderLists();
-    layer->updateNormalFlowList();
-    
+    layer->updateLayerListsIfNeeded();
+
     // Clear the flag
     layer->setHasCompositingDescendant(false);
     
@@ -743,7 +741,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
 #endif
 
     if (layer->isStackingContext()) {
-        ASSERT(!layer->m_zOrderListsDirty);
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
@@ -764,7 +761,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         }
     }
     
-    ASSERT(!layer->m_normalFlowListDirty);
     if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
@@ -811,8 +807,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     }
 
     ASSERT(willBeComposited == needsToBeComposited(layer));
-    if (layer->reflectionLayer())
+    if (layer->reflectionLayer()) {
+        // FIXME: Shouldn't we call computeCompositingRequirements to handle a reflection overlapping with another renderer?
         layer->reflectionLayer()->setMustOverlapCompositedLayers(willBeComposited);
+    }
 
     // Subsequent layers in the parent stacking context also need to composite.
     if (childState.m_subtreeIsCompositing)
@@ -934,8 +932,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
 #endif
 
     if (layer->isStackingContext()) {
-        ASSERT(!layer->m_zOrderListsDirty);
-
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
@@ -949,7 +945,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
             childList.append(layerBacking->foregroundLayer());
     }
 
-    ASSERT(!layer->m_normalFlowListDirty);
     if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
@@ -1118,8 +1113,6 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer, int dept
 #endif
 
     if (layer->isStackingContext()) {
-        ASSERT(!layer->m_zOrderListsDirty);
-
         if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i)
@@ -1127,7 +1120,6 @@ void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer, int dept
         }
     }
 
-    ASSERT(!layer->m_normalFlowListDirty);
     if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i)
@@ -1411,7 +1403,9 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
 
 bool RenderLayerCompositor::canBeComposited(const RenderLayer* layer) const
 {
-    return m_hasAcceleratedCompositing && layer->isSelfPaintingLayer();
+    // FIXME: We disable accelerated compositing for elements in a RenderFlowThread as it doesn't work properly.
+    // See http://webkit.org/b/84900 to re-enable it.
+    return m_hasAcceleratedCompositing && layer->isSelfPaintingLayer() && !layer->renderer()->inRenderFlowThread();
 }
 
 bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer* layer, const RenderLayer* compositingAncestorLayer) const
