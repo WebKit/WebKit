@@ -1,3 +1,9 @@
+2012-05-02  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Unreviewed. Build fix for Qt port on mac.
+
+        * UIProcess/API/qt/qwebnavigationhistory_p.h:
+
 2012-05-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Make ShareableSurface's ref-counting thread-safe
