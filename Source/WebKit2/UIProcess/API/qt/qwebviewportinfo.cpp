@@ -77,7 +77,7 @@ QVariant QWebViewportInfo::isScalable() const
 
 QVariant QWebViewportInfo::layoutSize() const
 {
-    return QSize(m_webViewPrivate->attributes.layoutSize);
+    return QSizeF(m_webViewPrivate->attributes.layoutSize.width(), m_webViewPrivate->attributes.layoutSize.height());
 }
 
 void QWebViewportInfo::didUpdateContentsSize()
