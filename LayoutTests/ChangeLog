@@ -1,3 +1,14 @@
+2012-05-02  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, expectations updates after r115774.
+
+        * platform/chromium-win/http/tests/loading/pdf-commit-load-callbacks-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/http/tests/loading/pdf-commit-load-callbacks-expected.txt: Added.
+        * platform/gtk/test_expectations.txt:
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/loading/pdf-commit-load-callbacks-expected.txt: Added.
+
 2012-05-02  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, changing test expectations due to https://bugs.webkit.org/show_bug.cgi?id=85401

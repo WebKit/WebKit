@@ -3684,7 +3684,6 @@ BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
 BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
-BUGWK85353 WIN : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
 
 // Need text rebaseline after lazily allocating layers.
 // The difference should be only layer removal, no size or position should change.
