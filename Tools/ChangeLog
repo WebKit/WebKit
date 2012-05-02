@@ -1,3 +1,18 @@
+2012-05-01  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Fix sys.platform check in find_files_unittest.
+        https://bugs.webkit.org/show_bug.cgi?id=85339
+
+        Reviewed by Ryosuke Niwa.
+
+        Follow-up to r101618 -- 'win' is not a valid sys.platform value,
+        'win32' should be used instead. The check always returned false
+        due to this, so assert_normalize() was never called.
+
+        * Scripts/webkitpy/common/find_files_unittest.py:
+        (TestWinNormalize.test_win): Add the missing import for the
+        FileSystem class and fix the sys.platform check.
+
 2012-05-02  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] drag&drop related failures

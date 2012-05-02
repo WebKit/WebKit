@@ -29,6 +29,7 @@
 import sys
 import unittest
 
+from webkitpy.common.system.filesystem import FileSystem
 import find_files
 
 
@@ -55,7 +56,7 @@ class TestWinNormalize(unittest.TestCase):
     def test_win(self):
         # This tests the actual windows platform, to ensure we get the same
         # results that we get in test_mocked_win().
-        if sys.platform != 'win':
+        if sys.platform != 'win32':
             return
         self.assert_filesystem_normalizes(FileSystem())
 
