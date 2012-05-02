@@ -1,3 +1,9 @@
+2012-05-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening, skipping failing test
+
+        * platform/qt/Skipped:
+
 2012-05-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Changing webkitGetUserMedia to take an object instead of a string
