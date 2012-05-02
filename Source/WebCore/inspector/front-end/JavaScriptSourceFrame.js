@@ -279,6 +279,10 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 this._highlightElement.addStyleClass("source-frame-eval-expression");
         }
 
+        if (!WebInspector.debuggerModel.isPaused()) {
+            this._popoverHelper.hidePopover();
+            return;
+        }
         var selectedCallFrame = WebInspector.debuggerModel.selectedCallFrame();
         selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, true, false, showObjectPopover.bind(this));
     },
