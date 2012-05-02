@@ -1,5 +1,30 @@
 2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        webkitpy: Use a SystemHost instead of PlatformInfo in the PNG checker.
+        https://bugs.webkit.org/show_bug.cgi?id=85426
+
+        Reviewed by Dirk Pranke.
+
+        r115880 replaced the direct use of sys.platform with a
+        PlatformInfo object. Dirk Pranke later told me SystemHost objects
+        should be preferred, as nothing out of webkitpy.common.system
+        should create its own PlatformInfo instances.
+
+        * Scripts/webkitpy/common/system/systemhost_mock.py:
+        (MockSystemHost.__init__): Make it possible to specify a custom
+        filesystem object.
+        * Scripts/webkitpy/style/checkers/png.py:
+        (PNGChecker.__init__): Accept a host object instead of a
+        filesystem one, which is now obtained from host.
+        (PNGChecker._config_file_path): Retrieve PlatformInfo from
+        SystemHost.
+        * Scripts/webkitpy/style/checkers/png_unittest.py:
+        (PNGCheckerTest.test_init): Adjust calls to PNGChecker to its new
+        constructor signature.
+        (PNGCheckerTest.test_check): Ditto.
+
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         webkitpy: Remove direct checks for sys.platform == 'darwin' in the layout test classes.
         https://bugs.webkit.org/show_bug.cgi?id=85424
 

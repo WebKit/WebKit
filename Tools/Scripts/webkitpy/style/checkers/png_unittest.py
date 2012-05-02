@@ -26,7 +26,7 @@
 import unittest
 from png import PNGChecker
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 
 class MockSCMDetector(object):
@@ -51,9 +51,7 @@ class PNGCheckerTest(unittest.TestCase):
         def mock_handle_style_error(self):
             pass
 
-        fs = MockFileSystem()
-        scm = MockSCMDetector('git')
-        checker = PNGChecker("test/config", mock_handle_style_error, fs, scm)
+        checker = PNGChecker("test/config", mock_handle_style_error, MockSCMDetector('git'), MockSystemHost())
         self.assertEquals(checker._file_path, "test/config")
         self.assertEquals(checker._handle_style_error, mock_handle_style_error)
 
@@ -69,7 +67,7 @@ class PNGCheckerTest(unittest.TestCase):
         fs = MockFileSystem()
 
         scm = MockSCMDetector('svn')
-        checker = PNGChecker(file_path, mock_handle_style_error, fs, scm)
+        checker = PNGChecker(file_path, mock_handle_style_error, scm, MockSystemHost(filesystem=fs))
         checker.check()
         self.assertEquals(len(errors), 1)
         self.assertEquals(errors[0],
@@ -79,7 +77,7 @@ class PNGCheckerTest(unittest.TestCase):
         fs = MockFileSystem(files)
         scm = MockSCMDetector('git')
         errors = []
-        checker = PNGChecker("config", mock_handle_style_error, fs, scm, MockPlatformInfo('linux', 'lucid'))
+        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
         checker.check()
         self.assertEquals(len(errors), 0)
 
@@ -87,7 +85,7 @@ class PNGCheckerTest(unittest.TestCase):
         fs = MockFileSystem(files)
         scm = MockSCMDetector('git')
         errors = []
-        checker = PNGChecker("config", mock_handle_style_error, fs, scm, MockPlatformInfo('linux', 'lucid'))
+        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
         checker.check()
         self.assertEquals(len(errors), 1)
 
@@ -95,7 +93,7 @@ class PNGCheckerTest(unittest.TestCase):
         fs = MockFileSystem(files)
         scm = MockSCMDetector('git')
         errors = []
-        checker = PNGChecker("config", mock_handle_style_error, fs, scm, MockPlatformInfo('linux', 'lucid'))
+        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
         checker.check()
         self.assertEquals(len(errors), 0)
 
@@ -103,7 +101,7 @@ class PNGCheckerTest(unittest.TestCase):
         fs = MockFileSystem(files)
         scm = MockSCMDetector('git')
         errors = []
-        checker = PNGChecker("config", mock_handle_style_error, fs, scm, MockPlatformInfo('linux', 'lucid'))
+        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
         checker.check()
         self.assertEquals(len(errors), 0)
 
@@ -111,7 +109,7 @@ class PNGCheckerTest(unittest.TestCase):
         fs = MockFileSystem(files)
         scm = MockSCMDetector('git')
         errors = []
-        checker = PNGChecker("config", mock_handle_style_error, fs, scm, MockPlatformInfo('linux', 'lucid'))
+        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
         checker.check()
         self.assertEquals(len(errors), 1)
 
