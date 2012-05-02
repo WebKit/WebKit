@@ -41,12 +41,10 @@ Rectangle {
 
     function load(address) {
         webView.url = address
-        webView.forceActiveFocus()
     }
 
     function reload() {
         webView.reload()
-        webView.forceActiveFocus()
     }
 
     function focusAddressBar() {
@@ -253,10 +251,10 @@ Rectangle {
                     left: parent.left
                 }
                 radius: 3
-                width: parent.width / 100 * Math.max(5, webView.loadProgress)
+                width: parent.width / 100 * webView.loadProgress
                 color: "blue"
                 opacity: 0.3
-                visible: webView.loading
+                visible: webView.loadProgress != 100
             }
             Image {
                 id: favIcon
@@ -273,7 +271,6 @@ Rectangle {
                 id: addressLine
                 clip: true
                 selectByMouse: true
-                horizontalAlignment: TextInput.AlignLeft
                 font {
                     pointSize: 11
                     family: "Sans"
@@ -286,21 +283,9 @@ Rectangle {
                 }
 
                 Keys.onReturnPressed:{
-                    console.log("Navigating to: ", addressLine.text)
-                    load(utils.urlFromUserInput(addressLine.text))
+                    console.log("going to: ", addressLine.text)
+                    webView.url = utils.urlFromUserInput(addressLine.text)
                 }
-
-                property url url
-
-                onUrlChanged: {
-                    if (activeFocus)
-                        return;
-
-                    text = url
-                    cursorPosition = 0
-                }
-
-                onActiveFocusChanged: url = webView.url
             }
         }
     }
@@ -316,15 +301,10 @@ Rectangle {
 
         onTitleChanged: pageTitleChanged(title)
         onUrlChanged: {
-            addressLine.url = webView.url
-
+            addressLine.text = url
             if (options.printLoadedUrls)
-                console.log("WebView url changed:", webView.url.toString());
-        }
-
-        onLoadingChanged: {
-            if (!loading && loadRequest.status == WebView.LoadFailedStatus)
-                webView.loadHtml("Failed to load " + loadRequest.url, "", loadRequest.url)
+                console.log("Loaded:", webView.url.toString());
+            forceActiveFocus();
         }
 
         experimental.preferredMinimumContentsWidth: 980

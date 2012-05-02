@@ -138,10 +138,6 @@ TEST(WebKit2, PageLoadBasic)
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
-    WKRetainPtr<WKURLRef> activeUrl = adoptWK(WKPageCopyActiveURL(webView.page()));
-    ASSERT_NOT_NULL(activeUrl.get());
-    EXPECT_TRUE(WKURLIsEqual(activeUrl.get(), url.get()));
-
     Util::run(&test1Done);
 }
 

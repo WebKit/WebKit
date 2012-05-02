@@ -1,3 +1,18 @@
+2012-05-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Revert r115191 - "Make the web view's url property follow the active url"
+
+        It uncovered/caused issues in the icon-implementation that can't be
+        easily fixed, so rolling out instead.
+
+        https://bugs.webkit.org/show_bug.cgi?id=77554
+
+        Rubber-stamped by Simon Hausmann.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-05-02  Zan Dobersek  <zandobersek@gmail.com>
 
         Reftest mismatches are providing undefined diff percent in results.html

@@ -150,7 +150,7 @@ public:
     void runJavaScriptInMainFrame(const QString& script, QObject* receiver, const char* method);
 
 public Q_SLOTS:
-    void loadHtml(const QString& html, const QUrl& baseUrl = QUrl(), const QUrl& unreachableUrl = QUrl());
+    void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
 
     void goBack();
     void goForward();
@@ -202,8 +202,6 @@ private:
 
     QQuickWebView(WKContextRef, WKPageGroupRef, QQuickItem* parent = 0);
     WKPageRef pageRef() const;
-
-    void emitUrlChangeIfNeeded();
 
     Q_PRIVATE_SLOT(d_func(), void _q_suspend());
     Q_PRIVATE_SLOT(d_func(), void _q_resume());

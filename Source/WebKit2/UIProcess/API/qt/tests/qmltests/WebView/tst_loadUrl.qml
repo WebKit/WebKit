@@ -10,8 +10,6 @@ TestWebView {
     property int numLoadStarted: 0
     property int numLoadSucceeded: 0
 
-    focus: true
-
     onLoadProgressChanged: {
         if (watchProgress && webView.loadProgress != 100) {
             watchProgress = false
@@ -29,8 +27,6 @@ TestWebView {
     TestCase {
         id: test
         name: "WebViewLoadUrl"
-        when: windowShown
-
         function test_loadIgnoreEmptyUrl() {
             var url = Qt.resolvedUrl("../common/test1.html")
 
@@ -60,64 +56,6 @@ TestWebView {
             compare(numLoadStarted, 3)
             compare(numLoadSucceeded, 3)
             verify(!watchProgress)
-            compare(webView.url, url)
-        }
-
-        function test_urlProperty() {
-            var url = Qt.resolvedUrl("../common/test1.html")
-
-            webView.url = url
-            compare(webView.url, url)
-            verify(webView.waitForLoadSucceeded())
-            compare(webView.url, url)
-
-            var bogusSite = "http://www.somesitethatdoesnotexist.abc/"
-            webView.url = bogusSite
-            compare(webView.url, bogusSite)
-            verify(webView.waitForLoadFailed())
-            compare(webView.url, bogusSite)
-
-            webView.url = "about:blank" // Reset from previous test
-            verify(webView.waitForLoadSucceeded())
-
-            var handleLoadFailed = function(loadRequest) {
-                if (loadRequest.status == WebView.LoadFailedStatus) {
-                    compare(webView.url, bogusSite)
-                    compare(loadRequest.url, bogusSite)
-                    webView.loadHtml("load failed", bogusSite, bogusSite)
-                }
-            }
-            webView.loadingChanged.connect(handleLoadFailed)
-            webView.url = bogusSite
-            compare(webView.url, bogusSite)
-            verify(webView.waitForLoadSucceeded())
-            compare(webView.url, bogusSite)
-            webView.loadingChanged.disconnect(handleLoadFailed)
-
-            var dataUrl = "data:text/html,foo"
-            webView.url = dataUrl
-            compare(webView.url, dataUrl)
-
-            var redirectUrl = Qt.resolvedUrl("../common/redirect.html")
-            webView.url = redirectUrl
-            compare(webView.url, redirectUrl)
-            verify(webView.waitForLoadSucceeded())
-            compare(webView.url, redirectUrl)
-            verify(webView.waitForLoadSucceeded())
-            compare(webView.url, url)
-
-            var linkUrl = Qt.resolvedUrl("../common/link.html")
-            webView.url = linkUrl
-            compare(webView.url, linkUrl)
-            verify(webView.waitForLoadSucceeded())
-            compare(webView.url, linkUrl)
-            webView.loadingChanged.connect(function(loadRequest) {
-                compare(webView.url, loadRequest.url)
-                compare(webView.url, url)
-            })
-            webView.forceActiveFocus()
-            keyPress(Qt.Key_Return) // Link is focused
-            verify(webView.waitForLoadSucceeded())
             compare(webView.url, url)
         }
     }

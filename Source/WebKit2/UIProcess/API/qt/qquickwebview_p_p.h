@@ -192,8 +192,7 @@ protected:
     bool m_renderToOffscreenBuffer;
     bool m_dialogActive;
     QUrl m_iconURL;
-    QUrl m_deferredUrlToLoad;
-    WTF::String m_currentUrl;
+    QUrl m_deferedUrlToLoad;
 };
 
 class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {

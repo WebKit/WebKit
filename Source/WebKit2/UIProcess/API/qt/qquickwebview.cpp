@@ -50,12 +50,9 @@
 
 #include <JavaScriptCore/InitializeThreading.h>
 #include <QDateTime>
-#include <QtQml/QQmlEngine>
-#include <QtQuick/QQuickCanvas>
-#include <WKOpenPanelResultListener.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/KURL.h>
+#include <WKOpenPanelResultListener.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
@@ -237,11 +234,10 @@ void QQuickWebViewPrivate::loadDidSucceed()
 
 void QQuickWebViewPrivate::onComponentComplete()
 {
-    if (m_deferredUrlToLoad.isEmpty())
+    if (m_deferedUrlToLoad.isEmpty())
         return;
 
-    q_ptr->setUrl(m_deferredUrlToLoad);
-    m_deferredUrlToLoad.clear();
+    q_ptr->setUrl(m_deferedUrlToLoad);
 }
 
 void QQuickWebViewPrivate::setNeedsDisplay()
@@ -1265,17 +1261,6 @@ void QQuickWebView::stop()
 void QQuickWebView::reload()
 {
     Q_D(QQuickWebView);
-
-    WebFrameProxy* mainFrame = d->webPageProxy->mainFrame();
-    if (mainFrame && !mainFrame->unreachableURL().isEmpty() && mainFrame->url() != blankURL()) {
-        // We have an unreachable url, but haven't loaded alternative content
-        // for it (an error page eg.), so WebCore doesn't know about the unreachable
-        // url, and will try to reload the currently committed url instead. We don't
-        // want that, so we override the reload here by doing a manual load.
-        d->webPageProxy->loadURL(mainFrame->unreachableURL());
-        return;
-    }
-
     const bool reloadFromOrigin = true;
     d->webPageProxy->reload(reloadFromOrigin);
 }
@@ -1283,12 +1268,10 @@ void QQuickWebView::reload()
 QUrl QQuickWebView::url() const
 {
     Q_D(const QQuickWebView);
-
-    if (!isComponentComplete())
-        return d->m_deferredUrlToLoad;
-
-    Q_ASSERT(d->m_currentUrl == d->webPageProxy->activeURL());
-    return QUrl(d->m_currentUrl);
+    RefPtr<WebFrameProxy> mainFrame = d->webPageProxy->mainFrame();
+    if (!mainFrame)
+        return QUrl();
+    return QUrl(QString(mainFrame->url()));
 }
 
 void QQuickWebView::setUrl(const QUrl& url)
@@ -1298,24 +1281,12 @@ void QQuickWebView::setUrl(const QUrl& url)
     if (url.isEmpty())
         return;
 
-    if (!isComponentComplete())
-        d->m_deferredUrlToLoad = url;
-    else
-        d->webPageProxy->loadURL(url.toString());
-
-    emitUrlChangeIfNeeded();
-}
-
-// Make sure we don't emit urlChanged unless it actually changed
-void QQuickWebView::emitUrlChangeIfNeeded()
-{
-    Q_D(QQuickWebView);
-
-    WTF::String activeUrl = d->webPageProxy->activeURL();
-    if (activeUrl != d->m_currentUrl) {
-        d->m_currentUrl = activeUrl;
-        emit urlChanged();
+    if (!isComponentComplete()) {
+        d->m_deferedUrlToLoad = url;
+        return;
     }
+
+    d->webPageProxy->loadURL(url.toString());
 }
 
 QUrl QQuickWebView::icon() const
@@ -1666,20 +1637,12 @@ void QQuickWebView::handleFlickableMouseRelease(const QPointF& position, qint64 
     External objects such as stylesheets or images referenced in the HTML
     document are located relative to \a baseUrl.
 
-    If an \a unreachableUrl is passed it is used as the url for the loaded
-    content. This is typically used to display error pages for a failed
-    load.
-
     \sa WebView::url
 */
-
-void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl, const QUrl& unreachableUrl)
+void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl)
 {
     Q_D(QQuickWebView);
-    if (unreachableUrl.isValid())
-        d->webPageProxy->loadAlternateHTMLString(html, baseUrl.toString(), unreachableUrl.toString());
-    else
-        d->webPageProxy->loadHTMLString(html, baseUrl.toString());
+    d->webPageProxy->loadHTMLString(html, baseUrl.toString());
 }
 
 QPointF QQuickWebView::pageItemPos()
