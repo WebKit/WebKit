@@ -31,7 +31,6 @@
 
 import logging
 import os
-import sys
 import time
 
 from webkitpy.layout_tests.servers import http_server_base
@@ -177,7 +176,7 @@ class Lighttpd(http_server_base.HttpServerBase):
 
         # Copy liblightcomp.dylib to /tmp/lighttpd/lib to work around the
         # bug that mod_alias.so loads it from the hard coded path.
-        if sys.platform == 'darwin':
+        if self._port_obj.host.platform.is_mac():
             tmp_module_path = '/tmp/lighttpd/lib'
             if not self._filesystem.exists(tmp_module_path):
                 self._filesystem.maybe_make_directory(tmp_module_path)

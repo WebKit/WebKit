@@ -1,5 +1,21 @@
 2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        webkitpy: Remove direct checks for sys.platform == 'darwin' in the layout test classes.
+        https://bugs.webkit.org/show_bug.cgi?id=85424
+
+        Reviewed by Tony Chang.
+
+        We should reduce direct usage of sys.platform in webkitpy and use
+        PlatformInfo instead.
+
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd._prepare_config): Call PlatformInfo.is_mac() instead of
+        checking for 'darwin' directly.
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.__init__): Ditto.
+
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         webkitpy: Remove direct sys.platform usage in run_webkit_tests_integrationtest.
         https://bugs.webkit.org/show_bug.cgi?id=85419
 

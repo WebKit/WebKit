@@ -61,7 +61,7 @@ class HttpServerBase(object):
         # randomly-generated directory under /var/folders and no one would ever
         # look there.
         tmpdir = tempfile.gettempdir()
-        if sys.platform == 'darwin':
+        if port_obj.host.platform.is_mac():
             tmpdir = '/tmp'
 
         self._runtime_path = self._filesystem.join(tmpdir, "WebKit")
