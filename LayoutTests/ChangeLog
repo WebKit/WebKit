@@ -1,3 +1,9 @@
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        Unreviewed, EFL rebaseline after r113885.
+
+        * platform/efl/css2.1/20110323/replaced-elements-001-expected.txt:
+
 2012-05-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r115829.
