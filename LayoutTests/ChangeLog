@@ -1,3 +1,11 @@
+2012-05-02  Zhenyao Mo  <zmo@google.com>
+
+        Rebaseline, unreviewed.
+
+        * platform/chromium-linux-x86/http/tests/loading: Added.
+        * platform/chromium-linux-x86/http/tests/loading/pdf-commit-load-callbacks-expected.txt: Added.
+        * platform/chromium-linux/http/tests/loading/pdf-commit-load-callbacks-expected.txt:
+
 2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed gardening.
