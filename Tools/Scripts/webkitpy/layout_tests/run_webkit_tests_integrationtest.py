@@ -263,9 +263,9 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def setUp(self):
         self._platform = PlatformInfo(sys, platform, Executive())
 
-        # FIXME: remove this when we fix test-webkitpy to work
+        # FIXME: Remove this when we fix test-webkitpy to work
         # properly on cygwin (bug 63846).
-        self.SHOULD_TEST_PROCESSES = not self._platform.is_win()
+        self.should_test_processes = not self._platform.is_win()
 
     def test_accelerated_compositing(self):
         # This just tests that we recognize the command line args
@@ -290,13 +290,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_child_processes_2(self):
-        if self.SHOULD_TEST_PROCESSES:
+        if self.should_test_processes:
             _, _, regular_output, _ = logging_run(
                 ['--print', 'config', '--child-processes', '2'])
             self.assertTrue(any(['Running 2 ' in line for line in regular_output.buflist]))
 
     def test_child_processes_min(self):
-        if self.SHOULD_TEST_PROCESSES:
+        if self.should_test_processes:
             _, _, regular_output, _ = logging_run(
                 ['--print', 'config', '--child-processes', '2', 'passes'],
                 tests_included=True)
@@ -322,7 +322,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertRaises(ValueError, logging_run,
             ['failures/expected/exception.html', '--child-processes', '1'], tests_included=True)
 
-        if self.SHOULD_TEST_PROCESSES:
+        if self.should_test_processes:
             self.assertRaises(run_webkit_tests.WorkerException, logging_run,
                 ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True)
 
@@ -352,7 +352,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             ['failures/expected/keyboard.html', '--child-processes', '1'],
             tests_included=True)
 
-        if self.SHOULD_TEST_PROCESSES:
+        if self.should_test_processes:
             self.assertRaises(KeyboardInterrupt, logging_run,
                 ['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True)
 

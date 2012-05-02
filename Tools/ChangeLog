@@ -3,6 +3,23 @@
         webkitpy: Remove direct sys.platform usage in run_webkit_tests_integrationtest.
         https://bugs.webkit.org/show_bug.cgi?id=85419
 
+        Rubber-stamped by Dirk Pranke.
+
+        Follow-up patch to r115887 which fixes some capitalization problems
+        pointed out in comments 2 and 4.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.setUp):
+        (MainTest.test_child_processes_2):
+        (MainTest.test_child_processes_min):
+        (MainTest.test_exception_raised):
+        (MainTest.test_keyboard_interrupt):
+
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Remove direct sys.platform usage in run_webkit_tests_integrationtest.
+        https://bugs.webkit.org/show_bug.cgi?id=85419
+
         Reviewed by Dirk Pranke.
 
         Another part of the work towards replacing direct sys.platform
