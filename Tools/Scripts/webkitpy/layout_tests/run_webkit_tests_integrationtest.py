@@ -876,7 +876,7 @@ class EndToEndTest(unittest.TestCase):
         self.assertTrue("multiple-mismatch-success.html" not in json["tests"]["reftests"]["foo"])
         self.assertTrue("multiple-both-success.html" not in json["tests"]["reftests"]["foo"])
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-match-failure.html"],
-            {"expected": "PASS", "ref_file": "reftests/foo/second-mismatching-ref.html", "actual": "IMAGE", 'is_reftest': True})
+            {"expected": "PASS", "ref_file": "reftests/foo/second-mismatching-ref.html", "actual": "IMAGE", "image_diff_percent": 1, 'is_reftest': True})
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-mismatch-failure.html"],
             {"expected": "PASS", "ref_file": "reftests/foo/matching-ref.html", "actual": "IMAGE", "is_mismatch_reftest": True})
         self.assertEqual(json["tests"]["reftests"]["foo"]["multiple-both-failure.html"],

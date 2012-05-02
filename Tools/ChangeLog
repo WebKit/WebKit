@@ -1,3 +1,28 @@
+2012-05-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reftest mismatches are providing undefined diff percent in results.html
+        https://bugs.webkit.org/show_bug.cgi?id=85283
+
+        Reviewed by Ojan Vafai.
+
+        When writing test results for a reftest mismatch, also take into account the
+        difference percent that is produced when generating image diff. This value is
+        then used when creating test results in the form of dictionaries, stored under
+        the 'image_diff_percent' key. It ultimately ends up in JSON results data,
+        providing additional information about the reftest difference.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (interpret_test_failures): Store the diff percent for reftest failure under the
+        'image_diff_percent' key.
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result): Also set the new diff_percent attribute of the reftest
+        mismatch failure to the value of the difference percent ImageDiff outputs.
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (FailureReftestMismatch.__init__): Add the new diff_percent attribute with the
+        default value of None.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (EndToEndTest.test_reftest_with_two_notrefs): Update the test case expected results.
+
 2012-05-02  Terry Anderson  <tdanderson@chromium.org>
 
         Addition of a contributor to committers.py

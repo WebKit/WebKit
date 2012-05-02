@@ -186,6 +186,7 @@ class FailureReftestMismatch(TestFailure):
 
     def __init__(self, reference_filename=None):
         self.reference_filename = reference_filename
+        self.diff_percent = None
 
     def message(self):
         return "Mismatch with reference"
