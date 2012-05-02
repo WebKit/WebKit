@@ -1,5 +1,12 @@
 2012-05-01  Xiaomei Ji  <xji@chromium.org>
 
+        Skip editing/selection/move-by-word-visually-mac.html (introduced in r115788) in qt and wk2.
+
+        * platform/qt/Skipped:
+        * platform/wk2/Skipped:
+
+2012-05-01  Xiaomei Ji  <xji@chromium.org>
+
         enable ctrl-arrow move by word visually in other platforms (besides Windows)
         https://bugs.webkit.org/show_bug.cgi?id=85017
 

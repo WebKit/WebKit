@@ -662,6 +662,7 @@ editing/selection/move-by-word-visually-single-space-one-element.html
 editing/selection/move-by-word-visually-textarea.html
 editing/selection/move-by-word-visually-wrong-left-right.html
 editing/selection/move-by-word-visually-crash-test-css-generated-content.html
+editing/selection/move-by-word-visually-mac.html
 editing/selection/programmatic-selection-on-mac-is-directionless.html
 editing/selection/selection-extend-should-not-move-across-caret-on-mac.html
 editing/execCommand/query-command-state.html
