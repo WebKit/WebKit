@@ -830,7 +830,7 @@ WebInspector.NetworkRequest.prototype = {
      */
     addFrameError: function(errorMessage, time)
     {
-        errorObject = {};
+        var errorObject = {};
         errorObject.errorMessage = errorMessage;
         errorObject.time = time;
         this._pushFrame(errorObject);

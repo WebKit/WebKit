@@ -118,10 +118,14 @@ WebInspector.CookiesTable.prototype = {
                 this._populateNode(groupNode, item.cookies);
                 groupNode.expand();
             } else
-                this._populateNode(this._dataGrid, item.cookies);
+                this._populateNode(this._dataGrid.rootNode(), item.cookies);
         }
     },
 
+    /**
+     * @param {WebInspector.DataGridNode} parentNode
+     * @param {Array.<PageAgent.Cookie>} cookies
+     */
     _populateNode: function(parentNode, cookies)
     {
         var selectedCookie = this.selectedCookie;
