@@ -691,31 +691,21 @@ IntRect RenderThemeGtk::calculateProgressRect(RenderObject* renderObject, const 
 }
 #endif
 
-static bool stringByAdoptingFileSystemRepresentation(gchar* systemFilename, String& result)
-{
-    if (!systemFilename)
-        return false;
-
-    result = filenameToString(systemFilename);
-    g_free(systemFilename);
-
-    return true;
-}
-
 String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();
 
-    String string = fileButtonNoFileSelectedLabel();
-    if (multipleFilesAllowed)
-        string = fileButtonNoFilesSelectedLabel();
-
-    if (fileList->length() == 1) {
-        CString systemFilename = fileSystemRepresentation(fileList->item(0)->path());
-        gchar* systemBasename = g_path_get_basename(systemFilename.data());
-    } else if (fileList->length() > 1)
+    if (fileList->length() > 1)
         return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font, StringTruncator::EnableRoundingHacks);
+
+    String string;
+    if (fileList->length())
+        string = pathGetFileName(fileList->item(0)->path());
+    else if (multipleFilesAllowed)
+        string = fileButtonNoFilesSelectedLabel();
+    else
+        string = fileButtonNoFileSelectedLabel();
 
     return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }
