@@ -1,3 +1,22 @@
+2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed test rebaseline after r115749.
+
+        * platform/chromium-mac-leopard/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac-leopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-leopard/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-layout-direction-expected.png:
+        * platform/chromium-mac/media/media-controls-clone-expected.png:
+        * platform/chromium-win/media/audio-controls-rendering-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-layout-direction-expected.png:
+        * platform/chromium-win/media/media-controls-clone-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-02  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Implement the Web Audio API feature.
