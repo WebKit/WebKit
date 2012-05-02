@@ -1,3 +1,9 @@
+2012-05-01  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Move date-input-visible-strings-expected.txt to the correct place.
+
+        * platform/chromium-linux/fast/forms/date/date-input-visible-strings-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/forms/date/date-input-visible-strings-expected.txt.
+
 2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unnecessary <form> tags created inside of an <iframe> with designMode on
