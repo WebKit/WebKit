@@ -1,3 +1,16 @@
+2012-05-01  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Accept four parameters when dispatching a WebInputEvent::GestureTap in chromium DRT eventSender
+        https://bugs.webkit.org/show_bug.cgi?id=85289
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::gestureEvent):
+            This change will allow for testing of WK85101. Currently
+            no tests use the extra parameters deltaX and deltaY. Added
+            a check for the size of |arguments|.
+
 2012-05-01  Eric Seidel  <eric@webkit.org>
 
         Add myself to the watchlist to watch all rendering changes, as well as sort the watchers in the list
