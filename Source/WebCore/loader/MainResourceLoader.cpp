@@ -57,6 +57,10 @@
 #include "PluginDatabase.h"
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#include "WebCoreSystemInterface.h"
+#endif
+
 // FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
 
 namespace WebCore {
@@ -72,11 +76,17 @@ MainResourceLoader::MainResourceLoader(Frame* frame)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
     , m_timeOfLastDataReceived(0.0)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    , m_filter(0)
+#endif
 {
 }
 
 MainResourceLoader::~MainResourceLoader()
 {
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    ASSERT(!m_filter);
+#endif
 }
 
 PassRefPtr<MainResourceLoader> MainResourceLoader::create(Frame* frame)
@@ -123,6 +133,13 @@ void MainResourceLoader::didCancel(const ResourceError& error)
     // We should notify the frame loader after fully canceling the load, because it can do complicated work
     // like calling DOMWindow::print(), during which a half-canceled load could try to finish.
     documentLoader()->mainReceivedError(error);
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    if (m_filter) {
+        wkFilterRelease(m_filter);
+        m_filter = 0;
+    }
+#endif
 }
 
 ResourceError MainResourceLoader::interruptedForPolicyChangeError() const
@@ -424,6 +441,11 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     }
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    if (r.url().protocolIs("https") && wkFilterIsManagedSession())
+        m_filter = wkFilterCreateInstance(r.nsURLResponse());
+#endif
+
     frameLoader()->policyChecker()->checkContentPolicy(m_response, callContinueAfterContentPolicy, this);
 }
 
@@ -449,6 +471,22 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
     ASSERT(!defersLoading());
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    if (m_filter) {
+        ASSERT(!wkFilterWasBlocked(m_filter));
+        const char* blockedData = wkFilterAddData(m_filter, data, &length);
+        // If we don't have blockedData, that means we're still accumulating data
+        if (!blockedData) {
+            // Transition to committed state.
+            ResourceLoader::didReceiveData("", 0, 0, false);
+            return;
+        }
+
+        data = blockedData;
+        encodedDataLength = -1;
+    }
+#endif
+
     documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, encodedDataLength, allAtOnce);
 
     // The additional processing can do anything including possibly removing the last
@@ -458,6 +496,19 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
     m_timeOfLastDataReceived = monotonicallyIncreasingTime();
 
     ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    if (WebFilterEvaluator *filter = m_filter) {
+        // If we got here, it means we know if we were blocked or not. If we were blocked, we're
+        // done loading the page altogether. Either way, we don't need the filter anymore.
+
+        // Remove this->m_filter early so didFinishLoading doesn't see it.
+        m_filter = 0;
+        if (wkFilterWasBlocked(filter))
+            cancel();
+        wkFilterRelease(filter);
+    }
+#endif
 }
 
 void MainResourceLoader::didFinishLoading(double finishTime)
@@ -473,6 +524,19 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     RefPtr<MainResourceLoader> protect(this);
     RefPtr<DocumentLoader> dl = documentLoader();
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    if (m_filter) {
+        int length;
+        const char* data = wkFilterDataComplete(m_filter, &length);
+        WebFilterEvaluator *filter = m_filter;
+        // Remove this->m_filter early so didReceiveData doesn't see it.
+        m_filter = 0;
+        if (data)
+            didReceiveData(data, length, -1, false);
+        wkFilterRelease(filter);
+    }
+#endif
+
     if (m_loadingMultipartContent)
         dl->maybeFinishLoadingMultipartContent();
 
@@ -485,6 +549,13 @@ void MainResourceLoader::didFinishLoading(double finishTime)
 
 void MainResourceLoader::didFail(const ResourceError& error)
 {
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+    if (m_filter) {
+        wkFilterRelease(m_filter);
+        m_filter = 0;
+    }
+#endif
+
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainError(request(), error))
         return;
 

@@ -1679,6 +1679,15 @@ _wkCreateAXTextMarker
 _wkGetBytesFromAXTextMarker
 _wkCreateAXUIElementRef
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+_wkFilterIsManagedSession
+_wkFilterCreateInstance
+_wkFilterRelease
+_wkFilterWasBlocked
+_wkFilterAddData
+_wkFilterDataComplete
+#endif
+
 #if ENABLE(SVG)
 __ZN7WebCore14SVGSMILElement13isSMILElementEPNS_4NodeE
 __ZN7WebCore8Document13svgExtensionsEv

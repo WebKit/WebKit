@@ -34,6 +34,10 @@
 #include "SubstituteData.h"
 #include <wtf/Forward.h>
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+OBJC_CLASS WebFilterEvaluator;
+#endif
+
 #if HAVE(RUNLOOP_TIMER)
 #include "RunLoopTimer.h"
 #else
@@ -109,6 +113,10 @@ namespace WebCore {
         bool m_loadingMultipartContent;
         bool m_waitingForContentPolicy;
         double m_timeOfLastDataReceived;
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+        WebFilterEvaluator *m_filter;
+#endif
     };
 
 }

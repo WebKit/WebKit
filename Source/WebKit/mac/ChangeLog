@@ -1,3 +1,13 @@
+2012-05-01  Jeffrey Pfau  <jpfau@apple.com>
+
+        <rdar://problem/10422318> Support for web content filter delegate for filtering https content
+        https://bugs.webkit.org/show_bug.cgi?id=85300
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         *Command.h files shouldn't be exported to WebKit layer

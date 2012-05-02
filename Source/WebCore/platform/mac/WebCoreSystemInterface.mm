@@ -190,3 +190,12 @@ bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+BOOL (*wkFilterIsManagedSession)(void);
+WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);
+void (*wkFilterRelease)(WebFilterEvaluator *);
+BOOL (*wkFilterWasBlocked)(WebFilterEvaluator *);
+const char* (*wkFilterAddData)(WebFilterEvaluator *, const char* data, int* length);
+const char* (*wkFilterDataComplete)(WebFilterEvaluator *, int* length);
+#endif
