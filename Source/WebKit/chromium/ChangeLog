@@ -1,3 +1,15 @@
+2012-05-01  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Additional instances of calling histogramCustomCounts directly
+        https://bugs.webkit.org/show_bug.cgi?id=85322
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/painting/PaintAggregator.cpp:
+        (WebKit::PaintAggregator::invalidateRect):
+
 2012-05-01  Min Qin  <qinmin@google.com>
 
         use USE(NATIVE_FULLSCREEN_VIDEO) instead of ENABLE(NATIVE_FULLSCREEN_VIDEO)
