@@ -1,3 +1,16 @@
+2012-05-02  Anders Carlsson  <andersca@apple.com>
+
+        PDF page does not show up when opened in the background
+        https://bugs.webkit.org/show_bug.cgi?id=85427
+        <rdar://problem/11259951>
+
+        Reviewed by Sam Weinig.
+
+        Ensure that the accelerated hosting view is always the bottom view so it won't obscure subviews that are before it.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _enterAcceleratedCompositingMode:]):
+
 2012-05-02  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport

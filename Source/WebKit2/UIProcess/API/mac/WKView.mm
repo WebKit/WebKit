@@ -2480,7 +2480,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [self addSubview:_data->_layerHostingView.get()];
+
+    [self addSubview:_data->_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
 
     // Create a root layer that will back the NSView.
     RetainPtr<CALayer> rootLayer(AdoptNS, [[CALayer alloc] init]);
