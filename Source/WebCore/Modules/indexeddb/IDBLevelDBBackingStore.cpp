@@ -602,7 +602,7 @@ void IDBLevelDBBackingStore::deleteObjectStoreRecord(int64_t databaseId, int64_t
     m_currentTransaction->remove(existsEntryKey);
 }
 
-double IDBLevelDBBackingStore::nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId)
+int64_t IDBLevelDBBackingStore::nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId)
 {
     ASSERT(m_currentTransaction);
     const Vector<char> startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
@@ -610,9 +610,10 @@ double IDBLevelDBBackingStore::nextAutoIncrementNumber(int64_t databaseId, int64
 
     OwnPtr<LevelDBIterator> it = m_currentTransaction->createIterator();
 
-    int maxNumericKey = 0;
+    int64_t maxNumericKey = 0;
 
-    // FIXME: Be more efficient: seek to something after the object store data, then reverse.
+    // FIXME: This does a forward scan over all keys. Improve it.
+    // Since all dates > all numbers, create Date(-Infinity) and seek backwards.
 
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
         const char *p = it->key().begin();

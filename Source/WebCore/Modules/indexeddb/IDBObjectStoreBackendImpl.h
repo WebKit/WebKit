@@ -115,7 +115,7 @@ private:
 
     typedef HashMap<String, RefPtr<IDBIndexBackendImpl> > IndexMap;
     IndexMap m_indexes;
-    int m_autoIncrementNumber;
+    int64_t m_autoIncrementNumber;
 };
 
 } // namespace WebCore
