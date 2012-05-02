@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+window.onload=function(){
+    document.execCommand("SelectAll", false, false);
+    window.getSelection().deleteFromDocument();
+};
+</script>
+</head>
+<body>
+Bug 85149. This test passes if it doesn't crash.  Note: You will need to reload
+this test many times (or run the test under valgrind / ASAN) to see a crash.
+<form>
+<fieldset>
+<select></select>
+</fieldset>
+</form>
+<style> *{ animation-play-state:paused,running; } </style>
+</body>
+</html>

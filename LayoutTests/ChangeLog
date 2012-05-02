@@ -1,3 +1,15 @@
+2012-05-01  Keishi Hattori  <keishi@webkit.org>
+
+        datalist: Form control in a <datalist> should be barred from constraint validation
+        https://bugs.webkit.org/show_bug.cgi?id=84359
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/datalist/datalist-child-validation-expected.txt: Added.
+        * fast/forms/datalist/datalist-child-validation.html: Added. Tests that willValidate changes from false to true when we move the element out of the datalist.
+        * fast/forms/form-control-element-crash-expected.txt: Added.
+        * fast/forms/form-control-element-crash.html: Added. Tests for the crash reported in Bug 85149.
+
 2012-05-01  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for date-input-visible-strings.html.
