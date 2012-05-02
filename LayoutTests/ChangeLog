@@ -1,5 +1,12 @@
 2012-05-02  Andy Estes  <aestes@apple.com>
 
+        media/audio-repaint.html sometimes fails on Lion Debug (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=84357
+
+        * platform/mac/Skipped: Skipped the flaky test.
+
+2012-05-02  Andy Estes  <aestes@apple.com>
+
         Update two more Mac baselines.
 
         * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
