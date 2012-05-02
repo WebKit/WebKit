@@ -1,3 +1,17 @@
+2012-05-02  Nico Weber  <thakis@chromium.org>
+
+        Let WebKit parse with clang on windows with -std=c++11
+        https://bugs.webkit.org/show_bug.cgi?id=85398
+
+        Reviewed by Ryosuke Niwa.
+
+        See http://trac.webkit.org/changeset/85945 for background on the line
+        I'm changing. With clang, __GXX_EXPERIMENTLAL_CXX0X__ is set in c++11
+        mode, but MSVC's c++ library doesn't have a tr1/memory header. So also
+        check for __GLIBCXX__, like it's done in the rest of this file.
+
+        * wtf/TypeTraits.h:
+
 2012-05-02  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [Qt]r57240 broke Qt build (gcc bug)
