@@ -11,7 +11,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
             RenderBlock {DIV} at (0,10) size 0x0
             RenderBlock {DIV} at (0,0) size 171x21
-              RenderBlock {DIV} at (0,0) size 171x21
             RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (190,4) size 4x21
           text run at (190,4) width 4: " "
@@ -19,8 +18,11 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
             RenderBlock {DIV} at (0,10) size 0x0
             RenderBlock {DIV} at (0,0) size 171x21
-              RenderBlock {DIV} at (0,0) size 171x21
-                RenderText {#text} at (1,0) size 56x21
-                  text run at (1,0) width 56: "this one"
             RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
+layer at (12,49) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+layer at (206,49) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (1,0) size 56x21
+      text run at (1,0) width 56: "this one"

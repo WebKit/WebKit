@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+CONSOLE MESSAGE: event.layerX and event.layerY are broken and deprecated in WebKit. They will be removed from the engine in the near future.
+span
+
+PASS simulateElementClick(testElement, [100, 100, 200, 200]); is '100, 100, 200, 200'
+PASS simulateElementClick(spanElement, [16, 10, 16, 10]); is '16, 10, 16, 10'
+PASS simulateElementClick(inputElement, [40, 10, 40, 10]); is '40, 10, 40, 10'
+

@@ -21,13 +21,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
             RenderBlock {DIV} at (0,10) size 0x0
             RenderBlock {DIV} at (0,0) size 171x21
-              RenderBlock {DIV} at (0,0) size 171x21
-                RenderText {#text} at (42,0) size 128x21
-                  text run at (42,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-                  text run at (62,0) width 26: "she"
-                  text run at (88,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-                  text run at (124,0) width 18: "he"
-                  text run at (142,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
             RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (190,4) size 4x21
           text run at (190,4) width 4: " "
@@ -36,13 +29,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 272x21
             RenderBlock {DIV} at (0,10) size 0x0
             RenderBlock {DIV} at (0,0) size 261x21
-              RenderBlock {DIV} at (0,0) size 261x21
-                RenderText {#text} at (132,0) size 128x21
-                  text run at (132,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-                  text run at (152,0) width 26: "she"
-                  text run at (178,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-                  text run at (214,0) width 18: "he"
-                  text run at (232,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
             RenderBlock {DIV} at (261,5) size 11x11
         RenderText {#text} at (280,33) size 4x21
           text run at (280,33) width 4: " "
@@ -51,10 +37,27 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
             RenderBlock {DIV} at (0,10) size 0x0
             RenderBlock {DIV} at (0,0) size 171x21
-              RenderBlock {DIV} at (0,0) size 171x21
             RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,161) size 784x21
         RenderText {#text} at (0,0) size 44x21
           text run at (0,0) width 44: "PASS"
+layer at (12,70) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (42,0) size 128x21
+      text run at (42,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (62,0) width 26: "she"
+      text run at (88,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (124,0) width 18: "he"
+      text run at (142,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,99) size 261x21
+  RenderBlock {DIV} at (0,0) size 261x21
+    RenderText {#text} at (132,0) size 128x21
+      text run at (132,0) width 20 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (152,0) width 26: "she"
+      text run at (178,0) width 36 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (214,0) width 18: "he"
+      text run at (232,0) width 28 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,128) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

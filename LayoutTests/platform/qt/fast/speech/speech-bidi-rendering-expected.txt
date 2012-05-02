@@ -1,0 +1,81 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 553x21
+          text run at (0,0) width 553: "This test verifies that the speech input control is rendered correctly for dir=rtl/ltr."
+      RenderBlock {UL} at (0,37) size 784x174
+        RenderListItem {LI} at (40,0) size 744x29
+          RenderListMarker at (-18,4) size 7x21: bullet
+          RenderText {#text} at (0,4) size 276x21
+            text run at (0,4) width 276: "The Microphone icon should be on the "
+          RenderInline {B} at (0,0) size 35x21
+            RenderText {#text} at (276,4) size 35x21
+              text run at (276,4) width 35: "right"
+          RenderText {#text} at (311,4) size 8x21
+            text run at (311,4) width 8: ": "
+          RenderTextControl {INPUT} at (321,2) size 186x25
+        RenderListItem {LI} at (40,29) size 744x29
+          RenderListMarker at (-18,4) size 7x21: bullet
+          RenderText {#text} at (0,4) size 276x21
+            text run at (0,4) width 276: "The Microphone icon should be on the "
+          RenderInline {B} at (0,0) size 35x21
+            RenderText {#text} at (276,4) size 35x21
+              text run at (276,4) width 35: "right"
+          RenderText {#text} at (311,4) size 8x21
+            text run at (311,4) width 8: ": "
+          RenderTextControl {INPUT} at (321,2) size 186x25
+        RenderListItem {LI} at (40,58) size 744x29
+          RenderListMarker at (-18,4) size 7x21: bullet
+          RenderText {#text} at (0,4) size 276x21
+            text run at (0,4) width 276: "The Microphone icon should be on the "
+          RenderInline {B} at (0,0) size 35x21
+            RenderText {#text} at (276,4) size 35x21
+              text run at (276,4) width 35: "right"
+          RenderText {#text} at (311,4) size 8x21
+            text run at (311,4) width 8: ": "
+          RenderTextControl {INPUT} at (321,2) size 186x25
+        RenderListItem {LI} at (40,87) size 744x29
+          RenderListMarker at (-18,4) size 7x21: bullet
+          RenderText {#text} at (0,4) size 276x21
+            text run at (0,4) width 276: "The Microphone icon should be on the "
+          RenderInline {B} at (0,0) size 23x21
+            RenderText {#text} at (276,4) size 23x21
+              text run at (276,4) width 23: "left"
+          RenderText {#text} at (299,4) size 8x21
+            text run at (299,4) width 8: ": "
+          RenderTextControl {INPUT} at (309,2) size 186x25
+        RenderListItem {LI} at (40,116) size 744x29
+          RenderListMarker at (-18,4) size 7x21: bullet
+          RenderText {#text} at (0,4) size 276x21
+            text run at (0,4) width 276: "The Microphone icon should be on the "
+          RenderInline {B} at (0,0) size 23x21
+            RenderText {#text} at (276,4) size 23x21
+              text run at (276,4) width 23: "left"
+          RenderText {#text} at (299,4) size 8x21
+            text run at (299,4) width 8: ": "
+          RenderTextControl {INPUT} at (309,2) size 186x25
+        RenderListItem {LI} at (40,145) size 744x29
+          RenderListMarker at (-18,4) size 7x21: bullet
+          RenderText {#text} at (0,4) size 276x21
+            text run at (0,4) width 276: "The Microphone icon should be on the "
+          RenderInline {B} at (0,0) size 23x21
+            RenderText {#text} at (276,4) size 23x21
+              text run at (276,4) width 23: "left"
+          RenderText {#text} at (299,4) size 8x21
+            text run at (299,4) width 8: ": "
+          RenderTextControl {INPUT} at (309,2) size 186x25
+layer at (371,49) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (371,78) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (371,107) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (359,136) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (359,165) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (359,194) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21

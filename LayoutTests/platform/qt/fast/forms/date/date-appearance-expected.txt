@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x334
+  RenderBlock {HTML} at (0,0) size 800x334
+    RenderBody {BODY} at (8,8) size 784x318
+      RenderBlock {DIV} at (0,0) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+      RenderBlock {DIV} at (0,29) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+      RenderBlock {DIV} at (0,58) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+      RenderBlock {DIV} at (0,87) size 784x31
+        RenderTextControl {INPUT} at (2,2) size 188x27 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
+      RenderBlock {DIV} at (0,118) size 784x31
+        RenderTextControl {INPUT} at (2,2) size 188x27 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
+      RenderBlock {DIV} at (0,149) size 784x31
+        RenderTextControl {INPUT} at (2,2) size 188x27 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
+      RenderBlock {DIV} at (0,180) size 784x46
+        RenderTextControl {INPUT} at (2,2) size 346x42
+      RenderBlock {DIV} at (0,226) size 784x46
+        RenderTextControl {INPUT} at (2,2) size 346x42
+      RenderBlock {DIV} at (0,272) size 784x46
+        RenderTextControl {INPUT} at (2,2) size 346x42
+layer at (12,12) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 82x21
+      text run at (1,0) width 82: "2012-04-02"
+layer at (12,41) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 82x21
+      text run at (1,0) width 82: "2012-04-02"
+layer at (12,70) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
+    RenderText {#text} at (1,0) size 82x21
+      text run at (1,0) width 82: "2012-04-02"
+layer at (13,100) size 182x21
+  RenderBlock {DIV} at (3,3) size 182x21
+    RenderText {#text} at (1,0) size 82x21
+      text run at (1,0) width 82: "2012-04-02"
+layer at (13,131) size 182x21
+  RenderBlock {DIV} at (3,3) size 182x21
+    RenderText {#text} at (1,0) size 82x21
+      text run at (1,0) width 82: "2012-04-02"
+layer at (13,162) size 182x21
+  RenderBlock {DIV} at (3,3) size 182x21 [color=#ABABAB]
+    RenderText {#text} at (1,0) size 82x21
+      text run at (1,0) width 82: "2012-04-02"
+layer at (12,192) size 342x38
+  RenderBlock {DIV} at (2,2) size 342x38
+    RenderText {#text} at (1,0) size 156x38
+      text run at (1,0) width 156: "2012-04-02"
+layer at (12,238) size 342x38
+  RenderBlock {DIV} at (2,2) size 342x38
+    RenderText {#text} at (1,0) size 156x38
+      text run at (1,0) width 156: "2012-04-02"
+layer at (12,284) size 342x38
+  RenderBlock {DIV} at (2,2) size 342x38 [color=#545454]
+    RenderText {#text} at (1,0) size 156x38
+      text run at (1,0) width 156: "2012-04-02"

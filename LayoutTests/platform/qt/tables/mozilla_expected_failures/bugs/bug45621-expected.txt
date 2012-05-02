@@ -8,9 +8,10 @@ layer at (0,0) size 800x83
           RenderTableRow {TR} at (0,0) size 392x27
             RenderTableCell {TD} at (0,0) size 392x27 [bgcolor=#808080] [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (0,2) size 394x23 [bgcolor=#FFC0CB]
-                RenderBlock {DIV} at (1,1) size 392x21
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,27) size 392x40
             RenderTableCell {TD} at (0,27) size 392x40 [bgcolor=#808080] [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 392x40 [bgcolor=#00FFFF]
               RenderText {#text} at (0,0) size 0x0
+layer at (9,11) size 392x21
+  RenderBlock {DIV} at (1,1) size 392x21

@@ -9,5 +9,6 @@ layer at (0,0) size 800x600
           text run at (0,21) width 47: "below."
 layer at (28,70) size 100x100
   RenderBlock {DIV} at (20,62) size 100x100
-    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
-      RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+layer at (28,70) size 100x100
+  RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

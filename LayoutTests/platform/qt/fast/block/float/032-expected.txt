@@ -28,24 +28,28 @@ layer at (0,0) size 784x1043
       RenderBlock {DIV} at (0,524) size 768x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderTextControl {INPUT} at (205,5) size 106x106 [bgcolor=#800080] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,43) size 100x21
       RenderBlock (anonymous) at (0,634) size 768x21
         RenderBR {BR} at (0,0) size 0x21
       RenderBlock {DIV} at (0,655) size 768x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderTextControl {INPUT} at (305,5) size 106x106 [bgcolor=#800080] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,43) size 100x21
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,765) size 768x21
         RenderBR {BR} at (0,0) size 0x21
       RenderBlock {DIV} at (0,786) size 768x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderTextControl {INPUT} at (55,5) size 106x106 [bgcolor=#800080] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,43) size 100x21
       RenderBlock (anonymous) at (0,896) size 768x21
         RenderBR {BR} at (0,0) size 0x21
       RenderBlock {DIV} at (0,917) size 768x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderTextControl {INPUT} at (55,5) size 106x106 [bgcolor=#800080] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,43) size 100x21
         RenderText {#text} at (0,0) size 0x0
+layer at (216,580) size 100x21
+  RenderBlock {DIV} at (3,43) size 100x21
+layer at (316,711) size 100x21
+  RenderBlock {DIV} at (3,43) size 100x21
+layer at (66,842) size 100x21
+  RenderBlock {DIV} at (3,43) size 100x21
+layer at (66,973) size 100x21
+  RenderBlock {DIV} at (3,43) size 100x21

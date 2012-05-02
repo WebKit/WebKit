@@ -82,7 +82,6 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (120,0) size 505x66 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 501x25
-                    RenderBlock {DIV} at (2,2) size 497x21
                   RenderBR {BR} at (505,20) size 0x0
                   RenderButton {INPUT} at (123,31) size 119x33 [bgcolor=#C0C0C0]
                     RenderBlock (anonymous) at (6,6) size 107x21
@@ -147,5 +146,7 @@ layer at (0,0) size 800x600
           RenderInline {FONT} at (0,0) size 68x13
             RenderText {#text} at (358,0) size 68x13
               text run at (358,0) width 68: "\x{A9}2005 Google"
+layer at (134,97) size 497x21
+  RenderBlock {DIV} at (2,2) size 497x21
 selection start: position 0 of child 3 {INPUT} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of body
 selection end:   position 1 of child 2 {BR} of child 0 {FONT} of child 2 {TD} of child 0 {TR} of child 0 {TBODY} of child 2 {TABLE} of child 4 {DIV} of child 0 {CENTER} of body

@@ -10,5 +10,6 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,4) size 364x21
               text run at (0,4) width 364: "This is a searchable index. Enter search keywords: "
             RenderTextControl {INPUT} at (366,2) size 186x25
-              RenderBlock {DIV} at (2,2) size 182x21
         RenderBlock {HR} at (0,47) size 784x2 [border: (1px inset #000000)]
+layer at (376,22) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21

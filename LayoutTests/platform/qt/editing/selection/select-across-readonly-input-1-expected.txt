@@ -13,14 +13,15 @@ layer at (0,0) size 800x600
           text run at (0,21) width 225: "extend inside the input element."
       RenderBlock {DIV} at (0,116) size 784x29
         RenderTextControl {INPUT} at (0,2) size 56x25
-          RenderBlock {DIV} at (2,2) size 52x21
-            RenderText {#text} at (1,0) size 35x21
-              text run at (1,0) width 35: "hello"
         RenderText {#text} at (56,4) size 4x21
           text run at (56,4) width 4: " "
         RenderInline {SPAN} at (0,0) size 39x21
           RenderText {#text} at (60,4) size 39x21
             text run at (60,4) width 39: "world"
         RenderText {#text} at (0,0) size 0x0
+layer at (10,128) size 52x21
+  RenderBlock {DIV} at (2,2) size 52x21
+    RenderText {#text} at (1,0) size 35x21
+      text run at (1,0) width 35: "hello"
 selection start: position 4 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body
 selection end:   position 5 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body

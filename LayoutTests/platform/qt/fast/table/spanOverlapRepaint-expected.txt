@@ -19,7 +19,8 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,16) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                     RenderTableCell {TD} at (8,2) size 194x33 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                       RenderTextControl {INPUT} at (4,4) size 186x25
-                        RenderBlock {DIV} at (2,2) size 182x21
-                          RenderText {#text} at (1,0) size 35x21
-                            text run at (1,0) width 35: "hello"
                       RenderText {#text} at (0,0) size 0x0
+layer at (27,29) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 35x21
+      text run at (1,0) width 35: "hello"

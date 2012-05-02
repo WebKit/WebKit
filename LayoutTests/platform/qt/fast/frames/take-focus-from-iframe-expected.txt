@@ -11,13 +11,15 @@ layer at (0,0) size 800x600
             RenderBlock {HTML} at (0,0) size 184x45
               RenderBody {BODY} at (8,8) size 168x29
                 RenderTextControl {INPUT} at (2,2) size 186x25
-                  RenderBlock {DIV} at (2,2) size 182x21
+          layer at (12,12) size 182x21
+            RenderBlock {DIV} at (2,2) size 182x21
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,60) size 784x29
         RenderText {#text} at (0,4) size 399x21
           text run at (0,4) width 399: "This field should look and act focused. Try to type into it: "
         RenderTextControl {INPUT} at (401,2) size 186x25
-          RenderBlock {DIV} at (2,2) size 182x21
-            RenderText {#text} at (1,0) size 44x21
-              text run at (1,0) width 44: "PASS"
+layer at (411,72) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 44x21
+      text run at (1,0) width 44: "PASS"
 caret: position 4 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 3 {P} of body

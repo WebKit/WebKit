@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderEmbeddedObject {EMBED} at (0,0) size 100x100
         RenderBR {BR} at (100,100) size 0x0
         RenderTextControl {INPUT} at (2,102) size 186x25
-          RenderBlock {DIV} at (2,2) size 182x21
-            RenderText {#text} at (1,0) size 35x21
-              text run at (1,0) width 35: "hello"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,129) size 784x0
-caret: position 1 of child 1 {EMBED} of body
+layer at (12,112) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 35x21
+      text run at (1,0) width 35: "hello"

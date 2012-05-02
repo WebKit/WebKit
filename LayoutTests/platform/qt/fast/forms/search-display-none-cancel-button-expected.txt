@@ -10,7 +10,8 @@ layer at (0,0) size 800x600
         RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
           RenderBlock {DIV} at (0,10) size 0x0
           RenderBlock {DIV} at (0,0) size 182x21
-            RenderBlock {DIV} at (0,0) size 182x21
-              RenderText {#text} at (1,0) size 25x21
-                text run at (1,0) width 25: "test"
       RenderText {#text} at (0,0) size 0x0
+layer at (12,33) size 182x21
+  RenderBlock {DIV} at (0,0) size 182x21
+    RenderText {#text} at (1,0) size 25x21
+      text run at (1,0) width 25: "test"

@@ -9,7 +9,6 @@ layer at (0,0) size 800x435
       RenderBlock (anonymous) at (0,37) size 784x374
         RenderText {#text} at (182,166) size 4x21
           text run at (182,166) width 4: " "
-        RenderBlock {DIV} at (206,20) size 142x142 [border: (1px solid #000000)]
         RenderText {#text} at (368,166) size 4x21
           text run at (368,166) width 4: " "
         RenderText {#text} at (554,166) size 4x21
@@ -17,16 +16,19 @@ layer at (0,0) size 800x435
         RenderBR {BR} at (0,0) size 0x0
         RenderText {#text} at (182,353) size 4x21
           text run at (182,353) width 4: " "
-        RenderBlock {DIV} at (206,207) size 142x142 [border: (1px solid #000000)]
         RenderText {#text} at (368,353) size 4x21
           text run at (368,353) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (28,73) size 142x142 clip at (29,74) size 140x140 scrollHeight 171
   RenderBlock {DIV} at (20,20) size 142x142 [border: (1px solid #000000)]
     RenderBlock {DIV} at (11,11) size 122x122 [border: (1px solid #0000FF)]
+layer at (214,73) size 142x142 clip at (215,74) size 140x140
+  RenderBlock {DIV} at (206,20) size 142x142 [border: (1px solid #000000)]
 layer at (28,260) size 142x142 clip at (29,261) size 140x140 scrollHeight 171
   RenderBlock {DIV} at (20,207) size 142x142 [border: (1px solid #000000)]
     RenderBlock {DIV} at (11,11) size 122x122 [border: (1px solid #0000FF)]
+layer at (214,260) size 142x142 clip at (215,261) size 140x140
+  RenderBlock {DIV} at (206,207) size 142x142 [border: (1px solid #000000)]
 layer at (50,95) size 100x150 backgroundClip at (29,74) size 140x140 clip at (29,74) size 140x140 outlineClip at (29,74) size 140x140
   RenderBlock {DIV} at (11,11) size 100x150 [bgcolor=#808080]
 layer at (225,84) size 122x122

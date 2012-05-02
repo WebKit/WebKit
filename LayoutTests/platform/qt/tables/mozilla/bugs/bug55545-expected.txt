@@ -15,5 +15,6 @@ layer at (0,0) size 800x600
                         text run at (1,1) width 61: "User ID:"
                     RenderTableCell {TD} at (67,2) size 372x31 [r=0 c=1 rs=1 cs=1]
                       RenderTextControl {INPUT} at (3,3) size 366x25
-                        RenderBlock {DIV} at (2,2) size 362x21
                       RenderText {#text} at (0,0) size 0x0
+layer at (83,18) size 362x21
+  RenderBlock {DIV} at (2,2) size 362x21

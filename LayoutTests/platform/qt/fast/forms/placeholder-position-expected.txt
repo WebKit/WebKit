@@ -7,103 +7,125 @@ layer at (0,0) size 800x600
         RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
           RenderBlock {DIV} at (0,10) size 0x0
           RenderBlock {DIV} at (0,0) size 171x21
-            RenderBlock {DIV} at (0,0) size 171x21
           RenderBlock {DIV} at (171,5) size 11x11
-        RenderBlock {DIV} at (2,2) size 171x21 [color=#A9A9A9]
-          RenderText {#text} at (1,0) size 84x21
-            text run at (1,0) width 84: "placeholder"
       RenderBR {BR} at (190,20) size 0x0
       RenderTextControl {INPUT} at (2,31) size 186x25
-        RenderBlock {DIV} at (2,2) size 182x21
-        RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
-          RenderText {#text} at (1,0) size 84x21
-            text run at (1,0) width 84: "placeholder"
       RenderBR {BR} at (190,49) size 0x0
       RenderTextControl {INPUT} at (2,60) size 186x25
         RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
           RenderBlock {DIV} at (0,10) size 0x0
           RenderBlock {DIV} at (0,0) size 171x21
-            RenderBlock {DIV} at (0,0) size 171x21
           RenderBlock {DIV} at (171,5) size 11x11
-        RenderBlock {DIV} at (2,2) size 171x21 [color=#A9A9A9]
-          RenderText {#text} at (86,0) size 84x21
-            text run at (86,0) width 84: "placeholder"
       RenderBR {BR} at (190,78) size 0x0
       RenderTextControl {INPUT} at (2,89) size 186x25
         RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
           RenderBlock {DIV} at (0,10) size 0x0
           RenderBlock {DIV} at (0,0) size 171x21
-            RenderBlock {DIV} at (0,0) size 171x21
           RenderBlock {DIV} at (171,5) size 11x11
-        RenderBlock {DIV} at (2,2) size 171x21 [color=#A9A9A9]
-          RenderText {#text} at (1,0) size 84x21
-            text run at (1,0) width 84: "placeholder"
       RenderBR {BR} at (190,107) size 0x0
       RenderBR {BR} at (204,166) size 0x0
       RenderTextControl {INPUT} at (2,168) size 186x25
-        RenderBlock {DIV} at (2,2) size 182x21
-        RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
-          RenderText {#text} at (1,0) size 84x21
-            text run at (1,0) width 84: "placeholder"
       RenderBR {BR} at (190,186) size 0x0
       RenderBR {BR} at (204,245) size 0x0
       RenderTextControl {INPUT} at (5,250) size 174x32 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
-        RenderBlock {DIV} at (6,6) size 162x20
-        RenderBlock {DIV} at (6,6) size 162x20 [color=#A9A9A9]
-          RenderText {#text} at (1,0) size 75x20
-            text run at (1,0) width 75: "placeholder"
       RenderBR {BR} at (184,271) size 0x0
       RenderTextControl {INPUT} at (2,289) size 186x29
-        RenderBlock {DIV} at (2,2) size 182x25
-          RenderText {#text} at (1,2) size 42x21
-            text run at (1,2) width 42: "Value"
       RenderText {#text} at (190,293) size 4x21
         text run at (190,293) width 4: " "
       RenderTextControl {INPUT} at (196,289) size 186x29
-        RenderBlock {DIV} at (2,2) size 182x25
-        RenderBlock {DIV} at (2,2) size 182x25 [color=#A9A9A9]
-          RenderText {#text} at (1,2) size 84x21
-            text run at (1,2) width 84: "placeholder"
       RenderText {#text} at (384,293) size 4x21
         text run at (384,293) width 4: " "
       RenderBR {BR} at (388,309) size 0x0
       RenderTextControl {INPUT} at (2,322) size 186x25
-        RenderBlock {DIV} at (2,2) size 182x21
-          RenderText {#text} at (70,0) size 42x21
-            text run at (70,0) width 42: "Value"
       RenderText {#text} at (190,324) size 4x21
         text run at (190,324) width 4: " "
       RenderTextControl {INPUT} at (196,322) size 186x25
-        RenderBlock {DIV} at (2,2) size 182x21
-        RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
-          RenderText {#text} at (49,0) size 84x21
-            text run at (49,0) width 84: "placeholder"
       RenderText {#text} at (384,324) size 4x21
         text run at (384,324) width 4: " "
       RenderTextControl {INPUT} at (390,322) size 186x25
-        RenderBlock {DIV} at (2,2) size 182x21
-        RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
-          RenderText {#text} at (49,0) size 84x21
-            text run at (49,0) width 84: "placeholder"
       RenderText {#text} at (578,324) size 4x21
         text run at (578,324) width 4: " "
       RenderBR {BR} at (582,340) size 0x0
       RenderBR {BR} at (190,369) size 0x0
+layer at (12,12) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+layer at (12,12) size 171x21
+  RenderBlock {DIV} at (2,2) size 171x21 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 84x21
+      text run at (1,0) width 84: "placeholder"
+layer at (12,41) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (12,41) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 84x21
+      text run at (1,0) width 84: "placeholder"
+layer at (12,70) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+layer at (12,70) size 171x21
+  RenderBlock {DIV} at (2,2) size 171x21 [color=#A9A9A9]
+    RenderText {#text} at (86,0) size 84x21
+      text run at (86,0) width 84: "placeholder"
+layer at (12,99) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+layer at (12,99) size 171x21
+  RenderBlock {DIV} at (2,2) size 171x21 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 84x21
+      text run at (1,0) width 84: "placeholder"
 layer at (10,126) size 200x46
   RenderTextControl {TEXTAREA} at (2,118) size 200x46
     RenderBlock {DIV} at (2,2) size 196x21
     RenderBlock {DIV} at (2,2) size 196x21 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 84x21
         text run at (0,0) width 84: "placeholder"
+layer at (12,178) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (12,178) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 84x21
+      text run at (1,0) width 84: "placeholder"
 layer at (10,205) size 200x46
   RenderTextControl {TEXTAREA} at (2,197) size 200x46
     RenderBlock {DIV} at (2,2) size 196x21
     RenderBlock {DIV} at (2,2) size 196x21 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 84x21
         text run at (0,0) width 84: "placeholder"
+layer at (19,264) size 162x20
+  RenderBlock {DIV} at (6,6) size 162x20
+layer at (19,264) size 162x20
+  RenderBlock {DIV} at (6,6) size 162x20 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 75x20
+      text run at (1,0) width 75: "placeholder"
+layer at (12,299) size 182x25
+  RenderBlock {DIV} at (2,2) size 182x25
+    RenderText {#text} at (1,2) size 42x21
+      text run at (1,2) width 42: "Value"
+layer at (206,299) size 182x25
+  RenderBlock {DIV} at (2,2) size 182x25
+layer at (206,299) size 182x25
+  RenderBlock {DIV} at (2,2) size 182x25 [color=#A9A9A9]
+    RenderText {#text} at (1,2) size 84x21
+      text run at (1,2) width 84: "placeholder"
+layer at (12,332) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (70,0) size 42x21
+      text run at (70,0) width 42: "Value"
+layer at (206,332) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (206,332) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
+    RenderText {#text} at (49,0) size 84x21
+      text run at (49,0) width 84: "placeholder"
+layer at (400,332) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (400,332) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
+    RenderText {#text} at (49,0) size 84x21
+      text run at (49,0) width 84: "placeholder"
 layer at (10,359) size 186x25
   RenderTextControl {INPUT} at (2,351) size 186x25
-    RenderBlock {DIV} at (2,2) size 182x21
-    RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
-      RenderText {#text} at (1,0) size 84x21
-        text run at (1,0) width 84: "placeholder"
+layer at (12,361) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+layer at (12,361) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 84x21
+      text run at (1,0) width 84: "placeholder"

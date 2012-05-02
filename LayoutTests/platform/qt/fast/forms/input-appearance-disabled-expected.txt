@@ -7,7 +7,8 @@ layer at (0,0) size 800x600
         text run at (0,0) width 445: "This tests that text can not be inserted into a disabled text field. "
       RenderBR {BR} at (445,16) size 0x0
       RenderTextControl {INPUT} at (2,23) size 186x25
-        RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
-          RenderText {#text} at (1,0) size 89x21
-            text run at (1,0) width 89: "Test Passed"
       RenderText {#text} at (0,0) size 0x0
+layer at (12,33) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
+    RenderText {#text} at (1,0) size 89x21
+      text run at (1,0) width 89: "Test Passed"

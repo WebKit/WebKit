@@ -13,7 +13,6 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (136,4) size 370x29 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 366x25
-                    RenderBlock {DIV} at (2,2) size 362x21
                   RenderText {#text} at (0,0) size 0x0
                 RenderTableCell {TD} at (506,0) size 126x37 [r=0 c=2 rs=1 cs=1]
                   RenderButton {INPUT} at (2,2) size 122x33 [bgcolor=#C0C0C0]
@@ -30,4 +29,6 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,53) size 784x21
           RenderBR {BR} at (392,0) size 0x21
+layer at (148,16) size 362x21
+  RenderBlock {DIV} at (2,2) size 362x21
 caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 2 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

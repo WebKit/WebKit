@@ -13,9 +13,6 @@ layer at (0,0) size 800x600
           text run at (0,21) width 374: "extend only in the input element that contains \"hello\"."
       RenderBlock {DIV} at (0,116) size 784x29
         RenderTextControl {INPUT} at (0,2) size 56x25
-          RenderBlock {DIV} at (2,2) size 52x21
-            RenderText {#text} at (1,0) size 35x21
-              text run at (1,0) width 35: "hello"
         RenderText {#text} at (56,4) size 4x21
           text run at (56,4) width 4: " "
         RenderInline {SPAN} at (0,0) size 39x21
@@ -25,6 +22,10 @@ layer at (0,0) size 800x600
           text run at (99,4) width 4: " "
         RenderTextControl {INPUT} at (103,2) size 56x25
         RenderText {#text} at (0,0) size 0x0
+layer at (10,128) size 52x21
+  RenderBlock {DIV} at (2,2) size 52x21
+    RenderText {#text} at (1,0) size 35x21
+      text run at (1,0) width 35: "hello"
 layer at (113,128) size 52x21 scrollWidth 54
   RenderBlock {DIV} at (2,2) size 52x21
     RenderText {#text} at (1,0) size 52x21

@@ -50,7 +50,6 @@ layer at (0,0) size 800x586
                 RenderTableRow (anonymous) at (0,28) size 147x32
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
-                      RenderBlock {DIV} at (2,2) size 139x21
             RenderText {#text} at (147,44) size 4x21
               text run at (147,44) width 4: " "
             RenderTable {SPAN} at (151,0) size 147x60
@@ -62,7 +61,6 @@ layer at (0,0) size 800x586
                 RenderTableRow (anonymous) at (0,28) size 147x32
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
-                      RenderBlock {DIV} at (2,2) size 139x21
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,135) size 568x71
             RenderTable {SPAN} at (0,0) size 339x60
@@ -74,7 +72,6 @@ layer at (0,0) size 800x586
                 RenderTableRow (anonymous) at (0,28) size 339x32
                   RenderTableCell (anonymous) at (0,28) size 339x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 335x25
-                      RenderBlock {DIV} at (2,2) size 331x21
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,206) size 568x71
             RenderTable {SPAN} at (0,0) size 147x60
@@ -86,7 +83,6 @@ layer at (0,0) size 800x586
                 RenderTableRow (anonymous) at (0,28) size 147x32
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
-                      RenderBlock {DIV} at (2,2) size 139x21
             RenderText {#text} at (147,44) size 4x21
               text run at (147,44) width 4: " "
             RenderTable {SPAN} at (151,0) size 147x60
@@ -98,7 +94,6 @@ layer at (0,0) size 800x586
                 RenderTableRow (anonymous) at (0,28) size 147x32
                   RenderTableCell (anonymous) at (0,28) size 147x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,3) size 143x25
-                      RenderBlock {DIV} at (2,2) size 139x21
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,277) size 568x37
             RenderButton {INPUT} at (2,2) size 66x33 [bgcolor=#C0C0C0]
@@ -112,3 +107,13 @@ layer at (0,0) size 800x586
                 RenderText at (0,0) size 80x21
                   text run at (0,0) width 80: "Clear Form"
             RenderText {#text} at (0,0) size 0x0
+layer at (160,286) size 139x21
+  RenderBlock {DIV} at (2,2) size 139x21
+layer at (311,286) size 139x21
+  RenderBlock {DIV} at (2,2) size 139x21
+layer at (160,357) size 331x21
+  RenderBlock {DIV} at (2,2) size 331x21
+layer at (160,428) size 139x21
+  RenderBlock {DIV} at (2,2) size 139x21
+layer at (311,428) size 139x21
+  RenderBlock {DIV} at (2,2) size 139x21

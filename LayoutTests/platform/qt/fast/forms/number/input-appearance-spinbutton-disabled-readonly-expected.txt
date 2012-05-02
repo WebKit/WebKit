@@ -12,9 +12,6 @@ layer at (0,0) size 800x600
           RenderTextControl {INPUT} at (2,2) size 226x30
             RenderDeprecatedFlexibleBox {DIV} at (2,2) size 222x26
               RenderBlock {DIV} at (0,0) size 206x26
-                RenderBlock {DIV} at (0,0) size 206x26
-                  RenderText {#text} at (1,0) size 11x26
-                    text run at (1,0) width 11: "0"
           RenderText {#text} at (230,8) size 94x21
             text run at (230,8) width 94: " Normal state"
       RenderBlock {DIV} at (0,92) size 784x34
@@ -22,9 +19,6 @@ layer at (0,0) size 800x600
           RenderTextControl {INPUT} at (2,2) size 226x30
             RenderDeprecatedFlexibleBox {DIV} at (2,2) size 222x26
               RenderBlock {DIV} at (0,0) size 206x26
-                RenderBlock {DIV} at (0,0) size 206x26 [color=#545454]
-                  RenderText {#text} at (1,0) size 11x26
-                    text run at (1,0) width 11: "0"
           RenderText {#text} at (230,8) size 106x21
             text run at (230,8) width 106: " Disabled state"
       RenderBlock {DIV} at (0,126) size 784x34
@@ -32,11 +26,20 @@ layer at (0,0) size 800x600
           RenderTextControl {INPUT} at (2,2) size 226x30
             RenderDeprecatedFlexibleBox {DIV} at (2,2) size 222x26
               RenderBlock {DIV} at (0,0) size 206x26
-                RenderBlock {DIV} at (0,0) size 206x26
-                  RenderText {#text} at (1,0) size 11x26
-                    text run at (1,0) width 11: "0"
           RenderText {#text} at (230,8) size 116x21
             text run at (230,8) width 116: " Read-only state"
+layer at (12,70) size 206x26
+  RenderBlock {DIV} at (0,0) size 206x26
+    RenderText {#text} at (1,0) size 11x26
+      text run at (1,0) width 11: "0"
+layer at (12,104) size 206x26
+  RenderBlock {DIV} at (0,0) size 206x26 [color=#545454]
+    RenderText {#text} at (1,0) size 11x26
+      text run at (1,0) width 11: "0"
+layer at (12,138) size 206x26
+  RenderBlock {DIV} at (0,0) size 206x26
+    RenderText {#text} at (1,0) size 11x26
+      text run at (1,0) width 11: "0"
 layer at (220,68) size 16x30
   RenderBlock (relative positioned) {DIV} at (208,-2) size 16x30
 layer at (220,102) size 16x30

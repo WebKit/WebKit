@@ -7,21 +7,23 @@ layer at (0,0) size 800x600
         RenderDeprecatedFlexibleBox {DIV} at (3,3) size 442x51
           RenderBlock {DIV} at (0,25) size 0x0
           RenderBlock {DIV} at (0,0) size 421x51
-            RenderBlock {DIV} at (0,0) size 421x51
-              RenderText {#text} at (1,0) size 362x51
-                text run at (1,0) width 362: "value jgq not clipped"
           RenderBlock {DIV} at (421,15) size 21x21
       RenderBR {BR} at (452,44) size 0x0
       RenderTextControl {INPUT} at (2,92) size 446x55
-        RenderBlock {DIV} at (2,2) size 442x51
-          RenderText {#text} at (1,0) size 362x51
-            text run at (1,0) width 362: "value jgq not clipped"
       RenderBR {BR} at (450,133) size 0x0
       RenderTextControl {INPUT} at (2,149) size 226x25
         RenderDeprecatedFlexibleBox {DIV} at (2,0) size 222x25
           RenderBlock {DIV} at (0,12) size 0x0
           RenderBlock {DIV} at (0,2) size 208x21
           RenderBlock {DIV} at (208,5) size 14x14
+layer at (13,13) size 421x51
+  RenderBlock {DIV} at (0,0) size 421x51
+    RenderText {#text} at (1,0) size 362x51
+      text run at (1,0) width 362: "value jgq not clipped"
+layer at (12,102) size 442x51
+  RenderBlock {DIV} at (2,2) size 442x51
+    RenderText {#text} at (1,0) size 362x51
+      text run at (1,0) width 362: "value jgq not clipped"
 layer at (12,159) size 208x21 scrollHeight 26
   RenderBlock {DIV} at (0,0) size 208x21
     RenderText {#text} at (1,0) size 118x26

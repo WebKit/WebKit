@@ -10,9 +10,10 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (12,52) size 186x25
   RenderTextControl {INPUT} at (12,52) size 186x25
-    RenderBlock {DIV} at (2,2) size 182x21
-      RenderText {#text} at (1,0) size 170x21
-        text run at (1,0) width 170: "No caret should be here"
+layer at (14,54) size 182x21
+  RenderBlock {DIV} at (2,2) size 182x21
+    RenderText {#text} at (1,0) size 170x21
+      text run at (1,0) width 170: "No caret should be here"
 layer at (10,70) size 350x42
   RenderBlock (positioned) {DIV} at (10,70) size 350x42
     RenderBR {BR} at (0,0) size 0x21
