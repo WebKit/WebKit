@@ -6292,6 +6292,8 @@
 		FD581FAF1520F91F003A7A75 /* Oscillator.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FAC1520F91F003A7A75 /* Oscillator.h */; };
 		FD581FB41520F93B003A7A75 /* WaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD581FB11520F93B003A7A75 /* WaveTable.cpp */; };
 		FD581FB51520F93B003A7A75 /* WaveTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FD581FB21520F93B003A7A75 /* WaveTable.h */; };
+		FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */; };
+		FD629EA4154B47160006D026 /* AudioBasicInspectorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */; };
 		FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */; };
 		FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */; };
 		FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */; };
@@ -13520,6 +13522,8 @@
 		FD581FB11520F93B003A7A75 /* WaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveTable.cpp; sourceTree = "<group>"; };
 		FD581FB21520F93B003A7A75 /* WaveTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveTable.h; sourceTree = "<group>"; };
 		FD581FB31520F93B003A7A75 /* WaveTable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WaveTable.idl; sourceTree = "<group>"; };
+		FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBasicInspectorNode.h; sourceTree = "<group>"; };
+		FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBasicInspectorNode.cpp; sourceTree = "<group>"; };
 		FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceProviderClient.h; sourceTree = "<group>"; };
 		FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressorNode.h; sourceTree = "<group>"; };
@@ -21365,6 +21369,8 @@
 			children = (
 				FD5686C713AC180200B69C68 /* AsyncAudioDecoder.cpp */,
 				FD5686C813AC180200B69C68 /* AsyncAudioDecoder.h */,
+				FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */,
+				FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */,
 				FD315FAC12B0267500C1A359 /* AudioBasicProcessorNode.cpp */,
 				FD315FAD12B0267500C1A359 /* AudioBasicProcessorNode.h */,
 				FD315FAE12B0267500C1A359 /* AudioBuffer.cpp */,
@@ -24837,6 +24843,7 @@
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
 				71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */,
 				78D02BC6154A18DF00B62D05 /* CSSPropertyAnimation.h in Headers */,
+				FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27853,6 +27860,7 @@
 				FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */,
 				71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
+				FD629EA4154B47160006D026 /* AudioBasicInspectorNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

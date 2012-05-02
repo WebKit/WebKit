@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("This test verifies that the AudioBasicInspectorNode based nodes work correctly.");
+
+var sampleRate = 44100.0;
+// We carefully arrange the renderLengthInFrames to be a multiple of the AudioNode rendering quantum (AudioNode::ProcessingSizeInFrames)
+// so that AudioSourceNode will not feed tailing zeroes into the context and fail this test.
+var renderLengthInFrames = 256;
+var fftSize = 64;
+
+var audioDataOne = 255; // Audio data 1.0 in Uint8 format will be 255.
+var audioDataZero = 128; // Audio data 0 in Uint8 format will be 128.
+
+var context;
+var constantBuffer;
+var bufferSource;
+var analyser;
+
+function constructCommonGraph() {
+    // Create offline audio context.
+    context = new webkitAudioContext(1, renderLengthInFrames, sampleRate);
+    constantBuffer = createConstantBuffer(context, renderLengthInFrames, 1);
+
+    bufferSource = context.createBufferSource();
+    bufferSource.buffer = constantBuffer;
+
+    analyser = context.createAnalyser();
+    analyser.fftSize = fftSize;
+
+    bufferSource.connect(analyser);
+}
+
+function test1Finished() {
+    var timeDomainData = new Uint8Array(fftSize);
+    analyser.getByteTimeDomainData(timeDomainData);
+
+    if (timeDomainData[0] >= audioDataOne)
+        testPassed("RealtimeAnalyserNode got pulled when connected from upstream node but not to downstream node.");
+    else
+        testFailed("RealtimeAnalyserNode failed to get pulled when connected from upstream node but not to downstream node.");
+
+    test2();
+}
+
+// To verify the realtimeAnalyser can pull data when there is an upstream node connected to it
+// but it's not connected to a downstream node.
+function test1() {
+    constructCommonGraph();
+
+    bufferSource.noteOn(0);
+
+    context.oncomplete = test1Finished;
+    context.startRendering();
+}
+
+function test2Finished() {
+    var timeDomainData = new Uint8Array(fftSize);
+    analyser.getByteTimeDomainData(timeDomainData);
+
+    if (timeDomainData[0] >= audioDataOne)
+        testPassed("RealtimeAnalyserNode got pulled when connected from upstream node and to destination node.");
+    else
+        testFailed("RealtimeAnalyserNode failed to be pulled when connected by upstream node and to destination node.");
+
+    test3();
+}
+
+// To verify the realtimeAnalyser can process normally when there is an upstream node connected to it
+// and it's also connected to a downstream node which ultimately connect to audio destination.
+function test2() {
+    constructCommonGraph();
+
+    analyser.connect(context.destination);
+
+    bufferSource.noteOn(0);
+
+    context.oncomplete = test2Finished;
+    context.startRendering();
+}
+
+function test3Finished() {
+    var timeDomainData = new Uint8Array(fftSize);
+    analyser.getByteTimeDomainData(timeDomainData);
+
+    // If realtimeAnalyser hasn't pulled any data, the data in buffer will be 0.
+    if (timeDomainData[0] == audioDataZero)
+        testPassed("RealtimeAnalyserNode didn't get pulled when it should not.");
+    else
+        testFailed("RealtimeAnalyserNode been pulled when it should not.");
+
+    finishJSTest();
+}
+
+// To verify the realtimeAnalyser will stop pulling if it is connected to a downstream node
+// which is not ultimatly connected to any audio destination.
+function test3() {
+    constructCommonGraph();
+
+    var gain = context.createGainNode();
+    analyser.connect(gain);
+
+    bufferSource.noteOn(0);
+
+    context.oncomplete = test3Finished;
+    context.startRendering();
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    test1();
+}
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

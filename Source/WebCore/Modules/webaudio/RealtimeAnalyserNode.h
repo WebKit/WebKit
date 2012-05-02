@@ -25,13 +25,13 @@
 #ifndef RealtimeAnalyserNode_h
 #define RealtimeAnalyserNode_h
 
-#include "AudioNode.h"
+#include "AudioBasicInspectorNode.h"
 #include "RealtimeAnalyser.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class RealtimeAnalyserNode : public AudioNode {
+class RealtimeAnalyserNode : public AudioBasicInspectorNode {
 public:
     static PassRefPtr<RealtimeAnalyserNode> create(AudioContext* context, float sampleRate)
     {
@@ -42,7 +42,6 @@ public:
     
     // AudioNode
     virtual void process(size_t framesToProcess);
-    virtual void pullInputs(size_t framesToProcess);
     virtual void reset();
 
     // Javascript bindings

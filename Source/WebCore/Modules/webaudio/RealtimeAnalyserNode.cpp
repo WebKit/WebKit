@@ -35,7 +35,7 @@
 namespace WebCore {
 
 RealtimeAnalyserNode::RealtimeAnalyserNode(AudioContext* context, float sampleRate)
-    : AudioNode(context, sampleRate)
+    : AudioBasicInspectorNode(context, sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
@@ -68,15 +68,6 @@ void RealtimeAnalyserNode::process(size_t framesToProcess)
     // (resulting in inputBus == outputBus).  Otherwise, do an up-mix to stereo.
     if (inputBus != outputBus)
         outputBus->copyFrom(*inputBus);
-}
-
-// We override pullInputs() as an optimization allowing this node to take advantage of in-place processing,
-// where the input is simply passed through unprocessed to the output.
-// Note: this only applies if the input and output channel counts match.
-void RealtimeAnalyserNode::pullInputs(size_t framesToProcess)
-{
-    // Render input stream - try to render directly into output bus for pass-through processing where process() doesn't need to do anything...
-    input(0)->pull(output(0)->bus(), framesToProcess);
 }
 
 void RealtimeAnalyserNode::reset()

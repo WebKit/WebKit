@@ -1,3 +1,13 @@
+2012-05-01  Raymond Liu  <raymond.liu@intel.com>
+
+        Modify RealtimeAnalyserNode pull mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=77515
+
+        Reviewed by Chris Rogers.
+
+        * webaudio/automatic-pull-node-expected.txt: Added.
+        * webaudio/automatic-pull-node.html: Added.
+
 2012-05-01  Keishi Hattori  <keishi@webkit.org>
 
         datalist: Form control in a <datalist> should be barred from constraint validation

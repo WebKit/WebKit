@@ -1557,6 +1557,8 @@
             'Modules/speech/SpeechRecognitionResult.h',
             'Modules/speech/SpeechRecognitionResultList.cpp',
             'Modules/speech/SpeechRecognitionResultList.h',
+            'Modules/webaudio/AudioBasicInspectorNode.cpp',
+            'Modules/webaudio/AudioBasicInspectorNode.h',
             'Modules/webaudio/AudioBasicProcessorNode.cpp',
             'Modules/webaudio/AudioBasicProcessorNode.h',
             'Modules/webaudio/AudioBuffer.cpp',

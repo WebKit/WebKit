@@ -80,6 +80,9 @@ void AudioDestinationNode::provideInput(AudioBus* destinationBus, size_t numberO
         destinationBus->copyFrom(*renderedBus);
     }
 
+    // Process nodes which need a little extra help because they are not connected to anything, but still need to process.
+    context()->processAutomaticPullNodes(numberOfFrames);
+
     // Let the context take care of any business at the end of each render quantum.
     context()->handlePostRenderTasks();
     

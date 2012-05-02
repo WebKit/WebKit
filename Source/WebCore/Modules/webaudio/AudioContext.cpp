@@ -140,6 +140,7 @@ AudioContext::AudioContext(Document* document)
     , m_document(document)
     , m_destinationNode(0)
     , m_isDeletionScheduled(false)
+    , m_automaticPullNodesNeedUpdating(false)
     , m_connectionCount(0)
     , m_audioThread(0)
     , m_graphOwnerThread(UndefinedThreadIdentifier)
@@ -164,6 +165,7 @@ AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t
     , m_isAudioThreadFinished(false)
     , m_document(document)
     , m_destinationNode(0)
+    , m_automaticPullNodesNeedUpdating(false)
     , m_connectionCount(0)
     , m_audioThread(0)
     , m_graphOwnerThread(UndefinedThreadIdentifier)
@@ -200,6 +202,8 @@ AudioContext::~AudioContext()
     ASSERT(!m_nodesToDelete.size());
     ASSERT(!m_referencedNodes.size());
     ASSERT(!m_finishedNodes.size());
+    ASSERT(!m_automaticPullNodes.size());
+    ASSERT(!m_renderingAutomaticPullNodes.size());
 }
 
 void AudioContext::lazyInitialize()
@@ -662,7 +666,9 @@ void AudioContext::handlePreRenderTasks()
         // Fixup the state of any dirty AudioNodeInputs and AudioNodeOutputs.
         handleDirtyAudioNodeInputs();
         handleDirtyAudioNodeOutputs();
-        
+
+        updateAutomaticPullNodes();
+
         if (mustReleaseLock)
             unlock();
     }
@@ -690,7 +696,9 @@ void AudioContext::handlePostRenderTasks()
         // Fixup the state of any dirty AudioNodeInputs and AudioNodeOutputs.
         handleDirtyAudioNodeInputs();
         handleDirtyAudioNodeOutputs();
-        
+
+        updateAutomaticPullNodes();
+
         if (mustReleaseLock)
             unlock();
     }
@@ -712,6 +720,12 @@ void AudioContext::markForDeletion(AudioNode* node)
 {
     ASSERT(isGraphOwner());
     m_nodesToDelete.append(node);
+
+    // This is probably the best time for us to remove the node from automatic pull list,
+    // since all connections are gone and we hold the graph lock. Then when handlePostRenderTasks()
+    // gets a chance to schedule the deletion work, updateAutomaticPullNodes() also gets a chance to
+    // modify m_renderingAutomaticPullNodes.
+    removeAutomaticPullNode(node);
 }
 
 void AudioContext::scheduleNodeDeletion()
@@ -801,6 +815,52 @@ void AudioContext::handleDirtyAudioNodeOutputs()
         (*i)->updateRenderingState();
 
     m_dirtyAudioNodeOutputs.clear();
+}
+
+void AudioContext::addAutomaticPullNode(AudioNode* node)
+{
+    ASSERT(isGraphOwner());
+
+    if (!m_automaticPullNodes.contains(node)) {
+        m_automaticPullNodes.add(node);
+        m_automaticPullNodesNeedUpdating = true;
+    }
+}
+
+void AudioContext::removeAutomaticPullNode(AudioNode* node)
+{
+    ASSERT(isGraphOwner());
+
+    if (m_automaticPullNodes.contains(node)) {
+        m_automaticPullNodes.remove(node);
+        m_automaticPullNodesNeedUpdating = true;
+    }
+}
+
+void AudioContext::updateAutomaticPullNodes()
+{
+    ASSERT(isGraphOwner());
+
+    if (m_automaticPullNodesNeedUpdating) {
+        // Copy from m_automaticPullNodes to m_renderingAutomaticPullNodes.
+        m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
+
+        unsigned j = 0;
+        for (HashSet<AudioNode*>::iterator i = m_automaticPullNodes.begin(); i != m_automaticPullNodes.end(); ++i, ++j) {
+            AudioNode* output = *i;
+            m_renderingAutomaticPullNodes[j] = output;
+        }
+
+        m_automaticPullNodesNeedUpdating = false;
+    }
+}
+
+void AudioContext::processAutomaticPullNodes(size_t framesToProcess)
+{
+    ASSERT(isAudioThread());
+
+    for (unsigned i = 0; i < m_renderingAutomaticPullNodes.size(); ++i)
+        m_renderingAutomaticPullNodes[i]->processIfNecessary(framesToProcess);
 }
 
 const AtomicString& AudioContext::interfaceName() const

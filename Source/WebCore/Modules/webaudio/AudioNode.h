@@ -116,9 +116,9 @@ public:
     AudioNodeOutput* output(unsigned);
 
     // Called from main thread by corresponding JavaScript methods.
-    void connect(AudioNode*, unsigned outputIndex, unsigned inputIndex, ExceptionCode&);
+    virtual void connect(AudioNode*, unsigned outputIndex, unsigned inputIndex, ExceptionCode&);
     void connect(AudioParam*, unsigned outputIndex, ExceptionCode&);
-    void disconnect(unsigned outputIndex, ExceptionCode&);
+    virtual void disconnect(unsigned outputIndex, ExceptionCode&);
 
     virtual float sampleRate() const { return m_sampleRate; }
 

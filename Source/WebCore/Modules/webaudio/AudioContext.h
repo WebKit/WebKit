@@ -148,7 +148,15 @@ public:
     // We schedule deletion of all marked nodes at the end of each realtime render quantum.
     void markForDeletion(AudioNode*);
     void deleteMarkedNodes();
-    
+
+    // AudioContext can pull node(s) at the end of each render quantum even when they are not connected to any downstream nodes.
+    // These two methods are called by the nodes who want to add/remove themselves into/from the automatic pull lists.
+    void addAutomaticPullNode(AudioNode*);
+    void removeAutomaticPullNode(AudioNode*);
+
+    // Called right before handlePostRenderTasks() to handle nodes which need to be pulled even when they are not connected to anything.
+    void processAutomaticPullNodes(size_t framesToProcess);
+
     // Keeps track of the number of connections made.
     void incrementConnectionCount()
     {
@@ -280,6 +288,14 @@ private:
     HashSet<AudioNodeOutput*> m_dirtyAudioNodeOutputs;
     void handleDirtyAudioNodeInputs();
     void handleDirtyAudioNodeOutputs();
+
+    // For the sake of thread safety, we maintain a seperate Vector of automatic pull nodes for rendering in m_renderingAutomaticPullNodes.
+    // It will be copied from m_automaticPullNodes by updateAutomaticPullNodes() at the very start or end of the rendering quantum.
+    HashSet<AudioNode*> m_automaticPullNodes;
+    Vector<AudioNode*> m_renderingAutomaticPullNodes;
+    // m_automaticPullNodesNeedUpdating keeps track if m_automaticPullNodes is modified.
+    bool m_automaticPullNodesNeedUpdating;
+    void updateAutomaticPullNodes();
 
     unsigned m_connectionCount;
 

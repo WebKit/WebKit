@@ -5473,6 +5473,8 @@ if ENABLE_WEB_AUDIO
 webcore_sources += \
 	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.cpp \
 	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.h \
+	Source/WebCore/Modules/webaudio/AudioBasicInspectorNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioBasicInspectorNode.h \
 	Source/WebCore/Modules/webaudio/AudioBasicProcessorNode.cpp \
 	Source/WebCore/Modules/webaudio/AudioBasicProcessorNode.h \
 	Source/WebCore/Modules/webaudio/AudioBuffer.cpp \
