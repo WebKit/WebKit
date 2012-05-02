@@ -209,6 +209,7 @@ struct _Ewk_View_Private_Data {
         bool enablePlugins : 1;
         bool enableFrameFlattening : 1;
         bool encodingDetector : 1;
+        bool hyperlinkAuditingEnabled : 1;
         bool scriptsCanOpenWindows : 1;
         bool scriptsCanCloseWindows : 1;
 #if ENABLE(VIDEO_TRACK)
@@ -680,6 +681,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setFixedFontFamily("monotype");
     priv->pageSettings->setSansSerifFontFamily("sans");
     priv->pageSettings->setStandardFontFamily("sans");
+    priv->pageSettings->setHyperlinkAuditingEnabled(false);
     priv->pageSettings->setScriptEnabled(true);
     priv->pageSettings->setPluginsEnabled(true);
     priv->pageSettings->setLocalStorageEnabled(true);
@@ -728,6 +730,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.enablePlugins = priv->pageSettings->arePluginsEnabled();
     priv->settings.enableFrameFlattening = priv->pageSettings->frameFlatteningEnabled();
     priv->settings.enableXSSAuditor = priv->pageSettings->xssAuditorEnabled();
+    priv->settings.hyperlinkAuditingEnabled = priv->pageSettings->hyperlinkAuditingEnabled();
     priv->settings.scriptsCanOpenWindows = priv->pageSettings->javaScriptCanOpenWindowsAutomatically();
     priv->settings.scriptsCanCloseWindows = priv->pageSettings->allowScriptsToCloseWindows();
 #if ENABLE(VIDEO_TRACK)
@@ -2514,6 +2517,25 @@ Eina_Bool ewk_view_setting_include_links_in_focus_chain_set(Evas_Object* ewkView
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     enable = !!enable;
     priv->settings.tabsToLinks = enable;
+    return true;
+}
+
+Eina_Bool ewk_view_setting_enable_hyperlink_auditing_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.hyperlinkAuditingEnabled;
+}
+
+Eina_Bool ewk_view_setting_enable_hyperlink_auditing_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    enable = !!enable;
+    if (priv->settings.hyperlinkAuditingEnabled != enable) {
+        priv->pageSettings->setHyperlinkAuditingEnabled(enable);
+        priv->settings.hyperlinkAuditingEnabled = enable;
+    }
     return true;
 }
 

@@ -2046,6 +2046,35 @@ EAPI Eina_Bool ewk_view_setting_include_links_in_focus_chain_get(const Evas_Obje
 EAPI Eina_Bool ewk_view_setting_include_links_in_focus_chain_set(Evas_Object *o, Eina_Bool enable);
 
 /**
+ * Queries if hyperlink auditing is enabled.
+ *
+ * Hyperlink auditing is used if a hyperlink created by an @c a or @c area element has a @c ping attribute.
+ * Please refer to the hyperlink auditing specification at http://www.whatwg.org/specs/web-apps/current-work/#hyperlink-auditing.
+ * Hyperlink auditing is disabled by default.
+ *
+ * @param o view object to query if  hyperlink auditing is enabled
+ *
+ * @return @c EINA_TRUE if hyperlink auditing is enabled, @c EINA_FALSE
+ *         otherwise
+ */
+EAPI Eina_Bool ewk_view_setting_enable_hyperlink_auditing_get(const Evas_Object *o);
+
+/**
+ * Enables/disables hyperlink auditing.
+ *
+ * Hyperlink auditing is used if a hyperlink created by an @c a or @c area element has a @c ping attribute.
+ * Please refer to the hyperlink auditing specification at http://www.whatwg.org/specs/web-apps/current-work/#hyperlink-auditing.
+ * Hyperlink auditing is disabled by default.
+ *
+ * @param o view object to set hyperlink auditing
+ * @param enable @c EINA_TRUE to enable hyperlink auditing, @c EINA_FALSE to
+ *               disable
+ *
+ * @return @c EINA_TRUE on success or @EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_view_setting_enable_hyperlink_auditing_set(Evas_Object *o, Eina_Bool enable);
+
+/**
  * Gets the internal data of @a o.
  *
  * This is similar to evas_object_smart_data_get(), but additionally does type checking.

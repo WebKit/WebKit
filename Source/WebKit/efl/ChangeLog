@@ -1,3 +1,19 @@
+2012-05-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Hyperlink auditing ewk_view setting
+        https://bugs.webkit.org/show_bug.cgi?id=84451
+
+        Reviewed by Antonio Gomes.
+
+        Exporting new ewk_view setting:  hyperlinkAuditingEnabled - enbles/disables hyperlink auditing.
+
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_enable_hyperlink_auditing_get):
+        (ewk_view_setting_enable_hyperlink_auditing_set):
+        * ewk/ewk_view.h:
+
 2012-05-02  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Fix typo introduced in r115800.
