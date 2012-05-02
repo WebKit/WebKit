@@ -1,0 +1,5 @@
+This test that removing a track element before it has been processed doesn't crash (https://bugs.webkit.org/show_bug.cgi?id=85095).
+If this test does not crash, it passes.
+
+END OF TEST
+

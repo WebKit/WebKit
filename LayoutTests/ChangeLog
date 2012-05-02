@@ -1,3 +1,13 @@
+2012-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Crash in WebCore::TextTrackList::remove
+        https://bugs.webkit.org/show_bug.cgi?id=85095
+
+        Reviewed by Maciej Stachowiak.
+
+        * media/track/track-remove-quickly-expected.txt: Added.
+        * media/track/track-remove-quickly.html: Added.
+
 2012-05-02  David Barton  <dbarton@mathscribe.com>
 
         After appending MathML with jquery the table renders with overlaps

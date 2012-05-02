@@ -2816,6 +2816,9 @@ void HTMLMediaElement::willRemoveTrack(HTMLTrackElement* trackElement)
 
     trackElement->setHasBeenConfigured(false);
 
+    if (!m_textTracks)
+        return;
+    
     RefPtr<TextTrack> textTrack = trackElement->track();
     if (!textTrack)
         return;
