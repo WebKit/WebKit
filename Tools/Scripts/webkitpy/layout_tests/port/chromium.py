@@ -412,13 +412,7 @@ class ChromiumDriver(WebKitDriver):
         self._proc = None
         self._image_path = None
 
-        # FIXME: Make the regular webkit driver work on win as well so we can delete all of this driver code.
-        if port.host.platform.is_win():
-            if not hasattr(port._options, 'additional_drt_flag'):
-                port._options.additional_drt_flag = []
-            if not '--test-shell' in port._options.additional_drt_flag:
-                port._options.additional_drt_flag.append('--test-shell')
-
+        # FIXME: Delete all of this driver code once we're satisfied that it's not needed any more.
         self._test_shell = '--test-shell' in port.get_option('additional_drt_flag', [])
 
     def _wrapper_options(self, pixel_tests):

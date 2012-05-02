@@ -30,14 +30,23 @@
 """Package that implements the ServerProcess wrapper class"""
 
 import logging
-import os
-import select
 import signal
 import subprocess
 import sys
 import time
-if sys.platform != 'win32':
+
+# Note that although win32 python does provide an implementation of
+# the win32 select API, it only works on sockets, and not on the named pipes
+# used by subprocess, so we have to use the native APIs directly.
+if sys.platform == 'win32':
+    import errno
+    import msvcrt
+    import win32pipe
+    import win32file
+else:
     import fcntl
+    import os
+    import select
 
 from webkitpy.common.system.executive import Executive, ScriptError
 
@@ -45,7 +54,7 @@ from webkitpy.common.system.executive import Executive, ScriptError
 _log = logging.getLogger(__name__)
 
 
-class ServerProcess:
+class ServerProcess(object):
     """This class provides a wrapper around a subprocess that
     implements a simple request/response usage model. The primary benefit
     is that reading responses takes a deadline, so that we don't ever block
@@ -59,6 +68,10 @@ class ServerProcess:
         self._env = env
         self._reset()
         self._executive = executive
+
+        # See comment in imports for why we need the win32 APIs and can't just use select.
+        # FIXME: there should be a way to get win32 vs. cygwin from platforminfo.
+        self._use_win32_apis = sys.platform == 'win32'
 
     def name(self):
         return self._name
@@ -88,11 +101,12 @@ class ServerProcess:
                                       close_fds=close_fds,
                                       env=self._env)
         fd = self._proc.stdout.fileno()
-        fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
-        fd = self._proc.stderr.fileno()
-        fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+        if not self._use_win32_apis:
+            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+            fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+            fd = self._proc.stderr.fileno()
+            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+            fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
     def _handle_possible_interrupt(self):
         """This routine checks to see if the process crashed or exited
@@ -195,7 +209,7 @@ class ServerProcess:
         output, self._error = self._split_string_after_index(self._error, bytes_count)
         return output
 
-    def _wait_for_data_and_update_buffers(self, deadline):
+    def _wait_for_data_and_update_buffers_using_select(self, deadline):
         out_fd = self._proc.stdout.fileno()
         err_fd = self._proc.stderr.fileno()
         select_fds = (out_fd, err_fd)
@@ -208,6 +222,37 @@ class ServerProcess:
         except IOError, e:
             # FIXME: Why do we ignore all IOErrors here?
             pass
+
+    def _wait_for_data_and_update_buffers_using_win32_apis(self, deadline):
+        # See http://code.activestate.com/recipes/440554-module-to-allow-asynchronous-subprocess-use-on-win/
+        # and http://docs.activestate.com/activepython/2.6/pywin32/modules.html
+        # for documentation on all of these win32-specific modules.
+        now = time.time()
+        out_fh = msvcrt.get_osfhandle(self._proc.stdout.fileno())
+        err_fh = msvcrt.get_osfhandle(self._proc.stderr.fileno())
+        while (self._proc.poll() is None) and (now < deadline):
+            output = self._non_blocking_read_win32(out_fh)
+            error = self._non_blocking_read_win32(err_fh)
+            if output or error:
+                if output:
+                    self._output += output
+                if error:
+                    self._error += error
+                return
+            time.sleep(0.01)
+            now = time.time()
+        return
+
+    def _non_blocking_read_win32(self, handle):
+        try:
+            _, avail, _ = win32pipe.PeekNamedPipe(handle, 0)
+            if avail > 0:
+                _, buf = win32file.ReadFile(handle, avail, None)
+                return buf
+        except Exception, e:
+            if e[0] not in (109, errno.ESHUTDOWN):  # 109 == win32 ERROR_BROKEN_PIPE
+                raise
+        return None
 
     def has_crashed(self):
         if not self._crashed and self.poll():
@@ -231,7 +276,10 @@ class ServerProcess:
             if bytes is not None:
                 return bytes
 
-            self._wait_for_data_and_update_buffers(deadline)
+            if self._use_win32_apis:
+                self._wait_for_data_and_update_buffers_using_win32_apis(deadline)
+            else:
+                self._wait_for_data_and_update_buffers_using_select(deadline)
 
     def start(self):
         if not self._proc:

@@ -1,3 +1,28 @@
+2012-05-02  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: make ServerProcess work on chromium win
+        https://bugs.webkit.org/show_bug.cgi?id=85333
+
+        Reviewed by Ojan Vafai.
+
+        This change implements a poor man's select() that will
+        slow-spin doing non-blocking reads on the stdout and stderr
+        named pipes connecting the worker to the driver. Seems to work
+        and I have yet to see much overhead or ill effects but it
+        probably needs more testing.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.__init__):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._start):
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+        (ServerProcess._wait_for_data_and_update_buffers_using_win32_apis):
+        (ServerProcess):
+        (ServerProcess._non_blocking_read_win32):
+        (ServerProcess._read):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TestServerProcess.test_basic): Added.
+
 2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Use a SystemHost instead of PlatformInfo in the PNG checker.
