@@ -750,7 +750,7 @@ MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& t
 {
     String keySystem;
 #endif
-    WebMimeRegistry::SupportsType supportsType = webKitPlatformSupport()->mimeRegistry()->supportsMediaMIMEType(type, codecs, keySystem);
+    WebMimeRegistry::SupportsType supportsType = WebKit::Platform::current()->mimeRegistry()->supportsMediaMIMEType(type, codecs, keySystem);
 
     switch (supportsType) {
     default:

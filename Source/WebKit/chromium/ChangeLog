@@ -1,3 +1,17 @@
+2012-05-01  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Additional instances of calling mimeRegistry directly
+        https://bugs.webkit.org/show_bug.cgi?id=85320
+
+        Reviewed by Eric Seidel.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::canShowMIMEType):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+
 2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         *Command.h files shouldn't be exported to WebKit layer
