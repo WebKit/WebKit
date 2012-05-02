@@ -1,3 +1,22 @@
+2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed gardening.
+
+        Rebaselined overflow-delete-line.html and ancestor-overflow.html.
+
+        The pixel changes are only text differences.
+
+        * fast/repaint/overflow-delete-line-expected.txt: Added.
+        * platform/chromium-mac-leopard/compositing/overflow/ancestor-overflow-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/repaint/overflow-delete-line-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/overflow-delete-line-expected.png:
+        * platform/chromium-mac/compositing/overflow/ancestor-overflow-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/overflow-delete-line-expected.txt: Removed.
+        * platform/chromium-win/compositing/overflow/ancestor-overflow-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/repaint/overflow-delete-line-expected.txt: Removed.
+        * platform/gtk/fast/repaint/overflow-delete-line-expected.txt: Removed.
+
 2012-05-02  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Need tests for PerfTestRunner.computeStatistics

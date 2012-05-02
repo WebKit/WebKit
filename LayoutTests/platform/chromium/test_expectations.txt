@@ -3228,7 +3228,6 @@ BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/inline-relative-positioned.html = IMAGE+TEXT
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/lines-with-layout-delta.html = IMAGE+TEXT
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/overflow-clip-subtree-layout.html = IMAGE+TEXT
-BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/overflow-delete-line.html = IMAGE+TEXT
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/repaint-resized-overflow.html = IMAGE+TEXT
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-layoutstate-transform.html = IMAGE+TEXT
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE+TEXT
@@ -3711,7 +3710,6 @@ BUGWK83954 WIN LINUX LION : fast/text/textIteratorNilRenderer.html = TEXT
 // Those tests need a text baseline after allocating more layers.
 // The change should only be layer addition.
 BUGWK83954 : compositing/geometry/object-clip-rects-assertion.html = TEXT
-BUGWK83954 : compositing/overflow/ancestor-overflow.html = TEXT
 BUGWK83954 : editing/inserting/before-after-input-element.html = TEXT
 BUGWK83954 : editing/pasteboard/4806874.html = TEXT
 BUGWK83954 : editing/pasteboard/drop-text-without-selection.html = TEXT
