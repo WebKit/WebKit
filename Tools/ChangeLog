@@ -3,6 +3,20 @@
         webkitpy: Remove direct sys.platform usage in run_webkit_tests_integrationtest.
         https://bugs.webkit.org/show_bug.cgi?id=85419
 
+        Reviewed by Dirk Pranke.
+
+        As pointed out by Dirk Pranke, a PlatformInfo is not supposed to
+        be created directly, we should should a SystemHost instead.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.setUp): Create a SystemHost and obtain the PlatformInfo
+        object from it instead of creating PlatformInfo directly.
+
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Remove direct sys.platform usage in run_webkit_tests_integrationtest.
+        https://bugs.webkit.org/show_bug.cgi?id=85419
+
         Rubber-stamped by Dirk Pranke.
 
         Follow-up patch to r115887 which fixes some capitalization problems

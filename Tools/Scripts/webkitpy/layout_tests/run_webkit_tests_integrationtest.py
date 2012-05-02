@@ -45,8 +45,7 @@ import unittest
 
 from webkitpy.common.system import outputcapture, path
 from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin
-from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.platforminfo import PlatformInfo
+from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
@@ -261,7 +260,10 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
 
 class MainTest(unittest.TestCase, StreamTestingMixin):
     def setUp(self):
-        self._platform = PlatformInfo(sys, platform, Executive())
+        # A real PlatformInfo object is used here instead of a
+        # MockPlatformInfo because we need to actually check for
+        # Windows and Mac to skip some tests.
+        self._platform = SystemHost().platform
 
         # FIXME: Remove this when we fix test-webkitpy to work
         # properly on cygwin (bug 63846).
