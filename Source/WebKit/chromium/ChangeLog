@@ -1,3 +1,14 @@
+2012-05-02  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Changing webkitGetUserMedia to take an object instead of a string
+        https://bugs.webkit.org/show_bug.cgi?id=84850
+
+        Reviewed by Dimitri Glazkov.
+
+        * public/WebUserMediaRequest.h:
+        (WebUserMediaRequest):
+        * src/WebUserMediaRequest.cpp:
+
 2012-05-01  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Additional instances of calling histogramCustomCounts directly

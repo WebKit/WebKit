@@ -64,8 +64,7 @@ public:
 
     WEBKIT_EXPORT bool audio() const;
     WEBKIT_EXPORT bool video() const;
-    WEBKIT_EXPORT bool cameraPreferenceUser() const;
-    WEBKIT_EXPORT bool cameraPreferenceEnvironment() const;
+
     WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
 
     WEBKIT_EXPORT void requestSucceeded(const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources);

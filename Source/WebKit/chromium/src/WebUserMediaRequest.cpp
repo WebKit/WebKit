@@ -70,16 +70,6 @@ bool WebUserMediaRequest::video() const
     return m_private->video();
 }
 
-bool WebUserMediaRequest::cameraPreferenceUser() const
-{
-    return m_private->cameraPreferenceUser();
-}
-
-bool WebUserMediaRequest::cameraPreferenceEnvironment() const
-{
-    return m_private->cameraPreferenceEnvironment();
-}
-
 WebSecurityOrigin WebUserMediaRequest::securityOrigin() const
 {
     ASSERT(m_private->scriptExecutionContext());

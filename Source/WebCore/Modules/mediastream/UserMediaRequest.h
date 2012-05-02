@@ -44,11 +44,12 @@
 
 namespace WebCore {
 
+class Dictionary;
 class UserMediaController;
 
 class UserMediaRequest : public MediaStreamSourcesQueryClient, public ContextDestructionObserver {
 public:
-    static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
+    static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
     ~UserMediaRequest();
 
     NavigatorUserMediaSuccessCallback* successCallback() const { return m_successCallback.get(); }
@@ -62,23 +63,16 @@ public:
     // MediaStreamSourcesQueryClient
     virtual bool audio() const { return m_audio; }
     virtual bool video() const { return m_video; }
-    virtual bool cameraPreferenceUser() const { return m_cameraPreferenceUser; }
-    virtual bool cameraPreferenceEnvironment() const { return m_cameraPreferenceEnvironment; }
     virtual void didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
 
     // ContextDestructionObserver
     virtual void contextDestroyed();
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
-
-    void parseOptions(const String& options);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
 
     bool m_audio;
     bool m_video;
-
-    bool m_cameraPreferenceUser;
-    bool m_cameraPreferenceEnvironment;
 
     UserMediaController* m_controller;
 

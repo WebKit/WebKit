@@ -25,6 +25,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -45,7 +46,7 @@ NavigatorMediaStream::~NavigatorMediaStream()
 {
 }
 
-void NavigatorMediaStream::webkitGetUserMedia(Navigator* navigator, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
+void NavigatorMediaStream::webkitGetUserMedia(Navigator* navigator, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback, ExceptionCode& ec)
 {
     if (!successCallback)
         return;

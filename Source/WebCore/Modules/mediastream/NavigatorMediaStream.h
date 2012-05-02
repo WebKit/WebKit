@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class Dictionary;
 class Navigator;
 class NavigatorUserMediaErrorCallback;
 class NavigatorUserMediaSuccessCallback;
@@ -35,7 +36,7 @@ typedef int ExceptionCode;
 
 class NavigatorMediaStream {
 public:
-    static void webkitGetUserMedia(Navigator*, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
+    static void webkitGetUserMedia(Navigator*, const Dictionary&, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
 
 private:
     NavigatorMediaStream();

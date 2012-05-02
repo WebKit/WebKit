@@ -1,3 +1,20 @@
+2012-05-02  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Changing webkitGetUserMedia to take an object instead of a string
+        https://bugs.webkit.org/show_bug.cgi?id=84850
+
+        Reviewed by Dimitri Glazkov.
+
+        Also took the opportunity to update the peerconnection-Attributes test
+        to test PeerConnection00 instead.
+
+        * fast/mediastream/argument-types-expected.txt:
+        * fast/mediastream/peerconnection-Attributes-expected.txt:
+        * fast/mediastream/script-tests/argument-types.js:
+        (emptyFunction):
+        * fast/mediastream/script-tests/peerconnection-Attributes.js:
+        * platform/chromium/media/video-capture-preview.html:
+
 2012-05-02  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] CSS tests needs rebaselining

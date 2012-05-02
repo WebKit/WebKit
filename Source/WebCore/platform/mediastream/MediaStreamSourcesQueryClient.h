@@ -44,8 +44,6 @@ public:
 
     virtual bool audio() const = 0;
     virtual bool video() const = 0;
-    virtual bool cameraPreferenceUser() const = 0;
-    virtual bool cameraPreferenceEnvironment() const = 0;
 
     virtual void didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources) = 0;
 };

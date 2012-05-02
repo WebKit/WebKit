@@ -43,7 +43,7 @@ function playPreview()
     findMediaElement();
     try {
         consoleWrite("request access to local media");
-        navigator.webkitGetUserMedia("video", gotStream, gotStreamFailed);
+        navigator.webkitGetUserMedia({video:true}, gotStream, gotStreamFailed);
     } catch (e) {
         consoleWrite("getUserMedia error " + "(" + e.name + " / " + e.message + ")");
     }

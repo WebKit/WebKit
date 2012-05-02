@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,7 @@
 
 #include "UserMediaRequest.h"
 
+#include "Dictionary.h"
 #include "LocalMediaStream.h"
 #include "MediaStreamCenter.h"
 #include "SpaceSplitString.h"
@@ -41,7 +43,7 @@
 
 namespace WebCore {
 
-PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* context, UserMediaController* controller, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* context, UserMediaController* controller, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
 {
     RefPtr<UserMediaRequest> request = adoptRef(new UserMediaRequest(context, controller, options, successCallback, errorCallback));
     if (!request->audio() && !request->video())
@@ -50,17 +52,16 @@ PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* co
     return request.release();
 }
 
-UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback, PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
     : ContextDestructionObserver(context)
     , m_audio(false)
     , m_video(false)
-    , m_cameraPreferenceUser(false)
-    , m_cameraPreferenceEnvironment(false)
     , m_controller(controller)
     , m_successCallback(successCallback)
     , m_errorCallback(errorCallback)
 {
-    parseOptions(options);
+    options.get("audio", m_audio);
+    options.get("video", m_video);
 }
 
 UserMediaRequest::~UserMediaRequest()
@@ -106,26 +107,6 @@ void UserMediaRequest::contextDestroyed()
     }
 
     ContextDestructionObserver::contextDestroyed();
-}
-
-void UserMediaRequest::parseOptions(const String& options)
-{
-    Vector<String> optionsList;
-    options.split(",", optionsList);
-
-    for (size_t i = 0; i < optionsList.size(); ++i) {
-        SpaceSplitString subOptions(optionsList[i], false);
-
-        if (subOptions[0] == "audio")
-            m_audio = true;
-        else if (subOptions[0] == "video") {
-            m_video = true;
-            if (subOptions.contains("user"))
-                m_cameraPreferenceUser = true;
-            if (subOptions.contains("environment"))
-                m_cameraPreferenceEnvironment = true;
-        }
-    }
 }
 
 } // namespace WebCore
