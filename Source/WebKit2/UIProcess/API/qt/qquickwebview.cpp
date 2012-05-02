@@ -1635,4 +1635,25 @@ void QQuickWebView::setZoomFactor(qreal factor)
     d->setZoomFactor(factor);
 }
 
+struct JSCallbackClosure {
+    QPointer<QObject> receiver;
+    QByteArray method;
+};
+
+static void javaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void* context)
+{
+    JSCallbackClosure* closure = reinterpret_cast<JSCallbackClosure*>(context);
+    QMetaObject::invokeMethod(closure->receiver, closure->method);
+    delete closure;
+}
+
+void QQuickWebView::runJavaScriptInMainFrame(const QString &script, QObject *receiver, const char *method)
+{
+    Q_D(QQuickWebView);
+    JSCallbackClosure* closure = new JSCallbackClosure;
+    closure->receiver = receiver;
+    closure->method = method;
+    d->webPageProxy.get()->runJavaScriptInMainFrame(script, ScriptValueCallback::create(closure, javaScriptCallback));
+}
+
 #include "moc_qquickwebview_p.cpp"

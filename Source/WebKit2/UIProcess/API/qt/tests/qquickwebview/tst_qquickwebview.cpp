@@ -57,10 +57,13 @@ private slots:
     void titleUpdate();
     void transparentWebViews();
 
+    void inputMethod();
+
 private:
     void prepareWebViewComponent();
     inline QQuickWebView* newWebView();
     inline QQuickWebView* webView() const;
+    void runJavaScript(const QString& script);
     QScopedPointer<TestWindow> m_window;
     QScopedPointer<QQmlComponent> m_component;
 };
@@ -104,6 +107,13 @@ void tst_QQuickWebView::cleanup()
 inline QQuickWebView* tst_QQuickWebView::webView() const
 {
     return static_cast<QQuickWebView*>(m_window->webView.data());
+}
+
+void tst_QQuickWebView::runJavaScript(const QString &script)
+{
+    QEventLoop loop;
+    webView()->runJavaScriptInMainFrame(script, &loop, "quit");
+    loop.exec();
 }
 
 void tst_QQuickWebView::accessPage()
@@ -361,6 +371,19 @@ void tst_QQuickWebView::transparentWebViews()
 
     QTest::qWait(200);
     // FIXME: test actual rendering results; https://bugs.webkit.org/show_bug.cgi?id=80609.
+}
+
+void tst_QQuickWebView::inputMethod()
+{
+    QQuickWebView* view = webView();
+    view->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/inputmethod.html")));
+    QVERIFY(waitForLoadSucceeded(view));
+
+    QVERIFY(!view->flags().testFlag(QQuickItem::ItemAcceptsInputMethod));
+    runJavaScript("document.getElementById('inputField').focus();");
+    QVERIFY(view->flags().testFlag(QQuickItem::ItemAcceptsInputMethod));
+    runJavaScript("document.getElementById('inputField').blur();");
+    QVERIFY(!view->flags().testFlag(QQuickItem::ItemAcceptsInputMethod));
 }
 
 void tst_QQuickWebView::scrollRequest()

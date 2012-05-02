@@ -147,6 +147,7 @@ public:
     // Private C++-only API.
     qreal zoomFactor() const;
     void setZoomFactor(qreal);
+    void runJavaScriptInMainFrame(const QString& script, QObject* receiver, const char* method);
 
 public Q_SLOTS:
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl(), const QUrl& unreachableUrl = QUrl());

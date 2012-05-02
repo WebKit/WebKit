@@ -1,3 +1,29 @@
+2012-05-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] QQuickWebView does not allow for input from virtual keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=85350
+
+        Reviewed by Kenneth Christiansen.
+
+        It is necessary to set the ItemAcceptsInputMethod flag on the QQuickWebView if we have editable
+        content, in order for the input method to recognize that we can handle input method events.
+
+        Analyzed by Michael Brüning.
+
+        * UIProcess/API/qt/qquickwebview.cpp: Add simple hook for executing JS as private C++ API.
+        (JSCallbackClosure):
+        (javaScriptCallback):
+        (QQuickWebView::runJavaScriptInMainFrame):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/html/inputmethod.html: Added.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView):
+        (tst_QQuickWebView::runJavaScript): Simple helper for running JS.
+        (tst_QQuickWebView::inputMethod): Added simple test for ItemAcceptsInputMethod toggling.
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::updateTextInputState): Set ItemAcceptsInputMethod as soon as we
+        have editable content.
+
 2012-05-01  Anders Carlsson  <andersca@apple.com>
 
         inspectorReallyUsesWebKitUserInterface should be more robust against missing files

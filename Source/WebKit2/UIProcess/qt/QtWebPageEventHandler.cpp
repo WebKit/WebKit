@@ -409,6 +409,8 @@ void QtWebPageEventHandler::updateTextInputState()
 
     const EditorState& editor = m_webPageProxy->editorState();
 
+    m_webView->setFlag(QQuickItem::ItemAcceptsInputMethod, editor.isContentEditable);
+
     if (!m_webView->hasFocus())
         return;
 
