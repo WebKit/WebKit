@@ -199,12 +199,20 @@ contains(QT_CONFIG, opengl):!win32-* {
     }
 }
 
-# orientation support if QtMobility exists
-contains(MOBILITY_CONFIG, sensors) {
-   !contains(DEFINES, ENABLE_ORIENTATION_EVENTS=.): DEFINES += ENABLE_ORIENTATION_EVENTS=1
-   !contains(DEFINES, ENABLE_DEVICE_ORIENTATION=.): DEFINES += ENABLE_DEVICE_ORIENTATION=1
-   CONFIG *= mobility
-   MOBILITY *= sensors
+# orientation support
+haveQt(5) {
+    !isEmpty(QT.sensors.name) {
+        !contains(DEFINES, ENABLE_ORIENTATION_EVENTS=.): DEFINES += ENABLE_ORIENTATION_EVENTS=1
+        !contains(DEFINES, ENABLE_DEVICE_ORIENTATION=.): DEFINES += ENABLE_DEVICE_ORIENTATION=1
+    }
+} else {
+    # Qt 4 with Qt Mobility
+    contains(MOBILITY_CONFIG, sensors) {
+        !contains(DEFINES, ENABLE_ORIENTATION_EVENTS=.): DEFINES += ENABLE_ORIENTATION_EVENTS=1
+        !contains(DEFINES, ENABLE_DEVICE_ORIENTATION=.): DEFINES += ENABLE_DEVICE_ORIENTATION=1
+        CONFIG *= mobility
+        MOBILITY *= sensors
+    }
 }
 
 !contains(DEFINES, ENABLE_TOUCH_EVENTS=.): DEFINES += ENABLE_TOUCH_EVENTS=1

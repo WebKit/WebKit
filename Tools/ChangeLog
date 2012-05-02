@@ -1,3 +1,13 @@
+2012-05-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Enable device orientation/motion with Qt 5
+
+        Reviewed by Tor Arne Vestbø.
+
+        Enable device orientation/motion features with Qt 5 if Qt Sensors is available.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-05-01  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Remove unused platform imports.
