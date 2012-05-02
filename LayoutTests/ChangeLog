@@ -1,3 +1,21 @@
+2012-05-01  Xiaomei Ji  <xji@chromium.org>
+
+        enable ctrl-arrow move by word visually in other platforms (besides Windows)
+        https://bugs.webkit.org/show_bug.cgi?id=85017
+
+        Reviewed by Ryosuke Niwa.
+  
+        Since DOMSelection.modify('move', 'left'/'right', 'word') moves caret by word in visual order (instead of
+        logical order) now, there are several changes to the test file:
+        1. file name renamed from move-left-right-by-word-mac.html to move-by-word-visually-mac.html.
+        2. test expectations change from moving caret by word in logical order to moving caret by word in visual order.
+        3. since test expectations are inside test file itself, test file itself changes accordingly.
+       
+        * editing/selection/move-by-word-visually-mac-expected.txt: Copied from LayoutTests/editing/selection/move-left-right-by-word-mac-expected.txt.
+        * editing/selection/move-by-word-visually-mac.html: Copied from LayoutTests/editing/selection/move-left-right-by-word-mac.html.
+        * editing/selection/move-left-right-by-word-mac-expected.txt: Removed.
+        * editing/selection/move-left-right-by-word-mac.html: Removed.
+
 2012-05-01  Raymond Liu  <raymond.liu@intel.com>
 
         Modify RealtimeAnalyserNode pull mechanism

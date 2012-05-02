@@ -367,7 +367,8 @@ static bool islogicalEndOfWord(TextBreakIterator* iter, int position, bool hardL
 
 enum CursorMovementDirection { MoveLeft, MoveRight };
 
-static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition, CursorMovementDirection direction)
+static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition, CursorMovementDirection direction, 
+    bool skipsSpaceWhenMovingRight)
 {
     if (visiblePosition.isNull())
         return VisiblePosition();
@@ -418,7 +419,10 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         int offsetInIterator = offsetInBox - textBox->start() + previousBoxLength;
 
         bool isWordBreak;
-        if (box->direction() == blockDirection) {
+        bool boxHasSameDirectionalityAsBlock = box->direction() == blockDirection;
+        bool movingBackward = (direction == MoveLeft && box->direction() == LTR) || (direction == MoveRight && box->direction() == RTL);
+        if ((skipsSpaceWhenMovingRight && boxHasSameDirectionalityAsBlock)
+            || (!skipsSpaceWhenMovingRight && movingBackward)) {
             bool logicalStartInRenderer = offsetInBox == static_cast<int>(textBox->start()) && previousBoxInDifferentBlock;
             isWordBreak = isLogicalStartOfWord(iter, offsetInIterator, logicalStartInRenderer);
         } else {
@@ -434,9 +438,9 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     return VisiblePosition();
 }
 
-VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
+VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition, bool skipsSpaceWhenMovingRight)
 {
-    VisiblePosition leftWordBreak = visualWordPosition(visiblePosition, MoveLeft);
+    VisiblePosition leftWordBreak = visualWordPosition(visiblePosition, MoveLeft, skipsSpaceWhenMovingRight);
     leftWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(leftWordBreak);
     
     // FIXME: How should we handle a non-editable position?
@@ -447,9 +451,9 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
     return leftWordBreak;
 }
 
-VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
+VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition, bool skipsSpaceWhenMovingRight)
 {
-    VisiblePosition rightWordBreak = visualWordPosition(visiblePosition, MoveRight);
+    VisiblePosition rightWordBreak = visualWordPosition(visiblePosition, MoveRight, skipsSpaceWhenMovingRight);
     rightWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(rightWordBreak);
 
     // FIXME: How should we handle a non-editable position?
