@@ -128,8 +128,10 @@
         "EFL": {
             "filename": r"Source/WebKit/efl/"
                         r"|Source/WebCore/platform/efl/"
+                        r"|Source/WTF/wtf/efl/"
                         r"|Tools/EWebLauncher"
-                        r"|Tools/DumpRenderTree/efl/",
+                        r"|Tools/DumpRenderTree/efl/"
+                        r"|LayoutTests/platform/efl/",
         },
         "CMake": {
             "filename": r".*CMakeLists\w*\.txt"

@@ -1,3 +1,13 @@
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [watchlist] Update watchlist rules for EFL-related patches.
+        http://bugs.webkit.org/show_bug.cgi?id=85160
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/config/watchlist: Monitor
+        Source/WTF/wtf/efl and LayoutTests/platform/efl as well.
+
 2012-05-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Revert r115191 - "Make the web view's url property follow the active url"
