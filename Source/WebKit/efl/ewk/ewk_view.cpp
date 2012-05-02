@@ -225,7 +225,7 @@ struct _Ewk_View_Private_Data {
         bool pageCache : 1;
         bool enableXSSAuditor : 1;
 #if ENABLE(WEB_AUDIO)
-        bool webAudio : 0;
+        bool webAudio : 1;
 #endif
         bool webGLEnabled : 1;
         bool tabsToLinks : 1;
