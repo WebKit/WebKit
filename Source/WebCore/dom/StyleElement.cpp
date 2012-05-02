@@ -170,11 +170,11 @@ void StyleElement::createSheet(Element* e, int startLineNumber, const String& te
             m_loading = true;
 
             m_sheet = CSSStyleSheet::createInline(e, KURL(), document->inputEncoding());
-            RefPtr<StyleSheetInternal> styleSheet = m_sheet->internal();
+            m_sheet->setMediaQueries(mediaQueries.release());
+            m_sheet->setTitle(e->title());
+    
+            m_sheet->internal()->parseStringAtLine(text, startLineNumber);
 
-            styleSheet->parseStringAtLine(text, startLineNumber);
-            styleSheet->setMediaQueries(mediaQueries.release());
-            styleSheet->setTitle(e->title());
             m_loading = false;
         }
     }

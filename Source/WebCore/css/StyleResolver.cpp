@@ -504,9 +504,13 @@ void StyleResolver::appendAuthorStylesheets(unsigned firstNew, const Vector<RefP
     // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.
     unsigned size = stylesheets.size();
     for (unsigned i = firstNew; i < size; ++i) {
-        if (!stylesheets[i]->isCSSStyleSheet() || stylesheets[i]->disabled())
+        if (!stylesheets[i]->isCSSStyleSheet())
             continue;
         CSSStyleSheet* cssSheet = static_cast<CSSStyleSheet*>(stylesheets[i].get());
+        if (cssSheet->disabled())
+            continue;
+        if (cssSheet->mediaQueries() && !m_medium->eval(cssSheet->mediaQueries(), this))
+            continue;
         StyleSheetInternal* sheet = cssSheet->internal();
 #if ENABLE(STYLE_SCOPED)
         const ContainerNode* scope = determineScope(sheet);
@@ -2478,11 +2482,6 @@ void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurit
 void RuleSet::addRulesFromSheet(StyleSheetInternal* sheet, const MediaQueryEvaluator& medium, StyleResolver* styleSelector, const ContainerNode* scope)
 {
     ASSERT(sheet);
-
-    // No media implies "all", but if a media list exists it must
-    // contain our current medium
-    if (sheet->mediaQueries() && !medium.eval(sheet->mediaQueries(), styleSelector))
-        return; // the style sheet doesn't apply
     
     const Vector<RefPtr<StyleRuleImport> >& importRules = sheet->importRules();
     for (unsigned i = 0; i < importRules.size(); ++i) {

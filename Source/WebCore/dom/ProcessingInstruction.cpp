@@ -212,15 +212,19 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
 
     ASSERT(m_isCSS);
     CSSParserContext parserContext(document(), baseURL, charset);
+
     RefPtr<StyleSheetInternal> newSheet = StyleSheetInternal::create(href, baseURL, parserContext);
-    m_sheet = CSSStyleSheet::create(newSheet, this);
+
+    RefPtr<CSSStyleSheet> cssSheet = CSSStyleSheet::create(newSheet, this);
+    cssSheet->setDisabled(m_alternate);
+    cssSheet->setTitle(m_title);
+    cssSheet->setMediaQueries(MediaQuerySet::create(m_media));
+
+    m_sheet = cssSheet.release();
+
     // We don't need the cross-origin security check here because we are
     // getting the sheet text in "strict" mode. This enforces a valid CSS MIME
     // type.
-    newSheet->setTitle(m_title);
-    newSheet->setMediaQueries(MediaQuerySet::create(m_media));
-    m_sheet->setDisabled(m_alternate);
-
     parseStyleSheet(sheet->sheetText(true));
 }
 
@@ -261,7 +265,7 @@ void ProcessingInstruction::setCSSStyleSheet(PassRefPtr<CSSStyleSheet> sheet)
     ASSERT(!m_cachedSheet);
     ASSERT(!m_loading);
     m_sheet = sheet;
-    sheet->internal()->setTitle(m_title);
+    sheet->setTitle(m_title);
     sheet->setDisabled(m_alternate);
 }
 

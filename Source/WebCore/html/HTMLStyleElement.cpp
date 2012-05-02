@@ -73,7 +73,7 @@ PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagNa
 void HTMLStyleElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == titleAttr && m_sheet)
-        m_sheet->internal()->setTitle(attr->value());
+        m_sheet->setTitle(attr->value());
     else if (attr->name() == onloadAttr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == onerrorAttr)
@@ -84,7 +84,6 @@ void HTMLStyleElement::parseAttribute(Attribute* attr)
             registerWithScopingNode();
         else if (attr->isNull() && m_isRegisteredWithScopingNode)
             unregisterWithScopingNode();
-
     }
 #endif
     else

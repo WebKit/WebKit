@@ -118,7 +118,7 @@ void SVGStyleElement::parseAttribute(Attribute* attr)
 
     if (attr->name() == SVGNames::titleAttr) {
         if (m_sheet)
-            m_sheet->internal()->setTitle(attr->value());
+            m_sheet->setTitle(attr->value());
         return;
     }
 

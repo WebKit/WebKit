@@ -155,7 +155,7 @@ void HTMLLinkElement::parseAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
     else {
         if (attr->name() == titleAttr && m_sheet)
-            m_sheet->internal()->setTitle(attr->value());
+            m_sheet->setTitle(attr->value());
         HTMLElement::parseAttribute(attr);
     }
 }
@@ -302,12 +302,10 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
 
-        // restoreParsedStyleSheet() currently returns a copy so it is ok to mutate the queries and the title like this.
-        RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
-        restoredSheet->setMediaQueries(media.release());
-        restoredSheet->setTitle(title());
-
         m_sheet = CSSStyleSheet::create(restoredSheet, this);
+        m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
+        m_sheet->setTitle(title());
+
         m_loading = false;
         sheetLoaded();
         notifyLoadedSheetAndAllCriticalSubresources(false);
@@ -315,13 +313,12 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     }
 
     RefPtr<StyleSheetInternal> styleSheet = StyleSheetInternal::create(href, baseURL, parserContext);
+
     m_sheet = CSSStyleSheet::create(styleSheet, this);
+    m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
+    m_sheet->setTitle(title());
 
     styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document()->securityOrigin());
-
-    RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
-    styleSheet->setMediaQueries(media.release());
-    styleSheet->setTitle(title());
 
     m_loading = false;
     styleSheet->notifyLoadedSheet(cachedStyleSheet);

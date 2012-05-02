@@ -109,12 +109,10 @@ StyleSheetInternal::StyleSheetInternal(const StyleSheetInternal& o)
     , m_ownerRule(0)
     , m_originalURL(o.m_originalURL)
     , m_finalURL(o.m_finalURL)
-    , m_title(o.m_title)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_importRules(o.m_importRules.size())
     , m_childRules(o.m_childRules.size())
     , m_namespaces(o.m_namespaces)
-    , m_mediaQueries(o.m_mediaQueries ? o.m_mediaQueries->copy() : 0)
     , m_loadCompleted(true)
     , m_isUserStyleSheet(o.m_isUserStyleSheet)
     , m_hasSyntacticallyValidCSSHeader(o.m_hasSyntacticallyValidCSSHeader)
@@ -417,11 +415,6 @@ Document* StyleSheetInternal::singleOwnerDocument() const
     return ownerNode ? ownerNode->document() : 0;
 }
 
-void StyleSheetInternal::setMediaQueries(PassRefPtr<MediaQuerySet> mediaQueries)
-{
-    m_mediaQueries = mediaQueries;
-}
-
 void StyleSheetInternal::styleSheetChanged()
 {
     m_hasMutated = true;
@@ -525,8 +518,15 @@ void CSSStyleSheet::setDisabled(bool disabled)
 { 
     if (disabled == m_isDisabled)
         return;
-    m_isDisabled = disabled; 
-    m_internal->styleSheetChanged();
+    m_isDisabled = disabled;
+    Document* owner = ownerDocument();
+    if (owner)
+        owner->styleResolverChanged(DeferRecalcStyle);
+}
+
+void CSSStyleSheet::setMediaQueries(PassRefPtr<MediaQuerySet> mediaQueries)
+{
+    m_mediaQueries = mediaQueries;
 }
 
 unsigned CSSStyleSheet::length() const
@@ -639,10 +639,11 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules()
 
 MediaList* CSSStyleSheet::media() const 
 { 
-    if (!m_internal->mediaQueries())
+    if (!m_mediaQueries)
         return 0;
+
     if (!m_mediaCSSOMWrapper)
-        m_mediaCSSOMWrapper = MediaList::create(m_internal->mediaQueries(), const_cast<CSSStyleSheet*>(this));
+        m_mediaCSSOMWrapper = MediaList::create(m_mediaQueries.get(), const_cast<CSSStyleSheet*>(this));
     return m_mediaCSSOMWrapper.get();
 }
 

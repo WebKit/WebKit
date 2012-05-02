@@ -105,9 +105,6 @@ public:
     const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
     const Vector<RefPtr<StyleRuleImport> >& importRules() const { return m_importRules; }
 
-    MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
-    void setMediaQueries(PassRefPtr<MediaQuerySet>);
-
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
     
     StyleSheetInternal* parentStyleSheet() const;
@@ -118,8 +115,6 @@ public:
     // this style sheet. This property probably isn't useful for much except
     // the JavaScript binding (which needs to use this value for security).
     String originalURL() const { return m_originalURL; }
-    String title() const { return m_title; }
-    void setTitle(const String& title) { m_title = title; }
     
     const KURL& finalURL() const { return m_finalURL; }
     const KURL& baseURL() const { return m_parserContext.baseURL; }
@@ -146,21 +141,17 @@ private:
 
     void clearCharsetRule();
     bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
-    
-    void updateBaseURL();
 
     StyleRuleImport* m_ownerRule;
 
     String m_originalURL;
     KURL m_finalURL;
-    String m_title;
 
     String m_encodingFromCharsetRule;
     Vector<RefPtr<StyleRuleImport> > m_importRules;
     Vector<RefPtr<StyleRuleBase> > m_childRules;
     typedef HashMap<AtomicString, AtomicString> PrefixNamespaceURIMap;
     PrefixNamespaceURIMap m_namespaces;
-    RefPtr<MediaQuerySet> m_mediaQueries;
 
     bool m_loadCompleted : 1;
     bool m_isUserStyleSheet : 1;
@@ -192,7 +183,7 @@ public:
     virtual Node* ownerNode() const OVERRIDE { return m_ownerNode; }
     virtual MediaList* media() const OVERRIDE;
     virtual String href() const OVERRIDE { return m_internal->originalURL(); }  
-    virtual String title() const OVERRIDE { return m_internal->title(); }
+    virtual String title() const OVERRIDE { return m_title; }
     virtual bool disabled() const OVERRIDE { return m_isDisabled; }
     virtual void setDisabled(bool) OVERRIDE;
     
@@ -218,6 +209,9 @@ public:
     void clearOwnerRule() { m_ownerRule = 0; }
     void styleSheetChanged() { m_internal->styleSheetChanged(); }
     Document* ownerDocument() const;
+    MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
+    void setMediaQueries(PassRefPtr<MediaQuerySet>);
+    void setTitle(const String& title) { m_title = title; }
     
     void clearChildRuleCSSOMWrappers();
 
@@ -232,6 +226,8 @@ private:
     
     RefPtr<StyleSheetInternal> m_internal;
     bool m_isDisabled;
+    String m_title;
+    RefPtr<MediaQuerySet> m_mediaQueries;
 
     Node* m_ownerNode;
     CSSImportRule* m_ownerRule;
