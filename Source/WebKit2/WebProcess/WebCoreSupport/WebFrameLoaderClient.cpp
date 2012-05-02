@@ -543,6 +543,11 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
 
     if (m_frame == m_frame->page()->mainWebFrame() && !webPage->corePage()->settings()->suppressesIncrementalRendering())
         webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
+
+#if USE(TILED_BACKING_STORE)
+    // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
+    ASSERT(!webPage->useFixedLayout() || m_frame != m_frame->page()->mainWebFrame() || m_frame->coreFrame()->document()->didDispatchViewportPropertiesChanged());
+#endif
 }
 
 void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()

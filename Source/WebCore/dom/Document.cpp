@@ -481,6 +481,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_scheduledTasksAreSuspended(false)
     , m_visualUpdatesAllowed(true)
     , m_visualUpdatesSuppressionTimer(this, &Document::visualUpdatesSuppressionTimerFired)
+#ifndef NDEBUG
+    , m_didDispatchViewportPropertiesChanged(false)
+#endif
 {
     m_document = this;
 
@@ -3008,8 +3011,12 @@ void Document::processViewport(const String& features)
 
 void Document::updateViewportArguments()
 {
-    if (page() && page()->mainFrame() == frame())
+    if (page() && page()->mainFrame() == frame()) {
+#ifndef NDEBUG
+        m_didDispatchViewportPropertiesChanged = true;
+#endif
         page()->chrome()->dispatchViewportPropertiesDidChange(m_viewportArguments);
+    }
 }
 
 void Document::processReferrerPolicy(const String& policy)
@@ -4307,6 +4314,12 @@ void Document::documentWillSuspendForPageCache()
     HashSet<Element*>::iterator end = m_documentSuspensionCallbackElements.end();
     for (HashSet<Element*>::iterator i = m_documentSuspensionCallbackElements.begin(); i != end; ++i)
         (*i)->documentWillSuspendForPageCache();
+
+#ifndef NDEBUG
+    // Clear the update flag to be able to check if the viewport arguments update
+    // is dispatched, after the document is restored from the page cache.
+    m_didDispatchViewportPropertiesChanged = false;
+#endif
 }
 
 void Document::documentDidResumeFromPageCache() 

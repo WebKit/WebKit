@@ -326,6 +326,9 @@ public:
 #endif
 
     ViewportArguments viewportArguments() const { return m_viewportArguments; }
+#ifndef NDEBUG
+    bool didDispatchViewportPropertiesChanged() const { return m_didDispatchViewportPropertiesChanged; }
+#endif
 
     ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
 
@@ -1495,6 +1498,10 @@ private:
     
     bool m_visualUpdatesAllowed;
     Timer<Document> m_visualUpdatesSuppressionTimer;
+
+#ifndef NDEBUG
+    bool m_didDispatchViewportPropertiesChanged;
+#endif
 };
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.

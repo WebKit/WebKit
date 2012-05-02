@@ -1,3 +1,15 @@
+2012-05-02  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Remove redundant updateViewportArguments() call from HTMLBodyElement::didNotifyDescendantInseretions()
+        https://bugs.webkit.org/show_bug.cgi?id=84241
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add ASSERT to ensure at least one viewport argument change call is dispatched to WebPage per main frame.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout):
+
 2012-05-02  Lars Knudsen  <lars.knudsen@nokia.com>
 
         [Qt] Make DeviceMotion and DeviceOrientation work with WebKit2

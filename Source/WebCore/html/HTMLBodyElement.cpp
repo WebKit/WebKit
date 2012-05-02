@@ -181,8 +181,6 @@ void HTMLBodyElement::didNotifyDescendantInseretions(Node* insertionPoint)
     // But without it we hang during WebKit tests; need to fix that and remove this.
     if (FrameView* view = document()->view())
         view->scheduleRelayout();
-
-    document()->updateViewportArguments();
 }
 
 bool HTMLBodyElement::isURLAttribute(Attribute *attr) const
