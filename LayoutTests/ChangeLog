@@ -1,3 +1,13 @@
+2012-05-02  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][DRT] Gardening failure cases on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=85365
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Skip new failing tests and one crashing test to paint the bot green.

@@ -146,6 +146,8 @@ BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT
 
 // Missing execCommand('copy') and execCommand('paste').
 BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TIMEOUT
+BUGWK84338 : editing/input/paste-text-ending-with-interchange-newline.html = TEXT
+BUGWK84338 : editing/input/reveal-contenteditable-on-paste-vertically.html = TEXT
 
 // Missing showModalDialog implementation
 BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
@@ -290,3 +292,25 @@ BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
 // Test doesn't work when the machine is under heavy load.
 BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
+
+// Turn on blob support for the EFL port.
+BUGWK85363 : fast/dom/DOMURL/check-instanceof-domurl-functions.html = TEXT
+BUGWK85363 : fast/dom/call-a-constructor-as-a-function.html = TEXT
+
+// Expose title direction in WebKit API
+BUGWK58845 : fast/dom/title-directionality.html = FAIL
+BUGWK58845 : fast/dom/title-directionality-removeChild.html = FAIL
+
+BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = FAIL
+
+BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
+
+// EFL's LayoutTestController does not implement TextInputController
+BUGWK78559 : editing/input/select-all-clear-input-method.html = TEXT
+
+// EventSender doesn't provide correct key string
+BUGWK84710 : fast/forms/textarea-type-spaces.html = TEXT
+
+// Requires WebP support.
+BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = FAIL
+BUGWKEFL SKIP : fast/images/webp-image-decoding.html = FAIL

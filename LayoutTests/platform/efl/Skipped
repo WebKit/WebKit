@@ -657,6 +657,7 @@ fast/dom/Window/window-properties-geolocation.html
 
 # The EFL port has no support for x-webkit-speech (and addMockSpeechInputResult in LayoutTestController)
 fast/speech
+fast/events/constructors/speech-recognition-event-constructor.html
 
 # The EFL port has no support for plugins
 fast/dom/Window/Plug-ins.html
@@ -681,6 +682,7 @@ http/tests/inspector-enabled
 # The EFL port has no support for device motion and orientation
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation
+fast/dom/Orientation
 fast/dom/Window/window-properties-device-orientation.html
 
 # The EFL port has no support for WebGL (the rest is skipped automatically)
@@ -690,9 +692,6 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 
 # The EFL port has no support for desktop notifications
 fast/notifications
-
-# The EFL port has no support for WebP decoding
-fast/images/webp-image-decoding.html
 
 # The EFL port has no support for user gesture (dumpUserGestureInFrameLoadCallbacks in DRT and in the port itself as well)
 fast/frames/location-redirect-user-gesture.html
@@ -760,6 +759,7 @@ fast/forms/number/input-number-large-padding.html
 fast/forms/number/input-number-size.html
 fast/forms/number/input-spinbutton-capturing.html
 fast/forms/number/spin-button-gets-disabled-or-readonly.html
+fast/forms/number/spin-button-state.html
 
 # This test is out-dated since r95899.
 # https://bugs.webkit.org/show_bug.cgi?id=65709
