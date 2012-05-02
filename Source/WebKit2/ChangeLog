@@ -1,3 +1,15 @@
+2012-05-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Make ShareableSurface's ref-counting thread-safe
+
+        Fixes assert when threaded rendering is enabled for the Qt scene-graph.
+
+        https://bugs.webkit.org/show_bug.cgi?id=85381
+
+        Reviewed by Noam Rosenthal.
+
+        * Shared/ShareableSurface.h:
+
 2012-05-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Enable css filters in TextureMapperGL

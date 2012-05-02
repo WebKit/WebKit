@@ -22,6 +22,8 @@
 
 #include "ShareableBitmap.h"
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 #if USE(GRAPHICS_SURFACE)
 #include "GraphicsSurface.h"
 #endif
@@ -34,7 +36,7 @@ class GraphicsContext;
 
 namespace WebKit {
 
-class ShareableSurface : public RefCounted<ShareableSurface> {
+class ShareableSurface : public ThreadSafeRefCounted<ShareableSurface> {
 public:
     enum Hint {
         SupportsGraphicsSurface = 0x01
