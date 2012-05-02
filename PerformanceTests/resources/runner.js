@@ -1,3 +1,4 @@
+// There are tests for computeStatistics() located in LayoutTests/fast/harness/perftests
 
 var PerfTestRunner = {};
 

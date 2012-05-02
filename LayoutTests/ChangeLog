@@ -1,3 +1,13 @@
+2012-05-02  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Need tests for PerfTestRunner.computeStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=85410
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/harness/perftests/perf-runner-compute-statistics-expected.txt: Added.
+        * fast/harness/perftests/perf-runner-compute-statistics.html: Added.
+
 2012-05-02  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Handle generated keys up to 2^53
