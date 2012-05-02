@@ -1,3 +1,22 @@
+2012-05-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix vkb showing incorrect flags/keys when content changes
+
+        Reviewed by Tor Arne Vestbø.
+
+        When the editor state changes we have to inform the input method about changed
+        properties so that it can issue a new input method query. Otherwise it may use old values
+        from other QQuickItems or other incorrectly initialized data.
+
+        Also use isActiveFocus() instead of hasFocus() to detect whether we're actively focused.
+        This is also what QQuick uses internally to determine whether it can make calls to the input method
+        or not.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::inputPanelVisibleChanged):
+        (WebKit::QtWebPageEventHandler::updateTextInputState):
+        (WebKit::QtWebPageEventHandler::doneWithGestureEvent):
+
 2012-05-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add initial QML documentation

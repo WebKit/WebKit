@@ -394,7 +394,7 @@ void QtWebPageEventHandler::inputPanelVisibleChanged()
         return;
 
     // We only respond to the input panel becoming visible.
-    if (!m_webView->hasFocus() || !qApp->inputPanel()->visible())
+    if (!m_webView->hasActiveFocus() || !qApp->inputPanel()->visible())
         return;
 
     const EditorState& editor = m_webPageProxy->editorState();
@@ -411,8 +411,10 @@ void QtWebPageEventHandler::updateTextInputState()
 
     m_webView->setFlag(QQuickItem::ItemAcceptsInputMethod, editor.isContentEditable);
 
-    if (!m_webView->hasFocus())
+    if (!m_webView->hasActiveFocus())
         return;
+
+    qApp->inputPanel()->update(Qt::ImQueryInput);
 
     // Ignore input method requests not due to a tap gesture.
     if (!editor.isContentEditable)
@@ -426,12 +428,12 @@ void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, b
 
     m_postponeTextInputStateChanged = false;
 
-    if (!wasEventHandled || !m_webView->hasFocus())
+    if (!wasEventHandled || !m_webView->hasActiveFocus())
         return;
 
+    qApp->inputPanel()->update(Qt::ImQueryInput);
     const EditorState& editor = m_webPageProxy->editorState();
     bool newVisible = editor.isContentEditable;
-
     setInputPanelVisible(newVisible);
 }
 
