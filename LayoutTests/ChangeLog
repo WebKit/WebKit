@@ -1,5 +1,23 @@
 2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Unreviewed Chromium gardening.
+
+        * platform/chromium-mac-leopard/fast/layers/add-layer-with-nested-stacking-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/layers/add-layer-with-nested-stacking-expected.txt: Added.
+        * platform/chromium-mac/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/chromium-mac/editing/spelling/inline_spelling_markers-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/chromium-mac/fast/forms/input-value-expected.txt:
+        * platform/chromium-mac/fast/layers/add-layer-with-nested-stacking-expected.txt: Added.
+        * platform/chromium-mac/fast/layers/remove-layer-with-nested-stacking-expected.txt: Removed.
+        Rebaselined the previous tests.
+
+        * platform/chromium/test_expectations.txt:
+        Tweaked the expectation files to cover the failures on Mac.
+
+2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Unreviewed expectation updates after r115846.
 
         * platform/gtk/test_expectations.txt:
