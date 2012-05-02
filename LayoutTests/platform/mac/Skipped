@@ -800,3 +800,7 @@ fast/files/blob-builder-crash.html
 # [Mac] inspector/debugger/linkifier.html is flakey
 # https://bugs.webkit.org/show_bug.cgi?id=85319
 inspector/debugger/linkifier.html
+
+# scrollbars/scrollbar-miss-mousemove-disabled.html is asserting in markAllMisspellingsAndBadGrammarInRanges()
+# https://bugs.webkit.org/show_bug.cgi?id=85273
+scrollbars/scrollbar-miss-mousemove-disabled.html

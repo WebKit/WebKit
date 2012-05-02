@@ -1,3 +1,10 @@
+2012-05-01  Andy Estes  <aestes@apple.com>
+
+        scrollbars/scrollbar-miss-mousemove-disabled.html is asserting in markAllMisspellingsAndBadGrammarInRanges()
+        https://bugs.webkit.org/show_bug.cgi?id=85273
+
+        * platform/mac/Skipped: Skip the test.
+
 2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the test added by r115724 on WebKit2 and Qt because drag and drop isn't supported by DRT
