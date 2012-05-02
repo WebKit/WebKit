@@ -12,9 +12,6 @@ layer at (0,0) size 800x546
           RenderTableRow {TR} at (0,2) size 242x240
             RenderTableCell {TD} at (2,88) size 238x68 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (22,22) size 194x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                RenderBlock {DIV} at (3,3) size 188x18
-                  RenderText {#text} at (1,0) size 49x19
-                    text run at (1,0) width 49: "foo bar"
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,278) size 242x244
         RenderTableSection {TBODY} at (0,0) size 242x244
@@ -22,6 +19,10 @@ layer at (0,0) size 800x546
             RenderTableCell {TD} at (2,88) size 238x68 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (22,22) size 194x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
               RenderText {#text} at (0,0) size 0x0
+layer at (35,163) size 188x18 scrollHeight 19
+  RenderBlock {DIV} at (3,3) size 188x18
+    RenderText {#text} at (1,0) size 49x19
+      text run at (1,0) width 49: "foo bar"
 layer at (35,407) size 188x18 scrollHeight 19
   RenderBlock {DIV} at (3,3) size 188x18
     RenderText {#text} at (1,0) size 49x19

@@ -11,7 +11,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 172x18
-              RenderBlock {DIV} at (0,0) size 172x18
             RenderBlock {DIV} at (172,1) size 16x16
         RenderText {#text} at (198,5) size 4x19
           text run at (198,5) width 4: " "
@@ -21,6 +20,8 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,0) size 172x18
             RenderBlock {DIV} at (172,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
+layer at (13,47) size 172x18
+  RenderBlock {DIV} at (0,0) size 172x18
 layer at (215,47) size 172x18 scrollHeight 19
   RenderBlock {DIV} at (0,0) size 172x18
     RenderText {#text} at (1,0) size 56x19

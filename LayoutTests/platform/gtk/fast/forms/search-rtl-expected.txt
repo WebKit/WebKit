@@ -36,7 +36,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 188x18
             RenderBlock {DIV} at (0,1) size 16x16
             RenderBlock {DIV} at (16,0) size 156x18
-              RenderBlock {DIV} at (0,0) size 156x18
             RenderBlock {DIV} at (172,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,134) size 784x18
@@ -58,4 +57,6 @@ layer at (29,75) size 246x18 scrollHeight 19
       text run at (123,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (179,0) width 18: "he"
       text run at (197,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (29,103) size 156x18
+  RenderBlock {DIV} at (0,0) size 156x18
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

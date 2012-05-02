@@ -24,12 +24,13 @@ layer at (0,0) size 800x600
         RenderDeprecatedFlexibleBox {DIV} at (3,3) size 312x194
           RenderBlock {DIV} at (0,97) size 0x0
           RenderBlock {DIV} at (0,81) size 288x31
-            RenderBlock {DIV} at (0,0) size 288x31
-              RenderText {#text} at (1,0) size 84x31
-                text run at (1,0) width 84: "regular"
           RenderBlock {DIV} at (288,85) size 24x24
       RenderText {#text} at (0,0) size 0x0
 layer at (88,121) size 153x17 scrollHeight 18
   RenderBlock {DIV} at (0,0) size 153x17
     RenderText {#text} at (1,0) size 35x18
       text run at (1,0) width 35: "small"
+layer at (270,110) size 288x31
+  RenderBlock {DIV} at (0,0) size 288x31
+    RenderText {#text} at (1,0) size 84x31
+      text run at (1,0) width 84: "regular"
