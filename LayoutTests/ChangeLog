@@ -1,3 +1,11 @@
+2012-05-01  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for date-input-visible-strings.html.
+
+        * platform/chromium-linux-x86/fast/forms/date/date-input-visible-strings-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/forms/date/date-input-visible-strings-expected.txt.
+        * platform/chromium/fast/forms/date/date-input-visible-strings-expected.txt: Renamed from LayoutTests/platform/chromium-mac/fast/forms/date/date-input-visible-strings-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-01  Andy Estes  <aestes@apple.com>
 
         scrollbars/scrollbar-miss-mousemove-disabled.html is asserting in markAllMisspellingsAndBadGrammarInRanges()
