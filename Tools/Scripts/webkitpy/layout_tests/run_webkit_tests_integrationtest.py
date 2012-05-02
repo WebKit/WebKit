@@ -33,6 +33,7 @@ import codecs
 import itertools
 import json
 import logging
+import platform
 import Queue
 import re
 import StringIO
@@ -42,14 +43,10 @@ import time
 import threading
 import unittest
 
-from webkitpy.common.system import path
-
-# FIXME: remove this when we fix test-webkitpy to work properly on cygwin
-# (bug 63846).
-SHOULD_TEST_PROCESSES = sys.platform not in ('cygwin', 'win32')
-
-from webkitpy.common.system import outputcapture
+from webkitpy.common.system import outputcapture, path
 from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin
+from webkitpy.common.system.executive import Executive
+from webkitpy.common.system.platforminfo import PlatformInfo
 from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
@@ -263,6 +260,13 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
 
 
 class MainTest(unittest.TestCase, StreamTestingMixin):
+    def setUp(self):
+        self._platform = PlatformInfo(sys, platform, Executive())
+
+        # FIXME: remove this when we fix test-webkitpy to work
+        # properly on cygwin (bug 63846).
+        self.SHOULD_TEST_PROCESSES = not self._platform.is_win()
+
     def test_accelerated_compositing(self):
         # This just tests that we recognize the command line args
         self.assertTrue(passing_run(['--accelerated-video']))
@@ -286,16 +290,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_child_processes_2(self):
-        # This test seems to fail on win32.
-        if sys.platform == 'win32':
-            return
-        if SHOULD_TEST_PROCESSES:
+        if self.SHOULD_TEST_PROCESSES:
             _, _, regular_output, _ = logging_run(
                 ['--print', 'config', '--child-processes', '2'])
             self.assertTrue(any(['Running 2 ' in line for line in regular_output.buflist]))
 
     def test_child_processes_min(self):
-        if SHOULD_TEST_PROCESSES:
+        if self.SHOULD_TEST_PROCESSES:
             _, _, regular_output, _ = logging_run(
                 ['--print', 'config', '--child-processes', '2', 'passes'],
                 tests_included=True)
@@ -321,7 +322,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertRaises(ValueError, logging_run,
             ['failures/expected/exception.html', '--child-processes', '1'], tests_included=True)
 
-        if SHOULD_TEST_PROCESSES:
+        if self.SHOULD_TEST_PROCESSES:
             self.assertRaises(run_webkit_tests.WorkerException, logging_run,
                 ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True)
 
@@ -351,7 +352,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             ['failures/expected/keyboard.html', '--child-processes', '1'],
             tests_included=True)
 
-        if SHOULD_TEST_PROCESSES:
+        if self.SHOULD_TEST_PROCESSES:
             self.assertRaises(KeyboardInterrupt, logging_run,
                 ['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True)
 
@@ -578,7 +579,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_crash_log(self):
         # FIXME: Need to rewrite these tests to not be mac-specific, or move them elsewhere.
         # Currently CrashLog uploading only works on Darwin.
-        if sys.platform != "darwin":
+        if not self._platform.is_mac():
             return
         mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 12345)
         host = MockHost()
@@ -595,7 +596,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_web_process_crash_log(self):
         # FIXME: Need to rewrite these tests to not be mac-specific, or move them elsewhere.
         # Currently CrashLog uploading only works on Darwin.
-        if sys.platform != "darwin":
+        if not self._platform.is_mac():
             return
         mock_crash_report = make_mock_crash_report_darwin('WebProcess', 12345)
         host = MockHost()
@@ -606,11 +607,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             tests_included=True,
             record_results=True,
             host=host)
-        expected_crash_log = mock_crash_report
-        # Currently CrashLog uploading only works on Darwin.
-        if sys.platform != "darwin":
-            expected_crash_log = ""
-        self.assertEquals(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), expected_crash_log)
+        self.assertEquals(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), mock_crash_report)
 
     def test_exit_after_n_failures_upload(self):
         host = MockHost()
@@ -840,8 +837,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         batch_tests_run_http = get_tests_run(['--http', 'LayoutTests/http', 'websocket/'], flatten_batches=True)
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'http'))
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'websocket'))
-
-MainTest = skip_if(MainTest, sys.platform == 'cygwin' and sys.version < '2.6', 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 
 
 class EndToEndTest(unittest.TestCase):

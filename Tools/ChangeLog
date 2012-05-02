@@ -1,5 +1,29 @@
 2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        webkitpy: Remove direct sys.platform usage in run_webkit_tests_integrationtest.
+        https://bugs.webkit.org/show_bug.cgi?id=85419
+
+        Reviewed by Dirk Pranke.
+
+        Another part of the work towards replacing direct sys.platform
+        usage with PlatformInfo.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.setUp): Move the setting of SHOULD_TEST_PROCESSES
+        here. Even though it is costlier, unittest.setUpClass was
+        introduced in Python 2.7.
+        (MainTest.test_child_processes_2): Use self.SHOULD_TEST_PROCESSES.
+        (MainTest.test_child_processes_min): Ditto.
+        (MainTest.test_exception_raised): Ditto.
+        (MainTest.test_keyboard_interrupt): Ditto.
+        (MainTest.test_crash_log): Check for PlatformInfo.is_mac().
+        (MainTest.test_web_process_crash_log): Ditto, and remove duplicate
+        check at the end.
+        (MainTest.test_no_http_tests): Remove check for (cygwin && Python
+        2.5.2), as we only support Python 2.6+.
+
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         webkitpy: Remove direct sys.platform usage in the PNG checker.
         https://bugs.webkit.org/show_bug.cgi?id=85407
 
