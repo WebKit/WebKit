@@ -302,7 +302,7 @@ const AtomicString& StyleSheetInternal::determineNamespace(const AtomicString& p
     return it->second;
 }
 
-void StyleSheetInternal::parseUserStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)
+void StyleSheetInternal::parseAuthorStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)
 {
     // Check to see if we should enforce the MIME type of the CSS resource in strict mode.
     // Running in iWeb 2 is one example of where we don't want to - <rdar://problem/6099748>

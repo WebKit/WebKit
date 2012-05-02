@@ -317,7 +317,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     RefPtr<StyleSheetInternal> styleSheet = StyleSheetInternal::create(href, baseURL, parserContext);
     m_sheet = CSSStyleSheet::create(styleSheet, this);
 
-    styleSheet->parseUserStyleSheet(cachedStyleSheet, document()->securityOrigin());
+    styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document()->securityOrigin());
 
     RefPtr<MediaQuerySet> media = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
     styleSheet->setMediaQueries(media.release());

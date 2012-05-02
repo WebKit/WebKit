@@ -72,7 +72,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     m_styleSheet = StyleSheetInternal::create(this, href, baseURL, context);
 
     Document* document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : 0;
-    m_styleSheet->parseUserStyleSheet(cachedStyleSheet, document ? document->securityOrigin() : 0);
+    m_styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document ? document->securityOrigin() : 0);
 
     m_loading = false;
 

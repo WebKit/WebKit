@@ -67,7 +67,7 @@ public:
 
     void styleSheetChanged();
 
-    void parseUserStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
+    void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     bool parseString(const String&);
     bool parseStringAtLine(const String&, int startLineNumber);
 
