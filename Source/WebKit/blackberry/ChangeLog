@@ -1,3 +1,22 @@
+2012-05-02  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Double tap zooming does nothing on small size table
+        https://bugs.webkit.org/show_bug.cgi?id=85383
+
+        Reviewed by George Staikos.
+
+        PR: 153232
+        When we search the best node for block zoom, if the initial node's new
+        scale exceeds the maximum block zoom scale, we will try to walk through
+        it's ancestors and pick the acceptable one. But the reality is that the
+        acceptable ancestor's size can be too close to the size of the actual
+        contents, we will do nothing for it. As we will still select the
+        minimum of the new scale and the maximum block zoom scale as block zoom
+        scale, we can ignore such kind of node and use the initial node instead.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::adjustedBlockZoomNodeForZoomLimits):
+
 2012-05-01  Mike Fenton  <mifenton@rim.com>
 
         Add special attribute for alternate selection touch handling.

@@ -2660,6 +2660,17 @@ Node* WebPagePrivate::adjustedBlockZoomNodeForZoomLimits(Node* node)
         acceptableNodeSize = newScaleForBlockZoomRect(rectForNode(node), 1.0, 0) < maxBlockZoomScale();
     }
 
+    // Don't use a node if it is too close to the size of the actual contents.
+    if (initialNode != node) {
+        IntRect nodeRect = rectForNode(node);
+        nodeRect = adjustRectOffsetForFrameOffset(nodeRect, node);
+        nodeRect.intersect(IntRect(IntPoint::zero(), contentsSize()));
+        int nodeArea = nodeRect.width() * nodeRect.height();
+        int pageArea = contentsSize().width() * contentsSize().height();
+        if (static_cast<double>(pageArea - nodeArea) / pageArea < minimumExpandingRatio)
+            return initialNode;
+    }
+
     return node;
 }
 
