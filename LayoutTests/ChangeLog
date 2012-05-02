@@ -1,3 +1,15 @@
+2012-05-02  Oliver Hunt  <oliver@apple.com>
+
+        Unreviewed, rolling out r115388.
+        http://trac.webkit.org/changeset/115388
+        https://bugs.webkit.org/show_bug.cgi?id=85011
+
+        This caused many weird performance problems, and needs to be
+        landed in pieces.
+
+        * fast/js/global-recursion-on-full-stack-expected.txt:
+        * fast/js/stack-trace-expected.txt:
+
 2012-05-02  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, removing recent test expectations for changes in r115846

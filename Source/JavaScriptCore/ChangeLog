@@ -1,3 +1,52 @@
+2012-05-02  Oliver Hunt  <oliver@apple.com>
+
+        Unreviewed, rolling out r115388.
+        http://trac.webkit.org/changeset/115388
+        https://bugs.webkit.org/show_bug.cgi?id=85011
+
+        This caused many weird performance problems, and needs to be
+        landed in pieces.
+
+        * dfg/DFGOperations.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::getConservativeRegisterRoots):
+        (JSC::Heap::markRoots):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::dumpCaller):
+        (JSC):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        (ExecState):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::execute):
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::growSlowCase):
+        (JSC::RegisterFile::gatherConservativeRoots):
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::end):
+        (JSC::RegisterFile::size):
+        (JSC::RegisterFile::addressOfEnd):
+        (RegisterFile):
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::shrink):
+        (JSC::RegisterFile::grow):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::jitCompileFor):
+        (JSC::lazyLinkFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+
 2012-05-01  Oliver Hunt  <oliver@apple.com>
 
         Physijs demo crashes due to DFG not updating topCallFrame correctly.

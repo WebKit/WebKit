@@ -294,7 +294,7 @@ namespace JSC {
 
     inline JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, ScopeChainNode* scopeChain)
     {
-        return execute(eval, callFrame, thisValue, scopeChain, (callFrame->startOfReusableRegisterFile() - m_registerFile.begin()) + 1 + RegisterFile::CallFrameHeaderSize);
+        return execute(eval, callFrame, thisValue, scopeChain, m_registerFile.size() + 1 + RegisterFile::CallFrameHeaderSize);
     }
 
     JSValue eval(CallFrame*);

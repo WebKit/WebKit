@@ -70,7 +70,7 @@ ALWAYS_INLINE ExecState* arityCheckFor(ExecState* exec, RegisterFile* registerFi
         dst[i] = jsUndefined();
 
     ExecState* newExec = ExecState::create(dst);
-    ASSERT((void*)newExec <= registerFile->commitEnd());
+    ASSERT((void*)newExec <= registerFile->end());
     return newExec;
 }
 

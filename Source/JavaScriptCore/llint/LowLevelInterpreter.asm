@@ -273,7 +273,7 @@ macro functionInitialization(profileArgSkip)
     loadp JSGlobalData::interpreter[t2], t2   # FIXME: Can get to the RegisterFile from the JITStackFrame
     lshifti 3, t0
     addp t0, cfr, t0
-    bpaeq Interpreter::m_registerFile + RegisterFile::m_commitEnd[t2], t0, .stackHeightOK
+    bpaeq Interpreter::m_registerFile + RegisterFile::m_end[t2], t0, .stackHeightOK
 
     # Stack height check failed - need to call a slow_path.
     callSlowPath(_llint_register_file_check)

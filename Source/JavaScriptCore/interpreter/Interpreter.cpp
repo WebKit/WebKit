@@ -1208,7 +1208,7 @@ failedJSONP:
         return checkedReturn(throwError(callFrame, error));
     CodeBlock* codeBlock = &program->generatedBytecode();
 
-    Register* oldEnd = callFrame->startOfReusableRegisterFile();
+    Register* oldEnd = m_registerFile.end();
     Register* newEnd = oldEnd + codeBlock->numParameters() + RegisterFile::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
     if (!m_registerFile.grow(newEnd))
         return checkedReturn(throwStackOverflowError(callFrame));
@@ -1257,7 +1257,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    Register* oldEnd = callFrame->startOfReusableRegisterFile();
+    Register* oldEnd = m_registerFile.end();
     ASSERT(callFrame->frameExtent() <= oldEnd || callFrame == callFrame->scopeChain()->globalObject->globalExec());
     int argCount = 1 + args.size(); // implicit "this" parameter
     size_t registerOffset = argCount + RegisterFile::CallFrameHeaderSize;
@@ -1354,7 +1354,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     if (m_reentryDepth >= MaxSmallThreadReentryDepth && m_reentryDepth >= callFrame->globalData().maxReentryDepth)
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    Register* oldEnd = callFrame->startOfReusableRegisterFile();
+    Register* oldEnd = m_registerFile.end();
     int argCount = 1 + args.size(); // implicit "this" parameter
     size_t registerOffset = argCount + RegisterFile::CallFrameHeaderSize;
 
@@ -1456,7 +1456,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
         return CallFrameClosure();
     }
 
-    Register* oldEnd = callFrame->startOfReusableRegisterFile();
+    Register* oldEnd = m_registerFile.end();
     size_t registerOffset = argumentCountIncludingThis + RegisterFile::CallFrameHeaderSize;
 
     CallFrame* newCallFrame = CallFrame::create(oldEnd + registerOffset);
@@ -1582,6 +1582,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
         }
     }
 
+    Register* oldEnd = m_registerFile.end();
     Register* newEnd = m_registerFile.begin() + globalRegisterOffset + codeBlock->m_numCalleeRegisters;
     if (!m_registerFile.grow(newEnd)) {
         if (pushedScope)
@@ -1625,6 +1626,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     if (*profiler)
         (*profiler)->didExecute(callFrame, eval->sourceURL(), eval->lineNo());
 
+    m_registerFile.shrink(oldEnd);
     if (pushedScope)
         scopeChain->pop();
     return checkedReturn(result);
@@ -4516,7 +4518,6 @@ skip_id_custom_self:
             callFrame = slideRegisterWindowForCall(newCodeBlock, registerFile, callFrame, registerOffset, argCount);
             if (UNLIKELY(!callFrame)) {
                 callFrame = previousCallFrame;
-                *topCallFrameSlot = callFrame;
                 exceptionValue = createStackOverflowError(callFrame);
                 goto vm_throw;
             }
@@ -4595,7 +4596,6 @@ skip_id_custom_self:
             CodeBlock* newCodeBlock = &callData.js.functionExecutable->generatedBytecodeForCall();
             newCallFrame = slideRegisterWindowForCall(newCodeBlock, registerFile, newCallFrame, 0, argCount);
             if (UNLIKELY(!newCallFrame)) {
-                *topCallFrameSlot = callFrame;
                 exceptionValue = createStackOverflowError(callFrame);
                 goto vm_throw;
             }
@@ -4917,7 +4917,6 @@ skip_id_custom_self:
             callFrame = slideRegisterWindowForCall(newCodeBlock, registerFile, callFrame, registerOffset, argCount);
             if (UNLIKELY(!callFrame)) {
                 callFrame = previousCallFrame;
-                *topCallFrameSlot = callFrame;
                 exceptionValue = createStackOverflowError(callFrame);
                 goto vm_throw;
             }

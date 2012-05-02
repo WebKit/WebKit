@@ -63,11 +63,12 @@ namespace JSC {
         RegisterFile(size_t capacity = defaultCapacity);
         ~RegisterFile();
         
-        void gatherConservativeRoots(JSGlobalData&, ConservativeRoots&);
-        void gatherConservativeRoots(JSGlobalData&, ConservativeRoots&, DFGCodeBlocks&);
+        void gatherConservativeRoots(ConservativeRoots&);
+        void gatherConservativeRoots(ConservativeRoots&, DFGCodeBlocks&);
 
         Register* begin() const { return static_cast<Register*>(m_reservation.base()); }
-        Register* commitEnd() const { return m_commitEnd; }
+        Register* end() const { return m_end; }
+        size_t size() const { return end() - begin(); }
 
         bool grow(Register*);
         void shrink(Register*);
@@ -77,7 +78,7 @@ namespace JSC {
 
         Register* const * addressOfEnd() const
         {
-            return &m_commitEnd;
+            return &m_end;
         }
 
     private:
@@ -86,28 +87,33 @@ namespace JSC {
         bool growSlowCase(Register*);
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
+        Register* m_end;
         Register* m_commitEnd;
         PageReservation m_reservation;
     };
 
     inline RegisterFile::RegisterFile(size_t capacity)
+        : m_end(0)
     {
         ASSERT(capacity && isPageAligned(capacity));
 
         m_reservation = PageReservation::reserve(roundUpAllocationSize(capacity * sizeof(Register), commitSize), OSAllocator::JSVMStackPages);
+        m_end = static_cast<Register*>(m_reservation.base());
         m_commitEnd = static_cast<Register*>(m_reservation.base());
     }
 
     inline void RegisterFile::shrink(Register* newEnd)
     {
-        ASSERT(newEnd <= m_commitEnd);
-        if (newEnd == m_reservation.base() && (m_commitEnd - begin()) >= maxExcessCapacity)
+        if (newEnd >= m_end)
+            return;
+        m_end = newEnd;
+        if (m_end == m_reservation.base() && (m_commitEnd - begin()) >= maxExcessCapacity)
             releaseExcessCapacity();
     }
 
     inline bool RegisterFile::grow(Register* newEnd)
     {
-        if (newEnd <= m_commitEnd)
+        if (newEnd <= m_end)
             return true;
         return growSlowCase(newEnd);
     }
