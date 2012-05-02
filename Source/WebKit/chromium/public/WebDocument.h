@@ -33,6 +33,7 @@
 
 #include "WebNode.h"
 #include "WebSecurityOrigin.h"
+#include "platform/WebReferrerPolicy.h"
 #include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
@@ -101,6 +102,7 @@ public:
     WEBKIT_EXPORT void cancelFullScreen();
     WEBKIT_EXPORT WebElement fullScreenElement() const;
     WEBKIT_EXPORT WebDOMEvent createEvent(const WebString& eventType);
+    WEBKIT_EXPORT WebReferrerPolicy referrerPolicy() const;
 
     // Accessibility support. These methods should only be called on the
     // top-level document, because one accessibility cache spans all of

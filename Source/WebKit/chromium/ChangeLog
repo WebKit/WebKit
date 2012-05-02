@@ -1,3 +1,18 @@
+2012-05-02  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Add WebDocument::referrerPolicy() which wraps the same method on Document
+        https://bugs.webkit.org/show_bug.cgi?id=85201
+
+        Reviewed by Adam Barth.
+
+        Embedders should use webFrame->document()->referrerPolicy() instead of webFrame->referrerPolicy(). The latter will be removed soon.
+
+        * public/WebDocument.h:
+        (WebDocument):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::referrerPolicy):
+        (WebKit):
+
 2012-05-02  Michal Mocny  <mmocny@google.com>
 
         [chromium] Set contents texture manager preferred memory limit based on GpuMemoryManager suggestion.

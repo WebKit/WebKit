@@ -209,6 +209,11 @@ WebDOMEvent WebDocument::createEvent(const WebString& eventType)
     return event;
 }
 
+WebReferrerPolicy WebDocument::referrerPolicy() const
+{
+    return static_cast<WebReferrerPolicy>(constUnwrap<Document>()->referrerPolicy());
+}
+
 WebAccessibilityObject WebDocument::accessibilityObject() const
 {
     const Document* document = constUnwrap<Document>();
