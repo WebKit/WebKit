@@ -1,3 +1,10 @@
+2012-05-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Unreviewed prospective QtMobility build fix.
+
+        * Source/api.pri: The Qt 4 equivalent of QT += sensors should be handled by
+        WebCore.pri, but somehow it isn't.
+
 2012-05-02  Lars Knudsen  <lars.knudsen@nokia.com>
 
         [Qt] Make DeviceMotion and DeviceOrientation work with WebKit2
