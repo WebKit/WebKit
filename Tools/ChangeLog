@@ -1,3 +1,11 @@
+2012-05-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Fix mistake I committed when applying review comments.
+
+        * jhbuild/jhbuild-wrapper: dependencies_path was getting 'Root'
+        appended to its path, so jhbuild itself was being cloned and
+        installed in the wrong place when using WEBKITOUTPUTDIR.
+
 2012-05-02  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: make ServerProcess work on chromium win
