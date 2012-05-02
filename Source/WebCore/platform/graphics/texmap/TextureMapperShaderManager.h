@@ -134,7 +134,9 @@ public:
     TextureMapperShaderManager();
     virtual ~TextureMapperShaderManager();
 
+#if ENABLE(CSS_FILTERS)
     PassRefPtr<StandardFilterProgram> getShaderForFilter(const FilterOperation&);
+#endif
 
     PassRefPtr<TextureMapperShaderProgram> getShaderProgram(ShaderType shaderType)
     {
