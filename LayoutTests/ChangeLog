@@ -1,3 +1,9 @@
+2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Removed entries for 4 media tests that pass now.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK test_expectations update.
