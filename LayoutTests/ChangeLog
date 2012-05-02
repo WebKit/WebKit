@@ -1,3 +1,13 @@
+2012-05-02  Kenneth Russell  <kbr@google.com>
+
+        Don't allocate stencil buffer if stencil flag is false in context creation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=85317
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias-expected.txt:
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html:
+
 2012-05-02  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, rebaselining after changes in r115846.

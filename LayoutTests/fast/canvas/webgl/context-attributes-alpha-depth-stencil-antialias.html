@@ -15,9 +15,8 @@ void main()
 </script>
 
 <script id="fshader" type="x-shader/x-fragment">
-#ifdef GL_ES
-precision highp float;
-#endif
+precision mediump float;
+
 varying vec4 color;
 
 void main()
@@ -45,67 +44,34 @@ function init()
     runTest();
 }
 
-function getWebGL(canvasName, contextAttribs, clearColor, clearDepth, clearStencil)
+function getWebGL(canvasWidth, canvasHeight, contextAttribs, clearColor, clearDepth, clearStencil)
 {
-    var canvas = document.getElementById(canvasName);
-    var gl = canvas.getContext("experimental-webgl", contextAttribs);
-    if (!gl) {
-        alert("No WebGL context found");
+    var canvas = document.createElement("canvas");
+    if (!canvas)
         return null;
-    }
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
-    // Add a console
-    gl.console = ("console" in window) ? window.console : { log: function() { } };
-
-    // create our shaders
-    var vertexShader = loadShader(gl, "vshader");
-    var fragmentShader = loadShader(gl, "fshader");
-
-    if (!vertexShader || !fragmentShader)
+    var context = create3DContext(canvas, contextAttribs);
+    if (!context)
         return null;
 
-    // Create the program object
-    gl.program = gl.createProgram();
-
-    if (!gl.program)
+    context.program = createProgram(context, "vshader", "fshader", ["pos", "colorIn"]);
+    if (!context.program)
         return null;
 
-    // Attach our two shaders to the program
-    gl.attachShader(gl.program, vertexShader);
-    gl.attachShader(gl.program, fragmentShader);
+    context.useProgram(context.program);
 
-    // Bind attributes
-    var attribs = [ "pos", "colorIn" ];
-    for (var i in attribs)
-        gl.bindAttribLocation(gl.program, parseInt(i), attribs[i]);
+    context.enable(context.DEPTH_TEST);
+    context.enable(context.STENCIL_TEST);
+    context.disable(context.BLEND);
 
-    // Link the program
-    gl.linkProgram(gl.program);
+    context.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+    context.clearDepth(clearDepth);
+    context.clearStencil(clearStencil);
+    context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
 
-    // Check the link status
-    var linked = gl.getProgramParameter(gl.program, gl.LINK_STATUS);
-    if (!linked) {
-        // something went wrong with the link
-        var error = gl.getProgramInfoLog (gl.program);
-        gl.console.log("Error in program linking:"+error);
-
-        gl.deleteProgram(gl.program);
-        gl.deleteProgram(fragmentShader);
-        gl.deleteProgram(vertexShader);
-
-        return null;
-    }
-
-    gl.useProgram(gl.program);
-
-    gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    gl.clearDepth(clearDepth);
-    gl.clearStencil(clearStencil);
-    gl.enable(gl.DEPTH_TEST);
-    gl.enable(gl.STENCIL_TEST);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
-
-    return gl;
+    return context;
 }
 
 function drawAndReadPixel(gl, vertices, colors, x, y)
@@ -134,15 +100,11 @@ function testAlpha(alpha)
 {
     debug("Testing alpha = " + alpha);
     if (alpha)
-        shouldBeNonNull("webGL = getWebGL('alphaOn', { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
+        shouldBeNonNull("webGL = getWebGL(1, 1, { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
     else
-        shouldBeNonNull("webGL = getWebGL('alphaOff', { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
+        shouldBeNonNull("webGL = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeDefined("contextAttribs.alpha");
-    shouldBeDefined("contextAttribs.depth");
-    shouldBeDefined("contextAttribs.stencil");
-    shouldBeDefined("contextAttribs.antialias");
-    shouldBeDefined("contextAttribs.premultipliedAlpha");
+    shouldBeTrue("contextAttribs.alpha == " + alpha);
 
     var buf = new Uint8Array(1 * 1 * 4);
     webGL.readPixels(0, 0, 1, 1, webGL.RGBA, webGL.UNSIGNED_BYTE, buf);
@@ -158,15 +120,10 @@ function testDepth(depth)
 {
     debug("Testing depth = " + depth);
     if (depth)
-        shouldBeNonNull("webGL = getWebGL('depthOn', { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+        shouldBeNonNull("webGL = getWebGL(1, 1, { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
     else
-        shouldBeNonNull("webGL = getWebGL('depthOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+        shouldBeNonNull("webGL = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeDefined("contextAttribs.depth");
-    shouldBeDefined("contextAttribs.alpha");
-    shouldBeDefined("contextAttribs.stencil");
-    shouldBeDefined("contextAttribs.antialias");
-    shouldBeDefined("contextAttribs.premultipliedAlpha");
 
     webGL.depthFunc(webGL.NEVER);
 
@@ -194,19 +151,18 @@ function testDepth(depth)
     shouldBe("pixel", "correctColor");
 }
 
-function testStencil(stencil)
+function testStencilAndDepth(stencil, depth)
 {
-    debug("Testing stencil = " + stencil);
-    if (stencil)
-        shouldBeNonNull("webGL = getWebGL('stencilOn', { depth: false, stencil: true, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
-    else
-        shouldBeNonNull("webGL = getWebGL('stencilOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+    debug("Testing stencil = " + stencil + ", depth = " + depth);
+    var creationString =
+        "webGL = getWebGL(1, 1, { depth: " + depth + ", stencil: " + stencil + ", antialias: false }, [ 0, 0, 0, 1 ], 1, 0)";
+    shouldBeNonNull(creationString);
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeDefined("contextAttribs.depth");
-    shouldBeDefined("contextAttribs.alpha");
-    shouldBeDefined("contextAttribs.stencil");
-    shouldBeDefined("contextAttribs.antialias");
-    shouldBeDefined("contextAttribs.premultipliedAlpha");
+    if (!stencil && contextAttribs.stencil) {
+        testFailed("WebGL implementation provided a stencil buffer when it should not have");
+    }
+    if (!contextAttribs.stencil)
+        stencil = false;
 
     webGL.depthFunc(webGL.ALWAYS);
 
@@ -233,7 +189,7 @@ function testStencil(stencil)
     pixel[1] = buf[1];
     pixel[2] = buf[2];
     pixel[3] = buf[3];
-    correctColor = (contextAttribs.stencil ? [0, 0, 0, 255] : [255, 0, 0, 255]);
+    correctColor = (stencil ? [0, 0, 0, 255] : [255, 0, 0, 255]);
     shouldBe("pixel", "correctColor");
 }
 
@@ -241,15 +197,10 @@ function testAntialias(antialias)
 {
     debug("Testing antialias = " + antialias);
     if (antialias)
-        shouldBeNonNull("webGL = getWebGL('antialiasOn', { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0)");
+        shouldBeNonNull("webGL = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0)");
     else
-        shouldBeNonNull("webGL = getWebGL('antialiasOff', { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
+        shouldBeNonNull("webGL = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeDefined("contextAttribs.depth");
-    shouldBeDefined("contextAttribs.alpha");
-    shouldBeDefined("contextAttribs.stencil");
-    shouldBeDefined("contextAttribs.antialias");
-    shouldBeDefined("contextAttribs.premultipliedAlpha");
 
     var vertices = new Float32Array([
          1.0, 1.0, 0.0,
@@ -271,32 +222,19 @@ function runTest()
     testAlpha(false);
     testDepth(true);
     testDepth(false);
-    testStencil(true);
-    testStencil(false);
+    testStencilAndDepth(true, false);
+    testStencilAndDepth(false, false);
+    testStencilAndDepth(true, true);
+    testStencilAndDepth(false, true);
     testAntialias(true);
     testAntialias(false);
-    var epilogue = document.createElement("script");
-    epilogue.onload = finish;
-    epilogue.src = "../../js/resources/js-test-post.js";
-    document.body.appendChild(epilogue);
+
+    finishTest();
 }
 
-function finish() {
-    if (window.nonKhronosFrameworkNotifyDone) {
-        window.nonKhronosFrameworkNotifyDone();
-    }
-}
 </script>
 </head>
 <body onload="init()">
-<canvas id="alphaOn" width="1px" height="1px"></canvas>
-<canvas id="alphaOff" width="1px" height="1px"></canvas>
-<canvas id="depthOn" width="1px" height="1px"></canvas>
-<canvas id="depthOff" width="1px" height="1px"></canvas>
-<canvas id="stencilOn" width="1px" height="1px"></canvas>
-<canvas id="stencilOff" width="1px" height="1px"></canvas>
-<canvas id="antialiasOn" width="2px" height="2px"></canvas>
-<canvas id="antialiasOff" width="2px" height="2px"></canvas>
 <div id="description"></div>
 <div id="console"></div>
 </body>

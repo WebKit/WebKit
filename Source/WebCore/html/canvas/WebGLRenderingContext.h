@@ -483,7 +483,7 @@ public:
     GC3Dboolean m_colorMask[4];
     GC3Dboolean m_depthMask;
 
-    long m_stencilBits;
+    bool m_stencilEnabled;
     GC3Duint m_stencilMask, m_stencilMaskBack;
     GC3Dint m_stencilFuncRef, m_stencilFuncRefBack; // Note that these are the user specified values, not the internal clamped value.
     GC3Duint m_stencilFuncMask, m_stencilFuncMaskBack;
@@ -698,6 +698,13 @@ public:
     void synthesizeGLError(GC3Denum, const char* functionName, const char* description);
 
     String ensureNotNull(const String&) const;
+
+    // Enable or disable stencil test based on user setting and
+    // whether the current FBO has a stencil buffer.
+    void applyStencilTest();
+
+    // Helper for enabling or disabling a capability.
+    void enableOrDisable(GC3Denum capability, bool enable);
 
     friend class WebGLStateRestorer;
 };

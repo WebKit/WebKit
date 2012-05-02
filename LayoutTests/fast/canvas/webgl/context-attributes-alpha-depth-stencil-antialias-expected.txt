@@ -1,79 +1,48 @@
-       
 Verify WebGLContextAttributes are working as specified, including alpha, depth, stencil, antialias, but not premultipliedAlpha
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Testing alpha = true
-PASS webGL = getWebGL('alphaOn', { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
+PASS webGL = getWebGL(1, 1, { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
+PASS contextAttribs.alpha == true is true
 PASS pixel is correctColor
 Testing alpha = false
-PASS webGL = getWebGL('alphaOff', { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
+PASS webGL = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
+PASS contextAttribs.alpha == false is true
 PASS pixel is correctColor
 Testing depth = true
-PASS webGL = getWebGL('depthOn', { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS webGL = getWebGL(1, 1, { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
 PASS pixel is correctColor
 Testing depth = false
-PASS webGL = getWebGL('depthOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS webGL = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
 PASS pixel is correctColor
-Testing stencil = true
-PASS webGL = getWebGL('stencilOn', { depth: false, stencil: true, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+Testing stencil = true, depth = false
+PASS webGL = getWebGL(1, 1, { depth: false, stencil: true, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
 PASS pixel is correctColor
-Testing stencil = false
-PASS webGL = getWebGL('stencilOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+Testing stencil = false, depth = false
+PASS webGL = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
+PASS pixel is correctColor
+Testing stencil = true, depth = true
+PASS webGL = getWebGL(1, 1, { depth: true, stencil: true, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS contextAttribs = webGL.getContextAttributes() is non-null.
+PASS pixel is correctColor
+Testing stencil = false, depth = true
+PASS webGL = getWebGL(1, 1, { depth: true, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS contextAttribs = webGL.getContextAttributes() is non-null.
 PASS pixel is correctColor
 Testing antialias = true
-PASS webGL = getWebGL('antialiasOn', { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS webGL = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
 PASS pixel[0] != 255 && pixel[0] != 0 is contextAttribs.antialias
 Testing antialias = false
-PASS webGL = getWebGL('antialiasOff', { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS webGL = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
 PASS contextAttribs = webGL.getContextAttributes() is non-null.
-PASS contextAttribs.depth is defined.
-PASS contextAttribs.alpha is defined.
-PASS contextAttribs.stencil is defined.
-PASS contextAttribs.antialias is defined.
-PASS contextAttribs.premultipliedAlpha is defined.
 PASS pixel[0] != 255 && pixel[0] != 0 is contextAttribs.antialias
 PASS successfullyParsed is true
 

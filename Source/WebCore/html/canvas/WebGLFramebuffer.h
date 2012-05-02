@@ -73,6 +73,8 @@ public:
 
     void setHasEverBeenBound() { m_hasEverBeenBound = true; }
 
+    bool hasStencilBuffer() const;
+
 protected:
     WebGLFramebuffer(WebGLRenderingContext*);
 

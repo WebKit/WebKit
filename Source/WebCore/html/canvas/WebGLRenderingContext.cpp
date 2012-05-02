@@ -470,6 +470,7 @@ void WebGLRenderingContext::initializeNewContext()
     m_framebufferBinding = 0;
     m_renderbufferBinding = 0;
     m_depthMask = true;
+    m_stencilEnabled = false;
     m_stencilMask = 0xFFFFFFFF;
     m_stencilMaskBack = 0xFFFFFFFF;
     m_stencilFuncRef = 0;
@@ -927,6 +928,7 @@ void WebGLRenderingContext::bindFramebuffer(GC3Denum target, WebGLFramebuffer* b
         m_context->bindFramebuffer(target, objectOrZero(buffer));
     if (buffer)
         buffer->setHasEverBeenBound();
+    applyStencilTest();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1625,6 +1627,12 @@ void WebGLRenderingContext::disable(GC3Denum cap)
 {
     if (isContextLost() || !validateCapability("disable", cap))
         return;
+    if (cap == GraphicsContext3D::STENCIL_TEST) {
+        m_stencilEnabled = false;
+        applyStencilTest();
+        cleanupAfterGraphicsCall(false);
+        return;
+    }
     if (cap == GraphicsContext3D::SCISSOR_TEST) {
         m_scissorEnabled = false;
         if (m_drawingBuffer)
@@ -1970,6 +1978,12 @@ void WebGLRenderingContext::enable(GC3Denum cap)
 {
     if (isContextLost() || !validateCapability("enable", cap))
         return;
+    if (cap == GraphicsContext3D::STENCIL_TEST) {
+        m_stencilEnabled = true;
+        applyStencilTest();
+        cleanupAfterGraphicsCall(false);
+        return;
+    }
     if (cap == GraphicsContext3D::SCISSOR_TEST) {
         m_scissorEnabled = true;
         if (m_drawingBuffer)
@@ -2080,6 +2094,7 @@ void WebGLRenderingContext::framebufferRenderbuffer(GC3Denum target, GC3Denum at
         if (object)
             m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, object);
     }
+    applyStencilTest();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -2235,7 +2250,16 @@ PassRefPtr<WebGLContextAttributes> WebGLRenderingContext::getContextAttributes()
         return 0;
     // We always need to return a new WebGLContextAttributes object to
     // prevent the user from mutating any cached version.
-    return WebGLContextAttributes::create(m_context->getContextAttributes());
+
+    // Also, we need to enforce requested values of "false" for depth
+    // and stencil, regardless of the properties of the underlying
+    // GraphicsContext3D.
+    RefPtr<WebGLContextAttributes> attributes = WebGLContextAttributes::create(m_context->getContextAttributes());
+    if (!m_attributes.depth)
+        attributes->setDepth(false);
+    if (!m_attributes.stencil)
+        attributes->setStencil(false);
+    return attributes.release();
 }
 
 GC3Denum WebGLRenderingContext::getError()
@@ -3065,6 +3089,8 @@ GC3Dboolean WebGLRenderingContext::isEnabled(GC3Denum cap)
 {
     if (isContextLost() || !validateCapability("isEnabled", cap))
         return 0;
+    if (cap == GraphicsContext3D::STENCIL_TEST)
+        return m_stencilEnabled;
     return m_context->isEnabled(cap);
 }
 
@@ -3315,7 +3341,9 @@ void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum intern
         break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
+        return;
     }
+    applyStencilTest();
 }
 
 void WebGLRenderingContext::sampleCoverage(GC3Dfloat value, GC3Dboolean invert)
@@ -5503,6 +5531,28 @@ void WebGLRenderingContext::synthesizeGLError(GC3Denum error, const char* functi
     m_context->synthesizeGLError(error);
 }
 
+
+void WebGLRenderingContext::applyStencilTest()
+{
+    bool haveStencilBuffer = false;
+
+    if (m_framebufferBinding)
+        haveStencilBuffer = m_framebufferBinding->hasStencilBuffer();
+    else {
+        RefPtr<WebGLContextAttributes> attributes = getContextAttributes();
+        haveStencilBuffer = attributes->stencil();
+    }
+    enableOrDisable(GraphicsContext3D::STENCIL_TEST,
+                    m_stencilEnabled && haveStencilBuffer);
+}
+
+void WebGLRenderingContext::enableOrDisable(GC3Denum capability, bool enable)
+{
+    if (enable)
+        m_context->enable(capability);
+    else
+        m_context->disable(capability);
+}
 
 } // namespace WebCore
 

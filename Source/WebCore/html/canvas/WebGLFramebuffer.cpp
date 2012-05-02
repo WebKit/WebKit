@@ -95,11 +95,9 @@ namespace {
 
     bool isValidRenderbuffer(WebGLSharedObject* attachedObject)
     {
-        if (attachedObject && attachedObject->object() && attachedObject->isRenderbuffer()) {
-            if (!(reinterpret_cast<WebGLRenderbuffer*>(attachedObject))->isValid())
-                return false;
-        }
-        return true;
+        if (!attachedObject || !attachedObject->object() || !attachedObject->isRenderbuffer())
+            return false;
+        return static_cast<WebGLRenderbuffer*>(attachedObject)->isValid();
     }
 
 } // anonymous namespace
@@ -386,6 +384,11 @@ bool WebGLFramebuffer::onAccess(GraphicsContext3D* context3d, bool needToInitial
     if (needToInitializeRenderbuffers)
         return initializeRenderbuffers(context3d);
     return true;
+}
+
+bool WebGLFramebuffer::hasStencilBuffer() const
+{
+    return isValidRenderbuffer(m_depthStencilAttachment.get()) || isValidRenderbuffer(m_stencilAttachment.get());
 }
 
 void WebGLFramebuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
