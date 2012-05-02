@@ -1,3 +1,15 @@
+2012-05-02  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Implement the Web Audio API feature.
+        https://bugs.webkit.org/show_bug.cgi?id=78688
+
+        Reviewed by Philippe Normand.
+
+        Implement the Web Audio API feature on the EFL port.
+        https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+
+        * platform/efl/Skipped: Change the comment of webaudio.
+
 2012-05-01  Andrew Scherkus  <scherkus@chromium.org>
 
         [Chromium] Adjust baseline location for media/media-can-play-type-webm.html.

@@ -1,3 +1,20 @@
+2012-05-02  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Implement the Web Audio API feature.
+        https://bugs.webkit.org/show_bug.cgi?id=78688
+
+        Reviewed by Philippe Normand.
+
+        Implement the Web Audio API feature on the EFL port.
+        https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+
+        * ewk/ewk_view.cpp: Add the setter/getter of the webaudio feature.
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_web_audio_get): Enable/disable the Web Audio API feature.
+        (ewk_view_setting_web_audio_set): Query if the Web Audio API feature is enabled.
+        * ewk/ewk_view.h: Add the prototypes.
+
 2012-04-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] ResourceError domain needs to be properly set in FrameLoaderClient

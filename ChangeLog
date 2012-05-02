@@ -1,3 +1,18 @@
+2012-05-02  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Implement the Web Audio API feature.
+        https://bugs.webkit.org/show_bug.cgi?id=78688
+
+        Reviewed by Philippe Normand.
+
+        Implement the Web Audio API feature on the EFL port.
+        https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+
+        * Source/cmake/FindGStreamer-Audio.cmake: Added. Find the pkgconfig of the GStreamer-audio.
+        * Source/cmake/FindGStreamer-FFT.cmake: Added. Find the pkgconfig of the GStreamer-fft.
+        * Source/cmake/OptionsEfl.cmake: Add the ENABLE_WEB_AUDIO option.
+        * Source/cmakeconfig.h.cmake: Add the ENABLE_WEB_AUDIO option.
+
 2012-05-01  Landry Breuil  <landry@openbsd.org>
 
         [GTK] Fix gstreamer detection during configure

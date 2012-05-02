@@ -275,6 +275,16 @@ IF (ENABLE_WEBGL)
     )
 ENDIF ()
 
+IF (ENABLE_WEB_AUDIO)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSAudioBufferSourceNodeCustom.cpp
+        bindings/js/JSAudioContextCustom.cpp
+        bindings/js/JSConvolverNodeCustom.cpp
+        bindings/js/JSJavaScriptAudioNodeCustom.cpp
+        bindings/js/JSWaveShaperNodeCustom.cpp
+    )
+ENDIF ()
+
 LIST(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
 )

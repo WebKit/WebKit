@@ -123,6 +123,7 @@ SET(WebCore_IDL_FILES
     Modules/geolocation/PositionErrorCallback.idl
 
     Modules/webaudio/AudioBuffer.idl
+    Modules/webaudio/AudioBufferCallback.idl
     Modules/webaudio/AudioBufferSourceNode.idl
     Modules/webaudio/AudioChannelSplitter.idl
     Modules/webaudio/AudioChannelMerger.idl
@@ -136,11 +137,18 @@ SET(WebCore_IDL_FILES
     Modules/webaudio/AudioParam.idl
     Modules/webaudio/AudioProcessingEvent.idl
     Modules/webaudio/AudioSourceNode.idl
+    Modules/webaudio/BiquadFilterNode.idl
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/DOMWindowWebAudio.idl
     Modules/webaudio/DelayNode.idl
+    Modules/webaudio/DynamicsCompressorNode.idl
     Modules/webaudio/JavaScriptAudioNode.idl
+    Modules/webaudio/MediaElementAudioSourceNode.idl
+    Modules/webaudio/OfflineAudioCompletionEvent.idl
+    Modules/webaudio/Oscillator.idl
     Modules/webaudio/RealtimeAnalyserNode.idl
+    Modules/webaudio/WaveShaperNode.idl
+    Modules/webaudio/WaveTable.idl
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/DOMWindowWebSocket.idl
@@ -2416,6 +2424,80 @@ IF (ENABLE_BATTERY_STATUS)
         Modules/battery/BatteryController.cpp
         Modules/battery/BatteryManager.cpp
         Modules/battery/BatteryStatus.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_WEB_AUDIO)
+    LIST(APPEND WebCore_SOURCES
+        Modules/webaudio/AsyncAudioDecoder.cpp
+        Modules/webaudio/AudioBasicProcessorNode.cpp
+        Modules/webaudio/AudioBuffer.cpp
+        Modules/webaudio/AudioBufferSourceNode.cpp
+        Modules/webaudio/AudioChannelMerger.cpp
+        Modules/webaudio/AudioChannelSplitter.cpp
+        Modules/webaudio/AudioContext.cpp
+        Modules/webaudio/AudioDestinationNode.cpp
+        Modules/webaudio/AudioGainNode.cpp
+        Modules/webaudio/AudioListener.cpp
+        Modules/webaudio/AudioNode.cpp
+        Modules/webaudio/AudioNodeInput.cpp
+        Modules/webaudio/AudioNodeOutput.cpp
+        Modules/webaudio/AudioPannerNode.cpp
+        Modules/webaudio/AudioParam.cpp
+        Modules/webaudio/AudioParamTimeline.cpp
+        Modules/webaudio/AudioProcessingEvent.cpp
+        Modules/webaudio/BiquadDSPKernel.cpp
+        Modules/webaudio/BiquadFilterNode.cpp
+        Modules/webaudio/BiquadProcessor.cpp
+        Modules/webaudio/ConvolverNode.cpp
+        Modules/webaudio/DefaultAudioDestinationNode.cpp
+        Modules/webaudio/DelayDSPKernel.cpp
+        Modules/webaudio/DelayNode.cpp
+        Modules/webaudio/DelayProcessor.cpp
+        Modules/webaudio/DynamicsCompressorNode.cpp
+        Modules/webaudio/JavaScriptAudioNode.cpp
+        Modules/webaudio/MediaElementAudioSourceNode.cpp
+        Modules/webaudio/OfflineAudioCompletionEvent.cpp
+        Modules/webaudio/OfflineAudioDestinationNode.cpp
+        Modules/webaudio/Oscillator.cpp
+        Modules/webaudio/RealtimeAnalyser.cpp
+        Modules/webaudio/RealtimeAnalyserNode.cpp
+        Modules/webaudio/WaveShaperDSPKernel.cpp
+        Modules/webaudio/WaveShaperNode.cpp
+        Modules/webaudio/WaveShaperProcessor.cpp
+        Modules/webaudio/WaveTable.cpp
+
+        platform/audio/AudioBus.cpp
+        platform/audio/AudioChannel.cpp
+        platform/audio/AudioDSPKernelProcessor.cpp
+        platform/audio/AudioResampler.cpp
+        platform/audio/AudioResamplerKernel.cpp
+        platform/audio/AudioUtilities.cpp
+        platform/audio/Biquad.cpp
+        platform/audio/Cone.cpp
+        platform/audio/DirectConvolver.cpp
+        platform/audio/Distance.cpp
+        platform/audio/DynamicsCompressor.cpp
+        platform/audio/DynamicsCompressorKernel.cpp
+        platform/audio/EqualPowerPanner.cpp
+        platform/audio/FFTConvolver.cpp
+        platform/audio/FFTFrame.cpp
+        platform/audio/FFTFrameStub.cpp
+        platform/audio/HRTFDatabase.cpp
+        platform/audio/HRTFDatabaseLoader.cpp
+        platform/audio/HRTFElevation.cpp
+        platform/audio/HRTFKernel.cpp
+        platform/audio/HRTFPanner.cpp
+        platform/audio/MultiChannelResampler.cpp
+        platform/audio/Panner.cpp
+        platform/audio/ReverbAccumulationBuffer.cpp
+        platform/audio/ReverbConvolver.cpp
+        platform/audio/ReverbConvolverStage.cpp
+        platform/audio/Reverb.cpp
+        platform/audio/ReverbInputBuffer.cpp
+        platform/audio/SincResampler.cpp
+        platform/audio/VectorMath.cpp
+        platform/audio/ZeroPole.cpp
     )
 ENDIF ()
 

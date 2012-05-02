@@ -224,6 +224,9 @@ struct _Ewk_View_Private_Data {
         bool offlineAppCache : 1;
         bool pageCache : 1;
         bool enableXSSAuditor : 1;
+#if ENABLE(WEB_AUDIO)
+        bool webAudio : 0;
+#endif
         bool webGLEnabled : 1;
         bool tabsToLinks : 1;
         struct {
@@ -683,6 +686,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setOfflineWebApplicationCacheEnabled(true);
     priv->pageSettings->setUsesPageCache(true);
     priv->pageSettings->setUsesEncodingDetector(false);
+#if ENABLE(WEB_AUDIO)
+    priv->pageSettings->setWebAudioEnabled(false);
+#endif
     priv->pageSettings->setWebGLEnabled(true);
     priv->pageSettings->setXSSAuditorEnabled(true);
 
@@ -741,6 +747,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.tabsToLinks = true;
 
     priv->settings.userAgent = ewk_settings_default_user_agent_get();
+#if ENABLE(WEB_AUDIO)
+    priv->settings.webAudio = priv->pageSettings->webAudioEnabled();
+#endif
 
     // Since there's no scale separated from zooming in webkit-efl, this functionality of
     // viewport meta tag is implemented using zoom. When scale zoom is supported by webkit-efl,
@@ -4202,6 +4211,32 @@ WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Ob
     return 0;
 }
 #endif
+
+Eina_Bool ewk_view_setting_web_audio_get(const Evas_Object* ewkView)
+{
+#if ENABLE(WEB_AUDIO)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.webAudio;
+#else
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_setting_web_audio_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+#if ENABLE(WEB_AUDIO)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    if (priv->settings.webAudio != enable) {
+        priv->pageSettings->setWebAudioEnabled(enable);
+        priv->settings.webAudio = enable;
+    }
+    return true;
+#else
+    return false;
+#endif
+}
 
 namespace EWKPrivate {
 

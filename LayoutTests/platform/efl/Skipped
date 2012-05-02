@@ -710,7 +710,7 @@ svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 webarchive
 
-# The EFL port has no support for webaudio
+# For now, Web Audio API is disabled
 webaudio
 
 # The EFL port has no support for loading a PDF as an image
