@@ -42,10 +42,7 @@ public:
     RenderBox(Node*);
     virtual ~RenderBox();
 
-    virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || requiresLayerForOverflowClip() || hasTransform() || hasHiddenBackface() || hasMask() || hasReflection() || hasFilter() || style()->specifiesColumns(); }
-    bool requiresLayerForOverflowClip() const;
-
-    bool hasOverflowClipWithLayer() const { return hasOverflowClip() && hasLayer(); }
+    virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || isRelPositioned() || isTransparent() || hasOverflowClip() || hasTransform() || hasHiddenBackface() || hasMask() || hasReflection() || hasFilter() || style()->specifiesColumns(); }
 
     // Use this with caution! No type checking is done!
     RenderBox* firstChildBox() const;
@@ -462,8 +459,6 @@ public:
 
     IntSize scrolledContentOffset() const;
     LayoutSize cachedSizeForOverflowClip() const;
-    void updateCachedSizeForOverflowClip();
-    void clearCachedSizeForOverflowClip();
 
     virtual bool hasRelativeDimensions() const;
     virtual bool hasRelativeLogicalHeight() const;
@@ -648,24 +643,6 @@ inline RenderBox* RenderBox::firstChildBox() const
 inline RenderBox* RenderBox::lastChildBox() const
 {
     return toRenderBox(lastChild());
-}
-
-inline bool RenderBox::requiresLayerForOverflowClip() const
-{
-    if (!hasOverflowClip())
-        return false;
-
-    // The resizer is attached to the RenderLayer so we need one.
-    if (style()->resize() != RESIZE_NONE)
-        return true;
-
-    // FIXME: overflow: auto could also lazily create its layer but some repainting
-    // issues are arising from that.
-    bool onlyOverflowHidden = style()->overflowX() == OHIDDEN && style()->overflowY() == OHIDDEN;
-
-    // Currently {push|pop}ContentsClip do not handle properly all cases involving a clip
-    // with a border radius so we need a RenderLayer to handle them.
-    return !onlyOverflowHidden || style()->hasBorderRadius();
 }
 
 } // namespace WebCore

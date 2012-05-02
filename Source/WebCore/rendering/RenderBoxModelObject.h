@@ -244,8 +244,6 @@ public:
     RenderObject* firstLetterRemainingText() const;
     void setFirstLetterRemainingText(RenderObject*);
 
-    void ensureLayer();
-
 private:
     virtual bool isBoxModelObject() const { return true; }
 

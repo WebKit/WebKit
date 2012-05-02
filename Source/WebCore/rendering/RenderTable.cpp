@@ -446,9 +446,6 @@ void RenderTable::layout()
     // FIXME: Only pass true if width or height changed.
     layoutPositionedObjects(true);
 
-    if (hasOverflowClip() && !hasLayer())
-        updateCachedSizeForOverflowClip();
-
     updateLayerTransform();
 
     // Layout was changed, so probably borders too.

@@ -1583,7 +1583,6 @@ BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 // Rebaseline to take advantage of skia ColorFilter optimization.
 // Note that two of tests below are broken on Leopard for other reasons (search
 // elsewhere within this file) and thus should not be blindly rebaselined there.
-// Need TEXT rebaseline after BUGWK75568
 BUGCR104128 : fast/repaint/box-shadow-h.html = IMAGE
 BUGCR104128 : fast/repaint/box-shadow-v.html = IMAGE
 BUGCR104128 LINUX MAC : fast/repaint/text-shadow-horizontal.html = IMAGE
@@ -2289,8 +2288,7 @@ BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = PASS CRASH TIMEOU
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
 
 BUG_DRT DEBUG : fast/frames/calculate-round.html = PASS TIMEOUT
-// Rebaseline needed after BUGWK75568
-BUG_DRT : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT
+BUG_DRT : fast/repaint/iframe-scroll-repaint.html = IMAGE
 BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS TEXT
 BUG_DRT LINUX MAC : http/tests/plugins/post-url-file.html = TIMEOUT
@@ -3142,10 +3140,6 @@ BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 // CRASH comes from BUGCR121442
 BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT TEXT CRASH
 
-// Started failing at WK r106383 or r106384.
-// FIXME_JCHAFFRAIX:  Restore to just IMAGE after WK75568 text rebaselines land
-// BUGWK77494 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
-
 // Started crashing at WK r106422.
 BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
 
@@ -3231,23 +3225,19 @@ BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
 
 // Need text rebaseline after lazily allocating layers.
 // The difference should be only layer removal, no size or position should change.
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/inline-relative-positioned.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/lines-with-layout-delta.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/overflow-clip-subtree-layout.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/overflow-delete-line.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/repaint-resized-overflow.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-layoutstate-transform.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-skipped.html = IMAGE
-BUGWK75568 LEOPARD SNOWLEOPARD : fast/replaced/replaced-breaking.html = IMAGE
-BUGWK75568 MAC : fast/replaced/width100percent-searchfield.html = IMAGE PASS
-BUGWK75568 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
-BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PASS
-
-// Those tests need a text baseline after lazily allocating layers.
-// The change should only be layer removal.
-BUGWK75568 : fast/events/mouse-relative-position.html = TEXT
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/inline-relative-positioned.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/lines-with-layout-delta.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/overflow-clip-subtree-layout.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/overflow-delete-line.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/repaint-resized-overflow.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-layoutstate-transform.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-skipped.html = IMAGE
+BUGWK83954 LEOPARD SNOWLEOPARD : fast/replaced/replaced-breaking.html = IMAGE
+BUGWK83954 MAC : fast/replaced/width100percent-searchfield.html = IMAGE PASS
+BUGWK83954 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
+BUGWK83954 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PASS
 
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT IMAGE
 
@@ -3289,7 +3279,6 @@ BUGWK81145 LION : editing/spelling/spelling-backspace-between-lines.html = TEXT
 BUGWK81145 LION : fast/events/offsetX-offsetY.html = TEXT
 BUGWK81145 LION : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TEXT
 BUGWK81145 LION : fast/loader/loadInProgress.html = TEXT
-BUGWK81145 LION : fast/text/selection-rect-rounding.html = TEXT
 BUGWK81145 LION : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
 BUGWK81145 LION : plugins/plugin-javascript-access.html = TEXT
 BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
@@ -3485,7 +3474,7 @@ BUGWK82122 LEOPARD SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d4.xml = FAIL P
 
 // Needs a rebaseline after the bug.
 // The inner <input> should now grow to take the full cell's height.
-BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE
+BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
 // Flaky/crashing on a single platform every 30 tries or so
@@ -3512,7 +3501,8 @@ BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 
 BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canplay_canplaythrough.html = PASS CRASH
 
-BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
+// Needs a text rebaseline after bug 83954
+BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = TEXT IMAGE+TEXT
 
 BUGRNIWA MAC : editing/pasteboard/emacs-cntl-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
@@ -3534,9 +3524,6 @@ BUG_OJAN SKIP : fast/js/global-constructors.html = FAIL
 
 // This should only be a layer change.
 BUGWK82129 : fast/box-shadow/shadow-buffer-partial.html = TEXT
-BUGWK82129 MAC : fast/block/lineboxcontain/block-font.html = TEXT
-BUGWK82129 MAC : fast/block/lineboxcontain/block-glyphs.html = TEXT
-BUGWK82129 MAC : fast/block/lineboxcontain/font.html = TEXT
 BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 
 BUGWK82669 LINUX WIN LEOPARD : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
@@ -3615,7 +3602,8 @@ BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html 
 
 BUGWK84689 SNOWLEOPARD : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TIMEOUT PASS
 
-BUGWK84698 LINUX : fast/forms/placeholder-position.html = IMAGE PASS
+// Needs a text rebaseline after bug 83954
+BUGWK84698 LINUX : fast/forms/placeholder-position.html = IMAGE+TEXT TEXT
 
 BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT PASS
 
@@ -3697,3 +3685,193 @@ BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
 BUGWK85353 WIN : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
+
+// Need text rebaseline after lazily allocating layers.
+// The difference should be only layer removal, no size or position should change.
+
+// Those tests have other entries in our expectations filed and may not totally covers
+BUGWK83954 RELEASE : animations/combo-transform-translate+scale.html = TEXT
+BUGWK83954 LINUX DEBUG : animations/combo-transform-translate+scale.html = TEXT
+BUGWK83954 WIN LINUX : editing/spelling/inline_spelling_markers.html = TEXT
+BUGWK83954 WIN LINUX : fast/forms/form-element-geometry.html = TEXT
+BUGWK83954 WIN LINUX : fast/forms/input-value.html = TEXT
+BUGWK83954 WIN LINUX : fast/layers/add-layer-with-nested-stacking.html = TEXT
+BUGWK83954 WIN LINUX : fast/layers/remove-layer-with-nested-stacking.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/inline-relative-positioned.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/lines-with-layout-delta.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/overflow-clip-subtree-layout.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/repaint-resized-overflow.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/subtree-layoutstate-transform.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/subtree-root-clip-2.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/subtree-root-clip.html = TEXT
+BUGWK83954 WIN LINUX : fast/repaint/subtree-root-skipped.html = TEXT
+BUGWK83954 WIN LINUX : fast/replaced/replaced-breaking.html = TEXT
+BUGWK83954 WIN LINUX : fast/replaced/width100percent-searchfield.html = TEXT
+BUGWK83954 WIN LINUX : fast/text/textIteratorNilRenderer.html = TEXT
+
+// Those tests need a text baseline after allocating more layers.
+// The change should only be layer addition.
+BUGWK83954 : compositing/geometry/object-clip-rects-assertion.html = TEXT
+BUGWK83954 : compositing/overflow/ancestor-overflow.html = TEXT
+BUGWK83954 : editing/inserting/before-after-input-element.html = TEXT
+BUGWK83954 : editing/pasteboard/4806874.html = TEXT
+BUGWK83954 : editing/pasteboard/drop-text-without-selection.html = TEXT
+BUGWK83954 : editing/pasteboard/input-field-1.html = TEXT
+BUGWK83954 : editing/selection/3690703-2.html = TEXT
+BUGWK83954 : editing/selection/3690703.html = TEXT
+BUGWK83954 : editing/selection/3690719.html = TEXT
+BUGWK83954 : editing/selection/4895428-3.html = TEXT
+BUGWK83954 : editing/selection/4975120.html = TEXT
+BUGWK83954 : editing/selection/drag-select-1.html = TEXT
+BUGWK83954 : editing/selection/expanding-selections.html = TEXT
+BUGWK83954 : editing/selection/leave-requested-block.html = TEXT
+BUGWK83954 : editing/selection/select-across-readonly-input-1.html = TEXT
+BUGWK83954 : editing/selection/select-across-readonly-input-2.html = TEXT
+BUGWK83954 : editing/selection/select-across-readonly-input-3.html = TEXT
+BUGWK83954 : editing/selection/select-across-readonly-input-4.html = TEXT
+BUGWK83954 : editing/selection/select-across-readonly-input-5.html = TEXT
+BUGWK83954 : fast/block/float/032.html = TEXT
+BUGWK83954 : fast/block/float/033.html = TEXT
+BUGWK83954 : fast/block/float/avoidance-rtl.html = TEXT
+BUGWK83954 : fast/block/float/float-not-removed-from-next-sibling3.html = TEXT
+BUGWK83954 : fast/block/float/float-overflow-hidden-containing-block-width.html = TEXT
+BUGWK83954 : fast/block/float/in-margin.html = TEXT
+BUGWK83954 : fast/block/float/overlapping-floats-with-overflow-hidden.html = TEXT
+BUGWK83954 : fast/block/float/shrink-to-avoid-float-complexity.html = TEXT
+BUGWK83954 : fast/block/lineboxcontain/block-font.html = TEXT
+BUGWK83954 : fast/block/lineboxcontain/block-glyphs.html = TEXT
+BUGWK83954 : fast/block/lineboxcontain/font.html = TEXT
+BUGWK83954 : fast/block/lineboxcontain/parsing-invalid.html = TEXT
+BUGWK83954 : fast/block/margin-collapse/103.html = TEXT
+BUGWK83954 : fast/clip/017.html = TEXT
+BUGWK83954 : fast/css/input-search-padding.html = TEXT
+BUGWK83954 : fast/css/invalidation-errors-2.html = TEXT
+BUGWK83954 : fast/css/invalidation-errors.html = TEXT
+BUGWK83954 : fast/css/line-height.html = TEXT
+BUGWK83954 : fast/css/nested-layers-with-hover.html = TEXT
+BUGWK83954 : fast/css/resize-single-axis.html = TEXT
+BUGWK83954 : fast/css/text-input-with-webkit-border-radius.html = TEXT
+BUGWK83954 : fast/css/text-overflow-input.html = TEXT
+BUGWK83954 : fast/dom/isindex-001.html = TEXT
+BUGWK83954 : fast/dom/isindex-002.html = TEXT
+BUGWK83954 : fast/dynamic/subtree-boundary-percent-height.html = TEXT
+BUGWK83954 : fast/dynamic/subtree-no-common-root-static-y.html = TEXT
+BUGWK83954 : fast/dynamic/subtree-table-cell-height.html = TEXT
+BUGWK83954 : fast/events/autoscroll.html = TEXT
+BUGWK83954 : fast/events/context-no-deselect.html = TEXT
+BUGWK83954 : fast/events/mouse-relative-position.html = TEXT
+BUGWK83954 : fast/forms/basic-inputs.html = TEXT
+BUGWK83954 : fast/forms/box-shadow-override.html = TEXT
+BUGWK83954 : fast/forms/encoding-test.html = TEXT
+BUGWK83954 : fast/forms/fieldset-align.html = TEXT
+BUGWK83954 : fast/forms/floating-textfield-relayout.html = TEXT
+BUGWK83954 : fast/forms/input-align.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-bkcolor.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-default-bkcolor.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-disabled.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-focus.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-height.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-preventDefault.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-readonly.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-selection.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-visibility.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-width.html = TEXT
+BUGWK83954 : fast/forms/input-baseline.html = TEXT
+BUGWK83954 : fast/forms/input-double-click-selection-gap-bug.html = TEXT
+BUGWK83954 : fast/forms/input-field-text-truncated.html = TEXT
+BUGWK83954 : fast/forms/input-placeholder-visibility-1.html = TEXT
+BUGWK83954 : fast/forms/input-placeholder-visibility-3.html = TEXT
+BUGWK83954 : fast/forms/input-readonly-empty.html = TEXT
+BUGWK83954 : fast/forms/input-spaces.html = TEXT
+BUGWK83954 : fast/forms/input-table.html = TEXT
+BUGWK83954 : fast/forms/input-text-click-inside.html = TEXT
+BUGWK83954 : fast/forms/input-text-click-outside.html = TEXT
+BUGWK83954 : fast/forms/input-text-option-delete.html = TEXT
+BUGWK83954 : fast/forms/input-text-self-emptying-click.html = TEXT
+BUGWK83954 : fast/forms/input-width.html = TEXT
+BUGWK83954 : fast/forms/number/input-appearance-number-rtl.html = TEXT
+BUGWK83954 : fast/forms/number/input-appearance-spinbutton-disabled-readonly.html = TEXT
+BUGWK83954 : fast/forms/number/input-appearance-spinbutton-layer.html = TEXT
+BUGWK83954 WIN MAC : fast/forms/placeholder-position.html = TEXT
+BUGWK83954 : fast/forms/placeholder-pseudo-style.html = TEXT
+BUGWK83954 : fast/forms/plaintext-mode-2.html = TEXT
+BUGWK83954 : fast/forms/search-cancel-button-style-sharing.html = TEXT
+BUGWK83954 : fast/forms/search-display-none-cancel-button.html = TEXT
+BUGWK83954 : fast/forms/search-rtl.html = TEXT
+BUGWK83954 : fast/forms/search-styled.html = TEXT
+BUGWK83954 : fast/forms/search-vertical-alignment.html = TEXT
+BUGWK83954 : fast/forms/searchfield-heights.html = TEXT
+BUGWK83954 : fast/forms/tabbing-input-iframe.html = TEXT
+BUGWK83954 : fast/forms/text-style-color.html = TEXT
+BUGWK83954 : fast/forms/textfield-focus-ring.html = TEXT
+BUGWK83954 : fast/forms/validation-message-appearance.html = TEXT
+BUGWK83954 : fast/forms/visual-hebrew-text-field.html = TEXT
+BUGWK83954 : fast/frames/take-focus-from-iframe.html = TEXT
+BUGWK83954 : fast/html/details-no-summary4.html = TEXT
+BUGWK83954 : fast/html/details-open-javascript.html = TEXT
+BUGWK83954 : fast/html/details-open2.html = TEXT
+BUGWK83954 : fast/html/details-open4.html = TEXT
+BUGWK83954 : fast/invalid/residual-style.html = TEXT
+BUGWK83954 : fast/layers/self-painting-outline.html = TEXT
+BUGWK83954 : fast/lists/dynamic-marker-crash.html = TEXT
+BUGWK83954 : fast/multicol/layers-split-across-columns.html = TEXT
+BUGWK83954 : fast/overflow/004.html = TEXT
+BUGWK83954 : fast/overflow/clip-rects-fixed-ancestor.html = TEXT
+BUGWK83954 : fast/overflow/line-clamp.html = TEXT
+BUGWK83954 : fast/overflow/overflow-focus-ring.html = TEXT
+BUGWK83954 : fast/repaint/layer-outline-horizontal.html = TEXT
+BUGWK83954 : fast/repaint/layer-outline.html = TEXT
+BUGWK83954 : fast/repaint/opacity-change-on-overflow-float.html = TEXT
+BUGWK83954 : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = TEXT
+BUGWK83954 : fast/repaint/subtree-root-clip-3.html = TEXT
+BUGWK83954 : fast/replaced/replaced-breaking-mixture.html = TEXT
+BUGWK83954 : fast/text/selection-painted-separately.html = TEXT
+BUGWK83954 : fast/text/selection-rect-rounding.html = TEXT
+BUGWK83954 : fast/transforms/transformed-focused-text-input.html = TEXT
+BUGWK83954 : plugins/mouse-click-plugin-clears-selection.html = TEXT
+BUGWK83954 : svg/custom/inline-svg-in-xhtml.xml = TEXT
+BUGWK83954 : svg/hixie/mixed/003.xml = TEXT
+BUGWK83954 : tables/mozilla/bugs/45621.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug12384.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug154780.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug18359.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug24200.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug2479-2.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug2479-3.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug2479-4.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug28928.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug4382.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug44505.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug4527.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug46368-1.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug46368-2.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug51037.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug55545.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug7342.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug99948.html = TEXT
+BUGWK83954 : tables/mozilla/dom/tableDom.html = TEXT
+BUGWK83954 : tables/mozilla/other/move_row.html = TEXT
+BUGWK83954 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
+BUGWK83954 : tables/mozilla_expected_failures/bugs/bug45621.html = TEXT
+BUGWK83954 : tables/mozilla_expected_failures/bugs/bug92647-1.html = TEXT
+BUGWK83954 : tables/mozilla_expected_failures/bugs/bug2479-5.html = TEXT
+BUGWK83954 : fast/replaced/width100percent-textfield.html = TEXT
+BUGWK83954 WIN LINUX SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = TEXT
+BUGWK83954 : fast/speech/input-appearance-speechbutton.html = TEXT
+BUGWK83954 : fast/speech/speech-bidi-rendering.html = TEXT
+BUGWK83954 : fast/table/003.html = TEXT
+BUGWK83954 : fast/table/029.html = TEXT
+BUGWK83954 LINUX : fast/table/colspanMinWidth-vertical.html = TEXT
+BUGWK83954 : fast/table/colspanMinWidth.html = TEXT
+BUGWK83954 : fast/table/overflowHidden.html = TEXT
+BUGWK83954 : fast/table/spanOverlapRepaint.html = TEXT
+BUGWK83954 : fast/table/text-field-baseline.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug1188.html = TEXT
+BUGWK83954 : fast/block/float/avoiding-float-centered.html = TEXT
+BUGWK83954 : fast/clip/008.html = TEXT
+BUGWK83954 : fast/clip/011.html = TEXT
+BUGWK83954 : fast/clip/012.html = TEXT
+BUGWK83954 : fast/forms/input-text-double-click.html = TEXT
+BUGWK83954 : fast/repaint/table-hover-on-link.html = TEXT
+BUGWK83954 : http/tests/navigation/javascriptlink-frames.html = TEXT
+BUGWK83954 : fast/forms/date/date-appearance.html = TEXT

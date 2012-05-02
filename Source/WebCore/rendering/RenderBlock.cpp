@@ -1297,18 +1297,12 @@ void RenderBlock::finishDelayUpdateScrollInfo()
 
 void RenderBlock::updateScrollInfoAfterLayout()
 {
-    if (!hasOverflowClip())
-        return;
-
-    if (!hasLayer()) {
-        updateCachedSizeForOverflowClip();
-        return;
+    if (hasOverflowClip()) {
+        if (gDelayUpdateScrollInfo)
+            gDelayedUpdateScrollInfoSet->add(this);
+        else
+            layer()->updateScrollInfoAfterLayout();
     }
-
-    if (gDelayUpdateScrollInfo)
-        gDelayedUpdateScrollInfoSet->add(this);
-    else
-        layer()->updateScrollInfoAfterLayout();
 }
 
 void RenderBlock::layout()
@@ -1537,7 +1531,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
         repaintRect.inflate(maximalOutlineSize(PaintPhaseOutline));
         
-        if (hasOverflowClipWithLayer()) {
+        if (hasOverflowClip()) {
             // Adjust repaint rect for scroll offset
             repaintRect.move(-scrolledContentOffset());
 
@@ -2531,7 +2525,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
     // z-index.  We paint after we painted the background/border, so that the scrollbars will
     // sit above the background/border.
-    if (hasOverflowClipWithLayer() && style()->visibility() == VISIBLE && (phase == PaintPhaseBlockBackground || phase == PaintPhaseChildBlockBackground) && paintInfo.shouldPaintWithinRoot(this))
+    if (hasOverflowClip() && style()->visibility() == VISIBLE && (phase == PaintPhaseBlockBackground || phase == PaintPhaseChildBlockBackground) && paintInfo.shouldPaintWithinRoot(this))
         layer()->paintOverflowControls(paintInfo.context, roundedIntPoint(adjustedPaintOffset), paintInfo.rect);
 }
 
@@ -4386,7 +4380,7 @@ LayoutUnit RenderBlock::getClearDelta(RenderBox* child, LayoutUnit logicalTop)
 
 bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
-    if (!scrollsOverflow() || !hasLayer())
+    if (!scrollsOverflow())
         return false;
 
     return layer()->hitTestOverflowControls(result, roundedIntPoint(pointInContainer - toLayoutSize(accumulatedOffset)));

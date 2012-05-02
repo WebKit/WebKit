@@ -2552,11 +2552,6 @@ sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_dec
 # https://bugs.webkit.org/show_bug.cgi?id=71266
 fast/ruby/text-decoration-in-descendants-ruby.html
 
-# Still failing tests - no baseline problem
-# https://bugs.webkit.org/show_bug.cgi?id=75568
-plugins/mouse-click-plugin-clears-selection.html
-fast/events/mouse-relative-position.html
-
 # Failing since isWordTextBreak is not implemented. https://bugs.webkit.org/show_bug.cgi?id=81136
 editing/selection/move-by-word-visually-crash-test-1.html
 editing/selection/move-by-word-visually-crash-test-2.html

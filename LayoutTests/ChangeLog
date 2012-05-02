@@ -1,3 +1,28 @@
+2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION(110072): Clipping is not applied on layers that are animated using platform code
+        https://bugs.webkit.org/show_bug.cgi?id=83954
+
+        Reviewed by Simon Fraser.
+
+        * fast/layers/no-clipping-overflow-hidden-added-after-transform-expected.html: Added.
+        * fast/layers/no-clipping-overflow-hidden-added-after-transform.html: Added.
+        * fast/layers/no-clipping-overflow-hidden-added-after-transition-expected.html: Added.
+        * fast/layers/no-clipping-overflow-hidden-added-after-transition.html: Added.
+        * fast/layers/no-clipping-overflow-hidden-hardware-acceleration-expected.html: Added.
+        * fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html: Added.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        Disabled some tests for those platforms.
+
+        * platform/efl/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        Re-enabled those tests on the premises that r11072 / bug 75568 got rolled out.
+
 2012-05-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] EFL's LayoutTestController overridePreference implementation

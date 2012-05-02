@@ -272,9 +272,6 @@ void RenderBox::willBeDestroyed()
     // value during laying out. It causes a use-after-free bug.
     ASSERT(!RenderBlock::hasPercentHeightDescendant(this));
 
-    if (hasOverflowClip() && everHadLayout() && !hasLayer())
-        clearCachedSizeForOverflowClip();
-
     RenderBoxModelObject::willBeDestroyed();
 }
 
@@ -372,7 +369,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
     // new zoomed coordinate space.
-    if (hasOverflowClipWithLayer() && oldStyle && newStyle && oldStyle->effectiveZoom() != newStyle->effectiveZoom()) {
+    if (hasOverflowClip() && oldStyle && newStyle && oldStyle->effectiveZoom() != newStyle->effectiveZoom()) {
         if (int left = layer()->scrollXOffset()) {
             left = (left / oldStyle->effectiveZoom()) * newStyle->effectiveZoom();
             layer()->scrollToXOffset(left);
@@ -475,10 +472,6 @@ void RenderBox::layout()
         child = child->nextSibling();
     }
     statePusher.pop();
-
-    if (hasOverflowClip() && !hasLayer())
-        updateCachedSizeForOverflowClip();
-
     setNeedsLayout(false);
 }
 
@@ -506,7 +499,7 @@ int RenderBox::pixelSnappedClientHeight() const
 
 int RenderBox::scrollWidth() const
 {
-    if (hasOverflowClipWithLayer())
+    if (hasOverflowClip())
         return layer()->scrollWidth();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
@@ -517,7 +510,7 @@ int RenderBox::scrollWidth() const
 
 int RenderBox::scrollHeight() const
 {
-    if (hasOverflowClipWithLayer())
+    if (hasOverflowClip())
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
@@ -526,23 +519,23 @@ int RenderBox::scrollHeight() const
 
 int RenderBox::scrollLeft() const
 {
-    return hasOverflowClipWithLayer() ? layer()->scrollXOffset() : 0;
+    return hasOverflowClip() ? layer()->scrollXOffset() : 0;
 }
 
 int RenderBox::scrollTop() const
 {
-    return hasOverflowClipWithLayer() ? layer()->scrollYOffset() : 0;
+    return hasOverflowClip() ? layer()->scrollYOffset() : 0;
 }
 
 void RenderBox::setScrollLeft(int newLeft)
 {
-    if (hasOverflowClipWithLayer())
+    if (hasOverflowClip())
         layer()->scrollToXOffset(newLeft, RenderLayer::ScrollOffsetClamped);
 }
 
 void RenderBox::setScrollTop(int newTop)
 {
-    if (hasOverflowClipWithLayer())
+    if (hasOverflowClip())
         layer()->scrollToYOffset(newTop, RenderLayer::ScrollOffsetClamped);
 }
 
@@ -668,13 +661,13 @@ bool RenderBox::fixedElementLaysOutRelativeToFrame(Frame* frame, FrameView* fram
 
 bool RenderBox::includeVerticalScrollbarSize() const
 {
-    return hasOverflowClipWithLayer() && !layer()->hasOverlayScrollbars()
+    return hasOverflowClip() && !layer()->hasOverlayScrollbars()
         && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO);
 }
 
 bool RenderBox::includeHorizontalScrollbarSize() const
 {
-    return hasOverflowClipWithLayer() && !layer()->hasOverlayScrollbars()
+    return hasOverflowClip() && !layer()->hasOverlayScrollbars()
         && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO);
 }
 
@@ -766,56 +759,15 @@ bool RenderBox::needsPreferredWidthsRecalculation() const
 IntSize RenderBox::scrolledContentOffset() const
 {
     ASSERT(hasOverflowClip());
-
-    if (hasLayer())
-        return layer()->scrolledContentOffset();
-
-    // If we have no layer, it means that we have no overflowing content as we lazily
-    // allocate it on demand. Thus we don't have any scroll offset.
-    ASSERT(!requiresLayerForOverflowClip());
-    return IntSize();
-}
-
-typedef HashMap<const RenderBox*, LayoutSize> RendererSizeCache;
-static RendererSizeCache& cachedSizeForOverflowClipMap()
-{
-    DEFINE_STATIC_LOCAL(RendererSizeCache, cachedSizeForOverflowClipMap, ());
-    return cachedSizeForOverflowClipMap;
+    ASSERT(hasLayer());
+    return layer()->scrolledContentOffset();
 }
 
 LayoutSize RenderBox::cachedSizeForOverflowClip() const
 {
     ASSERT(hasOverflowClip());
-    if (hasLayer())
-        return layer()->size();
-
-    ASSERT(!requiresLayerForOverflowClip());
-    RendererSizeCache::iterator it = cachedSizeForOverflowClipMap().find(this);
-    if (it == cachedSizeForOverflowClipMap().end())
-        return LayoutSize();
-
-    return it->second;
-}
-
-void RenderBox::updateCachedSizeForOverflowClip()
-{
-    ASSERT(hasOverflowClip());
-    ASSERT(!requiresLayerForOverflowClip());
-    ASSERT(!hasLayer());
-
-    cachedSizeForOverflowClipMap().set(this, size());
-}
-
-void RenderBox::clearCachedSizeForOverflowClip()
-{
-    ASSERT(hasOverflowClip());
-    ASSERT(!requiresLayerForOverflowClip());
-    ASSERT(!hasLayer());
-
-    // FIXME: We really would like to enable this ASSERT. However the current updateScrollInfoAfterLayout
-    // is not bullet-proof and it triggers in non-obvious ways under NRWT.
-    // ASSERT(cachedSizeForOverflowClipMap().contains(this));
-    cachedSizeForOverflowClipMap().remove(this);
+    ASSERT(hasLayer());
+    return layer()->size();
 }
 
 LayoutUnit RenderBox::minPreferredLogicalWidth() const
@@ -1249,7 +1201,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
         return false;
         
     bool isControlClip = hasControlClip();
-    bool isOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
+    bool isOverflowClip = hasOverflowClip() && !layer()->isSelfPaintingLayer();
     
     if (!isControlClip && !isOverflowClip)
         return false;
@@ -1271,7 +1223,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
 
 void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, const LayoutPoint& accumulatedOffset)
 {
-    ASSERT(hasControlClip() || (hasOverflowClip() && !hasSelfPaintingLayer()));
+    ASSERT(hasControlClip() || (hasOverflowClip() && !layer()->isSelfPaintingLayer()));
 
     paintInfo.context->restore();
     if (originalPhase == PaintPhaseOutline) {
@@ -3729,12 +3681,6 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
     if (clientBox.contains(rect) || rect.isEmpty())
         return;
     
-    // Lazily allocate our layer as we will need it to hold our scroll information
-    // and for the clipping logic to work properly. Note that we *do* need a layer
-    // if we have some left overflow on an horizontal writing mode with ltr direction.
-    if (hasOverflowClip())
-        ensureLayer();
-
     // For overflow clip objects, we don't want to propagate overflow into unreachable areas.
     LayoutRect overflowRect(rect);
     if (hasOverflowClip() || isRenderView()) {

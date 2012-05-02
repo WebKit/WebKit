@@ -412,10 +412,6 @@ void RenderTableSection::layout()
         }
     }
     statePusher.pop();
-
-    if (hasOverflowClip() && !hasLayer())
-        updateCachedSizeForOverflowClip();
-
     setNeedsLayout(false);
 }
 
