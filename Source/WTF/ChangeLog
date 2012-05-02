@@ -1,3 +1,15 @@
+2012-05-02  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [Qt]r57240 broke Qt build (gcc bug)
+        https://bugs.webkit.org/show_bug.cgi?id=37253
+
+        Reviewed by Noam Rosenthal.
+
+        Removing workaround macro since current gcc/Qt doesn't require it to compile.
+
+        * wtf/PassRefPtr.h:
+        (WTF):
+
 2012-04-30  Oliver Hunt  <oliver@apple.com>
 
         Investigate overflows in Canvas putImageData routine

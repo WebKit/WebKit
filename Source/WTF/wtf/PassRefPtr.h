@@ -32,13 +32,7 @@ namespace WTF {
 
     inline void adopted(const void*) { }
 
-#if !PLATFORM(QT)
     #define REF_DEREF_INLINE ALWAYS_INLINE
-#else
-    // Using ALWAYS_INLINE broke the Qt build. This may be a GCC bug.
-    // See https://bugs.webkit.org/show_bug.cgi?id=37253 for details.
-    #define REF_DEREF_INLINE inline
-#endif
 
     template<typename T> REF_DEREF_INLINE void refIfNotNull(T* ptr)
     {
