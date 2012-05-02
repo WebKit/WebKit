@@ -1,3 +1,11 @@
+2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed expectation updates after r115846.
+
+        * platform/gtk/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        Added more files after triaging the diffs.
+
 2012-05-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         NULL ptr in WebCore::AppendNodeCommand::AppendNodeCommand

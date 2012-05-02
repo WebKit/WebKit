@@ -1695,6 +1695,36 @@ BUGWK83954 : fast/repaint/table-hover-on-link.html = TEXT
 BUGWK83954 : tables/mozilla_expected_failures/bugs/bug2479-5.html = TEXT
 BUGWK83954 : http/tests/navigation/javascriptlink-frames.html = TEXT
 BUGWK83954 : fast/forms/date/date-appearance.html = TEXT
+BUGWK83954 : editing/inserting/before-after-input-element.html = TEXT
+BUGWK83954 : editing/selection/select-from-textfield-outwards.html = TEXT
+BUGWK83954 : editing/spelling/inline_spelling_markers.html = TEXT
+BUGWK83954 : fast/block/margin-collapse/103.html = TEXT
+BUGWK83954 : fast/dom/isindex-002.html = TEXT
+BUGWK83954 : fast/events/autoscroll.html = TEXT
+BUGWK83954 : fast/forms/box-shadow-override.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-height.html = TEXT
+BUGWK83954 : fast/forms/input-appearance-width.html = TEXT
+BUGWK83954 : fast/forms/input-table.html = TEXT
+BUGWK83954 : fast/forms/input-text-click-outside.html = TEXT
+BUGWK83954 : fast/forms/input-text-drag-down.html = TEXT
+BUGWK83954 : fast/forms/input-text-scroll-left-on-blur.html = TEXT
+BUGWK83954 : fast/forms/placeholder-pseudo-style.html = TEXT
+BUGWK83954 : fast/forms/searchfield-heights.html = TEXT
+BUGWK83954 : fast/forms/tabbing-input-iframe.html = TEXT
+BUGWK83954 : fast/forms/textfield-overflow.html = TEXT
+BUGWK83954 : fast/forms/validation-message-appearance.html = TEXT
+BUGWK83954 : fast/invalid/residual-style.html = TEXT
+BUGWK83954 : fast/overflow/clip-rects-fixed-ancestor.html = TEXT
+BUGWK83954 : fast/repaint/inline-relative-positioned.html = TEXT
+BUGWK83954 : fast/repaint/layer-outline-horizontal.html = TEXT
+BUGWK83954 : fast/repaint/layer-outline.html = TEXT
+BUGWK83954 : fast/table/003.html = TEXT
+BUGWK83954 : fast/text/selection-painted-separately.html = TEXT
+BUGWK83954 : fast/text/selection-rect-rounding.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug12384.html = TEXT
+BUGWK83954 : tables/mozilla/bugs/bug99948.html = TEXT
+// There is some change in the text but it looks like a progression as scrollOffset is non-zero anymore.
+BUGWK83954 : fast/forms/input-readonly-autoscroll.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
