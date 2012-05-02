@@ -25,10 +25,12 @@
 """Supports checking WebKit style in png files."""
 
 import os
+import platform
 import re
 import sys
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.platforminfo import PlatformInfo
 from webkitpy.common.checkout.scm.detection import SCMDetector
 
 
@@ -42,7 +44,7 @@ class PNGChecker(object):
         self._handle_style_error = handle_style_error
         self._fs = filesystem or FileSystem()
         self._detector = scm or SCMDetector(self._fs, Executive()).detect_scm_system(self._fs.getcwd())
-        self._platform = platform or sys.platform
+        self._platform = platform or PlatformInfo(sys, platform, Executive())
 
     def check(self, inline=None):
         errorstr = ""
@@ -91,8 +93,8 @@ class PNGChecker(object):
 
     def _config_file_path(self):
         config_file = ""
-        if self._platform.startswith('linux') or self._platform.startswith('darwin'):
-            config_file_path = self._fs.join(self._fs.expanduser("~"), ".subversion/config")
-        elif self._platform.startswith('win') or self._platform.startswith('cygwin'):
+        if self._platform.is_win():
             config_file_path = self._fs.join(os.environ['APPDATA'], "Subversion\config")
+        else:
+            config_file_path = self._fs.join(self._fs.expanduser("~"), ".subversion/config")
         return config_file_path

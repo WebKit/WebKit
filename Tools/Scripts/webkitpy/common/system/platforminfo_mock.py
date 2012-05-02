@@ -28,8 +28,9 @@
 
 
 class MockPlatformInfo(object):
-    os_name = 'mac'
-    os_version = 'snowleopard'
+    def __init__(self, os_name='mac', os_version='snowleopard'):
+        self.os_name = os_name
+        self.os_version = os_version
 
     def is_mac(self):
         return self.os_name == 'mac'

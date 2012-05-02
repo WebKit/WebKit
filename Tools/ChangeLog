@@ -1,5 +1,26 @@
 2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        webkitpy: Remove direct sys.platform usage in the PNG checker.
+        https://bugs.webkit.org/show_bug.cgi?id=85407
+
+        Reviewed by Tony Chang.
+
+        Work towards replacing direct sys.platform usage with
+        PlatformInfo.
+
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.__init__): Accept os_name and os_version as
+        arguments.
+        * Scripts/webkitpy/style/checkers/png.py:
+        (PNGChecker.__init__): Create a PlatformInfo object instead of
+        using sys.platform when needed.
+        (PNGChecker._config_file_path): Check for the current platform via
+        PlatformInfo.
+        * Scripts/webkitpy/style/checkers/png_unittest.py:
+        (PNGCheckerTest.test_check): Update tests after the changes above.
+
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [watchlist] Update watchlist rules for EFL-related patches.
         http://bugs.webkit.org/show_bug.cgi?id=85160
 
