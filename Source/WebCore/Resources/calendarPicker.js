@@ -1109,7 +1109,8 @@ function handleGlobalKey(event) {
         global.yearMonthController.moveRelatively(event.shiftKey ? YearMonthController.PreviousYear : YearMonthController.NextYear);
     } else if (key == "U+0044") { // 'd'
         global.yearMonthController.moveRelatively(event.shiftKey ? YearMonthController.PreviousTenYears : YearMonthController.NextTenYears);
-    }
+    } else if (key == "U+001B") // ESC
+        handleCancel();
 }
 
 function maybeUpdateFocusStyle() {
