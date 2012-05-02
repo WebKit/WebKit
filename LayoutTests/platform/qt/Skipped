@@ -426,6 +426,7 @@ http/tests/security/drag-drop-same-unique-origin.html
 # [Qt] DumpRenderTree needs eventSender.beginDragWithFiles() implementation
 # https://bugs.webkit.org/show_bug.cgi?id=50902
 editing/pasteboard/dataTransfer-setData-getData.html
+editing/pasteboard/drag-drop-url-with-style.html
 editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/file-input-files-access.html
 fast/dom/Window/window-postmessage-clone-frames.html

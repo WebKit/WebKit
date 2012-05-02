@@ -1077,6 +1077,7 @@ editing/selection/5354455-2.html
 # Qt: https://bugs.webkit.org/show_bug.cgi?id=69946
 fast/events/moving-text-should-fire-drop-and-dragend-events.html
 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
+editing/pasteboard/drag-drop-url-with-style.html
 
 # missing window.internals.createShadowContentElement
 fast/dom/shadow/create-content-element.html
