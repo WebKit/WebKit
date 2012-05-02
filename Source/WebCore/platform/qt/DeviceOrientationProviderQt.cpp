@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,8 +52,8 @@ bool DeviceOrientationProviderQt::filter(QRotationReading* reading)
     if (m_controller) {
         // Provide device orientation data according W3C spec:
         // http://dev.w3.org/geo/api/spec-source-orientation.html
-        // Qt mobility provide these data via QRotationSensor using the
-        // QRotationReading class:
+        // Qt mobility (QtSensors in Qt5) provide these data via QRotationSensor
+        // using the QRotationReading class:
         //  - the rotation around z axis (alpha) is given as z in QRotationReading;
         //  - the rotation around x axis (beta) is given as x in QRotationReading;
         //  - the rotation around y axis (gamma) is given as y in QRotationReading;

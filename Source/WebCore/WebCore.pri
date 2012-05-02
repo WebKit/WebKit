@@ -160,8 +160,12 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
 }
 
 contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
-    CONFIG *= mobility
-    MOBILITY *= sensors
+    haveQt(5) {
+        QT += sensors
+    } else {
+        CONFIG *= mobility
+        MOBILITY *= sensors
+    }
 }
 
 contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=1) {

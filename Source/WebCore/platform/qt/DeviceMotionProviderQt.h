@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,9 +22,8 @@
 #define DeviceMotionProviderQt_h
 
 #include "DeviceMotionData.h"
-
-#include <wtf/RefPtr.h>
 #include <QAccelerometerFilter>
+#include <wtf/RefPtr.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 using QTM_NAMESPACE::QAccelerometer;

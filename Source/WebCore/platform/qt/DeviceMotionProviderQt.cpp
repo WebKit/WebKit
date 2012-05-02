@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -78,7 +78,7 @@ bool DeviceMotionProviderQt::filter(QAccelerometerReading* reading)
     m_motion = DeviceMotionData::create(accel,
             accel, /* FIXME: Needs to provide acceleration include gravity. */
             rotation,
-            false, 0 /* The interval is treated internally by Qt mobility */);
+            false, 0 /* The interval is treated internally by Qt mobility (QtSensors in Qt5) */);
 
     m_controller->didChangeDeviceMotion(m_motion.get());
 

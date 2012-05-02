@@ -1,3 +1,16 @@
+2012-05-02  Lars Knudsen  <lars.knudsen@nokia.com>
+
+        [Qt] Make DeviceMotion and DeviceOrientation work with WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=64595
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moving DeviceMotion and DeviceOrientation clients and providers
+        to WebCore.  This is done to allow clean dependencies when
+        statically linking WK2.
+
+        * Source/api.pri:
+
 2012-05-02  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Implement the Web Audio API feature.

@@ -3430,6 +3430,18 @@ contains(DEFINES, HAVE_QRAWFONT=1) {
         platform/graphics/qt/FontQt4.cpp
 }
 
+contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+    HEADERS += \
+        platform/qt/DeviceMotionClientQt.h \
+        platform/qt/DeviceMotionProviderQt.h \
+        platform/qt/DeviceOrientationClientQt.h \
+        platform/qt/DeviceOrientationProviderQt.h
+    SOURCES += \
+        platform/qt/DeviceMotionClientQt.cpp \
+        platform/qt/DeviceMotionProviderQt.cpp \
+        platform/qt/DeviceOrientationClientQt.cpp \
+        platform/qt/DeviceOrientationProviderQt.cpp
+}
 
 contains(DEFINES, ENABLE_GEOLOCATION=1) {
     v8 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,45 +17,51 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
-#include "DeviceOrientationClientQt.h"
-#include "DeviceOrientationProviderQt.h"
+#include "DeviceMotionClientQt.h"
+
+#include "DeviceMotionProviderQt.h"
+
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-DeviceOrientationClientQt::DeviceOrientationClientQt()
-    : m_provider(new DeviceOrientationProviderQt)
+DeviceMotionClientQt::~DeviceMotionClientQt()
 {
 }
 
-DeviceOrientationClientQt::~DeviceOrientationClientQt()
+void DeviceMotionClientQt::deviceMotionControllerDestroyed()
 {
-    delete m_provider;
+    delete this;
 }
 
-void DeviceOrientationClientQt::setController(DeviceOrientationController* controller)
+void DeviceMotionClientQt::setController(DeviceMotionController* controller)
 {
+    // Initialize lazily.
+    if (!m_provider)
+        m_provider = adoptPtr(new DeviceMotionProviderQt);
+
     m_provider->setController(controller);
 }
 
-void DeviceOrientationClientQt::startUpdating()
+void DeviceMotionClientQt::startUpdating()
 {
-    m_provider->start();
+    if (m_provider)
+        m_provider->start();
 }
 
-void DeviceOrientationClientQt::stopUpdating()
+void DeviceMotionClientQt::stopUpdating()
 {
-    m_provider->stop();
+    if (m_provider)
+        m_provider->stop();
 }
 
-DeviceOrientation* DeviceOrientationClientQt::lastOrientation() const
+DeviceMotionData* DeviceMotionClientQt::currentDeviceMotion() const
 {
-    return m_provider->lastOrientation();
-}
-
-void DeviceOrientationClientQt::deviceOrientationControllerDestroyed()
-{
-    delete this;
+    return m_provider->currentDeviceMotion();
 }
 
 } // namespace WebCore

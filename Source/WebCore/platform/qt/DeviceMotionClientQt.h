@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,31 +17,39 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DeviceOrientationClientQt_h
-#define DeviceOrientationClientQt_h
 
-#include "DeviceOrientation.h"
-#include "DeviceOrientationClient.h"
+#ifndef DeviceMotionClientQt_h
+#define DeviceMotionClientQt_h
+
+#include "DeviceMotionClient.h"
+#include "DeviceMotionData.h"
+
+#include "DeviceMotionProviderQt.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class DeviceOrientationProviderQt;
+class DeviceMotionController;
+class DeviceMotionProviderQt;
 
-class DeviceOrientationClientQt : public DeviceOrientationClient {
+class DeviceMotionClientQt : public DeviceMotionClient {
 public:
-    DeviceOrientationClientQt();
-    virtual ~DeviceOrientationClientQt();
-
-    virtual void setController(DeviceOrientationController*);
-    virtual void startUpdating();
-    virtual void stopUpdating();
-    virtual DeviceOrientation* lastOrientation() const;
-    virtual void deviceOrientationControllerDestroyed();
+    DeviceMotionClientQt() { }
+    virtual ~DeviceMotionClientQt();
 
 private:
-    DeviceOrientationProviderQt* m_provider;
+    virtual void deviceMotionControllerDestroyed();
+
+    virtual void startUpdating();
+    virtual void stopUpdating();
+
+    virtual DeviceMotionData* currentDeviceMotion() const;
+
+    virtual void setController(DeviceMotionController*);
+
+    OwnPtr<DeviceMotionProviderQt> m_provider;
 };
 
-} // namespace WebCore
+} // namespece WebCore
 
-#endif // DeviceOrientationClientQt_h
+#endif // DeviceMotionClientQt_h
