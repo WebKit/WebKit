@@ -482,6 +482,24 @@ function testHtmlForIndividualTests()
     assertEquals(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuildersWithChrome(test1) + '<hr>' + htmlForIndividualTestOnAllBuildersWithChrome(test2));
 }
 
+function testHtmlForSingleTestRow()
+{
+    var builder = 'dummyBuilder';
+    var test = createResultsObjectForTest('foo/exists.html', builder);
+    g_currentState.showCorrectExpectations = true;
+    g_resultsByBuilder[builder] = {buildNumbers: [2, 1], webkitRevision: [1234, 1233]};
+    test.rawResults = [[1, 'F'], [2, 'I']];
+    test.rawTimes = [[1, 0], [2, 5]];
+    var expected = '<tr>' +
+        '<td class="test-link"><span class="link" onclick="setQueryParameter(\'tests\',\'foo/exists.html\');">foo/exists.html</span>' +
+        '<td class=options-container><a href="https://bugs.webkit.org/enter_bug.cgi?assigned_to=webkit-unassigned%40lists.webkit.org&product=WebKit&form_name=enter_bug&component=Tools%20%2F%20Tests&short_desc=Layout%20Test%20foo%2Fexists.html%20is%20failing&comment=The%20following%20layout%20test%20is%20failing%20on%20%5Binsert%20platform%5D%0A%0Afoo%2Fexists.html%0A%0AProbable%20cause%3A%0A%0A%5Binsert%20probable%20cause%5D" class="file-bug">FILE BUG</a>' +
+        '<td class=options-container>' +
+            '<td class=options-container>' +
+                '<td><td>0<td title="TEXT. Click for more info." class="results F" onclick=\'showPopupForBuild(event, "dummyBuilder",0,"foo/exists.html")\'>&nbsp;' +
+                '<td title="IMAGE. Click for more info." class="results I" onclick=\'showPopupForBuild(event, "dummyBuilder",1,"foo/exists.html")\'>5';
+
+    assertEquals(htmlForSingleTestRow(test), expected);
+}
 
 function testLookupVirtualTestSuite()
 {

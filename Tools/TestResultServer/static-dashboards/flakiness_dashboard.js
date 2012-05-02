@@ -1187,7 +1187,7 @@ function htmlForSingleTestRow(test)
             var testCellClassName = 'test-link' + (isCrossBuilderView() ? ' builder-name' : '');
             var testCellHTML = isCrossBuilderView() ? test.builder : '<span class="link" onclick="setQueryParameter(\'tests\',\'' + test.test +'\');">' + test.test + '</span>';
 
-            html += '<tr class="' + (test.meetsExpectations ? '' : 'wrong-expectations') + '"><td class="' + testCellClassName + '">' + testCellHTML;
+            html += '<tr><td class="' + testCellClassName + '">' + testCellHTML;
         } else if (startsWith(header, 'bugs'))
             html += '<td class=options-container>' + (filteredModifiers.bugs ? htmlForBugs(filteredModifiers.bugs) : createBugHTML(test));
         else if (startsWith(header, 'modifiers'))
@@ -2303,8 +2303,7 @@ function showLegend()
 
     html += '<div class=merge>WEBKIT MERGE</div>';
     if (isLayoutTestResults()) {
-      html += '<div class=wrong-expectations>WRONG EXPECTATIONS</div>' +
-          '</div><br style="clear:both">' +
+      html += '</div><br style="clear:both">' +
           '</div><h3>Test expectatons fallback order.</h3>';
 
       for (var platform in g_fallbacksMap)

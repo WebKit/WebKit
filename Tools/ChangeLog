@@ -1,3 +1,21 @@
+2012-05-02  Ojan Vafai  <ojan@chromium.org>
+
+        Remove pink from flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=85422
+
+        Reviewed by Dirk Pranke.
+
+        The pink indicates that the test doesn't match it's listing in test_expectations.txt.
+        In practice, this just added noise and confused people.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (htmlForSingleTestRow):
+        (showLegend):
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.css:
+        (#legend-contents *):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (testHtmlForSingleTestRow):
+
 2012-05-02  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. Fix mistake I committed when applying review comments.

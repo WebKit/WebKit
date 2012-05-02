@@ -104,10 +104,6 @@
     float: left;
     border: 1px solid grey;
 }
-.test-table .wrong-expectations,
-.wrong-expectations {
-    background-color: pink;
-}
 .P {
     background-color: #8fdf5f;
 }
