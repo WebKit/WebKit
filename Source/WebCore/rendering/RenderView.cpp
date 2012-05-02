@@ -99,8 +99,6 @@ void RenderView::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     RenderBlock::computePreferredLogicalWidths();
-
-    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
 }
 
 bool RenderView::isChildAllowed(RenderObject* child, RenderStyle*) const

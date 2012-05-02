@@ -44,18 +44,20 @@ public:
 
     bool hitTest(const HitTestRequest&, HitTestResult&);
 
-    virtual const char* renderName() const { return "RenderView"; }
+    virtual const char* renderName() const OVERRIDE { return "RenderView"; }
 
-    virtual bool isRenderView() const { return true; }
+    virtual bool isRenderView() const OVERRIDE { return true; }
 
-    virtual bool requiresLayer() const { return true; }
+    virtual bool requiresLayer() const OVERRIDE { return true; }
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
 
-    virtual void layout();
-    virtual void computeLogicalWidth();
-    virtual void computeLogicalHeight();
-    virtual void computePreferredLogicalWidths();
+    virtual void layout() OVERRIDE;
+    virtual void computeLogicalWidth() OVERRIDE;
+    virtual void computeLogicalHeight() OVERRIDE;
+    // FIXME: This override is not needed and should be removed
+    // it only exists to make computePreferredLogicalWidths public.
+    virtual void computePreferredLogicalWidths() OVERRIDE;
 
     // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.
     int viewHeight() const;
