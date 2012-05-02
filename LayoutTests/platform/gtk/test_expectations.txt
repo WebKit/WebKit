@@ -1551,6 +1551,8 @@ BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 BUGWK84857 : fast/repaint/moving-shadow-on-container.html = FAIL
 BUGWK84857 : fast/repaint/moving-shadow-on-path.html = FAIL
 
+BUGWK85275 : http/tests/loading/pdf-commit-load-callbacks.html = FAIL
+
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
 BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE

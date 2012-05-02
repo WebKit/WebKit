@@ -1,3 +1,10 @@
+2012-05-02  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK test_expectations update.
+
+        * platform/gtk/test_expectations.txt:
+        http/tests/loading/pdf-commit-load-callbacks.html is failing.
+
 2012-05-02  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][DRT] Gardening failure cases on EFL port
