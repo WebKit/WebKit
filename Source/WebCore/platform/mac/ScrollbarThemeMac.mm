@@ -140,7 +140,7 @@ static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 static bool supportsExpandedScrollbars()
 {
     // FIXME: This is temporary until all platforms that support ScrollbarPainter support this part of the API.
-    static bool globalSupportsExpandedScrollbars = [NSClassFromString(@"NSScrollerImp") instancesRespondToSelector:@selector(setExpanded)];
+    static bool globalSupportsExpandedScrollbars = [NSClassFromString(@"NSScrollerImp") instancesRespondToSelector:@selector(setExpanded:)];
     return globalSupportsExpandedScrollbars;
 }
 
