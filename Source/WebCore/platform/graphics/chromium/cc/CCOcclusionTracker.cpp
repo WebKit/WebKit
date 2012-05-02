@@ -226,7 +226,7 @@ static inline TransformationMatrix contentToTargetSurfaceTransform(const LayerTy
 
 // FIXME: Remove usePaintTracking when paint tracking is on for paint culling.
 template<typename LayerType>
-static inline Region computeOcclusionBehindLayer(const LayerType* layer, const TransformationMatrix& transform, const Region& opaqueContents, const IntRect& scissorRect, bool usePaintTracking)
+static inline void addOcclusionBehindLayer(Region& region, const LayerType* layer, const TransformationMatrix& transform, const Region& opaqueContents, const IntRect& scissorRect, bool usePaintTracking)
 {
     ASSERT(layer->visibleLayerRect().contains(opaqueContents.bounds()));
 
@@ -234,20 +234,17 @@ static inline Region computeOcclusionBehindLayer(const LayerType* layer, const T
     FloatQuad visibleTransformedQuad = CCMathUtil::mapQuad(transform, FloatQuad(layer->visibleLayerRect()), clipped);
     // FIXME: Find a rect interior to each transformed quad.
     if (clipped || !visibleTransformedQuad.isRectilinear())
-        return Region();
+        return;
 
-    Region transformedOpaqueContents;
-    if (usePaintTracking && transform.isIdentity())
-        transformedOpaqueContents = opaqueContents;
-    else if (usePaintTracking) {
+    if (usePaintTracking) {
         Vector<IntRect> contentRects = opaqueContents.rects();
         // We verify that the possible bounds of this region are not clipped above, so we can use mapRect() safely here.
-        for (size_t i = 0; i < contentRects.size(); ++i)
-            transformedOpaqueContents.unite(enclosedIntRect(transform.mapRect(FloatRect(contentRects[i]))));
+        for (size_t i = 0; i < contentRects.size(); ++i) {
+            IntRect transformedRect = enclosedIntRect(transform.mapRect(FloatRect(contentRects[i])));
+            transformedRect.intersect(scissorRect);
+            region.unite(transformedRect);
+        }
     }
-
-    transformedOpaqueContents.intersect(scissorRect);
-    return transformedOpaqueContents;
 }
 
 template<typename LayerType, typename RenderSurfaceType>
@@ -267,7 +264,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
 
     IntRect scissorInTarget = layerScissorRectInTargetSurface(layer);
     if (layerTransformsToTargetKnown(layer))
-        m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurfaceTransform<LayerType>(layer), opaqueContents, scissorInTarget, m_usePaintTracking));
+        addOcclusionBehindLayer<LayerType>(m_stack.last().occlusionInTarget, layer, contentToTargetSurfaceTransform<LayerType>(layer), opaqueContents, scissorInTarget, m_usePaintTracking);
 
     // We must clip the occlusion within the layer's scissorInTarget within screen space as well. If the scissor rect can't be moved to screen space and
     // remain rectilinear, then we don't add any occlusion in screen space.
@@ -280,7 +277,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
         if (clipped || !scissorInScreenQuad.isRectilinear())
             return;
         IntRect scissorInScreenRect = intersection(m_scissorRectInScreenSpace, enclosedIntRect(scissorInScreenQuad.boundingBox()));
-        m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpaceTransform<LayerType>(layer), opaqueContents, scissorInScreenRect, m_usePaintTracking));
+        addOcclusionBehindLayer<LayerType>(m_stack.last().occlusionInScreen, layer, contentToScreenSpaceTransform<LayerType>(layer), opaqueContents, scissorInScreenRect, m_usePaintTracking);
     }
 }
 
@@ -315,14 +312,8 @@ bool CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::occluded(const LayerT
 static inline IntRect rectSubtractRegion(const IntRect& rect, const Region& region)
 {
     Region rectRegion(rect);
-    Region intersectRegion(intersect(region, rectRegion));
-
-    if (intersectRegion.isEmpty())
-        return rect;
-
-    rectRegion.subtract(intersectRegion);
-    IntRect boundsRect = rectRegion.bounds();
-    return boundsRect;
+    rectRegion.subtract(region);
+    return rectRegion.bounds();
 }
 
 static inline IntRect computeUnoccludedContentRect(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
