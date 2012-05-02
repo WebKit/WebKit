@@ -328,6 +328,12 @@ void ContainerNode::willRemove()
 
 static void willRemoveChild(Node* child)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    ASSERT(child->parentNode());
+    ChildListMutationScope(child->parentNode()).willRemoveChild(child);
+    child->notifyMutationObserversNodeWillDetach();
+#endif
+
     dispatchChildRemovalEvents(child);
     child->document()->nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
     child->willRemove();
@@ -346,6 +352,12 @@ static void willRemoveChildren(ContainerNode* container)
 
     for (NodeVector::const_iterator it = children.begin(); it != children.end(); it++) {
         Node* child = it->get();
+
+#if ENABLE(MUTATION_OBSERVERS)
+        mutation.willRemoveChild(child);
+        child->notifyMutationObserversNodeWillDetach();
+#endif
+
         // fire removed from document mutation events.
         dispatchChildRemovalEvents(child);
         child->willRemove();
@@ -936,13 +948,6 @@ static void dispatchChildInsertionEvents(Node* child)
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
 
-#if ENABLE(MUTATION_OBSERVERS)
-    if (c->parentNode()) {
-        ChildListMutationScope mutation(c->parentNode());
-        mutation.childAdded(c.get());
-    }
-#endif
-
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEINSERTED_LISTENER))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, true, c->parentNode()));
 
@@ -967,14 +972,6 @@ static void dispatchChildRemovalEvents(Node* child)
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
 
-#if ENABLE(MUTATION_OBSERVERS)
-    if (c->parentNode()) {
-        ChildListMutationScope mutation(c->parentNode());
-        mutation.willRemoveChild(c.get());
-        c->notifyMutationObserversNodeWillDetach();
-    }
-#endif
-
     // dispatch pre-removal mutation events
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEREMOVED_LISTENER))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, true, c->parentNode()));
@@ -990,6 +987,10 @@ static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, bool sh
 {
     ASSERT(parent->refCount());
     ASSERT(child->refCount());
+
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope(parent).childAdded(child);
+#endif
 
     parent->childrenChanged(false, child->previousSibling(), child->nextSibling(), 1);
 

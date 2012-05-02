@@ -1,3 +1,16 @@
+2012-05-02  Adam Klein  <adamk@chromium.org>
+
+        Childlist mutations in shadow DOM should be observable with MutationObservers
+        https://bugs.webkit.org/show_bug.cgi?id=85402
+
+        Reviewed by Ojan Vafai.
+
+        Added test covering childList mutations as well as attribute and
+        characterData mutations (these were already working).
+
+        * fast/mutation/shadow-dom-expected.txt: Added.
+        * fast/mutation/shadow-dom.html: Added.
+
 2012-05-02  Eric Carlson  <eric.carlson@apple.com>
 
         Crash in WebCore::TextTrackList::remove
