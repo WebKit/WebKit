@@ -28,7 +28,6 @@
 
 import codecs
 import logging
-import platform
 import os.path
 
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults

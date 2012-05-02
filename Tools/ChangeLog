@@ -1,3 +1,16 @@
+2012-05-01  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Remove unused platform imports.
+        https://bugs.webkit.org/show_bug.cgi?id=85341
+
+        Reviewed by Eric Seidel.
+
+        Remove a few uses of `import platform' which were either rendered
+        unneeded after r105931 or were never needed at all.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+
 2012-05-01  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Accept four parameters when dispatching a WebInputEvent::GestureTap in chromium DRT eventSender

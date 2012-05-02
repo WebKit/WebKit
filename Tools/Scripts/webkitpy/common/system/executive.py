@@ -32,7 +32,6 @@ import ctypes
 import errno
 import logging
 import os
-import platform
 import StringIO
 import signal
 import subprocess
