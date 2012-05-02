@@ -1,3 +1,11 @@
+2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added by r115724 on WebKit2 and Qt because drag and drop isn't supported by DRT
+        on those platforms.
+
+        * platform/qt/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-01  Joe Thomas  <joethomas@motorola.com>
 
         [GTK] new ref test fast/forms/listbox-clear-restore.html fails.
