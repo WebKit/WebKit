@@ -46,7 +46,7 @@ void WebSurroundingText::initialize(const WebHitTestResult& hitTestInfo, size_t 
     if (!node || !node->renderer())
         return;
 
-    VisiblePosition visiblePosition(node->renderer()->positionForPoint(hitTestInfo.localPoint()));
+    VisiblePosition visiblePosition(node->renderer()->positionForPoint(static_cast<IntPoint>(hitTestInfo.localPoint())));
     if (visiblePosition.isNull())
         return;
 

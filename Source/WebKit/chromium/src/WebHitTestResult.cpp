@@ -47,7 +47,7 @@ WebNode WebHitTestResult::node() const
 
 WebPoint WebHitTestResult::localPoint() const
 {
-    return WebPoint(m_private->localPoint());
+    return roundedIntPoint(m_private->localPoint());
 }
 
 WebHitTestResult::WebHitTestResult(const HitTestResult& result)

@@ -1,3 +1,20 @@
+2012-05-02  Emil A Eklund  <eae@chromium.org>
+
+        Fix usage of layout types in platform code
+        https://bugs.webkit.org/show_bug.cgi?id=85392
+
+        Reviewed by Eric Seidel.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::tiledBackingStoreVisibleRect):
+        Use enclosingIntRect to convert visible rect for transform results to
+        line up with device pixels.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        Use pixelSnapped rect for editor rect calculation as it represents a
+        device coordinate.
+
 2012-05-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Revert r115191 - "Make the web view's url property follow the active url"

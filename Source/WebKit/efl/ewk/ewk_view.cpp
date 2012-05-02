@@ -1689,7 +1689,7 @@ Eina_Bool ewk_view_scale_set(Evas_Object* ewkView, float scaleFactor, Evas_Coord
     if (currentScaleFactor == -1)
         return false;
 
-    priv->page->setPageScaleFactor(scaleFactor, WebCore::LayoutPoint(scrollX, scrollY));
+    priv->page->setPageScaleFactor(scaleFactor, WebCore::IntPoint(scrollX, scrollY));
     return true;
 }
 

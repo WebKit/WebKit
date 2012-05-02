@@ -861,7 +861,7 @@ Eina_Bool ewk_frame_focused_element_geometry_get(const Evas_Object *ewkFrame, in
     WebCore::Node* focusedNode = document->focusedNode();
     if (!focusedNode)
         return false;
-    WebCore::IntRect nodeRect = focusedNode->getRect();
+    WebCore::IntRect nodeRect = focusedNode->getPixelSnappedRect();
     if (x)
         *x = nodeRect.x();
     if (y)

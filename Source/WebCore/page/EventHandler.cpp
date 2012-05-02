@@ -2443,7 +2443,7 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent, No
 #endif
     // FIXME: Refactor to avoid hit testing multiple times (this is only an interim step).
     if (preTargetedNode)
-        adjustedPoint = preTargetedNode->getRect().center();
+        adjustedPoint = preTargetedNode->getPixelSnappedRect().center();
 
     bool defaultPrevented = false;
     PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
