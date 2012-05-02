@@ -41,6 +41,7 @@ WebInspector.DebuggerModel = function()
     this._scripts = {};
 
     this._canSetScriptSource = false;
+    this._breakpointsActive = true;
 
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerDispatcher(this));
 }
