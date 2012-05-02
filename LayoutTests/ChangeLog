@@ -1,3 +1,15 @@
+2012-05-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        NULL ptr in WebCore::AppendNodeCommand::AppendNodeCommand
+        https://bugs.webkit.org/show_bug.cgi?id=75843
+
+        Reviewed by Tony Chang.
+
+        Add a regression test.
+
+        * editing/execCommand/indent-with-after-content-crash-expected.txt: Added.
+        * editing/execCommand/indent-with-after-content-crash.html: Added.
+
 2012-05-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(110072): Clipping is not applied on layers that are animated using platform code
