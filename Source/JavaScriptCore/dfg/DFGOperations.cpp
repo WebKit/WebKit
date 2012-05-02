@@ -59,6 +59,7 @@
 
 #define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, offset) \
     asm( \
+    ".text" "\n" \
     ".globl " SYMBOL_STRING(function) "\n" \
     HIDE_SYMBOL(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
@@ -1172,6 +1173,7 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
 );
 #elif CPU(X86)
 asm (
+".text" "\n" \
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"

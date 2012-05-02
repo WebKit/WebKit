@@ -1,3 +1,17 @@
+2012-05-02  Yong Li  <yoli@rim.com>
+
+        Fix GCC X86 build error
+        https://bugs.webkit.org/show_bug.cgi?id=85379
+
+        Reviewed by Rob Buis.
+
+        Always explicitly claim ".text" to make sure
+        functions defined with inline assembly will be
+        created in the correct section.
+
+        * dfg/DFGOperations.cpp:
+        (JSC):
+
 2012-05-02  Oliver Hunt  <oliver@apple.com>
 
         Unreviewed, rolling out r115388.
