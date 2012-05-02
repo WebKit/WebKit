@@ -2193,7 +2193,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case InSelectMode:
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         if (token.name() == optgroupTag) {
-            if (m_tree.currentNode()->hasTagName(optionTag) && m_tree.oneBelowTop()->hasTagName(optgroupTag))
+            if (m_tree.currentNode()->hasTagName(optionTag) && m_tree.oneBelowTop() && m_tree.oneBelowTop()->hasTagName(optgroupTag))
                 processFakeEndTag(optionTag);
             if (m_tree.currentNode()->hasTagName(optgroupTag)) {
                 m_tree.openElements()->pop();

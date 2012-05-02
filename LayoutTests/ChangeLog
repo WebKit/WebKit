@@ -1,3 +1,12 @@
+2012-05-01  James Simonsen  <simonjam@chromium.org>
+
+        Ensure HTMLElementStack fails gracefully if it has a non-Element.
+        https://bugs.webkit.org/show_bug.cgi?id=85167
+
+        Reviewed by Adam Barth.
+
+        * html5lib/resources/webkit02.dat:
+
 2012-05-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] fast/loader/file-protocol-fragment.html needs rebaselining

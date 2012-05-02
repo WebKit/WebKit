@@ -149,3 +149,11 @@ table
 |   <input>
 |     name="isindex"
 | <hr>
+
+#data
+<option><XH<optgroup></optgroup>
+#errors
+#document-fragment
+select
+#document
+| <option>
