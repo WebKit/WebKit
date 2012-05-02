@@ -361,19 +361,27 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // Initialize the framebuffer if needed.
     ImageFrame& buffer = m_frameBufferCache[0];
     if (buffer.status() == ImageFrame::FrameEmpty) {
+        png_structp png = m_reader->pngPtr();
         if (!buffer.setSize(scaledSize().width(), scaledSize().height())) {
-            longjmp(JMPBUF(m_reader->pngPtr()), 1);
+            longjmp(JMPBUF(png), 1);
             return;
         }
+
+        if (PNG_INTERLACE_ADAM7 == png_get_interlace_type(png, m_reader->infoPtr())) {
+            int bytesPerPixel = m_reader->hasAlpha() ? 4 : 3;
+            m_reader->createInterlaceBuffer(bytesPerPixel * size().width() * size().height());
+            if (!m_reader->interlaceBuffer()) {
+                longjmp(JMPBUF(png), 1);
+                return;
+            }
+        }
+
         buffer.setStatus(ImageFrame::FramePartial);
         buffer.setHasAlpha(false);
         buffer.setColorProfile(m_colorProfile);
 
         // For PNGs, the frame always fills the entire image.
         buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
-
-        if (png_get_interlace_type(m_reader->pngPtr(), m_reader->infoPtr()) != PNG_INTERLACE_NONE)
-            m_reader->createInterlaceBuffer((m_reader->hasAlpha() ? 4 : 3) * size().width() * size().height());
     }
 
     if (!rowBuffer)
@@ -411,8 +419,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     bool hasAlpha = m_reader->hasAlpha();
     unsigned colorChannels = hasAlpha ? 4 : 3;
     png_bytep row;
-    png_bytep interlaceBuffer = m_reader->interlaceBuffer();
-    if (interlaceBuffer) {
+
+    if (png_bytep interlaceBuffer = m_reader->interlaceBuffer()) {
         row = interlaceBuffer + (rowIndex * colorChannels * size().width());
         png_progressive_combine_row(png, row, rowBuffer);
     } else
