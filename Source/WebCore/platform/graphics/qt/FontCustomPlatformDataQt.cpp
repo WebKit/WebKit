@@ -65,14 +65,18 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     if (id == -1)
         return 0;
     Q_ASSERT(QFontDatabase::applicationFontFamilies(id).size() > 0);
+#else
+    // Pixel size doesn't matter at this point, it is set in FontCustomPlatformData::fontPlatformData.
+    QRawFont rawFont(fontData, /*pixelSize = */0, QFont::PreferDefaultHinting);
+    if (!rawFont.isValid())
+        return 0;
 #endif
 
     FontCustomPlatformData *data = new FontCustomPlatformData;
 #if !HAVE(QRAWFONT)
     data->m_handle = id;
 #else
-    // Pixel size doesn't matter at this point, it is set in FontCustomPlatformData::fontPlatformData.
-    data->m_rawFont.loadFromData(fontData, /*pixelSize = */0, QFont::PreferDefaultHinting);
+    data->m_rawFont = rawFont;
 #endif
     return data;
 }

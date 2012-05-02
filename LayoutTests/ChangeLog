@@ -1,3 +1,13 @@
+2012-05-02  Keith Rosenblatt  <keith.rosenblatt@nokia.com>
+
+        [Qt] ASSERT in FontCustomPlatformDataQt.cpp with invalid font in data URI
+        https://bugs.webkit.org/show_bug.cgi?id=85089
+
+        Reviewed by Simon Hausmann.
+
+        * fast/css/font-face-data-uri-invalid-expected.txt: Added.
+        * fast/css/font-face-data-uri-invalid.html: Added.
+
 2012-05-02  Andy Estes  <aestes@apple.com>
 
         Update Mac baselines after r115846.
