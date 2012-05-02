@@ -1,11 +1,7 @@
 <!DOCTYPE html>
-
 <html>
     <head>
-        <style>
-            video { background-color: yellow; width: 320px; height: 240px;}
-        </style>
-        <script src=video-test.js></script>
+        <script src="video-test.js"></script>
         <script>
             function test()
             {
@@ -27,13 +23,10 @@
                 endTest();
             }
         </script>
-
     </head>
     <body onload="start()">
-
-        <video controls ></video>
-
+        <video controls></video>
         <p>Test HTMLMediaElement <em>canPlayType()</em> method with "application/octet-stream".</p>
-
+        <p>These tests should always pass as no WebKit port should support "application/octet-stream".</p>
     </body>
 </html>

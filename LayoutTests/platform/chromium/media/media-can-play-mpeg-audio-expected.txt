@@ -1,0 +1,12 @@
+Test HTMLMediaElement canPlayType() method with multiple audio mpeg MIME types.
+
+These tests may be expected to fail if the WebKit port does not support the format.
+
+EXPECTED (audio.canPlayType('audio/x-mpeg') == 'maybe'), OBSERVED '' FAIL
+EXPECTED (audio.canPlayType('audio/x-mp3') == 'maybe'), OBSERVED '' FAIL
+EXPECTED (audio.canPlayType('audio/mp3') == 'maybe'), OBSERVED '' FAIL
+EXPECTED (audio.canPlayType('audio/mpeg') == 'maybe'), OBSERVED '' FAIL
+EXPECTED (audio.canPlayType('audio/mp4') == 'maybe'), OBSERVED '' FAIL
+EXPECTED (audio.canPlayType('audio/aac') == 'maybe'), OBSERVED '' FAIL
+END OF TEST
+

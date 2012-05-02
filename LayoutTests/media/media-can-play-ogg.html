@@ -1,23 +1,25 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <style>
-            video { background-color: yellow; width: 320px; height: 240px;}
-        </style>
-    </head>
-    <body>
-
-        <video controls ></video>
-
-        <p>Test HTMLMediaElement <em>canPlayType()</em> method for ogg media containers.</p>
-
-        <script src=video-test.js></script>
+        <script src="video-test.js"></script>
         <script>
-            video = mediaElement = document.getElementsByTagName('video')[0];
+            function start() {
+                video = mediaElement = document.getElementsByTagName('video')[0];
 
-            testExpected("video.canPlayType('Audio/ogg')", "maybe");
-            testExpected("video.canPlayType('Video/ogg')", "maybe");
+                testExpected("video.canPlayType('audio/ogg')", "maybe");
+                testExpected("video.canPlayType('video/ogg')", "maybe");
 
-            endTest();
+                testExpected("video.canPlayType('audio/ogg; codecs=vorbis')", "probably");
+                testExpected("video.canPlayType('video/ogg; codecs=theora')", "probably");
+                testExpected("video.canPlayType('video/ogg; codecs=theora,vorbis')", "probably");
+
+                endTest();
+            }
         </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method for ogg media containers.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
     </body>
 </html>

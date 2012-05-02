@@ -746,10 +746,6 @@ WONTFIX SKIP MAC : fast/dom/HTMLProgressElement/progress-element.html = TEXT
 // These tests are WONTFIX because they use codecs Chromium doesn't support.
 WONTFIX SKIP : media/audio-mpeg-supported.html = TIMEOUT FAIL
 WONTFIX SKIP : media/audio-mpeg4-supported.html = TIMEOUT FAIL
-WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
-WONTFIX SKIP : media/media-can-play-mpeg4-video.html = TEXT
-WONTFIX SKIP : media/media-can-play-flac-audio.html = TEXT
-WONTFIX SKIP : media/video-can-play-type.html = TIMEOUT FAIL
 WONTFIX SKIP : media/video-document-types.html = TIMEOUT FAIL
 WONTFIX SKIP : media/video-element-other-namespace-crash.html = TIMEOUT
 WONTFIX SKIP : media/video-size-intrinsic-scale.html = TIMEOUT FAIL

@@ -3,10 +3,6 @@ Test HTMLMediaElement canPlayType() method.
 EXPECTED (video.canPlayType() == '') OK
 EXPECTED (video.canPlayType('video/') == '') OK
 EXPECTED (video.canPlayType('video/blahblah') == '') OK
-EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"') == 'probably') OK
-EXPECTED (video.canPlayType(' Video/MP4 ; CODECS="mp4v.20.8, mp4a.40.2"') == 'probably') OK
-EXPECTED (video.canPlayType('audio/mpeg') == 'maybe') OK
-EXPECTED (video.canPlayType('audio/Wav') == 'maybe') OK
 EXPECTED (video.canPlayType('video/blahblah; codecs="blah, , blah"') == '') OK
 EXPECTED (video.canPlayType('video/blahblah; codecs=blah') == '') OK
 EXPECTED (video.canPlayType('video/blahblah; codecs="blah"') == '') OK

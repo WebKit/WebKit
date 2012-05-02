@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            function start() {
+                video = document.getElementsByTagName('video')[0];
+
+                testExpected("video.canPlayType()", "");
+                testExpected("video.canPlayType('video/')", "");
+                testExpected("video.canPlayType('video/blahblah')", "");
+                testExpected("video.canPlayType('video/blahblah; codecs=\"blah,  , blah\"')", "");
+                testExpected("video.canPlayType('video/blahblah; codecs=blah')", "");
+                testExpected("video.canPlayType('video/blahblah; codecs=\"blah\"')", "");
+                testExpected("video.canPlayType('video/blahblah; codecs=\"badcontent')", "");
+                testExpected("video.canPlayType('video/blahblah; codecs=badcontent\"')", "");
+                testExpected("video.canPlayType('video/blahblah; codecs=&quot;badcontent&quot;')", "");
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method.</p>
+    </body>
+</html>

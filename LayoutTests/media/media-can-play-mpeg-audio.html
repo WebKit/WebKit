@@ -1,31 +1,27 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <style>
-            video { background-color: yellow; width: 320px; height: 240px;}
-        </style>
         <script src=video-test.js></script>
         <script>
             function start()
             {
-                video = mediaElement = document.getElementsByTagName('video')[0];
+                audio = document.getElementsByTagName('audio')[0];
 
-                testExpected("video.canPlayType('audio/x-mpeg')", "maybe");
-                testExpected("video.canPlayType('audio/x-mp3')", "maybe");
-                testExpected("video.canPlayType('audio/mp3')", "maybe");
+                testExpected("audio.canPlayType('audio/x-mpeg')", "maybe");
+                testExpected("audio.canPlayType('audio/x-mp3')", "maybe");
+                testExpected("audio.canPlayType('audio/mp3')", "maybe");
+                testExpected("audio.canPlayType('audio/mpeg')", "maybe");
 
-                testExpected("video.canPlayType('audio/mp4')", "maybe");
-                testExpected("video.canPlayType('audio/aac')", "maybe");
+                testExpected("audio.canPlayType('audio/mp4')", "maybe");
+                testExpected("audio.canPlayType('audio/aac')", "maybe");
 
                 endTest();
             }
         </script>
-
     </head>
     <body onload="start()">
-
-        <video controls ></video>
-
-        <p>Test HTMLMediaElement <em>canPlayType()</em> method with multiple mp3 MIME types.</p>
-
+        <audio controls></audio>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with multiple audio mpeg MIME types.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
     </body>
 </html>

@@ -1,3 +1,27 @@
+2012-04-27  Andrew Scherkus  <scherkus@chromium.org>
+
+        Clean up media canPlayType() tests and add a test for WebM.
+        https://bugs.webkit.org/show_bug.cgi?id=85116
+
+        Reviewed by Eric Carlson.
+
+        * media/media-can-play-flac-audio-expected.txt:
+        * media/media-can-play-flac-audio.html:
+        * media/media-can-play-mpeg-audio-expected.txt:
+        * media/media-can-play-mpeg-audio.html:
+        * media/media-can-play-mpeg4-video.html:
+        * media/media-can-play-octet-stream-expected.txt:
+        * media/media-can-play-octet-stream.html:
+        * media/media-can-play-ogg-expected.txt:
+        * media/media-can-play-ogg.html:
+        * media/media-can-play-type-expected.txt: Renamed from LayoutTests/media/video-can-play-type-expected.txt.
+        * media/media-can-play-type.html: Added.
+        * media/media-can-play-wav-audio-expected.txt:
+        * media/media-can-play-wav-audio.html:
+        * media/media-can-play-webm-expected.txt: Added.
+        * media/media-can-play-webm.html: Added.
+        * media/video-can-play-type.html: Removed.
+
 2012-05-01  Eric Seidel  <eric@webkit.org>
 
         Add <iframe seamless> navigation code (and pass all the navigation tests)
