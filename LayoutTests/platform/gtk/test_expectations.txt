@@ -322,8 +322,6 @@ BUGWKGTK : fast/forms/multiple-form-submission-protection-mouse.html = CRASH
 // This test crashes whatever test follows it. Perhaps it's related to the previous failure.
 BUGWKGTK : fast/dom/gc-10.html = CRASH
 
-BUGWK56147 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH
-
 BUGWK56309 : svg/text/text-deco-01-b.svg = CRASH
 
 BUGWK60158 : fast/dom/Geolocation/argument-types.html = CRASH
@@ -490,6 +488,7 @@ BUGWK84700 : fast/dom/Window/window-postmessage-clone-frames.html = PASS TEXT
 BUGWK84856 : media/media-controller-playback.html = PASS TEXT
 BUGWK84858 : media/video-seek-past-end-playing.html = PASS TEXT
 
+// Sometimes asserts in debug builds (cross-platform problem): https://bugs.webkit.org/show_bug.cgi?id=59801
 BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT
 
 BUGWK83878 : media/track/track-mode.html = PASS TEXT

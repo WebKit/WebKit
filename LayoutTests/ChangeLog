@@ -1,3 +1,12 @@
+2012-05-02  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed gardening.
+
+        * platform/gtk/test_expectations.txt: remove duplicate annotation
+        for fast/workers/storage/use-same-database-in-page-and-workers.html,
+        added comment explaining the ocasional ASSERT that's a
+        cross-platform problem.
+
 2012-05-02  Andy Estes  <aestes@apple.com>
 
         media/audio-repaint.html sometimes fails on Lion Debug (Tests)
