@@ -1,3 +1,15 @@
+2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unnecessary <form> tags created inside of an <iframe> with designMode on
+        https://bugs.webkit.org/show_bug.cgi?id=13126
+
+        Reviewed by Eric Seidel.
+
+        Add a regression test since this bug doesn't reproduce anymore but it's still good to test it.
+
+        * editing/inserting/insert-paragraph-inside-form-expected.txt: Added.
+        * editing/inserting/insert-paragraph-inside-form.html: Added.
+
 2012-05-01  Xiaomei Ji  <xji@chromium.org>
 
         Skip editing/selection/move-by-word-visually-mac.html (introduced in r115788) in qt and wk2.
