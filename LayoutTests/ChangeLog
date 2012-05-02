@@ -1,3 +1,33 @@
+2012-05-01  Eric Seidel  <eric@webkit.org>
+
+        Add support for seamless attribute as well as seamless sandbox flag and default CSS styling
+        https://bugs.webkit.org/show_bug.cgi?id=85302
+
+        Reviewed by Ojan Vafai.
+
+        Update all the test results now that the html.css changes have
+        been added for seamless, as specified by HTML5:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#replaced-elements
+
+        I also added a new test for about:blank iframes (per a code-FIXME)
+        as well as some new testing to confirm that the default seamless-CSS style
+        applies even when iframes cannot render seamless due to security restrictions.
+
+        * fast/frames/seamless/seamless-basic-expected.txt:
+        * fast/frames/seamless/seamless-basic.html:
+        * fast/frames/seamless/seamless-inherited-origin-expected.txt: Added.
+        * fast/frames/seamless/seamless-inherited-origin.html: Added.
+        * fast/frames/seamless/seamless-inline-expected.txt:
+        * fast/frames/seamless/seamless-min-max-expected.txt:
+        * fast/frames/seamless/seamless-nested-expected.txt:
+        * fast/frames/seamless/seamless-quirks-expected.txt:
+        * fast/frames/seamless/seamless-sandbox-flag-expected.txt:
+        * fast/frames/seamless/seamless-sandbox-flag.html:
+        * fast/frames/seamless/seamless-sandbox-srcdoc-expected.txt:
+        * http/tests/security/seamless/seamless-cross-origin-expected.txt:
+        * http/tests/security/seamless/seamless-sandbox-srcdoc-expected.txt:
+        * svg/in-html/by-reference.html: was using seamless, but really doens't want to, doing so just adds noise.
+
 2012-05-01  James Simonsen  <simonjam@chromium.org>
 
         Ensure HTMLElementStack fails gracefully if it has a non-Element.

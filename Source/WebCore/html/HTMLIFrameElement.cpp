@@ -115,6 +115,11 @@ void HTMLIFrameElement::removedFrom(Node* insertionPoint)
         static_cast<HTMLDocument*>(document())->removeExtraNamedItem(m_name);
 }
 
+bool HTMLIFrameElement::shouldDisplaySeamlessly() const
+{
+    return contentDocument() && contentDocument()->mayDisplaySeamlessWithParent() && hasAttribute(seamlessAttr);
+}
+
 #if ENABLE(MICRODATA)
 String HTMLIFrameElement::itemValueText() const
 {

@@ -1,0 +1,7 @@
+Test that frames with inherited security origins can still be seamless.
+FAIL iframe.seamless should be true (of type boolean). Was undefined (of type undefined).
+FAIL window.getComputedStyle(iframe).width should be 200px. Was 300px.
+FAIL window.getComputedStyle(iframe).height should be 0px. Was 150px.
+FAIL window.getComputedStyle(iframe).width should be 200px. Was 300px.
+FAIL window.getComputedStyle(iframe).height should be 100px. Was 150px.
+

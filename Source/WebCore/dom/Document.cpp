@@ -4857,6 +4857,20 @@ bool Document::useSecureKeyboardEntryWhenActive() const
     return m_useSecureKeyboardEntryWhenActive;
 }
 
+static bool isEligibleForSeamless(Document* parent, Document* child)
+{
+    // It should not matter what we return for the top-most document.
+    if (!parent)
+        return false;
+    if (parent->isSandboxed(SandboxSeamlessIframes))
+        return false;
+    if (child->isSrcdocDocument())
+        return true;
+    if (parent->securityOrigin()->canAccess(child->securityOrigin()))
+        return true;
+    return parent->securityOrigin()->canRequest(child->url());
+}
+
 void Document::initSecurityContext()
 {
     if (haveInitializedSecurityOrigin()) {
@@ -4910,6 +4924,16 @@ void Document::initSecurityContext()
         }
     }
 
+    Document* parentDocument = ownerElement() ? ownerElement()->document() : 0;
+    if (parentDocument && m_frame->loader()->shouldTreatURLAsSrcdocDocument(url())) {
+        m_isSrcdocDocument = true;
+        setBaseURLOverride(parentDocument->baseURL());
+    }
+
+    // FIXME: What happens if we inherit the security origin? This check may need to be later.
+    // <iframe seamless src="about:blank"> likely won't work as-is.
+    m_mayDisplaySeamlessWithParent = isEligibleForSeamless(parentDocument, this);
+
     if (!shouldInheritSecurityOriginFromOwner(m_url))
         return;
 
@@ -4923,11 +4947,6 @@ void Document::initSecurityContext()
     if (!ownerFrame) {
         didFailToInitializeSecurityOrigin();
         return;
-    }
-
-    if (m_frame->loader()->shouldTreatURLAsSrcdocDocument(url())) {
-        m_isSrcdocDocument = true;
-        setBaseURLOverride(ownerFrame->document()->baseURL());
     }
 
     if (isSandboxed(SandboxOrigin)) {
@@ -5843,6 +5862,24 @@ void Document::didRemoveTouchEventHandler()
     Frame* mainFrame = page() ? page()->mainFrame() : 0;
     if (mainFrame)
         mainFrame->notifyChromeClientTouchEventHandlerCountChanged();
+}
+
+HTMLIFrameElement* Document::seamlessParentIFrame() const
+{
+    if (!shouldDisplaySeamlesslyWithParent())
+        return 0;
+
+    HTMLFrameOwnerElement* ownerElement = this->ownerElement();
+    ASSERT(ownerElement->hasTagName(iframeTag));
+    return static_cast<HTMLIFrameElement*>(ownerElement);
+}
+
+bool Document::shouldDisplaySeamlesslyWithParent() const
+{
+    HTMLFrameOwnerElement* ownerElement = this->ownerElement();
+    if (!ownerElement)
+        return false;
+    return m_mayDisplaySeamlessWithParent && ownerElement->hasTagName(iframeTag) && ownerElement->fastHasAttribute(seamlessAttr);
 }
 
 DocumentLoader* Document::loader() const

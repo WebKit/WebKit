@@ -97,6 +97,7 @@ class HTMLFormElement;
 class HTMLFrameOwnerElement;
 class HTMLHeadElement;
 class HTMLInputElement;
+class HTMLIFrameElement;
 class HTMLMapElement;
 class HTMLNameCollection;
 class HitTestRequest;
@@ -827,6 +828,9 @@ public:
     // Returns the owning element in the parent document.
     // Returns 0 if this is the top level document.
     HTMLFrameOwnerElement* ownerElement() const;
+
+    HTMLIFrameElement* seamlessParentIFrame() const;
+    bool shouldDisplaySeamlesslyWithParent() const;
 
     // Used by DOM bindings; no direction known.
     String title() const { return m_title.string(); }

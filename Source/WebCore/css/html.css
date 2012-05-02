@@ -983,8 +983,12 @@ frameset {
     border-color: inherit
 }
 
-iframe {
+iframe:not([seamless]) {
     border: 2px inset
+}
+
+iframe[seamless] {
+    display: block
 }
 
 details {

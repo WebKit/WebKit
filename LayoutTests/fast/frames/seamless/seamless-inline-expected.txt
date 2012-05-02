@@ -3,9 +3,9 @@ FAIL window.getComputedStyle(iframe1).display should be inline-block. Was inline
 FAIL window.getComputedStyle(iframe2).display should be inline-block. Was inline.
 FAIL window.getComputedStyle(iframe1).width should be 150px. Was 300px.
 FAIL window.getComputedStyle(iframe1).height should be 50px. Was 150px.
-FAIL window.getComputedStyle(parent1).height should be 50px. Was 204px.
+FAIL window.getComputedStyle(parent1).height should be 50px. Was 200px.
 FAIL window.getComputedStyle(iframe2).width should be 100px. Was 300px.
 FAIL window.getComputedStyle(iframe2).height should be 100px. Was 150px.
-FAIL window.getComputedStyle(parent2).height should be 150px. Was 204px.
+FAIL window.getComputedStyle(parent2).height should be 150px. Was 200px.
 
 

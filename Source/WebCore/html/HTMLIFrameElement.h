@@ -32,6 +32,8 @@ class HTMLIFrameElement : public HTMLFrameElementBase {
 public:
     static PassRefPtr<HTMLIFrameElement> create(const QualifiedName&, Document*);
 
+    bool shouldDisplaySeamlessly() const;
+
 private:
     HTMLIFrameElement(const QualifiedName&, Document*);
 

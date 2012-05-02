@@ -1,5 +1,6 @@
 Test basic seamless auto-sizing-to-content functionality.
 FAIL iframe.seamless should be true (of type boolean). Was undefined (of type undefined).
+PASS window.getComputedStyle(iframe).display is "block"
 FAIL window.getComputedStyle(iframe).width should be 200px. Was 300px.
 FAIL window.getComputedStyle(iframe).height should be 100px. Was 150px.
 FAIL window.getComputedStyle(iframe).height should be 200px. Was 150px.

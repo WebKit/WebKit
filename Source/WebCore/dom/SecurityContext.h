@@ -48,7 +48,7 @@ enum SandboxFlag {
     SandboxTopNavigation = 1 << 5,
     SandboxPopups = 1 << 6, // See https://www.w3.org/Bugs/Public/show_bug.cgi?id=12393
     SandboxAutomaticFeatures = 1 << 7,
-    // FIXME: Add http://www.whatwg.org/specs/web-apps/current-work/#sandboxed-seamless-iframes-flag when we implement seamless.
+    SandboxSeamlessIframes = 1 << 8,
     SandboxAll = -1 // Mask with all bits set to 1.
 };
 
@@ -67,6 +67,8 @@ public:
 
     static SandboxFlags parseSandboxPolicy(const String& policy);
 
+    bool mayDisplaySeamlessWithParent() const { return m_mayDisplaySeamlessWithParent; }
+
 protected:
     SecurityContext();
     ~SecurityContext();
@@ -79,6 +81,10 @@ protected:
 
     void didFailToInitializeSecurityOrigin() { m_haveInitializedSecurityOrigin = false; }
     bool haveInitializedSecurityOrigin() const { return m_haveInitializedSecurityOrigin; }
+
+    // Set in Document::initSecurityContext() at Document creation, per:
+    // http://www.whatwg.org/specs/web-apps/current-work/#attr-iframe-seamless
+    bool m_mayDisplaySeamlessWithParent;
 
 private:
     bool m_haveInitializedSecurityOrigin;

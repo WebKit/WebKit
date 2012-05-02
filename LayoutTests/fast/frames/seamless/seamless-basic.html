@@ -11,6 +11,7 @@ window.onload = function () {
 
     // Seamless iframes are blocks, filling their parent width
     // and setting their height to that of their children.
+    shouldBeEqualToString("window.getComputedStyle(iframe).display", "block");
 
     // Spec: In visual media, in a CSS-supporting user agent: the user agent
     // should set the intrinsic width of the iframe to the width that the element
