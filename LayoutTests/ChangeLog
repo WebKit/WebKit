@@ -1,3 +1,12 @@
+2012-05-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Mac media engine doesn't reccognize canPlayType('audio/wav; codecs=1')
+        https://bugs.webkit.org/show_bug.cgi?id=85409
+
+        Not reviewed, new platform results added after r115798.
+
+        * platform/mac/media/media-can-play-wav-audio-expected.txt: Added.
+
 2012-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed gardening after r115821.
