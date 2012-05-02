@@ -1448,8 +1448,6 @@ BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = FAIL
 BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = FAIL
 BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = FAIL
 
-BUGWK77633 : fast/forms/listbox-clear-restore.html = FAIL
-
 BUGWK78434 : fast/dom/Window/window-custom-prototype.html = FAIL
 
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.

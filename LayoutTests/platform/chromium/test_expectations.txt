@@ -3157,10 +3157,6 @@ BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
 
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
-BUGWK77889 WIN DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
-BUGWK77889 LINUX DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
-BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
-
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
 

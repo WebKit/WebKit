@@ -1,3 +1,16 @@
+2012-05-01  Joe Thomas  <joethomas@motorola.com>
+
+        [GTK] new ref test fast/forms/listbox-clear-restore.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=77633
+
+        Reviewed by Martin Robinson.
+
+        Flakiness of the test case is fixed in http://trac.webkit.org/changeset/115526.
+        Enabling the test for GTK and Chromium ports.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+
 2012-05-01  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=85275.
