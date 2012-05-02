@@ -418,20 +418,32 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     } else
         row = rowBuffer;
 
-    // Copy the data into our buffer.
-    int width = scaledSize().width();
-    int destY = scaledY(rowIndex);
-
-    // Check that the row is within the image bounds. LibPNG may supply an extra row.
-    if (destY < 0 || destY >= scaledSize().height())
+    // Check the row is within the image bounds: libpng may supply an extra row.
+    int y = !m_scaled ? rowIndex : scaledY(rowIndex);
+    if (y < 0 || y >= scaledSize().height())
         return;
+
+    // Write the decoded row pixels to the frame buffer.
+    int width = scaledSize().width();
     bool nonTrivialAlpha = false;
+
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     for (int x = 0; x < width; ++x) {
         png_bytep pixel = row + (m_scaled ? m_scaledColumns[x] : x) * colorChannels;
         unsigned alpha = hasAlpha ? pixel[3] : 255;
-        buffer.setRGBA(x, destY, pixel[0], pixel[1], pixel[2], alpha);
+        buffer.setRGBA(x, y, pixel[0], pixel[1], pixel[2], alpha);
         nonTrivialAlpha |= alpha < 255;
     }
+#else
+    ASSERT(!m_scaled);
+    png_bytep pixel = row;
+    for (int x = 0; x < width; ++x, pixel += colorChannels) {
+        unsigned alpha = hasAlpha ? pixel[3] : 255;
+        buffer.setRGBA(x, y, pixel[0], pixel[1], pixel[2], alpha);
+        nonTrivialAlpha |= alpha < 255;
+    }
+#endif
+
     if (nonTrivialAlpha && !buffer.hasAlpha())
         buffer.setHasAlpha(nonTrivialAlpha);
 }
