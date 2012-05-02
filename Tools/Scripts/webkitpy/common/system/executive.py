@@ -254,16 +254,14 @@ class Executive(object):
 
     def check_running_pid(self, pid):
         """Return True if pid is alive, otherwise return False."""
-        if sys.platform.startswith('linux') or sys.platform in ('darwin', 'cygwin'):
-            try:
-                os.kill(pid, 0)
-                return True
-            except OSError:
-                return False
-        elif sys.platform == 'win32':
+        if sys.platform == 'win32':
             return self._win32_check_running_pid(pid)
 
-        assert(False)
+        try:
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
 
     def running_pids(self, process_name_filter=None):
         if not process_name_filter:

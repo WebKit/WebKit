@@ -1,3 +1,19 @@
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Special-case win32 calls in file_lock and executive.
+        https://bugs.webkit.org/show_bug.cgi?id=85431
+
+        Reviewed by Dirk Pranke.
+
+        Simplify accesses to sys.platform by only checking if sys.platform
+        is "win32" and removing explicit checks for the else case.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.check_running_pid):
+        * Scripts/webkitpy/common/system/file_lock.py:
+        (FileLock._create_lock):
+        (FileLock._remove_lock):
+
 2012-05-02  Ojan Vafai  <ojan@chromium.org>
 
         Remove pink from flakiness dashboard
