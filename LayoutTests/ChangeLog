@@ -1,3 +1,9 @@
+2012-05-02  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, rebaseline pdf-commit-load-callbacks.html for chromium-linux.
+
+        * platform/chromium-linux/http/tests/loading/pdf-commit-load-callbacks-expected.txt: Added.
+
 2012-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed, rebaselining after changes in r115846.
