@@ -5611,3 +5611,16 @@ ietestcenter/css3/text/textshadow-007.htm
 ietestcenter/css3/text/textshadow-008.htm
 ietestcenter/css3/text/textshadow-009.htm
 ietestcenter/css3/text/textshadow-010.htm
+
+# new failing tests
+fast/ruby/floating-ruby-text.html
+fast/ruby/positioned-ruby-text.html
+fast/text/international/arabic-justify.html
+ietestcenter/css3/multicolumn/column-block-formatting-context-001.htm
+printing/compositing-layer-printing.html
+printing/media-queries-print.html
+printing/simultaneous-position-float-change.html
+printing/width-overflow.html
+
+# new crashing test
+css3/filters/huge-region.html
