@@ -39,7 +39,7 @@ class DeviceOrientationProviderQt;
 class DeviceMotionProviderQt : public QAccelerometerFilter {
 public:
     DeviceMotionProviderQt();
-    ~DeviceMotionProviderQt();
+    virtual ~DeviceMotionProviderQt();
 
     void setController(DeviceMotionController*);
 

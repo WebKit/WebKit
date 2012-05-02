@@ -36,6 +36,7 @@ namespace WebCore {
 class DeviceOrientationProviderQt : public QRotationFilter {
 public:
     DeviceOrientationProviderQt();
+    virtual ~DeviceOrientationProviderQt();
 
     void setController(DeviceOrientationController*);
 

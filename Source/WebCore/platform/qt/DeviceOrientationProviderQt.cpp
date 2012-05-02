@@ -29,6 +29,11 @@ DeviceOrientationProviderQt::DeviceOrientationProviderQt()
     m_lastOrientation = DeviceOrientation::create();
 }
 
+DeviceOrientationProviderQt::~DeviceOrientationProviderQt()
+{
+
+}
+
 void DeviceOrientationProviderQt::setController(DeviceOrientationController* controller)
 {
     if (!controller)
