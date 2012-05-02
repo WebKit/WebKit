@@ -133,16 +133,6 @@ inline int getOffsetHeight(RenderObject* obj)
     return 0;
 }
 
-void RenderMathMLUnderOver::stretchToHeight(int height)
-{
-    RenderBoxModelObject* base = this->base();
-    if (base && base->isRenderMathMLBlock()) {
-        RenderMathMLBlock* block = toRenderMathMLBlock(base);
-        block->stretchToHeight(height);
-        setNeedsLayout(true);
-    }
-}
-
 void RenderMathMLUnderOver::layout() 
 {
     RenderBlock::layout();

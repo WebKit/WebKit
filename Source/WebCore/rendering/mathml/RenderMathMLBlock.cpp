@@ -46,6 +46,7 @@ RenderMathMLBlock::RenderMathMLBlock(Node* container)
     , m_intrinsicPaddingAfter(0)
     , m_intrinsicPaddingStart(0)
     , m_intrinsicPaddingEnd(0)
+    , m_preferredLogicalHeight(preferredLogicalHeightUnset)
 {
 }
 
@@ -138,6 +139,13 @@ LayoutUnit RenderMathMLBlock::paddingEnd() const
     return computedCSSPaddingEnd() + m_intrinsicPaddingEnd;
 }
 
+void RenderMathMLBlock::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+    m_preferredLogicalHeight = preferredLogicalHeightUnset;
+    RenderBlock::computePreferredLogicalWidths();
+}
+
 RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay display)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
@@ -148,13 +156,46 @@ RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay displa
     return newBlock;
 }
 
-void RenderMathMLBlock::stretchToHeight(int height) 
+// An arbitrary large value, like RenderBlock.cpp BLOCK_MAX_WIDTH or FixedTableLayout.cpp TABLE_MAX_WIDTH.
+static const LayoutUnit cLargeLogicalWidth = 15000;
+
+void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
 {
-    for (RenderObject* current = firstChild(); current; current = current->nextSibling())
-       if (current->isRenderMathMLBlock()) {
-          RenderMathMLBlock* block = toRenderMathMLBlock(current);
-          block->stretchToHeight(height);
-       }
+    ASSERT(needsLayout());
+    
+    // Ensure a full repaint will happen after layout finishes.
+    setNeedsLayout(true, MarkOnlyThis);
+    
+    LayoutUnit oldAvailableLogicalWidth = availableLogicalWidth();
+    setLogicalWidth(cLargeLogicalWidth);
+    
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isBox())
+            continue;
+        
+        // Because our width changed, |child| may need layout.
+        if (child->maxPreferredLogicalWidth() > oldAvailableLogicalWidth)
+            child->setNeedsLayout(true, MarkOnlyThis);
+        
+        RenderMathMLBlock* childMathMLBlock = child->isRenderMathMLBlock() ? toRenderMathMLBlock(child) : 0;
+        if (childMathMLBlock && !childMathMLBlock->isPreferredLogicalHeightDirty())
+            continue;
+        // Layout our child to compute its preferred logical height.
+        child->layoutIfNeeded();
+        if (childMathMLBlock)
+            childMathMLBlock->setPreferredLogicalHeight(childMathMLBlock->logicalHeight());
+    }
+}
+
+LayoutUnit RenderMathMLBlock::preferredLogicalHeightAfterSizing(RenderObject* child)
+{
+    if (child->isRenderMathMLBlock())
+        return toRenderMathMLBlock(child)->preferredLogicalHeight();
+    if (child->isBox()) {
+        ASSERT(!child->needsLayout());
+        return toRenderBox(child)->logicalHeight();
+    }
+    return child->style()->fontSize();
 }
 
 #if ENABLE(DEBUG_MATH_LAYOUT)

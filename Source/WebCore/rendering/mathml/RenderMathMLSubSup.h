@@ -39,7 +39,6 @@ public:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     
     virtual RenderMathMLOperator* unembellishedOperator();
-    virtual void stretchToHeight(int pixelHeight);
 
 protected:
     virtual void layout();

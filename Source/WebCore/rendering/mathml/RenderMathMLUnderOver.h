@@ -40,7 +40,6 @@ public:
     virtual RenderMathMLOperator* unembellishedOperator();
     virtual void layout();
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual void stretchToHeight(int pixelHeight);
     
 private:
     virtual const char* renderName() const { return "RenderMathMLUnderOver"; }

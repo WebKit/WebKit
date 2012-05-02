@@ -38,16 +38,19 @@ public:
     RenderMathMLOperator(Element*);
     RenderMathMLOperator(Node*, UChar operatorChar);
     virtual bool isRenderMathMLOperator() const { return true; }
-    virtual RenderMathMLOperator* unembellishedOperator() { return this; }
-    virtual void stretchToHeight(int pixelHeight);
-    virtual void updateFromElement(); 
+    
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    virtual void updateFromElement() OVERRIDE;
+    
+    virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
+    void stretchToHeight(int pixelHeight);
+    
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
         
 protected:
-    virtual void layout();
-    virtual PassRefPtr<RenderStyle> createStackableStyle(int lineHeight, int maxHeightForRenderer, int topRelative);
-    virtual RenderBlock* createGlyph(UChar glyph, int lineHeight, int maxHeightForRenderer = 0, int charRelative = 0, int topRelative = 0);
+    virtual void computePreferredLogicalWidths() OVERRIDE;
+    PassRefPtr<RenderStyle> createStackableStyle(int lineHeight, int maxHeightForRenderer, int topRelative);
+    RenderBlock* createGlyph(UChar glyph, int lineHeight, int maxHeightForRenderer = 0, int charRelative = 0, int topRelative = 0);
     
 private:
     virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }

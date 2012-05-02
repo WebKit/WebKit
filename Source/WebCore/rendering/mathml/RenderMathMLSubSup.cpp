@@ -117,13 +117,6 @@ RenderMathMLOperator* RenderMathMLSubSup::unembellishedOperator()
     return toRenderMathMLBlock(base)->unembellishedOperator();
 }
 
-void RenderMathMLSubSup::stretchToHeight(int height)
-{
-    RenderBoxModelObject* base = this->base();
-    if (base && base->isRenderMathMLBlock())
-        toRenderMathMLBlock(base)->stretchToHeight(height);
-}
-
 void RenderMathMLSubSup::layout()
 {
     RenderBlock::layout();

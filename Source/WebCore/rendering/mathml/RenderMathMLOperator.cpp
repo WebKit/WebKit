@@ -62,20 +62,23 @@ static const float gOperatorExpansion = 1.2f;
 
 void RenderMathMLOperator::stretchToHeight(int height)
 {
-    if (height == m_stretchHeight)
+    height *= gOperatorExpansion;
+    if (m_stretchHeight == height)
         return;
-    m_stretchHeight = static_cast<int>(height * gOperatorExpansion);
+    m_stretchHeight = height;
     
-    updateBoxModelInfoFromStyle();
-    setNeedsLayout(true);
+    updateFromElement();
 }
 
-void RenderMathMLOperator::layout() 
+void RenderMathMLOperator::computePreferredLogicalWidths() 
 {
-    // FIXME: This probably shouldn't be called here but when the operator
-    // isn't stretched (e.g. outside of a mrow), it needs to be called somehow
-    updateFromElement();
-    RenderBlock::layout();
+    ASSERT(preferredLogicalWidthsDirty());
+    
+    // Check for an uninitialized operator.
+    if (!firstChild())
+        updateFromElement();
+    
+    RenderMathMLBlock::computePreferredLogicalWidths();
 }
 
 // This is a table of stretchy characters.
@@ -312,6 +315,8 @@ void RenderMathMLOperator::updateFromElement()
             createGlyph(stretchyCharacters[index].bottomGlyph, bottomGlyphLineHeight, 0, gBottomGlyphTopAdjust);
         }
     }
+    
+    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int lineHeight, int maxHeightForRenderer, int topRelative)

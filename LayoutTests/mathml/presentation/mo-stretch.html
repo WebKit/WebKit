@@ -3,6 +3,10 @@
 
 <head>
     <title>&lt;mo&gt; Stretching Tests</title>
+    
+    <style>
+    	td		{ border: solid }
+    </style>
 </head>
 
 <body>
@@ -59,6 +63,25 @@
     <mo>)</mo>
   </msqrt>
 </math>
+
+<p>Preferred logical widths and heights, with operator stretching:</p>
+<table><td>a</table>
+<table><td id="grow-td">x</table>
+<script>
+    window.addEventListener("load", function() {
+        document.body.offsetTop;
+        
+        var e = document.createElement("div");
+        e.innerHTML = "<math display='block' style='margin-bottom: 0'> <mrow>"+
+        	"<mrow> <mo>{</mo> <mi>x</mi> <mo>}</mo> </mrow> <mo>+</mo>" +
+        	"<mfenced> <mfrac> <mn>1</mn> <mi>y</mi> </mfrac> </mfenced> <mo>+</mo>" +
+            "<mrow> <mo>[</mo> <mtable> <mtr><mtd><mn>1</mn></mtd></mtr> <mtr><mtd><mn>2</mn></mtd></mtr>" +
+            	"<mtr><mtd><mn>3</mn></mtd></mtr> </mtable> <mo>]</mo> </mrow> </mrow> </math>";
+        var td = document.getElementById("grow-td"), t = td.firstChild;
+        td.insertBefore(e.firstChild, t);
+        td.removeChild(t);
+    }, false);
+</script>
 
 </body>
 
