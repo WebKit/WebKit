@@ -197,3 +197,4 @@ BUGWK85401 : media/video-colorspace-yuv422.html = TEXT
 
 BUGWK85404 : fast/loader/javascript-url-in-embed.html = TEXT PASS
 
+BUGWK85408 : svg/batik/text/longTextOnPath.svg = TEXT PASS
