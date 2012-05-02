@@ -1,3 +1,23 @@
+2012-05-01  Eric Seidel  <eric@webkit.org>
+
+        Add <iframe seamless> navigation code (and pass all the navigation tests)
+        https://bugs.webkit.org/show_bug.cgi?id=85340
+
+        Reviewed by Adam Barth.
+
+        Update results now that we pass all the navigation tests.
+
+        * fast/frames/seamless/seamless-form-get-expected.txt:
+        * fast/frames/seamless/seamless-form-get-named-expected.txt:
+        * fast/frames/seamless/seamless-form-post-expected.txt:
+        * fast/frames/seamless/seamless-form-post-named-expected.txt:
+        * fast/frames/seamless/seamless-hyperlink-expected.txt:
+        * fast/frames/seamless/seamless-hyperlink-named-expected.txt:
+        * fast/frames/seamless/seamless-window-location-expected.txt:
+        * fast/frames/seamless/seamless-window-location-href-expected.txt:
+        * fast/frames/seamless/seamless-window-location-sandbox-expected.txt:
+        * fast/frames/seamless/seamless-window-open-expected.txt:
+
 2012-05-01  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Move date-input-visible-strings-expected.txt to the correct place.

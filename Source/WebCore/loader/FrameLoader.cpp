@@ -2921,6 +2921,25 @@ Frame* FrameLoader::findFrameForNavigation(const AtomicString& name, Document* a
 {
     Frame* frame = m_frame->tree()->find(name);
 
+    // From http://www.whatwg.org/specs/web-apps/current-work/#seamlessLinks:
+    //
+    // If the source browsing context is the same as the browsing context
+    // being navigated, and this browsing context has its seamless browsing
+    // context flag set, and the browsing context being navigated was not
+    // chosen using an explicit self-navigation override, then find the
+    // nearest ancestor browsing context that does not have its seamless
+    // browsing context flag set, and continue these steps as if that
+    // browsing context was the one that was going to be navigated instead.
+    if (frame == m_frame && name != "_self" && m_frame->document()->shouldDisplaySeamlesslyWithParent()) {
+        for (Frame* ancestor = m_frame; ancestor; ancestor = ancestor->tree()->parent(true)) {
+            if (!ancestor->document()->shouldDisplaySeamlesslyWithParent()) {
+                frame = ancestor;
+                break;
+            }
+        }
+        ASSERT(frame != m_frame);
+    }
+
     if (activeDocument) {
         if (!activeDocument->canNavigate(frame))
             return 0;
