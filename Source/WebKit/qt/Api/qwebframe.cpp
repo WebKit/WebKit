@@ -1509,7 +1509,7 @@ void QWebFrame::print(QPrinter *printer) const
                      int(qprinterRect.width() / zoomFactorX),
                      int(qprinterRect.height() / zoomFactorY));
 
-    printContext.begin(pageRect.width());
+    printContext.begin(pageRect.width(), pageRect.height());
 
     printContext.computePageRects(pageRect, /* headerHeight */ 0, /* footerHeight */ 0, /* userScaleFactor */ 1.0, pageHeight);
 

@@ -1,3 +1,13 @@
+2012-05-02  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] Pass page-height to PrintContext::begin to fix print layouting
+        https://bugs.webkit.org/show_bug.cgi?id=84864
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print):
+
 2012-05-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add initial QML documentation
