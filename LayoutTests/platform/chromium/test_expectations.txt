@@ -1881,7 +1881,8 @@ BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
 // WebKit roll 58304:58400
-BUGUKAI MAC WIN : fast/text/international/bold-bengali.html = FAIL
+BUGUKAI MAC : fast/text/international/bold-bengali.html = IMAGE
+BUGUKAI WIN : fast/text/international/bold-bengali.html = IMAGE+TEXT
 
 // These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 // They should be moved to the JavaScriptCore test suite.
@@ -2427,7 +2428,6 @@ BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = T
 WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
 
 // Chromium does not support the CoreAnimation plugin model right now.
-BUGWK47925 LEOPARD : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 // We don't handle reflections in the right way to support this.
@@ -3691,7 +3691,7 @@ BUGWK85174 : fast/files/blob-constructor.html = CRASH
 BUGWK85174 : fast/dom/HTMLAnchorElement/anchor-download-unset.html = TIMEOUT
 BUGWK85174 : fast/filesystem/file-writer-gc-blob.html = TIMEOUT
 BUGWK85174 : fast/filesystem/workers/file-writer-gc-blob.html = TEXT
-BUGWK85174 : fast/filesystem/workers/file-writer-sync-truncate-extend.html = TEXT
+BUGWK85174 MAC LINUX : fast/filesystem/workers/file-writer-sync-truncate-extend.html = TEXT
 BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
 BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
 
