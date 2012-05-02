@@ -1,3 +1,10 @@
+2012-05-02  Zhenyao Mo  <zmo@google.com>
+
+        Rebaseline, unreviewed.
+
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium/media/media-can-play-wav-audio-expected.txt: Added.
+
 2012-05-02  Adam Klein  <adamk@chromium.org>
 
         Childlist mutations in shadow DOM should be observable with MutationObservers
