@@ -68,18 +68,18 @@
 
 namespace WebCore {
 
-void V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper)
+void V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
 {
     ASSERT(maybeDOMWrapper(wrapper));
     ASSERT(!node->isActiveNode());
-    getDOMNodeMap().set(node.leakRef(), wrapper);
+    getDOMNodeMap(isolate).set(node.leakRef(), wrapper);
 }
 
-void V8DOMWrapper::setJSWrapperForActiveDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper)
+void V8DOMWrapper::setJSWrapperForActiveDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
 {
     ASSERT(maybeDOMWrapper(wrapper));
     ASSERT(node->isActiveNode());
-    getActiveDOMNodeMap().set(node.leakRef(), wrapper);
+    getActiveDOMNodeMap(isolate).set(node.leakRef(), wrapper);
 }
 
 v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, DOMWindow* window)

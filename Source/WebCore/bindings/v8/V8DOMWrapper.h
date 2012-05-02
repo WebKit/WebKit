@@ -106,10 +106,10 @@ namespace WebCore {
         static v8::Local<v8::Function> constructorForType(WrapperTypeInfo*, WorkerContext*);
 #endif
 
-        template<typename T> static void setJSWrapperForDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
-        template<typename T> static void setJSWrapperForActiveDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>);
-        static void setJSWrapperForDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>);
-        static void setJSWrapperForActiveDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>);
+        template<typename T> static void setJSWrapperForDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>, v8::Isolate* = 0);
+        template<typename T> static void setJSWrapperForActiveDOMObject(PassRefPtr<T>, v8::Persistent<v8::Object>, v8::Isolate* = 0);
+        static void setJSWrapperForDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>, v8::Isolate* = 0);
+        static void setJSWrapperForActiveDOMNode(PassRefPtr<Node>, v8::Persistent<v8::Object>, v8::Isolate* = 0);
 
         static bool isValidDOMObject(v8::Handle<v8::Value>);
 
@@ -155,19 +155,19 @@ namespace WebCore {
     };
 
     template<typename T>
-    void V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
+    void V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
     {
         ASSERT(maybeDOMWrapper(wrapper));
         ASSERT(!domWrapperType(wrapper)->toActiveDOMObjectFunction);
-        getDOMObjectMap().set(object.leakRef(), wrapper);
+        getDOMObjectMap(isolate).set(object.leakRef(), wrapper);
     }
 
     template<typename T>
-    void V8DOMWrapper::setJSWrapperForActiveDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper)
+    void V8DOMWrapper::setJSWrapperForActiveDOMObject(PassRefPtr<T> object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
     {
         ASSERT(maybeDOMWrapper(wrapper));
         ASSERT(domWrapperType(wrapper)->toActiveDOMObjectFunction);
-        getActiveDOMObjectMap().set(object.leakRef(), wrapper);
+        getActiveDOMObjectMap(isolate).set(object.leakRef(), wrapper);
     }
 }
 

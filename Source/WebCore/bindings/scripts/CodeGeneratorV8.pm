@@ -1773,7 +1773,7 @@ END
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper));
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper), args.GetIsolate());
     return args.Holder();
 END
 
@@ -1818,7 +1818,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     RefPtr<${implClassName}> event = ${implClassName}::create(type, eventInit);
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, event.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), v8::Persistent<v8::Object>::New(args.Holder()), args.GetIsolate());
     return args.Holder();
 }
 
@@ -1948,7 +1948,7 @@ END
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper));
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper), args.GetIsolate());
     return args.Holder();
 END
 
@@ -3198,7 +3198,7 @@ END
 END
     }
     push(@implContent, <<END);
-    V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapperHandle);
+    V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapperHandle, isolate);
     return wrapper;
 }
 END
