@@ -1077,7 +1077,7 @@ RenderLayer* RenderLayer::clippingRoot() const
         ASSERT(current);
         if (current->transform()
 #if USE(ACCELERATED_COMPOSITING)
-            || current->isComposited()
+            || (current->isComposited() && !current->backing()->paintsIntoCompositedAncestor())
 #endif
         )
             return const_cast<RenderLayer*>(current);
