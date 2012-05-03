@@ -1,3 +1,14 @@
+2012-05-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] join() is wrongly used in webkitdirs.pm since r115532
+        https://bugs.webkit.org/show_bug.cgi?id=85501
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitdirs.pm:
+        (getJhbuildPath):
+        (buildAutotoolsProject):
+
 2012-05-03  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] ImageDiff crashes when it can't open a display
