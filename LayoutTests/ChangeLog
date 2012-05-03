@@ -1,3 +1,14 @@
+2012-05-03  Levi Weintraub  <leviw@chromium.org>
+
+        Updating expectations after r116009.
+
+        * platform/chromium-linux/fast/block/float/overhanging-tall-block-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/chromium-mac/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/chromium/fast/block/float/overhanging-tall-block-expected.png: Removed.
+        * platform/chromium/fast/block/float/overhanging-tall-block-expected.txt: Removed.
+
 2012-05-03  Philip Rogers  <pdr@google.com>
 
         Fix numeric precision issue in SVG animations
