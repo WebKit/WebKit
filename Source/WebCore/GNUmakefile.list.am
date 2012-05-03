@@ -1038,9 +1038,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/filesystem/Metadata.h \
 	Source/WebCore/Modules/filesystem/WebKitFlags.h \
 	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h
-
-webcore_sources += \
+	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h \
 	Source/WebCore/Modules/geolocation/Geolocation.cpp \
 	Source/WebCore/Modules/geolocation/Geolocation.h \
 	Source/WebCore/Modules/geolocation/GeolocationController.cpp \
@@ -1230,7 +1228,9 @@ webcore_sources += \
 	Source/WebCore/Modules/websockets/WebSocketHandshakeResponse.cpp \
 	Source/WebCore/Modules/websockets/WebSocketHandshakeResponse.h \
 	Source/WebCore/Modules/websockets/WorkerThreadableWebSocketChannel.cpp \
-	Source/WebCore/Modules/websockets/WorkerThreadableWebSocketChannel.h \
+	Source/WebCore/Modules/websockets/WorkerThreadableWebSocketChannel.h
+
+webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.cpp \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.h \
 	Source/WebCore/accessibility/AccessibilityARIAGrid.cpp \
