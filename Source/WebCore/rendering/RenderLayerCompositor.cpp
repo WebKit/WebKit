@@ -2246,6 +2246,8 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
          style->transform().has3DOperation()))
         return true;
 
+    const_cast<RenderLayer*>(layer)->updateLayerListsIfNeeded();
+
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(layer));
 #endif

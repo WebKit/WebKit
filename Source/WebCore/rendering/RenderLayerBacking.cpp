@@ -907,6 +907,9 @@ bool RenderLayerBacking::containsNonEmptyRenderers() const
 // Conservative test for having no rendered children.
 bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
 {
+    // FIXME: We shouldn't be called with a stale z-order lists. See bug 85512.
+    m_owningLayer->updateLayerListsIfNeeded();
+
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(m_owningLayer);
 #endif
