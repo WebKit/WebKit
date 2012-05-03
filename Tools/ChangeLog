@@ -1,5 +1,18 @@
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
+        [Chromium] Don't show the WebKit Linux ASAN bot on the flakiness dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=85551
+
+        Reviewed by Dirk Pranke.
+
+        It's not uploading results and in the short term we don't plan to have it start.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (isChromiumWebkitTipOfTreeTestRunner):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
         Show the test name in the dashboard if showChrome==false and we're showing multiple tests
         https://bugs.webkit.org/show_bug.cgi?id=85243
 
