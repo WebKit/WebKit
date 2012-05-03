@@ -598,23 +598,25 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
 
 LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent)
 {
+    LayoutUnit contentExtent = 0;
     if (!isColumnFlow())
-        return mainAxisContentExtent() - preferredMainAxisExtent;
+        contentExtent = mainAxisContentExtent();
+    else if (hasOverrideHeight())
+        contentExtent = overrideHeight() - (logicalHeight() - contentLogicalHeight());
+    else {
+        LayoutUnit heightResult = computeContentLogicalHeightUsing(style()->logicalHeight());
+        if (heightResult == -1)
+            heightResult = preferredMainAxisExtent;
+        LayoutUnit minHeight = computeContentLogicalHeightUsing(style()->logicalMinHeight()); // Leave as -1 if unset.
+        LayoutUnit maxHeight = style()->logicalMaxHeight().isUndefined() ? heightResult : computeContentLogicalHeightUsing(style()->logicalMaxHeight());
+        if (maxHeight == -1)
+            maxHeight = heightResult;
+        heightResult = std::min(maxHeight, heightResult);
+        heightResult = std::max(minHeight, heightResult);
+        contentExtent = heightResult;
+    }
 
-    if (hasOverrideHeight())
-        return overrideHeight();
-
-    LayoutUnit heightResult = computeContentLogicalHeightUsing(style()->logicalHeight());
-    if (heightResult == -1)
-        heightResult = preferredMainAxisExtent;
-    LayoutUnit minHeight = computeContentLogicalHeightUsing(style()->logicalMinHeight()); // Leave as -1 if unset.
-    LayoutUnit maxHeight = style()->logicalMaxHeight().isUndefined() ? heightResult : computeContentLogicalHeightUsing(style()->logicalMaxHeight());
-    if (maxHeight == -1)
-        maxHeight = heightResult;
-    heightResult = std::min(maxHeight, heightResult);
-    heightResult = std::max(minHeight, heightResult);
-
-    return heightResult - preferredMainAxisExtent;
+    return contentExtent - preferredMainAxisExtent;
 }
 
 void RenderFlexibleBox::layoutFlexItems(FlexOrderIterator& iterator, WTF::Vector<LineContext>& lineContexts)
