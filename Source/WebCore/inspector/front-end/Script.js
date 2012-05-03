@@ -25,6 +25,7 @@
 
 /**
  * @constructor
+ * @implements {WebInspector.ContentProvider}
  * @param {string} scriptId
  * @param {string} sourceURL
  * @param {number} startLine
@@ -49,12 +50,20 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
 
 WebInspector.Script.prototype = {
     /**
-     * @param {function(string)} callback
+     * @return {?string}
      */
-    requestSource: function(callback)
+    contentURL: function()
+    {
+        return this.sourceURL;
+    },
+
+    /**
+     * @param {function(?string,boolean,string)} callback
+     */
+    requestContent: function(callback)
     {
         if (this._source) {
-            callback(this._source);
+            callback(this._source, false, "text/javascript");
             return;
         }
 
@@ -66,13 +75,13 @@ WebInspector.Script.prototype = {
         function didGetScriptSource(error, source)
         {
             this._source = error ? "" : source;
-            callback(this._source);
+            callback(this._source, false, "text/javascript");
         }
         if (this.scriptId) {
             // Script failed to parse.
             DebuggerAgent.getScriptSource(this.scriptId, didGetScriptSource.bind(this));
         } else
-            callback("");
+            callback("", false, "text/javascript");
     },
 
     /**

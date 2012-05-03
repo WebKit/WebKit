@@ -1,8 +1,6 @@
 Tests ContentProvider implementations.
 
 
-Running: testScriptContentProvider
-
 Running: testConcatenatedScriptsContentProvider
   <script>function foo() { return 0; }</script>
                                                               <script>function bar() { return 0; }</script>

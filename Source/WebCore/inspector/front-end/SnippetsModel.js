@@ -416,7 +416,7 @@ WebInspector.SnippetsScriptMapping.prototype = {
      */
     _createUISourceCodeForScript: function(script)
     {
-        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script.sourceURL, new WebInspector.ScriptContentProvider(script));
+        var uiSourceCode = new WebInspector.JavaScriptSource(script.sourceURL, script.sourceURL, script);
         uiSourceCode.isSnippetEvaluation = true;
         var oldUISourceCode = this._uiSourceCodeForScriptId[script.scriptId];
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;

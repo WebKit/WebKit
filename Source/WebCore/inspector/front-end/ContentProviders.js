@@ -31,52 +31,6 @@
 /**
  * @constructor
  * @implements {WebInspector.ContentProvider}
- * @param {WebInspector.Script} script
- */
-WebInspector.ScriptContentProvider = function(script)
-{
-    this._mimeType = "text/javascript";
-    this._script = script;
-}
-
-WebInspector.ScriptContentProvider.prototype = {
-    /**
-     * @return {?string}
-     */
-    contentURL: function()
-    {
-        return this._script.sourceURL;
-    },
-
-    /**
-     * @param {function(?string,boolean,string)} callback
-     */
-    requestContent: function(callback)
-    {
-        function didRequestSource(source)
-        {
-            callback(source, false, this._mimeType);
-        }
-        this._script.requestSource(didRequestSource.bind(this));
-    },
-
-    /**
-     * @param {string} query
-     * @param {boolean} caseSensitive
-     * @param {boolean} isRegex
-     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
-     */
-    searchInContent: function(query, caseSensitive, isRegex, callback)
-    {
-        this._script.searchInContent(query, caseSensitive, isRegex, callback);
-    }
-}
-
-WebInspector.ScriptContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
-
-/**
- * @constructor
- * @implements {WebInspector.ContentProvider}
  * @param {Array.<WebInspector.Script>} scripts
  */
 WebInspector.ConcatenatedScriptsContentProvider = function(scripts)
@@ -133,14 +87,14 @@ WebInspector.ConcatenatedScriptsContentProvider.prototype = {
     {
         var scripts = this._sortedScripts();
         var sources = [];
-        function didRequestSource(source)
+        function didRequestSource(content, contentEncoded, mimeType)
         {
-            sources.push(source);
+            sources.push(content);
             if (sources.length == scripts.length)
                 callback(this._concatenateScriptsContent(scripts, sources), false, this._mimeType);
         }
         for (var i = 0; i < scripts.length; ++i)
-            scripts[i].requestSource(didRequestSource.bind(this));
+            scripts[i].requestContent(didRequestSource.bind(this));
     },
 
     /**

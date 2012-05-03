@@ -290,7 +290,7 @@ InspectorTest.createScriptMock = function(url, startLine, startColumn, isContent
     var endLine = startLine + lineCount - 1;
     var endColumn = lineCount === 1 ? startColumn + source.length : source.length - source.lineEndings()[lineCount - 2];
     var script = new WebInspector.Script(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript);
-    script.requestSource = function(callback) { callback(source); };
+    script.requestContent = function(callback) { callback(source); };
     WebInspector.debuggerModel._scripts[scriptId] = script;
     return script;
 }

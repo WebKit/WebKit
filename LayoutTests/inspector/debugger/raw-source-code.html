@@ -96,18 +96,17 @@ function test()
             var script = InspectorTest.createScriptMock("foo.js", 0, 0, true, "<script source>");
             var rawSourceCode = createRawSourceCode(script, null);
 
-            InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
             var uiSourceCode = rawSourceCode.uiSourceCode();
-            InspectorTest.assertEquals("foo.js", uiSourceCode.url);
-            InspectorTest.assertEquals(true, uiSourceCode.isContentScript);
+            InspectorTest.addResult("UISourceCode: " + rawSourceCode.uiSourceCode().id);
+            InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
             InspectorTest.checkUILocation(uiSourceCode, 0, 5, rawSourceCode.rawLocationToUILocation(createRawLocation(0, 5)));
             InspectorTest.checkRawLocation(script, 10, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 10, 0));
             uiSourceCode.requestContent(didRequestContent);
 
             function didRequestContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/javascript", mimeType);
-                InspectorTest.assertEquals("<script source>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
                 next();
             }
         },
@@ -130,15 +129,15 @@ function test()
                 InspectorTest.assertTrue(!event.data.oldUISourceCode);
                 InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
                 var uiSourceCode = rawSourceCode.uiSourceCode();
-                InspectorTest.assertEquals("index.html", uiSourceCode.url);
-                InspectorTest.assertEquals(false, uiSourceCode.isContentScript);
+                InspectorTest.addResult("UISourceCode: " + uiSourceCode.url);
+                InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
                 uiSourceCode.requestContent(didRequestContent);
             }
 
             function didRequestContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/html", mimeType);
-                InspectorTest.assertEquals("<resource content>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.addScript(script2);
                 rawSourceCode.forceUpdateSourceMapping();
@@ -156,14 +155,14 @@ function test()
 
             InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
             var uiSourceCode = rawSourceCode.uiSourceCode();
-            InspectorTest.assertEquals("index.html", uiSourceCode.url);
-            InspectorTest.assertEquals(false, uiSourceCode.isContentScript);
+            InspectorTest.addResult("UISourceCode: " + uiSourceCode.url);
+            InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
             uiSourceCode.requestContent(didRequestContent);
 
             function didRequestContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/html", mimeType);
-                InspectorTest.assertEquals("<resource content>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.addScript(script2);
                 rawSourceCode.forceUpdateSourceMapping();
@@ -197,8 +196,8 @@ function test()
 
             function didRequestContentOneScript(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/html", mimeType);
-                InspectorTest.assertEquals("  <script><script source 1></" + "script>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.forceUpdateSourceMapping();
                 rawSourceCode.addScript(script2);
@@ -215,8 +214,8 @@ function test()
 
             function didRequestContentTwoScripts(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/html", mimeType);
-                InspectorTest.assertEquals("  <script><script source 1></" + "script> <script><script source 2></" + "script>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.forceUpdateSourceMapping();
                 waitForUISourceCodeChangedEvent(rawSourceCode, requestContentRequest);
@@ -232,8 +231,8 @@ function test()
 
             function didRequestContentRequest(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/html", mimeType);
-                InspectorTest.assertEquals("<resource content>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.addScript(script3);
                 rawSourceCode.forceUpdateSourceMapping();
@@ -257,8 +256,8 @@ function test()
 
             function didRequestContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/javascript", mimeType);
-                InspectorTest.assertEquals("<resource content>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.setFormatted(true);
                 waitForUISourceCodeChangedEvent(rawSourceCode, requestFormattedContent);
@@ -276,8 +275,8 @@ function test()
 
             function didRequestFormattedContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/javascript", mimeType);
-                InspectorTest.assertEquals("<formatted> <resource content>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 waitForUISourceCodeChangedEvent(rawSourceCode, requestNotFormattedContent);
                 rawSourceCode.setFormatted(false);
@@ -294,8 +293,8 @@ function test()
 
             function didRequestNotFormattedContent(content, contentEncoded, mimeType)
             {
-                InspectorTest.assertEquals("text/javascript", mimeType);
-                InspectorTest.assertEquals("<resource content>", content);
+                InspectorTest.addResult("Mime type: " + mimeType);
+                InspectorTest.addResult("Script source: " + content);
 
                 next();
             }

@@ -167,7 +167,7 @@ WebInspector.RawSourceCode.prototype = {
         if (this._resource)
             return this._resource;
         if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
-            return new WebInspector.ScriptContentProvider(this._scripts[0]);
+            return this._scripts[0];
         return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
     },
 

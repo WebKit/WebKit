@@ -10,9 +10,9 @@ function test()
     {
         range = range || [0, 0, 100, 0];
         return {
-            requestSource: function(callback)
+            requestContent: function(callback)
             {
-                callback(source);
+                callback(source, false, "text/javascript");
             },
             get lineOffset() { return range[0]; },
             get columnOffset() { return range[1]; },
@@ -22,20 +22,6 @@ function test()
     }
 
     InspectorTest.runTestSuite([
-        function testScriptContentProvider(next)
-        {
-            var mockScriptSource = "function foo() { return 0; }";
-            var mockScript = createMockScript("foo.js", mockScriptSource);
-            var contentProvider = new WebInspector.ScriptContentProvider(mockScript);
-            function didRequestContent(content, contentEncoded, mimeType)
-            {
-                InspectorTest.assertEquals("text/javascript", mimeType);
-                InspectorTest.assertEquals(mockScriptSource, content);
-                next();
-            }
-            contentProvider.requestContent(didRequestContent);
-        },
-
         function testConcatenatedScriptsContentProvider(next)
         {
             var scripts = [];
