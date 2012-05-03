@@ -67,12 +67,10 @@ void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void
 #if !PLATFORM(IOS)
     double startTime = WTF::monotonicallyIncreasingTime();
     if (heap->isPagedOut(startTime + pagingTimeOut)) {
-        fprintf(stdout, "cancelling opportunistic collection\n");
         heap->activityCallback()->cancel();
         heap->increaseLastGCLength(pagingTimeOut);
         return;
     }
-    fprintf(stdout, "running opportunistic collection\n");
 #endif
     heap->collectAllGarbage();
 }

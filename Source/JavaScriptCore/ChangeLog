@@ -1,3 +1,10 @@
+2012-05-03  Andy Estes  <aestes@apple.com>
+
+        If you add printf()s to your garbage collector, the layout tests are gonna have a bad time.
+
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallbackPlatformData::timerDidFire):
+
 2012-05-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Heap::reportAbandonedObjectGraph should not hasten an allocation-triggered collection
