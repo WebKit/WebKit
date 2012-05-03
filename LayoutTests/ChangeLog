@@ -1,3 +1,9 @@
+2012-05-03  Dan Bernstein  <mitz@apple.com>
+
+        Removed dumpAsText() from this ref test, since that apparently confuses the test tool.
+
+        * fast/writing-mode/flipped-blocks-inline-map-local-to-container.html:
+
 2012-05-03  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r111387): CSSOM representation of 'background-image' values should be CSSPrimitiveValue.
