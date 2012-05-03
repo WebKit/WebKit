@@ -150,6 +150,11 @@ public:
         m_assembler.movs_r(dest, m_assembler.lsl(dest, imm.m_value & 0x1f));
     }
 
+    void lshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.movs_r(dest, m_assembler.lsl(src, imm.m_value & 0x1f));
+    }
+
     void mul32(RegisterID src, RegisterID dest)
     {
         if (src == dest) {
@@ -178,6 +183,11 @@ public:
     void or32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.orrs_r(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
+    }
+
+    void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        m_assembler.orrs_r(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
     void or32(RegisterID op1, RegisterID op2, RegisterID dest)
@@ -216,6 +226,11 @@ public:
     void urshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.movs_r(dest, m_assembler.lsr(dest, imm.m_value & 0x1f));
+    }
+    
+    void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.movs_r(dest, m_assembler.lsr(src, imm.m_value & 0x1f));
     }
 
     void sub32(RegisterID src, RegisterID dest)
@@ -257,6 +272,14 @@ public:
             m_assembler.mvns_r(dest, dest);
         else
             m_assembler.eors_r(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
+    }
+
+    void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (imm.m_value == -1)
+            m_assembler.mvns_r(dest, src);
+        else    
+            m_assembler.eors_r(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
     void countLeadingZeros32(RegisterID src, RegisterID dest)
@@ -624,6 +647,13 @@ public:
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(src, imm, dest);
+        return Jump(m_assembler.jmp(ARMCondition(cond)));
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        m_assembler.subs_r(dest, op1, op2);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 

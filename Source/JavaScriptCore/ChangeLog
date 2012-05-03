@@ -1,3 +1,18 @@
+2012-05-02  Hojong Han  <hojong.han@samsung.com>
+
+        ARM_TRADITIONAL build fix
+        https://bugs.webkit.org/show_bug.cgi?id=85358
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::lshift32):
+        (MacroAssemblerARM):
+        (JSC::MacroAssemblerARM::or32):
+        (JSC::MacroAssemblerARM::urshift32):
+        (JSC::MacroAssemblerARM::xor32):
+        (JSC::MacroAssemblerARM::branchSub32):
+
 2012-05-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Opportunistic GC should give up if the Heap is paged out
