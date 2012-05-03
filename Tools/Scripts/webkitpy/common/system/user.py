@@ -45,11 +45,6 @@ except ImportError:
     if sys.platform != "win32":
         # There is no readline module for win32, not much to do except cry.
         _log.warn("Unable to import readline.")
-    # FIXME: We could give instructions for non-mac platforms.
-    # Lack of readline results in a very bad user experiance.
-    if sys.platform == "darwin":
-        _log.warn("If you're using MacPorts, try running:")
-        _log.warn("  sudo port install py25-readline")
 
 
 class User(object):

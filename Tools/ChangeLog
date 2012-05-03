@@ -1,3 +1,16 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Remove check for readline on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=85547
+
+        Reviewed by Eric Seidel.
+
+        Python 2.5 is not supported by the WebKit project anymore, and
+        Python's readline documentation does not mention the module not
+        being available in the supported versions.
+
+        * Scripts/webkitpy/common/system/user.py:
+
 2012-05-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [NRWT] Run performance tests with lock
