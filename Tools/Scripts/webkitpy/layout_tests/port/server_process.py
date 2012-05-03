@@ -48,7 +48,7 @@ else:
     import os
     import select
 
-from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.executive import ScriptError
 
 
 _log = logging.getLogger(__name__)
@@ -61,13 +61,13 @@ class ServerProcess(object):
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
-    def __init__(self, port_obj, name, cmd, env=None, executive=Executive()):
+    def __init__(self, port_obj, name, cmd, env=None):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
         self._cmd = cmd
         self._env = env
+        self._host = self._port.host
         self._reset()
-        self._executive = executive
 
         # See comment in imports for why we need the win32 APIs and can't just use select.
         # FIXME: there should be a way to get win32 vs. cygwin from platforminfo.
@@ -94,7 +94,7 @@ class ServerProcess(object):
             raise ValueError("%s already running" % self._name)
         self._reset()
         # close_fds is a workaround for http://bugs.python.org/issue2320
-        close_fds = sys.platform not in ('win32', 'cygwin')
+        close_fds = not self._host.platform.is_win()
         self._proc = subprocess.Popen(self._cmd, stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE,
@@ -192,7 +192,6 @@ class ServerProcess(object):
         # messing up the master process's output.
         _log.info('')
         _log.info(message)
-
 
     def _handle_timeout(self):
         self.timed_out = True
@@ -298,7 +297,7 @@ class ServerProcess(object):
         self._proc.stdout.close()
         if self._proc.stderr:
             self._proc.stderr.close()
-        if sys.platform not in ('win32', 'cygwin'):
+        if not self._host.platform.is_win():
             # Closing stdin/stdout/stderr hangs sometimes on OS X,
             # (see restart(), above), and anyway we don't want to hang
             # the harness if DumpRenderTree is buggy, so we wait a couple
@@ -316,7 +315,7 @@ class ServerProcess(object):
 
     def kill(self):
         if self._proc:
-            self._executive.kill_process(self._proc.pid)
+            self._host.executive.kill_process(self._proc.pid)
             if self._proc.poll() is not None:
                 self._proc.wait()
             self._reset()

@@ -1,3 +1,26 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Use PlatformInfo whenever possible in server_process.py.
+        https://bugs.webkit.org/show_bug.cgi?id=85516
+
+        Reviewed by Eric Seidel.
+
+        Eliminate direct access to sys.platform wherever possible by using
+        PlatformInfo.is_win() instead.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.__init__): Remove the executive parameter as it was
+        not passed by any caller, obtain a SystemHost from port_obj
+        instead.
+        (ServerProcess._log): Style, remove extra empty line.
+        (ServerProcess._start):
+        (ServerProcess.stop):
+        (ServerProcess.kill):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TrivialMockPort.__init__): Create a MockSystemHost used by
+        ServerProcess.
+        (TestServerProcess.test_broken_pipe): Test different platforms.
+
 2012-05-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         webkitpy: Style checker broken when committing a PNG

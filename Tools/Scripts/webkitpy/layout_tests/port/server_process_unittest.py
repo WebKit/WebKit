@@ -32,14 +32,16 @@ import unittest
 
 from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.layout_tests.port import server_process
-from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.system.outputcapture import OutputCapture
 
 
 
 class TrivialMockPort(object):
+    def __init__(self):
+        self.host = MockSystemHost()
+
     def results_directory(self):
         return "/mock-results"
 
@@ -107,7 +109,17 @@ class TestServerProcess(unittest.TestCase):
         proc.stop()
 
     def test_broken_pipe(self):
-        server_process = FakeServerProcess(port_obj=TrivialMockPort(), name="test", cmd=["test"])
+        port_obj = TrivialMockPort()
+
+        port_obj.host.platform.os_name = 'win'
+        server_process = FakeServerProcess(port_obj=port_obj, name="test", cmd=["test"])
+        server_process.write("should break")
+        self.assertTrue(server_process.has_crashed())
+        self.assertEquals(server_process._proc, None)
+        self.assertEquals(server_process.broken_pipes, [server_process.stdin])
+
+        port_obj.host.platform.os_name = 'mac'
+        server_process = FakeServerProcess(port_obj=port_obj, name="test", cmd=["test"])
         server_process.write("should break")
         self.assertTrue(server_process.has_crashed())
         self.assertEquals(server_process._proc, None)
