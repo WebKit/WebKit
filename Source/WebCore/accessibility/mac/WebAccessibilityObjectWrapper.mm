@@ -569,12 +569,20 @@ static id textMarkerRangeFromMarkers(id textMarker1, id textMarker2)
     return AXTextMarkerRange(textMarker1, textMarker2);
 }
 
+// When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
+// To protect against such cases the range should be validated before adding or removing attributes.
+static BOOL AXAttributedStringRangeIsValid(NSAttributedString* attrString, NSRange range)
+{
+    return (range.location < [attrString length] && NSMaxRange(range) <= [attrString length]);
+}
+
 static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, NSString* attribute, NSFont* font, NSRange range)
 {
-    NSDictionary* dict;
+    if (!AXAttributedStringRangeIsValid(attrString, range))
+        return;
     
     if (font) {
-        dict = [NSDictionary dictionaryWithObjectsAndKeys:
+        NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
             [font fontName]                             , NSAccessibilityFontNameKey,
             [font familyName]                           , NSAccessibilityFontFamilyKey,
             [font displayName]                          , NSAccessibilityVisibleNameKey,
@@ -612,6 +620,9 @@ static CGColorRef CreateCGColorIfDifferent(NSColor* nsColor, CGColorRef existing
 
 static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSString* attribute, NSColor* color, NSRange range)
 {
+    if (!AXAttributedStringRangeIsValid(attrString, range))
+        return;
+
     if (color) {
         CGColorRef existingColor = (CGColorRef) [attrString attribute:attribute atIndex:range.location effectiveRange:nil];
         CGColorRef cgColor = CreateCGColorIfDifferent(color, existingColor);
@@ -625,6 +636,9 @@ static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSS
 
 static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NSString* attribute, NSNumber* number, NSRange range)
 {
+    if (!AXAttributedStringRangeIsValid(attrString, range))
+        return;
+
     if (number)
         [attrString addAttribute:attribute value:number range:range];
     else
@@ -695,6 +709,9 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
 
 static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
+    if (!AXAttributedStringRangeIsValid(attrString, range))
+        return;
+
     AccessibilityObject* obj = renderer->document()->axObjectCache()->getOrCreate(renderer);
     int quoteLevel = obj->blockquoteLevel();
     
@@ -746,6 +763,9 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
     if (!renderer)
         return;
     
+    if (!AXAttributedStringRangeIsValid(attrString, range))
+        return;
+    
     // Sometimes there are objects between the text and the heading. 
     // In those cases the parent hierarchy should be queried to see if there is a heading level.
     int parentHeadingLevel = 0;
@@ -764,6 +784,9 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
 
 static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, AccessibilityObject* object, NSRange range)
 {
+    if (!AXAttributedStringRangeIsValid(attrString, range))
+        return;
+
     if (object && object->isAccessibilityRenderObject()) {
         // make a serializable AX object
         
