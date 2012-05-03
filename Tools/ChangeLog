@@ -1,3 +1,17 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Use PlatformInfo wherever possible in the User class.
+        https://bugs.webkit.org/show_bug.cgi?id=85549
+
+        Reviewed by Dirk Pranke.
+
+        Instead of relying on sys.platform to detect whether the current
+        platform is a Mac, use the PlatformInfo class instead.
+
+        * Scripts/webkitpy/common/system/user.py:
+        (User.__init__):
+        (User.edit_changelog):
+
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
         Remove the percent failed column from the flakiness dashboard
