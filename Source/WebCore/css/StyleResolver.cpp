@@ -871,7 +871,7 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
 
     sortMatchedRules();
 
-    if (m_checker.isCollectingRulesOnly()) {
+    if (m_checker.mode() == SelectorChecker::CollectingRules) {
         if (!m_ruleList)
             m_ruleList = StaticCSSRuleList::create();
         for (unsigned i = 0; i < m_matchedRules.size(); ++i)
@@ -1045,7 +1045,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
             // If we're matching normal rules, set a pseudo bit if
             // we really just matched a pseudo-element.
             if (m_dynamicPseudo != NOPSEUDO && m_checker.pseudoStyle() == NOPSEUDO) {
-                if (m_checker.isCollectingRulesOnly()) {
+                if (m_checker.mode() == SelectorChecker::CollectingRules) {
                     InspectorInstrumentation::didMatchRule(cookie, false);
                     continue;
                 }
@@ -2175,7 +2175,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
 
-    m_checker.setCollectingRulesOnly(true);
+    m_checker.setMode(SelectorChecker::CollectingRules);
 
     initElement(e);
     initForStyleResolve(e, 0, pseudoId);
@@ -2199,7 +2199,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
         m_sameOriginOnly = false;
     }
 
-    m_checker.setCollectingRulesOnly(false);
+    m_checker.setMode(SelectorChecker::ResolvingStyle);
 
     return m_ruleList.release();
 }

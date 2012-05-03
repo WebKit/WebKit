@@ -52,6 +52,7 @@ public:
 
     enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
+    enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules };
 
     struct SelectorCheckingContext {
         // Initial selector constructor
@@ -96,8 +97,8 @@ public:
     Document* document() const { return m_document; }
     bool strictParsing() const { return m_strictParsing; }
 
-    bool isCollectingRulesOnly() const { return m_isCollectingRulesOnly; }
-    void setCollectingRulesOnly(bool b) { m_isCollectingRulesOnly = b; }
+    Mode mode() const { return m_mode; }
+    void setMode(Mode mode) { m_mode = mode; }
 
     PseudoId pseudoStyle() const { return m_pseudoStyle; }
     void setPseudoStyle(PseudoId pseudoId) { m_pseudoStyle = pseudoId; }
@@ -135,7 +136,7 @@ private:
     Document* m_document;
     bool m_strictParsing;
     bool m_documentIsHTML;
-    bool m_isCollectingRulesOnly;
+    Mode m_mode;
     PseudoId m_pseudoStyle;
     mutable bool m_hasUnknownPseudoElements;
     mutable HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;

@@ -1,3 +1,15 @@
+2012-05-03  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Broken handling of pseudo-elements in selectors API
+        https://bugs.webkit.org/show_bug.cgi?id=83446
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/Window/querySelectorAll-with-pseudo-elements-expected.txt: Added.
+        * fast/dom/Window/querySelectorAll-with-pseudo-elements.html: Added.
+        New layout testcase added for verifying that the querySelectorAll() API returns zero
+        when querying for pseudo-elements selectors; as per the specification.
+
 2012-05-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Update EFL baselines after r115846

@@ -37,7 +37,7 @@ ContentSelectorQuery::ContentSelectorQuery(const InsertionPoint* insertionPoint)
     : m_insertionPoint(insertionPoint)
     , m_selectorChecker(insertionPoint->document(), !insertionPoint->document()->inQuirksMode())
 {
-    m_selectorChecker.setCollectingRulesOnly(true);
+    m_selectorChecker.setMode(SelectorChecker::CollectingRules);
 
     if (insertionPoint->select().isNull() || insertionPoint->select().isEmpty()) {
         m_isValidSelector = true;

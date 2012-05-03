@@ -69,7 +69,7 @@ SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
     : m_document(document)
     , m_strictParsing(strictParsing)
     , m_documentIsHTML(document->isHTMLDocument())
-    , m_isCollectingRulesOnly(false)
+    , m_mode(ResolvingStyle)
     , m_pseudoStyle(NOPSEUDO)
     , m_hasUnknownPseudoElements(false)
 {
@@ -492,7 +492,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         return checkSelector(nextContext, dynamicPseudo);
 
     case CSSSelector::DirectAdjacent:
-        if (!m_isCollectingRulesOnly && context.element->parentElement()) {
+        if (m_mode == ResolvingStyle && context.element->parentElement()) {
             RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : context.element->parentNode()->renderStyle();
             if (parentStyle)
                 parentStyle->setChildrenAffectedByDirectAdjacentRules();
@@ -506,7 +506,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         return checkSelector(nextContext, dynamicPseudo);
 
     case CSSSelector::IndirectAdjacent:
-        if (!m_isCollectingRulesOnly && context.element->parentElement()) {
+        if (m_mode == ResolvingStyle && context.element->parentElement()) {
             RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : context.element->parentNode()->renderStyle();
             if (parentStyle)
                 parentStyle->setChildrenAffectedByForwardPositionalRules();
@@ -526,7 +526,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         // a selector is invalid if something follows a pseudo-element
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        if ((context.elementStyle || m_isCollectingRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION
+        if ((context.elementStyle || m_mode == CollectingRules || m_mode == QueryingRules) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION
              && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && nextContext.selector->m_match == CSSSelector::PseudoClass))
             return SelectorFailsCompletely;
         nextContext.isSubSelector = true;
@@ -773,7 +773,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                         }
                     }
                 }
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     if (context.elementStyle)
                         context.elementStyle->setEmptyState(result);
                     else if (element->renderStyle() && (element->document()->usesSiblingRules() || element->renderStyle()->unique()))
@@ -787,7 +787,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                 bool result = false;
                 if (!element->previousElementSibling())
                     result = true;
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : element->parentNode()->renderStyle();
                     if (parentStyle)
@@ -809,7 +809,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                         break;
                     }
                 }
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : element->parentNode()->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
@@ -821,7 +821,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             // last-child matches the last child that is an element
             if (Element* parentElement = element->parentElement()) {
                 bool result = parentElement->isFinishedParsingChildren() && !element->nextElementSibling();
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
@@ -835,7 +835,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         case CSSSelector::PseudoLastOfType:
             // last-of-type matches the last element of its type
             if (Element* parentElement = element->parentElement()) {
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByBackwardPositionalRules();
@@ -855,7 +855,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                 bool firstChild = !element->previousElementSibling();
                 bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && !element->nextElementSibling();
 
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (parentStyle) {
@@ -873,7 +873,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         case CSSSelector::PseudoOnlyOfType:
             // FIXME: This selector is very slow.
             if (Element* parentElement = element->parentElement()) {
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (parentStyle) {
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
@@ -909,7 +909,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                     count++;
                 }
 
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (childStyle)
@@ -932,7 +932,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                     if (sibling->hasTagName(type))
                         ++count;
                 }
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByForwardPositionalRules();
@@ -946,7 +946,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             if (!selector->parseNth())
                 break;
             if (Element* parentElement = element->parentElement()) {
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByBackwardPositionalRules();
@@ -964,7 +964,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             if (!selector->parseNth())
                 break;
             if (Element* parentElement = element->parentElement()) {
-                if (!m_isCollectingRulesOnly) {
+                if (m_mode == ResolvingStyle) {
                     RenderStyle* parentStyle = context.elementStyle ? context.elementParentStyle : parentElement->renderStyle();
                     if (parentStyle)
                         parentStyle->setChildrenAffectedByBackwardPositionalRules();
@@ -1169,7 +1169,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         return false;
     }
     if (selector->m_match == CSSSelector::PseudoElement) {
-        if (!context.elementStyle && !m_isCollectingRulesOnly)
+        if ((!context.elementStyle && m_mode == ResolvingStyle) || m_mode == QueryingRules)
             return false;
 
         if (selector->isUnknownPseudoElement()) {

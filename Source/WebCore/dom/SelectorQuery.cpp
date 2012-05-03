@@ -151,7 +151,7 @@ SelectorQuery::SelectorQuery(Node* rootNode, const CSSSelectorList& selectorList
     , m_selectorChecker(rootNode->document(), !rootNode->document()->inQuirksMode())
     , m_selectors(selectorList)
 {
-    m_selectorChecker.setCollectingRulesOnly(true);
+    m_selectorChecker.setMode(SelectorChecker::QueryingRules);
 }
 
 PassRefPtr<NodeList> SelectorQuery::queryAll() const
