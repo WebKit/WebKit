@@ -1,3 +1,12 @@
+2012-05-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed morning gardening.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/fast/forms/search-rtl-expected.png: Added.
+        * platform/qt-5.0/fast/forms/search-rtl-expected.txt:
+        * platform/qt/Skipped:
+
 2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening. Adjusted expectations for slow tests.

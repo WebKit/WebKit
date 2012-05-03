@@ -8,7 +8,6 @@ fast/dom/DeviceOrientation
 fast/dom/Orientation/create-event-orientationchange.html
 fast/dom/Window/Plug-ins.html
 fast/dom/Window/window-properties-device-orientation.html
-fast/dom/Window/window-property-descriptors.html
 fast/forms/HTMLOptionElement_label06.html
 fast/forms/HTMLOptionElement_label07.html
 fast/forms/menulist-separator-painting.html
