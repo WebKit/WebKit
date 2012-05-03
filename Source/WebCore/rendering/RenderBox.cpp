@@ -1375,7 +1375,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     return cb->computeContentBoxLogicalHeight(logicalHeightLength.value());
 }
 
-void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const
+void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, ApplyContainerFlipOrNot, bool* wasFixed) const
 {
     if (repaintContainer == this)
         return;
@@ -1429,11 +1429,11 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
         // Transform from render flow coordinates into region coordinates.
         RenderRegion* region = toRenderFlowThread(o)->mapFromFlowToRegion(transformState);
         if (region)
-            region->mapLocalToContainer(region->containerForRepaint(), fixed, useTransforms, transformState, wasFixed);
+            region->mapLocalToContainer(region->containerForRepaint(), fixed, useTransforms, transformState, DoNotApplyContainerFlip, wasFixed);
         return;
     }
 
-    o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
+    o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, DoNotApplyContainerFlip, wasFixed);
 }
 
 void RenderBox::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const

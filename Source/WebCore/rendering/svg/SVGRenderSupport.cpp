@@ -82,7 +82,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
     if (parent->isSVGRoot())
         transformState.applyTransform(toRenderSVGRoot(parent)->localToBorderBoxTransform());
     
-    parent->mapLocalToContainer(repaintContainer, false, true, transformState, wasFixed);
+    parent->mapLocalToContainer(repaintContainer, false, true, transformState, RenderObject::DoNotApplyContainerFlip, wasFixed);
 }
 
 // Update a bounding box taking into account the validity of the other bounding box.

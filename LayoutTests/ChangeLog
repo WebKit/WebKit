@@ -1,3 +1,13 @@
+2012-05-03  Dan Bernstein  <mitz@apple.com>
+
+        highlight for Ruby text is mispositioned in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=82684
+
+        Reviewed by Simon Fraser.
+
+        * fast/writing-mode/flipped-blocks-inline-map-local-to-container-expected.html: Added.
+        * fast/writing-mode/flipped-blocks-inline-map-local-to-container.html: Added.
+
 2012-05-03  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed, adjusted platform specifiers for fast/js/dfg-double-vote-fuzz.html
