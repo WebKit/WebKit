@@ -238,7 +238,6 @@ function createResultsObjectForTest(test, builder)
         modifiers: '',
         expectations : '',
         rawResults: '',
-        percentFailed: 0,
         // List of all the results the test actually has.
         actualResults: []
     };
@@ -780,7 +779,6 @@ function processMissingAndExtraExpectations(resultsForTest)
     var numResultsSeen = 0;
     var haveSeenNonFlakeResult = false;
     var numRealResults = 0;
-    var failedCount = 0;
 
     var seenResults = {};
     for (var i = 0; i < rawResults.length; i++) {
@@ -788,8 +786,6 @@ function processMissingAndExtraExpectations(resultsForTest)
         numResultsSeen += numResults;
 
         var result = rawResults[i][RLE.VALUE];
-        if (isFailingResult(result))
-            failedCount += numResults;
 
         var hasMinRuns = numResults >= MIN_RUNS_FOR_FLAKE;
         if (haveSeenNonFlakeResult && hasMinRuns)
@@ -811,8 +807,6 @@ function processMissingAndExtraExpectations(resultsForTest)
 
     resultsForTest.flips = i - 1;
     resultsForTest.isFlaky = numRealResults > 1;
-    // Calculate the % of times the test failed - how flaky is it?
-    resultsForTest.percentFailed = Math.round(failedCount / numResultsSeen * 100);
 
     var missingExpectations = [];
     var extraExpectations = [];
@@ -1160,7 +1154,7 @@ function tableHeaders(opt_getAll)
     if (isLayoutTestResults() || opt_getAll)
         headers.push('bugs', 'modifiers', 'expectations');
 
-    headers.push('slowest run', '% fail', 'flakiness (numbers are runtimes in seconds)');
+    headers.push('slowest run', 'flakiness (numbers are runtimes in seconds)');
     return headers;
 }
 
@@ -1196,8 +1190,6 @@ function htmlForSingleTestRow(test)
             html += '<td class=options-container>' + test.expectations;
         else if (startsWith(header, 'slowest'))
             html += '<td>' + (test.slowestTime ? test.slowestTime + 's' : '');
-        else if (startsWith(header, '% fail'))
-            html += '<td>' + test.percentFailed;
         else if (startsWith(header, 'flakiness'))
             html += htmlForTestResults(test, isCrossBuilderView());
     }
@@ -1309,9 +1301,6 @@ function sortTests(tests, column, order)
     } else if (column == 'slowest') {
         sortFunctionGetter = numericSort;
         resultsProperty = 'slowestTime';
-    } else if (column == '%') {
-        sortFunctionGetter = numericSort;
-        resultsProperty = 'percentFailed';
     } else {
         sortFunctionGetter = alphanumericCompare;
         resultsProperty = column;

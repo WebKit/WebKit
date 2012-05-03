@@ -366,7 +366,6 @@ test('HtmlForIndividualTestOnAllBuildersWithChrome', 1, function() {
                 '<th sortValue=modifiers><div class=table-header-content><span></span><span class=header-text>modifiers</span></div></th>' +
                 '<th sortValue=expectations><div class=table-header-content><span></span><span class=header-text>expectations</span></div></th>' +
                 '<th sortValue=slowest><div class=table-header-content><span></span><span class=header-text>slowest run</span></div></th>' +
-                '<th sortValue=%><div class=table-header-content><span></span><span class=header-text>% fail</span></div></th>' +
                 '<th sortValue=flakiness colspan=10000><div class=table-header-content><span></span><span class=header-text>flakiness (numbers are runtimes in seconds)</span></div></th>' +
             '</tr></thead>' +
             '<tbody></tbody>' +
@@ -399,7 +398,6 @@ test('HtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster', 1, function() {
                 '<th sortValue=modifiers><div class=table-header-content><span></span><span class=header-text>modifiers</span></div></th>' +
                 '<th sortValue=expectations><div class=table-header-content><span></span><span class=header-text>expectations</span></div></th>' +
                 '<th sortValue=slowest><div class=table-header-content><span></span><span class=header-text>slowest run</span></div></th>' +
-                '<th sortValue=%><div class=table-header-content><span></span><span class=header-text>% fail</span></div></th>' +
                 '<th sortValue=flakiness colspan=10000><div class=table-header-content><span></span><span class=header-text>flakiness (numbers are runtimes in seconds)</span></div></th>' +
             '</tr></thead>' +
             '<tbody></tbody>' +
@@ -464,7 +462,7 @@ test('HtmlForSingleTestRow', 1, function() {
         '<td class=options-container><a href="https://bugs.webkit.org/enter_bug.cgi?assigned_to=webkit-unassigned%40lists.webkit.org&product=WebKit&form_name=enter_bug&component=Tools%20%2F%20Tests&short_desc=Layout%20Test%20foo%2Fexists.html%20is%20failing&comment=The%20following%20layout%20test%20is%20failing%20on%20%5Binsert%20platform%5D%0A%0Afoo%2Fexists.html%0A%0AProbable%20cause%3A%0A%0A%5Binsert%20probable%20cause%5D" class="file-bug">FILE BUG</a>' +
         '<td class=options-container>' +
             '<td class=options-container>' +
-                '<td><td>0<td title="TEXT. Click for more info." class="results F" onclick=\'showPopupForBuild(event, "dummyBuilder",0,"foo/exists.html")\'>&nbsp;' +
+                '<td><td title="TEXT. Click for more info." class="results F merge" onclick=\'showPopupForBuild(event, "dummyBuilder",0,"foo/exists.html")\'>&nbsp;' +
                 '<td title="IMAGE. Click for more info." class="results I" onclick=\'showPopupForBuild(event, "dummyBuilder",1,"foo/exists.html")\'>5';
 
     equal(htmlForSingleTestRow(test), expected);

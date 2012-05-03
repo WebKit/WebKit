@@ -1,3 +1,20 @@
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Remove the percent failed column from the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=85552
+
+        Reviewed by Dirk Pranke.
+
+        This column isn't useful enough to justify the visual noise.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (processMissingAndExtraExpectations):
+        (tableHeaders):
+        (htmlForSingleTestRow):
+        (sortTests):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
 2012-05-03  Eric Seidel  <eric@webkit.org>
 
         --coverage should not not use the "feature" options system in build-webkit, similarly remove special-casing for WTF_URL
