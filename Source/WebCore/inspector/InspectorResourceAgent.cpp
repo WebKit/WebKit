@@ -456,23 +456,22 @@ void InspectorResourceAgent::didCloseWebSocket(unsigned long identifier)
 {
     m_frontend->webSocketClosed(IdentifiersFactory::requestId(identifier), currentTime());
 }
+
 void InspectorResourceAgent::didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
 {
-    String payload = frame.payload;
     RefPtr<TypeBuilder::Network::WebSocketFrame> frameObject = TypeBuilder::Network::WebSocketFrame::create()
         .setOpcode(frame.opCode)
         .setMask(frame.masked)
-        .setPayloadData(payload.substring(0, frame.payloadLength));
+        .setPayloadData(String(frame.payload, frame.payloadLength));
     m_frontend->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), currentTime(), frameObject);
 }
 
 void InspectorResourceAgent::didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
 {
-    String payload = frame.payload;
     RefPtr<TypeBuilder::Network::WebSocketFrame> frameObject = TypeBuilder::Network::WebSocketFrame::create()
         .setOpcode(frame.opCode)
         .setMask(frame.masked)
-        .setPayloadData(payload.substring(0, frame.payloadLength));
+        .setPayloadData(String(frame.payload, frame.payloadLength));
     m_frontend->webSocketFrameSent(IdentifiersFactory::requestId(identifier), currentTime(), frameObject);
 }
 
