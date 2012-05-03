@@ -37,6 +37,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_CSS_EXCLUSIONS"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_CSS_FILTERS"
 		Value=""
 		PerformEnvironmentSet="true"
@@ -47,23 +52,13 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_CSS_SHADERS"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
 		Name="ENABLE_CSS_REGIONS"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_CSS_EXCLUSIONS"
+		Name="ENABLE_CSS_SHADERS"
 		Value=""
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
-		Name="ENABLE_SQL_DATABASE"
-		Value="ENABLE_SQL_DATABASE"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -92,18 +87,18 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-        Name="ENABLE_DIRECTORY_UPLOAD"
-        Value=""
-        PerformEnvironmentSet="true"
-    />
-  <UserMacro
-		Name="ENABLE_FILTERS"
-		Value="ENABLE_FILTERS"
+		Name="ENABLE_DIRECTORY_UPLOAD"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
 		Name="ENABLE_FILE_SYSTEM"
 		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_FILTERS"
+		Value="ENABLE_FILTERS"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -132,12 +127,12 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_INPUT_TYPE_COLOR"
+		Name="ENABLE_INPUT_SPEECH"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_INPUT_SPEECH"
+		Name="ENABLE_INPUT_TYPE_COLOR"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
@@ -176,11 +171,11 @@
 		Value="ENABLE_JAVASCRIPT_DEBUGGER"
 		PerformEnvironmentSet="true"
 	/>
-    <UserMacro
-  		Name="ENABLE_LEGACY_NOTIFICATIONS"
-  		Value=""
-  		PerformEnvironmentSet="true"
-  	/>
+  <UserMacro
+		Name="ENABLE_LEGACY_NOTIFICATIONS"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
   <UserMacro
 		Name="ENABLE_LINK_PREFETCH"
 		Value=""
@@ -194,6 +189,16 @@
   <UserMacro
 		Name="ENABLE_MATHML"
 		Value="ENABLE_MATHML"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_MEDIA_SOURCE"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_MEDIA_STATISTICS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -252,6 +257,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_SQL_DATABASE"
+		Value="ENABLE_SQL_DATABASE"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_STYLE_SCOPED"
 		Value=""
 		PerformEnvironmentSet="true"
@@ -273,16 +283,6 @@
 	/>
   <UserMacro
 		Name="ENABLE_VIDEO"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
-		Name="ENABLE_MEDIA_SOURCE"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
-		Name="ENABLE_MEDIA_STATISTICS"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
