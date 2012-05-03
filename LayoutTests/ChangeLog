@@ -1,3 +1,9 @@
+2012-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, unskipping fixed test.
+
+        * platform/mac/Skipped:
+
 2012-05-03  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(99539): SVG <img> disregards page scale and device scale
