@@ -1,3 +1,12 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed, remove expectation which was failing.
+
+        The current result matches the base expectation, so remove the
+        port-specific one.
+
+        * platform/efl/fast/css/zoom-body-scroll-expected.txt: Removed.
+
 2012-05-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline.
