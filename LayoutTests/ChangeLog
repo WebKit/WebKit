@@ -1,5 +1,11 @@
 2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed gardening. Adjusted expectations for slow tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-02  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Removed entry for fast/dom/prototype-inheritance-2.html to keep lint happy.
 
         * platform/chromium/test_expectations.txt:

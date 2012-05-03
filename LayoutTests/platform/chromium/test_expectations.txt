@@ -42,7 +42,7 @@ BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/security/xss-DENIED-iframe-src-alias.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : css3/flexbox/multiline-pack.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/dfg-float32array.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD WIN DEBUG : fast/js/dfg-float32array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS CRASH
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
@@ -2327,7 +2327,8 @@ BUGCR66751 RELEASE : http/tests/local/link-stylesheet-load-order.html = PASS TIM
 BUGCR66751 DEBUG : http/tests/local/link-stylesheet-load-order.html = PASS CRASH TIMEOUT TEXT
 
 // The test is just too slow and has never passed since on Dbg build.
-BUG_YURYS SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUG_YURYS SLOW LINUX MAC DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUG_YURYS WIN DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = TIMEOUT
 
 // WebKit roll 74255:74308
 BUGCR67416 LINUX WIN : fast/text/emphasis.html = IMAGE+TEXT
@@ -3669,7 +3670,7 @@ BUGWK85090 : fast/js/dfg-float64array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint32array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint16array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint8array.html = PASS TIMEOUT
-BUGWK85106 MAC LINUX SLOW : tables/mozilla/other/slashlogo.html = PASS
+BUGWK85106 SLOW : tables/mozilla/other/slashlogo.html = PASS
 BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
 
 BUGWK85174 : fast/files/blob-constructor.html = CRASH
