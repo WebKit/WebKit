@@ -30,7 +30,9 @@ module window {
         Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
         Supplemental=DOMWindow
     ] DOMWindowNotifications {
+#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
         readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
+#endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
         attribute NotificationConstructor Notification;
 #endif

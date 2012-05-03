@@ -398,6 +398,7 @@ IDL_BINDINGS += \
     $$PWD/notifications/DOMWindowNotifications.idl \
     $$PWD/notifications/Notification.idl \
     $$PWD/notifications/NotificationCenter.idl \
+    $$PWD/notifications/NotificationPermissionCallback.idl \
     $$PWD/notifications/WorkerContextNotifications.idl \
     $$PWD/page/BarInfo.idl \
     $$PWD/page/Console.idl \

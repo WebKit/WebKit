@@ -50,6 +50,12 @@ module threads {
         void close();
 #endif
 
+
+#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
+        [CallWith=ScriptExecutionContext] static DOMString permissionLevel();
+        [Custom] static void requestPermission(in NotificationPermissionCallback callback);
+#endif
+
         attribute EventListener onshow;
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
         attribute EventListener ondisplay;

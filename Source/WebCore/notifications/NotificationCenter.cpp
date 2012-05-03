@@ -55,6 +55,7 @@ NotificationCenter::NotificationCenter(ScriptExecutionContext* context, Notifica
 {
 }
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
 int NotificationCenter::checkPermission()
 {
     if (!client() || !scriptExecutionContext())
@@ -72,7 +73,9 @@ int NotificationCenter::checkPermission()
     ASSERT_NOT_REACHED();
     return m_client->checkPermission(scriptExecutionContext());
 }
+#endif
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
 void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 {
     if (!client() || !scriptExecutionContext())
@@ -91,6 +94,7 @@ void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
     ASSERT_NOT_REACHED();
     m_client->requestPermission(scriptExecutionContext(), callback);
 }
+#endif
 
 void NotificationCenter::stop()
 {

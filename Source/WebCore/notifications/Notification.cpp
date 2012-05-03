@@ -43,6 +43,8 @@
 #include "EventNames.h"
 #include "NotificationCenter.h"
 #include "NotificationClient.h"
+#include "NotificationController.h"
+#include "NotificationPermissionCallback.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"
@@ -237,12 +239,49 @@ void Notification::dispatchErrorEvent()
 #if ENABLE(NOTIFICATIONS)
 void Notification::taskTimerFired(Timer<Notification>* timer)
 {
+    ASSERT(scriptExecutionContext()->isDocument());
+    ASSERT(static_cast<Document*>(scriptExecutionContext())->page());
     ASSERT_UNUSED(timer, timer == m_taskTimer.get());
-    if (m_notificationCenter->checkPermission() != NotificationClient::PermissionAllowed) {
+    if (NotificationController::from(static_cast<Document*>(scriptExecutionContext())->page())->client()->checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
         dispatchErrorEvent();
         return;
     }
     show();
+}
+#endif
+
+
+#if ENABLE(NOTIFICATIONS)
+const String& Notification::permissionLevel(ScriptExecutionContext* context)
+{
+    ASSERT(context->isDocument());
+    ASSERT(static_cast<Document*>(context)->page());
+    return permissionString(NotificationController::from(static_cast<Document*>(context)->page())->client()->checkPermission(context));
+}
+
+const String& Notification::permissionString(NotificationClient::Permission permission)
+{
+    DEFINE_STATIC_LOCAL(const String, allowedPermission, ("granted"));
+    DEFINE_STATIC_LOCAL(const String, deniedPermission, ("denied"));
+    DEFINE_STATIC_LOCAL(const String, defaultPermission, ("default"));
+    switch (permission) {
+    case NotificationClient::PermissionAllowed:
+        return allowedPermission;
+    case NotificationClient::PermissionDenied:
+        return deniedPermission;
+    case NotificationClient::PermissionNotAllowed:
+        return defaultPermission;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return deniedPermission;
+}
+
+void Notification::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)
+{
+    ASSERT(context->isDocument());
+    ASSERT(static_cast<Document*>(context)->page());
+    NotificationController::from(static_cast<Document*>(context)->page())->client()->requestPermission(context, callback);
 }
 #endif
 

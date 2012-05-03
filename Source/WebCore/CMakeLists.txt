@@ -1695,6 +1695,7 @@ IF (ENABLE_NOTIFICATIONS)
         notifications/DOMWindowNotifications.idl
         notifications/Notification.idl
         notifications/NotificationCenter.idl
+        notifications/NotificationPermissionCallback.idl
         notifications/WorkerContextNotifications.idl
     )
 ENDIF ()

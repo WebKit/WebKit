@@ -1,3 +1,25 @@
+2012-05-02  Jon Lee  <jonlee@apple.com>
+
+        Migrate permission functions to Notification from NotificationCenter
+        https://bugs.webkit.org/show_bug.cgi?id=80485
+        <rdar://problem/10965458>
+
+        Reviewed by Jian Li.
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest): Add version to support both kinds of
+        callbacks.
+        (WebKit::NotificationPermissionRequestManager::cancelRequest):
+        (WebKit::NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h: Add another map for new callback type.
+        (NotificationPermissionRequestManager):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): Add #ifdef to use replaceId() or tag() depending on which feature
+        has been enabled. In the case where both are enabled, we prefer tag() since that is in the latest spec.
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::requestPermission):
+        * WebProcess/WebCoreSupport/WebNotificationClient.h: Implement both client functions to request permissions.
+
 2012-05-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r115907.

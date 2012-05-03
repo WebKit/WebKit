@@ -37,14 +37,32 @@
 #import <WebCore/ScriptExecutionContext.h>
 #endif
 
+#if ENABLE(NOTIFICATIONS)
+#import <WebCore/NotificationPermissionCallback.h>
+#endif
+#if ENABLE(LEGACY_NOTIFICATIONS)
+#import <WebCore/VoidCallback.h>
+#endif
+
 using namespace WebCore;
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 @interface WebNotificationPolicyListener : NSObject <WebAllowDenyPolicyListener>
 {
-    RefPtr<VoidCallback> _callback;
+#if ENABLE(NOTIFICATIONS)
+    RefPtr<NotificationPermissionCallback> _callback;
+#endif
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    RefPtr<VoidCallback> _voidCallback;
+#endif
 }
-- (id)initWithCallback:(PassRefPtr<VoidCallback>)callback;
+#if ENABLE(NOTIFICATIONS)
+- (id)initWithCallback:(PassRefPtr<NotificationPermissionCallback>)callback;
+#endif
+#if ENABLE(LEGACY_NOTIFICATIONS)
+- (id)initWithVoidCallback:(PassRefPtr<VoidCallback>)callback;
+#endif
+
 @end
 #endif
 
@@ -148,29 +166,42 @@ void WebNotificationClient::notificationControllerDestroyed()
     delete this;
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
-{
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, WebNotificationPolicyListener *listener)
+{
     SEL selector = @selector(webView:decidePolicyForNotificationRequestFromOrigin:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector])
         return;
     
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()];
-    WebNotificationPolicyListener* listener = [[WebNotificationPolicyListener alloc] initWithCallback:callback];
     
     CallUIDelegate(m_webView, selector, webOrigin, listener);
     
     [webOrigin release];
-    [listener release];
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(callback);
-#endif
 }
+#endif
+
+#if ENABLE(LEGACY_NOTIFICATIONS)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithVoidCallback:callback];
+    requestPermission(context, listener);
+    [listener release];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    WebNotificationPolicyListener *listener = [[WebNotificationPolicyListener alloc] initWithCallback:callback];
+    requestPermission(context, listener);
+    [listener release];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+#endif
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
@@ -200,7 +231,9 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 @implementation WebNotificationPolicyListener
-- (id)initWithCallback:(PassRefPtr<VoidCallback>)callback
+
+#if ENABLE(NOTIFICATIONS)
+- (id)initWithCallback:(PassRefPtr<NotificationPermissionCallback>)callback
 {
     if (!(self = [super init]))
         return nil;
@@ -209,15 +242,44 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
     _callback = callback;
     return self;
 }
+#endif
+
+#if ENABLE(LEGACY_NOTIFICATIONS)
+- (id)initWithVoidCallback:(PassRefPtr<VoidCallback>)callback
+{
+    if (!(self = [super init]))
+        return nil;
+
+    ASSERT(callback);
+    _voidCallback = callback;
+    return self;
+}
+#endif
 
 - (void)allow
 {
-    _callback->handleEvent();
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    if (_voidCallback) {
+        _voidCallback->handleEvent();
+        return;
+    }
+#endif
+#if ENABLE(NOTIFICATIONS)
+    _callback->handleEvent(Notification::permissionString(NotificationClient::PermissionAllowed));
+#endif
 }
 
 - (void)deny
 {
-    _callback->handleEvent();
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    if (_voidCallback) {
+        _voidCallback->handleEvent();
+        return;
+    }
+#endif
+#if ENABLE(NOTIFICATIONS)
+    _callback->handleEvent(Notification::permissionString(NotificationClient::PermissionDenied));
+#endif
 }
 
 @end

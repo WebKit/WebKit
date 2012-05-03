@@ -32,16 +32,14 @@
 module threads {
 
     interface [
-        Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
+        Conditional=LEGACY_NOTIFICATIONS,
         ActiveDOMObject,
         OmitConstructor
     ] NotificationCenter {
-#if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
 #if !defined(ENABLE_TEXT_NOTIFICATIONS_ONLY) || !ENABLE_TEXT_NOTIFICATIONS_ONLY
        [V8Custom] Notification createHTMLNotification(in DOMString url) raises(DOMException);
 #endif
        [V8Custom] Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
-#endif
 
        int checkPermission();
        [Custom] void requestPermission(in VoidCallback callback);

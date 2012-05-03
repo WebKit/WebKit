@@ -426,6 +426,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSNotificationCenter.h \
 	DerivedSources/WebCore/JSNotification.cpp \
 	DerivedSources/WebCore/JSNotification.h \
+	DerivedSources/WebCore/JSNotificationPermissionCallback.cpp \
+	DerivedSources/WebCore/JSNotificationPermissionCallback.h \
 	DerivedSources/WebCore/JSOESStandardDerivatives.cpp \
 	DerivedSources/WebCore/JSOESStandardDerivatives.h \
 	DerivedSources/WebCore/JSOESTextureFloat.cpp \
@@ -930,6 +932,7 @@ dom_binding_idls += \
 	$(WebCore)/loader/appcache/DOMApplicationCache.idl \
 	$(WebCore)/notifications/Notification.idl \
 	$(WebCore)/notifications/NotificationCenter.idl \
+	$(WebCore)/notifications/NotificationPermissionCallback.idl \
 	$(WebCore)/page/BarInfo.idl \
 	$(WebCore)/page/Console.idl \
 	$(WebCore)/page/Coordinates.idl \
@@ -2885,6 +2888,7 @@ webcore_sources += \
 	Source/WebCore/notifications/NotificationController.h \
 	Source/WebCore/notifications/Notification.cpp \
 	Source/WebCore/notifications/Notification.h \
+	Source/WebCore/notifications/NotificationPermissionCallback.h \
 	Source/WebCore/notifications/WorkerContextNotifications.cpp \
 	Source/WebCore/notifications/WorkerContextNotifications.h \
 	Source/WebCore/page/animation/AnimationBase.cpp \

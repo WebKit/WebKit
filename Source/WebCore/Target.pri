@@ -234,6 +234,7 @@ v8 {
         \
         bindings/v8/specialization/V8BindingState.cpp\
         \
+        bindings/v8/custom/V8NotificationCustom.cpp \
         bindings/v8/custom/V8NotificationCenterCustom.cpp \
         bindings/v8/custom/V8ConsoleCustom.cpp \
         bindings/v8/custom/V8SQLTransactionSyncCustom.cpp \
@@ -342,6 +343,7 @@ v8 {
         bindings/js/JSNodeFilterCustom.cpp \
         bindings/js/JSNodeIteratorCustom.cpp \
         bindings/js/JSNodeListCustom.cpp \
+        bindings/js/JSNotificationCustom.cpp \
         bindings/js/JSPluginElementFunctions.cpp \
         bindings/js/JSPopStateEventCustom.cpp \
         bindings/js/JSProcessingInstructionCustom.cpp \

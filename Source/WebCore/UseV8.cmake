@@ -136,6 +136,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8NamedNodesCollection.cpp
     bindings/v8/custom/V8NodeCustom.cpp
     bindings/v8/custom/V8NodeListCustom.cpp
+    bindings/v8/custom/V8NotificationCustom.cpp
     bindings/v8/custom/V8NotificationCenterCustom.cpp
     bindings/v8/custom/V8PerformanceCustom.cpp
     bindings/v8/custom/V8PopStateEventCustom.cpp

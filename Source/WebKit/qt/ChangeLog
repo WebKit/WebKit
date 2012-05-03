@@ -1,3 +1,15 @@
+2012-04-27  Jon Lee  <jonlee@apple.com>
+
+        Migrate permission functions to Notification from NotificationCenter
+        https://bugs.webkit.org/show_bug.cgi?id=80485
+        <rdar://problem/10965458>
+
+        Reviewed by Jian Li.
+
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (NotificationPresenterClientQt): Add stub implementation of requestPermission.
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+
 2012-05-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r115907.

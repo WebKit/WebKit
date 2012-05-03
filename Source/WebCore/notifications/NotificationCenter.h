@@ -81,8 +81,10 @@ public:
 
     NotificationClient* client() const { return m_client; }
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
     int checkPermission();
     void requestPermission(PassRefPtr<VoidCallback>);
+#endif
 
     virtual void stop() OVERRIDE;
 

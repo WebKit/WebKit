@@ -38,8 +38,9 @@
 namespace WebCore {
 
 class Document;
-class Notification;
 class KURL;
+class Notification;
+class NotificationPermissionCallback;
 class Page;
 class ScriptExecutionContext;
 
@@ -70,10 +71,15 @@ public:
     // Informs the presenter the controller attached to the page has been destroyed.
     virtual void notificationControllerDestroyed() = 0;
 
+#if ENABLE(LEGACY_NOTIFICATIONS)
     // Requests user permission to show desktop notifications from a particular
     // script context. The callback parameter should be run when the user has
     // made a decision.
     virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>) = 0;
+#endif
+#if ENABLE(NOTIFICATIONS)
+    virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback>) = 0;
+#endif
 
     // Cancel all outstanding requests for the ScriptExecutionContext
     virtual void cancelRequestsForPermission(ScriptExecutionContext*) = 0;

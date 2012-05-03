@@ -117,8 +117,12 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     
     NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<uint64_t>()).iterator;
     it->second.append(notificationID);
-    
+
+#if ENABLE(NOTIFICATIONS)
+    m_process->connection()->send(Messages::WebPageProxy::ShowNotification(notification->title(), notification->body(), notification->iconURL().string(), notification->tag(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->pageID());
+#else
     m_process->connection()->send(Messages::WebPageProxy::ShowNotification(notification->title(), notification->body(), notification->iconURL().string(), notification->replaceId(), notification->scriptExecutionContext()->securityOrigin()->toString(), notificationID), page->pageID());
+#endif
     return true;
 #else
     return false;

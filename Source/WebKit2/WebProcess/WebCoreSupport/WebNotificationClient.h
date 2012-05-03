@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include <WebCore/NotificationClient.h>
 
 namespace WebCore {
+class NotificationPermissionCallback;
 class ScriptExecutionContext;
 class VoidCallback;
 } // namespace WebCore
@@ -50,7 +51,12 @@ private:
     virtual void clearNotifications(WebCore::ScriptExecutionContext*) OVERRIDE;
     virtual void notificationObjectDestroyed(WebCore::Notification*) OVERRIDE;
     virtual void notificationControllerDestroyed() OVERRIDE;
+#if ENABLE(LEGACY_NOTIFICATIONS)
     virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>) OVERRIDE;
+#endif
+#if ENABLE(NOTIFICATIONS)
+    virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::NotificationPermissionCallback>) OVERRIDE;
+#endif
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
     virtual NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
     

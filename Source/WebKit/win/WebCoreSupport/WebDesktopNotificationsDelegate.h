@@ -50,7 +50,12 @@ public:
     virtual void cancel(WebCore::Notification* object);
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
     virtual void notificationControllerDestroyed();
-    virtual void requestPermission(WebCore::SecurityOrigin* origin, PassRefPtr<WebCore::VoidCallback> callback);
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    virtual void requestPermission(WebCore::SecurityOrigin*, PassRefPtr<WebCore::VoidCallback>);
+#endif
+#if ENABLE(NOTIFICATIONS)
+    virtual void requestPermission(WebCore::SecurityOrigin*, PassRefPtr<WebCore::NotificationPermissionCallback>);
+#endif
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*);
     virtual WebCore::NotificationClient::Permission checkPermission(const KURL&);
 

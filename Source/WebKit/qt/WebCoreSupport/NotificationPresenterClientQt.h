@@ -93,7 +93,12 @@ public:
     virtual void cancel(Notification*);
     virtual void notificationObjectDestroyed(Notification*);
     virtual void notificationControllerDestroyed();
+#if ENABLE(LEGACY_NOTIFICATIONS)
     virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>);
+#endif
+#if ENABLE(NOTIFICATIONS)
+    virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback>) { }
+#endif
     virtual NotificationClient::Permission checkPermission(ScriptExecutionContext*);
     virtual void cancelRequestsForPermission(ScriptExecutionContext*);
 

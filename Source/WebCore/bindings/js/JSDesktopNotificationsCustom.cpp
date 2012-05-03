@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,14 +31,12 @@
 
 #include "config.h"
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "Document.h"
 #include "JSCustomVoidCallback.h"
 #include "JSEventListener.h"
-#include "JSNotification.h"
 #include "JSNotificationCenter.h"
-#include "Notification.h"
 #include "NotificationCenter.h"
 #include <runtime/Error.h>
 
@@ -68,6 +67,6 @@ JSValue JSNotificationCenter::requestPermission(ExecState* exec)
     return jsUndefined();
 }
 
-} // namespace
+} // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#endif // ENABLE(LEGACY_NOTIFICATIONS)

@@ -176,6 +176,10 @@ void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin* origin, 
         notificationDelegate()->requestNotificationPermission(org);
 }
 
+void WebDesktopNotificationsDelegate::requestPermission(SecurityOrigin*, PassRefPtr<NotificationPermissionCallback>)
+{
+}
+
 void WebDesktopNotificationsDelegate::cancelRequestsForPermission(ScriptExecutionContext* context)
 {
 }

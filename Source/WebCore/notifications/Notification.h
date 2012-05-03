@@ -36,6 +36,7 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "KURL.h"
+#include "NotificationClient.h"
 #include "SharedBuffer.h"
 #include "TextDirection.h"
 #include "ThreadableLoaderClient.h"
@@ -54,6 +55,7 @@ namespace WebCore {
 
 class Dictionary;
 class NotificationCenter;
+class NotificationPermissionCallback;
 class ResourceError;
 class ResourceResponse;
 class ScriptExecutionContext;
@@ -134,6 +136,12 @@ public:
     void detachPresenter() { }
 
     void finalize();
+
+#if ENABLE(NOTIFICATIONS)
+    static const String& permissionLevel(ScriptExecutionContext*);
+    static const String& permissionString(NotificationClient::Permission);
+    static void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback>);
+#endif
 
 private:
 #if ENABLE(LEGACY_NOTIFICATIONS)
