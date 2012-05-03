@@ -1454,8 +1454,8 @@ IntRect RenderLayerBacking::compositedBounds() const
 void RenderLayerBacking::setCompositedBounds(const IntRect& bounds)
 {
     m_compositedBounds = bounds;
-
 }
+
 CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
 {
     CSSPropertyID cssProperty = CSSPropertyInvalid;

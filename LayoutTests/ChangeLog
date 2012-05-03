@@ -1,3 +1,25 @@
+2012-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Keep overlap testing for compositing on pages with 3d transforms when possible
+        https://bugs.webkit.org/show_bug.cgi?id=62487
+
+        Reviewed by Antti Koivisto.
+        
+        Two new tests that check for layer creation outside of an overflow:hidden
+        stacking context.
+        
+        Updated results for other tests whose results are affected by the
+        'compositingConsultsOverlap' flag; their layers are now constrained to
+        the viewport.
+
+        * compositing/geometry/ancestor-overflow-change-expected.txt:
+        * compositing/geometry/foreground-layer-expected.txt:
+        * compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * compositing/layer-creation/overlap-animation-expected.txt: Added.
+        * compositing/layer-creation/overlap-animation.html: Added.
+        * compositing/layer-creation/overlap-transforms-expected.txt: Added.
+        * compositing/layer-creation/overlap-transforms.html: Added.
+
 2012-05-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] CSS tests needs gardening

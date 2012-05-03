@@ -28,8 +28,8 @@ Test overflow clipping of composited elements in various configurations.
           (bounds 60.00 70.00)
           (children 1
             (GraphicsLayer
-              (position -9.00 1.00)
-              (bounds 122.00 122.00)
+              (position 0.00 1.00)
+              (bounds 60.00 69.00)
               (drawsContent 1)
             )
           )
@@ -67,7 +67,6 @@ Test overflow clipping of composited elements in various configurations.
         (GraphicsLayer
           (position 240.00 230.00)
           (bounds 60.00 70.00)
-          (drawsContent 1)
           (children 1
             (GraphicsLayer
               (bounds 60.00 70.00)

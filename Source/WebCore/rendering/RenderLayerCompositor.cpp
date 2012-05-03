@@ -129,17 +129,29 @@ private:
 };
 
 struct CompositingState {
-    CompositingState(RenderLayer* compAncestor)
+    CompositingState(RenderLayer* compAncestor, bool testOverlap)
         : m_compositingAncestor(compAncestor)
         , m_subtreeIsCompositing(false)
+        , m_testingOverlap(testOverlap)
 #ifndef NDEBUG
         , m_depth(0)
 #endif
     {
     }
     
+    CompositingState(const CompositingState& other)
+        : m_compositingAncestor(other.m_compositingAncestor)
+        , m_subtreeIsCompositing(other.m_subtreeIsCompositing)
+        , m_testingOverlap(other.m_testingOverlap)
+#ifndef NDEBUG
+        , m_depth(other.m_depth + 1)
+#endif
+    {
+    }
+    
     RenderLayer* m_compositingAncestor;
     bool m_subtreeIsCompositing;
+    bool m_testingOverlap;
 #ifndef NDEBUG
     int m_depth;
 #endif
@@ -375,12 +387,12 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         ++m_rootLayerUpdateCount;
         startTime = currentTime();
     }
-#endif        
+#endif
 
     if (checkForHierarchyUpdate) {
         // Go through the layers in presentation order, so that we can compute which RenderLayers need compositing layers.
         // FIXME: we could maybe do this and the hierarchy udpate in one pass, but the parenting logic would be more complex.
-        CompositingState compState(updateRoot);
+        CompositingState compState(updateRoot, m_compositingConsultsOverlap);
         bool layersChanged = false;
         if (m_compositingConsultsOverlap) {
             OverlapMap overlapTestRequestMap;
@@ -469,12 +481,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
     if (needsToBeComposited(layer)) {
         enableCompositingMode();
         
-        // Non-identity 3D transforms turn off the testing of overlap.
-        if (hasNonIdentity3DTransform(layer->renderer()))
-            setCompositingConsultsOverlap(false);
-
         if (!layer->backing()) {
-
             // If we need to repaint, do so before making backing
             if (shouldRepaint == CompositingChangeRepaintNow)
                 repaintOnCompositingChange(layer);
@@ -685,7 +692,7 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
 //      must be compositing so that its contents render over that child.
 //      This implies that its positive z-index children must also be compositing.
 //
-void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, OverlapMap* overlapMap, struct CompositingState& compositingState, bool& layersChanged)
+void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, OverlapMap* overlapMap, CompositingState& compositingState, bool& layersChanged)
 {
     layer->updateLayerPosition();
     layer->updateLayerListsIfNeeded();
@@ -697,7 +704,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
 
     bool haveComputedBounds = false;
     IntRect absBounds;
-    if (overlapMap && !overlapMap->isEmpty()) {
+    if (overlapMap && !overlapMap->isEmpty() && compositingState.m_testingOverlap) {
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
         absBounds = layer->renderer()->localToAbsoluteQuad(FloatRect(layer->localBoundingBox())).enclosingBoundingBox();
         // Empty rects never intersect, but we need them to for the purposes of overlap testing.
@@ -712,10 +719,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // The children of this layer don't need to composite, unless there is
     // a compositing layer among them, so start by inheriting the compositing
     // ancestor with m_subtreeIsCompositing set to false.
-    CompositingState childState(compositingState.m_compositingAncestor);
-#ifndef NDEBUG
-    childState.m_depth = compositingState.m_depth + 1;
-#endif
+    CompositingState childState(compositingState);
+    childState.m_subtreeIsCompositing = false;
 
     bool willBeComposited = needsToBeComposited(layer);
     if (willBeComposited) {
@@ -726,6 +731,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
 
         if (overlapMap)
             overlapMap->pushCompositingContainer();
+
+        if (hasNonAffineTransform(layer->renderer()) || isRunningAcceleratedTransformAnimation(layer->renderer())) {
+            // If we have a 3D transform, or are animating transform, then turn overlap testing off.
+            childState.m_testingOverlap = false;
+        }
     }
 
 #if ENABLE(VIDEO)
@@ -816,18 +826,27 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     if (childState.m_subtreeIsCompositing)
         compositingState.m_subtreeIsCompositing = true;
 
+    // We have to keep overlap testing disabled for later layers.
+    if (!childState.m_testingOverlap)
+        compositingState.m_testingOverlap = false;
+
     // Set the flag to say that this SC has compositing children.
     layer->setHasCompositingDescendant(childState.m_subtreeIsCompositing);
 
     // setHasCompositingDescendant() may have changed the answer to needsToBeComposited() when clipping,
     // so test that again.
-    if (!willBeComposited && canBeComposited(layer) && clipsCompositingDescendants(layer)) {
-        childState.m_compositingAncestor = layer;
-        if (overlapMap) {
-            overlapMap->pushCompositingContainer();
-            addToOverlapMapRecursive(*overlapMap, layer);
-        }
-        willBeComposited = true;
+    if (canBeComposited(layer) && clipsCompositingDescendants(layer)) {
+        if (!willBeComposited) {
+            childState.m_compositingAncestor = layer;
+            if (overlapMap) {
+                overlapMap->pushCompositingContainer();
+                addToOverlapMapRecursive(*overlapMap, layer);
+            }
+            willBeComposited = true;
+         }
+
+        // We're done processing an element that clips. The container can keep testing overlap.
+        compositingState.m_testingOverlap = true;
     }
 
     if (overlapMap && childState.m_compositingAncestor == layer && !layer->isRootLayer())
@@ -1310,13 +1329,9 @@ void RenderLayerCompositor::updateRootLayerPosition()
 #endif
 }
 
-void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID property)
+void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID)
 {
-    // If an accelerated animation or transition runs, we have to turn off overlap checking because
-    // we don't do layout for every frame, but we have to ensure that the layering is
-    // correct between the animating object and other objects on the page.
-    if (property == CSSPropertyWebkitTransform)
-        setCompositingConsultsOverlap(false);
+    // FIXME: remove this method.
 }
 
 bool RenderLayerCompositor::has3DContent() const
@@ -1708,17 +1723,25 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     return true;
 }
 
-bool RenderLayerCompositor::hasNonIdentity3DTransform(RenderObject* renderer) const
+bool RenderLayerCompositor::hasNonAffineTransform(RenderObject* renderer) const
 {
     if (!renderer->hasTransform())
         return false;
     
-    if (renderer->style()->hasPerspective())
-        return true;
-
     if (TransformationMatrix* transform = toRenderBoxModelObject(renderer)->layer()->transform())
         return !transform->isAffine();
     
+    return false;
+}
+
+bool RenderLayerCompositor::isRunningAcceleratedTransformAnimation(RenderObject* renderer) const
+{
+    if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
+        return false;
+
+    if (AnimationController* animController = renderer->animation())
+        return animController->isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitTransform);
+
     return false;
 }
 

@@ -259,8 +259,9 @@ private:
     void removeCompositedChildren(RenderLayer*);
 
     bool layerHas3DContent(const RenderLayer*) const;
-    bool hasNonIdentity3DTransform(RenderObject*) const;
-    
+    bool hasNonAffineTransform(RenderObject*) const;
+    bool isRunningAcceleratedTransformAnimation(RenderObject*) const;
+
     bool hasAnyAdditionalCompositedLayers(const RenderLayer* rootLayer) const;
 
     void ensureRootLayer();
