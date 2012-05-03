@@ -1,3 +1,16 @@
+2012-05-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-mac/compositing/geometry/foreground-layer-expected.txt: Removed.
+        * platform/chromium-mac/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/chromium-win/compositing/geometry/ancestor-overflow-change-expected.txt:
+        * platform/chromium-win/compositing/geometry/foreground-layer-expected.txt: Removed.
+        * platform/chromium-win/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/chromium-win/compositing/overflow/clip-descendents-expected.txt:
+        * platform/chromium/compositing/geometry/foreground-layer-expected.txt: Replaced.
+        * platform/chromium/compositing/iframes/invisible-nested-iframe-show-expected.txt: Removed.
+
 2012-05-03  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, unskipping fixed test.
