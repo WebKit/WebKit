@@ -1,3 +1,9 @@
+2012-05-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline
+
+        * platform/chromium-linux-x86/fast/js/dfg-double-vote-fuzz-expected.txt: Added.
+
 2012-05-03  Dan Bernstein  <mitz@apple.com>
 
         highlight for Ruby text is mispositioned in the Web Inspector
