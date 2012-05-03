@@ -1,3 +1,13 @@
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Fix some state resetting when running unittests. HtmlForSingleTestRow
+        was flaky.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (htmlForSingleTestRow):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Use PlatformInfo wherever possible in the User class.

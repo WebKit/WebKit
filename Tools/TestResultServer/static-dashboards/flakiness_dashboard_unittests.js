@@ -36,9 +36,9 @@ function resetGlobals()
     g_allExpectations = null;
     g_allTests = null;
     g_currentState = {};
-    for (var key in g_defaultCrossDashboardStateValues) {
-        g_currentState[key] = g_defaultCrossDashboardStateValues[key];
-    }
+    g_crossDashboardState = {};
+    for (var key in g_defaultCrossDashboardStateValues)
+        g_crossDashboardState[key] = g_defaultCrossDashboardStateValues[key];
 }
 
 function runExpectationsTest(builder, test, expectations, modifiers)
@@ -452,6 +452,7 @@ test('HtmlForIndividualTests', 4, function() {
 test('HtmlForSingleTestRow', 1, function() {
     resetGlobals();
     var builder = 'dummyBuilder';
+    BUILDER_TO_MASTER[builder] = CHROMIUM_WEBKIT_BUILDER_MASTER;
     var test = createResultsObjectForTest('foo/exists.html', builder);
     g_currentState.showCorrectExpectations = true;
     g_resultsByBuilder[builder] = {buildNumbers: [2, 1], webkitRevision: [1234, 1233]};

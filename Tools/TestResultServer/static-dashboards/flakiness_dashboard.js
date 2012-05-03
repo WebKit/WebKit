@@ -1191,7 +1191,7 @@ function htmlForSingleTestRow(test)
         else if (startsWith(header, 'slowest'))
             html += '<td>' + (test.slowestTime ? test.slowestTime + 's' : '');
         else if (startsWith(header, 'flakiness'))
-            html += htmlForTestResults(test, isCrossBuilderView());
+            html += htmlForTestResults(test);
     }
     return html;
 }
