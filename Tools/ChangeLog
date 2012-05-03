@@ -1,3 +1,15 @@
+2012-05-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Password protect "Stop build" button
+        https://bugs.webkit.org/show_bug.cgi?id=81982
+
+        Reviewed by Ryosuke Niwa.
+
+        Only authenticated users should be able to use stopBuild, stopAllBuilds, cancelPendingBuild
+        features to prevent killing builds on build.webkit.org by SPAM bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2012-05-03  Dongwoo Im  <dw.im@samsung.com>
 
         [DRT] Remove the name of parameter, visibility, from the setPageVisibility stub implementations.
