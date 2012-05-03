@@ -1,3 +1,9 @@
+2012-05-03  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed test expectations change for chromium, skip subpixel tests until SUBPIXEL_LAYOUT is enabled.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed gardening.

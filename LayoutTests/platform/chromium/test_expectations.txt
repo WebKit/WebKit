@@ -3871,3 +3871,8 @@ BUGWK83954 WIN LINUX : fast/clip/012.html = TEXT
 BUGWK83954 : fast/forms/input-text-double-click.html = TEXT
 BUGWK83954 : http/tests/navigation/javascriptlink-frames.html = TEXT
 BUGWK83954 : fast/forms/date/date-appearance.html = TEXT
+
+// Skip until SUBPIXEL_LAYOUT is enabled 
+BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
+BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html  = FAIL
+BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
