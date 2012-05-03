@@ -1416,10 +1416,7 @@ void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld* world)
     if (!webPage)
         return;
     
-    JSObjectRef globalObject = toRef(m_frame->coreFrame()->script()->globalObject(world));
-    
-    webPage->injectedBundleLoaderClient().didCreateGlobalObjectForFrame(webPage, globalObject, m_frame, world);
-    
+    webPage->injectedBundleLoaderClient().globalObjectIsAvailableForFrame(webPage, m_frame, world);
 }
 
 void WebFrameLoaderClient::dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(WebCore::DOMWindowExtension* extension)

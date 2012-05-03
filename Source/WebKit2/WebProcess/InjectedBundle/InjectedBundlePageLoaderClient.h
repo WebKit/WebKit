@@ -74,7 +74,7 @@ public:
     void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const String& url, double delay, double date);
     void didHandleOnloadEventsForFrame(WebPage*, WebFrame*);
 
-    void didCreateGlobalObjectForFrame(WebPage*, JSObjectRef globalObject, WebFrame*, WebCore::DOMWrapperWorld*);
+    void globalObjectIsAvailableForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld*);
     void willDisconnectDOMWindowExtensionFromGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
     void didReconnectDOMWindowExtensionToGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
     void willDestroyGlobalObjectForDOMWindowExtension(WebPage*, WebCore::DOMWindowExtension*);

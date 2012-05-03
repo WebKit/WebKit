@@ -36,10 +36,10 @@ static bool finished;
 static int liveDOMExtensionCount;
 
 static const char* expectedMessages[] = {
-"DidCreateGlobalObjectForFrame called",
-"DidCreateGlobalObjectForFrame called",
-"DidCreateGlobalObjectForFrame called",
-"DidCreateGlobalObjectForFrame called",
+"GlobalObjectIsAvailableForFrame called",
+"GlobalObjectIsAvailableForFrame called",
+"GlobalObjectIsAvailableForFrame called",
+"GlobalObjectIsAvailableForFrame called",
 "Subframe finished loading",
 "Extension states:\nFirst page, main frame, standard world - Connected\nFirst page, main frame, non-standard world - Connected\nFirst page, subframe, standard world - Connected\nFirst page, subframe, non-standard world - Connected\nSecond page, main frame, standard world - Uncreated\nSecond page, main frame, non-standard world - Uncreated",
 "Main frame finished loading",
@@ -48,8 +48,8 @@ static const char* expectedMessages[] = {
 "WillDisconnectDOMWindowExtensionFromGlobalObject called",
 "WillDisconnectDOMWindowExtensionFromGlobalObject called",
 "WillDisconnectDOMWindowExtensionFromGlobalObject called",
-"DidCreateGlobalObjectForFrame called",
-"DidCreateGlobalObjectForFrame called",
+"GlobalObjectIsAvailableForFrame called",
+"GlobalObjectIsAvailableForFrame called",
 "Main frame finished loading",
 "Extension states:\nFirst page, main frame, standard world - Disconnected\nFirst page, main frame, non-standard world - Disconnected\nFirst page, subframe, standard world - Disconnected\nFirst page, subframe, non-standard world - Disconnected\nSecond page, main frame, standard world - Connected\nSecond page, main frame, non-standard world - Connected",
 "WillDisconnectDOMWindowExtensionFromGlobalObject called",
@@ -80,7 +80,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     WKStringRef bodyString = (WKStringRef)messageBody;
     messages.append(bodyString);
     
-    if (WKStringIsEqualToUTF8CString(messageName, "DidCreateGlobalObjectForFrame"))
+    if (WKStringIsEqualToUTF8CString(messageName, "GlobalObjectIsAvailableForFrame"))
         liveDOMExtensionCount++;
     else if (WKStringIsEqualToUTF8CString(messageName, "WillDestroyGlobalObjectForDOMWindowExtension")) {
         liveDOMExtensionCount--;

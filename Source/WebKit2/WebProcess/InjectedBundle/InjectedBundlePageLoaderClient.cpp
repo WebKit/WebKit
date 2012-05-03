@@ -249,13 +249,13 @@ void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage* page
     m_client.didHandleOnloadEventsForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::didCreateGlobalObjectForFrame(WebPage* page, JSObjectRef globalObject, WebFrame* frame, WebCore::DOMWrapperWorld* world)
+void InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame(WebPage* page, WebFrame* frame, WebCore::DOMWrapperWorld* world)
 {
-    if (!m_client.didCreateGlobalObjectForFrame)
+    if (!m_client.globalObjectIsAvailableForFrame)
         return;
     
     RefPtr<InjectedBundleScriptWorld> injectedWorld = InjectedBundleScriptWorld::getOrCreate(world);
-    m_client.didCreateGlobalObjectForFrame(toAPI(page), globalObject, toAPI(frame), toAPI(injectedWorld.get()), m_client.clientInfo);
+    m_client.globalObjectIsAvailableForFrame(toAPI(page), toAPI(frame), toAPI(injectedWorld.get()), m_client.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::willDisconnectDOMWindowExtensionFromGlobalObject(WebPage* page, WebCore::DOMWindowExtension* coreExtension)

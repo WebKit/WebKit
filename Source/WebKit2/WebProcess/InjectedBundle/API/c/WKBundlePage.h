@@ -103,7 +103,7 @@ typedef void (*WKBundlePageDidCancelClientRedirectForFrameCallback)(WKBundlePage
 typedef void (*WKBundlePageWillPerformClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date, const void *clientInfo);
 typedef void (*WKBundlePageDidHandleOnloadEventsForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef bool (*WKBundlePageShouldGoToBackForwardListItemCallback)(WKBundlePageRef page, WKBundleBackForwardListItemRef item, WKTypeRef* userData, const void *clientInfo);
-typedef void (*WKBundlePageDidCreateGlobalObjectForFrameCallback)(WKBundlePageRef page, JSObjectRef globalObject, WKBundleFrameRef, WKBundleScriptWorldRef, const void* clientInfo);
+typedef void (*WKBundlePageGlobalObjectIsAvailableForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef, WKBundleScriptWorldRef, const void* clientInfo);
 typedef void (*WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef void (*WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
@@ -137,7 +137,7 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidNewFirstVisuallyNonEmptyLayoutCallback                   didNewFirstVisuallyNonEmptyLayout;
     WKBundlePageDidDetectXSSForFrameCallback                                didDetectXSSForFrame;
     WKBundlePageShouldGoToBackForwardListItemCallback                       shouldGoToBackForwardListItem;
-    WKBundlePageDidCreateGlobalObjectForFrameCallback                       didCreateGlobalObjectForFrame;
+    WKBundlePageGlobalObjectIsAvailableForFrameCallback                     globalObjectIsAvailableForFrame;
     WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
     WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
     WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;

@@ -39,7 +39,7 @@
 namespace TestWebKitAPI {
 
 static void didFinishLoadForFrameCallback(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void* clientInfo);
-static void didCreateGlobalObjectForFrameCallback(WKBundlePageRef, JSObjectRef, WKBundleFrameRef, WKBundleScriptWorldRef, const void* clientInfo);
+static void globalObjectIsAvailableForFrameCallback(WKBundlePageRef, WKBundleFrameRef, WKBundleScriptWorldRef, const void* clientInfo);
 static void willDisconnectDOMWindowExtensionFromGlobalObjectCallback(WKBundlePageRef, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 static void didReconnectDOMWindowExtensionToGlobalObjectCallback(WKBundlePageRef, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 static void willDestroyGlobalObjectForDOMWindowExtensionCallback(WKBundlePageRef, WKBundleDOMWindowExtensionRef, const void* clientInfo);
@@ -68,7 +68,7 @@ public:
     virtual void initialize(WKBundleRef, WKTypeRef userData);
     virtual void didCreatePage(WKBundleRef, WKBundlePageRef);
     
-    void didCreateGlobalObjectForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);
+    void globalObjectIsAvailableForFrame(WKBundleFrameRef, WKBundleScriptWorldRef);
     void willDisconnectDOMWindowExtensionFromGlobalObject(WKBundleDOMWindowExtensionRef);
     void didReconnectDOMWindowExtensionToGlobalObject(WKBundleDOMWindowExtensionRef);
     void willDestroyGlobalObjectForDOMWindowExtension(WKBundleDOMWindowExtensionRef);
@@ -160,7 +160,7 @@ void DOMWindowExtensionBasic::didCreatePage(WKBundleRef bundle, WKBundlePageRef 
     pageLoaderClient.version = 1;
     pageLoaderClient.clientInfo = this;
     pageLoaderClient.didFinishLoadForFrame = didFinishLoadForFrameCallback;
-    pageLoaderClient.didCreateGlobalObjectForFrame = didCreateGlobalObjectForFrameCallback;
+    pageLoaderClient.globalObjectIsAvailableForFrame = globalObjectIsAvailableForFrameCallback;
     pageLoaderClient.willDisconnectDOMWindowExtensionFromGlobalObject = willDisconnectDOMWindowExtensionFromGlobalObjectCallback;
     pageLoaderClient.didReconnectDOMWindowExtensionToGlobalObject = didReconnectDOMWindowExtensionToGlobalObjectCallback;
     pageLoaderClient.willDestroyGlobalObjectForDOMWindowExtension = willDestroyGlobalObjectForDOMWindowExtensionCallback;
@@ -180,7 +180,7 @@ void DOMWindowExtensionBasic::sendBundleMessage(const char* message)
     WKBundlePostMessage(m_bundle, wkMessage.get(), wkMessage.get());
 }
 
-void DOMWindowExtensionBasic::didCreateGlobalObjectForFrame(WKBundleFrameRef frame, WKBundleScriptWorldRef world)
+void DOMWindowExtensionBasic::globalObjectIsAvailableForFrame(WKBundleFrameRef frame, WKBundleScriptWorldRef world)
 {
     WKBundleDOMWindowExtensionRef extension = WKBundleDOMWindowExtensionCreate(frame, world);
 
@@ -196,7 +196,7 @@ void DOMWindowExtensionBasic::didCreateGlobalObjectForFrame(WKBundleFrameRef fra
     m_extensionToRecordMap.set(extension, index);
 
     updateExtensionStateRecord(extension, Connected);
-    sendBundleMessage("DidCreateGlobalObjectForFrame called");
+    sendBundleMessage("GlobalObjectIsAvailableForFrame called");
 }
 
 void DOMWindowExtensionBasic::willDisconnectDOMWindowExtensionFromGlobalObject(WKBundleDOMWindowExtensionRef extension)
@@ -231,9 +231,9 @@ static void didFinishLoadForFrameCallback(WKBundlePageRef, WKBundleFrameRef fram
     ((DOMWindowExtensionBasic*)clientInfo)->frameLoadFinished(frame);
 }
 
-static void didCreateGlobalObjectForFrameCallback(WKBundlePageRef, JSObjectRef, WKBundleFrameRef frame, WKBundleScriptWorldRef world, const void* clientInfo)
+static void globalObjectIsAvailableForFrameCallback(WKBundlePageRef, WKBundleFrameRef frame, WKBundleScriptWorldRef world, const void* clientInfo)
 {
-    ((DOMWindowExtensionBasic*)clientInfo)->didCreateGlobalObjectForFrame(frame, world);
+    ((DOMWindowExtensionBasic*)clientInfo)->globalObjectIsAvailableForFrame(frame, world);
 }
 
 static void willDisconnectDOMWindowExtensionFromGlobalObjectCallback(WKBundlePageRef, WKBundleDOMWindowExtensionRef extension, const void* clientInfo)
