@@ -89,7 +89,8 @@ public:
     SMILTime previousIntervalBegin() const { return m_previousIntervalBegin; }
     SMILTime simpleDuration() const;
 
-    void progress(SMILTime elapsed, SVGSMILElement* resultsElement);
+    void seekToIntervalCorrespondingToTime(SMILTime elapsed);
+    void progress(SMILTime elapsed, SVGSMILElement* resultsElement, bool seekToTime);
     SMILTime nextProgressTime() const;
 
     void reset();
@@ -129,7 +130,7 @@ private:
     
     SMILTime findInstanceTime(BeginOrEnd, SMILTime minimumTime, bool equalsMinimumOK) const;
     void resolveFirstInterval();
-    void resolveNextInterval();
+    void resolveNextInterval(bool notifyDependents);
     void resolveInterval(bool first, SMILTime& beginResult, SMILTime& endResult) const;
     SMILTime resolveActiveEnd(SMILTime resolvedBegin, SMILTime resolvedEnd) const;
     SMILTime repeatingDuration() const;

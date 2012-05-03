@@ -89,8 +89,10 @@ void SMILTimeContainer::begin()
     ASSERT(!m_beginTime);
     double now = currentTime();
 
+    // If 'm_presetStartTime' is set, the timeline was modified via setElapsed() before the document began.
+    // In this case pass on 'seekToTime=true' to updateAnimations().
     m_beginTime = now - m_presetStartTime;
-    updateAnimations(SMILTime(m_presetStartTime));
+    updateAnimations(SMILTime(m_presetStartTime), m_presetStartTime ? true : false);
     m_presetStartTime = 0;
 
     if (m_pauseTime) {
@@ -126,6 +128,9 @@ void SMILTimeContainer::setElapsed(SMILTime time)
         return;
     }
 
+    if (m_beginTime)
+        m_timer.stop();
+
     m_beginTime = currentTime() - time.value();
     m_accumulatedPauseTime = 0;
 
@@ -134,7 +139,7 @@ void SMILTimeContainer::setElapsed(SMILTime time)
     for (unsigned n = 0; n < toReset.size(); ++n)
         toReset[n]->reset();
 
-    updateAnimations(time);
+    updateAnimations(time, true);
 }
 
 void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
@@ -202,7 +207,7 @@ static void sortByApplyOrder(Vector<SVGSMILElement*>& smilElements)
     std::sort(smilElements.begin(), smilElements.end(), applyOrderSortFunction);
 }
 
-void SMILTimeContainer::updateAnimations(SMILTime elapsed)
+void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 {
     SMILTime earliersFireTime = SMILTime::unresolved();
 
@@ -247,7 +252,7 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
         }
 
         // This will calculate the contribution from the animation and add it to the resultsElement.
-        animation->progress(elapsed, resultElement);
+        animation->progress(elapsed, resultElement, seekToTime);
 
         SMILTime nextFireTime = animation->nextProgressTime();
         if (nextFireTime.isFinite())

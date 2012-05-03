@@ -68,7 +68,7 @@ private:
     
     void timerFired(Timer<SMILTimeContainer>*);
     void startTimer(SMILTime fireTime, SMILTime minimumDelay = 0);
-    void updateAnimations(SMILTime elapsed);
+    void updateAnimations(SMILTime elapsed, bool seekToTime = false);
     
     void updateDocumentOrderIndexes();
     void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);

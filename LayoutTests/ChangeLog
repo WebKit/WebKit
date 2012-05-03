@@ -1,3 +1,34 @@
+2012-05-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Fix multiple begin values support - especially with seeking through setCurrentTime
+        https://bugs.webkit.org/show_bug.cgi?id=85372
+
+        Reviewed by Zoltan Herczeg.
+
+        * svg/animations/multiple-begin-additive-animation-expected.txt: Added.
+        * svg/animations/multiple-begin-additive-animation.html: Added.
+        * svg/animations/multiple-begin-animation-discrete-expected.svg: Added.
+        * svg/animations/multiple-begin-animation-discrete.svg: Added.
+        * svg/animations/multiple-begin-animation-expected.svg: Added.
+        * svg/animations/multiple-begin-animation.svg: Added.
+        * svg/animations/resources/multiple-begin-additive-animation.svg: Added.
+        * svg/animations/script-tests/multiple-begin-additive-animation.js: Added.
+        (checkBaseValues):
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (sample6):
+        (sample7):
+        (sample8):
+        (sample9):
+        (sample10):
+        (sample11):
+        (sample12):
+        (sample13):
+        (executeTest):
+
 2012-05-03  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL][DRT] Implement the LayoutTestController's methods related to the Page Visibility API.
