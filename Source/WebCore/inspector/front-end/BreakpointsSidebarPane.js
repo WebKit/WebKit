@@ -147,16 +147,6 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         }
     },
 
-    /**
-     * @param {WebInspector.BreakpointManager.Breakpoint} breakpoint
-     * @param {WebInspector.UILocation} uiLocation
-     */
-    _createBreakpointItemId: function(breakpoint, uiLocation)
-    {
-        var primaryLocation = breakpoint.primaryUILocation();
-        return primaryLocation.uiSourceCode.id + ":" + primaryLocation.lineNumber + "@" + uiLocation.uiSourceCode.id + ":" + uiLocation.lineNumber;
-    },
-
     _breakpointClicked: function(uiLocation, event)
     {
         this._showSourceLineDelegate(uiLocation.uiSourceCode, uiLocation.lineNumber);

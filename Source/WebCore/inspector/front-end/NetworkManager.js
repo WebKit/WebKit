@@ -584,9 +584,8 @@ WebInspector.NetworkDispatcher.prototype = {
      * @param {string} url
      * @param {string} documentURL
      * @param {NetworkAgent.Initiator} initiator
-     * @param {ConsoleAgent.StackTrace=} stackTrace
      */
-    _createNetworkRequest: function(requestId, frameId, loaderId, url, documentURL, initiator, stackTrace)
+    _createNetworkRequest: function(requestId, frameId, loaderId, url, documentURL, initiator)
     {
         var networkRequest = new WebInspector.NetworkRequest(requestId, url, documentURL, frameId, loaderId);
         networkRequest.initiator = initiator;

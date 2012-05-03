@@ -364,11 +364,12 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
      */
     _uiSourceCodeForResource: function(resource)
     {
-        var rawLocation = WebInspector.debuggerModel.createRawLocationByURL(resource.url, 0, 0);
-        if (!rawLocation)
-            return null;
-        var uiLocation = this._presentationModel.rawLocationToUILocation(rawLocation);
-        return uiLocation ? uiLocation.uiSourceCode : null;
+        var uiSourceCodes = this._presentationModel.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes.length; ++i) {
+            if (uiSourceCodes[i].url === resource.url)
+                return uiSourceCodes[i];
+        }
+        return null;
     },
 
     /**

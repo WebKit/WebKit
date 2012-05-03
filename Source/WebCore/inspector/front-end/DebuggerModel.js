@@ -501,6 +501,18 @@ WebInspector.DebuggerModel.prototype = {
     {
         var script = this._scripts[location.scriptId];
         return script.createLiveLocation(location, updateDelegate);
+    },
+
+    /**
+     * @param {DebuggerAgent.Location} rawLocation
+     * @return {?WebInspector.UILocation}
+     */
+    rawLocationToUILocation: function(rawLocation)
+    {
+        var script = this._scripts[rawLocation.scriptId];
+        if (!script)
+            return null;
+        return script.rawLocationToUILocation(rawLocation);
     }
 }
 

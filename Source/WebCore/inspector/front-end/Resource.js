@@ -373,12 +373,23 @@ WebInspector.Resource.prototype = {
     requestContent: function(callback)
     {
         if (typeof this._content !== "undefined") {
-            callback(this._content, !!this._contentEncoded, this.mimeType);
+            callback(this._content, !!this._contentEncoded, this.canonicalMimeType());
             return;
         }
 
         this._pendingContentCallbacks.push(callback);
         this._innerRequestContent();
+    },
+
+    canonicalMimeType: function()
+    {
+        if (this.type === WebInspector.resourceTypes.Document)
+            return "text/html";
+        if (this.type === WebInspector.resourceTypes.Script)
+            return "text/javascript";
+        if (this.type === WebInspector.resourceTypes.Stylesheet)
+            return "text/css";
+        return this.mimeType;
     },
 
     /**
@@ -448,7 +459,7 @@ WebInspector.Resource.prototype = {
             this._originalContent = content;
             var callbacks = this._pendingContentCallbacks.slice();
             for (var i = 0; i < callbacks.length; ++i)
-                callbacks[i](this._content, this._contentEncoded, this.mimeType);
+                callbacks[i](this._content, this._contentEncoded, this.canonicalMimeType());
             this._pendingContentCallbacks.length = 0;
             delete this._contentRequested;
         }

@@ -87,22 +87,6 @@ WebInspector.ResourceSourceFrame = function(resource)
     this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
 }
 
-WebInspector.ResourceSourceFrame._canonicalMIMEType = function(resource)
-{
-    var type = resource.type;
-    if (type === WebInspector.resourceTypes.Document)
-        return "text/html";
-    if (type === WebInspector.resourceTypes.Stylesheet)
-        return "text/css";
-    if (type === WebInspector.resourceTypes.Script)
-        return "text/javascript";
-}
-
-WebInspector.ResourceSourceFrame._mimeTypeForResource = function(resource)
-{
-    return WebInspector.ResourceSourceFrame._canonicalMIMEType(resource) || resource.mimeType;
-}
-
 WebInspector.ResourceSourceFrame.prototype = {
     get resource()
     {
@@ -121,15 +105,14 @@ WebInspector.ResourceSourceFrame.prototype = {
          */
         function callbackWrapper(content, contentEncoded, mimeType)
         {
-            // Canonicalize mimeType.
-            callback(content, contentEncoded, WebInspector.ResourceSourceFrame._mimeTypeForResource(this._resource));
+            callback(content, contentEncoded, mimeType);
         }
         this.resource.requestContent(callbackWrapper.bind(this));
     },
 
     _contentChanged: function(event)
     {
-        this.setContent(this._resource.content, false, WebInspector.ResourceSourceFrame._mimeTypeForResource(this._resource));
+        this.setContent(this._resource.content, false, this._resource.canonicalMimeType());
     }
 }
 
