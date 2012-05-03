@@ -1658,7 +1658,6 @@ BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
 
 // New tests with WebKit merge 46288:46363
 BUGCR18116 : fast/dom/constructed-objects-prototypes.html = TEXT
-BUGCR18116 : fast/dom/prototype-inheritance-2.html = TEXT
 
 // Test failures from WebKit merge 46894 to 46977
 BUGCR26737 : fast/js/prototypes.html = FAIL
