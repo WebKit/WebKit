@@ -315,8 +315,10 @@ void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node* target, int breakpo
             breakpointOwner = InspectorDOMAgent::innerParentNode(target);
         ASSERT(breakpointOwner);
         while (!(m_domBreakpoints.get(breakpointOwner) & (1 << breakpointType))) {
-            breakpointOwner = InspectorDOMAgent::innerParentNode(breakpointOwner);
-            ASSERT(breakpointOwner);
+            Node* parentNode = InspectorDOMAgent::innerParentNode(breakpointOwner);
+            if (!parentNode)
+                break;
+            breakpointOwner = parentNode;
         }
 
         if (breakpointType == SubtreeModified)
