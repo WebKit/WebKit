@@ -1,3 +1,20 @@
+2012-05-02  Eric Seidel  <eric@webkit.org>
+
+        Sort ENABLE_ defines in FeatureDefines.xcconfig files to make them easier to compare with one another (and easier to autogenerate)
+        https://bugs.webkit.org/show_bug.cgi?id=85433
+
+        Reviewed by Adam Barth.
+
+        I have a script which can autogenerate these xcconfig files as well as the
+        vsprops files (and soon the Chromium, cmake, gnumake and qmake) feature lists
+        from a central feature list file.
+        In preparation for posting such a tool, I'm re-sorting these xcconfig files to be
+        alphabetically ordered (currently they're close, but not quite).
+        There is also at least one inconsistency between these files (CSS_LEGACY_PREFIXES) which
+        I will fix in a second pass.  I will also sort the FEATURE_DEFINES = line in a follow-up patch.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
