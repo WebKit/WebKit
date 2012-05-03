@@ -56,7 +56,7 @@ public:
 
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const IntRect&);
-    void drawLayer(WebTileLayer*, CGContextRef);
+    void drawLayer(WebTileLayer *, CGContextRef);
 
     void setScale(CGFloat);
 
@@ -92,6 +92,7 @@ private:
     RetainPtr<WebTileLayer> createTileLayer(const IntRect&);
 
     bool shouldShowRepaintCounters() const;
+    void drawRepaintCounter(WebTileLayer *, CGContextRef);
 
     WebTileCacheLayer* m_tileCacheLayer;
     RetainPtr<CALayer> m_tileContainerLayer;

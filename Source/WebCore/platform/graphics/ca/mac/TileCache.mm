@@ -123,7 +123,7 @@ void TileCache::setNeedsDisplayInRect(const IntRect& rect)
     }
 }
 
-void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
+void TileCache::drawLayer(WebTileLayer *layer, CGContextRef context)
 {
     PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
     if (!platformLayer)
@@ -138,36 +138,7 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
 
     CGContextRestoreGState(context);
 
-    unsigned repaintCount = [layer incrementRepaintCount];
-    if (!shouldShowRepaintCounters())
-        return;
-
-    // FIXME: Some of this code could be shared with WebLayer.
-    char text[16]; // that's a lot of repaints
-    snprintf(text, sizeof(text), "%d", repaintCount);
-
-    CGRect indicatorBox = [layer bounds];
-    indicatorBox.size.width = 12 + 10 * strlen(text);
-    indicatorBox.size.height = 27;
-    CGContextSaveGState(context);
-
-    CGContextSetAlpha(context, 0.5f);
-    CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
-
-    CGContextSetFillColorWithColor(context, m_tileDebugBorderColor.get());
-    CGContextFillRect(context, indicatorBox);
-
-    if (platformLayer->acceleratesDrawing())
-        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
-    else
-        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
-
-    CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
-    CGContextSelectFont(context, "Helvetica", 22, kCGEncodingMacRoman);
-    CGContextShowTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
-
-    CGContextEndTransparencyLayer(context);
-    CGContextRestoreGState(context);
+    drawRepaintCounter(layer, context);
 }
 
 void TileCache::setScale(CGFloat scale)
@@ -437,6 +408,42 @@ bool TileCache::shouldShowRepaintCounters() const
         return false;
 
     return layerContents->platformCALayerShowRepaintCounter();
+}
+
+void TileCache::drawRepaintCounter(WebTileLayer *layer, CGContextRef context)
+{
+    unsigned repaintCount = [layer incrementRepaintCount];
+    if (!shouldShowRepaintCounters())
+        return;
+
+    // FIXME: Some of this code could be shared with WebLayer.
+    char text[16]; // that's a lot of repaints
+    snprintf(text, sizeof(text), "%d", repaintCount);
+
+    CGRect indicatorBox = [layer bounds];
+    indicatorBox.size.width = 12 + 10 * strlen(text);
+    indicatorBox.size.height = 27;
+    CGContextSaveGState(context);
+
+    CGContextSetAlpha(context, 0.5f);
+    CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
+
+    CGContextSetFillColorWithColor(context, m_tileDebugBorderColor.get());
+    CGContextFillRect(context, indicatorBox);
+
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
+
+    if (platformLayer->acceleratesDrawing())
+        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
+    else
+        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
+
+    CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+    CGContextSelectFont(context, "Helvetica", 22, kCGEncodingMacRoman);
+    CGContextShowTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
+
+    CGContextEndTransparencyLayer(context);
+    CGContextRestoreGState(context);
 }
 
 } // namespace WebCore
