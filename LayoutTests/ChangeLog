@@ -1,3 +1,19 @@
+2012-05-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-mac-leopard/svg/as-image/image-respects-pageScaleFactor-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/as-image/image-respects-pageScaleFactor-expected.png: Added.
+        * platform/chromium-mac/svg/as-image/image-respects-pageScaleFactor-expected.png: Added.
+        * platform/chromium-win-vista/svg/as-image: Added.
+        * platform/chromium-win-vista/svg/as-image/image-respects-pageScaleFactor-expected.png: Added.
+        * platform/chromium-win-vista/svg/as-image/image-respects-pageScaleFactor-expected.txt: Added.
+        * platform/chromium-win-xp/svg/as-image: Added.
+        * platform/chromium-win-xp/svg/as-image/image-respects-pageScaleFactor-expected.png: Added.
+        * platform/chromium-win-xp/svg/as-image/image-respects-pageScaleFactor-expected.txt: Added.
+        * platform/chromium-win/svg/as-image/image-respects-pageScaleFactor-expected.png: Added.
+        * platform/chromium-win/svg/as-image/image-respects-pageScaleFactor-expected.txt: Added.
+
 2012-05-03  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed test expectations update for zoom event test due to slight change in rounding in hit testing code post the switch to FractionalLayoutUnits.
