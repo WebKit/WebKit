@@ -529,7 +529,7 @@ class TestDriver(Driver):
 
         crash_log = ''
         if crashed_process_name:
-            crash_logs = CrashLogs(self._port._filesystem)
+            crash_logs = CrashLogs(self._port.host)
             crash_log = crash_logs.find_newest_log(crashed_process_name, None) or ''
 
         return DriverOutput(actual_text, test.actual_image, test.actual_checksum, audio,

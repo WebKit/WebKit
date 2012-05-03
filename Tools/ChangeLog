@@ -1,5 +1,29 @@
 2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        webkitpy: Remove sys.platform accesses in CrashLogs.
+        https://bugs.webkit.org/show_bug.cgi?id=85436
+
+        Reviewed by Dirk Pranke.
+
+        Instead of directly checking for sys.platform == 'darwin', use a
+        SystemHost and call PlatformInfo.is_mac().
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.__init__):
+        (CrashLogs.find_newest_log):
+        (CrashLogs._log_directory_darwin):
+        (CrashLogs._find_newest_log_darwin):
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.test_find_log_darwin):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver.run_test):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (execute):
+
+2012-05-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         webkitpy: Special-case win32 calls in file_lock and executive.
         https://bugs.webkit.org/show_bug.cgi?id=85431
 
