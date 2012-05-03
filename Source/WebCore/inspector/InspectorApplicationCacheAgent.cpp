@@ -168,7 +168,8 @@ PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCache> InspectorApplication
         .setSize(applicationCacheInfo.m_size)
         .setCreationTime(applicationCacheInfo.m_creationTime)
         .setUpdateTime(applicationCacheInfo.m_updateTime)
-        .setResources(buildArrayForApplicationCacheResources(applicationCacheResources));
+        .setResources(buildArrayForApplicationCacheResources(applicationCacheResources))
+        .release();
 }
 
 PassRefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::ApplicationCacheResource> > InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList& applicationCacheResources)

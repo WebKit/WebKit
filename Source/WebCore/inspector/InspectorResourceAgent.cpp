@@ -119,7 +119,8 @@ static PassRefPtr<TypeBuilder::Network::ResourceTiming> buildObjectForTiming(con
         .setSslEnd(timing.sslEnd)
         .setSendStart(timing.sendStart)
         .setSendEnd(timing.sendEnd)
-        .setReceiveHeadersEnd(timing.receiveHeadersEnd);
+        .setReceiveHeadersEnd(timing.receiveHeadersEnd)
+        .release();
 }
 
 static PassRefPtr<TypeBuilder::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request)
@@ -409,7 +410,8 @@ PassRefPtr<TypeBuilder::Network::Initiator> InspectorResourceAgent::buildInitiat
         return m_styleRecalculationInitiator;
 
     return TypeBuilder::Network::Initiator::create()
-        .setType(TypeBuilder::Network::Initiator::Type::Other);
+        .setType(TypeBuilder::Network::Initiator::Type::Other)
+        .release();
 }
 
 #if ENABLE(WEB_SOCKETS)

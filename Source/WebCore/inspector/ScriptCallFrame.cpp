@@ -63,7 +63,8 @@ PassRefPtr<TypeBuilder::Console::CallFrame> ScriptCallFrame::buildInspectorObjec
         .setFunctionName(m_functionName)
         .setUrl(m_scriptName)
         .setLineNumber(m_lineNumber)
-        .setColumnNumber(m_column);
+        .setColumnNumber(m_column)
+        .release();
 }
 #endif
 

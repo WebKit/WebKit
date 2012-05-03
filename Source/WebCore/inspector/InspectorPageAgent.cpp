@@ -418,7 +418,8 @@ static PassRefPtr<TypeBuilder::Page::Cookie> buildObjectForCookie(const Cookie& 
         .setSize((cookie.name.length() + cookie.value.length()))
         .setHttpOnly(cookie.httpOnly)
         .setSecure(cookie.secure)
-        .setSession(cookie.session);
+        .setSession(cookie.session)
+        .release();
 }
 
 static PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie> > buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
@@ -600,7 +601,8 @@ static PassRefPtr<TypeBuilder::Page::SearchResult> buildObjectForSearchResult(co
     return TypeBuilder::Page::SearchResult::create()
         .setUrl(url)
         .setFrameId(frameId)
-        .setMatchesCount(matchesCount);
+        .setMatchesCount(matchesCount)
+        .release();
 }
 
 void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult> >& results)

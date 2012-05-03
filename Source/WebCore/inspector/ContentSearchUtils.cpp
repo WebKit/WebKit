@@ -98,7 +98,8 @@ static PassRefPtr<TypeBuilder::Page::SearchMatch> buildObjectForSearchMatch(int 
 {
     return TypeBuilder::Page::SearchMatch::create()
         .setLineNumber(lineNumber)
-        .setLineContent(lineContent);
+        .setLineContent(lineContent)
+        .release();
 }
 
 RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex)

@@ -1242,9 +1242,9 @@ class TypeBindings:
             return *reinterpret_cast<RefPtr<%s>*>(&m_result);
         }
 
-        operator PassRefPtr<%s> ()
+        PassRefPtr<%s> release()
         {
-            return RefPtr<%s>(*this);
+            return RefPtr<%s>(*this).release();
         }
     };
 
