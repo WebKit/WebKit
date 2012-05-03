@@ -75,7 +75,8 @@ struct WebBasicComponentTransferFilterOperation : public WebFilterOperation {
         BasicComponentTransferFilterTypeInvert = 5,
         BasicComponentTransferFilterTypeBrightness = 7,
         BasicComponentTransferFilterTypeContrast = 8
-        // Opacity is missing because this is more expensive than just setting opacity on the layer.
+        // Opacity is missing because this is more expensive than just setting opacity on the layer,
+        // and opacity is not allowed for background filters.
     };
 
     WebBasicComponentTransferFilterOperation(BasicComponentTransferFilterType type, float amount)

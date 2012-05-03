@@ -59,9 +59,9 @@ public:
     // Gives an unoccluded sub-rect of |contentRect| in the content space of the layer. Used when considering occlusion for a layer that paints/draws something.
     IntRect unoccludedContentRect(const LayerType*, const IntRect& contentRect) const;
 
-    // Gives an unoccluded sub-rect of |contentRect| in the content space of the surface owned by |layer|. Used when considering occlusion for a contributing surface
+    // Gives an unoccluded sub-rect of |contentRect| in the content space of the surface. Used when considering occlusion for a contributing surface
     // that is rendering into another target surface.
-    IntRect unoccludedContributingSurfaceContentRect(const LayerType*, bool forReplica, const IntRect& contentRect) const;
+    IntRect unoccludedContributingSurfaceContentRect(const RenderSurfaceType*, bool forReplica, const IntRect& contentRect) const;
 
     // Report operations for recording overdraw metrics.
     CCOverdrawMetrics& overdrawMetrics() const { return *m_overdrawMetrics.get(); }

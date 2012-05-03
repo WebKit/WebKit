@@ -71,13 +71,13 @@ bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
 
 bool CCQuadCuller::appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
-    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, false, passDrawQuad->quadRect());
+    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer->renderSurface(), false, passDrawQuad->quadRect());
     return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
 }
 
 bool CCQuadCuller::appendReplica(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
-    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, true, passDrawQuad->quadRect());
+    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer->renderSurface(), true, passDrawQuad->quadRect());
     return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
 }
 
