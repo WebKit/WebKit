@@ -148,7 +148,7 @@
           'ENABLE_WEB_AUDIO=1',
         ],
       }],
-      ['OS=="android" or use_aura==1', {
+      ['OS=="android" or chromeos==1', {
         'feature_defines': [
           'ENABLE_INPUT_TYPE_COLOR=0',
         ],

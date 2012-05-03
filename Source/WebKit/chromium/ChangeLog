@@ -1,3 +1,14 @@
+2012-05-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Use correct define in the features.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=85520
+
+        Patch by Ben Goodger.
+
+        Reviewed by Tony Chang.
+
+        * features.gypi: Replaced use_aura with a more appropriate chromeos
+
 2012-05-03  Antony Sargent  <asargent@chromium.org>
 
         Add methods to create WebArrayBuffer/WebArrayBufferView from v8 objects
