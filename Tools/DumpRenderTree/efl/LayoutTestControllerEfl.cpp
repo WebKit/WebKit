@@ -844,3 +844,19 @@ void LayoutTestController::setBackingScaleFactor(double)
 void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
 {
 }
+
+void LayoutTestController::resetPageVisibility()
+{
+    ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_VISIBLE, true);
+}
+
+void LayoutTestController::setPageVisibility(const char* visibility)
+{
+    String newVisibility(visibility);
+    if (newVisibility == "visible")
+        ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_VISIBLE, false);
+    else if (newVisibility == "hidden")
+        ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_HIDDEN, false);
+    else if (newVisibility == "prerender")
+        ewk_view_visibility_state_set(browser->mainView(), EWK_PAGE_VISIBILITY_STATE_PRERENDER, false);
+}

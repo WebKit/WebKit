@@ -2026,7 +2026,6 @@ http/tests/xmlviewer/extensions-api.html
 fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-transition-test.html
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html

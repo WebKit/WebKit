@@ -897,3 +897,12 @@ void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
 {
 }
 
+void LayoutTestController::resetPageVisibility()
+{
+    notImplemented();
+}
+
+void LayoutTestController::setPageVisibility(const char* visibility)
+{
+    notImplemented();
+}

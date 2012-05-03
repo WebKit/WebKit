@@ -126,9 +126,8 @@ public:
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
     void setEditingBehavior(const char* editingBehavior);
     void startSpeechInput(JSContextRef inputElement);
-
-    void setPageVisibility(const char* visibility) { }
-    void resetPageVisibility() { }
+    void setPageVisibility(const char*);
+    void resetPageVisibility();
 
     void waitForPolicyDelegate();
     size_t webHistoryItemCount();

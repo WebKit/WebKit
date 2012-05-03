@@ -983,6 +983,16 @@ void LayoutTestController::syncLocalStorage()
     // FIXME: Implement.
 }
 
+void LayoutTestController::resetPageVisibility()
+{
+    // FIXME: Implement this.
+}
+
+void LayoutTestController::setPageVisibility(const char* visibility)
+{
+    // FIXME: Implement this.
+}
+
 QString LayoutTestController::layerTreeAsText()
 {
     return DumpRenderTreeSupportQt::layerTreeAsText(m_drt->webPage()->mainFrame());

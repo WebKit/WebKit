@@ -1,3 +1,12 @@
+2012-05-03  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL][DRT] Implement the LayoutTestController's methods related to the Page Visibility API.
+        https://bugs.webkit.org/show_bug.cgi?id=85347
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platformrm/efl/Skipped: Remove one test case of the Page Visibility API.
+
 2012-05-02  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Need tests for PerfTestRunner.computeStatistics

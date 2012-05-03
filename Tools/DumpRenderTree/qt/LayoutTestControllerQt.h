@@ -239,6 +239,9 @@ public slots:
     void setMockSpeechInputDumpRect(bool flag);
     void startSpeechInput(const QString& inputElement);
 
+    void setPageVisibility(const char*);
+    void resetPageVisibility();
+
     // Empty stub method to keep parity with object model exposed by global LayoutTestController.
     void abortModal() {}
 
