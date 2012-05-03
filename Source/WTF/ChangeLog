@@ -1,3 +1,16 @@
+2012-05-02  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt]r57240 broke Qt build (gcc bug)
+        https://bugs.webkit.org/show_bug.cgi?id=37253
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add back the inline hack just for ARM due to old version of
+        gcc still being used on Harmattan SDK. Thanks to Ossy for the
+        suggestion.
+        * wtf/PassRefPtr.h:
+        (WTF):
+
 2012-05-02  Nico Weber  <thakis@chromium.org>
 
         Let WebKit parse with clang on windows with -std=c++11
