@@ -926,9 +926,6 @@ http/tests/multipart/invalid-image-data.html
 compositing/geometry/fixed-position.html
 compositing/geometry/vertical-scroll-composited.html
 
-# BUG: there should be no black in the three images below the text
-fast/css/shadow-multiple.html
-
 # BUG: the word "word" is not being selected
 fast/forms/input-text-double-click.html
 
@@ -1030,15 +1027,8 @@ compositing/framesets/composited-frame-alignment.html
 compositing/images/direct-pdf-image.html
 compositing/reflections/backface-hidden-reflection.html
 compositing/tiling/constrained-layer-size.html
-css2.1/20110323/abspos-containing-block-initial-001.htm
-css2.1/20110323/abspos-containing-block-initial-001-ref.htm
-css3/filters/filter-property.html
 fast/box-shadow/shadow-tiling-artifact.html
 fast/canvas/svg-taint.html
-fast/css/clip-text-in-scaled-div.html
-fast/css/custom-font-xheight.html
-fast/css/counters/complex-before.html
-fast/css/device-aspect-ratio.html
 fast/events/overflow-viewport-renderer-deleted.html
 fast/events/scale-and-scroll-body.html
 fast/events/scale-and-scroll-iframe-body.html
@@ -1268,11 +1258,7 @@ media/W3C/video/readyState/readyState_during_playing.html
 # BUG: The form widgets are too big for Edje to process, however this makes the page not scrollable at all.
 fast/block/float/overhanging-tall-block.html
 
-# BUG: text-rendering:optimizeLegibility and text-rendering:geometricPrecision are not being processed correctly.
-fast/css/text-rendering.html
-
 # BUG: <select> form elements do not respect some properties when being rendered (probably a problem in the theme).
-fast/css/pseudo-required-optional-004.html
 fast/forms/basic-selects.html
 fast/forms/select-disabled-appearance.html
 
@@ -1365,9 +1351,6 @@ printing/media-queries-print.html
 # BUG: there is a "0" at the top right corner
 printing/simultaneous-position-float-change.html
 
-# BUG: square button is not being drawn as a square
-fast/css/square-button-appearance.html
-
 # BUG: Only works if --gui is passed (due to the current implementation of PlatformScreenEfl::screenRect).
 fast/media/invalid-lengths.html
 fast/media/matchmedium-query-api.html
@@ -1387,25 +1370,11 @@ fast/forms/color/input-value-sanitization-color.html
 fast/forms/textarea-metrics.html
 
 # BUG: In practice, the style seems to be applied, but the colors are not reported correctly.
-fast/css/pseudo-valid-007.html
 fast/dom/HTMLInputElement/checked-pseudo-selector.html
 fast/forms/setCustomValidity.html
 
 # BUG: <select> element is not being scrolled as expected.
 fast/forms/listbox-selection-2.html
-
-# BUG: background color is not being applied to <input type="search">
-fast/css/pseudo-required-optional-006.html
-
-# The results may be platform-dependent.
-css3/zoom-coords.xhtml
-fast/css/font-face-data-uri.html
-fast/css/font-face-download-error.html
-fast/css/font-face-repeated-url.html
-fast/css/line-height-rounding.html
-
-# BUG: form buttons do not have the expected height
-fast/css/button-height.html
 
 # BUG: the whole text is being selected
 fast/forms/input-text-drag-down.html
@@ -1480,12 +1449,6 @@ http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html
 # Tests for features under development
 # ------------------------------------
 
-# CSS Grid Layout is not yet enabled. http://webkit.org/b/60731
-fast/css-grid-layout
-
-# <style scoped> is not yet enabled. http://webkit.org/b/49142
-fast/css/style-scoped
-
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
@@ -1504,21 +1467,10 @@ fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
 fast/dom/shadow/multiple-shadowroot-adopt.html
 
-# CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
-# https://bugs.webkit.org/show_bug.cgi?id=68469
-css3/filters
-
-# CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
-fast/css/image-set-parsing.html
-fast/css/image-set-parsing-invalid.html
-
 # ENABLE_INPUT_TYPE_* are not enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=29359
 # https://bugs.webkit.org/show_bug.cgi?id=68971
 fast/forms/date
-fast/css/pseudo-in-range.html
-fast/css/pseudo-out-of-range.html
-fast/css/pseudo-in-range-invalid-value.html
 fast/forms/datetime
 fast/forms/datetimelocal
 fast/forms/month
@@ -1824,9 +1776,9 @@ scrollbars/scroll-rtl-or-bt-layer.html
 svg/animations/animate-text-nested-transforms.html
 svg/as-border-image/svg-as-border-image-2.html
 svg/as-border-image/svg-as-border-image.html
+svg/as-image/animated-svg-as-image.html
 svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html
 svg/as-image/animated-svg-as-image-same-image.html
-svg/as-image/animated-svg-as-image.html
 svg/as-image/img-preserveAspectRatio-support-1.html
 svg/as-image/img-preserveAspectRatio-support-2.html
 svg/as-image/same-image-two-instances.html
@@ -1839,7 +1791,9 @@ svg/carto.net/tabgroup.svg
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
 svg/css/composite-shadow-example.html
 svg/css/composite-shadow-with-opacity.html
-svg/css/stars-with-shadow.html
+svg/css/getComputedStyle-basic.xhtml
+svg/css/path-gradient-stroke-shadow.svg
+svg/dom/css-transforms.xhtml
 svg/hixie/data-types/002.xhtml
 svg/hixie/error/012.xml
 svg/hixie/error/013.xml
@@ -1903,11 +1857,9 @@ svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg
 svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg
 svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg
 svg/W3C-I18N/text-anchor-no-markup.svg
-svg/animations/animate-inherit-css-property.html
 svg/batik/paints/gradientLimit.svg
 svg/batik/text/textOnPath.svg
 svg/batik/text/textProperties2.svg
-svg/css/group-with-shadow.svg
 svg/hixie/perf/004.xml
 svg/hixie/perf/005.xml
 svg/hixie/perf/006.xml
@@ -1916,7 +1868,6 @@ tables/mozilla/bugs/bug14929.html
 tables/mozilla/bugs/bug2947.html
 tables/mozilla_expected_failures/
 transforms/no_transform_hit_testing.html
-transforms/svg-vs-css.xhtml
 transitions/cross-fade-background-image.html
 transitions/cross-fade-border-image.html
 transitions/default-timing-function.html
@@ -2029,7 +1980,6 @@ fast/events/page-visibility-iframe-propagation-test.html
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html
-fast/css/apple-prefix.html
 
 # Touch adjustment not enabled
 # https://bugs.webkit.org/show_bug.cgi?id=78801
@@ -2042,49 +1992,6 @@ animations/animation-add-events-in-handler.html
 animations/cross-fade-webkit-mask-box-image.html
 canvas/philip/tests/2d.canvas.readonly.html
 canvas/philip/tests/2d.canvas.reference.html
-css1/basic/comments.html
-css1/classification/list_style.html
-css1/color_and_background/background_attachment.html
-css1/color_and_background/background.html
-css1/box_properties/acid_test.html
-css1/box_properties/border.html
-css1/basic/class_as_selector.html
-css1/basic/containment.html
-css1/cascade/important.html
-css1/cascade/cascade_order.html
-css1/classification/display.html
-css1/conformance/forward_compatible_parsing.html
-css2.1/20110323/background-intrinsic-001.htm
-css2.1/20110323/background-intrinsic-002.htm
-css2.1/20110323/background-intrinsic-003.htm
-css2.1/20110323/background-intrinsic-004.htm
-css2.1/20110323/background-intrinsic-005.htm
-css2.1/20110323/background-intrinsic-006.htm
-css2.1/20110323/background-intrinsic-007.htm
-css2.1/20110323/background-intrinsic-008.htm
-css2.1/20110323/background-intrinsic-009.htm
-css2.1/20110323/border-collapse-offset-002.htm
-css2.1/20110323/border-spacing-applies-to-015.htm
-css2.1/20110323/dynamic-top-change-001.htm
-css2.1/20110323/dynamic-top-change-002.htm
-css2.1/20110323/dynamic-top-change-003.htm
-css2.1/20110323/dynamic-top-change-004.htm
-css2.1/20110323/empty-inline-001.htm
-css2.1/20110323/empty-inline-002.htm
-css2.1/20110323/empty-inline-003.htm
-css2.1/20110323/outline-color-applies-to-008.htm
-css2.1/20110323/table-caption-001.htm
-css2.1/20110323/table-caption-002.htm
-css2.1/20110323/table-caption-horizontal-alignment-001.htm
-css2.1/20110323/table-caption-margins-001.htm
-css2.1/20110323/table-caption-optional-001.htm
-css2.1/20110323/table-caption-optional-002.htm
-css3/images/cross-fade-background-size.html
-css3/images/cross-fade-blending.html
-css3/images/cross-fade-invalidation.html
-css3/images/cross-fade-simple.html
-css3/images/cross-fade-sizing.html
-css3/images/cross-fade-tiled.html
 editing/input/caret-at-the-edge-of-input.html
 fast/borders/border-image-slice-constrained.html
 fast/borders/border-mixed-alpha.html
@@ -2098,9 +2005,6 @@ fast/borders/borderRadiusInset01.html
 fast/borders/borderRadiusOutset01.html
 fast/borders/borderRadiusRidge01.html
 fast/borders/scaled-border-image.html
-fast/css-generated-content/nested-tables-with-before-after-content-crash.html
-fast/css/child-style-can-override-visited-style.html
-fast/css/text-overflow-input.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/html/font-weight-bold-for-b-and-strong.html
 fast/js/global-constructors.html
@@ -2136,13 +2040,6 @@ fast/spatial-navigation/snav-multiple-select-focusring.html
 
 # This test requires flac codec
 media/media-can-play-flac-audio.html
-
-# The rectangle colors should not match
-fast/css/color-correction-on-background-image.html
-fast/css/color-correction-on-backgrounds.html
-fast/css/color-correction-on-box-shadow.html
-fast/css/color-correction-on-text-shadow.html
-fast/css/color-correction-untagged-images.html
 
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html

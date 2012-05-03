@@ -208,3 +208,56 @@ BUGWK84710 : fast/forms/textarea-type-spaces.html = TEXT
 // Requires WebP support.
 BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = FAIL
 BUGWKEFL SKIP : fast/images/webp-image-decoding.html = FAIL
+
+// This tests fails by one on 32 bits machines due to rounding issues.
+BUGWKEFL : fast/css/percentage-non-integer.html = TEXT PASS
+
+// CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
+BUGWKEFL : fast/css/image-set-parsing.html = TEXT
+
+// Test is timeouting, passes in all other platforms.
+BUGWKEFL SKIP : fast/css/device-aspect-ratio.html = FAIL
+
+// These test -apple- prefixed CSS properties, which we don't support.
+WONTFIX SKIP : fast/css/apple-prefix.html = TEXT
+
+// CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
+BUGWK85465 SKIP : css3/filters = TEXT
+BUGWK85465 SKIP : fast/css/getComputedStyle/computed-style.html = TEXT
+
+BUGWK75747 : fast/css/color-correction-on-background-image.html = TEXT
+BUGWK75747 : fast/css/color-correction-on-backgrounds.html = TEXT
+BUGWK75747 : fast/css/color-correction-on-box-shadow.html = TEXT
+BUGWK75747 : fast/css/color-correction-on-text-shadow.html = TEXT
+BUGWK75747 : fast/css/color-correction-untagged-images.html = TEXT
+
+BUGWK65536 : fast/css/text-rendering.html = TEXT
+
+BUGWK49142 : fast/css/style-scoped = TEXT
+
+// ENABLE(INPUT_TYPE_*) are not enabled.
+BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
+BUGWK29359 : fast/css/pseudo-out-of-range.html = TEXT
+BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = TEXT
+
+// CSS Grid Layout is not yet enabled.
+BUGWK60731 : fast/css-grid-layout = TEXT
+
+BUGWK85483 : fast/css/transformed-mask.html = TEXT
+
+BUGWK85484 : fast/css/resize-corner-tracking-transformed.html = TEXT
+BUGWK85484 : fast/css/resize-corner-tracking.html = TEXT
+
+BUGWK85493 : fast/css/square-button-appearance.html = TEXT
+
+BUGWK85494 : fast/css/button-height.html = TEXT
+
+BUGWK85497 : fast/css/pseudo-required-optional-004.html = TEXT
+BUGWK85497 : fast/css/pseudo-required-optional-006.html = TEXT
+BUGWK85497 : fast/css/pseudo-valid-007.html = TEXT
+
+BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+
+BUGWK85466 : css3/images/cross-fade-background-size.html = TEXT
+
+BUGWK85492 : css3/zoom-coords.xhtml = TEXT

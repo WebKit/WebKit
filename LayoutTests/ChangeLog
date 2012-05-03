@@ -1,3 +1,116 @@
+2012-05-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] CSS tests needs gardening
+        https://bugs.webkit.org/show_bug.cgi?id=85499
+
+        Unreviewed gardening.
+
+        Moved CSS tests from Skipped to test_expectations.txt and made the
+        reference to the appropriated bug. Also updated missing/wrong
+        baselines.
+
+        * platform/efl/Skipped:
+        * platform/efl/css1/basic/class_as_selector-expected.png:
+        * platform/efl/css1/basic/comments-expected.png:
+        * platform/efl/css1/basic/containment-expected.png:
+        * platform/efl/css1/box_properties/acid_test-expected.png:
+        * platform/efl/css1/box_properties/border-expected.png:
+        * platform/efl/css1/cascade/cascade_order-expected.png:
+        * platform/efl/css1/cascade/important-expected.png:
+        * platform/efl/css1/classification/display-expected.png:
+        * platform/efl/css1/classification/list_style-expected.png:
+        * platform/efl/css1/color_and_background/background-expected.png:
+        * platform/efl/css1/color_and_background/background_attachment-expected.png:
+        * platform/efl/css1/conformance/forward_compatible_parsing-expected.png:
+        * platform/efl/css2.1/20110323/abspos-containing-block-initial-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/abspos-containing-block-initial-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-003-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-003-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-004-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-004-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-005-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-005-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-006-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-006-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-007-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-007-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-008-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-008-expected.txt: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-009-expected.png: Added.
+        * platform/efl/css2.1/20110323/background-intrinsic-009-expected.txt: Added.
+        * platform/efl/css2.1/20110323/border-collapse-offset-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/border-collapse-offset-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/border-spacing-applies-to-015-expected.png: Added.
+        * platform/efl/css2.1/20110323/border-spacing-applies-to-015-expected.txt: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-003-expected.png: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-003-expected.txt: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-004-expected.png: Added.
+        * platform/efl/css2.1/20110323/dynamic-top-change-004-expected.txt: Added.
+        * platform/efl/css2.1/20110323/empty-inline-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/empty-inline-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/empty-inline-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/empty-inline-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/empty-inline-003-expected.png: Added.
+        * platform/efl/css2.1/20110323/empty-inline-003-expected.txt: Added.
+        * platform/efl/css2.1/20110323/outline-color-applies-to-008-expected.png: Added.
+        * platform/efl/css2.1/20110323/outline-color-applies-to-008-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-caption-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-caption-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-caption-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-caption-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-caption-horizontal-alignment-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-caption-horizontal-alignment-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-caption-margins-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-caption-margins-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-caption-optional-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-caption-optional-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/table-caption-optional-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/table-caption-optional-002-expected.txt: Added.
+        * platform/efl/css3/images/cross-fade-background-size-expected.txt: Added.
+        * platform/efl/css3/images/cross-fade-blending-expected.png: Added.
+        * platform/efl/css3/images/cross-fade-blending-expected.txt: Added.
+        * platform/efl/css3/images/cross-fade-invalidation-expected.png: Added.
+        * platform/efl/css3/images/cross-fade-invalidation-expected.txt: Added.
+        * platform/efl/css3/images/cross-fade-simple-expected.png: Added.
+        * platform/efl/css3/images/cross-fade-simple-expected.txt: Added.
+        * platform/efl/css3/images/cross-fade-sizing-expected.png: Added.
+        * platform/efl/css3/images/cross-fade-sizing-expected.txt: Added.
+        * platform/efl/css3/images/cross-fade-tiled-expected.png: Added.
+        * platform/efl/css3/images/cross-fade-tiled-expected.txt: Added.
+        * platform/efl/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.png: Added.
+        * platform/efl/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt: Added.
+        * platform/efl/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/efl/fast/css/child-style-can-override-visited-style-expected.txt: Added.
+        * platform/efl/fast/css/clip-text-in-scaled-div-expected.png: Added.
+        * platform/efl/fast/css/clip-text-in-scaled-div-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-background-image-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-backgrounds-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-box-shadow-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-on-text-shadow-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-untagged-images-expected.txt: Added.
+        * platform/efl/fast/css/invalidation-errors-2-expected.txt:
+        * platform/efl/fast/css/invalidation-errors-expected.txt:
+        * platform/efl/fast/css/shadow-multiple-expected.png:
+        * platform/efl/fast/css/text-overflow-input-expected.png: Added.
+        * platform/efl/fast/css/text-overflow-input-expected.txt: Added.
+        * platform/efl/fast/css/text-rendering-expected.png: Removed.
+        * platform/efl/fast/css/text-rendering-expected.txt: Added.
+        * platform/efl/svg/css/composite-shadow-example-expected.txt: Removed.
+        * platform/efl/svg/css/composite-shadow-with-opacity-expected.txt: Removed.
+        * platform/efl/svg/css/group-with-shadow-expected.png: Added.
+        * platform/efl/svg/css/stars-with-shadow-expected.png: Added.
+        * platform/efl/test_expectations.txt:
+        * platform/efl/transforms/svg-vs-css-expected.png:
+        * platform/efl/transforms/svg-vs-css-expected.txt:
+
 2012-05-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline
