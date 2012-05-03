@@ -1,3 +1,18 @@
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Port the flakiness dashboard unittests to qunit
+        https://bugs.webkit.org/show_bug.cgi?id=85544
+
+        Reviewed by Adam Barth.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (appendJSONScriptElements):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+        (runExpectationsTest):
+        (test):
+        * TestResultServer/static-dashboards/run-unittests.html: Added.
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Remove check for readline on Mac.

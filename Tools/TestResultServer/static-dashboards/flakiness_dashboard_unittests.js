@@ -26,21 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// @fileoverview Poor-man's unittests for some of the trickier logic bits of
-// the flakiness dashboard.
-//
-// Currently only tests processExpectations and populateExpectationsData.
-// A test just consists of calling runExpectationsTest with the appropriate
-// arguments.
-
-// FIXME: move this over to using qunit
-// In the meanwhile, you can run these tests by loading
-// flakiness_dashboard.html#useTestData=true in a browser.
-
-// Clears out the global objects modified or used by processExpectations and
-// populateExpectationsData. A bit gross since it's digging into implementation
-// details, but it's good enough for now.
-function setupExpectationsTest()
+function resetGlobals()
 {
     allExpectations = null;
     allTests = null;
@@ -55,15 +41,6 @@ function setupExpectationsTest()
     }
 }
 
-// Processes the expectations for a test and asserts that the final expectations
-// and modifiers we apply to a test match what we expect.
-//
-// @param {string} builder Builder the test is run on.
-// @param {string} test The test name.
-// @param {string} expectations Sorted string of what the expectations for this
-//        test ought to be for this builder.
-// @param {string} modifiers Sorted string of what the modifiers for this
-//        test ought to be for this builder.
 function runExpectationsTest(builder, test, expectations, modifiers)
 {
     g_builders[builder] = true;
@@ -79,24 +56,12 @@ function runExpectationsTest(builder, test, expectations, modifiers)
     populateExpectationsData(resultsForTest);
 
     var message = 'Builder: ' + resultsForTest.builder + ' test: ' + resultsForTest.test;
-    assertEquals(resultsForTest.expectations, expectations, message);
-    assertEquals(resultsForTest.modifiers, modifiers, message);
+    equal(resultsForTest.expectations, expectations, message);
+    equal(resultsForTest.modifiers, modifiers, message);
 }
 
-function assertEquals(actual, expected, message)
-{
-    if (expected !== actual) {
-        if (message)
-            message += ' ';
-        else
-            message = '';
-
-        throw Error(message + 'got: ' + actual + ' expected: ' + expected);
-    }
-}
-
-function testFlattenTrie()
-{
+test('FlattenTrie', 1, function() {
+    resetGlobals();
     var tests = {
         'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
         'foo': {
@@ -109,11 +74,11 @@ function testFlattenTrie()
         'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
         'foo/bar/baz.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
     };
-    assertEquals(JSON.stringify(flattenTrie(tests)), JSON.stringify(expectedFlattenedTests))
-}
+    equal(JSON.stringify(flattenTrie(tests)), JSON.stringify(expectedFlattenedTests))
+});
 
-function testReleaseFail()
-{
+test('ReleaseFail', 2, function() {
+    resetGlobals();
     var builder = 'Webkit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
@@ -121,10 +86,10 @@ function testReleaseFail()
     ];
     g_expectations = 'RELEASE : ' + test + ' = FAIL';
     runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
-}
+});
 
-function testReleaseFailDebugCrashReleaseBuilder()
-{
+test('ReleaseFailDebugCrashReleaseBuilder', 2, function() {
+    resetGlobals();
     var builder = 'Webkit Win';
     var test = 'foo/1.html';
     var expectationsArray = [
@@ -134,10 +99,10 @@ function testReleaseFailDebugCrashReleaseBuilder()
     g_expectations = 'RELEASE : ' + test + ' = FAIL\n' +
         'DEBUG : ' + test + ' = CRASH';
     runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
-}
+});
 
-function testReleaseFailDebugCrashDebugBuilder()
-{
+test('ReleaseFailDebugCrashDebugBuilder', 2, function() {
+    resetGlobals();
     var builder = 'Webkit Win (dbg)';
     var test = 'foo/1.html';
     var expectationsArray = [
@@ -147,10 +112,10 @@ function testReleaseFailDebugCrashDebugBuilder()
     g_expectations = 'RELEASE : ' + test + ' = FAIL\n' +
         'DEBUG : ' + test + ' = CRASH';
     runExpectationsTest(builder, test, 'CRASH', 'DEBUG');
-}
+});
 
-function testOverrideJustBuildType()
-{
+test('OverrideJustBuildType', 12, function() {
+    resetGlobals();
     var test = 'bar/1.html';
     g_expectations = 'WONTFIX : bar = FAIL PASS TIMEOUT\n' +
         'WONTFIX MAC : ' + test + ' = FAIL\n' +
@@ -162,16 +127,15 @@ function testOverrideJustBuildType()
     runExpectationsTest('Webkit Linux (dbg)(3)', test, 'CRASH', 'LINUX DEBUG');
     runExpectationsTest('Webkit Mac10.5', test, 'FAIL', 'WONTFIX MAC');
     runExpectationsTest('Webkit Mac10.5 (dbg)(3)', test, 'FAIL', 'WONTFIX MAC');
-}
+});
 
-function testPlatformAndBuildType()
-{
+test('PlatformAndBuildType', 88, function() {
     var runPlatformAndBuildTypeTest = function(builder, expectedPlatform, expectedBuildType) {
         g_perBuilderPlatformAndBuildType = {};
         buildInfo = platformAndBuildType(builder);
         var message = 'Builder: ' + builder;
-        assertEquals(buildInfo.platform, expectedPlatform, message);
-        assertEquals(buildInfo.buildType, expectedBuildType, message);
+        equal(buildInfo.platform, expectedPlatform, message);
+        equal(buildInfo.buildType, expectedBuildType, message);
     }
     runPlatformAndBuildTypeTest('Webkit Win (deps)', 'XP', 'RELEASE');
     runPlatformAndBuildTypeTest('Webkit Win (deps)(dbg)(1)', 'XP', 'DEBUG');
@@ -224,37 +188,32 @@ function testPlatformAndBuildType()
     runPlatformAndBuildTypeTest('SnowLeopard Intel Release (WebKit2 Tests)', 'APPLE_SNOWLEOPARD', 'RELEASE');
     runPlatformAndBuildTypeTest('SnowLeopard Intel Debug (WebKit2 Tests)', 'APPLE_SNOWLEOPARD', 'DEBUG');
     runPlatformAndBuildTypeTest('Windows 7 Release (WebKit2 Tests)', 'APPLE_WIN7', 'RELEASE');    
-}
+});
 
-function testRealModifiers()
-{
-    assertEquals(realModifiers('BUGFOO LINUX LEOPARD WIN DEBUG SLOW'), 'SLOW');
-    assertEquals(realModifiers('BUGFOO LUCID MAC XP RELEASE SKIP'), 'SKIP');
-    assertEquals(realModifiers('BUGFOO'), '');
-}
+test('RealModifiers', 3, function() {
+    equal(realModifiers('BUGFOO LINUX LEOPARD WIN DEBUG SLOW'), 'SLOW');
+    equal(realModifiers('BUGFOO LUCID MAC XP RELEASE SKIP'), 'SKIP');
+    equal(realModifiers('BUGFOO'), '');
+});
 
-function testAllTestsWithSamePlatformAndBuildType()
-{
+test('AllTestsWithSamePlatformAndBuildType', 14, function() {
     // FIXME: test that allTestsWithSamePlatformAndBuildType actually returns the right set of tests.
-    for (var i = 0; i < PLATFORMS.length; i++) {
-        if (!g_allTestsByPlatformAndBuildType[PLATFORMS[i]])
-            throw Error(PLATFORMS[i] + ' is not in g_allTestsByPlatformAndBuildType');
-    }
-}
+    for (var i = 0; i < PLATFORMS.length; i++)
+        ok(g_allTestsByPlatformAndBuildType[PLATFORMS[i]]);
+});
 
-function testFilterBugs()
-{
+test('FilterBugs',4, function() {
     var filtered = filterBugs('SKIP BUG123 BUGCR123 BUGWK123 SLOW BUG_TONY DEBUG')
-    assertEquals(filtered.modifiers, 'SKIP SLOW DEBUG');
-    assertEquals(filtered.bugs, 'BUG123 BUGCR123 BUGWK123 BUG_TONY');
+    equal(filtered.modifiers, 'SKIP SLOW DEBUG');
+    equal(filtered.bugs, 'BUG123 BUGCR123 BUGWK123 BUG_TONY');
 
     filtered = filterBugs('SKIP SLOW DEBUG')
-    assertEquals(filtered.modifiers, 'SKIP SLOW DEBUG');
-    assertEquals(filtered.bugs, '');
-}
+    equal(filtered.modifiers, 'SKIP SLOW DEBUG');
+    equal(filtered.bugs, '');
+});
 
-function testGetExpectations()
-{
+test('GetExpectations', 12, function() {
+    resetGlobals();
     g_builders['WebKit Win'] = true;
     g_resultsByBuilder = {
         'WebKit Win': {
@@ -279,55 +238,53 @@ function testGetExpectations()
     processExpectations();
     
     var expectations = getExpectations('foo/test1.html', 'XP', 'DEBUG');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"DEBUG","expectations":"CRASH"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"DEBUG","expectations":"CRASH"}');
 
     var expectations = getExpectations('foo/test1.html', 'LUCID', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"RELEASE BUGFOO","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"RELEASE BUGFOO","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LUCID', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LEOPARD', 'DEBUG');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LUCID', 'DEBUG');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"LINUX DEBUG","expectations":"CRASH"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"LINUX DEBUG","expectations":"CRASH"}');
 
     var expectations = getExpectations('foo/test3.html', 'LUCID', 'DEBUG');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"BUG123","expectations":"FAIL PASS CRASH"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"BUG123","expectations":"FAIL PASS CRASH"}');
 
     var expectations = getExpectations('test1.html', 'XP', 'DEBUG');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"DEBUG","expectations":"CRASH"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"DEBUG","expectations":"CRASH"}');
 
     var expectations = getExpectations('test1.html', 'LUCID', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"RELEASE","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"RELEASE","expectations":"FAIL"}');
 
     var expectations = getExpectations('http/tests/appcache/interrupted-update.html', 'WIN7', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"WIN7","expectations":"TIMEOUT"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"WIN7","expectations":"TIMEOUT"}');
 
     var expectations = getExpectations('http/tests/appcache/interrupted-update.html', 'LEOPARD', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"MAC LINUX XP VISTA","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"MAC LINUX XP VISTA","expectations":"FAIL"}');
 
     var expectations = getExpectations('http/tests/appcache/interrupted-update.html', 'LUCID', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"MAC LINUX XP VISTA","expectations":"FAIL"}');
+    equal(JSON.stringify(expectations), '{"modifiers":"MAC LINUX XP VISTA","expectations":"FAIL"}');
 
     var expectations = getExpectations('http/tests/appcache/interrupted-update.html', 'VISTA', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"MAC LINUX XP VISTA","expectations":"FAIL"}');
-}
+    equal(JSON.stringify(expectations), '{"modifiers":"MAC LINUX XP VISTA","expectations":"FAIL"}');
+});
 
-function testSubstringList()
-{
+test('SubstringList', 2, function() {
     g_crossDashboardState.testType = 'gtest';
     g_currentState.tests = 'test.FLAKY_foo test.FAILS_foo1 test.DISABLED_foo2 test.MAYBE_foo3 test.foo4';
-    assertEquals(substringList().toString(), 'test.foo,test.foo1,test.foo2,test.foo3,test.foo4');
+    equal(substringList().toString(), 'test.foo,test.foo1,test.foo2,test.foo3,test.foo4');
 
     g_crossDashboardState.testType = 'layout-tests';
     g_currentState.tests = 'foo/bar.FLAKY_foo.html';
-    assertEquals(substringList().toString(), 'foo/bar.FLAKY_foo.html');
-}
+    equal(substringList().toString(), 'foo/bar.FLAKY_foo.html');
+});
 
-function testHtmlForTestsWithExpectationsButNoFailures()
-{
+test('HtmlForTestsWithExpectationsButNoFailures', 4, function() {
     var builder = 'WebKit Win';
     g_perBuilderWithExpectationsButNoFailures[builder] = ['passing-test1.html', 'passing-test2.html'];
     g_perBuilderSkippedPaths[builder] = ['skipped-test1.html'];
@@ -341,53 +298,51 @@ function testHtmlForTestsWithExpectationsButNoFailures()
     
     var container = document.createElement('div');
     container.innerHTML = htmlForTestsWithExpectationsButNoFailures(builder);
-    assertEquals(container.querySelectorAll('#passing-tests > div').length, 2);
-    assertEquals(container.querySelectorAll('#skipped-tests > div').length, 1);
+    equal(container.querySelectorAll('#passing-tests > div').length, 2);
+    equal(container.querySelectorAll('#skipped-tests > div').length, 1);
     
     g_currentState.showUnexpectedPasses = false;
     g_currentState.showSkipped = false;
     
     var container = document.createElement('div');
     container.innerHTML = htmlForTestsWithExpectationsButNoFailures(builder);
-    assertEquals(container.querySelectorAll('#passing-tests > div').length, 0);
-    assertEquals(container.querySelectorAll('#skipped-tests > div').length, 0);
-}
+    equal(container.querySelectorAll('#passing-tests > div').length, 0);
+    equal(container.querySelectorAll('#skipped-tests > div').length, 0);
+});
 
-function testHeaderForTestTableHtml()
-{
+test('HeaderForTestTableHtml', 1, function() {
     var container = document.createElement('div');
     container.innerHTML = headerForTestTableHtml();
-    assertEquals(container.querySelectorAll('input').length, 5);
-}
+    equal(container.querySelectorAll('input').length, 5);
+});
 
-function testHtmlForTestTypeSwitcherGroup()
-{
+test('HtmlForTestTypeSwitcherGroup', 6, function() {
     var container = document.createElement('div');
     g_crossDashboardState.testType = 'ui_tests';
     container.innerHTML = htmlForTestTypeSwitcher();
     var selects = container.querySelectorAll('select');
-    assertEquals(selects.length, 3);
+    equal(selects.length, 3);
     var group = selects[2];
-    assertEquals(group.parentNode.textContent.indexOf('Group:'), 0);
-    assertEquals(group.children.length, 3);
+    equal(group.parentNode.textContent.indexOf('Group:'), 0);
+    equal(group.children.length, 3);
 
     g_crossDashboardState.testType = 'layout-tests';
     container.innerHTML = htmlForTestTypeSwitcher();
     var selects = container.querySelectorAll('select');
-    assertEquals(selects.length, 3);
+    equal(selects.length, 3);
     var group = selects[2];
-    assertEquals(group.parentNode.textContent.indexOf('Group:'), 0);
-    assertEquals(group.children.length, 3);
-}
+    equal(group.parentNode.textContent.indexOf('Group:'), 0);
+    equal(group.children.length, 3);
+});
 
-function testHtmlForIndividualTestOnAllBuilders()
-{
-    assertEquals(htmlForIndividualTestOnAllBuilders('foo/nonexistant.html'), '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>');
-}
+test('HtmlForIndividualTestOnAllBuilders', 1, function() {
+    resetGlobals();
+    equal(htmlForIndividualTestOnAllBuilders('foo/nonexistant.html'), '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>');
+});
 
-function testHtmlForIndividualTestOnAllBuildersWithChromeNonexistant()
-{
-    assertEquals(htmlForIndividualTestOnAllBuildersWithChrome('foo/nonexistant.html'),
+test('HtmlForIndividualTestOnAllBuildersWithChromeNonexistant', 1, function() {
+    resetGlobals();
+    equal(htmlForIndividualTestOnAllBuildersWithChrome('foo/nonexistant.html'),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
         '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>' +
         '<div class=expectations test=foo/nonexistant.html>' +
@@ -397,16 +352,15 @@ function testHtmlForIndividualTestOnAllBuildersWithChromeNonexistant()
                 '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b>' +
             '</div>' +
         '</div>');
-}
+});
 
-function testHtmlForIndividualTestOnAllBuildersWithChrome()
-{
+test('HtmlForIndividualTestOnAllBuildersWithChrome', 1, function() {
+    resetGlobals();
     var test = 'dummytest.html';
     var builderName = 'dummyBuilder';
     g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
-    currentBuilderGroup().builders = {'Webkit Linux': '', 'Webkit Linux (dbg)': '', 'Webkit Mac10.5': '', 'Webkit Win': ''};
 
-    assertEquals(htmlForIndividualTestOnAllBuildersWithChrome(test),
+    equal(htmlForIndividualTestOnAllBuildersWithChrome(test),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/dummytest.html" target="_blank">dummytest.html</a></h2>' +
         '<table class=test-table><thead><tr>' +
                 '<th sortValue=test><div class=table-header-content><span></span><span class=header-text>test</span></div></th>' +
@@ -431,17 +385,16 @@ function testHtmlForIndividualTestOnAllBuildersWithChrome()
             '<span class=link onclick="setQueryParameter(\'showLargeExpectations\', true)">Show large thumbnails</span> | ' +
             '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b></div>' +
         '</div>');
-}
+});
 
-function testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster()
-{
+test('HtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster', 1, function() {
+    resetGlobals();
     var test = 'dummytest.html';
     var builderName = 'dummyBuilder';
     BUILDER_TO_MASTER[builderName] = WEBKIT_BUILDER_MASTER;
     g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
-        currentBuilderGroup().builders = {'Webkit Linux': '', 'Webkit Linux (dbg)': '', 'Webkit Mac10.5': '', 'Webkit Win': ''};
 
-    assertEquals(htmlForIndividualTestOnAllBuildersWithChrome(test),
+    equal(htmlForIndividualTestOnAllBuildersWithChrome(test),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/dummytest.html" target="_blank">dummytest.html</a></h2>' +
             '<table class=test-table><thead><tr>' +
                     '<th sortValue=test><div class=table-header-content><span></span><span class=header-text>test</span></div></th>' +
@@ -468,22 +421,22 @@ function testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster()
                     'Show results for WebKit revision: <input name=revision placeholder="e.g. 65540" value="" id=revision-input>' +
                 '</form></div>' +
             '</div>');
-}
+});
 
-function testHtmlForIndividualTests()
-{
+test('HtmlForIndividualTests', 2, function() {
+    resetGlobals();
     g_currentState.showChrome = false;
     var test1 = 'foo/nonexistant.html';
     var test2 = 'bar/nonexistant.html';
     var tests = [test1, test2];
-    assertEquals(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuilders(test1) + '<hr>' + htmlForIndividualTestOnAllBuilders(test2));
+    equal(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuilders(test1) + '<hr>' + htmlForIndividualTestOnAllBuilders(test2));
 
     g_currentState.showChrome = true;
-    assertEquals(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuildersWithChrome(test1) + '<hr>' + htmlForIndividualTestOnAllBuildersWithChrome(test2));
-}
+    equal(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuildersWithChrome(test1) + '<hr>' + htmlForIndividualTestOnAllBuildersWithChrome(test2));
+});
 
-function testHtmlForSingleTestRow()
-{
+test('HtmlForSingleTestRow', 1, function() {
+    resetGlobals();
     var builder = 'dummyBuilder';
     var test = createResultsObjectForTest('foo/exists.html', builder);
     g_currentState.showCorrectExpectations = true;
@@ -498,55 +451,37 @@ function testHtmlForSingleTestRow()
                 '<td><td>0<td title="TEXT. Click for more info." class="results F" onclick=\'showPopupForBuild(event, "dummyBuilder",0,"foo/exists.html")\'>&nbsp;' +
                 '<td title="IMAGE. Click for more info." class="results I" onclick=\'showPopupForBuild(event, "dummyBuilder",1,"foo/exists.html")\'>5';
 
-    assertEquals(htmlForSingleTestRow(test), expected);
-}
+    equal(htmlForSingleTestRow(test), expected);
+});
 
-function testLookupVirtualTestSuite()
-{
-    assertEquals(lookupVirtualTestSuite('fast/canvas/foo.html'), '');
-    assertEquals(lookupVirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas/foo.html'),
-                      'platform/chromium/virtual/gpu/fast/canvas');
-}
+test('LookupVirtualTestSuite', 2, function() {
+    equal(lookupVirtualTestSuite('fast/canvas/foo.html'), '');
+    equal(lookupVirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas/foo.html'), 'platform/chromium/virtual/gpu/fast/canvas');
+});
 
-function testBaseTest()
-{
-    assertEquals(baseTest('fast/canvas/foo.html', ''), 'fast/canvas/foo.html');
-    assertEquals(baseTest('platform/chromium/virtual/gpu/fast/canvas/foo.html', 'platform/chromium/virtual/gpu/fast/canvas'), 'fast/canvas/foo.html');
-}
+test('BaseTest', 2, function() {
+    equal(baseTest('fast/canvas/foo.html', ''), 'fast/canvas/foo.html');
+    equal(baseTest('platform/chromium/virtual/gpu/fast/canvas/foo.html', 'platform/chromium/virtual/gpu/fast/canvas'), 'fast/canvas/foo.html');
+});
 
 // FIXME: Create builders_tests.js and move this there.
-function generateBuildersFromBuilderListHelper(builderList, expectedBuilders, builderFilter)
-{
-    var builders = generateBuildersFromBuilderList(builderList, builderFilter);
-    assertEquals(builders.length, expectedBuilders.length);
-    builders.forEach(function(builder, index) {
-        var expected = expectedBuilders[index];
-        assertEquals(builder.length, expected.length);
-        for (var i = 0; i < builder.length; i++)
-            assertEquals(builder[i], expected[i]);
-    })
-}
-
-function testGenerateChromiumDepsFyiGpuBuildersFromBuilderList()
-{
+test('GenerateChromiumDepsFyiGpuBuildersFromBuilderList', 1, function() {
     var builderList = ["Linux Audio", "Linux Release (ATI)", "Linux Release (Intel)", "Mac Release (ATI)", "Win7 Audio", "Win7 Release (ATI)", "Win7 Release (Intel)", "WinXP Debug (NVIDIA)", "WinXP Release (NVIDIA)"];
     var expectedBuilders = [["Linux Release (ATI)", 2], ["Linux Release (Intel)"], ["Mac Release (ATI)"], ["Win7 Release (ATI)"], ["Win7 Release (Intel)"], ["WinXP Debug (NVIDIA)"], ["WinXP Release (NVIDIA)"] ];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumDepsFyiGpuTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isChromiumDepsFyiGpuTestRunner), expectedBuilders);
+});
 
-function testGenerateChromiumTipOfTreeGpuBuildersFromBuilderList()
-{
+test('GenerateChromiumTipOfTreeGpuBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf",
         "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)",
         "Webkit Linux 32", "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)",
         "Webkit Mac10.6", "Webkit Mac10.6 (dbg)", "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Vista", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)",
         "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)", "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
     var expectedBuilders = [["GPU Linux (NVIDIA)", 2], ["GPU Linux (dbg) (NVIDIA)"], ["GPU Mac"], ["GPU Mac (dbg)"], ["GPU Win7 (NVIDIA)"], ["GPU Win7 (dbg) (NVIDIA)"]];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumTipOfTreeGpuTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isChromiumTipOfTreeGpuTestRunner), expectedBuilders);
+});
 
-function testGenerateWebkitBuildersFromBuilderList()
-{
+test('GenerateWebkitBuildersFromBuilderList', 1, function() {
     var builderList = ["Chromium Android Release", "Chromium Linux Release", "Chromium Linux Release (Grid Layout)", "Chromium Linux Release (Perf)", "Chromium Linux Release (Tests)",
         "Chromium Mac Release", "Chromium Mac Release (Perf)", "Chromium Mac Release (Tests)", "Chromium Win Release", "Chromium Win Release (Perf)", "Chromium Win Release (Tests)",
         "EFL Linux Release", "GTK Linux 32-bit Release", "GTK Linux 64-bit Debug", "GTK Linux 64-bit Release", "Lion Debug (Build)", "Lion Debug (Tests)", "Lion Debug (WebKit2 Tests)",
@@ -558,11 +493,10 @@ function testGenerateWebkitBuildersFromBuilderList()
     var expectedBuilders = [["Chromium Linux Release (Tests)", 2], ["Chromium Mac Release (Tests)"], ["Chromium Win Release (Tests)"], ["GTK Linux 32-bit Release"], ["GTK Linux 64-bit Debug"],
         ["GTK Linux 64-bit Release"], ["Lion Debug (Tests)"], ["Lion Debug (WebKit2 Tests)"], ["Lion Release (Tests)"], ["Lion Release (WebKit2 Tests)"], ["Qt Linux Release"],
         ["SnowLeopard Intel Debug (Tests)"], ["SnowLeopard Intel Debug (WebKit2 Tests)"], ["SnowLeopard Intel Release (Tests)"], ["SnowLeopard Intel Release (WebKit2 Tests)"]];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isWebkitTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isWebkitTestRunner), expectedBuilders);
+});
 
-function testGenerateChromiumWebkitTipOfTreeBuildersFromBuilderList()
-{
+test('GenerateChromiumWebkitTipOfTreeBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf", "Linux Tests",
         "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)", "Webkit Linux 32",
         "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)", "Webkit Mac10.6", "Webkit Mac10.6 (dbg)",
@@ -570,22 +504,20 @@ function testGenerateChromiumWebkitTipOfTreeBuildersFromBuilderList()
         "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
     var expectedBuilders = [["Webkit Linux", 2], ["Webkit Linux (dbg)"], ["Webkit Linux 32"], ["Webkit Mac10.5"], ["Webkit Mac10.5 (dbg)(1)"], ["Webkit Mac10.5 (dbg)(2)"], ["Webkit Mac10.6"],
         ["Webkit Mac10.6 (dbg)"], ["Webkit Mac10.7"], ["Webkit Vista"], ["Webkit Win"], ["Webkit Win (dbg)(1)"], ["Webkit Win (dbg)(2)"], ["Webkit Win7"]];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumWebkitTipOfTreeTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isChromiumWebkitTipOfTreeTestRunner), expectedBuilders);
+});
 
-function testGenerateChromiumWebkitDepsBuildersFromBuilderList()
-{
+test('GenerateChromiumWebkitDepsBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf", "Linux Tests",
         "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)", "Webkit Linux 32",
         "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)", "Webkit Mac10.6", "Webkit Mac10.6 (dbg)",
         "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Vista", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)", "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)",
         "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
     var expectedBuilders = [["Webkit Linux (deps)", 2], ["Webkit Mac10.6 (deps)"], ["Webkit Win (deps)"]];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumWebkitDepsTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isChromiumWebkitDepsTestRunner), expectedBuilders);
+});
 
-function testGenerateChromiumDepsGTestBuildersFromBuilderList()
-{
+test('GenerateChromiumDepsGTestBuildersFromBuilderList', 1, function() {
     var builderList = ["Android Builder", "Chrome Frame Tests (ie6)", "Chrome Frame Tests (ie7)", "Chrome Frame Tests (ie8)", "Interactive Tests (dbg)", "Linux", "Linux Builder (dbg)",
         "Linux Builder (dbg)(shared)", "Linux Builder x64", "Linux Clang (dbg)", "Linux Sync", "Linux Tests (dbg)(1)", "Linux Tests (dbg)(2)", "Linux Tests (dbg)(shared)", "Linux Tests x64",
         "Linux x64", "Mac", "Mac 10.5 Tests (dbg)(1)", "Mac 10.5 Tests (dbg)(2)", "Mac 10.5 Tests (dbg)(3)", "Mac 10.5 Tests (dbg)(4)", "Mac 10.6 Tests (dbg)(1)", "Mac 10.6 Tests (dbg)(2)",
@@ -600,44 +532,33 @@ function testGenerateChromiumDepsGTestBuildersFromBuilderList()
         ["NACL Tests (x64)"], ["Vista Tests (1)"], ["Vista Tests (2)"], ["Vista Tests (3)"], ["Win7 Tests (1)"], ["Win7 Tests (2)"], ["Win7 Tests (3)"], ["Win7 Tests (dbg)(1)"],
         ["Win7 Tests (dbg)(2)"], ["Win7 Tests (dbg)(3)"], ["Win7 Tests (dbg)(4)"], ["Win7 Tests (dbg)(5)"], ["Win7 Tests (dbg)(6)"], ["XP Tests (1)"], ["XP Tests (2)"], ["XP Tests (3)"],
         ["XP Tests (dbg)(1)"], ["XP Tests (dbg)(2)"], ["XP Tests (dbg)(3)"], ["XP Tests (dbg)(4)"], ["XP Tests (dbg)(5)"], ["XP Tests (dbg)(6)"]];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumDepsGTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isChromiumDepsGTestRunner), expectedBuilders);
+});
 
-function testGenerateChromiumDepsCrosGTestBuildersFromBuilderList()
-{
+test('GenerateChromiumDepsCrosGTestBuildersFromBuilderList', 1, function() {
     var builderList = ["ChromiumOS (amd64)", "ChromiumOS (arm)", "ChromiumOS (tegra2)", "ChromiumOS (x86)", "Linux ChromiumOS (Clang dbg)", "Linux ChromiumOS Builder", "Linux ChromiumOS Builder (dbg)",
         "Linux ChromiumOS Tests (1)", "Linux ChromiumOS Tests (2)", "Linux ChromiumOS Tests (dbg)(1)", "Linux ChromiumOS Tests (dbg)(2)", "Linux ChromiumOS Tests (dbg)(3)"];
     var expectedBuilders = [["Linux ChromiumOS Tests (1)", 2], ["Linux ChromiumOS Tests (2)"], ["Linux ChromiumOS Tests (dbg)(1)"], ["Linux ChromiumOS Tests (dbg)(2)"], ["Linux ChromiumOS Tests (dbg)(3)"]];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumDepsCrosGTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isChromiumDepsCrosGTestRunner), expectedBuilders);
+});
 
-function testGenerateChromiumTipOfTreeGTestBuildersFromBuilderList()
-{
+test('GenerateChromiumTipOfTreeGTestBuildersFromBuilderList', 1, function() {
     var builderList = ["Chrome Frame Tests", "GPU Linux (NVIDIA)", "GPU Linux (dbg) (NVIDIA)", "GPU Mac", "GPU Mac (dbg)", "GPU Win7 (NVIDIA)", "GPU Win7 (dbg) (NVIDIA)", "Linux Perf",
         "Linux Tests", "Linux Valgrind", "Mac Builder (dbg)", "Mac10.6 Perf", "Mac10.6 Tests", "Vista Perf", "Vista Tests", "Webkit Linux", "Webkit Linux (dbg)", "Webkit Linux (deps)",
         "Webkit Linux 32", "Webkit Mac Builder", "Webkit Mac Builder (dbg)", "Webkit Mac Builder (deps)", "Webkit Mac10.5", "Webkit Mac10.5 (dbg)(1)", "Webkit Mac10.5 (dbg)(2)",
         "Webkit Mac10.6", "Webkit Mac10.6 (dbg)", "Webkit Mac10.6 (deps)", "Webkit Mac10.7", "Webkit Vista", "Webkit Win", "Webkit Win (dbg)(1)", "Webkit Win (dbg)(2)",
         "Webkit Win (deps)", "Webkit Win Builder", "Webkit Win Builder (dbg)", "Webkit Win Builder (deps)", "Webkit Win7", "Win (dbg)", "Win Builder"];
     var expectedBuilders = [['Linux Tests', BuilderGroup.DEFAULT_BUILDER], ['Mac10.6 Tests'], ['Vista Tests'], ['Win (dbg)']];
-    generateBuildersFromBuilderListHelper(builderList, expectedBuilders, isChromiumTipOfTreeGTestRunner);
-}
+    deepEqual(generateBuildersFromBuilderList(builderList, isChromiumTipOfTreeGTestRunner), expectedBuilders);
+});
 
-function assertObjectsDeepEqual(a, b)
-{
-    assertEquals(Object.keys(a).length, Object.keys(b).length);
-    for (var key in a)
-        assertEquals(a[key], b[key]);
-}
+test('QueryHashAsMap', 2, function() {
+    equal(window.location.hash, '#useTestData=true');
+    deepEqual(queryHashAsMap(), {useTestData: 'true'});
+});
 
-function testQueryHashAsMap()
-{
-    assertEquals(window.location.hash, '#useTestData=true');
-    assertObjectsDeepEqual(queryHashAsMap(), {useTestData: 'true'});
-}
-
-function testParseCrossDashboardParameters()
-{
-    assertEquals(window.location.hash, '#useTestData=true');
+test('ParseCrossDashboardParameters', 2, function() {
+    equal(window.location.hash, '#useTestData=true');
     parseCrossDashboardParameters();
 
     var expectedParameters = {};
@@ -645,40 +566,37 @@ function testParseCrossDashboardParameters()
         expectedParameters[key] = g_defaultCrossDashboardStateValues[key];
     expectedParameters.useTestData = true;
 
-    assertObjectsDeepEqual(g_crossDashboardState, expectedParameters);
-}
+    deepEqual(g_crossDashboardState, expectedParameters);
+});
 
-function testDiffStates()
-{
+test('DiffStates', 5, function() {
     var newState = {a: 1, b: 2};
-    assertObjectsDeepEqual(diffStates(null, newState), newState);
+    deepEqual(diffStates(null, newState), newState);
 
     var oldState = {a: 1};
-    assertObjectsDeepEqual(diffStates(oldState, newState), {b: 2});
+    deepEqual(diffStates(oldState, newState), {b: 2});
 
     // FIXME: This is kind of weird. I think the existing users of this code work correctly, but it's a confusing result.
     var oldState = {c: 1};
-    assertObjectsDeepEqual(diffStates(oldState, newState), {a:1, b: 2});
+    deepEqual(diffStates(oldState, newState), {a:1, b: 2});
 
     var oldState = {a: 1, b: 2};
-    assertObjectsDeepEqual(diffStates(oldState, newState), {});
+    deepEqual(diffStates(oldState, newState), {});
 
     var oldState = {a: 2, b: 3};
-    assertObjectsDeepEqual(diffStates(oldState, newState), {a: 1, b: 2});
-}
+    deepEqual(diffStates(oldState, newState), {a: 1, b: 2});
+});
 
-function testAddBuilderLoadErrors()
-{
+test('AddBuilderLoadErrors', 1, function() {
     clearErrors();
     g_hasDoneInitialPageGeneration = false;
     g_buildersThatFailedToLoad = ['builder1', 'builder2'];
     g_staleBuilders = ['staleBuilder1'];
     addBuilderLoadErrors();
-    assertEquals(g_errorMessages, 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
-}
+    equal(g_errorMessages, 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
+});
 
-function testBuilderGroupIsToTWebKitAttribute()
-{
+test('BuilderGroupIsToTWebKitAttribute', 2, function() {
     var dummyMaster = new BuilderMaster('dummy.org', 'http://build.dummy.org');
     var testBuilderGroups = {
         '@ToT - dummy.org': null,
@@ -686,48 +604,9 @@ function testBuilderGroupIsToTWebKitAttribute()
     }
     var testJSONData = "{ \"Dummy Builder 1\": null, \"Dummy Builder 2\": null }";
 
-    // Override g_handleBuildersListLoaded to avoid entering an infinite recursion
-    // as the builder lists are being loaded with dummy data.
-    g_handleBuildersListLoaded = function() { }
-
     onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@ToT - dummy.org', BuilderGroup.TOT_WEBKIT, JSON.parse(testJSONData));
-    assertEquals(testBuilderGroups['@ToT - dummy.org'].isToTWebKit, true);
+    equal(testBuilderGroups['@ToT - dummy.org'].isToTWebKit, true);
 
     onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@DEPS - dummy.org', BuilderGroup.DEPS_WEBKIT, JSON.parse(testJSONData));
-    assertEquals(testBuilderGroups['@DEPS - dummy.org'].isToTWebKit, false);
-}
-
-function htmlEscape(string)
-{
-    var div = document.createElement('div');
-    div.textContent = string;
-    return div.innerHTML;
-}
-
-function runTests()
-{
-    document.body.innerHTML = '<pre id=unittest-results></pre>';
-    for (var name in window) {
-        if (typeof window[name] == 'function' && /^test/.test(name)) {
-            setupExpectationsTest();
-
-            var test = window[name];
-            var error = null;
-
-            try {
-                test();
-            } catch (err) {
-                error = err;
-            }
-
-            var result = error ? htmlEscape(error.toString()) : 'PASSED';
-
-            $('unittest-results').insertAdjacentHTML("beforeEnd", name + ': ' + result + '\n');
-        }
-    }
-}
-
-if (document.readyState == 'complete')
-    runTests();
-else
-    window.addEventListener('load', runTests, false);
+    equal(testBuilderGroups['@DEPS - dummy.org'].isToTWebKit, false);
+});
