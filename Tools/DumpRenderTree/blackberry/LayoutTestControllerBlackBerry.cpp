@@ -902,7 +902,7 @@ void LayoutTestController::resetPageVisibility()
     notImplemented();
 }
 
-void LayoutTestController::setPageVisibility(const char* visibility)
+void LayoutTestController::setPageVisibility(const char*)
 {
     notImplemented();
 }

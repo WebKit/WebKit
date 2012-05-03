@@ -1,3 +1,21 @@
+2012-05-03  Dongwoo Im  <dw.im@samsung.com>
+
+        [DRT] Remove the name of parameter, visibility, from the setPageVisibility stub implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=85468
+
+        Reviewed by Nikolas Zimmermann.
+
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        (LayoutTestController::setPageVisibility): Remove the name of parameter, visibility.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setPageVisibility): Remove the name of parameter, visibility.
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setPageVisibility): Remove the name of parameter, visibility.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setPageVisibility): Remove the name of parameter, visibility.
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setPageVisibility): Remove the name of parameter, visibility.
+
 2012-05-03  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=85450 unbounded growth of JSDOMWindowShells loading pages in the same window

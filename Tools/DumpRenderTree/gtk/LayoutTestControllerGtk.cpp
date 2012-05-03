@@ -1037,7 +1037,7 @@ void LayoutTestController::resetPageVisibility()
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setPageVisibility(const char* visibility)
+void LayoutTestController::setPageVisibility(const char*)
 {
     // FIXME: Implement this.
 }
