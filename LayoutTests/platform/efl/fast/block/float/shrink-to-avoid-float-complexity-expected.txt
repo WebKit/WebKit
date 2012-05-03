@@ -6,80 +6,33 @@ layer at (0,0) size 785x2079
       RenderBlock {H2} at (0,0) size 769x28
         RenderText {#text} at (0,0) size 149x28
           text run at (0,0) width 149: "Test 1 (1 float)"
-      RenderBlock {DIV} at (0,47) size 769x200 [bgcolor=#C0C0C0]
-        RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 120x55
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 120: "is floated left and it"
-            text run at (36,72) width 93: "has no margin."
       RenderBlock {HR} at (48,295) size 673x2 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,345) size 769x28
         RenderText {#text} at (0,0) size 149x28
           text run at (0,0) width 149: "Test 2 (1 float)"
-      RenderBlock {DIV} at (0,392) size 769x200 [bgcolor=#C0C0C0]
-        RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 120x55
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 120: "is floated left and it"
-            text run at (36,72) width 93: "has no margin."
       RenderBlock {HR} at (48,640) size 673x2 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,690) size 769x28
         RenderText {#text} at (0,0) size 149x28
           text run at (0,0) width 149: "Test 3 (1 float)"
-      RenderBlock {DIV} at (0,737) size 769x200 [bgcolor=#C0C0C0]
-        RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 125x73
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 119: "is a floated left and"
-            text run at (36,72) width 125: "it has a right margin"
-            text run at (36,90) width 61: "of 100px."
       RenderBlock {HR} at (48,985) size 673x2 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1035) size 769x28
         RenderText {#text} at (0,0) size 158x28
           text run at (0,0) width 158: "Test 4 (2 floats)"
-      RenderBlock {DIV} at (0,1082) size 769x200 [bgcolor=#C0C0C0]
-        RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 120x55
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 120: "is floated left and it"
-            text run at (36,72) width 93: "has no margin."
-        RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 128x55
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 128: "is a floated right and"
-            text run at (36,72) width 105: "it has no margin."
       RenderBlock {HR} at (48,1330) size 673x2 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1380) size 769x28
         RenderText {#text} at (0,0) size 158x28
           text run at (0,0) width 158: "Test 5 (2 floats)"
-      RenderBlock {DIV} at (0,1427) size 769x200 [bgcolor=#C0C0C0]
-        RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 120x55
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 120: "is floated left and it"
-            text run at (36,72) width 93: "has no margin."
-        RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 128x55
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 128: "is a floated right and"
-            text run at (36,72) width 105: "it has no margin."
       RenderBlock {HR} at (48,1675) size 673x2 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1725) size 769x28
         RenderText {#text} at (0,0) size 158x28
           text run at (0,0) width 158: "Test 6 (2 floats)"
-      RenderBlock {DIV} at (0,1772) size 769x272 [bgcolor=#C0C0C0]
-        RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 120x73
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 120: "is floated left and it"
-            text run at (36,72) width 113: "has a right margin"
-            text run at (36,90) width 61: "of 100px."
-        RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
-          RenderText {#text} at (36,36) size 120x73
-            text run at (36,36) width 120: "This yellow square"
-            text run at (36,54) width 117: "is floated right and"
-            text run at (36,72) width 116: "it has a left margin"
-            text run at (36,90) width 61: "of 100px."
+layer at (8,66) size 769x200
+  RenderBlock {DIV} at (0,47) size 769x200 [bgcolor=#C0C0C0]
+    RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 120x55
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 120: "is floated left and it"
+        text run at (36,72) width 93: "has no margin."
 layer at (208,66) size 469x164 scrollHeight 165
   RenderBlock {DIV} at (200,0) size 469x164 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 140x19
@@ -122,6 +75,13 @@ layer at (208,66) size 469x164 scrollHeight 165
     RenderBR {BR} at (205,127) size 0x19
     RenderText {#text} at (0,146) size 327x19
       text run at (0,146) width 327: "\x{2013} has a 100px left margin and a 100px right margin;"
+layer at (8,411) size 769x200
+  RenderBlock {DIV} at (0,392) size 769x200 [bgcolor=#C0C0C0]
+    RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 120x55
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 120: "is floated left and it"
+        text run at (36,72) width 93: "has no margin."
 layer at (208,411) size 569x166 scrollHeight 167
   RenderBlock {DIV} at (200,0) size 569x166 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 140x19
@@ -164,6 +124,14 @@ layer at (208,411) size 569x166 scrollHeight 167
     RenderBR {BR} at (52,129) size 0x19
     RenderText {#text} at (0,148) size 164x19
       text run at (0,148) width 164: "\x{2013} has a 200px left margin;"
+layer at (8,756) size 769x200
+  RenderBlock {DIV} at (0,737) size 769x200 [bgcolor=#C0C0C0]
+    RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 125x73
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 119: "is a floated left and"
+        text run at (36,72) width 125: "it has a right margin"
+        text run at (36,90) width 61: "of 100px."
 layer at (308,756) size 369x164 scrollHeight 165
   RenderBlock {DIV} at (300,0) size 369x164 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 140x19
@@ -206,6 +174,18 @@ layer at (308,756) size 369x164 scrollHeight 165
     RenderBR {BR} at (261,127) size 0x19
     RenderText {#text} at (0,146) size 311x19
       text run at (0,146) width 311: "\x{2013} has a 0px left margin and a 100px right margin;"
+layer at (8,1101) size 769x200
+  RenderBlock {DIV} at (0,1082) size 769x200 [bgcolor=#C0C0C0]
+    RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 120x55
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 120: "is floated left and it"
+        text run at (36,72) width 93: "has no margin."
+    RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 128x55
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 128: "is a floated right and"
+        text run at (36,72) width 105: "it has no margin."
 layer at (208,1101) size 369x164 scrollHeight 165
   RenderBlock {DIV} at (200,0) size 369x164 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 140x19
@@ -248,6 +228,18 @@ layer at (208,1101) size 369x164 scrollHeight 165
     RenderBR {BR} at (261,127) size 0x19
     RenderText {#text} at (0,146) size 327x19
       text run at (0,146) width 327: "\x{2013} has a 100px left margin and a 100px right margin;"
+layer at (8,1446) size 769x200
+  RenderBlock {DIV} at (0,1427) size 769x200 [bgcolor=#C0C0C0]
+    RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 120x55
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 120: "is floated left and it"
+        text run at (36,72) width 93: "has no margin."
+    RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 128x55
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 128: "is a floated right and"
+        text run at (36,72) width 105: "it has no margin."
 layer at (208,1446) size 369x164 scrollHeight 165
   RenderBlock {DIV} at (200,0) size 369x164 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 140x19
@@ -290,6 +282,20 @@ layer at (208,1446) size 369x164 scrollHeight 165
     RenderBR {BR} at (261,127) size 0x19
     RenderText {#text} at (0,146) size 173x19
       text run at (0,146) width 173: "\x{2013} has a 200px right margin;"
+layer at (8,1791) size 769x272
+  RenderBlock {DIV} at (0,1772) size 769x272 [bgcolor=#C0C0C0]
+    RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 120x73
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 120: "is floated left and it"
+        text run at (36,72) width 113: "has a right margin"
+        text run at (36,90) width 61: "of 100px."
+    RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
+      RenderText {#text} at (36,36) size 120x73
+        text run at (36,36) width 120: "This yellow square"
+        text run at (36,54) width 117: "is floated right and"
+        text run at (36,72) width 116: "it has a left margin"
+        text run at (36,90) width 61: "of 100px."
 layer at (308,1791) size 169x272 scrollHeight 273
   RenderBlock {DIV} at (300,0) size 169x272 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 140x19
