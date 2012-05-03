@@ -3876,3 +3876,5 @@ BUGWK83954 : fast/forms/date/date-appearance.html = TEXT
 BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html  = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
+
+BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE+TEXT
