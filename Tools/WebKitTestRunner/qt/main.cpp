@@ -75,6 +75,14 @@ void messageHandler(QtMsgType type, const char* message)
 
 int main(int argc, char** argv)
 {
+#if !defined(NDEBUG) && defined(Q_OS_UNIX)
+    if (qgetenv("QT_WEBKIT_PAUSE_UI_PROCESS") == "1") {
+        fprintf(stderr, "Pausing UI process, please attach to PID %d and continue... ", getpid());
+        pause();
+        fprintf(stderr, " OK\n");
+    }
+#endif
+
     // Suppress debug output from Qt if not started with --verbose
     bool suppressQtDebugOutput = true;
     for (int i = 1; i < argc; ++i) {

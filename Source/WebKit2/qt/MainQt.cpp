@@ -48,6 +48,14 @@ static void messageHandler(QtMsgType type, const char* message)
 // to reimplement the handling of command line arguments from QApplication.
 int main(int argc, char** argv)
 {
+#if !defined(NDEBUG) && defined(Q_OS_UNIX)
+    if (qgetenv("QT_WEBKIT_PAUSE_WEB_PROCESS") == "1" || qgetenv("QT_WEBKIT2_DEBUG") == "1") {
+        fprintf(stderr, "Pausing web process, please attach to PID %d and continue... ", getpid());
+        pause();
+        fprintf(stderr, " OK\n");
+    }
+#endif
+
     WebKit::initializeWebKit2Theme();
 
     // Has to be done before QApplication is constructed in case

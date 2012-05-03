@@ -1,3 +1,17 @@
+2012-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Allow the web process and WTR to be paused on startup
+
+        Makes it easier to debug the web process or run-webkit-tests -2, as you
+        have ample time to attach gdb to the process.
+
+        Reviewed by Simon Hausmann.
+
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+        * qt/MainQt.cpp:
+        (main):
+
 2012-05-03  Alexander Færøy  <ahf@0x90.dk>
 
         Rename deviceDPI to devicePixelRatio

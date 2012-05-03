@@ -1,3 +1,17 @@
+2012-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Allow the web process and WTR to be paused on startup
+
+        Makes it easier to debug the web process or run-webkit-tests -2, as you
+        have ample time to attach gdb to the process.
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.setup_environ_for_server):
+        * WebKitTestRunner/qt/main.cpp:
+        (main):
+
 2012-05-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Password protect "Stop build" button

@@ -136,6 +136,10 @@ class QtPort(WebKitPort):
         clean_env = WebKitPort.setup_environ_for_server(self, server_name)
         clean_env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
         self._copy_value_from_environ_if_set(clean_env, 'QT_DRT_WEBVIEW_MODE')
+        self._copy_value_from_environ_if_set(clean_env, 'DYLD_IMAGE_SUFFIX')
+        self._copy_value_from_environ_if_set(clean_env, 'QT_WEBKIT_LOG')
+        self._copy_value_from_environ_if_set(clean_env, 'DISABLE_NI_WARNING')
+        self._copy_value_from_environ_if_set(clean_env, 'QT_WEBKIT_PAUSE_UI_PROCESS')
         return clean_env
 
     # FIXME: We should find a way to share this implmentation with Gtk,

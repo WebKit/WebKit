@@ -141,13 +141,6 @@ static void initializeProxy()
 
 Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
 {
-#ifndef NDEBUG
-    if (qgetenv("QT_WEBKIT2_DEBUG") == "1") {
-        qDebug() << "Waiting 3 seconds for debugger";
-        sleep(3);
-    }
-#endif
-
     initializeProxy();
 
     srandom(time(0));
