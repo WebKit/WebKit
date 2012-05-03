@@ -1297,29 +1297,6 @@ BUGWKGTK SKIP WONTFIX : accessibility/plugin.html = FAIL
 BUGWK71022 : fast/canvas/canvas-composite-image.html = FAIL
 BUGWK71022 : fast/canvas/canvas-composite-canvas.html = FAIL
 
-// REGRESSION(r99195)
-BUGWK70609 : fast/viewport/viewport-121.html = FAIL
-BUGWK70609 : fast/viewport/viewport-122.html = FAIL
-BUGWK70609 : fast/viewport/viewport-125.html = FAIL
-BUGWK70609 : fast/viewport/viewport-129.html = FAIL
-BUGWK70609 : fast/viewport/viewport-18.html = FAIL
-BUGWK70609 : fast/viewport/viewport-36.html = FAIL
-BUGWK70609 : fast/viewport/viewport-37.html = FAIL
-BUGWK70609 : fast/viewport/viewport-43.html = FAIL
-BUGWK70609 : fast/viewport/viewport-46.html = FAIL
-BUGWK70609 : fast/viewport/viewport-52.html = FAIL
-BUGWK70609 : fast/viewport/viewport-53.html = FAIL
-BUGWK70609 : fast/viewport/viewport-54.html = FAIL
-BUGWK70609 : fast/viewport/viewport-55.html = FAIL
-BUGWK70609 : fast/viewport/viewport-60.html = FAIL
-BUGWK70609 : fast/viewport/viewport-75.html = FAIL
-BUGWK70609 : fast/viewport/viewport-76.html = FAIL
-BUGWK70609 : fast/viewport/viewport-83.html = FAIL
-BUGWK70609 : fast/viewport/viewport-86.html = FAIL
-BUGWK70609 : fast/viewport/viewport-warnings-3.html = FAIL
-BUGWK70609 : fast/viewport/viewport-warnings-4.html = FAIL
-BUGWK70609 : fast/viewport/viewport-warnings-6.html = FAIL
-
 // viewport meta tag tests that failed because window.devicePixelRatio is not implemented
 BUGWKGTK : fast/viewport/viewport-133.html = FAIL
 

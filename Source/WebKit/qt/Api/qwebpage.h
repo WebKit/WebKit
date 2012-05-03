@@ -232,7 +232,7 @@ public:
         inline qreal devicePixelRatio() const { return m_devicePixelRatio; }
         inline bool isUserScalable() const { return m_isUserScalable; }
         inline bool isValid() const { return m_isValid; }
-        inline QSize size() const { return m_size; }
+        inline QSizeF size() const { return m_size; }
 
     private:
         QSharedDataPointer<QtViewportAttributesPrivate> d;
@@ -242,7 +242,7 @@ public:
         qreal m_devicePixelRatio;
         bool m_isUserScalable;
         bool m_isValid;
-        QSize m_size;
+        QSizeF m_size;
 
         friend class WebCore::ChromeClientQt;
         friend class QWebPage;

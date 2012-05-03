@@ -534,7 +534,7 @@ void DumpRenderTreeSupportEfl::dumpConfigurationForViewport(Evas_Object* ewkView
             availableSize);
     restrictMinimumScaleFactorToViewportSize(attributes, availableSize);
     restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
-    fprintf(stdout, "viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n", attributes.layoutSize.width(), attributes.layoutSize.height(), attributes.initialScale, attributes.minimumScale, attributes.maximumScale, attributes.userScalable);
+    fprintf(stdout, "viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n", static_cast<int>(attributes.layoutSize.width()), static_cast<int>(attributes.layoutSize.height()), attributes.initialScale, attributes.minimumScale, attributes.maximumScale, attributes.userScalable);
 }
 
 void DumpRenderTreeSupportEfl::deliverAllMutationsIfNecessary()

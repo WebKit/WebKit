@@ -27,7 +27,7 @@
 #ifndef ViewportArguments_h
 #define ViewportArguments_h
 
-#include "IntSize.h"
+#include "FloatSize.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ enum ViewportErrorCode {
 };
 
 struct ViewportAttributes {
-    IntSize layoutSize;
+    FloatSize layoutSize;
 
     float devicePixelRatio;
 

@@ -811,8 +811,8 @@ QString DumpRenderTreeSupportQt::viewportAsText(QWebPage* page, int deviceDPI, c
 
     QString res;
     res = res.sprintf("viewport size %dx%d scale %f with limits [%f, %f] and userScalable %f\n",
-            conf.layoutSize.width(),
-            conf.layoutSize.height(),
+            static_cast<int>(conf.layoutSize.width()),
+            static_cast<int>(conf.layoutSize.height()),
             conf.initialScale,
             conf.minimumScale,
             conf.maximumScale,
