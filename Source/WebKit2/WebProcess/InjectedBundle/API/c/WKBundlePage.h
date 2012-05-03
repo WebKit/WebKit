@@ -283,20 +283,26 @@ typedef void (*WKBundlePageTextDidChangeInTextFieldCallback)(WKBundlePageRef pag
 typedef void (*WKBundlePageTextDidChangeInTextAreaCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlTextAreaElementHandle, WKBundleFrameRef frame, const void* clientInfo);
 typedef bool (*WKBundlePageShouldPerformActionInTextFieldCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlInputElementHandle, WKInputFieldActionType actionType, WKBundleFrameRef frame, const void* clientInfo);
 typedef void (*WKBundlePageWillSubmitFormCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlFormElementHandle, WKBundleFrameRef frame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef* userData, const void* clientInfo);
+typedef void (*WKBundlePageWillSendSubmitEventCallback)(WKBundlePageRef page, WKBundleNodeHandleRef htmlFormElementHandle, WKBundleFrameRef frame, WKBundleFrameRef sourceFrame, WKDictionaryRef values, const void* clientInfo);
 
 struct WKBundlePageFormClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+    
+    // Version 0.
     WKBundlePageTextFieldDidBeginEditingCallback                        textFieldDidBeginEditing;
     WKBundlePageTextFieldDidEndEditingCallback                          textFieldDidEndEditing;
     WKBundlePageTextDidChangeInTextFieldCallback                        textDidChangeInTextField;
     WKBundlePageTextDidChangeInTextAreaCallback                         textDidChangeInTextArea;
     WKBundlePageShouldPerformActionInTextFieldCallback                  shouldPerformActionInTextField;
     WKBundlePageWillSubmitFormCallback                                  willSubmitForm;
+    
+    // Version 1.
+    WKBundlePageWillSendSubmitEventCallback                             willSendSubmitEvent;
 };
 typedef struct WKBundlePageFormClient WKBundlePageFormClient;
 
-enum { kWKBundlePageFormClientCurrentVersion = 0 };
+enum { kWKBundlePageFormClientCurrentVersion = 1 };
 
 // ContextMenu client
 typedef void (*WKBundlePageGetContextMenuFromDefaultContextMenuCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, WKTypeRef* userData, const void* clientInfo);

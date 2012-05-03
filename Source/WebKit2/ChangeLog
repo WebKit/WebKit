@@ -1,3 +1,40 @@
+2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebFrameLoaderClient::dispatchWillSendSubmitEvent() needs to be
+        implemented for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=84304
+
+        Reviewed by Jessie Berlin.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Declare willSendSubmitEvent on WKBundlePageFormClient.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::willSendSubmitEvent):
+        From the String pair vector, create a map from control name to value.
+        Call the client's willSendSubmitEvent.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        Declare willSendSubmitEvent.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSendSubmitEvent):
+        Call the injected bundle form client's willSendSubmitEvent.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        Un-stub willSendSubmitEvent.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        Set the interface sizes for WKBundlePageFormClient; version 1 includes
+        willSendSubmitEvent.
+
+        * Shared/APIClientTraits.h:
+        Declare a specialization for WKBundlePageFormClient.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Bump the WKBundlePageFormClient version number.
+
 2012-05-03  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport

@@ -1,3 +1,34 @@
+2012-05-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        WebFrameLoaderClient::dispatchWillSendSubmitEvent() needs to be
+        implemented for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=84304
+
+        Reviewed by Jessie Berlin.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Added new files to project.
+
+        * TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        Look for the "DidReceiveWillSendSubmitEvent" message. The message body
+        will be the dictionary of form control names and values passed to the
+        injected bundle's willSendSubmitEvent handler; look for the pairs
+        "textField" -> "text field" and "passwordField" -> "password field".
+        Check that "hiddenField" is not included.
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp: Added.
+        (TestWebKitAPI::willSendSubmitEvent):
+        Post a message to the TestWebKitAPI process with the dictionary of form
+        control names and values that we received.
+        (TestWebKitAPI::WillSendSubmitEventTest::WillSendSubmitEventTest):
+        (TestWebKitAPI::WillSendSubmitEventTest::didCreatePage):
+        Set up the page's form client.
+
+        * TestWebKitAPI/Tests/WebKit2/auto-submitting-form.html: Added.
+
 2012-05-03  Eric Seidel  <eric@webkit.org>
 
         Remove dead code from build-webkit for working around old XCode dependency bug

@@ -739,8 +739,17 @@ void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& 
     webPage->send(Messages::WebPageProxy::UnableToImplementPolicy(m_frame->frameID(), error, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-void WebFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<FormState>)
+void WebFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<FormState> prpFormState)
 {
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    RefPtr<FormState> formState = prpFormState;
+    HTMLFormElement* form = formState->form();
+    WebFrame* sourceFrame = static_cast<WebFrameLoaderClient*>(formState->sourceDocument()->frame()->loader()->client())->webFrame();
+
+    webPage->injectedBundleFormClient().willSendSubmitEvent(webPage, form, m_frame, sourceFrame, formState->textFieldValues());
 }
 
 void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> prpFormState)

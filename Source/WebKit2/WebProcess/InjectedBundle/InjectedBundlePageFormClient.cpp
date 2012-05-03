@@ -83,6 +83,21 @@ bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page,
     return m_client.shouldPerformActionInTextField(toAPI(page), toAPI(nodeHandle.get()), actionType, toAPI(frame), m_client.clientInfo);
 }
 
+void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String> >& values)
+{
+    if (!m_client.willSendSubmitEvent)
+        return;
+
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(formElement);
+
+    ImmutableDictionary::MapType map;
+    for (size_t i = 0; i < values.size(); ++i)
+        map.set(values[i].first, WebString::create(values[i].second));
+    RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::adopt(map);
+
+    m_client.willSendSubmitEvent(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), m_client.clientInfo);
+}
+
 void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String> >& values, RefPtr<APIObject>& userData)
 {
     if (!m_client.willSubmitForm)

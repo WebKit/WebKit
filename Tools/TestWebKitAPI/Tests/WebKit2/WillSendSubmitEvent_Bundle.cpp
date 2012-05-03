@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClientTraits_h
-#define APIClientTraits_h
+#include "config.h"
+#include "InjectedBundleTest.h"
 
-#include "WKBundlePage.h"
-#include "WKPage.h"
+#include "PlatformUtilities.h"
+#include <WebKit2/WKBundlePage.h>
 
-namespace WebKit {
+namespace TestWebKitAPI {
 
-template <typename ClientInterface> struct APIClientTraits {
-    static const size_t interfaceSizesByVersion[1];
-};
-template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
+class WillSendSubmitEventTest : public InjectedBundleTest {
+public:
+    WillSendSubmitEventTest(const std::string& identifier);
 
-template<> struct APIClientTraits<WKBundlePageLoaderClient> {
-    static const size_t interfaceSizesByVersion[2];
+    virtual void didCreatePage(WKBundleRef, WKBundlePageRef);
 };
 
-template<> struct APIClientTraits<WKBundlePageResourceLoadClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
+static InjectedBundleTest::Register<WillSendSubmitEventTest> registrar("WillSendSubmitEventTest");
 
-template<> struct APIClientTraits<WKBundlePageFullScreenClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
+static void willSendSubmitEvent(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleFrameRef, WKBundleFrameRef, WKDictionaryRef values, const void*)
+{
+    WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("DidReceiveWillSendSubmitEvent").get(), values);
+}
 
-template<> struct APIClientTraits<WKPageContextMenuClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
+WillSendSubmitEventTest::WillSendSubmitEventTest(const std::string& identifier)
+    : InjectedBundleTest(identifier)
+{
+}
 
-template<> struct APIClientTraits<WKPageLoaderClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
+void WillSendSubmitEventTest::didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
+{
+    WKBundlePageFormClient formClient;
+    memset(&formClient, 0, sizeof(formClient));
+    
+    formClient.version = 1;
+    formClient.clientInfo = this;
+    formClient.willSendSubmitEvent = willSendSubmitEvent;
+    
+    WKBundlePageSetFormClient(page, &formClient);
+}
 
-template<> struct APIClientTraits<WKPageUIClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFormClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-} // namespace WebKit
-
-#endif // APIClientTraits_h
+} // namespace TestWebKitAPI
