@@ -40,7 +40,7 @@ class PNGChecker(object):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
         self._host = host or SystemHost()
-        self._fs = host.filesystem
+        self._fs = self._host.filesystem
         self._detector = scm or SCMDetector(self._fs, self._host.executive).detect_scm_system(self._fs.getcwd())
 
     def check(self, inline=None):

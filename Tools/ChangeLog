@@ -1,3 +1,13 @@
+2012-05-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        webkitpy: Style checker broken when committing a PNG
+        https://bugs.webkit.org/show_bug.cgi?id=85504
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/style/checkers/png.py:
+        (PNGChecker.__init__):
+
 2012-05-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix another call to join(), similar to the ones landed
