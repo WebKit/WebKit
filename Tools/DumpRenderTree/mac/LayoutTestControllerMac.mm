@@ -1225,3 +1225,13 @@ void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
 {
     // FIXME: Implement.
 }
+
+void LayoutTestController::resetPageVisibility()
+{
+    // FIXME: Implement.
+}
+
+void LayoutTestController::setPageVisibility(const char*)
+{
+    // FIXME: Implement.
+}

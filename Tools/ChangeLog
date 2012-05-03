@@ -1,3 +1,11 @@
+2012-05-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Fix mac build, it was missing setPageVisibility/resetPageVisibility stub implementations.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::resetPageVisibility):
+        (LayoutTestController::setPageVisibility):
+
 2012-05-02  Alexander Færøy  <ahf@0x90.dk>
 
         Rename deviceDPI to devicePixelRatio
