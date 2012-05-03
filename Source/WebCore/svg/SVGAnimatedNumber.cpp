@@ -88,11 +88,14 @@ void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigne
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    float& fromNumber = from->number();
-    float& toNumber = to->number();
-    float& toAtEndOfDurationNumber = toAtEndOfDuration->number();
+    float fromNumber = m_animationElement->animationMode() == ToAnimation ? animated->number() : from->number();
+    float toNumber = to->number();
+    float toAtEndOfDurationNumber = toAtEndOfDuration->number();
     float& animatedNumber = animated->number();
-    m_animationElement->adjustFromToValues<float>(parseNumberFromString, fromNumber, toNumber, animatedNumber, percentage, m_contextElement);
+
+    // Apply CSS inheritance rules.
+    m_animationElement->adjustForInheritance<float>(parseNumberFromString, m_animationElement->fromPropertyValueType(), fromNumber, m_contextElement);
+    m_animationElement->adjustForInheritance<float>(parseNumberFromString, m_animationElement->toPropertyValueType(), toNumber, m_contextElement);
 
     m_animationElement->animateAdditiveNumber(percentage, repeatCount, fromNumber, toNumber, toAtEndOfDurationNumber, animatedNumber);
 }

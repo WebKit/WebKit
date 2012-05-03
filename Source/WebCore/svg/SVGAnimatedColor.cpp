@@ -68,11 +68,14 @@ void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    Color& fromColor = from->color();
-    Color& toColor = to->color();
-    Color& toAtEndOfDurationColor = toAtEndOfDuration->color();
+    Color fromColor = m_animationElement->animationMode() == ToAnimation ? animated->color() : from->color();
+    Color toColor = to->color();
+    const Color& toAtEndOfDurationColor = toAtEndOfDuration->color();
     Color& animatedColor = animated->color();
-    m_animationElement->adjustFromToValues<Color>(parseColorFromString, fromColor, toColor, animatedColor, percentage, m_contextElement);
+
+    // Apply CSS inheritance rules.
+    m_animationElement->adjustForInheritance<Color>(parseColorFromString, m_animationElement->fromPropertyValueType(), fromColor, m_contextElement);
+    m_animationElement->adjustForInheritance<Color>(parseColorFromString, m_animationElement->toPropertyValueType(), toColor, m_contextElement);
 
     // Apply <animateColor> rules.
     if (m_animationElement->fromPropertyValueType() == CurrentColorValue)

@@ -112,14 +112,21 @@ void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned 
     SVGPathByteStream* toAtEndOfDurationPath = toAtEndOfDuration->path();
     SVGPathByteStream* animatedPath = animated->path();
 
-    // Pass false to 'resizeAnimatedListIfNeeded' here, as the path animation is not a regular Vector<SVGXXX> type, but a SVGPathByteStream, that works differently.
-    if (!m_animationElement->adjustFromToListValues<SVGPathByteStream>(0, *fromPath, *toPath, *animatedPath, percentage, m_contextElement, false))
-        return;
+    OwnPtr<SVGPathByteStream> underlyingPath;
+    bool isToAnimation = m_animationElement->animationMode() == ToAnimation;
+    if (isToAnimation) {
+        underlyingPath = animatedPath->copy();
+        fromPath = underlyingPath.get();
+    }
 
     // Cache the current animated value before the buildAnimatedSVGPathByteStream() clears animatedPath.
     OwnPtr<SVGPathByteStream> lastAnimatedPath;
-    if (!fromPath->size() || (m_animationElement->isAdditive() && m_animationElement->animationMode() != ToAnimation))
+    if (!fromPath->size() || (m_animationElement->isAdditive() && !isToAnimation))
         lastAnimatedPath = animatedPath->copy();
+
+    // Pass false to 'resizeAnimatedListIfNeeded' here, as the path animation is not a regular Vector<SVGXXX> type, but a SVGPathByteStream, that works differently.
+    if (!m_animationElement->adjustFromToListValues<SVGPathByteStream>(*fromPath, *toPath, *animatedPath, percentage, false))
+        return;
 
     buildAnimatedSVGPathByteStream(fromPath, toPath, animatedPath, percentage);
 

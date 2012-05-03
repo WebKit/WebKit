@@ -150,10 +150,9 @@ void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, un
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    unsigned& fromEnumeration = from->enumeration();
-    unsigned& toEnumeration = to->enumeration();
+    unsigned fromEnumeration = m_animationElement->animationMode() == ToAnimation ? animated->enumeration() : from->enumeration();
+    unsigned toEnumeration = to->enumeration();
     unsigned& animatedEnumeration = animated->enumeration();
-    m_animationElement->adjustFromToValues<unsigned>(0, fromEnumeration, toEnumeration, animatedEnumeration, percentage, m_contextElement);
 
     m_animationElement->animateDiscreteType<unsigned>(percentage, fromEnumeration, toEnumeration, animatedEnumeration);
 }

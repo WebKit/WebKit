@@ -78,10 +78,13 @@ void SVGAnimatedStringAnimator::calculateAnimatedValue(float percentage, unsigne
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    String& fromString = from->string();
-    String& toString = to->string();
+    String fromString = from->string();
+    String toString = to->string();
     String& animatedString = animated->string();
-    m_animationElement->adjustFromToValues<String>(parseStringFromString, fromString, toString, animatedString, percentage, m_contextElement);
+
+    // Apply CSS inheritance rules.
+    m_animationElement->adjustForInheritance<String>(parseStringFromString, m_animationElement->fromPropertyValueType(), fromString, m_contextElement);
+    m_animationElement->adjustForInheritance<String>(parseStringFromString, m_animationElement->toPropertyValueType(), toString, m_contextElement);
 
     m_animationElement->animateDiscreteType<String>(percentage, fromString, toString, animatedString);
 }

@@ -40,9 +40,10 @@ private:
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual void resetToBaseValue();
+    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString);
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, const String& toAtEndOfDurationString, SVGSMILElement* resultElement);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement);
     virtual void applyResultsToTarget();
     virtual float calculateDistance(const String& fromString, const String& toString);
     virtual Path animationPath() const;
@@ -55,9 +56,12 @@ private:
     RotateMode rotateMode() const;
     void buildTransformForProgress(AffineTransform*, float percentage);
 
+    bool m_hasToPointAtEndOfDuration;
+
     // Note: we do not support percentage values for to/from coords as the spec implies we should (opera doesn't either)
     FloatPoint m_fromPoint;
     FloatPoint m_toPoint;
+    FloatPoint m_toPointAtEndOfDuration;
 
     Path m_path;
 };

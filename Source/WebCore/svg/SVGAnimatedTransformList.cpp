@@ -79,14 +79,14 @@ void SVGAnimatedTransformListAnimator::addAnimatedTypes(SVGAnimatedType* from, S
     ASSERT(from->type() == AnimatedTransformList);
     ASSERT(from->type() == to->type());
 
-    SVGTransformList& fromTransformList = from->transformList();
+    const SVGTransformList& fromTransformList = from->transformList();
     SVGTransformList& toTransformList = to->transformList();
     unsigned fromTransformListSize = fromTransformList.size();
     if (!fromTransformListSize || fromTransformListSize != toTransformList.size())
         return;
 
     ASSERT(fromTransformListSize == 1);
-    SVGTransform& fromTransform = fromTransformList[0];
+    const SVGTransform& fromTransform = fromTransformList[0];
     SVGTransform& toTransform = toTransformList[0];
 
     ASSERT(fromTransform.type() == toTransform.type());
@@ -101,13 +101,13 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
     // ‘to’ attribute value, which conflicts mathematically with the requirement for additive transform animations
     // to be post-multiplied. As a consequence, in SVG 1.1 the behavior of to animations for ‘animateTransform’ is undefined.
     // FIXME: This is not taken into account yet.
-    SVGTransformList& fromTransformList = from->transformList();
-    SVGTransformList& toTransformList = to->transformList();
-    SVGTransformList& toAtEndOfDurationTransformList = toAtEndOfDuration->transformList();
+    const SVGTransformList& fromTransformList = m_animationElement->animationMode() == ToAnimation ? animated->transformList() : from->transformList();
+    const SVGTransformList& toTransformList = to->transformList();
+    const SVGTransformList& toAtEndOfDurationTransformList = toAtEndOfDuration->transformList();
     SVGTransformList& animatedTransformList = animated->transformList();
 
     // Pass false to 'resizeAnimatedListIfNeeded' here, as the special post-multiplication behavior of <animateTransform> needs to be respected below.
-    if (!m_animationElement->adjustFromToListValues<SVGTransformList>(0, fromTransformList, toTransformList, animatedTransformList, percentage, m_contextElement, false))
+    if (!m_animationElement->adjustFromToListValues<SVGTransformList>(fromTransformList, toTransformList, animatedTransformList, percentage, false))
         return;
 
     // Never resize the animatedTransformList to the toTransformList size, instead either clear the list or append to it.
@@ -115,13 +115,12 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
         animatedTransformList.clear();
 
     unsigned fromTransformListSize = fromTransformList.size();
-    SVGTransform& toTransform = toTransformList[0];
+    const SVGTransform& toTransform = toTransformList[0];
     SVGTransform effectiveFrom = fromTransformListSize ? fromTransformList[0] : SVGTransform(toTransform.type(), SVGTransform::ConstructZeroTransform);
     SVGTransform currentTransform = SVGTransformDistance(effectiveFrom, toTransform).scaledDistance(percentage).addToSVGTransform(effectiveFrom);
-    if (m_animationElement->isAccumulated() && repeatCount) {
-        SVGTransform& toAtEndOfDurationTransform = toAtEndOfDurationTransformList[0];
-        animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, toAtEndOfDurationTransform, repeatCount));
-    } else
+    if (m_animationElement->isAccumulated() && repeatCount)
+        animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, toAtEndOfDurationTransformList[0], repeatCount));
+    else
         animatedTransformList.append(currentTransform);
 }
 

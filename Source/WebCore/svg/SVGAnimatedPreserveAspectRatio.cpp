@@ -73,10 +73,9 @@ void SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue(float percen
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    SVGPreserveAspectRatio& fromPreserveAspectRatio = from->preserveAspectRatio();
-    SVGPreserveAspectRatio& toPreserveAspectRatio = to->preserveAspectRatio();
+    const SVGPreserveAspectRatio& fromPreserveAspectRatio = m_animationElement->animationMode() == ToAnimation ? animated->preserveAspectRatio() : from->preserveAspectRatio();
+    const SVGPreserveAspectRatio& toPreserveAspectRatio = to->preserveAspectRatio();
     SVGPreserveAspectRatio& animatedPreserveAspectRatio = animated->preserveAspectRatio();
-    m_animationElement->adjustFromToValues<SVGPreserveAspectRatio>(0, fromPreserveAspectRatio, toPreserveAspectRatio, animatedPreserveAspectRatio, percentage, m_contextElement);
 
     m_animationElement->animateDiscreteType<SVGPreserveAspectRatio>(percentage, fromPreserveAspectRatio, toPreserveAspectRatio, animatedPreserveAspectRatio);
 }

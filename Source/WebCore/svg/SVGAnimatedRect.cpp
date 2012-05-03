@@ -77,11 +77,10 @@ void SVGAnimatedRectAnimator::calculateAnimatedValue(float percentage, unsigned 
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    FloatRect& fromRect = from->rect();
-    FloatRect& toRect = to->rect();
-    FloatRect& toAtEndOfDurationRect = toAtEndOfDuration->rect();
+    const FloatRect& fromRect = m_animationElement->animationMode() == ToAnimation ? animated->rect() : from->rect();
+    const FloatRect& toRect = to->rect();
+    const FloatRect& toAtEndOfDurationRect = toAtEndOfDuration->rect();
     FloatRect& animatedRect = animated->rect();
-    m_animationElement->adjustFromToValues<FloatRect>(0, fromRect, toRect, animatedRect, percentage, m_contextElement);
 
     float animatedX = animatedRect.x();
     float animatedY = animatedRect.y();

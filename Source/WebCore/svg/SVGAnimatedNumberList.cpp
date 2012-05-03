@@ -69,7 +69,7 @@ void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
     ASSERT(from->type() == AnimatedNumberList);
     ASSERT(from->type() == to->type());
 
-    SVGNumberList& fromNumberList = from->numberList();
+    const SVGNumberList& fromNumberList = from->numberList();
     SVGNumberList& toNumberList = to->numberList();
 
     unsigned fromNumberListSize = fromNumberList.size();
@@ -83,13 +83,12 @@ void SVGAnimatedNumberListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
 void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
-    ASSERT(m_contextElement);
 
-    SVGNumberList& fromNumberList = from->numberList();
-    SVGNumberList& toNumberList = to->numberList();
-    SVGNumberList& toAtEndOfDurationNumberList = toAtEndOfDuration->numberList();
+    const SVGNumberList& fromNumberList = m_animationElement->animationMode() == ToAnimation ? animated->numberList() : from->numberList();
+    const SVGNumberList& toNumberList = to->numberList();
+    const SVGNumberList& toAtEndOfDurationNumberList = toAtEndOfDuration->numberList();
     SVGNumberList& animatedNumberList = animated->numberList();
-    if (!m_animationElement->adjustFromToListValues<SVGNumberList>(0, fromNumberList, toNumberList, animatedNumberList, percentage, m_contextElement))
+    if (!m_animationElement->adjustFromToListValues<SVGNumberList>(fromNumberList, toNumberList, animatedNumberList, percentage))
         return;
 
     unsigned fromNumberListSize = fromNumberList.size();

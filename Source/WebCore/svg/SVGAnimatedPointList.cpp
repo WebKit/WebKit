@@ -70,7 +70,7 @@ void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAn
     ASSERT(from->type() == AnimatedPoints);
     ASSERT(from->type() == to->type());
 
-    SVGPointList& fromPointList = from->pointList();
+    const SVGPointList& fromPointList = from->pointList();
     SVGPointList& toPointList = to->pointList();
 
     unsigned fromPointListSize = fromPointList.size();
@@ -84,13 +84,12 @@ void SVGAnimatedPointListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAn
 void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
 {
     ASSERT(m_animationElement);
-    ASSERT(m_contextElement);
 
-    SVGPointList& fromPointList = from->pointList();
-    SVGPointList& toPointList = to->pointList();
-    SVGPointList& toAtEndOfDurationPointList = toAtEndOfDuration->pointList();
+    const SVGPointList& fromPointList = m_animationElement->animationMode() == ToAnimation ? animated->pointList() : from->pointList();
+    const SVGPointList& toPointList = to->pointList();
+    const SVGPointList& toAtEndOfDurationPointList = toAtEndOfDuration->pointList();
     SVGPointList& animatedPointList = animated->pointList();
-    if (!m_animationElement->adjustFromToListValues<SVGPointList>(0, fromPointList, toPointList, animatedPointList, percentage, m_contextElement))
+    if (!m_animationElement->adjustFromToListValues<SVGPointList>(fromPointList, toPointList, animatedPointList, percentage))
         return;
 
     unsigned fromPointListSize = fromPointList.size();

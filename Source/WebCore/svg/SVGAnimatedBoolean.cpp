@@ -79,10 +79,9 @@ void SVGAnimatedBooleanAnimator::calculateAnimatedValue(float percentage, unsign
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    bool& fromBoolean = from->boolean();
-    bool& toBoolean = to->boolean();
+    bool fromBoolean = m_animationElement->animationMode() == ToAnimation ? animated->boolean() : from->boolean();
+    bool toBoolean = to->boolean();
     bool& animatedBoolean = animated->boolean();
-    m_animationElement->adjustFromToValues<bool>(0, fromBoolean, toBoolean, animatedBoolean, percentage, m_contextElement);
 
     m_animationElement->animateDiscreteType<bool>(percentage, fromBoolean, toBoolean, animatedBoolean);
 }

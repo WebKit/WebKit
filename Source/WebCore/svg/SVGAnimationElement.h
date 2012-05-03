@@ -115,28 +115,8 @@ public:
     }
 
     template<typename AnimatedType>
-    void adjustFromToValues(AnimatedType (*parseTypeFromString)(SVGAnimationElement*, const String&),
-                            AnimatedType& fromType, AnimatedType& toType, AnimatedType& animatedType,
-                            float& percentage, SVGElement* contextElement)
+    bool adjustFromToListValues(const AnimatedType& fromList, const AnimatedType& toList, AnimatedType& animatedList, float percentage, bool resizeAnimatedListIfNeeded = true)
     {
-        // To-animation uses contributions from the lower priority animations as the base value.
-        if (animationMode() == ToAnimation)
-            fromType = AnimatedType(animatedType);
-
-        adjustForInheritance<AnimatedType>(parseTypeFromString, m_fromPropertyValueType, fromType, contextElement);
-        adjustForInheritance<AnimatedType>(parseTypeFromString, m_toPropertyValueType, toType, contextElement);
-
-        if (calcMode() == CalcModeDiscrete)
-            percentage = percentage < 0.5 ? 0 : 1;
-    }
-
-    template<typename AnimatedType>
-    bool adjustFromToListValues(AnimatedType (*parseTypeFromString)(SVGAnimationElement*, const String&), 
-                                AnimatedType& fromList, AnimatedType& toList, AnimatedType& animatedList,
-                                float& percentage, SVGElement* contextElement, bool resizeAnimatedListIfNeeded = true)
-    {
-        adjustFromToValues(parseTypeFromString, fromList, toList, animatedList, percentage, contextElement);
-
         // If no 'to' value is given, nothing to animate.
         unsigned toListSize = toList.size();
         if (!toListSize)
@@ -147,9 +127,9 @@ public:
         if (fromListSize != toListSize && fromListSize) {
             if (percentage < 0.5) {
                 if (animationMode() != ToAnimation)
-                    animatedList = fromList;
+                    animatedList = AnimatedType(fromList);
             } else
-                animatedList = toList;
+                animatedList = AnimatedType(toList);
 
             return false;
         }
@@ -162,7 +142,7 @@ public:
     }
 
     template<typename AnimatedType>
-    void animateDiscreteType(float percentage, AnimatedType& fromType, AnimatedType& toType, AnimatedType& animatedType)
+    void animateDiscreteType(float percentage, const AnimatedType& fromType, const AnimatedType& toType, AnimatedType& animatedType)
     {
         if ((animationMode() == FromToAnimation && percentage > 0.5) || animationMode() == ToAnimation || percentage == 1) {
             animatedType = AnimatedType(toType);
@@ -222,13 +202,14 @@ protected:
 private:
     virtual void animationAttributeChanged() OVERRIDE;
 
+    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
-    virtual void calculateAnimatedValue(float percent, unsigned repeatCount, const String& toAtEndOfDurationString, SVGSMILElement* resultElement) = 0;
+    virtual void calculateAnimatedValue(float percent, unsigned repeatCount, SVGSMILElement* resultElement) = 0;
     virtual float calculateDistance(const String& /*fromString*/, const String& /*toString*/) { return -1.f; }
     virtual Path animationPath() const { return Path(); }
 
-    void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to, String& toAtEndOfDuration);
+    void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
     void calculateKeyTimesForCalcModePaced();
     float calculatePercentFromKeyPoints(float percent) const;
     void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;

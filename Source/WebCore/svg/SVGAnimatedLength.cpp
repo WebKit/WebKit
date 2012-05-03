@@ -78,7 +78,7 @@ void SVGAnimatedLengthAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnima
     ASSERT(from->type() == to->type());
 
     SVGLengthContext lengthContext(m_contextElement);
-    SVGLength& fromLength = from->length();
+    const SVGLength& fromLength = from->length();
     SVGLength& toLength = to->length();
 
     ExceptionCode ec = 0;
@@ -96,11 +96,14 @@ void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigne
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    SVGLength& fromSVGLength = from->length();
-    SVGLength& toSVGLength = to->length();
-    SVGLength& toAtEndOfDurationSVGLength = toAtEndOfDuration->length();
+    SVGLength fromSVGLength = m_animationElement->animationMode() == ToAnimation ? animated->length() : from->length();
+    SVGLength toSVGLength = to->length();
+    const SVGLength& toAtEndOfDurationSVGLength = toAtEndOfDuration->length();
     SVGLength& animatedSVGLength = animated->length();
-    m_animationElement->adjustFromToValues<SVGLength>(parseLengthFromString, fromSVGLength, toSVGLength, animatedSVGLength, percentage, m_contextElement);
+
+    // Apply CSS inheritance rules.
+    m_animationElement->adjustForInheritance<SVGLength>(parseLengthFromString, m_animationElement->fromPropertyValueType(), fromSVGLength, m_contextElement);
+    m_animationElement->adjustForInheritance<SVGLength>(parseLengthFromString, m_animationElement->toPropertyValueType(), toSVGLength, m_contextElement);
 
     SVGLengthContext lengthContext(m_contextElement);
     float animatedNumber = animatedSVGLength.value(lengthContext);

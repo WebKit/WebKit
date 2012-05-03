@@ -92,7 +92,7 @@ AnimatedPropertyType SVGAnimateElement::determineAnimatedPropertyType(SVGElement
     return type;
 }
 
-void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeatCount, const String& toAtEndOfDurationString, SVGSMILElement* resultElement)
+void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement)
 {
     ASSERT(resultElement);
     SVGElement* targetElement = this->targetElement();
@@ -122,6 +122,9 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     if (hasTagName(SVGNames::setTag))
         percentage = 1;
 
+    if (calcMode() == CalcModeDiscrete)
+        percentage = percentage < 0.5 ? 0 : 1;
+
     // Target element might have changed.
     m_animator->setContextElement(targetElement);
 
@@ -132,14 +135,17 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     if (!m_animatedProperties.isEmpty())
         m_animator->animValWillChange(m_animatedProperties);
 
-    if (toAtEndOfDurationString.isEmpty()) {
-        m_animator->calculateAnimatedValue(percentage, repeatCount, m_fromType.get(), m_toType.get(), m_toType.get(), resultAnimationElement->m_animatedType.get());
-        return;
-    }
-
     // Values-animation accumulates using the last values entry corresponding to the end of duration time.
-    OwnPtr<SVGAnimatedType> toAtEndOfDurationType = m_animator->constructFromString(toAtEndOfDurationString);
-    m_animator->calculateAnimatedValue(percentage, repeatCount, m_fromType.get(), m_toType.get(), toAtEndOfDurationType.get(), resultAnimationElement->m_animatedType.get());
+    SVGAnimatedType* toAtEndOfDurationType = m_toAtEndOfDurationType ? m_toAtEndOfDurationType.get() : m_toType.get();
+    m_animator->calculateAnimatedValue(percentage, repeatCount, m_fromType.get(), m_toType.get(), toAtEndOfDurationType, resultAnimationElement->m_animatedType.get());
+}
+
+bool SVGAnimateElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
+{
+    if (toAtEndOfDurationString.isEmpty())
+        return false;
+    m_toAtEndOfDurationType = ensureAnimator()->constructFromString(toAtEndOfDurationString);
+    return true;
 }
 
 bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const String& toString)
@@ -284,6 +290,7 @@ void SVGAnimateElement::targetElementWillChange(SVGElement* currentTarget, SVGEl
     m_animatedType.clear();
     m_fromType.clear();
     m_toType.clear();
+    m_toAtEndOfDurationType.clear();
     m_animator.clear();
     m_animatedPropertyType = newTarget ? determineAnimatedPropertyType(newTarget) : AnimatedString;
 }

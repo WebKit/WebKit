@@ -44,6 +44,7 @@ using namespace SVGNames;
 
 inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tagName, Document* document)
     : SVGAnimationElement(tagName, document)
+    , m_hasToPointAtEndOfDuration(false)
 {
     ASSERT(hasTagName(animateMotionTag));
 }
@@ -173,8 +174,16 @@ void SVGAnimateMotionElement::resetToBaseValue()
     transform->makeIdentity();
 }
 
+bool SVGAnimateMotionElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
+{
+    parsePoint(toAtEndOfDurationString, m_toPointAtEndOfDuration);
+    m_hasToPointAtEndOfDuration = true;
+    return true;
+}
+
 bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString, const String& toString)
 {
+    m_hasToPointAtEndOfDuration = false;
     parsePoint(fromString, m_fromPoint);
     parsePoint(toString, m_toPoint);
     return true;
@@ -182,6 +191,7 @@ bool SVGAnimateMotionElement::calculateFromAndToValues(const String& fromString,
     
 bool SVGAnimateMotionElement::calculateFromAndByValues(const String& fromString, const String& byString)
 {
+    m_hasToPointAtEndOfDuration = false;
     if (animationMode() == ByAnimation && !isAdditive())
         return false;
     parsePoint(fromString, m_fromPoint);
@@ -211,7 +221,7 @@ void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transfo
     transform->rotate(angle);
 }
 
-void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeatCount, const String& toAtEndOfDurationString, SVGSMILElement*)
+void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement*)
 {
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
@@ -228,8 +238,8 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
 
     if (animationMode() != PathAnimation) {
         FloatPoint toPointAtEndOfDuration = m_toPoint;
-        if (isAccumulated() && repeatCount && !toAtEndOfDurationString.isEmpty())
-            parsePoint(toAtEndOfDurationString, toPointAtEndOfDuration);
+        if (isAccumulated() && repeatCount && m_hasToPointAtEndOfDuration)
+            toPointAtEndOfDuration = m_toPointAtEndOfDuration;
 
         float animatedX = 0;
         animateAdditiveNumber(percentage, repeatCount, m_fromPoint.x(), m_toPoint.x(), toPointAtEndOfDuration.x(), animatedX);

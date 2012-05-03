@@ -22,17 +22,8 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedType.h"
 
-#include "FloatRect.h"
-#include "SVGAngle.h"
-#include "SVGColor.h"
-#include "SVGLength.h"
-#include "SVGLengthList.h"
-#include "SVGNumberList.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathByteStream.h"
-#include "SVGPointList.h"
-#include "SVGPreserveAspectRatio.h"
-#include "SVGTransformList.h"
 
 namespace WebCore {
 
@@ -235,108 +226,6 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createTransformList(SVGTransformLis
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedTransformList));
     animatedType->m_data.transformList = transformList;
     return animatedType.release();
-}
-
-std::pair<SVGAngle, unsigned>& SVGAnimatedType::angleAndEnumeration()
-{
-    ASSERT(m_type == AnimatedAngle);
-    return *m_data.angleAndEnumeration;
-}
-
-bool& SVGAnimatedType::boolean()
-{
-    ASSERT(m_type == AnimatedBoolean);
-    return *m_data.boolean;
-}
-
-Color& SVGAnimatedType::color()
-{
-    ASSERT(m_type == AnimatedColor);
-    return *m_data.color;
-}
-
-unsigned& SVGAnimatedType::enumeration()
-{
-    ASSERT(m_type == AnimatedEnumeration);
-    return *m_data.enumeration;
-}
-
-int& SVGAnimatedType::integer()
-{
-    ASSERT(m_type == AnimatedInteger);
-    return *m_data.integer;
-}
-
-pair<int, int>& SVGAnimatedType::integerOptionalInteger()
-{
-    ASSERT(m_type == AnimatedIntegerOptionalInteger);
-    return *m_data.integerOptionalInteger;        
-}
-
-SVGLength& SVGAnimatedType::length()
-{
-    ASSERT(m_type == AnimatedLength);
-    return *m_data.length;
-}
-
-SVGLengthList& SVGAnimatedType::lengthList()
-{
-    ASSERT(m_type == AnimatedLengthList);
-    return *m_data.lengthList;
-}
-
-float& SVGAnimatedType::number()
-{
-    ASSERT(m_type == AnimatedNumber);
-    return *m_data.number;
-}
-
-SVGNumberList& SVGAnimatedType::numberList()
-{
-    ASSERT(m_type == AnimatedNumberList);
-    return *m_data.numberList;
-}
-
-pair<float, float>& SVGAnimatedType::numberOptionalNumber()
-{
-    ASSERT(m_type == AnimatedNumberOptionalNumber);
-    return *m_data.numberOptionalNumber;        
-}
-
-SVGPathByteStream* SVGAnimatedType::path()
-{
-    ASSERT(m_type == AnimatedPath);
-    return m_data.path;
-}
-
-SVGPointList& SVGAnimatedType::pointList()
-{
-    ASSERT(m_type == AnimatedPoints);
-    return *m_data.pointList;
-}
-
-SVGPreserveAspectRatio& SVGAnimatedType::preserveAspectRatio()
-{
-    ASSERT(m_type == AnimatedPreserveAspectRatio);
-    return *m_data.preserveAspectRatio;
-}
-
-FloatRect& SVGAnimatedType::rect()
-{
-    ASSERT(m_type == AnimatedRect);
-    return *m_data.rect;
-}
-
-String& SVGAnimatedType::string()
-{
-    ASSERT(m_type == AnimatedString);
-    return *m_data.string;
-}
-
-SVGTransformList& SVGAnimatedType::transformList()
-{
-    ASSERT(m_type == AnimatedTransformList);
-    return *m_data.transformList;
 }
 
 String SVGAnimatedType::valueAsString()

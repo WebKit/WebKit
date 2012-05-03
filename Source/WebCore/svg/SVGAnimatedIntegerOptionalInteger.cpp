@@ -79,7 +79,7 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::addAnimatedTypes(SVGAnimatedType
     ASSERT(from->type() == AnimatedIntegerOptionalInteger);
     ASSERT(from->type() == to->type());
 
-    pair<int, int>& fromIntegerPair = from->integerOptionalInteger();
+    const pair<int, int>& fromIntegerPair = from->integerOptionalInteger();
     pair<int, int>& toIntegerPair = to->integerOptionalInteger();
 
     toIntegerPair.first += fromIntegerPair.first;
@@ -91,11 +91,10 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue(float per
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    pair<int, int>& fromIntegerPair = from->integerOptionalInteger();
-    pair<int, int>& toIntegerPair = to->integerOptionalInteger();
-    pair<int, int>& toAtEndOfDurationIntegerPair = toAtEndOfDuration->integerOptionalInteger();
+    const pair<int, int>& fromIntegerPair = m_animationElement->animationMode() == ToAnimation ? animated->integerOptionalInteger() : from->integerOptionalInteger();
+    const pair<int, int>& toIntegerPair = to->integerOptionalInteger();
+    const pair<int, int>& toAtEndOfDurationIntegerPair = toAtEndOfDuration->integerOptionalInteger();
     pair<int, int>& animatedIntegerPair = animated->integerOptionalInteger();
-    m_animationElement->adjustFromToValues<pair<int, int> >(0, fromIntegerPair, toIntegerPair, animatedIntegerPair, percentage, m_contextElement);
 
     SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromIntegerPair.first, toIntegerPair.first, toAtEndOfDurationIntegerPair.first, animatedIntegerPair.first);
     SVGAnimatedIntegerAnimator::calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromIntegerPair.second, toIntegerPair.second, toAtEndOfDurationIntegerPair.second, animatedIntegerPair.second);

@@ -493,13 +493,12 @@ void SVGAnimationElement::currentValuesFromKeyPoints(float percent, float& effec
     to = m_values[index + 1];
 }
     
-void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to, String& toAtEndOfDuration)
+void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to)
 {
     unsigned valuesCount = m_values.size();
     ASSERT(m_animationValid);
     ASSERT(valuesCount >= 1);
 
-    toAtEndOfDuration = m_values.last();
     if (percent == 1 || valuesCount == 1) {
         from = m_values[valuesCount - 1];
         to = m_values[valuesCount - 1];
@@ -601,6 +600,8 @@ void SVGAnimationElement::startedActiveInterval()
             && (calcMode == CalcModeDiscrete || !m_keyTimes.size() || m_keyTimes.last() == 1)
             && (calcMode != CalcModeSpline || ((m_keySplines.size() && (m_keySplines.size() == m_values.size() - 1)) || m_keySplines.size() == m_keyPoints.size() - 1))
             && (!fastHasAttribute(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size()));
+        if (m_animationValid)
+            m_animationValid = calculateToAtEndOfDurationValue(m_values.last());
         if (calcMode == CalcModePaced && m_animationValid)
             calculateKeyTimesForCalcModePaced();
     } else if (animationMode == PathAnimation)
@@ -612,13 +613,12 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
     if (!m_animationValid)
         return;
 
-    String toAtEndOfDuration;
     float effectivePercent;
     CalcMode mode = calcMode();
     if (animationMode() == ValuesAnimation) {
         String from;
         String to;
-        currentValuesForValuesAnimation(percent, effectivePercent, from, to, toAtEndOfDuration);
+        currentValuesForValuesAnimation(percent, effectivePercent, from, to);
         if (from != m_lastValuesAnimationFrom || to != m_lastValuesAnimationTo) {
             m_animationValid = calculateFromAndToValues(from, to);
             if (!m_animationValid)
@@ -635,7 +635,7 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
     else
         effectivePercent = percent;
 
-    calculateAnimatedValue(effectivePercent, repeatCount, toAtEndOfDuration, resultElement);
+    calculateAnimatedValue(effectivePercent, repeatCount, resultElement);
 }
 
 void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& value)

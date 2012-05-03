@@ -85,11 +85,10 @@ void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsign
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    int& fromInteger = from->integer();
-    int& toInteger = to->integer();
-    int& toAtEndOfDurationInteger = toAtEndOfDuration->integer();
+    int fromInteger = m_animationElement->animationMode() == ToAnimation ? animated->integer() : from->integer();
+    int toInteger = to->integer();
+    int toAtEndOfDurationInteger = toAtEndOfDuration->integer();
     int& animatedInteger = animated->integer();
-    m_animationElement->adjustFromToValues<int>(0, fromInteger, toInteger, animatedInteger, percentage, m_contextElement);
 
     calculateAnimatedInteger(m_animationElement, percentage, repeatCount, fromInteger, toInteger, toAtEndOfDurationInteger, animatedInteger);
 }
