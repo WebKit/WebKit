@@ -37,7 +37,7 @@ testPrev()
 trans = db.transaction(objectStoreName)
 objectStore = trans.objectStore(objectStoreName);
 keyIndex = 8;
-request = objectStore.index('height').openCursor(null, IDBCursor.PREV);
+request = objectStore.index('height').openCursor(null, 'prev');
 cursor = event.target.result;
 PASS cursor.key is 73
 PASS cursor.primaryKey is '237-23-7740'
@@ -125,7 +125,7 @@ PASS keyIndex is -1
 testPrevNoDuplicate()
 objectStore = db.transaction(objectStoreName).objectStore(objectStoreName);
 keyIndex = 8;
-request = objectStore.index('height').openCursor(null, IDBCursor.PREV_NO_DUPLICATE);
+request = objectStore.index('height').openCursor(null, 'prevunique');
 cursor = event.target.result;
 keyIndex -= 1
   => Entering with keyIndex = 7

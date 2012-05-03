@@ -35,7 +35,7 @@ function startTransaction()
 {
     debug("starting transaction");
     evalAndLog("state = 'starting'");
-    evalAndLog("trans = dbc1.transaction('storeName', IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = dbc1.transaction('storeName', 'readwrite')");
     evalAndLog("trans.objectStore('storeName').put('value', 'key')");
     trans.onabort = unexpectedAbortCallback;
     trans.onerror = unexpectedErrorCallback;

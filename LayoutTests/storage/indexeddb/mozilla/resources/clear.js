@@ -44,7 +44,7 @@ function cleanDatabase()
 function clear()
 {
     evalAndExpectException("db.transaction('foo').objectStore('foo').clear();", "IDBDatabaseException.READ_ONLY_ERR");
-    evalAndLog("db.transaction('foo', IDBTransaction.READ_WRITE).objectStore('foo').clear();");
+    evalAndLog("db.transaction('foo', 'readwrite').objectStore('foo').clear();");
     request = evalAndLog("request = db.transaction('foo').objectStore('foo').openCursor();");
     request.onsuccess = areWeClearYet;
     request.onerror = unexpectedErrorCallback;

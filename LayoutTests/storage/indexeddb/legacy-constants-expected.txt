@@ -1,0 +1,62 @@
+CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
+CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
+CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
+CONSOLE MESSAGE: Numeric direction values are deprecated in IDBObjectStore.openCursor. Use"next", "nextunique", "prev", or "prevunique".
+Test that legacy direction/mode constants work
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+
+openreq = indexedDB.open('legacy-constants')
+db = openreq.result
+verreq = db.setVersion('1')
+Deleted all object stores.
+store = db.createObjectStore('store')
+store.createIndex('index', 'value')
+
+populating store...
+trans = db.transaction('store', IDBTransaction.READ_WRITE)
+PASS trans.mode is 'readwrite'
+store = trans.objectStore('store');
+store.put({value: 111}, 1)
+store.put({value: 222}, 2)
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+PASS trans.mode is 'readonly'
+request = store.openCursor(null, IDBCursor.NEXT)
+PASS cursor.direction is 'next'
+cursor.continue();
+PASS cursor.direction is 'next'
+cursor.continue();
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+PASS trans.mode is 'readonly'
+request = store.openCursor(null, IDBCursor.NEXT_NO_DUPLICATE)
+PASS cursor.direction is 'nextunique'
+cursor.continue();
+PASS cursor.direction is 'nextunique'
+cursor.continue();
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+PASS trans.mode is 'readonly'
+request = store.openCursor(null, IDBCursor.PREV)
+PASS cursor.direction is 'prev'
+cursor.continue();
+PASS cursor.direction is 'prev'
+cursor.continue();
+trans = db.transaction('store', IDBTransaction.READ_ONLY)
+PASS trans.mode is 'readonly'
+request = store.openCursor(null, IDBCursor.NEXT)
+PASS cursor.direction is 'next'
+cursor.continue();
+PASS cursor.direction is 'next'
+cursor.continue();
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

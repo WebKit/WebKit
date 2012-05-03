@@ -41,7 +41,7 @@ function setVersionSuccess()
 
 function testValidArrayKeys()
 {
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction('store', 'readwrite')");
     evalAndLog("store = trans.objectStore('store')");
     debug("");
 
@@ -124,7 +124,7 @@ function testValidArrayKeys()
 
 function testInvalidArrayKeys()
 {
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction('store', 'readwrite')");
     evalAndLog("store = trans.objectStore('store')");
     debug("");
 

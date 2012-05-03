@@ -10,24 +10,24 @@ db = event.target.result
 request = db.setVersion('1')
 Deleted all object stores.
 objectStore = db.createObjectStore(osName, { autoIncrement: true });
-request = db.transaction([osName], IDBTransaction.READ_WRITE).objectStore(osName).add({});
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
+request = db.transaction([osName], 'readwrite').objectStore(osName).add({});
+PASS event.target.transaction.mode is 'readwrite'
 key1 = event.target.result;
-request = db.transaction(osName, IDBTransaction.READ_WRITE).objectStore(osName).add({});
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
+request = db.transaction(osName, 'readwrite').objectStore(osName).add({});
+PASS event.target.transaction.mode is 'readwrite'
 key2 = event.target.result;
-request = db.transaction([osName], IDBTransaction.READ_WRITE).objectStore(osName).put({}, key1);
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
-request = db.transaction(osName, IDBTransaction.READ_WRITE).objectStore(osName).put({}, key2);
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
-request = db.transaction([osName], IDBTransaction.READ_WRITE).objectStore(osName).put({}, key1);
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
-request = db.transaction(osName, IDBTransaction.READ_WRITE).objectStore(osName).put({}, key1);
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
-request = db.transaction([osName], IDBTransaction.READ_WRITE).objectStore(osName).delete(key1);
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
-request = db.transaction(osName, IDBTransaction.READ_WRITE).objectStore(osName).delete(key2);
-PASS event.target.transaction.mode is IDBTransaction.READ_WRITE
+request = db.transaction([osName], 'readwrite').objectStore(osName).put({}, key1);
+PASS event.target.transaction.mode is 'readwrite'
+request = db.transaction(osName, 'readwrite').objectStore(osName).put({}, key2);
+PASS event.target.transaction.mode is 'readwrite'
+request = db.transaction([osName], 'readwrite').objectStore(osName).put({}, key1);
+PASS event.target.transaction.mode is 'readwrite'
+request = db.transaction(osName, 'readwrite').objectStore(osName).put({}, key1);
+PASS event.target.transaction.mode is 'readwrite'
+request = db.transaction([osName], 'readwrite').objectStore(osName).delete(key1);
+PASS event.target.transaction.mode is 'readwrite'
+request = db.transaction(osName, 'readwrite').objectStore(osName).delete(key2);
+PASS event.target.transaction.mode is 'readwrite'
 PASS successfullyParsed is true
 
 TEST COMPLETE

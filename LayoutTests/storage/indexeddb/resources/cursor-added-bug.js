@@ -41,7 +41,7 @@ function setVersionSuccess()
 
 function openCursor()
 {
-    evalAndLog("trans = db.transaction(['test'], IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['test'], 'readwrite')");
     trans.onabort = finishJSTest;
     trans.oncomplete = finishJSTest;
     request = evalAndLog("trans.objectStore('test').openCursor()");

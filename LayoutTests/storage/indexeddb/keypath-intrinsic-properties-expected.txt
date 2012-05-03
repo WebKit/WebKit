@@ -16,7 +16,7 @@ store.createIndex('string length', 'string.length')
 store.createIndex('array length', 'array.length')
 
 testKeyPaths():
-transaction = db.transaction('store', IDBTransaction.READ_WRITE)
+transaction = db.transaction('store', 'readwrite')
 store = transaction.objectStore('store')
 store.put({"id":"id#0","string":"","array":[]})
 store.put({"id":"id#1","string":"xx","array":["x","x","x"]})

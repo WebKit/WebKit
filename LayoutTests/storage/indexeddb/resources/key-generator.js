@@ -176,7 +176,7 @@ defineTest(
     },
 
     function (db, callback) {
-        evalAndLog("trans1 = db.transaction(['store'], IDBTransaction.READ_WRITE)");
+        evalAndLog("trans1 = db.transaction(['store'], 'readwrite')");
         evalAndLog("store_t1 = trans1.objectStore('store')");
         evalAndLog("store_t1.put('a')");
         check(store_t1, 1, 'a');
@@ -190,7 +190,7 @@ defineTest(
             trans1.onabort = function () {
                 debug('aborted!');
 
-                evalAndLog("trans2 = db.transaction(['store'], IDBTransaction.READ_WRITE)");
+                evalAndLog("trans2 = db.transaction(['store'], 'readwrite')");
                 evalAndLog("store_t2 = trans2.objectStore('store')");
                 evalAndLog("store_t2.put('c')");
                 check(store_t2, 1, 'c');
@@ -210,7 +210,7 @@ defineTest(
     },
 
     function (db, callback) {
-        evalAndLog("trans1 = db.transaction(['store'], IDBTransaction.READ_WRITE)");
+        evalAndLog("trans1 = db.transaction(['store'], 'readwrite')");
         evalAndLog("store_t1 = trans1.objectStore('store')");
         evalAndLog("store_t1.put('a')");
         check(store_t1, 1, 'a');

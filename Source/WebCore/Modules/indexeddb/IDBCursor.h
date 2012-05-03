@@ -53,6 +53,15 @@ public:
         PREV = 2,
         PREV_NO_DUPLICATE = 3,
     };
+
+    static const AtomicString& directionNext();
+    static const AtomicString& directionNextUnique();
+    static const AtomicString& directionPrev();
+    static const AtomicString& directionPrevUnique();
+
+    static unsigned short stringToDirection(const String& modeString, ExceptionCode&);
+    static const AtomicString& directionToString(unsigned short mode, ExceptionCode&);
+
     static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursor();
 
@@ -60,7 +69,7 @@ public:
     void continueFunction(ExceptionCode& ec) { continueFunction(0, ec); }
 
     // Implement the IDL
-    unsigned short direction() const;
+    const String& direction() const;
     PassRefPtr<IDBKey> key() const;
     PassRefPtr<IDBKey> primaryKey() const;
     PassRefPtr<IDBAny> value() const;

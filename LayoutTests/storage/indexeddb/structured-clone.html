@@ -102,7 +102,7 @@ function testValue(value, callback)
 {
     // One transaction per test, since some tests require asynchronous
     // operations to verify the result (e.g. via FileReader)
-    evalAndLog("transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)");
+    evalAndLog("transaction = db.transaction('storeName', 'readwrite')");
     transaction.onerror = unexpectedErrorCallback;
     transaction.onabort = unexpectedAbortCallback;
     evalAndLog("store = transaction.objectStore('storeName')");
@@ -511,7 +511,7 @@ function testBadTypes()
     debug("Test types that can't be cloned:");
     debug("");
 
-    evalAndLog("transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)");
+    evalAndLog("transaction = db.transaction('storeName', 'readwrite')");
     evalAndLog("store = transaction.objectStore('storeName')");
     transaction.onerror = unexpectedErrorCallback;
     transaction.oncomplete = unexpectedCompleteCallback;

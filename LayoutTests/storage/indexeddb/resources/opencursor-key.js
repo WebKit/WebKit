@@ -82,7 +82,7 @@ function testAll()
 function testObjectStore()
 {
     debug("testObjectStore()");
-    evalAndLog("trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
     trans.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = trans.objectStore(objectStoreName)");
 
@@ -109,7 +109,7 @@ function testObjectStore()
 
 function testIndex()
 {
-    evalAndLog("trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
     objectStore = evalAndLog("objectStore = trans.objectStore(objectStoreName)");
     index = evalAndLog("index = objectStore.index('weight')");
 
@@ -149,7 +149,7 @@ function testIndex()
 
 function testIndexWithKey()
 {
-    evalAndLog("trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
     objectStore = evalAndLog("objectStore = trans.objectStore(objectStoreName)");
     index = evalAndLog("index = objectStore.index('weight')");
 

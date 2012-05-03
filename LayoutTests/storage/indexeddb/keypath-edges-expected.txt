@@ -15,7 +15,7 @@ db.createObjectStore('store-with-path', {keyPath: 'foo'})
 db.createObjectStore('store-with-path-and-generator', {keyPath: 'foo', autoIncrement: true})
 
 testKeyPaths():
-transaction = db.transaction(['store-with-path'], IDBTransaction.READ_WRITE)
+transaction = db.transaction(['store-with-path'], 'readwrite')
 store = transaction.objectStore('store-with-path')
 
 Key path doesn't resolve to a value; should yield null, should throw DATA_ERR
@@ -38,7 +38,7 @@ store.put({foo: 'zoo'})
 PASS store.put succeeded
 
 testKeyPathsAndGenerator():
-transaction = db.transaction(['store-with-path-and-generator'], IDBTransaction.READ_WRITE)
+transaction = db.transaction(['store-with-path-and-generator'], 'readwrite')
 store = transaction.objectStore('store-with-path-and-generator')
 
 Key path doesn't resolve to a value; should yield null but insertion would fail, so put request should raise exception

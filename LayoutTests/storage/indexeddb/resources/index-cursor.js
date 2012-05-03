@@ -173,7 +173,7 @@ function runNextTest()
     else
         keyRange = IDBKeyRange.upperBound(testData[upper], upperIsOpen);
 
-    var request = indexObject.openKeyCursor(keyRange, ascending ? IDBCursor.NEXT : IDBCursor.PREV);
+    var request = indexObject.openKeyCursor(keyRange, ascending ? 'next' : 'prev');
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }
@@ -240,7 +240,7 @@ function testNullKeyRange()
     debug("");
     debug(str);
 
-    var request = indexObject.openKeyCursor(null, ascending ? IDBCursor.NEXT : IDBCursor.PREV);
+    var request = indexObject.openKeyCursor(null, ascending ? 'next' : 'prev');
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }

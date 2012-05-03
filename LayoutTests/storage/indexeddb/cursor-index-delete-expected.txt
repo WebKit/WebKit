@@ -19,7 +19,7 @@ objectStore.add({x: 2}, 'myKey2')
 objectStore.add({x: 3}, 'myKey3')
 objectStore.add({x: 4}, 'myKey4')
 openCursor1
-trans = db.transaction(['test'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['test'], 'readwrite')
 trans.objectStore('test').index('testIndex').openCursor(keyRange)
 event.target.result.delete()
 PASS event.target.result.key is counter++
@@ -36,7 +36,7 @@ event.target.result.continue()
 PASS counter is 5
 trans.objectStore('test').index('testIndex').openCursor(keyRange)
 PASS event.target.result is null
-trans = db.transaction(['test'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['test'], 'readwrite')
 objectStore = trans.objectStore('test')
 objectStore.add({x: 1}, 'myKey1')
 openCursor2

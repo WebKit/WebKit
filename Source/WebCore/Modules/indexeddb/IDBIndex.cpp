@@ -56,14 +56,12 @@ IDBIndex::~IDBIndex()
 {
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openCursor");
-    if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
-        // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
-        ec = IDBDatabaseException::CONSTRAINT_ERR;
+    unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
+    if (ec)
         return 0;
-    }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorType(IDBCursorBackendInterface::IndexCursor);
@@ -75,9 +73,29 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
     return request;
 }
 
+PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBIndex::openCursor");
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Numeric direction values are deprecated in IDBIndex.openCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\"."));
+    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+    const String& directionString = IDBCursor::directionToString(direction, ec);
+    if (ec)
+        return 0;
+    return openCursor(context, keyRange, directionString, ec);
+}
+
+PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, const String& direction, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBIndex::openCursor");
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    if (ec)
+        return 0;
+    return openCursor(context, keyRange.release(), ec);
+}
+
 PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, unsigned short direction, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::openCursor");
+    IDB_TRACE("IDBIndex::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;
@@ -105,14 +123,13 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
     return count(context, keyRange.release(), ec);
 }
 
-PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openKeyCursor");
-    if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
-        // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
-        ec = IDBDatabaseException::CONSTRAINT_ERR;
+
+    unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
+    if (ec)
         return 0;
-    }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorType(IDBCursorBackendInterface::IndexKeyCursor);
@@ -124,9 +141,29 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
     return request;
 }
 
+PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBIndex::openKeyCursor");
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Numeric direction values are deprecated in IDBIndex.openKeyCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\"."));
+    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+    const String& directionString = IDBCursor::directionToString(direction, ec);
+    if (ec)
+        return 0;
+    return openKeyCursor(context, keyRange, directionString, ec);
+}
+
+PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, const String& direction, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBIndex::openKeyCursor");
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    if (ec)
+        return 0;
+    return openKeyCursor(context, keyRange.release(), ec);
+}
+
 PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, unsigned short direction, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::openKeyCursor");
+    IDB_TRACE("IDBIndex::openKeyCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
     if (ec)
         return 0;

@@ -20,7 +20,7 @@ request.transaction = this
 PASS request.transaction is still null
 trying to set readonly property request.readyState
 request.readyState = 666
-PASS request.readyState is still 2
+PASS request.readyState is still done
 db = event.target.result
 trying to set readonly property db.name
 db.name = 'bar'
@@ -29,7 +29,7 @@ request = db.setVersion('1')
 transaction = event.target.result;
 trying to set readonly property transaction.mode
 transaction.mode = 666
-PASS transaction.mode is still 2
+PASS transaction.mode is still versionchange
 trying to set readonly property transaction.db
 transaction.db = this
 PASS transaction.db is still [object IDBDatabase]
@@ -49,7 +49,7 @@ cursor.source = this
 PASS cursor.source is still [object IDBObjectStore]
 trying to set readonly property cursor.direction
 cursor.direction = 666
-PASS cursor.direction is still 0
+PASS cursor.direction is still next
 trying to set readonly property cursor.key
 cursor.key = Infinity
 PASS cursor.key is still first

@@ -56,10 +56,19 @@ public:
         VERSION_CHANGE = 2
     };
 
+    static const AtomicString& modeReadOnly();
+    static const AtomicString& modeReadWrite();
+    static const AtomicString& modeVersionChange();
+    static const AtomicString& modeReadOnlyLegacy();
+    static const AtomicString& modeReadWriteLegacy();
+
+    static unsigned short stringToMode(const String&, ExceptionCode&);
+    static const AtomicString& modeToString(unsigned short, ExceptionCode&);
+
     IDBTransactionBackendInterface* backend() const;
     bool finished() const;
 
-    unsigned short mode() const;
+    const String& mode() const;
     IDBDatabase* db() const;
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);
     void abort();
@@ -117,7 +126,7 @@ private:
 
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
-    unsigned short m_mode;
+    const unsigned short m_mode;
     bool m_transactionFinished; // Is it possible that we'll fire any more events or allow any new requests? If not, we're finished.
     bool m_contextStopped;
 

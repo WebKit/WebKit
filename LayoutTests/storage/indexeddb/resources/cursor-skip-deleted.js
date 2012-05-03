@@ -138,7 +138,7 @@ function basicCursorTest()
 {
     debug("basicCursorTest()");
 
-    evalAndLog("trans = db.transaction(['store'], IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['store'], 'readwrite')");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = transactionComplete;
 
@@ -167,7 +167,7 @@ function reverseCursorTest()
                    {id: 5, targets: [7,8]}
                    ];
 
-    testCursor(deletes, "trans.objectStore('store').openCursor(IDBKeyRange.lowerBound(0), IDBCursor.PREV)", function() { resetObjectStore(indexCursorTest); });
+    testCursor(deletes, "trans.objectStore('store').openCursor(IDBKeyRange.lowerBound(0), 'prev')", function() { resetObjectStore(indexCursorTest); });
 }
 
 function indexCursorTest()

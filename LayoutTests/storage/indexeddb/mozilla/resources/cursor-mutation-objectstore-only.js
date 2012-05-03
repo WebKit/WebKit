@@ -90,7 +90,7 @@ function checkCursorResultsAndSetupMutatingCursor()
     sawAdded = evalAndLog("sawAdded = false;");
     sawRemoved = evalAndLog("sawRemoved = false;");
 
-    request = evalAndLog("request = db.transaction('foo', IDBTransaction.READ_WRITE).objectStore('foo').openCursor();");
+    request = evalAndLog("request = db.transaction('foo', 'readwrite').objectStore('foo').openCursor();");
     request.onsuccess = iterateMutatingCursor;
     request.onerror = unexpectedErrorCallback;
 }
