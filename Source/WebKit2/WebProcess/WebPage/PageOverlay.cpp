@@ -92,8 +92,11 @@ void PageOverlay::setPage(WebPage* webPage)
 
 void PageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
-    if (m_webPage)
+    if (m_webPage) {
+        if (!m_pageOverlayShouldApplyFadeWhenPainting)
+            m_webPage->drawingArea()->setPageOverlayOpacity(m_fractionFadedIn);
         m_webPage->drawingArea()->setPageOverlayNeedsDisplay(dirtyRect);
+    }
 }
 
 void PageOverlay::setNeedsDisplay()

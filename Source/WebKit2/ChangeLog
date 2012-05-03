@@ -1,3 +1,16 @@
+2012-05-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Tap-highlight blinks when activated.
+        https://bugs.webkit.org/show_bug.cgi?id=85481
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set the opacity on the page-overlay the first time it is requested to be drawn. Otherwiser
+        it will start fully opaque before fading in.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setNeedsDisplay):
+
 2012-05-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Document the QML WebViewExperimental API devicePixelRatio.
