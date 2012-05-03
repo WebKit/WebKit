@@ -55,8 +55,6 @@ using namespace std;
 
 namespace WebCore {
 
-static const double autoreleaseInterval = 3;
-
 #if PLATFORM(CHROMIUM) || !defined(NDEBUG)
 
 #define PCLOG(...) LOG(PageCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
@@ -320,7 +318,7 @@ PageCache::PageCache()
     , m_size(0)
     , m_head(0)
     , m_tail(0)
-    , m_autoreleaseTimer(this, &PageCache::releaseAutoreleasedPagesNowOrReschedule)
+    , m_autoreleaseTimer(this, &PageCache::releaseAutoreleasedPagesNowDueToTimer)
 #if USE(ACCELERATED_COMPOSITING)
     , m_shouldClearBackingStores(false)
 #endif
@@ -514,19 +512,9 @@ void PageCache::removeFromLRUList(HistoryItem* item)
     }
 }
 
-void PageCache::releaseAutoreleasedPagesNowOrReschedule(Timer<PageCache>* timer)
+void PageCache::releaseAutoreleasedPagesNowDueToTimer(Timer<PageCache>*)
 {
-    double loadDelta = currentTime() - FrameLoader::timeOfLastCompletedLoad();
-    float userDelta = userIdleTime();
-    
-    // FIXME: <rdar://problem/5211190> This limit of 42 risks growing the page cache far beyond its nominal capacity.
-    if ((userDelta < 0.5 || loadDelta < 1.25) && m_autoreleaseSet.size() < 42) {
-        LOG(PageCache, "WebCorePageCache: Postponing releaseAutoreleasedPagesNowOrReschedule() - %f since last load, %f since last input, %i objects pending release", loadDelta, userDelta, m_autoreleaseSet.size());
-        timer->startOneShot(autoreleaseInterval);
-        return;
-    }
-
-    LOG(PageCache, "WebCorePageCache: Releasing page caches - %f seconds since last load, %f since last input, %i objects pending release", loadDelta, userDelta, m_autoreleaseSet.size());
+    LOG(PageCache, "WebCorePageCache: Releasing page caches - %i objects pending release", m_autoreleaseSet.size());
     releaseAutoreleasedPagesNow();
 }
 
@@ -558,7 +546,7 @@ void PageCache::autorelease(PassRefPtr<CachedPage> page)
     ASSERT(!m_autoreleaseSet.contains(page.get()));
     m_autoreleaseSet.add(page);
     if (!m_autoreleaseTimer.isActive())
-        m_autoreleaseTimer.startOneShot(autoreleaseInterval);
+        m_autoreleaseTimer.startOneShot(0);
 }
 
 } // namespace WebCore

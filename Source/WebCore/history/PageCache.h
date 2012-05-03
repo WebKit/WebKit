@@ -79,7 +79,7 @@ namespace WebCore {
         void prune();
 
         void autorelease(PassRefPtr<CachedPage>);
-        void releaseAutoreleasedPagesNowOrReschedule(Timer<PageCache>*);
+        void releaseAutoreleasedPagesNowDueToTimer(Timer<PageCache>*);
 
         int m_capacity;
         int m_size;
