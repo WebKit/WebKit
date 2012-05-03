@@ -373,7 +373,7 @@ and PID and prints it to stdout."""
     argument_names = "PROCESS_NAME [PID]"
 
     def execute(self, options, args, tool):
-        crash_logs = CrashLogs(tool.filesystem)
+        crash_logs = CrashLogs(tool)
         pid = None
         if len(args) > 1:
             pid = int(args[1])
