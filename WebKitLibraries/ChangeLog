@@ -1,3 +1,16 @@
+2012-05-02  Eric Seidel  <eric@webkit.org>
+
+        Fix tabs vs. space formating in FeatureDefines.vsprops and fix alphabetical sorting
+        https://bugs.webkit.org/show_bug.cgi?id=85445
+
+        Reviewed by Adam Barth.
+
+        I noticed this when comparing my auto-generated output for this file vs. the one
+        we have checked in.  Seems we might as well fix the checked in file to be
+        consistent in style with itself. :)
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2012-04-27  Gavin Peters  <gavinp@chromium.org>
 
         Add new ENABLE_LINK_PRERENDER define to control the Prerendering API

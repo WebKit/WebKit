@@ -12,11 +12,6 @@
 		PreprocessorDefinitions="$(ENABLE_REQUEST_ANIMATION_FRAME);$(ENABLE_3D_CANVAS);$(ENABLE_3D_RENDERING);$(ENABLE_ACCELERATED_2D_CANVAS);$(ENABLE_BLOB);$(ENABLE_CHANNEL_MESSAGING);$(ENABLE_CSS_FILTERS);$(ENABLE_CSS_GRID_LAYOUT);$(ENABLE_CSS_SHADERS);$(ENABLE_CSS_REGIONS);$(ENABLE_CSS_EXCLUSIONS);$(ENABLE_SQL_DATABASE);$(ENABLE_DATAGRID);$(ENABLE_DATALIST);$(ENABLE_DATA_TRANSFER_ITEMS);$(ENABLE_DETAILS);$(ENABLE_DEVICE_ORIENTATION);$(ENABLE_DIRECTORY_UPLOAD);$(ENABLE_FILTERS);$(ENABLE_FILE_SYSTEM);$(ENABLE_FULLSCREEN_API);$(ENABLE_GAMEPAD);$(ENABLE_GEOLOCATION);$(ENABLE_HIGH_DPI_CANVAS);$(ENABLE_ICONDATABASE);$(ENABLE_INDEXED_DATABASE);$(ENABLE_INPUT_TYPE_COLOR);$(ENABLE_INPUT_SPEECH);$(ENABLE_INPUT_TYPE_DATE);$(ENABLE_INPUT_TYPE_DATETIME);$(ENABLE_INPUT_TYPE_DATETIMELOCAL);$(ENABLE_INPUT_TYPE_MONTH);$(ENABLE_INPUT_TYPE_TIME);$(ENABLE_INPUT_TYPE_WEEK);$(ENABLE_JAVASCRIPT_DEBUGGER);$(ENABLE_LEGACY_CSS_VENDOR_PREFIXES);$(ENABLE_LEGACY_NOTIFICATIONS);$(ENABLE_LINK_PREFETCH);$(ENABLE_LINK_PRERENDER);$(ENABLE_MATHML);$(ENABLE_METER_TAG);$(ENABLE_MICRODATA);$(ENABLE_MUTATION_OBSERVERS);$(ENABLE_NOTIFICATIONS);$(ENABLE_PAGE_VISIBILITY_API);$(ENABLE_PROGRESS_TAG);$(ENABLE_QUOTA);$(ENABLE_REGISTER_PROTOCOL_HANDLER);$(ENABLE_SCRIPTED_SPEECH);$(ENABLE_SHADOW_DOM);$(ENABLE_SHARED_WORKERS);$(ENABLE_STYLE_SCOPED);$(ENABLE_SVG);$(ENABLE_SVG_DOM_OBJC_BINDINGS);$(ENABLE_SVG_FONTS);$(ENABLE_VIDEO);$(ENABLE_MEDIA_SOURCE);$(ENABLE_MEDIA_STATISTICS);$(ENABLE_WEB_SOCKETS);$(ENABLE_WEB_TIMING);$(ENABLE_WORKERS);$(ENABLE_XSLT)"
 	/>
   <UserMacro
-		Name="ENABLE_REQUEST_ANIMATION_FRAME"
-		Value="ENABLE_REQUEST_ANIMATION_FRAME"
-		PerformEnvironmentSet="true"
-	/>
-    <UserMacro
 		Name="ENABLE_3D_CANVAS"
 		Value=""
 		PerformEnvironmentSet="true"
@@ -42,6 +37,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_CSS_EXCLUSIONS"
+		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_CSS_FILTERS"
 		Value="ENABLE_CSS_FILTERS"
 		PerformEnvironmentSet="true"
@@ -52,23 +52,13 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_CSS_SHADERS"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
 		Name="ENABLE_CSS_REGIONS"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_CSS_EXCLUSIONS"
+		Name="ENABLE_CSS_SHADERS"
 		Value=""
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
-		Name="ENABLE_SQL_DATABASE"
-		Value="ENABLE_SQL_DATABASE"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -97,18 +87,18 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-        Name="ENABLE_DIRECTORY_UPLOAD"
-        Value=""
-        PerformEnvironmentSet="true"
-    />
-  <UserMacro
-		Name="ENABLE_FILTERS"
-		Value="ENABLE_FILTERS"
+		Name="ENABLE_DIRECTORY_UPLOAD"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
 		Name="ENABLE_FILE_SYSTEM"
 		Value=""
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_FILTERS"
+		Value="ENABLE_FILTERS"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -142,12 +132,12 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_INPUT_TYPE_COLOR"
+		Name="ENABLE_INPUT_SPEECH"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_INPUT_SPEECH"
+		Name="ENABLE_INPUT_TYPE_COLOR"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
@@ -186,16 +176,16 @@
 		Value="ENABLE_JAVASCRIPT_DEBUGGER"
 		PerformEnvironmentSet="true"
 	/>
-<UserMacro
+  <UserMacro
 		Name="ENABLE_LEGACY_CSS_VENDOR_PREFIXES"
 		Value="ENABLE_LEGACY_CSS_VENDOR_PREFIXES"
 		PerformEnvironmentSet="true"
-/>
-<UserMacro
+	/>
+  <UserMacro
 		Name="ENABLE_LEGACY_NOTIFICATIONS"
 		Value=""
 		PerformEnvironmentSet="true"
-/>
+	/>
   <UserMacro
 		Name="ENABLE_LINK_PREFETCH"
 		Value=""
@@ -209,6 +199,16 @@
   <UserMacro
 		Name="ENABLE_MATHML"
 		Value="ENABLE_MATHML"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_MEDIA_SOURCE"
+		Value="ENABLE_MEDIA_SOURCE"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_MEDIA_STATISTICS"
+		Value="ENABLE_MEDIA_STATISTICS"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -252,6 +252,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_REQUEST_ANIMATION_FRAME"
+		Value="ENABLE_REQUEST_ANIMATION_FRAME"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_SCRIPTED_SPEECH"
 		Value=""
 		PerformEnvironmentSet="true"
@@ -264,6 +269,11 @@
   <UserMacro
 		Name="ENABLE_SHARED_WORKERS"
 		Value="ENABLE_SHARED_WORKERS"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
+		Name="ENABLE_SQL_DATABASE"
+		Value="ENABLE_SQL_DATABASE"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -289,16 +299,6 @@
   <UserMacro
 		Name="ENABLE_VIDEO"
 		Value="ENABLE_VIDEO"
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
-		Name="ENABLE_MEDIA_SOURCE"
-		Value="ENABLE_MEDIA_SOURCE"
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
-		Name="ENABLE_MEDIA_STATISTICS"
-		Value="ENABLE_MEDIA_STATISTICS"
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
