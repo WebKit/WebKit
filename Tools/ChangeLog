@@ -1,3 +1,17 @@
+2012-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Attempt to fix a crash on SL ...
+
+        Unreviewed, build fix.
+
+        It looks like we may be getting an IOError raised during
+        select() on chromium mac, and that error isn't being caught.
+        Pushing it into the try/catch block will hopefully catch this
+        and allow us to see why the subprocess is crashing.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+
 2012-05-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebFrameLoaderClient::dispatchWillSendSubmitEvent() needs to be

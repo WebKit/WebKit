@@ -212,14 +212,15 @@ class ServerProcess(object):
         out_fd = self._proc.stdout.fileno()
         err_fd = self._proc.stderr.fileno()
         select_fds = (out_fd, err_fd)
-        read_fds, _, _ = select.select(select_fds, [], select_fds, deadline - time.time())
         try:
+            read_fds, _, _ = select.select(select_fds, [], select_fds, deadline - time.time())
             if out_fd in read_fds:
                 self._output += self._proc.stdout.read()
             if err_fd in read_fds:
                 self._error += self._proc.stderr.read()
         except IOError, e:
-            # FIXME: Why do we ignore all IOErrors here?
+            # We can ignore the IOErrors because we will detect if the subporcess crashed
+            # the next time through the loop in _read()
             pass
 
     def _wait_for_data_and_update_buffers_using_win32_apis(self, deadline):
