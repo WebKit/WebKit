@@ -1,3 +1,12 @@
+2012-05-02  Joshua Bell  <jsbell@chromium.org>
+
+        Roll Chromium DEPS r134537 to r134581.
+        https://bugs.webkit.org/show_bug.cgi?id=85428
+
+        Unreviewed - just a deps roll.
+
+        * DEPS:
+
 2012-05-02  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Add WebDocument::referrerPolicy() which wraps the same method on Document
