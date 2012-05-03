@@ -39,7 +39,6 @@ use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
-use webkitperl::features;
 use POSIX;
 
 sub cMakeArgsFromFeatures();
@@ -421,10 +420,6 @@ foreach (@features) {
     ${$_->{value}} = ($minimal ? 0 : $_->{default});
 }
 
-$svgSupport = $svgSupport || $svgDOMObjCBindingsSupport || $svgFontsSupport;
-
-$blobSupport = $blobSupport || $mediaStreamSupport;
-
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
@@ -634,9 +629,6 @@ if (isGtk()) {
 # list after all of the port specific tweaks have been made to
 # build options, etc.
 @projects = ("Source/WebKit") if $onlyWebKitProject;
-
-# Force re-link of existing libraries if different than expected
-removeLibraryDependingOnFeature("WebCore", "SVG", $svgSupport);
 
 if (isInspectorFrontend()) {
     exit exitStatus(copyInspectorFrontendFiles());

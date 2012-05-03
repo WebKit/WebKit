@@ -40,30 +40,9 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&checkWebCoreFeatureSupport
-                     &removeLibraryDependingOnFeature);
+   @EXPORT      = qw(&checkWebCoreFeatureSupport);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
-}
-
-sub libraryContainsSymbol($$)
-{
-    my ($path, $symbol) = @_;
-
-    if (isCygwin() or isWindows()) {
-        # FIXME: Implement this for Windows.
-        return 0;
-    }
-
-    my $foundSymbol = 0;
-    if (-e $path) {
-        open NM, "-|", nmPath(), $path or die;
-        while (<NM>) {
-            $foundSymbol = 1 if /$symbol/; # FIXME: This should probably check for word boundaries before/after the symbol name.
-        }
-        close NM;
-    }
-    return $foundSymbol;
 }
 
 sub hasFeature($$)
@@ -92,16 +71,6 @@ sub checkWebCoreFeatureSupport($$)
         die "$libraryName at \"$path\" does not include $hasFeature support.  See build-webkit --help\n";
     }
     return $hasFeature;
-}
-
-sub removeLibraryDependingOnFeature($$$)
-{
-    my ($libraryName, $featureName, $shouldHaveFeature) = @_;
-    my $path = builtDylibPathForName($libraryName);
-    return unless -x $path;
-
-    my $hasFeature = hasFeature($featureName, $path);
-    system "rm -f $path" if ($shouldHaveFeature xor $hasFeature);
 }
 
 1;

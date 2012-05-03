@@ -1,3 +1,20 @@
+2012-05-03  Eric Seidel  <eric@webkit.org>
+
+        Remove dead code from build-webkit for working around old XCode dependency bug
+        https://bugs.webkit.org/show_bug.cgi?id=85535
+
+        Reviewed by Adam Barth.
+
+        Xcode used to have a bug whereby it didn't notice if you changed the #defines
+        passed on the command line to xcodebuild.  I wrote code to work around this
+        while bringing up SVG support 5-6 years ago.  I think we can finally remove this
+        code from build-webkit, since SVG is the only feature flag to ever use it
+        (modern in-progress features like MathML don't seem to be using the support)
+        an I suspect the XCode bug has long been fixed.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitperl/features.pm:
+
 2012-05-03  Andy Estes  <aestes@apple.com>
 
         InjectedBundleControllerMac.mm needs to include config.h
