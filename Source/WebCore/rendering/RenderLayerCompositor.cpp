@@ -1329,11 +1329,6 @@ void RenderLayerCompositor::updateRootLayerPosition()
 #endif
 }
 
-void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID)
-{
-    // FIXME: remove this method.
-}
-
 bool RenderLayerCompositor::has3DContent() const
 {
     return layerHas3DContent(rootRenderLayer());

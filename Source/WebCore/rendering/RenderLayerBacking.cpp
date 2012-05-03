@@ -1303,21 +1303,15 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
     bool didAnimateFilter = false;
 #endif
     
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset)) {
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer())->pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
         didAnimateTransform = true;
-        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitTransform);
-    }
 
-    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset)) {
+    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset))
         didAnimateOpacity = true;
-        compositor()->didStartAcceleratedAnimation(CSSPropertyOpacity);
-    }
 
 #if ENABLE(CSS_FILTERS)
-    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize(), anim, keyframes.animationName(), timeOffset)) {
+    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize(), anim, keyframes.animationName(), timeOffset))
         didAnimateFilter = true;
-        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitFilter);
-    }
 #endif
 
 #if ENABLE(CSS_FILTERS)
@@ -1390,17 +1384,6 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             }
         }
     }
-#endif
-
-    if (didAnimateOpacity)
-        compositor()->didStartAcceleratedAnimation(CSSPropertyOpacity);
-
-    if (didAnimateTransform)
-        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitTransform);
-    
-#if ENABLE(CSS_FILTERS)
-    if (didAnimateFilter)
-        compositor()->didStartAcceleratedAnimation(CSSPropertyWebkitFilter);
 #endif
 
 #if ENABLE(CSS_FILTERS)

@@ -164,8 +164,6 @@ public:
         --m_compositedLayerCount;
     }
     
-    void didStartAcceleratedAnimation(CSSPropertyID);
-    
 #if ENABLE(VIDEO)
     // Use by RenderVideo to ask if it should try to use accelerated compositing.
     bool canAccelerateVideoRendering(RenderVideo*) const;
