@@ -1,3 +1,13 @@
+2012-05-03  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Unreviewed gardening
+
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+
 2012-05-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline.
