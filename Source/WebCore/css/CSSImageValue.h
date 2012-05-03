@@ -44,6 +44,8 @@ public:
 
     String customCssText() const;
 
+    PassRefPtr<CSSValue> cloneForCSSOM() const;
+
 protected:
     CSSImageValue(ClassType, const String& url);
 

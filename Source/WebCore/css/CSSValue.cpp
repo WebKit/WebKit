@@ -315,6 +315,9 @@ PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
         return static_cast<const CSSPrimitiveValue*>(this)->cloneForCSSOM();
     case ValueListClass:
         return static_cast<const CSSValueList*>(this)->cloneForCSSOM();
+    case ImageClass:
+    case CursorImageClass:
+        return static_cast<const CSSImageValue*>(this)->cloneForCSSOM();
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->cloneForCSSOM();

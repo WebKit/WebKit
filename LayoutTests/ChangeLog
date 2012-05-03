@@ -1,3 +1,16 @@
+2012-05-03  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r111387): CSSOM representation of 'background-image' values should be CSSPrimitiveValue.
+        <http://webkit.org/b/85500>
+
+        Reviewed by Antti Koivisto.
+
+        Update fast/css/image-value-type.html to reflect that CSSImageValue are now exposed
+        as primitive values in the CSSOM.
+
+        * fast/css/image-value-type-expected.txt:
+        * fast/css/image-value-type.html:
+
 2012-05-03  Keishi Hattori  <keishi@webkit.org>
 
         Crash in HTMLFormControlElement::m_fieldSetAncestor

@@ -79,6 +79,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)
     // Scripts should only ever see cloned CSSValues, never the internal ones.
     ASSERT(value->isCSSOMSafe());
 
+    // If we're here under erroneous circumstances, prefer returning null over a potentially insecure value.
+    if (!value->isCSSOMSafe())
+        return jsNull();
+
     JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), value);
 
     if (wrapper)
