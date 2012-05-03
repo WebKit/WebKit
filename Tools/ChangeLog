@@ -1,3 +1,22 @@
+2012-05-03  Eric Seidel  <eric@webkit.org>
+
+        Remove the last bits of Leopard support from our perl scripts
+        https://bugs.webkit.org/show_bug.cgi?id=85545
+
+        Reviewed by Daniel Bates.
+
+        Chromium still supports Leopard (for a little while yet), but AppleMacWebKit dropped
+        Leopard support several months ago.  Remove the last bits of isLeopard() branching
+        in our Perl scripts, since no one is using this (Chromium has never used this Perl code).
+
+        * Scripts/build-webkit:
+        * Scripts/old-run-webkit-tests:
+        (countAndPrintLeaks):
+        (captureSavedCrashLog):
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+        (argumentsForRunAndDebugMacWebKitApp):
+
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
         [Chromium] Don't show the WebKit Linux ASAN bot on the flakiness dashboard.

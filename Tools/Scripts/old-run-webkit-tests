@@ -219,10 +219,7 @@ my @macPlatforms = ("mac-leopard", "mac-snowleopard", "mac-lion", "mac");
 my @winPlatforms = ("win-xp", "win-vista", "win-7sp0", "win");
 
 if (isAppleMacWebKit()) {
-    if (isLeopard()) {
-        $platform = "mac-leopard";
-        $tolerance = 0.1;
-    } elsif (isSnowLeopard()) {
+    if (isSnowLeopard()) {
         $platform = "mac-snowleopard";
         $tolerance = 0.1;
     } elsif (isLion()) {
@@ -1245,20 +1242,6 @@ sub countAndPrintLeaks($$$)
         "ScanFromString", # <http://code.google.com/p/angleproject/issues/detail?id=249> leak in ANGLE
     );
 
-    if (isLeopard()) {
-        # Leak list for the version of Leopard used on the build bot.
-        push @callStacksToExclude, (
-            "CFHTTPMessageAppendBytes", # leak in CFNetwork, rdar://problem/5435912
-            "sendDidReceiveDataCallback", # leak in CFNetwork, rdar://problem/5441619
-            "_CFHTTPReadStreamReadMark", # leak in CFNetwork, rdar://problem/5441468
-            "httpProtocolStart", # leak in CFNetwork, rdar://problem/5468837
-            "_CFURLConnectionSendCallbacks", # leak in CFNetwork, rdar://problem/5441600
-            "DispatchQTMsg", # leak in QuickTime, PPC only, rdar://problem/5667132
-            "QTMovieContentView createVisualContext", # leak in QuickTime, PPC only, rdar://problem/5667132
-            "_CopyArchitecturesForJVMVersion", # leak in Java, rdar://problem/5910823
-        );
-    }
-
     if (isSnowLeopard()) {
         push @callStacksToExclude, (
             "readMakerNoteProps", # <rdar://problem/7156432> leak in ImageIO
@@ -1799,14 +1782,7 @@ sub captureSavedCrashLog($$)
     if (isCygwin()) {
         $glob = File::Spec->catfile($testResultsDirectory, $windowsCrashLogFilePrefix . "*.txt");
     } elsif (isAppleMacWebKit()) {
-        my $crashLogDirectoryName;
-        if (isLeopard()) {
-            $crashLogDirectoryName = "CrashReporter";
-        } else {
-            $crashLogDirectoryName = "DiagnosticReports";
-        }
-
-        $glob = File::Spec->catfile("~", "Library", "Logs", $crashLogDirectoryName, ($webProcessCrashed ? "WebProcess" : $dumpToolName) . "_*.crash");
+        $glob = File::Spec->catfile("~", "Library", "Logs", "DiagnosticReports", ($webProcessCrashed ? "WebProcess" : $dumpToolName) . "_*.crash");
 
         # Even though the dump tool has exited, CrashReporter might still be running. We need to
         # wait for it to exit to ensure it has saved its crash log to disk. For simplicitly, we'll

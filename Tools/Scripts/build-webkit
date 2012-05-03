@@ -153,7 +153,7 @@ my @features = (
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isBlackBerry(), value =>\$downloadAttributeSupport },
 
     { option => "3d-canvas", desc => "Toggle 3D canvas (WebGL) support",
-      define => "ENABLE_WEBGL", default => (isAppleMacWebKit() && !isLeopard()), value => \$threeDCanvasSupport },
+      define => "ENABLE_WEBGL", default => isAppleMacWebKit(), value => \$threeDCanvasSupport },
 
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isQt()), value => \$threeDRenderingSupport },

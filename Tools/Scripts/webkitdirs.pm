@@ -313,13 +313,9 @@ sub determineArchitecture
         if ($architecture) {
             chomp $architecture;
         } else {
-            if (isLeopard()) {
-                $architecture = `arch`;
-            } else {
-                my $supports64Bit = `sysctl -n hw.optional.x86_64`;
-                chomp $supports64Bit;
-                $architecture = $supports64Bit ? 'x86_64' : `arch`;
-            }
+            my $supports64Bit = `sysctl -n hw.optional.x86_64`;
+            chomp $supports64Bit;
+            $architecture = $supports64Bit ? 'x86_64' : `arch`;
             chomp $architecture;
         }
     }
@@ -1352,11 +1348,6 @@ sub osXVersion()
 {
     determineOSXVersion();
     return $osXVersion;
-}
-
-sub isLeopard()
-{
-    return isDarwin() && osXVersion()->{"minor"} == 5;
 }
 
 sub isSnowLeopard()
@@ -2488,7 +2479,7 @@ EOF
 sub argumentsForRunAndDebugMacWebKitApp()
 {
     my @args = @ARGV;
-    push @args, ("-ApplePersistenceIgnoreState", "YES") if !isLeopard() && !isSnowLeopard() && checkForArgumentAndRemoveFromArrayRef("--no-saved-state", \@args);
+    push @args, ("-ApplePersistenceIgnoreState", "YES") if !isSnowLeopard() && checkForArgumentAndRemoveFromArrayRef("--no-saved-state", \@args);
     return @args;
 }
 
