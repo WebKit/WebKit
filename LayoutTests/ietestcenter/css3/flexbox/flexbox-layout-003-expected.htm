@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD//XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>CSS Test: Flexbox does not shrink to fit children when width and height are specified. - Reference </title>
+        <link rel="author" title="Codeaurora" href="http://www.codeaurora.org/" />
+        <link rel="help" href="http://www.w3.org/TR/css3-flexbox/"/>
+        <style type="text/css">
+            .parent
+            {
+                background: green;
+                width:500px;
+                height:500px;
+                position: relative;
+            }
+            .childa
+            {
+                width:100px;
+                height:100px;
+                background: green;
+                position: absolute;
+            }
+            .childb
+            {
+                width:100px;
+                height:100px;
+                background: green;
+                position: absolute;
+                left: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there is no red visible on the page.</p>
+        <div class="parent">
+            <div class="childa">parent is 300x200px</div>
+            <div class="childb">two children are 100x100px</div>
+        </div>
+    </body>
+</html>
