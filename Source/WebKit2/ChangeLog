@@ -1,3 +1,18 @@
+2012-05-03  Tobias Netzel  <tobias.netzel@googlemail.com>
+
+        Bugs in WebFullScreenController
+        https://bugs.webkit.org/show_bug.cgi?id=85388
+
+        Reviewed by Alexey Proskuryakov.
+
+        Leopard specific fixes:
+        NSWindow doesn't respond to isOnActiveSpace so find out first.
+        Values passed to SetSystemUIMode were swapped.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:WebCore::finalFrame:WebCore::]):
+        (-[WKFullScreenWindowController _updateMenuAndDockForFullScreen]):
+
 2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebFrameLoaderClient::dispatchWillSendSubmitEvent() needs to be
