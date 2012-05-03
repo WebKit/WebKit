@@ -1,3 +1,9 @@
+2012-05-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed gardening. Narrowed down platform specifiers for some tests, removed some entries.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-03  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Remove extra checks for empty string when parsing CSS value
