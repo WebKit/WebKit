@@ -112,6 +112,7 @@ function test() {
     shouldBe("window.NodeFilter.SHOW_NOTATION", 0x00000800);
 
     event = document.createEvent("Event");
+    shouldBe("event.NONE", 0);
     shouldBe("event.CAPTURING_PHASE", 1);
     shouldBe("event.AT_TARGET", 2);
     shouldBe("event.BUBBLING_PHASE", 3);
@@ -132,6 +133,7 @@ function test() {
     shouldBe("event.SELECT", 16384);
     shouldBe("event.CHANGE", 32768);
 
+    shouldBe("window.Event.NONE", 0);
     shouldBe("window.Event.CAPTURING_PHASE", 1);
     shouldBe("window.Event.AT_TARGET", 2);
     shouldBe("window.Event.BUBBLING_PHASE", 3);

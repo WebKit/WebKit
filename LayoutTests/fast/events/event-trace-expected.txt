@@ -1,5 +1,6 @@
 This tests the target, currentEvent, and phase of a complete trace through event bubbling and capture.
 
+Target = No Target; Phase = NONE; CurrentTarget = No Target;
 Target = [object HTMLDivElement] (ID: Self); Phase = CAPTURE; CurrentTarget = [object Window];
 Target = [object HTMLDivElement] (ID: Self); Phase = CAPTURE; CurrentTarget = [object HTMLDocument];
 Target = [object HTMLDivElement] (ID: Self); Phase = CAPTURE; CurrentTarget = [object HTMLHtmlElement] (ID: HTML);

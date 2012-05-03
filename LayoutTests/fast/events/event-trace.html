@@ -25,6 +25,8 @@
     {
         function targetString(target)
         {
+            if (!target)
+                return "No Target";
             if (target instanceof window.Element)
                 return target.toString() + " (ID: " + target.id + ")";
             return target.toString();
@@ -32,7 +34,9 @@
 
         function phaseString(eventPhase)
         {
-            if (eventPhase == Event.CAPTURING_PHASE)
+            if (eventPhase == Event.NONE)
+                return "NONE";
+            else if (eventPhase == Event.CAPTURING_PHASE)
                 return "CAPTURE";
             else if (eventPhase == Event.BUBBLING_PHASE)
                 return "BUBBLE";
@@ -46,6 +50,7 @@
 
         log("Target = " + target + "; Phase = " + phase + "; CurrentTarget = " + currentTarget + ";");
     }
+    
 
     window.addEventListener("customevent", traceEvent, true);
     document.addEventListener("customevent", traceEvent, true);
@@ -63,6 +68,10 @@
 
     var theEvent = document.createEvent("Event");
     theEvent.initEvent("customevent", true, true);
+
+    // Trace before dispatch.
+    traceEvent(theEvent);
+
     document.getElementById("Self").dispatchEvent(theEvent);
 </script>
 </body>

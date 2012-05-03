@@ -56,6 +56,7 @@ PASS: window.NodeFilter.SHOW_DOCUMENT should be 256 and is.
 PASS: window.NodeFilter.SHOW_DOCUMENT_TYPE should be 512 and is.
 PASS: window.NodeFilter.SHOW_DOCUMENT_FRAGMENT should be 1024 and is.
 PASS: window.NodeFilter.SHOW_NOTATION should be 2048 and is.
+PASS: event.NONE should be 0 and is.
 PASS: event.CAPTURING_PHASE should be 1 and is.
 PASS: event.AT_TARGET should be 2 and is.
 PASS: event.BUBBLING_PHASE should be 3 and is.
@@ -75,6 +76,7 @@ PASS: event.FOCUS should be 4096 and is.
 PASS: event.BLUR should be 8192 and is.
 PASS: event.SELECT should be 16384 and is.
 PASS: event.CHANGE should be 32768 and is.
+PASS: window.Event.NONE should be 0 and is.
 PASS: window.Event.CAPTURING_PHASE should be 1 and is.
 PASS: window.Event.AT_TARGET should be 2 and is.
 PASS: window.Event.BUBBLING_PHASE should be 3 and is.
