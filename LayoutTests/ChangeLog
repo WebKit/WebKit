@@ -1,3 +1,14 @@
+2012-05-02  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Need tests for PerfTestRunner.computeStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=85410
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/harness/perftests/perf-runner-compute-statistics-expected.txt: Added.
+        * fast/harness/perftests/perf-runner-compute-statistics.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardening.

@@ -161,6 +161,9 @@ WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
 WONTFIX SKIP : inspector/styles/vendor-prefixes.html = TIMEOUT
 WONTFIX SKIP : fast/css/apple-prefix.html = FAIL
 
+// Perf tests aren't loaded on the chromium bots, so skip testing the framework
+WONTFIX SKIP : fast/harness/perftests = FAIL
+
 // Perf tests are really slow in debug builds and there are few benefits in
 // running them.
 WONTFIX SKIP DEBUG : perf = TIMEOUT
