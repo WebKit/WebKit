@@ -305,7 +305,7 @@ public:
     virtual void detachedFromParent2();
     virtual void detachedFromParent3();
     virtual void cancelPolicyCheck();
-    virtual void dispatchWillSendSubmitEvent(WebCore::HTMLFormElement*) { }
+    virtual void dispatchWillSendSubmitEvent(PassRefPtr<WebCore::FormState>);
     virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>);
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);
     virtual void setMainFrameDocumentReady(bool);

@@ -1,3 +1,15 @@
+2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
+        information about the form being submitted
+        https://bugs.webkit.org/show_bug.cgi?id=84297
+
+        Reviewed by Andy Estes.
+
+        * WebKitSupport/FrameLoaderClientWx.h:
+        (WebCore::FrameLoaderClientWx::dispatchWillSendSubmitEvent):
+        Updated method declaration.
+
 2012-03-30  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
 
         [wx] Move wxWebKit API into WebKit namespace.

@@ -96,7 +96,7 @@ public:
 
     virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
 
-    virtual void dispatchWillSendSubmitEvent(WebCore::HTMLFormElement*) { }
+    virtual void dispatchWillSendSubmitEvent(WTF::PassRefPtr<WebCore::FormState>) { }
     virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, WTF::PassRefPtr<WebCore::FormState>);
 
     virtual void revertToProvisionalState(WebCore::DocumentLoader*);

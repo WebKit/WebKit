@@ -716,11 +716,11 @@ void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction fun
     (m_frame->loader()->policyChecker()->*function)(PolicyUse);
 }
 
-void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(HTMLFormElement* form)
+void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(PassRefPtr<FormState> prpFormState)
 {
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
-        credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(form));
+        credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(prpFormState->form()));
 #else
     notImplemented();
 #endif

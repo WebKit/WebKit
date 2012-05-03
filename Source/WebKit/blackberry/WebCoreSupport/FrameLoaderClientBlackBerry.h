@@ -163,7 +163,7 @@ public:
 
     virtual void didDetectXSS(const KURL&, bool) { }
     virtual void dispatchDidChangeIcons(IconType) { notImplemented(); };
-    virtual void dispatchWillSendSubmitEvent(HTMLFormElement*);
+    virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>);
 
     virtual void willDeferLoading();
     virtual void didResumeLoading();

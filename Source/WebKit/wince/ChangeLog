@@ -1,3 +1,15 @@
+2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
+        information about the form being submitted
+        https://bugs.webkit.org/show_bug.cgi?id=84297
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+        (WebKit::FrameLoaderClientWinCE::dispatchWillSendSubmitEvent):
+        Updated method declaration.
+
 2012-03-30  Patrick Gansterer  <paroga@webkit.org>
 
         [WinCE] Correct <wtf/*.h> include paths.

@@ -110,6 +110,8 @@ public:
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
 
     const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
+    
+    void getTextFieldValues(StringPairVector& fieldNamesAndValues) const;
 
 private:
     HTMLFormElement(const QualifiedName&, Document*);

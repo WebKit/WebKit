@@ -177,7 +177,7 @@ namespace WebCore {
 
         virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
 
-        virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) = 0;
+        virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) = 0;
         virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) = 0;
 
         virtual void revertToProvisionalState(DocumentLoader*) = 0;

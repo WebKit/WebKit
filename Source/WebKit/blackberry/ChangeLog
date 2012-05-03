@@ -1,3 +1,19 @@
+2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
+        information about the form being submitted
+        https://bugs.webkit.org/show_bug.cgi?id=84297
+
+        Reviewed by Andy Estes.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent):
+        Updated to use the FormState.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+        Updated method declaration.
+
 2012-05-02  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Double tap zooming does nothing on small size table

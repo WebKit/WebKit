@@ -1035,10 +1035,10 @@ void FrameLoaderClientImpl::dispatchUnableToImplementPolicy(const ResourceError&
     m_webFrame->client()->unableToImplementPolicyWithError(m_webFrame, error);
 }
 
-void FrameLoaderClientImpl::dispatchWillSendSubmitEvent(HTMLFormElement* form)
+void FrameLoaderClientImpl::dispatchWillSendSubmitEvent(PassRefPtr<FormState> prpFormState)
 {
     if (m_webFrame->client())
-        m_webFrame->client()->willSendSubmitEvent(m_webFrame, WebFormElement(form));
+        m_webFrame->client()->willSendSubmitEvent(m_webFrame, WebFormElement(prpFormState->form()));
 }
 
 void FrameLoaderClientImpl::dispatchWillSubmitForm(FramePolicyFunction function,

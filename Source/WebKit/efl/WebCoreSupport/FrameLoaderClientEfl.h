@@ -119,7 +119,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&);
 
-    virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) { }
+    virtual void dispatchWillSendSubmitEvent(WTF::PassRefPtr<FormState>) { }
     virtual void dispatchWillSubmitForm(FramePolicyFunction, WTF::PassRefPtr<FormState>);
 
     virtual void revertToProvisionalState(DocumentLoader*);

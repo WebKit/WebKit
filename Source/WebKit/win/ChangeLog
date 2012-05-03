@@ -1,3 +1,14 @@
+2012-04-23  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
+        information about the form being submitted
+        https://bugs.webkit.org/show_bug.cgi?id=84297
+
+        Reviewed by Andy Estes.
+
+        * WebFrame.h:
+        Fix function stub for new parameter.
+
 2012-05-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         *Command.h files shouldn't be exported to WebKit layer

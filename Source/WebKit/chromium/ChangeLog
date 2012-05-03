@@ -1,3 +1,19 @@
+2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
+        information about the form being submitted
+        https://bugs.webkit.org/show_bug.cgi?id=84297
+
+        Reviewed by Andy Estes.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchWillSendSubmitEvent):
+        Updated to use the FormState.
+
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+        Updated method declaration.
+
 2012-05-02  Joshua Bell  <jsbell@chromium.org>
 
         Roll Chromium DEPS r134537 to r134581.

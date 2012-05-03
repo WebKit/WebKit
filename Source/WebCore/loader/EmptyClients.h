@@ -303,7 +303,7 @@ public:
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) { }
 
-    virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) { }
+    virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) { }
     virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) { }
 
     virtual void revertToProvisionalState(DocumentLoader*) { }

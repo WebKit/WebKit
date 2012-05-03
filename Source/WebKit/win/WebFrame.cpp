@@ -1556,6 +1556,10 @@ void WebFrame::cancelPolicyCheck()
     d->m_policyFunction = 0;
 }
 
+void WebFrame::dispatchWillSendSubmitEvent(PassRefPtr<WebCore::FormState>)
+{
+}
+
 void WebFrame::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
 {
     Frame* coreFrame = core(this);

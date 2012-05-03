@@ -1,3 +1,19 @@
+2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
+        information about the form being submitted
+        https://bugs.webkit.org/show_bug.cgi?id=84297
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient):
+        Updated method declaration.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::willSendSubmitEvent):
+        Stubbed.
+
 2012-05-01  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Make Page::setDefersLoading() have a call count so that each time

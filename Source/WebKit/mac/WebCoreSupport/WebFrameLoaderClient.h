@@ -124,7 +124,7 @@ private:
 
     virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&) OVERRIDE;
 
-    virtual void dispatchWillSendSubmitEvent(WebCore::HTMLFormElement*) OVERRIDE { }
+    virtual void dispatchWillSendSubmitEvent(PassRefPtr<WebCore::FormState>) OVERRIDE { }
     virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>) OVERRIDE;
 
     virtual void revertToProvisionalState(WebCore::DocumentLoader*) OVERRIDE;

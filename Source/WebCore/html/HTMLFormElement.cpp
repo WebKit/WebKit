@@ -288,7 +288,10 @@ bool HTMLFormElement::prepareForSubmission(Event* event)
         return false;
     }
 
-    frame->loader()->client()->dispatchWillSendSubmitEvent(this);
+    StringPairVector controlNamesAndValues;
+    getTextFieldValues(controlNamesAndValues);
+    RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, document(), NotSubmittedByJavaScript);
+    frame->loader()->client()->dispatchWillSendSubmitEvent(formState.release());
 
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)))
         m_shouldSubmit = true;
@@ -309,6 +312,25 @@ void HTMLFormElement::submit()
 void HTMLFormElement::submitFromJavaScript()
 {
     submit(0, false, ScriptController::processingUserGesture(), SubmittedByJavaScript);
+}
+
+void HTMLFormElement::getTextFieldValues(StringPairVector& fieldNamesAndValues) const
+{
+    ASSERT_ARG(fieldNamesAndValues, fieldNamesAndValues.isEmpty());
+
+    fieldNamesAndValues.reserveCapacity(m_associatedElements.size());
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
+        FormAssociatedElement* control = m_associatedElements[i];
+        HTMLElement* element = toHTMLElement(control);
+        if (!element->hasLocalName(inputTag))
+            continue;
+
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
+        if (!input->isTextField())
+            continue;
+
+        fieldNamesAndValues.append(make_pair(input->name().string(), input->value()));
+    }
 }
 
 void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger formSubmissionTrigger)
