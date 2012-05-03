@@ -140,7 +140,16 @@ WebInspector.Script.prototype = {
         return !!this.sourceURL && this.lineOffset !== 0 && this.columnOffset !== 0;
     },
 
-    
+    /**
+     * @param {DebuggerAgent.Location} rawLocation
+     * @return {WebInspector.UILocation}
+     */
+    rawLocationToUILocation: function(rawLocation)
+    {
+        console.assert(rawLocation.scriptId === this.scriptId);
+        return this._sourceMapping.rawLocationToUILocation(rawLocation);
+    },
+
     /**
      * @param {WebInspector.SourceMapping} sourceMapping
      */

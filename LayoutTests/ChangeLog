@@ -1,3 +1,20 @@
+2012-04-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: migrate breakpoint manager to live locations.
+        https://bugs.webkit.org/show_bug.cgi?id=85136
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/breakpoint-manager-expected.txt:
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/source-frame-expected.txt:
+        * inspector/debugger/source-frame.html:
+        * platform/chromium/inspector/debugger/breakpoint-manager-expected.txt: Removed.
+
 2012-05-03  Uday Kiran  <udaykiran@motorola.com>
 
         CSS clip: auto clips to box borders instead of removing clipping

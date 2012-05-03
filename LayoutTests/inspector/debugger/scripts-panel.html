@@ -11,6 +11,13 @@ function test()
     WebInspector._isMac = false;
 
     var uiSourceCodes;
+
+    var persistentBreakpoints = [];
+    var breakpointStorage = {
+        get: function() { return persistentBreakpoints; },
+        set: function(breakpoints) { persistentBreakpoints = breakpoints; }
+    };
+
     function createDebuggerPresentationModelMock()
     {
         var model = new WebInspector.Object();
@@ -38,7 +45,7 @@ function test()
             var data = { oldUISourceCodeList: oldUISourceCodeList, uiSourceCodeList: newUISourceCodeList };
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, data);
         }
-
+        model.breakpointManager = new WebInspector.BreakpointManager(breakpointStorage, WebInspector.debuggerModel, null);
         return model;
     }
     function createUISouceCode(url)

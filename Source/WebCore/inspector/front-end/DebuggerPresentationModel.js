@@ -138,11 +138,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         var removedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["removedItems"];
         var addedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["addedItems"];
-
-        for (var i = 0; i < removedItems.length; ++i)
-            this._breakpointManager.uiSourceCodeRemoved(removedItems[i]);
+        
         for (var i = 0; i < addedItems.length; ++i)
-            this._breakpointManager.uiSourceCodeAdded(addedItems[i]);
+            WebInspector.debuggerPresentationModel.breakpointManager.restoreBreakpoints(addedItems[i]);
 
         if (!removedItems.length) {
             for (var i = 0; i < addedItems.length; ++i)
@@ -298,7 +296,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _debuggerReset: function()
     {
         this._scriptMapping.reset();
-        this._breakpointManager.debuggerReset();
         this._pendingConsoleMessages = {};
         this._consoleMessageLiveLocations = [];
     }
@@ -392,8 +389,6 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
         {
             if (userCallback)
                 userCallback(error);
-            if (!error)
-                uiSourceCode.updateBreakpointsAfterLiveEdit(oldContent || "", content);
         }
         this._presentationModel.setScriptSource(uiSourceCode, content, callback.bind(this));
     }

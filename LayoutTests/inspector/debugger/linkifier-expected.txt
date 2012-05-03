@@ -2,9 +2,9 @@ Tests that Linkifier works correctly.
 
 Debugger was enabled.
 listeners added on raw source code: 1
-original location: linkifier.html:21
-pretty printed location: linkifier.html:24
-reverted location: linkifier.html:21
+original location: linkifier.html:9
+pretty printed location: linkifier.html:12
+reverted location: linkifier.html:9
 listeners removed from raw source code: 1
 Debugger was disabled.
 

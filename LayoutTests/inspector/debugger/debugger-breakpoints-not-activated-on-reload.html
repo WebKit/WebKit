@@ -26,15 +26,10 @@ var test = function()
         InspectorTest.addResult("Main resource was shown.");
         InspectorTest.setBreakpoint(sourceFrame, 8, "", true);
         WebInspector.panels.scripts._toggleBreakpointsButton.element.click();
-        InspectorTest.reloadPage(step4);
+        InspectorTest.reloadPage(step3);
     }
 
     function step3()
-    {
-        InspectorTest.showScriptSource(testName, step4);
-    }
-
-    function step4()
     {
         InspectorTest.addResult("Main resource was shown.");
         if (!WebInspector.debuggerModel.breakpointsActive())

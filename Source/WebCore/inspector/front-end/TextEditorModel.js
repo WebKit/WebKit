@@ -400,12 +400,12 @@ WebInspector.TextEditorModel.prototype = {
     /**
      * @param {function()=} beforeCallback
      * @param {function(WebInspector.TextRange, WebInspector.TextRange)=} afterCallback
-     * @return {WebInspector.TextRange}
+     * @return {?WebInspector.TextRange}
      */
     undo: function(beforeCallback, afterCallback)
     {
         if (!this._undoStack.length)
-            return;
+            return null;
 
         this._markRedoableState();
 
@@ -424,7 +424,7 @@ WebInspector.TextEditorModel.prototype = {
     redo: function(beforeCallback, afterCallback)
     {
         if (!this._redoStack || !this._redoStack.length)
-            return;
+            return null;
         this.markUndoableState();
 
         this._inRedo = true;

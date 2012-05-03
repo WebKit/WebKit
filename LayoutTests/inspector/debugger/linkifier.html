@@ -4,6 +4,11 @@
 <script src="../../http/tests/inspector/debugger-test.js"></script>
 <script>
 
+function dummyScript()
+{
+    console.log("dummy string");
+}
+
 function test()
 {
     InspectorTest.startDebuggerTest(waitForScripts);
@@ -17,12 +22,11 @@ function test()
         var continued = false;
         function scriptAdded(event)
         {
-            if (continued)
+            if (script)
                 return;
 
-            script = event.data;
-            if (script.sourceURL === WebInspector.inspectedPageURL) {
-                continued = true;
+            if (event.data.sourceURL === WebInspector.inspectedPageURL && event.data.lineOffset === 4) {
+                script = event.data;
                 setTimeout(debuggerTest, 0);
             }
         }
@@ -36,7 +40,7 @@ function test()
         linkifier = new WebInspector.Linkifier();
 
         var count1 = liveLocationsCount();
-        link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 20, 0, "dummy-class");
+        link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 8, 0, "dummy-class");
         var count2 = liveLocationsCount();
 
         InspectorTest.addResult("listeners added on raw source code: " + (count2 - count1));

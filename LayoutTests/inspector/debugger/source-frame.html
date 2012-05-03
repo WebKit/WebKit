@@ -10,6 +10,11 @@ function addErrorToConsole()
     console.error("test error message");
 }
 
+function methodForBreakpoint()
+{
+    alert("Hello world");
+}
+
 function test()
 {
     WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
@@ -22,7 +27,7 @@ function test()
             {
                 InspectorTest.addResult("Script source was shown.");
                 InspectorTest.addSniffer(WebInspector.JavaScriptSourceFrame.prototype, "_addBreakpointDecoration", didAddBreakpoint);
-                InspectorTest.setBreakpoint(sourceFrame, 17, "", true);
+                InspectorTest.setBreakpoint(sourceFrame, 14, "", true);
             }
 
             function didAddBreakpoint(lineNumber)

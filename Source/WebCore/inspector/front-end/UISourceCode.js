@@ -51,11 +51,9 @@ WebInspector.UISourceCode = function(id, url, contentProvider)
 }
 
 WebInspector.UISourceCode.Events = {
-    ContentChanged: "content-changed",
-    BreakpointAdded: "breakpoint-added",
-    BreakpointRemoved: "breakpoint-removed",
-    ConsoleMessageAdded: "console-message-added",
-    ConsoleMessagesCleared: "console-messages-cleared"
+    ContentChanged: "ContentChanged",
+    ConsoleMessageAdded: "ConsoleMessageAdded",
+    ConsoleMessagesCleared: "ConsoleMessagesCleared"
 }
 
 WebInspector.UISourceCode.prototype = {
@@ -104,8 +102,9 @@ WebInspector.UISourceCode.prototype = {
     contentChanged: function(newContent)
     {
         console.assert(this._contentLoaded);
+        var oldContent = this._content;
         this._content = newContent;
-        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged);
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged, {oldContent: oldContent, content: newContent});
     },
 
     /**
@@ -134,11 +133,6 @@ WebInspector.UISourceCode.prototype = {
             this._requestContentCallbacks[i](content, contentEncoded, mimeType);
         this._requestContentCallbacks = [];
     },
-
-    /**
-     * @return {Object.<string,WebInspector.UIBreakpoint>}
-     */
-    breakpoints: function() {},
 
     /**
      * @return {Array.<WebInspector.PresentationConsoleMessage>}

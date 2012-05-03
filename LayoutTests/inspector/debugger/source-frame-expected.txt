@@ -5,7 +5,7 @@ Debugger was enabled.
 
 Running: testSetBreakpoint
 Script source was shown.
-Breakpoint added to source frame at line 17
+Breakpoint added to source frame at line 14
 
 Running: testConsoleMessage
 Script source was shown.

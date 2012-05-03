@@ -385,7 +385,6 @@ WebInspector.DebuggerModel.prototype = {
         return !!this.debuggerPausedDetails();
     },
 
-
     /**
      * @param {?WebInspector.DebuggerModel.CallFrame} callFrame
      */
@@ -491,6 +490,17 @@ WebInspector.DebuggerModel.prototype = {
     breakpointsActive: function()
     {
         return this._breakpointsActive;
+    },
+
+    /**
+     * @param {DebuggerAgent.Location} location
+     * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
+     * @return {WebInspector.LiveLocation}
+     */
+    createLiveLocation: function(location, updateDelegate)
+    {
+        var script = this._scripts[location.scriptId];
+        return script.createLiveLocation(location, updateDelegate);
     }
 }
 

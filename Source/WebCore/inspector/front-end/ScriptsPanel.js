@@ -90,7 +90,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
-    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel, this._showSourceLine.bind(this));
+    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel.breakpointManager, this._showSourceLine.bind(this));
     if (Capabilities.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
         this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
@@ -245,11 +245,6 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _uiSourceCodeAdded: function(uiSourceCode)
     {
-        var breakpoints = uiSourceCode.breakpoints();
-        for (var lineNumber in breakpoints)
-            this._uiBreakpointAdded({ data: breakpoints[lineNumber] });
-        this._addBreakpointListeners(uiSourceCode);
-
         if (!uiSourceCode.url || uiSourceCode.isSnippetEvaluation) {
             // Anonymous sources and snippets evaluations are shown only when stepping.
             return;
@@ -271,25 +266,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
         this._removeSourceFrame(uiSourceCode);
-        this._removeBreakpointListeners(uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _addBreakpointListeners: function(uiSourceCode)
-    {
-        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.BreakpointAdded, this._uiBreakpointAdded, this);
-        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.BreakpointRemoved, this._uiBreakpointRemoved, this);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _removeBreakpointListeners: function(uiSourceCode)
-    {
-        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.BreakpointAdded, this._uiBreakpointAdded, this);
-        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.BreakpointRemoved, this._uiBreakpointRemoved, this);
     },
 
     /**
@@ -300,18 +276,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this._navigator.setScriptSourceIsDirty(uiSourceCode, isDirty);
         this._editorContainer.setFileIsDirty(uiSourceCode, isDirty);
-    },
-
-    _uiBreakpointAdded: function(event)
-    {
-        var uiBreakpoint = /** @type {WebInspector.UIBreakpoint} */ event.data;
-        this.sidebarPanes.jsBreakpoints.addBreakpoint(uiBreakpoint);
-    },
-
-    _uiBreakpointRemoved: function(event)
-    {
-        var uiBreakpoint = /** @type {WebInspector.UIBreakpoint} */ event.data;
-        this.sidebarPanes.jsBreakpoints.removeBreakpoint(uiBreakpoint.uiSourceCode, uiBreakpoint.lineNumber);
     },
 
     _consoleCommandEvaluatedInSelectedCallFrame: function(event)
@@ -352,9 +316,10 @@ WebInspector.ScriptsPanel.prototype = {
         } else {
             function didGetUILocation(uiLocation)
             {
-                if (!uiLocation.uiSourceCode.findBreakpoint(uiLocation.lineNumber))
+                var breakpoint = this._presentationModel.breakpointManager.findBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber);
+                if (!breakpoint)
                     return;
-                this.sidebarPanes.jsBreakpoints.highlightBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber);
+                this.sidebarPanes.jsBreakpoints.highlightBreakpoint(breakpoint);
                 this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a JavaScript breakpoint."));
             }
             details.callFrames[0].createLiveLocation(didGetUILocation.bind(this));
@@ -561,16 +526,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._editorContainer.replaceFiles(oldUISourceCodeList, uiSourceCodeList);
         for (var i = 0; i < oldUISourceCodeList.length; ++i)
             this._removeSourceFrame(oldUISourceCodeList[i]);
-
-        for (var i = 0; i < oldUISourceCodeList.length; ++i)
-            this._removeBreakpointListeners(oldUISourceCodeList[i]);
-        for (var i = 0; i < uiSourceCodeList.length; ++i) {
-            var uiSourceCode = uiSourceCodeList[i];
-            var breakpoints = uiSourceCode.breakpoints();
-            for (var lineNumber in breakpoints)
-                this._uiBreakpointAdded({ data: breakpoints[lineNumber] });
-            this._addBreakpointListeners(uiSourceCode);
-        }
     },
 
     _clearCurrentExecutionLine: function()
