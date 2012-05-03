@@ -32,6 +32,7 @@
 #ifndef NotificationClient_h
 #define NotificationClient_h
 
+#include "NotificationPermissionCallback.h"
 #include "VoidCallback.h"
 #include <wtf/PassRefPtr.h>
 
@@ -40,7 +41,6 @@ namespace WebCore {
 class Document;
 class KURL;
 class Notification;
-class NotificationPermissionCallback;
 class Page;
 class ScriptExecutionContext;
 
