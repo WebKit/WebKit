@@ -2430,6 +2430,7 @@ ENDIF ()
 IF (ENABLE_WEB_AUDIO)
     LIST(APPEND WebCore_SOURCES
         Modules/webaudio/AsyncAudioDecoder.cpp
+        Modules/webaudio/AudioBasicInspectorNode.cpp
         Modules/webaudio/AudioBasicProcessorNode.cpp
         Modules/webaudio/AudioBuffer.cpp
         Modules/webaudio/AudioBufferSourceNode.cpp
@@ -2446,6 +2447,7 @@ IF (ENABLE_WEB_AUDIO)
         Modules/webaudio/AudioParam.cpp
         Modules/webaudio/AudioParamTimeline.cpp
         Modules/webaudio/AudioProcessingEvent.cpp
+        Modules/webaudio/AudioScheduledSourceNode.cpp
         Modules/webaudio/BiquadDSPKernel.cpp
         Modules/webaudio/BiquadFilterNode.cpp
         Modules/webaudio/BiquadProcessor.cpp
@@ -2470,6 +2472,7 @@ IF (ENABLE_WEB_AUDIO)
         platform/audio/AudioBus.cpp
         platform/audio/AudioChannel.cpp
         platform/audio/AudioDSPKernelProcessor.cpp
+        platform/audio/AudioPullFIFO.cpp
         platform/audio/AudioResampler.cpp
         platform/audio/AudioResamplerKernel.cpp
         platform/audio/AudioUtilities.cpp
