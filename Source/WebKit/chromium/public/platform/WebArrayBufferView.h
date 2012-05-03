@@ -32,6 +32,13 @@
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
 
+#if WEBKIT_USING_V8
+namespace v8 {
+class Value;
+template <class T> class Handle;
+}
+#endif
+
 namespace WTF { class ArrayBufferView; }
 
 namespace WebKit {
@@ -49,6 +56,10 @@ public:
 
     WEBKIT_EXPORT void assign(const WebArrayBufferView&);
     WEBKIT_EXPORT void reset();
+
+#if WEBKIT_USING_V8
+    WEBKIT_EXPORT static WebArrayBufferView* createFromV8Value(v8::Handle<v8::Value>);
+#endif
 
 #if WEBKIT_IMPLEMENTATION
     WebArrayBufferView(const WTF::PassRefPtr<WTF::ArrayBufferView>&);

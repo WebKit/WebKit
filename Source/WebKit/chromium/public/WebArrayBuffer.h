@@ -68,6 +68,7 @@ public:
 
 #if WEBKIT_USING_V8
     WEBKIT_EXPORT v8::Handle<v8::Value> toV8Value();
+    WEBKIT_EXPORT static WebArrayBuffer* createFromV8Value(v8::Handle<v8::Value>);
 #endif
 
 #if WEBKIT_IMPLEMENTATION

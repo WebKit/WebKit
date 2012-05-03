@@ -1,3 +1,22 @@
+2012-05-03  Antony Sargent  <asargent@chromium.org>
+
+        Add methods to create WebArrayBuffer/WebArrayBufferView from v8 objects
+        https://bugs.webkit.org/show_bug.cgi?id=84899
+
+        Reviewed by Adam Barth.
+
+        * public/WebArrayBuffer.h:
+        (WebArrayBuffer):
+        * public/platform/WebArrayBufferView.h:
+        (v8):
+        (WebArrayBufferView):
+        * src/WebArrayBuffer.cpp:
+        (WebKit):
+        (WebKit::WebArrayBuffer::createFromV8Value):
+        * src/WebArrayBufferView.cpp:
+        (WebKit):
+        (WebKit::WebArrayBufferView::createFromV8Value):
+
 2012-05-03  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't add small opaque areas to the occlusion tracker's Region

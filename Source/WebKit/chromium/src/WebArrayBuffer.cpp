@@ -74,6 +74,14 @@ v8::Handle<v8::Value> WebArrayBuffer::toV8Value()
 {
     return V8ArrayBuffer::wrap(m_private.get());
 }
+
+WebArrayBuffer* WebArrayBuffer::createFromV8Value(v8::Handle<v8::Value> value)
+{
+    if (!V8ArrayBuffer::HasInstance(value))
+        return 0;
+    WTF::ArrayBuffer* buffer = V8ArrayBuffer::toNative(value->ToObject());
+    return new WebArrayBuffer(buffer);
+}
 #endif
 
 WebArrayBuffer::WebArrayBuffer(const WTF::PassRefPtr<WTF::ArrayBuffer>& blob)
