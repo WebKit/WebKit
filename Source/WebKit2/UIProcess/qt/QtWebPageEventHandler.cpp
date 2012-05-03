@@ -414,11 +414,9 @@ void QtWebPageEventHandler::updateTextInputState()
     if (!m_webView->hasActiveFocus())
         return;
 
-    qApp->inputPanel()->update(Qt::ImQueryInput);
+    qApp->inputPanel()->update(Qt::ImQueryInput | Qt::ImEnabled);
 
-    // Ignore input method requests not due to a tap gesture.
-    if (!editor.isContentEditable)
-        setInputPanelVisible(false);
+    setInputPanelVisible(editor.isContentEditable);
 }
 
 void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, bool wasEventHandled)
@@ -431,10 +429,7 @@ void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, b
     if (!wasEventHandled || !m_webView->hasActiveFocus())
         return;
 
-    qApp->inputPanel()->update(Qt::ImQueryInput);
-    const EditorState& editor = m_webPageProxy->editorState();
-    bool newVisible = editor.isContentEditable;
-    setInputPanelVisible(newVisible);
+    updateTextInputState();
 }
 
 #if ENABLE(TOUCH_EVENTS)

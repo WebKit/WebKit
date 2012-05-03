@@ -1,3 +1,17 @@
+2012-05-03  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Also update Qt::ImEnabled flag when updating the input method.
+        https://bugs.webkit.org/show_bug.cgi?id=85495
+
+        Reviewed by Simon Hausmann.
+
+        QInputMethod only issues a new inputMethodQuery if the Qt::ImEnabled
+        flag got updated as well.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::updateTextInputState):
+        (WebKit::QtWebPageEventHandler::doneWithGestureEvent):
+
 2012-05-03  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Tap-highlight blinks when activated.
