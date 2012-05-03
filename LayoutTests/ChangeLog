@@ -1,3 +1,11 @@
+2012-05-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-win-vista/fast/css/zoom-body-scroll-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/zoom-body-scroll-expected.txt: Added.
+        * platform/chromium-win/fast/css/zoom-body-scroll-expected.txt:
+
 2012-05-03  Levi Weintraub  <leviw@chromium.org>
 
         Updating expectations after r116009.
