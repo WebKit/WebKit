@@ -1,3 +1,14 @@
+2012-05-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, skipping flaky tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=85522
+        https://bugs.webkit.org/show_bug.cgi?id=85523
+        https://bugs.webkit.org/show_bug.cgi?id=85524
+        https://bugs.webkit.org/show_bug.cgi?id=85525
+
+        * platform/mac/Skipped:
+
 2012-05-03  Dan Bernstein  <mitz@apple.com>
 
         Removed dumpAsText() from this ref test, since that apparently confuses the test tool.
