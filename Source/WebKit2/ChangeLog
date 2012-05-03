@@ -1,3 +1,11 @@
+2012-05-03  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Document the QML WebViewExperimental API devicePixelRatio.
+
+        Rubberstamped by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+
 2012-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Allow the web process and WTR to be paused on startup

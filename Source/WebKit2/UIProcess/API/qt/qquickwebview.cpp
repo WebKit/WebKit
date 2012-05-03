@@ -1112,6 +1112,43 @@ void QQuickWebViewExperimental::setUserAgent(const QString& userAgent)
     emit userAgentChanged();
 }
 
+/*!
+    \internal
+
+    \qmlproperty real WebViewExperimental::devicePixelRatio
+    \brief The ratio between the CSS units and device pixels when the content is unscaled.
+
+    When designing touch-friendly contents, knowing the approximated target size on a device
+    is important for contents providers in order to get the intented layout and element
+    sizes.
+
+    As most first generation touch devices had a PPI of approximately 160, this became a
+    de-facto value, when used in conjunction with the viewport meta tag.
+
+    Devices with a higher PPI learning towards 240 or 320, applies a pre-scaling on all
+    content, of either 1.5 or 2.0, not affecting the CSS scale or pinch zooming.
+
+    This value can be set using this property and it is exposed to CSS media queries using
+    the -webkit-device-pixel-ratio query.
+
+    For instance, if you want to load an image without having it upscaled on a web view
+    using a device pixel ratio of 2.0 it can be done by loading an image of say 100x100
+    pixels but showing it at half the size.
+
+    FIXME: Move documentation example out in separate files
+
+    @media (-webkit-min-device-pixel-ratio: 1.5) {
+        .icon {
+            width: 50px;
+            height: 50px;
+            url: "/images/icon@2x.png"; // This is actually a 100x100 image
+        }
+    }
+
+    If the above is used on a device with device pixel ratio of 1.5, it will be scaled
+    down but still provide a better looking image.
+ */
+
 double QQuickWebViewExperimental::devicePixelRatio() const
 {
     Q_D(const QQuickWebView);
