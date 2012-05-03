@@ -160,6 +160,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void discardAllCompiledCode();
 
         void didAllocate(size_t);
+        void didAbandon(size_t);
 
         bool isPagedOut(double deadline);
 
@@ -211,6 +212,7 @@ namespace JSC {
 
         size_t m_bytesAllocatedLimit;
         size_t m_bytesAllocated;
+        size_t m_bytesAbandoned;
         
         OperationInProgress m_operationInProgress;
         MarkedSpace m_objectSpace;

@@ -316,6 +316,7 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_sizeAfterLastCollect(0)
     , m_bytesAllocatedLimit(m_minBytesPerCycle)
     , m_bytesAllocated(0)
+    , m_bytesAbandoned(0)
     , m_operationInProgress(NoOperation)
     , m_objectSpace(this)
     , m_storageSpace(this)
@@ -401,7 +402,13 @@ void Heap::reportAbandonedObjectGraph()
     // been abandoned, the next collection has the potential to 
     // be more profitable. Since allocation is the trigger for collection, 
     // we hasten the next collection by pretending that we've allocated more memory. 
-    didAllocate(abandonedBytes);
+    didAbandon(abandonedBytes);
+}
+
+void Heap::didAbandon(size_t bytes)
+{
+    m_activityCallback->didAllocate(m_bytesAllocated + m_bytesAbandoned);
+    m_bytesAbandoned += bytes;
 }
 
 void Heap::protect(JSValue k)
@@ -728,6 +735,7 @@ static double minute = 60.0;
 void Heap::collect(SweepToggle sweepToggle)
 {
     SamplingRegion samplingRegion("Garbage Collection");
+    fprintf(stdout, "running collection\n");
     
     GCPHASE(Collect);
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
@@ -785,6 +793,7 @@ void Heap::collect(SweepToggle sweepToggle)
         sweep();
         m_objectSpace.shrink();
         m_weakSet.shrink();
+        m_bytesAbandoned = 0;
     }
 
     // To avoid pathological GC churn in large heaps, we set the new allocation 
@@ -826,7 +835,7 @@ GCActivityCallback* Heap::activityCallback()
 
 void Heap::didAllocate(size_t bytes)
 {
-    m_activityCallback->didAllocate(m_bytesAllocated);
+    m_activityCallback->didAllocate(m_bytesAllocated + m_bytesAbandoned);
     m_bytesAllocated += bytes;
 }
 
