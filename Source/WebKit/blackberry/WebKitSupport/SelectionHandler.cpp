@@ -827,7 +827,7 @@ bool SelectionHandler::inputNodeOverridesTouch() const
         return false;
 
     // TODO consider caching this in InputHandler so it is only calculated once per focus.
-    DEFINE_STATIC_LOCAL(QualifiedName, selectionTouchOverrideAttr, (nullAtom, "-bb-selection-touchoverride", nullAtom));
+    DEFINE_STATIC_LOCAL(QualifiedName, selectionTouchOverrideAttr, (nullAtom, "data-blackberry-end-selection-on-touch", nullAtom));
     Element* element = static_cast<Element*>(focusedNode);
     return DOMSupport::elementAttributeState(element, selectionTouchOverrideAttr) == DOMSupport::On;
 }

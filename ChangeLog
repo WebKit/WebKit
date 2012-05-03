@@ -1,3 +1,14 @@
+2012-05-03  Mike Fenton  <mifenton@rim.com>
+
+        Rename attribute.
+
+        [BlackBerry] Add special attribute for alternate selection touch handling.
+        https://bugs.webkit.org/show_bug.cgi?id=85284
+
+        Reviewed by Rob Buis.
+
+        * ManualTests/blackberry/selection-touch-override.html:
+
 2012-05-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Remove unneeded keyword in WebKitFeatures.cmake

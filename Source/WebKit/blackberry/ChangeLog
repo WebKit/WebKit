@@ -1,3 +1,15 @@
+2012-05-03  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Add special attribute for alternate selection touch handling.
+        https://bugs.webkit.org/show_bug.cgi?id=85284
+
+        Reviewed by Rob Buis.
+
+        Rename the custom attribute and make it a data- attribute.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::inputNodeOverridesTouch):
+
 2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more
