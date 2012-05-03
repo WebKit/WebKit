@@ -255,7 +255,7 @@ public:
             styleResolver->style()->setHasClip(true);
         } else if (primitiveValue->getIdent() == CSSValueAuto) {
             styleResolver->style()->setClip(Length(), Length(), Length(), Length());
-            styleResolver->style()->setHasClip(true);
+            styleResolver->style()->setHasClip(false);
         }
     }
 

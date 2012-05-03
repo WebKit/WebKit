@@ -1,3 +1,16 @@
+2012-05-03  Uday Kiran  <udaykiran@motorola.com>
+
+        CSS clip: auto clips to box borders instead of removing clipping
+        https://bugs.webkit.org/show_bug.cgi?id=36772
+
+        Reviewed by Andreas Kling.
+
+        CSS 2.1 test case added for clip:auto
+
+        * css2.1/20110323/clip-001-expected.html: Added.
+        * css2.1/20110323/clip-001.html: Added.
+        * fast/css/getPropertyValue-clip.html: getPropertyValue for clip when auto is specified should return auto and not rect(0px 0px 0px 0px).
+
 2012-05-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Fix multiple begin values support - especially with seeking through setCurrentTime
