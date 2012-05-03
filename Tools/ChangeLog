@@ -1,3 +1,16 @@
+2012-05-03  Zan Dobersek  <zandobersek@gmail.com>
+
+        ImageDiff should be run inside a properly established environment
+        https://bugs.webkit.org/show_bug.cgi?id=85292
+
+        Reviewed by Martin Robinson.
+
+        When creating the ImageDiff server process, pass along a freshly-set-up environment
+        in which the process should be executed in.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._start_image_diff_process):
+
 2012-05-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Allow the web process and WTR to be paused on startup

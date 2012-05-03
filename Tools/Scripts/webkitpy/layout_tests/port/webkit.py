@@ -180,7 +180,8 @@ class WebKitPort(Port):
             else:
                 tolerance = 0.1
         command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
-        process = server_process.ServerProcess(self, 'ImageDiff', command)
+        environment = self.setup_environ_for_server('ImageDiff')
+        process = server_process.ServerProcess(self, 'ImageDiff', command, environment)
 
         process.write('Content-Length: %d\n%sContent-Length: %d\n%s' % (
             len(actual_contents), actual_contents,
