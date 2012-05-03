@@ -203,4 +203,31 @@ defineTest(
     }
 );
 
+defineTest(
+    'Verify that keys above 2^53 result in errors.',
+    function (db, trans) {
+        db.createObjectStore('store', { autoIncrement: true });
+    },
+
+    function (db, callback) {
+        evalAndLog("trans1 = db.transaction(['store'], IDBTransaction.READ_WRITE)");
+        evalAndLog("store_t1 = trans1.objectStore('store')");
+        evalAndLog("store_t1.put('a')");
+        check(store_t1, 1, 'a');
+        evalAndLog("store_t1.put('b', 9007199254740992)");
+        check(store_t1, 9007199254740992, 'b');
+        request = evalAndLog("store_t1.put('c')");
+        request.onsuccess = unexpectedSuccessCallback;
+        request.onerror = function () {
+            debug("Error event fired auto-incrementing past 2^53 (as expected)");
+            shouldBe("event.target.errorCode", "IDBDatabaseException.DATA_ERR");
+            evalAndLog("event.preventDefault()");
+        };
+        evalAndLog("store_t1.put('d', 2)");
+        check(store_t1, 2, 'd');
+
+        trans1.oncomplete = callback;
+    }
+);
+
 test();
