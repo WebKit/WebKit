@@ -1,3 +1,13 @@
+2012-05-03  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Remove extra checks for empty string when parsing CSS value
+        https://bugs.webkit.org/show_bug.cgi?id=85480
+
+        Reviewed by Alexis Menard.
+
+        * fast/html/font-face-empty-should-not-crash-expected.txt: Added.
+        * fast/html/font-face-empty-should-not-crash.html: Added.
+
 2012-05-03  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Broken handling of pseudo-elements in selectors API

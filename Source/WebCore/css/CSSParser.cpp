@@ -362,9 +362,8 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
 
 static bool parseColorValue(StylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
+    ASSERT(!string.isEmpty());
     bool strict = isStrictParserMode(cssParserMode);
-    if (!string.length())
-        return false;
     if (!isColorPropertyID(propertyId))
         return false;
     CSSParserString cssString;
@@ -442,12 +441,10 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
 
 static bool parseSimpleLengthValue(StylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
+    ASSERT(!string.isEmpty());
     bool acceptsNegativeNumbers;
     bool strict = isStrictParserMode(cssParserMode);
     unsigned length = string.length();
-
-    if (!length)
-        return false;
 
     double number;
     bool ok;
@@ -933,8 +930,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
 
 static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important)
 {
-    if (string.isEmpty())
-        return false;
+    ASSERT(!string.isEmpty());
 
     if (!isKeywordPropertyID(propertyId))
         return false;
@@ -963,6 +959,8 @@ static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID prope
 
 PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
 {
+    if (string.isEmpty())
+        return 0;
     RefPtr<StylePropertySet> dummyStyle = StylePropertySet::create();
     if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, 0))
         return 0;
@@ -971,6 +969,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
 
 bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetInternal* contextStyleSheet)
 {
+    ASSERT(!string.isEmpty());
     if (parseSimpleLengthValue(declaration, propertyID, string, important, cssParserMode))
         return true;
     if (parseColorValue(declaration, propertyID, string, important, cssParserMode))

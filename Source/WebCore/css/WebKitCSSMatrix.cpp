@@ -52,6 +52,9 @@ WebKitCSSMatrix::~WebKitCSSMatrix()
 
 void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
 {
+    if (string.isEmpty())
+        return;
+
     RefPtr<StylePropertySet> styleDeclaration = StylePropertySet::create();
     if (CSSParser::parseValue(styleDeclaration.get(), CSSPropertyWebkitTransform, string, true, CSSStrictMode, 0)) {
         // Convert to TransformOperations. This can fail if a property
@@ -80,7 +83,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
 
         // set the matrix
         m_matrix = t;
-    } else if (!string.isEmpty()) // There is something there but parsing failed
+    } else // There is something there but parsing failed.
         ec = SYNTAX_ERR;
 }
 
