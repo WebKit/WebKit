@@ -177,8 +177,8 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     // Extend width and height to fill the visual viewport for the resolved initial-scale.
     width = max<float>(width, availableWidth / result.initialScale);
     height = max<float>(height, availableHeight / result.initialScale);
-    result.layoutSize.setWidth(width);
-    result.layoutSize.setHeight(height);
+    result.layoutSize.setWidth(static_cast<int>(roundf(width)));
+    result.layoutSize.setHeight(static_cast<int>(roundf(height)));
 
     result.userScalable = args.userScalable;
 
