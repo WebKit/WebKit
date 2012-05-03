@@ -1,0 +1,17 @@
+<html>
+<head>
+    <script>
+    function init() {
+        if (!window.layoutTestController)
+            return;
+
+        layoutTestController.waitUntilDone();
+        layoutTestController.setBackingScaleFactor(2, function () { layoutTestController.notifyDone(); });
+    }
+    window.onload = init;
+    </script>
+</head>
+<p>This test passes if both of the circles have sharp edges when deviceScaleFactor=2.</p>
+<img style="width: 128px;" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4Ij4KPGNpcmNsZSBmaWxsPSJibGFjayIgY3g9IjY0IiBjeT0iNjQiIHI9IjY0IiAvPgo8L3N2Zz4K">
+<img style="width: 128px;" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgoJPGNpcmNsZSBmaWxsPSJibGFjayIgY3g9IjY0IiBjeT0iNjQiIHI9IjY0IiAvPgo8L3N2Zz4=">
+</html>

@@ -33,6 +33,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
+#include "Page.h"
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -202,7 +203,11 @@ void CachedImage::setContainerSizeForRenderer(const RenderObject* renderer, cons
         m_image->setContainerSize(containerSize);
         return;
     }
-    m_svgImageCache->setRequestedSizeAndZoom(renderer, SVGImageCache::SizeAndZoom(containerSize, containerZoom));
+
+    // FIXME (85335): This needs to take CSS transform scale into account as well.
+    float containerScale = renderer->document()->page()->deviceScaleFactor() * renderer->document()->page()->pageScaleFactor();
+
+    m_svgImageCache->setRequestedSizeAndScales(renderer, SVGImageCache::SizeAndScales(containerSize, containerZoom, containerScale));
 #else
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(containerZoom);
@@ -250,10 +255,10 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
 
 #if ENABLE(SVG)
     if (m_image->isSVGImage()) {
-        SVGImageCache::SizeAndZoom sizeAndZoom = m_svgImageCache->requestedSizeAndZoom(renderer);
-        if (!sizeAndZoom.size.isEmpty()) {
-            imageSize.setWidth(sizeAndZoom.size.width() / sizeAndZoom.zoom);
-            imageSize.setHeight(sizeAndZoom.size.height() / sizeAndZoom.zoom);
+        SVGImageCache::SizeAndScales sizeAndScales = m_svgImageCache->requestedSizeAndScales(renderer);
+        if (!sizeAndScales.size.isEmpty()) {
+            imageSize.setWidth(sizeAndScales.size.width() / sizeAndScales.zoom);
+            imageSize.setHeight(sizeAndScales.size.height() / sizeAndScales.zoom);
         }
     }
 #endif

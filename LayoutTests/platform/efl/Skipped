@@ -1482,6 +1482,7 @@ gamepad/
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
+svg/as-image/image-respects-deviceScaleFactor.html
 
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/

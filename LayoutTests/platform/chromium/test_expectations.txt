@@ -2963,6 +2963,7 @@ BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : fast/hidpi = TIMEOUT
+BUGWK70066 SKIP : svg/as-image/image-respects-deviceScaleFactor.html = TIMEOUT
 
 // Flaky tests from ~r97647
 BUGWK70298 : fast/images/pdf-as-background.html = FAIL TIMEOUT PASS

@@ -52,7 +52,7 @@ public:
         DontClearImageBuffer
     };
 
-    void drawSVGToImageBuffer(ImageBuffer*, const IntSize&, float zoom, ShouldClearBuffer);
+    void drawSVGToImageBuffer(ImageBuffer*, const IntSize&, float zoom, float scale, ShouldClearBuffer);
     RenderBox* embeddedContentBox() const;
     FrameView* frameView() const;
 
