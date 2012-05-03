@@ -280,6 +280,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setBackspaceKeyNavigationEnabled:(BOOL)flag;
 - (BOOL)backspaceKeyNavigationEnabled;
 
+- (void)setWantsBalancedSetDefersLoadingBehavior:(BOOL)flag;
+- (BOOL)wantsBalancedSetDefersLoadingBehavior;
+
 - (void)setShouldDisplaySubtitles:(BOOL)flag;
 - (BOOL)shouldDisplaySubtitles;
 

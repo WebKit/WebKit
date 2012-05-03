@@ -1,3 +1,18 @@
+2012-05-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Make Page::setDefersLoading() have a call count so that each time
+        loading is deferred, it must be balanced with a call to resume.
+        https://bugs.webkit.org/show_bug.cgi?id=84522
+
+        Reviewed by Andy Estes.
+
+        * Shared/WebPreferencesStore.h:
+        Use the macro to declare the new preference.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Set the setting from the WebPreferencesStore's value.
+
 2012-05-02  Ojan Vafai  <ojan@chromium.org>
 
         Add a histogram for rendertree size

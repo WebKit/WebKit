@@ -1,3 +1,29 @@
+2012-05-01  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Make Page::setDefersLoading() have a call count so that each time
+        loading is deferred, it must be balanced with a call to resume.
+        https://bugs.webkit.org/show_bug.cgi?id=84522
+
+        Reviewed by Andy Estes.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        Declare a new key for this preference.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        Initialize new preference to NO.
+        (-[WebPreferences setWantsBalancedSetDefersLoadingBehavior:]):
+        Setter.
+        (-[WebPreferences wantsBalancedSetDefersLoadingBehavior]):
+        Getter.
+
+        * WebView/WebPreferencesPrivate.h:
+        Declare setter and getter.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Set the setting from the WebPreferences object's value.
+
 2012-05-01  Jeffrey Pfau  <jpfau@apple.com>
 
         <rdar://problem/10422318> Support for web content filter delegate for filtering https content

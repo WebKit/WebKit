@@ -1519,6 +1519,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);
     settings->setRegionBasedColumnsEnabled([preferences regionBasedColumnsEnabled]);
     settings->setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
+    settings->setWantsBalancedSetDefersLoadingBehavior([preferences wantsBalancedSetDefersLoadingBehavior]);
     settings->setMockScrollbarsEnabled([preferences mockScrollbarsEnabled]);
 
 #if ENABLE(VIDEO_TRACK)

@@ -263,6 +263,7 @@ Settings::Settings(Page* page)
 #endif
     , m_threadedAnimationEnabled(false)
     , m_shouldRespectImageOrientation(false)
+    , m_wantsBalancedSetDefersLoadingBehavior(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {

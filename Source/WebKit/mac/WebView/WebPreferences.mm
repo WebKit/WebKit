@@ -397,6 +397,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayTextDescriptionsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitNotificationsEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
+        [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1614,6 +1615,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)backspaceKeyNavigationEnabled
 {
     return [self _boolValueForKey:WebKitBackspaceKeyNavigationEnabledKey];
+}
+
+- (void)setWantsBalancedSetDefersLoadingBehavior:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitWantsBalancedSetDefersLoadingBehaviorKey];
+}
+
+- (BOOL)wantsBalancedSetDefersLoadingBehavior
+{
+    return [self _boolValueForKey:WebKitWantsBalancedSetDefersLoadingBehaviorKey];
 }
 
 - (void)setShouldDisplaySubtitles:(BOOL)flag
