@@ -735,7 +735,6 @@ static double minute = 60.0;
 void Heap::collect(SweepToggle sweepToggle)
 {
     SamplingRegion samplingRegion("Garbage Collection");
-    fprintf(stdout, "running collection\n");
     
     GCPHASE(Collect);
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
