@@ -1,5 +1,27 @@
 2012-05-03  Eric Seidel  <eric@webkit.org>
 
+        --coverage should not not use the "feature" options system in build-webkit, similarly remove special-casing for WTF_URL
+        https://bugs.webkit.org/show_bug.cgi?id=85542
+
+        Reviewed by Daniel Bates.
+
+        Remove these last two odd-men-out, so that we can generate the default feature options
+        for build-webkit using the new generate-feature-files command.
+        The Mac build system has some special casing for ENABLE_ defines which gets them
+        defined as -D on the build command, even though initially they start out as
+        environment variables ENABLE_FOO = ENABLE_FOO.  The Feature options in build-webkit
+        depend on this support, but it doesn't work for WTF_USE_ defines like WTF_USE_WTF_URL.
+        I'm told that WTF_URL is not actively being worked on, so just removing it for now.
+        It should probably come back to life as an ENABLE_, or build-webkit or the Xcode projects
+        should be made generically smarter about these USE_WTF defines.
+        (There is still WTF_USE_TILED_BACKING_STORE in the feature list, but it only seems
+        used by Qt.  If someone tried build-webkit --tiled-backing-store on Mac today it
+        would not work!)
+
+        * Scripts/build-webkit:
+
+2012-05-03  Eric Seidel  <eric@webkit.org>
+
         Remove the last bits of Leopard support from our perl scripts
         https://bugs.webkit.org/show_bug.cgi?id=85545
 

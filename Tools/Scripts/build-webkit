@@ -61,6 +61,7 @@ my $makeArgs = "";
 my $cmakeArgs;
 my $onlyWebKitProject = 0;
 my $noWebKit2 = 0;
+my $coverageSupport = 0;
 my $startTime = time();
 
 my (
@@ -72,7 +73,6 @@ my (
     $batterystatusAPISupport,
     $blobSupport,
     $channelMessagingSupport,
-    $coverageSupport,
     $cssFiltersSupport,
     $cssGridLayoutSupport,
     $cssShadersSupport,
@@ -142,7 +142,6 @@ my (
     $webTimingSupport,
     $workersSupport,
     $xsltSupport,
-    $wtfURL,
 );
 
 my @features = (
@@ -181,9 +180,6 @@ my @features = (
 
     { option => "css-shaders", desc => "Toggle CSS Shaders (within CSS Filters) support",
       define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },
-
-    { option => "coverage", desc => "Toggle code coverage support",
-      define => "", default => 0, value => \$coverageSupport },
 
     { option => "sql-database", desc => "Toggle SQL Database Support",
       define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
@@ -374,9 +370,6 @@ my @features = (
     { option => "workers", desc => "Toggle Web Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$workersSupport },
 
-    { option => "wtfurl", desc => "Toogle the use of WTFURL for URL parsing",
-      define => "WTF_USE_WTFURL", default => 0, value => \$wtfURL },
-
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },
 );
@@ -427,7 +420,7 @@ Usage: $programName [options] [options to pass to build system]
   --clean                           Cleanup the build directory
   --debug                           Compile in debug mode
   --gyp                             Use GYP-generated project files
-  --dsym                            Change debugging format to dwarf-with-dsym (Mac only)
+  --coverage                        Enable Code Coverage support (Mac only)
 
   --blackberry                      Build the BlackBerry port on Mac/Linux
   --chromium                        Build the Chromium port on Mac/Win/Linux
@@ -469,6 +462,7 @@ my %options = (
     'v8' => \$v8,
     'only-webkit' => \$onlyWebKitProject,
     'no-webkit2' => \$noWebKit2,
+    'coverage' => \$coverageSupport,
 );
 
 # Build usage text and options list from features
@@ -547,10 +541,8 @@ if (isGtk()) {
     }
 
     foreach (@features) {
-        if ($_->{option} ne "coverage" && $_->{option} ne "wtfurl") {
-            my $option = option($_->{define}, ${$_->{value}}, $_->{default});
-            push @options, $option unless $option eq "";
-        }
+        my $option = option($_->{define}, ${$_->{value}}, $_->{default});
+        push @options, $option unless $option eq "";
     }
 
     # ANGLE must come before WebCore
@@ -718,7 +710,6 @@ for my $dir (@projects) {
     } elsif (isAppleMacWebKit()) {
         my @local_options = @options;
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
-        push @local_options, "OTHER_CFLAGS= \$(OTHER_CFLAGS) -DWTF_USE_WTFURL=1" if $wtfURL;
         my $useGYPProject = $useGYP && ($project =~ "WebCore|JavaScriptCore");
         my $projectPath = $useGYPProject ? "gyp/$project" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
