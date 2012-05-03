@@ -1,5 +1,11 @@
 2012-05-03  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed, adjusted platform specifiers for fast/js/dfg-double-vote-fuzz.html
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-03  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed gardening. Narrowed down platform specifiers for some tests, removed some entries.
 
         * platform/chromium/test_expectations.txt:
