@@ -255,10 +255,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         if (autoIncrement) {
             if (!key) {
                 RefPtr<IDBKey> autoIncKey = objectStore->genAutoIncrementKey();
-                if (!autoIncKey->valid()) {
-                    callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "Maximum key generator value reached."));
-                    return;
-                }
                 if (hasKeyPath) {
                     RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(autoIncKey, value, objectStore->m_keyPath);
                     ASSERT(valueAfterInjection);
@@ -683,15 +679,10 @@ void IDBObjectStoreBackendImpl::addIndexToMap(ScriptExecutionContext*, PassRefPt
 
 PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::genAutoIncrementKey()
 {
-    const int64_t kMaxGeneratorValue = 9007199254740992; // Maximum integer storable as ECMAScript number.
-    if (m_autoIncrementNumber > kMaxGeneratorValue)
-        return IDBKey::createInvalid();
     if (m_autoIncrementNumber > 0)
         return IDBKey::createNumber(m_autoIncrementNumber++);
 
-    m_autoIncrementNumber = m_backingStore->nextAutoIncrementNumber(m_databaseId, id());
-    if (m_autoIncrementNumber > kMaxGeneratorValue)
-        return IDBKey::createInvalid();
+    m_autoIncrementNumber = static_cast<int>(m_backingStore->nextAutoIncrementNumber(m_databaseId, id()));
     return IDBKey::createNumber(m_autoIncrementNumber++);
 }
 

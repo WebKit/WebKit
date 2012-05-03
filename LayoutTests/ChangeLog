@@ -1,5 +1,16 @@
 2012-05-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r115902.
+        http://trac.webkit.org/changeset/115902
+        https://bugs.webkit.org/show_bug.cgi?id=85441
+
+        Compile failure on linux 32 (Requested by zhenyao on #webkit).
+
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/resources/key-generator.js:
+
+2012-05-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r115905.
         http://trac.webkit.org/changeset/115905
         https://bugs.webkit.org/show_bug.cgi?id=85435

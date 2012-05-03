@@ -58,7 +58,7 @@ public:
     virtual bool putObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, ObjectStoreRecordIdentifier*);
     virtual void clearObjectStore(int64_t databaseId, int64_t objectStoreId);
     virtual void deleteObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const ObjectStoreRecordIdentifier*);
-    virtual int64_t nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId);
+    virtual double nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId);
     virtual bool keyExistsInObjectStore(int64_t databaseId, int64_t objectStoreId, const IDBKey&, ObjectStoreRecordIdentifier* foundRecordIdentifier);
 
     virtual bool forEachObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, ObjectStoreRecordCallback&);
