@@ -1,3 +1,20 @@
+2012-05-03  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Correct fast/regions/region-style-inline-background-color.html
+        https://bugs.webkit.org/show_bug.cgi?id=85470
+
+        Reviewed by Andreas Kling.
+
+        Fix a typo in the original test and update the expectations.
+        The purpose of this test is to verify that region styling is NOT enabled for inline elements. The test was passing
+        because region styling rule was not applied due to incorrect region selector.
+
+        The corrected test makes sure that region styling rule has the right region selector and can be applied to the first region in the test file.
+
+        * fast/regions/region-style-inline-background-color.html:
+        * platform/chromium-win/fast/regions/region-style-inline-background-color-expected.txt:
+        * platform/mac/fast/regions/region-style-inline-background-color-expected.txt:
+
 2012-04-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: migrate breakpoint manager to live locations.
