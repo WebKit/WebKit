@@ -178,7 +178,7 @@ void printImageDifferences(GdkPixbuf* baselineImage, GdkPixbuf* actualImage)
 
 int main(int argc, char* argv[])
 {
-    gdk_init(&argc, &argv);
+    g_type_init();
 
     GError* error = 0;
     GOptionContext* context = g_option_context_new("- compare two image files, printing their percentage difference and the difference image to stdout");

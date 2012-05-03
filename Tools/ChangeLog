@@ -1,5 +1,20 @@
 2012-05-03  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Gtk] ImageDiff crashes when it can't open a display
+        https://bugs.webkit.org/show_bug.cgi?id=85476
+
+        Reviewed by Martin Robinson.
+
+        Replace gdk_init() initialization call with the g_type_init()
+        call. GdkPixbufLoader doesn't actually need the current call to be
+        made and this change will also remove crashes when ImageDiff
+        is started in an environment without a DISPLAY env.
+
+        * DumpRenderTree/gtk/ImageDiff.cpp:
+        (main):
+
+2012-05-03  Zan Dobersek  <zandobersek@gmail.com>
+
         ImageDiff should be run inside a properly established environment
         https://bugs.webkit.org/show_bug.cgi?id=85292
 
