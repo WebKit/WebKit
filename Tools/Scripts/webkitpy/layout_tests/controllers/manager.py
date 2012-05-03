@@ -301,6 +301,7 @@ class Manager(object):
         self._expectations = None
 
         self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR
+        self.PERF_SUBDIR = 'perf'
         self.WEBSOCKET_SUBDIR = 'websocket' + port.TEST_PATH_SEPARATOR
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._has_http_lock = False
@@ -356,6 +357,9 @@ class Manager(object):
 
     def _http_tests(self):
         return set(test for test in self._test_files if self._is_http_test(test))
+
+    def _is_perf_test(self, test):
+        return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
 
     def parse_expectations(self):
         """Parse the expectations from the test_list files and return a data
@@ -554,8 +558,10 @@ class Manager(object):
 
     def _test_requires_lock(self, test_file):
         """Return True if the test needs to be locked when
-        running multiple copies of NRWTs."""
-        return self._is_http_test(test_file)
+        running multiple copies of NRWTs. Perf tests are locked
+        because heavy load caused by running other tests in parallel
+        might cause some of them to timeout."""
+        return self._is_http_test(test_file) or self._is_perf_test(test_file)
 
     def _test_is_slow(self, test_file):
         return self._expectations.has_modifier(test_file, test_expectations.SLOW)

@@ -26,7 +26,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """This class helps to block NRWT threads when more NRWTs run
-http and websocket tests in a same time."""
+perf, http and websocket tests in a same time."""
 
 import logging
 import os

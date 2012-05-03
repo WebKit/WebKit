@@ -1,3 +1,21 @@
+2012-05-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [NRWT] Run performance tests with lock
+        https://bugs.webkit.org/show_bug.cgi?id=78628
+
+        Reviewed by Tony Chang.
+
+        Locking performance tests (like we do for http tests) will force them
+        to run in serial. This reduces the load of the machine when running perf
+        tests and minimizes the chances of the tests to fail, specially
+        timeouts.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager._is_perf_test):
+        (Manager._test_requires_lock):
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+
 2012-05-03  Dirk Pranke  <dpranke@chromium.org>
 
         Attempt to fix a crash on SL ...
