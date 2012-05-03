@@ -46,6 +46,7 @@ public:
     virtual void didAllocate(size_t) { }
     virtual void willCollect() { }
     virtual void synchronize() { }
+    virtual void cancel() { }
 
 protected:
     GCActivityCallback() {}
@@ -63,6 +64,7 @@ public:
     virtual void didAllocate(size_t);
     virtual void willCollect();
     virtual void synchronize();
+    virtual void cancel();
 
 #if USE(CF)
 protected:

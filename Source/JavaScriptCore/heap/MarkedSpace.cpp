@@ -70,6 +70,20 @@ void MarkedSpace::canonicalizeCellLivenessData()
     }
 }
 
+bool MarkedSpace::isPagedOut(double deadline)
+{
+    for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
+        if (allocatorFor(cellSize).isPagedOut(deadline) || destructorAllocatorFor(cellSize).isPagedOut(deadline))
+            return true;
+    }
+
+    for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
+        if (allocatorFor(cellSize).isPagedOut(deadline) || destructorAllocatorFor(cellSize).isPagedOut(deadline))
+            return true;
+    }
+
+    return false;
+}
 
 void MarkedSpace::freeBlocks(MarkedBlock* head)
 {

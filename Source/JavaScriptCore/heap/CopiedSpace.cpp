@@ -281,4 +281,29 @@ size_t CopiedSpace::capacity()
     return calculatedCapacity;
 }
 
+static bool isBlockListPagedOut(double deadline, DoublyLinkedList<HeapBlock>* list)
+{
+    unsigned itersSinceLastTimeCheck = 0;
+    HeapBlock* current = list->head();
+    while (current) {
+        current = current->next();
+        ++itersSinceLastTimeCheck;
+        if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {
+            double currentTime = WTF::monotonicallyIncreasingTime();
+            if (currentTime > deadline)
+                return true;
+            itersSinceLastTimeCheck = 0;
+        }
+    }
+
+    return false;
+}
+
+bool CopiedSpace::isPagedOut(double deadline)
+{
+    return isBlockListPagedOut(deadline, m_toSpace) 
+        || isBlockListPagedOut(deadline, m_fromSpace) 
+        || isBlockListPagedOut(deadline, &m_oversizeBlocks);
+}
+
 } // namespace JSC

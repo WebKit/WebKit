@@ -1,3 +1,70 @@
+2012-05-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Opportunistic GC should give up if the Heap is paged out
+        https://bugs.webkit.org/show_bug.cgi?id=85411
+
+        Reviewed by Filip Pizlo.
+
+        Opportunistic GC is punishing us severely in limited memory situations because its 
+        assumptions about how much time a collection will take are way out of whack when the Heap 
+        has been paged out by the OS. We should add a simple detection function to the Heap that 
+        detects if its is paged out. It will do this by iterating each block of both the MarkedSpace 
+        and CopiedSpace. If that operation takes longer than a fixed amount of time (e.g. 100ms), 
+        the function returns true. This function will only be run prior to an opportunistic 
+        collection (i.e. it will not run during our normal allocation-triggered collections).
+
+        In my tests, steady state was drastically improved in high memory pressure situations (i.e. 
+        the browser was still usable, significant reduction in SPODs). Occasionally, a normal GC
+        would be triggered due to pages doing things in the background, which would cause a 
+        significant pause. As we close pages we now cause normal collections rather than full 
+        collections, which prevents us from collecting all of the dead memory immediately. One 
+        nice way to deal with this issue might be to do incremental sweeping.
+
+
+        * heap/CopiedSpace.cpp:
+        (JSC::isBlockListPagedOut): Helper function to reduce code duplication when iterating over 
+        to-space, from-space, and the oversize blocks.
+        (JSC):
+        (JSC::CopiedSpace::isPagedOut): Tries to determine whether or not CopiedSpace is paged out
+        by iterating all of the blocks.
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/Heap.cpp:
+        (JSC::Heap::isPagedOut): Tries to determine whether the Heap is paged out by asking the 
+        MarkedSpace and CopiedSpace if they are paged out.
+        (JSC):
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::increaseLastGCLength): Added this so that the GC timer can linearly back off 
+        each time it determines that the Heap is paged out.
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::isPagedOut): Tries to determine if this particular MarkedAllocator's
+        list of blocks are paged out.
+        (JSC):
+        * heap/MarkedAllocator.h:
+        (MarkedAllocator):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::isPagedOut): For each MarkedAllocator, check to see if they're paged out.
+        * heap/MarkedSpace.h:
+        (MarkedSpace):
+        * runtime/GCActivityCallback.cpp:
+        (JSC::DefaultGCActivityCallback::cancel):
+        (JSC):
+        * runtime/GCActivityCallback.h:
+        (JSC::GCActivityCallback::cancel):
+        (DefaultGCActivityCallback):
+        * runtime/GCActivityCallbackCF.cpp: Added a constant of 100ms for the timeout in determining
+        whether the Heap is paged out or not.
+        (JSC):
+        (JSC::DefaultGCActivityCallbackPlatformData::timerDidFire): Added the check to see if we 
+        should attempt a collection based on whether or not we can iterate the blocks of the Heap in 
+        100ms. If we can't, we cancel the timer and tell the Heap we just wasted 100ms more trying to 
+        do a collection. This gives us a nice linear backoff so we're not constantly re-trying in
+        steady state paged-out-ness.
+        (JSC::DefaultGCActivityCallback::cancel): Added this function which, while currently doing 
+        exactly the same thing as willCollect, is more obvious as to what it's doing when we call it 
+        in timerDidFire.
+
 2012-05-02  Yong Li  <yoli@rim.com>
 
         Fix GCC X86 build error

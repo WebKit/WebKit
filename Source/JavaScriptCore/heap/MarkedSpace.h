@@ -78,6 +78,8 @@ public:
     void didAddBlock(MarkedBlock*);
     void didConsumeFreeList(MarkedBlock*);
 
+    bool isPagedOut(double deadline);
+
 private:
     friend class LLIntOffsetsExtractor;
     

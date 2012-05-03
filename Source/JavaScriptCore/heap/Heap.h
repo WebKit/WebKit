@@ -76,6 +76,12 @@ namespace JSC {
         static Heap* heap(const JSValue); // 0 for immediate values
         static Heap* heap(const JSCell*);
 
+        // This constant determines how many blocks we iterate between checks of our 
+        // deadline when calling Heap::isPagedOut. Decreasing it will cause us to detect 
+        // overstepping our deadline more quickly, while increasing it will cause 
+        // our scan to run faster. 
+        static const unsigned s_timeCheckResolution = 16;
+
         static bool isMarked(const void*);
         static bool testAndSetMarked(const void*);
         static void setMarked(const void*);
@@ -149,10 +155,13 @@ namespace JSC {
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
         double lastGCLength() { return m_lastGCLength; }
+        void increaseLastGCLength(double amount) { m_lastGCLength += amount; }
 
         JS_EXPORT_PRIVATE void discardAllCompiledCode();
 
         void didAllocate(size_t);
+
+        bool isPagedOut(double deadline);
 
     private:
         friend class CodeBlock;

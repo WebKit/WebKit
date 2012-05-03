@@ -3,8 +3,27 @@
 
 #include "GCActivityCallback.h"
 #include "Heap.h"
+#include <wtf/CurrentTime.h>
 
 namespace JSC {
+
+bool MarkedAllocator::isPagedOut(double deadline)
+{
+    unsigned itersSinceLastTimeCheck = 0;
+    HeapBlock* block = m_blockList.head();
+    while (block) {
+        block = block->next();
+        ++itersSinceLastTimeCheck;
+        if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {
+            double currentTime = WTF::monotonicallyIncreasingTime();
+            if (currentTime > deadline)
+                return true;
+            itersSinceLastTimeCheck = 0;
+        }
+    }
+
+    return false;
+}
 
 inline void* MarkedAllocator::tryAllocateHelper()
 {

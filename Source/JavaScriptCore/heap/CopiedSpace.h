@@ -70,6 +70,7 @@ public:
     size_t capacity();
 
     void freeAllBlocks();
+    bool isPagedOut(double deadline);
 
     static CopiedBlock* blockFor(void*);
 

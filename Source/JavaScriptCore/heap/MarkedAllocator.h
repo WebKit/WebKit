@@ -32,7 +32,9 @@ public:
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
     void init(Heap*, MarkedSpace*, size_t cellSize, bool cellsNeedDestruction);
-    
+
+    bool isPagedOut(double deadline);
+   
 private:
     friend class LLIntOffsetsExtractor;
     

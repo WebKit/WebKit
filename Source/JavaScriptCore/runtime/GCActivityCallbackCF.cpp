@@ -56,6 +56,7 @@ struct DefaultGCActivityCallbackPlatformData {
 const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB
 const double maxGCTimeSlice = 0.05; // The maximum amount of CPU time we want to use for opportunistic timer-triggered collections.
 const double timerSlop = 2.0; // Fudge factor to avoid performance cost of resetting timer.
+const double pagingTimeOut = 0.1; // Time in seconds to allow opportunistic timer to iterate over all blocks to see if the Heap is paged out.
 const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
 const CFTimeInterval hour = 60 * 60;
 
@@ -63,6 +64,14 @@ void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void
 {
     Heap* heap = static_cast<Heap*>(info);
     APIEntryShim shim(heap->globalData());
+#if !PLATFORM(IOS)
+    double startTime = WTF::monotonicallyIncreasingTime();
+    if (heap->isPagedOut(startTime + pagingTimeOut)) {
+        heap->activityCallback()->cancel();
+        heap->increaseLastGCLength(pagingTimeOut);
+        return;
+    }
+#endif
     heap->collectAllGarbage();
 }
 
@@ -133,6 +142,11 @@ void DefaultGCActivityCallback::synchronize()
     CFRunLoopRemoveTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
     d->runLoop = CFRunLoopGetCurrent();
     CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
+}
+
+void DefaultGCActivityCallback::cancel()
+{
+    cancelTimer(d.get());
 }
 
 }

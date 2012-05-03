@@ -54,5 +54,9 @@ void DefaultGCActivityCallback::synchronize()
 {
 }
 
+void DefaultGCActivityCallback::cancel()
+{
+}
+
 }
 
