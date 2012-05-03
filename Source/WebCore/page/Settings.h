@@ -461,8 +461,8 @@ namespace WebCore {
         void setDeviceHeight(int height) { m_deviceHeight = height; }
         int deviceHeight() const { return m_deviceHeight; }
 
-        void setDeviceDPI(int deviceDPI) { m_deviceDPI = deviceDPI; }
-        int deviceDPI() const { return m_deviceDPI; }
+        void setDevicePixelRatio(double devicePixelRatio) { m_devicePixelRatio = devicePixelRatio; }
+        double devicePixelRatio() const { return m_devicePixelRatio; }
 
         void setForceCompositingMode(bool flag) { m_forceCompositingMode = flag; }
         bool forceCompositingMode() { return m_forceCompositingMode; }
@@ -592,7 +592,7 @@ namespace WebCore {
         int m_validationMessageTimerMagnification;
         int m_minimumAccelerated2dCanvasSize;
         int m_layoutFallbackWidth;
-        int m_deviceDPI;
+        double m_devicePixelRatio;
         size_t m_maximumDecodedImageSize;
         int m_deviceWidth;
         int m_deviceHeight;

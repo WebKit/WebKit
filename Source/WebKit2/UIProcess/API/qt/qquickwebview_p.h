@@ -265,6 +265,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
     Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged)
+    Q_PROPERTY(double devicePixelRatio READ devicePixelRatio WRITE setDevicePixelRatio NOTIFY devicePixelRatioChanged)
     Q_ENUMS(NavigationRequestActionExperimental)
 
 public:
@@ -295,6 +296,8 @@ public:
     void setDatabaseQuotaDialog(QDeclarativeComponent*);
     QString userAgent() const;
     void setUserAgent(const QString& userAgent);
+    double devicePixelRatio() const;
+    void setDevicePixelRatio(double);
 
     QWebViewportInfo* viewportInfo();
 
@@ -344,6 +347,7 @@ Q_SIGNALS:
     void messageReceived(const QVariantMap& message);
     void proxyAuthenticationDialogChanged();
     void userAgentChanged();
+    void devicePixelRatioChanged();
 
 private:
     QQuickWebView* q_ptr;

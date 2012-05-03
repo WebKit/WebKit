@@ -880,7 +880,7 @@ void WebPage::sendViewportAttributesChanged()
 
     int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_viewportSize.width());
 
-    ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(), settings->deviceDPI(), m_viewportSize);
+    ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, settings->deviceWidth(), settings->deviceHeight(), static_cast<int>(160 * settings->devicePixelRatio()), m_viewportSize);
 
     setResizesToContentsUsingLayoutSize(attr.layoutSize);
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
@@ -1946,7 +1946,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setDefaultFontSize(store.getUInt32ValueForKey(WebPreferencesKey::defaultFontSizeKey()));
     settings->setDefaultFixedFontSize(store.getUInt32ValueForKey(WebPreferencesKey::defaultFixedFontSizeKey()));
     settings->setLayoutFallbackWidth(store.getUInt32ValueForKey(WebPreferencesKey::layoutFallbackWidthKey()));
-    settings->setDeviceDPI(store.getUInt32ValueForKey(WebPreferencesKey::deviceDPIKey()));
+    settings->setDevicePixelRatio(store.getDoubleValueForKey(WebPreferencesKey::devicePixelRatioKey()));
     settings->setDeviceWidth(store.getUInt32ValueForKey(WebPreferencesKey::deviceWidthKey()));
     settings->setDeviceHeight(store.getUInt32ValueForKey(WebPreferencesKey::deviceHeightKey()));
     settings->setEditableLinkBehavior(static_cast<WebCore::EditableLinkBehavior>(store.getUInt32ValueForKey(WebPreferencesKey::editableLinkBehaviorKey())));

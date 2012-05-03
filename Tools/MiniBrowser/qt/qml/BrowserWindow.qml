@@ -307,6 +307,7 @@ Rectangle {
             forceActiveFocus();
         }
 
+        experimental.devicePixelRatio: 1.5
         experimental.preferredMinimumContentsWidth: 980
         experimental.itemSelector: ItemSelector { }
         experimental.alertDialog: AlertDialog { }

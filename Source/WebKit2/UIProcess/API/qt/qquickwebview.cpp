@@ -752,10 +752,6 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
         return;
 
     WebPreferences* wkPrefs = webPageProxy->pageGroup()->preferences();
-
-    // FIXME: Remove later; Hardcode a value for now to make sure the DPI adjustment is being tested.
-    wkPrefs->setDeviceDPI(160);
-
     wkPrefs->setDeviceWidth(viewportSize.width());
     wkPrefs->setDeviceHeight(viewportSize.height());
 
@@ -1114,6 +1110,22 @@ void QQuickWebViewExperimental::setUserAgent(const QString& userAgent)
 
     d->webPageProxy->setUserAgent(userAgent);
     emit userAgentChanged();
+}
+
+double QQuickWebViewExperimental::devicePixelRatio() const
+{
+    Q_D(const QQuickWebView);
+    return d->webPageProxy->pageGroup()->preferences()->devicePixelRatio();
+}
+
+void QQuickWebViewExperimental::setDevicePixelRatio(double devicePixelRatio)
+{
+    Q_D(QQuickWebView);
+    if (devicePixelRatio == this->devicePixelRatio())
+        return;
+
+    d->webPageProxy->pageGroup()->preferences()->setDevicePixelRatio(devicePixelRatio);
+    emit devicePixelRatioChanged();
 }
 
 QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, int index)

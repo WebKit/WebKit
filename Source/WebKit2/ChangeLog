@@ -1,3 +1,23 @@
+2012-05-02  Alexander Færøy  <ahf@0x90.dk>
+
+        Rename deviceDPI to devicePixelRatio
+        https://bugs.webkit.org/show_bug.cgi?id=85049
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add experimental QML API to set and get the device pixel ratio.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewExperimental::devicePixelRatio):
+        (QQuickWebViewExperimental::setDevicePixelRatio):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+        (WebKit::WebPage::updatePreferences):
+
 2012-05-02  Jon Lee  <jonlee@apple.com>
 
         Migrate permission functions to Notification from NotificationCenter
