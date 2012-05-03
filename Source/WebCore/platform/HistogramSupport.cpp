@@ -37,4 +37,8 @@ void HistogramSupport::histogramEnumeration(const char*, int, int)
 {
 }
 
+void HistogramSupport::histogramCustomCounts(const char*, int, int, int, int)
+{
+}
+
 } // namespace WebCore

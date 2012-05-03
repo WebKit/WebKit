@@ -40,4 +40,9 @@ void HistogramSupport::histogramEnumeration(const char* name, int sample, int bo
     WebKit::Platform::current()->histogramEnumeration(name, sample, boundaryValue);
 }
 
+void HistogramSupport::histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount)
+{
+    WebKit::Platform::current()->histogramCustomCounts(name, sample, min, max, bucketCount);
+}
+
 } // namespace WebCore

@@ -118,6 +118,8 @@ namespace WebCore {
         Page(PageClients&);
         ~Page();
 
+        size_t renderTreeSize() const;
+
         void setNeedsRecalcStyleInAllFrames();
 
         RenderTheme* theme() const { return m_theme.get(); };

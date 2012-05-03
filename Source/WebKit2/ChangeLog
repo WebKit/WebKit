@@ -1,3 +1,14 @@
+2012-05-02  Ojan Vafai  <ojan@chromium.org>
+
+        Add a histogram for rendertree size
+        https://bugs.webkit.org/show_bug.cgi?id=85226
+
+        Reviewed by Eric Seidel.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::renderTreeSize):
+        Move the renderTreeSize code into Page.cpp, so it can be reused.
+
 2012-05-02  Anders Carlsson  <andersca@apple.com>
 
         PDF page does not show up when opened in the background

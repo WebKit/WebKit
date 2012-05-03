@@ -44,6 +44,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
+#include "HistogramSupport.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
@@ -57,6 +58,7 @@
 #include "PluginViewBase.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
+#include "RenderArena.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -205,6 +207,16 @@ Page::~Page()
     pageCounter.decrement();
 #endif
 
+}
+
+size_t Page::renderTreeSize() const
+{
+    size_t size = 0;
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document() && frame->document()->renderArena())
+            size += frame->document()->renderArena()->totalRenderArenaSize();
+    }
+    return size;
 }
 
 ViewportArguments Page::viewportArguments() const
@@ -1006,8 +1018,11 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
         return;
     m_visibilityState = visibilityState;
 
-    if (!isInitialState && m_mainFrame)
+    if (!isInitialState && m_mainFrame) {
+        if (visibilityState == PageVisibilityStateHidden)
+            HistogramSupport::histogramCustomCounts("WebCore.Page.renderTreeSizeBytes", renderTreeSize(), 1000, 500000000, 50);
         m_mainFrame->dispatchVisibilityStateChangeEvent();
+    }
 }
 
 PageVisibilityState Page::visibilityState() const

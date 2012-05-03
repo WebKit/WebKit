@@ -98,7 +98,6 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PrintContext.h>
-#include <WebCore/RenderArena.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
@@ -502,16 +501,7 @@ uint64_t WebPage::renderTreeSize() const
 {
     if (!m_page)
         return 0;
-
-    Frame* mainFrame = m_page->mainFrame();
-    if (!mainFrame)
-        return 0;
-
-    uint64_t size = 0;
-    for (Frame* coreFrame = mainFrame; coreFrame; coreFrame = coreFrame->tree()->traverseNext())
-        size += coreFrame->document()->renderArena()->totalRenderArenaSize();
-
-    return size;
+    return m_page->renderTreeSize();
 }
 
 void WebPage::setPaintedObjectsCounterThreshold(uint64_t threshold)

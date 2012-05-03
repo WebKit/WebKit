@@ -36,6 +36,7 @@ namespace WebCore {
 class HistogramSupport {
 public:
     static void histogramEnumeration(const char* name, int sample, int boundaryValue);
+    static void histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount);
 };
 
 } // namespace WebCore
