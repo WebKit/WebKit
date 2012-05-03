@@ -3508,7 +3508,6 @@ BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/input/emacs-ctrl-o.html = PASS FAIL
 
-BUG_OJAN SKIP : fast/dom/Window/window-properties.html = FAIL
 // These tests rely on specific details of decompilation of
 // functions. V8 always returns the source code as written; there's
 // no decompilation or pretty printing involved except for

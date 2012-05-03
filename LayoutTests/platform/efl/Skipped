@@ -242,9 +242,6 @@ editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 editing/selection/mixed-editability-10.html
 editing/selection/move-left-right.html
-fast/dom/Window/window-properties.html
-fast/dom/prototype-inheritance.html
-fast/dom/prototype-inheritance-2.html
 fast/dom/tab-in-right-alignment.html
 fast/events/ime-composition-events-001.html
 fast/forms/cursor-at-editable-content-boundary.html
