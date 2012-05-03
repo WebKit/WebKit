@@ -1,3 +1,15 @@
+2012-05-03  Keishi Hattori  <keishi@webkit.org>
+
+        Crash in HTMLFormControlElement::m_fieldSetAncestor
+        https://bugs.webkit.org/show_bug.cgi?id=85453
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/datalist/datalist-child-validation-expected.txt:
+        * fast/forms/datalist/datalist-child-validation.html: Added tests that check the validation status of removed node.
+        * fast/forms/form-control-element-crash-expected.txt:
+        * fast/forms/form-control-element-crash.html: Replaced with a better, easier to understand test case from the cluster-fuzz.
+
 2012-05-03  Simon Fraser  <simon.fraser@apple.com>
 
         Keep overlap testing for compositing on pages with 3d transforms when possible

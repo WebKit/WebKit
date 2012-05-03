@@ -5,6 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS e.willValidate is false
 PASS e.willValidate is true
+PASS w.querySelector(":invalid") is e
+PASS e.willValidate is true
+PASS e.willValidate is true
 PASS document.querySelector(":invalid") is e
 PASS successfullyParsed is true
 

@@ -8,7 +8,9 @@
 <div id="console"></div>
 
 <datalist id="list">
-  <input type=text id=e required>
+  <div id=w>
+    <input type=text id=e required>
+  </div>
 </datalist>
 
 <script>
@@ -16,6 +18,12 @@ description('Test for child elements of a datalist element.');
 
 var e = document.getElementById('e');
 shouldBeFalse('e.willValidate');
+var w = document.getElementById('w');
+w.parentNode.removeChild(w);
+shouldBeTrue('e.willValidate');
+shouldBe('w.querySelector(":invalid")', 'e');
+e.parentNode.removeChild(e);
+shouldBeTrue('e.willValidate');
 document.body.appendChild(e);
 shouldBeTrue('e.willValidate');
 shouldBe('document.querySelector(":invalid")', 'e');

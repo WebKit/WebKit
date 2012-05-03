@@ -239,7 +239,6 @@ void HTMLFormControlElement::removedFrom(Node* insertionPoint)
     HTMLElement::removedFrom(insertionPoint);
     FormAssociatedElement::removedFrom(insertionPoint);
     m_ancestorsValid = false;
-    setNeedsWillValidateCheck();
 }
 
 const AtomicString& HTMLFormControlElement::formControlName() const
@@ -365,7 +364,10 @@ bool HTMLFormControlElement::recalcWillValidate() const
 
 bool HTMLFormControlElement::willValidate() const
 {
-    if (!m_willValidateInitialized) {
+    if (!m_willValidateInitialized || !m_ancestorsValid) {
+        if (!m_ancestorsValid)
+            updateAncestors();
+
         m_willValidateInitialized = true;
         m_willValidate = recalcWillValidate();
     } else {
