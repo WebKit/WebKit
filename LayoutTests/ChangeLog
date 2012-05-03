@@ -1,3 +1,17 @@
+2012-05-03  Philip Rogers  <pdr@google.com>
+
+        Fix numeric precision issue in SVG animations
+        https://bugs.webkit.org/show_bug.cgi?id=85502
+
+        Reviewed by Dirk Schulze.
+
+        * svg/animations/animate-end-attribute-numeric-precision-expected.txt: Added.
+        * svg/animations/animate-end-attribute-numeric-precision.html: Added.
+        * svg/animations/script-tests/animate-end-attribute-numeric-precision.js: Added.
+        (sample1):
+        (sample2):
+        (executeTest):
+
 2012-05-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline.
