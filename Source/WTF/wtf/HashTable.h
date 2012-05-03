@@ -30,6 +30,12 @@
 #include <wtf/Threading.h>
 #include <wtf/ValueCheck.h>
 
+#ifndef NDEBUG
+// Required for CHECK_HASHTABLE_ITERATORS.
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#endif
+
 namespace WTF {
 
 #define DUMP_HASHTABLE_STATS 0
@@ -441,7 +447,8 @@ namespace WTF {
     public:
         // All access to m_iterators should be guarded with m_mutex.
         mutable const_iterator* m_iterators;
-        mutable Mutex m_mutex;
+        // Use OwnPtr so HashTable can still be memmove'd or memcpy'ed.
+        mutable OwnPtr<Mutex> m_mutex;
 #endif
     };
 
@@ -454,6 +461,7 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
+        , m_mutex(adoptPtr(new Mutex))
 #endif
     {
     }
@@ -1006,6 +1014,7 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
+        , m_mutex(adoptPtr(new Mutex))
 #endif
     {
         // Copy the hash table the dumb way, by adding each element to the new table.
@@ -1099,7 +1108,7 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::invalidateIterators()
     {
-        MutexLocker lock(m_mutex);
+        MutexLocker lock(*m_mutex);
         const_iterator* next;
         for (const_iterator* p = m_iterators; p; p = next) {
             next = p->m_next;
@@ -1121,7 +1130,7 @@ namespace WTF {
         if (!table) {
             it->m_next = 0;
         } else {
-            MutexLocker lock(table->m_mutex);
+            MutexLocker lock(*table->m_mutex);
             ASSERT(table->m_iterators != it);
             it->m_next = table->m_iterators;
             table->m_iterators = it;
@@ -1143,7 +1152,7 @@ namespace WTF {
             ASSERT(!it->m_next);
             ASSERT(!it->m_previous);
         } else {
-            MutexLocker lock(it->m_table->m_mutex);
+            MutexLocker lock(*it->m_table->m_mutex);
             if (it->m_next) {
                 ASSERT(it->m_next->m_previous == it);
                 it->m_next->m_previous = it->m_previous;

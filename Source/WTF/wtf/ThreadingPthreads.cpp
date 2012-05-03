@@ -288,14 +288,16 @@ Mutex::Mutex()
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
 
-    pthread_mutex_init(&m_mutex, &attr);
+    int result = pthread_mutex_init(&m_mutex, &attr);
+    ASSERT_UNUSED(result, !result);
 
     pthread_mutexattr_destroy(&attr);
 }
 
 Mutex::~Mutex()
 {
-    pthread_mutex_destroy(&m_mutex);
+    int result = pthread_mutex_destroy(&m_mutex);
+    ASSERT_UNUSED(result, !result);
 }
 
 void Mutex::lock()
