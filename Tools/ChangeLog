@@ -1,5 +1,23 @@
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
+        Show the test name in the dashboard if showChrome==false and we're showing multiple tests
+        https://bugs.webkit.org/show_bug.cgi?id=85243
+
+        Reviewed by Dirk Pranke.
+
+        This happens for cases where a test name matches multiple tests.
+        In practice, this only happens for virtual test suites (e.g. the canvas tests).
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (htmlForIndividualTestOnAllBuildersWithChrome):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (testHtmlForIndividualTestOnAllBuildersWithChromeNonexistant):
+        (testHtmlForIndividualTestOnAllBuildersWithChrome):
+        (testHtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster):
+        (testHtmlForIndividualTests):
+
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
         Port the flakiness dashboard unittests to qunit
         https://bugs.webkit.org/show_bug.cgi?id=85544
 

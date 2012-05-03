@@ -1571,14 +1571,6 @@ function htmlForIndividualTestOnAllBuildersWithChrome(test)
 
     var testResults = g_testToResultsMap[test];
     var html = '';
-    if (isLayoutTestResults()) {
-        var suite = lookupVirtualTestSuite(test);
-        var base = suite ? baseTest(test, suite) : test;
-        var tracURL = TEST_URL_BASE_PATH_TRAC + base;
-        html += '<h2>' + linkHTMLToOpenWindow(tracURL, test) + '</h2>';
-    } else
-        html += '<h2>' + test + '</h2>';
-
     html += htmlForIndividualTestOnAllBuilders(test);
 
     html += '<div class=expectations test=' + test + '><div>' +
@@ -2135,8 +2127,21 @@ function htmlForIndividualTests(tests)
 {
     var testsHTML = [];
     var htmlForTestFunction = g_currentState.showChrome ? htmlForIndividualTestOnAllBuildersWithChrome : htmlForIndividualTestOnAllBuilders;
-    for (var i = 0; i < tests.length; i++)
-        testsHTML.push(htmlForTestFunction(tests[i]));
+    for (var i = 0; i < tests.length; i++) {
+        var test = tests[i];
+        var testNameHtml = '';
+        if (g_currentState.showChrome || tests.length > 1) {
+            if (isLayoutTestResults()) {
+                var suite = lookupVirtualTestSuite(test);
+                var base = suite ? baseTest(test, suite) : test;
+                var tracURL = TEST_URL_BASE_PATH_TRAC + base;
+                testNameHtml += '<h2>' + linkHTMLToOpenWindow(tracURL, test) + '</h2>';
+            } else
+                testNameHtml += '<h2>' + test + '</h2>';
+        }
+
+        testsHTML.push(testNameHtml + htmlForTestFunction(test));
+    }
     return testsHTML.join('<hr>');
 }
 
