@@ -2901,4 +2901,41 @@ protected:
 
 ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestReduceOcclusionWhenBackgroundFilterIsPartiallyOccluded);
 
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestMinimumTrackingSize : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        IntSize trackingSize(100, 100);
+        IntSize belowTrackingSize(99, 99);
+
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(400, 400));
+        typename Types::LayerType* large = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), trackingSize, true);
+        typename Types::LayerType* small = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), belowTrackingSize, true);
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+        occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+        occlusion.setMinimumTrackingSize(trackingSize);
+
+        // The small layer is not tracked because it is too small.
+        this->visitLayer(small, occlusion);
+
+        EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(0u, occlusion.occlusionInTargetSurface().rects().size());
+
+        // The large layer is tracked as it is large enough.
+        this->visitLayer(large, occlusion);
+
+        EXPECT_EQ_RECT(IntRect(IntPoint(), trackingSize), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(IntPoint(), trackingSize), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+    }
+};
+
+ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestMinimumTrackingSize);
+
 } // namespace

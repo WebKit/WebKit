@@ -1213,7 +1213,7 @@ TEST_F(CCLayerTreeHostImplTest, viewportCovered)
     m_hostImpl->initializeLayerRenderer(createContext());
     m_hostImpl->setBackgroundColor(Color::gray);
 
-    IntSize viewportSize(100, 100);
+    IntSize viewportSize(1000, 1000);
     m_hostImpl->setViewportSize(viewportSize);
 
     m_hostImpl->setRootLayer(BlendStateCheckLayer::create(0));
@@ -1223,7 +1223,7 @@ TEST_F(CCLayerTreeHostImplTest, viewportCovered)
 
     // No gutter rects
     {
-        IntRect layerRect(0, 0, 100, 100);
+        IntRect layerRect(0, 0, 1000, 1000);
         root->setPosition(layerRect.location());
         root->setBounds(layerRect.size());
         root->setContentBounds(layerRect.size());
@@ -1270,7 +1270,7 @@ TEST_F(CCLayerTreeHostImplTest, viewportCovered)
 
     // Content area in middle of clip rect (four surrounding gutter rects)
     {
-        IntRect layerRect(50, 50, 20, 20);
+        IntRect layerRect(500, 500, 200, 200);
         root->setPosition(layerRect.location());
         root->setBounds(layerRect.size());
         root->setContentBounds(layerRect.size());

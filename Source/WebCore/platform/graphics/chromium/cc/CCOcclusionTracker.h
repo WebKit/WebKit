@@ -66,11 +66,12 @@ public:
     // Report operations for recording overdraw metrics.
     CCOverdrawMetrics& overdrawMetrics() const { return *m_overdrawMetrics.get(); }
 
-    // FIXME: Remove this when paint tracking is on for paint culling.
-    void setUsePaintTracking(bool use) { m_usePaintTracking = use; }
-
     // Gives the region of the screen that is not occluded by something opaque.
     Region computeVisibleRegionInScreen() const { return subtract(Region(m_scissorRectInScreenSpace), m_stack.last().occlusionInScreen); }
+
+    void setMinimumTrackingSize(const IntSize& size) { m_minimumTrackingSize = size; }
+
+    static IntSize preferredMinimumTrackingSize() { return IntSize(160, 160); }
 
 protected:
     struct StackObject {
@@ -110,7 +111,7 @@ private:
 
     IntRect m_scissorRectInScreenSpace;
     OwnPtr<CCOverdrawMetrics> m_overdrawMetrics;
-    bool m_usePaintTracking; // FIXME: Remove this when paint tracking is on for paint culling.
+    IntSize m_minimumTrackingSize;
 };
 
 typedef CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium> CCOcclusionTracker;

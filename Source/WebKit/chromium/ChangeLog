@@ -1,3 +1,15 @@
+2012-05-03  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't add small opaque areas to the occlusion tracker's Region
+        https://bugs.webkit.org/show_bug.cgi?id=85297
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests):
+        (CCOcclusionTrackerTestMinimumTrackingSize):
+        (WebKitTests::CCOcclusionTrackerTestMinimumTrackingSize::runMyTest):
+
 2012-05-02  Jon Lee  <jonlee@apple.com>
 
         Migrate permission functions to Notification from NotificationCenter
