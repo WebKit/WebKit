@@ -1,3 +1,11 @@
+2012-05-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix another call to join(), similar to the ones landed
+        in r115975.
+
+        * Scripts/webkitdirs.pm:
+        (jhbuildConfigurationChanged):
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Remove sys.platform accesses in CrashLogs.

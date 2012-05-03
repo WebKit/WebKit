@@ -1849,7 +1849,7 @@ sub getJhbuildPath()
 sub jhbuildConfigurationChanged()
 {
     foreach my $file (qw(jhbuildrc.md5sum jhbuild.modules.md5sum)) {
-        my $path = join(getJhbuildPath(), $file);
+        my $path = join('/', getJhbuildPath(), $file);
         if (! -e $path) {
             return 1;
         }
