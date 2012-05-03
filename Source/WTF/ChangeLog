@@ -1,3 +1,17 @@
+2012-05-02  Antti Koivisto  <antti@apple.com>
+
+        Add temporary feature define for parsed stylesheet caching
+        https://bugs.webkit.org/show_bug.cgi?id=85413
+
+        Rubber-stamped by Nikolas Zimmermann.
+
+        While not an externally visible feature this is still a significant internal change.
+        It is good to have define in case someone has an urgent need to turn it off.
+        
+        Caching is enabled by default on all platforms. The define should be removed after some bake time.
+
+        * wtf/Platform.h:
+
 2012-05-02  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt]r57240 broke Qt build (gcc bug)
