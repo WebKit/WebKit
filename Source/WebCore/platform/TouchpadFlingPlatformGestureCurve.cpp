@@ -56,9 +56,11 @@ const int TouchpadFlingPlatformGestureCurve::m_maxSearchIterations = 20;
 PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, IntPoint cumulativeScroll)
 {
     // The default parameters listed below are a matched set, and should not be changed independently of one another.
-    return create(velocity, 1.5395e+01, 2.0466e+04, -2.9899e+04, 2.0577e+04, -5.4966e+03, 1.128445, cumulativeScroll);
+    return create(velocity, -5.70762e+03, 1.72e+02, 3.7e+00, 0, 0, 1.3, cumulativeScroll);
 }
 
+// FIXME: need to remove p3, p4 here and below as they are not used in the exponential curve, but leave in for now to facilitate
+// the in-flight patch for https://bugs.webkit.org/show_bug.cgi?id=81663 .
 PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const FloatPoint& velocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, IntPoint cumulativeScroll)
 {
     return adoptPtr(new TouchpadFlingPlatformGestureCurve(velocity, p0, p1, p2, p3, p4, curveDuration, cumulativeScroll));
@@ -66,12 +68,12 @@ PassOwnPtr<PlatformGestureCurve> TouchpadFlingPlatformGestureCurve::create(const
 
 inline double position(double t, float* p)
 {
-    return p[0] + t * (p[1] + t * (p[2] + t * (p[3] + t * p[4])));
+    return p[0] * exp(-p[2] * t) - p[1] * t - p[0];
 }
 
 inline double velocity(double t, float* p)
 {
-    return p[1] + t * (2 * p[2] + t * (3 * p[3] + t * 4 * p[4]));
+    return -p[0] * p[2] * exp(-p[2] * t) - p[1];
 }
 
 TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const FloatPoint& initialVelocity, float p0, float p1, float p2, float p3, float p4, float curveDuration, const IntPoint& cumulativeScroll)
@@ -79,19 +81,20 @@ TouchpadFlingPlatformGestureCurve::TouchpadFlingPlatformGestureCurve(const Float
     , m_curveDuration(curveDuration)
 {
     ASSERT(initialVelocity != FloatPoint::zero());
-    m_coeffs[0] = p0;
-    m_coeffs[1] = p1;
-    m_coeffs[2] = p2;
-    m_coeffs[3] = p3;
-    m_coeffs[4] = p4;
+
+    m_coeffs[0] = p0; // alpha
+    m_coeffs[1] = p1; // beta
+    m_coeffs[2] = p2; // gamma
+    m_coeffs[3] = p3; // not used
+    m_coeffs[4] = p4; // not used
 
     float maxInitialVelocity = max(fabs(initialVelocity.x()), fabs(initialVelocity.y()));
 
     // Force maxInitialVelocity to lie in the range v(0) to v(curveDuration), and assume that
     // the curve parameters define a monotonically decreasing velocity, or else bisection search may
     // fail.
-    if (maxInitialVelocity > m_coeffs[1])
-        maxInitialVelocity = m_coeffs[1];
+    if (maxInitialVelocity > velocity(0, m_coeffs))
+        maxInitialVelocity = velocity(0, m_coeffs);
 
     if (maxInitialVelocity < velocity(m_curveDuration, m_coeffs))
         maxInitialVelocity = velocity(m_curveDuration, m_coeffs);

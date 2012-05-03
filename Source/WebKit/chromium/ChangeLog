@@ -1,3 +1,12 @@
+2012-05-03  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Revise touchpad fling curve to use exponential curve, to improve feel and small fling performance.
+        https://bugs.webkit.org/show_bug.cgi?id=85530
+
+        Reviewed by Kenneth Russell.
+
+        * tests/PlatformGestureCurveTest.cpp:
+
 2012-05-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Use correct define in the features.gypi

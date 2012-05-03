@@ -110,7 +110,7 @@ TEST(PlatformGestureCurve, flingCurveTouch)
     EXPECT_TRUE(animation->animate(0.45)); // Use non-uniform tick spacing.
     EXPECT_TRUE(animation->animate(1));
     EXPECT_FALSE(animation->animate(1.5));
-    EXPECT_NEAR(target.cumulativeDelta().x(), 1094, 1);
+    EXPECT_NEAR(target.cumulativeDelta().x(), 1193, 1);
     EXPECT_EQ(target.cumulativeDelta().y(), 0);
 }
 
