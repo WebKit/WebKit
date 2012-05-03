@@ -157,7 +157,7 @@ RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay displa
 }
 
 // An arbitrary large value, like RenderBlock.cpp BLOCK_MAX_WIDTH or FixedTableLayout.cpp TABLE_MAX_WIDTH.
-static const LayoutUnit cLargeLogicalWidth = 15000;
+static const int cLargeLogicalWidth = 15000;
 
 void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
 {

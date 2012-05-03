@@ -1,3 +1,54 @@
+2012-04-23  Levi Weintraub  <leviw@chromium.org>
+
+        [meta] Switch away from integers representing pixels for layout/event handling/rendering
+        https://bugs.webkit.org/show_bug.cgi?id=60318
+
+        Reviewed by Eric Seidel.
+
+        * fast/sub-pixel: Added.
+        * fast/sub-pixel/client-width-height-snapping-expected.txt: Added.
+        * fast/sub-pixel/client-width-height-snapping.html: Added.
+        * fast/sub-pixel/size-of-box-with-zoom-expected.html: Added.
+        * fast/sub-pixel/size-of-box-with-zoom.html: Added.
+        * fast/sub-pixel/layout-boxes-with-zoom-expected.html: Added.
+        * fast/sub-pixel/layout-boxes-with-zoom.html: Added.
+
+<<<<<<< .mine
+2012-05-03  Levi Weintraub  <leviw@chromium.org>
+
+        [meta] Switch away from integers representing pixels for layout/event handling/rendering
+        https://bugs.webkit.org/show_bug.cgi?id=60318
+
+        Reviewed by Eric Seidel.
+
+        * fast/sub-pixel: Added.
+        * fast/sub-pixel/client-width-height-snapping-expected.txt: Added.
+        * fast/sub-pixel/client-width-height-snapping.html: Added.
+        * fast/sub-pixel/layout-boxes-with-zoom-expected.html: Added.
+        * fast/sub-pixel/layout-boxes-with-zoom.html: Added.
+        * fast/sub-pixel/size-of-box-with-zoom-expected.html: Added.
+        * fast/sub-pixel/size-of-box-with-zoom.html: Added.
+        * platform/efl/Skipped: Skipping sub-pixel tests until platforms enabled the
+        SUBPIXEL_LAYOUT feature flag.
+        * platform/gtk-wk2/Skipped: Ditto.
+        * platform/mac-lion/Skipped: Ditto.
+        * platform/mac-snowleopard/Skipped: Ditto.
+        * platform/mac-wk2/Skipped: Ditto.
+        * platform/mac/Skipped: Ditto.
+        * platform/qt-4.8/Skipped: Ditto.
+        * platform/qt-5.0-wk1/Skipped: Ditto.
+        * platform/qt-5.0-wk2/Skipped: Ditto.
+        * platform/qt-5.0/Skipped: Ditto.
+        * platform/qt-arm/Skipped: Ditto.
+        * platform/qt-mac/Skipped: Ditto.
+        * platform/qt/Skipped: Ditto.
+        * platform/win-wk2/Skipped: Ditto.
+        * platform/win-xp/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+        * platform/wincairo/Skipped: Ditto.
+        * platform/wk2/Skipped: Ditto.
+
+=======
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed, remove expectation which was failing.
@@ -84,6 +135,7 @@
 
         * fast/writing-mode/flipped-blocks-inline-map-local-to-container.html:
 
+>>>>>>> .r116007
 2012-05-03  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r111387): CSSOM representation of 'background-image' values should be CSSPrimitiveValue.

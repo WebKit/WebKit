@@ -83,6 +83,12 @@ inspector/styles/styles-computed-trace.html
 # Needs rebaseline
 fast/js/constructor-length.html
 
+# Fail until SUBPIXEL_LAYOUT is enabled
+# https://bugs.webkit.org/show_bug.cgi?id=85532
+fast/sub-pixel/client-width-height-snapping.html
+fast/sub-pixel/layout-boxes-with-zoom.html
+fast/sub-pixel/size-of-box-with-zoom.html
+
 # CONSOLE MESSAGE: line 0: SVG animation pause API missing!
 # [WK2] SVG animation pause API missing
 # https://bugs.webkit.org/show_bug.cgi?id=63396
