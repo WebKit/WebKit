@@ -1,3 +1,11 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        * platform/efl/fast/html/details-position-expected.txt: Added.
+        * platform/efl/fast/replaced/width100percent-checkbox-expected.txt:
+        * platform/efl/fast/replaced/width100percent-radio-expected.txt:
+
 2012-04-23  Levi Weintraub  <leviw@chromium.org>
 
         [meta] Switch away from integers representing pixels for layout/event handling/rendering
