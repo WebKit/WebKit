@@ -1,3 +1,10 @@
+2012-05-03  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed test expectations update for zoom event test due to slight change in rounding in hit testing code post the switch to FractionalLayoutUnits.
+
+        * fast/events/zoom-dblclick-expected.txt:
+        * fast/events/zoom-dblclick.html:
+
 2012-05-03  Dave Tharp  <dtharp@codeaurora.org>
 
         Integrate IETC CSS : flexbox tests

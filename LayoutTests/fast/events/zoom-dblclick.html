@@ -53,9 +53,9 @@
     {
         event = e;
         debug("\nZoomed");
-        shouldBe("event.clientX", "167");
+        shouldBe("event.clientX", "166");
         shouldBe("event.clientY", "83");
-        shouldBe("event.pageX", "167");
+        shouldBe("event.pageX", "166");
         shouldBe("event.pageY", "83");
     }
     window.addEventListener("dblclick", zoomed, false);
