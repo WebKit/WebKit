@@ -1,3 +1,19 @@
+2012-05-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=85591
+
+        Reviewed by Martin Robinson.
+
+        Remove incorrect test expectations for tests that are lately consistently
+        passing on all the Gtk builders but only turned out to be passing after
+        the Gtk port moved from using Skipped list to test_expectations.txt.
+        Their proper bug entries will be handled later, after all the tests are
+        confirmed to still pass. If any test backfires the correct test expectation
+        will be renewed and bug entries refreshed with latest information.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Frame load callbacks output is missing for redirections
