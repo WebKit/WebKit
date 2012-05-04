@@ -60,7 +60,9 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     // FIXME: Should this be OwnPtr<QImage>?
     QImage* image = new QImage(createQImage());
-    OwnPtr<GraphicsContext> context = adoptPtr(new GraphicsContext(new QPainter(image)));
+    QPainter* painter = new QPainter(image);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    OwnPtr<GraphicsContext> context = adoptPtr(new GraphicsContext(painter));
     context->takeOwnershipOfPlatformContext();
     return context.release();
 }

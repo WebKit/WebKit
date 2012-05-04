@@ -41,6 +41,7 @@ PassOwnPtr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize& s
     // The image and painter will be released when the returned GraphicsContext is released.
     QImage* image = new QImage(reinterpret_cast<uchar*>(bits), size.width(), size.height(), stride, format, didReleaseImage, this);
     QPainter* painter = new QPainter(image);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     OwnPtr<GraphicsContext> graphicsContext = adoptPtr(new GraphicsContext(painter));
     graphicsContext->takeOwnershipOfPlatformContext();
     return graphicsContext.release();
