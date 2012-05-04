@@ -27,6 +27,7 @@
 
 #include "AudioBus.h"
 #include "AudioNode.h"
+#include "AudioParam.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
@@ -144,8 +145,8 @@ private:
     unsigned m_renderingFanOutCount;
     unsigned m_renderingParamFanOutCount;
 
-    HashSet<AudioParam*> m_params;
-    typedef HashSet<AudioParam*>::iterator ParamsIterator;
+    HashSet<RefPtr<AudioParam> > m_params;
+    typedef HashSet<RefPtr<AudioParam> >::iterator ParamsIterator;
 };
 
 } // namespace WebCore

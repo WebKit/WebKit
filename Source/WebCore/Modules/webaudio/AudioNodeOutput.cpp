@@ -218,10 +218,8 @@ void AudioNodeOutput::disconnectAllParams()
 {
     ASSERT(context()->isGraphOwner());
 
-    for (ParamsIterator i = m_params.begin(); i != m_params.end(); ++i) {
-        AudioParam* param = *i;
-        param->disconnect(this);
-    }
+    for (ParamsIterator it = m_params.begin(); it != m_params.end(); ++it)
+        (*it)->disconnect(this);
 
     m_params.clear();
 }
