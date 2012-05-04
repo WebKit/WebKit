@@ -1,5 +1,12 @@
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Unreviewed, add some other missing baselines.
+
+        * platform/efl/fast/html/details-marker-style-actual.txt: Added.
+        * platform/efl/media/media-can-play-webm-actual.txt: Added.
+
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unreviewed, add baseline for r116001.
 
         * platform/efl/svg/as-image/image-respects-pageScaleFactor-actual.txt: Added.
