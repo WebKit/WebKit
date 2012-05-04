@@ -1,3 +1,14 @@
+2012-05-04  Jochen Eisinger  <jochen@chromium.org>
+
+        Correctly update the outgoing referrer when navigating back from an history item created by pushState/replaceState
+        https://bugs.webkit.org/show_bug.cgi?id=85374
+
+        Reviewed by Nate Chapin.
+
+        * http/tests/history/history-navigations-set-referrer-expected.txt: Added.
+        * http/tests/history/history-navigations-set-referrer.html: Added.
+        * http/tests/history/resources/check-referrer.html: Added.
+
 2012-05-04  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Web Timing tests gardening
