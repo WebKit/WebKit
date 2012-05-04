@@ -1,5 +1,22 @@
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
+        Fix modifier and bug sorting on the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=85554
+
+        Reviewed by Dirk Pranke.
+
+        The sorting assumes that the column header name matches a field
+        in the testResults object and uses that field for sorting.
+        Filter the bugs out of the modifiers list and put them in a bugs field
+        and only put the non-bug modifiers in the modifiers list.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (populateExpectationsData):
+        (htmlForSingleTestRow):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
         Fix some state resetting when running unittests. HtmlForSingleTestRow
         was flaky.
 

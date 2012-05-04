@@ -236,6 +236,7 @@ function createResultsObjectForTest(test, builder)
         // String of extra expectations (i.e. expectations that never occur).
         extra: '',
         modifiers: '',
+        bugs: '',
         expectations : '',
         rawResults: '',
         // List of all the results the test actually has.
@@ -521,7 +522,9 @@ function populateExpectationsData(resultsObject)
         return;
 
     resultsObject.expectations = expectations.expectations;
-    resultsObject.modifiers = expectations.modifiers;
+    var filteredModifiers = filterBugs(expectations.modifiers);
+    resultsObject.modifiers = filteredModifiers.modifiers;
+    resultsObject.bugs = filteredModifiers.bugs;
     resultsObject.isWontFixSkip = stringContains(expectations.modifiers, 'WONTFIX') || stringContains(expectations.modifiers, 'SKIP'); 
 }
 
@@ -1172,8 +1175,6 @@ function htmlForSingleTestRow(test)
     var html = '';
     for (var i = 0; i < headers.length; i++) {
         var header = headers[i];
-        var filteredModifiers = filterBugs(test.modifiers);
-        
         if (startsWith(header, 'test') || startsWith(header, 'builder')) {
             // If isCrossBuilderView() is true, we're just viewing a single test
             // with results for many builders, so the first column is builder names
@@ -1183,9 +1184,9 @@ function htmlForSingleTestRow(test)
 
             html += '<tr><td class="' + testCellClassName + '">' + testCellHTML;
         } else if (startsWith(header, 'bugs'))
-            html += '<td class=options-container>' + (filteredModifiers.bugs ? htmlForBugs(filteredModifiers.bugs) : createBugHTML(test));
+            html += '<td class=options-container>' + (test.bugs ? htmlForBugs(test.bugs) : createBugHTML(test));
         else if (startsWith(header, 'modifiers'))
-            html += '<td class=options-container>' + filteredModifiers.modifiers;
+            html += '<td class=options-container>' + test.modifiers;
         else if (startsWith(header, 'expectations'))
             html += '<td class=options-container>' + test.expectations;
         else if (startsWith(header, 'slowest'))

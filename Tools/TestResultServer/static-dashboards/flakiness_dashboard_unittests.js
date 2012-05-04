@@ -625,3 +625,28 @@ test('BuilderGroupIsToTWebKitAttribute', 2, function() {
     onBuilderListLoad(testBuilderGroups,  function() { return true; }, dummyMaster, '@DEPS - dummy.org', BuilderGroup.DEPS_WEBKIT, JSON.parse(testJSONData));
     equal(testBuilderGroups['@DEPS - dummy.org'].isToTWebKit, false);
 });
+
+test('SortTests', 4, function() {
+    var test1 = createResultsObjectForTest('foo/test1.html', 'dummyBuilder');
+    var test2 = createResultsObjectForTest('foo/test2.html', 'dummyBuilder');
+    var test3 = createResultsObjectForTest('foo/test3.html', 'dummyBuilder');
+    test1.modifiers = 'b';
+    test2.modifiers = 'a';
+    test3.modifiers = '';
+
+    var tests = [test1, test2, test3];
+    sortTests(tests, 'modifiers', FORWARD);
+    deepEqual(tests, [test2, test1, test3]);
+    sortTests(tests, 'modifiers', BACKWARD);
+    deepEqual(tests, [test3, test1, test2]);
+
+    test1.bugs = 'b';
+    test2.bugs = 'a';
+    test3.bugs = '';
+
+    var tests = [test1, test2, test3];
+    sortTests(tests, 'bugs', FORWARD);
+    deepEqual(tests, [test2, test1, test3]);
+    sortTests(tests, 'bugs', BACKWARD);
+    deepEqual(tests, [test3, test1, test2]);
+});
