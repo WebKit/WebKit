@@ -320,7 +320,7 @@ PassRefPtr<Widget> FrameLoaderClientBlackBerry::createPlugin(const IntSize& plug
     String mimeType(mimeTypeIn);
     if (mimeType.isEmpty()) {
         mimeType = MIMETypeRegistry::getMIMETypeForPath(url.path());
-        mimeType = WebSettings::getNormalizedMIMEType(mimeType);
+        mimeType = MIMETypeRegistry::getNormalizedMIMEType(mimeType);
         if (mimeType != "application/x-shockwave-flash")
             mimeType = mimeTypeIn;
     }
@@ -451,7 +451,7 @@ bool FrameLoaderClientBlackBerry::canHandleRequest(const ResourceRequest&) const
 bool FrameLoaderClientBlackBerry::canShowMIMEType(const String& mimeTypeIn) const
 {
     // Get normalized type.
-    String mimeType = WebSettings::getNormalizedMIMEType(mimeTypeIn);
+    String mimeType = MIMETypeRegistry::getNormalizedMIMEType(mimeTypeIn);
 
     // FIXME: Seems no other port checks empty MIME type in this function. Should we do that?
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)
@@ -768,7 +768,7 @@ ObjectContentType FrameLoaderClientBlackBerry::objectContentType(const KURL& url
         mimeType = MIMETypeRegistry::getMIMETypeForPath(url.path());
 
     // Get mapped type.
-    mimeType = WebSettings::getNormalizedMIMEType(mimeType);
+    mimeType = MIMETypeRegistry::getNormalizedMIMEType(mimeType);
 
     ObjectContentType defaultType = FrameLoader::defaultObjectContentType(url, mimeType, shouldPreferPlugInsForImages);
     if (defaultType != ObjectContentNone)

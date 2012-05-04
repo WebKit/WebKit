@@ -56,7 +56,6 @@ public:
 
     static void addSupportedObjectPluginMIMEType(const char*);
     static bool isSupportedObjectMIMEType(const WebString&);
-    static WebString getNormalizedMIMEType(const WebString&);
 
     bool xssAuditorEnabled() const;
     void setXSSAuditorEnabled(bool);

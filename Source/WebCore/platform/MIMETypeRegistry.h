@@ -84,6 +84,8 @@ public:
     static HashSet<String>& getSupportedNonImageMIMETypes();
     static HashSet<String>& getSupportedMediaMIMETypes();
     static HashSet<String>& getUnsupportedTextMIMETypes();
+
+    static String getNormalizedMIMEType(const String&);
 };
 
 const String& defaultMIMEType();
