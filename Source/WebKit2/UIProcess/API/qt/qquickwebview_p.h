@@ -348,6 +348,8 @@ Q_SIGNALS:
     void proxyAuthenticationDialogChanged();
     void userAgentChanged();
     void devicePixelRatioChanged();
+    void enterFullScreenRequested();
+    void exitFullScreenRequested();
 
 private:
     QQuickWebView* q_ptr;

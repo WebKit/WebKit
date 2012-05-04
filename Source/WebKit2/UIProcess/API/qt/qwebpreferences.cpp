@@ -41,6 +41,10 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
     switch (attr) {
     case AutoLoadImages:
         return WKPreferencesGetLoadsImagesAutomatically(preferencesRef());
+#if ENABLE(FULLSCREEN_API)
+    case FullScreenEnabled:
+        return WKPreferencesGetFullScreenEnabled(preferencesRef());
+#endif
     case JavascriptEnabled:
         return WKPreferencesGetJavaScriptEnabled(preferencesRef());
     case PluginsEnabled:
@@ -71,6 +75,11 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
     case AutoLoadImages:
         WKPreferencesSetLoadsImagesAutomatically(preferencesRef(), enable);
         break;
+#if ENABLE(FULLSCREEN_API)
+    case FullScreenEnabled:
+        WKPreferencesSetFullScreenEnabled(preferencesRef(), enable);
+        break;
+#endif
     case JavascriptEnabled:
         WKPreferencesSetJavaScriptEnabled(preferencesRef(), enable);
         break;
@@ -235,6 +244,25 @@ void QWebPreferences::setAutoLoadImages(bool enable)
 {
     d->setAttribute(QWebPreferencesPrivate::AutoLoadImages, enable);
     emit autoLoadImagesChanged();
+}
+
+bool QWebPreferences::fullScreenEnabled() const
+{
+#if ENABLE(FULLSCREEN_API)
+    return d->testAttribute(QWebPreferencesPrivate::FullScreenEnabled);
+#else
+    return false;
+#endif
+}
+
+void QWebPreferences::setFullScreenEnabled(bool enable)
+{
+#if ENABLE(FULLSCREEN_API)
+    d->setAttribute(QWebPreferencesPrivate::FullScreenEnabled, enable);
+    emit fullScreenEnabledChanged();
+#else
+    UNUSED_PARAM(enable);
+#endif
 }
 
 bool QWebPreferences::javascriptEnabled() const

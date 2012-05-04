@@ -29,6 +29,7 @@ public:
 
     enum WebAttribute {
         AutoLoadImages,
+        FullScreenEnabled,
         JavascriptEnabled,
         PluginsEnabled,
         OfflineWebApplicationCacheEnabled,

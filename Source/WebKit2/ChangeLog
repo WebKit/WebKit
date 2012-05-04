@@ -1,3 +1,33 @@
+2012-05-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Enable fullscreen API for WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=85498
+
+        Reviewed by Simon Hausmann.
+
+        Enable the fullscreen API for Qt port. It is only
+        supported on WebKit2. It adds experimental settings
+        to enable it and also add two experimental signals so
+        the API user can react when the fullscreen is requested
+        (e.g hide the urlbar of a browser and change the state
+        of the window to be fullscreen).
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::fullScreenEnabled):
+        (QWebPreferences::setFullScreenEnabled):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+        * UIProcess/WebFullScreenManagerProxy.h:
+        (WebKit):
+        * UIProcess/qt/WebFullScreenManagerProxyQt.cpp:
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+
 2012-05-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Images are scaled badly in WebKit2

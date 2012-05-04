@@ -32,6 +32,7 @@ public:
     ~QWebPreferences();
 
     Q_PROPERTY(bool autoLoadImages READ autoLoadImages WRITE setAutoLoadImages NOTIFY autoLoadImagesChanged FINAL)
+    Q_PROPERTY(bool fullScreenEnabled READ fullScreenEnabled WRITE setFullScreenEnabled NOTIFY fullScreenEnabledChanged FINAL)
     Q_PROPERTY(bool javascriptEnabled READ javascriptEnabled WRITE setJavascriptEnabled NOTIFY javascriptEnabledChanged FINAL)
     Q_PROPERTY(bool pluginsEnabled READ pluginsEnabled WRITE setPluginsEnabled NOTIFY pluginsEnabledChanged FINAL)
     Q_PROPERTY(bool offlineWebApplicationCacheEnabled READ offlineWebApplicationCacheEnabled WRITE setOfflineWebApplicationCacheEnabled NOTIFY offlineWebApplicationCacheEnabledChanged FINAL)
@@ -56,6 +57,9 @@ public:
 
     bool autoLoadImages() const;
     void setAutoLoadImages(bool enable);
+
+    bool fullScreenEnabled() const;
+    void setFullScreenEnabled(bool enable);
 
     bool javascriptEnabled() const;
     void setJavascriptEnabled(bool enable);
@@ -117,6 +121,7 @@ public:
 Q_SIGNALS:
     void autoLoadImagesChanged();
     void pluginsEnabledChanged();
+    void fullScreenEnabledChanged();
     void javascriptEnabledChanged();
     void offlineWebApplicationCacheEnabledChanged();
     void localStorageEnabledChanged();

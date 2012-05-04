@@ -64,6 +64,9 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
         show();
     }
 
+    QQmlContext* context = rootContext();
+    context->setContextProperty("Window", this);
+
     if (!options->userAgent().isNull())
         webViewExperimental()->setUserAgent(options->userAgent());
 

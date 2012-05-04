@@ -33,6 +33,9 @@
 #include "QtWebPagePolicyClient.h"
 #include "UtilsQt.h"
 #include "WebBackForwardList.h"
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenManagerProxy.h"
+#endif
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
 
@@ -183,6 +186,9 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     context = contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext();
     webPageProxy = context->createWebPage(&pageClient, pageGroup.get());
+#if ENABLE(FULLSCREEN_API)
+    webPageProxy->fullScreenManager()->setWebView(q_ptr);
+#endif
 
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->initialize(webPageProxy.get());

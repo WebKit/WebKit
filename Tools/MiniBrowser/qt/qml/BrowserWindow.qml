@@ -308,6 +308,7 @@ Rectangle {
         }
 
         experimental.devicePixelRatio: 1.5
+        experimental.preferences.fullScreenEnabled: true
         experimental.preferredMinimumContentsWidth: 980
         experimental.itemSelector: ItemSelector { }
         experimental.alertDialog: AlertDialog { }
@@ -327,6 +328,14 @@ Rectangle {
                     model.accept(model.expectedUsage)
                 }
             }
+        }
+        experimental.onEnterFullScreenRequested : {
+            navigationBar.visible = false;
+            Window.showFullScreen();
+        }
+        experimental.onExitFullScreenRequested : {
+            Window.showNormal();
+            navigationBar.visible = true;
         }
     }
 

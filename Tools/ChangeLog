@@ -1,3 +1,19 @@
+2012-05-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Enable fullscreen API for WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=85498
+
+        Reviewed by Simon Hausmann.
+
+        Enable the fullscreen API on the MiniBrowser and turn
+        it default on WebKit2, disable it on WK1.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * Scripts/webkitperl/FeatureList.pm:
+        * qmake/mkspecs/features/features.prf:
+
 2012-05-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         REGRESSION(r116008) old-run-webkit-tests broken
