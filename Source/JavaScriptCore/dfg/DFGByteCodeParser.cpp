@@ -365,10 +365,19 @@ private:
         
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
-            if (node.op() == Flush)
+            switch (node.op()) {
+            case Flush:
                 nodeIndex = node.child1().index();
+                break;
+            case GetLocal:
+                nodeIndex = node.child1().index();
+                break;
+            default:
+                break;
+            }
             
-            ASSERT(m_graph[nodeIndex].op() != Flush);
+            ASSERT(m_graph[nodeIndex].op() != Flush
+                   && m_graph[nodeIndex].op() != GetLocal);
             
             // Emit a Flush regardless of whether we already flushed it.
             // This gives us guidance to see that the variable also needs to be flushed
@@ -1032,6 +1041,16 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             
     CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
         m_inlineStackTop->m_profiledBlock, m_currentIndex);
+    
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("For call at @%lu bc#%u: ", m_graph.size(), m_currentIndex);
+    if (callLinkStatus.isSet()) {
+        if (callLinkStatus.couldTakeSlowPath())
+            dataLog("could take slow path, ");
+        dataLog("target = %p\n", callLinkStatus.callTarget());
+    } else
+        dataLog("not set.\n");
+#endif
     
     if (m_graph.isFunctionConstant(callTarget))
         callType = ConstantFunction;

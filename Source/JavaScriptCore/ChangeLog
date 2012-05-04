@@ -1,3 +1,15 @@
+2012-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not Flush GetLocal's
+        https://bugs.webkit.org/show_bug.cgi?id=85663
+        <rdar://problem/11373600>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushArgument):
+        (JSC::DFG::ByteCodeParser::handleCall):
+
 2012-05-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Doesn't build with ENABLE_JIT=0 
