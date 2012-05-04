@@ -6,22 +6,16 @@ EXPECTED (testTrack.track.cues.length == '4') OK
 RUN(video.play())
 EXPECTED (video.paused == 'false') OK
 
+EVENT(pause)
 EVENT(exit)
 EXPECTED (currentCue.id == '0') OK
 EXPECTED (video.paused == 'true') OK
 RUN(video.play())
 
-EVENT(exit)
-EXPECTED (currentCue.id == '1') OK
-EXPECTED (video.paused == 'false') OK
-
+EVENT(pause)
 EVENT(exit)
 EXPECTED (currentCue.id == '2') OK
 EXPECTED (video.paused == 'true') OK
 RUN(video.play())
-
-EVENT(exit)
-EXPECTED (currentCue.id == '3') OK
-EXPECTED (video.paused == 'false') OK
 END OF TEST
 

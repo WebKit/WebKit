@@ -24,30 +24,33 @@
 
                 for (var i = 0; i < testTrack.track.cues.length; ++i) {
                     testTrack.track.cues[i].pauseOnExit = (i % 2 == 0);
-                    testTrack.track.cues[i].addEventListener('exit', cueExited);
                 }
 
                 run("video.play()");
                 testExpected("video.paused", false);
+                consoleWrite("");
+
+                waitForEvent('pause', function() {
+                    waitForEvent('exit', cueExited, false, true, testTrack.track.cues[currentCueNumber]);
+                });
             }
 
             function cueExited(evt)
             {
                 currentCue = evt.target;
 
-                consoleWrite("");
-                consoleWrite("EVENT("+evt.type+")");
 
                 testExpected("currentCue.id", currentCueNumber);
-                testExpected("video.paused", currentCueNumber % 2 == 0);
+                testExpected("video.paused", true);
 
-                if (currentCueNumber % 2 == 0)
-                    run("video.play()");
+                run("video.play()");
 
-                if (currentCueNumber == 3)
+                if (currentCueNumber == 2)
                     endTest();
 
-                currentCueNumber++;
+                currentCueNumber += 2;
+
+                consoleWrite("");
             }
 
             function loaded()

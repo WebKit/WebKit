@@ -1,3 +1,20 @@
+2012-05-04  Victor Carbune  <vcarbune@adobe.com>
+
+        Layout Test media/track/track-cues-pause-on-exit.html is flaky on chromium debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=80067
+
+        Reviewed by Eric Carlson.
+
+        Trying a different approach, blocking on waitForEvent for the video element.
+
+        * media/track/track-cues-pause-on-exit-expected.txt: Updated.
+        * media/track/track-cues-pause-on-exit.html: Changed to use
+        waitForEvent and listen to exit events right after.
+        * media/video-test.js: Updated waitForEvent to enable listening for
+        events on other elements as well.
+        (waitForEvent._eventCallback):
+        (waitForEvent):
+
 2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT needs an implementation of LayoutTestController::setDefersLoading and ::goBack
