@@ -92,7 +92,6 @@
 }
 
 .results-view .top-panel {
-    min-height: 100px;
     max-height: 20%;
     overflow: auto;
     position: relative;

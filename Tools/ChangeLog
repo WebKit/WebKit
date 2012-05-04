@@ -1,3 +1,16 @@
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Improve UI for garden-o-matic examine view when there are fewer than 5 tests.
+        https://bugs.webkit.org/show_bug.cgi?id=85566
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Recognize FreeBSD as a valid platform.

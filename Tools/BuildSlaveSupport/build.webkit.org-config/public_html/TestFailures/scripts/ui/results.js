@@ -240,7 +240,8 @@ ui.results.TestSelector = base.extends('div', {
         this._flakinessData = new ui.results.FlakinessData();
         this.appendChild(this._flakinessData);
 
-        Object.keys(resultsByTest).sort().forEach(function(testName) {
+        var testNames = Object.keys(resultsByTest);
+        testNames.sort().forEach(function(testName) {
             var nonLinkTitle = document.createElement('a');
             nonLinkTitle.classList.add('non-link-title');
             nonLinkTitle.textContent = testName;
@@ -256,6 +257,14 @@ ui.results.TestSelector = base.extends('div', {
             header.addEventListener('click', this._showResults.bind(this, header));
             topPanel.appendChild(header);
         }, this);
+
+        // If we have a small amount of content, don't show the resize handler.
+        // Otherwise, set the minHeight so that the percentage height of the 
+        // topPanel is not too small.
+        if (testNames.length <= 4)
+            this.removeChild(this.querySelector('.resize-handle'));
+        else
+            topPanel.style.minHeight = '100px';
     },
     _appendResizeHandle: function()
     {

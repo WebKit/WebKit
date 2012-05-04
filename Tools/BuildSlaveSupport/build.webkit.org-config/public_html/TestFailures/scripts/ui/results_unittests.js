@@ -89,7 +89,40 @@ var kExampleResultsWithTimeoutByTest = {
     }
 };
 
-test('View', 16, function() {
+var kExampleGreaterThanFourResultsByTest = {
+    "scrollbars/custom-scrollbar-with-incomplete-style.html": {
+        "Mock Linux": {
+            "expected": "TEXT",
+            "actual": "CRASH"
+        }
+    },
+    "scrollbars/1.html": {
+        "Mock Linux": {
+            "expected": "TEXT",
+            "actual": "CRASH"
+        }
+    },
+    "scrollbars/2.html": {
+        "Mock Linux": {
+            "expected": "TEXT",
+            "actual": "CRASH"
+        }
+    },
+    "scrollbars/3.html": {
+        "Mock Linux": {
+            "expected": "TEXT",
+            "actual": "CRASH"
+        }
+    },
+    "userscripts/another-test.html": {
+        "Mock Builder": {
+            "expected": "PASS",
+            "actual": "TEXT"
+        }
+    }
+};
+
+test('View', 18, function() {
     var delegate = {
         fetchResultsURLs: function(failureInfo, callback) { return; }
     };
@@ -126,9 +159,27 @@ test('View', 16, function() {
     equals(topPanel.childNodes[0], topPanel.querySelector('.active'));;
     equals($($('.builder-selector', view)[0]).tabs('option', 'selected'), 1);
     equals(view.currentTestName(), 'scrollbars/custom-scrollbar-with-incomplete-style.html');
+
+    ok(!testSelector.querySelector('.resize-handle'));
+    equals(topPanel.style.minHeight, '');
 });
 
-test('View', 2, function() {
+test('View with more than four tests', 2, function() {
+    var delegate = {
+        fetchResultsURLs: function(failureInfo, callback) { return; }
+    };
+
+    var view = new ui.results.View(delegate);
+    view.setResultsByTest(kExampleGreaterThanFourResultsByTest);
+
+    var testSelector = view.querySelector('.test-selector');
+    var topPanel = testSelector.querySelector('.top-panel');
+
+    ok(testSelector.querySelector('.resize-handle'));
+    equals(topPanel.style.minHeight, '100px');
+});
+
+test('View with reftests', 2, function() {
     var delegate = {
         fetchResultsURLs: function(failureInfo, callback) { return; }
     };
