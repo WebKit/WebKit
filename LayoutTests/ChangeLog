@@ -1,3 +1,9 @@
+2012-05-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-03  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Replace numeric constants with strings
