@@ -1,3 +1,22 @@
+2012-05-03  Eric Seidel  <eric@webkit.org>
+
+        Split build-webkit's feature option list off into its own module in preparation for autogeneration
+        https://bugs.webkit.org/show_bug.cgi?id=85548
+
+        Reviewed by Daniel Bates.
+
+        My Perl-fu is very weak.  This moves the feature option list off into a separate module
+        file so that I can easily autogenerate just that file with the fancy new generate-feature-files command.
+        It's a bit odd to have an array which we return out to build-webkit to modify, but it turns out
+        not to matter.  Also, build-webkit doesn't actually use any of the variables we're using to
+        store the results from the option parse, so those end up inaccessible from build-webkit (except by reference)
+        which is actually cleaner.  Callers can't assume that they would get a new array every time, but someone
+        with more Perl-fu than I could create something fancier than this if we need in the future.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitperl/FeatureList.pm: Added.
+        (getFeatureOptionList):
+
 2012-05-03  Dirk Pranke  <dpranke@chromium.org>
 
         REGRESSION: run-webkit-tests failing on Chromium Mac
