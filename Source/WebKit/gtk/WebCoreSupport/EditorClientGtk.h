@@ -65,12 +65,7 @@ class EditorClient : public WebCore::EditorClient {
         EditorClient(WebKitWebView*);
         ~EditorClient();
         WebKitWebView* webView() { return m_webView; }
-        bool treatContextCommitAsKeyEvent() { return m_treatContextCommitAsKeyEvent; }
-        bool preventNextCompositionCommit() { return m_preventNextCompositionCommit; }
-        void clearPendingComposition() { m_pendingComposition.set(0); }
-        bool hasPendingComposition() { return m_pendingComposition; }
         void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(command); }
-        void updatePendingComposition(const char*);
         void generateEditorCommands(const WebCore::KeyboardEvent*);
         bool executePendingEditorCommands(WebCore::Frame*, bool);
 
@@ -119,7 +114,6 @@ class EditorClient : public WebCore::EditorClient {
 
         virtual void handleKeyboardEvent(WebCore::KeyboardEvent*);
         virtual void handleInputMethodKeydown(WebCore::KeyboardEvent*);
-        virtual void handleInputMethodMousePress();
 
         virtual void textFieldDidBeginEditing(WebCore::Element*);
         virtual void textFieldDidEndEditing(WebCore::Element*);
@@ -140,20 +134,18 @@ class EditorClient : public WebCore::EditorClient {
         virtual bool shouldShowUnicodeMenu();
 
     private:
+        bool handleInputMethodKeyboardEvent(WebCore::KeyboardEvent*);
+
 #if ENABLE(SPELLCHECK)
         TextCheckerClientGtk m_textCheckerClient;
 #else
         WebCore::EmptyTextCheckerClient m_textCheckerClient;
 #endif
         WebKitWebView* m_webView;
-        bool m_preventNextCompositionCommit;
-        bool m_treatContextCommitAsKeyEvent;
-        GOwnPtr<gchar> m_pendingComposition;
-
         WebCore::KeyBindingTranslator m_keyBindingTranslator;
         Vector<WTF::String> m_pendingEditorCommands;
-
         bool m_smartInsertDeleteEnabled;
+        bool m_updatingComposition;
     };
 }
 

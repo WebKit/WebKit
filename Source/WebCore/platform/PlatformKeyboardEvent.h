@@ -43,6 +43,7 @@ typedef long LPARAM;
 
 #if PLATFORM(GTK)
 typedef struct _GdkEventKey GdkEventKey;
+#include "CompositionResults.h"
 #endif
 
 #if PLATFORM(QT)
@@ -151,8 +152,9 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(GTK)
-        PlatformKeyboardEvent(GdkEventKey*);
-        GdkEventKey* gdkEventKey() const;
+        PlatformKeyboardEvent(GdkEventKey*, const CompositionResults&);
+        GdkEventKey* gdkEventKey() const { return m_gdkEventKey; }
+        const CompositionResults& compositionResults() const { return m_compositionResults; }
 
         // Used by WebKit2
         static String keyIdentifierForGdkKeyCode(unsigned);
@@ -200,6 +202,7 @@ namespace WebCore {
 #endif
 #if PLATFORM(GTK)
         GdkEventKey* m_gdkEventKey;
+        CompositionResults m_compositionResults;
 #endif
 #if PLATFORM(QT)
         QKeyEvent* m_qtEvent;

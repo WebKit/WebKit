@@ -273,8 +273,6 @@ G_DEFINE_TYPE_WITH_CODE(WebKitWebView, webkit_web_view, GTK_TYPE_CONTAINER,
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView);
 static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWebWindowFeatures* webWindowFeatures);
 
-static GtkIMContext* webkit_web_view_get_im_context(WebKitWebView*);
-
 #if ENABLE(CONTEXT_MENUS)
 static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pushIn, gpointer userData)
 {
@@ -581,7 +579,7 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
         g_value_set_string(value, webkit_web_view_get_icon_uri(webView));
         break;
     case PROP_IM_CONTEXT:
-        g_value_set_object(value, webkit_web_view_get_im_context(webView));
+        g_value_set_object(value, webView->priv->imFilter.context());
         break;
     case PROP_VIEW_MODE:
         g_value_set_enum(value, webkit_web_view_get_view_mode(webView));
@@ -710,42 +708,15 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
 
 static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* event)
 {
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    PlatformKeyboardEvent keyboardEvent(event);
-
-    if (!frame->view())
-        return FALSE;
-
-    if (frame->eventHandler()->keyEvent(keyboardEvent))
+    if (WEBKIT_WEB_VIEW(widget)->priv->imFilter.filterKeyEvent(event))
         return TRUE;
-
-    /* Chain up to our parent class for binding activation */
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->key_press_event(widget, event);
 }
 
 static gboolean webkit_web_view_key_release_event(GtkWidget* widget, GdkEventKey* event)
 {
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-
-    // GTK+ IM contexts often require us to filter key release events, which
-    // WebCore does not do by default, so we filter the event here. We only block
-    // the event if we don't have a pending composition, because that means we
-    // are using a context like 'simple' which marks every keystroke as filtered.
-    WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
-    if (gtk_im_context_filter_keypress(webView->priv->imContext.get(), event) && !client->hasPendingComposition())
+    if (WEBKIT_WEB_VIEW(widget)->priv->imFilter.filterKeyEvent(event))
         return TRUE;
-
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    if (!frame->view())
-        return FALSE;
-
-    PlatformKeyboardEvent keyboardEvent(event);
-    if (frame->eventHandler()->keyEvent(keyboardEvent))
-        return TRUE;
-
-    /* Chain up to our parent class for binding activation */
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->key_release_event(widget, event);
 }
 
@@ -773,9 +744,8 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
     if (!frame->view())
         return FALSE;
 
+    priv->imFilter.notifyMouseButtonPress();
     gboolean result = frame->eventHandler()->handleMousePressEvent(platformEvent);
-    // Handle the IM context when a mouse press fires
-    static_cast<WebKit::EditorClient*>(core(webView)->editorClient())->handleInputMethodMousePress();
 
 #if PLATFORM(X11)
     /* Copy selection to the X11 selection clipboard */
@@ -964,20 +934,20 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
     // TODO: Improve focus handling as suggested in
     // http://bugs.webkit.org/show_bug.cgi?id=16910
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
-    if (widgetIsOnscreenToplevelWindow(toplevel) && gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel))) {
-        WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-        FocusController* focusController = core(webView)->focusController();
+    if (!widgetIsOnscreenToplevelWindow(toplevel) || !gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel)))
+        return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 
-        focusController->setActive(true);
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    FocusController* focusController = core(webView)->focusController();
 
-        if (focusController->focusedFrame())
-            focusController->setFocused(true);
-        else
-            focusController->setFocusedFrame(core(webView)->mainFrame());
+    focusController->setActive(true);
+    if (focusController->focusedFrame())
+        focusController->setFocused(true);
+    else
+        focusController->setFocusedFrame(core(webView)->mainFrame());
 
-        if (focusController->focusedFrame()->editor()->canEdit())
-            gtk_im_context_focus_in(webView->priv->imContext.get());
-    }
+    if (focusController->focusedFrame()->editor()->canEdit())
+        webView->priv->imFilter.notifyFocusedIn();
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }
 
@@ -987,22 +957,17 @@ static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus
 
     // We may hit this code while destroying the widget, and we might
     // no longer have a page, then.
-    Page* page = core(webView);
-    if (page) {
+    if (Page* page = core(webView)) {
         page->focusController()->setActive(false);
         page->focusController()->setFocused(false);
     }
 
-    if (webView->priv->imContext)
-        gtk_im_context_focus_out(webView->priv->imContext.get());
-
+    webView->priv->imFilter.notifyFocusedOut();
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_out_event(widget, event);
 }
 
 static void webkit_web_view_realize(GtkWidget* widget)
 {
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
-
     gtk_widget_set_realized(widget, TRUE);
 
     GtkAllocation allocation;
@@ -1058,8 +1023,6 @@ static void webkit_web_view_realize(GtkWidget* widget)
 #else
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
 #endif
-
-    gtk_im_context_set_client_window(priv->imContext.get(), window);
 }
 
 #ifdef GTK_API_VERSION_2
@@ -1640,12 +1603,6 @@ static gboolean webkit_web_view_show_help(GtkWidget* widget, GtkWidgetHelpType h
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->show_help(widget, help_type);
 }
 #endif
-
-static GtkIMContext* webkit_web_view_get_im_context(WebKitWebView* webView)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    return GTK_IM_CONTEXT(webView->priv->imContext.get());
-}
 
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
@@ -3564,7 +3521,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     // members, which ensures they are initialized properly.
     new (priv) WebKitWebViewPrivate();
 
-    priv->imContext = adoptGRef(gtk_im_multicontext_new());
+    priv->imFilter.setWebView(webView);
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebKit::ChromeClient(webView);

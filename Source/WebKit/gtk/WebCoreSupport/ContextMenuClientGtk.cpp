@@ -64,7 +64,7 @@ static GtkWidget* inputMethodsMenuItem (WebKitWebView* webView)
 
     WebKitWebViewPrivate* priv = webView->priv;
     ContextMenu imContextMenu;
-    gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(priv->imContext.get()), GTK_MENU_SHELL(imContextMenu.platformDescription()));
+    gtk_im_multicontext_append_menuitems(GTK_IM_MULTICONTEXT(priv->imFilter.context()), GTK_MENU_SHELL(imContextMenu.platformDescription()));
 
     ContextMenuItem menuItem(ActionType, ContextMenuItemTagInputMethods, contextMenuItemTagInputMethods(), &imContextMenu);
     imContextMenu.releasePlatformDescription();

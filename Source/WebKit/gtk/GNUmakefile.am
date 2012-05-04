@@ -212,6 +212,8 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/WebCoreSupport/PlatformStrategiesGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/UserMediaClientGtk.cpp \
 	Source/WebKit/gtk/WebCoreSupport/UserMediaClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/WebViewInputMethodFilter.cpp \
+	Source/WebKit/gtk/WebCoreSupport/WebViewInputMethodFilter.h \
 	Source/WebKit/gtk/webkit/webkitapplicationcache.cpp \
 	Source/WebKit/gtk/webkit/webkitdownload.cpp \
 	Source/WebKit/gtk/webkit/webkitdownloadprivate.h \

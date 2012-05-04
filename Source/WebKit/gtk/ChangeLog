@@ -1,3 +1,58 @@
+2012-05-03  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Rework IME handling to fix bugs and prepare for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=84556
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Rework input method handling logic into a class called GtkInputMethodFilter.
+        This filter now runs before WebCore event handling, allowing the code to more
+        easily fake simple compositions that should be seen as keystrokes. We can also
+        filter keypresses that should not go to web content at all, such as key up events
+        related to key down events that were filtered.
+
+        Also added is a WebViewInputMethodFilter which is a concrete implementation of
+        GtkInputMethodFilter. This class contains logic for actually sending events to
+        WebCore. In WebKit2 an implementation of GtkInputMethodFilter will send events
+        across the IPC channel.
+
+        * GNUmakefile.am: Add new files to the source list.
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::inputMethodsMenuItem): Access the input method context via the filter.
+        * WebCoreSupport/EditorClientGtk.cpp: Remove the tricky logic of input method
+        events from this class, because it's now in the GtkInputMethodFilter.
+        (WebKit::EditorClient::setInputMethodState): Call into the filter.
+        (WebKit::EditorClient::shouldBeginEditing): We no longer need to update the composition here.
+        This is handled by the focus in and focus out logic in the filter.
+        (WebKit::EditorClient::shouldEndEditing): Ditto.
+        (WebKit::EditorClient::respondToChangedSelection): Call into the filter now.
+        (WebKit::EditorClient::handleInputMethodKeyboardEvent): Added this helper which executes
+        any pending composition confirmation or preedit update actions as the default action of
+        the keydown event.
+        (WebKit::EditorClient::handleKeyboardEvent): Call handleInputMethodKeyboardEvent to do
+        any pending composition action.
+        (WebKit::EditorClient::handleInputMethodKeydown): Remove all the logic from this method.
+        Keys are filtered before they are sent to WebCore now and the actual action of input method
+        events happens in the keydown default action to increase compatibility with other browsers.
+        (WebKit::EditorClient::EditorClient): Remove context signal management.
+        (WebKit::EditorClient::~EditorClient): Ditto.
+        * WebCoreSupport/EditorClientGtk.h:
+        (EditorClient): No longer has some members that tracked IME status.
+        * WebCoreSupport/WebViewInputMethodFilter.cpp: Added.
+        * WebCoreSupport/WebViewInputMethodFilter.h: Added.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_property): Get the context from the filter now.
+        (webkit_web_view_key_press_event): Just send events straight to the filter.
+        The filter will decide whether or not to send them to WebCore.
+        (webkit_web_view_key_release_event): Ditto.
+        (webkit_web_view_button_press_event): Use the filter to handle button press
+        events related to IME.
+        (webkit_web_view_focus_in_event): Notify the filter now.
+        (webkit_web_view_focus_out_event): Ditto.
+        (webkit_web_view_realize): The filter takes care of listening for realize now.
+        (webkit_web_view_init): Set the WebView widget on the filter.
+        * webkit/webkitwebviewprivate.h: Change the GtkIMContext member to be a GtkInputMethodFilter member.
+
 2012-05-03  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport

@@ -29,6 +29,7 @@
 #include "GtkDragAndDropHelper.h"
 #include "Page.h"
 #include "ResourceHandle.h"
+#include "WebViewInputMethodFilter.h"
 #include "WidgetBackingStore.h"
 #include <webkit/webkitwebview.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -59,7 +60,7 @@ struct _WebKitWebViewPrivate {
     gint lastPopupYPosition;
 
     HashSet<GtkWidget*> children;
-    GRefPtr<GtkIMContext> imContext;
+    WebKit::WebViewInputMethodFilter imFilter;
 
     gboolean transparent;
     bool needsResizeOnMap;
