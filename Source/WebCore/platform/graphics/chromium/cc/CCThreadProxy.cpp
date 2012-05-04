@@ -610,6 +610,10 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
     if (!m_layerTreeHostImpl)
         return result;
 
+    ASSERT(m_layerTreeHostImpl->layerRenderer());
+    if (!m_layerTreeHostImpl->layerRenderer())
+        return result;
+
     // FIXME: compute the frame display time more intelligently
     double monotonicTime = monotonicallyIncreasingTime();
     double wallClockTime = currentTime();

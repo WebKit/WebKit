@@ -153,6 +153,8 @@ bool CCLayerTreeHostImpl::canDraw()
         return false;
     if (viewportSize().isEmpty())
         return false;
+    if (!m_layerRenderer)
+        return false;
     return true;
 }
 
