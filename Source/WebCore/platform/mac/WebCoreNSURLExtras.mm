@@ -66,6 +66,7 @@ static inline BOOL isLookalikeCharacter(int charCode)
         case 0x01C3: /* LATIN LETTER RETROFLEX CLICK */
         case 0x0251: /* LATIN SMALL LETTER ALPHA */
         case 0x0261: /* LATIN SMALL LETTER SCRIPT G */
+        case 0x0335: /* COMBINING SHORT STROKE OVERLAY */
         case 0x0337: /* COMBINING SHORT SOLIDUS OVERLAY */
         case 0x0338: /* COMBINING LONG SOLIDUS OVERLAY */
         case 0x05B4: /* HEBREW POINT HIRIQ */
