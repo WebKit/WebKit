@@ -2090,3 +2090,6 @@ batterystatus
 
 # Network Information API is not supported yet. http://webkit.org/b/73528
 networkinformation
+
+# Generate results for your platform http://webkit.org/b/85567
+fast/images/png-suite/test.html

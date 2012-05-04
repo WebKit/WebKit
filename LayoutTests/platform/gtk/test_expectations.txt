@@ -1527,6 +1527,9 @@ BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMA
 BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
+// Generate results for your platform(s)
+BUGWK85567 : fast/images/png-suite/test.html = IMAGE
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
