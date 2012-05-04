@@ -1,3 +1,9 @@
+2012-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed gardening, refined specifiers for unexpectedly passing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed, fix r116067 and r116068.

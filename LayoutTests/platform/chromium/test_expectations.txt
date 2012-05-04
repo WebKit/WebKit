@@ -3690,8 +3690,6 @@ BUGWK85120 : fast/js/toString-number.html = TEXT
 // The difference should be only layer removal, no size or position should change.
 
 // Those tests have other entries in our expectations filed and may not totally covers
-BUGWK83954 RELEASE : animations/combo-transform-translate+scale.html = TEXT
-BUGWK83954 LINUX DEBUG : animations/combo-transform-translate+scale.html = TEXT
 BUGWK83954 WIN LINUX : editing/spelling/inline_spelling_markers.html = TEXT
 BUGWK83954 WIN LINUX : fast/forms/form-element-geometry.html = TEXT
 BUGWK83954 WIN LINUX : fast/forms/input-value.html = TEXT
@@ -3736,9 +3734,9 @@ BUGWK83954 : fast/block/float/float-overflow-hidden-containing-block-width.html 
 BUGWK83954 : fast/block/float/in-margin.html = TEXT
 BUGWK83954 : fast/block/float/overlapping-floats-with-overflow-hidden.html = TEXT
 BUGWK83954 : fast/block/float/shrink-to-avoid-float-complexity.html = TEXT
-BUGWK83954 : fast/block/lineboxcontain/block-font.html = TEXT
-BUGWK83954 : fast/block/lineboxcontain/block-glyphs.html = TEXT
-BUGWK83954 : fast/block/lineboxcontain/font.html = TEXT
+BUGWK83954 MAC : fast/block/lineboxcontain/block-font.html = TEXT
+BUGWK83954 MAC : fast/block/lineboxcontain/block-glyphs.html = TEXT
+BUGWK83954 MAC : fast/block/lineboxcontain/font.html = TEXT
 BUGWK83954 : fast/block/lineboxcontain/parsing-invalid.html = TEXT
 BUGWK83954 : fast/block/margin-collapse/103.html = TEXT
 BUGWK83954 : fast/clip/017.html = TEXT
