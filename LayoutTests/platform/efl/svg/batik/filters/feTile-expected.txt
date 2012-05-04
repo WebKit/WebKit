@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (0,25) size 384x454
+  RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGContainer {g} at (0,25) size 384x354
       RenderSVGText {text} at (187,25) size 75x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 75x19
@@ -11,8 +11,21 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
           RenderSVGGradientStop {stop} [offset=0.50] [color=#44CCFF]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#000033]
+        RenderSVGResourceFilter {filter} [id="tile_1"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+          [feTile]
+            [feOffset dx="0.00" dy="0.00"]
+              [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="tile_2"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+          [feTile]
+            [feOffset dx="0.00" dy="0.00"]
+              [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="tile_3"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+          [feTile]
+            [feOffset dx="0.00" dy="0.00"]
+              [SourceGraphic]
       RenderSVGContainer {g} at (3,70) size 134x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,100.00)}]
-        RenderSVGRect {rect} at (20,100) size 50x25 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+        RenderSVGRect {rect} at (20,100) size 100x50 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+          [filter="tile_1"] RenderSVGResourceFilter {filter} at (0,0) size 100x50
         RenderSVGRect {rect} at (19,99) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
         RenderSVGText {text} at (30,-30) size 39x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 39x19
@@ -21,7 +34,8 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 133x19
             chunk 1 (middle anchor) text run 1 at (-16.50,-3.00) startOffset 0 endOffset 21 width 133.00: "4 tiles, quarter size"
       RenderSVGContainer {g} at (0,170) size 145x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,200.00)}]
-        RenderSVGRect {rect} at (45,212) size 50x26 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=25.00] [y=12.50] [width=50.00] [height=25.00]
+        RenderSVGRect {rect} at (20,200) size 100x50 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=25.00] [y=12.50] [width=50.00] [height=25.00]
+          [filter="tile_2"] RenderSVGResourceFilter {filter} at (0,0) size 100x50
         RenderSVGRect {rect} at (19,199) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
         RenderSVGText {text} at (-8,-30) size 115x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 115x19
@@ -30,7 +44,8 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 149x19
             chunk 1 (middle anchor) text run 1 at (-24.50,-3.00) startOffset 0 endOffset 26 width 149.00: "9 tiles, 1 full, 8 partial"
       RenderSVGContainer {g} at (0,269) size 145x82 [transform={m=((1.00,0.00)(0.00,1.00)) t=(32.50,307.25)}]
-        RenderSVGRect {rect} at (32,307) size 51x26 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+        RenderSVGRect {rect} at (20,301) size 100x50 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+          [filter="tile_3"] RenderSVGResourceFilter {filter} at (-12.50,-6.25) size 100x50
         RenderSVGRect {rect} at (19,299) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [x=-12.50] [y=-7.25] [width=100.00] [height=50.00]
         RenderSVGText {text} at (-34,-38) size 142x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 142x19
@@ -39,7 +54,8 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 149x19
             chunk 1 (middle anchor) text run 1 at (-37.00,-10.25) startOffset 0 endOffset 26 width 149.00: "9 tiles, 1 full, 8 partial"
       RenderSVGContainer {g} at (244,99) size 131x52 [transform={m=((1.00,0.00)(0.58,1.00)) t=(245.00,100.00)}]
-        RenderSVGRect {rect} at (245,100) size 65x25 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+        RenderSVGRect {rect} at (245,100) size 129x50 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+          [filter="tile_1"] RenderSVGResourceFilter {filter} at (0,0) size 100x50
         RenderSVGRect {rect} at (244,99) size 131x52 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
       RenderSVGContainer {g} at (260,70) size 70x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(245.00,100.00)}]
         RenderSVGText {text} at (30,-30) size 39x19 contains 1 chunk(s)
@@ -49,7 +65,8 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 70x19
             chunk 1 (middle anchor) text run 1 at (15.00,-3.00) startOffset 0 endOffset 8 width 70.00: "skewed X"
       RenderSVGContainer {g} at (255,201) size 80x58 [transform={m=((0.66,0.24)(-0.24,0.66)) t=(268.10,201.58)}]
-        RenderSVGRect {rect} at (275,215) size 40x30 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=25.00] [y=12.50] [width=50.00] [height=25.00]
+        RenderSVGRect {rect} at (256,201) size 78x58 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=25.00] [y=12.50] [width=50.00] [height=25.00]
+          [filter="tile_2"] RenderSVGResourceFilter {filter} at (0,0) size 100x50
         RenderSVGRect {rect} at (255,201) size 80x58 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
       RenderSVGContainer {g} at (206,170) size 178x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(245.00,200.00)}]
         RenderSVGText {text} at (30,-30) size 39x19 contains 1 chunk(s)
@@ -59,7 +76,8 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 177x19
             chunk 1 (middle anchor) text run 1 at (-38.50,-3.00) startOffset 0 endOffset 26 width 177.00: "(centered, rotate & scale)"
       RenderSVGContainer {g} at (244,300) size 102x79 [transform={m=((1.00,0.27)(0.00,1.00)) t=(257.50,310.60)}]
-        RenderSVGRect {rect} at (257,310) size 51x39 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+        RenderSVGRect {rect} at (245,301) size 100x77 [fill={[type=LINEAR-GRADIENT] [id="tileFill"]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+          [filter="tile_3"] RenderSVGResourceFilter {filter} at (-12.50,-6.25) size 100x50
         RenderSVGRect {rect} at (244,300) size 102x79 [stroke={[type=SOLID] [color=#000000]}] [x=-12.50] [y=-6.25] [width=100.00] [height=50.00]
       RenderSVGContainer {g} at (223,269) size 144x33 [transform={m=((1.00,0.00)(0.00,1.00)) t=(257.50,307.25)}]
         RenderSVGText {text} at (-34,-38) size 142x19 contains 1 chunk(s)
@@ -72,5 +90,11 @@ layer at (0,0) size 450x500
       RenderSVGText {text} at (20,460) size 161x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 161x19
           chunk 1 text run 1 at (20.00,475.00) startOffset 0 endOffset 26 width 161.00: "How it should look like..."
-    RenderSVGContainer {use} at (0,0) size 0x0
-      RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGContainer {use} at (0,0) size 448x498
+      RenderSVGContainer {g} at (0,0) size 448x498
+        RenderSVGRect {rect} at (0,0) size 448x498 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+        RenderSVGContainer {g} at (418,466) size 27x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(418.00,467.00)}]
+          RenderSVGViewportContainer {svg} at (418,466) size 27x29
+            RenderSVGPath {path} at (418,469) size 13x18 [fill={[type=SOLID] [color=#6666FF]}] [data="M 172 44 C 137 60 31 135 11 199 C 3 226 33 247 55 232 C 14 306 -1 332 0 356 C 0 370 13 398 44 383 C 52 379 79 358 96 342 C 110 341 120 331 138 314 C 155 328 174 324 190 307 C 212 309 272 229 234 199 C 231 175 204 162 181 181 C 175 179 168 180 163 182 C 185 147 206 100 212 77 C 219 47 188 36 172 44 Z"]
+            RenderSVGPath {path} at (432,466) size 13x16 [fill={[type=SOLID] [color=#FF0000]}] [data="M 400 0 C 382 3 351 31 351 31 C 322 54 308 89 323 126 C 310 140 294 170 294 193 C 294 221 314 245 344 222 C 351 230 365 238 381 227 C 376 256 384 275 407 276 C 408 286 420 307 443 293 C 459 283 501 254 522 237 C 547 214 547 143 504 148 C 537 89 501 52 477 64 C 467 68 431 89 425 94 C 424 87 420 82 414 80 C 436 45 436 -5 401 0 Z"]
+            RenderSVGPath {path} at (426,484) size 15x11 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

@@ -1,3 +1,39 @@
+2012-05-04  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL][DRT] Gardening away remaining SVG failures
+        https://bugs.webkit.org/show_bug.cgi?id=85600
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/svg/batik/filters/feTile-expected.png: Added.
+        * platform/efl/svg/batik/filters/feTile-expected.txt:
+        * platform/efl/svg/batik/filters/filterRegions-expected.png: Added.
+        * platform/efl/svg/batik/filters/filterRegions-expected.txt:
+        * platform/efl/svg/carto.net/button-expected.txt:
+        * platform/efl/svg/carto.net/colourpicker-expected.txt:
+        * platform/efl/svg/carto.net/slider-expected.txt:
+        * platform/efl/svg/carto.net/window-expected.txt:
+        * platform/efl/svg/css/stars-with-shadow-expected.txt: Added.
+        * platform/efl/svg/hixie/error/014-expected.png: Added.
+        * platform/efl/svg/hixie/error/014-expected.txt:
+        * platform/efl/svg/hixie/perf/003-expected.png: Added.
+        * platform/efl/svg/hixie/perf/003-expected.txt:
+        * platform/efl/svg/hixie/shapes/path/001-expected.png: Added.
+        * platform/efl/svg/hixie/shapes/path/001-expected.txt: Added.
+        * platform/efl/svg/hixie/use/002-expected.png: Added.
+        * platform/efl/svg/hixie/use/002-expected.txt:
+        * platform/efl/svg/repaint/filter-child-repaint-expected.png: Added.
+        * platform/efl/svg/repaint/filter-child-repaint-expected.txt:
+        * platform/efl/svg/repaint/filter-repaint-expected.png: Added.
+        * platform/efl/svg/repaint/filter-repaint-expected.txt:
+        * platform/efl/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/efl/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/efl/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/efl/svg/zoom/text/zoom-foreignObject-expected.png: Added.
+        * platform/efl/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/efl/test_expectations.txt:
+
 2012-05-04  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt

@@ -280,3 +280,5 @@ BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 // Generate results for your platform
 BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 
+// Issue with SVG hittesting on strokes, fails on GTK as well.
+BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
