@@ -1,3 +1,9 @@
+2012-05-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, checking in new expectation file.
+
+        * platform/mac/fast/images/png-suite/test-expected.txt: Added.
+
 2012-05-04  Abhishek Arya  <inferno@chromium.org>
 
         ASSERT(beforeChildAnonymousContainer->isTable()); fails in RenderBlock::addChildIgnoringAnonymousColumnBlocks.
