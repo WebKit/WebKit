@@ -69,6 +69,14 @@ BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
 
 BUGWK79679 DEBUG SLOW : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
 
+BUGWK85649 SLOW : editing = PASS
+BUGWK82097 SLOW : editing/selection/move-by-word-visually-crash-test-5.html = PASS
+BUGRNIWA SLOW MAC : editing/pasteboard/emacs-cntl-y-001.html = PASS FAIL
+BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
+BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
+BUGRNIWA SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
+
+
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------
@@ -3338,10 +3346,6 @@ BUGWK81931 SNOWLEOPARD DEBUG : fast/images/destroyed-image-load-event.html = PAS
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 
-// Need rebaselining.
-
-// New test, flaky since added in r110965.
-BUGWK82097 : editing/selection/move-by-word-visually-crash-test-5.html = PASS TIMEOUT
 
 // Tests still flaky on the given platforms. They may not actually be flaky, but prior to
 // a rebaselining they were showing inconsistent results.
@@ -3505,12 +3509,6 @@ BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canpla
 
 // Needs a text rebaseline after bug 83954
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = TEXT IMAGE+TEXT
-
-BUGRNIWA MAC : editing/pasteboard/emacs-cntl-y-001.html = PASS FAIL
-BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
-BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
-BUGRNIWA LION LEOPARD : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
-BUGRNIWA SNOWLEOPARD DEBUG : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
 
 // These tests rely on specific details of decompilation of
 // functions. V8 always returns the source code as written; there's
@@ -3710,23 +3708,23 @@ BUGWK83954 WIN LINUX LION : fast/text/textIteratorNilRenderer.html = TEXT
 
 // Those tests need a text baseline after allocating more layers.
 // The change should only be layer addition.
-BUGWK83954 : editing/inserting/before-after-input-element.html = TEXT
-BUGWK83954 : editing/pasteboard/4806874.html = TEXT
+BUGWK83954 SLOW : editing/inserting/before-after-input-element.html = TEXT
+BUGWK83954 SLOW : editing/pasteboard/4806874.html = TEXT
 BUGWK83954 LINUX WIN : editing/pasteboard/drop-text-without-selection.html = TEXT
-BUGWK83954 : editing/pasteboard/input-field-1.html = TEXT
-BUGWK83954 : editing/selection/3690703-2.html = TEXT
-BUGWK83954 : editing/selection/3690703.html = TEXT
-BUGWK83954 : editing/selection/3690719.html = TEXT
-BUGWK83954 : editing/selection/4895428-3.html = TEXT
-BUGWK83954 : editing/selection/4975120.html = TEXT
-BUGWK83954 : editing/selection/drag-select-1.html = TEXT
-BUGWK83954 : editing/selection/expanding-selections.html = TEXT
-BUGWK83954 : editing/selection/leave-requested-block.html = TEXT
-BUGWK83954 : editing/selection/select-across-readonly-input-1.html = TEXT
-BUGWK83954 : editing/selection/select-across-readonly-input-2.html = TEXT
-BUGWK83954 : editing/selection/select-across-readonly-input-3.html = TEXT
-BUGWK83954 : editing/selection/select-across-readonly-input-4.html = TEXT
-BUGWK83954 : editing/selection/select-across-readonly-input-5.html = TEXT
+BUGWK83954 SLOW : editing/pasteboard/input-field-1.html = TEXT
+BUGWK83954 SLOW : editing/selection/3690703-2.html = TEXT
+BUGWK83954 SLOW : editing/selection/3690703.html = TEXT
+BUGWK83954 SLOW : editing/selection/3690719.html = TEXT
+BUGWK83954 SLOW : editing/selection/4895428-3.html = TEXT
+BUGWK83954 SLOW : editing/selection/4975120.html = TEXT
+BUGWK83954 SLOW : editing/selection/drag-select-1.html = TEXT
+BUGWK83954 SLOW : editing/selection/expanding-selections.html = TEXT
+BUGWK83954 SLOW : editing/selection/leave-requested-block.html = TEXT
+BUGWK83954 SLOW : editing/selection/select-across-readonly-input-1.html = TEXT
+BUGWK83954 SLOW : editing/selection/select-across-readonly-input-2.html = TEXT
+BUGWK83954 SLOW : editing/selection/select-across-readonly-input-3.html = TEXT
+BUGWK83954 SLOW : editing/selection/select-across-readonly-input-4.html = TEXT
+BUGWK83954 SLOW : editing/selection/select-across-readonly-input-5.html = TEXT
 BUGWK83954 : fast/block/float/032.html = TEXT
 BUGWK83954 : fast/block/float/033.html = TEXT
 BUGWK83954 : fast/block/float/avoidance-rtl.html = TEXT
@@ -3893,29 +3891,6 @@ BUGWK83076 SNOWLEOPARD RELEASE : compositing/geometry/outline-change.html = TIME
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-161.xml = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-166.xml = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-166a.xml = TIMEOUT PASS
-
-BUGWK83076 SNOWLEOPARD RELEASE : editing/deleting/delete-3857753-fix.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/deleting/delete-3865854-fix.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/deleting/delete-3928305-fix.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4747450.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4786404-1.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4786404-2.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4916235.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/caret-at-the-edge-of-input.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/format-block-with-trailing-br.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/format-block-without-body-crash.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/format-block.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/forward-delete-no-scroll.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/hilitecolor.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/emacs-ctrl-o.html = TIMEOUT IMAGE+TEXT
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/div-first-child-rule-input.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/div-first-child-rule-textarea.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/ime-composition-clearpreedit.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/insert-wrapping-space-in-textarea.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/option-page-up-down.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/input/page-up-down-scrolls.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/inserting/12882.html = TIMEOUT PASS
-BUGWK83076 SNOWLEOPARD RELEASE : editing/inserting/4278698.html = TIMEOUT PASS
 
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/back-with-fragment-change.php = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/cross-origin-replace-history-object.html = TIMEOUT PASS
