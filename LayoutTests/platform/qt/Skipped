@@ -2599,3 +2599,15 @@ inspector/debugger/linkifier.html
 
 # REGRESSION(r115379) - https://bugs.webkit.org/show_bug.cgi?id=85004
 http/tests/inspector/network/network-initiator.html
+
+# [Qt] ietestcenter/css3/flexbox tests fail on 32 bit
+https://bugs.webkit.org/show_bug.cgi?id=85596
+ietestcenter/css3/flexbox/flexbox-align-end-001.htm
+ietestcenter/css3/flexbox/flexbox-align-start-001.htm
+ietestcenter/css3/flexbox/flexbox-flex-001.htm
+ietestcenter/css3/flexbox/flexbox-flex-002.htm
+ietestcenter/css3/flexbox/flexbox-flex-003.htm
+ietestcenter/css3/flexbox/flexbox-groups-001.htm
+ietestcenter/css3/flexbox/flexbox-groups-002.htm
+ietestcenter/css3/flexbox/flexbox-groups-004.htm
+ietestcenter/css3/flexbox/flexbox-layout-003.htm

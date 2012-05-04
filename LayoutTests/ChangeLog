@@ -1,3 +1,12 @@
+2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] ietestcenter/css3/flexbox tests fail on 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=85596
+
+        Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2012-05-04  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed test expectations update after r116074
