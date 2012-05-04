@@ -1,3 +1,16 @@
+2012-05-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline.
+
+        * platform/chromium-linux/fast/xmlhttprequest: Added.
+        * platform/chromium-linux/fast/xmlhttprequest/xmlhttprequest-get-expected.txt: Added.
+        * platform/chromium-mac/fast/xmlhttprequest: Removed.
+        * platform/chromium-mac/fast/xmlhttprequest/xmlhttprequest-get-expected.txt: Removed.
+        * platform/chromium-mac/http/tests/workers: Removed.
+        * platform/chromium-win/fast/xmlhttprequest/xmlhttprequest-get-expected.txt:
+        * platform/chromium/fast/xmlhttprequest/xmlhttprequest-get-expected.txt: Added.
+        * platform/chromium/http/tests/workers/worker-importScriptsOnError-expected.txt: Replaced.
+
 2012-05-03  Adam Barth  <abarth@webkit.org>
 
         CSP shouldn't block about:blank for iframes
