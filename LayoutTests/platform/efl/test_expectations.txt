@@ -262,6 +262,12 @@ BUGWK85466 : css3/images/cross-fade-background-size.html = TEXT
 
 BUGWK85492 : css3/zoom-coords.xhtml = TEXT
 
+// Redirect response URL is not the one expected
+BUGWK85072 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
+
+// No support for overriding WebKitLoadSiteIconsKey
+BUGWK85171 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
+
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE

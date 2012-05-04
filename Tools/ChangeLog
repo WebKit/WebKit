@@ -1,3 +1,16 @@
+2012-05-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] DRT should support LayoutTestController's willSendRequestReturnsNullOnRedirect()
+        https://bugs.webkit.org/show_bug.cgi?id=82704
+
+        Reviewed by Antonio Gomes.
+
+        EFL's DRT needs to obey LayoutTestController's
+        willSendRequestReturnsNullOnRedirect().
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onWillSendRequest):
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         git-add-reviewer: Do not put the bug title and its URL in the same line in the commit message.

@@ -587,10 +587,6 @@ http/tests/loading/preload-slow-loading.php
 # BUG: Missing resource load callback ability in DRT
 http/tests/loading/redirect-methods.html
 
-# Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
-http/tests/misc/will-send-request-returns-null-on-redirect.html
-http/tests/misc/favicon-loads-with-icon-loading-override.html
-
 # BUG: No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/cache/subresource-fragment-identifier.html

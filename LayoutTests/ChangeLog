@@ -1,3 +1,16 @@
+2012-05-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] DRT should support LayoutTestController's willSendRequestReturnsNullOnRedirect()
+        https://bugs.webkit.org/show_bug.cgi?id=82704
+
+        Reviewed by Antonio Gomes.
+
+        Update test_expectations.txt now that EFL's DumpRenderTree supports
+        LayoutTestController's willSendRequestReturnsNullOnRedirect().
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-03  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, gardening after r116009 and r116039.

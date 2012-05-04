@@ -432,12 +432,18 @@ void DumpRenderTreeChrome::onWillSendRequest(void*, Evas_Object*, void* eventInf
 
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
         printf("%s - willSendRequest %s redirectResponse %s\n",
-               pathSuitableForTestResult(messages->request->url).data(),
+               m_dumpAssignedUrls.contains(messages->request->identifier) ? m_dumpAssignedUrls.get(messages->request->identifier).data() : "<unknown>",
                descriptionSuitableForTestResult(messages->request).data(),
                descriptionSuitableForTestResult(messages->redirect_response).data());
 
     if (!done && gLayoutTestController->willSendRequestReturnsNull()) {
         // As requested by the LayoutTestController, don't perform the request.
+        messages->request->url = 0;
+        return;
+    }
+
+    if (!done && gLayoutTestController->willSendRequestReturnsNullOnRedirect() && messages->redirect_response) {
+        printf("Returning null for this redirect\n");
         messages->request->url = 0;
         return;
     }
