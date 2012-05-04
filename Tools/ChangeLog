@@ -1,3 +1,23 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        git-add-reviewer: Do not put the bug title and its URL in the same line in the commit message.
+        https://bugs.webkit.org/show_bug.cgi?id=85570
+
+        Reviewed by Adam Roben.
+
+        The standard format of commit messages and ChangeLog entries has a
+        short summary in the first line, followed by the bug URL in
+        Bugzilla. Passing "%s" in the pretty format line to git-rev-list
+        merges these two lines into a single one separated by a space
+        character, which is not what we want.
+
+        Since "%s%n%n%b" is in practice "%B" (raw message), use it
+        instead, as the first two lines do not end up being merged
+        together.
+
+        * Scripts/git-add-reviewer:
+        (writeCommitMessageToFile):
+
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
         Improve UI for garden-o-matic examine view when there are fewer than 5 tests.

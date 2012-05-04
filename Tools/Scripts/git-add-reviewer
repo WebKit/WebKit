@@ -346,7 +346,7 @@ sub writeCommitMessageToFile($)
     my ($file) = @_;
 
     open FILE, ">", $file or return fail("Couldn't open $file.");
-    open MESSAGE, "-|", qw(git rev-list --max-count=1 --pretty=format:%s%n%n%b HEAD) or return fail("Error running git rev-list.");
+    open MESSAGE, "-|", qw(git rev-list --max-count=1 --pretty=format:%B HEAD) or return fail("Error running git rev-list.");
     my $commitLine = <MESSAGE>;
     foreach my $line (<MESSAGE>) {
         print FILE $line;
