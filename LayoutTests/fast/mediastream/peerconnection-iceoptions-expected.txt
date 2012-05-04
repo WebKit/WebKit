@@ -1,0 +1,16 @@
+Tests PeerConenction00::startIce().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.startIce() did not throw exception.
+PASS pc.startIce(5) threw exception TypeError: Not an object..
+PASS pc.startIce(null) did not throw exception.
+PASS pc.startIce(undefined) did not throw exception.
+PASS pc.startIce({}) did not throw exception.
+PASS pc.startIce({"use_candidates":"all"}) did not throw exception.
+PASS pc.startIce({"use_candidates":"foobar"}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

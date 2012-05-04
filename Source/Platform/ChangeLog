@@ -1,3 +1,12 @@
+2012-05-04  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make PeerConnection00's API fully compliant with the draft
+        https://bugs.webkit.org/show_bug.cgi?id=85491
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebPeerConnection00HandlerClient.h:
+
 2012-05-02  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't occlude pixels in a surface that are needed for a background filter blur

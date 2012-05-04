@@ -1,3 +1,12 @@
+2012-05-04  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make PeerConnection00's API fully compliant with the draft
+        https://bugs.webkit.org/show_bug.cgi?id=85491
+
+        Reviewed by Adam Barth.
+
+        * src/AssertMatchingEnums.cpp:
+
 2012-05-04  Nate Chapin  <japhet@chromium.org>
 
         Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.

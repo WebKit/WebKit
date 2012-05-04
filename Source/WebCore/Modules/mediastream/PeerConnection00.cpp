@@ -91,52 +91,60 @@ bool PeerConnection00::hasLocalVideoTrack()
     return false;
 }
 
-PassRefPtr<MediaHints> PeerConnection00::parseMediaHints(const String& mediaHints)
+PassRefPtr<MediaHints> PeerConnection00::createMediaHints(const Dictionary& dictionary)
 {
-    Vector<String> hintsList;
-    mediaHints.split(",", hintsList);
     bool audio = hasLocalAudioTrack();
     bool video = hasLocalVideoTrack();
-    for (Vector<String>::iterator i = hintsList.begin(); i != hintsList.end(); ++i) {
-        if (*i == "audio")
-            audio = true;
-        else if (*i == "no_audio")
-            audio = false;
-        else if (*i == "video")
-            video = true;
-        else if (*i == "no_video")
-            video = false;
-    }
-
+    dictionary.get("has_audio", audio);
+    dictionary.get("has_video", audio);
     return MediaHints::create(audio, video);
 }
 
-PassRefPtr<SessionDescription> PeerConnection00::createOffer()
+PassRefPtr<MediaHints> PeerConnection00::createMediaHints()
 {
-    return createOffer("");
+    bool audio = hasLocalAudioTrack();
+    bool video = hasLocalVideoTrack();
+    return MediaHints::create(audio, video);
 }
 
-PassRefPtr<SessionDescription> PeerConnection00::createOffer(const String& mediaHintsString)
+PassRefPtr<SessionDescription> PeerConnection00::createOffer(ExceptionCode& ec)
 {
-    RefPtr<MediaHints> mediaHints = parseMediaHints(mediaHintsString);
-    RefPtr<SessionDescriptionDescriptor> descriptor = m_peerHandler->createOffer(mediaHints.release());
-    if (!descriptor)
+    return createOffer(createMediaHints(), ec);
+}
+
+PassRefPtr<SessionDescription> PeerConnection00::createOffer(const Dictionary& dictionary, ExceptionCode& ec)
+{
+    return createOffer(createMediaHints(dictionary), ec);
+}
+
+PassRefPtr<SessionDescription> PeerConnection00::createOffer(PassRefPtr<MediaHints> mediaHints, ExceptionCode& ec)
+{
+    RefPtr<SessionDescriptionDescriptor> descriptor = m_peerHandler->createOffer(mediaHints);
+    if (!descriptor) {
+        ec = SYNTAX_ERR;
         return 0;
+    }
 
     return SessionDescription::create(descriptor.release());
 }
 
-PassRefPtr<SessionDescription> PeerConnection00::createAnswer(const String& offer)
+PassRefPtr<SessionDescription> PeerConnection00::createAnswer(const String& offer, ExceptionCode& ec)
 {
-    return createAnswer(offer, "");
+    return createAnswer(offer, createMediaHints(), ec);
 }
 
-PassRefPtr<SessionDescription> PeerConnection00::createAnswer(const String& offer, const String& mediaHintsString)
+PassRefPtr<SessionDescription> PeerConnection00::createAnswer(const String& offer, const Dictionary& dictionary, ExceptionCode& ec)
 {
-    RefPtr<MediaHints> mediaHints = parseMediaHints(mediaHintsString);
-    RefPtr<SessionDescriptionDescriptor> descriptor = m_peerHandler->createAnswer(offer, mediaHints.release());
-    if (!descriptor)
+    return createAnswer(offer, createMediaHints(dictionary), ec);
+}
+
+PassRefPtr<SessionDescription> PeerConnection00::createAnswer(const String& offer, PassRefPtr<MediaHints> hints, ExceptionCode& ec)
+{
+    RefPtr<SessionDescriptionDescriptor> descriptor = m_peerHandler->createAnswer(offer, hints);
+    if (!descriptor) {
+        ec = SYNTAX_ERR;
         return 0;
+    }
 
     return SessionDescription::create(descriptor.release());
 }
@@ -215,32 +223,53 @@ PassRefPtr<SessionDescription> PeerConnection00::remoteDescription()
     return desc.release();
 }
 
-void PeerConnection00::startIce(ExceptionCode& ec)
+PassRefPtr<IceOptions> PeerConnection00::createIceOptions(const Dictionary& dictionary, ExceptionCode& ec)
 {
-    startIce("", ec);
+    String useCandidates = "";
+    dictionary.get("use_candidates", useCandidates);
+
+    IceOptions::UseCandidatesOption option;
+    if (useCandidates == "" || useCandidates == "all")
+        option = IceOptions::ALL;
+    else if (useCandidates == "no_relay")
+        option = IceOptions::NO_RELAY;
+    else if (useCandidates == "only_relay")
+        option = IceOptions::ONLY_RELAY;
+    else {
+        ec = TYPE_MISMATCH_ERR;
+        return 0;
+    }
+
+    return IceOptions::create(option);
 }
 
-void PeerConnection00::startIce(const String& options, ExceptionCode& ec)
+PassRefPtr<IceOptions> PeerConnection00::createDefaultIceOptions()
+{
+    return IceOptions::create(IceOptions::ALL);
+}
+
+void PeerConnection00::startIce(ExceptionCode& ec)
+{
+    startIce(createDefaultIceOptions(), ec);
+}
+
+void PeerConnection00::startIce(const Dictionary& dictionary, ExceptionCode& ec)
+{
+    RefPtr<IceOptions> iceOptions = createIceOptions(dictionary, ec);
+    if (ec)
+        return;
+
+    startIce(iceOptions.release(), ec);
+}
+
+void PeerConnection00::startIce(PassRefPtr<IceOptions> iceOptions, ExceptionCode& ec)
 {
     if (m_readyState == CLOSED) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    IceOptions::UseCandidatesOption option;
-
-    if (options == "" || options == "all")
-        option = IceOptions::ALL;
-    else if (options == "no_relay")
-        option = IceOptions::NO_RELAY;
-    else if (options == "only_relay")
-        option = IceOptions::ONLY_RELAY;
-    else {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
-    bool valid = m_peerHandler->startIce(IceOptions::create(option));
+    bool valid = m_peerHandler->startIce(iceOptions);
     if (!valid)
         ec = SYNTAX_ERR;
 }
@@ -273,13 +302,7 @@ PeerConnection00::IceState PeerConnection00::iceState() const
     return m_iceState;
 }
 
-void PeerConnection00::addStream(PassRefPtr<MediaStream> stream, ExceptionCode& ec)
-{
-    String emptyHints;
-    return addStream(stream, emptyHints, ec);
-}
-
-void PeerConnection00::addStream(PassRefPtr<MediaStream> prpStream, const String& mediaStreamHints, ExceptionCode& ec)
+void PeerConnection00::addStream(PassRefPtr<MediaStream> prpStream, ExceptionCode& ec)
 {
     RefPtr<MediaStream> stream = prpStream;
     if (!stream) {
@@ -297,8 +320,13 @@ void PeerConnection00::addStream(PassRefPtr<MediaStream> prpStream, const String
 
     m_localStreams->append(stream);
 
-    // FIXME: When the spec says what the mediaStreamHints should look like send it down.
     m_peerHandler->addStream(stream->descriptor());
+}
+
+void PeerConnection00::addStream(PassRefPtr<MediaStream> stream, const Dictionary& mediaStreamHints, ExceptionCode& ec)
+{
+    // FIXME: When the spec says what the mediaStreamHints should look like use it.
+    addStream(stream, ec);
 }
 
 void PeerConnection00::removeStream(MediaStream* stream, ExceptionCode& ec)
@@ -435,7 +463,7 @@ void PeerConnection00::changeReadyState(ReadyState readyState)
     m_readyState = readyState;
 
     switch (m_readyState) {
-    case NEGOTIATING:
+    case OPENING:
         dispatchEvent(Event::create(eventNames().connectingEvent, false, false));
         break;
     case ACTIVE:

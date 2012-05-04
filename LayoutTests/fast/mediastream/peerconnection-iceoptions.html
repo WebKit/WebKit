@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+</body>
+<script>
+description("Tests PeerConenction00::startIce().");
+
+function shouldNotThrow(expression)
+{
+  try {
+    eval(expression);
+    testPassed(expression + " did not throw exception.");
+  } catch(e) {
+    testFailed(expression + " should not throw exception. Threw exception " + e);
+  }
+}
+
+function test(expression, expressionShouldThrow, expectedException) {
+    if (expressionShouldThrow) {
+        if (expectedException)
+            shouldThrow(expression, '(function() { return "' + expectedException + '"; })();');
+        else
+            shouldThrow(expression, '(function() { return "Error: TYPE_MISMATCH_ERR: DOM Exception 17"; })();');
+    } else {
+        shouldNotThrow(expression);
+    }
+}
+
+var pc = new webkitPeerConnection00("", function() {});
+
+test('pc.startIce()', false);
+test('pc.startIce(5)', true, 'TypeError: Not an object.');
+test('pc.startIce(null)', false);
+test('pc.startIce(undefined)', false);
+test('pc.startIce({})', false);
+test('pc.startIce({"use_candidates":"all"})', false);
+test('pc.startIce({"use_candidates":"foobar"})', true);
+
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</html>

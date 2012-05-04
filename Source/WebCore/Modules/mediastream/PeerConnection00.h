@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
+#include "Dictionary.h"
 #include "EventTarget.h"
 #include "ExceptionBase.h"
 #include "IceCallback.h"
@@ -49,6 +50,7 @@
 namespace WebCore {
 
 class MediaHints;
+class IceOptions;
 
 // Note:
 // SDP stands for Session Description Protocol, which is intended for describing
@@ -63,7 +65,7 @@ class PeerConnection00 : public RefCounted<PeerConnection00>, public PeerConnect
 public:
     enum ReadyState {
         NEW = 0,
-        NEGOTIATING = 1,
+        OPENING = 1,
         ACTIVE = 2,
         CLOSED = 3
     };
@@ -87,10 +89,10 @@ public:
     static PassRefPtr<PeerConnection00> create(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<IceCallback>);
     ~PeerConnection00();
 
-    PassRefPtr<SessionDescription> createOffer();
-    PassRefPtr<SessionDescription> createOffer(const String& mediaHints);
-    PassRefPtr<SessionDescription> createAnswer(const String& offer);
-    PassRefPtr<SessionDescription> createAnswer(const String& offer, const String& mediaHints);
+    PassRefPtr<SessionDescription> createOffer(ExceptionCode&);
+    PassRefPtr<SessionDescription> createOffer(const Dictionary& mediaHints, ExceptionCode&);
+    PassRefPtr<SessionDescription> createAnswer(const String& offer, ExceptionCode&);
+    PassRefPtr<SessionDescription> createAnswer(const String& offer, const Dictionary& mediaHints, ExceptionCode&);
 
     void setLocalDescription(int action, PassRefPtr<SessionDescription>, ExceptionCode&);
     void setRemoteDescription(int action, PassRefPtr<SessionDescription>, ExceptionCode&);
@@ -98,14 +100,14 @@ public:
     PassRefPtr<SessionDescription> remoteDescription();
 
     void startIce(ExceptionCode&);
-    void startIce(const String& options, ExceptionCode&);
+    void startIce(const Dictionary& iceOptions, ExceptionCode&);
     void processIceMessage(PassRefPtr<IceCandidate>, ExceptionCode&);
 
     IceState iceState() const;
     ReadyState readyState() const;
 
     void addStream(const PassRefPtr<MediaStream>, ExceptionCode&);
-    void addStream(const PassRefPtr<MediaStream>, const String& mediaStreamHints, ExceptionCode&);
+    void addStream(const PassRefPtr<MediaStream>, const Dictionary& mediaStreamHints, ExceptionCode&);
     void removeStream(MediaStream*, ExceptionCode&);
     MediaStreamList* localStreams() const;
     MediaStreamList* remoteStreams() const;
@@ -147,9 +149,16 @@ private:
 
     void changeReadyState(ReadyState);
     void changeIceState(IceState);
+
     bool hasLocalAudioTrack();
     bool hasLocalVideoTrack();
-    PassRefPtr<MediaHints> parseMediaHints(const String& mediaHintsString);
+    PassRefPtr<MediaHints> createMediaHints(const Dictionary&);
+    PassRefPtr<MediaHints> createMediaHints();
+    PassRefPtr<IceOptions> createIceOptions(const Dictionary&, ExceptionCode&);
+    PassRefPtr<IceOptions> createDefaultIceOptions();
+    PassRefPtr<SessionDescription> createOffer(PassRefPtr<MediaHints>, ExceptionCode&);
+    PassRefPtr<SessionDescription> createAnswer(const String& offer, PassRefPtr<MediaHints>, ExceptionCode&);
+    void startIce(PassRefPtr<IceOptions>, ExceptionCode&);
 
     RefPtr<IceCallback> m_iceCallback;
 

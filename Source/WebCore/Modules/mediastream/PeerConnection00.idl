@@ -37,11 +37,10 @@ module p2p {
         CallWith=ScriptExecutionContext,
         EventTarget
     ] PeerConnection00 {
-        // FIXME: Make mediaHints an object
-        SessionDescription createOffer(in [Optional] DOMString mediaHints);
-
-        // FIXME: Make mediaHints an object
-        SessionDescription createAnswer(in DOMString offer, in [Optional] DOMString mediaHints);
+        SessionDescription createOffer(in [Optional] Dictionary mediaHints)
+            raises(DOMException);
+        SessionDescription createAnswer(in DOMString offer, in [Optional] Dictionary mediaHints)
+            raises(DOMException);
 
         // Actions, for setLocalDescription/setRemoteDescription.
         const unsigned short SDP_OFFER = 0x100;
@@ -50,22 +49,19 @@ module p2p {
 
         void setLocalDescription(in unsigned short action, in SessionDescription desc)
             raises(DOMException);
-
         void setRemoteDescription(in unsigned short action, in SessionDescription desc)
             raises(DOMException);
 
         readonly attribute SessionDescription localDescription;
-
         readonly attribute SessionDescription remoteDescription;
 
         const unsigned short NEW = 0;
-        const unsigned short NEGOTIATING = 1;
+        const unsigned short OPENING = 1;
         const unsigned short ACTIVE = 2;
         const unsigned short CLOSED = 3;
         readonly attribute unsigned short readyState;
 
-        // FIXME: Make iceOptions an object
-        void startIce(in [Optional] DOMString iceOptions)
+        void startIce(in [Optional] Dictionary iceOptions)
             raises(DOMException);
 
         void processIceMessage(in IceCandidate candidate)
@@ -80,8 +76,7 @@ module p2p {
         const unsigned short ICE_CLOSED = 0x700;
         readonly attribute unsigned short iceState;
 
-        // FIXME: Make mediaStreamHints an object
-        [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional] DOMString mediaStreamHints)
+        [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional] Dictionary mediaStreamHints)
             raises(DOMException);
         [StrictTypeChecking] void removeStream(in MediaStream stream)
             raises(DOMException);

@@ -1,3 +1,14 @@
+2012-05-04  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make PeerConnection00's API fully compliant with the draft
+        https://bugs.webkit.org/show_bug.cgi?id=85491
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/peerconnection-Attributes-expected.txt:
+        * fast/mediastream/peerconnection-iceoptions-expected.txt: Added.
+        * fast/mediastream/peerconnection-iceoptions.html: Added.
+
 2012-05-04  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt

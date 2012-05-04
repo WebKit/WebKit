@@ -40,9 +40,12 @@ class WebPeerConnection00HandlerClient {
 public:
     enum ReadyState {
         ReadyStateNew = 0,
-        ReadyStateNegotiating = 1,
+        ReadyStateOpening = 1,
         ReadyStateActive = 2,
-        ReadyStateClosed = 3
+        ReadyStateClosed = 3,
+
+        // DEPRECATED
+        ReadyStateNegotiating = 1,
     };
 
     enum ICEState {

@@ -119,7 +119,7 @@ PassRefPtr<SessionDescriptionDescriptor> PeerConnection00HandlerInternal::remote
 bool PeerConnection00HandlerInternal::startIce(PassRefPtr<IceOptions> iceOptions)
 {
     if (!m_webHandler)
-        return false;
+        return true;
 
     return m_webHandler->startIce(iceOptions);
 }
