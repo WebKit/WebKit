@@ -1,3 +1,18 @@
+2012-05-04  Tony Chang  <tony@chromium.org>
+
+        [chromium] enable msvs_error_on_missing_sources at gyp time
+        https://bugs.webkit.org/show_bug.cgi?id=85683
+
+        Reviewed by Adam Barth.
+
+        This flag checks for missing files, which cause compile times to be
+        slow on Windows. Since this flag is on by default for the
+        build.chromium.org bots, we should add it here too so everyone can fix
+        these errors.
+
+        * DEPS: Roll to a chromium version that has no missing files.
+        * gyp_webkit: Add the flag.
+
 2012-05-04  Satoru Takabayashi  <satorux@chromium.org>
 
         [chromium] Add plumbing for file display names for drag and drop

@@ -119,6 +119,7 @@ if __name__ == '__main__':
                '-Dinside_chromium_build=0',
                '-Dv8_use_snapshot=false',
                '-Dmsvs_use_common_release=0',
+               '-Gmsvs_error_on_missing_sources=1',
 
                # WebKit doesn't use the chromium style checker.
                '-Dmake_clang_dir=Source/WebKit/chromium/third_party/llvm-build/Release+Asserts',

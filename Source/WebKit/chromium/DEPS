@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '134581'
+  'chromium_rev': '135445'
 }
 
 deps = {
@@ -121,6 +121,8 @@ deps = {
     Var('chromium_svn')+'/ui@'+Var('chromium_rev'), # needed by app
 
   # other third party
+  'third_party/pyftpdlib/src':
+    From('chromium_deps', 'src/third_party/pyftpdlib/src'),
   'third_party/icu':
     From('chromium_deps', 'src/third_party/icu'),
   'third_party/ots':
