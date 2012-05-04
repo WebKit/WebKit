@@ -3873,7 +3873,7 @@ BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html  = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
 
-BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE+TEXT
+BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
 
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
