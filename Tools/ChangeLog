@@ -1,5 +1,15 @@
 2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Fix up warning about missing GLib/Gio/GStreamer
+
+        We don't actually fall back.
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        * qmake/mkspecs/features/features.prf:
+
+2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Clarify warning about missing GLib/Gio/GStreamer for media support
 
         And only print it once.

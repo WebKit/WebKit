@@ -152,7 +152,7 @@ haveQt(5) {
             DEFINES += ENABLE_VIDEO=1
             DEFINES += WTF_USE_GSTREAMER=1
         } else {
-            root_project_file: message("Missing GLib/Gio/GStreamer, falling back to QtMultimedia if available")
+            root_project_file: message("Missing GLib/Gio/GStreamer, disabling media element support")
         }
     } else: contains(MOBILITY_CONFIG, multimedia) {
         DEFINES += ENABLE_VIDEO=1
