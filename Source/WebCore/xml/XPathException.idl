@@ -28,7 +28,7 @@
 
 module xpath {
 
-    interface [
+    exception [
         DoNotCheckConstants
     ] XPathException {
 

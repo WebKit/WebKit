@@ -20,7 +20,7 @@
 
 module svg {
 
-    interface [
+    exception [
         Conditional=SVG,
         DoNotCheckConstants
     ] SVGException {

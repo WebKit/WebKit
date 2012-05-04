@@ -28,7 +28,7 @@
 
 module core {
 
-    interface [
+    exception [
         JSNoStaticTables,
         DoNotCheckConstants,
         InterfaceName=DOMException

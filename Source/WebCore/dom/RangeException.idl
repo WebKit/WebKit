@@ -19,7 +19,7 @@
 
 module ranges {
 
-    interface [
+    exception [
         DoNotCheckConstants
     ] RangeException {
 

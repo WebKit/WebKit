@@ -29,7 +29,7 @@
  */
 
 module html {
-    interface [
+    exception [
         Conditional=BLOB|FILE_SYSTEM,
         DoNotCheckConstants,
         JSNoStaticTables

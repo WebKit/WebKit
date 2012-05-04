@@ -30,7 +30,7 @@
 
 module storage {
 
-    interface [
+    exception [
         Conditional=SQL_DATABASE,
         JSNoStaticTables,
         DoNotCheckConstants

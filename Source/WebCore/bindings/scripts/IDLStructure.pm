@@ -41,6 +41,7 @@ struct( domClass => {
     attributes => '@',    # List of 'domAttribute'    
     extendedAttributes => '$', # Extended attributes
     constructor => '$', # Constructor
+    isException => '$', # Used for exception interfaces
 });
 
 # Used to represent domClass contents (name of method, signature)
@@ -103,7 +104,7 @@ our $setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)'
 
 our $typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
 
-our $interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([-a-zA-Z0-9_"=\s(),;:\[\]<>&\|]*)';
+our $interfaceSelector = '(interface|exception)\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([-a-zA-Z0-9_"=\s(),;:\[\]<>&\|]*)';
 our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)(static\s+)?' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]<>]*)';
 our $interfaceParameterSelector = '(in|out)\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
 
