@@ -115,6 +115,9 @@ haveQt(5) {
 !contains(DEFINES, ENABLE_FAST_MOBILE_SCROLLING=.): DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 !contains(DEFINES, ENABLE_PAGE_VISIBILITY_API=.): DEFINES += ENABLE_PAGE_VISIBILITY_API=1
 
+# Policy decisions: for using a particular third-party library or optional OS service
+!contains(DEFINES, WTF_USE_QT_IMAGE_DECODER=.): DEFINES += WTF_USE_QT_IMAGE_DECODER=1
+
 # Enabled in Source/JavaScriptCore/wtf/Platform.h if not set
 # We have to do the same to be able to disable the feature in build-webkit
 !contains(DEFINES, ENABLE_FTPDIR=.): DEFINES += ENABLE_FTPDIR=1

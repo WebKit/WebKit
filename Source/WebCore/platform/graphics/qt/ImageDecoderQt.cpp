@@ -31,9 +31,20 @@
 
 #include <QtCore/QByteArray>
 #include <QtCore/QBuffer>
+
 #include <QtGui/QImageReader>
+#include <qdebug.h>
 
 namespace WebCore {
+
+ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
+{
+    // We need at least 4 bytes to figure out what kind of image we're dealing with.
+    if (data.size() < 4)
+        return 0;
+
+    return new ImageDecoderQt(alphaOption, gammaAndColorProfileOption);
+}
 
 ImageDecoderQt::ImageDecoderQt(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
@@ -118,7 +129,7 @@ int ImageDecoderQt::repetitionCount() const
 String ImageDecoderQt::filenameExtension() const
 {
     return String(m_format.constData(), m_format.length());
-}
+};
 
 ImageFrame* ImageDecoderQt::frameBufferAtIndex(size_t index)
 {
@@ -183,28 +194,21 @@ void ImageDecoderQt::internalReadImage(size_t frameIndex)
 
 bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
 {
-    ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
-    QSize imageSize = m_reader->size();
+    QPixmap pixmap = QPixmap::fromImageReader(m_reader.get());
 
-    if (!buffer->setSize(imageSize.width(), imageSize.height()))
-        return false;
-
-    QImage image(reinterpret_cast<uchar*>(buffer->getAddr(0, 0)), imageSize.width(), imageSize.height(), sizeof(ImageFrame::PixelData) * imageSize.width(), m_reader->imageFormat());
-
-    buffer->setDuration(m_reader->nextImageDelay());
-    m_reader->read(&image);
-
-    if (image.isNull()) {
+    if (pixmap.isNull()) {
         frameCount();
         repetitionCount();
         clearPointers();
         return false;
     }
 
-    buffer->setOriginalFrameRect(image.rect());
-    buffer->setHasAlpha(image.hasAlphaChannel());
+    // now into the ImageFrame - even if the image is not
+    ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
+    buffer->setOriginalFrameRect(m_reader->currentImageRect());
     buffer->setStatus(ImageFrame::FrameComplete);
-
+    buffer->setDuration(m_reader->nextImageDelay());
+    buffer->setPixmap(pixmap);
     return true;
 }
 
@@ -241,20 +245,6 @@ void ImageDecoderQt::clearPointers()
     m_reader.clear();
     m_buffer.clear();
 }
-
-NativeImagePtr ImageFrame::asNewNativeImage() const
-{
-    QImage::Format format;
-    if (m_hasAlpha)
-        format = m_premultiplyAlpha ?  QImage::Format_ARGB32_Premultiplied : QImage::Format_ARGB32;
-    else
-        format = QImage::Format_RGB32;
-
-    QImage img(reinterpret_cast<uchar*>(m_bytes), m_size.width(), m_size.height(), sizeof(PixelData) * m_size.width(), format);
-
-    return new QPixmap(QPixmap::fromImage(img));
-}
-
 }
 
 // vim: ts=4 sw=4 et
