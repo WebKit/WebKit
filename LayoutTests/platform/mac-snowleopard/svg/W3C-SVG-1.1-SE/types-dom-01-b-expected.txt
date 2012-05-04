@@ -34,7 +34,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 9 at (367.30,130.00) startOffset 31 endOffset 32 width 11.12: "e"
               chunk 1 text run 10 at (377.88,130.00) startOffset 32 endOffset 35 width 19.38: "xt'"
           RenderSVGViewportContainer {svg} at (275,45) size 100x100
-            RenderSVGPath {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=50.00]
+            RenderSVGEllipse {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=50.00]
         RenderSVGText {text} at (10,190) size 277x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 277x12
             chunk 1 text run 1 at (10.00,200.00) startOffset 0 endOffset 3 width 16.68: ".ge"

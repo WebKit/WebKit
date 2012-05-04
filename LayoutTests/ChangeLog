@@ -1,3 +1,51 @@
+2012-05-04  Rob Buis  <rbuis@rim.com>
+
+        Rebaseline some SVG Snow Leopard results
+        https://bugs.webkit.org/show_bug.cgi?id=85637
+
+        Reviewed by Nikolas Zimmermann.
+
+        Remove batik expected pngs for Snow Leopard since the generic mac ones match.
+        Fix types-dom-01-b-expected.txt to expect RenderSVGEllipse.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/mac-snowleopard/svg/batik/filters/feTile-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/filters/filterRegions-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/masking/maskRegions-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/paints/gradientLimit-expected.png:
+        * platform/mac-snowleopard/svg/batik/paints/patternPreserveAspectRatioA-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/paints/patternRegionA-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/paints/patternRegions-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/paints/patternRegions-positioned-objects-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/longTextOnPath-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/smallFonts-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textAnchor-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textAnchor2-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textAnchor3-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textDecoration-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textDecoration2-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textEffect-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textEffect2-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textEffect3-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textFeatures-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textGlyphOrientationHorizontal-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textLayout-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textLayout2-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textLength-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textOnPath-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textOnPath2-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textOnPath3-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textOnPathSpaces-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textPCDATA-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textPosition-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textPosition2-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textProperties-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textProperties2-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/textStyles-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/verticalText-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/verticalTextOnPath-expected.png: Removed.
+        * platform/mac-snowleopard/svg/batik/text/xmlSpace-expected.png: Removed.
+
 2012-05-04  Victor Carbune  <vcarbune@adobe.com>
 
         Layout Test media/track/track-cues-pause-on-exit.html is flaky on chromium debug builds
