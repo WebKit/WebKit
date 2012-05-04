@@ -1,3 +1,13 @@
+2012-05-04  Jeff Rogers  <jrogers@rim.com>
+
+        [BlackBerry] Implement numberOfProcessorCores() for QNX
+        https://bugs.webkit.org/show_bug.cgi?id=85638
+
+        Reviewed by Antonio Gomes.
+
+        * wtf/NumberOfCores.cpp:
+        (WTF::numberOfProcessorCores):
+
 2012-05-03  Yong Li  <yoli@rim.com>
 
         Mutex failure when HashTable is memory moved in debug build
