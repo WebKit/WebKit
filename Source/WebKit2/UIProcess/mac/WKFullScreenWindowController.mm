@@ -338,6 +338,8 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
     [self _startExitFullScreenAnimationWithDuration:defaultAnimationDuration];
 }
 
+static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*);
+
 - (void)finishedExitFullScreenAnimation:(bool)completed
 {
     if (!_isExitingFullScreen)
@@ -346,11 +348,9 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
     [self _updateMenuAndDockForFullScreen];
 
-    // Screen updates to be re-enabled ta the end of the current function.
+    // Screen updates to be re-enabled in completeFinishExitFullScreenAnimationAfterRepaint.
     NSDisableScreenUpdates();
-
-    [self _manager]->didExitFullScreen();
-    [self _manager]->setAnimatingFullScreen(false);
+    [[_webViewPlaceholder.get() window] setAutodisplay:NO];
 
     NSResponder *firstResponder = [[self window] firstResponder];
     [self _swapView:_webViewPlaceholder.get() with:_webView];
@@ -372,7 +372,22 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
     [[_webView window] makeKeyAndOrderFront:self];
 
+    // These messages must be sent after the swap or flashing will occur during forceRepaint:
+    [self _manager]->didExitFullScreen();
+    [self _manager]->setAnimatingFullScreen(false);
+
+    [self _page]->forceRepaint(VoidCallback::create(self, completeFinishExitFullScreenAnimationAfterRepaint));
+}
+
+- (void)completeFinishExitFullScreenAnimationAfterRepaint
+{
+    [[_webView window] setAutodisplay:YES];
     NSEnableScreenUpdates();
+}
+
+static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void* _self)
+{
+    [(WKFullScreenWindowController*)_self completeFinishExitFullScreenAnimationAfterRepaint];
 }
 
 - (void)close

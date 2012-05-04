@@ -1,3 +1,22 @@
+2012-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Flash of white when exiting full screen HTML5 video
+        https://bugs.webkit.org/show_bug.cgi?id=85438
+
+        Reviewed by Maciej Stachowiak.
+
+        Force a repaint before displaying the newly exited WebView window.  This gives the window
+        a chance to seamlessly repaint before enabling screen updates.
+
+        Also, send the WebProcess the didExitFullScreen and setAnimatingFullScreen(false) messages
+        after swapping the WebView back into its original window. Doing otherwise seems to cause
+        forceRepaint to paint a white frame.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+        (completeFinishExitFullScreenAnimationAfterRepaint):
+
 2012-05-04  Anders Carlsson  <andersca@apple.com>
 
         Set the right device scale factor when creating the web page
