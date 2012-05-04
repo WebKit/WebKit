@@ -1,5 +1,12 @@
 2012-05-04  Ojan Vafai  <ojan@chromium.org>
 
+        Fix test naming to be camel-case like the methods they are testing.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
+2012-05-04  Ojan Vafai  <ojan@chromium.org>
+
         Show the results links in the embedded flakiness dashboard
         https://bugs.webkit.org/show_bug.cgi?id=85660
 
