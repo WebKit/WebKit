@@ -37,6 +37,8 @@ class AccessibilityMenuListOption : public AccessibilityMockObject {
 public:
     static PassRefPtr<AccessibilityMenuListOption> create() { return adoptRef(new AccessibilityMenuListOption); }
 
+    virtual bool accessibilityIsIgnored() const;
+
     void setElement(HTMLElement*);
 
 private:

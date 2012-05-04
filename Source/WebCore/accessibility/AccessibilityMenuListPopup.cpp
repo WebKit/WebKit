@@ -62,6 +62,11 @@ bool AccessibilityMenuListPopup::isEnabled() const
     return m_parent->isEnabled();
 }
 
+bool AccessibilityMenuListPopup::accessibilityIsIgnored() const
+{
+    return accessibilityPlatformIncludesObject() != IgnoreObject;
+}
+
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const
 {
     if (!element || !element->hasTagName(optionTag))
