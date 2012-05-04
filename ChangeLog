@@ -1,3 +1,12 @@
+2012-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Taking a visibility:hidden element full screen causes full screen window to disappear.
+        https://bugs.webkit.org/show_bug.cgi?id=85432
+
+        Reviewed by Maciej Stachowiak.
+
+        * ManualTests/fullscreen/full-screen-zero-width.html: Added.
+
 2012-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r116075.

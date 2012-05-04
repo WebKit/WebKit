@@ -1,3 +1,17 @@
+2012-05-02  Jer Noble  <jer.noble@apple.com>
+
+        Taking a visibility:hidden element full screen causes full screen window to disappear.
+        https://bugs.webkit.org/show_bug.cgi?id=85432
+
+        Reviewed by Maciej Stachowiak.
+
+        When given an initial or final frame with a zero width or height, return a rect representing
+        the entire screen, rather than a rect with a zero or infinite size. Doing otherwise will
+        confuse the window server when it's instructed to scale the full screen window to that size.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (windowFrameFromApparentFrames):
+
 2012-04-30  Jer Noble  <jer.noble@apple.com>
 
         Full screen will exit during a provisional load of a non-ancestor iframe.

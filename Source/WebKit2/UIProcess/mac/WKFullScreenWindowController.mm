@@ -468,6 +468,9 @@ static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame)
 static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFrame, NSRect finalFrame)
 {
     NSRect initialWindowFrame;
+    if (!NSWidth(initialFrame) || !NSWidth(finalFrame) || !NSHeight(initialFrame) || !NSHeight(finalFrame))
+        return screenFrame;
+
     CGFloat xScale = NSWidth(screenFrame) / NSWidth(finalFrame);
     CGFloat yScale = NSHeight(screenFrame) / NSHeight(finalFrame);
     CGFloat xTrans = NSMinX(screenFrame) - NSMinX(finalFrame);
