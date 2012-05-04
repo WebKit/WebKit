@@ -1,3 +1,13 @@
+2012-05-04  Jeffrey Pfau  <jpfau@apple.com>
+
+        Prevent early EventListener deletion
+        https://bugs.webkit.org/show_bug.cgi?id=73970
+
+        Reviewed by Oliver Hunt.
+
+        * fast/events/attribute-listener-deletion-crash-expected.txt: Added.
+        * fast/events/attribute-listener-deletion-crash.html: Added.
+
 2012-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, updating expectations.
