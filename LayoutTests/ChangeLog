@@ -1,3 +1,12 @@
+2012-05-04  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r116009): image no longer visible on fast/block/float/float-not-removed-from-next-sibling4.html
+        https://bugs.webkit.org/show_bug.cgi?id=85651
+
+        Check in failing results for platform/mac/.
+
+        * platform/mac/fast/block/float/float-not-removed-from-next-sibling4-expected.txt:
+
 2012-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Mark editing tests as slow.
