@@ -435,6 +435,7 @@ v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, 
     // V8Proxy::callFunction.
     v8::Local<v8::Value> result;
     {
+        V8RecursionScope recursionScope(frame() ? frame()->document() : 0);
         result = constructor->NewInstance(argc, args);
     }
 
