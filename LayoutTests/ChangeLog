@@ -1,5 +1,14 @@
 2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] REGRESSION: http/tests/xmlhttprequest/basic-auth-nopassword.html started to crash with newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=85632
+
+        Unreviewed gardening, skip the new _crashing_ test to paint the bot green.
+
+        * platform/qt-5.0-wk1/Skipped:
+
+2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] REGRESSION: 350 tests started to fail with newer Qt5-WK1
         https://bugs.webkit.org/show_bug.cgi?id=85631
 
