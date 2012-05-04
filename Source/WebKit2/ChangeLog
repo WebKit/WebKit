@@ -1,3 +1,13 @@
+2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't pass viewport-create function to quick_test_main.
+        https://bugs.webkit.org/show_bug.cgi?id=85478
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp:
+        (main):
+
 2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for newer Qt5

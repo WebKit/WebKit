@@ -48,5 +48,5 @@ int main(int argc, char** argv)
 #ifdef DISABLE_FLICKABLE_VIEWPORT
     QQuickWebViewExperimental::setFlickableViewportEnabled(false);
 #endif
-    return quick_test_main(argc, argv, "qmltests", 0, QUICK_TEST_SOURCE_DIR);
+    return quick_test_main(argc, argv, "qmltests", QUICK_TEST_SOURCE_DIR);
 }
