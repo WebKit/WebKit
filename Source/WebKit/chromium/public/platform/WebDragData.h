@@ -70,6 +70,7 @@ public:
 
         // Only valid when storageType == StorageTypeFilename.
         WebString filenameData;
+        WebString displayNameData;
 
         // Only valid when storageType == StorageTypeBinaryData.
         WebData binaryData;

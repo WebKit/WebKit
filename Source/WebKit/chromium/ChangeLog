@@ -1,3 +1,15 @@
+2012-05-04  Satoru Takabayashi  <satorux@chromium.org>
+
+        [chromium] Add plumbing for file display names for drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=85673
+
+        Reviewed by Darin Fisher.
+
+        * public/platform/WebDragData.h:
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::items):
+        (WebKit::WebDragData::addItem):
+
 2012-05-04  Adam Barth  <abarth@webkit.org>
 
         Refactor CSP state to prepare for having both a ReportOnly and an Enforced policy

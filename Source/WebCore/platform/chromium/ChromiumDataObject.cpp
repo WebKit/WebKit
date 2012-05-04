@@ -202,9 +202,9 @@ Vector<String> ChromiumDataObject::filenames() const
     return results;
 }
 
-void ChromiumDataObject::addFilename(const String& filename)
+void ChromiumDataObject::addFilename(const String& filename, const String& displayName)
 {
-    internalAddFileItem(ChromiumDataObjectItem::createFromFile(File::create(filename)));
+    internalAddFileItem(ChromiumDataObjectItem::createFromFile(File::createWithName(filename, displayName)));
 }
 
 void ChromiumDataObject::addSharedBuffer(const String& name, PassRefPtr<SharedBuffer> buffer)

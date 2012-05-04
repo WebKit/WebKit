@@ -81,7 +81,7 @@ public:
     // Used for dragging in files from the desktop.
     bool containsFilenames() const;
     Vector<String> filenames() const;
-    void addFilename(const String&);
+    void addFilename(const String& filename, const String& displayName);
 
     // Used to handle files (images) being dragged out.
     void addSharedBuffer(const String& name, PassRefPtr<SharedBuffer>);

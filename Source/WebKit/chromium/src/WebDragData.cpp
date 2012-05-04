@@ -88,6 +88,7 @@ WebVector<WebDragData::Item> WebDragData::items() const
                 if (blob->isFile()) {
                     File* file = static_cast<File*>(blob.get());
                     item.filenameData = file->path();
+                    item.displayNameData = file->name();
                 } else
                     ASSERT_NOT_REACHED();
             } else
@@ -121,7 +122,7 @@ void WebDragData::addItem(const Item& item)
             m_private->setData(item.stringType, item.stringData);
         return;
     case Item::StorageTypeFilename:
-        m_private->addFilename(item.filenameData);
+        m_private->addFilename(item.filenameData, item.displayNameData);
         return;
     case Item::StorageTypeBinaryData:
         // This should never happen when dragging in.
