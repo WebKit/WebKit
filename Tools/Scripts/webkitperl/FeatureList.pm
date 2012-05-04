@@ -42,7 +42,6 @@ BEGIN {
 }
 
 my (
-    $requestAnimationFrameSupport,
     $threeDCanvasSupport,
     $threeDRenderingSupport,
     $accelerated2dCanvasSupport,
@@ -53,9 +52,8 @@ my (
     $cssFiltersSupport,
     $cssGridLayoutSupport,
     $cssShadersSupport,
-    $sqlDatabaseSupport,
-    $datalistSupport,
     $dataTransferItemsSupport,
+    $datalistSupport,
     $detailsSupport,
     $deviceOrientationSupport,
     $directoryUploadSupport,
@@ -70,9 +68,8 @@ my (
     $iconDatabaseSupport,
     $imageResizerSupport,
     $indexedDatabaseSupport,
-    $inputTypeColorSupport,
     $inputSpeechSupport,
-    $scriptedSpeechSupport,
+    $inputTypeColorSupport,
     $inputTypeDateSupport,
     $inputTypeDatetimeSupport,
     $inputTypeDatetimelocalSupport,
@@ -100,12 +97,15 @@ my (
     $progressTagSupport,
     $quotaSupport,
     $registerProtocolHandlerSupport,
+    $requestAnimationFrameSupport,
+    $scriptedSpeechSupport,
     $shadowDomSupport,
     $sharedWorkersSupport,
+    $sqlDatabaseSupport,
     $styleScopedSupport,
-    $svgSupport,
     $svgDOMObjCBindingsSupport,
     $svgFontsSupport,
+    $svgSupport,
     $systemMallocSupport,
     $tiledBackingStoreSupport,
     $touchEventsSupport,
@@ -122,12 +122,6 @@ my (
 );
 
 my @features = (
-    { option => "request-animation-frame", desc => "Toggle requestAnimationFrame support",
-      define => "ENABLE_REQUEST_ANIMATION_FRAME", default => (isAppleMacWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$requestAnimationFrameSupport },
-
-    { option => "download-attribute", desc => "Toggle download attribute support",
-      define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isBlackBerry(), value =>\$downloadAttributeSupport },
-
     { option => "3d-canvas", desc => "Toggle 3D canvas (WebGL) support",
       define => "ENABLE_WEBGL", default => isAppleMacWebKit(), value => \$threeDCanvasSupport },
 
@@ -158,9 +152,6 @@ my @features = (
     { option => "css-shaders", desc => "Toggle CSS Shaders (within CSS Filters) support",
       define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },
 
-    { option => "sql-database", desc => "Toggle SQL Database Support",
-      define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
-
     { option => "datalist", desc => "Toggle HTML5 datalist support",
       define => "ENABLE_DATALIST", default => 0, value => \$datalistSupport },
 
@@ -175,6 +166,9 @@ my @features = (
 
     { option => "directory-upload", desc => "Toogle Directory upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
+
+    { option => "download-attribute", desc => "Toggle download attribute support",
+      define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isBlackBerry(), value => \$downloadAttributeSupport },
 
     { option => "file-system", desc => "Toggle FileSystem support",
       define => "ENABLE_FILE_SYSTEM", default => isBlackBerry(), value => \$fileSystemSupport },
@@ -205,9 +199,6 @@ my @features = (
 
     { option => "input-speech", desc => "Speech Input API support",
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
-
-    { option => "scripted-speech", desc => "Scripted Speech API support",
-      define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
 
     { option => "input-type-color", desc => "Toggle color type <input> support",
       define => "ENABLE_INPUT_TYPE_COLOR", default => (isBlackBerry() || isEfl()), value => \$inputTypeColorSupport },
@@ -296,14 +287,20 @@ my @features = (
     { option => "register-protocol-handler", desc => "Register Protocol Handler support",
       define => "ENABLE_REGISTER_PROTOCOL_HANDLER", default => 0, value => \$registerProtocolHandlerSupport },
 
-    { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
-      define => "USE_SYSTEM_MALLOC", default => isWinCE(), value => \$systemMallocSupport },
+    { option => "request-animation-frame", desc => "Toggle requestAnimationFrame support",
+      define => "ENABLE_REQUEST_ANIMATION_FRAME", default => (isAppleMacWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$requestAnimationFrameSupport },
+
+    { option => "scripted-speech", desc => "Scripted Speech API support",
+      define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
 
     { option => "shadow-dom", desc => "Toggle Shadow DOM support",
       define => "ENABLE_SHADOW_DOM", default => isGtk(), value => \$shadowDomSupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$sharedWorkersSupport },
+
+    { option => "sql-database", desc => "Toggle SQL Database support",
+      define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
 
     { option => "style-scoped", desc => "Toggle <style scoped> support",
       define => "ENABLE_STYLE_SCOPED", default => 0, value => \$styleScopedSupport },
@@ -316,6 +313,9 @@ my @features = (
 
     { option => "svg-fonts", desc => "Toggle SVG fonts support (imples SVG support)",
       define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
+
+    { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
+      define => "USE_SYSTEM_MALLOC", default => isWinCE(), value => \$systemMallocSupport },
 
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
       define => "WTF_USE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
@@ -336,13 +336,13 @@ my @features = (
       define => "ENABLE_VIDEO_TRACK", default => (isAppleWebKit() || isGtk() || isEfl()), value => \$videoTrackSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
-      define => "ENABLE_WEB_AUDIO", default => 0, value=> \$webAudioSupport },
+      define => "ENABLE_WEB_AUDIO", default => 0, value => \$webAudioSupport },
 
     { option => "web-sockets", desc => "Toggle Web Sockets support",
-      define => "ENABLE_WEB_SOCKETS", default => 1, value=> \$webSocketsSupport },
+      define => "ENABLE_WEB_SOCKETS", default => 1, value => \$webSocketsSupport },
 
     { option => "web-timing", desc => "Toggle Web Timing support",
-      define => "ENABLE_WEB_TIMING", default => (isBlackBerry() || isGtk() || isEfl()), value=> \$webTimingSupport },
+      define => "ENABLE_WEB_TIMING", default => (isBlackBerry() || isGtk() || isEfl()), value => \$webTimingSupport },
 
     { option => "workers", desc => "Toggle Web Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$workersSupport },

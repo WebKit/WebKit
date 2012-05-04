@@ -1,3 +1,14 @@
+2012-05-04  Eric Seidel  <eric@webkit.org>
+
+        Sort entries in FeaturesList.pm to make them easier to autogenerate
+        https://bugs.webkit.org/show_bug.cgi?id=85584
+
+        Reviewed by Daniel Bates.
+
+        No functional changes, only sorting.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-05-04  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r115752): WebKit2.NewFirstVisuallyNonEmptyLayout API test times out
