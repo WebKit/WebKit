@@ -3889,3 +3889,5 @@ BUGWK85213 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMA
 // Requires rebaseline after bug 85031
 BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 WIN LINUX: fast/css/border-solid-single-edge-antialias.html = IMAGE
+
+BUGWK85553 SLOW DEBUG : http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html = PASS
