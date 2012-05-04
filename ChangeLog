@@ -1,3 +1,13 @@
+2012-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Enable WebKit2 by default in configure.
+
+        This was removed in r115624 to make sure release 1.9.1 didn't have
+        WebKit2 enabled by default, because we are using the same library
+        versions for WebKit1 and WebKit2.
+
+        * configure.ac: Enable WebKit2 by default.
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindCairo.cmake.
