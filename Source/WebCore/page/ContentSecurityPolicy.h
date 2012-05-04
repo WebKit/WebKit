@@ -26,6 +26,7 @@
 #ifndef ContentSecurityPolicy_h
 #define ContentSecurityPolicy_h
 
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -36,11 +37,11 @@ class CSPDirective;
 class ScriptExecutionContext;
 class KURL;
 
-class ContentSecurityPolicy : public RefCounted<ContentSecurityPolicy> {
+class ContentSecurityPolicy {
 public:
-    static PassRefPtr<ContentSecurityPolicy> create(ScriptExecutionContext* scriptExecutionContext)
+    static PassOwnPtr<ContentSecurityPolicy> create(ScriptExecutionContext* scriptExecutionContext)
     {
-        return adoptRef(new ContentSecurityPolicy(scriptExecutionContext));
+        return adoptPtr(new ContentSecurityPolicy(scriptExecutionContext));
     }
     ~ContentSecurityPolicy();
 

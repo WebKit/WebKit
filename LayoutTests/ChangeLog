@@ -1,3 +1,24 @@
+2012-05-03  Adam Barth  <abarth@webkit.org>
+
+        CSP: Eval isn't blocked in about:blank subframes
+        https://bugs.webkit.org/show_bug.cgi?id=85553
+
+        Reviewed by Eric Seidel.
+
+        * http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html: Added.
+            - New test for the eval issue.
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-in-iframe-expected.txt:
+            - Now that we re-parse the CSP policy, we log parse errors to the
+              console more times. This isn't ideal and is something we might
+              change in the future.
+        * platform/chromium/http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe-expected.txt: Added.
+            - Add a Chromium-specific baseline for this test because the eval
+              error is slightly different between V8 and JSC.
+
 2012-05-03  David Barr  <davidbarr@chromium.org>
 
         Update mac test expectations after r115927

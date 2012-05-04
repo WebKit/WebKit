@@ -1,0 +1,3 @@
+ALERT: /PASS/
+CONSOLE MESSAGE: line 1: Uncaught Error: Code generation from strings disallowed for this context
+ Eval should be blocked in the iframe, but inline script should be allowed.

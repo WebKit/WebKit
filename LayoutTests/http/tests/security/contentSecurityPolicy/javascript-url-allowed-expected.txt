@@ -1,4 +1,12 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
 
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
 ALERT: PASS
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
 

@@ -1,5 +1,9 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'options'.
 
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'options'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'options'.
+
 CONSOLE MESSAGE: Refused to execute JavaScript URL because of Content-Security-Policy.
 
 This test passes if it doesn't alert fail. 

@@ -4976,7 +4976,13 @@ void Document::initSecurityContext()
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
     setSecurityOrigin(ownerFrame->document()->securityOrigin());
-    setContentSecurityPolicy(ownerFrame->document()->contentSecurityPolicy());
+}
+
+void Document::initContentSecurityPolicy()
+{
+    if (!m_frame->tree()->parent() || !shouldInheritSecurityOriginFromOwner(m_url))
+        return;
+    contentSecurityPolicy()->copyStateFrom(m_frame->tree()->parent()->document()->contentSecurityPolicy());
 }
 
 void Document::setSecurityOrigin(PassRefPtr<SecurityOrigin> origin)

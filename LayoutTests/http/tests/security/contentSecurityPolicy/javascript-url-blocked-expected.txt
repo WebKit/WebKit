@@ -1,5 +1,13 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
 
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
 CONSOLE MESSAGE: Refused to execute JavaScript URL because of Content-Security-Policy.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
 
 

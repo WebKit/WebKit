@@ -606,6 +606,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
 
     updateFirstPartyForCookies();
+    m_frame->document()->initContentSecurityPolicy();
 
     Settings* settings = m_frame->document()->settings();
     m_frame->document()->cachedResourceLoader()->setAutoLoadImages(settings && settings->loadsImagesAutomatically());

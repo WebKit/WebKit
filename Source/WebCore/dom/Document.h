@@ -1039,6 +1039,7 @@ public:
 #endif
 
     void initSecurityContext();
+    void initContentSecurityPolicy();
 
     // Explicitly override the security origin for this document.
     // Note: It is dangerous to change the security origin of a document

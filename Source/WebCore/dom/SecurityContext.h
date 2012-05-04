@@ -77,7 +77,7 @@ protected:
     // Note: It is dangerous to change the security origin of a script context
     //       that already contains content.
     void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
-    void setContentSecurityPolicy(PassRefPtr<ContentSecurityPolicy>);
+    void setContentSecurityPolicy(PassOwnPtr<ContentSecurityPolicy>);
 
     void didFailToInitializeSecurityOrigin() { m_haveInitializedSecurityOrigin = false; }
     bool haveInitializedSecurityOrigin() const { return m_haveInitializedSecurityOrigin; }
@@ -90,7 +90,7 @@ private:
     bool m_haveInitializedSecurityOrigin;
     SandboxFlags m_sandboxFlags;
     RefPtr<SecurityOrigin> m_securityOrigin;
-    RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
+    OwnPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 };
 
 } // namespace WebCore
