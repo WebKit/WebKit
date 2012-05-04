@@ -1317,14 +1317,13 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
 
 void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 {
-    if (!isValid())
-        return;
-
     if (m_intrinsicDeviceScaleFactor == scaleFactor)
         return;
 
     m_intrinsicDeviceScaleFactor = scaleFactor;
-    m_drawingArea->deviceScaleFactorDidChange();
+
+    if (m_drawingArea)
+        m_drawingArea->deviceScaleFactorDidChange();
 }
 
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)

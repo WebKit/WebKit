@@ -270,6 +270,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_pageGroup = WebProcess::shared().webPageGroup(parameters.pageGroupData);
     m_page->setGroupName(m_pageGroup->identifier());
+    m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
 
     platformInitialize();
 

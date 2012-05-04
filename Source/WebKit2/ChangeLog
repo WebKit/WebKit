@@ -1,3 +1,23 @@
+2012-05-04  Anders Carlsson  <andersca@apple.com>
+
+        Set the right device scale factor when creating the web page
+        https://bugs.webkit.org/show_bug.cgi?id=85667
+        <rdar://problem/11376611>
+
+        Reviewed by Oliver Hunt.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        Set the scale factor before initializing the page, to ensure that the WebPageCreationParameters struct gets the right scale factor.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIntrinsicDeviceScaleFactor):
+        This can now be called with a null drawing area. Also, remove the isValid() check since we still want to update the scale factor even if the web process has crashed.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Set the device scale factor from the creation parameters.
+
 2012-05-02  Jer Noble  <jer.noble@apple.com>
 
         Taking a visibility:hidden element full screen causes full screen window to disappear.
