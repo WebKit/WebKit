@@ -3891,7 +3891,8 @@ BUGWK83076 SNOWLEOPARD RELEASE : compositing/geometry/outline-change.html = TIME
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-161.xml = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-166.xml = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-166a.xml = TIMEOUT PASS
-
+BUGWK83076 SNOWLEOPARD RELEASE : fast/workers/storage/multiple-databases-garbage-collection.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : fast/workers/storage/multiple-transactions-on-different-handles-sync.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/back-with-fragment-change.php = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/cross-origin-replace-history-object.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/history-navigations-set-referrer.html = TIMEOUT PASS
@@ -3899,6 +3900,11 @@ BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/popstate-fires-with-pending-
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-200-refresh-0-seconds.pl = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-200-refresh-2-seconds.pl = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-301.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-302.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-303.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text-custom-font-load-crash.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = TIMEOUT PASS
 
 
 BUGDPRANKE MAC RELEASE : fast/loader/javascript-url-in-embed.html = TEXT PASS
