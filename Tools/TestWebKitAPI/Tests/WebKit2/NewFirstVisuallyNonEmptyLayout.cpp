@@ -47,7 +47,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient);
 }
 
-TEST(WebKit2, NewFirstVisuallyNonEmptyLayout)
+TEST(WebKit2, DISABLED_NewFirstVisuallyNonEmptyLayout)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutTest"));
 

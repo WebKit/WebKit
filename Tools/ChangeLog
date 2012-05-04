@@ -1,3 +1,11 @@
+2012-05-04  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r115752): WebKit2.NewFirstVisuallyNonEmptyLayout API test times out
+        https://bugs.webkit.org/show_bug.cgi?id=85675
+
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout.cpp:
+        (TestWebKitAPI::TEST): Disable the test.
+
 2012-04-30  Jer Noble  <jer.noble@apple.com>
 
         Full screen will exit during a provisional load of a non-ancestor iframe.
