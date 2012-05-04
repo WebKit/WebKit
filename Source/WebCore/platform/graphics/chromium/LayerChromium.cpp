@@ -381,14 +381,6 @@ void LayerChromium::setScrollPosition(const IntPoint& scrollPosition)
     setNeedsCommit();
 }
 
-void LayerChromium::setMaxScrollPosition(const IntSize& maxScrollPosition)
-{
-    if (m_maxScrollPosition == maxScrollPosition)
-        return;
-    m_maxScrollPosition = maxScrollPosition;
-    setNeedsCommit();
-}
-
 void LayerChromium::setScrollable(bool scrollable)
 {
     if (m_scrollable == scrollable)
@@ -509,7 +501,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setPosition(m_position);
     layer->setPreserves3D(preserves3D());
     layer->setScrollPosition(m_scrollPosition);
-    layer->setMaxScrollPosition(m_maxScrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);
     if (!transformIsAnimating())
         layer->setTransform(m_transform);

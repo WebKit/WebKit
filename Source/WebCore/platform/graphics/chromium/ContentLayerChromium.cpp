@@ -145,12 +145,5 @@ void ContentLayerChromium::setOpaque(bool opaque)
         m_textureUpdater->setOpaque(opaque);
 }
 
-void ContentLayerChromium::scrollBy(const IntSize& scrollDelta)
-{
-    setScrollPosition(scrollPosition() + scrollDelta);
-    if (m_delegate)
-        m_delegate->didScroll(scrollDelta);
-}
-
 }
 #endif // USE(ACCELERATED_COMPOSITING)

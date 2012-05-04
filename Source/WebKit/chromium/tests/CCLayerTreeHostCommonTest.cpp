@@ -1325,28 +1325,6 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCulling)
     EXPECT_TRUE(childOfAnimatingSurface->visibleLayerRect().isEmpty());
 }
 
-TEST(CCLayerTreeHostCommonTest, verifySubtreeSearch)
-{
-    RefPtr<LayerChromium> root = LayerChromium::create();
-    RefPtr<LayerChromium> child = LayerChromium::create();
-    RefPtr<LayerChromium> grandChild = LayerChromium::create();
-    RefPtr<LayerChromium> maskLayer = LayerChromium::create();
-    RefPtr<LayerChromium> replicaLayer = LayerChromium::create();
-
-    grandChild->setReplicaLayer(replicaLayer.get());
-    child->addChild(grandChild.get());
-    child->setMaskLayer(maskLayer.get());
-    root->addChild(child.get());
-
-    int nonexistentId = -1;
-    EXPECT_EQ(root, CCLayerTreeHostCommon::findLayerInSubtree(root.get(), root->id()));
-    EXPECT_EQ(child, CCLayerTreeHostCommon::findLayerInSubtree(root.get(), child->id()));
-    EXPECT_EQ(grandChild, CCLayerTreeHostCommon::findLayerInSubtree(root.get(), grandChild->id()));
-    EXPECT_EQ(maskLayer, CCLayerTreeHostCommon::findLayerInSubtree(root.get(), maskLayer->id()));
-    EXPECT_EQ(replicaLayer, CCLayerTreeHostCommon::findLayerInSubtree(root.get(), replicaLayer->id()));
-    EXPECT_EQ(0, CCLayerTreeHostCommon::findLayerInSubtree(root.get(), nonexistentId));
-}
-
 // FIXME:
 // continue working on https://bugs.webkit.org/show_bug.cgi?id=68942
 //  - add a test to verify clipping that changes the "center point"

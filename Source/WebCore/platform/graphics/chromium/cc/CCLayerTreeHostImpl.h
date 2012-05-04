@@ -133,10 +133,10 @@ public:
     void readback(void* pixels, const IntRect&);
 
     void setRootLayer(PassOwnPtr<CCLayerImpl>);
-    PassOwnPtr<CCLayerImpl> releaseRootLayer();
+    PassOwnPtr<CCLayerImpl> releaseRootLayer() { return m_rootLayerImpl.release(); }
     CCLayerImpl* rootLayer() { return m_rootLayerImpl.get(); }
 
-    CCLayerImpl* rootScrollLayer() const { return m_rootScrollLayerImpl; }
+    CCLayerImpl* scrollLayer() const { return m_scrollLayerImpl; }
 
     bool visible() const { return m_visible; }
     void setVisible(bool);
@@ -183,6 +183,8 @@ private:
     void makeScrollAndScaleSet(CCScrollAndScaleSet* scrollInfo, const IntSize& scrollOffset, float pageScale);
 
     void setPageScaleDelta(float);
+    void applyPageScaleDeltaToScrollLayer();
+    void adjustScrollsForPageScaleChange(float);
     void updateMaxScrollPosition();
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
     void calculateRenderSurfaceLayerList(CCLayerList&);
@@ -195,15 +197,12 @@ private:
     IntSize contentSize() const;
     void sendDidLoseContextRecursive(CCLayerImpl*);
     void clearRenderSurfacesOnCCLayerImplRecursive(CCLayerImpl*);
-    bool ensureMostRecentRenderSurfaceLayerList();
 
     void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
-    CCLayerImpl* m_rootScrollLayerImpl;
-    CCLayerImpl* m_currentlyScrollingLayerImpl;
-    int m_scrollingLayerIdFromPreviousTree;
+    CCLayerImpl* m_scrollLayerImpl;
     CCSettings m_settings;
     IntSize m_viewportSize;
     bool m_visible;
@@ -229,9 +228,6 @@ private:
     OwnPtr<CCLayerTreeHostImplTimeSourceAdapter> m_timeSourceClientAdapter;
 
     CCLayerSorter m_layerSorter;
-
-    // List of visible layers in the most recent frame. Used for input event hit testing.
-    CCLayerList m_mostRecentRenderSurfaceLayerList;
 
     FloatRect m_rootDamageRect;
 

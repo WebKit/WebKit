@@ -183,37 +183,6 @@ void CCLayerImpl::scrollBy(const FloatSize& scroll)
     noteLayerPropertyChangedForSubtree();
 }
 
-CCInputHandlerClient::ScrollStatus CCLayerImpl::tryScroll(const IntPoint& viewportPoint, CCInputHandlerClient::ScrollInputType type) const
-{
-    if (shouldScrollOnMainThread()) {
-        TRACE_EVENT("tryScroll Failed shouldScrollOnMainThread", this, 0);
-        return CCInputHandlerClient::ScrollFailed;
-    }
-
-    if (!screenSpaceTransform().isInvertible()) {
-        TRACE_EVENT("tryScroll Failed nonInvertibleTransform", this, 0);
-        return CCInputHandlerClient::ScrollIgnored;
-    }
-
-    IntPoint contentPoint(screenSpaceTransform().inverse().mapPoint(viewportPoint));
-    if (nonFastScrollableRegion().contains(contentPoint)) {
-        TRACE_EVENT("tryScroll Failed nonFastScrollableRegion", this, 0);
-        return CCInputHandlerClient::ScrollFailed;
-    }
-
-    if (type == CCInputHandlerClient::Wheel && haveWheelEventHandlers()) {
-        TRACE_EVENT("tryScroll Failed wheelEventHandlers", this, 0);
-        return CCInputHandlerClient::ScrollFailed;
-    }
-
-    if (!scrollable()) {
-        TRACE_EVENT("tryScroll Ignored not scrollable", this, 0);
-        return CCInputHandlerClient::ScrollIgnored;
-    }
-
-    return CCInputHandlerClient::ScrollStarted;
-}
-
 const IntRect CCLayerImpl::getDrawRect() const
 {
     // Form the matrix used by the shader to map the corners of the layer's

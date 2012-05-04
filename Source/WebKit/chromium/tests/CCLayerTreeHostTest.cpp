@@ -1550,7 +1550,6 @@ public:
     }
 
     virtual bool preserves3D() { return false; }
-    virtual void didScroll(const IntSize&) { }
 
 private:
     CCLayerTreeHostTest* m_test;
@@ -1685,8 +1684,7 @@ class MockContentLayerDelegate : public ContentLayerDelegate {
 public:
     bool drawsContent() const { return true; }
     MOCK_CONST_METHOD0(preserves3D, bool());
-    virtual void paintContents(GraphicsContext&, const IntRect&) { }
-    virtual void didScroll(const IntSize&) { }
+    void paintContents(GraphicsContext&, const IntRect&) { }
     void notifySyncRequired() { }
 };
 
@@ -2446,72 +2444,6 @@ private:
 TEST_F(CCLayerTreeHostTestFractionalScroll, runMultiThread)
 {
     runTestThreaded();
-}
-
-class CCLayerTreeHostTestScrollChildLayer : public CCLayerTreeHostTest {
-public:
-    CCLayerTreeHostTestScrollChildLayer()
-        : m_scrollAmount(2, 1)
-    {
-    }
-
-    virtual void beginTest()
-    {
-        m_layerTreeHost->setViewportSize(IntSize(10, 10));
-        m_rootScrollLayer = ContentLayerChromium::create(&m_mockDelegate);
-        m_rootScrollLayer->setBounds(IntSize(10, 10));
-        m_rootScrollLayer->setIsDrawable(true);
-        m_rootScrollLayer->setScrollable(true);
-        m_rootScrollLayer->setMaxScrollPosition(IntSize(100, 100));
-        m_layerTreeHost->rootLayer()->addChild(m_rootScrollLayer);
-        m_childLayer = ContentLayerChromium::create(&m_mockDelegate);
-        m_childLayer->setBounds(IntSize(50, 50));
-        m_childLayer->setIsDrawable(true);
-        m_childLayer->setScrollable(true);
-        m_childLayer->setMaxScrollPosition(IntSize(100, 100));
-        m_rootScrollLayer->addChild(m_childLayer);
-        postSetNeedsCommitToMainThread();
-    }
-
-    virtual void applyScrollAndScale(const IntSize& scrollDelta, float)
-    {
-        IntPoint position = m_rootScrollLayer->scrollPosition();
-        m_rootScrollLayer->setScrollPosition(position + scrollDelta);
-    }
-
-    virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
-    {
-        EXPECT_EQ(m_rootScrollLayer->scrollPosition(), IntPoint());
-        if (!m_layerTreeHost->frameNumber())
-            EXPECT_EQ(m_childLayer->scrollPosition(), IntPoint());
-        else
-            EXPECT_EQ(m_childLayer->scrollPosition(), IntPoint() + m_scrollAmount);
-    }
-
-    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
-    {
-        if (impl->frameNumber() == 1) {
-            EXPECT_EQ(impl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
-            impl->scrollBy(m_scrollAmount);
-            impl->scrollEnd();
-        } else if (impl->frameNumber() == 2)
-            endTest();
-    }
-
-    virtual void afterTest()
-    {
-    }
-
-private:
-    const IntSize m_scrollAmount;
-    MockContentLayerDelegate m_mockDelegate;
-    RefPtr<LayerChromium> m_childLayer;
-    RefPtr<LayerChromium> m_rootScrollLayer;
-};
-
-TEST_F(CCLayerTreeHostTestScrollChildLayer, runMultiThread)
-{
-    runTest(true);
 }
 
 } // namespace

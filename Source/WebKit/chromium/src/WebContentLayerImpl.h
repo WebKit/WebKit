@@ -44,7 +44,6 @@ protected:
 
     // ContentLayerDelegate implementation.
     virtual void paintContents(WebCore::GraphicsContext&, const WebCore::IntRect& clip);
-    virtual void didScroll(const WebCore::IntSize&);
 
     WebContentLayerClient* m_contentClient;
     bool m_drawsContent;

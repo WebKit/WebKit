@@ -72,8 +72,4 @@ void WebContentLayerImpl::paintContents(GraphicsContext& gc, const IntRect& clip
     m_contentClient->paintContents(canvas, WebRect(clip));
 }
 
-void WebContentLayerImpl::didScroll(const WebCore::IntSize&)
-{
-}
-
 } // namespace WebKit

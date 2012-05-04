@@ -1,3 +1,19 @@
+2012-05-04  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Revert compositor layer scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=85644
+
+        Reviewed by Steve Block.
+
+        * src/WebContentLayerImpl.cpp:
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockContentLayerDelegate::paintContents):
+
 2012-05-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make PeerConnection00's API fully compliant with the draft

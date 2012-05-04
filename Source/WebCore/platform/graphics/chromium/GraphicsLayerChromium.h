@@ -113,7 +113,6 @@ public:
 
     // ContentLayerDelegate implementation.
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
-    virtual void didScroll(const IntSize&) OVERRIDE { }
 
     // CCLayerAnimationDelegate implementation.
     virtual void notifyAnimationStarted(double startTime);
