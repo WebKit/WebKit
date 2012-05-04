@@ -149,10 +149,12 @@ private:
 struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
     String m_token;
     String m_anchorText;
+    String m_overrideContentType;
     bool m_isXMLHTTPRequest;
     bool m_mustHandleInternally;
     bool m_isRequestedByPlugin;
     bool m_forceDownload;
+    ResourceRequest::TargetType m_targetType;
 };
 
 } // namespace WebCore

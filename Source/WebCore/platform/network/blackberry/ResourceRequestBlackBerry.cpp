@@ -233,9 +233,12 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(P
 {
     data->m_token = m_token;
     data->m_anchorText = m_anchorText;
+    data->m_overrideContentType = m_overrideContentType;
     data->m_isXMLHTTPRequest = m_isXMLHTTPRequest;
     data->m_mustHandleInternally = m_mustHandleInternally;
     data->m_isRequestedByPlugin = m_isRequestedByPlugin;
+    data->m_forceDownload = m_forceDownload;
+    data->m_targetType = m_targetType;
     return data;
 }
 
@@ -243,10 +246,12 @@ void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>
 {
     m_token = data->m_token;
     m_anchorText = data->m_anchorText;
+    m_overrideContentType = data->m_overrideContentType;
     m_isXMLHTTPRequest = data->m_isXMLHTTPRequest;
     m_mustHandleInternally = data->m_mustHandleInternally;
     m_isRequestedByPlugin = data->m_isRequestedByPlugin;
     m_forceDownload = data->m_forceDownload;
+    m_targetType = data->m_targetType;
 }
 
 void ResourceRequest::clearHTTPContentLength()
