@@ -1,3 +1,20 @@
+2012-05-04  Jer Noble  <jer.noble@apple.com>
+
+        Move WebKitFullScreenListener into its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=85640
+
+        Reviewed by Maciej Stachowiak.
+
+        Move WebKitFullScreenListener into its own file, so it can be used by multiple classes.
+
+        * WebCoreSupport/WebKitFullScreenListener.h: Added.
+        * WebCoreSupport/WebKitFullScreenListener.mm: Added.
+        (-[WebKitFullScreenListener webkitWillEnterFullScreen]):
+        (-[WebKitFullScreenListener webkitDidEnterFullScreen]):
+        (-[WebKitFullScreenListener webkitWillExitFullScreen]):
+        (-[WebKitFullScreenListener webkitDidExitFullScreen]):
+        * WebCoreSupport/WebChromeClient.mm:
+
 2012-05-04  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11312853> and https://bugs.webkit.org/show_bug.cgi?id=85635 

@@ -367,6 +367,8 @@
 		C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */; };
+		CD8BFCE715531224005AFB25 /* WebKitFullScreenListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */; };
+		CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */; };
 		CD8EAC7311CAC9A300774075 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8EAC7211CAC9A300774075 /* IOKit.framework */; };
 		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
 		CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */; };
@@ -698,6 +700,8 @@
 		C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
 		C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebUserContentURLPattern.mm; sourceTree = "<group>"; };
+		CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitFullScreenListener.mm; sourceTree = "<group>"; };
+		CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitFullScreenListener.h; sourceTree = "<group>"; };
 		CD8EAC7211CAC9A300774075 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenController.h; sourceTree = "<group>"; };
 		CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenController.mm; sourceTree = "<group>"; };
@@ -1319,6 +1323,8 @@
 				931633EE0AEDFFAE0062B92D /* WebFrameLoaderClient.mm */,
 				9391F273121B38BD00EBF7E8 /* WebFrameNetworkingContext.h */,
 				9391F274121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm */,
+				CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */,
+				CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */,
 				BC7F884910C8775A00D6133D /* WebGeolocationClient.h */,
 				BC7F884A10C8775A00D6133D /* WebGeolocationClient.mm */,
 				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
@@ -1650,6 +1656,7 @@
 				312E2FE514E48182007CCA18 /* WebNotification.h in Headers */,
 				312E2FE914E48215007CCA18 /* WebNotificationInternal.h in Headers */,
 				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
+				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2038,6 +2045,7 @@
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
 				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
+				CD8BFCE715531224005AFB25 /* WebKitFullScreenListener.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

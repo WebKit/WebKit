@@ -1,3 +1,14 @@
+2012-05-03  Jer Noble  <jer.noble@apple.com>
+
+        Move WebKitFullScreenListener into its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=85640
+
+        Reviewed by Maciej Stachowiak .
+
+        Pull WebKitFullScreenListener into its own file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindCairo.cmake.

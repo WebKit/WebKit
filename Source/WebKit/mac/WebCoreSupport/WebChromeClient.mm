@@ -38,6 +38,7 @@
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryInternal.h"
+#import "WebKitFullScreenListener.h"
 #import "WebKitPrefix.h"
 #import "WebKitSystemInterface.h"
 #import "WebNSURLRequestExtras.h"
@@ -127,18 +128,6 @@ NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
 @end
 
 using namespace WebCore;
-
-#if ENABLE(FULLSCREEN_API)
-
-@interface WebKitFullScreenListener : NSObject <WebKitFullScreenListener>
-{
-    RefPtr<Element> _element;
-}
-
-- (id)initWithElement:(Element*)element;
-@end
-
-#endif
 
 WebChromeClient::WebChromeClient(WebView *webView) 
     : m_webView(webView)
@@ -955,42 +944,5 @@ void WebChromeClient::fullScreenRendererChanged(RenderBox* renderer)
     if ([[m_webView UIDelegate] respondsToSelector:selector])
         CallUIDelegate(m_webView, selector, (id)renderer);
 }
-
-@implementation WebKitFullScreenListener
-
-- (id)initWithElement:(Element*)element
-{
-    if (!(self = [super init]))
-        return nil;
-    
-    _element = element;
-    return self;
-}
-
-- (void)webkitWillEnterFullScreen
-{
-    if (_element)
-        _element->document()->webkitWillEnterFullScreenForElement(_element.get());
-}
-
-- (void)webkitDidEnterFullScreen
-{
-    if (_element)
-        _element->document()->webkitDidEnterFullScreenForElement(_element.get());
-}
-
-- (void)webkitWillExitFullScreen
-{
-    if (_element)
-        _element->document()->webkitWillExitFullScreenForElement(_element.get());
-}
-
-- (void)webkitDidExitFullScreen
-{
-    if (_element)
-        _element->document()->webkitDidExitFullScreenForElement(_element.get());
-}
-
-@end
 
 #endif
