@@ -1,3 +1,13 @@
+2012-05-03  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, gardening after r116009 and r116039.
+
+        * fast/xmlhttprequest/xmlhttprequest-get-expected.txt:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+        * platform/gtk/fast/block/float/float-not-removed-from-next-sibling4-expected.txt:
+        * platform/gtk/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/gtk/test_expectations.txt:
+
 2012-05-03  David Barr  <davidbarr@chromium.org>
 
         Antialias single-edge solid borders
