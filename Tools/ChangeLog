@@ -1,3 +1,17 @@
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Store fewer runs by default in the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=85568
+
+        Reviewed by Dirk Pranke.
+
+        This will greatly shrink the size of the json files we load,
+        resulting in a much faster initial load. People rarely care
+        about more than 100 runs. For the cases they do, they can still click
+        the show all runs checkbox to show 500 runs.
+
+        * TestResultServer/model/jsonresults.py:
+
 2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Frame load callbacks output is missing for redirections
