@@ -1,3 +1,23 @@
+2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Clean up and split features.prf into a static list of defaults
+
+        The static list of feature defaults is used as a fallback for any
+        feature that's not dynamically detected or overriden on the command
+        line (though build-webkit or passing DEFINES+= to qmake).
+
+        The static list is complete, which allows for auto-generation based
+        on Features.py (see bug https://bugs.webkit.org/show_bug.cgi?id=85456)
+
+        https://bugs.webkit.org/show_bug.cgi?id=85611
+
+        Reviewed by Simon Hausmann.
+
+        * Scripts/build-webkit:
+        * Tools.pro:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/features.pri: Added.
+
 2012-05-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116085, r116091, and r116095.

@@ -4124,7 +4124,7 @@ contains(CONFIG, opengl-shims) {
     DEFINES += QT_OPENGL_SHIMS=1
 }
 
-contains(CONFIG, graphics_surfaces) {
+contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=1) {
     mac {
         SOURCES += platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp
         INCLUDEPATH += /System/Library/Frameworks/CoreFoundation.framework/Headers

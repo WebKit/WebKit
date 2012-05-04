@@ -301,12 +301,11 @@ if (isGtk()) {
         push @options, "DEFINES+=$_->{define}=${$_->{value}}" if $_->{define} && ${$_->{value}} != $_->{default};
     }
 
-    if ($minimal) {
-        push @options, "CONFIG+=minimal";
-    }
-
     if ($v8) {
-        push @options, "CONFIG+=v8";
+        print "Building WebKit2 with v8 is not supported currently. Disabling WebKit2.\n";
+        # FIXME: Deal with this in defaults_pre, once Qt has support for getting at the
+        # command line arguments at that stage.
+        push @options, "CONFIG+=v8 CONFIG+=no_webkit2";
     }
 }
 

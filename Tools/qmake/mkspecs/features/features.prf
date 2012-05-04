@@ -5,26 +5,17 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-CONFIG(minimal) {
-    DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
-}
+# Since features.prf is currently loaded from .pro/.pri files, not
+# defaults_pre.prf, we have at this point parsed any optional command
+# line arguments to qmake (eg qmake DEFINES+=ENABLE_VIDEO=0), that are
+# intended to override default values (static or dynamic) of the
+# feature defines.
+#
+# This is why the checks below look for !contains(DEFINES, ENABLE_FOO=.)
+# so that the static or dynamic defaults will only be set if the user did
+# not make an explicit choice by passing an argument to qmake/build-webkit.
 
-CONFIG(production) {
-    DEFINES += ENABLE_XSLT=0
-    DEFINES += ENABLE_WEB_TIMING=0
-}
-
-meegotouch {
-    DEFINES += WTF_USE_MEEGOTOUCH=1
-}
-
-haveQt(5) {
-    mac: CONFIG += graphics_surfaces
-}
-
-contains(CONFIG, graphics_surfaces) {
-    DEFINES += WTF_USE_GRAPHICS_SURFACE=1
-}
+# ------------- Prepare for feature detection -------------
 
 ## load mobilityconfig if mobility is available
 load(mobilityconfig, true)
@@ -35,22 +26,29 @@ isEmpty(SQLITE3SRCDIR) {
     SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
 }
 
+# ---------- Dynamically detect optional features -------------
+#
+# Please note, static feature defaults go in features.pri
+#
+# Do not add new CONFIG options, but use the existing patterns
+# of WTF_USE, ENABLE_, etc, and detect the precense of those
+# defines in the relevant target files. You do not need to have
+# a fallback in your logic for the disabling feature, that's handled
+# by having the feature disabled in features.pri. Nor do you have to
+# unset the opposite value, that's handled automatically for you.
+
 # For Mac we do not rely on QT_CONFIG, because icu is not officially supported for all of qt.
 haveQt(5):if(contains(QT_CONFIG,icu)|mac) {
     DEFINES += WTF_USE_ICU_UNICODE=1
-    DEFINES -= WTF_USE_QT4_UNICODE
+    DEFINES -= WTF_USE_QT4_UNICODE=1
 } else {
     DEFINES += WTF_USE_QT4_UNICODE=1
-    DEFINES -= WTF_USE_ICU_UNICODE
+    DEFINES -= WTF_USE_ICU_UNICODE=1
 }
 
-# Use of QRawFont in Qt 5:
-haveQt(5): DEFINES += HAVE_QRAWFONT=1
-
-isEmpty(HAVE_QRAWFONT) {
-    # We have to disable SVG Fonts, which rely on the fast path.
-    DEFINES -= ENABLE_SVG_FONTS=1
-    DEFINES += ENABLE_SVG_FONTS=0
+!contains(DEFINES, HAVE_QRAWFONT=.) {
+    # Use of QRawFont in Qt 5:
+    haveQt(5): DEFINES += HAVE_QRAWFONT=1
 }
 
 # We need fontconfig to set up the test fonts for DumpRenderTree and WebKitTestRunner.
@@ -75,63 +73,7 @@ haveQt(5) {
     haveQt(5):contains(config_test_libxslt, yes): DEFINES += ENABLE_XSLT=1
 }
 
-# Feature defines: for web-facing features only
-!contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=.): DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=1
-!contains(DEFINES, ENABLE_GAMEPAD=.): DEFINES += ENABLE_GAMEPAD=0
-!contains(DEFINES, ENABLE_SQL_DATABASE=.): DEFINES += ENABLE_SQL_DATABASE=1
-!contains(DEFINES, ENABLE_ICONDATABASE=.): DEFINES += ENABLE_ICONDATABASE=1
-!contains(DEFINES, ENABLE_CHANNEL_MESSAGING=.): DEFINES += ENABLE_CHANNEL_MESSAGING=1
-!contains(DEFINES, ENABLE_DIRECTORY_UPLOAD=.): DEFINES += ENABLE_DIRECTORY_UPLOAD=0
-!contains(DEFINES, ENABLE_FILE_SYSTEM=.): DEFINES += ENABLE_FILE_SYSTEM=0
-!contains(DEFINES, ENABLE_QUOTA=.): DEFINES += ENABLE_QUOTA=0
-!contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
-!contains(DEFINES, ENABLE_FILTERS=.): DEFINES += ENABLE_FILTERS=1
-!contains(DEFINES, ENABLE_CSS_FILTERS=.): DEFINES += ENABLE_CSS_FILTERS=1
-!contains(DEFINES, ENABLE_SHARED_WORKERS=.): DEFINES += ENABLE_SHARED_WORKERS=1
-!contains(DEFINES, ENABLE_SHADOW_DOM=.): DEFINES += ENABLE_SHADOW_DOM=0
-!contains(DEFINES, ENABLE_WORKERS=.): DEFINES += ENABLE_WORKERS=1
-!contains(DEFINES, ENABLE_DETAILS=.): DEFINES += ENABLE_DETAILS=1
-!contains(DEFINES, ENABLE_METER_TAG=.): DEFINES += ENABLE_METER_TAG=1
-!contains(DEFINES, ENABLE_MHTML=.): DEFINES += ENABLE_MHTML=0
-!contains(DEFINES, ENABLE_MICRODATA=.): DEFINES += ENABLE_MICRODATA=0
-!contains(DEFINES, ENABLE_PROGRESS_TAG=.): DEFINES += ENABLE_PROGRESS_TAG=1
-!contains(DEFINES, ENABLE_BLOB=.): DEFINES += ENABLE_BLOB=1
-!contains(DEFINES, ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=.): DEFINES += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
-!contains(DEFINES, ENABLE_LEGACY_NOTIFICATIONS=.): DEFINES += ENABLE_LEGACY_NOTIFICATIONS=1
-!contains(DEFINES, ENABLE_NOTIFICATIONS=.): DEFINES += ENABLE_NOTIFICATIONS=1
-!contains(DEFINES, ENABLE_INPUT_TYPE_COLOR=.): DEFINES += ENABLE_INPUT_TYPE_COLOR=0
-!contains(DEFINES, ENABLE_INPUT_SPEECH=.): DEFINES += ENABLE_INPUT_SPEECH=0
-!contains(DEFINES, ENABLE_SCRIPTED_SPEECH=.): DEFINES += ENABLE_SCRIPTED_SPEECH=0
-!contains(DEFINES, ENABLE_INSPECTOR=.): DEFINES += ENABLE_INSPECTOR=1
-!contains(DEFINES, ENABLE_3D_RENDERING=.): DEFINES += ENABLE_3D_RENDERING=1
-!contains(DEFINES, ENABLE_WEB_AUDIO=.): DEFINES += ENABLE_WEB_AUDIO=0
-!contains(DEFINES, ENABLE_MEDIA_SOURCE=.): DEFINES += ENABLE_MEDIA_SOURCE=0
-!contains(DEFINES, ENABLE_MEDIA_STATISTICS=.): DEFINES += ENABLE_MEDIA_STATISTICS=0
-!contains(DEFINES, ENABLE_MEDIA_STREAM=.): DEFINES += ENABLE_MEDIA_STREAM=0
-!contains(DEFINES, ENABLE_VIDEO_TRACK=.): DEFINES += ENABLE_VIDEO_TRACK=0
-!contains(DEFINES, ENABLE_TOUCH_ICON_LOADING=.): DEFINES += ENABLE_TOUCH_ICON_LOADING=0
-!contains(DEFINES, ENABLE_ANIMATION_API=.): DEFINES += ENABLE_ANIMATION_API=0
-!contains(DEFINES, ENABLE_TOUCH_ADJUSTMENT=.): DEFINES += ENABLE_TOUCH_ADJUSTMENT=1
-!contains(DEFINES, ENABLE_FAST_MOBILE_SCROLLING=.): DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
-!contains(DEFINES, ENABLE_PAGE_VISIBILITY_API=.): DEFINES += ENABLE_PAGE_VISIBILITY_API=1
-
-# Policy decisions: for using a particular third-party library or optional OS service
 !contains(DEFINES, WTF_USE_QT_IMAGE_DECODER=.): DEFINES += WTF_USE_QT_IMAGE_DECODER=1
-
-# Enabled in Source/JavaScriptCore/wtf/Platform.h if not set
-# We have to do the same to be able to disable the feature in build-webkit
-!contains(DEFINES, ENABLE_FTPDIR=.): DEFINES += ENABLE_FTPDIR=1
-
-# SVG support
-!contains(DEFINES, ENABLE_SVG=0) {
-    !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
-    !contains(DEFINES, ENABLE_SVG_FONTS=.): DEFINES += ENABLE_SVG_FONTS=1
-} else {
-    DEFINES += ENABLE_SVG_FONTS=0
-}
-
-# HTML5 datalist support
-!contains(DEFINES, ENABLE_DATALIST=.): DEFINES += ENABLE_DATALIST=1
 
 # Tiled Backing Store support
 !contains(DEFINES, WTF_USE_TILED_BACKING_STORE=.): DEFINES += WTF_USE_TILED_BACKING_STORE=1
@@ -140,13 +82,11 @@ haveQt(5) {
 !contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=.) {
     unix:haveQt(4)|win32-*:!embedded:!wince*: {
         DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
-    } else {
-        DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
     }
 }
 
 # Netscape plugins support for WebKit2
-!contains(DEFINES, PLUGIN_ARCHITECTURE_UNSUPPORTED) {
+!contains(DEFINES, PLUGIN_ARCHITECTURE_UNSUPPORTED=.) {
     no_webkit2 {
         DEFINES += PLUGIN_ARCHITECTURE_UNSUPPORTED=1
     } else {
@@ -165,34 +105,19 @@ haveQt(5) {
 haveQt(4)|!isEmpty(QT.widgets.name): DEFINES += HAVE_QSTYLE=1
 
 # WebGL support
-contains(QT_CONFIG, opengl):!win32-* {
-    !contains(DEFINES, ENABLE_WEBGL=.): DEFINES += ENABLE_WEBGL=1
-} else {
-    DEFINES += ENABLE_WEBGL=0
+!contains(DEFINES, ENABLE_WEBGL=.) {
+    contains(QT_CONFIG, opengl):!win32-*: DEFINES += ENABLE_WEBGL=1
 }
 
-# Web Socket support.
-!contains(DEFINES, ENABLE_WEB_SOCKETS=.): DEFINES += ENABLE_WEB_SOCKETS=1
-
-# Web Timing support.
-!contains(DEFINES, ENABLE_WEB_TIMING=.): DEFINES += ENABLE_WEB_TIMING=1
-
-!contains(DEFINES, ENABLE_REQUEST_ANIMATION_FRAME=.): DEFINES += ENABLE_REQUEST_ANIMATION_FRAME=1
-
-# XSLT support with QtXmlPatterns
 !contains(DEFINES, ENABLE_XSLT=.) {
-    contains(QT_CONFIG, xmlpatterns):DEFINES += ENABLE_XSLT=1
-    else:DEFINES += ENABLE_XSLT=0
+    # Using QtXmlPatterns
+    contains(QT_CONFIG, xmlpatterns): DEFINES += ENABLE_XSLT=1
+
+    # Or libxml2 -- experimental and only works on Linux so far
+    contains(DEFINES, WTF_USE_LIBXML2=1): DEFINES += ENABLE_XSLT=1
 }
 
-# This is experimental and only works on Linux so far.
-!contains(DEFINES, ENABLE_XSLT=.) {
-    contains(DEFINES, WTF_USE_LIBXML2=1) {
-        DEFINES += ENABLE_XSLT=1
-    }
-}
-
-# geolocation support if QtMobility exists
+# Geolocation support if QtMobility exists
 !contains(DEFINES, ENABLE_GEOLOCATION=.) {
     contains(MOBILITY_CONFIG, location)|contains(QT_CONFIG, location) {
        DEFINES += ENABLE_GEOLOCATION=1
@@ -210,109 +135,96 @@ haveQt(5) {
     contains(MOBILITY_CONFIG, sensors) {
         !contains(DEFINES, ENABLE_ORIENTATION_EVENTS=.): DEFINES += ENABLE_ORIENTATION_EVENTS=1
         !contains(DEFINES, ENABLE_DEVICE_ORIENTATION=.): DEFINES += ENABLE_DEVICE_ORIENTATION=1
+
+        # FIXME: These should not be here, but in the target that needs them
         CONFIG *= mobility
         MOBILITY *= sensors
     }
 }
 
-!contains(DEFINES, ENABLE_TOUCH_EVENTS=.): DEFINES += ENABLE_TOUCH_EVENTS=1
-!contains(DEFINES, ENABLE_GESTURE_EVENTS=.): DEFINES += ENABLE_GESTURE_EVENTS=1
-
 # HTML5 Media Support
-# We require QtMultimedia
 !contains(DEFINES, ENABLE_VIDEO=.) {
-    DEFINES -= ENABLE_VIDEO=1
-    DEFINES += ENABLE_VIDEO=0
-
     mac:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
-        DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
         DEFINES += WTF_USE_QTKIT=1
-        DEFINES -= WTF_USE_QTKIT=0
     } else: linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
         !contains(QT_CONFIG, no-pkg-config):system(pkg-config --exists glib-2.0 gio-2.0 \'gstreamer-0.10 >= 0.10.30\' \'gstreamer-plugins-base-0.10 >= 0.10.30\'): {
-            DEFINES -= ENABLE_VIDEO=0
             DEFINES += ENABLE_VIDEO=1
             DEFINES += WTF_USE_GSTREAMER=1
-            DEFINES -= WTF_USE_GSTREAMER=0
         } else {
             message("Disabling video due the lack of GLib/Gio/GStreamer.")
-            DEFINES -= ENABLE_VIDEO=1
-            DEFINES += ENABLE_VIDEO=0
         }
     } else: contains(MOBILITY_CONFIG, multimedia) {
-        DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
-        DEFINES -= WTF_USE_QT_MULTIMEDIA=0
         DEFINES += WTF_USE_QT_MULTIMEDIA=1
     }
 }
 
 !contains(DEFINES, ENABLE_FULLSCREEN_API=.) {
-    no_webkit2 {
-        DEFINES += ENABLE_FULLSCREEN_API=0
-    } else {
-        DEFINES += ENABLE_FULLSCREEN_API=1
+    !no_webkit2: DEFINES += ENABLE_FULLSCREEN_API=1
+}
+
+haveQt(4) {
+    haveQtModule(declarative): DEFINES += HAVE_QQUICK1=1
+} else {
+    # FIXME: Add Qt 5 QQuick1 support once QDeclarativeEngine in QQuick2
+    # is called QmlEngine and it is safe for us to use QQuick1 again.
+}
+
+!contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=.) {
+    haveQt(5):mac: DEFINES += WTF_USE_GRAPHICS_SURFACE=1
+}
+
+# -------------- Fill in static defaults --------------
+#
+# Only applies to features that don't have a dynamic default
+# or have been overriden on the command line.
+
+include(features.pri)
+
+for(feature, FEATURE_DEFAULTS) {
+    anyFeatureDefine = $$replace(feature, =.$, =.)
+    !contains(DEFINES, $$anyFeatureDefine) {
+        DEFINES += $$feature
     }
 }
 
-contains(DEFINES, ENABLE_INSPECTOR=0) {
-    DEFINES -= ENABLE_JAVASCRIPT_DEBUGGER=1
-    DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=0
+# ---------------- Sanitize defines -------------------
+
+# Disable SVG fonts if SVG is disabled or we don't have raw fonts
+contains(DEFINES, ENABLE_SVG=0)|!contains(DEFINES, HAVE_QRAWFONT=1): DEFINES += ENABLE_SVG_FONTS=0
+
+# JavaScript debugger requires the inspector
+contains(DEFINES, ENABLE_INSPECTOR=0): DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=0
+
+# Remove conflicting defines. The preprocessor would take care of this
+# anyways, but doing it here makes for nicer command lines when building.
+for(define, DEFINES) {
+    parts = $$split(define, =)
+    value = $$member(parts, 1, 1)
+    isEmpty(value): next()
+
+    equals(value, 1): opposite = $$replace(define, =1$, =0)
+    equals(value, 0): opposite = $$replace(define, =0$, =1)
+
+    # Is there a later define that overrides this one?
+    contains(DEFINES, $$opposite): DEFINES -= $$define
 }
-haveQt(4) {
-    haveQtModule(declarative): DEFINES += HAVE_QQUICK1=1
-}
-### FIXME: Add Qt 5 QQuick1 support once QDeclarativeEngine in QQuick2
-### is called QmlEngine and it is safe for us to use QQuick1 again.
+
+# --------- Make features available to JSC ------------
 
 ## Forward enabled feature macros to JavaScript enabled features macros
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
 v8: FEATURE_DEFINES_JAVASCRIPT += V8_BINDING=1
-contains(DEFINES, ENABLE_CHANNEL_MESSAGING=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_CHANNEL_MESSAGING=1
-contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_ORIENTATION_EVENTS=1
-contains(DEFINES, ENABLE_SQL_DATABASE=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_SQL_DATABASE=1
-contains(DEFINES, ENABLE_DATALIST=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATALIST=1
-contains(DEFINES, ENABLE_SHARED_SCRIPT=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_SCRIPT=1
-contains(DEFINES, ENABLE_WORKERS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_WORKERS=1
-contains(DEFINES, ENABLE_SHARED_WORKERS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_WORKERS=1
-contains(DEFINES, ENABLE_SHADOW_DOM=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHADOW_DOM=1
-contains(DEFINES, ENABLE_VIDEO=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO=1
-contains(DEFINES, ENABLE_XSLT=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_XSLT=1
-contains(DEFINES, ENABLE_FILTERS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_FILTERS=1
-contains(DEFINES, ENABLE_CSS_FILTERS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_CSS_FILTERS=1
-contains(DEFINES, ENABLE_SVG=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
-contains(DEFINES, ENABLE_SVG_FONTS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_FONTS=1
-contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_JAVASCRIPT_DEBUGGER=1
-contains(DEFINES, ENABLE_GAMEPAD=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_GAMEPAD=1
-contains(DEFINES, ENABLE_WEB_SOCKETS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_WEB_SOCKETS=1
-contains(DEFINES, ENABLE_WEB_TIMING=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_WEB_TIMING=1
-contains(DEFINES, ENABLE_TOUCH_EVENTS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_TOUCH_EVENTS=1
-contains(DEFINES, ENABLE_GESTURE_EVENTS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_GESTURE_EVENTS=1
-contains(DEFINES, WTF_USE_TILED_BACKING_STORE=1): FEATURE_DEFINES_JAVASCRIPT += WTF_USE_TILED_BACKING_STORE=1
-contains(DEFINES, ENABLE_LEGACY_NOTIFICATIONS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_LEGACY_NOTIFICATIONS=1
-contains(DEFINES, ENABLE_NOTIFICATIONS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_NOTIFICATIONS=1
-contains(DEFINES, ENABLE_DETAILS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_DETAILS=1
-contains(DEFINES, ENABLE_METER_TAG=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_METER_TAG=1
-contains(DEFINES, ENABLE_PROGRESS_TAG=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_PROGRESS_TAG=1
-contains(DEFINES, ENABLE_GEOLOCATION=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_GEOLOCATION=1
-contains(DEFINES, ENABLE_BLOB=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_BLOB=1
-contains(DEFINES, ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1
-contains(DEFINES, ENABLE_MEDIA_SOURCE=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_MEDIA_SOURCE=1
-contains(DEFINES, ENABLE_MEDIA_STATISTICS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_MEDIA_STATISTICS=1
-contains(DEFINES, ENABLE_MEDIA_STREAM=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_MEDIA_STREAM=1
-contains(DEFINES, ENABLE_VIDEO_TRACK=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO_TRACK=1
-contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATA_TRANSFER_ITEMS=1
-contains(DEFINES, ENABLE_FULLSCREEN_API=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_FULLSCREEN_API=1
-contains(DEFINES, ENABLE_REQUEST_ANIMATION_FRAME=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_REQUEST_ANIMATION_FRAME=1
-contains(DEFINES, ENABLE_TOUCH_ADJUSTMENT=1): FEATURE_DEFINES_JAVASCRIPT += ENABLE_TOUCH_ADJUSTMENT=1
 
-v8 {
-    # This have to be placed here because command line arguments, such as CONFIG+=v8 are
-    # not considered by qmake when processing defaults_pre.prf.
-    root_project_file: message("Building WebKit2 with v8 is not supported currently. Disabling WebKit2.")
-    CONFIG += no_webkit2
+for(define, DEFINES) {
+    feature_define = $$find(define, ^ENABLE_.+=.$)
+    isEmpty(feature_define): next()
+
+    FEATURE_DEFINES_JAVASCRIPT += $$feature_define
 }
+
+# ---------------------- The end ----------------------
 
 # Used to compute defaults for the build-webkit script
 # Don't place anything after this!
