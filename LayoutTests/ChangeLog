@@ -1,3 +1,14 @@
+2012-05-04  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION: Cursor jumps to the first line after deleting the last word.
+        https://bugs.webkit.org/show_bug.cgi?id=85334
+        <rdar://problem/11210059>
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/deleting/delete-word-from-unstyled-div-expected.txt: Added.
+        * editing/deleting/delete-word-from-unstyled-div.html: Added.
+
 2012-05-04  Jeffrey Pfau  <jpfau@apple.com>
 
         Prevent early EventListener deletion
@@ -1713,7 +1724,6 @@
 
         * fast/writing-mode/flipped-blocks-inline-map-local-to-container.html:
 
->>>>>>> .r116007
 2012-05-03  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r111387): CSSOM representation of 'background-image' values should be CSSPrimitiveValue.

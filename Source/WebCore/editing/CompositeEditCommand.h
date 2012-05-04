@@ -126,6 +126,7 @@ protected:
     HTMLElement* replaceElementWithSpanPreservingChildrenAndAttributes(PassRefPtr<HTMLElement>);
     void removeNodePreservingChildren(PassRefPtr<Node>);
     void removeNodeAndPruneAncestors(PassRefPtr<Node>);
+    void updatePositionForNodeRemovalPreservingChildren(Position&, Node*);
     void prune(PassRefPtr<Node>);
     void replaceTextInNode(PassRefPtr<Text>, unsigned offset, unsigned count, const String& replacementText);
     Position replaceSelectedTextInNode(const String&);

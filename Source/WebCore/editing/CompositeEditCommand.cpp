@@ -304,11 +304,14 @@ void CompositeEditCommand::insertLineBreak()
 
 bool CompositeEditCommand::isRemovableBlock(const Node* node)
 {
-    Node* parentNode = node->parentNode();
-    if ((parentNode && parentNode->firstChild() != parentNode->lastChild()) || !node->hasTagName(divTag))
+    if (!node->hasTagName(divTag))
         return false;
 
-    if (!node->isElementNode() || !toElement(node)->hasAttributes())
+    Node* parentNode = node->parentNode();
+    if (parentNode && parentNode->firstChild() != parentNode->lastChild())
+        return false;
+
+    if (!toElement(node)->hasAttributes())
         return true;
 
     return false;
@@ -401,6 +404,14 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(PassRefPtr<Node> node)
     RefPtr<ContainerNode> parent = node->parentNode();
     removeNode(node);
     prune(parent.release());
+}
+
+void CompositeEditCommand::updatePositionForNodeRemovalPreservingChildren(Position& position, Node* node)
+{
+    int offset = (position.anchorType() == Position::PositionIsOffsetInAnchor) ? position.offsetInContainerNode() : 0;
+    updatePositionForNodeRemoval(position, node);
+    if (offset)
+        position.moveToOffset(offset);    
 }
 
 HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAttributes(PassRefPtr<HTMLElement> node)

@@ -740,7 +740,7 @@ void DeleteSelectionCommand::removeRedundantBlocks()
     while (node != rootNode) {
         if (isRemovableBlock(node)) {
             if (node == m_endingPosition.anchorNode())
-                updatePositionForNodeRemoval(m_endingPosition, node);
+                updatePositionForNodeRemovalPreservingChildren(m_endingPosition, node);
             
             CompositeEditCommand::removeNodePreservingChildren(node);
             node = m_endingPosition.anchorNode();
