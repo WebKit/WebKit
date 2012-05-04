@@ -1,3 +1,16 @@
+2012-05-03  Adam Barth  <abarth@webkit.org>
+
+        CSP shouldn't block about:blank for iframes
+        https://bugs.webkit.org/show_bug.cgi?id=85233
+
+        Reviewed by Eric Seidel.
+
+        Test that about:blank iframes and objects don't generate debug log
+        messages.
+
+        * http/tests/security/contentSecurityPolicy/frame-src-about-blank-allowed-by-default-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/frame-src-about-blank-allowed-by-default.html: Added.
+
 2012-05-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116040.

@@ -641,12 +641,16 @@ bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
 {
     DEFINE_STATIC_LOCAL(String, type, ("object"));
+    if (url.protocolIs("about"))
+        return true;
     return checkSourceAndReportViolation(operativeDirective(m_objectSrc.get()), url, type);
 }
 
 bool ContentSecurityPolicy::allowChildFrameFromSource(const KURL& url) const
 {
     DEFINE_STATIC_LOCAL(String, type, ("frame"));
+    if (url.protocolIs("about"))
+        return true;
     return checkSourceAndReportViolation(operativeDirective(m_frameSrc.get()), url, type);
 }
 
