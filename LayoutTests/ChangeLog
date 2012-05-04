@@ -1,3 +1,9 @@
+2012-05-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed gardening, marking a test added in r116127 as failing.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-04  Adam Barth  <abarth@webkit.org>
 
         CSP: Eval isn't blocked in about:blank subframes
