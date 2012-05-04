@@ -1,3 +1,14 @@
+2012-05-03  Oliver Hunt  <oliver@apple.com>
+
+        Regression(r114702): Clobbering the caller frame register before we've stored it.
+        https://bugs.webkit.org/show_bug.cgi?id=85564
+
+        Reviewed by Filip Pizlo.
+
+        Don't use t0 as a temporary, when we're about to use the value in t0.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2012-05-03  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Removing remainder of accidental printfs.

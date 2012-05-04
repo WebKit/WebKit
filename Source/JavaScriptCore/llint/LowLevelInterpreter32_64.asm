@@ -1686,8 +1686,8 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         addp 16 - 4, sp
         loadp JITStackFrame::globalData + 4[sp], t3
     elsif ARMv7
-        loadp JITStackFrame::globalData[sp], t0
-        storep cfr, JSGlobalData::topCallFrame[t0]
+        loadp JITStackFrame::globalData[sp], t1
+        storep cfr, JSGlobalData::topCallFrame[t1]
         move t0, t2
         preserveReturnAddressAfterCall(t3)
         storep t3, ReturnPC[cfr]
