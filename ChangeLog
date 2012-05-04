@@ -1,3 +1,34 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Rewrite FindCairo.cmake.
+        https://bugs.webkit.org/show_bug.cgi?id=84895
+
+        Reviewed by Daniel Bates.
+
+        The old approach relied on pkg-config for finding Cairo (which
+        introduced a dependency on pkg-config that could be avoided), used
+        the LibFindMacros code that we should probably remove in the
+        future and did not use the FindPackageHandleStandardArguments
+        module.
+
+        Change all that by rewriting the module.
+        - Use the pkg-config output optionally instead of requiring it
+        like LibFindMacros did.
+        - Remove the implicit dependency on FreeType which often found it
+        the wrong way via pkg-config and without considering
+        CMAKE_PREFIX_PATH.
+        - Retrieve the Cairo version by looking at cairo-version.h instead
+        of relying on pkg-config. It requires some additional code for
+        checking if the desired version has been found, but that will not
+        be needed once we start depending on CMake 2.8.3 or later.
+
+        The only downside is that FPHSA sets <UPPERCASED_NAME>_FOUND
+        instead of <Name>_FOUND, and to keep things consistent
+        Cairo_LIBRARIES and Cairo_INCLUDE_DIRS have become CAIRO_LIBRARIES
+        and CAIRO_INCLUDE_DIRS.
+
+        * Source/cmake/FindCairo.cmake:
+
 2012-05-03  Mike Fenton  <mifenton@rim.com>
 
         Rename attribute.

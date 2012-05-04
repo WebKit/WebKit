@@ -14,7 +14,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/efl"
-    ${Cairo_INCLUDE_DIRS}
+    ${CAIRO_INCLUDE_DIRS}
     ${ECORE_X_INCLUDE_DIRS}
     ${EDJE_INCLUDE_DIRS}
     ${EFLDEPS_INCLUDE_DIRS}
@@ -121,7 +121,7 @@ LIST(APPEND WebKit_SOURCES
 )
 
 LIST(APPEND WebKit_LIBRARIES
-    ${Cairo_LIBRARIES}
+    ${CAIRO_LIBRARIES}
     ${ECORE_X_LIBRARIES}
     ${EFLDEPS_LIBRARIES}
     ${FREETYPE_LIBRARIES}
