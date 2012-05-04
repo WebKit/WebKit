@@ -593,6 +593,7 @@ WebInspector.CPUProfileType.prototype = {
     startRecordingProfile: function()
     {
         this._recording = true;
+        WebInspector.userMetrics.ProfilesCPUProfileTaken.record();
         ProfilerAgent.start();
     },
 
@@ -615,6 +616,16 @@ WebInspector.CPUProfileType.prototype = {
     createView: function(profile)
     {
         return new WebInspector.CPUProfileView(profile);
+    },
+
+    createTemporaryProfile: function()
+    {
+        return new WebInspector.ProfileHeader(WebInspector.CPUProfileType.TypeId, WebInspector.UIString("Recording\u2026"));
+    },
+
+    createProfile: function(profile)
+    {
+        return new WebInspector.ProfileHeader(profile.typeId, profile.title, profile.uid);
     }
 }
 

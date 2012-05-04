@@ -349,6 +349,16 @@ WebInspector.CSSSelectorProfileType.prototype = {
     createView: function(profile)
     {
         return new WebInspector.CSSSelectorProfileView(profile);
+    },
+
+    createTemporaryProfile: function()
+    {
+        return new WebInspector.ProfileHeader(WebInspector.CSSSelectorProfileType.TypeId, WebInspector.UIString("Recording\u2026"));
+    },
+
+    createProfile: function(profile)
+    {
+        return new WebInspector.ProfileHeader(profile.typeId, profile.title, profile.uid);
     }
 }
 

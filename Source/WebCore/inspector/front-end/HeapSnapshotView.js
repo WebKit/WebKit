@@ -747,6 +747,16 @@ WebInspector.HeapSnapshotProfileType.prototype = {
     createView: function(profile)
     {
         return new WebInspector.HeapSnapshotView(WebInspector.panels.profiles, profile);
+    },
+
+    createTemporaryProfile: function()
+    {
+        return new WebInspector.ProfileHeader(WebInspector.HeapSnapshotProfileType.TypeId, WebInspector.UIString("Snapshotting\u2026"));
+    },
+
+    createProfile: function(profile)
+    {
+        return new WebInspector.HeapProfileHeader(profile.typeId, profile.title, profile.uid, profile.maxJSObjectId);
     }
 }
 
