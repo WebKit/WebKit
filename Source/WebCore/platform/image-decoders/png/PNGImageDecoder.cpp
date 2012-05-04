@@ -368,8 +368,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         }
 
         if (PNG_INTERLACE_ADAM7 == png_get_interlace_type(png, m_reader->infoPtr())) {
-            int bytesPerPixel = m_reader->hasAlpha() ? 4 : 3;
-            m_reader->createInterlaceBuffer(bytesPerPixel * size().width() * size().height());
+            unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
+            m_reader->createInterlaceBuffer(colorChannels * size().width() * size().height());
             if (!m_reader->interlaceBuffer()) {
                 longjmp(JMPBUF(png), 1);
                 return;
@@ -384,11 +384,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
     }
 
-    if (!rowBuffer)
-        return;
-
-    // libpng comments (pasted in here to explain what follows)
-    /*
+    /* libpng comments (here to explain what follows).
+     *
      * this function is called for every row in the image.  If the
      * image is interlacing, and you turned on the interlace handler,
      * this function will be called for every row in every pass.
@@ -397,6 +394,18 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
      * The rows and passes are called in order, so you don't really
      * need the row_num and pass, but I'm supplying them because it
      * may make your life easier.
+     */
+
+    // Nothing to do if the row is unchanged, or the row is outside
+    // the image bounds: libpng may send extra rows, ignore them to
+    // make our lives easier.
+    if (!rowBuffer)
+        return;
+    int y = !m_scaled ? rowIndex : scaledY(rowIndex);
+    if (y < 0 || y >= scaledSize().height())
+        return;
+
+    /* libpng comments (continued).
      *
      * For the non-NULL rows of interlaced images, you must call
      * png_progressive_combine_row() passing in the row and the
@@ -415,21 +424,14 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
      * old row and the new row.
      */
 
-    png_structp png = m_reader->pngPtr();
     bool hasAlpha = m_reader->hasAlpha();
     unsigned colorChannels = hasAlpha ? 4 : 3;
-    png_bytep row;
+    png_bytep row = rowBuffer;
 
     if (png_bytep interlaceBuffer = m_reader->interlaceBuffer()) {
         row = interlaceBuffer + (rowIndex * colorChannels * size().width());
-        png_progressive_combine_row(png, row, rowBuffer);
-    } else
-        row = rowBuffer;
-
-    // Check the row is within the image bounds: libpng may supply an extra row.
-    int y = !m_scaled ? rowIndex : scaledY(rowIndex);
-    if (y < 0 || y >= scaledSize().height())
-        return;
+        png_progressive_combine_row(m_reader->pngPtr(), row, rowBuffer);
+    }
 
     // Write the decoded row pixels to the frame buffer.
     int width = scaledSize().width();
