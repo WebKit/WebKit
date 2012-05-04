@@ -396,12 +396,17 @@ v8 {
         bridge/qt/qt_class.cpp \
         bridge/qt/qt_instance.cpp \
         bridge/qt/qt_pixmapruntime.cpp \
-        bridge/qt/qt_runtime.cpp \
         bridge/runtime_array.cpp \
         bridge/runtime_method.cpp \
         bridge/runtime_object.cpp \
         bridge/runtime_root.cpp \
         testing/js/WebCoreTestSupport.cpp
+
+    haveQt(5) {
+        SOURCES += bridge/qt/qt_runtime.cpp
+    } else {
+        SOURCES += bridge/qt/qt_runtime_qt4.cpp
+    }
 }
 
 SOURCES += \

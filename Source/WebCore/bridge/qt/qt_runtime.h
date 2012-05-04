@@ -238,15 +238,20 @@ private:
 // with the appropriate signal of 'sender'. When execute() is called, it will call JS 'receiverFunction'.
 class QtConnectionObject : public QObject
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    Q_OBJECT_FAKE
+#endif
 public:
     QtConnectionObject(JSContextRef, PassRefPtr<QtInstance> senderInstance, int signalIndex, JSObjectRef receiver, JSObjectRef receiverFunction);
     ~QtConnectionObject();
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     // Explicitly define these because want a custom qt_metacall(), so we can't use Q_OBJECT macro.
     static const QMetaObject staticMetaObject;
     virtual const QMetaObject *metaObject() const;
     virtual void *qt_metacast(const char *);
     virtual int qt_metacall(QMetaObject::Call, int, void **argv);
+#endif
 
     void execute(void **argv);
 

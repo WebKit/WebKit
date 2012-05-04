@@ -1,3 +1,23 @@
+2012-05-04  Kent Hansen <kent.hansen@nokia.com>
+
+        [Qt] Update Qt bridge after changes to QMetaMethod
+        https://bugs.webkit.org/show_bug.cgi?id=85478
+
+        Reviewed by Tor Arne Vestbø.
+
+        QMetaMethod::signature() has been renamed to methodSignature() and
+        returns a QByteArray.
+
+        The new function QMetaMethod::name() gives direct access to a
+        method's name. returnType(), parameterCount(), and parameterType()
+        give direct access to type information.
+
+        Ported the custom QtConnectionObject meta-object to revision 7;
+        revision 6 and below aren't supported (and don't compile) with Qt5.
+
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+        (gatherAPI):
+
 2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't pass viewport-create function to quick_test_main.

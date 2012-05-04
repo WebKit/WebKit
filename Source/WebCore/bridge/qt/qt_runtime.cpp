@@ -1161,14 +1161,10 @@ static int findMethodIndex(ExecState* exec,
             continue;
 
         // try and find all matching named methods
-        if (m.signature() == signature)
+        if (!overloads && m.methodSignature() == signature)
             matchingIndices.append(i);
-        else if (overloads) {
-            QByteArray rawsignature = m.signature();
-            rawsignature.truncate(rawsignature.indexOf('('));
-            if (rawsignature == signature)
-                matchingIndices.append(i);
-        }
+        else if (overloads && m.name() == signature)
+            matchingIndices.append(i);
     }
 
     int chosenIndex = -1;
@@ -1189,11 +1185,9 @@ static int findMethodIndex(ExecState* exec,
 
         // resolve return type
         QByteArray returnTypeName = method.typeName();
-        int rtype = QMetaType::type(returnTypeName);
-        if ((rtype == 0) && !returnTypeName.isEmpty()) {
-            if (returnTypeName == "QVariant") {
-                types.append(QtMethodMatchType::variant());
-            } else if (returnTypeName.endsWith('*')) {
+        int rtype = method.returnType();
+        if (rtype == QMetaType::UnknownType) {
+            if (returnTypeName.endsWith('*')) {
                 types.append(QtMethodMatchType::metaType(QMetaType::VoidStar, returnTypeName));
             } else {
                 int enumIndex = indexOfMetaEnum(meta, returnTypeName);
@@ -1205,7 +1199,7 @@ static int findMethodIndex(ExecState* exec,
                 }
             }
         } else {
-            if (returnTypeName == "QVariant")
+            if (rtype == QMetaType::QVariant)
                 types.append(QtMethodMatchType::variant());
             else
                 types.append(QtMethodMatchType::metaType(rtype, returnTypeName));
@@ -1215,21 +1209,17 @@ static int findMethodIndex(ExecState* exec,
         QList<QByteArray> parameterTypeNames = method.parameterTypes();
         for (int i = 0; i < parameterTypeNames.count(); ++i) {
             QByteArray argTypeName = parameterTypeNames.at(i);
-            int atype = QMetaType::type(argTypeName);
-            if (atype == 0) {
-                if (argTypeName == "QVariant") {
-                    types.append(QtMethodMatchType::variant());
-                } else {
-                    int enumIndex = indexOfMetaEnum(meta, argTypeName);
-                    if (enumIndex != -1)
-                        types.append(QtMethodMatchType::metaEnum(enumIndex, argTypeName));
-                    else {
-                        unresolvedTypes = true;
-                        types.append(QtMethodMatchType::unresolved(argTypeName));
-                    }
+            int atype = method.parameterType(i);
+            if (atype == QMetaType::UnknownType) {
+                int enumIndex = indexOfMetaEnum(meta, argTypeName);
+                if (enumIndex != -1)
+                    types.append(QtMethodMatchType::metaEnum(enumIndex, argTypeName));
+                else {
+                    unresolvedTypes = true;
+                    types.append(QtMethodMatchType::unresolved(argTypeName));
                 }
             } else {
-                if (argTypeName == "QVariant")
+                if (atype == QMetaType::QVariant)
                     types.append(QtMethodMatchType::variant());
                 else
                     types.append(QtMethodMatchType::metaType(atype, argTypeName));
@@ -1238,13 +1228,13 @@ static int findMethodIndex(ExecState* exec,
 
         // If the native method requires more arguments than what was passed from JavaScript
         if (exec->argumentCount() + 1 < static_cast<unsigned>(types.count())) {
-            qMatchDebug() << "Match:too few args for" << method.signature();
+            qMatchDebug() << "Match:too few args for" << method.methodSignature();
             tooFewArgs.append(index);
             continue;
         }
 
         if (unresolvedTypes) {
-            qMatchDebug() << "Match:unresolved arg types for" << method.signature();
+            qMatchDebug() << "Match:unresolved arg types for" << method.methodSignature();
             // remember it so we can give an error message later, if necessary
             unresolved.append(QtMethodMatchData(/*matchDistance=*/INT_MAX, index,
                                                    types, QVarLengthArray<QVariant, 10>()));
@@ -1256,7 +1246,8 @@ static int findMethodIndex(ExecState* exec,
             args.resize(types.count());
 
         QtMethodMatchType retType = types[0];
-        args[0] = QVariant(retType.typeId(), (void *)0); // the return value
+        if (retType.typeId() != QMetaType::Void)
+            args[0] = QVariant(retType.typeId(), (void *)0); // the return value
 
         bool converted = true;
         int matchDistance = 0;
@@ -1274,7 +1265,7 @@ static int findMethodIndex(ExecState* exec,
             }
         }
 
-        qMatchDebug() << "Match: " << method.signature() << (converted ? "converted":"failed to convert") << "distance " << matchDistance;
+        qMatchDebug() << "Match: " << method.methodSignature() << (converted ? "converted":"failed to convert") << "distance " << matchDistance;
 
         if (converted) {
             if ((exec->argumentCount() + 1 == static_cast<unsigned>(types.count()))
@@ -1309,12 +1300,12 @@ static int findMethodIndex(ExecState* exec,
         // No valid functions at all - format an error message
         if (!conversionFailed.isEmpty()) {
             QString message = QString::fromLatin1("incompatible type of argument(s) in call to %0(); candidates were\n")
-                              .arg(QLatin1String(signature));
+                              .arg(QString::fromLatin1(signature));
             for (int i = 0; i < conversionFailed.size(); ++i) {
                 if (i > 0)
                     message += QLatin1String("\n");
                 QMetaMethod mtd = meta->method(conversionFailed.at(i));
-                message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.signature()));
+                message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.methodSignature()));
             }
             *pError = throwError(exec, createTypeError(exec, message.toLatin1().constData()));
         } else if (!unresolved.isEmpty()) {
@@ -1328,12 +1319,12 @@ static int findMethodIndex(ExecState* exec,
             *pError = throwError(exec, createTypeError(exec, message.toLatin1().constData()));
         } else {
             QString message = QString::fromLatin1("too few arguments in call to %0(); candidates are\n")
-                              .arg(QLatin1String(signature));
+                              .arg(QString::fromLatin1(signature));
             for (int i = 0; i < tooFewArgs.size(); ++i) {
                 if (i > 0)
                     message += QLatin1String("\n");
                 QMetaMethod mtd = meta->method(tooFewArgs.at(i));
-                message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.signature()));
+                message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.methodSignature()));
             }
             *pError = throwError(exec, createSyntaxError(exec, message.toLatin1().constData()));
         }
@@ -1354,7 +1345,7 @@ static int findMethodIndex(ExecState* exec,
                     if (i > 0)
                         message += QLatin1String("\n");
                     QMetaMethod mtd = meta->method(candidates.at(i).index);
-                    message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.signature()));
+                    message += QString::fromLatin1("    %0").arg(QString::fromLatin1(mtd.methodSignature()));
                 }
             }
             *pError = throwError(exec, createTypeError(exec, message.toLatin1().constData()));
@@ -1767,29 +1758,64 @@ QtConnectionObject::~QtConnectionObject()
     JSValueUnprotect(m_context, m_receiverFunction);
 }
 
+// Begin moc-generated code -- modify with care! Check "HAND EDIT" parts
+struct qt_meta_stringdata_QtConnectionObject_t {
+    QByteArrayData data[3];
+    char stringdata[44];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) { \
+    Q_REFCOUNT_INITIALIZE_STATIC, len, 0, 0, \
+    offsetof(qt_meta_stringdata_QtConnectionObject_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData) \
+    }
+static const qt_meta_stringdata_QtConnectionObject_t qt_meta_stringdata_QtConnectionObject = {
+    {
+QT_MOC_LITERAL(0, 0, 33),
+QT_MOC_LITERAL(1, 34, 7),
+QT_MOC_LITERAL(2, 42, 0)
+    },
+    "JSC::Bindings::QtConnectionObject\0"
+    "execute\0\0"
+};
+#undef QT_MOC_LITERAL
+
 static const uint qt_meta_data_QtConnectionObject[] = {
 
  // content:
-       1,       // revision
+       7,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   10, // methods
+       1,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
 
- // slots: signature, parameters, type, tag, flags
-      28,   27,   27,   27, 0x0a,
+ // slots: name, argc, parameters, tag, flags
+       1,    0,   19,    2, 0x0a,
+
+ // slots: parameters
+    QMetaType::Void,
 
        0        // eod
 };
 
-static const char qt_meta_stringdata_QtConnectionObject[] = {
-    "JSC::Bindings::QtConnectionObject\0\0execute()\0"
-};
+void QtConnectionObject::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        Q_ASSERT(staticMetaObject.cast(_o));
+        QtConnectionObject *_t = static_cast<QtConnectionObject *>(_o);
+        switch (_id) {
+        case 0: _t->execute(_a); break; // HAND EDIT: add _a parameter
+        default: ;
+        }
+    }
+}
 
 const QMetaObject QtConnectionObject::staticMetaObject = {
-    { &QObject::staticMetaObject, qt_meta_stringdata_QtConnectionObject,
-      qt_meta_data_QtConnectionObject, 0 }
+    { &QObject::staticMetaObject, qt_meta_stringdata_QtConnectionObject.data,
+      qt_meta_data_QtConnectionObject, qt_static_metacall, 0, 0 }
 };
 
 const QMetaObject *QtConnectionObject::metaObject() const
@@ -1800,25 +1826,24 @@ const QMetaObject *QtConnectionObject::metaObject() const
 void *QtConnectionObject::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_QtConnectionObject))
+    if (!strcmp(_clname, qt_meta_stringdata_QtConnectionObject.stringdata))
         return static_cast<void*>(const_cast<QtConnectionObject*>(this));
     return QObject::qt_metacast(_clname);
 }
 
-// This is what moc would generate except by the fact that we pass all arguments to our execute() slot.
 int QtConnectionObject::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        switch (_id) {
-        case 0: execute(_a); break;
-        }
+        if (_id < 1)
+            qt_static_metacall(this, _c, _id, _a);
         _id -= 1;
     }
     return _id;
 }
+// End of moc-generated code
 
 static bool isJavaScriptFunction(JSObjectRef object)
 {
@@ -1840,12 +1865,10 @@ void QtConnectionObject::execute(void** argv)
     const QMetaObject* meta = sender->metaObject();
     const QMetaMethod method = meta->method(m_signalIndex);
 
-    QList<QByteArray> parameterTypes = method.parameterTypes();
-
     JSValueRef* ignoredException = 0;
     JSRetainPtr<JSStringRef> lengthProperty(JSStringCreateWithUTF8CString("length"));
     int receiverLength = int(JSValueToNumber(m_context, JSObjectGetProperty(m_context, m_receiverFunction, lengthProperty.get(), ignoredException), ignoredException));
-    int argc = qMax(parameterTypes.count(), receiverLength);
+    int argc = qMax(method.parameterCount(), receiverLength);
     WTF::Vector<JSValueRef> args(argc);
 
     // TODO: remove once conversion functions use JSC API.
@@ -1853,7 +1876,7 @@ void QtConnectionObject::execute(void** argv)
     RefPtr<RootObject> rootObject = m_senderInstance->rootObject();
 
     for (int i = 0; i < argc; i++) {
-        int argType = QMetaType::type(parameterTypes.at(i));
+        int argType = method.parameterType(i);
         args[i] = ::toRef(exec, convertQVariantToValue(exec, rootObject, QVariant(argType, argv[i+1])));
     }
 
