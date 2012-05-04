@@ -563,7 +563,6 @@ BUGWKGTK : accessibility/button-press-action.html = FAIL
 BUGWKGTK : accessibility/canvas.html = FAIL
 BUGWKGTK : accessibility/editable-webarea-context-menu-point.html = FAIL
 BUGWKGTK : accessibility/ellipsis-text.html = FAIL
-BUGWKGTK : accessibility/iframe-bastardization.html = FAIL
 BUGWKGTK : accessibility/ignore-spacer-elements.html = FAIL
 BUGWKGTK : accessibility/inline-continuations.html = FAIL
 BUGWKGTK : accessibility/label-for-control-hittest.html = FAIL
@@ -613,9 +612,6 @@ BUGWKGTK : fast/encoding/idn-security.html = FAIL
 
 // These two glyphs cannot be selected separately (verified in GtkLauncher)
 BUGWKGTK : fast/text/international/thai-offsetForPosition-inside-character.html = FAIL
-
-// Caret positioning is incorrect in this test.
-BUGWKGTK : fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html = FAIL
 
 // These failures appear to be bugs in the EventSender
 BUGWK53964 : fast/forms/listbox-onchange.html = FAIL
@@ -903,18 +899,11 @@ BUGWK40601 : media/controls-right-click-on-timebar.html = FAIL
 BUGWK58222 : fast/preloader = FAIL
 BUGWK58222 : http/tests/mime/uppercase-mime-type.html = FAIL
 
-// SVG tests that seem to produce incorrect output
-BUGWKGTK : svg/zoom/text/zoom-hixie-mixed-009.xml = FAIL
-BUGWKGTK : svg/custom/mask-excessive-malloc.svg = FAIL
-
 // No matching language preference set
 BUGWKGTK : svg/W3C-SVG-1.1/struct-cond-02-t.svg = FAIL
 
 // The pixel output shows two broken images instead of the sunset.
 BUGWKGTK : svg/W3C-SVG-1.1/struct-image-04-t.svg = FAIL
-
-// The gradient limits seem broken in this test.
-BUGWKGTK : svg/batik/paints/gradientLimit.svg = FAIL
 
 // The middle circle on both rectangles is missing in the pixel output.
 BUGWKGTK : svg/custom/circular-marker-reference-2.svg = FAIL
@@ -1031,9 +1020,6 @@ BUGWK20011 SKIP : printing/width-overflow.html = FAIL
 BUGWKGTK : http/tests/security/401-logout/401-logout.php = FAIL
 BUGWKGTK : http/tests/xmlhttprequest/remember-bad-password.html = FAIL
 
-// Still failing, looks like bugs in the EventSender drag-and-drop
-BUGWKGTK : fast/events/5056619.html = FAIL
-
 BUGWK62625 : fast/css/counters/complex-before.html = FAIL
 
 // EventSender::dumpFilenameBeingDragged not implemented.
@@ -1056,12 +1042,6 @@ BUGWK52094 : editing/pasteboard/files-during-page-drags.html = FAIL
 // is enabled or assume platform-dependent sizing.
 BUGWKGTK : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
 BUGWKGTK : fast/events/ondragenter.html = FAIL
-BUGWKGTK : editing/selection/drag-start-event-client-x-y.html = FAIL
-
-// Fails because multiple clicks in a row in the same place
-// register as a triple-click even though the mouse have moved
-// outside of the double-click distance.
-BUGWKGTK : editing/selection/5195166-1.html = FAIL
 
 // Remaining Sputnik failures
 BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html = FAIL
@@ -1123,10 +1103,6 @@ BUGWKGTK : fast/viewport/viewport-84.html = FAIL
 BUGWKGTK : fast/viewport/viewport-87.html = FAIL
 BUGWKGTK : fast/viewport/viewport-126.html = FAIL
 BUGWKGTK : fast/viewport/viewport-127.html = FAIL
-
-// Needs more investigation like QT
-BUGWKGTK : fast/dom/nodesFromRect-links-and-text.html = FAIL
-BUGWKGTK : fast/dom/nodesFromRect-inner-documents.html = FAIL
 
 // LayoutTestController::addUserScript not implemented for gtk
 BUGWKGTK : plugins/plugin-document-load-prevented-userscript.html = FAIL
@@ -1231,9 +1207,6 @@ BUGWK61122 : http/tests/navigation/post-307-response.html = FAIL
 
 BUGWK61630 : fast/events/dropzone-002.html = FAIL
 BUGWK61630 : fast/events/dropzone-005.html = FAIL
-
-// Font feature settings is not implemented.
-BUGWKGTK : css3/font-feature-settings-rendering.html = FAIL
 
 // This test verifies that a mismatch reftest will fail as intended if both results are same.
 BUGWKGTK : fast/harness/sample-fail-mismatch-reftest.html = FAIL
@@ -1378,7 +1351,6 @@ BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-22-b.svg = FAIL
 BUGWKGTK : svg/css/composite-shadow-example.html = FAIL
 BUGWKGTK : svg/css/composite-shadow-with-opacity.html = FAIL
 BUGWKGTK : svg/css/stars-with-shadow.html = FAIL
-BUGWKGTK : svg/carto.net/tabgroup.svg = FAIL
 
 BUGWK78673 : svg/animations/animate-text-nested-transforms.html = FAIL
 

@@ -1,3 +1,14 @@
+2012-05-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=85591
+
+        Unreviewed, removing incorrect test expectations for tests that turned
+        to be passing on all the Gtk builders after moving from using Skipped
+        to test_expectations.txt and have the generic BUGWKGTK modifier.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening, refined specifiers for unexpectedly passing tests.
