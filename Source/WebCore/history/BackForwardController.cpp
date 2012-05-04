@@ -109,21 +109,4 @@ void BackForwardController::close()
     m_client->close();
 }
 
-void BackForwardController::markPagesForFullStyleRecalc()
-{
-    int first = -backCount();
-    int last = forwardCount();
-    for (int i = first; i <= last; i++) {
-        if (!i)
-            continue;
-
-        // FIXME: itemAtIndex should never return null here, but due to the way the
-        // back/forward list is implemented in WebKit2 it sometimes can, when the
-        // session has been updated in the UI process but the session update message
-        // hasn't yet reached the web process.
-        if (HistoryItem* historyItem = itemAtIndex(i))
-            historyItem->markForFullStyleRecalc();
-    }
-}
-
 } // namespace WebCore

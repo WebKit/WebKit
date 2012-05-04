@@ -66,6 +66,7 @@
 #include "Navigator.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PageCache.h"
 #include "PageGroup.h"
 #include "RegularExpression.h"
 #include "RenderPart.h"
@@ -953,7 +954,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     }
 
     if (page->mainFrame() == this)
-        page->backForward()->markPagesForFullStyleRecalc();
+        pageCache()->markPagesForFullStyleRecalc(page);
 }
 
 float Frame::frameScaleFactor() const

@@ -52,6 +52,7 @@
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
+#include "PageCache.h"
 #include "PageGroup.h"
 #include "PluginData.h"
 #include "PluginView.h"
@@ -682,7 +683,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->editor()->deviceScaleFactorChanged();
 
-    backForward()->markPagesForFullStyleRecalc();
+    pageCache()->markPagesForFullStyleRecalc(this);
 }
 
 void Page::setPagination(const Pagination& pagination)
@@ -693,7 +694,7 @@ void Page::setPagination(const Pagination& pagination)
     m_pagination = pagination;
 
     setNeedsRecalcStyleInAllFrames();
-    backForward()->markPagesForFullStyleRecalc();
+    pageCache()->markPagesForFullStyleRecalc(this);
 }
 
 unsigned Page::pageCount() const

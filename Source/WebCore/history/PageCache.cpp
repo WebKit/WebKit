@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
+#include "FrameView.h"
 #include "HistogramSupport.h"
 #include "HistoryItem.h"
 #include "Logging.h"
@@ -417,6 +418,17 @@ void PageCache::markPagesForVistedLinkStyleRecalc()
 {
     for (HistoryItem* current = m_head; current; current = current->m_next)
         current->m_cachedPage->markForVistedLinkStyleRecalc();
+}
+
+void PageCache::markPagesForFullStyleRecalc(Page* page)
+{
+    Frame* mainFrame = page->mainFrame();
+
+    for (HistoryItem* current = m_head; current; current = current->m_next) {
+        CachedPage* cachedPage = current->m_cachedPage.get();
+        if (cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
+            cachedPage->markForFullStyleRecalc();
+    }
 }
 
 void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page* page)

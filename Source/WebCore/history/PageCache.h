@@ -60,6 +60,9 @@ namespace WebCore {
 
         void markPagesForVistedLinkStyleRecalc();
 
+        // Will mark all cached pages associated with the given page as needing style recalc.
+        void markPagesForFullStyleRecalc(Page*);
+
 #if USE(ACCELERATED_COMPOSITING)
         bool shouldClearBackingStores() const { return m_shouldClearBackingStores; }
         void setShouldClearBackingStores(bool flag) { m_shouldClearBackingStores = flag; }
