@@ -1,3 +1,9 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed, add baseline for r116001.
+
+        * platform/efl/svg/as-image/image-respects-pageScaleFactor-actual.txt: Added.
+
 2012-05-03  Adam Barth  <abarth@webkit.org>
 
         CSP: Eval isn't blocked in about:blank subframes
