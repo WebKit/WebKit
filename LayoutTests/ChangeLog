@@ -1,3 +1,18 @@
+2012-05-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: createRawLocationByURL is too slow if a big number of evals happen.
+        https://bugs.webkit.org/show_bug.cgi?id=85477
+
+        It iterates through all the _scripts even they have no url.
+        We can keep a separate map of scripts with url.
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/raw-source-code.html:
+
 2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] fast/table/quote-text-around-iframe.html needs rebaselining

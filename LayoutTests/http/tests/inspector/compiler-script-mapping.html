@@ -124,7 +124,7 @@ function test()
 
         function testCompilerScriptMapping(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var mapping = new WebInspector.CompilerScriptMapping();
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
@@ -160,7 +160,7 @@ function test()
 
         function testInlinedSourceMap(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var mapping = new WebInspector.CompilerScriptMapping();
             var script = InspectorTest.createScriptMock("http://example.com/compiled.js", 0, 0, true, "");
             var sourceMap = {
@@ -191,7 +191,7 @@ function test()
         function testSourceMapCouldNotBeLoaded(next)
         {
             WebInspector.settings.sourceMapsEnabled.set(true);
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var mainScriptMapping = new WebInspector.MainScriptMapping();
             mainScriptMapping.addEventListener(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, uiSourceCodeListChanged);
 

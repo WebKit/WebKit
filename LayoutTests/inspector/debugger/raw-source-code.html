@@ -92,7 +92,7 @@ function test()
     InspectorTest.runTestSuite([
         function testScriptWithoutResource(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var script = InspectorTest.createScriptMock("foo.js", 0, 0, true, "<script source>");
             var rawSourceCode = createRawSourceCode(script, null);
 
@@ -113,7 +113,7 @@ function test()
 
         function testHTMLWithPendingResource(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var script1 = InspectorTest.createScriptMock("index.html", 0, 10, false, "<script source 1>");
             var script2 = InspectorTest.createScriptMock("index.html", 0, 45, false, "<script source 2>");
             var request = createPendingRequestMock("document", "<resource content>");
@@ -147,7 +147,7 @@ function test()
 
         function testHTMLWithFinishedResource(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var script1 = InspectorTest.createScriptMock("index.html", 1, 10, false, "<script source 1>");
             var script2 = InspectorTest.createScriptMock("index.html", 5, 45, false, "<script\nsource\n2>");
             var request = createFinishedRequestMock("document", "<resource content>");
@@ -176,7 +176,7 @@ function test()
 
         function testForceUpdateSourceMapping(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var script1 = InspectorTest.createScriptMock("index.html", 0, 10, false, "<script source 1>");
             var script2 = InspectorTest.createScriptMock("index.html", 0, 45, false, "<script source 2>");
             var script3 = InspectorTest.createScriptMock("index.html", 1, 10, false, "<script source 3>");
@@ -243,7 +243,7 @@ function test()
 
         function testFormattingWithFinishedResource(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var script = InspectorTest.createScriptMock("foo.js", 0, 0, true, "<script source>");
             var request = createFinishedRequestMock("script", "<resource content>");
             var rawSourceCode = createRawSourceCode(script, request, false);
@@ -302,7 +302,7 @@ function test()
 
         function testFormattingWithPendingResource(next)
         {
-            WebInspector.debuggerModel._scripts = [];
+            WebInspector.debuggerModel._reset();
             var script = InspectorTest.createScriptMock("foo.js", 0, 0, true, "<script source>");
             var request = createPendingRequestMock("script", "<resource content>");
             var rawSourceCode = createRawSourceCode(script, request, true);
