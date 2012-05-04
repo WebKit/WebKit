@@ -1,3 +1,20 @@
+2012-05-03  David Barr  <davidbarr@chromium.org>
+
+        Antialias single-edge solid borders
+        https://bugs.webkit.org/show_bug.cgi?id=85031
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/border-solid-single-edge-antialias-expected.png: Added.
+        * fast/css/border-solid-single-edge-antialias-expected.txt: Added.
+        * fast/css/border-solid-single-edge-antialias.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        * platform/win/test_expectations.txt:
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed, add some other missing baselines.

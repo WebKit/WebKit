@@ -1527,3 +1527,7 @@ BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
+
+// Requires rebaseline after bug 85031
+BUGWK85565 : fast/block/float/016.html = IMAGE
+BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE

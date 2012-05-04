@@ -1850,20 +1850,20 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;
     bool haveAllDoubleEdges = true;
-    bool allEdgesVisible = true;
+    int numEdgesVisible = 4;
     bool allEdgesShareColor = true;
     int firstVisibleEdge = -1;
 
     for (int i = BSTop; i <= BSLeft; ++i) {
         const BorderEdge& currEdge = edges[i];
         if (currEdge.presentButInvisible()) {
-            allEdgesVisible = false;
+            --numEdgesVisible;
             allEdgesShareColor = false;
             continue;
         }
         
         if (!currEdge.width) {
-            allEdgesVisible = false;
+            --numEdgesVisible;
             continue;
         }
 
@@ -1890,7 +1890,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
     if ((haveAllSolidEdges || haveAllDoubleEdges) && allEdgesShareColor && innerBorder.isRenderable()) {
         // Fast path for drawing all solid edges and all unrounded double edges
-        if (allEdgesVisible && (outerBorder.isRounded() || haveAlphaColor)
+        if (numEdgesVisible == 4 && (outerBorder.isRounded() || haveAlphaColor)
             && (haveAllSolidEdges || (!outerBorder.isRounded() && !innerBorder.isRounded()))) {
             Path path;
             
@@ -1949,7 +1949,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             return;
         } 
         // Avoid creating transparent layers
-        if (haveAllSolidEdges && !allEdgesVisible && !outerBorder.isRounded() && haveAlphaColor) {
+        if (haveAllSolidEdges && numEdgesVisible != 4 && !outerBorder.isRounded() && haveAlphaColor) {
             Path path;
 
             for (int i = BSTop; i <= BSLeft; ++i) {
@@ -1979,7 +1979,8 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
             graphicsContext->clipOutRoundedRect(innerBorder);
     }
 
-    bool antialias = shouldAntialiasLines(graphicsContext);    
+    // If only one edge visible antialiasing doesn't create seams
+    bool antialias = shouldAntialiasLines(graphicsContext) || numEdgesVisible == 1;
     if (haveAlphaColor)
         paintTranslucentBorderSides(graphicsContext, style, outerBorder, innerBorder, edges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
     else

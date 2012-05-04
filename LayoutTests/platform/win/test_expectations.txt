@@ -1,2 +1,6 @@
 // This file is intentionally left blank. Until the Apple win port supports new-run-webkit-tests (https://bugs.webkit.org/show_bug.cgi?id=38756)
 // this file does nothing.
+
+// Requires rebaseline after bug 85031
+BUGWK85565 : fast/block/float/016.html = IMAGE
+BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
