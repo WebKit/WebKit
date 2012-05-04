@@ -3686,7 +3686,7 @@ BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
 
-BUGWK85567 : fast/images/png-suite/test.html = IMAGE
+BUGWK85567 : fast/images/png-suite/test.html = MISSING
 
 // Need text rebaseline after lazily allocating layers.
 // The difference should be only layer removal, no size or position should change.

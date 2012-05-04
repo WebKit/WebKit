@@ -1,5 +1,11 @@
 2012-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed gardening, changed expectations for fast/images/png-suite/test.html from IMAGE to MISSING.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed gardening, marking http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html as slow.
 
         * platform/chromium/test_expectations.txt:
