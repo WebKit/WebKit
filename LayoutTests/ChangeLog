@@ -1,3 +1,10 @@
+2012-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        All the inspector tests are skipped on chromium-mac. We should
+        skip the new ones in platform/chromium as well.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Suppress yet more Chromium Mac SL timeouts; hopefully close to end
