@@ -4210,7 +4210,6 @@
             'platform/image-decoders/openvg/ImageDecoderOpenVG.cpp',
             'platform/image-decoders/png/PNGImageDecoder.cpp',
             'platform/image-decoders/png/PNGImageDecoder.h',
-            'platform/image-decoders/qt/ImageFrameQt.cpp',
             'platform/image-decoders/skia/ImageDecoderSkia.cpp',
             'platform/image-decoders/webp/WEBPImageDecoder.cpp',
             'platform/image-decoders/webp/WEBPImageDecoder.h',
