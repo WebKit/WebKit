@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-static String executablePath(QLatin1String baseName)
+static String executablePath(QString baseName)
 {
     QString expectedPath = QCoreApplication::applicationDirPath() + QDir::separator() + baseName;
     if (QFile::exists(expectedPath))

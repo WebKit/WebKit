@@ -1,3 +1,14 @@
+2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Buildfix for newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=85478
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Shared/qt/ProcessExecutablePathQt.cpp:
+        (WebKit::executablePath):
+        * UIProcess/API/qt/qwebiconimageprovider_p.h:
+
 2012-05-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Enable fullscreen API for WebKit2.
