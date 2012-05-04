@@ -1,3 +1,18 @@
+2012-05-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Revert to using chromium --test-shell mode on SL in NRWT
+
+        https://bugs.webkit.org/show_bug.cgi?id=83076
+
+        Unreviewed, build fix.
+
+        We seem to be seeing a lot more flakiness on the bot since
+        I switched NRWT to "DRT" mode. We'll try reverting back and
+        see if this helps things.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.__init__):
+
 2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Implement layoutTestController.dumpResourceResponseMIMETypes

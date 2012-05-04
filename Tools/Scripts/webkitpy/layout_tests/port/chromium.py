@@ -413,6 +413,12 @@ class ChromiumDriver(WebKitDriver):
         self._image_path = None
 
         # FIXME: Delete all of this driver code once we're satisfied that it's not needed any more.
+        if port.host.platform.os_version == 'snowleopard':
+            if not hasattr(port._options, 'additional_drt_flag'):
+                port._options.additional_drt_flag = []
+            if not '--test-shell' in port._options.additional_drt_flag:
+                port._options.additional_drt_flag.append('--test-shell')
+
         self._test_shell = '--test-shell' in port.get_option('additional_drt_flag', [])
 
     def _wrapper_options(self, pixel_tests):
