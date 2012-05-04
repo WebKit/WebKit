@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CSPDirective;
+class CSPDirectiveList;
 class ScriptExecutionContext;
 class KURL;
 
@@ -53,8 +53,9 @@ public:
     };
 
     void didReceiveHeader(const String&, HeaderType);
-    String policy() { return m_header; }
-    HeaderType headerType() { return m_reportOnly ? ReportOnly : EnforcePolicy; }
+
+    const String& header() const;
+    HeaderType headerType() const;
 
     bool allowJavaScriptURLs() const;
     bool allowInlineEventHandlers() const;
@@ -76,42 +77,9 @@ public:
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);
 
-    void parse(const String&);
-    bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
-    void parseReportURI(const String&);
-    void addDirective(const String& name, const String& value);
-    void applySandboxPolicy(const String& sandboxPolicy);
-
-    PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
-
-    CSPDirective* operativeDirective(CSPDirective*) const;
-    void reportViolation(const String& directiveText, const String& consoleMessage) const;
-    void logUnrecognizedDirective(const String& name) const;
-    bool checkEval(CSPDirective*) const;
-
-    bool checkInlineAndReportViolation(CSPDirective*, const String& consoleMessage) const;
-    bool checkEvalAndReportViolation(CSPDirective*, const String& consoleMessage) const;
-    bool checkSourceAndReportViolation(CSPDirective*, const KURL&, const String& type) const;
-
-    bool denyIfEnforcingPolicy() const { return m_reportOnly; }
-
-    bool m_havePolicy;
     ScriptExecutionContext* m_scriptExecutionContext;
-
-    bool m_reportOnly;
-    String m_header;
-    OwnPtr<CSPDirective> m_defaultSrc;
-    OwnPtr<CSPDirective> m_scriptSrc;
-    OwnPtr<CSPDirective> m_objectSrc;
-    OwnPtr<CSPDirective> m_frameSrc;
-    OwnPtr<CSPDirective> m_imgSrc;
-    OwnPtr<CSPDirective> m_styleSrc;
-    OwnPtr<CSPDirective> m_fontSrc;
-    OwnPtr<CSPDirective> m_mediaSrc;
-    OwnPtr<CSPDirective> m_connectSrc;
-    bool m_haveSandboxPolicy;
     bool m_overrideInlineStyleAllowed;
-    Vector<KURL> m_reportURLs;
+    OwnPtr<CSPDirectiveList> m_policy;
 };
 
 }

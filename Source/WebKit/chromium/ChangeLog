@@ -1,3 +1,17 @@
+2012-05-04  Adam Barth  <abarth@webkit.org>
+
+        Refactor CSP state to prepare for having both a ReportOnly and an Enforced policy
+        https://bugs.webkit.org/show_bug.cgi?id=85662
+
+        Reviewed by Eric Seidel.
+
+        Update callers to the new function name.
+
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::startWorkerContext):
+
 2012-05-04  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Revert compositor layer scrolling

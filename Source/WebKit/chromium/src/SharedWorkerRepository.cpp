@@ -171,7 +171,7 @@ void SharedWorkerScriptLoader::notifyFinished()
         InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
         // Pass the script off to the worker, then send a connect event.
         m_webWorker->startWorkerContext(m_url, m_name, m_worker->scriptExecutionContext()->userAgent(m_url), m_scriptLoader->script(),
-                                        m_worker->scriptExecutionContext()->contentSecurityPolicy()->policy(),
+                                        m_worker->scriptExecutionContext()->contentSecurityPolicy()->header(),
                                         static_cast<WebKit::WebContentSecurityPolicyType>(m_worker->scriptExecutionContext()->contentSecurityPolicy()->headerType()),
                                         m_responseAppCacheID);
         sendConnect();
