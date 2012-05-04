@@ -609,6 +609,11 @@ bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start,
     return true;
 }
 
+void DumpRenderTreeSupportGtk::setDefersLoading(WebKitWebView* webView, bool defers)
+{
+    core(webView)->setDefersLoading(defers);
+}
+
 void DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(WebKitWebView* webView, bool enabled)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));

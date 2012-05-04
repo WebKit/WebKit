@@ -1,3 +1,17 @@
+2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT needs an implementation of LayoutTestController::setDefersLoading and ::goBack
+        https://bugs.webkit.org/show_bug.cgi?id=85134
+
+        Reviewed by Martin Robinson.
+
+        Add support for setDefersLoading in DumpRenderTreeSupportGtk.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setDefersLoading):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-05-04  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ debug build after the r116114.

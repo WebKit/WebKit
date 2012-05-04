@@ -1,3 +1,20 @@
+2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT needs an implementation of LayoutTestController::setDefersLoading and ::goBack
+        https://bugs.webkit.org/show_bug.cgi?id=85134
+
+        Reviewed by Martin Robinson.
+
+        Add missing implementation setDefersLoading and goBack to GTK's
+        LayoutTestController so that the test case rely on these methods
+        can be enabled.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::goBack):
+        (LayoutTestController::setDefersLoading):
+
 2012-05-04  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt][NRWT] Run each DRT in it's own xvfb

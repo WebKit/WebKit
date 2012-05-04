@@ -1127,9 +1127,6 @@ BUGWK58741 : fast/text/zero-width-characters-complex-script.html = FAIL
 // HTTP 204 (No Content) should be ignored
 BUGWK60206 : http/tests/navigation/response204.html = FAIL
 
-// Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
-BUGWKGTK : loader/navigation-while-deferring-loads.html = FAIL
-
 BUGWK61118 : fullscreen/full-screen-keyboard-enabled.html = FAIL
 BUGWK61118 : fullscreen/full-screen-element-stack.html = FAIL
 BUGWK61118 : fullscreen/full-screen-restrictions.html = FAIL

@@ -752,12 +752,14 @@ void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidd
 
 void LayoutTestController::goBack()
 {
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    webkit_web_view_go_back(webView);
 }
 
-void LayoutTestController::setDefersLoading(bool)
+void LayoutTestController::setDefersLoading(bool defers)
 {
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    DumpRenderTreeSupportGtk::setDefersLoading(webView, defers);
 }
 
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)

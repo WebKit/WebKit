@@ -1,3 +1,16 @@
+2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] DRT needs an implementation of LayoutTestController::setDefersLoading and ::goBack
+        https://bugs.webkit.org/show_bug.cgi?id=85134
+
+        Reviewed by Martin Robinson.
+
+        Unskip loader/navigation-while-deferring-loads.html and disable
+        loader/load-defer-resume-crash.html as it triggers an assertion
+        failure.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-04  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r116009): image no longer visible on fast/block/float/float-not-removed-from-next-sibling4.html
