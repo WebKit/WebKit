@@ -1,3 +1,20 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [soup] URL of the ResourceResponse passed to willSendRequest is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=85072
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskip http/tests/misc/will-send-request-returns-null-on-redirect.html
+        and http/tests/loading/307-after-303-after-post.html now that the
+        response passed to willSendRequest is correct and now that the right
+        redirect URL is being printed in EFL port.
+
+        Unfortunately, http/tests/loading/redirect-methods.html cannot be
+        unskipped yet due to bug 66873.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r116134): It made 3 inspector tests fail
