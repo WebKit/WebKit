@@ -827,3 +827,6 @@ fast/dom/xmlhttprequest-constructor-in-detached-document.html
 # https://bugs.webkit.org/show_bug.cgi?id=85525
 media/video-played-reset.html
 
+# [Mac] IETC flexbox reference tests have pixel differences (due to embedded color profiles?)
+# https://bugs.webkit.org/show_bug.cgi?id=85666
+ietestcenter/css3/flexbox/
