@@ -1,5 +1,17 @@
 2012-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed, rolling out r116075.
+        http://trac.webkit.org/changeset/116075
+
+        WebKit2 build was broken while WebKit2 build was disabled in bots,
+        so nobody noticed it. Disable the WebKit2 build for now to keep
+        the bots green again until we find the actual commit that
+        broke the WebKit2 build.
+
+        * configure.ac:
+
+2012-05-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Enable WebKit2 by default in configure.
 
         This was removed in r115624 to make sure release 1.9.1 didn't have
