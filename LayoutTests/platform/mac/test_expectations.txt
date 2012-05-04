@@ -167,8 +167,6 @@ BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 BUGWK82546 : compositing/tiling/crash-reparent-tiled-layer.html = PASS TEXT
 
 BUGWK84604 FUTURE : fast/js/global-constructors.html = TEXT
-BUGWK84604 FUTURE : fast/dom/Window/window-properties.html = TEXT
-BUGWK84604 FUTURE : fast/dom/prototype-inheritance-2.html = TEXT
 
 // Requires rebaseline after bug 83978
 BUGWK83978 : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT

@@ -1,3 +1,14 @@
+2012-05-03  David Barr  <davidbarr@chromium.org>
+
+        Update mac test expectations after r115927
+        https://bugs.webkit.org/show_bug.cgi?id=85569
+
+        Reviewed by Dirk Pranke.
+
+        The tests were removed on r115927. Remove them from the mac test expectations.
+
+        * platform/mac/test_expectations.txt:
+
 2012-05-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline.
