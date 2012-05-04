@@ -174,6 +174,8 @@ private:
     Length m_xPosition;
     Length m_yPosition;
 
+    LengthSize m_sizeLength;
+
     unsigned m_attachment : 2; // EFillAttachment
     unsigned m_clip : 2; // EFillBox
     unsigned m_origin : 2; // EFillBox
@@ -182,17 +184,15 @@ private:
     unsigned m_composite : 4; // CompositeOperator
     unsigned m_sizeType : 2; // EFillSizeType
     
-    LengthSize m_sizeLength;
-
-    bool m_imageSet : 1;
-    bool m_attachmentSet : 1;
-    bool m_clipSet : 1;
-    bool m_originSet : 1;
-    bool m_repeatXSet : 1;
-    bool m_repeatYSet : 1;
-    bool m_xPosSet : 1;
-    bool m_yPosSet : 1;
-    bool m_compositeSet : 1;
+    unsigned m_imageSet : 1;
+    unsigned m_attachmentSet : 1;
+    unsigned m_clipSet : 1;
+    unsigned m_originSet : 1;
+    unsigned m_repeatXSet : 1;
+    unsigned m_repeatYSet : 1;
+    unsigned m_xPosSet : 1;
+    unsigned m_yPosSet : 1;
+    unsigned m_compositeSet : 1;
     
     unsigned m_type : 1; // EFillLayerType
 };
