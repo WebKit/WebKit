@@ -1,3 +1,12 @@
+2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r116134): It made 3 inspector tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=85654
+
+        Unreviewed gardening, skip failing tests until proper fix.
+
+        * platform/qt/Skipped:
+
 2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Implement layoutTestController.dumpResourceResponseMIMETypes

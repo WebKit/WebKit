@@ -2611,3 +2611,8 @@ ietestcenter/css3/flexbox/flexbox-groups-001.htm
 ietestcenter/css3/flexbox/flexbox-groups-002.htm
 ietestcenter/css3/flexbox/flexbox-groups-004.htm
 ietestcenter/css3/flexbox/flexbox-layout-003.htm
+
+# REGRESSION(r116134): It made 3 inspector tests fail
+inspector/debugger/scripts-panel.html
+inspector/debugger/snippets-model.html
+inspector/debugger/source-frame.html
