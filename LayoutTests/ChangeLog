@@ -1,5 +1,16 @@
 2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, update expected files.
+
+        * platform/qt/Skipped: Typo fix.
+        * platform/qt/fast/block/float/float-not-removed-from-next-sibling4-expected.png: Added.
+        * platform/qt/fast/block/float/float-not-removed-from-next-sibling4-expected.txt:
+        * platform/qt/fast/block/float/overhanging-tall-block-expected.png:
+        * platform/qt/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-device-orientation-expected.txt:
+
+2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] ietestcenter/css3/flexbox tests fail on 32 bit
         https://bugs.webkit.org/show_bug.cgi?id=85596
 
