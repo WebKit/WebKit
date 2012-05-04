@@ -437,12 +437,10 @@ bool EditorClient::handleInputMethodKeyboardEvent(KeyboardEvent* event)
 
     m_updatingComposition = true;
 
-    // This won't prevent a keypress event alone, but PlatformKeyboardEvent returns
-    // an empty string when there are composition results. That prevents the delivery
-    // of keypress, which is the behavior we want for composition events. See
-    // EventHandler::keyEvent.
-    event->preventDefault();
-    ASSERT(platformEvent->string().isNull());
+    // PlatformKeyboardEvent returns an empty string when there are composition results.
+    // That prevents the delivery of keypress, which is the behavior we want for composition
+    // events. See EventHandler::keyEvent. 
+    ASSERT(platformEvent->text().isNull());
 
     if (!compositionResults.confirmedComposition.isNull())
         frame->editor()->confirmComposition(compositionResults.confirmedComposition);

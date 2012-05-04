@@ -1,3 +1,13 @@
+2012-05-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ debug build after the r116114.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleInputMethodKeyboardEvent): Update an
+        assertion to reflect a real method name in PlatformKeyboardEvent
+        and remove an unnecessary call to preventDefault() which triggered
+        an assertion failure higher in the call stack.
+
 2012-05-04  Nate Chapin  <japhet@chromium.org>
 
         Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.
