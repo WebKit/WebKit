@@ -1786,11 +1786,6 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
 
     frame->didStartProvisionalLoad(url);
     m_loaderClient.didStartProvisionalLoadForFrame(this, frame, userData.get());
-
-#if ENABLE(FULLSCREEN_API)
-    if (m_fullScreenManager && m_fullScreenManager->isFullScreen())
-        m_fullScreenManager->close();
-#endif
 }
 
 void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String& url, CoreIPC::ArgumentDecoder* arguments)

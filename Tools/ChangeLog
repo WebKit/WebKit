@@ -1,3 +1,20 @@
+2012-04-30  Jer Noble  <jer.noble@apple.com>
+
+        Full screen will exit during a provisional load of a non-ancestor iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=85230
+
+        Reviewed by Maciej Stachowiak .
+
+        Add support for the new UIDelegate webView:closeFullScreenWithListener: method:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:closeFullScreenWithListener:]):
+
+        Add support for the new closeFullScreen injected bundle method:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::closeFullScreen):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2012-05-04  Ojan Vafai  <ojan@chromium.org>
 
         Fix test naming to be camel-case like the methods they are testing.

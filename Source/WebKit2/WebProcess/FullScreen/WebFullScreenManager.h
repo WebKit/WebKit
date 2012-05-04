@@ -65,6 +65,8 @@ public:
 
     WebCore::Element* element();
 
+    void close();
+
 protected:
     WebFullScreenManager(WebPage*);
 

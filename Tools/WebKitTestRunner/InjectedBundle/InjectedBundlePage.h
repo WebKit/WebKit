@@ -126,6 +126,7 @@ private:
     static void exitFullScreenForElement(WKBundlePageRef, WKBundleNodeHandleRef element);
     static void beganEnterFullScreen(WKBundlePageRef, WKRect initialFrame, WKRect finalFrame);
     static void beganExitFullScreen(WKBundlePageRef, WKRect initialFrame, WKRect finalFrame);
+    static void closeFullScreen(WKBundlePageRef);
 #endif
 
     // Editor client

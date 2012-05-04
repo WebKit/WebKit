@@ -322,6 +322,7 @@ typedef void (*WKBundlePageEnterFullScreenForElement)(WKBundlePageRef page, WKBu
 typedef void (*WKBundlePageExitFullScreenForElement)(WKBundlePageRef page, WKBundleNodeHandleRef element);
 typedef void (*WKBundlePageBeganEnterFullScreen)(WKBundlePageRef page, WKRect initialFrame, WKRect finalFrame);
 typedef void (*WKBundlePageBeganExitFullScreen)(WKBundlePageRef page, WKRect initialFrame, WKRect finalFrame);
+typedef void (*WKBundlePageCloseFullScreen)(WKBundlePageRef page);
 
 struct WKBundlePageFullScreenClient {
     int                                                                 version;
@@ -335,6 +336,7 @@ struct WKBundlePageFullScreenClient {
     // Version 1:
     WKBundlePageBeganEnterFullScreen                                    beganEnterFullScreen;
     WKBundlePageBeganExitFullScreen                                     beganExitFullScreen;
+    WKBundlePageCloseFullScreen                                         closeFullScreen;
 };
 typedef struct WKBundlePageFullScreenClient WKBundlePageFullScreenClient;
 

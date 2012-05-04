@@ -146,6 +146,11 @@ void WebFullScreenManager::requestExitFullScreen()
     m_element->document()->webkitCancelFullScreen();
 }
 
+void WebFullScreenManager::close()
+{
+    m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.get());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)

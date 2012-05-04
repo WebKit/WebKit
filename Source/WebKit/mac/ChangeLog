@@ -1,5 +1,19 @@
 2012-05-04  Jer Noble  <jer.noble@apple.com>
 
+        Full screen will exit during a provisional load of a non-ancestor iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=85230
+
+        Reviewed by Maciej Stachowiak .
+
+        Only exit full screen mode if the frame being loaded contains the full 
+        screen element.
+
+        * WebView/WebView.mm:
+        (-[WebView _didStartProvisionalLoadForFrame:]): Give the UIDelegate a first crack at handling the
+        request to close the full screen window when a provisional load occurs.
+
+2012-05-04  Jer Noble  <jer.noble@apple.com>
+
         Move WebKitFullScreenListener into its own file.
         https://bugs.webkit.org/show_bug.cgi?id=85640
 

@@ -88,6 +88,14 @@ void InjectedBundlePageFullScreenClient::beganExitFullScreen(WebPage *page, IntR
         page->send(Messages::WebFullScreenManagerProxy::BeganExitFullScreen(initialFrame, finalFrame));
 }
 
+void InjectedBundlePageFullScreenClient::closeFullScreen(WebPage *page)
+{
+    if (m_client.closeFullScreen)
+        m_client.closeFullScreen(toAPI(page));
+    else
+        page->send(Messages::WebFullScreenManagerProxy::Close());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)

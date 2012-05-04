@@ -276,6 +276,12 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
         [self performSelector:@selector(exitFullScreenWithListener:) withObject:listener afterDelay:0];
 }
 
+- (void)webView:(WebView *)sender closeFullScreenWithListener:(NSObject<WebKitFullScreenListener>*)listener
+{
+    [listener webkitWillExitFullScreen];
+    [listener webkitDidExitFullScreen];
+}
+
 - (BOOL)webView:(WebView *)webView didPressMissingPluginButton:(DOMElement *)element
 {
     printf("MISSING PLUGIN BUTTON PRESSED\n");

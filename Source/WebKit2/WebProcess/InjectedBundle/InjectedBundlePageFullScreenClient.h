@@ -49,6 +49,7 @@ public:
     void exitFullScreenForElement(WebPage*, WebCore::Element*);
     void beganEnterFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
     void beganExitFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
+    void closeFullScreen(WebPage*);
 };
 
 } // namespace WebKit

@@ -43,6 +43,7 @@
 #include "WebEvent.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
+#include "WebFullScreenManager.h"
 #include "WebNavigationDataStore.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -389,6 +390,11 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
+
+#if ENABLE(FULLSCREEN_API)
+    if (m_frame->coreFrame()->document()->webkitIsFullScreen())
+        webPage->fullScreenManager()->close();
+#endif
 
     webPage->findController().hideFindUI();
     webPage->sandboxExtensionTracker().didStartProvisionalLoad(m_frame);

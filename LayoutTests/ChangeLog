@@ -1,3 +1,14 @@
+2012-05-03  Jer Noble  <jer.noble@apple.com>
+
+        Full screen will exit during a provisional load of a non-ancestor iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=85230
+
+        Reviewed by Maciej Stachowiak .
+
+        * fullscreen/non-ancestor-iframe-expected.txt: Added.
+        * fullscreen/non-ancestor-iframe.html: Added.
+        * fullscreen/resources/empty.html: Added.
+
 2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [soup] URL of the ResourceResponse passed to willSendRequest is incorrect

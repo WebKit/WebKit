@@ -1,3 +1,32 @@
+2012-04-30  Jer Noble  <jer.noble@apple.com>
+
+        Full screen will exit during a provisional load of a non-ancestor iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=85230
+
+        Reviewed by Maciej Stachowiak .
+
+        Only exit full screen mode if the frame being loaded contains the full 
+        screen element:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+
+        Move the full screen exiting logic up into WebFrameLoaderClient in the
+        WebProcess:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+
+        Add a WebFullScreenManager "close" method & message:
+        * UIProcess/WebFullScreenManagerProxy.messages.in:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::close):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+
+        Add support for this new message to the WKBundlePage and client:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp:
+        (WebKit::InjectedBundlePageFullScreenClient::closeFullScreen):
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+
 2012-05-04  Anders Carlsson  <andersca@apple.com>
 
         TiledCoreAnimationDrawingArea should handle visibility changes

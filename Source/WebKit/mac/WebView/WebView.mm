@@ -32,6 +32,7 @@
 #import "WebViewData.h"
 
 #import "DOMCSSStyleDeclarationInternal.h"
+#import "DOMDocumentInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebAlternativeTextClient.h"
@@ -71,6 +72,7 @@
 #import "WebInspector.h"
 #import "WebInspectorClient.h"
 #import "WebKitErrors.h"
+#import "WebKitFullScreenListener.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
@@ -1851,8 +1853,16 @@ static inline IMP getMethod(id o, SEL s)
     [NSApp setWindowsNeedUpdate:YES];
 
 #if ENABLE(FULLSCREEN_API)
-    if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen])
-        [_private->newFullscreenController close];
+    if (Element* element = core([frame DOMDocument])->webkitCurrentFullScreenElement()) {
+        SEL selector = @selector(webView:closeFullScreenWithListener:);
+        if (_private->UIDelegate && [_private->UIDelegate respondsToSelector:selector]) {
+            WebKitFullScreenListener *listener = [[WebKitFullScreenListener alloc] initWithElement:element];
+            CallUIDelegate(self, selector, listener);
+            [listener release];
+        } else if (_private->newFullscreenController && [_private->newFullscreenController isFullScreen]) {
+            [_private->newFullscreenController close];
+        }
+    }
 #endif
 }
 
