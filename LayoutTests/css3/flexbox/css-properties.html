@@ -82,6 +82,7 @@ shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexPack', '
 shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', '');
 // The initial value is 'stretch'.
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexItemAlign', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(document.documentElement, null).webkitFlexItemAlign', 'stretch');
 
 flexbox.style.webkitFlexItemAlign = 'foo';
 shouldBeEqualToString('flexbox.style.webkitFlexItemAlign', '');

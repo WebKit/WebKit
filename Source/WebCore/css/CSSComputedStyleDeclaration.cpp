@@ -1641,8 +1641,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitFlexAlign:
             return cssValuePool().createValue(style->flexAlign());
         case CSSPropertyWebkitFlexItemAlign:
-            if (style->flexItemAlign() == AlignAuto && m_node && m_node->parentNode() && m_node->parentNode()->computedStyle())
-                return cssValuePool().createValue(m_node->parentNode()->computedStyle()->flexAlign());
+            if (style->flexItemAlign() == AlignAuto) {
+                if (m_node && m_node->parentNode() && m_node->parentNode()->computedStyle())
+                    return cssValuePool().createValue(m_node->parentNode()->computedStyle()->flexAlign());
+                return cssValuePool().createValue(AlignStretch);
+            }
             return cssValuePool().createValue(style->flexItemAlign());
         case CSSPropertyWebkitFlexDirection:
             return cssValuePool().createValue(style->flexDirection());
