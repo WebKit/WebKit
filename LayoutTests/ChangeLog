@@ -1,3 +1,12 @@
+2012-05-04  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Web Timing tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=85619
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION: http/tests/xmlhttprequest/basic-auth-nopassword.html started to crash with newer Qt5
