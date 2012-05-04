@@ -58,6 +58,14 @@ void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
     m_webPageProxy->process()->send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()), m_webPageProxy->pageID());
 }
 
+void TiledCoreAnimationDrawingAreaProxy::visibilityDidChange()
+{
+    if (!m_webPageProxy->isViewVisible())
+        m_webPageProxy->process()->send(Messages::DrawingArea::SuspendPainting(), m_webPageProxy->pageID());
+    else
+        m_webPageProxy->process()->send(Messages::DrawingArea::ResumePainting(), m_webPageProxy->pageID());
+}
+
 void TiledCoreAnimationDrawingAreaProxy::layerHostingModeDidChange()
 {
     m_webPageProxy->process()->send(Messages::DrawingArea::SetLayerHostingMode(m_webPageProxy->layerHostingMode()), m_webPageProxy->pageID());

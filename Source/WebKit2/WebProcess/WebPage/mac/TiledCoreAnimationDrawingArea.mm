@@ -33,6 +33,7 @@
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
 #import "WebPage.h"
+#import "WebPageCreationParameters.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
@@ -65,6 +66,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
     , m_layerTreeStateIsFrozen(false)
     , m_layerFlushScheduler(this)
+    , m_isPaintingSuspended(!parameters.isVisible)
 {
     Page* page = webPage->corePage();
 
@@ -283,6 +285,33 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 
     [pool drain];
     return returnValue;
+}
+
+void TiledCoreAnimationDrawingArea::suspendPainting()
+{
+    ASSERT(!m_isPaintingSuspended);
+    m_isPaintingSuspended = true;
+
+    [m_rootLayer.get() setValue:(id)kCFBooleanTrue forKey:@"NSCAViewRenderPaused"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_rootLayer.get() forKey:@"layer"]];
+
+    m_webPage->corePage()->suspendScriptedAnimations();
+}
+
+void TiledCoreAnimationDrawingArea::resumePainting()
+{
+    if (!m_isPaintingSuspended) {
+        // FIXME: We can get a call to resumePainting when painting is not suspended.
+        // This happens when sending a synchronous message to create a new page. See <rdar://problem/8976531>.
+        return;
+    }
+    m_isPaintingSuspended = false;
+
+    [m_rootLayer.get() setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_rootLayer.get() forKey:@"layer"]];
+
+    if (m_webPage->windowIsVisible())
+        m_webPage->corePage()->resumeScriptedAnimations();
 }
 
 void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)

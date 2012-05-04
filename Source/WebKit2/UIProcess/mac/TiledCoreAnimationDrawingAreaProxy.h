@@ -44,6 +44,7 @@ private:
     // DrawingAreaProxy
     virtual void deviceScaleFactorDidChange() OVERRIDE;
     virtual void layerHostingModeDidChange() OVERRIDE;
+    virtual void visibilityDidChange() OVERRIDE;
     virtual void sizeDidChange() OVERRIDE;
     virtual void waitForPossibleGeometryUpdate() OVERRIDE;
 
