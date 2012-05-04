@@ -3924,3 +3924,10 @@ BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/popstate-fires-with-pending-
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-200-refresh-0-seconds.pl = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-200-refresh-2-seconds.pl = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-301.html = TIMEOUT PASS
+
+
+BUGDPRANKE MAC RELEASE : fast/loader/javascript-url-in-embed.html = TEXT PASS
+BUGDPRANKE MAC : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
+BUGDPRANKE MAC : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
+BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
+

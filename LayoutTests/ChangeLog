@@ -1,3 +1,16 @@
+2012-05-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Mark a few more tests as flaky across all macs.
+
+        Unreviewed, expectations change.
+
+        fast/loader/javascript-url-in-embed.html = TEXT PASS (Release only)
+        http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
+        media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
+        userscripts/user-style-all-frames.html = TEXT PASS
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-04  Ojan Vafai  <ojan@chromium.org>
 
         Fix path to external JS file that was not updated when the file
