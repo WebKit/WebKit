@@ -457,7 +457,12 @@ void DumpRenderTreeChrome::onWillSendRequest(void*, Evas_Object*, void* eventInf
         && url.host().lower() != "localhost") {
         printf("Blocked access to external URL %s\n", messages->request->url);
         messages->request->url = 0;
+        return;
     }
+
+    const std::string& destination = gLayoutTestController->redirectionDestinationForURL(url.string().utf8().data());
+    if (destination.length())
+        messages->request->url = strdup(destination.c_str());
 }
 
 void DumpRenderTreeChrome::onWebViewOnloadEvent(void*, Evas_Object*, void* eventInfo)

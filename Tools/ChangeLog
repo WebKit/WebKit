@@ -1,5 +1,18 @@
 2012-05-03  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] DRT should obey layoutTestController's addURLToRedirect()
+        https://bugs.webkit.org/show_bug.cgi?id=82722
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement support for layoutTestController's addURLToRedirect()
+        in EFL's DRT so that it redirects properly when indicated.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onWillSendRequest):
+
+2012-05-03  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] DRT should support LayoutTestController's willSendRequestReturnsNullOnRedirect()
         https://bugs.webkit.org/show_bug.cgi?id=82704
 

@@ -575,9 +575,6 @@ printing/width-overflow.html
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
 
-# BUG: DRT does not obey layoutTestController.addURLToRedirect()
-http/tests/loading/cross-origin-XHR-willLoadRequest.html
-
 # BUG: Requires willPerformClientRedirectToURL
 http/tests/loading/onload-vs-immediate-refresh.pl
 

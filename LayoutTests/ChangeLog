@@ -1,3 +1,15 @@
+2012-05-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] DRT should obey layoutTestController's addURLToRedirect()
+        https://bugs.webkit.org/show_bug.cgi?id=82722
+
+        Reviewed by Maciej Stachowiak.
+
+        Unskip http/tests/loading/cross-origin-XHR-willLoadRequest.html now
+        that EFL's DRT obeys layoutTestController's addURLToRedirect().
+
+        * platform/efl/Skipped:
+
 2012-05-03  Ilya Sherman  <isherman@chromium.org>
 
         [Qt] REGRESSION(r113511): fast/forms/input-autofilled.html fails
