@@ -1853,7 +1853,8 @@ static inline IMP getMethod(id o, SEL s)
     [NSApp setWindowsNeedUpdate:YES];
 
 #if ENABLE(FULLSCREEN_API)
-    if (Element* element = core([frame DOMDocument])->webkitCurrentFullScreenElement()) {
+    Document* document = core([frame DOMDocument]);
+    if (Element* element = document ? document->webkitCurrentFullScreenElement() : 0) {
         SEL selector = @selector(webView:closeFullScreenWithListener:);
         if (_private->UIDelegate && [_private->UIDelegate respondsToSelector:selector]) {
             WebKitFullScreenListener *listener = [[WebKitFullScreenListener alloc] initWithElement:element];
