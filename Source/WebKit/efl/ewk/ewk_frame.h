@@ -138,6 +138,7 @@ struct _Ewk_Frame_Resource_Response {
     const char *url; /**< url of the resource */
     int status_code; /**< http status code */
     unsigned long identifier; /**< identifier of resource */
+    const char *mime_type; /**< MIME type of the resource */
 };
 
 /// Creates a type name for _Ewk_Frame_Resource_Messages.

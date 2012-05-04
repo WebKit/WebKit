@@ -188,15 +188,17 @@ void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
     Ewk_Frame_Resource_Response* redirectResponse;
     Ewk_Frame_Resource_Response responseBuffer;
-    CString redirectUrl;
+    CString redirectUrl, mimeType;
 
     if (coreResponse.isNull())
         redirectResponse = 0;
     else {
         redirectUrl = coreResponse.url().string().utf8();
+        mimeType = coreResponse.mimeType().utf8();
         responseBuffer.url = redirectUrl.data();
         responseBuffer.status_code = coreResponse.httpStatusCode();
         responseBuffer.identifier = identifier;
+        responseBuffer.mime_type = mimeType.data();
         redirectResponse = &responseBuffer;
     }
 
@@ -270,7 +272,8 @@ void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, un
 
     m_response = coreResponse;
 
-    Ewk_Frame_Resource_Response response = { 0, coreResponse.httpStatusCode(), identifier };
+    CString mimeType = coreResponse.mimeType().utf8();
+    Ewk_Frame_Resource_Response response = { 0, coreResponse.httpStatusCode(), identifier, mimeType.data() };
     CString url = coreResponse.url().string().utf8();
     response.url = url.data();
 

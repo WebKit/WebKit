@@ -549,17 +549,6 @@ fast/loader/stateobjects/state-url-sets-links-visited.html
 fast/js/i18n-bindings-locale.html
 fast/js/navigator-language.html
 
-# BUG: no mimetype detection messages (LayoutTestController:dumpResourceResponseMIMETypes)
-fast/preloader/document-write-noscript.html
-fast/preloader/image.html
-fast/preloader/input.html
-fast/preloader/link.html
-fast/preloader/noscript.html
-fast/preloader/script.html
-fast/preloader/style.html
-http/tests/mime/uppercase-mime-type.html
-http/tests/loading/preload-append-scan.php
-
 # BUG: Needs setPrinting
 # https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html

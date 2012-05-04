@@ -1,3 +1,16 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Implement layoutTestController.dumpResourceResponseMIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=84941
+
+        Reviewed by Martin Robinson.
+
+        Print MIME type detection messages in EFL's DumpRenderTree if
+        LayoutTestController's dumpResourceResponseMIMETypes() returns true.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onResponseReceived):
+
 2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] DRT needs an implementation of LayoutTestController::setDefersLoading and ::goBack

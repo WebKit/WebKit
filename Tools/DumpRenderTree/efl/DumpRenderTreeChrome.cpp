@@ -592,6 +592,12 @@ void DumpRenderTreeChrome::onResponseReceived(void*, Evas_Object*, void* eventIn
                m_dumpAssignedUrls.contains(response->identifier) ? m_dumpAssignedUrls.get(response->identifier).data() : "<unknown>",
                responseDescription.data());
     }
+
+    if (!done && gLayoutTestController->dumpResourceResponseMIMETypes()) {
+        printf("%s has MIME type %s\n",
+               KURL(ParsedURLString, response->url).lastPathComponent().utf8().data(),
+               response->mime_type);
+    }
 }
 
 void DumpRenderTreeChrome::onResourceLoadFinished(void*, Evas_Object*, void* eventInfo)

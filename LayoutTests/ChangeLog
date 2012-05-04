@@ -1,3 +1,16 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Implement layoutTestController.dumpResourceResponseMIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=84941
+
+        Reviewed by Martin Robinson.
+
+        * platform/efl/Skipped: Unskip test cases which require MIME type
+        detection messages now that is is implemented in EFL port.
+        * platform/efl/fast/preloader/script-expected.txt: Added. Use same
+        EFL expectation as in chromium and mac ports (MIME type is
+        "application/javascript" instead of "application/x-javascript").
+
 2012-05-04  Ojan Vafai  <ojan@chromium.org>
 
         Fix expectation for test after http://trac.webkit.org/changeset/116143.

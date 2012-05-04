@@ -1,3 +1,18 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Implement layoutTestController.dumpResourceResponseMIMETypes
+        https://bugs.webkit.org/show_bug.cgi?id=84941
+
+        Reviewed by Martin Robinson.
+
+        Extend Ewk_Frame_Resource_Response structure to pass resource MIME type
+        information.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveResponse):
+        * ewk/ewk_frame.h:
+
 2012-05-04  Nate Chapin  <japhet@chromium.org>
 
         Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.
