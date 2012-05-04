@@ -1,3 +1,24 @@
+2012-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Show the results links in the embedded flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=85660
+
+        Reviewed by Adam Barth.
+
+        Turns out these links don't add much visual noise and it's annoying
+        to have to go to the dashboard from garden-o-matic just to view the
+        results for a test.
+
+        This is useful for cases where garden-o-matic doesn't properly show the
+        results (e.g. missing tests). If we address all those cases, then
+        we could easily hide the results links again if we wanted to.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (showUpdateInfoForTest):
+        (htmlForIndividualTestOnAllBuildersWithResultsLinks):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
 2012-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Revert to using chromium --test-shell mode on SL in NRWT

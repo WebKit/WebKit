@@ -340,9 +340,9 @@ test('HtmlForIndividualTestOnAllBuilders', 1, function() {
     equal(htmlForIndividualTestOnAllBuilders('foo/nonexistant.html'), '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>');
 });
 
-test('HtmlForIndividualTestOnAllBuildersWithChromeNonexistant', 1, function() {
+test('HtmlForIndividualTestOnAllBuildersWithResultsLinksNonexistant', 1, function() {
     resetGlobals();
-    equal(htmlForIndividualTestOnAllBuildersWithChrome('foo/nonexistant.html'),
+    equal(htmlForIndividualTestOnAllBuildersWithResultsLinks('foo/nonexistant.html'),
         '<div class="not-found">Test not found. Either it does not exist, is skipped or passes on all platforms.</div>' +
         '<div class=expectations test=foo/nonexistant.html>' +
             '<div>' +
@@ -353,13 +353,13 @@ test('HtmlForIndividualTestOnAllBuildersWithChromeNonexistant', 1, function() {
         '</div>');
 });
 
-test('HtmlForIndividualTestOnAllBuildersWithChrome', 1, function() {
+test('HtmlForIndividualTestOnAllBuildersWithResultsLinks', 1, function() {
     resetGlobals();
     var test = 'dummytest.html';
     var builderName = 'dummyBuilder';
     g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
 
-    equal(htmlForIndividualTestOnAllBuildersWithChrome(test),
+    equal(htmlForIndividualTestOnAllBuildersWithResultsLinks(test),
         '<table class=test-table><thead><tr>' +
                 '<th sortValue=test><div class=table-header-content><span></span><span class=header-text>test</span></div></th>' +
                 '<th sortValue=bugs><div class=table-header-content><span></span><span class=header-text>bugs</span></div></th>' +
@@ -384,14 +384,14 @@ test('HtmlForIndividualTestOnAllBuildersWithChrome', 1, function() {
         '</div>');
 });
 
-test('HtmlForIndividualTestOnAllBuildersWithChromeWebkitMaster', 1, function() {
+test('HtmlForIndividualTestOnAllBuildersWithResultsLinksWebkitMaster', 1, function() {
     resetGlobals();
     var test = 'dummytest.html';
     var builderName = 'dummyBuilder';
     BUILDER_TO_MASTER[builderName] = WEBKIT_BUILDER_MASTER;
     g_testToResultsMap[test] = [createResultsObjectForTest(test, builderName)];
 
-    equal(htmlForIndividualTestOnAllBuildersWithChrome(test),
+    equal(htmlForIndividualTestOnAllBuildersWithResultsLinks(test),
         '<table class=test-table><thead><tr>' +
                 '<th sortValue=test><div class=table-header-content><span></span><span class=header-text>test</span></div></th>' +
                 '<th sortValue=bugs><div class=table-header-content><span></span><span class=header-text>bugs</span></div></th>' +
@@ -428,25 +428,41 @@ test('HtmlForIndividualTests', 4, function() {
     var tests = [test1, test2];
     equal(htmlForIndividualTests(tests),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
-        htmlForIndividualTestOnAllBuilders(test1) + '<hr>' +
+        htmlForIndividualTestOnAllBuilders(test1) + 
+        '<div class=expectations test=foo/nonexistant.html>' +
+            '<div><span class=link onclick=\"setQueryParameter(\'showExpectations\', true)\">Show results</span> | ' +
+            '<span class=link onclick=\"setQueryParameter(\'showLargeExpectations\', true)\">Show large thumbnails</span> | ' +
+            '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b></div>' +
+        '</div>' +
+        '<hr>' +
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/bar/nonexistant.html" target="_blank">bar/nonexistant.html</a></h2>' +
-        htmlForIndividualTestOnAllBuilders(test2));
+        htmlForIndividualTestOnAllBuilders(test2) +
+        '<div class=expectations test=bar/nonexistant.html>' +
+            '<div><span class=link onclick=\"setQueryParameter(\'showExpectations\', true)\">Show results</span> | ' +
+            '<span class=link onclick=\"setQueryParameter(\'showLargeExpectations\', true)\">Show large thumbnails</span> | ' +
+            '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b></div>' +
+        '</div>');
 
     tests = [test1];
-    equal(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuilders(test1));
+    equal(htmlForIndividualTests(tests), htmlForIndividualTestOnAllBuilders(test1) +
+        '<div class=expectations test=foo/nonexistant.html>' +
+            '<div><span class=link onclick=\"setQueryParameter(\'showExpectations\', true)\">Show results</span> | ' +
+            '<span class=link onclick=\"setQueryParameter(\'showLargeExpectations\', true)\">Show large thumbnails</span> | ' +
+            '<b>Only shows actual results/diffs from the most recent *failure* on each bot.</b></div>' +
+        '</div>');
 
     g_currentState.showChrome = true;
 
     equal(htmlForIndividualTests(tests),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
-        htmlForIndividualTestOnAllBuildersWithChrome(test1));
+        htmlForIndividualTestOnAllBuildersWithResultsLinks(test1));
 
     tests = [test1, test2];
     equal(htmlForIndividualTests(tests),
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/foo/nonexistant.html" target="_blank">foo/nonexistant.html</a></h2>' +
-        htmlForIndividualTestOnAllBuildersWithChrome(test1) + '<hr>' +
+        htmlForIndividualTestOnAllBuildersWithResultsLinks(test1) + '<hr>' +
         '<h2><a href="http://trac.webkit.org/browser/trunk/LayoutTests/bar/nonexistant.html" target="_blank">bar/nonexistant.html</a></h2>' +
-        htmlForIndividualTestOnAllBuildersWithChrome(test2));
+        htmlForIndividualTestOnAllBuildersWithResultsLinks(test2));
 });
 
 test('HtmlForSingleTestRow', 1, function() {

@@ -1455,7 +1455,7 @@ function showUpdateInfoForTest(testsNeedingUpdate, keys)
     document.body.appendChild(checkboxes);
 
     var div = document.createElement('div');
-    div.innerHTML = htmlForIndividualTestOnAllBuildersWithChrome(test);
+    div.innerHTML = htmlForIndividualTestOnAllBuildersWithResultsLinks(test);
     document.body.appendChild(div);
     appendExpectations();
 }
@@ -1555,7 +1555,7 @@ function htmlForIndividualTestOnAllBuilders(test)
     return htmlForTestTable(html) + skippedBuildersHtml;
 }
 
-function htmlForIndividualTestOnAllBuildersWithChrome(test)
+function htmlForIndividualTestOnAllBuildersWithResultsLinks(test)
 {
     processTestRunsForAllBuilders();
 
@@ -2116,7 +2116,6 @@ function performChunkedAction(tests, handleChunk, onComplete, timeout, opt_index
 function htmlForIndividualTests(tests)
 {
     var testsHTML = [];
-    var htmlForTestFunction = g_currentState.showChrome ? htmlForIndividualTestOnAllBuildersWithChrome : htmlForIndividualTestOnAllBuilders;
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
         var testNameHtml = '';
@@ -2130,7 +2129,7 @@ function htmlForIndividualTests(tests)
                 testNameHtml += '<h2>' + test + '</h2>';
         }
 
-        testsHTML.push(testNameHtml + htmlForTestFunction(test));
+        testsHTML.push(testNameHtml + htmlForIndividualTestOnAllBuildersWithResultsLinks(test));
     }
     return testsHTML.join('<hr>');
 }
