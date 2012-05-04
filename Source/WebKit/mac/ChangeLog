@@ -1,3 +1,17 @@
+2012-05-04  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11312853> and https://bugs.webkit.org/show_bug.cgi?id=85635 
+        Exception in [WebFrame loadRequest:] breaks some WebKit apps
+
+        Reviewed by Alexey Proskuryakov.
+
+        Some API clients pass in nil requests or requests with nil URLs.
+        In r112571 we started rewriting these URLs resulting in an exception.
+        Since we've supported nil requests until now, we should not try to rewrite these URLs.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame loadRequest:]): Don't try to rewrite invalid URLs if they are also null.
+
 2012-05-04  Nate Chapin  <japhet@chromium.org>
 
         Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.

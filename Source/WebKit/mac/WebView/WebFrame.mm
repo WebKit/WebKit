@@ -1395,9 +1395,13 @@ static bool needsMicrosoftMessengerDOMDocumentWorkaround()
         return;
 
     ResourceRequest resourceRequest(request);
-    // Modifying the original request here breaks -[WebDataSource initialRequest], but we don't want
-    // to implement this "path as URL" quirk anywhere except for API boundary.
-    if (!resourceRequest.url().isValid())
+    
+    // Some users of WebKit API incorrectly use "file path as URL" style requests which are invalid.
+    // By re-writing those URLs here we technically break the -[WebDataSource initialRequest] API
+    // but that is necessary to implement this quirk only at the API boundary.
+    // Note that other users of WebKit API use nil requests or requests with nil URLs, so we
+    // only implement this workaround when the request had a non-nil URL.
+    if (!resourceRequest.url().isValid() && [request URL])
         resourceRequest.setURL([NSURL fileURLWithPath:[[request URL] absoluteString]]);
 
     coreFrame->loader()->load(resourceRequest, false);
