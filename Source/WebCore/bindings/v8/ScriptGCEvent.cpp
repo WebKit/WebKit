@@ -34,39 +34,38 @@
 
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"
+#include "V8Binding.h"
 
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
-typedef Vector<ScriptGCEventListener*> GCEventListeners;
-static GCEventListeners& eventListeners()
+static GCEventData& isolateGCEventData()
 {
-    DEFINE_STATIC_LOCAL(GCEventListeners, listeners, ());
-    return listeners;
+    V8BindingPerIsolateData* isolateData = V8BindingPerIsolateData::current();
+    ASSERT(isolateData);
+    return isolateData->gcEventData();
 }
-
-double ScriptGCEvent::s_startTime = 0.0;
-size_t ScriptGCEvent::s_usedHeapSize = 0;
 
 void ScriptGCEvent::addEventListener(ScriptGCEventListener* eventListener)
 {
-    ASSERT(eventListener);
-    if (eventListeners().isEmpty()) {
+    GCEventData::GCEventListeners& listeners = isolateGCEventData().listeners();
+    if (listeners.isEmpty()) {
         v8::V8::AddGCPrologueCallback(ScriptGCEvent::gcPrologueCallback);
         v8::V8::AddGCEpilogueCallback(ScriptGCEvent::gcEpilogueCallback);
     }
-    eventListeners().append(eventListener);
+    listeners.append(eventListener);
 }
 
 void ScriptGCEvent::removeEventListener(ScriptGCEventListener* eventListener)
 {
     ASSERT(eventListener);
-    ASSERT(!eventListeners().isEmpty());
-    size_t i = eventListeners().find(eventListener);
+    GCEventData::GCEventListeners& listeners = isolateGCEventData().listeners();
+    ASSERT(!listeners.isEmpty());
+    size_t i = listeners.find(eventListener);
     ASSERT(i != notFound);
-    eventListeners().remove(i);
-    if (eventListeners().isEmpty()) {
+    listeners.remove(i);
+    if (listeners.isEmpty()) {
         v8::V8::RemoveGCPrologueCallback(ScriptGCEvent::gcPrologueCallback);
         v8::V8::RemoveGCEpilogueCallback(ScriptGCEvent::gcEpilogueCallback);
     }
@@ -90,17 +89,23 @@ size_t ScriptGCEvent::getUsedHeapSize()
 
 void ScriptGCEvent::gcPrologueCallback(v8::GCType type, v8::GCCallbackFlags flags)
 {
-    s_startTime = WTF::monotonicallyIncreasingTime();
-    s_usedHeapSize = getUsedHeapSize();
+    GCEventData& gcEventData = isolateGCEventData();
+    gcEventData.startTime = WTF::monotonicallyIncreasingTime();
+    gcEventData.usedHeapSize = getUsedHeapSize();
 }
 
 void ScriptGCEvent::gcEpilogueCallback(v8::GCType type, v8::GCCallbackFlags flags)
 {
+    GCEventData& gcEventData = isolateGCEventData();
+    if (!gcEventData.usedHeapSize)
+        return;
     double endTime = WTF::monotonicallyIncreasingTime();
-    size_t collectedBytes = s_usedHeapSize - getUsedHeapSize();
-    GCEventListeners listeners(eventListeners());
-    for (GCEventListeners::iterator i = listeners.begin(); i != listeners.end(); ++i)
-        (*i)->didGC(s_startTime, endTime, collectedBytes);
+    size_t usedHeapSize = getUsedHeapSize();
+    size_t collectedBytes = usedHeapSize > gcEventData.usedHeapSize ? 0 : gcEventData.usedHeapSize - usedHeapSize;
+    GCEventData::GCEventListeners& listeners = gcEventData.listeners();
+    for (GCEventData::GCEventListeners::iterator i = listeners.begin(); i != listeners.end(); ++i)
+        (*i)->didGC(gcEventData.startTime, endTime, collectedBytes);
+    gcEventData.clear();
 }
     
 } // namespace WebCore

@@ -89,6 +89,27 @@ namespace WebCore {
         RefPtr<StringImpl> m_lastStringImpl;
     };
 
+    class ScriptGCEventListener;
+
+    class GCEventData {
+    public:
+        typedef Vector<ScriptGCEventListener*> GCEventListeners;
+
+        GCEventData() : startTime(0.0), usedHeapSize(0) { }
+        void clear()
+        {
+            startTime = 0.0;
+            usedHeapSize = 0;
+        }
+        GCEventListeners& listeners() { return m_listeners; }
+
+        double startTime;
+        size_t usedHeapSize;
+
+    private:
+        GCEventListeners m_listeners;
+    };
+
     class ConstructorMode;
 
 #ifndef NDEBUG
@@ -160,6 +181,8 @@ namespace WebCore {
         int decrementInternalScriptRecursionLevel() { return --m_internalScriptRecursionLevel; }
 #endif
 
+        GCEventData& gcEventData() { return m_gcEventData; }
+
     private:
         explicit V8BindingPerIsolateData(v8::Isolate*);
         ~V8BindingPerIsolateData();
@@ -186,6 +209,7 @@ namespace WebCore {
         GlobalHandleMap m_globalHandleMap;
         int m_internalScriptRecursionLevel;
 #endif
+        GCEventData m_gcEventData;
     };
 
     class ConstructorMode {

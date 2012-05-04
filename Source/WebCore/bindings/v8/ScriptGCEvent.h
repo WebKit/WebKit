@@ -47,9 +47,6 @@ public:
     static void removeEventListener(ScriptGCEventListener*);
     static void getHeapSize(size_t&, size_t&, size_t&);
 private:
-    static double s_startTime;
-    static size_t s_usedHeapSize;
- 
     static void gcEpilogueCallback(v8::GCType type, v8::GCCallbackFlags flags);
     static void gcPrologueCallback(v8::GCType type, v8::GCCallbackFlags flags);
     static size_t getUsedHeapSize();
