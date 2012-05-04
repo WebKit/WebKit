@@ -52,8 +52,7 @@ public:
 private:
     PageRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, Page*, InspectorPageAgent*);
 
-    virtual ScriptState* scriptStateForFrameId(const String& frameId);
-    virtual ScriptState* getDefaultInspectedState();
+    virtual ScriptState* scriptStateForEval(ErrorString*, const String* frameId);
     virtual void muteConsole();
     virtual void unmuteConsole();
     Page* m_inspectedPage;

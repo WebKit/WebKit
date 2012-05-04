@@ -52,17 +52,17 @@ PageRuntimeAgent::~PageRuntimeAgent()
 {
 }
 
-ScriptState* PageRuntimeAgent::scriptStateForFrameId(const String& frameId)
+ScriptState* PageRuntimeAgent::scriptStateForEval(ErrorString* errorString, const String* frameId)
 {
-    Frame* frame = m_pageAgent->frameForId(frameId);
-    if (!frame)
-        return 0;
-    return mainWorldScriptState(frame);
-}
+    if (!frameId)
+        return mainWorldScriptState(m_inspectedPage->mainFrame());
 
-ScriptState* PageRuntimeAgent::getDefaultInspectedState()
-{
-    return mainWorldScriptState(m_inspectedPage->mainFrame());
+    Frame* frame = m_pageAgent->frameForId(*frameId);
+    if (!frame) {
+        *errorString = "Frame with given id not found.";
+        return 0;
+    }
+    return mainWorldScriptState(frame);
 }
 
 void PageRuntimeAgent::muteConsole()

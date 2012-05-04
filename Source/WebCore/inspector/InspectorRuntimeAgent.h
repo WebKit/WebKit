@@ -88,8 +88,8 @@ public:
 
 protected:
     InspectorRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
-    virtual ScriptState* scriptStateForFrameId(const String& frameId) = 0;
-    virtual ScriptState* getDefaultInspectedState() = 0;
+    virtual ScriptState* scriptStateForEval(ErrorString*, const String* frameId) = 0;
+
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
 

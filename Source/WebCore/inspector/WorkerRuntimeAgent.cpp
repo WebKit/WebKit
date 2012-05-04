@@ -48,13 +48,12 @@ WorkerRuntimeAgent::~WorkerRuntimeAgent()
 {
 }
 
-ScriptState* WorkerRuntimeAgent::scriptStateForFrameId(const String&)
+ScriptState* WorkerRuntimeAgent::scriptStateForEval(ErrorString* error, const String* frameId)
 {
-    return 0;
-}
-
-ScriptState* WorkerRuntimeAgent::getDefaultInspectedState()
-{
+    if (frameId) {
+        *error = "Frame id is not supported for workers.";
+        return 0;
+    }
     return scriptStateFromWorkerContext(m_workerContext);
 }
 
