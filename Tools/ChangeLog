@@ -1,3 +1,15 @@
+2012-05-04  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        REGRESSION(r116008) old-run-webkit-tests broken
+        https://bugs.webkit.org/show_bug.cgi?id=85597
+
+        Reviewed by Simon Hausmann.
+
+        Reinstate libraryContainsSymbol.
+
+        * Scripts/webkitperl/features.pm:
+        (libraryContainsSymbol):
+
 2012-05-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Set WebCore imagedecoders as default and add fallback to QImageDecoder

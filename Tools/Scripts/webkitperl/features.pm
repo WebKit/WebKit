@@ -45,6 +45,26 @@ BEGIN {
    @EXPORT_OK   = ();
 }
 
+sub libraryContainsSymbol($$)
+{
+    my ($path, $symbol) = @_;
+
+    if (isCygwin() or isWindows()) {
+        # FIXME: Implement this for Windows.
+        return 0;
+    }
+
+    my $foundSymbol = 0;
+    if (-e $path) {
+        open NM, "-|", nmPath(), $path or die;
+        while (<NM>) {
+            $foundSymbol = 1 if /$symbol/; # FIXME: This should probably check for word boundaries before/after the symbol name.
+        }
+        close NM;
+    }
+    return $foundSymbol;
+}
+
 sub hasFeature($$)
 {
     my ($featureName, $path) = @_;
