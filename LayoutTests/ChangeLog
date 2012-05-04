@@ -1,3 +1,12 @@
+2012-05-04  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Unreviewed test expectations update after r116074
+
+        * platform/chromium-mac/fast/images/png-suite/test-expected.png: Added.
+        * platform/chromium-win/fast/images/png-suite/test-expected.png: Added.
+        * platform/chromium/fast/images/png-suite/test-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening, changed expectations for fast/images/png-suite/test.html from IMAGE to MISSING.
