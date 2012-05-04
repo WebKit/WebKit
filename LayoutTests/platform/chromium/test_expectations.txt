@@ -3900,10 +3900,12 @@ BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-200-refresh-2-secon
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-301.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-302.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-303.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/loading/307-after-303-after-post.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text-custom-font-load-crash.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = TIMEOUT PASS
-
+BUGWK83076 SNOWLEOPARD RELEASE : storage/read-and-write-transactions-dont-run-together.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : storage/read-transactions-running-concurrently.html = TIMEOUT PASS
 
 BUGDPRANKE MAC RELEASE : fast/loader/javascript-url-in-embed.html = TEXT PASS
 BUGDPRANKE MAC : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
