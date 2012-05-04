@@ -80,8 +80,9 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     // smaller than the layer bounds (e.g. tiled layers)
     FloatRect clipBounds = CGContextGetClipBoundingBox(context);
 
-    // The focus ring machinery needs to know the exact clip rect in a flipped, non-transformed coordinate system.
-    ThemeMac::setFocusRingClipRect(FloatRect(clipBounds.x(), layerBounds.size.height - clipBounds.maxY(), clipBounds.width(), clipBounds.height()));
+    // Set the focus ring clip rect which needs to be in base coordinates.
+    AffineTransform transform = CGContextGetCTM(context);
+    ThemeMac::setFocusRingClipRect(transform.mapRect(clipBounds));
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     __block GraphicsContext* ctx = &graphicsContext;
