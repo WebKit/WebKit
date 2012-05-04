@@ -3505,8 +3505,6 @@ BUGWK82413 MAC DEBUG : fast/filesystem/workers/async-operations.html = PASS TIME
 
 BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 
-BUGWK82507 LEOPARD SNOWLEOPARD DEBUG : media/W3C/video/events/event_order_canplay_canplaythrough.html = PASS CRASH
-
 // Needs a text rebaseline after bug 83954
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = TEXT IMAGE+TEXT
 

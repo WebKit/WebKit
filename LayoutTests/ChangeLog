@@ -1,3 +1,11 @@
+2012-05-04  Shadi Khalek  <shadi@chromium.org>
+
+        Unreviewed, test_expectations update.
+        Remove media/W3C/video/events/event_order_canplay_canplaythrough.html.
+        The crash is not happening anymore.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Suppress more Chromium Mac SL timeouts ...
