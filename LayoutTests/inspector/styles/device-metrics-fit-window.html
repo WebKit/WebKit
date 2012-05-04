@@ -1,0 +1,65 @@
+<html>
+<head>
+
+<style type="text/css" media="screen">
+body {
+    margin: 0;
+}
+
+#main {
+    width: 1024px;
+}
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function mainElement()
+{
+    return document.getElementById("main");
+}
+
+function getDimensions()
+{
+    return JSON.stringify({
+        width: document.width,
+        height: document.height,
+        mainWidth: mainElement().offsetWidth,
+        mainHeight: mainElement().offsetHeight
+    });
+}
+
+function test()
+{
+    function finalCallback(result)
+    {
+        var value = JSON.parse(result.value);
+        InspectorTest.addResult("document: " + value.width + "x" + value.height + ", #main: " + value.mainWidth + "x" + value.mainHeight);
+        InspectorTest.completeTest();
+    }
+
+    function overrideCallback()
+    {
+        InspectorTest.evaluateInPage("getDimensions()", finalCallback);
+    }
+
+    PageAgent.enable();
+    PageAgent.setDeviceMetricsOverride(1024, 768, 1, true, overrideCallback);
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that emulating device metrics with "Fit window" for a small FrameView correctly downscales page content.
+</p>
+
+<div id="main">
+123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 
+123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 
+123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 
+123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 
+123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 
+</div>
+</body>
+</html>

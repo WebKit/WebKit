@@ -1,3 +1,19 @@
+2012-05-04  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Device Metrics] With "Fit window" option on, page contents are downscaled incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=85510
+
+        Reviewed by Pavel Feldman.
+
+        Use the RenderView width rather than FrameView contents width whenever possible.
+        Drive-by: add protection from division-by-zero (for some weird rendering states).
+
+        Test: inspector/styles/device-metrics-fit-window.html
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::DeviceMetricsSupport::ensureOriginalZoomFactor):
+        (WebKit::DeviceMetricsSupport::scaledEmulatedFrameSize):
+
 2012-05-03  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Revise touchpad fling curve to use exponential curve, to improve feel and small fling performance.
