@@ -45,6 +45,8 @@ const unsigned char kMinimumIndexId = 30;
 Vector<char> encodeByte(unsigned char);
 Vector<char> maxIDBKey();
 Vector<char> minIDBKey();
+Vector<char> encodeBool(bool);
+bool decodeBool(const char* begin, const char* end);
 Vector<char> encodeInt(int64_t);
 int64_t decodeInt(const char* begin, const char* end);
 Vector<char> encodeVarInt(int64_t);
@@ -143,6 +145,16 @@ public:
 
 class ObjectStoreMetaDataKey {
 public:
+    enum MetaDataType {
+        kName = 0,
+        kKeyPath = 1,
+        kAutoIncrement = 2,
+        kEvictable = 3,
+        kLastVersion = 4,
+        kMaxIndexId = 5,
+        kHasKeyPath = 6
+    };
+
     ObjectStoreMetaDataKey();
     static const char* decode(const char* start, const char* limit, ObjectStoreMetaDataKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t metaDataType);
@@ -159,10 +171,18 @@ private:
 
 class IndexMetaDataKey {
 public:
+    enum MetaDataType {
+        kName = 0,
+        kUnique = 1,
+        kKeyPath = 2,
+        kMultiEntry = 3
+    };
+
     IndexMetaDataKey();
     static const char* decode(const char* start, const char* limit, IndexMetaDataKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, unsigned char metaDataType);
     static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId);
+    static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
     int compare(const IndexMetaDataKey& other);
     int64_t indexId() const;
     unsigned char metaDataType() const { return m_metaDataType; }

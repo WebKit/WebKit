@@ -128,6 +128,13 @@
 namespace WebCore {
 namespace IDBLevelDBCoding {
 
+#ifndef INT64_MAX
+#define INT64_MAX 0x7fffffffffffffffLL
+#endif
+#ifndef INT32_MAX
+#define INT32_MAX 0x7fffffffL
+#endif
+
 static const unsigned char kIDBKeyNullTypeByte = 0;
 static const unsigned char kIDBKeyStringTypeByte = 1;
 static const unsigned char kIDBKeyDateTypeByte = 2;
@@ -150,13 +157,8 @@ static const unsigned char kIndexFreeListTypeByte = 151;
 static const unsigned char kObjectStoreNamesTypeByte = 200;
 static const unsigned char kIndexNamesKeyTypeByte = 201;
 
-#ifndef INT64_MAX
-#define INT64_MAX 0x7fffffffffffffffLL
-#endif
-#ifndef INT32_MAX
-#define INT32_MAX 0x7fffffffL
-#endif
-
+static const int64_t kObjectMetaDataTypeMaximum = INT64_MAX;
+static const unsigned char kIndexMetaDataTypeMaximum = 255;
 
 Vector<char> encodeByte(unsigned char c)
 {
@@ -173,6 +175,19 @@ Vector<char> maxIDBKey()
 Vector<char> minIDBKey()
 {
     return encodeByte(kIDBKeyMinKeyTypeByte);
+}
+
+Vector<char> encodeBool(bool b)
+{
+    Vector<char> ret(1);
+    ret.append(b ? 1 : 0);
+    return ret;
+}
+
+bool decodeBool(const char* begin, const char* end)
+{
+    ASSERT(begin < end);
+    return *begin;
 }
 
 Vector<char> encodeInt(int64_t n)
@@ -1001,12 +1016,12 @@ Vector<char> ObjectStoreMetaDataKey::encode(int64_t databaseId, int64_t objectSt
 
 Vector<char> ObjectStoreMetaDataKey::encodeMaxKey(int64_t databaseId)
 {
-    return encode(databaseId, INT64_MAX, INT64_MAX);
+    return encode(databaseId, INT64_MAX, kObjectMetaDataTypeMaximum);
 }
 
 Vector<char> ObjectStoreMetaDataKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId)
 {
-    return encode(databaseId, objectStoreId, INT64_MAX);
+    return encode(databaseId, objectStoreId, kObjectMetaDataTypeMaximum);
 }
 
 int64_t ObjectStoreMetaDataKey::objectStoreId() const
@@ -1076,7 +1091,12 @@ Vector<char> IndexMetaDataKey::encode(int64_t databaseId, int64_t objectStoreId,
 
 Vector<char> IndexMetaDataKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId)
 {
-    return encode(databaseId, objectStoreId, INT64_MAX, 255);
+    return encode(databaseId, objectStoreId, INT64_MAX, kIndexMetaDataTypeMaximum);
+}
+
+Vector<char> IndexMetaDataKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId)
+{
+    return encode(databaseId, objectStoreId, indexId, kIndexMetaDataTypeMaximum);
 }
 
 int IndexMetaDataKey::compare(const IndexMetaDataKey& other)

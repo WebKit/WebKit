@@ -46,6 +46,23 @@ namespace WebCore {
 using namespace IDBLevelDBCoding;
 
 template <typename DBOrTransaction>
+static bool getBool(DBOrTransaction* db, const Vector<char>& key, bool& foundBool)
+{
+    Vector<char> result;
+    if (!db->get(key, result))
+        return false;
+
+    foundBool = decodeBool(result.begin(), result.end());
+    return true;
+}
+
+template <typename DBOrTransaction>
+static bool putBool(DBOrTransaction* db, const Vector<char>& key, bool value)
+{
+    return db->put(key, encodeBool(value));
+}
+
+template <typename DBOrTransaction>
 static bool getInt(DBOrTransaction* db, const Vector<char>& key, int64_t& foundInt)
 {
     Vector<char> result;
@@ -330,16 +347,20 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
         ObjectStoreMetaDataKey metaDataKey;
         p = ObjectStoreMetaDataKey::decode(p, limit, &metaDataKey);
         ASSERT(p);
-        if (metaDataKey.metaDataType()) {
+        if (metaDataKey.metaDataType() != ObjectStoreMetaDataKey::kName) {
             LOG_ERROR("Internal Indexed DB error.");
-            return;
+            // Possible stale metadata, but don't fail the load.
+            it->next();
+            continue;
         }
 
         int64_t objectStoreId = metaDataKey.objectStoreId();
+
+        // FIXME: Do this by direct key lookup rather than iteration, to simplify.
         String objectStoreName = decodeString(it->value().begin(), it->value().end());
 
         it->next();
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, 1)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kKeyPath)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
@@ -347,35 +368,33 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
         bool hasKeyPath = true;
 
         it->next();
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, 2)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kAutoIncrement)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
-        // FIXME: Add encode/decode functions for bools.
-        bool autoIncrement = *it->value().begin();
+        bool autoIncrement = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // Is evicatble.
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, 3)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kEvictable)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
 
         it->next(); // Last version.
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, 4)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kLastVersion)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
 
-        it->next(); // Maxium index id allocated.
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, 5)) {
+        it->next(); // Maximum index id allocated.
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kMaxIndexId)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
 
         it->next(); // [optional] has key path (is not null)
-        if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, 6)) {
-            // FIXME: Add encode/decode functions for bools.
-            hasKeyPath = *it->value().begin();
+        if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kHasKeyPath)) {
+            hasKeyPath = decodeBool(it->value().begin(), it->value().end());
             if (!hasKeyPath && !keyPath.isEmpty()) {
                 LOG_ERROR("Internal Indexed DB error.");
                 return;
@@ -413,13 +432,13 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
     if (objectStoreId < 0)
         return false;
 
-    const Vector<char> nameKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0);
-    const Vector<char> keyPathKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 1);
-    const Vector<char> autoIncrementKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 2);
-    const Vector<char> evictableKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 3);
-    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 4);
-    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 5);
-    const Vector<char> hasKeyPathKey  = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 6);
+    const Vector<char> nameKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kName);
+    const Vector<char> keyPathKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyPath);
+    const Vector<char> autoIncrementKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kAutoIncrement);
+    const Vector<char> evictableKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kEvictable);
+    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kLastVersion);
+    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kMaxIndexId);
+    const Vector<char> hasKeyPathKey  = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kHasKeyPath);
     const Vector<char> namesKey = ObjectStoreNamesKey::encode(databaseId, name);
 
     bool ok = putString(m_currentTransaction.get(), nameKey, name);
@@ -458,7 +477,7 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
         return false;
     }
 
-    ok = putInt(m_currentTransaction.get(), hasKeyPathKey, !keyPath.isNull());
+    ok = putBool(m_currentTransaction.get(), hasKeyPathKey, !keyPath.isNull());
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
         return false;
@@ -480,7 +499,7 @@ void IDBLevelDBBackingStore::deleteObjectStore(int64_t databaseId, int64_t objec
     ASSERT(m_currentTransaction);
 
     String objectStoreName;
-    getString(m_currentTransaction.get(), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), objectStoreName);
+    getString(m_currentTransaction.get(), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kName), objectStoreName);
 
     if (!deleteRange(m_currentTransaction.get(), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encodeMaxKey(databaseId, objectStoreId)))
         return; // FIXME: Report error.
@@ -536,7 +555,7 @@ private:
 
 static int64_t getNewVersionNumber(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
-    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 4);
+    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kLastVersion);
 
     int64_t lastVersion = -1;
     if (!getInt(transaction, lastVersionKey, lastVersion))
@@ -719,22 +738,26 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
         IndexMetaDataKey metaDataKey;
         p = IndexMetaDataKey::decode(p, limit, &metaDataKey);
         ASSERT(p);
+        if (metaDataKey.metaDataType() != IndexMetaDataKey::kName) {
+            LOG_ERROR("Internal Indexed DB error.");
+            // Possible stale metadata due to http://webkit.org/b/85557 but don't fail the load.
+            it->next();
+            continue;
+        }
 
+        // FIXME: Do this by direct key lookup rather than iteration, to simplify.
         int64_t indexId = metaDataKey.indexId();
-        ASSERT(!metaDataKey.metaDataType());
-
         String indexName = decodeString(it->value().begin(), it->value().end());
 
         it->next(); // unique flag
-        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, 1)) {
+        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::kUnique)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
-        // FIXME: Add encode/decode functions for bools.
-        bool indexUnique = *it->value().begin();
+        bool indexUnique = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // keyPath
-        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, 2)) {
+        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::kKeyPath)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
@@ -742,9 +765,8 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
 
         it->next(); // [optional] multiEntry flag
         bool indexMultiEntry = false;
-        if (checkIndexAndMetaDataKey(it.get(), stopKey, indexId, 3)) {
-            // FIXME: Add encode/decode functions for bools.
-            indexMultiEntry = *it->value().begin();
+        if (checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::kMultiEntry)) {
+            indexMultiEntry = decodeBool(it->value().begin(), it->value().end());
             it->next();
         }
 
@@ -759,7 +781,7 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
 static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
     int64_t maxIndexId = -1;
-    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 5);
+    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kMaxIndexId);
     if (!getInt(transaction, maxIndexIdKey, maxIndexId))
         maxIndexId = kMinimumIndexId;
 
@@ -779,10 +801,10 @@ bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStore
     if (indexId < 0)
         return false;
 
-    const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 0);
-    const Vector<char> uniqueKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 1);
-    const Vector<char> keyPathKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 2);
-    const Vector<char> multiEntryKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 3);
+    const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kName);
+    const Vector<char> uniqueKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kUnique);
+    const Vector<char> keyPathKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kKeyPath);
+    const Vector<char> multiEntryKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kMultiEntry);
 
     bool ok = putString(m_currentTransaction.get(), nameKey, name);
     if (!ok) {
@@ -790,7 +812,7 @@ bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStore
         return false;
     }
 
-    ok = putInt(m_currentTransaction.get(), uniqueKey, isUnique);
+    ok = putBool(m_currentTransaction.get(), uniqueKey, isUnique);
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
         return false;
@@ -802,7 +824,7 @@ bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStore
         return false;
     }
 
-    ok = putInt(m_currentTransaction.get(), multiEntryKey, isMultiEntry);
+    ok = putBool(m_currentTransaction.get(), multiEntryKey, isMultiEntry);
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
         return false;
@@ -815,19 +837,10 @@ void IDBLevelDBBackingStore::deleteIndex(int64_t databaseId, int64_t objectStore
 {
     ASSERT(m_currentTransaction);
 
-    const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 0);
-    const Vector<char> uniqueKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 1);
-    const Vector<char> keyPathKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 2);
+    const Vector<char> indexMetaDataStart = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 0);
+    const Vector<char> indexMetaDataEnd = IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
 
-    if (!m_currentTransaction->remove(nameKey)) {
-        LOG_ERROR("Internal Indexed DB error.");
-        return;
-    }
-    if (!m_currentTransaction->remove(uniqueKey)) {
-        LOG_ERROR("Internal Indexed DB error.");
-        return;
-    }
-    if (!m_currentTransaction->remove(keyPathKey)) {
+    if (!deleteRange(m_currentTransaction.get(), indexMetaDataStart, indexMetaDataEnd)) {
         LOG_ERROR("Internal Indexed DB error.");
         return;
     }
