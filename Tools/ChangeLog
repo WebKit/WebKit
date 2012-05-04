@@ -1,3 +1,24 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Frame load callbacks output is missing for redirections
+        https://bugs.webkit.org/show_bug.cgi?id=85173
+
+        Reviewed by Antonio Gomes.
+
+        Catch the new ewk_frame signals to print the expected output in case
+        of redirections, when LayoutTestController's dumpFrameLoadCallbacks()
+        returns true.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onWillSendRequest):
+        (DumpRenderTreeChrome::onFrameCreated):
+        (DumpRenderTreeChrome::onFrameRedirectForProvisionalLoad):
+        (DumpRenderTreeChrome::onFrameRedirectRequested):
+        (DumpRenderTreeChrome::onResponseReceived):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix up warning about missing GLib/Gio/GStreamer

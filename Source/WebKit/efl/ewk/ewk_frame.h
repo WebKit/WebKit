@@ -61,6 +61,8 @@
  *  - "mixedcontent,run", void: frame has loaded and run mixed content.
  *  - "navigation,first", void: first navigation was occurred.
  *  - "redirect,cancelled", void: client redirect was cancelled.
+ *  - "redirect,load,provisional", void: received server redirect for provisional load.
+ *  - "redirect,requested", const char*: url of the client redirect that will be performed.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
  *    there's a new resource request.
  *  - "resource,request,willsend", Ewk_Frame_Resource_Messages*: a resource will be requested.
@@ -135,6 +137,7 @@ typedef struct _Ewk_Frame_Resource_Response Ewk_Frame_Resource_Response;
 struct _Ewk_Frame_Resource_Response {
     const char *url; /**< url of the resource */
     int status_code; /**< http status code */
+    unsigned long identifier; /**< identifier of resource */
 };
 
 /// Creates a type name for _Ewk_Frame_Resource_Messages.

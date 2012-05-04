@@ -112,6 +112,8 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(mainFrame, "load,finished", onFrameLoadFinished, 0);
     evas_object_smart_callback_add(mainFrame, "load,error", onFrameLoadError, 0);
     evas_object_smart_callback_add(mainFrame, "redirect,cancelled", onFrameRedirectCancelled, 0);
+    evas_object_smart_callback_add(mainFrame, "redirect,load,provisional", onFrameRedirectForProvisionalLoad, 0);
+    evas_object_smart_callback_add(mainFrame, "redirect,requested", onFrameRedirectRequested, 0);
     evas_object_smart_callback_add(mainFrame, "xss,detected", onDidDetectXSS, 0);
 
     return view;
@@ -497,6 +499,8 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
     evas_object_smart_callback_add(frame, "load,finished", onFrameLoadFinished, 0);
     evas_object_smart_callback_add(frame, "load,error", onFrameLoadError, 0);
     evas_object_smart_callback_add(frame, "redirect,cancelled", onFrameRedirectCancelled, 0);
+    evas_object_smart_callback_add(frame, "redirect,load,provisional", onFrameRedirectForProvisionalLoad, 0);
+    evas_object_smart_callback_add(frame, "redirect,requested", onFrameRedirectRequested, 0);
     evas_object_smart_callback_add(frame, "xss,detected", onDidDetectXSS, 0);
 }
 
@@ -554,6 +558,24 @@ void DumpRenderTreeChrome::onFrameRedirectCancelled(void*, Evas_Object* frame, v
     }
 }
 
+void DumpRenderTreeChrome::onFrameRedirectForProvisionalLoad(void*, Evas_Object* frame, void*)
+{
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didReceiveServerRedirectForProvisionalLoadForFrame\n", frameName.utf8().data());
+    }
+}
+
+void DumpRenderTreeChrome::onFrameRedirectRequested(void*, Evas_Object* frame, void* eventInfo)
+{
+    const char* url = static_cast<const char*>(eventInfo);
+
+    if (!done && gLayoutTestController->dumpFrameLoadCallbacks()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - willPerformClientRedirectToURL: %s \n", frameName.utf8().data(), pathSuitableForTestResult(url).data());
+    }
+}
+
 void DumpRenderTreeChrome::onDidDetectXSS(void*, Evas_Object* view, void*)
 {
     if (!done && gLayoutTestController->dumpFrameLoadCallbacks())
@@ -567,7 +589,7 @@ void DumpRenderTreeChrome::onResponseReceived(void*, Evas_Object*, void* eventIn
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         CString responseDescription(descriptionSuitableForTestResult(response));
         printf("%s - didReceiveResponse %s\n",
-               pathSuitableForTestResult(response->url).data(),
+               m_dumpAssignedUrls.contains(response->identifier) ? m_dumpAssignedUrls.get(response->identifier).data() : "<unknown>",
                responseDescription.data());
     }
 }

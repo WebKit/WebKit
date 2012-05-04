@@ -1,3 +1,17 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Frame load callbacks output is missing for redirections
+        https://bugs.webkit.org/show_bug.cgi?id=85173
+
+        Reviewed by Antonio Gomes.
+
+        Update test_expectations.txt now that EFL's DumpRenderTree is
+        correctly printing frame load callbacks information in case of
+        redirections.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Gardening some failure cases on EFL port

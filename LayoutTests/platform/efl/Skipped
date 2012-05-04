@@ -265,9 +265,6 @@ fast/forms/color/input-color-onchange-event.html
 # EFL's LayoutTestController does not implement copy{Encoded,Decoded}HostName
 fast/encoding/idn-security.html
 
-# EFL's LayoutTestController does not implement dispatchPendingLoadRequests
-http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
-
 # EFL's LayoutTestController does not implement keepWebHistory
 fast/history/visited-generated-content-test.html
 fast/history/visited-link-background-color.html
@@ -572,14 +569,8 @@ printing/width-overflow.html
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
 
-# BUG: Requires willPerformClientRedirectToURL
-http/tests/loading/onload-vs-immediate-refresh.pl
-
 # BUG: Missing DRT API.
 http/tests/loading/preload-slow-loading.php
-
-# BUG: Missing resource load callback ability in DRT
-http/tests/loading/redirect-methods.html
 
 # BUG: No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
@@ -887,10 +878,6 @@ http/tests/misc/iframe-reparenting-id-collision.html
 # Test times out (via GTK+)
 # https://bugs.webkit.org/show_bug.cgi?id=61122
 http/tests/navigation/post-307-response.html
-
-# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
-# See https://bugs.webkit.org/show_bug.cgi?id=35300
-http/tests/loading/307-after-303-after-post.html
 
 # Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
 http/tests/loading/basic-auth-resend-wrong-credentials.html

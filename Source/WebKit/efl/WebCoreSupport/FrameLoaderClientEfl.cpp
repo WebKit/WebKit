@@ -197,6 +197,7 @@ void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsig
         redirectUrl = coreResponse.url().string().utf8();
         responseBuffer.url = redirectUrl.data();
         responseBuffer.status_code = coreResponse.httpStatusCode();
+        responseBuffer.identifier = identifier;
         redirectResponse = &responseBuffer;
     }
 
@@ -262,7 +263,7 @@ void FrameLoaderClientEfl::frameLoaderDestroyed()
     delete this;
 }
 
-void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long, const ResourceResponse& coreResponse)
+void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& coreResponse)
 {
     // Update our knowledge of request soup flags - some are only set
     // after the request is done.
@@ -270,7 +271,7 @@ void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, un
 
     m_response = coreResponse;
 
-    Ewk_Frame_Resource_Response response = { 0, coreResponse.httpStatusCode() };
+    Ewk_Frame_Resource_Response response = { 0, coreResponse.httpStatusCode(), identifier };
     CString url = coreResponse.url().string().utf8();
     response.url = url.data();
 
@@ -569,7 +570,7 @@ void FrameLoaderClientEfl::dispatchDidHandleOnloadEvents()
 
 void FrameLoaderClientEfl::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
-    notImplemented();
+    ewk_frame_redirect_provisional_load(m_frame);
 }
 
 void FrameLoaderClientEfl::dispatchDidCancelClientRedirect()
@@ -577,9 +578,9 @@ void FrameLoaderClientEfl::dispatchDidCancelClientRedirect()
     ewk_frame_redirect_cancelled(m_frame);
 }
 
-void FrameLoaderClientEfl::dispatchWillPerformClientRedirect(const KURL&, double, double)
+void FrameLoaderClientEfl::dispatchWillPerformClientRedirect(const KURL& url, double, double)
 {
-    notImplemented();
+    ewk_frame_redirect_requested(m_frame, url.string().utf8().data());
 }
 
 void FrameLoaderClientEfl::dispatchDidChangeLocationWithinPage()

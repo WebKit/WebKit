@@ -1226,6 +1226,33 @@ void ewk_frame_redirect_cancelled(Evas_Object* ewkFrame)
 
 /**
  * @internal
+ * Reports receipt of server redirect for provisional load.
+ *
+ * @param ewkFrame Frame.
+ *
+ * Emits signal: "redirect,load,provisional"
+ */
+void ewk_frame_redirect_provisional_load(Evas_Object* ewkFrame)
+{
+    evas_object_smart_callback_call(ewkFrame, "redirect,load,provisional", 0);
+}
+
+/**
+ * @internal
+ * Reports that a client redirect will be performed.
+ *
+ * @param ewkFrame Frame.
+ * @param url Redirection URL.
+ *
+ * Emits signal: "redirect,requested"
+ */
+void ewk_frame_redirect_requested(Evas_Object* ewkFrame, const char* url)
+{
+    evas_object_smart_callback_call(ewkFrame, "redirect,requested", (void*)url);
+}
+
+/**
+ * @internal
  * Reports a resource will be requested. User may override behavior of webkit by
  * changing values in @param request.
  *

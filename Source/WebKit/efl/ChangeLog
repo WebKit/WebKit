@@ -1,5 +1,27 @@
 2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Frame load callbacks output is missing for redirections
+        https://bugs.webkit.org/show_bug.cgi?id=85173
+
+        Reviewed by Antonio Gomes.
+
+        Add a few redirection-related signals on the ewk_frame so that EFL's
+        DumpRenderTree can print the expected output when
+        LayoutTestController's dumpFrameLoadCallbacks() returns true.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchWillPerformClientRedirect):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_redirect_provisional_load):
+        (ewk_frame_redirect_requested):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_private.h:
+
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] LayoutTestController does not support overriding WebKitLoadSiteIconsKey
         https://bugs.webkit.org/show_bug.cgi?id=85171
 

@@ -226,6 +226,8 @@ void ewk_frame_load_error(Evas_Object* ewkFrame, const char* errorDomain, int er
 void ewk_frame_load_progress_changed(Evas_Object* ewkFrame);
 
 void ewk_frame_redirect_cancelled(Evas_Object* ewkFrame);
+void ewk_frame_redirect_provisional_load(Evas_Object* ewkFrame);
+void ewk_frame_redirect_requested(Evas_Object* ewkFrame, const char* url);
 void ewk_frame_request_will_send(Evas_Object* ewkFrame, Ewk_Frame_Resource_Messages* messages);
 void ewk_frame_request_assign_identifier(Evas_Object* ewkFrame, const Ewk_Frame_Resource_Request* request);
 void ewk_frame_response_received(Evas_Object* ewkFrame, Ewk_Frame_Resource_Response* response);

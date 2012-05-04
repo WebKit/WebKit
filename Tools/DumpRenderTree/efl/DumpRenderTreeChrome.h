@@ -96,6 +96,8 @@ private:
     static void onFrameLoadFinished(void*, Evas_Object*, void*);
 
     static void onFrameRedirectCancelled(void*, Evas_Object*, void*);
+    static void onFrameRedirectForProvisionalLoad(void*, Evas_Object*, void*);
+    static void onFrameRedirectRequested(void*, Evas_Object*, void*);
 
     static void onFrameLoadError(void*, Evas_Object*, void*);
     static void onDidDetectXSS(void*, Evas_Object*, void*);
