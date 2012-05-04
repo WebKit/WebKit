@@ -1,3 +1,11 @@
+2012-05-03  Ojan Vafai  <ojan@chromium.org>
+
+        Make the table headers white-space:nowrap. This decreases the vertical size,
+        which makes for more minimal embedding in garden-o-matic.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.css:
+        (.table-header-content *):
+
 2012-05-03  Eric Seidel  <eric@webkit.org>
 
         Split build-webkit's feature option list off into its own module in preparation for autogeneration

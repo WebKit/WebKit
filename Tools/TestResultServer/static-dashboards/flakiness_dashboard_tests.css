@@ -76,7 +76,6 @@
 .table-header-content * {
     -webkit-box-flex: 1;
     cursor: pointer;
-    white-space: normal;
 }
 .results {
     cursor: pointer;
