@@ -1,5 +1,15 @@
 2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Clarify warning about missing GLib/Gio/GStreamer for media support
+
+        And only print it once.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * qmake/mkspecs/features/features.prf:
+
+2012-05-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Clean up and split features.prf into a static list of defaults
 
         The static list of feature defaults is used as a fallback for any
