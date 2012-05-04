@@ -1,3 +1,14 @@
+2012-05-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Set WebCore imagedecoders as default and add fallback to QImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=80400
+
+        Remove WTF_USE_QT_IMAGE_DECODER macro.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-05-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] DRT should obey layoutTestController's addURLToRedirect()

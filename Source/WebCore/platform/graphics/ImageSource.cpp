@@ -29,11 +29,7 @@
 #include "config.h"
 #include "ImageSource.h"
 
-#if PLATFORM(QT)
-#include "ImageDecoderQt.h"
-#else
 #include "ImageDecoder.h"
-#endif
 
 #include "ImageOrientation.h"
 #include "NotImplemented.h"

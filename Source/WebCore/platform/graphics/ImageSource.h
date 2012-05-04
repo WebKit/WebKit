@@ -75,10 +75,6 @@ class ImageDecoder;
 class TiledImageOpenVG;
 typedef ImageDecoder* NativeImageSourcePtr;
 typedef TiledImageOpenVG* NativeImagePtr;
-#elif PLATFORM(QT)
-class ImageDecoderQt;
-typedef ImageDecoderQt* NativeImageSourcePtr;
-typedef QPixmap* NativeImagePtr;
 #else
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;
@@ -98,6 +94,8 @@ typedef RefPtr<SharedBitmap> NativeImagePtr;
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;
 typedef void* NativeImagePtr;
+#elif PLATFORM(QT)
+typedef QPixmap* NativeImagePtr;
 #endif
 #endif
 

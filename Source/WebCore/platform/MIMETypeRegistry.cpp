@@ -39,9 +39,9 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/RetainPtr.h>
 #endif
-#if PLATFORM(QT) && USE(QT_IMAGE_DECODER)
-#include <qimagereader.h>
-#include <qimagewriter.h>
+#if PLATFORM(QT)
+#include <QImageReader>
+#include <QImageWriter>
 #endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -227,22 +227,6 @@ static void initializeSupportedImageMIMETypes()
     supportedImageMIMETypes->remove("application/pdf");
     supportedImageMIMETypes->remove("application/postscript");
 
-#elif PLATFORM(QT) && USE(QT_IMAGE_DECODER)
-    QList<QByteArray> formats = QImageReader::supportedImageFormats();
-    for (size_t i = 0; i < static_cast<size_t>(formats.size()); ++i) {
-#if ENABLE(SVG)
-        /*
-         * Qt has support for SVG, but we want to use KSVG2
-         */
-        if (formats.at(i).toLower().startsWith("svg"))
-            continue;
-#endif
-        String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
-        if (!mimeType.isEmpty()) {
-            supportedImageMIMETypes->add(mimeType);
-            supportedImageResourceMIMETypes->add(mimeType);
-        }
-    }
 #else
     // assume that all implementations at least support the following standard
     // image types:
@@ -259,6 +243,21 @@ static void initializeSupportedImageMIMETypes()
         supportedImageMIMETypes->add(types[i]);
         supportedImageResourceMIMETypes->add(types[i]);
     }
+#if PLATFORM(QT)
+    QList<QByteArray> formats = QImageReader::supportedImageFormats();
+    for (size_t i = 0; i < static_cast<size_t>(formats.size()); ++i) {
+#if ENABLE(SVG)
+        // Qt has support for SVG, but we want to use KSVG2
+        if (formats.at(i).toLower().startsWith("svg"))
+            continue;
+#endif // ENABLE(SVG)
+        String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
+        if (!mimeType.isEmpty()) {
+            supportedImageMIMETypes->add(mimeType);
+            supportedImageResourceMIMETypes->add(mimeType);
+        }
+    }
+#endif // PLATFORM(QT)
 #if PLATFORM(BLACKBERRY)
     supportedImageMIMETypes->add("image/pjpeg");
     supportedImageResourceMIMETypes->add("image/pjpeg");
@@ -287,14 +286,14 @@ static void initializeSupportedImageMIMETypesForEncoding()
     supportedImageMIMETypesForEncoding->add("image/jpeg");
     supportedImageMIMETypesForEncoding->add("image/gif");
 #endif
-#elif PLATFORM(QT) && USE(QT_IMAGE_DECODER)
+#elif PLATFORM(QT)
     QList<QByteArray> formats = QImageWriter::supportedImageFormats();
     for (int i = 0; i < formats.size(); ++i) {
         String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());
         if (!mimeType.isEmpty())
             supportedImageMIMETypesForEncoding->add(mimeType);
     }
-#elif PLATFORM(GTK) || (PLATFORM(QT) && !USE(QT_IMAGE_DECODER))
+#elif PLATFORM(GTK)
     supportedImageMIMETypesForEncoding->add("image/png");
     supportedImageMIMETypesForEncoding->add("image/jpeg");
     supportedImageMIMETypesForEncoding->add("image/tiff");

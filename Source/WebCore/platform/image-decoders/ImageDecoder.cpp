@@ -20,21 +20,23 @@
  */
 
 #include "config.h"
-
 #include "ImageDecoder.h"
-
-#include <algorithm>
-#include <cmath>
 
 #include "BMPImageDecoder.h"
 #include "GIFImageDecoder.h"
 #include "ICOImageDecoder.h"
+#if PLATFORM(QT)
+#include "ImageDecoderQt.h"
+#endif
 #include "JPEGImageDecoder.h"
 #include "PNGImageDecoder.h"
+#include "SharedBuffer.h"
 #if USE(WEBP)
 #include "WEBPImageDecoder.h"
 #endif
-#include "SharedBuffer.h"
+
+#include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -124,6 +126,9 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaO
     if (matchesICOSignature(contents) || matchesCURSignature(contents))
         return new ICOImageDecoder(alphaOption, gammaAndColorProfileOption);
 
+#if PLATFORM(QT)
+    return new ImageDecoderQt(alphaOption, gammaAndColorProfileOption);
+#endif
     return 0;
 }
 

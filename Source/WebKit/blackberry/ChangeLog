@@ -1,3 +1,14 @@
+2012-05-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Set WebCore imagedecoders as default and add fallback to QImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=80400
+
+        Get rid off QT_IMAGE_DECODER flag.
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2012-05-03  Fady Samuel  <fsamuel@chromium.org>
 
         Removing line in computeViewportAttributes that enforces a minimum scale factor to never allow zooming out more than viewport
