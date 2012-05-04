@@ -1,3 +1,11 @@
+2012-05-04  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, build fix.
+        Move Chromium-specific test into platform/chromium.
+
+        * platform/chromium/inspector/styles/device-metrics-fit-window-expected.txt: Renamed from LayoutTests/inspector/styles/device-metrics-fit-window-expected.txt.
+        * platform/chromium/inspector/styles/device-metrics-fit-window.html: Renamed from LayoutTests/inspector/styles/device-metrics-fit-window.html.
+
 2012-05-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make PeerConnection00's API fully compliant with the draft
