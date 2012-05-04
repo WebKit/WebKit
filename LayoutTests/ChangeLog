@@ -1,3 +1,9 @@
+2012-05-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed gardening, eval-blocked-in-about-blank-iframe.html: SLOW -> TIMEOUT
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update expected files.
