@@ -3509,7 +3509,8 @@ BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = TEXT IMAGE
 BUGRNIWA MAC : editing/pasteboard/emacs-cntl-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
-BUGRNIWA MAC : editing/input/emacs-ctrl-o.html = PASS FAIL
+BUGRNIWA LION LEOPARD : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
+BUGRNIWA SNOWLEOPARD DEBUG : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
 
 // These tests rely on specific details of decompilation of
 // functions. V8 always returns the source code as written; there's
@@ -3887,3 +3888,39 @@ BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 WIN LINUX: fast/css/border-solid-single-edge-antialias.html = IMAGE
 
 BUGWK85553 DEBUG : http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html = TIMEOUT
+
+BUGWK83076 SNOWLEOPARD RELEASE : compositing/geometry/outline-change.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-161.xml = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-166.xml = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : css3/selectors3/xml/css3-modsel-166a.xml = TIMEOUT PASS
+
+BUGWK83076 SNOWLEOPARD RELEASE : editing/deleting/delete-3857753-fix.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/deleting/delete-3865854-fix.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/deleting/delete-3928305-fix.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4747450.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4786404-1.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4786404-2.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/4916235.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/caret-at-the-edge-of-input.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/format-block-with-trailing-br.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/format-block-without-body-crash.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/format-block.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/forward-delete-no-scroll.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/execCommand/hilitecolor.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/emacs-ctrl-o.html = TIMEOUT IMAGE+TEXT
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/div-first-child-rule-input.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/div-first-child-rule-textarea.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/ime-composition-clearpreedit.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/insert-wrapping-space-in-textarea.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/option-page-up-down.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/input/page-up-down-scrolls.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/inserting/12882.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : editing/inserting/4278698.html = TIMEOUT PASS
+
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/back-with-fragment-change.php = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/cross-origin-replace-history-object.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/history-navigations-set-referrer.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/popstate-fires-with-pending-requests.html = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-200-refresh-0-seconds.pl = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-200-refresh-2-seconds.pl = TIMEOUT PASS
+BUGWK83076 SNOWLEOPARD RELEASE : http/tests/history/redirect-301.html = TIMEOUT PASS
