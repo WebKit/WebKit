@@ -1,3 +1,12 @@
+2012-05-04  Daniel Mustieles  <daniel.mustieles@gmail.com>
+
+        Updated Spanish translation
+        https://bugs.webkit.org/show_bug.cgi?id=83995
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * es.po:
+
 2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
