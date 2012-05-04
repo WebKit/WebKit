@@ -36,7 +36,7 @@ BUGWK84333 : fast/events/drop-with-file-paths.html = TEXT
 BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
 
 // LayoutTestController.pathToLocalResource needs special handling of file URLs to /tmp.
-BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT
+BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT TEXT
 
 // Missing execCommand('copy') and execCommand('paste').
 BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TIMEOUT
@@ -62,7 +62,7 @@ BUGWKEFL SKIP : storage/storageinfo-no-callbacks.html = FAIL
 BUGWKEFL SKIP : storage/storageinfo-query-usage.html = FAIL
 BUGWKEFL SKIP : storage/storageinfo-request-quota.html = FAIL
 
-BUGWK59801 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH
+BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = TEXT TIMEOUT PASS
 
 // EFL's LayoutTestController does not implement originsWithLocalStorage.
 BUGWKEFL SKIP : storage/domstorage/localstorage/storagetracker = FAIL
@@ -190,6 +190,7 @@ BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
 // Turn on blob support for the EFL port.
 BUGWK85363 : fast/dom/DOMURL/check-instanceof-domurl-functions.html = TEXT
 BUGWK85363 : fast/dom/call-a-constructor-as-a-function.html = TEXT
+BUGWK85363 : fast/dom/constructed-objects-prototypes.html = TEXT
 
 // Expose title direction in WebKit API
 BUGWK58845 : fast/dom/title-directionality.html = FAIL
@@ -286,3 +287,10 @@ BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 
 // Issue with SVG hittesting on strokes, fails on GTK as well.
 BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
+
+// Issue related to battery status and vibration API
+BUGWK85594 : fast/dom/navigator-detached-no-crash.html = TEXT
+
+// Incorrect rendering results after r115846
+BUGWK85599 : http/tests/navigation/postredirect-basic.html = TEXT
+BUGWK85599 : http/tests/navigation/postredirect-goback1.html = TEXT

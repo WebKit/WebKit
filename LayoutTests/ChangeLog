@@ -1,3 +1,15 @@
+2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Gardening some failure cases on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=85605
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/fast/canvas/fillText-shadow-expected.txt: Added.
+        * platform/efl/fast/dom/Window/window-lookup-precedence-expected.txt: Added.
+        * platform/efl/fast/dom/Window/window-properties-performance-expected.txt: Added.
+        * platform/efl/test_expectations.txt:
+
 2012-05-04  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Device Metrics] With "Fit window" option on, page contents are downscaled incorrectly
