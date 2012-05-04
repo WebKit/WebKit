@@ -27,7 +27,7 @@ function cursorWithKeySuccess()
     debug("Cursor opened successfully.");
     // FIXME: check that we can iterate the cursor.
     cursor = event.target.result;
-    shouldBe("cursor.direction", "'next'");
+    shouldBe("cursor.direction", "0");
     shouldBe("cursor.key", "'myKey'");
     shouldBe("cursor.value", "'myValue'");
     debug("");
@@ -67,7 +67,7 @@ function cursorSuccess()
     debug("Cursor opened successfully.");
     // FIXME: check that we can iterate the cursor.
     cursor = event.target.result;
-    shouldBe("cursor.direction", "'next'");
+    shouldBe("cursor.direction", "0");
     shouldBe("cursor.key", "'myKey'");
     shouldBe("cursor.value", "'myValue'");
     debug("");

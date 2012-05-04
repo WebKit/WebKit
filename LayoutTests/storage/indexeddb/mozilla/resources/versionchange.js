@@ -64,7 +64,7 @@ function openSuccess2()
 function postSetVersion()
 {
     shouldBe("event.target.result", "event.target.transaction");
-    shouldBe("event.target.transaction.mode", "'versionchange'");
+    shouldBe("event.target.transaction.mode", "IDBTransaction.VERSION_CHANGE");
     shouldBe("db2.version", "'1'");
 
     request = evalAndLog("request = indexedDB.open(name, description);");
@@ -92,7 +92,7 @@ function openSuccess3()
 function postSetVersion2()
 {
     shouldBe("event.target.result", "event.target.transaction");
-    shouldBe("event.target.transaction.mode", "'versionchange'");
+    shouldBe("event.target.transaction.mode", "IDBTransaction.VERSION_CHANGE");
     shouldBe("db3.version", "'2'");
     shouldBe("versionChangeEventCount", "3");
     finishJSTest();

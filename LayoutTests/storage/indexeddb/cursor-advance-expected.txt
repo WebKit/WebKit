@@ -33,130 +33,130 @@ testAll()
 testSimple()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor()
+request = store.openCursor(null, null)
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
+PASS '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}' is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
 testContinueThenAdvance()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor()
+request = store.openCursor(null, null)
 cursor.continue();
 cursor.continue();
 cursor.continue();
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7736","value":{"name":"Joe","height":65,"weight":150},"primaryKey":"237-23-7736"}'
+PASS '{"key":"237-23-7736","value":{"name":"Joe","height":65,"weight":150},"primaryKey":"237-23-7736"}' is '{"key":"237-23-7736","value":{"name":"Joe","height":65,"weight":150},"primaryKey":"237-23-7736"}'
 testAdvanceMultiple()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor()
+request = store.openCursor(null, null)
 cursor.advance(3)
-PASS expected is '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
+PASS '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}' is '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
 testAdvanceIndex()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor()
+request = store.openCursor(null, null)
 cursor.advance(3)
-PASS expected is '{"key":"Jef","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}'
+PASS '{"key":"Jef","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}' is '{"key":"Jef","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}'
 testAdvanceIndexNoDupe()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor(null, 'nextunique')
+request = store.openCursor(null, 1)
 cursor.advance(3)
-PASS expected is '{"key":130,"value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
+PASS '{"key":130,"value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}' is '{"key":130,"value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
 testAdvanceIndexPrev()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor(null, 'prev')
+request = store.openCursor(null, 2)
 cursor.advance(3)
-PASS expected is '{"key":150,"value":{"name":"Joe","height":65,"weight":150},"primaryKey":"237-23-7736"}'
+PASS '{"key":150,"value":{"name":"Joe","height":65,"weight":150},"primaryKey":"237-23-7736"}' is '{"key":150,"value":{"name":"Joe","height":65,"weight":150},"primaryKey":"237-23-7736"}'
 testAdvanceIndexPrevNoDupe()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor(null, 'prevunique')
+request = store.openCursor(null, 3)
 cursor.advance(3)
-PASS expected is '{"key":120,"value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
+PASS '{"key":120,"value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}' is '{"key":120,"value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
 testAdvanceToEnd()
 trans = db.transaction(objectStoreName)
 store = trans.objectStore(objectStoreName)
-request = store.openCursor()
+request = store.openCursor(null, null)
 cursor.advance(100)
-PASS expected is 'null'
+PASS 'null' is 'null'
 testPrefetchInRange()
 trans = db.transaction(objectStoreName)
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
-PASS expected is '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
+PASS '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}' is '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
+PASS '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}' is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}'
+PASS '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}' is '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
+PASS '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}' is '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
 cursor.advance(2)
-PASS expected is '{"key":"237-23-7737","value":{"name":"Pat","height":65,"weight":100},"primaryKey":"237-23-7737"}'
+PASS '{"key":"237-23-7737","value":{"name":"Pat","height":65,"weight":100},"primaryKey":"237-23-7737"}' is '{"key":"237-23-7737","value":{"name":"Pat","height":65,"weight":100},"primaryKey":"237-23-7737"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7738","value":{"name":"Leo","height":65,"weight":180},"primaryKey":"237-23-7738"}'
+PASS '{"key":"237-23-7738","value":{"name":"Leo","height":65,"weight":180},"primaryKey":"237-23-7738"}' is '{"key":"237-23-7738","value":{"name":"Leo","height":65,"weight":180},"primaryKey":"237-23-7738"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7739","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}'
+PASS '{"key":"237-23-7739","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}' is '{"key":"237-23-7739","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7740","value":{"name":"Sam","height":71,"weight":110},"primaryKey":"237-23-7740"}'
+PASS '{"key":"237-23-7740","value":{"name":"Sam","height":71,"weight":110},"primaryKey":"237-23-7740"}' is '{"key":"237-23-7740","value":{"name":"Sam","height":71,"weight":110},"primaryKey":"237-23-7740"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7741","value":{"name":"Bug","height":63,"weight":100},"primaryKey":"237-23-7741"}'
+PASS '{"key":"237-23-7741","value":{"name":"Bug","height":63,"weight":100},"primaryKey":"237-23-7741"}' is '{"key":"237-23-7741","value":{"name":"Bug","height":63,"weight":100},"primaryKey":"237-23-7741"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}'
+PASS '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}' is '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}'
+PASS '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}' is '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}'
+PASS '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}' is '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}'
 cursor.continue()
 testPrefetchOutOfRange()
 trans = db.transaction(objectStoreName)
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
-PASS expected is '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
+PASS '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}' is '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
+PASS '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}' is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}'
+PASS '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}' is '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
+PASS '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}' is '{"key":"237-23-7735","value":{"name":"Sue","height":58,"weight":130},"primaryKey":"237-23-7735"}'
 cursor.advance(7)
-PASS expected is '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}'
+PASS '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}' is '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}'
+PASS '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}' is '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}'
 cursor.continue()
-PASS expected is '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}'
+PASS '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}' is '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}'
 cursor.continue()
 testBadAdvance()
-trans = db.transaction(objectStoreName, 'readwrite')
+trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
 Expecting exception from cursor.advance(0)
 PASS Exception was thrown.
 PASS code is DOMException.TYPE_MISMATCH_ERR
 testDelete()
-trans = db.transaction(objectStoreName, 'readwrite')
+trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
-PASS expected is '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
+PASS '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}' is '{"key":"237-23-7732","value":{"name":"Bob","height":60,"weight":120},"primaryKey":"237-23-7732"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
+PASS '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}' is '{"key":"237-23-7733","value":{"name":"Ann","height":52,"weight":110},"primaryKey":"237-23-7733"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}'
+PASS '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}' is '{"key":"237-23-7734","value":{"name":"Ron","height":73,"weight":180},"primaryKey":"237-23-7734"}'
 cursor.delete()
-PASS expected is '{"key":"237-23-7738","value":{"name":"Leo","height":65,"weight":180},"primaryKey":"237-23-7738"}'
+PASS '{"key":"237-23-7738","value":{"name":"Leo","height":65,"weight":180},"primaryKey":"237-23-7738"}' is '{"key":"237-23-7738","value":{"name":"Leo","height":65,"weight":180},"primaryKey":"237-23-7738"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7739","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}'
+PASS '{"key":"237-23-7739","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}' is '{"key":"237-23-7739","value":{"name":"Jef","height":65,"weight":120},"primaryKey":"237-23-7739"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7740","value":{"name":"Sam","height":71,"weight":110},"primaryKey":"237-23-7740"}'
+PASS '{"key":"237-23-7740","value":{"name":"Sam","height":71,"weight":110},"primaryKey":"237-23-7740"}' is '{"key":"237-23-7740","value":{"name":"Sam","height":71,"weight":110},"primaryKey":"237-23-7740"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7741","value":{"name":"Bug","height":63,"weight":100},"primaryKey":"237-23-7741"}'
+PASS '{"key":"237-23-7741","value":{"name":"Bug","height":63,"weight":100},"primaryKey":"237-23-7741"}' is '{"key":"237-23-7741","value":{"name":"Bug","height":63,"weight":100},"primaryKey":"237-23-7741"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}'
+PASS '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}' is '{"key":"237-23-7742","value":{"name":"Tub","height":69,"weight":180},"primaryKey":"237-23-7742"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}'
+PASS '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}' is '{"key":"237-23-7743","value":{"name":"Rug","height":77,"weight":120},"primaryKey":"237-23-7743"}'
 cursor.advance(1)
-PASS expected is '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}'
+PASS '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}' is '{"key":"237-23-7744","value":{"name":"Pug","height":66,"weight":110},"primaryKey":"237-23-7744"}'
 cursor.advance(1)
 PASS successfullyParsed is true
 

@@ -20,11 +20,13 @@ function test()
     shouldBeTrue("'transaction' in request");
     shouldBeNull("request.transaction");
     shouldBeTrue("'readyState' in request");
-    shouldBe("request.readyState", "'pending'");
+    shouldBe("request.readyState", "IDBRequest.LOADING");
     shouldBeTrue("'onsuccess' in request");
     shouldBeNull("request.onsuccess");
     shouldBeTrue("'onerror' in request");
     shouldBeNull("request.onerror");
+    shouldBe("request.LOADING", "1");
+    shouldBe("request.DONE", "2");
     request.onsuccess = openCallback;
     request.onerror = unexpectedErrorCallback;
 }
@@ -43,9 +45,11 @@ function openCallback(evt)
     shouldBeTrue("'transaction' in event.target");
     shouldBeNull("event.target.transaction");
     shouldBeTrue("'readyState' in request");
-    shouldBe("event.target.readyState", "'done'");
+    shouldBe("event.target.readyState", "IDBRequest.DONE");
     shouldBeTrue("'onsuccess' in event.target");
     shouldBeTrue("'onerror' in event.target");
+    shouldBe("event.target.LOADING", "1");
+    shouldBe("event.target.DONE", "2");
 
     finishJSTest();
 }

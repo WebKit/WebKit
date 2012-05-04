@@ -54,7 +54,7 @@ function setupObjectStore()
 function addRecord()
 {
     debug("addRecord():");
-    objectStore = evalAndLog("objectStore = db.transaction('foo', 'readwrite').objectStore('foo');");
+    objectStore = evalAndLog("objectStore = db.transaction('foo', IDBTransaction.READ_WRITE).objectStore('foo');");
     data = evalAndLog("data = { key: 5, index: 10 };");
     request = evalAndLog("request = objectStore.add(data);");
     request.onsuccess = addSuccess;
@@ -102,7 +102,7 @@ function checkRetrievedKey()
 function deleteRecord()
 {
     debug("deleteRecord():");
-    objectStore = evalAndLog("objectStore = db.transaction('foo', 'readwrite').objectStore('foo');");
+    objectStore = evalAndLog("objectStore = db.transaction('foo', IDBTransaction.READ_WRITE).objectStore('foo');");
     request = evalAndLog("request = objectStore.delete(data.key);");
     request.onsuccess = deleteSuccess;
     request.onerror = unexpectedErrorCallback;

@@ -37,7 +37,7 @@ function setVersionSuccess()
 function click() 
 {
     body.onclick = test;
-    var pendingTransaction = evalAndLog("pendingTransaction = db.transaction(['objectStore'], 'readwrite')");
+    var pendingTransaction = evalAndLog("pendingTransaction = db.transaction(['objectStore'], IDBTransaction.READ_WRITE)");
     pendingTransaction.onsuccess = unexpectedErrorCallback;
     pendingTransaction.onerror = unexpectedErrorCallback;
     pendingTransaction.onabort = abortCallback;
@@ -52,7 +52,7 @@ function click()
 function test()
 {
     debug("Start re-entrant JS");
-    transaction = evalAndLog("transaction = db.transaction(['objectStore'], 'readwrite')");
+    transaction = evalAndLog("transaction = db.transaction(['objectStore'], IDBTransaction.READ_WRITE)");
     debug("End re-entrant JS");
 }
 

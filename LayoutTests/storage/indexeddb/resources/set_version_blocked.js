@@ -40,7 +40,7 @@ function blocked()
     evalAndLog("seen_blocked_event = true");
     blocked_event = event;
     shouldBeEqualToString("blocked_event.version", "version 1");
-    shouldEvaluateTo("blocked_event.target.readyState", "'pending'");
+    shouldEvaluateTo("blocked_event.target.readyState", 1);
     evalAndLog("connections[1].close()");
 }
 

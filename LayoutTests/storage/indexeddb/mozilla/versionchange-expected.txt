@@ -20,7 +20,7 @@ close db1 now so versionchange doesn't trigger on db1 again when we call db3.set
 db1.close();
 PASS db2 received blocked event
 PASS event.target.result is event.target.transaction
-PASS event.target.transaction.mode is 'versionchange'
+PASS event.target.transaction.mode is IDBTransaction.VERSION_CHANGE
 PASS db2.version is '1'
 request = indexedDB.open(name, description);
 db3 = event.target.result;
@@ -37,7 +37,7 @@ PASS event.version is '2'
 close db2 now so onsuccess will be called
 db2.close();
 PASS event.target.result is event.target.transaction
-PASS event.target.transaction.mode is 'versionchange'
+PASS event.target.transaction.mode is IDBTransaction.VERSION_CHANGE
 PASS db3.version is '2'
 PASS versionChangeEventCount is 3
 PASS successfullyParsed is true

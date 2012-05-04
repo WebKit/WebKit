@@ -66,7 +66,7 @@ function runTests()
         var test = tests.shift();
         if (test) {
             debug("");
-            evalAndLog("trans = db.transaction('store', 'readwrite')");
+            evalAndLog("trans = db.transaction('store', IDBTransaction.READ_WRITE)");
             evalAndLog("store = trans.objectStore('store')");
             for (i = 1; i <= 10; ++i) {
                 evalAndLog("store.put(" + i + "," + i + ")");

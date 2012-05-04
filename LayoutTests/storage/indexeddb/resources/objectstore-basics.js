@@ -149,7 +149,7 @@ var testDateB = new Date("Wed Jan 05 2011 15:54:49");
 
 function addData()
 {
-    var transaction = evalAndLog("transaction = db.transaction(['storeName'], 'readwrite')");
+    var transaction = evalAndLog("transaction = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedAbortCallback;
     self.store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -200,20 +200,20 @@ function addAgainFailure(evt)
 
     evalAndLog("event.preventDefault()");
 
-    transaction = evalAndLog("db.transaction(['storeName'], 'readwrite')");
+    transaction = evalAndLog("db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
     evalAndLog("store.add({x: 'somevalue'}, 'somekey')");
     evalAndExpectException("store.add({x: 'othervalue'}, null)", "IDBDatabaseException.DATA_ERR");
 
-    transaction = evalAndLog("db.transaction(['storeName'], 'readwrite')");
+    transaction = evalAndLog("db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
     evalAndExpectException("store.add({x: null}, 'validkey')", "IDBDatabaseException.DATA_ERR");
 
-    transaction = evalAndLog("db.transaction(['storeName'], 'readwrite')");
+    transaction = evalAndLog("db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 

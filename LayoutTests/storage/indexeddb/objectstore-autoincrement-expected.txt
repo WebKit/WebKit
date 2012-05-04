@@ -26,7 +26,7 @@ PASS storeNames.contains('StoreWithAutoIncrement') is true
 PASS storeNames.contains('PlainOldStore') is true
 PASS storeNames.length is 4
 setVersionCompleted():
-trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], 'readwrite')
+trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], IDBTransaction.READ_WRITE)
 store = trans.objectStore('StoreWithKeyPath')
 Insert into object store with auto increment and key path, with key in the object.
 store.add({name: 'Jeffersson', number: '7010', id: 3})
@@ -66,7 +66,7 @@ store.add({name: 'Adam'}, 1)
 addAdamSuccess():
 PASS event.target.result is 1
 testLongKeyPath():
-trans = db.transaction('StoreWithLongKeyPath', 'readwrite')
+trans = db.transaction('StoreWithLongKeyPath', IDBTransaction.READ_WRITE)
 store = trans.objectStore('StoreWithLongKeyPath')
 store.add({foo: 'bar'})
 store.add({foo: 'bar', a: {}})

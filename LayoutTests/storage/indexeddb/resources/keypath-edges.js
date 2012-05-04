@@ -39,7 +39,7 @@ function testKeyPaths()
     debug("");
     debug("testKeyPaths():");
 
-    transaction = evalAndLog("transaction = db.transaction(['store-with-path'], 'readwrite')");
+    transaction = evalAndLog("transaction = db.transaction(['store-with-path'], IDBTransaction.READ_WRITE)");
     store = evalAndLog("store = transaction.objectStore('store-with-path')");
 
     debug("");
@@ -71,7 +71,7 @@ function testKeyPathsAndGenerator()
     debug("");
     debug("testKeyPathsAndGenerator():");
 
-    transaction = evalAndLog("transaction = db.transaction(['store-with-path-and-generator'], 'readwrite')");
+    transaction = evalAndLog("transaction = db.transaction(['store-with-path-and-generator'], IDBTransaction.READ_WRITE)");
     store = evalAndLog("store = transaction.objectStore('store-with-path-and-generator')");
 
     debug("");

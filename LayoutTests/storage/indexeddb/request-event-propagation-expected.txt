@@ -16,7 +16,7 @@ Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
 Verify that handler fires and that not preventing default will result in an abort
-trans = db.transaction(['storeName'], 'readwrite')
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted
 trans.oncomplete = unexpectedCompleteCallback
 trans.onerror = allowDefault
@@ -27,7 +27,7 @@ Doing nothing to prevent the default action...
 PASS handlerFired is true
 
 Verifing error
-trans = db.transaction(['storeName'], 'readwrite')
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted2
 trans.oncomplete = unexpectedAbortCallback
 trans.addEventListener('error', errorCaptureCallback, true)
@@ -94,7 +94,7 @@ PASS bubbleFired is true
 PASS dbBubbleFired is true
 
 Verifing success.
-trans = db.transaction(['storeName'], 'readwrite')
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.oncomplete = transactionComplete
 trans.onabort = unexpectedAbortCallback
 trans.addEventListener('success', successCaptureCallback, true)

@@ -32,7 +32,7 @@ objectStore.add({'x': testData[nextToAdd]}, nextToAdd)
 objectStore.add({'x': testData[nextToAdd]}, nextToAdd)
 objectStore.add({'x': testData[nextToAdd]}, nextToAdd)
 
-indexObject.openKeyCursor(null, 'next')
+indexObject.openKeyCursor(null, IDBCursor.NEXT)
 PASS event.target.result.primaryKey is 0
 event.target.result.continue(3.14159)
 PASS event.target.result.primaryKey is 3
@@ -57,7 +57,7 @@ PASS event.target.result.primaryKey is 17
 event.target.result.continue()
 PASS event.target.result is null
 
-indexObject.openKeyCursor(null, 'prev')
+indexObject.openKeyCursor(null, IDBCursor.PREV)
 PASS event.target.result.primaryKey is 17
 event.target.result.continue('A bit2')
 PASS event.target.result.primaryKey is 15
@@ -76,7 +76,7 @@ PASS event.target.result.primaryKey is 0
 event.target.result.continue()
 PASS event.target.result is null
 
-indexObject.openKeyCursor(null, 'next')
+indexObject.openKeyCursor(null, IDBCursor.NEXT)
 PASS event.target.result.primaryKey is 0
 event.target.result.continue(3.14159)
 PASS event.target.result.primaryKey is 3
@@ -84,7 +84,7 @@ Expecting exception from event.target.result.continue(1)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
-indexObject.openKeyCursor(null, 'next')
+indexObject.openKeyCursor(null, IDBCursor.NEXT)
 PASS event.target.result.primaryKey is 0
 event.target.result.continue(3.14159)
 PASS event.target.result.primaryKey is 3
@@ -92,7 +92,7 @@ Expecting exception from event.target.result.continue(3.14159)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
-indexObject.openKeyCursor(null, 'prev')
+indexObject.openKeyCursor(null, IDBCursor.PREV)
 PASS event.target.result.primaryKey is 17
 event.target.result.continue('A bit2')
 PASS event.target.result.primaryKey is 15
@@ -100,7 +100,7 @@ Expecting exception from event.target.result.continue('A bit3')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
-indexObject.openKeyCursor(null, 'prev')
+indexObject.openKeyCursor(null, IDBCursor.PREV)
 PASS event.target.result.primaryKey is 17
 event.target.result.continue('A bit2')
 PASS event.target.result.primaryKey is 15

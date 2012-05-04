@@ -431,7 +431,7 @@ request = objectStore.get(sortedKeys[4]);
 PASS event.target.result is 'bar'
 request = objectStore.put('foo', sortedKeys[4]);
 keyIndex = 0;
-request = objectStore.openCursor(null, 'next');
+request = objectStore.openCursor(null, IDBCursor.NEXT);
 cursor = event.target.result;
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]
@@ -501,7 +501,7 @@ PASS gotRemoveEvent is true
 request = objectStore.get(sortedKeys[4]);
 PASS event.target.result is undefined
 request = objectStore.add('foo', sortedKeys[4]);
-request = objectStore.openCursor(null, 'prev');
+request = objectStore.openCursor(null, IDBCursor.PREV);
 cursor = event.target.result;
 PASS cursor.key is sortedKeys[keyIndex]
 PASS cursor.primaryKey is sortedKeys[keyIndex]

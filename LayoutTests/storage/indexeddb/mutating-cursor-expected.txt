@@ -18,7 +18,7 @@ objectStore.add(2, 2).onerror = unexpectedErrorCallback
 objectStore.add(3, 3).onerror = unexpectedErrorCallback
 objectStore.add(4, 4).onerror = unexpectedErrorCallback
 openForwardCursor()
-trans = db.transaction(['store'], 'readwrite')
+trans = db.transaction(['store'], IDBTransaction.READ_WRITE)
 trans.objectStore('store')
 objectStore.openCursor()
 forwardCursor()
@@ -51,9 +51,9 @@ forwardCursor()
 PASS cursorSteps is 5
 forwardCursorComplete()
 openReverseCursor()
-trans = db.transaction(['store'], 'readwrite')
+trans = db.transaction(['store'], IDBTransaction.READ_WRITE)
 trans.objectStore('store')
-objectStore.openCursor(null, 'prev')
+objectStore.openCursor(null, IDBCursor.PREV)
 reverseCursor()
 5
 PASS cursor.key is cursorSteps

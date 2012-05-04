@@ -44,7 +44,7 @@ function verifyCount()
 {
     debug("");
     debug("verifying count without range");
-    trans = evalAndLog("trans = db.transaction('storeName', 'readonly')");
+    trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
     shouldBeTrue("trans != null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = verifyCountWithRange;
@@ -67,7 +67,7 @@ function verifyCountWithRange()
 {
     debug("");
     debug("verifying count with range");
-    trans = evalAndLog("trans = db.transaction('storeName', 'readonly')");
+    trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
     shouldBeTrue("trans != null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = verifyCountWithKey;
@@ -112,7 +112,7 @@ function verifyCountWithKey()
 {
     debug("");
     debug("verifying count with key");
-    trans = evalAndLog("trans = db.transaction('storeName', 'readonly')");
+    trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
     shouldBeTrue("trans != null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = finishJSTest;

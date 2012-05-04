@@ -16,12 +16,16 @@ store = db.createObjectStore('storeName')
 store.put('value', 'key')
 
 testBlob():
+BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder
+PASS BlobBuilder != null is true
 PASS FileReader != null is true
+builder = new BlobBuilder()
 test_content = 'This is a test. This is only a test.'
-blob = new Blob([test_content])
+builder.append(test_content)
+blob = builder.getBlob()
 
 validateExceptions(blob):
-transaction = db.transaction('storeName', 'readwrite')
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 Expecting exception from store.put(blob, 'key')
 PASS Exception was thrown.
@@ -39,7 +43,7 @@ testFile():
 file = fileInput.files[0]
 
 validateExceptions(file):
-transaction = db.transaction('storeName', 'readwrite')
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 Expecting exception from store.put(file, 'key')
 PASS Exception was thrown.
@@ -57,7 +61,7 @@ testFileList():
 filelist = fileInput.files
 
 validateExceptions(filelist):
-transaction = db.transaction('storeName', 'readwrite')
+transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 Expecting exception from store.put(filelist, 'key')
 PASS Exception was thrown.

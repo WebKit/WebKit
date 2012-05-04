@@ -24,11 +24,13 @@ PASS [Worker] request.source is indexedDB
 PASS [Worker] 'transaction' in request is true
 PASS [Worker] request.transaction is null
 PASS [Worker] 'readyState' in request is true
-PASS [Worker] request.readyState is 'pending'
+PASS [Worker] request.readyState is IDBRequest.LOADING
 PASS [Worker] 'onsuccess' in request is true
 PASS [Worker] request.onsuccess is null
 PASS [Worker] 'onerror' in request is true
 PASS [Worker] request.onerror is null
+PASS [Worker] request.LOADING is 1
+PASS [Worker] request.DONE is 2
 PASS [Worker] 'result' in event.target is true
 PASS [Worker] !!event.target.result is true
 PASS [Worker] 'errorCode' in event.target is true
@@ -40,9 +42,11 @@ PASS [Worker] request.source is indexedDB
 PASS [Worker] 'transaction' in event.target is true
 PASS [Worker] event.target.transaction is null
 PASS [Worker] 'readyState' in request is true
-PASS [Worker] event.target.readyState is 'done'
+PASS [Worker] event.target.readyState is IDBRequest.DONE
 PASS [Worker] 'onsuccess' in event.target is true
 PASS [Worker] 'onerror' in event.target is true
+PASS [Worker] event.target.LOADING is 1
+PASS [Worker] event.target.DONE is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

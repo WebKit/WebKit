@@ -122,7 +122,7 @@ request = indexedDB.open('key-generator')
 db = request.result
 request = db.setVersion('1')
 trans = request.result
-trans1 = db.transaction(['store'], 'readwrite')
+trans1 = db.transaction(['store'], IDBTransaction.READ_WRITE)
 store_t1 = trans1.objectStore('store')
 store_t1.put('a')
 request = store.get(1)
@@ -133,7 +133,7 @@ PASS Got "b" for key: 2
 aborting...
 trans1.abort()
 aborted!
-trans2 = db.transaction(['store'], 'readwrite')
+trans2 = db.transaction(['store'], IDBTransaction.READ_WRITE)
 store_t2 = trans2.objectStore('store')
 store_t2.put('c')
 request = store.get(1)
@@ -149,7 +149,7 @@ request = indexedDB.open('key-generator')
 db = request.result
 request = db.setVersion('1')
 trans = request.result
-trans1 = db.transaction(['store'], 'readwrite')
+trans1 = db.transaction(['store'], IDBTransaction.READ_WRITE)
 store_t1 = trans1.objectStore('store')
 store_t1.put('a')
 request = store.get(1)

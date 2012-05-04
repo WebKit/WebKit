@@ -1,3 +1,245 @@
+2012-05-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116040.
+        http://trac.webkit.org/changeset/116040
+        https://bugs.webkit.org/show_bug.cgi?id=85559
+
+        Broke a few IndexedDB browsertests (Requested by zhenyao on
+        #webkit).
+
+        * http/tests/inspector/indexeddb/indexeddb-test.js:
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/basics-workers-expected.txt:
+        * storage/indexeddb/constants-expected.txt:
+        * storage/indexeddb/create-object-store-options-expected.txt:
+        * storage/indexeddb/cursor-added-bug-expected.txt:
+        * storage/indexeddb/cursor-advance-expected.txt:
+        * storage/indexeddb/cursor-continue-expected.txt:
+        * storage/indexeddb/cursor-continue-validity-expected.txt:
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-inconsistency-expected.txt:
+        * storage/indexeddb/cursor-index-delete-expected.txt:
+        * storage/indexeddb/cursor-key-order-expected.txt:
+        * storage/indexeddb/cursor-prev-no-duplicate-expected.txt:
+        * storage/indexeddb/cursor-primary-key-order-expected.txt:
+        * storage/indexeddb/cursor-reverse-bug-expected.txt:
+        * storage/indexeddb/cursor-skip-deleted-expected.txt:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/data-corruption-expected.txt:
+        * storage/indexeddb/database-quota-expected.txt:
+        * storage/indexeddb/delete-range-expected.txt:
+        * storage/indexeddb/error-causes-abort-by-default-expected.txt:
+        * storage/indexeddb/exception-in-event-aborts-expected.txt:
+        * storage/indexeddb/factory-deletedatabase-expected.txt:
+        * storage/indexeddb/index-count-expected.txt:
+        * storage/indexeddb/index-multientry-expected.txt:
+        * storage/indexeddb/index-unique-expected.txt:
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/key-type-array-expected.txt:
+        * storage/indexeddb/keypath-edges-expected.txt:
+        * storage/indexeddb/keypath-intrinsic-properties-expected.txt:
+        * storage/indexeddb/legacy-constants-expected.txt: Removed.
+        * storage/indexeddb/legacy-constants.html: Removed.
+        * storage/indexeddb/mozilla/clear-expected.txt:
+        * storage/indexeddb/mozilla/create-index-unique-expected.txt:
+        * storage/indexeddb/mozilla/create-objectstore-basics-expected.txt:
+        * storage/indexeddb/mozilla/cursor-mutation-expected.txt:
+        * storage/indexeddb/mozilla/cursor-mutation-objectstore-only-expected.txt:
+        * storage/indexeddb/mozilla/cursors-expected.txt:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate-expected.txt:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate.html:
+        * storage/indexeddb/mozilla/indexes-expected.txt:
+        * storage/indexeddb/mozilla/odd-result-order-expected.txt:
+        * storage/indexeddb/mozilla/readwrite-transactions-expected.txt:
+        * storage/indexeddb/mozilla/readyState-expected.txt:
+        * storage/indexeddb/mozilla/resources/clear.js:
+        (clear):
+        * storage/indexeddb/mozilla/resources/create-index-unique.js:
+        (createAndVerifyIndex):
+        * storage/indexeddb/mozilla/resources/create-objectstore-basics.js:
+        (cleanDatabase):
+        * storage/indexeddb/mozilla/resources/cursor-mutation-objectstore-only.js:
+        (checkCursorResultsAndSetupMutatingCursor):
+        * storage/indexeddb/mozilla/resources/cursor-mutation.js:
+        (setupMutatingCursor):
+        * storage/indexeddb/mozilla/resources/cursors.js:
+        * storage/indexeddb/mozilla/resources/indexes.js:
+        * storage/indexeddb/mozilla/resources/odd-result-order.js:
+        (addRecord):
+        (deleteRecord):
+        * storage/indexeddb/mozilla/resources/readwrite-transactions.js:
+        (setVersionComplete):
+        (postAdd):
+        (postAdd2):
+        (postPut):
+        (postPut2):
+        (postPut3):
+        (postPut4):
+        (postDelete):
+        (postDelete2):
+        * storage/indexeddb/mozilla/resources/readyState.js:
+        (test):
+        (openSuccess):
+        (setupObjectStore):
+        (getRecord):
+        (finalCheck):
+        * storage/indexeddb/mozilla/resources/versionchange.js:
+        (postSetVersion):
+        (postSetVersion2):
+        * storage/indexeddb/mozilla/versionchange-expected.txt:
+        * storage/indexeddb/mutating-cursor-expected.txt:
+        * storage/indexeddb/noblobs-expected.txt:
+        * storage/indexeddb/noblobs.html:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/objectstore-count-expected.txt:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/open-during-transaction-expected.txt:
+        * storage/indexeddb/opencursor-key-expected.txt:
+        * storage/indexeddb/prefetch-bugfix-108071-expected.txt:
+        * storage/indexeddb/readonly-expected.txt:
+        * storage/indexeddb/request-event-propagation-expected.txt:
+        * storage/indexeddb/resources/basics.js:
+        (test):
+        (openCallback):
+        * storage/indexeddb/resources/constants.js:
+        (test):
+        * storage/indexeddb/resources/create-object-store-options.js:
+        (setVersionComplete):
+        * storage/indexeddb/resources/cursor-added-bug.js:
+        (openCursor):
+        * storage/indexeddb/resources/cursor-advance.js:
+        (runTest):
+        (testAdvanceIndexNoDupe):
+        (testAdvanceIndexPrev):
+        (testAdvanceIndexPrevNoDupe):
+        * storage/indexeddb/resources/cursor-continue-validity.js:
+        (continueTest):
+        (continueIndexTest):
+        (testModifyContinueOrder):
+        * storage/indexeddb/resources/cursor-continue.js:
+        (ascendingTest):
+        (descendingTest):
+        * storage/indexeddb/resources/cursor-delete.js:
+        (openCursor):
+        (addObject):
+        * storage/indexeddb/resources/cursor-inconsistency.js:
+        (openBasicCursor):
+        * storage/indexeddb/resources/cursor-index-delete.js:
+        (openCursor):
+        (addObject):
+        * storage/indexeddb/resources/cursor-key-order.js:
+        * storage/indexeddb/resources/cursor-prev-no-duplicate.js:
+        (populateStore):
+        (testFarRangeCursor_closed):
+        (testFarRangeCursor_open):
+        (testFarRangeCursor_indexClosed):
+        (testFarRangeCursor_indexOpen):
+        (testFarRangeCursor_indexKeyOpen):
+        (testFarRangeCursor_indexKeyClosed):
+        (testBoundaryCursor_closed):
+        (testBoundaryCursor_open):
+        (testBoundaryCursor_indexClosed):
+        (testBoundaryCursor_indexOpen):
+        (testBoundaryCursor_indexKeyClosed):
+        (testBoundaryCursor_indexKeyOpen):
+        (testNoDuplicate_closed):
+        (testNoDuplicate_open):
+        (testNoDuplicate_indexKeyClosed):
+        * storage/indexeddb/resources/cursor-primary-key-order.js:
+        (populateStore):
+        * storage/indexeddb/resources/cursor-reverse-bug.js:
+        (populateStore):
+        (testCursor):
+        * storage/indexeddb/resources/cursor-skip-deleted.js:
+        (basicCursorTest):
+        (reverseCursorTest):
+        * storage/indexeddb/resources/cursor-update.js:
+        (openBasicCursor):
+        * storage/indexeddb/resources/data-corruption.js:
+        (addData):
+        (getData):
+        * storage/indexeddb/resources/database-quota.js:
+        (checkQuotaEnforcing):
+        * storage/indexeddb/resources/delete-range.js:
+        (runTests.nextTest):
+        (runTests):
+        * storage/indexeddb/resources/error-causes-abort-by-default.js:
+        (addData):
+        (transactionCompleted):
+        (transactionAborted1):
+        * storage/indexeddb/resources/exception-in-event-aborts.js:
+        (startTest):
+        (transactionAborted1):
+        (transactionAborted2):
+        * storage/indexeddb/resources/factory-deletedatabase.js:
+        (getValue):
+        * storage/indexeddb/resources/index-count.js:
+        * storage/indexeddb/resources/index-cursor.js:
+        (runNextTest):
+        (testNullKeyRange):
+        * storage/indexeddb/resources/index-multientry.js:
+        * storage/indexeddb/resources/index-unique.js:
+        (setVersionCompleted):
+        * storage/indexeddb/resources/key-generator.js:
+        (.):
+        * storage/indexeddb/resources/key-type-array.js:
+        * storage/indexeddb/resources/keypath-edges.js:
+        * storage/indexeddb/resources/keypath-intrinsic-properties.js:
+        * storage/indexeddb/resources/legacy-constants.js: Removed.
+        * storage/indexeddb/resources/mutating-cursor.js:
+        (openForwardCursor):
+        (openReverseCursor):
+        * storage/indexeddb/resources/objectstore-autoincrement.js:
+        (setVersionCompleted):
+        * storage/indexeddb/resources/objectstore-basics.js:
+        (addData):
+        (addAgainFailure):
+        * storage/indexeddb/resources/objectstore-count.js:
+        * storage/indexeddb/resources/objectstore-cursor.js:
+        (runNextTest):
+        (testNullKeyRange):
+        * storage/indexeddb/resources/open-cursor.js:
+        (cursorWithKeySuccess):
+        (cursorSuccess):
+        * storage/indexeddb/resources/open-during-transaction.js:
+        * storage/indexeddb/resources/opencursor-key.js:
+        * storage/indexeddb/resources/prefetch-bugfix-108071.js:
+        * storage/indexeddb/resources/request-event-propagation.js:
+        (startTest):
+        (transactionAborted):
+        (transactionAborted2):
+        * storage/indexeddb/resources/set_version_blocked.js:
+        (blocked):
+        * storage/indexeddb/resources/transaction-abort.js:
+        (startTest):
+        * storage/indexeddb/resources/transaction-after-close.js:
+        (runFirstRegularTransaction):
+        (firstTransactionComplete):
+        (onSecondOpen):
+        * storage/indexeddb/resources/transaction-basics.js:
+        (testInvalidMode):
+        * storage/indexeddb/resources/transaction-event-propagation.js:
+        (startTest):
+        (dbAbortBubbleCallback):
+        * storage/indexeddb/resources/transaction-rollback.js:
+        (setVersionComplete):
+        (abortCallback):
+        * storage/indexeddb/set_version_blocked-expected.txt:
+        * storage/indexeddb/structured-clone-expected.txt:
+        * storage/indexeddb/structured-clone.html:
+        * storage/indexeddb/transaction-abort-expected.txt:
+        * storage/indexeddb/transaction-abort-with-js-recursion-cross-frame-expected.txt:
+        * storage/indexeddb/transaction-abort-with-js-recursion-cross-frame.html:
+        * storage/indexeddb/transaction-abort-with-js-recursion-expected.txt:
+        * storage/indexeddb/transaction-abort-with-js-recursion.html:
+        * storage/indexeddb/transaction-after-close-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-event-propagation-expected.txt:
+        * storage/indexeddb/transaction-rollback-expected.txt:
+        * storage/indexeddb/tutorial.html:
+
 2012-05-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

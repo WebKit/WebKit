@@ -43,7 +43,7 @@ function onPutSuccess()
 function runFirstRegularTransaction()
 {
     debug("running first transaction")
-    currentTransaction = evalAndLog("currentTransaction = db.transaction(['store'], 'readwrite')");
+    currentTransaction = evalAndLog("currentTransaction = db.transaction(['store'], IDBTransaction.READ_WRITE)");
     currentTransaction.onabort = unexpectedAbortCallback;
     currentTransaction.oncomplete = firstTransactionComplete;
     objectStore = currentTransaction.objectStore('store');
@@ -54,7 +54,7 @@ function runFirstRegularTransaction()
 function firstTransactionComplete()
 {
     evalAndLog("db.close()");
-    evalAndExpectException("db.transaction(['store'], 'readwrite')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.transaction(['store'], IDBTransaction.READ_WRITE)", "IDBDatabaseException.NOT_ALLOWED_ERR");
 
     debug("")
     debug("verify that we can reopen the db after calling close")
@@ -65,7 +65,7 @@ function firstTransactionComplete()
 
 function onSecondOpen() {
     second_db = evalAndLog("second_db = event.target.result");
-    currentTransaction = evalAndLog("currentTransaction = second_db.transaction(['store'], 'readwrite')");
+    currentTransaction = evalAndLog("currentTransaction = second_db.transaction(['store'], IDBTransaction.READ_WRITE)");
     store = currentTransaction.objectStore('store');
     request = evalAndLog("request = store.put('1', '2')");
     request.onsuccess = onFinalPutSuccess;

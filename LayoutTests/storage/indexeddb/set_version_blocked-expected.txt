@@ -10,7 +10,7 @@ indexedDB.open('set-version-blocked')
 connections[0].setVersion('version 1')
 seen_blocked_event = true
 PASS blocked_event.version is "version 1"
-PASS blocked_event.target.readyState is 'pending'
+PASS blocked_event.target.readyState is 1
 connections[1].close()
 in setVersion.onsuccess
 PASS seen_blocked_event is true

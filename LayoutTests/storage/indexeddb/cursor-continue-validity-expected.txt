@@ -42,7 +42,7 @@ continueTest()
 
 Checking objectStore
 ====================
-indexObject.openCursor(null, 'next')
+indexObject.openCursor(null, IDBCursor.NEXT)
 self.continueValue = 0
 doubleContinueCallback()
 cursor = event.target.result
@@ -400,7 +400,7 @@ continueIndexTest()
 
 Checking index
 ==============
-indexObject.openCursor(null, 'next')
+indexObject.openCursor(null, IDBCursor.NEXT)
 self.continueValue = 0
 cursor = event.target.result
 Checking value at 0
@@ -732,7 +732,7 @@ testModifyContinueOrder()
 
 Checking modification
 =====================
-indexObject.openCursor(null, 'next')
+indexObject.openCursor(null, IDBCursor.NEXT)
 self.continueValue = 0
 cursor = event.target.result
 cursor.continue()

@@ -44,7 +44,7 @@ function setVersionSuccess()
 function openForwardCursor()
 {
     debug("openForwardCursor()");
-    evalAndLog("trans = db.transaction(['store'], 'readwrite')");
+    evalAndLog("trans = db.transaction(['store'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = forwardCursorComplete;
 
@@ -89,12 +89,12 @@ function forwardCursorComplete()
 function openReverseCursor()
 {
     debug("openReverseCursor()");
-    evalAndLog("trans = db.transaction(['store'], 'readwrite')");
+    evalAndLog("trans = db.transaction(['store'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = reverseCursorComplete;
 
     self.objectStore = evalAndLog("trans.objectStore('store')");
-    request = evalAndLog("objectStore.openCursor(null, 'prev')");
+    request = evalAndLog("objectStore.openCursor(null, IDBCursor.PREV)");
     request.onsuccess = reverseCursor;
     request.onerror = unexpectedErrorCallback;
     self.cursorSteps = 6;

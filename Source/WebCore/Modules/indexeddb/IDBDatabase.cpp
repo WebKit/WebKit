@@ -137,7 +137,14 @@ PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionConte
     return request;
 }
 
-PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, const String& modeString, ExceptionCode& ec)
+PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const String& storeName, unsigned short mode, ExceptionCode& ec)
+{
+    RefPtr<DOMStringList> storeNames = DOMStringList::create();
+    storeNames->append(storeName);
+    return transaction(context, storeNames, mode, ec);
+}
+
+PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, unsigned short mode, ExceptionCode& ec)
 {
     RefPtr<DOMStringList> storeNames = prpStoreNames;
     if (!storeNames || storeNames->isEmpty()) {
@@ -145,10 +152,10 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         return 0;
     }
 
-    unsigned short mode = IDBTransaction::stringToMode(modeString, ec);
-    if (ec)
+    if (mode != IDBTransaction::READ_WRITE && mode != IDBTransaction::READ_ONLY) {
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
-
+    }
     if (m_closePending) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
@@ -167,32 +174,6 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     transactionBackend->setCallbacks(transaction.get());
     return transaction.release();
 }
-
-PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const String& storeName, const String& mode, ExceptionCode& ec)
-{
-    RefPtr<DOMStringList> storeNames = DOMStringList::create();
-    storeNames->append(storeName);
-    return transaction(context, storeNames, mode, ec);
-}
-
-PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const String& storeName, unsigned short mode, ExceptionCode& ec)
-{
-    RefPtr<DOMStringList> storeNames = DOMStringList::create();
-    storeNames->append(storeName);
-    return transaction(context, storeNames, mode, ec);
-}
-
-PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, unsigned short mode, ExceptionCode& ec)
-{
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Numeric transaction modes are deprecated in IDBDatabase.transaction. Use \"readonly\" or \"readwrite\"."));
-    context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
-    AtomicString modeString = IDBTransaction::modeToString(mode, ec);
-    if (ec)
-        return 0;
-
-    return transaction(context, prpStoreNames, modeString, ec);
-}
-
 
 void IDBDatabase::close()
 {

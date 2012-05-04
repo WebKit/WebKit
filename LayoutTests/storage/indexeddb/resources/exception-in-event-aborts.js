@@ -40,7 +40,7 @@ function deleteExisting()
 function startTest()
 {
     debug("");
-    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = transactionAborted1");
     evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
     store = evalAndLog("store = trans.objectStore('storeName')");
@@ -62,7 +62,7 @@ function transactionAborted1()
     debug("");
     shouldHaveHadError("this exception is expected");
     testPassed("The transaction was aborted.");
-    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = transactionAborted2");
     evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
     store = evalAndLog("store = trans.objectStore('storeName')");
@@ -76,7 +76,7 @@ function transactionAborted2()
     debug("");
     shouldHaveHadError("this exception is expected");
     testPassed("The transaction was aborted.");
-    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = unexpectedAbortCallback");
     evalAndLog("trans.oncomplete = transactionCompleted1");
     store = evalAndLog("store = trans.objectStore('storeName')");
@@ -101,7 +101,7 @@ function transactionCompleted1()
 {
     debug("");
     testPassed("The transaction completed.");
-    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = unexpectedAbortCallback");
     evalAndLog("trans.oncomplete = transactionCompleted2");
     store = evalAndLog("store = trans.objectStore('storeName')");

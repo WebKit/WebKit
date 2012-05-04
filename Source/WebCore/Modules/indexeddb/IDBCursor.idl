@@ -28,13 +28,12 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE,
     ] IDBCursor {
-        // FIXME: Eventually remove legacy enum constants, see https://bugs.webkit.org/show_bug.cgi?id=85315
         const unsigned short NEXT = 0;
         const unsigned short NEXT_NO_DUPLICATE = 1;
         const unsigned short PREV = 2;
         const unsigned short PREV_NO_DUPLICATE = 3;
 
-        readonly attribute DOMString direction;
+        readonly attribute unsigned short direction;
         readonly attribute IDBKey key;
         readonly attribute IDBKey primaryKey;
         readonly attribute IDBAny source;

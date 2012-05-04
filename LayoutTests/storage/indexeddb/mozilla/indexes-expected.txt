@@ -103,7 +103,7 @@ PASS 'value' in cursor is false
 keyIndex++;
 cursor = event.target.result;
 PASS keyIndex is objectStoreData.length
-request = objectStore.index('weight').openKeyCursor(null, 'next');
+request = objectStore.index('weight').openKeyCursor(null, IDBCursor.NEXT);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataWeightSort[keyIndex].value.weight
 PASS cursor.primaryKey is objectStoreDataWeightSort[keyIndex].key
@@ -150,7 +150,7 @@ cursor = event.target.result;
 PASS keyIndex is objectStoreData.length
 objectStore = db.transaction(objectStoreName).objectStore(objectStoreName);
 keyIndex = objectStoreDataNameSort.length - 1;
-request = objectStore.index('name').openKeyCursor(null, 'prev');
+request = objectStore.index('name').openKeyCursor(null, IDBCursor.PREV);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataNameSort[keyIndex].value.name
 PASS cursor.primaryKey is objectStoreDataNameSort[keyIndex].key
@@ -457,7 +457,7 @@ keyIndex++;
 cursor = event.target.result;
 PASS keyIndex is objectStoreDataNameSort.length
 keyIndex = objectStoreDataNameSort.length - 1;
-request = objectStore.index('name').openCursor(null, 'prev');
+request = objectStore.index('name').openCursor(null, IDBCursor.PREV);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataNameSort[keyIndex].value.name
 PASS cursor.primaryKey is objectStoreDataNameSort[keyIndex].key
@@ -710,7 +710,7 @@ cursor = event.target.result;
 PASS keyIndex is 4
 keyIndex = 4;
 keyRange = IDBKeyRange.bound('Bob', 'Ron');
-request = objectStore.index('name').openCursor(keyRange, 'prev');
+request = objectStore.index('name').openCursor(keyRange, IDBCursor.PREV);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataNameSort[keyIndex].value.name
 PASS cursor.primaryKey is objectStoreDataNameSort[keyIndex].key
@@ -767,7 +767,7 @@ cursor = event.target.result;
 PASS keyIndex is 0
 keyIndex = 3;
 keyRange = IDBKeyRange.only(65);
-request = objectStore.index('height').openKeyCursor(keyRange, 'next');
+request = objectStore.index('height').openKeyCursor(keyRange, IDBCursor.NEXT);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataHeightSort[keyIndex].value.height
 PASS cursor.primaryKey is objectStoreDataHeightSort[keyIndex].key
@@ -782,7 +782,7 @@ cursor = event.target.result;
 PASS keyIndex is 5
 keyIndex = 3;
 keyRange = IDBKeyRange.only(65);
-request = objectStore.index('height').openKeyCursor(keyRange, 'nextunique');
+request = objectStore.index('height').openKeyCursor(keyRange, IDBCursor.NEXT_NO_DUPLICATE);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataHeightSort[keyIndex].value.height
 PASS cursor.primaryKey is objectStoreDataHeightSort[keyIndex].key
@@ -792,7 +792,7 @@ cursor = event.target.result;
 PASS keyIndex is 4
 keyIndex = 3;
 keyRange = IDBKeyRange.only(65);
-request = objectStore.index('height').openCursor(keyRange, 'next');
+request = objectStore.index('height').openCursor(keyRange, IDBCursor.NEXT);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataHeightSort[keyIndex].value.height
 PASS cursor.primaryKey is objectStoreDataHeightSort[keyIndex].key
@@ -813,7 +813,7 @@ cursor = event.target.result;
 PASS keyIndex is 5
 keyIndex = 3;
 keyRange = IDBKeyRange.only(65);
-request = objectStore.index('height').openCursor(keyRange, 'nextunique');
+request = objectStore.index('height').openCursor(keyRange, IDBCursor.NEXT_NO_DUPLICATE);
 cursor = event.target.result;
 PASS cursor.key is objectStoreDataHeightSort[keyIndex].value.height
 PASS cursor.primaryKey is objectStoreDataHeightSort[keyIndex].key

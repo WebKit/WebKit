@@ -82,10 +82,7 @@ function makeAdvanceTest(startPos, direction, count, expectedValue, indexName)
     if (indexName)
         store = store.index(indexName);
 
-    if (direction)
-        evalAndLog("request = store.openCursor(null, " + direction + ")");
-    else
-        evalAndLog("request = store.openCursor()");
+    evalAndLog("request = store.openCursor(null, " + direction + ")");
     var currentPos = 0;
     function continueToTest(event)
     {
@@ -136,8 +133,8 @@ function simplifyCursor(cursor)
 
 function runTest(cursor, expectedValue)
 {
-    expected = JSON.stringify(expectedValue);
-    shouldBe("expected", "'" + JSON.stringify(simplifyCursor(cursor)) + "'");
+    shouldBe("'" + JSON.stringify(simplifyCursor(cursor)) + "'",
+             "'" + JSON.stringify(expectedValue) + "'");
 }
 
 function testAll()
@@ -191,7 +188,7 @@ function testAdvanceIndex()
 function testAdvanceIndexNoDupe()
 {
     debug("testAdvanceIndexNoDupe()");
-    makeAdvanceTest(0, "'nextunique'", 3,
+    makeAdvanceTest(0, IDBCursor.NEXT_NO_DUPLICATE, 3,
                     // Sue (weight 130 - skipping weight 100, 110, 120)
                     {key: objectStoreData[3].value.weight,
                      value: objectStoreData[3].value,
@@ -202,8 +199,8 @@ function testAdvanceIndexNoDupe()
 function testAdvanceIndexPrev()
 {
     debug("testAdvanceIndexPrev()");
-    makeAdvanceTest(0, "'prev'", 3,
-                    // Joe (weight 150 - skipping 180, 180, 180)
+    makeAdvanceTest(0, IDBCursor.PREV, 3,
+                    // Bob (weight 120 - skipping weights 180, 150, 130)
                     {key: objectStoreData[4].value.weight,
                      value: objectStoreData[4].value,
                      primaryKey: objectStoreData[4].key},
@@ -213,7 +210,7 @@ function testAdvanceIndexPrev()
 function testAdvanceIndexPrevNoDupe()
 {
     debug("testAdvanceIndexPrevNoDupe()");
-    makeAdvanceTest(0, "'prevunique'", 3,
+    makeAdvanceTest(0, IDBCursor.PREV_NO_DUPLICATE, 3,
                     // Bob (weight 120 - skipping weights 180, 150, 130)
                     {key: objectStoreData[0].value.weight,
                      value: objectStoreData[0].value,
@@ -317,7 +314,7 @@ function testPrefetchOutOfRange()
 function testBadAdvance()
 {
     debug("testBadAdvance()");
-    evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
+    evalAndLog("trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)");
     objectStore = evalAndLog("objectStore = trans.objectStore(objectStoreName)");
 
     evalAndLog("request = objectStore.openCursor()");
@@ -338,7 +335,7 @@ function testBadAdvance()
 function testDelete()
 {
     debug("testDelete()");
-    evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
+    evalAndLog("trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)");
     objectStore = evalAndLog("objectStore = trans.objectStore(objectStoreName)");
 
     evalAndLog("request = objectStore.openCursor()");

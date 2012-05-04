@@ -118,7 +118,7 @@ function setupMutatingCursor()
 
     debug("");
 
-    trans = evalAndLog("trans = db.transaction('foo', 'readwrite')");
+    trans = evalAndLog("trans = db.transaction('foo', IDBTransaction.READ_WRITE)");
     objectStore = evalAndLog("objectStore = trans.objectStore('foo')");
     request = evalAndLog("request = objectStore.index('name').openCursor()");
     request.onerror = unexpectedErrorCallback;

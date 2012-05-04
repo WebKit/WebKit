@@ -54,7 +54,7 @@ function setVersionCompleted()
 {
     debug("setVersionCompleted():");
 
-    self.trans = evalAndLog("trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], 'readwrite')");
+    self.trans = evalAndLog("trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = testLongKeyPath;
 
@@ -155,7 +155,7 @@ function addAdamSuccess()
 function testLongKeyPath()
 {
     debug("testLongKeyPath():");
-    trans = evalAndLog("trans = db.transaction('StoreWithLongKeyPath', 'readwrite')");
+    trans = evalAndLog("trans = db.transaction('StoreWithLongKeyPath', IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = finishJSTest;
 

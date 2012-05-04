@@ -12,8 +12,8 @@ Deleted all object stores.
 db.createObjectStore('a', {keyPath: 'a'})
 db.createObjectStore('b')
 db.createObjectStore('c', {autoIncrement: true});
-trans = db.transaction(['a', 'b'], 'readwrite')
-PASS trans.mode is 'readwrite'
+trans = db.transaction(['a', 'b'], IDBTransaction.READ_WRITE)
+PASS trans.mode is IDBTransaction.READ_WRITE
 trans.objectStore('a').put({'a': 0})
 Expecting TypeError exception from db.createObjectStore('d', 'bar');
 PASS Exception was thrown.

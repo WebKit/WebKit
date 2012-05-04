@@ -18,7 +18,7 @@ objectStore.createIndex('nameIndex', 'name')
 resetObjectStore():
 
 basicCursorTest()
-trans = db.transaction(['store'], 'readwrite')
+trans = db.transaction(['store'], IDBTransaction.READ_WRITE)
 
 testCursor():
 trans.objectStore('store').openCursor(IDBKeyRange.lowerBound(0))
@@ -60,7 +60,7 @@ resetObjectStore():
 reverseCursorTest():
 
 testCursor():
-trans.objectStore('store').openCursor(IDBKeyRange.lowerBound(0), 'prev')
+trans.objectStore('store').openCursor(IDBKeyRange.lowerBound(0), IDBCursor.PREV)
 25: Zulu
 24: Yankee
 request = trans.objectStore('store').delete(25)

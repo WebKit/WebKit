@@ -21,6 +21,9 @@ function test()
     shouldBe("IDBDatabaseException.QUOTA_ERR", "11");
     shouldBe("IDBDatabaseException.VER_ERR", "12");
 
+    shouldBe("IDBRequest.LOADING", "1");
+    shouldBe("IDBRequest.DONE", "2");
+
     shouldBe("IDBCursor.NEXT", "0");
     shouldBe("IDBCursor.NEXT_NO_DUPLICATE", "1");
     shouldBe("IDBCursor.PREV", "2");

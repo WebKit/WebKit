@@ -15,7 +15,7 @@ Deleted all object stores.
 db.createObjectStore('myObjectStore')
 PASS db.objectStoreNames.length is 1
 setVersionComplete():
-transaction = db.transaction(['myObjectStore'], 'readwrite')
+transaction = db.transaction(['myObjectStore'], IDBTransaction.READ_WRITE)
 store = transaction.objectStore('myObjectStore')
 store.add('rollbackValue', 'rollbackKey123')
 addSuccess():
@@ -25,7 +25,7 @@ openCursorSuccess():
 cursor = event.target.result
 abortCallback():
 Transaction was aborted.
-transaction = db.transaction(['myObjectStore'], 'readonly')
+transaction = db.transaction(['myObjectStore'], IDBTransaction.READ)
 store = transaction.objectStore('myObjectStore')
 store.get('rollbackKey123')
 getSuccess():

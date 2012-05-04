@@ -18,7 +18,7 @@ objectStore.add('someValue2', 'someKey2').onerror = unexpectedErrorCallback
 objectStore.add('someValue3', 'someKey3').onerror = unexpectedErrorCallback
 objectStore.add('someValue4', 'someKey4').onerror = unexpectedErrorCallback
 openBasicCursor()
-trans = db.transaction(['basicStore'], 'readwrite')
+trans = db.transaction(['basicStore'], IDBTransaction.READ_WRITE)
 trans.objectStore('basicStore')
 objectStore.openCursor(keyRange)
 

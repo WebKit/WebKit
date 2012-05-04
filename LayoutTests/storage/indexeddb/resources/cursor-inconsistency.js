@@ -45,7 +45,7 @@ function setVersionSuccess()
 function openBasicCursor()
 {
     debug("openBasicCursor()");
-    evalAndLog("trans = db.transaction(['basicStore'], 'readwrite')");
+    evalAndLog("trans = db.transaction(['basicStore'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = transactionComplete;
 

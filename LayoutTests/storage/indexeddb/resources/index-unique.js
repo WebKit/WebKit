@@ -41,7 +41,7 @@ function deleteExisting()
 function setVersionCompleted()
 {
     debug("setVersionCompleted():");
-    self.transaction = evalAndLog("transaction = db.transaction(['store'], 'readwrite')");
+    self.transaction = evalAndLog("transaction = db.transaction(['store'], IDBTransaction.READ_WRITE)");
 
     request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'foo')");
     request.onerror = unexpectedErrorCallback;

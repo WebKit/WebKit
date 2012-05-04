@@ -84,7 +84,7 @@ function validateExceptions(variable, onComplete)
 {
     debug("");
     debug("validateExceptions(" + variable + "):");
-    evalAndLog("transaction = db.transaction('storeName', 'readwrite')");
+    evalAndLog("transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)");
     evalAndLog("store = transaction.objectStore('storeName')");
     evalAndExpectException("store.put(" + variable + ", 'key')", "DOMException.DATA_CLONE_ERR");
     evalAndExpectException("store.add(" + variable + ", 'key')", "DOMException.DATA_CLONE_ERR");

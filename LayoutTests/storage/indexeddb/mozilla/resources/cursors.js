@@ -312,7 +312,7 @@ function testGroup13()
     gotRemoveEvent = false;
     retval = false;
 
-    request = evalAndLog("request = objectStore.openCursor(null, 'next');");
+    request = evalAndLog("request = objectStore.openCursor(null, IDBCursor.NEXT);");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function (event) {
       cursor = evalAndLog("cursor = event.target.result;");
@@ -361,7 +361,7 @@ function testGroup15()
 {
     keyIndex = sortedKeys.length - 1;
 
-    request = evalAndLog("request = objectStore.openCursor(null, 'prev');");
+    request = evalAndLog("request = objectStore.openCursor(null, IDBCursor.PREV);");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function (event) {
       cursor = evalAndLog("cursor = event.target.result;");

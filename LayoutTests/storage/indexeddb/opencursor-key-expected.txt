@@ -30,7 +30,7 @@ objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].op
 objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
 objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);
 testObjectStore()
-trans = db.transaction(objectStoreName, 'readwrite')
+trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor('237-23-7739')
 PASS cursor.key is '237-23-7739'
@@ -38,7 +38,7 @@ PASS JSON.stringify(cursor.value) is JSON.stringify(objectStoreData[7].value)
 PASS cursor.primaryKey is cursor.key
 cursor.continue()
 PASS cursor is null
-trans = db.transaction(objectStoreName, 'readwrite')
+trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)
 objectStore = trans.objectStore(objectStoreName)
 index = objectStore.index('weight')
 request = index.openCursor(180)
@@ -55,7 +55,7 @@ PASS JSON.stringify(cursor.value) is JSON.stringify(objectStoreData[10].value)
 PASS cursor.primaryKey is '237-23-7742'
 cursor.continue()
 PASS cursor is null
-trans = db.transaction(objectStoreName, 'readwrite')
+trans = db.transaction(objectStoreName, IDBTransaction.READ_WRITE)
 objectStore = trans.objectStore(objectStoreName)
 index = objectStore.index('weight')
 request = index.openKeyCursor(180)

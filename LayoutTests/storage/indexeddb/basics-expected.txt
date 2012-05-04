@@ -23,11 +23,13 @@ PASS request.source is indexedDB
 PASS 'transaction' in request is true
 PASS request.transaction is null
 PASS 'readyState' in request is true
-PASS request.readyState is 'pending'
+PASS request.readyState is IDBRequest.LOADING
 PASS 'onsuccess' in request is true
 PASS request.onsuccess is null
 PASS 'onerror' in request is true
 PASS request.onerror is null
+PASS request.LOADING is 1
+PASS request.DONE is 2
 PASS 'result' in event.target is true
 PASS !!event.target.result is true
 PASS 'errorCode' in event.target is true
@@ -39,9 +41,11 @@ PASS request.source is indexedDB
 PASS 'transaction' in event.target is true
 PASS event.target.transaction is null
 PASS 'readyState' in request is true
-PASS event.target.readyState is 'done'
+PASS event.target.readyState is IDBRequest.DONE
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
+PASS event.target.LOADING is 1
+PASS event.target.DONE is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

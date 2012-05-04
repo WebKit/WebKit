@@ -39,7 +39,7 @@ function deleteExisting()
 function startTest()
 {
     debug("Verifing abort");
-    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = abortFiredCallback");
     evalAndLog("trans.oncomplete = unexpectedAbortCallback");
     evalAndLog("db.addEventListener('abort', dbAbortCaptureCallback, true)");
@@ -89,7 +89,7 @@ function dbAbortBubbleCallback()
     dbBubbleFired1 = true;
     debug("");
     debug("Verifing success.");
-    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.oncomplete = completeFiredCallback");
     evalAndLog("trans.onabort = unexpectedAbortCallback");
     evalAndLog("db.removeEventListener('abort', dbAbortCaptureCallback, true)");

@@ -14,7 +14,7 @@ store = db.createObjectStore('store')
 store.createIndex('index', 'sorted')
 
 populating store...
-trans = db.transaction('store', 'readwrite')
+trans = db.transaction('store', IDBTransaction.READ_WRITE)
 store = trans.objectStore('store');
 store.put({sorted: 3, value: 111}, 1)
 store.put({sorted: 2, value: 222}, 2)
@@ -23,100 +23,100 @@ store.put({sorted: 10, value: 444}, 17)
 store.put({sorted: 10, value: 555}, 16)
 store.put({sorted: 10, value: 666}, 15)
 testFarRangeCursor: upper bound is well out of range, results always the same, whether open or closed
-storeReq = store.openCursor(IDBKeyRange.upperBound(7, false), 'prev')
+storeReq = store.openCursor(IDBKeyRange.upperBound(7, false), 2)
 
-Testing: store.openCursor(IDBKeyRange.upperBound(7, false), 'prev')
+Testing: store.openCursor(IDBKeyRange.upperBound(7, false), 2)
 PASS cursor.key is 3
 PASS cursor.value.value is 333
-storeReq = store.openCursor(IDBKeyRange.upperBound(7, true), 'prev')
+storeReq = store.openCursor(IDBKeyRange.upperBound(7, true), 2)
 DONE
 
-Testing: store.openCursor(IDBKeyRange.upperBound(7, true), 'prev')
+Testing: store.openCursor(IDBKeyRange.upperBound(7, true), 2)
 PASS cursor.key is 3
 PASS cursor.value.value is 333
-storeReq = index.openCursor(IDBKeyRange.upperBound(7, false), 'prev')
+storeReq = index.openCursor(IDBKeyRange.upperBound(7, false), 2)
 DONE
 
-Testing: index.openCursor(IDBKeyRange.upperBound(7, false), 'prev')
+Testing: index.openCursor(IDBKeyRange.upperBound(7, false), 2)
 PASS cursor.key is 3
 PASS cursor.value.value is 111
 PASS cursor.primaryKey is 1
-storeReq = index.openCursor(IDBKeyRange.upperBound(7, true), 'prev')
+storeReq = index.openCursor(IDBKeyRange.upperBound(7, true), 2)
 DONE
 
-Testing: index.openCursor(IDBKeyRange.upperBound(7, true), 'prev')
+Testing: index.openCursor(IDBKeyRange.upperBound(7, true), 2)
 PASS cursor.key is 3
 PASS cursor.value.value is 111
 PASS cursor.primaryKey is 1
-storeReq = index.openKeyCursor(IDBKeyRange.upperBound(7, false), 'prev')
+storeReq = index.openKeyCursor(IDBKeyRange.upperBound(7, false), 2)
 DONE
 
-Testing: index.openKeyCursor(IDBKeyRange.upperBound(7, false), 'prev')
+Testing: index.openKeyCursor(IDBKeyRange.upperBound(7, false), 2)
 PASS cursor.key is 3
 PASS cursor.primaryKey is 1
-storeReq = index.openKeyCursor(IDBKeyRange.upperBound(7, true), 'prev')
+storeReq = index.openKeyCursor(IDBKeyRange.upperBound(7, true), 2)
 DONE
 
-Testing: index.openKeyCursor(IDBKeyRange.upperBound(7, true), 'prev')
+Testing: index.openKeyCursor(IDBKeyRange.upperBound(7, true), 2)
 PASS cursor.key is 3
 PASS cursor.primaryKey is 1
-storeReq = store.openCursor(IDBKeyRange.upperBound(3, false), 'prev')
+storeReq = store.openCursor(IDBKeyRange.upperBound(3, false), 2)
 DONE
 
-Testing: store.openCursor(IDBKeyRange.upperBound(3, false), 'prev')
+Testing: store.openCursor(IDBKeyRange.upperBound(3, false), 2)
 PASS cursor.key is 3
 PASS cursor.value.value is 333
-storeReq = store.openCursor(IDBKeyRange.upperBound(3, true), 'prev')
+storeReq = store.openCursor(IDBKeyRange.upperBound(3, true), 2)
 DONE
 
-Testing: store.openCursor(IDBKeyRange.upperBound(3, true), 'prev')
+Testing: store.openCursor(IDBKeyRange.upperBound(3, true), 2)
 PASS cursor.key is 2
 PASS cursor.value.value is 222
-storeReq = index.openCursor(IDBKeyRange.upperBound(3, false), 'prev')
+storeReq = index.openCursor(IDBKeyRange.upperBound(3, false), 2)
 DONE
 
-Testing: index.openCursor(IDBKeyRange.upperBound(3, false), 'prev')
+Testing: index.openCursor(IDBKeyRange.upperBound(3, false), 2)
 PASS cursor.key is 3
 PASS cursor.value.value is 111
 PASS cursor.primaryKey is 1
-storeReq = index.openCursor(IDBKeyRange.upperBound(3, true), 'prev')
+storeReq = index.openCursor(IDBKeyRange.upperBound(3, true), 2)
 DONE
 
-Testing: index.openCursor(IDBKeyRange.upperBound(3, true), 'prev')
+Testing: index.openCursor(IDBKeyRange.upperBound(3, true), 2)
 PASS cursor.key is 2
 PASS cursor.value.value is 222
 PASS cursor.primaryKey is 2
-storeReq = index.openKeyCursor(IDBKeyRange.upperBound(3, false), 'prev')
+storeReq = index.openKeyCursor(IDBKeyRange.upperBound(3, false), 2)
 DONE
 
-Testing: index.openKeyCursor(IDBKeyRange.upperBound(3, false), 'prev')
+Testing: index.openKeyCursor(IDBKeyRange.upperBound(3, false), 2)
 PASS cursor.key is 3
 PASS cursor.primaryKey is 1
-storeReq = index.openKeyCursor(IDBKeyRange.upperBound(3, true), 'prev')
+storeReq = index.openKeyCursor(IDBKeyRange.upperBound(3, true), 2)
 DONE
 
-Testing: index.openKeyCursor(IDBKeyRange.upperBound(3, true), 'prev')
+Testing: index.openKeyCursor(IDBKeyRange.upperBound(3, true), 2)
 PASS cursor.key is 2
 PASS cursor.primaryKey is 2
 testNoDuplicate: there are 3 values, but we should return always the first one
-storeReq = store.openCursor(IDBKeyRange.upperBound(15, false), 'prevunique')
+storeReq = store.openCursor(IDBKeyRange.upperBound(15, false), 3)
 DONE
 
-Testing: store.openCursor(IDBKeyRange.upperBound(15, false), 'prevunique')
+Testing: store.openCursor(IDBKeyRange.upperBound(15, false), 3)
 PASS cursor.key is 15
 PASS cursor.value.value is 666
 PASS cursor.primaryKey is 15
-storeReq = index.openCursor(IDBKeyRange.upperBound(15, false), 'prevunique')
+storeReq = index.openCursor(IDBKeyRange.upperBound(15, false), 3)
 DONE
 
-Testing: index.openCursor(IDBKeyRange.upperBound(15, false), 'prevunique')
+Testing: index.openCursor(IDBKeyRange.upperBound(15, false), 3)
 PASS cursor.key is 10
 PASS cursor.value.value is 666
 PASS cursor.primaryKey is 15
-storeReq = index.openKeyCursor(IDBKeyRange.upperBound(15, false), 'prevunique')
+storeReq = index.openKeyCursor(IDBKeyRange.upperBound(15, false), 3)
 DONE
 
-Testing: index.openKeyCursor(IDBKeyRange.upperBound(15, false), 'prevunique')
+Testing: index.openKeyCursor(IDBKeyRange.upperBound(15, false), 3)
 PASS cursor.key is 10
 PASS cursor.primaryKey is 15
 PASS successfullyParsed is true

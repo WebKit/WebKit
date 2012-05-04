@@ -120,7 +120,7 @@ function testPrev()
     objectStore = evalAndLog("objectStore = trans.objectStore(objectStoreName);");
     keyIndex = evalAndLog("keyIndex = 8;");
     // first try with just PREV
-    request = evalAndLog("request = objectStore.index('height').openCursor(null, 'prev');");
+    request = evalAndLog("request = objectStore.index('height').openCursor(null, IDBCursor.PREV);");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function(event)
     {
@@ -151,7 +151,7 @@ function testPrevNoDuplicate()
     debug("testPrevNoDuplicate()");
     objectStore = evalAndLog("objectStore = db.transaction(objectStoreName).objectStore(objectStoreName);");
     keyIndex = evalAndLog("keyIndex = 8;");
-    request = evalAndLog("request = objectStore.index('height').openCursor(null, 'prevunique');");
+    request = evalAndLog("request = objectStore.index('height').openCursor(null, IDBCursor.PREV_NO_DUPLICATE);");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function (event)
     {

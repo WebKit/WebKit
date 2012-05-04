@@ -279,7 +279,7 @@ function testInvalidMode()
 {
     debug("");
     debug("Verify that specifying an invalid mode raises an exception");
-    evalAndExpectException("db.transaction(['storeName'], 'lsakjdf')", "IDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.transaction(['storeName'], 3)", "IDBDatabaseException.NON_TRANSIENT_ERR");
     finishJSTest();
 }
 

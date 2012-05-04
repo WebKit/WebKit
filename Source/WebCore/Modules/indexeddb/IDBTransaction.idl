@@ -31,13 +31,13 @@ module storage {
         ActiveDOMObject,
         EventTarget
     ] IDBTransaction {
-        // FIXME: Eventually remove legacy enum constants, see https://bugs.webkit.org/show_bug.cgi?id=85315
+        // Modes
         const unsigned short READ_ONLY = 0;
         const unsigned short READ_WRITE = 1;
         const unsigned short VERSION_CHANGE = 2;
 
         // Properties
-        readonly attribute DOMString mode;
+        readonly attribute unsigned short mode;
         readonly attribute IDBDatabase db;
         // Methods
         IDBObjectStore objectStore (in DOMString name)

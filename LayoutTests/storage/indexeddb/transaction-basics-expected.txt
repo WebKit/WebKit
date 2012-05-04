@@ -170,9 +170,9 @@ PASS transaction.objectStore("storeName") != null is true
 PASS all stores present in transaction
 
 Verify that specifying an invalid mode raises an exception
-Expecting exception from db.transaction(['storeName'], 'lsakjdf')
+Expecting exception from db.transaction(['storeName'], 3)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NON_TRANSIENT_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

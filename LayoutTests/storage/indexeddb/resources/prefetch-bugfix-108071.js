@@ -62,7 +62,7 @@ function iterateAndDeleteFirstElement()
 {
     debug("iterateAndDeleteFirstElement():");
 
-    evalAndLog("trans = db.transaction(['store'], 'readwrite')");
+    evalAndLog("trans = db.transaction(['store'], IDBTransaction.READ_WRITE)");
     trans.onabort = transactionAborted;
     trans.oncomplete = unexpectedCompleteCallback;
 

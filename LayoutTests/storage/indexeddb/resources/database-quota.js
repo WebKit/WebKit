@@ -53,7 +53,7 @@ function checkObjectStore()
 
 function checkQuotaEnforcing()
 {
-    var trans = evalAndLog("trans = db.transaction(['test123'], 'readwrite')");
+    var trans = evalAndLog("trans = db.transaction(['test123'], IDBTransaction.READ_WRITE)");
     trans.onabort = testComplete;
     trans.oncomplete = unexpectedCompleteCallback;
     debug("Creating 'data' which contains 64K of data");
