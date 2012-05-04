@@ -54,6 +54,7 @@ public:
     void free(size_t, void*);
 
     size_t totalRenderArenaSize() const { return m_totalSize; }
+    size_t totalRenderArenaAllocatedBytes() const { return m_totalAllocated; }
 
 private:
     // Underlying arena pool
@@ -64,6 +65,7 @@ private:
     void* m_recyclers[gMaxRecycledSize >> 2];
 
     size_t m_totalSize;
+    size_t m_totalAllocated;
 };
 
 } // namespace WebCore

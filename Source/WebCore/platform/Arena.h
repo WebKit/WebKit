@@ -69,17 +69,17 @@ struct ArenaPool {
 
 void InitArenaPool(ArenaPool*, const char* name, unsigned int size, unsigned int align);
 void FinishArenaPool(ArenaPool*);
-void* ArenaAllocate(ArenaPool*, unsigned int nb);
+void* ArenaAllocate(ArenaPool*, unsigned int numBytes, unsigned int& bytesAllocated);
 
 #define ARENA_ALIGN(n) (((uword)(n) + ARENA_ALIGN_MASK) & ~ARENA_ALIGN_MASK)
 #define INIT_ARENA_POOL(pool, name, size) InitArenaPool(pool, name, size, ARENA_ALIGN_MASK + 1)
-#define ARENA_ALLOCATE(p, pool, nb) \
+#define ARENA_ALLOCATE(p, pool, nb, bytesAllocated) \
     Arena* _a = (pool)->current; \
     unsigned int _nb = ARENA_ALIGN(nb); \
     uword _p = _a->avail; \
     uword _q = _p + _nb; \
     if (_q > _a->limit) \
-        _p = (uword)ArenaAllocate(pool, _nb); \
+        _p = (uword)ArenaAllocate(pool, _nb, *bytesAllocated); \
     else \
         _a->avail = _q; \
     p = (void*)_p;

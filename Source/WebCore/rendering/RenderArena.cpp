@@ -110,7 +110,9 @@ void* RenderArena::allocate(size_t size)
 
     if (!result) {
         // Allocate a new chunk from the arena
-        ARENA_ALLOCATE(result, &m_pool, size);
+        unsigned bytesAllocated = 0;
+        ARENA_ALLOCATE(result, &m_pool, size, &bytesAllocated);
+        m_totalAllocated += bytesAllocated;
     }
 
     return result;

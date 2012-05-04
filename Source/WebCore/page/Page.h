@@ -91,6 +91,16 @@ namespace WebCore {
 
     float deviceScaleFactor(Frame*);
 
+    struct ArenaSize {
+        ArenaSize(size_t treeSize, size_t allocated)
+            : treeSize(treeSize)
+            , allocated(allocated)
+        {
+        }
+        size_t treeSize;
+        size_t allocated;
+    };
+
     class Page : public Supplementable<Page> {
         WTF_MAKE_NONCOPYABLE(Page);
         friend class Settings;
@@ -118,7 +128,7 @@ namespace WebCore {
         Page(PageClients&);
         ~Page();
 
-        size_t renderTreeSize() const;
+        ArenaSize renderTreeSize() const;
 
         void setNeedsRecalcStyleInAllFrames();
 

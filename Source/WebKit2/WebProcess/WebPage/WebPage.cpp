@@ -501,7 +501,7 @@ uint64_t WebPage::renderTreeSize() const
 {
     if (!m_page)
         return 0;
-    return m_page->renderTreeSize();
+    return m_page->renderTreeSize().treeSize;
 }
 
 void WebPage::setPaintedObjectsCounterThreshold(uint64_t threshold)

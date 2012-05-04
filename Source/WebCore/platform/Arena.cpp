@@ -97,7 +97,7 @@ void InitArenaPool(ArenaPool* pool, const char*, unsigned size, unsigned align)
      pool->arenasize = size;                                  
 }
 
-void* ArenaAllocate(ArenaPool* pool, unsigned int numBytes)
+void* ArenaAllocate(ArenaPool* pool, unsigned int numBytes, unsigned int& bytesAllocated)
 {
     Arena* arena;
     char* returnPointer;
@@ -127,6 +127,7 @@ void* ArenaAllocate(ArenaPool* pool, unsigned int numBytes)
         i++;
         printf("Malloc: %d\n", i);
 #endif
+        bytesAllocated = size;
         arena = (Arena*)fastMalloc(size);
         // fastMalloc will abort() if it fails, so we are guaranteed that a is not 0.
         arena->limit = (uword)arena + size;

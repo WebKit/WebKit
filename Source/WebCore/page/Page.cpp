@@ -210,14 +210,18 @@ Page::~Page()
 
 }
 
-size_t Page::renderTreeSize() const
+ArenaSize Page::renderTreeSize() const
 {
-    size_t size = 0;
+    ArenaSize total(0, 0);
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->document() && frame->document()->renderArena())
-            size += frame->document()->renderArena()->totalRenderArenaSize();
+        if (!frame->document())
+            continue;
+        if (RenderArena* arena = frame->document()->renderArena()) {
+            total.treeSize += arena->totalRenderArenaSize();
+            total.allocated += arena->totalRenderArenaAllocatedBytes();
+        }
     }
-    return size;
+    return total;
 }
 
 ViewportArguments Page::viewportArguments() const
@@ -1029,8 +1033,11 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
     m_visibilityState = visibilityState;
 
     if (!isInitialState && m_mainFrame) {
-        if (visibilityState == PageVisibilityStateHidden)
-            HistogramSupport::histogramCustomCounts("WebCore.Page.renderTreeSizeBytes", renderTreeSize(), 1000, 500000000, 50);
+        if (visibilityState == PageVisibilityStateHidden) {
+            ArenaSize size = renderTreeSize();
+            HistogramSupport::histogramCustomCounts("WebCore.Page.renderTreeSizeBytes", size.treeSize, 1000, 500000000, 50);
+            HistogramSupport::histogramCustomCounts("WebCore.Page.renderTreeAllocatedBytes", size.allocated, 1000, 500000000, 50);
+        }
         m_mainFrame->dispatchVisibilityStateChangeEvent();
     }
 }
