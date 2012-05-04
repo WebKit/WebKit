@@ -1,3 +1,20 @@
+2012-05-04  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt][NRWT] Run each DRT in it's own xvfb
+        https://bugs.webkit.org/show_bug.cgi?id=77335
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._driver_class):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._driver_class):
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py: Added.
+        (XvfbDriver):
+        (XvfbDriver._start):
+        (XvfbDriver._start.x_filter):
+        (XvfbDriver.stop):
+
 2012-05-04  Zan Dobersek  <zandobersek@gmail.com>
 
         Use destructuring assingment for the return values of the
