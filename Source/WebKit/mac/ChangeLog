@@ -1,3 +1,14 @@
+2012-05-03  Anders Carlsson  <andersca@apple.com>
+
+        useWebKitWebInspector should be more robust against missing files
+        https://bugs.webkit.org/show_bug.cgi?id=85563
+        <rdar://problem/11373948>
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (useWebKitWebInspector):
+
 2012-05-03  Tobias Netzel  <tobias.netzel@googlemail.com>
 
         Bugs in WebFullScreenController

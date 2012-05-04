@@ -170,8 +170,13 @@ static bool useWebKitWebInspector()
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
     WebInspectorLibrary();
 
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"UseWebKitWebInspector"] ||
-        ![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"])
+        return true;
+
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
+        return false;
+
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"UseWebKitWebInspector"];
 }
 
 String WebInspectorFrontendClient::localizedStringsURL()
