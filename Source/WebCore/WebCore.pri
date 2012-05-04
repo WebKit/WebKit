@@ -238,7 +238,7 @@ haveQt(5) {
     !contains(config_test_libpng, yes): error("PNG 1.2 library not found!")
 }
 
-LIBS += -ljpeg -lpng12
+LIBS += -ljpeg -lpng
 
 win32-*|wince* {
     DLLDESTDIR = $${ROOT_BUILD_DIR}/bin
