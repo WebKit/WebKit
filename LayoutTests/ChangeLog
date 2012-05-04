@@ -1,3 +1,13 @@
+2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed, fix r116067 and r116068.
+
+        Fix the names of the expectations I added in those revisions.
+
+        * platform/efl/fast/html/details-marker-style-expected.txt: Renamed from LayoutTests/platform/efl/fast/html/details-marker-style-actual.txt.
+        * platform/efl/media/media-can-play-webm-expected.txt: Renamed from LayoutTests/platform/efl/media/media-can-play-webm-actual.txt.
+        * platform/efl/svg/as-image/image-respects-pageScaleFactor-expected.txt: Renamed from LayoutTests/platform/efl/svg/as-image/image-respects-pageScaleFactor-actual.txt.
+
 2012-05-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening, eval-blocked-in-about-blank-iframe.html: SLOW -> TIMEOUT
