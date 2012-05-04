@@ -1,3 +1,13 @@
+2012-05-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Use destructuring assingment for the return values of the
+        port.diff_image() method call.
+
+        Rubber-stamped by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
         Store fewer runs by default in the flakiness dashboard

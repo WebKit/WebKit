@@ -68,10 +68,10 @@ def write_test_result(filesystem, port, test_name, driver_output,
             # FIXME: This work should be done earlier in the pipeline (e.g., when we compare images for non-ref tests).
             # FIXME: We should always have 2 images here.
             if driver_output.image and expected_driver_output.image:
-                diff_result = port.diff_image(driver_output.image, expected_driver_output.image, tolerance=0)
-                if diff_result[0]:
-                    writer.write_image_diff_files(diff_result[0])
-                    failure.diff_percent = diff_result[1]
+                diff_image, diff_percent = port.diff_image(driver_output.image, expected_driver_output.image, tolerance=0)
+                if diff_image:
+                    writer.write_image_diff_files(diff_image)
+                    failure.diff_percent = diff_percent
                 else:
                     _log.warn('Can not get image diff. ImageDiff program might not work correctly.')
             writer.copy_file(failure.reference_filename)
