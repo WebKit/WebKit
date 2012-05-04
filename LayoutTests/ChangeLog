@@ -1,3 +1,13 @@
+2012-05-04  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] fast/table/quote-text-around-iframe.html needs rebaselining
+        https://bugs.webkit.org/show_bug.cgi?id=85487
+
+        Unreviewed, EFL rebaseline after r115218.
+
+        * platform/efl/fast/table/quote-text-around-iframe-expected.png:
+        * platform/efl/fast/table/quote-text-around-iframe-expected.txt:
+
 2012-05-04  Noel Gordon  <noel.gordon@gmail.com>
 
         Add PNG image pngsuite test

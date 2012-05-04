@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x198
-  RenderBlock {HTML} at (0,0) size 800x198
-    RenderBody {BODY} at (16,16) size 768x166
-      RenderTable at (0,0) size 394x166
-        RenderTableSection (anonymous) at (0,0) size 394x166
-          RenderTableRow {Q} at (0,0) size 394x166
-            RenderTableCell (anonymous) at (0,0) size 394x166 [r=0 c=0 rs=1 cs=1]
+layer at (0,0) size 800x348
+  RenderBlock {HTML} at (0,0) size 800x348
+    RenderBody {BODY} at (16,16) size 768x316
+      RenderTable at (0,0) size 694x316
+        RenderTableSection (anonymous) at (0,0) size 694x316
+          RenderTableRow {Q} at (0,0) size 694x316
+            RenderTableCell (anonymous) at (0,0) size 694x316 [r=0 c=0 rs=1 cs=1]
               RenderInline (generated) at (0,0) size 13x36
-                RenderQuote at (0,129) size 13x36
-                  text run at (0,129) width 13: "\""
-              RenderText {#text} at (13,129) size 31x36
-                text run at (13,129) width 31: " A"
-              RenderPartObject {IFRAME} at (44,0) size 308x158 [border: (4px inset #000000)]
-                layer at (0,0) size 300x150
-                  RenderView at (0,0) size 300x150
-                layer at (0,0) size 300x150
-                  RenderBlock {HTML} at (0,0) size 300x150
-                    RenderBody {BODY} at (8,8) size 284x134
-              RenderText {#text} at (352,129) size 29x36
-                text run at (352,129) width 29: "B "
+                RenderQuote at (0,279) size 13x36
+                  text run at (0,279) width 13: "\""
+              RenderText {#text} at (13,279) size 31x36
+                text run at (13,279) width 31: " A"
+              RenderPartObject {IFRAME} at (44,0) size 608x308 [border: (4px inset #000000)]
+                layer at (0,0) size 600x300
+                  RenderView at (0,0) size 600x300
+                layer at (0,0) size 600x300
+                  RenderBlock {HTML} at (0,0) size 600x300
+                    RenderBody {BODY} at (8,8) size 584x284
+              RenderText {#text} at (652,279) size 29x36
+                text run at (652,279) width 29: "B "
               RenderInline (generated) at (0,0) size 13x36
-                RenderQuote at (381,129) size 13x36
-                  text run at (381,129) width 13: "\""
+                RenderQuote at (681,279) size 13x36
+                  text run at (681,279) width 13: "\""
