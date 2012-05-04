@@ -87,11 +87,12 @@ PassRefPtr<RenderStyle> RenderStyle::createDefaultStyle()
     return adoptRef(new RenderStyle(true));
 }
 
-PassRefPtr<RenderStyle> RenderStyle::createAnonymousStyle(const RenderStyle* parentStyle)
+PassRefPtr<RenderStyle> RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay display)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(parentStyle);
     newStyle->inheritUnicodeBidiFrom(parentStyle);
+    newStyle->setDisplay(display);
     return newStyle;
 }
 

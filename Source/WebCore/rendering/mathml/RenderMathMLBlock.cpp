@@ -148,9 +148,7 @@ void RenderMathMLBlock::computePreferredLogicalWidths()
 
 RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay display)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-    newStyle->setDisplay(display);
-    
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), display);
     RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(node() /* "almost" anonymous block */);
     newBlock->setStyle(newStyle.release());
     return newBlock;

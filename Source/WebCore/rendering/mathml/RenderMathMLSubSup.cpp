@@ -76,8 +76,7 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
             
         // Make sure we have a script block for rendering.
         if (m_kind == SubSup && !m_scripts) {
-            RefPtr<RenderStyle> scriptsStyle = RenderStyle::createAnonymousStyle(style());
-            scriptsStyle->setDisplay(INLINE_BLOCK);
+            RefPtr<RenderStyle> scriptsStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), INLINE_BLOCK);
             scriptsStyle->setVerticalAlign(TOP);
             scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
             scriptsStyle->setTextAlign(LEFT);

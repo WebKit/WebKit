@@ -390,7 +390,7 @@ private:
 public:
     static PassRefPtr<RenderStyle> create();
     static PassRefPtr<RenderStyle> createDefaultStyle();
-    static PassRefPtr<RenderStyle> createAnonymousStyle(const RenderStyle* parentStyle);
+    static PassRefPtr<RenderStyle> createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay);
     static PassRefPtr<RenderStyle> clone(const RenderStyle*);
 
     void inheritFrom(const RenderStyle* inheritParent);

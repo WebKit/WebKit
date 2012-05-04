@@ -146,9 +146,8 @@ static void updateStyleOfAnonymousBlockContinuations(RenderObject* block, const 
         RenderInline* cont = toRenderBlock(block)->inlineElementContinuation();
         if (oldStyle->position() == RelativePosition && hasRelPositionedInlineAncestor(cont))
             continue;
-        RefPtr<RenderStyle> blockStyle = RenderStyle::createAnonymousStyle(block->style());
+        RefPtr<RenderStyle> blockStyle = RenderStyle::createAnonymousStyleWithDisplay(block->style(), BLOCK);
         blockStyle->setPosition(newStyle->position());
-        blockStyle->setDisplay(BLOCK);
         block->setStyle(blockStyle);
     }
 }
@@ -281,8 +280,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         // inline into continuations.  This involves creating an anonymous block box to hold
         // |newChild|.  We then make that block box a continuation of this inline.  We take all of
         // the children after |beforeChild| and put them in a clone of this object.
-        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
-        newStyle->setDisplay(BLOCK);
+        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
         
         // If inside an inline affected by relative positioning the block needs to be affected by it too.
         // Giving the block a layer like this allows it to collect the x/y offsets from inline parents later.
