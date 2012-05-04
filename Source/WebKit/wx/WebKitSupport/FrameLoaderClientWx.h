@@ -241,7 +241,6 @@ namespace WebCore {
         PluginView* m_pluginView;
         bool m_hasSentResponseToPlugin;
         ResourceResponse m_response;
-        bool m_firstData;
     };
 
 }

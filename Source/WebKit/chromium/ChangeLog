@@ -1,3 +1,19 @@
+2012-05-04  Nate Chapin  <japhet@chromium.org>
+
+        Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.
+        https://bugs.webkit.org/show_bug.cgi?id=85533
+
+        Reviewed by Alexey Proskuryakov.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::FrameLoaderClientImpl):
+        (WebKit):
+        (WebKit::FrameLoaderClientImpl::finishedLoading):
+        * src/FrameLoaderClientImpl.h:
+        (WebKit::FrameLoaderClientImpl::makeRepresentation):
+        (WebKit::FrameLoaderClientImpl::revertToProvisionalState):
+        (FrameLoaderClientImpl):
+
 2012-05-04  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Device Metrics] With "Fit window" option on, page contents are downscaled incorrectly

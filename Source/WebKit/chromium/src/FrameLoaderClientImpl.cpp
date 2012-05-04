@@ -110,7 +110,6 @@ enum {
 
 FrameLoaderClientImpl::FrameLoaderClientImpl(WebFrameImpl* frame)
     : m_webFrame(frame)
-    , m_hasRepresentation(false)
     , m_sentInitialResponseToPlugin(false)
     , m_nextNavigationPolicy(WebNavigationPolicyIgnore)
 {
@@ -270,11 +269,6 @@ bool FrameLoaderClientImpl::hasFrameView() const
 void FrameLoaderClientImpl::makeDocumentView()
 {
     m_webFrame->createFrameView();
-}
-
-void FrameLoaderClientImpl::makeRepresentation(DocumentLoader*)
-{
-    m_hasRepresentation = true;
 }
 
 void FrameLoaderClientImpl::forceLayout()
@@ -1049,11 +1043,6 @@ void FrameLoaderClientImpl::dispatchWillSubmitForm(FramePolicyFunction function,
     (m_webFrame->frame()->loader()->policyChecker()->*function)(PolicyUse);
 }
 
-void FrameLoaderClientImpl::revertToProvisionalState(DocumentLoader*)
-{
-    m_hasRepresentation = true;
-}
-
 void FrameLoaderClientImpl::setMainDocumentError(DocumentLoader*,
                                                  const ResourceError& error)
 {
@@ -1150,18 +1139,12 @@ void FrameLoaderClientImpl::committedLoad(DocumentLoader* loader, const char* da
     }
 }
 
-void FrameLoaderClientImpl::finishedLoading(DocumentLoader* dl)
+void FrameLoaderClientImpl::finishedLoading(DocumentLoader*)
 {
     if (m_pluginWidget) {
         m_pluginWidget->didFinishLoading();
         m_pluginWidget = 0;
         m_sentInitialResponseToPlugin = false;
-    } else {
-        // This is necessary to create an empty document. See bug 634004.
-        // However, we only want to do this if makeRepresentation has been called, to
-        // match the behavior on the Mac.
-        if (m_hasRepresentation)
-            dl->writer()->setEncoding("", false);
     }
 }
 

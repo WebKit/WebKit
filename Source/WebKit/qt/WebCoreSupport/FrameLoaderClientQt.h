@@ -83,7 +83,7 @@ public:
 
     virtual bool hasWebView() const; // mainly for assertions
 
-    virtual void makeRepresentation(DocumentLoader*);
+    virtual void makeRepresentation(DocumentLoader*) { }
     virtual void forceLayout();
     virtual void forceLayoutForNonHTML();
 
@@ -138,7 +138,7 @@ public:
     virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) { }
     virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>);
 
-    virtual void revertToProvisionalState(DocumentLoader*);
+    virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
 
     virtual void postProgressStartedNotification();
@@ -271,11 +271,6 @@ private:
     // Plugin view to redirect data to
     WebCore::PluginView* m_pluginView;
     bool m_hasSentResponseToPlugin;
-
-    // True if makeRepresentation was called.  We don't actually have a concept
-    // of a "representation", but we need to know when we're expected to have one.
-    // See finishedLoading().
-    bool m_hasRepresentation;
 
     KURL m_lastRequestedUrl;
     bool m_isOriginatingLoad;

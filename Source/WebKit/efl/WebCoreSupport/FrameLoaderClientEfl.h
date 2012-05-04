@@ -61,7 +61,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
 
     void callPolicyFunction(FramePolicyFunction, PolicyAction);
 
-    virtual void makeRepresentation(DocumentLoader*);
+    virtual void makeRepresentation(DocumentLoader*) { }
     virtual void forceLayout();
     virtual void forceLayoutForNonHTML();
 
@@ -122,7 +122,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchWillSendSubmitEvent(WTF::PassRefPtr<FormState>) { }
     virtual void dispatchWillSubmitForm(FramePolicyFunction, WTF::PassRefPtr<FormState>);
 
-    virtual void revertToProvisionalState(DocumentLoader*);
+    virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
 
     virtual void postProgressStartedNotification();
@@ -217,7 +217,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     // Plugin view to redirect data to
     PluginView* m_pluginView;
     bool m_hasSentResponseToPlugin;
-    bool m_hasRepresentation;
 };
 
 }

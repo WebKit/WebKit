@@ -444,14 +444,9 @@ void FrameLoaderClientWx::didChangeTitle(DocumentLoader *l)
 }
 
 
-void FrameLoaderClientWx::finishedLoading(DocumentLoader* loader)
+void FrameLoaderClientWx::finishedLoading(DocumentLoader*)
 {
-    if (!m_pluginView) {
-        if (m_firstData) {
-            loader->writer()->setEncoding(m_response.textEncodingName(), false);
-            m_firstData = false;
-        }
-    } else {
+    if (m_pluginView) {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
@@ -651,10 +646,7 @@ bool FrameLoaderClientWx::canCachePage() const
 
 void FrameLoaderClientWx::setMainDocumentError(WebCore::DocumentLoader* loader, const WebCore::ResourceError&)
 {
-    if (m_firstData) {
-        loader->writer()->setEncoding(m_response.textEncodingName(), false);
-        m_firstData = false;
-    }
+    notImplemented();
 }
 
 // FIXME: This function should be moved into WebCore.
@@ -761,7 +753,6 @@ void FrameLoaderClientWx::dispatchDidReceiveResponse(DocumentLoader* loader, uns
 {
     notImplemented();
     m_response = response;
-    m_firstData = true;
 }
 
 void FrameLoaderClientWx::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long id, int length)
@@ -776,10 +767,6 @@ void FrameLoaderClientWx::dispatchDidFinishLoading(DocumentLoader*, unsigned lon
 
 void FrameLoaderClientWx::dispatchDidFailLoading(DocumentLoader* loader, unsigned long, const ResourceError&)
 {
-    if (m_firstData) {
-        loader->writer()->setEncoding(m_response.textEncodingName(), false);
-        m_firstData = false;
-    }
     if (m_webView) {
         WebKit::WebViewLoadEvent wkEvent(m_webView);
         wkEvent.SetState(WEBVIEW_LOAD_FAILED);

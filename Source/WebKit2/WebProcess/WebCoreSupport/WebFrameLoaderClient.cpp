@@ -879,8 +879,6 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
 void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 {
     if (!m_pluginView) {
-        committedLoad(loader, 0, 0);
-
         if (m_frameHasCustomRepresentation) {
             WebPage* webPage = m_frame->page();
             if (!webPage)

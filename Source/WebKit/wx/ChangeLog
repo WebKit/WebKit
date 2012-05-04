@@ -1,3 +1,18 @@
+2012-05-04  Nate Chapin  <japhet@chromium.org>
+
+        Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.
+        https://bugs.webkit.org/show_bug.cgi?id=85533
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::finishedLoading):
+        (WebCore::FrameLoaderClientWx::setMainDocumentError):
+        (WebCore::FrameLoaderClientWx::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientWx::dispatchDidFailLoading):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        (FrameLoaderClientWx):
+
 2012-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         FrameLoaderClient::dispatchWillSendSubmitEvent() should be given more

@@ -1,3 +1,13 @@
+2012-05-04  Nate Chapin  <japhet@chromium.org>
+
+        Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.
+        https://bugs.webkit.org/show_bug.cgi?id=85533
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::finishedLoading):
+
 2012-04-27  Jon Lee  <jonlee@apple.com>
 
         Migrate permission functions to Notification from NotificationCenter

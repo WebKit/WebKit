@@ -363,17 +363,12 @@ void FrameLoaderClientBlackBerry::receivedData(const char* data, int length, con
     m_frame->loader()->documentLoader()->writer()->addData(data, length);
 }
 
-void FrameLoaderClientBlackBerry::finishedLoading(DocumentLoader* loader)
+void FrameLoaderClientBlackBerry::finishedLoading(DocumentLoader*)
 {
     if (m_pluginView) {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
-    } else {
-        // Telling the frame we received some data and passing 0 as the data is our
-        // way to get work done that is normally done when the first bit of data is
-        // received, even for the case of a document with no data (like about:blank).
-        committedLoad(loader, 0, 0);
     }
 }
 

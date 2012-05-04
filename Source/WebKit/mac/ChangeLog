@@ -1,3 +1,14 @@
+2012-05-04  Nate Chapin  <japhet@chromium.org>
+
+        Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.
+        https://bugs.webkit.org/show_bug.cgi?id=85533
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]): Calling commitData when finishing is no longer necessary,
+            as WebCore will take care of simulating the receipt of data and ensuring the requisite work gets done in the blank document case.
+
 2012-05-03  Anders Carlsson  <andersca@apple.com>
 
         useWebKitWebInspector should be more robust against missing files

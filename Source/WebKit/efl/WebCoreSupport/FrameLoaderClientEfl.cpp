@@ -70,7 +70,6 @@ FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object* view)
     , m_customUserAgent("")
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
-    , m_hasRepresentation(false)
 {
 }
 
@@ -531,11 +530,6 @@ void FrameLoaderClientEfl::didDetectXSS(const KURL& insecureURL, bool didBlockEn
     ewk_frame_xss_detected(m_frame, &xssInfo);
 }
 
-void FrameLoaderClientEfl::makeRepresentation(DocumentLoader*)
-{
-    m_hasRepresentation = true;
-}
-
 void FrameLoaderClientEfl::forceLayout()
 {
     ewk_frame_force_layout(m_frame);
@@ -664,11 +658,6 @@ void FrameLoaderClientEfl::cancelPolicyCheck()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::revertToProvisionalState(DocumentLoader*)
-{
-    m_hasRepresentation = true;
-}
-
 void FrameLoaderClientEfl::willChangeTitle(DocumentLoader*)
 {
     // no need for, dispatchDidReceiveTitle is the right callback
@@ -717,13 +706,10 @@ String FrameLoaderClientEfl::generatedMIMETypeForURLScheme(const String&) const
     return String();
 }
 
-void FrameLoaderClientEfl::finishedLoading(DocumentLoader* documentLoader)
+void FrameLoaderClientEfl::finishedLoading(DocumentLoader*)
 {
-    if (!m_pluginView) {
-        if (m_hasRepresentation)
-            documentLoader->writer()->setEncoding("", false);
+    if (!m_pluginView)
         return;
-    }
     m_pluginView->didFinishLoading();
     m_pluginView = 0;
     m_hasSentResponseToPlugin = false;

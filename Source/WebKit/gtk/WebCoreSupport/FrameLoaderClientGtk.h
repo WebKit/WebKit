@@ -49,7 +49,7 @@ namespace WebKit {
 
         virtual bool hasWebView() const;
 
-        virtual void makeRepresentation(WebCore::DocumentLoader*);
+        virtual void makeRepresentation(WebCore::DocumentLoader*) { }
         virtual void forceLayout();
         virtual void forceLayoutForNonHTML();
 
@@ -105,7 +105,7 @@ namespace WebKit {
         virtual void dispatchWillSendSubmitEvent(WTF::PassRefPtr<WebCore::FormState>) { }
         virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, WTF::PassRefPtr<WebCore::FormState>);
 
-        virtual void revertToProvisionalState(WebCore::DocumentLoader*);
+        virtual void revertToProvisionalState(WebCore::DocumentLoader*) { }
         virtual void setMainDocumentError(WebCore::DocumentLoader*, const WebCore::ResourceError&);
 
         virtual void postProgressStartedNotification();
@@ -198,8 +198,6 @@ namespace WebKit {
         // Plugin view to redirect data to
         WebCore::PluginView* m_pluginView;
         bool m_hasSentResponseToPlugin;
-
-        bool m_hasRepresentation;
     };
 
 }

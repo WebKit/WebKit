@@ -517,13 +517,8 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
     m_manualLoader->didReceiveData(data, length);
 }
 
-void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
+void WebFrameLoaderClient::finishedLoading(DocumentLoader*)
 {
-    // Telling the frame we received some data and passing 0 as the data is our
-    // way to get work done that is normally done when the first bit of data is
-    // received, even for the case of a document with no data (like about:blank)
-    committedLoad(loader, 0, 0);
-
     if (!m_manualLoader)
         return;
 

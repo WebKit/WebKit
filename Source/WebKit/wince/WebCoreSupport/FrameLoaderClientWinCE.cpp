@@ -443,12 +443,10 @@ String FrameLoaderClientWinCE::generatedMIMETypeForURLScheme(const String&) cons
     return String();
 }
 
-void FrameLoaderClientWinCE::finishedLoading(DocumentLoader* documentLoader)
+void FrameLoaderClientWinCE::finishedLoading(DocumentLoader*)
 {
-    if (!m_pluginView) {
-        documentLoader->writer()->setEncoding(m_response.textEncodingName(), false);
+    if (!m_pluginView)
         return;
-    }
 
     m_pluginView->didFinishLoading();
     m_pluginView = 0;

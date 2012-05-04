@@ -214,14 +214,6 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
     if (!webFrame)
         return;
-
-    if (![self _isDisplayingWebArchive]) {
-        // Telling the frame we received some data and passing nil as the data is our
-        // way to get work done that is normally done when the first bit of data is
-        // received, even for the case of a document with no data (like about:blank).
-        [webFrame _commitData:nil];
-    }
-
     WebView *webView = [webFrame webView];
     if ([webView mainFrame] == webFrame && [webView isEditable])
         core(webFrame)->editor()->applyEditingStyleToBodyElement();

@@ -106,7 +106,6 @@ FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     , m_loadingErrorPage(false)
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
-    , m_hasRepresentation(false)
 {
     ASSERT(m_frame);
 }
@@ -665,11 +664,6 @@ void FrameLoaderClient::didDetectXSS(const KURL&, bool)
     notImplemented();
 }
 
-void FrameLoaderClient::makeRepresentation(WebCore::DocumentLoader*)
-{
-    m_hasRepresentation = true;
-}
-
 void FrameLoaderClient::forceLayout()
 {
     FrameView* view = core(m_frame)->view();
@@ -883,11 +877,6 @@ void FrameLoaderClient::cancelPolicyCheck()
         webkit_web_policy_decision_cancel(m_policyDecision);
 }
 
-void FrameLoaderClient::revertToProvisionalState(WebCore::DocumentLoader*)
-{
-    m_hasRepresentation = true;
-}
-
 void FrameLoaderClient::willChangeTitle(WebCore::DocumentLoader*)
 {
     notImplemented();
@@ -930,14 +919,9 @@ String FrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const
     return String();
 }
 
-void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader* documentLoader)
+void FrameLoaderClient::finishedLoading(WebCore::DocumentLoader*)
 {
-    if (!m_pluginView) {
-        // This is necessary to create an empty document,
-        // but it has to be skipped in the provisional phase.
-        if (m_hasRepresentation)
-            documentLoader->writer()->setEncoding("", false);
-    } else {
+    if (m_pluginView) {
         m_pluginView->didFinishLoading();
         m_pluginView = 0;
         m_hasSentResponseToPlugin = false;
