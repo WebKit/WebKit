@@ -29,6 +29,7 @@
 
 """Package that implements the ServerProcess wrapper class"""
 
+import errno
 import logging
 import signal
 import subprocess
@@ -39,7 +40,6 @@ import time
 # the win32 select API, it only works on sockets, and not on the named pipes
 # used by subprocess, so we have to use the native APIs directly.
 if sys.platform == 'win32':
-    import errno
     import msvcrt
     import win32pipe
     import win32file
@@ -214,6 +214,14 @@ class ServerProcess(object):
         select_fds = (out_fd, err_fd)
         try:
             read_fds, _, _ = select.select(select_fds, [], select_fds, deadline - time.time())
+        except select.error, e:
+            # We can ignore EINVAL since it's likely the process just crashed and we'll
+            # figure that out the next time through the loop in _read().
+            if e.args[0] == errno.EINVAL:
+                return
+            raise
+
+        try:
             if out_fd in read_fds:
                 self._output += self._proc.stdout.read()
             if err_fd in read_fds:

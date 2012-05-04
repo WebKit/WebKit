@@ -1,3 +1,16 @@
+2012-05-03  Dirk Pranke  <dpranke@chromium.org>
+
+        REGRESSION: run-webkit-tests failing on Chromium Mac
+        https://bugs.webkit.org/show_bug.cgi?id=85459
+
+        Unreviewed, build fix.
+
+        Turns out select doesn't throw IOErrors, it has it's own kind of
+        error :(. Trap that instead.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+
 2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindCairo.cmake.
