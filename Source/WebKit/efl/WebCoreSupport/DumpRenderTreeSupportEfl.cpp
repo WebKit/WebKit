@@ -389,6 +389,15 @@ void DumpRenderTreeSupportEfl::setDefersLoading(Evas_Object* ewkView, bool defer
     page->setDefersLoading(defers);
 }
 
+void DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(Evas_Object* ewkView, bool loadsSiteIconsIgnoringImageLoadingPreferences)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    page->settings()->setLoadsSiteIconsIgnoringImageLoadingSetting(loadsSiteIconsIgnoringImageLoadingPreferences);
+}
+
 void DumpRenderTreeSupportEfl::addUserStyleSheet(const Evas_Object* ewkView, const char* sourceCode, bool allFrames)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);

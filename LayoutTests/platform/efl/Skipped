@@ -385,9 +385,6 @@ fast/parser/pre-html5-parser-quirks.html
 # EFL's LayoutTestController overridePreference does not implement WebKitOfflineWebApplicationCacheEnabled preference
 http/tests/appcache/disabled.html
 
-# EFL's LayoutTestController overridePreference does not implement WebKitLoadSiteIconsKey preference
-http/tests/misc/favicon-loads-with-icon-loading-override.html
-
 # EFL's LayoutTestController does not implement addUserScript
 userscripts/document-element-available-at-start.html
 userscripts/script-not-run-for-fragments.html

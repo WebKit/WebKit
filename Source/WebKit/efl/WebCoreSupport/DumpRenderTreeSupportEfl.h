@@ -70,6 +70,7 @@ public:
     static void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
     static void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
     static void setDefersLoading(Evas_Object* ewkView, bool defers);
+    static void setLoadsSiteIconsIgnoringImageLoadingSetting(Evas_Object* ewkView, bool loadsSiteIconsIgnoringImageLoadingPreferences);
 
     static void addUserStyleSheet(const Evas_Object* ewkView, const char* sourceCode, bool allFrames);
     static bool findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions);

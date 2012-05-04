@@ -1,3 +1,18 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] LayoutTestController does not support overriding WebKitLoadSiteIconsKey
+        https://bugs.webkit.org/show_bug.cgi?id=85171
+
+        Reviewed by Andreas Kling.
+
+        Implement support for overriding "WebKitLoadSiteIconsKey" setting in
+        EFL's LayoutTestController.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::overridePreference):
+
 2012-05-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Enable fullscreen API for WebKit2.

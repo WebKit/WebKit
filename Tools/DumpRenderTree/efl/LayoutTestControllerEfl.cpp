@@ -693,6 +693,8 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         ewk_view_setting_enable_hyperlink_auditing_set(browser->mainView(), toBool(value));
     else if (equals(key, "WebKitTabToLinksPreferenceKey"))
         ewk_view_setting_include_links_in_focus_chain_set(browser->mainView(), toBool(value));
+    else if (equals(key, "WebKitLoadSiteIconsKey"))
+        DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(browser->mainView(), toBool(value));
     else
         fprintf(stderr, "LayoutTestController::overridePreference tried to override unknown preference '%s'.\n", value->ustring().utf8().data());
 }
