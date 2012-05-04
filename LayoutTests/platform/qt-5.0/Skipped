@@ -126,3 +126,16 @@ fast/sub-pixel/size-of-box-with-zoom.html
 # REGRESSION(r114899) - https://bugs.webkit.org/show_bug.cgi?id=84595
 editing/selection/5354455-1.html
 editing/selection/click-left-of-rtl-wrapping-text.html
+
+# [Qt] REGRESSION: 10 tests started to fail with newer Qt5
+# https://bugs.webkit.org/show_bug.cgi?id=85629
+fast/encoding/char-decoding.html
+fast/encoding/percent-escaping.html
+fast/loader/data-url-encoding-html.html
+fast/loader/data-url-encoding-svg.html
+http/tests/security/xssAuditor/script-tag-Big5-char-twice-url-encode-16bit-unicode.html
+http/tests/security/xssAuditor/script-tag-with-16bit-unicode-surrogate-pair.html
+http/tests/security/xssAuditor/script-tag-with-16bit-unicode2.html
+http/tests/security/xssAuditor/script-tag-with-16bit-unicode5.html
+http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
+http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding.html

@@ -1,5 +1,15 @@
 2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] REGRESSION: 10 tests started to fail with newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=85629
+
+        Unreviewed fix after r116106.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+
+2012-05-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] REGRESSION: 10 tests started to fail with newer Qt5
         https://bugs.webkit.org/show_bug.cgi?id=85629
 
