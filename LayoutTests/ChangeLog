@@ -1,3 +1,10 @@
+2012-05-04  Ojan Vafai  <ojan@chromium.org>
+
+        Fix path to external JS file that was not updated when the file
+        was moved in http://trac.webkit.org/changeset/116128/.
+
+        * platform/chromium/inspector/styles/device-metrics-fit-window.html:
+
 2012-05-04  Dirk Pranke  <dpranke@chromium.org>
 
         Mark tests as flaky timeouts on chromium Mac 10.6
