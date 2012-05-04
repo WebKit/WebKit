@@ -86,7 +86,7 @@ class PortFactory(object):
 
     def _default_port(self, options):
         platform = self._host.platform
-        if platform.is_linux():
+        if platform.is_linux() or platform.is_freebsd():
             return 'chromium-linux'
         elif platform.is_mac():
             return 'mac'

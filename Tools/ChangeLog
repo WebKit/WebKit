@@ -1,3 +1,35 @@
+2012-05-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Recognize FreeBSD as a valid platform.
+        https://bugs.webkit.org/show_bug.cgi?id=81467
+
+        Reviewed by Adam Barth.
+
+        Add PlatformInfo.is_freebsd() so that trying to use webkit-patch
+        on FreeBSD does not raise an "unrecognized platform" exception.
+
+        Most of this patch contains some unit tests for the mentioned
+        method, as currently platform-specific code is needed only on
+        Windows.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__):
+        (PlatformInfo.is_freebsd):
+        (PlatformInfo._determine_os_name):
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.is_freebsd):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (fake_platform):
+        (fake_platform.FakePlatformModule.release):
+        (TestPlatformInfo.test_real_code):
+        (TestPlatformInfo.test_os_name_and_wrappers):
+        (TestPlatformInfo.test_os_version):
+        (TestPlatformInfo.test_display_name):
+        (TestPlatformInfo.test_total_bytes_memory):
+        (TestPlatformInfo.test_free_bytes_memory):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory._default_port):
+
 2012-05-03  Ojan Vafai  <ojan@chromium.org>
 
         Make the table headers white-space:nowrap. This decreases the vertical size,
