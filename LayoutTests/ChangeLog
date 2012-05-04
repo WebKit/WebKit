@@ -1,5 +1,11 @@
 2012-05-04  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, updating expectations.
+
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+
+2012-05-04  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, checking in new expectation file.
 
         * platform/mac/fast/images/png-suite/test-expected.txt: Added.
