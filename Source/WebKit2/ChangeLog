@@ -1,3 +1,13 @@
+2012-05-04  Mark Rowe  <mrowe@apple.com>
+
+        Fix a leak in WebProcess when it is used to launch the UI process.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Destory the attributes and file actions after
+        spawning the subprocess.
+
 2012-05-02  Jer Noble  <jer.noble@apple.com>
 
         Flash of white when exiting full screen HTML5 video

@@ -118,6 +118,10 @@ int WebProcessMain(const CommandLine& commandLine)
         posix_spawnattr_setflags(&attributes, POSIX_SPAWN_CLOEXEC_DEFAULT | POSIX_SPAWN_SETPGROUP);
 
         int spawnResult = posix_spawn(0, command.data(), &fileActions, &attributes, const_cast<char**>(args), environmentVariables.environmentPointer());
+
+        posix_spawnattr_destroy(&attributes);
+        posix_spawn_file_actions_destroy(&fileActions);
+
         if (spawnResult)
             return 2;
 
