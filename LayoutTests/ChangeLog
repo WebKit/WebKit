@@ -1,3 +1,21 @@
+2012-05-04  David Barr  <davidbarr@chromium.org>
+
+        Rebaseline chromium after r116069 (bug 85031)
+        https://bugs.webkit.org/show_bug.cgi?id=85626
+
+        Reviewed by Ojan Vafai.
+
+        * fast/block/float/016-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/016-expected.txt.
+        * platform/chromium-linux/fast/block/float/016-expected.png:
+        * platform/chromium-linux/fast/css/border-solid-single-edge-antialias-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/016-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/float/016-expected.png:
+        * platform/chromium-mac/fast/block/float/016-expected.png:
+        * platform/chromium-win/fast/block/float/016-expected.png:
+        * platform/chromium-win/fast/css/border-solid-single-edge-antialias-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/block/float/016-expected.txt: Removed.
+
 2012-05-04  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION: Cursor jumps to the first line after deleting the last word.
