@@ -666,7 +666,7 @@ void Connection::enqueueIncomingMessage(IncomingMessage& incomingMessage)
     MutexLocker locker(m_incomingMessagesLock);
     m_incomingMessages.append(incomingMessage);
 
-    m_clientRunLoop->dispatch(bind(&Connection::dispatchMessages, this));
+    m_clientRunLoop->dispatch(bind(&Connection::dispatchOneMessage, this));
 }
 
 void Connection::dispatchMessage(IncomingMessage& message)
@@ -703,21 +703,19 @@ void Connection::dispatchMessage(IncomingMessage& message)
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }
 
-void Connection::dispatchMessages()
+void Connection::dispatchOneMessage()
 {
-    while (true) {
-        IncomingMessage incomingMessage;
+    IncomingMessage incomingMessage;
 
-        {
-            MutexLocker locker(m_incomingMessagesLock);
-            if (m_incomingMessages.isEmpty())
-                break;
+    {
+        MutexLocker locker(m_incomingMessagesLock);
+        if (m_incomingMessages.isEmpty())
+            return;
 
-            incomingMessage = m_incomingMessages.takeFirst();
-        }
-
-        dispatchMessage(incomingMessage);
+        incomingMessage = m_incomingMessages.takeFirst();
     }
+
+    dispatchMessage(incomingMessage);
 }
 
 } // namespace CoreIPC
