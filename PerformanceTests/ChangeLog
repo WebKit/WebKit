@@ -1,3 +1,9 @@
+2012-05-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: unreviewed followup fix for the performance test after r116218.
+
+        * inspector/heap-snapshot.html:
+
 2012-05-02  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Need tests for PerfTestRunner.computeStatistics
