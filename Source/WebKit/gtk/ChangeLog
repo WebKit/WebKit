@@ -1,3 +1,9 @@
+2012-05-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed preparation for 1.9.2.
+
+        * NEWS: changes from 1.9.1.
+
 2012-05-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Simplify how libWebCoreModules is linked in, and fix WebKit2 build

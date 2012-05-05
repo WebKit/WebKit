@@ -1,4 +1,21 @@
 =================
+WebKitGTK+ 1.9.2
+=================
+
+What's new in WebKitGTK+ 1.9.2?
+
+  - Fix exceeding arguments list build problem, by splitting more
+    files off libWebCore into the new libWebCoreModules convenience
+    library.
+  - Remove left over soup_session_pause_message() and properly handle
+    that case for defersLoading.
+  - Fix response being the new one instead of the one that caused the
+    redirect when emitting WebKitWebView::resource-request-starting.
+  - Refactor of IME handling to fix bugs and prepare for sharing with
+    WebKit2.
+  - Add file chooser API to WebKit2.
+
+=================
 WebKitGTK+ 1.9.1
 =================
 

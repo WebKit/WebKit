@@ -1,3 +1,9 @@
+2012-05-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed preparation for 1.9.2.
+
+        * configure.ac: bump version to 1.9.2 and bump libtool version.
+
 2012-05-04  Jer Noble  <jer.noble@apple.com>
 
         Flash of white when exiting full screen HTML5 video
