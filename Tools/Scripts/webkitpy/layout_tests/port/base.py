@@ -739,6 +739,7 @@ class Port(object):
             'LANG',
             'LD_LIBRARY_PATH',
             'DBUS_SESSION_BUS_ADDRESS',
+            'XDG_DATA_DIRS',
 
             # Darwin:
             'DYLD_LIBRARY_PATH',

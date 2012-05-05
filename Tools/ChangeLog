@@ -1,3 +1,21 @@
+2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        webkitpy: Preserve XDG_DATA_DIRS in the environment passed to ServerProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=85694
+
+        Reviewed by Martin Robinson.
+
+        This is sort of a follow-up to r100674: $XDG_DATA_DIRS should be
+        preserved, as it is particularly useful for Linux/Unix
+        environments.  As a real use case, if shared-mime-info is
+        installed into a non-trivial prefix, Glib and other libraries will
+        have trouble to properly identify mimetypes (in ResourceResponses,
+        for example) as the base freedesktop.org mimetype file will not be
+        found.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.setup_environ_for_server):
+
 2012-05-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Simplify how libWebCoreModules is linked in, and fix WebKit2 build
