@@ -229,6 +229,8 @@ public:
 
     String layerTreeAsText() const;
 
+    void setStackingOrderChanged(bool);
+
     bool layerPropertyChanged() const { return m_layerPropertyChanged; }
     void resetAllChangeTrackingForSubtree();
 

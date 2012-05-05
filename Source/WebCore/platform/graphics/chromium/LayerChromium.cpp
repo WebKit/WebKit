@@ -57,6 +57,7 @@ PassRefPtr<LayerChromium> LayerChromium::create()
 
 LayerChromium::LayerChromium()
     : m_needsDisplay(false)
+    , m_stackingOrderChanged(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
     , m_layerTreeHost(0)
@@ -153,6 +154,7 @@ void LayerChromium::insertChild(PassRefPtr<LayerChromium> child, size_t index)
     index = min(index, m_children.size());
     child->removeFromParent();
     child->setParent(this);
+    child->m_stackingOrderChanged = true;
     m_children.insert(index, child);
     setNeedsCommit();
 }
@@ -514,6 +516,8 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setScrollDelta(layer->scrollDelta() - layer->sentScrollDelta());
     layer->setSentScrollDelta(IntSize());
 
+    layer->setStackingOrderChanged(m_stackingOrderChanged);
+
     if (maskLayer())
         maskLayer()->pushPropertiesTo(layer->maskLayer());
     if (replicaLayer())
@@ -522,6 +526,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     m_layerAnimationController->pushAnimationUpdatesTo(layer->layerAnimationController());
 
     // Reset any state that should be cleared for the next update.
+    m_stackingOrderChanged = false;
     m_updateRect = FloatRect();
 }
 

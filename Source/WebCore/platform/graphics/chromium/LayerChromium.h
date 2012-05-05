@@ -264,6 +264,9 @@ protected:
     // This flag is set when layer need repainting/updating.
     bool m_needsDisplay;
 
+    // Tracks whether this layer may have changed stacking order with its siblings.
+    bool m_stackingOrderChanged;
+
     // The update rect is the region of the compositor resource that was actually updated by the compositor.
     // For layers that may do updating outside the compositor's control (i.e. plugin layers), this information
     // is not available and the update rect will remain empty.

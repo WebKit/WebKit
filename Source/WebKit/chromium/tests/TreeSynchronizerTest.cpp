@@ -197,6 +197,34 @@ TEST(TreeSynchronizerTest, syncSimpleTreeReusingLayers)
     EXPECT_EQ(secondCCLayerId, ccLayerDestructionList[0]);
 }
 
+// Constructs a very simple tree and checks that a stacking-order change is tracked properly.
+TEST(TreeSynchronizerTest, syncSimpleTreeAndTrackStackingOrderChange)
+{
+    DebugScopedSetImplThread impl;
+    Vector<int> ccLayerDestructionList;
+
+    // Set up the tree and sync once. child2 needs to be synced here, too, even though we
+    // remove it to set up the intended scenario.
+    RefPtr<LayerChromium> layerTreeRoot = MockLayerChromium::create(&ccLayerDestructionList);
+    RefPtr<LayerChromium> child2 = MockLayerChromium::create(&ccLayerDestructionList);
+    layerTreeRoot->addChild(MockLayerChromium::create(&ccLayerDestructionList));
+    layerTreeRoot->addChild(child2);
+    OwnPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), nullptr);
+    expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
+    ccLayerTreeRoot->resetAllChangeTrackingForSubtree();
+
+    // re-insert the layer and sync again.
+    child2->removeFromParent();
+    layerTreeRoot->addChild(child2);
+    ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), ccLayerTreeRoot.release());
+    expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
+
+    // Check that the impl thread properly tracked the change.
+    EXPECT_FALSE(ccLayerTreeRoot->layerPropertyChanged());
+    EXPECT_FALSE(ccLayerTreeRoot->children()[0]->layerPropertyChanged());
+    EXPECT_TRUE(ccLayerTreeRoot->children()[1]->layerPropertyChanged());
+}
+
 TEST(TreeSynchronizerTest, syncSimpleTreeAndProperties)
 {
     DebugScopedSetImplThread impl;

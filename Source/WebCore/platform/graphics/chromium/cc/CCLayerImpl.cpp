@@ -265,6 +265,13 @@ void CCLayerImpl::dumpLayer(TextStream& ts, int indent) const
         m_children[i]->dumpLayer(ts, indent+1);
 }
 
+void CCLayerImpl::setStackingOrderChanged(bool stackingOrderChanged)
+{
+    // We don't need to store this flag; we only need to track that the change occurred.
+    if (stackingOrderChanged)
+        noteLayerPropertyChangedForSubtree();
+}
+
 void CCLayerImpl::noteLayerPropertyChangedForSubtree()
 {
     m_layerPropertyChanged = true;
