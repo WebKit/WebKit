@@ -162,3 +162,6 @@
 #define WebKitMediaPlaybackAllowsInlinePreferenceKey "WebKitMediaPlaybackAllowsInline"
 
 #define WebKitAVFoundationEnabledPreferenceKey "WebKitAVFoundationEnabled"
+
+#define WebKitRequestAnimationFrameEnabledPreferenceKey "WebKitRequestAnimationFrameEnabled"
+

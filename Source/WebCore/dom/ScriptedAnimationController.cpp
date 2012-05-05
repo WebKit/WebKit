@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "RequestAnimationFrameCallback.h"
+#include "Settings.h"
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #include <algorithm>
@@ -109,7 +110,7 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
 
 void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTimeNow)
 {
-    if (!m_callbacks.size() || m_suspendCount)
+    if (!m_callbacks.size() || m_suspendCount || (m_document->settings() && !m_document->settings()->requestAnimationFrameEnabled()))
         return;
 
     double highResNowMs = 1000.0 * m_document->loader()->timing()->convertMonotonicTimeToZeroBasedDocumentTime(monotonicTimeNow);
@@ -118,7 +119,7 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
     // on are considered only for the "next" frame, not this one.
     CallbackList callbacks(m_callbacks);
 
-    // Invoking callbacks may detach elements from our document, which clear's the document's
+    // Invoking callbacks may detach elements from our document, which clears the document's
     // reference to us, so take a defensive reference.
     RefPtr<ScriptedAnimationController> protector(this);
 
@@ -146,6 +147,8 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
 
 void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displayID)
 {
+    if (m_document->settings() && !m_document->settings()->requestAnimationFrameEnabled())
+        return;
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     DisplayRefreshMonitorManager::sharedManager()->windowScreenDidChange(displayID, this);
 #else
@@ -155,7 +158,7 @@ void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displa
 
 void ScriptedAnimationController::scheduleAnimation()
 {
-    if (!m_document)
+    if (!m_document || (m_document->settings() && !m_document->settings()->requestAnimationFrameEnabled()))
         return;
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)

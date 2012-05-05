@@ -298,6 +298,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setShouldRespectImageOrientation:(BOOL)flag;
 - (BOOL)shouldRespectImageOrientation;
 
+- (BOOL)requestAnimationFrameEnabled;
+- (void)setRequestAnimationFrameEnabled:(BOOL)enabled;
+
 - (void)setIncrementalRenderingSuppressionTimeoutInSeconds:(NSTimeInterval)timeout;
 - (NSTimeInterval)incrementalRenderingSuppressionTimeoutInSeconds;
 

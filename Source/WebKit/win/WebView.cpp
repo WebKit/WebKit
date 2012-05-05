@@ -4947,6 +4947,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     setShouldInvertColors(enabled);
 
+    hr = prefsPrivate->requestAnimationFrameEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setRequestAnimationFrameEnabled(enabled);
+
     return S_OK;
 }
 

@@ -1,3 +1,23 @@
+2012-05-05  Dean Jackson  <dino@apple.com>
+
+        Add new Setting/Preference to disable requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=85693
+
+        Reviewed by Simon Fraser.
+
+        Exposes a new WebPreference: WebKitRequestAnimationFrameEnabled.
+        The default value is true. The majority of applications will leave
+        it this way.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRequestAnimationFrameEnabled):
+        (WKPreferencesGetRequestAnimationFrameEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-05-04  Jon Lee  <jonlee@apple.com>
 
         [WK2] Incoming events may be processed out-of-order

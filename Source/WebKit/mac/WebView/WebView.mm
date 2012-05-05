@@ -1532,6 +1532,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings->setShouldRespectImageOrientation([preferences shouldRespectImageOrientation]);
     settings->setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
+    settings->setRequestAnimationFrameEnabled([preferences requestAnimationFrameEnabled]);
     
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)

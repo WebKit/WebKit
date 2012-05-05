@@ -72,3 +72,5 @@ BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 // Generate results for your platform(s)
 BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 
+// Interferes with the tests that should pass
+BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT

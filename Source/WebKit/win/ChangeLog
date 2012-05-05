@@ -1,3 +1,25 @@
+2012-05-05  Dean Jackson  <dino@apple.com>
+
+        Add new Setting/Preference to disable requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=85693
+
+        Reviewed by Simon Fraser.
+
+        Exposes a new WebPreference: WebKitRequestAnimationFrameEnabled.
+        The default value is true. The majority of applications will leave
+        it this way.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::setRequestAnimationFrameEnabled):
+        (WebPreferences::requestAnimationFrameEnabled):
+        * WebPreferences.h:
+        (WebPreferences):
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2012-05-04  Nate Chapin  <japhet@chromium.org>
 
         Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.

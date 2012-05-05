@@ -554,10 +554,13 @@ namespace WebCore {
 
         void setWantsBalancedSetDefersLoadingBehavior(bool flag) { m_wantsBalancedSetDefersLoadingBehavior = flag; }
         bool wantsBalancedSetDefersLoadingBehavior() const { return m_wantsBalancedSetDefersLoadingBehavior; }
-        
+
         void setIncrementalRenderingSuppressionTimeoutInSeconds(double timeout) { m_incrementalRenderingSuppressionTimeoutInSeconds = timeout; }
         double incrementalRenderingSuppressionTimeoutInSeconds() const { return m_incrementalRenderingSuppressionTimeoutInSeconds; }
-        
+
+        void setRequestAnimationFrameEnabled(bool enabled) { m_requestAnimationFrameEnabled = enabled; }
+        bool requestAnimationFrameEnabled() const { return m_requestAnimationFrameEnabled; }
+
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -721,6 +724,7 @@ namespace WebCore {
         bool m_threadedAnimationEnabled : 1;
         bool m_shouldRespectImageOrientation : 1;
         bool m_wantsBalancedSetDefersLoadingBehavior : 1;
+        bool m_requestAnimationFrameEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

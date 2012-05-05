@@ -205,3 +205,6 @@ BUGWK85213 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMA
 // Requires rebaseline after bug 85031
 BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
+
+// Interferes with the tests that should pass
+BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT

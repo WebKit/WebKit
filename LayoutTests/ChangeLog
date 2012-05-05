@@ -1,3 +1,28 @@
+2012-05-05  Dean Jackson  <dino@apple.com>
+
+        Add new Setting/Preference to disable requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=85693
+
+        Reviewed by Simon Fraser.
+
+        A new test that exercises turning the requestAnimationFrame
+        preference off. Unfortunately this conflicts with the parallel
+        tests that expect the preference to be on (as it should by default),
+        so the test is skipped on all platforms. It can be run in isolation.
+        https://bugs.webkit.org/show_bug.cgi?id=85689
+
+        * fast/animation/request-animation-frame-disabled-expected.txt: Added.
+        * fast/animation/request-animation-frame-disabled.html: Added.
+        * fast/animation/script-tests/request-animation-frame-disabled.js: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        * platform/win/Skipped:
+        * platform/win/test_expectations.txt:
+
 2012-05-05  Zhenyao Mo  <zmo@google.com>
 
         vertexAttribPointer needs to reject large negative offsets

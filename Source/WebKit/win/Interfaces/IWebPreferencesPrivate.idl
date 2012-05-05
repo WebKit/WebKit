@@ -142,4 +142,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setShouldInvertColors([in] BOOL);
     HRESULT shouldInvertColors([out, retval] BOOL*);
+
+    HRESULT setRequestAnimationFrameEnabled([in] BOOL);
+    HRESULT requestAnimationFrameEnabled([out, retval] BOOL*);
 }

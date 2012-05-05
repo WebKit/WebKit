@@ -397,11 +397,13 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayTextDescriptionsPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitNotificationsEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
+        [NSNumber numberWithBool:YES],  WebKitRequestAnimationFrameEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         nil];
+
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
     ASSERT(kPDFDisplaySinglePageContinuous == 1);
@@ -1685,6 +1687,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)shouldRespectImageOrientation
 {
     return [self _boolValueForKey:WebKitShouldRespectImageOrientationKey];
+}
+
+- (BOOL)requestAnimationFrameEnabled
+{
+    return [self _boolValueForKey:WebKitRequestAnimationFrameEnabledPreferenceKey];
+}
+
+- (void)setRequestAnimationFrameEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitRequestAnimationFrameEnabledPreferenceKey];
 }
 
 - (void)setIncrementalRenderingSuppressionTimeoutInSeconds:(NSTimeInterval)timeout

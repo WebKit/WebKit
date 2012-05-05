@@ -290,3 +290,6 @@ BUGWK85594 : fast/dom/navigator-detached-no-crash.html = TEXT
 // Incorrect rendering results after r115846
 BUGWK85599 : http/tests/navigation/postredirect-basic.html = TEXT
 BUGWK85599 : http/tests/navigation/postredirect-goback1.html = TEXT
+
+// Interferes with the rAF tests that are enabled
+BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT

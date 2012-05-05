@@ -1343,6 +1343,9 @@ BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 
 BUGWK85700 : fullscreen/non-ancestor-iframe.html = FAIL
 
+// Interferes with the rAF tests that are enabled
+BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

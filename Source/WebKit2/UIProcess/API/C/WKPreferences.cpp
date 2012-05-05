@@ -788,6 +788,16 @@ bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->shouldRespectImageOrientation();
 }
 
+void WKPreferencesSetRequestAnimationFrameEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setRequestAnimationFrameEnabled(flag);
+}
+
+bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->requestAnimationFrameEnabled();
+}
+
 void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)
 {
     // Currently we reset the overrides on the web process when preferencesDidChange() is called. Since WTR preferences

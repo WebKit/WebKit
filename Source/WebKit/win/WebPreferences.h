@@ -471,6 +471,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE shouldInvertColors(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShouldInvertColors(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE requestAnimationFrameEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setRequestAnimationFrameEnabled(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.
