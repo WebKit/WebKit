@@ -38,43 +38,6 @@ from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
 from webkitpy.common.system.executive import Executive
 
-
-class GtkDriver(WebKitDriver):
-    def _start(self, pixel_tests, per_test_args):
-
-        # Collect the number of X servers running already and make
-        # sure our Xvfb process doesn't clash with any of them.
-        def x_filter(process_name):
-            return process_name.find("Xorg") > -1
-
-        running_displays = len(Executive().running_pids(x_filter))
-
-        # Use even displays for pixel tests and odd ones otherwise. When pixel tests are disabled,
-        # DriverProxy creates two drivers, one for normal and the other for ref tests. Both have
-        # the same worker number, so this prevents them from using the same Xvfb instance.
-        display_id = self._worker_number * 2 + running_displays
-        if pixel_tests:
-            display_id += 1
-        run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
-        with open(os.devnull, 'w') as devnull:
-            self._xvfb_process = subprocess.Popen(run_xvfb, stderr=devnull)
-        server_name = self._port.driver_name()
-        environment = self._port.setup_environ_for_server(server_name)
-        # We must do this here because the DISPLAY number depends on _worker_number
-        environment['DISPLAY'] = ":%d" % (display_id)
-        self._crashed_process_name = None
-        self._crashed_pid = None
-        self._server_process = ServerProcess(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
-
-    def stop(self):
-        WebKitDriver.stop(self)
-        if getattr(self, '_xvfb_process', None):
-            # FIXME: This should use Executive.kill_process
-            os.kill(self._xvfb_process.pid, signal.SIGTERM)
-            self._xvfb_process.wait()
-            self._xvfb_process = None
-
-
 class GtkPort(WebKitPort, PulseAudioSanitizer):
     port_name = "gtk"
 

@@ -1,5 +1,17 @@
 2012-05-05  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Gtk] GtkDriver is not required anymore after r116134
+        https://bugs.webkit.org/show_bug.cgi?id=85699
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove GtkDriver as it was replaced by the XvfbDriver and is
+        no longer needed.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+
+2012-05-05  Zan Dobersek  <zandobersek@gmail.com>
+
         Increase the display ID for the Xvfb process to use if pixel_tests argument
         is true rather than if pixel_tests option is present. This fixes the
         XvfbDriver in the same way r115825 fixed the now-redundant GtkDriver.
