@@ -2900,6 +2900,10 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* context,
     if (!renderer()->opacity())
         return;
 
+    // Non self-painting leaf layers don't need to be painted as their renderer() should properly paint itself.
+    if (!isSelfPaintingLayer() && !firstChild())
+        return;
+
     if (paintsWithTransparency(paintBehavior))
         paintFlags |= PaintLayerHaveTransparency;
 
