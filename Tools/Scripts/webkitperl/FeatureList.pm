@@ -42,11 +42,10 @@ BEGIN {
 }
 
 my (
-    $threeDCanvasSupport,
     $threeDRenderingSupport,
-    $accelerated2dCanvasSupport,
+    $accelerated2DCanvasSupport,
     $animationAPISupport,
-    $batterystatusAPISupport,
+    $batteryStatusSupport,
     $blobSupport,
     $channelMessagingSupport,
     $cssFiltersSupport,
@@ -65,7 +64,7 @@ my (
     $gamepadSupport,
     $geolocationSupport,
     $highDPICanvasSupport,
-    $iconDatabaseSupport,
+    $icondatabaseSupport,
     $imageResizerSupport,
     $indexedDatabaseSupport,
     $inputSpeechSupport,
@@ -76,6 +75,7 @@ my (
     $inputTypeMonthSupport,
     $inputTypeTimeSupport,
     $inputTypeWeekSupport,
+    $inspectorSupport,
     $javaScriptDebuggerSupport,
     $legacyNotificationsSupport,
     $legacyWebKitBlobBuilderSupport,
@@ -93,13 +93,13 @@ my (
     $networkInfoSupport,
     $notificationsSupport,
     $orientationEventsSupport,
-    $pageVisibilityApiSupport,
+    $pageVisibilityAPISupport,
     $progressTagSupport,
     $quotaSupport,
     $registerProtocolHandlerSupport,
     $requestAnimationFrameSupport,
     $scriptedSpeechSupport,
-    $shadowDomSupport,
+    $shadowDOMSupport,
     $sharedWorkersSupport,
     $sqlDatabaseSupport,
     $styleScopedSupport,
@@ -113,8 +113,8 @@ my (
     $vibrationSupport,
     $videoSupport,
     $videoTrackSupport,
+    $webglSupport,
     $webAudioSupport,
-    $webInspectorSupport,
     $webSocketsSupport,
     $webTimingSupport,
     $workersSupport,
@@ -122,25 +122,25 @@ my (
 );
 
 my @features = (
-    { option => "3d-canvas", desc => "Toggle 3D canvas (WebGL) support",
-      define => "ENABLE_WEBGL", default => isAppleMacWebKit(), value => \$threeDCanvasSupport },
+    { option => "3d-canvas", desc => "Toggle WebGL support",
+      define => "ENABLE_WEBGL", default => isAppleMacWebKit(), value => \$webglSupport },
 
-    { option => "3d-rendering", desc => "Toggle 3D rendering support",
+    { option => "3d-rendering", desc => "Toggle 3D Rendering support",
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isQt()), value => \$threeDRenderingSupport },
 
-    { option => "accelerated-2d-canvas", desc => "Toggle accelerated 2D canvas support",
-      define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2dCanvasSupport },
+    { option => "accelerated-2d-canvas", desc => "Toggle Accelerated 2D Canvas support",
+      define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2DCanvasSupport },
 
-    { option => "animation-api", desc => "Toggle animation API support",
+    { option => "animation-api", desc => "Toggle Animation API support",
       define => "ENABLE_ANIMATION_API", default => isBlackBerry(), value => \$animationAPISupport },
 
-    { option => "battery-status-api", desc => "Toggle battery status API support",
-      define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry()), value => \$batterystatusAPISupport },
+    { option => "battery-status-api", desc => "Toggle Battery Status API support",
+      define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry()), value => \$batteryStatusSupport },
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isChromium() || isBlackBerry()), value => \$blobSupport },
 
-    { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
+    { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
@@ -149,34 +149,34 @@ my @features = (
     { option => "css-grid-layout", desc => "Toggle CSS Grid Layout support",
       define => "ENABLE_CSS_GRID_LAYOUT", default => 0, value => \$cssGridLayoutSupport },
 
-    { option => "css-shaders", desc => "Toggle CSS Shaders (within CSS Filters) support",
+    { option => "css-shaders", desc => "Toggle CSS Shaders support",
       define => "ENABLE_CSS_SHADERS", default => 0, value => \$cssShadersSupport },
 
-    { option => "datalist", desc => "Toggle HTML5 datalist support",
+    { option => "datalist", desc => "Toggle Datalist support",
       define => "ENABLE_DATALIST", default => 0, value => \$datalistSupport },
 
-    { option => "data-transfer-items", desc => "Toggle HTML5 data transfer items support",
+    { option => "data-transfer-items", desc => "Toggle Data Transfer Items support",
       define => "ENABLE_DATA_TRANSFER_ITEMS", default => 0, value => \$dataTransferItemsSupport },
 
-    { option => "details", desc => "Toggle HTML5 details support",
+    { option => "details", desc => "Toggle Details support",
       define => "ENABLE_DETAILS", default => 1, value => \$detailsSupport },
 
-    { option => "device-orientation", desc => "Toggle DeviceOrientation support",
+    { option => "device-orientation", desc => "Toggle Device Orientation support",
       define => "ENABLE_DEVICE_ORIENTATION", default => isBlackBerry(), value => \$deviceOrientationSupport },
 
-    { option => "directory-upload", desc => "Toogle Directory upload support",
+    { option => "directory-upload", desc => "Toogle Directory Upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
 
-    { option => "download-attribute", desc => "Toggle download attribute support",
+    { option => "download-attribute", desc => "Toggle Download Attribute support",
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => isBlackBerry(), value => \$downloadAttributeSupport },
 
-    { option => "file-system", desc => "Toggle FileSystem support",
+    { option => "file-system", desc => "Toggle File System support",
       define => "ENABLE_FILE_SYSTEM", default => isBlackBerry(), value => \$fileSystemSupport },
 
-    { option => "filters", desc => "Toggle SVG Filters support",
+    { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl() || isBlackBerry()), value => \$filtersSupport },
 
-    { option => "ftpdir", desc => "Toggle FTP directory support",
+    { option => "ftpdir", desc => "Toggle FTP Directory support",
       define => "ENABLE_FTPDIR", default => !isWinCE(), value => \$ftpDirSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
@@ -188,55 +188,55 @@ my @features = (
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$geolocationSupport },
 
-    { option => "high-dpi-canvas", desc => "Toggle high-DPI canvas backing store support",
+    { option => "high-dpi-canvas", desc => "Toggle High DPI Canvas support",
       define => "ENABLE_HIGH_DPI_CANVAS", default => (isAppleWebKit()), value => \$highDPICanvasSupport },
 
-    { option => "icon-database", desc => "Toggle Icon database support",
-      define => "ENABLE_ICONDATABASE", default => 1, value => \$iconDatabaseSupport },
+    { option => "icon-database", desc => "Toggle Icondatabase support",
+      define => "ENABLE_ICONDATABASE", default => 1, value => \$icondatabaseSupport },
 
-    { option => "indexed-database", desc => "Toggle Indexed Database API support",
+    { option => "indexed-database", desc => "Toggle Indexed Database support",
       define => "ENABLE_INDEXED_DATABASE", default => 0, value => \$indexedDatabaseSupport },
 
-    { option => "input-speech", desc => "Speech Input API support",
+    { option => "input-speech", desc => "Toggle Input Speech support",
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
 
-    { option => "input-type-color", desc => "Toggle color type <input> support",
+    { option => "input-type-color", desc => "Toggle Input Type Color support",
       define => "ENABLE_INPUT_TYPE_COLOR", default => (isBlackBerry() || isEfl()), value => \$inputTypeColorSupport },
 
-    { option => "input-type-date", desc => "Toggle date type <input> support",
+    { option => "input-type-date", desc => "Toggle Input Type Date support",
       define => "ENABLE_INPUT_TYPE_DATE", default => 0, value => \$inputTypeDateSupport },
 
-    { option => "input-type-datetime", desc => "Toggle datetime type <input> support",
+    { option => "input-type-datetime", desc => "Toggle Input Type Datetime support",
       define => "ENABLE_INPUT_TYPE_DATETIME", default => 0, value => \$inputTypeDatetimeSupport },
 
-    { option => "input-type-datetimelocal", desc => "Toggle datetime-local type <input> support",
+    { option => "input-type-datetimelocal", desc => "Toggle Input Type Datetimelocal support",
       define => "ENABLE_INPUT_TYPE_DATETIMELOCAL", default => 0, value => \$inputTypeDatetimelocalSupport },
 
-    { option => "input-type-month", desc => "Toggle month type <input> support",
+    { option => "input-type-month", desc => "Toggle Input Type Month support",
       define => "ENABLE_INPUT_TYPE_MONTH", default => 0, value => \$inputTypeMonthSupport },
 
-    { option => "input-type-time", desc => "Toggle time type <input> support",
+    { option => "input-type-time", desc => "Toggle Input Type Time support",
       define => "ENABLE_INPUT_TYPE_TIME", default => 0, value => \$inputTypeTimeSupport },
 
-    { option => "input-type-week", desc => "Toggle week type <input> support",
+    { option => "input-type-week", desc => "Toggle Input Type Week support",
       define => "ENABLE_INPUT_TYPE_WEEK", default => 0, value => \$inputTypeWeekSupport },
 
-    { option => "inspector", desc => "Toggle Web Inspector support",
-      define => "ENABLE_INSPECTOR", default => !isWinCE(), value => \$webInspectorSupport },
+    { option => "inspector", desc => "Toggle Inspector support",
+      define => "ENABLE_INSPECTOR", default => !isWinCE(), value => \$inspectorSupport },
 
-    { option => "javascript-debugger", desc => "Toggle JavaScript Debugger/Profiler support",
+    { option => "javascript-debugger", desc => "Toggle JavaScript Debugger support",
       define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },
 
-    { option => "legacy-notifications", desc => "Toggle Legacy Desktop Notifications Support",
+    { option => "legacy-notifications", desc => "Toggle Legacy Notifications support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => isBlackBerry(), value => \$legacyNotificationsSupport },
 
-    { option => "legacy-webkit-blob-builder", desc => "Toggle Legacy WebKitBlobBuilder Support",
+    { option => "legacy-webkit-blob-builder", desc => "Toggle Legacy WebKit Blob Builder support",
       define => "ENABLE_LEGACY_WEBKIT_BLOB_BUILDER", default => (isGtk() || isChromium() || isBlackBerry()), value => \$legacyWebKitBlobBuilderSupport },
 
-    { option => "link-prefetch", desc => "Toggle pre fetching support",
+    { option => "link-prefetch", desc => "Toggle Link Prefetch support",
       define => "ENABLE_LINK_PREFETCH", default => 0, value => \$linkPrefetchSupport },
 
-    { option => "link-prerender", desc => "Toggle pre rendering support",
+    { option => "link-prerender", desc => "Toggle Link Prerender support",
       define => "ENABLE_LINK_PRERENDER", default => 0, value => \$linkPrerenderSupport },
 
     { option => "mathml", desc => "Toggle MathML support",
@@ -248,10 +248,10 @@ my @features = (
     { option => "media-statistics", desc => "Toggle Media Statistics support",
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },
 
-    { option => "media-stream", desc => "Toggle Media Stream API support (implies Blob support, currently Chromium and GTK only)",
+    { option => "media-stream", desc => "Toggle Media Stream support",
       define => "ENABLE_MEDIA_STREAM", default => (isChromium() || isGtk()), value => \$mediaStreamSupport },
 
-    { option => "meter-tag", desc => "Meter Tag support",
+    { option => "meter-tag", desc => "Toggle Meter Tag support",
       define => "ENABLE_METER_TAG", default => !isAppleWinWebKit(), value => \$meterTagSupport },
 
     { option => "mhtml", desc => "Toggle MHTML support",
@@ -260,58 +260,58 @@ my @features = (
     { option => "microdata", desc => "Toggle Microdata support",
       define => "ENABLE_MICRODATA", default => 0, value => \$microdataSupport },
 
-    { option => "mutation-observers", desc => "Toggle DOM mutation observer support",
+    { option => "mutation-observers", desc => "Toggle Mutation Observers support",
       define => "ENABLE_MUTATION_OBSERVERS", default => 1, value => \$mutationObserversSupport },
 
-    { option => "netscape-plugin", desc => "Netscape Plugin support",
+    { option => "netscape-plugin", desc => "Toggle Netscape Plugin API support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },
 
-    { option => "network-info", desc => "Network Information API support",
+    { option => "network-info", desc => "Toggle Network Information API support",
       define => "ENABLE_NETWORK_INFO", default => isEfl(), value => \$networkInfoSupport },
 
-    { option => "notifications", desc => "Toggle Desktop Notifications Support",
+    { option => "notifications", desc => "Toggle Notifications Support",
       define => "ENABLE_NOTIFICATIONS", default => isBlackBerry(), value => \$notificationsSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
       define => "ENABLE_ORIENTATION_EVENTS", default => isBlackBerry(), value => \$orientationEventsSupport },
 
-    { option => "page-visibility-api", desc => "Page Visibility API support",
-      define => "ENABLE_PAGE_VISIBILITY_API", default => (isBlackBerry() || isEfl()), value => \$pageVisibilityApiSupport },
+    { option => "page-visibility-api", desc => "Toggle Page Visibility API support",
+      define => "ENABLE_PAGE_VISIBILITY_API", default => (isBlackBerry() || isEfl()), value => \$pageVisibilityAPISupport },
 
-    { option => "progress-tag", desc => "Progress Tag support",
+    { option => "progress-tag", desc => "Toggle Progress Tag support",
       define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
 
     { option => "quota", desc => "Toggle Quota support",
       define => "ENABLE_QUOTA", default => 0, value => \$quotaSupport },
 
-    { option => "register-protocol-handler", desc => "Register Protocol Handler support",
+    { option => "register-protocol-handler", desc => "Toggle Register Protocol Handler support",
       define => "ENABLE_REGISTER_PROTOCOL_HANDLER", default => 0, value => \$registerProtocolHandlerSupport },
 
-    { option => "request-animation-frame", desc => "Toggle requestAnimationFrame support",
+    { option => "request-animation-frame", desc => "Toggle Request Animation Frame support",
       define => "ENABLE_REQUEST_ANIMATION_FRAME", default => (isAppleMacWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$requestAnimationFrameSupport },
 
-    { option => "scripted-speech", desc => "Scripted Speech API support",
+    { option => "scripted-speech", desc => "Toggle Scripted Speech support",
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
 
     { option => "shadow-dom", desc => "Toggle Shadow DOM support",
-      define => "ENABLE_SHADOW_DOM", default => isGtk(), value => \$shadowDomSupport },
+      define => "ENABLE_SHADOW_DOM", default => isGtk(), value => \$shadowDOMSupport },
 
-    { option => "shared-workers", desc => "Toggle SharedWorkers support",
+    { option => "shared-workers", desc => "Toggle Shared Workers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$sharedWorkersSupport },
 
     { option => "sql-database", desc => "Toggle SQL Database support",
       define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
 
-    { option => "style-scoped", desc => "Toggle <style scoped> support",
+    { option => "style-scoped", desc => "Toggle Style Scoped support",
       define => "ENABLE_STYLE_SCOPED", default => 0, value => \$styleScopedSupport },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },
 
-    { option => "svg-dom-objc-bindings", desc => "Toggle SVG DOM Objective-C bindings support (implies SVG support)",
+    { option => "svg-dom-objc-bindings", desc => "Toggle SVG DOM ObjC Bindings support",
       define => "ENABLE_SVG_DOM_OBJC_BINDINGS", default => isAppleMacWebKit(), value => \$svgDOMObjCBindingsSupport },
 
-    { option => "svg-fonts", desc => "Toggle SVG fonts support (imples SVG support)",
+    { option => "svg-fonts", desc => "Toggle SVG Fonts support",
       define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
@@ -326,7 +326,7 @@ my @features = (
     { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },
 
-    { option => "vibration", desc => "Toggle Vibration API support",
+    { option => "vibration", desc => "Toggle Vibration support",
       define => "ENABLE_VIBRATION", default => (isEfl() || isBlackBerry()), value => \$vibrationSupport },
 
     { option => "video", desc => "Toggle Video support",
@@ -344,7 +344,7 @@ my @features = (
     { option => "web-timing", desc => "Toggle Web Timing support",
       define => "ENABLE_WEB_TIMING", default => (isBlackBerry() || isGtk() || isEfl()), value => \$webTimingSupport },
 
-    { option => "workers", desc => "Toggle Web Workers support",
+    { option => "workers", desc => "Toggle Workers support",
       define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$workersSupport },
 
     { option => "xslt", desc => "Toggle XSLT support",
