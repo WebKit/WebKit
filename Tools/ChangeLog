@@ -1,3 +1,11 @@
+2012-05-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Buildfix for --minimal build after r116107.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-05-05  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] GtkDriver is not required anymore after r116134

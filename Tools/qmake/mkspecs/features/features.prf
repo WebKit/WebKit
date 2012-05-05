@@ -218,10 +218,10 @@ FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
 v8: FEATURE_DEFINES_JAVASCRIPT += V8_BINDING=1
 
 for(define, DEFINES) {
-    feature_define = $$find(define, ^ENABLE_.+=.$)
-    isEmpty(feature_define): next()
+    enabled_feature_define = $$find(define, ^ENABLE_.+=1$)
+    isEmpty(enabled_feature_define): next()
 
-    FEATURE_DEFINES_JAVASCRIPT += $$feature_define
+    FEATURE_DEFINES_JAVASCRIPT += $$enabled_feature_define
 }
 
 # ---------------------- The end ----------------------
