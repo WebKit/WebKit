@@ -1,3 +1,14 @@
+2012-05-04  Chris Rogers  <crogers@google.com>
+
+        Oscillator must implement noteOn() and noteOff()
+        https://bugs.webkit.org/show_bug.cgi?id=85236
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/oscillator-scheduling-expected.wav: Added.
+        * webaudio/resources/oscillator-testing.js:
+        (generateExponentialOscillatorSweep):
+
 2012-05-04  David Barr  <davidbarr@chromium.org>
 
         Rebaseline chromium after r116069 (bug 85031)

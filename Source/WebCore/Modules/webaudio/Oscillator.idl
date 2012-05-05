@@ -35,12 +35,22 @@ module audio {
         const unsigned short SAWTOOTH = 2;
         const unsigned short TRIANGLE = 3;
         const unsigned short CUSTOM = 4;
-        
+
         attribute unsigned short type;
+
+        // Playback state constants.
+        const unsigned short UNSCHEDULED_STATE = 0;
+        const unsigned short SCHEDULED_STATE = 1;
+        const unsigned short PLAYING_STATE = 2;
+        const unsigned short FINISHED_STATE = 3;
+
+        readonly attribute unsigned short playbackState;
 
         readonly attribute AudioParam frequency; // in Hertz
         readonly attribute AudioParam detune; // in Cents
 
+        void noteOn(in double when);
+        void noteOff(in double when);
         void setWaveTable(in WaveTable waveTable);
 
     };

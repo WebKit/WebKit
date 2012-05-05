@@ -101,18 +101,11 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             return;
         }
 
-        size_t quantumStartFrame;
-        size_t quantumEndFrame;
-        size_t startFrame;
-        size_t endFrame;
         size_t quantumFrameOffset;
         size_t bufferFramesToProcess;
 
         updateSchedulingInfo(framesToProcess,
-                             quantumStartFrame,
-                             quantumEndFrame,
-                             startFrame,
-                             endFrame,
+                             outputBus,
                              quantumFrameOffset,
                              bufferFramesToProcess);
                              
@@ -130,26 +123,6 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         // Apply the gain (in-place) to the output bus.
         float totalGain = gain()->value() * m_buffer->gain();
         outputBus->copyWithGainFrom(*outputBus, &m_lastGain, totalGain);
-
-        // If the end time is somewhere in the middle of this time quantum, then simply zero out the
-        // frames starting at the end time.
-        if (m_endTime != UnknownTime && endFrame >= quantumStartFrame && endFrame < quantumEndFrame) {
-            size_t zeroStartFrame = endFrame - quantumStartFrame;
-            size_t framesToZero = framesToProcess - zeroStartFrame;
-
-            bool isSafe = zeroStartFrame < framesToProcess && framesToZero <= framesToProcess && zeroStartFrame + framesToZero <= framesToProcess;
-            ASSERT(isSafe);
-            
-            if (isSafe) {
-                for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
-                    memset(m_destinationChannels[i] + zeroStartFrame, 0, sizeof(float) * framesToZero);
-            }
-
-            m_virtualReadIndex = 0;
-
-            finish();
-        }
-
         outputBus->clearSilentFlag();
     } else {
         // Too bad - the tryLock() failed.  We must be in the middle of changing buffers and were already outputting silence anyway.

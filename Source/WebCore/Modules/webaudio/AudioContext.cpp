@@ -350,7 +350,10 @@ PassRefPtr<AudioBufferSourceNode> AudioContext::createBufferSource()
     lazyInitialize();
     RefPtr<AudioBufferSourceNode> node = AudioBufferSourceNode::create(this, m_destinationNode->sampleRate());
 
-    refNode(node.get()); // context keeps reference until source has finished playing
+    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
+    // When this happens, AudioScheduledSourceNode::finish() calls AudioContext::notifyNodeFinishedProcessing().
+    refNode(node.get());
+
     return node;
 }
 
@@ -516,7 +519,14 @@ PassRefPtr<Oscillator> AudioContext::createOscillator()
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    return Oscillator::create(this, m_destinationNode->sampleRate());
+
+    RefPtr<Oscillator> node = Oscillator::create(this, m_destinationNode->sampleRate());
+
+    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
+    // When this happens, AudioScheduledSourceNode::finish() calls AudioContext::notifyNodeFinishedProcessing().
+    refNode(node.get());
+
+    return node;
 }
 
 PassRefPtr<WaveTable> AudioContext::createWaveTable(Float32Array* real, Float32Array* imag, ExceptionCode& ec)

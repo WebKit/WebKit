@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class AudioBus;
+
 class AudioScheduledSourceNode : public AudioSourceNode {
 public:
     // These are the possible states an AudioScheduledSourceNode can be in:
@@ -64,18 +66,14 @@ public:
 
 protected:
     // Get frame information for the current time quantum.
+    // We handle the transition into PLAYING_STATE and FINISHED_STATE here,
+    // zeroing out portions of the outputBus which are outside the range of startFrame and endFrame.
+    //
     // Each frame time is relative to the context's currentSampleFrame().
-    // quantumStartFrame     : Start frame of the current time quantum.
-    // quantumEndFrame       : End frame of the current time quantum.
-    // startFrame            : Start frame for this source.
-    // endFrame              : End frame for this source.
     // quantumFrameOffset    : Offset frame in this time quantum to start rendering.
     // nonSilentFramesToProcess : Number of frames rendering non-silence (will be <= quantumFrameSize).
     void updateSchedulingInfo(size_t quantumFrameSize,
-                              size_t& quantumStartFrame,
-                              size_t& quantumEndFrame,
-                              size_t& startFrame,
-                              size_t& endFrame,
+                              AudioBus* outputBus,
                               size_t& quantumFrameOffset,
                               size_t& nonSilentFramesToProcess);
 

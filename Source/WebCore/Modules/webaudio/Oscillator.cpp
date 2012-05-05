@@ -48,8 +48,9 @@ PassRefPtr<Oscillator> Oscillator::create(AudioContext* context, float sampleRat
 }
 
 Oscillator::Oscillator(AudioContext* context, float sampleRate)
-    : AudioSourceNode(context, sampleRate)
+    : AudioScheduledSourceNode(context, sampleRate)
     , m_type(SINE)
+    , m_firstRender(true)
     , m_virtualReadIndex(0)
     , m_phaseIncrements(AudioNode::ProcessingSizeInFrames)
     , m_detuneValues(AudioNode::ProcessingSizeInFrames)
@@ -111,6 +112,12 @@ bool Oscillator::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
     ASSERT(isGood);
     if (!isGood)
         return false;
+
+    if (m_firstRender) {
+        m_firstRender = false;
+        m_frequency->resetSmoothedValue();
+        m_detune->resetSmoothedValue();
+    }
 
     bool hasSampleAccurateValues = false;
     bool hasFrequencyChanges = false;
@@ -192,12 +199,25 @@ void Oscillator::process(size_t framesToProcess)
         return;
     }
 
+    size_t quantumFrameOffset;
+    size_t nonSilentFramesToProcess;
+
+    updateSchedulingInfo(framesToProcess,
+                         outputBus,
+                         quantumFrameOffset,
+                         nonSilentFramesToProcess);
+
+    if (!nonSilentFramesToProcess) {
+        outputBus->zero();
+        return;
+    }
+
     unsigned waveTableSize = m_waveTable->waveTableSize();
     double invWaveTableSize = 1.0 / waveTableSize;
 
     float* destP = outputBus->channel(0)->mutableData();
 
-    int n = framesToProcess;
+    ASSERT(quantumFrameOffset <= framesToProcess);
 
     // We keep virtualReadIndex double-precision since we're accumulating values.
     double virtualReadIndex = m_virtualReadIndex;
@@ -223,6 +243,10 @@ void Oscillator::process(size_t framesToProcess)
     float* phaseIncrements = m_phaseIncrements.data();
 
     unsigned readIndexMask = waveTableSize - 1;
+
+    // Start rendering at the correct offset.
+    destP += quantumFrameOffset;
+    int n = nonSilentFramesToProcess;
 
     while (n--) {
         unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
@@ -260,6 +284,8 @@ void Oscillator::process(size_t framesToProcess)
     }
 
     m_virtualReadIndex = virtualReadIndex;
+
+    outputBus->clearSilentFlag();
 }
 
 void Oscillator::reset()
@@ -275,6 +301,11 @@ void Oscillator::setWaveTable(WaveTable* waveTable)
     MutexLocker processLocker(m_processLock);
     m_waveTable = waveTable;
     m_type = CUSTOM;
+}
+
+bool Oscillator::propagatesSilence() const
+{
+    return !isPlayingOrScheduled() || hasFinished() || !m_waveTable.get();
 }
 
 } // namespace WebCore
