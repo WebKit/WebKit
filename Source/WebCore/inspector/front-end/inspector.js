@@ -1032,13 +1032,16 @@ WebInspector._toolbarItemClicked = function(event)
     WebInspector.inspectorView.setCurrentPanel(toolbarItem.panel);
 }
 
-WebInspector.save = function(url, content, forceSaveAs)
+WebInspector._saveCallbacks = [];
+
+WebInspector.save = function(url, content, forceSaveAs, callback)
 {
     // Remove this url from the saved URLs while it is being saved.
     var savedURLs = WebInspector.settings.savedURLs.get();
     delete savedURLs[url];
     WebInspector.settings.savedURLs.set(savedURLs);
-
+    if (callback)
+        WebInspector._saveCallbacks[url] = callback;
     InspectorFrontendHost.save(url, content, forceSaveAs);
 }
 
@@ -1047,6 +1050,11 @@ WebInspector.savedURL = function(url)
     var savedURLs = WebInspector.settings.savedURLs.get();
     savedURLs[url] = true;
     WebInspector.settings.savedURLs.set(savedURLs);
+    var callback = WebInspector._saveCallbacks[url];
+    if (!callback)
+        return;
+    delete WebInspector._saveCallbacks[url];
+    callback.call(null, url);
 }
 
 WebInspector.isURLSaved = function(url)
@@ -1054,3 +1062,20 @@ WebInspector.isURLSaved = function(url)
     var savedURLs = WebInspector.settings.savedURLs.get();
     return savedURLs[url];
 }
+
+WebInspector._appendCallbacks = [];
+
+WebInspector.append = function(url, content, callback)
+{
+    if (callback)
+        WebInspector._appendCallbacks[url] = callback;
+    InspectorFrontendHost.append(url, content);
+}
+
+WebInspector.appendedToURL = function(url)
+{
+    var callback = WebInspector._appendCallbacks[url];
+    if (callback)
+        callback.call(null, url);
+}
+

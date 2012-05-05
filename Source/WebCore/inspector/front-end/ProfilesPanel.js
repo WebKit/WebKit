@@ -138,20 +138,6 @@ WebInspector.ProfileHeader = function(profileType, title, uid)
 
 /**
  * @constructor
- * @extends {WebInspector.ProfileHeader}
- * @param {string} profileType
- * @param {string} title
- * @param {number} uid
- * @param {number} maxJSObjectId
- */
-WebInspector.HeapProfileHeader = function(profileType, title, uid, maxJSObjectId)
-{
-    WebInspector.ProfileHeader.call(this, profileType, title, uid);
-    this.maxJSObjectId = maxJSObjectId;
-}
-
-/**
- * @constructor
  * @extends {WebInspector.Panel}
  */
 WebInspector.ProfilesPanel = function()
@@ -336,6 +322,18 @@ WebInspector.ProfilesPanel.prototype = {
         profileType.treeElement = new WebInspector.SidebarSectionTreeElement(profileType.treeItemTitle, null, true);
         profileType.treeElement.hidden = true;
         this.sidebarTree.appendChild(profileType.treeElement);
+        profileType.treeElement.childrenListElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
+    },
+
+    _handleContextMenuEvent: function(event)
+    {
+        var element = event.srcElement;
+        while (element && !element.treeElement)
+            element = element.parentElement;
+        if (!element)
+            return;
+        if (element.treeElement.handleContextMenuEvent)
+            element.treeElement.handleContextMenuEvent(event);
     },
 
     /**
@@ -559,21 +557,7 @@ WebInspector.ProfilesPanel.prototype = {
         var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
         if (!profile)
             return;
-
-        if (!profile.proxy) {
-            function setProfileWait(event) {
-                profile.sidebarElement.wait = event.data;
-            }
-            var worker = new WebInspector.HeapSnapshotWorker();
-            worker.addEventListener("wait", setProfileWait, this);
-            profile.proxy = worker.createObject("WebInspector.HeapSnapshotLoader");
-        }
-        var proxy = profile.proxy;
-        if (proxy.startLoading(callback)) {
-            profile.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026");
-            profile.sidebarElement.wait = true;
-            ProfilerAgent.getProfile(profile.typeId, profile.uid);
-        }
+        profile.load(callback);
     },
 
     /**
@@ -583,9 +567,9 @@ WebInspector.ProfilesPanel.prototype = {
     _addHeapSnapshotChunk: function(uid, chunk)
     {
         var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        if (!profile || !profile.proxy)
+        if (!profile )
             return;
-        profile.proxy.pushJSONChunk(chunk);
+        profile.pushJSONChunk(chunk);
     },
 
     /**
@@ -594,19 +578,9 @@ WebInspector.ProfilesPanel.prototype = {
     _finishHeapSnapshot: function(uid)
     {
         var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        if (!profile || !profile.proxy)
+        if (!profile)
             return;
-        var proxy = profile.proxy;
-        function parsed(snapshotProxy)
-        {
-            profile.proxy = snapshotProxy;
-            profile.sidebarElement.subtitle = Number.bytesToString(snapshotProxy.totalSize);
-            profile.sidebarElement.wait = false;
-            var worker = /** @type {WebInspector.HeapSnapshotWorker} */ snapshotProxy.worker;
-            worker.startCheckingForLongRunningCalls();
-        }
-        if (proxy.finishLoading(parsed))
-            profile.sidebarElement.subtitle = WebInspector.UIString("Parsing\u2026");
+        profile.finishHeapSnapshot();
     },
 
     /**
@@ -1116,6 +1090,16 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
 
         this.bubbleText = matches;
         this.bubbleElement.addStyleClass("search-matches");
+    },
+
+    handleContextMenuEvent: function(event)
+    {
+        var profile = this.profile;
+        if (!profile.canSave || !profile.canSave())
+            return;
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Save profile"), profile.save.bind(profile));
+        contextMenu.show(event);
     }
 }
 

@@ -110,6 +110,11 @@ InspectorFrontendAPI = {
         WebInspector.savedURL(url);
     },
 
+    appendedToURL: function(url)
+    {
+        WebInspector.appendedToURL(url);
+    },
+
     setToolbarColors: function(backgroundColor, color)
     {
         WebInspector.setToolbarColors(backgroundColor, color);

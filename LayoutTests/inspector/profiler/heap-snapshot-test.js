@@ -523,6 +523,8 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
     }
     InspectorTest.override(ProfilerAgent, "getProfile", pushGeneratedSnapshot);
     InspectorTest._takeAndOpenSnapshotCallback = callback;
+    var profileType = WebInspector.panels.profiles.getProfileType(profile.typeId);
+    profile = profileType.createProfile(profile);
     WebInspector.panels.profiles.addProfileHeader(profile);
     WebInspector.panels.profiles.showProfile(profile);
 };

@@ -1,3 +1,17 @@
+2012-05-05  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: save HeapSnapshot implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=85595
+
+        HeapSnapshot specific implementation for loading was moved
+        from ProfilesPanel to HeapProfileHeader class.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot-inspect-dom-wrapper.html:
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest):
+
 2012-05-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: allow overriding the script mapping on the UI level

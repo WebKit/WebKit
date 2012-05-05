@@ -181,7 +181,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
     get profileWrapper()
     {
-        return this.profile.proxy;
+        return this.profile._proxy;
     },
 
     get baseProfile()
@@ -191,7 +191,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
     get baseProfileWrapper()
     {
-        return this.baseProfile.proxy;
+        return this.baseProfile._proxy;
     },
 
     wasShown: function()
@@ -770,3 +770,103 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 }
 
 WebInspector.HeapSnapshotProfileType.prototype.__proto__ = WebInspector.ProfileType.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.ProfileHeader}
+ * @param {string} profileType
+ * @param {string} title
+ * @param {number} uid
+ * @param {number} maxJSObjectId
+ */
+WebInspector.HeapProfileHeader = function(profileType, title, uid, maxJSObjectId)
+{
+    WebInspector.ProfileHeader.call(this, profileType, title, uid);
+    this.maxJSObjectId = maxJSObjectId;
+    this._loaded = false;
+    this._totalNumberOfChunks = 0;
+}
+
+WebInspector.HeapProfileHeader.prototype = {
+    load: function(callback)
+    {
+        if (this._loaded) {
+            callback.call(null);
+            return;
+        }
+
+        if (!this._proxy) {
+            function setProfileWait(event) {
+                this.sidebarElement.wait = event.data;
+            }
+            var worker = new WebInspector.HeapSnapshotWorker();
+            worker.addEventListener("wait", setProfileWait, this);
+            this._proxy = worker.createObject("WebInspector.HeapSnapshotLoader");
+        }
+
+        if (this._proxy.startLoading(callback)) {
+            this.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026");
+            this.sidebarElement.wait = true;
+            function done()
+            {
+                this._loaded = true;
+            }
+            ProfilerAgent.getProfile(this.typeId, this.uid, done.bind(this));
+        }
+    },
+
+    _saveStatusUpdate: function()
+    {
+        ++this._savedChunksCount;
+        if (this._savedChunksCount === this._totalNumberOfChunks) {
+            this.sidebarElement.subtitle = Number.bytesToString(this._proxy.totalSize);
+            this.sidebarElement.wait = false;
+        } else
+            this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 %d\%", Math.floor(this._savedChunksCount * 100 / this._totalNumberOfChunks));
+    },
+
+    pushJSONChunk: function(chunk)
+    {
+        if (this._loaded) {
+            this.sidebarElement.wait = true;
+            WebInspector.append(this._fileName, chunk, this._saveStatusUpdate.bind(this));
+        } else {
+            ++this._totalNumberOfChunks;
+            this._proxy.pushJSONChunk(chunk);
+        }
+    },
+
+    finishHeapSnapshot: function()
+    {
+        function parsed(snapshotProxy)
+        {
+            this._proxy = snapshotProxy;
+            this.sidebarElement.subtitle = Number.bytesToString(snapshotProxy.totalSize);
+            this.sidebarElement.wait = false;
+            var worker = /** @type {WebInspector.HeapSnapshotWorker} */ snapshotProxy.worker;
+            worker.startCheckingForLongRunningCalls();
+        }
+        if (this._proxy.finishLoading(parsed.bind(this)))
+            this.sidebarElement.subtitle = WebInspector.UIString("Parsing\u2026");
+    },
+
+    canSave: function()
+    {
+        return this._loaded && InspectorFrontendHost.canSave() && ("append" in InspectorFrontendHost);
+    },
+
+    save: function()
+    {
+        function startWritingSnapshot()
+        {
+            this.sidebarElement.wait = true;
+            this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 0\%");
+            this._savedChunksCount = 0;
+            ProfilerAgent.getProfile(this.typeId, this.uid);
+        }
+        this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".json";
+        WebInspector.save(this._fileName, "", true, startWritingSnapshot.bind(this));
+    }
+}
+
+WebInspector.HeapProfileHeader.prototype.__proto__ = WebInspector.ProfileHeader.prototype;
