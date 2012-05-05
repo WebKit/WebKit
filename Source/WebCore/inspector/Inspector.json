@@ -2533,14 +2533,24 @@
         "hidden": true,
         "types": [
             {
-                "id": "Profile",
-                "type": "object",
-                "description": "Profile."
-            },
-            {
                 "id": "ProfileHeader",
                 "type": "object",
-                "description": "Profile header."
+                "description": "Profile header.",
+                "properties": [
+                    { "name": "typeId", "type": "string", "enum": ["CPU", "CSS", "HEAP"], "description": "Profile type name." },
+                    { "name": "title", "type": "string", "description": "Profile title." },
+                    { "name": "uid", "type": "integer", "description": "Unique identifier of the profile." },
+                    { "name": "maxJSObjectId", "type": "integer", "optional": true, "description": "Last seen JS object Id." }
+                ]
+            },
+            {
+                "id": "Profile",
+                "type": "object",
+                "description": "Profile.",
+                "properties": [
+                    { "name": "head", "type": "object", "optional": true },
+                    { "name": "bottomUpHead", "type": "object", "optional": true }
+                ]
             }
         ],
         "commands": [

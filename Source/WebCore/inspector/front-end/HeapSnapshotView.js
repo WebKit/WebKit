@@ -749,14 +749,23 @@ WebInspector.HeapSnapshotProfileType.prototype = {
         return new WebInspector.HeapSnapshotView(WebInspector.panels.profiles, profile);
     },
 
+    /**
+     * @override
+     * @return {WebInspector.ProfileHeader}
+     */
     createTemporaryProfile: function()
     {
         return new WebInspector.ProfileHeader(WebInspector.HeapSnapshotProfileType.TypeId, WebInspector.UIString("Snapshotting\u2026"));
     },
 
+    /**
+     * @override
+     * @param {ProfilerAgent.ProfileHeader} profile
+     * @return {WebInspector.ProfileHeader}
+     */
     createProfile: function(profile)
     {
-        return new WebInspector.HeapProfileHeader(profile.typeId, profile.title, profile.uid, profile.maxJSObjectId);
+        return new WebInspector.HeapProfileHeader(profile.typeId, profile.title, profile.uid, profile.maxJSObjectId || 0);
     }
 }
 

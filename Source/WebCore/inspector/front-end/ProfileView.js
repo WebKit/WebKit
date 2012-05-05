@@ -618,11 +618,20 @@ WebInspector.CPUProfileType.prototype = {
         return new WebInspector.CPUProfileView(profile);
     },
 
+    /**
+     * @override
+     * @return {WebInspector.ProfileHeader}
+     */
     createTemporaryProfile: function()
     {
         return new WebInspector.ProfileHeader(WebInspector.CPUProfileType.TypeId, WebInspector.UIString("Recording\u2026"));
     },
 
+    /**
+     * @override
+     * @param {ProfilerAgent.ProfileHeader} profile
+     * @return {WebInspector.ProfileHeader}
+     */
     createProfile: function(profile)
     {
         return new WebInspector.ProfileHeader(profile.typeId, profile.title, profile.uid);
