@@ -31,7 +31,7 @@
 #include "config.h"
 #include "LocalizedDate.h"
 
-#include "ICULocale.h"
+#include "LocaleICU.h"
 #include <limits>
 
 using namespace std;

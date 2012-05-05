@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "ICULocale.h"
+#include "LocaleICU.h"
 #include <gtest/gtest.h>
 #include <wtf/PassOwnPtr.h>
 

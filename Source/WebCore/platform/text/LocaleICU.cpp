@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "ICULocale.h"
+#include "LocaleICU.h"
 
 #include "LocalizedStrings.h"
 #include <limits>
