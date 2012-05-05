@@ -462,55 +462,29 @@ WebInspector.SelectionDialogContentProvider.prototype = {
 /**
  * @constructor
  * @implements {WebInspector.SelectionDialogContentProvider}
+ * @param {WebInspector.View} view
+ * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.JavaScriptOutlineDialog = function(panel, view)
+WebInspector.JavaScriptOutlineDialog = function(view, contentProvider)
 {
     WebInspector.SelectionDialogContentProvider.call(this);
 
     this._functionItems = [];
-
-    this._panel = panel;
     this._view = view;
+    this._contentProvider = contentProvider;
 }
 
 /**
- * @param {{chunk, index, total, id}} data
+ * @param {WebInspector.View} view
+ * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.JavaScriptOutlineDialog.didAddChunk = function(data)
-{
-    var instance = WebInspector.JavaScriptOutlineDialog._instance;
-    if (!instance)
-        return;
-
-    if (data.id !== instance._view.uiSourceCode.id)
-        return;
-
-    instance._appendItemElements(data.chunk, data.index, data.total);
-},
-
-WebInspector.JavaScriptOutlineDialog.install = function(panel, viewGetter)
-{
-    function showJavaScriptOutlineDialog()
-    {
-         var view = viewGetter();
-         if (view)
-             WebInspector.JavaScriptOutlineDialog._show(panel, view);
-    }
-
-    var javaScriptOutlineShortcut = WebInspector.JavaScriptOutlineDialog.createShortcut();
-    panel.registerShortcut(javaScriptOutlineShortcut.key, showJavaScriptOutlineDialog);
-}
-
-WebInspector.JavaScriptOutlineDialog._show = function(panel, sourceView)
+WebInspector.JavaScriptOutlineDialog.show = function(view, contentProvider)
 {
     if (WebInspector.Dialog.currentInstance())
-        return;
-    if (!sourceView || !sourceView.canHighlightLine())
-        return;
-    WebInspector.JavaScriptOutlineDialog._instance = new WebInspector.JavaScriptOutlineDialog(panel, sourceView);
-
-    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(WebInspector.JavaScriptOutlineDialog._instance);
-    WebInspector.Dialog.show(sourceView.element, filteredItemSelectionDialog);
+        return null;
+    var delegate = new WebInspector.JavaScriptOutlineDialog(view, contentProvider);
+    var filteredItemSelectionDialog = new WebInspector.FilteredItemSelectionDialog(delegate);
+    WebInspector.Dialog.show(view.element, filteredItemSelectionDialog);
 }
 
 WebInspector.JavaScriptOutlineDialog.createShortcut = function()
@@ -551,8 +525,37 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
      */
     requestItems: function(callback)
     {
-        this._itemsAddedCallback = callback;
-        this._panel.requestVisibleScriptOutline();
+        /**
+         * @param {?string} content
+         * @param {boolean} contentEncoded
+         * @param {string} mimeType
+         */
+        function contentCallback(content, contentEncoded, mimeType)
+        {
+            if (this._outlineWorker)
+                this._outlineWorker.terminate();
+            this._outlineWorker = new Worker("ScriptFormatterWorker.js");
+            this._outlineWorker.onmessage = this._didBuildOutlineChunk.bind(this, callback);
+            const method = "outline";
+            this._outlineWorker.postMessage({ method: method, params: { content: content } });
+        }
+        this._contentProvider.requestContent(contentCallback.bind(this));
+    },
+
+    _didBuildOutlineChunk: function(callback, event)
+    {
+        var data = event.data;
+
+        var index = this._functionItems.length;
+        var chunk = data["chunk"];
+        for (var i = 0; i < chunk.length; ++i)
+            this._functionItems.push(chunk[i]);
+        callback(index, chunk.length, data.index, data.total);
+
+        if (data.total === data.index && this._outlineWorker) {
+            this._outlineWorker.terminate();
+            delete this._outlineWorker;
+        }
     },
 
     /**
@@ -564,21 +567,6 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         if (!isNaN(lineNumber) && lineNumber >= 0)
             this._view.highlightLine(lineNumber);
         this._view.focus();
-        delete WebInspector.JavaScriptOutlineDialog._instance;
-    },
-
-    /**
-     * @param {Array.<Object>} chunk
-     * @param {number} chunkIndex
-     * @param {number} chunkCount
-     */
-    _appendItemElements: function(chunk, chunkIndex, chunkCount)
-    {
-        var index = this._functionItems.length;
-        for (var i = 0; i < chunk.length; ++i) {
-            this._functionItems.push(chunk[i]);
-        }
-        this._itemsAddedCallback(index, chunk.length, chunkIndex, chunkCount);
     }
 }
 

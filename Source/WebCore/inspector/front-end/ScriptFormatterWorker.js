@@ -130,13 +130,13 @@ function outline(params)
             column = newColumn;
 
             if (processedChunkCharacters >= chunkSize) {
-                postMessage({ chunk: outlineChunk, id: params.id, total: chunkCount, index: currentChunk++ });
+                postMessage({ chunk: outlineChunk, total: chunkCount, index: currentChunk++ });
                 outlineChunk = [];
                 processedChunkCharacters = 0;
             }
         } while (column < line.length);
     }
-    postMessage({ chunk: outlineChunk, id: params.id, total: chunkCount, index: chunkCount });
+    postMessage({ chunk: outlineChunk, total: chunkCount, index: chunkCount });
 }
 
 function formatScript(content, mapping, offset, formattedOffset, indentString)

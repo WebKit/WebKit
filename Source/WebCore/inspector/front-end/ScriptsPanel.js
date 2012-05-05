@@ -44,7 +44,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
         return this.visibleView;
     }
     WebInspector.GoToLineDialog.install(this, viewGetter.bind(this));
-    WebInspector.JavaScriptOutlineDialog.install(this, viewGetter.bind(this));
 
     this.debugToolbar = this._createDebugToolbar();
 
@@ -126,6 +125,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     var scriptOutlineShortcut = WebInspector.JavaScriptOutlineDialog.createShortcut();
     helpSection.addKey(scriptOutlineShortcut.name, WebInspector.UIString("Go to function"));
+    this.registerShortcut(scriptOutlineShortcut.key, this._showJavaScriptOutlineDialog.bind(this));
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -211,17 +211,6 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.show();
 
         this._navigatorController.wasShown();
-    },
-
-    _didBuildOutlineChunk: function(event)
-    {
-        WebInspector.JavaScriptOutlineDialog.didAddChunk(event.data);
-        if (event.data.total === event.data.index) {
-            if (this._outlineWorker) {
-                this._outlineWorker.terminate();
-                delete this._outlineWorker;
-            }
-        }
     },
 
     /**
@@ -447,28 +436,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateScriptViewStatusBarItems();
 
         return sourceFrame;
-    },
-
-    requestVisibleScriptOutline: function()
-    {
-        
-        /**
-         * @param {?string} content
-         * @param {boolean} contentEncoded
-         * @param {string} mimeType
-         */
-        function contentCallback(content, contentEncoded, mimeType)
-        {
-            if (this._outlineWorker)
-                this._outlineWorker.terminate();
-            this._outlineWorker = new Worker("ScriptFormatterWorker.js");
-            this._outlineWorker.onmessage = this._didBuildOutlineChunk.bind(this);
-            const method = "outline";
-            this._outlineWorker.postMessage({ method: method, params: { content: content, id: this.visibleView.uiSourceCode.id } });
-        }
-
-        if (this.visibleView.uiSourceCode)
-            this.visibleView.uiSourceCode.requestContent(contentCallback.bind(this));
     },
 
     /**
@@ -952,6 +919,11 @@ WebInspector.ScriptsPanel.prototype = {
     addToWatch: function(expression)
     {
         this.sidebarPanes.watchExpressions.addExpression(expression);
+    },
+
+    _showJavaScriptOutlineDialog: function()
+    {
+         WebInspector.JavaScriptOutlineDialog.show(this.visibleView, this.visibleView);
     }
 }
 
