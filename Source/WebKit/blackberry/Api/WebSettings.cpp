@@ -44,6 +44,7 @@ DEFINE_STATIC_LOCAL(String, BlackBerryInitialScale, ("BlackBerryInitialScale"));
 DEFINE_STATIC_LOCAL(String, BlackBerryLinksHandledExternallyEnabled, ("BlackBerryLinksHandledExternallyEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryMaxPluginInstances, ("BlackBerryMaxPluginInstances"));
 DEFINE_STATIC_LOCAL(String, BlackBerryOverZoomColor, ("BlackBerryOverZoomColor"));
+DEFINE_STATIC_LOCAL(String, BlackBerryOverScrollImagePath, ("BlackBerryOverScrollImagePath"));
 DEFINE_STATIC_LOCAL(String, BlackBerryRenderAnimationsOnScrollOrZoomEnabled, ("BlackBerryRenderAnimationsOnScrollOrZoomEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryScrollbarsEnabled, ("BlackBerryScrollbarsEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryTextReflowMode, ("BlackBerryTextReflowMode"));
@@ -152,6 +153,7 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setDouble(BlackBerryInitialScale, -1);
     settings->m_private->setUnsigned(BlackBerryMaxPluginInstances, 1);
     settings->m_private->setUnsigned(BlackBerryOverZoomColor, WebCore::Color::white);
+    settings->m_private->setString(BlackBerryOverScrollImagePath, "");
     settings->m_private->setBoolean(BlackBerryScrollbarsEnabled, true);
 
     // FIXME: We should detect whether we are embedded in a browser or an email client and default to TextReflowEnabledOnlyForBlockZoom and TextReflowEnabled, respectively.
@@ -659,6 +661,16 @@ unsigned WebSettings::overZoomColor() const
 void WebSettings::setOverZoomColor(unsigned color)
 {
     m_private->setUnsigned(BlackBerryOverZoomColor, color);
+}
+
+WebString WebSettings::overScrollImagePath() const
+{
+    return m_private->getString(BlackBerryOverScrollImagePath);
+}
+
+void WebSettings::setOverScrollImagePath(const char* path)
+{
+    m_private->setString(BlackBerryOverScrollImagePath, path);
 }
 
 unsigned WebSettings::backgroundColor() const

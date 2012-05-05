@@ -37,13 +37,18 @@
 #include "WebPage_p.h"
 #include "WebSettings.h"
 
+#include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformExecutableMessage.h>
+#include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformIntRectRegion.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformScreen.h>
+#include <BlackBerryPlatformSettings.h>
 #include <BlackBerryPlatformWindow.h>
+
+#include <SkImageDecoder.h>
 
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -72,6 +77,8 @@ namespace WebKit {
 
 const int s_renderTimerTimeout = 1.0;
 WebPage* BackingStorePrivate::s_currentBackingStoreOwner = 0;
+Platform::Graphics::Buffer* BackingStorePrivate::s_overScrollImage = 0;
+std::string BackingStorePrivate::s_overScrollImagePath;
 
 typedef std::pair<int, int> Divisor;
 typedef Vector<Divisor> DivisorList;
@@ -1191,6 +1198,57 @@ void BackingStorePrivate::copyPreviousContentsToBackSurfaceOfTile(const Platform
     }
 }
 
+bool BackingStorePrivate::ensureOverScrollImage()
+{
+    std::string path = m_webPage->settings()->overScrollImagePath().utf8();
+    if (path == "")
+        return false;
+
+    if (s_overScrollImage && path == s_overScrollImagePath)
+        return true;
+
+    std::string imagePath = Platform::Client::get()->getApplicationDirectory() + path;
+
+    SkBitmap bitmap;
+
+    if (!SkImageDecoder::DecodeFile(imagePath.c_str(), &bitmap)) {
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
+                    "BackingStorePrivate::ensureOverScrollImage could not decode overscroll image: %s", imagePath.c_str());
+        return false;
+    }
+
+    // FIXME: Make it orientation and resolution agnostic
+    if (bitmap.width() != surfaceSize().width() || bitmap.height() != surfaceSize().height())
+        return false;
+
+    // FIXME: For now we fallback to solid color if sizes don't match, later we can implement tiling
+    s_overScrollImage = createBuffer(Platform::IntSize(bitmap.width(), bitmap.height()), Platform::Graphics::TemporaryBuffer);
+
+    SkCanvas* canvas = Platform::Graphics::lockBufferDrawable(s_overScrollImage);
+
+    if (!canvas) {
+        destroyBuffer(s_overScrollImage);
+        s_overScrollImage = 0;
+        return false;
+    }
+    SkPaint paint;
+    paint.setXfermodeMode(SkXfermode::kSrc_Mode);
+    paint.setFlags(SkPaint::kAntiAlias_Flag);
+    paint.setFilterBitmap(true);
+
+    SkRect rect = SkRect::MakeXYWH(0, 0, bitmap.width(), bitmap.height());
+
+    canvas->save();
+    canvas->drawBitmapRect(bitmap, 0, rect, &paint);
+    canvas->restore();
+
+    Platform::Graphics::releaseBufferDrawable(s_overScrollImage);
+
+    s_overScrollImagePath = path;
+
+    return true;
+}
+
 void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& contents,
                                                  const WebCore::TransformationMatrix& transformation,
                                                  bool flush)
@@ -1198,6 +1256,7 @@ void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& conten
     const Platform::IntRect contentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_webPage->d->transformedContentsSize());
     Platform::IntPoint origin = contents.location();
     Platform::IntRect contentsClipped = contents;
+
 
     // We have to paint the default background in the case of overzoom and
     // make sure it is invalidated.
@@ -1219,7 +1278,10 @@ void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& conten
             overScrollRect.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
         }
 
-        clearWindow(overScrollRect, color.red(), color.green(), color.blue(), color.alpha());
+        if (ensureOverScrollImage())
+            blitToWindow(overScrollRect, s_overScrollImage, overScrollRect, false, 255);
+        else
+            clearWindow(overScrollRect, color.red(), color.green(), color.blue(), color.alpha());
     }
 }
 

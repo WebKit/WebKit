@@ -193,6 +193,9 @@ public:
     unsigned overZoomColor() const;
     void setOverZoomColor(unsigned);
 
+    WebString overScrollImagePath() const;
+    void setOverScrollImagePath(const char*);
+
     unsigned backgroundColor() const;
     void setBackgroundColor(unsigned);
 

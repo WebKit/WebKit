@@ -326,6 +326,8 @@ public:
     BlackBerry::Platform::IntSize surfaceSize() const;
     BlackBerry::Platform::Graphics::Buffer* buffer() const;
 
+    bool ensureOverScrollImage();
+
     static WebPage* s_currentBackingStoreOwner;
 
     bool m_suspendScreenUpdates;
@@ -366,6 +368,9 @@ public:
     mutable bool m_needsDrawLayersOnCommit; // Not thread safe, WebKit thread only
     bool m_isDirectRenderingAnimationMessageScheduled;
 #endif
+
+    static Platform::Graphics::Buffer* s_overScrollImage;
+    static std::string s_overScrollImagePath;
 
 protected:
     virtual ~BackingStorePrivate();

@@ -1,3 +1,26 @@
+2012-05-04  Andrew Lo  <anlo@rim.com>
+
+        [Blackberry] Implement over-scroll background image
+        https://bugs.webkit.org/show_bug.cgi?id=85538
+
+        Reviewed by Rob Buis.
+
+        Use over-scroll image when set instead of the solid colour.
+        Internal PR146652
+
+        * Api/BackingStore.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::ensureOverScrollImage):
+        (BlackBerry::WebKit::BackingStorePrivate::paintDefaultBackground):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::overScrollImagePath):
+        (BlackBerry::WebKit::WebSettings::setOverScrollImagePath):
+        * Api/WebSettings.h:
+
 2012-05-04  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Rendering bmp file as text file when Content-Type:image/x-ms-bmp from apache web server.
