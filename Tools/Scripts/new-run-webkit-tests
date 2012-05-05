@@ -44,10 +44,7 @@ if __name__ == '__main__':
     env = os.environ
     if env.has_key('PYTHONPATH'):
         if script_dir not in env['PYTHONPATH']:
-            env_separator = ':'
-            if sys.platform == 'win32':
-                env_separator = ';'
-            env['PYTHONPATH'] = env['PYTHONPATH'] + env_separator + script_dir
+            env['PYTHONPATH'] = env['PYTHONPATH'] + os.pathsep + script_dir
     else:
         env['PYTHONPATH'] = script_dir
     module_path = os.path.join(script_dir, 'webkitpy', 'layout_tests', 'run_webkit_tests.py')
