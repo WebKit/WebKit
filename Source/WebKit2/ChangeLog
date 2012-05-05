@@ -1,3 +1,12 @@
+2012-05-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Simplify how libWebCoreModules is linked in, and fix WebKit2 build
+        https://bugs.webkit.org/show_bug.cgi?id=85691
+
+        * GNUmakefile.am: no longer link libWebCoreModules, and remove -no-
+        fast-install and -no-install from link flags, since we want those
+        programs installed.
+
 2012-05-04  Mark Rowe  <mrowe@apple.com>
 
         Fix a leak in WebProcess when it is used to launch the UI process.

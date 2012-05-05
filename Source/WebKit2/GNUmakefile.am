@@ -1165,7 +1165,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDF
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD = \
 	-lpthread \
 	libWebCore.la \
-	libWebCoreModules.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libWebCoreGtk.la \
 	$(CAIRO_LIBS) \
@@ -1361,10 +1360,6 @@ Programs_WebKitWebProcess_LDADD = \
 	$(GTK_LIBS) \
 	$(GTK_UNIX_PRINTING_LIBS) \
 	$(LIBSOUP_LIBS)
-
-Programs_WebKitWebProcess_LDFLAGS = \
-	-no-fast-install \
-	-no-install
 
 # PluginProcess
 if ENABLE_PLUGIN_PROCESS
@@ -1562,14 +1557,14 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
 	Source/WebKit2/gtk/PluginMainGtk.cpp
+
 Programs_WebKitPluginProcess_SOURCES = \
 	$(webkit2_plugin_process_sources)
 
 Programs_WebKitPluginProcess_LDADD = \
 	-lpthread \
-	libWebCore.la \
-	libWebCoreModules.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libWebCore.la \
 	libWebCoreGtk2.la \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
@@ -1592,10 +1587,6 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(XT_LIBS) \
 	$(WINMM_LIBS) \
 	$(ZLIB_LIBS)
-
-Programs_WebKitPluginProcess_LDFLAGS = \
-	-no-fast-install \
-	-no-install
 
 Programs_WebKitPluginProcess_CXXFLAGS = \
 	$(SYMBOL_VISIBILITY_INLINES) \
