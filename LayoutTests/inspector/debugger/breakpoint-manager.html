@@ -9,8 +9,7 @@ function test()
     var defaultMapping = {
         rawLocationToUILocation: function(rawLocation)
         {
-            var uiSourceCode = {};
-            uiSourceCode.id = rawLocation.scriptId;
+            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null);
             return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber, 0);
         },
 
@@ -23,8 +22,7 @@ function test()
     var shiftingMapping = {
         rawLocationToUILocation: function(rawLocation)
         {
-            var uiSourceCode = {};
-            uiSourceCode.id = rawLocation.scriptId;
+            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null);
             return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber + 10, 0);
         },
 

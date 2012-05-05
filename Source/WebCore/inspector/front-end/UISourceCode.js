@@ -48,6 +48,7 @@ WebInspector.UISourceCode = function(id, url, contentProvider)
      * @type Array.<function(?string,boolean,string)>
      */
     this._requestContentCallbacks = [];
+    this._liveLocations = [];
 }
 
 WebInspector.UISourceCode.Events = {
@@ -132,6 +133,38 @@ WebInspector.UISourceCode.prototype = {
         for (var i = 0; i < this._requestContentCallbacks.length; ++i)
             this._requestContentCallbacks[i](content, contentEncoded, mimeType);
         this._requestContentCallbacks = [];
+    },
+
+    /**
+     * @param {WebInspector.LiveLocation} liveLocation
+     */
+    addLiveLocation: function(liveLocation)
+    {
+        this._liveLocations.push(liveLocation);
+    },
+
+    /**
+     * @param {WebInspector.LiveLocation} liveLocation
+     */
+    removeLiveLocation: function(liveLocation)
+    {
+        this._liveLocations.remove(liveLocation);
+    },
+
+    updateLiveLocations: function()
+    {
+        var locationsCopy = this._liveLocations.slice();
+        for (var i = 0; i < locationsCopy.length; ++i)
+            locationsCopy[i].update();
+    },
+
+    /**
+     * @param {WebInspector.UILocation} uiLocation
+     * @return {WebInspector.UILocation}
+     */
+    overrideLocation: function(uiLocation)
+    {
+        return uiLocation;
     },
 
     /**

@@ -156,7 +156,9 @@ WebInspector.Script.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
         console.assert(rawLocation.scriptId === this.scriptId);
-        return this._sourceMapping.rawLocationToUILocation(rawLocation);
+        var uiLocation = this._sourceMapping.rawLocationToUILocation(rawLocation);
+        // FIXME: uiLocation will never be null after the next refactoring step.
+        return uiLocation ? uiLocation.uiSourceCode.overrideLocation(uiLocation) : null;
     },
 
     /**
@@ -196,23 +198,30 @@ WebInspector.Script.Location = function(script, rawLocation, updateDelegate)
     this._script = script;
     this._rawLocation = rawLocation;
     this._updateDelegate = updateDelegate;
+    this._uiSourceCodes = [];
 }
 
 WebInspector.Script.Location.prototype = {
-    dispose: function()
-    {
-        this._script._locations.remove(this);
-    },
-
     update: function()
     {
-        if (!this._script._sourceMapping)
-            return;
-        var uiLocation = this._script._sourceMapping.rawLocationToUILocation(this._rawLocation);
+        var uiLocation = this._script.rawLocationToUILocation(this._rawLocation);
         if (uiLocation) {
+            var uiSourceCode = uiLocation.uiSourceCode;
+            if (this._uiSourceCodes.indexOf(uiSourceCode) === -1) {
+                uiSourceCode.addLiveLocation(this);
+                this._uiSourceCodes.push(uiSourceCode);
+            }
             var oneTime = this._updateDelegate(uiLocation);
             if (oneTime)
                 this.dispose();
         }
+    },
+
+    dispose: function()
+    {
+        for (var i = 0; i < this._uiSourceCodes.length; ++i)
+            this._uiSourceCodes[i].removeLiveLocation(this);
+        this._uiSourceCodes = [];
+        this._script._locations.remove(this);
     }
 }
