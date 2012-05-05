@@ -88,7 +88,7 @@ public:
     virtual void setConstructed()
     {
         InlineBox::setConstructed();
-        for (InlineBox* child = firstChild(); child; child = child->next())
+        for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
             child->setConstructed();
     }
 

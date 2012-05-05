@@ -90,8 +90,6 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
-    InlineBox* next() const { return m_next; }
-
     // Overloaded new operator.
     void* operator new(size_t, RenderArena*);
 
