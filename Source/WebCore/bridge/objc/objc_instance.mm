@@ -315,7 +315,7 @@ JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
                     // the assert above should have fired in the impossible case
                     // of an invalid type anyway).
                     fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)objcValueType);
-                    ASSERT(false);
+                    ASSERT_NOT_REACHED();
             }
         }
     }

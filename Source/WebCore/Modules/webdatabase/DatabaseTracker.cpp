@@ -759,7 +759,7 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
         }
         if (!canDeleteOrigin(origin)) {
             LOG_ERROR("Tried to delete an origin (%s) while either creating database in it or already deleting it", origin->databaseIdentifier().ascii().data());
-            ASSERT(false);
+            ASSERT_NOT_REACHED();
             return false;
         }
         recordDeletingOrigin(origin);
@@ -853,19 +853,20 @@ void DatabaseTracker::doneCreatingDatabase(SecurityOrigin *origin, const String&
 {
     ASSERT(!m_databaseGuard.tryLock());
     NameCountMap* nameMap = m_beingCreated.get(origin);
-    if (nameMap) {
-        long count = nameMap->get(name);
-        ASSERT(count > 0);
-        if (count <= 1) {
-            nameMap->remove(name);
-            if (nameMap->isEmpty()) {
-                m_beingCreated.remove(origin);
-                delete nameMap;
-            }
-        } else
-            nameMap->set(name, count - 1);
+    ASSERT(nameMap);
+    if (!nameMap)
+        return;
+
+    long count = nameMap->get(name);
+    ASSERT(count > 0);
+    if (count <= 1) {
+        nameMap->remove(name);
+        if (nameMap->isEmpty()) {
+            m_beingCreated.remove(origin);
+            delete nameMap;
+        }
     } else
-        ASSERT(false);
+        nameMap->set(name, count - 1);
 }
 
 bool DatabaseTracker::creatingDatabase(SecurityOrigin *origin, const String& name)
@@ -898,15 +899,15 @@ void DatabaseTracker::doneDeletingDatabase(SecurityOrigin *origin, const String&
 {
     ASSERT(!m_databaseGuard.tryLock());
     NameSet* nameSet = m_beingDeleted.get(origin);
-    if (nameSet) {
-        ASSERT(nameSet->contains(name));
-        nameSet->remove(name);
-        if (nameSet->isEmpty()) {
-            m_beingDeleted.remove(origin);
-            delete nameSet;
-        }
-    } else {
-        ASSERT(false);
+    ASSERT(nameSet);
+    if (!nameSet)
+        return;
+
+    ASSERT(nameSet->contains(name));
+    nameSet->remove(name);
+    if (nameSet->isEmpty()) {
+        m_beingDeleted.remove(origin);
+        delete nameSet;
     }
 }
 
@@ -952,7 +953,7 @@ bool DatabaseTracker::deleteDatabase(SecurityOrigin* origin, const String& name)
             return false;
 
         if (!canDeleteDatabase(origin, name)) {
-            ASSERT(FALSE);
+            ASSERT_NOT_REACHED();
             return false;
         }
         recordDeletingDatabase(origin, name);

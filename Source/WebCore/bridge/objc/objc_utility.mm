@@ -232,7 +232,7 @@ JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType typ
         default:
             // Should never get here. Argument types are filtered.
             fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
-            ASSERT(false);
+            ASSERT_NOT_REACHED();
     }
     
     return jsUndefined();
@@ -298,7 +298,7 @@ ObjcValueType objcValueTypeForType(const char *type)
             default:
                 // Unhandled type. We don't handle C structs, unions, etc.
                 // FIXME: throw an exception?
-                ASSERT(false);
+                ASSERT_NOT_REACHED();
         }
 
         if (objcValueType != ObjcInvalidType)

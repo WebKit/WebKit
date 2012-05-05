@@ -1434,7 +1434,7 @@ bool Node::rendererIsNeeded(const NodeRenderingContext& context)
 
 RenderObject* Node::createRenderer(RenderArena*, RenderStyle*)
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return 0;
 }
     

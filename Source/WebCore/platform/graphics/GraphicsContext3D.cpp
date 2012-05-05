@@ -1348,7 +1348,7 @@ static void doPacking(const void* sourceData,
         break;
     }
     default:
-        ASSERT(false);
+        ASSERT_NOT_REACHED();
     }
 }
 

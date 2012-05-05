@@ -854,7 +854,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                         m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : EuropeanNumber;
                         break;
                     default:
-                        ASSERT(false);
+                        ASSERT_NOT_REACHED();
                 }
                 appendRun();
             }
