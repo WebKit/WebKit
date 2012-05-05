@@ -48,31 +48,27 @@ WebInspector.TimelineOverviewPane = function(model)
     this._topPaneSidebarElement = document.createElement("div");
     this._topPaneSidebarElement.id = "timeline-overview-sidebar";
 
-    if (WebInspector.experimentsSettings.timelineVerticalOverview.isEnabled()) {
-        this._overviewModeSelector = new WebInspector.TimelineOverviewModeSelector(this._onOverviewModeChanged.bind(this));
-        this._overviewModeSelector.addButton(WebInspector.UIString("Show each event category as a horizontal strip in overview"),
-                                             "timeline-mode-horizontal-bars", WebInspector.TimelineOverviewPane.Mode.EventsHorizontal);
-        this._overviewModeSelector.addButton(WebInspector.UIString("Show each event as a vertical bar in overview"),
-                                             "timeline-mode-vertical-bars", WebInspector.TimelineOverviewPane.Mode.EventsVertical);
-    }
-
     var overviewTreeElement = document.createElement("ol");
     overviewTreeElement.className = "sidebar-tree";
     this._topPaneSidebarElement.appendChild(overviewTreeElement);
     this.element.appendChild(this._topPaneSidebarElement);
 
     var topPaneSidebarTree = new TreeOutline(overviewTreeElement);
-    this._timelinesOverviewItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Timelines"));
-    if (this._overviewModeSelector)
-        this._timelinesOverviewItem.statusElement = this._overviewModeSelector.element;
 
-    topPaneSidebarTree.appendChild(this._timelinesOverviewItem);
-    this._timelinesOverviewItem.revealAndSelect(false);
-    this._timelinesOverviewItem.onselect = this._showTimelines.bind(this);
+    var eventsOverviewItem = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-events", WebInspector.UIString("Events"));
+    topPaneSidebarTree.appendChild(eventsOverviewItem);
+    eventsOverviewItem.revealAndSelect(false);
+    eventsOverviewItem.onselect = this._showEvents.bind(this);
 
-    this._memoryOverviewItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Memory"));
-    topPaneSidebarTree.appendChild(this._memoryOverviewItem);
-    this._memoryOverviewItem.onselect = this._showMemoryGraph.bind(this);
+    if (WebInspector.experimentsSettings.timelineVerticalOverview.isEnabled()) {
+        var framesOverviewItem = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-frames", WebInspector.UIString("Frames"));
+        topPaneSidebarTree.appendChild(framesOverviewItem);
+        framesOverviewItem.onselect = this._showFrames.bind(this);
+    }
+
+    var memoryOverviewItem = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-memory", WebInspector.UIString("Memory"));
+    topPaneSidebarTree.appendChild(memoryOverviewItem);
+    memoryOverviewItem.onselect = this._showMemoryGraph.bind(this);
 
     this._currentMode = WebInspector.TimelineOverviewPane.Mode.EventsHorizontal;
 
@@ -138,28 +134,41 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._update();
     },
 
-    _showTimelines: function()
+    _showEvents: function()
     {
-        var newMode = this._overviewModeSelector ? this._overviewModeSelector.value : WebInspector.TimelineOverviewPane.Mode.EventsHorizontal;
-        if (this._currentMode === newMode)
+        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsHorizontal)
             return;
-        this._currentMode = newMode;
-        this._timelinesOverviewItem.revealAndSelect(false);
         this._heapGraph.hide();
-        this._setVerticalOverview(this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsVertical);
+        this._setVerticalOverview(false);
         this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
-        this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._currentMode);
+        this._setMode(WebInspector.TimelineOverviewPane.Mode.EventsHorizontal);
+    },
+
+    _showFrames: function()
+    {
+        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.EventsVertical)
+            return;
+        this._heapGraph.hide();
+        this._setVerticalOverview(true);
+        this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
+        this._setMode(WebInspector.TimelineOverviewPane.Mode.EventsVertical);
     },
 
     _showMemoryGraph: function()
     {
-        this._currentMode = WebInspector.TimelineOverviewPane.Mode.Memory;
+        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Memory)
+            return;
         this._setVerticalOverview(false);
-        this._memoryOverviewItem.revealAndSelect(false);
-        this._heapGraph.show();
-        this._heapGraph.update();
         this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
+        this._heapGraph.show();
+        this._setMode(WebInspector.TimelineOverviewPane.Mode.Memory);
+    },
+
+    _setMode: function(newMode)
+    {
+        this._currentMode = newMode;
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._currentMode);
+        this._update();
     },
 
     _setVerticalOverview: function(enabled)
@@ -175,14 +184,6 @@ WebInspector.TimelineOverviewPane.prototype = {
             this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
             this._updateCategoryStrips();
         }
-    },
-
-    _onOverviewModeChanged: function()
-    {
-        // If we got this while in memory mode, we postpone actual switch until we get to the events mode.
-        if (this._currentMode === WebInspector.TimelineOverviewPane.Mode.Memory)
-            return;
-        this._showTimelines();
     },
 
     _onCategoryVisibilityChanged: function(event)
@@ -1071,62 +1072,3 @@ WebInspector.TimelineVerticalOverview.prototype = {
 }
 
 WebInspector.TimelineVerticalOverview.prototype.__proto__ = WebInspector.View.prototype;
-
-/**
- * @constructor
- */
-WebInspector.TimelineOverviewModeSelector = function(selectCallback)
-{
-    this.element = document.createElement("div");
-    this.element.className = "timeline-overview-mode-selector";
-    this._selectCallback = selectCallback;
-
-    this._buttons = [];
-    this.element.addEventListener("click", this._onClick.bind(this), false);
-}
-
-WebInspector.TimelineOverviewModeSelector.prototype = {
-    addButton: function(tooltip, className, value)
-    {
-        var button = this._createButton(tooltip, className, value);
-        this.element.appendChild(button);
-        this._buttons.push(button);
-        if (this._buttons.length === 1)
-            this._select(button, true);
-    },
-
-    get value()
-    {
-        return this._value;
-    },
-
-    _createButton: function(tooltip, className, value)
-    {
-        var button = document.createElement("button");
-        button.createChild("div", "glyph");
-        button.createChild("div", "glyph shadow");
-        button.className = className;
-        button.title = tooltip;
-        button.value = value;
-        return button;
-    },
-
-    _select: function(button, selected)
-    {
-        if (selected) {
-            button.addStyleClass("toggled");
-            this._value = button.value;
-        } else
-            button.removeStyleClass("toggled");
-    },
-
-    _onClick: function(event)
-    {
-        var button = event.target.enclosingNodeOrSelfWithNodeName("button");
-        if (!button)
-            return;
-        for (var i = 0; i < this._buttons.length; ++i)
-            this._select(this._buttons[i], this._buttons[i] === button);
-        this._selectCallback(button.value);
-    }
-}
