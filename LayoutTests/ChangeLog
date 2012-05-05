@@ -1,3 +1,10 @@
+2012-05-05  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r116216, fixing the inspector test.
+
+        * inspector/debugger/script-extract-outline.html:
+        * inspector/debugger/script-extract-outline-expected.txt:
+
 2012-05-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: save HeapSnapshot implementation.

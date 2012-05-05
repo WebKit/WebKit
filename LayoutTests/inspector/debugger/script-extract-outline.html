@@ -12,7 +12,7 @@ var test = function()
 
     worker.onmessage = InspectorTest.safeWrap(function(event)
     {
-        InspectorTest.addResult(JSON.stringify(event.data));
+        InspectorTest.addObject(event.data);
         InspectorTest.completeTest();
     });
 
@@ -22,7 +22,7 @@ var test = function()
         InspectorTest.completeTest();
     };
 
-    worker.postMessage({ method: "outline", params: { content: parsedScript, id: 1 } });
+    worker.postMessage({ method: "outline", params: { content: parsedScript } });
 }
 
 </script>
