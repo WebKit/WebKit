@@ -1036,7 +1036,7 @@ void WebGLRenderingContext::blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::bufferData(GC3Denum target, long long size, GC3Denum usage, ExceptionCode& ec)
+void WebGLRenderingContext::bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (isContextLost())
@@ -1105,7 +1105,7 @@ void WebGLRenderingContext::bufferData(GC3Denum target, ArrayBufferView* data, G
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::bufferSubData(GC3Denum target, long long offset, ArrayBuffer* data, ExceptionCode& ec)
+void WebGLRenderingContext::bufferSubData(GC3Denum target, GC3Dintptr offset, ArrayBuffer* data, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (isContextLost())
@@ -1130,7 +1130,7 @@ void WebGLRenderingContext::bufferSubData(GC3Denum target, long long offset, Arr
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::bufferSubData(GC3Denum target, long long offset, ArrayBufferView* data, ExceptionCode& ec)
+void WebGLRenderingContext::bufferSubData(GC3Denum target, GC3Dintptr offset, ArrayBufferView* data, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (isContextLost())
@@ -1898,7 +1898,7 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
     cleanupAfterGraphicsCall(true);
 }
 
-void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, ExceptionCode& ec)
+void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
 
@@ -3038,7 +3038,7 @@ WebGLGetInfo WebGLRenderingContext::getVertexAttrib(GC3Duint index, GC3Denum pna
     }
 }
 
-long long WebGLRenderingContext::getVertexAttribOffset(GC3Duint index, GC3Denum pname)
+GC3Dsizeiptr WebGLRenderingContext::getVertexAttribOffset(GC3Duint index, GC3Denum pname)
 {
     if (isContextLost())
         return 0;
@@ -4250,7 +4250,7 @@ void WebGLRenderingContext::vertexAttrib4fv(GC3Duint index, GC3Dfloat* v, GC3Dsi
     vertexAttribfvImpl("vertexAttrib4fv", index, v, size, 4);
 }
 
-void WebGLRenderingContext::vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, long long offset, ExceptionCode& ec)
+void WebGLRenderingContext::vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     if (isContextLost())

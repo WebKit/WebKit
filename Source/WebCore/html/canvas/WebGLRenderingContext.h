@@ -96,11 +96,11 @@ public:
     void blendFunc(GC3Denum sfactor, GC3Denum dfactor);
     void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha);
 
-    void bufferData(GC3Denum target, long long size, GC3Denum usage, ExceptionCode&);
+    void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage, ExceptionCode&);
     void bufferData(GC3Denum target, ArrayBuffer* data, GC3Denum usage, ExceptionCode&);
     void bufferData(GC3Denum target, ArrayBufferView* data, GC3Denum usage, ExceptionCode&);
-    void bufferSubData(GC3Denum target, long long offset, ArrayBuffer* data, ExceptionCode&);
-    void bufferSubData(GC3Denum target, long long offset, ArrayBufferView* data, ExceptionCode&);
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, ArrayBuffer* data, ExceptionCode&);
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, ArrayBufferView* data, ExceptionCode&);
 
     GC3Denum checkFramebufferStatus(GC3Denum target);
     void clear(GC3Dbitfield mask);
@@ -141,7 +141,7 @@ public:
     void disable(GC3Denum cap);
     void disableVertexAttribArray(GC3Duint index, ExceptionCode&);
     void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count, ExceptionCode&);
-    void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, ExceptionCode&);
+    void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, ExceptionCode&);
 
     void enable(GC3Denum cap);
     void enableVertexAttribArray(GC3Duint index, ExceptionCode&);
@@ -174,7 +174,7 @@ public:
     WebGLGetInfo getUniform(WebGLProgram*, const WebGLUniformLocation*, ExceptionCode&);
     PassRefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&, ExceptionCode&);
     WebGLGetInfo getVertexAttrib(GC3Duint index, GC3Denum pname, ExceptionCode&);
-    long long getVertexAttribOffset(GC3Duint index, GC3Denum pname);
+    GC3Dsizeiptr getVertexAttribOffset(GC3Duint index, GC3Denum pname);
 
     void hint(GC3Denum target, GC3Denum mode);
     GC3Dboolean isBuffer(WebGLBuffer*);
@@ -281,7 +281,7 @@ public:
     void vertexAttrib4fv(GC3Duint index, Float32Array* values);
     void vertexAttrib4fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
     void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized,
-                             GC3Dsizei stride, long long offset, ExceptionCode&);
+                             GC3Dsizei stride, GC3Dintptr offset, ExceptionCode&);
 
     void viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
 

@@ -1,8 +1,5 @@
-<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
 </head>
@@ -63,9 +60,9 @@ gl.enableVertexAttribArray(vertexLoc);
 gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 7 * sizeInBytes(gl.FLOAT), 4 * sizeInBytes(gl.FLOAT));
 gl.enableVertexAttribArray(normalLoc);
 shouldBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
-glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getError()', '0');
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getError()', '0');
 
 debug("Testing with out-of-range indices");
 
@@ -76,15 +73,15 @@ gl.vertexAttribPointer(vertexLoc, 4, gl.FLOAT, false, 7 * sizeInBytes(gl.FLOAT),
 gl.enableVertexAttribArray(vertexLoc);
 gl.disableVertexAttribArray(normalLoc);
 debug("Enable vertices, valid");
-glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getError()', '0');
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getError()', '0');
 debug("Enable normals, out-of-range");
 gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 7 * sizeInBytes(gl.FLOAT), 4 * sizeInBytes(gl.FLOAT));
 gl.enableVertexAttribArray(normalLoc);
-glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getError()', '0');
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-glErrorShouldBe(gl, gl.INVALID_OPERATION);
+shouldBe('gl.getError()', 'gl.INVALID_OPERATION');
 
 debug("Test with enabled attribute that does not belong to current program");
 
@@ -92,19 +89,14 @@ gl.disableVertexAttribArray(normalLoc);
 var extraLoc = Math.max(vertexLoc, normalLoc) + 1;
 gl.enableVertexAttribArray(extraLoc);
 debug("Enable an extra attribute with null");
-glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getError()', '0');
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-glErrorShouldBe(gl, gl.INVALID_OPERATION);
+shouldBe('gl.getError()', 'gl.INVALID_OPERATION');
 debug("Enable an extra attribute with insufficient data buffer");
 gl.vertexAttribPointer(extraLoc, 3, gl.FLOAT, false, 7 * sizeInBytes(gl.FLOAT), 4 * sizeInBytes(gl.FLOAT));
-glErrorShouldBe(gl, gl.NO_ERROR);
+shouldBe('gl.getError()', '0');
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-debug("Pass large negative index to vertexAttribPointer");
-gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 7 * sizeInBytes(gl.FLOAT), -2000000000 * sizeInBytes(gl.FLOAT));
-glErrorShouldBe(gl, gl.INVALID_VALUE);
-shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-
-successfullyParsed = true;
+shouldBe('gl.getError()', '0');
 </script>
 
 <script src="../../js/resources/js-test-post.js"></script>

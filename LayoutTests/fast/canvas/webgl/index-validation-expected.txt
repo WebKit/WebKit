@@ -4,29 +4,27 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Testing with valid indices
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-PASS getError was expected value: NO_ERROR : 
+PASS gl.getError() is 0
 PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0) is undefined.
-PASS getError was expected value: NO_ERROR : 
+PASS gl.getError() is 0
 Testing with out-of-range indices
 Enable vertices, valid
-PASS getError was expected value: NO_ERROR : 
+PASS gl.getError() is 0
 PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0) is undefined.
-PASS getError was expected value: NO_ERROR : 
+PASS gl.getError() is 0
 Enable normals, out-of-range
-PASS getError was expected value: NO_ERROR : 
+PASS gl.getError() is 0
 PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0) is undefined.
-PASS getError was expected value: INVALID_OPERATION : 
+PASS gl.getError() is gl.INVALID_OPERATION
 Test with enabled attribute that does not belong to current program
 Enable an extra attribute with null
-PASS getError was expected value: NO_ERROR : 
+PASS gl.getError() is 0
 PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0) is undefined.
-PASS getError was expected value: INVALID_OPERATION : 
+PASS gl.getError() is gl.INVALID_OPERATION
 Enable an extra attribute with insufficient data buffer
-PASS getError was expected value: NO_ERROR : 
+PASS gl.getError() is 0
 PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0) is undefined.
-Pass large negative index to vertexAttribPointer
-PASS getError was expected value: INVALID_VALUE : 
-PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0) is undefined.
+PASS gl.getError() is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

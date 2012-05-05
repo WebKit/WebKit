@@ -463,9 +463,9 @@ module html {
         [StrictTypeChecking] void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
         [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBuffer data, in unsigned long usage) raises (DOMException);
         [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBufferView data, in unsigned long usage) raises (DOMException);
-        [StrictTypeChecking] void         bufferData(in unsigned long target, in long long size, in unsigned long usage) raises (DOMException);
-        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long long offset, in ArrayBuffer data) raises (DOMException);
-        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long long offset, in ArrayBufferView data) raises (DOMException);
+        [StrictTypeChecking] void         bufferData(in unsigned long target, in long size, in unsigned long usage) raises (DOMException);
+        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long offset, in ArrayBuffer data) raises (DOMException);
+        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long offset, in ArrayBufferView data) raises (DOMException);
 
         [StrictTypeChecking] unsigned long checkFramebufferStatus(in unsigned long target);
         [StrictTypeChecking] void         clear(in unsigned long mask);
@@ -507,7 +507,7 @@ module html {
         [StrictTypeChecking] void         disable(in unsigned long cap);
         [StrictTypeChecking] void         disableVertexAttribArray(in unsigned long index) raises(DOMException);
         [StrictTypeChecking] void         drawArrays(in unsigned long mode, in long first, in long count) raises(DOMException);
-        [StrictTypeChecking] void         drawElements(in unsigned long mode, in long count, in unsigned long type, in long long offset) raises(DOMException);
+        [StrictTypeChecking] void         drawElements(in unsigned long mode, in long count, in unsigned long type, in long offset) raises(DOMException);
 
         [StrictTypeChecking] void         enable(in unsigned long cap);
         [StrictTypeChecking] void         enableVertexAttribArray(in unsigned long index) raises(DOMException);
@@ -567,7 +567,7 @@ module html {
         // any getVertexAttrib(in unsigned long index, in unsigned long pname) raises(DOMException);
         [StrictTypeChecking, Custom] void getVertexAttrib();
 
-        [StrictTypeChecking] long long getVertexAttribOffset(in unsigned long index, in unsigned long pname);
+        [StrictTypeChecking] long getVertexAttribOffset(in unsigned long index, in unsigned long pname);
 
         [StrictTypeChecking] void         hint(in unsigned long target, in unsigned long mode);
         [StrictTypeChecking] boolean      isBuffer(in WebGLBuffer buffer);
@@ -661,7 +661,7 @@ module html {
         [StrictTypeChecking] void         vertexAttrib4f(in unsigned long indx, in float x, in float y, in float z, in float w);
         [StrictTypeChecking, Custom] void         vertexAttrib4fv(in unsigned long indx, in Float32Array values);
         [StrictTypeChecking] void         vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, 
-                                                              in long stride, in long long offset) raises(DOMException);
+                                                              in long stride, in long offset) raises(DOMException);
 
         [StrictTypeChecking] void         viewport(in long x, in long y, in long width, in long height);
     };
