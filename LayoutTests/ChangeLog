@@ -1,3 +1,9 @@
+2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed, rebaseline after r116009.
+
+        * platform/efl/fast/block/float/float-not-removed-from-next-sibling4-expected.txt:
+
 2012-05-04  Chris Rogers  <crogers@google.com>
 
         Oscillator must implement noteOn() and noteOff()
