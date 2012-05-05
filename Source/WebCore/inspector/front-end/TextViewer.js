@@ -304,8 +304,8 @@ WebInspector.TextViewer.prototype = {
             return false;
 
         this._delegate.commitEditing();
-        if (this._url && WebInspector.isURLSaved(this._url))
-            WebInspector.save(this._url, this._textModel.text, false);
+        if (this._url && WebInspector.fileManager.isURLSaved(this._url))
+            WebInspector.fileManager.save(this._url, this._textModel.text, false);
         return true;
     },
 

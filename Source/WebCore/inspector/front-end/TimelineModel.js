@@ -203,7 +203,8 @@ WebInspector.TimelineModel.prototype = {
 
         var now = new Date();
         var fileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
-        WebInspector.save(fileName, records.join(",\n"), true);
+        WebInspector.fileManager.save(fileName, records.join(",\n"), true);
+
     },
 
     reset: function()

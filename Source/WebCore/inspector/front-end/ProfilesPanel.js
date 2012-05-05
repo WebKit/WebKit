@@ -136,6 +136,20 @@ WebInspector.ProfileHeader = function(profileType, title, uid)
     }
 }
 
+WebInspector.ProfileHeader.prototype = {
+    /**
+     * @param {Function} callback
+     */
+    load: function(callback) { },
+
+    /**
+     * @return {boolean}
+     */
+    canSave: function() { return false; },
+
+    save: function() { throw new Error("Needs implemented"); }
+}
+
 /**
  * @constructor
  * @extends {WebInspector.Panel}
@@ -1095,7 +1109,7 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     handleContextMenuEvent: function(event)
     {
         var profile = this.profile;
-        if (!profile.canSave || !profile.canSave())
+        if (!profile.canSave())
             return;
         var contextMenu = new WebInspector.ContextMenu();
         contextMenu.appendItem(WebInspector.UIString("Save profile"), profile.save.bind(profile));

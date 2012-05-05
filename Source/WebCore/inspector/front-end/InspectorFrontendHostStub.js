@@ -137,6 +137,15 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         fr.readAsDataURL(blob);
     },
 
+    canAppend: function()
+    {
+        return false;
+    },
+
+    append: function(url, content)
+    {
+    },
+
     sendMessageToBackend: function(message)
     {
     },
@@ -167,3 +176,4 @@ var InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
 Preferences.localizeUI = false;
 
 }
+

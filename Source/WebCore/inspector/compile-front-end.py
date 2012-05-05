@@ -74,6 +74,7 @@ modules = [
             "DOMStorage.js",
             "DebuggerModel.js",
             "DebuggerPresentationModel.js",
+            "FileManager.js",
             "HAREntry.js",
             "IndexedDBModel.js",
             "Linkifier.js",

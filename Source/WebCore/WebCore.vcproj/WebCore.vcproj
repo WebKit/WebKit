@@ -74233,6 +74233,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\FileManager.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FilteredItemSelectionDialog.js"
 					>
 				</File>

@@ -6364,6 +6364,7 @@
             'inspector/front-end/ExtensionPanel.js',
             'inspector/front-end/ExtensionRegistryStub.js',
             'inspector/front-end/ExtensionServer.js',
+            'inspector/front-end/FileManager.js',
             'inspector/front-end/FilteredItemSelectionDialog.js',
             'inspector/front-end/FontView.js',
             'inspector/front-end/GoToLineDialog.js',

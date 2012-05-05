@@ -788,6 +788,10 @@ WebInspector.HeapProfileHeader = function(profileType, title, uid, maxJSObjectId
 }
 
 WebInspector.HeapProfileHeader.prototype = {
+    /**
+     * @override
+     * @param {Function} callback
+     */
     load: function(callback)
     {
         if (this._loaded) {
@@ -815,21 +819,30 @@ WebInspector.HeapProfileHeader.prototype = {
         }
     },
 
-    _saveStatusUpdate: function()
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _saveStatusUpdate: function(event)
     {
-        ++this._savedChunksCount;
-        if (this._savedChunksCount === this._totalNumberOfChunks) {
+        if (event.data !== this._fileName)
+            return;
+        if (++this._savedChunksCount === this._totalNumberOfChunks) {
             this.sidebarElement.subtitle = Number.bytesToString(this._proxy.totalSize);
             this.sidebarElement.wait = false;
+            this._savedChunksCount = 0;
+            WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._saveStatusUpdate, this);
         } else
             this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 %d\%", Math.floor(this._savedChunksCount * 100 / this._totalNumberOfChunks));
     },
 
+    /**
+     * @param {string} chunk
+     */
     pushJSONChunk: function(chunk)
     {
         if (this._loaded) {
             this.sidebarElement.wait = true;
-            WebInspector.append(this._fileName, chunk, this._saveStatusUpdate.bind(this));
+            WebInspector.fileManager.append(this._fileName, chunk);
         } else {
             ++this._totalNumberOfChunks;
             this._proxy.pushJSONChunk(chunk);
@@ -850,22 +863,38 @@ WebInspector.HeapProfileHeader.prototype = {
             this.sidebarElement.subtitle = WebInspector.UIString("Parsing\u2026");
     },
 
+    /**
+     * @override
+     * @return {boolean}
+     */
     canSave: function()
     {
-        return this._loaded && InspectorFrontendHost.canSave() && ("append" in InspectorFrontendHost);
+        return this._loaded && !this._savedChunksCount && WebInspector.fileManager.canAppend();
     },
 
+    /**
+     * @override
+     */
     save: function()
     {
-        function startWritingSnapshot()
+        /**
+         * @param {WebInspector.Event} event
+         */
+        function startWritingSnapshot(event)
         {
+            if (event.data !== this._fileName)
+                return;
             this.sidebarElement.wait = true;
-            this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 0\%");
+            this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 %d\%", 0);
             this._savedChunksCount = 0;
+            WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.SavedURL, startWritingSnapshot, this);
+            WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._saveStatusUpdate, this);
             ProfilerAgent.getProfile(this.typeId, this.uid);
         }
+
         this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".json";
-        WebInspector.save(this._fileName, "", true, startWritingSnapshot.bind(this));
+        WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.SavedURL, startWritingSnapshot, this);
+        WebInspector.fileManager.save(this._fileName, "", true);
     }
 }
 
