@@ -1,5 +1,14 @@
 2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening, unskip test after r116097.
+
+        The test was unskipped from Skipped, but some other commit added it to
+        test_expectations.txt as well...
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Gardening; skip tests that depend on beginDragWithFiles.
 
         * platform/efl/Skipped:
