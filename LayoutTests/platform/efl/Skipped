@@ -33,6 +33,7 @@ fast/dom/Window/window-postmessage-clone.html
 fast/events/drag-dataTransferItemList-file-handling.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
+fast/events/drop-handler-should-not-stop-navigate.html
 fast/events/dropzone-004.html
 fast/events/file-input-hidden-in-ondrop.html
 fast/events/input-element-display-none-in-dragleave-crash.html
@@ -40,6 +41,7 @@ fast/events/prevent-drag-to-navigate.html
 fast/files/apply-blob-url-to-img.html
 fast/files/apply-blob-url-to-xhr.html
 fast/files/file-reader-abort.html
+fast/files/file-reader-directory-crash.html
 fast/files/file-reader-event-listener.html
 fast/files/null-origin-string.html
 fast/files/read-blob-async.html

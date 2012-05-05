@@ -1,5 +1,11 @@
 2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening; skip tests that depend on beginDragWithFiles.
+
+        * platform/efl/Skipped:
+
+2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unreviewed, rebaseline after r116009.
 
         * platform/efl/fast/block/float/float-not-removed-from-next-sibling4-expected.txt:
