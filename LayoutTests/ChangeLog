@@ -1,3 +1,9 @@
+2012-05-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Rebaseline fast/events/attribute-listener-deletion-crash.html (added in r116191).
+
+        * platform/chromium/fast/events/attribute-listener-deletion-crash-expected.txt: Added.
+
 2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening, unskip test after r116097.
