@@ -52,7 +52,7 @@ class XvfbDriver(WebKitDriver):
         # DriverProxy creates two drivers, one for normal and the other for ref tests. Both have
         # the same worker number, so this prevents them from using the same Xvfb instance.
         display_id = self._worker_number * 2 + running_displays
-        if self._port.get_option('pixel_tests'):
+        if pixel_tests:
             display_id += 1
         run_xvfb = ["Xvfb", ":%d" % (display_id), "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
