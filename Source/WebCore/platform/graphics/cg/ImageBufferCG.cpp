@@ -401,6 +401,9 @@ static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
 
 static String CGImageToDataURL(CGImageRef image, const String& mimeType, const double* quality)
 {
+    if (!image)
+        return "data:,";
+
     RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
     if (!data)
         return "data:,";
@@ -414,23 +417,23 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
 
     RetainPtr<CFDictionaryRef> imageProperties = 0;
     if (CFEqual(uti.get(), jpegUTI()) && quality && *quality >= 0.0 && *quality <= 1.0) {
-        // Apply the compression quality to the image destination.
+        // Apply the compression quality to the JPEG image destination.
         RetainPtr<CFNumberRef> compressionQuality(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, quality));
         const void* key = kCGImageDestinationLossyCompressionQuality;
         const void* value = compressionQuality.get();
         imageProperties.adoptCF(CFDictionaryCreate(0, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     }
 
-    // Setting kCGImageDestinationBackgroundColor to black in imageProperties would allow saving some math in the
-    // calling functions, but it doesn't seem to work.
+    // Setting kCGImageDestinationBackgroundColor to black for JPEG images in imageProperties would save some math
+    // in the calling functions, but it doesn't seem to work.
 
     CGImageDestinationAddImage(destination.get(), image, imageProperties.get());
     CGImageDestinationFinalize(destination.get());
 
-    Vector<char> out;
-    base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(data.get())), CFDataGetLength(data.get()), out);
+    Vector<char> base64Data;
+    base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(data.get())), CFDataGetLength(data.get()), base64Data);
 
-    return "data:" + mimeType + ";base64," + out;
+    return "data:" + mimeType + ";base64," + base64Data;
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality, CoordinateSystem) const
@@ -467,23 +470,19 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
         image.adoptCF(CGBitmapContextCreateImage(context.get()));
     }
 
-    if (!image)
-        return "data:,";
-
     return CGImageToDataURL(image.get(), mimeType, quality);
 }
 
 String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-        
-    RetainPtr<CGImageRef> image;
-    RetainPtr<CGDataProviderRef> dataProvider;
 
-    unsigned char* data = source.data()->data();
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
     ASSERT(uti);
+
+    unsigned char* data = source.data()->data();
     Vector<uint8_t> dataVector;
+
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
         dataVector.resize(4 * source.width() * source.height());
@@ -506,21 +505,18 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
 
         data = out;
     }
-    
-    dataProvider.adoptCF(CGDataProviderCreateWithData(0, data,
-                                                      4 * source.width() * source.height(), 0));
-    
+
+    RetainPtr<CGDataProviderRef> dataProvider;
+    dataProvider.adoptCF(CGDataProviderCreateWithData(0, data, 4 * source.width() * source.height(), 0));
     if (!dataProvider)
         return "data:,";
 
+    RetainPtr<CGImageRef> image;
     image.adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(),
                                 deviceRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaLast,
                                 dataProvider.get(), 0, false, kCGRenderingIntentDefault));
-                                
-        
-    if (!image)
-        return "data:,";
 
     return CGImageToDataURL(image.get(), mimeType, quality);
 }
+
 } // namespace WebCore
