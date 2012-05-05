@@ -1,3 +1,18 @@
+2012-05-05  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [jhbuild] Do not set XDG_DATA_DIRS in jhbuildrc.
+        https://bugs.webkit.org/show_bug.cgi?id=85717
+
+        Reviewed by Martin Robinson.
+
+        After r116209, the XDG_DATA_DIRS environment variable is now
+        passed by webkitpy's layout_tests code to run-with-jhbuild, so
+        instead of setting a few defaults in jhbuildrc we can now rely on
+        the values set and really used by each system.
+
+        * efl/jhbuildrc:
+        * gtk/jhbuildrc:
+
 2012-05-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Buildfix for --minimal build after r116107.
