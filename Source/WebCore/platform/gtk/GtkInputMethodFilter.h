@@ -18,6 +18,7 @@
  */
 
 #include "GRefPtrGtk.h"
+#include "IntRect.h"
 #include <gdk/gdk.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,6 +47,7 @@ public:
     void confirmComposition();
     void cancelContextComposition();
     void updatePreedit();
+    void setCursorRect(const IntRect& location);
 
     GtkIMContext* context() { return m_context.get(); }
 
@@ -81,6 +83,7 @@ private:
     bool m_preventNextCommit;
     bool m_justSentFakeKeyUp;
     unsigned int m_lastFilteredKeyPressCodeWithNoResults;
+    IntPoint m_lastCareLocation;
 };
 
 } // namespace WebCore

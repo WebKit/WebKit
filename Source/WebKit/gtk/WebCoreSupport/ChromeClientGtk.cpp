@@ -33,6 +33,7 @@
 #include "FileIconLoader.h"
 #include "FileSystem.h"
 #include "FloatRect.h"
+#include "FocusController.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "GtkUtilities.h"
@@ -598,6 +599,13 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     m_dirtyRegion = Region();
     m_lastDisplayTime = currentTime();
     m_repaintSoonSourceId = 0;
+
+    // We update the IM context window location here, because we want it to be
+    // synced with cursor movement. For instance, a text field can move without
+    // the selection changing.
+    Frame* focusedFrame = core(m_webView)->focusController()->focusedOrMainFrame();
+    if (focusedFrame && focusedFrame->editor()->canEdit())
+        m_webView->priv->imFilter.setCursorRect(frame->selection()->absoluteCaretBounds());
 }
 
 void ChromeClient::invalidateRootView(const IntRect&, bool immediate)

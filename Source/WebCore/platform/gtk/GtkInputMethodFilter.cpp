@@ -72,6 +72,27 @@ void GtkInputMethodFilter::setWidget(GtkWidget* widget)
         g_signal_connect_after(widget, "realize", G_CALLBACK(handleWidgetRealize), this);
 }
 
+void GtkInputMethodFilter::setCursorRect(const IntRect& cursorRect)
+{
+    // Don't move the window unless the cursor actually moves more than 10
+    // pixels. This prevents us from making the window flash during minor
+    // cursor adjustments.
+    static const int windowMovementThreshold = 10 * 10;
+    if (cursorRect.location().distanceSquaredToPoint(m_lastCareLocation) < windowMovementThreshold)
+        return;
+
+    m_lastCareLocation = cursorRect.location();
+    IntRect translatedRect = cursorRect;
+
+    ASSERT(m_widget);
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(m_widget, &allocation);
+    translatedRect.move(allocation.x, allocation.y);
+
+    GdkRectangle gdkCursorRect = cursorRect;
+    gtk_im_context_set_cursor_location(m_context.get(), &gdkCursorRect);
+}
+
 GtkInputMethodFilter::GtkInputMethodFilter()
     : m_cursorOffset(0)
     , m_context(adoptGRef(gtk_im_multicontext_new()))
