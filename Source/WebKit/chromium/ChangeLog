@@ -1,3 +1,46 @@
+2012-05-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Allow WebMediaPlayerClientImpl to switch clients
+        https://bugs.webkit.org/show_bug.cgi?id=85093
+
+        Reviewed by James Robinson.
+
+        WebVideoFrameProviderClient has a 1:1 relationship with a
+        WebVideoFrameProvider. The client here is CCVideoLayerImpl and the
+        provider is WebMediaPlayerClientImpl.  If the provider gets a new
+        client, then the old client needs to be informed to stop using the
+        provider.
+
+        If this doesn't happen, then the old client will have an unsafe
+        pointer to the provider, will not get informed if the provider gets
+        deleted, and the client will crash when it dereferences the provider
+        pointer trying to tell the provider that its client is going away.
+
+        Test: WebMediaPlayerClientImplTest.InitialNullVideoClient
+              WebMediaPlayerClientImplTest.SetAndUnsetVideoClient
+              WebMediaPlayerClientImplTest.DestroyProvider
+              WebMediaPlayerClientImplTest.SetMultipleVideoClients
+
+        * WebKit.gypi:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::setVideoFrameProviderClient):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * tests/WebMediaPlayerClientImplTest.cpp: Added.
+        (WebKit):
+        (FakeWebMediaPlayerClientImpl):
+        (WebKit::FakeWebMediaPlayerClientImpl::create):
+        (WebKit::FakeWebMediaPlayerClientImpl::FakeWebMediaPlayerClientImpl):
+        (FakeVideoFrameProviderClient):
+        (WebKit::FakeVideoFrameProviderClient::create):
+        (WebKit::FakeVideoFrameProviderClient::~FakeVideoFrameProviderClient):
+        (WebKit::FakeVideoFrameProviderClient::didReceiveFrame):
+        (WebKit::FakeVideoFrameProviderClient::didUpdateMatrix):
+        (WebKit::FakeVideoFrameProviderClient::stopUsingProvider):
+        (WebKit::FakeVideoFrameProviderClient::provider):
+        (WebKit::FakeVideoFrameProviderClient::FakeVideoFrameProviderClient):
+        (WebKit::TEST):
+
 2012-05-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

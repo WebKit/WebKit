@@ -687,6 +687,8 @@ bool WebMediaPlayerClientImpl::acceleratedRenderingInUse()
 void WebMediaPlayerClientImpl::setVideoFrameProviderClient(WebVideoFrameProvider::Client* client)
 {
     MutexLocker locker(m_compositingMutex);
+    if (m_videoFrameProviderClient)
+        m_videoFrameProviderClient->stopUsingProvider();
     m_videoFrameProviderClient = client;
     if (m_webMediaPlayer)
         m_webMediaPlayer->setStreamTextureClient(client ? this : 0);
