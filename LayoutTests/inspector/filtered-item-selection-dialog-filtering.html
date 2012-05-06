@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    function checkQuery(title, query, input)
+    {
+        var output = [];
+        var regex = WebInspector.FilteredItemSelectionDialog.prototype._createSearchRegExp(query);
+
+        for (var i = 0; i < input.length; ++i) {
+            var item = input[i];
+            if (regex.test(item))
+                output.push(item);
+        }
+
+        InspectorTest.addObject({
+            title: title,
+            query: query,
+            input: input,
+            output: output
+        });
+    }
+
+    checkQuery("Empty query matches everything", "", ["a", "bc"]);
+    checkQuery("Case sensitive matching", "aB", ["abc", "acB"]);
+    checkQuery("Case insensitive matching", "ab", ["abc", "bac", "a_B"]);
+    checkQuery("Spaces in query", "d v ", ["div .visible", "div.visible "]);
+    checkQuery("Duplicate symbols in query", "aab", ["abab", "abaa", "caab", "baac"]);
+    checkQuery("Dangerous input escaping", "^[]{}()\\.$*+?|", ["^[]{}()\\.$*+?|", "0123456789abcdef"]);
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p> 
+Check to see that FilteredItemSelectionDialog uses proper regex to filter results.
+</p>
+
+</body>
+</html>

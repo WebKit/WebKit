@@ -123,9 +123,10 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     {
         var fragment = document.createDocumentFragment();
         var candidateItem = this._selectedElement;
+        var regex = this._createSearchRegExp(this._promptElement.value);
         for (var i = index; i < index + chunkLength; ++i) {
             var itemElement = this._createItemElement(i, this._delegate.itemTitleAt(i));
-            if (this._checkItemAt(i, this._promptElement.value)) {
+            if (regex.test(this._delegate.itemKeyAt(i))) {
                 if (!candidateItem)
                     candidateItem = itemElement;
             } else
@@ -187,29 +188,31 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     },
 
     /**
-     * @param {number} index
-     */
-    _checkItemAt: function(index, query)
-    {
-        if (!query)
-            return true;
-        var regExp = this._createSearchRegExp(query);
-        var key = this._delegate.itemKeyAt(index);
-        return regExp.test(key);
-    },
-
-    /**
-     * @param {string=} query
+     * @param {?string} query
      * @param {boolean=} isGlobal
      */
     _createSearchRegExp: function(query, isGlobal)
     {
+        if (!query || !query.trim())
+            return new RegExp(".*");
+
         var trimmedQuery = query.trim();
-        var regExpString = trimmedQuery.escapeForRegExp().replace(/\\\*/g, ".*").replace(/(?!^)([A-Z])/g, "[^A-Z]*$1");
-        var isSuffix = (query.charAt(query.length - 1) === " ");
-        if (isSuffix)
-            regExpString += "$";
-        return new RegExp(regExpString, (trimmedQuery === trimmedQuery.toLowerCase() ? "i" : "") + (isGlobal ? "g" : ""));
+
+        var ignoreCase = (trimmedQuery === trimmedQuery.toLowerCase());
+
+        const toEscape = "^[]{}()\\.$*+?|";
+
+        var regExpString = "";
+        for (var i = 0; i < trimmedQuery.length; ++i) {
+            var c = trimmedQuery.charAt(i);
+            if (toEscape.indexOf(c) !== -1)
+                c = "\\" + c;
+            if (i)
+                regExpString += "[^" + c + "]*";
+            regExpString += c;
+        }
+
+        return new RegExp(regExpString, (ignoreCase ? "i" : "") + (isGlobal ? "g" : ""));
     },
 
     _filterItems: function()
@@ -220,15 +223,16 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         var charsAdded = this._previousInputLength < query.length;
         this._previousInputLength = query.length;
         query = query.trim();
+        var regex = this._createSearchRegExp(query);
 
         var firstElement;
         for (var i = 0; i < this._itemElements.length; ++i) {
             var itemElement = this._itemElements[i];
             
             if (this._itemElementVisible(itemElement)) { 
-                if (!this._checkItemAt(i, query))
+                if (!regex.test(this._delegate.itemKeyAt(i)))
                     this._hideItemElement(itemElement);
-            } else if (!charsAdded && this._checkItemAt(i, query))
+            } else if (!charsAdded && regex.test(this._delegate.itemKeyAt(i)))
                 this._showItemElement(itemElement);
             
             if (!firstElement && this._itemElementVisible(itemElement))
@@ -268,8 +272,6 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
 
             return candidate;
         }
-
-        var isPageScroll = false;
 
         if (this._selectedElement) {
             var candidate;
@@ -354,7 +356,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     },
 
     /**
-     * @param {string=} query
+     * @param {!string} query
      */
     _highlightItems: function(query)
     {
