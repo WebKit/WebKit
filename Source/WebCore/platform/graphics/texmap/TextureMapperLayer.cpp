@@ -132,6 +132,8 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
 #endif
 
     static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get())->updateContents(textureMapper, image.get(), m_size, dirtyRect);
+    m_state.needsDisplay = false;
+    m_state.needsDisplayRect = IntRect();
 }
 
 void TextureMapperLayer::paint()
