@@ -36,6 +36,7 @@
 
 #include "Event.h"
 #include "IdentifiersFactory.h"
+#include "InspectorClient.h"
 #include "InspectorCounters.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
@@ -171,6 +172,11 @@ void InspectorTimelineAgent::stop(ErrorString*)
 void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)
 {
     m_state->setBoolean(TimelineAgentState::includeMemoryDetails, value);
+}
+
+void InspectorTimelineAgent::supportsFrameInstrumentation(ErrorString*, bool* result)
+{
+    *result = m_frameInstrumentationSupport == FrameInstrumentationSupported;
 }
 
 void InspectorTimelineAgent::didBeginFrame()
@@ -437,13 +443,14 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorType type)
+InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorType type, FrameInstrumentationSupport frameInstrumentationSupport)
     : InspectorBaseAgent<InspectorTimelineAgent>("Timeline", instrumentingAgents, state)
     , m_frontend(0)
     , m_timestampOffset(0)
     , m_id(1)
     , m_maxCallStackDepth(5)
     , m_inspectorType(type)
+    , m_frameInstrumentationSupport(frameInstrumentationSupport)
 {
 }
 

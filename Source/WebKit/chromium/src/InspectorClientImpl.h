@@ -68,6 +68,8 @@ public:
     virtual void overrideDeviceMetrics(int, int, float, bool);
     virtual void autoZoomPageToFitWidth();
 
+    virtual bool supportsFrameInstrumentation();
+
 private:
     WebDevToolsAgentImpl* devToolsAgent();
 

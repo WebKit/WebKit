@@ -1,3 +1,19 @@
+2012-05-06  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: take timeline frame mode out of experimental
+        https://bugs.webkit.org/show_bug.cgi?id=85707
+
+        Reviewed by Pavel Feldman.
+
+        - exposed supportFrameInstrumentation method to InspectorClient. Client must return true iff the platform will call
+          InspectorInstrumentation::instrumentBeginFrame() upon beginning of frame rendering;
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::supportsFrameInstrumentation):
+        (WebKit):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+
 2012-05-04  Kent Tamura  <tkent@chromium.org>
 
         Rename ICULocale to LocaleICU, part 1

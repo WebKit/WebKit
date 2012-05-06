@@ -60,7 +60,7 @@ WebInspector.TimelineOverviewPane = function(model)
     eventsOverviewItem.revealAndSelect(false);
     eventsOverviewItem.onselect = this._showEvents.bind(this);
 
-    if (WebInspector.experimentsSettings.timelineVerticalOverview.isEnabled()) {
+    if (Capabilities.timelineSupportsFrameInstrumentation) {
         var framesOverviewItem = new WebInspector.SidebarTreeElement("timeline-overview-sidebar-frames", WebInspector.UIString("Frames"));
         topPaneSidebarTree.appendChild(framesOverviewItem);
         framesOverviewItem.onselect = this._showFrames.bind(this);

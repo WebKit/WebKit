@@ -44,6 +44,7 @@
 
 namespace WebCore {
 class Event;
+class InspectorClient;
 class InspectorFrontend;
 class InspectorState;
 class InstrumentingAgents;
@@ -57,9 +58,11 @@ class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     enum InspectorType { PageInspector, WorkerInspector };
-    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorType type)
+    enum FrameInstrumentationSupport { FrameInstrumentationNotSupported, FrameInstrumentationSupported };
+
+    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorType type, FrameInstrumentationSupport frameInstrumentationSupport)
     {
-        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, state, type));
+        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, state, type, frameInstrumentationSupport));
     }
 
     ~InspectorTimelineAgent();
@@ -71,6 +74,7 @@ public:
     virtual void start(ErrorString*, const int* maxCallStackDepth);
     virtual void stop(ErrorString*);
     virtual void setIncludeMemoryDetails(ErrorString*, bool);
+    virtual void supportsFrameInstrumentation(ErrorString*, bool*);
 
     int id() const { return m_id; }
 
@@ -145,7 +149,7 @@ private:
         bool cancelable;
     };
         
-    InspectorTimelineAgent(InstrumentingAgents*, InspectorState*, InspectorType);
+    InspectorTimelineAgent(InstrumentingAgents*, InspectorState*, InspectorType, FrameInstrumentationSupport);
 
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack);
     void setHeapSizeStatistic(InspectorObject* record);
@@ -183,6 +187,7 @@ private:
     GCEvents m_gcEvents;
     int m_maxCallStackDepth;
     InspectorType m_inspectorType;
+    FrameInstrumentationSupport m_frameInstrumentationSupport;
 };
 
 } // namespace WebCore

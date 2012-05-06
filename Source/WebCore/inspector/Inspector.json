@@ -2155,6 +2155,14 @@
                 ],
                 "hidden": true,
                 "description": "Starts calculating various DOM statistics and sending them as part of timeline events."
+            },
+            {
+                "name": "supportsFrameInstrumentation",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if timeline supports frame instrumentation." }
+                ],
+                "hidden": true,
+                "description": "Tells whether timeline agent supports frame instrumentation."
             }
         ],
         "events": [
