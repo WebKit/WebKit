@@ -1555,6 +1555,27 @@ EAPI Eina_Bool    ewk_view_setting_scripts_can_close_windows_get(const Evas_Obje
 EAPI Eina_Bool    ewk_view_setting_scripts_can_close_windows_set(Evas_Object *o, Eina_Bool allow);
 
 /**
+ * Returns whether scripts can access clipboard.
+ *
+ * @param o View whose settings to check.
+ *
+ * @return @c EINA_TRUE if scripts can access clipboard, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool    ewk_view_setting_scripts_can_access_clipboard_get(const Evas_Object *o);
+
+/**
+ * Sets whether scripts are allowed to access clipboard.
+ *
+ * @param o View whose settings to change.
+ * @param allow @c EINA_TRUE to allow scripts access clipboard,
+ *              @c EINA_FALSE otherwise.
+ *
+ * @return @c EINA_TRUE if the setting could be changed successfully,
+ *         @c EINA_FALSE in case an error occurred.
+ */
+EAPI Eina_Bool    ewk_view_setting_scripts_can_access_clipboard_set(Evas_Object *o, Eina_Bool allow);
+
+/**
  * Queries if HTML elements @c textarea can be resizable.
  *
  * @param o view object to query if the textarea elements can be resizable

@@ -1,3 +1,17 @@
+2012-05-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] EFL's LayoutTestController setJavaScriptCanAccessClipboard implementation
+        https://bugs.webkit.org/show_bug.cgi?id=83687
+
+        Reviewed by Antonio Gomes.
+
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (ewk_view_setting_scripts_can_access_clipboard_get):
+        (ewk_view_setting_scripts_can_access_clipboard_set):
+        * ewk/ewk_view.h:
+
 2012-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert isPageBoxVisible to use Internals interface.

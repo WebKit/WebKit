@@ -327,9 +327,9 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
     ewk_view_setting_private_browsing_set(browser->mainView(), flag);
 }
 
-void LayoutTestController::setJavaScriptCanAccessClipboard(bool)
+void LayoutTestController::setJavaScriptCanAccessClipboard(bool flag)
 {
-    notImplemented();
+    ewk_view_setting_scripts_can_access_clipboard_set(browser->mainView(), flag);
 }
 
 void LayoutTestController::setXSSAuditorEnabled(bool flag)

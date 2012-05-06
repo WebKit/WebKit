@@ -217,6 +217,7 @@ struct _Ewk_View_Private_Data {
         bool shouldDisplaySubtitles : 1;
         bool shouldDisplayTextDescriptions: 1;
 #endif
+        bool scriptsCanAccessClipboard : 1;
         bool resizableTextareas : 1;
         bool privateBrowsing : 1;
         bool caretBrowsing : 1;
@@ -738,6 +739,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.shouldDisplaySubtitles = priv->pageSettings->shouldDisplaySubtitles();
     priv->settings.shouldDisplayTextDescriptions = priv->pageSettings->shouldDisplayTextDescriptions();
 #endif
+    priv->settings.scriptsCanAccessClipboard = priv->pageSettings->javaScriptCanAccessClipboard();
     priv->settings.resizableTextareas = priv->pageSettings->textAreasAreResizable();
     priv->settings.privateBrowsing = priv->pageSettings->privateBrowsingEnabled();
     priv->settings.caretBrowsing = priv->pageSettings->caretBrowsingEnabled();
@@ -2101,6 +2103,25 @@ Eina_Bool ewk_view_setting_scripts_can_close_windows_set(Evas_Object* ewkView, E
     if (priv->settings.scriptsCanCloseWindows != allow) {
         priv->pageSettings->setAllowScriptsToCloseWindows(allow);
         priv->settings.scriptsCanCloseWindows = allow;
+    }
+    return true;
+}
+
+Eina_Bool ewk_view_setting_scripts_can_access_clipboard_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->settings.scriptsCanAccessClipboard;
+}
+
+Eina_Bool ewk_view_setting_scripts_can_access_clipboard_set(Evas_Object* ewkView, Eina_Bool allow)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    allow = !!allow;
+    if (priv->settings.scriptsCanAccessClipboard != allow) {
+        priv->pageSettings->setJavaScriptCanAccessClipboard(allow);
+        priv->settings.scriptsCanAccessClipboard = allow;
     }
     return true;
 }

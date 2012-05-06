@@ -313,8 +313,6 @@ fast/events/blur-focus-window-should-blur-focus-element.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 plugins/netscape-plugin-setwindow-size-2.html
 
-# EFL's LayoutTestController does not implement setJavaScriptCanAccessClipboard
-editing/execCommand/clipboard-access.html
 
 # EFL's LayoutTestController does not implement setAllowUniversalAccessFromFileURLs
 # EFL's LayoutTestController does not implement setAllowAccessFromFileURLs
