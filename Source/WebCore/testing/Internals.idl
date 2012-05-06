@@ -128,6 +128,8 @@ module window {
 
         unsigned long numberOfScrollableAreas(in Document document) raises (DOMException);
 
+        boolean isPageBoxVisible(in Document document, in long pageNumber) raises (DOMException);
+
         readonly attribute InternalSettings settings;
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS

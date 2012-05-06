@@ -962,12 +962,6 @@ void DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(QWebFrame* frame, in
 #endif
 }
 
-bool DumpRenderTreeSupportQt::isPageBoxVisible(QWebFrame* frame, int pageIndex)
-{
-    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
-    return coreFrame->document()->isPageBoxVisible(pageIndex);
-}
-
 QString DumpRenderTreeSupportQt::pageSizeAndMarginsInPixels(QWebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);

@@ -153,6 +153,8 @@ public:
 
     unsigned numberOfScrollableAreas(Document*, ExceptionCode&);
 
+    bool isPageBoxVisible(Document*, int pageNumber, ExceptionCode&);
+
     static const char* internalsId;
 
     InternalSettings* settings() const { return m_settings.get(); }

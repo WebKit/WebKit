@@ -997,6 +997,16 @@ unsigned Internals::numberOfScrollableAreas(Document* document, ExceptionCode&)
 
     return count;
 }
+    
+bool Internals::isPageBoxVisible(Document* document, int pageNumber, ExceptionCode& ec)
+{
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    return document->isPageBoxVisible(pageNumber);
+}
 
 #if ENABLE(FULLSCREEN_API)
 void Internals::webkitWillEnterFullScreenForElement(Document* document, Element* element)

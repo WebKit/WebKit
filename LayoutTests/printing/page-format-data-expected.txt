@@ -4,15 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test default visibility
-PASS layoutTestController.isPageBoxVisible(0) is true
+PASS internals.isPageBoxVisible(document, 0) is true
 Test display: none. display property doesn't apply to @page
-PASS layoutTestController.isPageBoxVisible(0) is true
+PASS internals.isPageBoxVisible(document, 0) is true
 Test display: inline. display property doesn't apply to @page
-PASS layoutTestController.isPageBoxVisible(0) is true
+PASS internals.isPageBoxVisible(document, 0) is true
 Test visibility: hidden
-PASS layoutTestController.isPageBoxVisible(0) is false
+PASS internals.isPageBoxVisible(document, 0) is false
 Test visibility: visible
-PASS layoutTestController.isPageBoxVisible(0) is true
+PASS internals.isPageBoxVisible(document, 0) is true
 
 Test default page size
 PASS layoutTestController.pageSizeAndMarginsInPixels(0, 100, 200, 1, 2, 3, 4) is '(100, 200)' + pxMargins(1, 2, 3, 4)

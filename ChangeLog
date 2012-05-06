@@ -1,3 +1,12 @@
+2012-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert isPageBoxVisible to use Internals interface.
+        https://bugs.webkit.org/show_bug.cgi?id=85692
+
+        Reviewed by Darin Adler.
+
+        * Source/autotools/symbols.filter: Add isPageBoxVisible symbol filter.
+
 2012-05-06  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Enable credential persistance and auto fill

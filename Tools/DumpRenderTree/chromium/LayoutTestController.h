@@ -340,9 +340,6 @@ public:
     // printing.
     void hasCustomPageSizeStyle(const CppArgumentList&, CppVariant*);
 
-    // Returns the visibililty status of a page box for printing
-    void isPageBoxVisible(const CppArgumentList&, CppVariant*);
-
     // Gets the page-related property for printed content
     void pageProperty(const CppArgumentList&, CppVariant*);
 

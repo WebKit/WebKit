@@ -151,21 +151,6 @@ WebCore::Frame* DumpRenderTreeSupportEfl::frameParent(const Evas_Object* ewkFram
     return frame->tree()->parent();
 }
 
-bool DumpRenderTreeSupportEfl::isPageBoxVisible(const Evas_Object* ewkFrame, int pageIndex)
-{
-    const WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
-
-    if (!frame)
-        return false;
-
-    WebCore::Document* document = frame->document();
-
-    if (!document)
-        return false;
-
-    return document->isPageBoxVisible(pageIndex);
-}
-
 void DumpRenderTreeSupportEfl::layoutFrame(Evas_Object* ewkFrame)
 {
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);

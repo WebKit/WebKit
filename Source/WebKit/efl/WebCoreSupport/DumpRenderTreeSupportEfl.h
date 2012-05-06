@@ -52,7 +52,6 @@ public:
     static bool elementDoesAutoCompleteForElementWithId(const Evas_Object* ewkFrame, const String& elementId);
     static Eina_List* frameChildren(const Evas_Object* ewkFrame);
     static WebCore::Frame* frameParent(const Evas_Object* ewkFrame);
-    static bool isPageBoxVisible(const Evas_Object* ewkFrame, int pageIndex);
     static void layoutFrame(Evas_Object* ewkFrame);
     static int numberOfPages(const Evas_Object* ewkFrame, float pageWidth, float pageHeight);
     static int numberOfPagesForElementId(const Evas_Object* ewkFrame, const char* elementId, float pageWidth, float pageHeight);

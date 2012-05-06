@@ -549,12 +549,6 @@ int LayoutTestController::numberOfPages(float, float)
     return -1;
 }
 
-bool LayoutTestController::isPageBoxVisible(int) const
-{
-    notImplemented();
-    return false;
-}
-
 void LayoutTestController::setScrollbarPolicy(JSStringRef, JSStringRef)
 {
     notImplemented();

@@ -39,23 +39,23 @@
         // Page box visibility tests.
 
         debug("Test default visibility");
-        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+        shouldBe("internals.isPageBoxVisible(document, 0)", "true");
 
         debug("Test display: none. display property doesn't apply to @page");
         appendStyle("@page {display:none;}");
-        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+        shouldBe("internals.isPageBoxVisible(document, 0)", "true");
 
         debug("Test display: inline. display property doesn't apply to @page");
         appendStyle("@page {display:inline;}");
-        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+        shouldBe("internals.isPageBoxVisible(document, 0)", "true");
 
         debug("Test visibility: hidden");
         appendStyle("@page {visibility:hidden;}");
-        shouldBe("layoutTestController.isPageBoxVisible(0)", "false");
+        shouldBe("internals.isPageBoxVisible(document, 0)", "false");
 
         debug("Test visibility: visible");
         appendStyle("@page {visibility:visible;}");
-        shouldBe("layoutTestController.isPageBoxVisible(0)", "true");
+        shouldBe("internals.isPageBoxVisible(document, 0)", "true");
 
         debug("");
 

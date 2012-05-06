@@ -566,12 +566,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* property
     return 0;
 }
 
-bool LayoutTestController::isPageBoxVisible(int pageNumber) const
-{
-    // FIXME: Implement
-    return true;
-}
-
 JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
     // FIXME: Implement

@@ -1393,12 +1393,6 @@ void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data,
 
 }
 
-bool LayoutTestController::isPageBoxVisible(int pageNumber) const
-{
-    // FIXME: implement
-    return false;
-}
-
 JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
     // FIXME: implement

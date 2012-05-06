@@ -1,3 +1,16 @@
+2012-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert isPageBoxVisible to use Internals interface.
+        https://bugs.webkit.org/show_bug.cgi?id=85692
+
+        Reviewed by Darin Adler.
+
+        Call isPageBoxVisible functions from internals, because it is able to work in the
+        cross-port way through the Internals interface.
+
+        * printing/page-format-data-expected.txt:
+        * printing/page-format-data.html:
+
 2012-05-05  Antti Koivisto  <antti@apple.com>
 
         Share stylesheet data structures between documents
