@@ -50,6 +50,8 @@ public:
     unsigned length() const;
     CSSRule* item(unsigned index) const;
 
+    void reattach(StyleRuleMedia*);
+
 private:
     CSSMediaRule(StyleRuleMedia*, CSSStyleSheet*);
     

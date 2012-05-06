@@ -55,4 +55,12 @@ String CSSFontFaceRule::cssText() const
     return result;
 }
 
+void CSSFontFaceRule::reattach(StyleRuleFontFace* rule)
+{
+    ASSERT(rule);
+    m_fontFaceRule = rule;
+    if (m_propertiesCSSOMWrapper)
+        m_propertiesCSSOMWrapper->reattach(m_fontFaceRule->properties());
+}
+
 } // namespace WebCore
