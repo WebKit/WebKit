@@ -42,7 +42,7 @@ using namespace std;
 
 namespace WebCore {
 
-ICULocale::ICULocale(const char* locale)
+LocaleICU::LocaleICU(const char* locale)
     : m_locale(locale)
     , m_numberFormat(0)
     , m_shortDateFormat(0)
@@ -54,29 +54,29 @@ ICULocale::ICULocale(const char* locale)
 {
 }
 
-ICULocale::~ICULocale()
+LocaleICU::~LocaleICU()
 {
     unum_close(m_numberFormat);
     udat_close(m_shortDateFormat);
 }
 
-PassOwnPtr<ICULocale> ICULocale::create(const char* localeString)
+PassOwnPtr<LocaleICU> LocaleICU::create(const char* localeString)
 {
-    return adoptPtr(new ICULocale(localeString));
+    return adoptPtr(new LocaleICU(localeString));
 }
 
-PassOwnPtr<ICULocale> ICULocale::createForCurrentLocale()
+PassOwnPtr<LocaleICU> LocaleICU::createForCurrentLocale()
 {
-    return adoptPtr(new ICULocale(0));
+    return adoptPtr(new LocaleICU(0));
 }
 
-ICULocale* ICULocale::currentLocale()
+LocaleICU* LocaleICU::currentLocale()
 {
-    static ICULocale* currentICULocale = ICULocale::createForCurrentLocale().leakPtr();
-    return currentICULocale;
+    static LocaleICU* currentLocale = LocaleICU::createForCurrentLocale().leakPtr();
+    return currentLocale;
 }
 
-void ICULocale::setDecimalSymbol(unsigned index, UNumberFormatSymbol symbol)
+void LocaleICU::setDecimalSymbol(unsigned index, UNumberFormatSymbol symbol)
 {
     UErrorCode status = U_ZERO_ERROR;
     int32_t bufferLength = unum_getSymbol(m_numberFormat, symbol, 0, 0, &status);
@@ -91,7 +91,7 @@ void ICULocale::setDecimalSymbol(unsigned index, UNumberFormatSymbol symbol)
     m_decimalSymbols[index] = String::adopt(buffer);
 }
 
-void ICULocale::setDecimalTextAttribute(String& destination, UNumberFormatTextAttribute tag)
+void LocaleICU::setDecimalTextAttribute(String& destination, UNumberFormatTextAttribute tag)
 {
     UErrorCode status = U_ZERO_ERROR;
     int32_t bufferLength = unum_getTextAttribute(m_numberFormat, tag, 0, 0, &status);
@@ -107,7 +107,7 @@ void ICULocale::setDecimalTextAttribute(String& destination, UNumberFormatTextAt
     destination = String::adopt(buffer);
 }
 
-void ICULocale::initializeDecimalFormat()
+void LocaleICU::initializeDecimalFormat()
 {
     if (m_didCreateDecimalFormat)
         return;
@@ -136,7 +136,7 @@ void ICULocale::initializeDecimalFormat()
     ASSERT(!m_positivePrefix.isEmpty() || !m_positiveSuffix.isEmpty() || !m_negativePrefix.isEmpty() || !m_negativeSuffix.isEmpty());
 }
 
-String ICULocale::convertToLocalizedNumber(const String& input)
+String LocaleICU::convertToLocalizedNumber(const String& input)
 {
     initializeDecimalFormat();
     if (!m_numberFormat || input.isEmpty())
@@ -195,7 +195,7 @@ static bool matches(const String& text, unsigned position, const String& part)
     return true;
 }
 
-bool ICULocale::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
+bool LocaleICU::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
 {
     startIndex = 0;
     endIndex = input.length();
@@ -223,7 +223,7 @@ bool ICULocale::detectSignAndGetDigitRange(const String& input, bool& isNegative
     return true;
 }
 
-unsigned ICULocale::matchedDecimalSymbolIndex(const String& input, unsigned& position)
+unsigned LocaleICU::matchedDecimalSymbolIndex(const String& input, unsigned& position)
 {
     for (unsigned symbolIndex = 0; symbolIndex < DecimalSymbolsSize; ++symbolIndex) {
         if (m_decimalSymbols[symbolIndex].length() && matches(input, position, m_decimalSymbols[symbolIndex])) {
@@ -234,7 +234,7 @@ unsigned ICULocale::matchedDecimalSymbolIndex(const String& input, unsigned& pos
     return DecimalSymbolsSize;
 }
 
-String ICULocale::convertFromLocalizedNumber(const String& localized)
+String LocaleICU::convertFromLocalizedNumber(const String& localized)
 {
     initializeDecimalFormat();
     String input = localized.stripWhiteSpace();
@@ -268,7 +268,7 @@ String ICULocale::convertFromLocalizedNumber(const String& localized)
     return builder.toString();
 }
 
-bool ICULocale::initializeShortDateFormat()
+bool LocaleICU::initializeShortDateFormat()
 {
     if (m_didCreateShortDateFormat)
         return m_shortDateFormat;
@@ -279,7 +279,7 @@ bool ICULocale::initializeShortDateFormat()
     return m_shortDateFormat;
 }
 
-double ICULocale::parseLocalizedDate(const String& input)
+double LocaleICU::parseLocalizedDate(const String& input)
 {
     if (!initializeShortDateFormat())
         return numeric_limits<double>::quiet_NaN();
@@ -295,7 +295,7 @@ double ICULocale::parseLocalizedDate(const String& input)
     return date;
 }
 
-String ICULocale::formatLocalizedDate(const DateComponents& dateComponents)
+String LocaleICU::formatLocalizedDate(const DateComponents& dateComponents)
 {
     if (!initializeShortDateFormat())
         return String();
@@ -367,7 +367,7 @@ static String localizeFormat(const Vector<UChar>& buffer)
     return builder.toString();
 }
 
-void ICULocale::initializeLocalizedDateFormatText()
+void LocaleICU::initializeLocalizedDateFormatText()
 {
     if (!m_localizedDateFormatText.isNull())
         return;
@@ -386,13 +386,13 @@ void ICULocale::initializeLocalizedDateFormatText()
     m_localizedDateFormatText = localizeFormat(buffer);
 }
 
-String ICULocale::localizedDateFormatText()
+String LocaleICU::localizedDateFormatText()
 {
     initializeLocalizedDateFormatText();
     return m_localizedDateFormatText;
 }
 
-PassOwnPtr<Vector<String> > ICULocale::createLabelVector(UDateFormatSymbolType type, int32_t startIndex, int32_t size)
+PassOwnPtr<Vector<String> > LocaleICU::createLabelVector(UDateFormatSymbolType type, int32_t startIndex, int32_t size)
 {
     if (!m_shortDateFormat)
         return PassOwnPtr<Vector<String> >();
@@ -439,7 +439,7 @@ static PassOwnPtr<Vector<String> > createFallbackWeekDayShortLabels()
     return labels.release();
 }
 
-void ICULocale::initializeCalendar()
+void LocaleICU::initializeCalendar()
 {
     if (m_monthLabels && m_weekDayShortLabels)
         return;
@@ -461,19 +461,19 @@ void ICULocale::initializeCalendar()
         m_weekDayShortLabels = createFallbackWeekDayShortLabels();
 }
 
-const Vector<String>& ICULocale::monthLabels()
+const Vector<String>& LocaleICU::monthLabels()
 {
     initializeCalendar();
     return *m_monthLabels;
 }
 
-const Vector<String>& ICULocale::weekDayShortLabels()
+const Vector<String>& LocaleICU::weekDayShortLabels()
 {
     initializeCalendar();
     return *m_weekDayShortLabels;
 }
 
-unsigned ICULocale::firstDayOfWeek()
+unsigned LocaleICU::firstDayOfWeek()
 {
     initializeCalendar();
     return m_firstDayOfWeek;

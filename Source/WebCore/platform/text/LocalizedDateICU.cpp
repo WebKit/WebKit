@@ -42,7 +42,7 @@ double parseLocalizedDate(const String& input, DateComponents::Type type)
 {
     switch (type) {
     case DateComponents::Date:
-        return ICULocale::currentLocale()->parseLocalizedDate(input);
+        return LocaleICU::currentLocale()->parseLocalizedDate(input);
     case DateComponents::DateTime:
     case DateComponents::DateTimeLocal:
     case DateComponents::Month:
@@ -58,7 +58,7 @@ String formatLocalizedDate(const DateComponents& dateComponents)
 {
     switch (dateComponents.type()) {
     case DateComponents::Date:
-        return ICULocale::currentLocale()->formatLocalizedDate(dateComponents);
+        return LocaleICU::currentLocale()->formatLocalizedDate(dateComponents);
     case DateComponents::DateTime:
     case DateComponents::DateTimeLocal:
     case DateComponents::Month:
@@ -73,22 +73,22 @@ String formatLocalizedDate(const DateComponents& dateComponents)
 #if ENABLE(CALENDAR_PICKER)
 String localizedDateFormatText()
 {
-    return ICULocale::currentLocale()->localizedDateFormatText();
+    return LocaleICU::currentLocale()->localizedDateFormatText();
 }
 
 const Vector<String>& monthLabels()
 {
-    return ICULocale::currentLocale()->monthLabels();
+    return LocaleICU::currentLocale()->monthLabels();
 }
 
 const Vector<String>& weekDayShortLabels()
 {
-    return ICULocale::currentLocale()->weekDayShortLabels();
+    return LocaleICU::currentLocale()->weekDayShortLabels();
 }
 
 unsigned firstDayOfWeek()
 {
-    return ICULocale::currentLocale()->firstDayOfWeek();
+    return LocaleICU::currentLocale()->firstDayOfWeek();
 }
 #endif
 

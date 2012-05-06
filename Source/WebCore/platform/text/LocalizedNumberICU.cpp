@@ -37,12 +37,12 @@ namespace WebCore {
 
 String convertToLocalizedNumber(const String& canonicalNumberString, unsigned fractionDigits)
 {
-    return ICULocale::currentLocale()->convertToLocalizedNumber(canonicalNumberString);
+    return LocaleICU::currentLocale()->convertToLocalizedNumber(canonicalNumberString);
 }
 
 String convertFromLocalizedNumber(const String& localizedNumberString)
 {
-    return ICULocale::currentLocale()->convertFromLocalizedNumber(localizedNumberString);
+    return LocaleICU::currentLocale()->convertFromLocalizedNumber(localizedNumberString);
 }
 
 } // namespace WebCore

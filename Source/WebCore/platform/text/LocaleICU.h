@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ICULocale_h
-#define ICULocale_h
+#ifndef LocaleICU_h
+#define LocaleICU_h
 
 #include "DateComponents.h"
 #include <unicode/udat.h>
@@ -42,12 +42,12 @@
 namespace WebCore {
 
 // We should use this class only for LocalizedNumberICU.cpp, LocalizedDateICU.cpp,
-// LocalizedCalendarICU.cpp, and LocalizedNumberICUTest.cpp.
-class ICULocale {
+// and LocalizedNumberICUTest.cpp.
+class LocaleICU {
 public:
-    static PassOwnPtr<ICULocale> create(const char* localeString);
-    static ICULocale* currentLocale();
-    ~ICULocale();
+    static PassOwnPtr<LocaleICU> create(const char* localeString);
+    static LocaleICU* currentLocale();
+    ~LocaleICU();
 
     // For LocalizedNumber
     String convertToLocalizedNumber(const String&);
@@ -59,15 +59,14 @@ public:
 #if ENABLE(CALENDAR_PICKER)
     String localizedDateFormatText();
 
-    // For LocalizedCalendar
     const Vector<String>& monthLabels();
     const Vector<String>& weekDayShortLabels();
     unsigned firstDayOfWeek();
 #endif
 
 private:
-    static PassOwnPtr<ICULocale> createForCurrentLocale();
-    explicit ICULocale(const char*);
+    static PassOwnPtr<LocaleICU> createForCurrentLocale();
+    explicit LocaleICU(const char*);
     void setDecimalSymbol(unsigned index, UNumberFormatSymbol);
     void setDecimalTextAttribute(String&, UNumberFormatTextAttribute);
     void initializeDecimalFormat();
