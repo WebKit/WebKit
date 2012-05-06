@@ -1,3 +1,9 @@
+2012-05-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-05-06  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: take timeline frame mode out of experimental
