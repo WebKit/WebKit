@@ -691,7 +691,7 @@ bool CSPDirectiveList::allowScriptFromSource(const KURL& url) const
 bool CSPDirectiveList::allowObjectFromSource(const KURL& url) const
 {
     DEFINE_STATIC_LOCAL(String, type, ("object"));
-    if (url.protocolIs("about"))
+    if (url.isBlankURL())
         return true;
     return checkSourceAndReportViolation(operativeDirective(m_objectSrc.get()), url, type);
 }
@@ -699,7 +699,7 @@ bool CSPDirectiveList::allowObjectFromSource(const KURL& url) const
 bool CSPDirectiveList::allowChildFrameFromSource(const KURL& url) const
 {
     DEFINE_STATIC_LOCAL(String, type, ("frame"));
-    if (url.protocolIs("about"))
+    if (url.isBlankURL())
         return true;
     return checkSourceAndReportViolation(operativeDirective(m_frameSrc.get()), url, type);
 }

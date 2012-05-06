@@ -303,10 +303,10 @@ static bool shouldInheritSecurityOriginFromOwner(const KURL& url)
     // If a Document has the address "about:blank"
     //     The origin of the Document is the origin it was assigned when its browsing context was created.
     //
-    // Note: We generalize this to all "about" URLs and invalid URLs because we
+    // Note: We generalize this to all "blank" URLs and invalid URLs because we
     // treat all of these URLs as about:blank.
     //
-    return !url.isValid() || url.protocolIs("about");
+    return !url.isValid() || url.isBlankURL();
 }
 
 static Widget* widgetForNode(Node* focusedNode)

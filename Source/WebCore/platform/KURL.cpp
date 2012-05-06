@@ -1772,6 +1772,11 @@ const KURL& blankURL()
     return staticBlankURL;
 }
 
+bool KURL::isBlankURL() const
+{
+    return protocolIs("about");
+}
+
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
 {
     if (protocol.isEmpty())

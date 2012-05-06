@@ -154,7 +154,7 @@ void SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, Ele
         return;
 
     KURL url = frame->document()->url();
-    if (url.isValid() && !url.protocolIs("about"))
+    if (url.isValid() && !url.isBlankURL())
         return;
 
     // We need to give a fake location to blank frames so they can be referenced by the serialized frame.
@@ -194,7 +194,7 @@ void PageSerializer::serializeFrame(Frame* frame)
 {
     Document* document = frame->document();
     KURL url = document->url();
-    if (!url.isValid() || url.protocolIs("about")) {
+    if (!url.isValid() || url.isBlankURL()) {
         // For blank frames we generate a fake URL so they can be referenced by their containing frame.
         url = urlForBlankFrame(frame);
     }
