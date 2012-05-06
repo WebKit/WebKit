@@ -23,6 +23,7 @@
 #include "PropertySetCSSStyleDeclaration.h"
 
 #include "CSSParser.h"
+#include "CSSStyleSheet.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "MutationObserverInterestGroup.h"
