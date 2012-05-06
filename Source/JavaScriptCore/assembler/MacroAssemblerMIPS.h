@@ -116,7 +116,7 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_isPointer && imm.m_value >= -32768 && imm.m_value <= 32767
+        if (imm.m_value >= -32768 && imm.m_value <= 32767
             && !m_fixedWidth) {
             /*
               addiu     dest, src, imm
@@ -148,8 +148,7 @@ public:
               sw        dataTemp, offset(base)
             */
             m_assembler.lw(dataTempRegister, address.base, address.offset);
-            if (!imm.m_isPointer
-                && imm.m_value >= -32768 && imm.m_value <= 32767
+            if (imm.m_value >= -32768 && imm.m_value <= 32767
                 && !m_fixedWidth)
                 m_assembler.addiu(dataTempRegister, dataTempRegister,
                                   imm.m_value);
@@ -228,7 +227,7 @@ public:
         */
         move(TrustedImmPtr(address.m_ptr), addrTempRegister);
         m_assembler.lw(dataTempRegister, addrTempRegister, 0);
-        if (!imm.m_isPointer && imm.m_value >= -32768 && imm.m_value <= 32767
+        if (imm.m_value >= -32768 && imm.m_value <= 32767
             && !m_fixedWidth)
             m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
         else {
@@ -245,9 +244,9 @@ public:
 
     void and32(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
+        if (!imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
-        else if (!imm.m_isPointer && imm.m_value > 0 && imm.m_value < 65535
+        else if (imm.m_value > 0 && imm.m_value < 65535
                  && !m_fixedWidth)
             m_assembler.andi(dest, dest, imm.m_value);
         else {
@@ -277,9 +276,9 @@ public:
 
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
+        if (!imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
-        else if (!imm.m_isPointer && imm.m_value == 1 && !m_fixedWidth)
+        else if (imm.m_value == 1 && !m_fixedWidth)
             move(src, dest);
         else {
             /*
@@ -308,10 +307,10 @@ public:
 
     void or32(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
+        if (!imm.m_value && !m_fixedWidth)
             return;
 
-        if (!imm.m_isPointer && imm.m_value > 0 && imm.m_value < 65535
+        if (imm.m_value > 0 && imm.m_value < 65535
             && !m_fixedWidth) {
             m_assembler.ori(dest, dest, imm.m_value);
             return;
@@ -357,7 +356,7 @@ public:
 
     void sub32(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_isPointer && imm.m_value >= -32767 && imm.m_value <= 32768
+        if (imm.m_value >= -32767 && imm.m_value <= 32768
             && !m_fixedWidth) {
             /*
               addiu     dest, src, imm
@@ -375,7 +374,7 @@ public:
 
     void sub32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_isPointer && imm.m_value >= -32767 && imm.m_value <= 32768
+        if (imm.m_value >= -32767 && imm.m_value <= 32768
             && !m_fixedWidth) {
             /*
               addiu     dest, src, imm
@@ -402,8 +401,7 @@ public:
               sw        dataTemp, offset(base)
             */
             m_assembler.lw(dataTempRegister, address.base, address.offset);
-            if (!imm.m_isPointer
-                && imm.m_value >= -32767 && imm.m_value <= 32768
+            if (imm.m_value >= -32767 && imm.m_value <= 32768
                 && !m_fixedWidth)
                 m_assembler.addiu(dataTempRegister, dataTempRegister,
                                   -imm.m_value);
@@ -426,8 +424,7 @@ public:
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
             m_assembler.lw(dataTempRegister, addrTempRegister, address.offset);
 
-            if (!imm.m_isPointer
-                && imm.m_value >= -32767 && imm.m_value <= 32768
+            if (imm.m_value >= -32767 && imm.m_value <= 32768
                 && !m_fixedWidth)
                 m_assembler.addiu(dataTempRegister, dataTempRegister,
                                   -imm.m_value);
@@ -458,7 +455,7 @@ public:
         move(TrustedImmPtr(address.m_ptr), addrTempRegister);
         m_assembler.lw(dataTempRegister, addrTempRegister, 0);
 
-        if (!imm.m_isPointer && imm.m_value >= -32767 && imm.m_value <= 32768
+        if (imm.m_value >= -32767 && imm.m_value <= 32768
             && !m_fixedWidth) {
             m_assembler.addiu(dataTempRegister, dataTempRegister,
                               -imm.m_value);
@@ -807,7 +804,7 @@ public:
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
-            if (!imm.m_isPointer && !imm.m_value)
+            if (!imm.m_value)
                 m_assembler.sw(MIPSRegisters::zero, address.base,
                                address.offset);
             else {
@@ -822,7 +819,7 @@ public:
               */
             m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
-            if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
+            if (!imm.m_value && !m_fixedWidth)
                 m_assembler.sw(MIPSRegisters::zero, addrTempRegister,
                                address.offset);
             else {
@@ -850,7 +847,7 @@ public:
             li  addrTemp, address
             sw  src, 0(addrTemp)
         */
-        if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth) {
+        if (!imm.m_value && !m_fixedWidth) {
             move(TrustedImmPtr(address), addrTempRegister);
             m_assembler.sw(MIPSRegisters::zero, addrTempRegister, 0);
         } else {
@@ -928,9 +925,9 @@ public:
 
     void move(TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
+        if (!imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
-        else if (imm.m_isPointer || m_fixedWidth) {
+        else if (m_fixedWidth) {
             m_assembler.lui(dest, imm.m_value >> 16);
             m_assembler.ori(dest, dest, imm.m_value);
         } else

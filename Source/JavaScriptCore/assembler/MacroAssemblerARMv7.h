@@ -1135,20 +1135,16 @@ public:
     {
         uint32_t value = imm.m_value;
 
-        if (imm.m_isPointer)
-            moveFixedWidthEncoding(imm, dest);
-        else {
-            ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(value);
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(value);
 
-            if (armImm.isValid())
-                m_assembler.mov(dest, armImm);
-            else if ((armImm = ARMThumbImmediate::makeEncodedImm(~value)).isValid())
-                m_assembler.mvn(dest, armImm);
-            else {
-                m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(value));
-                if (value & 0xffff0000)
-                    m_assembler.movt(dest, ARMThumbImmediate::makeUInt16(value >> 16));
-            }
+        if (armImm.isValid())
+            m_assembler.mov(dest, armImm);
+        else if ((armImm = ARMThumbImmediate::makeEncodedImm(~value)).isValid())
+            m_assembler.mvn(dest, armImm);
+        else {
+            m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(value));
+            if (value & 0xffff0000)
+                m_assembler.movt(dest, ARMThumbImmediate::makeUInt16(value >> 16));
         }
     }
 

@@ -1,3 +1,31 @@
+2012-05-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove TrustedImm32::m_isPointer
+        https://bugs.webkit.org/show_bug.cgi?id=85726
+
+        Rubber stamped by Sam Weinig.
+
+        We used to rely on being able to generate code with known, fixed offsets – to do so we
+        would inhibit more optimal code generation for pointers. This is no longer necessary.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImm32::TrustedImm32):
+        (TrustedImm32):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::move):
+        (JSC::MacroAssemblerARM::branch32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::move):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::add32):
+        (JSC::MacroAssemblerMIPS::and32):
+        (JSC::MacroAssemblerMIPS::mul32):
+        (JSC::MacroAssemblerMIPS::or32):
+        (JSC::MacroAssemblerMIPS::sub32):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::move):
+
 2012-05-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not Flush GetLocal's
