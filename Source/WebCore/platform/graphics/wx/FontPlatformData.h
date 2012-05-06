@@ -152,6 +152,8 @@ public:
 
     // We don't support this yet, so just return the default value for now.
     FontWidthVariant widthVariant() const { return RegularWidth; }
+    
+    bool isCompositeFontReference() const { return false; }
 
 #if OS(WINDOWS)
     bool useGDI() const;

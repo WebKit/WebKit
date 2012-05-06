@@ -193,5 +193,13 @@ float SimpleFontData::widthForGDIGlyph(Glyph glyph) const
     return width;
 }
 #endif
+    
+#if OS(DARWIN)
+const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *key) const
+{
+    return 0;
+}
+    
+#endif
 
 }

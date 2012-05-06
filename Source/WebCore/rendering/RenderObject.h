@@ -41,7 +41,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/UnusedParam.h>
 
-#if USE(CG) || USE(CAIRO) || USE(SKIA) || PLATFORM(QT)
+#if USE(CG) || USE(CAIRO) || USE(SKIA) || PLATFORM(QT) || PLATFORM(WX)
 #define HAVE_PATH_BASED_BORDER_RADIUS_DRAWING 1
 #endif
 
