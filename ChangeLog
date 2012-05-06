@@ -1,3 +1,15 @@
+2012-05-06  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Enable credential persistance and auto fill
+        https://bugs.webkit.org/show_bug.cgi?id=85572
+
+        Reviewed by Rob Buis.
+
+        Enable credential persistance and auto fill feature by adding
+        ENABLE_BLACKBERRY_CREDENTIAL_PERSIST=1.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-05-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed preparation for 1.9.2.

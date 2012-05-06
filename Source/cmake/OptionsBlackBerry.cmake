@@ -173,6 +173,8 @@ ENDIF ()
 
 WEBKIT_OPTION_END()
 
+ADD_DEFINITIONS(-DENABLE_BLACKBERRY_CREDENTIAL_PERSIST=1)
+
 # Some of our files, such as platform/graphics/chromium/ComplexTextControllerLinux.cpp, require a
 # newer ICU version than the version associated with the headers in {WebCore, JavaScriptCore}/icu.
 # Because of <https://bugs.webkit.org/show_bug.cgi?id=70913> we can't directly reference these newer

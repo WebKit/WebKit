@@ -170,7 +170,9 @@ void CredentialTransformData::setCredential(const Credential& credential)
 
     m_credential = credential;
     m_userNameElement->setValue(credential.user());
+    m_userNameElement->setAutofilled();
     m_passwordElement->setValue(credential.password());
+    m_passwordElement->setAutofilled();
 }
 
 bool CredentialTransformData::findPasswordFormFields(HTMLFormElement* form)
