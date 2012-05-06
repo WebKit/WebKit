@@ -1,3 +1,14 @@
+2012-05-06  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        sheriffbot isn't reopening patches after it lands rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=64418
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        (CreateBug.run):
+
 2012-05-04  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         webkitpy: Use os.pathsep instead of manually finding out the path separator in NRWT.

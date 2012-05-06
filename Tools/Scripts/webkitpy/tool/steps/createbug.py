@@ -50,3 +50,5 @@ class CreateBug(AbstractStep):
         if not blocks:
             blocks = state.get("bug_blocked")
         state["bug_id"] = self._tool.bugs.create_bug(state["bug_title"], state["bug_description"], blocked=blocks, component=self._options.component, cc=cc)
+        if blocks:
+            self._tool.bugs.reopen_bug(blocks, "Re-opened since this is blocked by %s" % state["bug_id"])
