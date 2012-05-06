@@ -1,5 +1,13 @@
 2012-05-05  Martin Robinson  <mrobinson@igalia.com>
 
+        Fix the GTK+ TextureMapper accelerated compositing build.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_realize): Properly access the private data
+        structure of the WebKitWebView.
+
+2012-05-05  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] WebKit should properly set the input method context window location
         https://bugs.webkit.org/show_bug.cgi?id=84981
 
