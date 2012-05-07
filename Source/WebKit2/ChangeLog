@@ -1,3 +1,20 @@
+2012-05-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Add test specific platform plugin to achieve unified layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=80996
+
+        Reviewed by Simon Hausmann.
+
+        Initialize the test platform plugin before initializing
+        the web process if we are in a WTR run.
+        It is necessary to place this initialization here as we
+        cannot control wich platform plugin will be used after
+        the instantiation of the QApplication.
+
+        * qt/MainQt.cpp:
+        (initializeTestPlatformPluginForWTRIfRequired):
+        (main):
+
 2012-05-06  MORITA Hajime  <morrita@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=85265

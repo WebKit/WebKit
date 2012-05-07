@@ -25,7 +25,11 @@
  */
 
 #include <QApplication>
-
+#include <QByteArray>
+#include <QFile>
+#include <QPlatformIntegration>
+#include <QPlatformIntegrationPlugin>
+#include <QPluginLoader>
 #include <stdio.h>
 
 namespace WebKit {
@@ -43,6 +47,21 @@ static void messageHandler(QtMsgType type, const char* message)
     // Do nothing
 }
 
+static void initializeTestPlatformPluginForWTRIfRequired()
+{
+    QByteArray pluginPath = qgetenv("QT_WEBKIT2_TEST_PLATFORM_PLUGIN_PATH");
+    if (pluginPath.isEmpty())
+        return;
+
+    QPluginLoader loader(QFile::decodeName(pluginPath.data()));
+    QPlatformIntegrationPlugin* plugin = qobject_cast<QPlatformIntegrationPlugin*>(loader.instance());
+    if (!plugin)
+        qFatal("cannot initialize test platform plugin\n");
+
+    qputenv("QT_QPA_PLATFORM_PLUGIN_PATH", pluginPath);
+    qputenv("QT_QPA_PLATFORM", "testplatform");
+}
+
 // The framework entry point.
 // We call our platform specific entry point directly rather than WebKitMain because it makes little sense
 // to reimplement the handling of command line arguments from QApplication.
@@ -56,6 +75,7 @@ int main(int argc, char** argv)
     }
 #endif
 
+    initializeTestPlatformPluginForWTRIfRequired();
     WebKit::initializeWebKit2Theme();
 
     // Has to be done before QApplication is constructed in case

@@ -1,3 +1,59 @@
+2012-05-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Add test specific platform plugin to achieve unified layout test results
+        https://bugs.webkit.org/show_bug.cgi?id=80996
+
+        Reviewed by Simon Hausmann.
+
+        Added QtTestPlatformPlugin as a new project under Tools.
+        This is a Qt5-ish platform plugin that can be used to tweak the
+        platform support interfaces in order to unify layout test results.
+        For now it only overrides the font database on Mac and redirects
+        everything else to the real platform plugin. The font database it
+        provides mimics the way how we set up test fonts with fontconfig on Linux.
+        Make DumpRenderTree and WebKitTestRunner use this platform plugin.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/main.cpp:
+        (initializeTestPlatformPlugin):
+        (main):
+        * QtTestPlatformPlugin/QtTestPlatformPlugin.pro: Added.
+        * QtTestPlatformPlugin/TestIntegration.cpp: Added.
+        (TestIntegration::TestIntegration):
+        (TestIntegration::fontDatabase):
+        * QtTestPlatformPlugin/TestIntegration.h: Added.
+        (TestIntegration):
+        (TestIntegration::hasCapability):
+        (TestIntegration::createPlatformPixmap):
+        (TestIntegration::createPlatformWindow):
+        (TestIntegration::createPlatformBackingStore):
+        (TestIntegration::createPlatformOpenGLContext):
+        (TestIntegration::createPlatformSharedGraphicsCache):
+        (TestIntegration::guiThreadEventDispatcher):
+        (TestIntegration::clipboard):
+        (TestIntegration::drag):
+        (TestIntegration::inputContext):
+        (TestIntegration::accessibility):
+        (TestIntegration::nativeInterface):
+        (TestIntegration::services):
+        (TestIntegration::styleHint):
+        (TestIntegration::platformTheme):
+        * QtTestPlatformPlugin/mac/TestFontDatabase.h: Added.
+        (TestFontDatabase):
+        * QtTestPlatformPlugin/mac/TestFontDatabase.mm: Added.
+        (TestFontDatabase::populateFontDatabase):
+        * QtTestPlatformPlugin/mac/TestIntegrationMac.mm: Added.
+        (TestIntegration::fontDatabase):
+        * QtTestPlatformPlugin/main.cpp: Added.
+        (TestIntegrationPlugin::keys):
+        (TestIntegrationPlugin::create):
+        (TestIntegrationPlugin::initialize):
+        * QtTestPlatformPlugin/testplatform.json: Added.
+        * Tools.pro:
+        * WebKitTestRunner/Target.pri:
+        * WebKitTestRunner/qt/main.cpp:
+        (main):
+
 2012-05-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] media/video-poster-blocked-by-willsendrequest.html is flaky

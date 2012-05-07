@@ -31,6 +31,12 @@
 
 #include "QtInitializeTestFonts.h"
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QPlatformIntegration>
+#include <QPlatformIntegrationPlugin>
+#include <QPluginLoader>
+#endif
+
 #include <wtf/AlwaysInline.h>
 
 #include <qstringlist.h>
@@ -123,6 +129,32 @@ static void WTFCrashHook()
 }
 #endif
 
+static void initializeTestPlatformPlugin(int argc, char* argv[] const)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    QPluginLoader loader(TEST_PLATFORM_PLUGIN_PATH);
+    QPlatformIntegrationPlugin* plugin = qobject_cast<QPlatformIntegrationPlugin*>(loader.instance());
+    if (!plugin)
+        qFatal("cannot initialize test platform plugin\n");
+
+    QByteArray platform = qgetenv("QT_QPA_PLATFORM");
+    QByteArray platformPluginPath = qgetenv("QT_QPA_PLATFORM_PLUGIN_PATH");
+    for (int i = 0; i < argc; ++i) {
+        if (QByteArray(argv[i]) == "-platform" && i + 1 < argc)
+            platform = argv[i + 1];
+        else if (QByteArray(argv[i]) == "-platformpluginpath" && i + 1 < argc)
+            platformPluginPath = argv[i + 1];
+    }
+    if (!platform.isEmpty())
+        qputenv("QT_WEBKIT_ORIGINAL_PLATFORM", platform);
+    if (!platformPluginPath.isEmpty())
+        qputenv("QT_WEBKIT_ORIGINAL_PLATFORM_PLUGIN_PATH", platformPluginPath);
+
+    qputenv("QT_QPA_PLATFORM_PLUGIN_PATH", TEST_PLATFORM_PLUGIN_PATH);
+    qputenv("QT_QPA_PLATFORM", "testplatform");
+#endif
+}
+
 int main(int argc, char* argv[])
 {
 #ifdef Q_OS_WIN
@@ -145,6 +177,8 @@ int main(int argc, char* argv[])
         qInstallMsgHandler(messageHandler);
 
     WebKit::initializeTestFonts();
+
+    initializeTestPlatformPlugin(argc, argv);
 
     QApplication::setGraphicsSystem("raster");
     QApplication::setStyle(new QWindowsStyle);
