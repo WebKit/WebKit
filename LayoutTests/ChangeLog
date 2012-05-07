@@ -1,5 +1,11 @@
 2012-05-07  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed gardening, refined expectations for compositing failures + more suppressions.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-07  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed gardening, more compositing test timeouts.
 
         * platform/chromium/test_expectations.txt:
