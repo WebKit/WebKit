@@ -1172,10 +1172,10 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
     LLINT_BEGIN();
     JSValue scrutinee = LLINT_OP_C(3).jsValue();
     ASSERT(scrutinee.isString());
-    JSString* value = asString(scrutinee);
-    ASSERT(value->length() == 1);
+    JSString* string = asString(scrutinee);
+    ASSERT(string->length() == 1);
     int defaultOffset = pc[2].u.operand;
-    StringImpl* impl = asString(scrutinee)->value(exec).impl();
+    StringImpl* impl = string->value(exec).impl();
     CodeBlock* codeBlock = exec->codeBlock();
     pc += codeBlock->characterSwitchJumpTable(pc[1].u.operand).offsetForValue((*impl)[0], defaultOffset);
     LLINT_END();

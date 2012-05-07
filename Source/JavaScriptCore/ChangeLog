@@ -1,5 +1,12 @@
 2012-05-07  Oliver Hunt  <oliver@apple.com>
 
+        Fix release build.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
+2012-05-07  Oliver Hunt  <oliver@apple.com>
+
         LLInt doesn't check for Ropes when performing a character switch
         https://bugs.webkit.org/show_bug.cgi?id=85837
 
