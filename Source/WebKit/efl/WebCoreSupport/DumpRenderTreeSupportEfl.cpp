@@ -32,6 +32,7 @@
 #include <Evas.h>
 #include <FindOptions.h>
 #include <FloatSize.h>
+#include <FocusController.h>
 #include <FrameView.h>
 #include <HTMLInputElement.h>
 #include <InspectorController.h>
@@ -392,6 +393,15 @@ void DumpRenderTreeSupportEfl::addUserStyleSheet(const Evas_Object* ewkView, con
     page->group().addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), sourceCode, WebCore::KURL(), nullptr, nullptr, allFrames ? WebCore::InjectInAllFrames : WebCore::InjectInTopFrameOnly);
 }
 
+void DumpRenderTreeSupportEfl::executeCoreCommandByName(const Evas_Object* ewkView, const char* name, const char* value)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    page->focusController()->focusedOrMainFrame()->editor()->command(name).execute(value);
+}
+
 bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions options)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);
@@ -418,6 +428,15 @@ void DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(const Evas_Object* 
     else
         controller->disableProfiler();
 #endif
+}
+
+bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, const char* name)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return false;
+
+    return page->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
 }
 
 void DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled)

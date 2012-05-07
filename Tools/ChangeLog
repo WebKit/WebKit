@@ -1,3 +1,17 @@
+2012-05-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][DRT] Implement LayoutTestController::execCommand
+        https://bugs.webkit.org/show_bug.cgi?id=82286
+
+        Reviewed by Antonio Gomes.
+
+        Add missing implementation execCommand and isCommandEnabled to EFL's
+        LayoutTestController. 
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::execCommand):
+        (LayoutTestController::isCommandEnabled):
+
 2012-05-06  Hayato Ito  <hayato@chromium.org>
 
         [prepare-ChangeLog] Excludes a reference file used by reftests from test files.

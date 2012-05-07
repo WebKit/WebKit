@@ -1,3 +1,16 @@
+2012-05-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][DRT] Implement LayoutTestController::execCommand
+        https://bugs.webkit.org/show_bug.cgi?id=82286
+
+        Reviewed by Antonio Gomes.
+
+        Unskipped test cases which rely on execCommand and 
+        updated test expectations for failure test cases.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening, compositing/overflow/scrollbar-painting.html times out on mac & linux.

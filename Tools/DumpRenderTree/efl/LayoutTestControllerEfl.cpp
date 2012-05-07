@@ -479,9 +479,9 @@ bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef i
     return DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId(mainFrame, elementId);
 }
 
-void LayoutTestController::execCommand(JSStringRef, JSStringRef)
+void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::executeCoreCommandByName(browser->mainView(), name->ustring().utf8().data(), value->ustring().utf8().data());
 }
 
 bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
@@ -520,7 +520,7 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
 
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
 {
-    return false;
+    return DumpRenderTreeSupportEfl::isCommandEnabled(browser->mainView(), name->ustring().utf8().data());
 }
 
 void LayoutTestController::setCacheModel(int)

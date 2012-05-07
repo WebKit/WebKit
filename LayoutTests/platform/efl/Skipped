@@ -325,9 +325,8 @@ fast/frames/location-change-no-file-access.html
 fast/xmlhttprequest/xmlhttprequest-no-file-access.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
-# EFL's LayoutTestController does not implement execCommand
+# BUG84835: Tests failing because of missing editing delegate callbacks.
 editing/deleting
-editing/execCommand
 editing/inserting
 editing/pasteboard
 editing/selection
