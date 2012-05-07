@@ -89,10 +89,15 @@ void MediaStreamCenterChromium::didStopLocalMediaStream(MediaStreamDescriptor* s
         m_private->didStopLocalMediaStream(stream);
 }
 
-void MediaStreamCenterChromium::didConstructMediaStream(MediaStreamDescriptor* stream)
+void MediaStreamCenterChromium::didCreateMediaStream(MediaStreamDescriptor* stream)
 {
-    if (m_private)
+    if (m_private) {
+        // FIXME: Remove when Chromium have switched to the new API.
         m_private->didConstructMediaStream(stream);
+
+        WebKit::WebMediaStreamDescriptor webStream(stream);
+        m_private->didCreateMediaStream(webStream);
+    }
 }
 
 String MediaStreamCenterChromium::constructSDP(IceCandidateDescriptor* iceCandidate)

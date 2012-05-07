@@ -74,7 +74,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, Pas
         return 0;
 
     RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(createCanonicalUUIDString(), audioSources, videoSources);
-    MediaStreamCenter::instance().didConstructMediaStream(descriptor.get());
+    MediaStreamCenter::instance().didCreateMediaStream(descriptor.get());
 
     return adoptRef(new MediaStream(context, descriptor.release()));
 }

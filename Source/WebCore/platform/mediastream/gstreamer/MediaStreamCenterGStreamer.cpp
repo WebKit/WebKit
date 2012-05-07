@@ -72,7 +72,7 @@ void MediaStreamCenterGStreamer::didStopLocalMediaStream(MediaStreamDescriptor*)
 {
 }
 
-void MediaStreamCenterGStreamer::didConstructMediaStream(MediaStreamDescriptor*)
+void MediaStreamCenterGStreamer::didCreateMediaStream(MediaStreamDescriptor*)
 {
 }
 

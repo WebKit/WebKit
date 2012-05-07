@@ -1,5 +1,21 @@
 2012-05-07  Tommy Widenflycht  <tommyw@google.com>
 
+        MediaStream API: Rename MediaStreamCenter::didConstructMediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=85796
+
+        Reviewed by Adam Barth.
+
+        Renamed WebMediaStreamCenter::didConstructMediaStream to didCreateMediaStream,
+        and change so that it is only called for MediaStreams created from JS.
+        Also send out the WebMediaStreamDescriptor non-const instead.
+
+        * chromium/public/WebMediaStreamCenter.h:
+        (WebKit::WebMediaStreamCenter::didCreateMediaStream):
+        (WebMediaStreamCenter):
+        (WebKit::WebMediaStreamCenter::didConstructMediaStream):
+
+2012-05-07  Tommy Widenflycht  <tommyw@google.com>
+
         MediaStream API: Allow UserMediaRequest::succeed to take an MediaStreamDescriptor
         https://bugs.webkit.org/show_bug.cgi?id=85798
 

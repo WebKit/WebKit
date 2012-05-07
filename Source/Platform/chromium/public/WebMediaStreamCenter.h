@@ -48,11 +48,13 @@ public:
     virtual void didEnableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
     virtual void didDisableMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
     virtual void didStopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
-    virtual void didConstructMediaStream(const WebMediaStreamDescriptor&) = 0;
+    virtual void didCreateMediaStream(WebMediaStreamDescriptor&) { }
 
-    // FIXME: Make pure virtual after implementation.
-    virtual WebString constructSDP(const WebICECandidateDescriptor&) { return WebString(); }
-    virtual WebString constructSDP(const WebSessionDescriptionDescriptor&) { return WebString(); }
+    // DEPRECATED
+    virtual void didConstructMediaStream(const WebMediaStreamDescriptor&) { }
+
+    virtual WebString constructSDP(const WebICECandidateDescriptor&) = 0;
+    virtual WebString constructSDP(const WebSessionDescriptionDescriptor&) = 0;
 };
 
 } // namespace WebKit
