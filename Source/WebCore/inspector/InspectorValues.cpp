@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorValues.h"
 
 #include <wtf/DecimalNumber.h>
@@ -797,5 +794,3 @@ PassRefPtr<InspectorValue> InspectorArrayBase::get(size_t index)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
