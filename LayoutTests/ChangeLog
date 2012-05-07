@@ -1,3 +1,9 @@
+2012-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Unreviewed. Rebaseline fast/layers/video-layer.html.
+
+        * platform/efl/fast/layers/video-layer-expected.txt:
+
 2012-05-07  Dirk Pranke  <dpranke@chromium.org>
 
         Mark more tests as flaky, including some compositing tests

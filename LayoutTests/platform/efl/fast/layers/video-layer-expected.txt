@@ -32,6 +32,8 @@ layer at (59,241) size 300x20 scrollHeight 28
           RenderBlock {DIV} at (145,4) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (280,0) size 20x20
 layer at (142,245) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+layer at (339,241) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
