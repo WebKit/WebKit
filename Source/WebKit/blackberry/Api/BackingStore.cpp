@@ -1217,11 +1217,12 @@ bool BackingStorePrivate::ensureOverScrollImage()
         return false;
     }
 
-    // FIXME: Make it orientation and resolution agnostic
+    // FIXME: Make it orientation and resolution agnostic.
+    // For now we fallback to solid color if sizes don't match, later we can implement tiling.
     if (bitmap.width() != surfaceSize().width() || bitmap.height() != surfaceSize().height())
         return false;
 
-    // FIXME: For now we fallback to solid color if sizes don't match, later we can implement tiling
+    destroyBuffer(s_overScrollImage);
     s_overScrollImage = createBuffer(Platform::IntSize(bitmap.width(), bitmap.height()), Platform::Graphics::TemporaryBuffer);
 
     SkCanvas* canvas = Platform::Graphics::lockBufferDrawable(s_overScrollImage);

@@ -1,5 +1,18 @@
 2012-05-07  Andrew Lo  <anlo@rim.com>
 
+        [BlackBerry] Delete previous buffer when new over-scroll image path is set
+        https://bugs.webkit.org/show_bug.cgi?id=85812
+
+        Reviewed by Rob Buis.
+
+        When a new over-scroll image path is set, delete old buffer before creating
+        a new one.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::ensureOverScrollImage):
+
+2012-05-07  Andrew Lo  <anlo@rim.com>
+
         [BlackBerry] Over-scroll image path property should be relative to local application directory
         https://bugs.webkit.org/show_bug.cgi?id=85814
 
