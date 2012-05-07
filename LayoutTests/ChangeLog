@@ -2,6 +2,13 @@
 
         Unreviewed, GTK gardening.
 
+        * platform/gtk/test_expectations.txt: Mark
+        fast/events/message-port-close.html as crashing in debug builds.
+
+2012-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
         * platform/gtk/test_expectations.txt: Mark new mediastream test as
         expected failure.
 
