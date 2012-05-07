@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <!--
-    Test for https://bugs.webkit.org/show_bug.cgi?id=71488 (Add support for background-color in region styling).
+    Ref test for https://bugs.webkit.org/show_bug.cgi?id=71488 (Add support for background-color in region styling).
     Setting the background color is not enabled for inline elements.
     You should not see any red background below.
     -->
@@ -16,29 +16,25 @@
             .regionBox { width: 300px; height: 50px; }
             span { font-family: webkit-ahem; }
 
-            #article1 { -webkit-flow-into: flow1; }
-            #region1 { -webkit-flow-from: flow1; position: absolute; top: 10px; }
+            #article1 { position: absolute; top: 10px; }
             #span1 { background-color: green; }
             @-webkit-region #region1 { #span1 { background-color: red; } }
 
-            #article2 { -webkit-flow-into: flow2; }
-            #region2 { -webkit-flow-from: flow2; position: absolute; top: 70px; }
+            #article2 { position: absolute; top: 70px; }
             #span2 { display: block; background-color: green; }
             @-webkit-region #region2 { #span2 { background-color: red; } }
         </style>
     </head>
     <body>
-        <div id="article1">
+        <div id="article1" class="regionBox">
             <!-- Green background span not styled in region. -->
             <span id="span1">R: 00 G: 80 B: 00</span>
         </div>
-        <div id="region1" class="regionBox"></div>
 
-        <div id="article2">
+        <div id="article2" class="regionBox">
             <!-- Green background span not styled in region. -->
             <span id="span2">R: 00 G: 80 B: 00</span>
         </div>
-        <div id="region2" class="regionBox"></div>
         <script>
             document.getElementById("span2").style.display = "inline";
         </script>

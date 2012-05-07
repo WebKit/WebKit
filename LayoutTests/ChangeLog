@@ -1,3 +1,33 @@
+2012-05-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Convert (some) region style tests to ref tests
+        https://bugs.webkit.org/show_bug.cgi?id=85783
+
+        Reviewed by Andreas Kling.
+
+        * fast/regions/region-style-image-background-color-expected.html: Added.
+        * fast/regions/region-style-image-background-color.html:
+        * fast/regions/region-style-inline-background-color-expected.html: Added.
+        * fast/regions/region-style-inline-background-color.html:
+        * platform/chromium-linux/fast/regions/region-style-image-background-color-expected.png: Removed.
+        * platform/chromium-linux/fast/regions/region-style-inline-background-color-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/regions/region-style-image-background-color-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/regions/region-style-inline-background-color-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/regions/region-style-image-background-color-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/regions/region-style-inline-background-color-expected.png: Removed.
+        * platform/chromium-mac/fast/regions/region-style-image-background-color-expected.png: Removed.
+        * platform/chromium-mac/fast/regions/region-style-inline-background-color-expected.png: Removed.
+        * platform/chromium-win/fast/regions/region-style-image-background-color-expected.png: Removed.
+        * platform/chromium-win/fast/regions/region-style-image-background-color-expected.txt: Removed.
+        * platform/chromium-win/fast/regions/region-style-inline-background-color-expected.png: Removed.
+        * platform/chromium-win/fast/regions/region-style-inline-background-color-expected.txt: Removed.
+        * platform/gtk/fast/regions/region-style-image-background-color-expected.txt: Removed.
+        * platform/gtk/fast/regions/region-style-inline-background-color-expected.txt: Removed.
+        * platform/mac/fast/regions/region-style-image-background-color-expected.png: Removed.
+        * platform/mac/fast/regions/region-style-image-background-color-expected.txt: Removed.
+        * platform/mac/fast/regions/region-style-inline-background-color-expected.png: Removed.
+        * platform/mac/fast/regions/region-style-inline-background-color-expected.txt: Removed.
+
 2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed gardening for Qt port. Updating expectation files and skipped tests which are
