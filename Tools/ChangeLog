@@ -1,3 +1,17 @@
+2012-05-07  Eric Seidel  <eric@webkit.org>
+
+        Add values for all features to Qt's features.pri
+        https://bugs.webkit.org/show_bug.cgi?id=85746
+
+        Reviewed by Tor Arne Vestbø.
+
+        When generate-feature-files generates features.pri it provides a value
+        for every possible ENABLE_.  In prepration for landing generate-feature-files
+        it seems appropriate to add a value for all possible ENABLEs to the existing
+        features.pri.  This lets me make sure that I'm getting them all right!
+
+        * qmake/mkspecs/features/features.pri:
+
 2012-05-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Added myself as a committer.
