@@ -2616,3 +2616,7 @@ ietestcenter/css3/flexbox/flexbox-layout-003.htm
 inspector/debugger/scripts-panel.html
 inspector/debugger/snippets-model.html
 inspector/debugger/source-frame.html
+
+# [Qt] New test introduced in r116255 is failing
+# https://bugs.webkit.org/show_bug.cgi?id=85777
+fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector.html
