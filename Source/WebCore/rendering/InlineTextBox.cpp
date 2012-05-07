@@ -534,46 +534,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     bool containsComposition = renderer()->node() && renderer()->frame()->editor()->compositionNode() == renderer()->node();
     bool useCustomUnderlines = containsComposition && renderer()->frame()->editor()->compositionUsesCustomUnderlines();
 
-    // Set our font.
-    const Font& font = styleToUse->font();
-
-    FloatPoint textOrigin = FloatPoint(boxOrigin.x(), boxOrigin.y() + font.fontMetrics().ascent());
-
-    if (combinedText)
-        combinedText->adjustTextOrigin(textOrigin, boxRect);
-
-    // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
-    // and composition underlines.
-    if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
-#if PLATFORM(MAC)
-        // Custom highlighters go behind everything else.
-        if (styleToUse->highlight() != nullAtom && !context->paintingDisabled())
-            paintCustomHighlight(adjustedPaintOffset, styleToUse->highlight());
-#endif
-
-        if (containsComposition && !useCustomUnderlines)
-            paintCompositionBackground(context, boxOrigin, styleToUse, font,
-                renderer()->frame()->editor()->compositionStart(),
-                renderer()->frame()->editor()->compositionEnd());
-
-        paintDocumentMarkers(context, boxOrigin, styleToUse, font, true);
-
-        if (haveSelection && !useCustomUnderlines)
-            paintSelection(context, boxOrigin, styleToUse, font);
-    }
-
-    if (Frame* frame = renderer()->frame()) {
-        if (Page* page = frame->page()) {
-            // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might 
-            // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
-            // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
-            // renderers and Page currently relies on each unpainted object having a unique renderer.
-            if (paintInfo.phase == PaintPhaseForeground)
-                page->addRelevantRepaintedObject(renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
-        }
-    }
-
-    // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
+    // Determine the text colors and selection colors.
     Color textFillColor;
     Color textStrokeColor;
     Color emphasisMarkColor;
@@ -660,6 +621,46 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         }
     }
 
+    // Set our font.
+    const Font& font = styleToUse->font();
+
+    FloatPoint textOrigin = FloatPoint(boxOrigin.x(), boxOrigin.y() + font.fontMetrics().ascent());
+
+    if (combinedText)
+        combinedText->adjustTextOrigin(textOrigin, boxRect);
+
+    // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
+    // and composition underlines.
+    if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
+#if PLATFORM(MAC)
+        // Custom highlighters go behind everything else.
+        if (styleToUse->highlight() != nullAtom && !context->paintingDisabled())
+            paintCustomHighlight(adjustedPaintOffset, styleToUse->highlight());
+#endif
+
+        if (containsComposition && !useCustomUnderlines)
+            paintCompositionBackground(context, boxOrigin, styleToUse, font,
+                renderer()->frame()->editor()->compositionStart(),
+                renderer()->frame()->editor()->compositionEnd());
+
+        paintDocumentMarkers(context, boxOrigin, styleToUse, font, true);
+
+        if (haveSelection && !useCustomUnderlines)
+            paintSelection(context, boxOrigin, styleToUse, font, selectionFillColor);
+    }
+
+    if (Frame* frame = renderer()->frame()) {
+        if (Page* page = frame->page()) {
+            // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
+            // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
+            // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
+            // renderers and Page currently relies on each unpainted object having a unique renderer.
+            if (paintInfo.phase == PaintPhaseForeground)
+                page->addRelevantRepaintedObject(renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
+        }
+    }
+
+    // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
     int length = m_len;
     int maximumLength;
     const UChar* characters;
@@ -806,7 +807,7 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     ePos = min(endPos - m_start, (int)m_len);
 }
 
-void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font)
+void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font, Color textColor)
 {
     if (context->paintingDisabled())
         return;
@@ -817,13 +818,12 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     if (sPos >= ePos)
         return;
 
-    Color textColor = style->visitedDependentColor(CSSPropertyColor);
     Color c = renderer()->selectionBackgroundColor();
     if (!c.isValid() || c.alpha() == 0)
         return;
 
     // If the text color ends up being the same as the selection background, invert the selection
-    // background.  This should basically never happen, since the selection has transparency.
+    // background.
     if (textColor == c)
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 

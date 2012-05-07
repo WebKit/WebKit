@@ -1,3 +1,15 @@
+2012-05-07  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        Selection Background Color Error
+        https://bugs.webkit.org/show_bug.cgi?id=80382
+
+        Reviewed by David Hyatt.
+
+        Added new test case for selection background color.
+
+        * fast/backgrounds/selection-background-color.html: Added.
+        * fast/backgrounds/selection-background-color-expected.html: Added.
+
 2012-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Unreviewed. Rebaseline fast/layers/video-layer.html.
