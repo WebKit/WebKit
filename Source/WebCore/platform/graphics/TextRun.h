@@ -63,11 +63,11 @@ public:
         , m_charactersLength(len)
         , m_len(len)
         , m_xpos(xpos)
-        , m_expansion(expansion)
-        , m_expansionBehavior(expansionBehavior)
 #if ENABLE(SVG)
         , m_horizontalGlyphStretch(1)
 #endif
+        , m_expansion(expansion)
+        , m_expansionBehavior(expansionBehavior)
         , m_allowTabs(allowTabs)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
@@ -83,11 +83,11 @@ public:
         , m_charactersLength(s.length())
         , m_len(s.length())
         , m_xpos(xpos)
-        , m_expansion(expansion)
-        , m_expansionBehavior(expansionBehavior)
 #if ENABLE(SVG)
         , m_horizontalGlyphStretch(1)
 #endif
+        , m_expansion(expansion)
+        , m_expansionBehavior(expansionBehavior)
         , m_allowTabs(allowTabs)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
@@ -120,7 +120,7 @@ public:
     float expansion() const { return m_expansion; }
     bool allowsLeadingExpansion() const { return m_expansionBehavior & AllowLeadingExpansion; }
     bool allowsTrailingExpansion() const { return m_expansionBehavior & AllowTrailingExpansion; }
-    TextDirection direction() const { return m_direction; }
+    TextDirection direction() const { return static_cast<TextDirection>(m_direction); }
     bool rtl() const { return m_direction == RTL; }
     bool ltr() const { return m_direction == LTR; }
     bool directionalOverride() const { return m_directionalOverride; }
@@ -163,18 +163,18 @@ private:
     // start of the containing block. In the case of right alignment or center alignment, left start of
     // the text line is not the same as left start of the containing block.
     float m_xpos;  
-    float m_expansion;
-    ExpansionBehavior m_expansionBehavior;
 #if ENABLE(SVG)
     float m_horizontalGlyphStretch;
 #endif
-    bool m_allowTabs;
-    TextDirection m_direction;
-    bool m_directionalOverride; // Was this direction set by an override character.
-    bool m_characterScanForCodePath;
-    bool m_applyRunRounding;
-    bool m_applyWordRounding;
-    bool m_disableSpacing;
+    float m_expansion;
+    ExpansionBehavior m_expansionBehavior : 2;
+    unsigned m_allowTabs : 1;
+    unsigned m_direction : 1;
+    unsigned m_directionalOverride : 1; // Was this direction set by an override character.
+    unsigned m_characterScanForCodePath : 1;
+    unsigned m_applyRunRounding : 1;
+    unsigned m_applyWordRounding : 1;
+    unsigned m_disableSpacing : 1;
     RefPtr<RenderingContext> m_renderingContext;
 };
 
