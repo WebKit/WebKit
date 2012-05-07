@@ -1,3 +1,23 @@
+2012-05-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] media/video-poster-blocked-by-willsendrequest.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=85609
+
+        Reviewed by Simon Hausmann.
+
+        Flakiness was caused by the fact that
+        media/crash-closing-page-with-media-as-plugin-fallback.html and
+        media/video-poster-blocked-by-willsendrequest.html use the same PNG
+        file as poster attribute in the video tag. The PNG file gets cached
+        when the first test is executed and this somehow causes the second
+        test to fail. 
+
+        The flakiness was addressed by clearing the memory and page caches
+        between tests.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-05-07  Eric Seidel  <eric@webkit.org>
 
         Add values for all features to Qt's features.pri
