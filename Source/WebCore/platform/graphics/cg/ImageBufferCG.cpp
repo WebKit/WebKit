@@ -480,30 +480,32 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
     RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
     ASSERT(uti);
 
+    CGImageAlphaInfo dataAlphaInfo = kCGImageAlphaLast;
     unsigned char* data = source.data()->data();
-    Vector<uint8_t> dataVector;
+    Vector<uint8_t> premultipliedData;
 
     if (CFEqual(uti.get(), jpegUTI())) {
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
-        dataVector.resize(4 * source.width() * source.height());
-        unsigned char *out = dataVector.data();
-        
-        for (int i = 0; i < source.width() * source.height(); i++) {
-            // Multiply color data by alpha, and set alpha to 255.
-            int alpha = data[4 * i + 3];
+        size_t size = 4 * source.width() * source.height();
+        if (!premultipliedData.tryReserveCapacity(size))
+            return "data:,";
+
+        unsigned char *buffer = premultipliedData.data();
+        for (size_t i = 0; i < size; i += 4) {
+            unsigned alpha = data[i + 3];
             if (alpha != 255) {
-                out[4 * i + 0] = data[4 * i + 0] * alpha / 255;
-                out[4 * i + 1] = data[4 * i + 1] * alpha / 255;
-                out[4 * i + 2] = data[4 * i + 2] * alpha / 255;
+                buffer[i + 0] = data[i + 0] * alpha / 255;
+                buffer[i + 1] = data[i + 1] * alpha / 255;
+                buffer[i + 2] = data[i + 2] * alpha / 255;
             } else {
-                out[4 * i + 0] = data[4 * i + 0];
-                out[4 * i + 1] = data[4 * i + 1];
-                out[4 * i + 2] = data[4 * i + 2];
+                buffer[i + 0] = data[i + 0];
+                buffer[i + 1] = data[i + 1];
+                buffer[i + 2] = data[i + 2];
             }
-            out[4 * i + 3] = 255;
         }
 
-        data = out;
+        dataAlphaInfo = kCGImageAlphaNoneSkipLast; // Ignore the alpha channel.
+        data = premultipliedData.data();
     }
 
     RetainPtr<CGDataProviderRef> dataProvider;
@@ -513,7 +515,7 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
 
     RetainPtr<CGImageRef> image;
     image.adoptCF(CGImageCreate(source.width(), source.height(), 8, 32, 4 * source.width(),
-                                deviceRGBColorSpaceRef(), kCGBitmapByteOrderDefault | kCGImageAlphaLast,
+                                deviceRGBColorSpaceRef(), kCGBitmapByteOrderDefault | dataAlphaInfo,
                                 dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
     return CGImageToDataURL(image.get(), mimeType, quality);
