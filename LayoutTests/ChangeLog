@@ -1,3 +1,17 @@
+2012-05-07  Andy Estes  <aestes@apple.com>
+
+        Update media/ pixel test results after r115749.
+
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/controls-after-reload-expected.png:
+        * platform/mac/media/controls-layout-direction-expected.png:
+        * platform/mac/media/controls-strict-expected.png:
+        * platform/mac/media/media-controls-clone-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-layer-crash-expected.png:
+        * platform/mac/media/video-playing-and-pause-expected.png:
+
 2012-05-07  Dirk Pranke  <dpranke@chromium.org>
 
         Fix compositing expectations to not include leopard.
