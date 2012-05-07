@@ -865,7 +865,11 @@ private:
 
         void setAtBeforeSideOfBlock(bool b) { m_atBeforeSideOfBlock = b; }
         void setAtAfterSideOfBlock(bool b) { m_atAfterSideOfBlock = b; }
-        void clearMargin() { m_positiveMargin = m_negativeMargin = 0; }
+        void clearMargin()
+        {
+            m_positiveMargin = 0;
+            m_negativeMargin = 0;
+        }
         void setMarginBeforeQuirk(bool b) { m_marginBeforeQuirk = b; }
         void setMarginAfterQuirk(bool b) { m_marginAfterQuirk = b; }
         void setDeterminedMarginBeforeQuirk(bool b) { m_determinedMarginBeforeQuirk = b; }
