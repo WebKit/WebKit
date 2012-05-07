@@ -1,3 +1,17 @@
+2012-05-07  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Allow UserMediaRequest::succeed to take an MediaStreamDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=85798
+
+        Reviewed by Adam Barth.
+
+        Adding another UserMediaRequest::succeed function that takes an MediaStreamDescriptor
+        instead of the two MediaStreamSource arrays.
+
+        * chromium/public/WebMediaStreamCenter.h:
+        (WebMediaStreamCenter):
+        (WebKit::WebMediaStreamCenter::constructSDP):
+
 2012-05-04  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make PeerConnection00's API fully compliant with the draft

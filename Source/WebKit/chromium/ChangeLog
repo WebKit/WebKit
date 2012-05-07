@@ -1,3 +1,19 @@
+2012-05-07  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Allow UserMediaRequest::succeed to take an MediaStreamDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=85798
+
+        Reviewed by Adam Barth.
+
+        Adding another WebUserMediaRequest::requestSucceed function that takes an
+        WebMediaStreamDescriptor instead of the two WebMediaStreamSource arrays.
+
+        * public/WebUserMediaRequest.h:
+        (WebKit):
+        (WebUserMediaRequest):
+        * src/WebUserMediaRequest.cpp:
+        (WebKit::WebUserMediaRequest::requestSucceeded):
+
 2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed: the same fix in another file for chromium win build.  Adding WebCore namespace to FileSystemTypes.

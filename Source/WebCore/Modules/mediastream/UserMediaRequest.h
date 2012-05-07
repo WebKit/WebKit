@@ -45,6 +45,7 @@
 namespace WebCore {
 
 class Dictionary;
+class MediaStreamDescriptor;
 class UserMediaController;
 
 class UserMediaRequest : public MediaStreamSourcesQueryClient, public ContextDestructionObserver {
@@ -58,6 +59,7 @@ public:
     void start();
 
     void succeed(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    void succeed(PassRefPtr<MediaStreamDescriptor>);
     void fail();
 
     // MediaStreamSourcesQueryClient

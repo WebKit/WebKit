@@ -36,11 +36,13 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
 #include "UserMediaRequest.h"
 #include "WebSecurityOrigin.h"
+#include "platform/WebMediaStreamDescriptor.h"
 #include "platform/WebMediaStreamSource.h"
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
@@ -93,6 +95,15 @@ void WebUserMediaRequest::requestSucceeded(const WebVector<WebMediaStreamSource>
     }
 
     m_private->succeed(audio, video);
+}
+
+void WebUserMediaRequest::requestSucceeded(const WebMediaStreamDescriptor& streamDescriptor)
+{
+    ASSERT(!streamDescriptor.isNull());
+    if (m_private.isNull())
+        return;
+
+    m_private->succeed(streamDescriptor);
 }
 
 void WebUserMediaRequest::requestFailed()
