@@ -57,7 +57,7 @@ private:
 
 v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl, v8::Isolate* isolate)
 {
-        v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(impl);
+        v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap(isolate).get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestNamedConstructor::wrapSlow(impl, isolate);

@@ -314,7 +314,6 @@ END
         push(@headerContent, "false;\n");
     }
 
-    my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
     my $forceNewObjectParameter = IsDOMNodeType($interfaceName) ? ", bool forceNewObject = false" : "";
     my $forceNewObjectInput = IsDOMNodeType($interfaceName) ? ", bool forceNewObject" : "";
     my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
@@ -424,6 +423,7 @@ v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl, v8::Isolate* isol
 {
 END
     push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
+    my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName, "isolate");
     my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "${domMapFunction}.get(impl)";
     push(@headerContent, <<END);
         v8::Handle<v8::Object> wrapper = $getCachedWrapper;
@@ -929,7 +929,7 @@ END
         # Check for a wrapper in the wrapper cache. If there is one, we know that a hidden reference has already
         # been created. If we don't find a wrapper, we create both a wrapper and a hidden reference.
         push(@implContentDecls, "    RefPtr<$returnType> result = ${getterString};\n");
-        my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
+        my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName, "info.GetIsolate()");
         push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8::Handle<v8::Object>();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
         push(@implContentDecls, "        wrapper = toV8(result.get(), info.GetIsolate());\n");
@@ -3206,7 +3206,11 @@ END
 
 sub GetDomMapFunction
 {
-    return "get" . GetDomMapName(@_) . "Map()";
+    my $dataNode = shift;
+    my $interfaceName = shift;
+    my $getIsolate = shift;
+
+    return "get" . GetDomMapName($dataNode, $interfaceName) . "Map(" . $getIsolate . ")";
 }
 
 sub GetDomMapName
@@ -3817,7 +3821,7 @@ sub NativeToJSValue
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", $getIsolate, true)" : ")");
+        return "toV8(${value}" . ($signature->extendedAttributes->{"ReturnNewObject"} ? ", $getIsolate, true)" : ", $getIsolate)");
     }
 
     if ($type eq "EventTarget") {

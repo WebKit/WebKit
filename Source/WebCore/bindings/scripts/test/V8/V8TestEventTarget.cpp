@@ -55,7 +55,7 @@ static v8::Handle<v8::Value> itemCallback(const v8::Arguments& args)
         ec = INDEX_SIZE_ERR;
         goto fail;
     }
-    return toV8(imp->item(index));
+    return toV8(imp->item(index), args.GetIsolate());
     }
     fail:
     V8Proxy::setDOMException(ec, args.GetIsolate());
