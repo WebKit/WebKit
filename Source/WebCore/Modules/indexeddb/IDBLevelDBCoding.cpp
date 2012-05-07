@@ -180,7 +180,7 @@ Vector<char> minIDBKey()
 Vector<char> encodeBool(bool b)
 {
     Vector<char> ret(1);
-    ret.append(b ? 1 : 0);
+    ret[0] = b ? 1 : 0;
     return ret;
 }
 

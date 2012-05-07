@@ -83,6 +83,20 @@ TEST(IDBLevelDBCodingTest, EncodeByte)
     EXPECT_EQ(expected, encodeByte(c));
 }
 
+TEST(IDBLevelDBCodingTest, EncodeBool)
+{
+    {
+        Vector<char> expected;
+        expected.append(1);
+        EXPECT_EQ(expected, encodeBool(true));
+    }
+    {
+        Vector<char> expected;
+        expected.append(0);
+        EXPECT_EQ(expected, encodeBool(false));
+    }
+}
+
 TEST(IDBLevelDBCodingTest, MaxIDBKey)
 {
     Vector<char> maxKey = maxIDBKey();
@@ -124,6 +138,20 @@ TEST(IDBLevelDBCodingTest, EncodeInt)
     EXPECT_EQ(static_cast<size_t>(1), encodeInt(255).size());
     EXPECT_EQ(static_cast<size_t>(2), encodeInt(256).size());
     EXPECT_EQ(static_cast<size_t>(4), encodeInt(0xffffffff).size());
+}
+
+TEST(IDBLevelDBCodingTest, DecodeBool)
+{
+    {
+        Vector<char> encoded;
+        encoded.append(1);
+        EXPECT_TRUE(decodeBool(encoded.data(), encoded.data() + encoded.size()));
+    }
+    {
+        Vector<char> encoded;
+        encoded.append(0);
+        EXPECT_FALSE(decodeBool(encoded.data(), encoded.data() + encoded.size()));
+    }
 }
 
 TEST(IDBLevelDBCodingTest, DecodeInt)

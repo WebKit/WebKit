@@ -1,3 +1,16 @@
+2012-05-07  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: LevelDB coding for bools is broken
+        https://bugs.webkit.org/show_bug.cgi?id=85810
+
+        Reviewed by Tony Chang.
+
+        Added tests for encodeBool/decodeBool.
+
+        * tests/IDBLevelDBCodingTest.cpp:
+        (IDBLevelDBCoding::TEST):
+        (IDBLevelDBCoding):
+
 2012-05-07  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] CCMathUtil projectPoint needs to avoid divide-by-zero
