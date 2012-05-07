@@ -31,7 +31,7 @@ class AsyncFileSystemCallbacks;
 
 class AsyncFileSystemGtk : public AsyncFileSystem {
 public:
-    AsyncFileSystemGtk(AsyncFileSystem::Type);
+    AsyncFileSystemGtk(FileSystemType);
     virtual ~AsyncFileSystemGtk();
 
     virtual KURL toURL(const String& originString, const String& fullPath) const;

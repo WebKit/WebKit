@@ -35,7 +35,7 @@ bool AsyncFileSystem::isAvailable()
     return false;
 }
 
-bool AsyncFileSystem::isValidType(Type type)
+bool AsyncFileSystem::isValidType(FileSystemType type)
 {
     UNUSED_PARAM(type);
 
@@ -43,12 +43,12 @@ bool AsyncFileSystem::isValidType(Type type)
     return false;
 }
 
-PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type type)
+PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(FileSystemType type)
 {
     return adoptPtr(new AsyncFileSystemBlackBerry(type));
 }
 
-void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, Type type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     UNUSED_PARAM(basePath);
     UNUSED_PARAM(storageIdentifier);
@@ -59,7 +59,7 @@ void AsyncFileSystem::openFileSystem(const String& basePath, const String& stora
     callbacks->didFail(NOT_SUPPORTED_ERR);
 }
 
-bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
+bool AsyncFileSystem::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
 {
     UNUSED_PARAM(url);
     UNUSED_PARAM(type);
@@ -69,7 +69,7 @@ bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type&
     return false;
 }
 
-AsyncFileSystemBlackBerry::AsyncFileSystemBlackBerry(AsyncFileSystem::Type type)
+AsyncFileSystemBlackBerry::AsyncFileSystemBlackBerry(FileSystemType type)
     : AsyncFileSystem(type)
 {
     notImplemented();

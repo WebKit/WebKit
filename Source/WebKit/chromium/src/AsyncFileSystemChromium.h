@@ -47,7 +47,7 @@ class KURL;
 
 class AsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(AsyncFileSystem::Type type, const KURL& rootURL)
+    static PassOwnPtr<AsyncFileSystem> create(FileSystemType type, const KURL& rootURL)
     {
         return adoptPtr(new AsyncFileSystemChromium(type, rootURL));
     }
@@ -72,7 +72,7 @@ public:
     virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 protected:
-    AsyncFileSystemChromium(AsyncFileSystem::Type, const KURL& rootURL);
+    AsyncFileSystemChromium(FileSystemType, const KURL& rootURL);
 
     PassOwnPtr<AsyncFileSystemCallbacks> createSnapshotFileCallback(const KURL& internalBlobURL, PassOwnPtr<AsyncFileSystemCallbacks>) const;
 

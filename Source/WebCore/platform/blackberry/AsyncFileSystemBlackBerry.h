@@ -27,7 +27,7 @@ namespace WebCore {
 
 class AsyncFileSystemBlackBerry : public AsyncFileSystem {
 public:
-    AsyncFileSystemBlackBerry(AsyncFileSystem::Type);
+    AsyncFileSystemBlackBerry(FileSystemType);
     virtual ~AsyncFileSystemBlackBerry();
     virtual KURL toURL(const String& originString, const String& fullPath) const;
     virtual void move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);

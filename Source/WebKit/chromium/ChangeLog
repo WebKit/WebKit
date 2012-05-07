@@ -1,5 +1,47 @@
 2012-05-06  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Cleanup: Move FileSystem API type definitions into a separate header file
+        https://bugs.webkit.org/show_bug.cgi?id=85738
+
+        Reviewed by David Levin.
+
+        Move FileSystem API type definitions from AsyncFileSystem.h and
+        AsyncFileSystemChromium.cpp for chromium port into a single separate
+        header file: FileSystemType.h
+
+        By doing this we make it clearer that every filesystem type can be
+        found in the header file and also can save including entire
+        AsyncFileSystem definition just for referring type enum value.
+
+        * src/AssertMatchingEnums.cpp:
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystem::crackFileSystemURL):
+        (WebCore::AsyncFileSystem::isValidType):
+        (WebCore::AsyncFileSystemChromium::AsyncFileSystemChromium):
+        (WebCore::AsyncFileSystemChromium::createIsolatedFileSystem):
+        (WebCore::AsyncFileSystemChromium::toURL):
+        * src/AsyncFileSystemChromium.h:
+        (WebCore::AsyncFileSystemChromium::create):
+        (AsyncFileSystemChromium):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemHelper):
+        (WebCore::LocalFileSystem::readFileSystem):
+        (WebCore::LocalFileSystem::requestFileSystem):
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl):
+        * src/WebFileSystemCallbacksImpl.h:
+        (WebFileSystemCallbacksImpl):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFileSystem):
+        (WebKit::WebFrameImpl::createFileEntry):
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        * src/WorkerAsyncFileSystemChromium.h:
+        (WebCore::WorkerAsyncFileSystemChromium::create):
+        (WorkerAsyncFileSystemChromium):
+
+2012-05-06  Kinuko Yasuda  <kinuko@chromium.org>
+
         Cleanup: FileSystem API's Entry.toURL() impl should return KURL instead of String
         https://bugs.webkit.org/show_bug.cgi?id=85736
 

@@ -99,7 +99,7 @@ static bool verifyAndGetDestinationPathForCopyOrMove(const EntryBase* source, En
     return true;
 }
 
-static bool pathToAbsolutePath(AsyncFileSystem::Type type, const EntryBase* base, String path, String& absolutePath)
+static bool pathToAbsolutePath(FileSystemType type, const EntryBase* base, String path, String& absolutePath)
 {
     ASSERT(base);
 
@@ -107,7 +107,7 @@ static bool pathToAbsolutePath(AsyncFileSystem::Type type, const EntryBase* base
         path = DOMFilePath::append(base->fullPath(), path);
     absolutePath = DOMFilePath::removeExtraParentReferences(path);
 
-    if ((type == AsyncFileSystem::Temporary || type == AsyncFileSystem::Persistent) && !DOMFilePath::isValidPath(absolutePath))
+    if ((type == FileSystemTypeTemporary || type == FileSystemTypePersistent) && !DOMFilePath::isValidPath(absolutePath))
         return false;
     return true;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,48 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AsyncFileSystem.h"
+#ifndef FileSystemType_h
+#define FileSystemType_h
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "AsyncFileSystemCallbacks.h"
-#include "ExceptionCode.h"
-#include "FileSystem.h"
-#include "NotImplemented.h"
-
 namespace WebCore {
 
-const char AsyncFileSystem::persistentPathPrefix[] = "persistent";
-const size_t AsyncFileSystem::persistentPathPrefixLength = sizeof(AsyncFileSystem::persistentPathPrefix) - 1;
-const char AsyncFileSystem::temporaryPathPrefix[] = "temporary";
-const size_t AsyncFileSystem::temporaryPathPrefixLength = sizeof(AsyncFileSystem::temporaryPathPrefix) - 1;
+// For file system types used in FileSystem API.
+enum FileSystemType {
+    FileSystemTypeTemporary,
+    FileSystemTypePersistent,
 
-#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK) && !PLATFORM(BLACKBERRY)
-bool AsyncFileSystem::isAvailable()
-{
-    notImplemented();
-    return false;
-}
+#if PLATFORM(CHROMIUM)
+    // Temporary isolated non-sandbox filesystem.
+    FileSystemTypeIsolated,
 
-bool AsyncFileSystem::isValidType(FileSystemType type)
-{
-    return type == FileSystemTypeTemporary || type == FileSystemTypePersistent;
-}
-
-PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(FileSystemType)
-{
-    notImplemented();
-    return nullptr;
-}
-
-void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
-{
-    notImplemented();
-    callbacks->didFail(NOT_SUPPORTED_ERR);
-}
+    // Non-sandbox filesystem.
+    FileSystemTypeExternal,
 #endif
+};
 
-} // namespace
+} // namespace WebCore
 
 #endif // ENABLE(FILE_SYSTEM)
+
+#endif // FileSystemType_h

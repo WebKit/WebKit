@@ -34,7 +34,6 @@
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "AsyncFileSystemChromium.h"
-#include "PlatformString.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -53,7 +52,7 @@ class WorkerContext;
 
 class WorkerAsyncFileSystemChromium : public AsyncFileSystemChromium {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, AsyncFileSystem::Type type, const WebKit::WebURL& rootURL, bool synchronous)
+    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, FileSystemType type, const WebKit::WebURL& rootURL, bool synchronous)
     {
         return adoptPtr(new WorkerAsyncFileSystemChromium(context, type, rootURL, synchronous));
     }
@@ -77,7 +76,7 @@ public:
     virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
-    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, AsyncFileSystem::Type, const WebKit::WebURL& rootURL, bool synchronous);
+    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, FileSystemType, const WebKit::WebURL& rootURL, bool synchronous);
 
     PassRefPtr<WebKit::WorkerFileSystemCallbacksBridge> createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks>);
 

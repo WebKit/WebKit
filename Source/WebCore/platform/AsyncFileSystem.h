@@ -33,6 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "FileSystemType.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "Timer.h"
@@ -50,12 +51,6 @@ class AsyncFileSystem {
 public:
     virtual ~AsyncFileSystem() { }
 
-    // FileSystem type
-    enum Type {
-        Temporary,
-        Persistent,
-    };
-
     // Path prefixes that are used in the filesystem URLs (that can be obtained by toURL()).
     // http://www.w3.org/TR/file-system-api/#widl-Entry-toURL
     static const char persistentPathPrefix[];
@@ -68,9 +63,9 @@ public:
 
     static bool isAvailable();
 
-    static bool isValidType(Type);
+    static bool isValidType(FileSystemType);
 
-    static bool crackFileSystemURL(const KURL&, Type&, String& filePath);
+    static bool crackFileSystemURL(const KURL&, FileSystemType&, String& filePath);
 
     virtual KURL toURL(const String& originString, const String& fullPath) const = 0;
 
@@ -79,10 +74,10 @@ public:
     virtual bool waitForOperationToComplete() { return false; }
 
     // Creates and returns a new platform-specific AsyncFileSystem instance if the platform has its own implementation.
-    static PassOwnPtr<AsyncFileSystem> create(Type);
+    static PassOwnPtr<AsyncFileSystem> create(FileSystemType);
 
     // Opens a new file system. The create parameter specifies whether or not to create the path if it does not already exists.
-    static void openFileSystem(const String& basePath, const String& storageIdentifier, Type, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
+    static void openFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
 
     // Moves a file or directory from srcPath to destPath.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.
@@ -147,15 +142,15 @@ public:
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
     virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
-    Type type() const { return m_type; }
+    FileSystemType type() const { return m_type; }
 
 protected:
-    AsyncFileSystem(Type type)
+    AsyncFileSystem(FileSystemType type)
         : m_type(type)
     {
     }
 
-    Type m_type;
+    FileSystemType m_type;
 };
 
 } // namespace WebCore

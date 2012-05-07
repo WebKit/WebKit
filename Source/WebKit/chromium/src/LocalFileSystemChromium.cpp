@@ -33,12 +33,12 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "AsyncFileSystem.h"
 #include "CrossThreadTask.h"
 #include "Document.h"
 #include "ErrorCallback.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
+#include "FileSystemType.h"
 #include "PlatformString.h"
 #include "WebFileError.h"
 #include "platform/WebFileSystem.h"
@@ -183,7 +183,7 @@ static void openFileSystemNotAllowed(ScriptExecutionContext*, PassOwnPtr<AsyncFi
     callbacks->didFail(WebKit::WebFileErrorAbort);
 }
 
-static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSystem::Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous, long long size, CreationFlag create)
+static void openFileSystemHelper(ScriptExecutionContext* context, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous, long long size, CreationFlag create)
 {
     bool allowed = true;
     ASSERT(context);
@@ -216,12 +216,12 @@ static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSyste
     }
 }
 
-void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous)
+void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous)
 {
     openFileSystemHelper(context, type, callbacks, synchronous, 0, OpenExisting);
 }
 
-void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, AsyncFileSystem::Type type, long long size, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous)
+void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSystemType type, long long size, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, bool synchronous)
 {
     openFileSystemHelper(context, type, callbacks, synchronous, size, CreateIfNotPresent);
 }

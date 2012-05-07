@@ -64,7 +64,7 @@ void DOMWindowFileSystem::webkitRequestFileSystem(DOMWindow* window, int type, l
         return;
     }
 
-    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
+    FileSystemType fileSystemType = static_cast<FileSystemType>(type);
     if (!AsyncFileSystem::isValidType(fileSystemType)) {
         DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
         return;
@@ -89,7 +89,7 @@ void DOMWindowFileSystem::webkitResolveLocalFileSystemURL(DOMWindow* window, con
         return;
     }
 
-    AsyncFileSystem::Type type;
+    FileSystemType type;
     String filePath;
     if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
         DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::ENCODING_ERR));
@@ -99,8 +99,8 @@ void DOMWindowFileSystem::webkitResolveLocalFileSystemURL(DOMWindow* window, con
     LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, filePath));
 }
 
-COMPILE_ASSERT(static_cast<int>(DOMWindowFileSystem::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
-COMPILE_ASSERT(static_cast<int>(DOMWindowFileSystem::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(DOMWindowFileSystem::TEMPORARY) == static_cast<int>(FileSystemTypeTemporary), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(DOMWindowFileSystem::PERSISTENT) == static_cast<int>(FileSystemTypePersistent), enum_mismatch);
 
 } // namespace WebCore
 

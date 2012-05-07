@@ -35,30 +35,30 @@ bool AsyncFileSystem::isAvailable()
     return false;
 }
 
-bool AsyncFileSystem::isValidType(Type type)
+bool AsyncFileSystem::isValidType(FileSystemType type)
 {
     notImplemented();
     return false;
 }
 
-PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type type)
+PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(FileSystemType type)
 {
     return adoptPtr(new AsyncFileSystemGtk(type));
 }
 
-void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, Type type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
     callbacks->didFail(NOT_SUPPORTED_ERR);
 }
 
-bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
+bool AsyncFileSystem::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
 {
     notImplemented();
     return false;
 }
 
-AsyncFileSystemGtk::AsyncFileSystemGtk(AsyncFileSystem::Type type)
+AsyncFileSystemGtk::AsyncFileSystemGtk(FileSystemType type)
     : AsyncFileSystem(type)
 {
     notImplemented();

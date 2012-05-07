@@ -33,7 +33,8 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "AsyncFileSystem.h"
+#include "AsyncFileSystemCallbacks.h"
+#include "FileSystemType.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -54,9 +55,9 @@ public:
     static LocalFileSystem& localFileSystem();
 
     // Does not create the root path for file system, just reads it if available.
-    void readFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
+    void readFileSystem(ScriptExecutionContext*, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
 
-    void requestFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
+    void requestFileSystem(ScriptExecutionContext*, FileSystemType, long long size, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
 
 #if !PLATFORM(CHROMIUM)
     // This call is not thread-safe; must be called before any worker threads are created.

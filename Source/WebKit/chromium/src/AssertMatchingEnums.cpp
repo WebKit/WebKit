@@ -36,13 +36,13 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "ApplicationCacheHost.h"
-#include "AsyncFileSystem.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentMarker.h"
 #include "EditorInsertAction.h"
 #include "ExceptionCode.h"
 #include "FileError.h"
 #include "FileMetadata.h"
+#include "FileSystemType.h"
 #include "FilterOperation.h"
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
@@ -470,8 +470,10 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::DateType, IDBKey::DateType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NumberType, IDBKey::NumberType);
 
 #if ENABLE(FILE_SYSTEM)
-COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeTemporary, AsyncFileSystem::Temporary);
-COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypePersistent, AsyncFileSystem::Persistent);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeTemporary, FileSystemTypeTemporary);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypePersistent, FileSystemTypePersistent);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeExternal, FileSystemTypeExternal);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeIsolated, FileSystemTypeIsolated);
 COMPILE_ASSERT_MATCHING_ENUM(WebFileInfo::TypeUnknown, FileMetadata::TypeUnknown);
 COMPILE_ASSERT_MATCHING_ENUM(WebFileInfo::TypeFile, FileMetadata::TypeFile);
 COMPILE_ASSERT_MATCHING_ENUM(WebFileInfo::TypeDirectory, FileMetadata::TypeDirectory);

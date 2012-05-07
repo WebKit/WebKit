@@ -56,7 +56,7 @@ void WorkerContextFileSystem::webkitRequestFileSystem(WorkerContext* worker, int
         return;
     }
 
-    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
+    FileSystemType fileSystemType = static_cast<FileSystemType>(type);
     if (!AsyncFileSystem::isValidType(fileSystemType)) {
         DOMFileSystem::scheduleCallback(worker, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
         return;
@@ -74,7 +74,7 @@ PassRefPtr<DOMFileSystemSync> WorkerContextFileSystem::webkitRequestFileSystemSy
         return 0;
     }
 
-    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
+    FileSystemType fileSystemType = static_cast<FileSystemType>(type);
     if (!AsyncFileSystem::isValidType(fileSystemType)) {
         ec = FileException::INVALID_MODIFICATION_ERR;
         return 0;
@@ -94,7 +94,7 @@ void WorkerContextFileSystem::webkitResolveLocalFileSystemURL(WorkerContext* wor
         return;
     }
 
-    AsyncFileSystem::Type type;
+    FileSystemType type;
     String filePath;
     if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
         DOMFileSystem::scheduleCallback(worker, errorCallback, FileError::create(FileError::ENCODING_ERR));
@@ -114,7 +114,7 @@ PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncU
         return 0;
     }
 
-    AsyncFileSystem::Type type;
+    FileSystemType type;
     String filePath;
     if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
         ec = FileException::ENCODING_ERR;
@@ -134,8 +134,8 @@ PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncU
     return entry.release();
 }
 
-COMPILE_ASSERT(static_cast<int>(WorkerContextFileSystem::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
-COMPILE_ASSERT(static_cast<int>(WorkerContextFileSystem::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(WorkerContextFileSystem::TEMPORARY) == static_cast<int>(FileSystemTypeTemporary), enum_mismatch);
+COMPILE_ASSERT(static_cast<int>(WorkerContextFileSystem::PERSISTENT) == static_cast<int>(FileSystemTypePersistent), enum_mismatch);
 
 } // namespace WebCore
 

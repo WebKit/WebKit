@@ -52,11 +52,9 @@ namespace WebCore {
 namespace {
 
 // For isolated filesystem.
-const AsyncFileSystem::Type isolatedType = static_cast<AsyncFileSystem::Type>(WebKit::WebFileSystem::TypeIsolated);
 const char isolatedPathPrefix[] = "isolated";
 
 // For external filesystem.
-const AsyncFileSystem::Type externalType = static_cast<AsyncFileSystem::Type>(WebKit::WebFileSystem::TypeExternal);
 const char externalPathPrefix[] = "external";
 const size_t externalPathPrefixLength = sizeof(externalPathPrefix) - 1;
 
@@ -105,7 +103,7 @@ bool AsyncFileSystem::isAvailable()
 }
 
 // static
-bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type& type, String& filePath)
+bool AsyncFileSystem::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
 {
     if (!url.protocolIs("filesystem"))
         return false;
@@ -113,51 +111,26 @@ bool AsyncFileSystem::crackFileSystemURL(const KURL& url, AsyncFileSystem::Type&
     if (url.innerURL()) {
         String typeString = url.innerURL()->path().substring(1);
         if (typeString == temporaryPathPrefix)
-            type = Temporary;
+            type = FileSystemTypeTemporary;
         else if (typeString == persistentPathPrefix)
-            type = Persistent;
+            type = FileSystemTypePersistent;
         else if (typeString == externalPathPrefix)
-            type = externalType;
+            type = FileSystemTypeExternal;
         else
             return false;
 
         filePath = decodeURLEscapeSequences(url.path());
-    } else {
-        // FIXME: Remove this clause once http://codereview.chromium.org/7811006
-        // lands, which makes this dead code.
-        KURL originURL(ParsedURLString, url.path());
-        String path = decodeURLEscapeSequences(originURL.path());
-        if (path.isEmpty() || path[0] != '/')
-            return false;
-        path = path.substring(1);
-
-        if (path.startsWith(temporaryPathPrefix)) {
-            type = Temporary;
-            path = path.substring(temporaryPathPrefixLength);
-        } else if (path.startsWith(persistentPathPrefix)) {
-            type = Persistent;
-            path = path.substring(persistentPathPrefixLength);
-        } else if (path.startsWith(externalPathPrefix)) {
-            type = externalType;
-            path = path.substring(externalPathPrefixLength);
-        } else
-            return false;
-
-        if (path.isEmpty() || path[0] != '/')
-            return false;
-
-        filePath.swap(path);
     }
     return true;
 }
 
 // static
-bool AsyncFileSystem::isValidType(Type type)
+bool AsyncFileSystem::isValidType(FileSystemType type)
 {
-    return type == Temporary || type == Persistent || type == static_cast<Type>(WebKit::WebFileSystem::TypeExternal);
+    return type == FileSystemTypeTemporary || type == FileSystemTypePersistent || type == FileSystemTypeExternal;
 }
 
-AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, const KURL& rootURL)
+AsyncFileSystemChromium::AsyncFileSystemChromium(FileSystemType type, const KURL& rootURL)
     : AsyncFileSystem(type)
     , m_webFileSystem(WebKit::webKitPlatformSupport()->fileSystem())
     , m_filesystemRootURL(rootURL)
@@ -191,7 +164,7 @@ PassOwnPtr<AsyncFileSystem> AsyncFileSystemChromium::createIsolatedFileSystem(co
     rootURL.append(filesystemId);
     rootURL.append("/");
 
-    return AsyncFileSystemChromium::create(isolatedType, KURL(ParsedURLString, rootURL.toString()));
+    return AsyncFileSystemChromium::create(FileSystemTypeIsolated, KURL(ParsedURLString, rootURL.toString()));
 }
 
 AsyncFileSystemChromium::~AsyncFileSystemChromium()
@@ -205,10 +178,10 @@ KURL AsyncFileSystemChromium::toURL(const String& originString, const String& fu
         return KURL();
 
     // For now we don't support toURL for isolated filesystem (until we resolve the isolated filesystem lifetime issue).
-    if (type() == isolatedType)
+    if (type() == FileSystemTypeIsolated)
         return KURL();
 
-    if (type() == externalType) {
+    if (type() == FileSystemTypeExternal) {
         // For external filesystem originString could be different from what we have in m_filesystemRootURL.
         StringBuilder result;
         result.append("filesystem:");

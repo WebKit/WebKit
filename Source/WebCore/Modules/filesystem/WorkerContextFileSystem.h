@@ -42,7 +42,7 @@ class WorkerContext;
 
 class WorkerContextFileSystem {
 public:
-    enum FileSystemType {
+    enum {
         TEMPORARY,
         PERSISTENT,
     };
