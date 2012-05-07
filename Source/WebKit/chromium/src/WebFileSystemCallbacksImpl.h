@@ -52,7 +52,7 @@ class WebURL;
 
 class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
 public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::FileSystemType = WebCore::FileSystemTypeTemporary, WebCore::ScriptExecutionContext* = 0, bool synchronous = false);
+    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::FileSystemType = WebCore::FileSystemTypeTemporary, WebCore::ScriptExecutionContext* = 0, WebCore::FileSystemSynchronousType = WebCore::AsynchronousFileSystem);
     virtual ~WebFileSystemCallbacksImpl();
 
     virtual void didSucceed();
@@ -69,7 +69,7 @@ private:
 
     // Used for worker's openFileSystem callbacks.
     WebCore::ScriptExecutionContext* m_context;
-    bool m_synchronous;
+    WebCore::FileSystemSynchronousType m_synchronousType;
 };
 
 } // namespace WebKit

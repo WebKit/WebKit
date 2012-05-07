@@ -49,6 +49,11 @@ enum FileSystemType {
 #endif
 };
 
+enum FileSystemSynchronousType {
+    AsynchronousFileSystem,
+    SynchronousFileSystem,
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(FILE_SYSTEM)

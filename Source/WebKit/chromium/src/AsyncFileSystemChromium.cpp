@@ -56,7 +56,6 @@ const char isolatedPathPrefix[] = "isolated";
 
 // For external filesystem.
 const char externalPathPrefix[] = "external";
-const size_t externalPathPrefixLength = sizeof(externalPathPrefix) - 1;
 
 // Specialized callback class for createSnapshotFileAndReadMetadata.
 class SnapshotFileCallbacks : public AsyncFileSystemCallbacks {

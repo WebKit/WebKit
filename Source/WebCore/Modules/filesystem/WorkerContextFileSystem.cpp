@@ -41,6 +41,7 @@
 #include "FileException.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
+#include "FileSystemType.h"
 #include "LocalFileSystem.h"
 #include "SecurityOrigin.h"
 #include "SyncCallbackHelper.h"
@@ -62,7 +63,7 @@ void WorkerContextFileSystem::webkitRequestFileSystem(WorkerContext* worker, int
         return;
     }
 
-    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, worker), false);
+    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, worker), AsynchronousFileSystem);
 }
 
 PassRefPtr<DOMFileSystemSync> WorkerContextFileSystem::webkitRequestFileSystemSync(WorkerContext* worker, int type, long long size, ExceptionCode& ec)
@@ -81,7 +82,7 @@ PassRefPtr<DOMFileSystemSync> WorkerContextFileSystem::webkitRequestFileSystemSy
     }
 
     FileSystemSyncCallbackHelper helper;
-    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(helper.successCallback(), helper.errorCallback(), worker), true);
+    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(helper.successCallback(), helper.errorCallback(), worker), SynchronousFileSystem);
     return helper.getResult(ec);
 }
 
@@ -122,7 +123,7 @@ PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncU
     }
 
     FileSystemSyncCallbackHelper readFileSystemHelper;
-    LocalFileSystem::localFileSystem().readFileSystem(worker, type, FileSystemCallbacks::create(readFileSystemHelper.successCallback(), readFileSystemHelper.errorCallback(), worker), true);
+    LocalFileSystem::localFileSystem().readFileSystem(worker, type, FileSystemCallbacks::create(readFileSystemHelper.successCallback(), readFileSystemHelper.errorCallback(), worker), SynchronousFileSystem);
     RefPtr<DOMFileSystemSync> fileSystem = readFileSystemHelper.getResult(ec);
     if (!fileSystem)
         return 0;

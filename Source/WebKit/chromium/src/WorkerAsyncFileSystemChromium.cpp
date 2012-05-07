@@ -57,11 +57,11 @@ namespace WebCore {
 
 static const char fileSystemOperationsMode[] = "fileSystemOperationsMode";
 
-WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium(ScriptExecutionContext* context, FileSystemType type, const WebKit::WebURL& rootURL, bool synchronous)
+WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium(ScriptExecutionContext* context, FileSystemType type, const WebKit::WebURL& rootURL, FileSystemSynchronousType synchronousType)
     : AsyncFileSystemChromium(type, rootURL)
     , m_scriptExecutionContext(context)
     , m_workerContext(static_cast<WorkerContext*>(context))
-    , m_synchronous(synchronous)
+    , m_synchronousType(synchronousType)
 {
     ASSERT(m_scriptExecutionContext->isWorkerContext());
 
@@ -219,7 +219,7 @@ void WorkerAsyncFileSystemChromium::createSnapshotFileAndReadMetadata(const Stri
 
 PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    ASSERT(!m_synchronous || !m_bridgeForCurrentOperation);
+    ASSERT(m_synchronousType == AsynchronousFileSystem || !m_bridgeForCurrentOperation);
 
     m_modeForCurrentOperation = fileSystemOperationsMode;
     m_modeForCurrentOperation.append(String::number(m_workerContext->thread()->runLoop().createUniqueId()));

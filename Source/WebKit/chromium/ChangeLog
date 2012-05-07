@@ -1,5 +1,28 @@
 2012-05-06  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Cleanup: Change boolean synchronous flag argument into enum in FileSystem API code
+        https://bugs.webkit.org/show_bug.cgi?id=85741
+
+        Reviewed by David Levin.
+
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemHelper):
+        (WebCore::LocalFileSystem::readFileSystem):
+        (WebCore::LocalFileSystem::requestFileSystem):
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl):
+        (WebKit::WebFileSystemCallbacksImpl::didOpenFileSystem):
+        * src/WebFileSystemCallbacksImpl.h:
+        (WebFileSystemCallbacksImpl):
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        (WebCore::WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge):
+        * src/WorkerAsyncFileSystemChromium.h:
+        (WebCore::WorkerAsyncFileSystemChromium::create):
+        (WorkerAsyncFileSystemChromium):
+
+2012-05-06  Kinuko Yasuda  <kinuko@chromium.org>
+
         Cleanup: Move FileSystem API type definitions into a separate header file
         https://bugs.webkit.org/show_bug.cgi?id=85738
 

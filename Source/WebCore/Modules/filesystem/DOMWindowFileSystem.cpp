@@ -37,6 +37,7 @@
 #include "FileError.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
+#include "FileSystemType.h"
 #include "LocalFileSystem.h"
 #include "SecurityOrigin.h"
 
@@ -70,7 +71,7 @@ void DOMWindowFileSystem::webkitRequestFileSystem(DOMWindow* window, int type, l
         return;
     }
 
-    LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document), false);
+    LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document), AsynchronousFileSystem);
 }
 
 void DOMWindowFileSystem::webkitResolveLocalFileSystemURL(DOMWindow* window, const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)

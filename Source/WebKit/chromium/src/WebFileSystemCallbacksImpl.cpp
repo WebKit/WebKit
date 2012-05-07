@@ -47,11 +47,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemType type, WebCore::ScriptExecutionContext* context, bool synchronous)
+WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemType type, WebCore::ScriptExecutionContext* context, FileSystemSynchronousType synchronousType)
     : m_callbacks(callbacks)
     , m_type(type)
     , m_context(context)
-    , m_synchronous(synchronous)
+    , m_synchronousType(synchronousType)
 {
     ASSERT(m_callbacks);
 }
@@ -92,7 +92,7 @@ void WebFileSystemCallbacksImpl::didOpenFileSystem(const WebString& name, const 
 
 #if ENABLE(WORKERS)
     if (m_context && m_context->isWorkerContext()) {
-        m_callbacks->didOpenFileSystem(name, WorkerAsyncFileSystemChromium::create(m_context, m_type, rootURL, m_synchronous));
+        m_callbacks->didOpenFileSystem(name, WorkerAsyncFileSystemChromium::create(m_context, m_type, rootURL, m_synchronousType));
         return;
     }
 #endif

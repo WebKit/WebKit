@@ -55,9 +55,9 @@ public:
     static LocalFileSystem& localFileSystem();
 
     // Does not create the root path for file system, just reads it if available.
-    void readFileSystem(ScriptExecutionContext*, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
+    void readFileSystem(ScriptExecutionContext*, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>, FileSystemSynchronousType = AsynchronousFileSystem);
 
-    void requestFileSystem(ScriptExecutionContext*, FileSystemType, long long size, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
+    void requestFileSystem(ScriptExecutionContext*, FileSystemType, long long size, PassOwnPtr<AsyncFileSystemCallbacks>, FileSystemSynchronousType = AsynchronousFileSystem);
 
 #if !PLATFORM(CHROMIUM)
     // This call is not thread-safe; must be called before any worker threads are created.
