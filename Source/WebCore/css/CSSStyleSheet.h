@@ -22,10 +22,8 @@
 #define CSSStyleSheet_h
 
 #include "CSSParserMode.h"
-#include "CSSRule.h"
 #include "StyleSheet.h"
 #include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -67,6 +65,8 @@ public:
 
     const AtomicString& determineNamespace(const AtomicString& prefix);
 
+    void styleSheetChanged();
+
     void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     bool parseString(const String&);
     bool parseStringAtLine(const String&, int startLineNumber);
@@ -101,8 +101,6 @@ public:
 
     void clearRules();
 
-    bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
-    String encodingFromCharsetRule() const { return m_encodingFromCharsetRule; }
     // Rules other than @charset and @import.
     const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
     const Vector<RefPtr<StyleRuleImport> >& importRules() const { return m_importRules; }
@@ -122,8 +120,7 @@ public:
     const KURL& baseURL() const { return m_parserContext.baseURL; }
 
     unsigned ruleCount() const;
-    StyleRuleBase* ruleAt(unsigned index) const;
-
+    
     bool usesRemUnits() const { return m_usesRemUnits; }
 
     unsigned estimatedSizeInBytes() const;
@@ -131,24 +128,19 @@ public:
     bool wrapperInsertRule(PassRefPtr<StyleRuleBase>, unsigned index);
     void wrapperDeleteRule(unsigned index);
 
+    PassRefPtr<CSSRule> createChildRuleCSSOMWrapper(unsigned index, CSSStyleSheet* parentWrapper);
+
     PassRefPtr<StyleSheetInternal> copy() const { return adoptRef(new StyleSheetInternal(*this)); }
 
     void registerClient(CSSStyleSheet*);
     void unregisterClient(CSSStyleSheet*);
-    bool hasOneClient() { return m_clients.size() == 1; }
-
-    bool isMutable() const { return m_isMutable; }
-    void setMutable() { m_isMutable = true; }
-
-    bool isInMemoryCache() const { return m_isInMemoryCache; }
-    void addedToMemoryCache();
-    void removedFromMemoryCache();
 
 private:
     StyleSheetInternal(StyleRuleImport* ownerRule, const String& originalURL, const KURL& baseURL, const CSSParserContext&);
     StyleSheetInternal(const StyleSheetInternal&);
 
     void clearCharsetRule();
+    bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
 
     StyleRuleImport* m_ownerRule;
 
@@ -166,8 +158,7 @@ private:
     bool m_hasSyntacticallyValidCSSHeader : 1;
     bool m_didLoadErrorOccur : 1;
     bool m_usesRemUnits : 1;
-    bool m_isMutable : 1;
-    bool m_isInMemoryCache : 1;
+    bool m_hasMutated : 1;
     
     CSSParserContext m_parserContext;
 
@@ -216,28 +207,13 @@ public:
     virtual bool isLoading() const OVERRIDE { return m_internal->isLoading(); }
     
     void clearOwnerRule() { m_ownerRule = 0; }
+    void styleSheetChanged() { m_internal->styleSheetChanged(); }
     Document* ownerDocument() const;
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
     void setMediaQueries(PassRefPtr<MediaQuerySet>);
     void setTitle(const String& title) { m_title = title; }
-
-    class RuleMutationScope {
-        WTF_MAKE_NONCOPYABLE(RuleMutationScope);
-    public:
-        RuleMutationScope(CSSStyleSheet*);
-        RuleMutationScope(CSSRule*);
-        ~RuleMutationScope();
-
-    private:
-        CSSStyleSheet* m_styleSheet;
-    };
-
-    void willMutateRules();
-    void didMutateRules();
-    void didMutate();
     
     void clearChildRuleCSSOMWrappers();
-    void reattachChildRuleCSSOMWrappers();
 
     StyleSheetInternal* internal() const { return m_internal.get(); }
 
@@ -260,26 +236,6 @@ private:
     mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
-
-inline CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet)
-    : m_styleSheet(sheet)
-{
-    if (m_styleSheet)
-        m_styleSheet->willMutateRules();
-}
-
-inline CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
-    : m_styleSheet(rule ? rule->parentStyleSheet() : 0)
-{
-    if (m_styleSheet)
-        m_styleSheet->willMutateRules();
-}
-
-inline CSSStyleSheet::RuleMutationScope::~RuleMutationScope()
-{
-    if (m_styleSheet)
-        m_styleSheet->didMutateRules();
-}
 
 } // namespace
 

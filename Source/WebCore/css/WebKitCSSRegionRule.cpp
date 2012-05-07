@@ -96,14 +96,5 @@ CSSRuleList* WebKitCSSRegionRule::cssRules() const
     return m_ruleListCSSOMWrapper.get();
 }
 
-void WebKitCSSRegionRule::reattach(StyleRuleRegion* rule)
-{
-    ASSERT(rule);
-    m_regionRule = rule;
-    for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
-        if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->reattach(m_regionRule->childRules()[i].get());
-    }
-}
 
 } // namespace WebCore

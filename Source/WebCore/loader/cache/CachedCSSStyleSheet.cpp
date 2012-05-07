@@ -50,8 +50,6 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(const ResourceRequest& resourceRequest,
 
 CachedCSSStyleSheet::~CachedCSSStyleSheet()
 {
-    if (m_parsedStyleSheetCache)
-        m_parsedStyleSheetCache->removedFromMemoryCache();
 }
 
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient* c)
@@ -155,12 +153,7 @@ bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType, bool* hasValidMIMETy
 
 void CachedCSSStyleSheet::destroyDecodedData()
 {
-    if (!m_parsedStyleSheetCache)
-        return;
-
-    m_parsedStyleSheetCache->removedFromMemoryCache();
     m_parsedStyleSheetCache.clear();
-
     setDecodedSize(0);
 }
 
@@ -168,26 +161,25 @@ PassRefPtr<StyleSheetInternal> CachedCSSStyleSheet::restoreParsedStyleSheet(cons
 {
     if (!m_parsedStyleSheetCache)
         return 0;
-    ASSERT(m_parsedStyleSheetCache->isCacheable());
-    ASSERT(m_parsedStyleSheetCache->isInMemoryCache());
-
+    // Cached parsed stylesheet has mutated, kick it out.
+    if (!m_parsedStyleSheetCache->isCacheable()) {
+        m_parsedStyleSheetCache.clear();
+        setDecodedSize(0);
+        return 0;
+    }
     // Contexts must be identical so we know we would get the same exact result if we parsed again.
     if (m_parsedStyleSheetCache->parserContext() != context)
         return 0;
 
     didAccessDecodedData(currentTime());
-
-    return m_parsedStyleSheetCache;
+    // FIXME: Implement copy-on-write to avoid copying when not necessary.
+    return m_parsedStyleSheetCache->copy();
 }
 
 void CachedCSSStyleSheet::saveParsedStyleSheet(PassRefPtr<StyleSheetInternal> sheet)
 {
     ASSERT(sheet && sheet->isCacheable());
-
-    if (m_parsedStyleSheetCache)
-        m_parsedStyleSheetCache->removedFromMemoryCache();
     m_parsedStyleSheetCache = sheet;
-    m_parsedStyleSheetCache->addedToMemoryCache();
 
     setDecodedSize(m_parsedStyleSheetCache->estimatedSizeInBytes());
 }

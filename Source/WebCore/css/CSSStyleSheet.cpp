@@ -99,8 +99,7 @@ StyleSheetInternal::StyleSheetInternal(StyleRuleImport* ownerRule, const String&
     , m_hasSyntacticallyValidCSSHeader(true)
     , m_didLoadErrorOccur(false)
     , m_usesRemUnits(false)
-    , m_isMutable(false)
-    , m_isInMemoryCache(false)
+    , m_hasMutated(false)
     , m_parserContext(context)
 {
 }
@@ -119,8 +118,7 @@ StyleSheetInternal::StyleSheetInternal(const StyleSheetInternal& o)
     , m_hasSyntacticallyValidCSSHeader(o.m_hasSyntacticallyValidCSSHeader)
     , m_didLoadErrorOccur(false)
     , m_usesRemUnits(o.m_usesRemUnits)
-    , m_isMutable(false)
-    , m_isInMemoryCache(false)
+    , m_hasMutated(false)
     , m_parserContext(o.m_parserContext)
 {
     ASSERT(o.isCacheable());
@@ -142,16 +140,13 @@ bool StyleSheetInternal::isCacheable() const
     // FIXME: Support copying import rules.
     if (!m_importRules.isEmpty())
         return false;
-    // FIXME: Support cached stylesheets in import rules.
-    if (m_ownerRule)
-        return false;
     // This would require dealing with multiple clients for load callbacks.
     if (!m_loadCompleted)
         return false;
     if (m_didLoadErrorOccur)
         return false;
     // It is not the original sheet anymore.
-    if (m_isMutable)
+    if (m_hasMutated)
         return false;
     // If the header is valid we are not going to need to check the SecurityOrigin.
     // FIXME: Valid mime type avoids the check too.
@@ -174,21 +169,21 @@ void StyleSheetInternal::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
     m_childRules.append(rule);
 }
 
-StyleRuleBase* StyleSheetInternal::ruleAt(unsigned index) const
+PassRefPtr<CSSRule> StyleSheetInternal::createChildRuleCSSOMWrapper(unsigned index, CSSStyleSheet* parentWrapper)
 {
     ASSERT(index < ruleCount());
     
     unsigned childVectorIndex = index;
     if (hasCharsetRule()) {
         if (index == 0)
-            return 0;
+            return CSSCharsetRule::create(parentWrapper, m_encodingFromCharsetRule);
         --childVectorIndex;
     }
     if (childVectorIndex < m_importRules.size())
-        return m_importRules[childVectorIndex].get();
-
+        return m_importRules[childVectorIndex]->createCSSOMWrapper(parentWrapper);
+    
     childVectorIndex -= m_importRules.size();
-    return m_childRules[childVectorIndex].get();
+    return m_childRules[childVectorIndex]->createCSSOMWrapper(parentWrapper);
 }
 
 unsigned StyleSheetInternal::ruleCount() const
@@ -225,7 +220,6 @@ void StyleSheetInternal::parserSetEncodingFromCharsetRule(const String& encoding
 
 bool StyleSheetInternal::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsigned index)
 {
-    ASSERT(m_isMutable);
     ASSERT(index <= ruleCount());
     // Parser::parseRule doesn't currently allow @charset so we don't need to deal with it.
     ASSERT(!rule->isCharsetRule());
@@ -248,6 +242,7 @@ bool StyleSheetInternal::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsig
         m_importRules[childVectorIndex]->setParentStyleSheet(this);
         m_importRules[childVectorIndex]->requestStyleSheet();
         // FIXME: Stylesheet doesn't actually change meaningfully before the imported sheets are loaded.
+        styleSheetChanged();
         return true;
     }
     // Inserting @import rule after a non-import rule is not allowed.
@@ -256,18 +251,20 @@ bool StyleSheetInternal::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsig
     childVectorIndex -= m_importRules.size();
  
     m_childRules.insert(childVectorIndex, rule);
+    
+    styleSheetChanged();
     return true;
 }
 
 void StyleSheetInternal::wrapperDeleteRule(unsigned index)
 {
-    ASSERT(m_isMutable);
     ASSERT(index < ruleCount());
 
     unsigned childVectorIndex = index;
     if (hasCharsetRule()) {
         if (childVectorIndex == 0) {
             clearCharsetRule();
+            styleSheetChanged();
             return;
         }
         --childVectorIndex;
@@ -275,11 +272,13 @@ void StyleSheetInternal::wrapperDeleteRule(unsigned index)
     if (childVectorIndex < m_importRules.size()) {
         m_importRules[childVectorIndex]->clearParentStyleSheet();
         m_importRules.remove(childVectorIndex);
+        styleSheetChanged();
         return;
     }
     childVectorIndex -= m_importRules.size();
 
     m_childRules.remove(childVectorIndex);
+    styleSheetChanged();
 }
 
 void StyleSheetInternal::parserAddNamespace(const AtomicString& prefix, const AtomicString& uri)
@@ -416,6 +415,16 @@ Document* StyleSheetInternal::singleOwnerDocument() const
     return ownerNode ? ownerNode->document() : 0;
 }
 
+void StyleSheetInternal::styleSheetChanged()
+{
+    m_hasMutated = true;
+
+    Document* ownerDocument = singleOwnerDocument();
+    if (!ownerDocument)
+        return;
+    ownerDocument->styleResolverChanged(DeferRecalcStyle);
+}
+
 KURL StyleSheetInternal::completeURL(const String& url) const
 {
     return CSSParser::completeURL(m_parserContext, url);
@@ -464,20 +473,6 @@ void StyleSheetInternal::unregisterClient(CSSStyleSheet* sheet)
     m_clients.remove(position);
 }
 
-void StyleSheetInternal::addedToMemoryCache()
-{
-    ASSERT(!m_isInMemoryCache);
-    ASSERT(isCacheable());
-    m_isInMemoryCache = true;
-}
-
-void StyleSheetInternal::removedFromMemoryCache()
-{
-    ASSERT(m_isInMemoryCache);
-    ASSERT(isCacheable());
-    m_isInMemoryCache = false;
-}
-
 PassRefPtr<CSSStyleSheet> CSSStyleSheet::createInline(Node* ownerNode, const KURL& baseURL, const String& encoding)
 {
     CSSParserContext parserContext(ownerNode->document(), baseURL, encoding);
@@ -519,59 +514,14 @@ CSSStyleSheet::~CSSStyleSheet()
     m_internal->unregisterClient(this);
 }
 
-void CSSStyleSheet::willMutateRules()
-{
-    // If we are the only client it is safe to mutate.
-    if (m_internal->hasOneClient() && !m_internal->isInMemoryCache()) {
-        m_internal->setMutable();
-        return;
-    }
-    // Only cacheable stylesheets should have multiple clients.
-    ASSERT(m_internal->isCacheable());
-
-    // Copy-on-write.
-    m_internal->unregisterClient(this);
-    m_internal = m_internal->copy();
-    m_internal->registerClient(this);
-
-    m_internal->setMutable();
-
-    // Any existing CSSOM wrappers need to be connected to the copied child rules.
-    reattachChildRuleCSSOMWrappers();
-}
-
-void CSSStyleSheet::didMutateRules()
-{
-    ASSERT(m_internal->isMutable());
-    ASSERT(m_internal->hasOneClient());
-
-    didMutate();
-}
-
-void CSSStyleSheet::didMutate()
-{
-    Document* owner = ownerDocument();
-    if (!owner)
-        return;
-    owner->styleResolverChanged(DeferRecalcStyle);
-}
-
-void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
-{
-    for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
-        if (!m_childRuleCSSOMWrappers[i])
-            continue;
-        m_childRuleCSSOMWrappers[i]->reattach(m_internal->ruleAt(i));
-    }
-}
-
 void CSSStyleSheet::setDisabled(bool disabled)
 { 
     if (disabled == m_isDisabled)
         return;
     m_isDisabled = disabled;
-
-    didMutate();
+    Document* owner = ownerDocument();
+    if (owner)
+        owner->styleResolverChanged(DeferRecalcStyle);
 }
 
 void CSSStyleSheet::setMediaQueries(PassRefPtr<MediaQuerySet> mediaQueries)
@@ -595,13 +545,8 @@ CSSRule* CSSStyleSheet::item(unsigned index)
     ASSERT(m_childRuleCSSOMWrappers.size() == ruleCount);
     
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
-    if (!cssRule) {
-        if (index == 0 && m_internal->hasCharsetRule()) {
-            ASSERT(!m_internal->ruleAt(0));
-            cssRule = CSSCharsetRule::create(this, m_internal->encodingFromCharsetRule());
-        } else
-            cssRule = m_internal->ruleAt(index)->createCSSOMWrapper(this);
-    }
+    if (!cssRule)
+        cssRule = m_internal->createChildRuleCSSOMWrapper(index, this);
     return cssRule.get();
 }
 
@@ -639,8 +584,6 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         ec = SYNTAX_ERR;
         return 0;
     }
-    RuleMutationScope mutationScope(this);
-
     bool success = m_internal->wrapperInsertRule(rule, index);
     if (!success) {
         ec = HIERARCHY_REQUEST_ERR;
@@ -648,7 +591,6 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
     }        
     if (!m_childRuleCSSOMWrappers.isEmpty())
         m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
-
     return index;
 }
 
@@ -661,8 +603,6 @@ void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR;
         return;
     }
-    RuleMutationScope mutationScope(this);
-
     m_internal->wrapperDeleteRule(index);
 
     if (!m_childRuleCSSOMWrappers.isEmpty()) {

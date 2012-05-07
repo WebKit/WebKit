@@ -43,8 +43,6 @@ public:
 
     String cssText() const;
 
-    void reattach(StyleRuleFontFace*);
-
 private:
     CSSFontFaceRule(StyleRuleFontFace*, CSSStyleSheet* parent);
 

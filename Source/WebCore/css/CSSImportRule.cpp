@@ -22,7 +22,6 @@
 #include "config.h"
 #include "CSSImportRule.h"
 
-#include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"

@@ -24,7 +24,6 @@
 
 #include "CSSParser.h"
 #include "CSSSelector.h"
-#include "CSSStyleSheet.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
@@ -66,16 +65,24 @@ String CSSPageRule::selectorText() const
 
 void CSSPageRule::setSelectorText(const String& selectorText)
 {
+    Document* doc = 0;
+    if (CSSStyleSheet* styleSheet = parentStyleSheet())
+        doc = styleSheet->ownerDocument();
+    if (!doc)
+        return;
+    
     CSSParser parser(parserContext());
     CSSSelectorList selectorList;
     parser.parseSelector(selectorText, selectorList);
     if (!selectorList.first())
         return;
-
-    CSSStyleSheet::RuleMutationScope mutationScope(this);
-
+    
     String oldSelectorText = this->selectorText();
     m_pageRule->wrapperAdoptSelectorList(selectorList);
+    
+    if (this->selectorText() == oldSelectorText)
+        return;
+    doc->styleResolverChanged(DeferRecalcStyle);
 }
 
 String CSSPageRule::cssText() const
@@ -85,14 +92,6 @@ String CSSPageRule::cssText() const
     result += m_pageRule->properties()->asText();
     result += "}";
     return result;
-}
-
-void CSSPageRule::reattach(StyleRulePage* rule)
-{
-    ASSERT(rule);
-    m_pageRule = rule;
-    if (m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper->reattach(m_pageRule->properties());
 }
 
 } // namespace WebCore

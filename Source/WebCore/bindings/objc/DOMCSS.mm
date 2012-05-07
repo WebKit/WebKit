@@ -28,7 +28,6 @@
 #import "config.h"
 
 #import "CSSRule.h"
-#import "CSSStyleSheet.h"
 #import "CSSValue.h"
 #import "DOMCSSCharsetRule.h"
 #import "DOMCSSFontFaceRule.h"

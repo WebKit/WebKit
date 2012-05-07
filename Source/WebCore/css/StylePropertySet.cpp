@@ -23,7 +23,6 @@
 #include "StylePropertySet.h"
 
 #include "CSSParser.h"
-#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
