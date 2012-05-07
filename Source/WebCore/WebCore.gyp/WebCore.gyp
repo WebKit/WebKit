@@ -1178,6 +1178,8 @@
           'direct_dependent_settings': {
             'include_dirs+++': ['../dom'],
           },
+          # In generated bindings code: 'switch contains default but no case'.
+          'msvs_disabled_warnings': [ 4065 ],
         }],
         ['OS=="linux" and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
           'cflags': [
