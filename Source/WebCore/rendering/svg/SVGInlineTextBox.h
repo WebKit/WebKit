@@ -83,8 +83,8 @@ private:
 
 private:
     float m_logicalHeight;
-    int m_paintingResourceMode;
-    bool m_startsNewTextChunk : 1;
+    unsigned m_paintingResourceMode : 4;
+    unsigned m_startsNewTextChunk : 1;
     RenderSVGResource* m_paintingResource;
     Vector<SVGTextFragment> m_textFragments;
 };

@@ -38,6 +38,7 @@ enum RenderSVGResourceType {
     ClipperResourceType
 };
 
+// If this enum changes change the unsigned bitfields using it.
 enum RenderSVGResourceMode {
     ApplyToDefaultMode = 1 << 0, // used for all resources except gradient/pattern
     ApplyToFillMode    = 1 << 1,

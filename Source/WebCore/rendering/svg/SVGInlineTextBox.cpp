@@ -44,6 +44,15 @@ using namespace std;
 
 namespace WebCore {
 
+class ExpectedSVGInlineTextBoxSize : public InlineTextBox {
+    float float1;
+    uint32_t bitfields : 5;
+    void* pointer;
+    Vector<SVGTextFragment> vector;
+};
+
+COMPILE_ASSERT(sizeof(SVGInlineTextBox) == sizeof(ExpectedSVGInlineTextBoxSize), SVGInlineTextBox_is_not_of_expected_size);
+
 SVGInlineTextBox::SVGInlineTextBox(RenderObject* object)
     : InlineTextBox(object)
     , m_logicalHeight(0)
