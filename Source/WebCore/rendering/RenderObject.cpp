@@ -1255,9 +1255,11 @@ RenderBoxModelObject* RenderObject::containerForRepaint() const
 
 #if USE(ACCELERATED_COMPOSITING)
     if (v->usesCompositing()) {
-        RenderLayer* compLayer = enclosingLayer()->enclosingCompositingLayerForRepaint();
-        if (compLayer)
-            repaintContainer = compLayer->renderer();
+        if (RenderLayer* parentLayer = enclosingLayer()) {
+            RenderLayer* compLayer = parentLayer->enclosingCompositingLayerForRepaint();
+            if (compLayer)
+                repaintContainer = compLayer->renderer();
+        }
     }
 #endif
     
