@@ -102,22 +102,6 @@ int main(int argc, char** argv)
 
     qputenv("QT_WEBKIT_THEME_NAME", "qstyle");
 
-    QByteArray platform = qgetenv("QT_QPA_PLATFORM");
-    QByteArray platformPluginPath = qgetenv("QT_QPA_PLATFORM_PLUGIN_PATH");
-    for (int i = 0; i < argc; ++i) {
-        if (QByteArray(argv[i]) == "-platform" && i + 1 < argc)
-            platform = argv[i + 1];
-        else if (QByteArray(argv[i]) == "-platformpluginpath" && i + 1 < argc)
-            platformPluginPath = argv[i + 1];
-    }
-    if (!platform.isEmpty())
-        qputenv("QT_WEBKIT_ORIGINAL_PLATFORM", platform);
-    if (!platformPluginPath.isEmpty())
-        qputenv("QT_WEBKIT_ORIGINAL_PLATFORM_PLUGIN_PATH", platformPluginPath);
-
-    // Tell the web process that we want to use the test platform plugin.
-    qputenv("QT_WEBKIT2_TEST_PLATFORM_PLUGIN_PATH", TEST_PLATFORM_PLUGIN_PATH);
-
     QQuickWebViewExperimental::setFlickableViewportEnabled(false);
     QApplication app(argc, argv);
     Launcher launcher(argc, argv);

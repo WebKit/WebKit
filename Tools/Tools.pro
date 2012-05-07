@@ -13,8 +13,6 @@ SUBDIRS += QtTestBrowser/QtTestBrowser.pro
 SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
 SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 
-haveQt(5): SUBDIRS += QtTestPlatformPlugin/QtTestPlatformPlugin.pro
-
 !no_webkit2 {
     SUBDIRS += MiniBrowser/qt/MiniBrowser.pro \
                WebKitTestRunner/WebKitTestRunner.pro

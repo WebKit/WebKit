@@ -37,9 +37,4 @@ PREFIX_HEADER = WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 *-clang*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
-mac: LIB_SUFFIX=.dylib
-win: LIB_SUFFIX=.dll
-unix:!mac: LIB_SUFFIX=.so
-DEFINES += TEST_PLATFORM_PLUGIN_PATH=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}lib$${QMAKE_DIR_SEP}libtestplatform$${LIB_SUFFIX}\\\"\"
-
 RESOURCES = qt/WebKitTestRunner.qrc

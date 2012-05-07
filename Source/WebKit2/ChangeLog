@@ -1,3 +1,16 @@
+2012-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116299, r116301, and r116303.
+        http://trac.webkit.org/changeset/116299
+        http://trac.webkit.org/changeset/116301
+        http://trac.webkit.org/changeset/116303
+        https://bugs.webkit.org/show_bug.cgi?id=85795
+
+        Build is still broken (Requested by Ossy on #webkit).
+
+        * qt/MainQt.cpp:
+        (main):
+
 2012-05-07  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Add test specific platform plugin to achieve unified layout test results

@@ -57,9 +57,4 @@ wince*: {
 DEFINES -= USE_SYSTEM_MALLOC=0
 DEFINES += USE_SYSTEM_MALLOC=1
 
-mac: LIB_SUFFIX=.dylib
-win: LIB_SUFFIX=.dll
-unix:!mac: LIB_SUFFIX=.so
-DEFINES += TEST_PLATFORM_PLUGIN_PATH=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}lib$${QMAKE_DIR_SEP}libtestplatform$${LIB_SUFFIX}\\\"\"
-
 RESOURCES = DumpRenderTree.qrc
