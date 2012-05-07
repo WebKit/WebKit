@@ -40,7 +40,7 @@ class ExpectedTextRunSize {
     RefPtr<TextRun::RenderingContext> renderingContext;
 };
 
-COMPILE_ASSERT(sizeof(TextRun) == sizeof(ExpectedTextRunSize), "TextRun is not of expected size");
+COMPILE_ASSERT(sizeof(TextRun) == sizeof(ExpectedTextRunSize), TextRun_is_not_of_expected_size);
 
 bool TextRun::s_allowsRoundingHacks = false;
 
