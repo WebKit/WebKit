@@ -1,3 +1,11 @@
+2012-05-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Added myself as a committer.
+
+        Not reviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-05-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][DRT] Implement LayoutTestController::execCommand
