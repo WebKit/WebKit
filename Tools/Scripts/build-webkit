@@ -245,40 +245,7 @@ if (isGtk()) {
     push @projects, ("Source/WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
 
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
-    my @librariesToCopy = (
-        "libWebKitSystemInterfaceLeopard.a",
-        "libWebKitSystemInterfaceSnowLeopard.a",
-        "libWebKitSystemInterfaceLion.a",
-        "libWebCoreSQLite3.a",
-    );
-
-    my $ranlib = `xcrun -find ranlib`;
-    chomp $ranlib;
-    foreach my $libName (@librariesToCopy) {
-        my $srcLib = "WebKitLibraries/" . $libName;
-        my $lib = "$productDir/" . $libName;
-        if (!-e $lib || -M $lib > -M $srcLib) {
-            print "Updating $lib\n";
-            system "ditto", $srcLib, $lib;
-            system $ranlib, $lib;
-        }
-    }
-
-    # FIXME: This code should be abstracted to not be copy/paste.
-    my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
-    my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
-    if (!-e $header || -M $header > -M $srcHeader) {
-        print "Updating $header\n";
-        system "mkdir", "-p", "$productDir/usr/local/include";
-        system "ditto", $srcHeader, $header;
-    }
-
-    my $srcHeaderDir = "WebKitLibraries/WebCoreSQLite3";
-    my $headerDir = "$productDir/WebCoreSQLite3";
-    if (!-e $headerDir || -M $headerDir > -M $srcHeaderDir) {
-        print "Updating $headerDir\n";
-        system "ditto", $srcHeaderDir, $headerDir;
-    }
+    (system("perl Tools/Scripts/copy-webkitlibraries-to-product-directory") == 0) or die;
 } elsif (isWinCairo()) {
     (system("perl Tools/Scripts/update-webkit-wincairo-libs") == 0) or die;
 } elsif (isAppleWinWebKit()) {

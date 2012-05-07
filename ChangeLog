@@ -1,3 +1,23 @@
+2012-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Part of: Building and debugging WebKit in the Xcode IDE requires a lot of setup
+        https://bugs.webkit.org/show_bug.cgi?id=85739
+
+        Reviewed by Daniel Bates.
+
+        * WebKit.xcworkspace: Added.
+        * WebKit.xcworkspace/contents.xcworkspacedata: Added.
+        * WebKit.xcworkspace/xcshareddata: Added.
+        * WebKit.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings: Added.
+        * WebKit.xcworkspace/xcshareddata/xcschemes: Added.
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme: Added
+        this scheme, which builds all source projects and runs WebProcess with
+        Safari as the client executable.
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme: Added
+        this scheme, which builds all source projects and runs Safari.
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Tools.xcscheme: Added
+        this scheme, which builds all tools projects and runs DumpRenderTree.
+
 2012-05-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Enable WebKit2 build by default (again)

@@ -1,3 +1,14 @@
+2012-05-06  Dan Bernstein  <mitz@apple.com>
+
+        Tools part of: Building and debugging WebKit in the Xcode IDE requires a lot of setup
+        https://bugs.webkit.org/show_bug.cgi?id=85739
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/build-webkit: Moved code that copies from WebKitLibraries to the product directory
+        from here...
+        * Scripts/copy-webkitlibraries-to-product-directory: ...to this new script.
+
 2012-05-06  Andy Estes  <aestes@apple.com>
 
         Fix the build after r116246.
