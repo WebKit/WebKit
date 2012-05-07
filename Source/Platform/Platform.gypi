@@ -42,6 +42,7 @@
             'chromium/public/WebContentLayerClient.h',
             'chromium/public/WebData.h',
             'chromium/public/WebExternalTextureLayer.h',
+            'chromium/public/WebFileSystem.h',
             'chromium/public/WebFilterOperation.h',
             'chromium/public/WebFilterOperations.h',
             'chromium/public/WebFloatPoint.h',

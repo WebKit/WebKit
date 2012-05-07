@@ -178,7 +178,7 @@
 #include "V8DirectoryEntry.h"
 #include "V8DOMFileSystem.h"
 #include "V8FileEntry.h"
-#include "platform/WebFileSystem.h"
+#include <public/WebFileSystem.h>
 #endif
 
 using namespace WebCore;

@@ -41,7 +41,6 @@
 #include "FileSystemType.h"
 #include "PlatformString.h"
 #include "WebFileError.h"
-#include "platform/WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
@@ -51,6 +50,7 @@
 #include "WorkerContext.h"
 #include "WorkerFileSystemCallbacksBridge.h"
 #include "WorkerThread.h"
+#include <public/WebFileSystem.h>
 #include <wtf/Threading.h>
 
 using namespace WebKit;

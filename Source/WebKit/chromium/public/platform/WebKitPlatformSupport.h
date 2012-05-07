@@ -53,7 +53,6 @@ class WebApplicationCacheHostClient; // FIXME: Does this belong in platform?
 class WebBlobRegistry;
 class WebClipboard;
 class WebCookieJar;
-class WebFileSystem;
 class WebFileUtilities;
 class WebIDBFactory; // FIXME: Does this belong in platform?
 class WebIDBKey; // FIXME: Does this belong in platform?
@@ -176,11 +175,6 @@ public:
     // This value must be checked again after a context loss event as the platform's capabilities may have changed.
     virtual bool canAccelerate2dCanvas() { return false; }
 
-
-    // FileSystem ----------------------------------------------------------
-
-    // Must return non-null.
-    virtual WebFileSystem* fileSystem() { return 0; }
 
     // WebWorker ----------------------------------------------------------
 

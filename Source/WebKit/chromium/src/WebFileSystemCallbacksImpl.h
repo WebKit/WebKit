@@ -33,8 +33,8 @@
 
 #include "FileSystemType.h"
 #include "WebFileSystemCallbacks.h"
-#include "platform/WebFileSystem.h"
 #include "platform/WebVector.h"
+#include <public/WebFileSystem.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 

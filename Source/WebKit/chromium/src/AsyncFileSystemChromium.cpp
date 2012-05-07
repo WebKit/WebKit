@@ -42,8 +42,8 @@
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
 #include "WebKit.h"
-#include "platform/WebFileSystem.h"
-#include "platform/WebKitPlatformSupport.h"
+#include <public/Platform.h>
+#include <public/WebFileSystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -131,7 +131,7 @@ bool AsyncFileSystem::isValidType(FileSystemType type)
 
 AsyncFileSystemChromium::AsyncFileSystemChromium(FileSystemType type, const KURL& rootURL)
     : AsyncFileSystem(type)
-    , m_webFileSystem(WebKit::webKitPlatformSupport()->fileSystem())
+    , m_webFileSystem(WebKit::Platform::current()->fileSystem())
     , m_filesystemRootURL(rootURL)
 {
     ASSERT(m_webFileSystem);

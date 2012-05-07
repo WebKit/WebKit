@@ -38,7 +38,6 @@
 #include "FileMetadata.h"
 #include "FileSystem.h"
 #include "NotImplemented.h"
-#include "platform/WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
 #include "WebKit.h"
@@ -49,6 +48,7 @@
 #include "WorkerFileSystemCallbacksBridge.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
+#include <public/WebFileSystem.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

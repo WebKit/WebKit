@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class WebAudioBus;
+class WebFileSystem;
 class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
 class WebMimeRegistry;
@@ -68,6 +69,11 @@ public:
     virtual size_t audioHardwareBufferSize() { return 0; }
     virtual WebAudioDevice* createAudioDevice(size_t bufferSize, unsigned numberOfChannels, double sampleRate, WebAudioDevice::RenderCallback*) { return 0; }
 
+
+    // FileSystem ----------------------------------------------------------
+
+    // Must return non-null.
+    virtual WebFileSystem* fileSystem() { return 0; }
 
     // Gamepad -------------------------------------------------------------
 

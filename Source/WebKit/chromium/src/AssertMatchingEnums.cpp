@@ -100,11 +100,11 @@
 #include "WebTextCheckingType.h"
 #include "WebView.h"
 #include "platform/WebClipboard.h"
-#include "platform/WebFileSystem.h"
 #include "platform/WebICEOptions.h"
 #include "platform/WebMediaStreamSource.h"
 #include "platform/WebPeerConnection00Handler.h"
 #include "platform/WebPeerConnection00HandlerClient.h"
+#include <public/WebFileSystem.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebReferrerPolicy.h>
 #include <wtf/Assertions.h>

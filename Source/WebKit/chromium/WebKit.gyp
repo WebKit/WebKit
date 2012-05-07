@@ -309,7 +309,6 @@
                 'public/platform/WebData.h',
                 'public/platform/WebDragData.h',
                 'public/platform/WebExternalTextureLayer.h',
-                'public/platform/WebFileSystem.h',
                 'public/platform/WebFloatPoint.h',
                 'public/platform/WebFloatQuad.h',
                 'public/platform/WebFloatRect.h',
