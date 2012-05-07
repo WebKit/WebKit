@@ -1,3 +1,13 @@
+2012-05-07  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderBlock::updateFirstLetterStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=85759
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/css-generated-content/first-letter-next-sibling-crash-expected.txt: Added.
+        * fast/css-generated-content/first-letter-next-sibling-crash.html: Added.
+
 2012-05-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK gardening.
