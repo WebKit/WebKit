@@ -1,3 +1,12 @@
+2012-05-07  Oliver Hunt  <oliver@apple.com>
+
+        Rolling out r110287
+
+        RS=Filip Pizlo
+
+        r110287 was meant to be refactoring only, but changed behavior
+        enough to break some websites, including qq.com.
+
 2012-05-07  Andy Estes  <aestes@apple.com>
 
         ENABLE_IFRAME_SEAMLESS should be part of FEATURE_DEFINES.

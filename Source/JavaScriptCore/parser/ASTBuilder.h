@@ -77,6 +77,7 @@ public:
         : m_globalData(globalData)
         , m_sourceCode(sourceCode)
         , m_scope(globalData)
+        , m_evalCount(0)
     {
     }
     
@@ -118,6 +119,7 @@ public:
 
     ParserArenaData<DeclarationStacks::VarStack>* varDeclarations() { return m_scope.m_varDeclarations; }
     ParserArenaData<DeclarationStacks::FunctionStack>* funcDeclarations() { return m_scope.m_funcDeclarations; }
+    int features() const { return m_scope.m_features; }
     int numConstants() const { return m_scope.m_numConstants; }
 
     void appendToComma(CommaNode* commaNode, ExpressionNode* expr) { commaNode->append(expr); }
@@ -150,8 +152,17 @@ public:
         incConstants();
         return new (m_globalData) VoidNode(lineNumber, expr);
     }
-    ExpressionNode* thisExpr(int lineNumber) { return new (m_globalData) ThisNode(lineNumber); }
-    ExpressionNode* createResolve(int lineNumber, const Identifier* ident, int start) { return new (m_globalData) ResolveNode(lineNumber, *ident, start); }
+    ExpressionNode* thisExpr(int lineNumber)
+    {
+        usesThis();
+        return new (m_globalData) ThisNode(lineNumber);
+    }
+    ExpressionNode* createResolve(int lineNumber, const Identifier* ident, int start)
+    {
+        if (m_globalData->propertyNames->arguments == *ident)
+            usesArguments();
+        return new (m_globalData) ResolveNode(lineNumber, *ident, start);
+    }
     ExpressionNode* createObjectLiteral(int lineNumber) { return new (m_globalData) ObjectLiteralNode(lineNumber); }
     ExpressionNode* createObjectLiteral(int lineNumber, PropertyListNode* properties) { return new (m_globalData) ObjectLiteralNode(lineNumber, properties); }
 
@@ -252,9 +263,9 @@ public:
         return result;
     }
 
-    FunctionBodyNode* createFunctionBody(int lineNumber, ScopeFlags scopeFlags)
+    FunctionBodyNode* createFunctionBody(int lineNumber, bool inStrictContext)
     {
-        return FunctionBodyNode::create(m_globalData, lineNumber, scopeFlags);
+        return FunctionBodyNode::create(m_globalData, lineNumber, inStrictContext);
     }
     
     template <bool> PropertyNode* createGetterOrSetterProperty(int lineNumber, PropertyNode::Type type, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
@@ -301,6 +312,8 @@ public:
     StatementNode* createFuncDeclStatement(int lineNumber, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
         FuncDeclNode* decl = new (m_globalData) FuncDeclNode(lineNumber, *name, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), parameters);
+        if (*name == m_globalData->propertyNames->arguments)
+            usesArguments();
         m_scope.m_funcDeclarations->data.append(decl->body());
         body->setLoc(bodyStartLine, bodyEndLine);
         return decl;
@@ -413,6 +426,8 @@ public:
     StatementNode* createTryStatement(int lineNumber, StatementNode* tryBlock, const Identifier* ident, StatementNode* catchBlock, StatementNode* finallyBlock, int startLine, int endLine)
     {
         TryNode* result = new (m_globalData) TryNode(lineNumber, tryBlock, *ident, catchBlock, finallyBlock);
+        if (catchBlock)
+            usesCatch();
         result->setLoc(startLine, endLine);
         return result;
     }
@@ -448,6 +463,7 @@ public:
 
     StatementNode* createWithStatement(int lineNumber, ExpressionNode* expr, StatementNode* statement, int start, int end, int startLine, int endLine)
     {
+        usesWith();
         WithNode* result = new (m_globalData) WithNode(lineNumber, expr, statement, end, end - start);
         result->setLoc(startLine, endLine);
         return result;
@@ -490,6 +506,8 @@ public:
 
     void addVar(const Identifier* ident, int attrs)
     {
+        if (m_globalData->propertyNames->arguments == *ident)
+            usesArguments();
         m_scope.m_varDeclarations->data.append(std::make_pair(ident, attrs));
     }
 
@@ -503,6 +521,8 @@ public:
         }
         return new (m_globalData) CommaNode(lineNumber, list, init);
     }
+
+    int evalCount() const { return m_evalCount; }
 
     void appendBinaryExpressionInfo(int& operandStackDepth, ExpressionNode* current, int exprStart, int lhs, int rhs, bool hasAssignments)
     {
@@ -590,11 +610,13 @@ private:
         Scope(JSGlobalData* globalData)
             : m_varDeclarations(new (globalData) ParserArenaData<DeclarationStacks::VarStack>)
             , m_funcDeclarations(new (globalData) ParserArenaData<DeclarationStacks::FunctionStack>)
+            , m_features(0)
             , m_numConstants(0)
         {
         }
         ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
         ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
+        int m_features;
         int m_numConstants;
     };
 
@@ -604,6 +626,15 @@ private:
     }
 
     void incConstants() { m_scope.m_numConstants++; }
+    void usesThis() { m_scope.m_features |= ThisFeature; }
+    void usesCatch() { m_scope.m_features |= CatchFeature; }
+    void usesArguments() { m_scope.m_features |= ArgumentsFeature; }
+    void usesWith() { m_scope.m_features |= WithFeature; }
+    void usesEval() 
+    {
+        m_evalCount++;
+        m_scope.m_features |= EvalFeature;
+    }
     ExpressionNode* createNumber(int lineNumber, double d)
     {
         return new (m_globalData) NumberNode(lineNumber, d);
@@ -616,6 +647,7 @@ private:
     Vector<AssignmentInfo, 10> m_assignmentInfoStack;
     Vector<pair<int, int>, 10> m_binaryOperatorStack;
     Vector<pair<int, int>, 10> m_unaryTokenStack;
+    int m_evalCount;
 };
 
 ExpressionNode* ASTBuilder::makeTypeOfNode(int lineNumber, ExpressionNode* expr)
@@ -765,8 +797,10 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(int lineNumber, ExpressionNode*
     if (func->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(func);
         const Identifier& identifier = resolve->identifier();
-        if (identifier == m_globalData->propertyNames->eval)
+        if (identifier == m_globalData->propertyNames->eval) {
+            usesEval();
             return new (m_globalData) EvalFunctionCallNode(lineNumber, args, divot, divot - start, end - divot);
+        }
         return new (m_globalData) FunctionCallResolveNode(lineNumber, identifier, args, divot, divot - start, end - divot);
     }
     if (func->isBracketAccessorNode()) {
