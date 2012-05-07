@@ -1,3 +1,13 @@
+2012-05-07  Raymond Toy  <rtoy@google.com>
+
+        ConvolverNode setBuffer() should not ASSERT on null buffer
+        https://bugs.webkit.org/show_bug.cgi?id=85653
+
+        Reviewed by Chris Rogers.
+
+        * webaudio/convolver-setBuffer-null-expected.txt: Added.
+        * webaudio/convolver-setBuffer-null.html: Added.
+
 2012-05-07  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to positioned object list not being cleared during block flow split

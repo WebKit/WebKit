@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="resources/audio-testing.js"></script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that ConvolverNode impulse response buffer can be set to 0.");
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    var context = new webkitAudioContext();
+    var conv = context.createConvolver();
+
+    conv.buffer = 0;
+    testPassed("ConvolverNode impulse response buffer was set to 0.");
+
+    finishJSTest();
+}
+
+runTest();
+successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -113,7 +113,6 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer)
 {
     ASSERT(isMainThread());
     
-    ASSERT(buffer);
     if (!buffer)
         return;
 
