@@ -1,3 +1,17 @@
+2012-05-07  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        webkitdirs.pm: Make determineNumberOfCPUs work on FreeBSD.
+        https://bugs.webkit.org/show_bug.cgi?id=81481
+
+        Reviewed by Dirk Pranke.
+
+        FreeBSD has the same sysctl interface present in Darwin to query
+        the number of CPUs available, so use that too.
+
+        * Scripts/webkitdirs.pm:
+        (determineNumberOfCPUs): Share the sysctl call with Darwin.
+        (isFreeBSD): Added.
+
 2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed Qt build fix in Debug.

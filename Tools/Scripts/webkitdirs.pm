@@ -336,7 +336,7 @@ sub determineNumberOfCPUs
     } elsif (isWindows() || isCygwin()) {
         # Assumes cygwin
         $numberOfCPUs = `ls /proc/registry/HKEY_LOCAL_MACHINE/HARDWARE/DESCRIPTION/System/CentralProcessor | wc -w`;
-    } elsif (isDarwin()) {
+    } elsif (isDarwin() || isFreeBSD()) {
         chomp($numberOfCPUs = `sysctl -n hw.ncpu`);
     }
 }
@@ -1255,6 +1255,11 @@ sub isMsys()
 sub isLinux()
 {
     return ($^O eq "linux") || 0;
+}
+
+sub isFreeBSD()
+{
+    return ($^O eq "freebsd") || 0;
 }
 
 sub isARM()
