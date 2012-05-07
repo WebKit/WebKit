@@ -3915,3 +3915,4 @@ BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 BUGWK85771 MAC LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 MAC LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
 BUGWK85771 MAC LINUX : compositing/reflections/masked-reflection-on-composited.html = PASS TIMEOUT
+BUGWK85771 MAC LINUX : compositing/visibility/visibility-simple-webgl-layer.html = PASS TIMEOUT

@@ -1,3 +1,9 @@
+2012-05-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed gardening, more compositing test timeouts.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-07  Antti Koivisto  <antti@apple.com>
 
         Share stylesheet data structures between documents
