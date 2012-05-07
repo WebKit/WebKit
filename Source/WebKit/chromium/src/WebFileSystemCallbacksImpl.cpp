@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemType type, WebCore::ScriptExecutionContext* context, FileSystemSynchronousType synchronousType)
+WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, WebCore::FileSystemType type, WebCore::ScriptExecutionContext* context, FileSystemSynchronousType synchronousType)
     : m_callbacks(callbacks)
     , m_type(type)
     , m_context(context)

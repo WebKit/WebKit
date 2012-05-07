@@ -1,3 +1,10 @@
+2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Not reviewed: chromium win build fix attempt; adding WebCore namespace to ambiguous type name.
+
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl):
+
 2012-05-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Cleanup: Change boolean synchronous flag argument into enum in FileSystem API code
