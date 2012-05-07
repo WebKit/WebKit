@@ -1759,6 +1759,7 @@ sub generateFileList(\%$$$)
                     if isAddedStatus($status)
                        && $file =~ /\.([a-zA-Z]+)$/
                        && SupportedTestExtensions->{lc($1)}
+                       && $file !~ /-expected(-mismatch)?\.html$/
                        && !scalar(grep(/^resources$/i, @components))
                        && !scalar(grep(/^script-tests$/i, @components));
             }
