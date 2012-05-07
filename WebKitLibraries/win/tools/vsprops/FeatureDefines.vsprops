@@ -122,6 +122,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_IFRAME_SEAMLESS"
+		Value="ENABLE_IFRAME_SEAMLESS"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_INDEXED_DATABASE"
 		Value=""
 		PerformEnvironmentSet="true"
