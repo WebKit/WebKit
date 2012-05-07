@@ -1,3 +1,9 @@
+2012-05-07  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening, fix failure expectation for test.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Convert (some) region style tests to ref tests

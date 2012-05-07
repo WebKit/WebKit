@@ -39,7 +39,7 @@ BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
 BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT TEXT
 
 // Missing execCommand('copy') and execCommand('paste').
-BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TIMEOUT
+BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TEXT
 BUGWK84338 : editing/input/paste-text-ending-with-interchange-newline.html = TEXT
 BUGWK84338 : editing/input/reveal-contenteditable-on-paste-vertically.html = TEXT
 
