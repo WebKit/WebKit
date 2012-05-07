@@ -557,7 +557,7 @@ private:
     }
 };
 
-void WebPagePrivate::load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally, bool forceDownload, const char* overrideContentType)
+void WebPagePrivate::load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally, bool forceDownload, const char* overrideContentType, const char* suggestedSaveName)
 {
     stopCurrentLoad();
     DeferredTaskLoadManualScript::finishOrCancel(this);
@@ -600,6 +600,8 @@ void WebPagePrivate::load(const char* url, const char* networkToken, const char*
     if (forceDownload)
         request.setForceDownload(true);
 
+    request.setSuggestedSaveName(suggestedSaveName);
+
     m_mainFrame->loader()->load(request, "" /* name */, false);
 }
 
@@ -626,7 +628,7 @@ void WebPage::loadFile(const char* path, const char* overrideContentType)
 
 void WebPage::download(const Platform::NetworkRequest& request)
 {
-    d->load(request.getUrlRef().c_str(), 0, "GET", Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "");
+    d->load(request.getUrlRef().c_str(), 0, "GET", Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "", request.getSuggestedSaveName().c_str());
 }
 
 void WebPagePrivate::loadString(const char* string, const char* baseURL, const char* contentType, const char* failingURL)

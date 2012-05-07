@@ -155,6 +155,7 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
                 timeoutInterval());
 
         platformRequest.setConditional(isConditional());
+        platformRequest.setSuggestedSaveName(suggestedSaveName().utf8().data());
 
         if (httpBody() && !httpBody()->isEmpty()) {
             const Vector<FormDataElement>& elements = httpBody()->elements();
@@ -234,6 +235,7 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(P
     data->m_token = m_token;
     data->m_anchorText = m_anchorText;
     data->m_overrideContentType = m_overrideContentType;
+    data->m_suggestedSaveName = m_suggestedSaveName;
     data->m_isXMLHTTPRequest = m_isXMLHTTPRequest;
     data->m_mustHandleInternally = m_mustHandleInternally;
     data->m_isRequestedByPlugin = m_isRequestedByPlugin;
@@ -247,6 +249,7 @@ void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>
     m_token = data->m_token;
     m_anchorText = data->m_anchorText;
     m_overrideContentType = data->m_overrideContentType;
+    m_suggestedSaveName = data->m_suggestedSaveName;
     m_isXMLHTTPRequest = data->m_isXMLHTTPRequest;
     m_mustHandleInternally = data->m_mustHandleInternally;
     m_isRequestedByPlugin = data->m_isRequestedByPlugin;

@@ -164,6 +164,11 @@ bool NetworkJob::initialize(int playerId,
     if (m_isData || m_isAbout)
         return true;
 
+    if (!request.getSuggestedSaveName().empty()) {
+        m_contentDisposition = "filename=";
+        m_contentDisposition += request.getSuggestedSaveName().c_str();
+    }
+
     BlackBerry::Platform::FilterStream* wrappedStream = m_streamFactory->createNetworkStream(request, m_playerId);
     if (!wrappedStream)
         return false;
