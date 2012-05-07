@@ -1,3 +1,13 @@
+2012-05-06  MORITA Hajime  <morrita@google.com>
+
+        [Shadow DOM] Node distribution should be refreshed before style recalc.
+        https://bugs.webkit.org/show_bug.cgi?id=85259
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector-expected.txt: Added.
+        * fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector.html: Added.
+
 2012-05-06  Adam Barth  <abarth@webkit.org>
 
         CSP should let sites both enforce one policy and monitor another

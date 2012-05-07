@@ -1154,6 +1154,16 @@ void Element::recalcStyle(StyleChange change)
         }
     }
     StyleResolverParentPusher parentPusher(this);
+
+    // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
+    if (hasShadowRoot()) {
+        ShadowTree* tree = shadowTree();
+        if (change >= Inherit || tree->childNeedsStyleRecalc() || tree->needsStyleRecalc()) {
+            parentPusher.push();
+            tree->recalcShadowTreeStyle(change);
+        }
+    }
+
     // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
     // For now we will just worry about the common case, since it's a lot trickier to get the second case right
     // without doing way too much re-resolution.
@@ -1176,14 +1186,6 @@ void Element::recalcStyle(StyleChange change)
         }
         forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
         forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
-    }
-    // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
-    if (hasShadowRoot()) {
-        ShadowTree* tree = shadowTree();
-        if (change >= Inherit || tree->childNeedsStyleRecalc() || tree->needsStyleRecalc()) {
-            parentPusher.push();
-            tree->recalcShadowTreeStyle(change);
-        }
     }
 
     clearNeedsStyleRecalc();
