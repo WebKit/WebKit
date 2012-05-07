@@ -1,3 +1,18 @@
+2012-05-06  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Add WebKit API to access multiple attribute of input element
+        https://bugs.webkit.org/show_bug.cgi?id=85355
+
+        Reviewed by Kent Tamura.
+
+        We need this to implement the datalist UI for <input type=email multiple>.
+
+        * public/WebInputElement.h:
+        (WebInputElement):
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::isMultiple):
+        (WebKit):
+
 2012-05-06  Adam Barth  <abarth@webkit.org>
 
         CSP should let sites both enforce one policy and monitor another

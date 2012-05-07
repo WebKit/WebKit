@@ -153,6 +153,11 @@ bool WebInputElement::isChecked() const
     return constUnwrap<HTMLInputElement>()->checked();
 }
 
+bool WebInputElement::isMultiple() const
+{
+    return constUnwrap<HTMLInputElement>()->multiple();
+}
+
 WebNodeCollection WebInputElement::dataListOptions() const
 {
 #if ENABLE(DATALIST)

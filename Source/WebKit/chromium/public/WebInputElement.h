@@ -85,6 +85,7 @@ namespace WebKit {
         WEBKIT_EXPORT int selectionEnd() const;
         WEBKIT_EXPORT bool isValidValue(const WebString&) const;
         WEBKIT_EXPORT bool isChecked() const;
+        WEBKIT_EXPORT bool isMultiple() const;
 
         WEBKIT_EXPORT WebNodeCollection dataListOptions() const;
 
