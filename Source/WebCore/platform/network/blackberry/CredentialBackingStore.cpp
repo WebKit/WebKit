@@ -38,13 +38,11 @@
 
 namespace WebCore {
 
-CredentialBackingStore* CredentialBackingStore::instance()
+CredentialBackingStore& credentialBackingStore()
 {
-    static CredentialBackingStore* backingStore = 0;
-    if (!backingStore) {
-        backingStore = new CredentialBackingStore;
-        backingStore->open(pathByAppendingComponent(BlackBerry::Platform::Client::get()->getApplicationDataDirectory().c_str(), "/credentials.db"));
-    }
+    DEFINE_STATIC_LOCAL(CredentialBackingStore, backingStore, ());
+    if (!backingStore.m_database.isOpen())
+        backingStore.open(pathByAppendingComponent(BlackBerry::Platform::Client::get()->getApplicationDataDirectory().c_str(), "/credentials.db"));
     return backingStore;
 }
 
@@ -64,6 +62,27 @@ CredentialBackingStore::CredentialBackingStore()
 
 CredentialBackingStore::~CredentialBackingStore()
 {
+    delete m_addLoginStatement;
+    m_addLoginStatement = 0;
+    delete m_updateLoginStatement;
+    m_updateLoginStatement = 0;
+    delete m_hasLoginStatement;
+    m_hasLoginStatement = 0;
+    delete m_getLoginStatement;
+    m_getLoginStatement = 0;
+    delete m_getLoginByURLStatement;
+    m_getLoginByURLStatement = 0;
+    delete m_removeLoginStatement;
+    m_removeLoginStatement = 0;
+    delete m_addNeverRememberStatement;
+    m_addNeverRememberStatement = 0;
+    delete m_hasNeverRememberStatement;
+    m_hasNeverRememberStatement = 0;
+    delete m_getNeverRememberStatement;
+    m_getNeverRememberStatement = 0;
+    delete m_removeNeverRememberStatement;
+    m_removeNeverRememberStatement = 0;
+
     if (m_database.isOpen())
         m_database.close();
 }
@@ -135,33 +154,6 @@ bool CredentialBackingStore::open(const String& dbPath)
         false, "Failed to prepare removeNeverRemember statement");
 
     return true;
-}
-
-void CredentialBackingStore::close()
-{
-    delete m_addLoginStatement;
-    m_addLoginStatement = 0;
-    delete m_updateLoginStatement;
-    m_updateLoginStatement = 0;
-    delete m_hasLoginStatement;
-    m_hasLoginStatement = 0;
-    delete m_getLoginStatement;
-    m_getLoginStatement = 0;
-    delete m_getLoginByURLStatement;
-    m_getLoginByURLStatement = 0;
-    delete m_removeLoginStatement;
-    m_removeLoginStatement = 0;
-    delete m_addNeverRememberStatement;
-    m_addNeverRememberStatement = 0;
-    delete m_hasNeverRememberStatement;
-    m_hasNeverRememberStatement = 0;
-    delete m_getNeverRememberStatement;
-    m_getNeverRememberStatement = 0;
-    delete m_removeNeverRememberStatement;
-    m_removeNeverRememberStatement = 0;
-
-    if (m_database.isOpen())
-        m_database.close();
 }
 
 bool CredentialBackingStore::addLogin(const KURL& url, const ProtectionSpace& protectionSpace, const Credential& credential)

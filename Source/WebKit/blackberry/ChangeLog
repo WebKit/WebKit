@@ -1,5 +1,22 @@
 2012-05-06  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
+        [BlackBerry] Autofill backing store implementation upstream
+        https://bugs.webkit.org/show_bug.cgi?id=85575
+
+        Reviewed by Rob Buis.
+
+        Replaced calling static function CredentialBackingStore::instance()
+        with calling the helper function credentialBackingStore().
+
+        * WebCoreSupport/CredentialManager.cpp:
+        (WebCore::CredentialManager::autofillAuthenticationChallenge):
+        (WebCore::CredentialManager::autofillPasswordForms):
+        (WebCore::CredentialManager::saveCredentialIfConfirmed):
+        (WebCore::CredentialManager::clearCredentials):
+        (WebCore::CredentialManager::clearNeverRememberSites):
+
+2012-05-06  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
         [BlackBerry] Enable credential persistance and auto fill
         https://bugs.webkit.org/show_bug.cgi?id=85572
 

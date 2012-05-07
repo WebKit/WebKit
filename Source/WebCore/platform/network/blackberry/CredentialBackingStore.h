@@ -31,10 +31,10 @@ class ProtectionSpace;
 
 class CredentialBackingStore {
 public:
-    static CredentialBackingStore* instance();
+    friend CredentialBackingStore& credentialBackingStore();
+
     ~CredentialBackingStore();
     bool open(const String& dbPath);
-    void close();
     bool addLogin(const KURL&, const ProtectionSpace&, const Credential&);
     bool updateLogin(const KURL&, const ProtectionSpace&, const Credential&);
     bool hasLogin(const KURL&, const ProtectionSpace&);
@@ -65,6 +65,8 @@ private:
     SQLiteStatement* m_getNeverRememberStatement;
     SQLiteStatement* m_removeNeverRememberStatement;
 };
+
+CredentialBackingStore& credentialBackingStore();
 
 } // namespace WebCore
 
