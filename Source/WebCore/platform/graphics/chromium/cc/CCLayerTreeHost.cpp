@@ -420,6 +420,7 @@ void CCLayerTreeHost::setContentsMemoryAllocationLimitBytes(size_t bytes)
         return;
 
     m_contentsTextureManager->setMemoryAllocationLimitBytes(bytes);
+    setNeedsCommit();
 }
 
 
