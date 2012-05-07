@@ -1,3 +1,18 @@
+2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Enable fullscreen api layout tests on WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=85616
+
+        Reviewed by Csaba Osztrogonác.
+
+        http://trac.webkit.org/changeset/116089 implements the fullscreen API for WebKit2,
+        we can now unskip the related tests.
+
+        * platform/qt-4.8/Skipped:
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2012-05-07  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [EFL][DRT] Gardening current IMAGE failures

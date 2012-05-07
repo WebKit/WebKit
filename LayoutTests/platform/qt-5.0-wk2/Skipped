@@ -536,6 +536,9 @@ transforms/3d/hit-testing
 # Generated results doesn't contain any visible 3d transformation.
 transforms/3d/point-mapping
 
+# Offset of the test appears to be different.
+fullscreen/full-screen-placeholder.html
+
 # [Qt][WK2] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml crashes
 # https://bugs.webkit.org/show_bug.cgi?id=80209
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml

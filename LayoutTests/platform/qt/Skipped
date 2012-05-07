@@ -359,11 +359,6 @@ http/tests/multipart
 fast/hidpi
 svg/as-image/image-respects-deviceScaleFactor.html
 
-# [Qt] QtWebKit needs fullscreen api support
-# <https://bugs.webkit.org/show_bug.cgi?id=70132>
-fullscreen
-plugins/fullscreen-plugins-dont-reload.html
-
 # Web Intents is not yet enabled.
 webintents/
 
