@@ -1377,6 +1377,7 @@ void WebViewHost::setWebWidget(WebKit::WebWidget* widget)
 {
     m_webWidget = widget;
     webView()->setSpellCheckClient(this);
+    webView()->setCompositorSurfaceReady();
 }
 
 WebView* WebViewHost::webView() const

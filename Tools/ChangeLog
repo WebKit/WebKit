@@ -1,3 +1,13 @@
+2012-05-07  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] WebViewHost should setCompositorSurfaceReady
+        https://bugs.webkit.org/show_bug.cgi?id=85418
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setWebWidget):
+
 2012-05-07  Jon Lee  <jonlee@apple.com>
 
         WebKitTestRunner needs layoutTestController.dumpFrameLoadCallbacks
