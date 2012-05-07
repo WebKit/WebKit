@@ -1,3 +1,13 @@
+2012-05-07  Pravin D  <pravind.2k4@gmail.com>
+
+        Wrong positioning due to wrong width calculation wrt width:0
+        https://bugs.webkit.org/show_bug.cgi?id=50135
+
+        Reviewed by Eric Seidel.
+
+        * fast/block/block-parent-with-zero-width-child-expected.txt: Added.
+        * fast/block/block-parent-with-zero-width-child.html: Added.
+
 2012-05-07  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [GTK] media/video-seek-past-end-playing.html times out
