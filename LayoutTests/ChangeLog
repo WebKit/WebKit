@@ -1,3 +1,13 @@
+2012-05-06  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Disallow unquoted -webkit-font-feature-settings tags
+        https://bugs.webkit.org/show_bug.cgi?id=85362
+
+        Reviewed by Kent Tamura.
+
+        * css3/font-feature-settings-parsing-expected.txt: Updated to follow the current draft specification.
+        * css3/font-feature-settings-parsing.html: Ditto.
+
 2012-05-06  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening. Skip more failing tests.

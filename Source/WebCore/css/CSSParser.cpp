@@ -7519,7 +7519,7 @@ bool CSSParser::parseFontFeatureTag(CSSValueList* settings)
 
     CSSParserValue* value = m_valueList->current();
     // Feature tag name comes first
-    if (value->unit != CSSPrimitiveValue::CSS_STRING && value->unit != CSSPrimitiveValue::CSS_IDENT)
+    if (value->unit != CSSPrimitiveValue::CSS_STRING)
         return false;
     if (value->string.length != tagNameLength)
         return false;
