@@ -80,13 +80,13 @@ AsyncFileSystemBlackBerry::~AsyncFileSystemBlackBerry()
     notImplemented();
 }
 
-String AsyncFileSystemBlackBerry::toURL(const String& originString, const String& fullPath)
+KURL AsyncFileSystemBlackBerry::toURL(const String& originString, const String& fullPath) const
 {
     UNUSED_PARAM(originString);
     UNUSED_PARAM(fullPath);
 
     notImplemented();
-    return String();
+    return KURL();
 }
 
 void AsyncFileSystemBlackBerry::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

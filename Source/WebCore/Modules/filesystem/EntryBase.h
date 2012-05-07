@@ -33,7 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "PlatformString.h"
+#include "KURL.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -55,7 +55,7 @@ public:
     const String& fullPath() const { return m_fullPath; }
     const String& name() const { return m_name; }
 
-    String toURL();
+    KURL toURL() const;
 
 protected:
     EntryBase(PassRefPtr<DOMFileSystemBase>, const String& fullPath);

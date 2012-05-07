@@ -54,7 +54,7 @@ EntryBase::~EntryBase()
 {
 }
 
-String EntryBase::toURL()
+KURL EntryBase::toURL() const
 {
     return m_fileSystem->asyncFileSystem()->toURL(m_fileSystem->securityOrigin()->toString(), m_fullPath);
 }

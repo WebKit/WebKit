@@ -1,3 +1,18 @@
+2012-05-06  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Cleanup: FileSystem API's Entry.toURL() impl should return KURL instead of String
+        https://bugs.webkit.org/show_bug.cgi?id=85736
+
+        Reviewed by David Levin.
+
+        Change AsyncFileSystemChromium::toURL()'s return type from String to KURL.
+
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::toURL):
+        String to KURL.
+        * src/AsyncFileSystemChromium.h:
+        (AsyncFileSystemChromium):
+
 2012-05-06  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call currentThread through Platform.h directly

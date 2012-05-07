@@ -69,10 +69,10 @@ AsyncFileSystemGtk::~AsyncFileSystemGtk()
     notImplemented();
 }
 
-String AsyncFileSystemGtk::toURL(const String& originString, const String& fullPath)
+KURL AsyncFileSystemGtk::toURL(const String& originString, const String& fullPath) const
 {
     notImplemented();
-    return String();
+    return KURL();
 }
 
 void AsyncFileSystemGtk::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

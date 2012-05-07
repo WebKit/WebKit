@@ -198,15 +198,15 @@ AsyncFileSystemChromium::~AsyncFileSystemChromium()
 {
 }
 
-String AsyncFileSystemChromium::toURL(const String& originString, const String& fullPath)
+KURL AsyncFileSystemChromium::toURL(const String& originString, const String& fullPath) const
 {
     ASSERT(!originString.isEmpty());
     if (originString == "null")
-        return String();
+        return KURL();
 
     // For now we don't support toURL for isolated filesystem (until we resolve the isolated filesystem lifetime issue).
     if (type() == isolatedType)
-        return String();
+        return KURL();
 
     if (type() == externalType) {
         // For external filesystem originString could be different from what we have in m_filesystemRootURL.
@@ -216,12 +216,12 @@ String AsyncFileSystemChromium::toURL(const String& originString, const String& 
         result.append("/");
         result.append(externalPathPrefix);
         result.append(encodeWithURLEscapeSequences(fullPath));
-        return result.toString();
+        return KURL(ParsedURLString, result.toString());
     }
 
     // For regular types we can just call virtualPathToFileSystemURL which appends the fullPath to the m_filesystemRootURL that should look like 'filesystem:<origin>/<typePrefix>'.
     ASSERT(SecurityOrigin::create(m_filesystemRootURL)->toString() == originString);
-    return virtualPathToFileSystemURL(fullPath);
+    return KURL(ParsedURLString, virtualPathToFileSystemURL(fullPath));
 }
 
 void AsyncFileSystemChromium::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

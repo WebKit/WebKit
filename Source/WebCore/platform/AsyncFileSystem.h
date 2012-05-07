@@ -72,7 +72,7 @@ public:
 
     static bool crackFileSystemURL(const KURL&, Type&, String& filePath);
 
-    virtual String toURL(const String& originString, const String& fullPath) = 0;
+    virtual KURL toURL(const String& originString, const String& fullPath) const = 0;
 
     // Subclass must implement this if it supports synchronous operations.
     // This should return false if there are no pending operations.
