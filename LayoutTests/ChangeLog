@@ -1,3 +1,24 @@
+2012-05-06  Adam Barth  <abarth@webkit.org>
+
+        CSP violation reports should have all the fields required by the spec
+        https://bugs.webkit.org/show_bug.cgi?id=85682
+
+        Reviewed by Darin Adler.
+
+        Update test results to show the new fields in the violation reports.
+        This patch also adds tests that exercise both the same-origin and the
+        cross-origin case for blocked-uri.
+
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+
 2012-05-06  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed expectations update for overflow-positioning.html.

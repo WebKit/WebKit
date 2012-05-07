@@ -6,4 +6,4 @@ CONTENT_TYPE: application/json
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-only-from-header.php
 REQUEST_METHOD: POST
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-only-from-header.php","violated-directive":"script-src 'self'"}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-only-from-header.php","violated-directive":"script-src 'self'","original-policy":"script-src 'self'; report-uri resources/save-report.php"}}

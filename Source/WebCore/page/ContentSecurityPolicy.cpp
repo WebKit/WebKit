@@ -518,7 +518,7 @@ private:
     PassOwnPtr<CSPDirective> createCSPDirective(const String& name, const String& value);
 
     CSPDirective* operativeDirective(CSPDirective*) const;
-    void reportViolation(const String& directiveText, const String& consoleMessage) const;
+    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL = KURL()) const;
     void logUnrecognizedDirective(const String& name) const;
     bool checkEval(CSPDirective*) const;
 
@@ -575,7 +575,7 @@ PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ScriptExecutionContext* sc
     return policy.release();
 }
 
-void CSPDirectiveList::reportViolation(const String& directiveText, const String& consoleMessage) const
+void CSPDirectiveList::reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL) const
 {
     String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
     m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
@@ -603,9 +603,15 @@ void CSPDirectiveList::reportViolation(const String& directiveText, const String
     // harmless information.
 
     RefPtr<InspectorObject> cspReport = InspectorObject::create();
-    cspReport->setString("document-uri", document->url());
+    cspReport->setString("document-uri", document->url().strippedForUseAsReferrer());
+    String referrer = document->referrer();
+    if (!referrer.isEmpty())
+        cspReport->setString("referrer", referrer);
     if (!directiveText.isEmpty())
         cspReport->setString("violated-directive", directiveText);
+    cspReport->setString("original-policy", m_header);
+    if (blockedURL.isValid())
+        cspReport->setString("blocked-uri", document->securityOrigin()->canRequest(blockedURL) ? blockedURL.strippedForUseAsReferrer() : SecurityOrigin::create(blockedURL)->toString());
 
     RefPtr<InspectorObject> reportObject = InspectorObject::create();
     reportObject->setObject("csp-report", cspReport.release());
@@ -652,7 +658,7 @@ bool CSPDirectiveList::checkSourceAndReportViolation(CSPDirective* directive, co
 {
     if (!directive || directive->allows(url))
         return true;
-    reportViolation(directive->text(), "Refused to load " + type + " from '" + url.string() + "' because of Content-Security-Policy.\n");
+    reportViolation(directive->text(), "Refused to load " + type + " from '" + url.string() + "' because of Content-Security-Policy.\n", url);
     return denyIfEnforcingPolicy();
 }
 
