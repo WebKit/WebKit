@@ -1,3 +1,19 @@
+2012-05-07  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to positioned object list not being cleared during block flow split
+        https://bugs.webkit.org/show_bug.cgi?id=85074
+
+        Reviewed by Abhishek Arya.
+
+        Test exercises crashing condition in bug 85074. It creates a column
+        span that requires multiple layers of splitting blocks from the
+        element that contains the columns, puts a positioned element underneath
+        one of the split blocks, and then causes a reattach of the column span
+        element.
+
+        * fast/block/positioning/positioned-object-under-split-block-parent-crash-expected.txt: Added
+        * fast/block/positioning/positioned-object-under-split-block-parent-crash.html: Added
+
 2012-05-07  Andy Estes  <aestes@apple.com>
 
         Update media/ pixel test results after r115749.
