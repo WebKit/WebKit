@@ -1,3 +1,11 @@
+2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed Qt build fix in Debug.
+
+        We need some system includes here for getpid() to be recognized.
+
+        * WebKitTestRunner/qt/main.cpp:
+
 2012-05-07  Ojan Vafai  <ojan@chromium.org>
 
         When embedding the flakiness dashboard, hide popups when the frame is blurred.

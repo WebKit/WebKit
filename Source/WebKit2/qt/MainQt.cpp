@@ -27,6 +27,9 @@
 #include <QApplication>
 
 #include <stdio.h>
+#if !defined(NDEBUG) && defined(Q_OS_UNIX)
+#include <unistd.h>
+#endif
 
 namespace WebKit {
 Q_DECL_IMPORT int WebProcessMainQt(QGuiApplication*);

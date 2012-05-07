@@ -30,6 +30,9 @@
 #include "qquickwebview_p.h"
 
 #include <stdio.h>
+#if !defined(NDEBUG) && defined(Q_OS_UNIX)
+#include <unistd.h>
+#endif
 
 #include <QApplication>
 #include <QObject>

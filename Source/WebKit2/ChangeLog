@@ -1,3 +1,11 @@
+2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed Qt build fix in Debug.
+
+        We need some system includes here for getpid() to be recognized.
+
+        * qt/MainQt.cpp:
+
 2012-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116299, r116301, and r116303.
