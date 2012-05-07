@@ -1,3 +1,15 @@
+2012-05-07  Liam Quinn  <lquinn@rim.com>
+
+        [BlackBerry] WWW-Authenticate header on 200 response pops up authentication dialog
+        https://bugs.webkit.org/show_bug.cgi?id=85643
+
+        Reviewed by George Staikos.
+
+        RIM PR: 151992
+        Added manual test for WWW-Authenticate header on a 200 response.
+
+        * ManualTests/blackberry/http-auth-on-200.php: Added.
+
 2012-05-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unreviewed trivial build fix: Don't include bytearraytestdata.h in the QtWebKit

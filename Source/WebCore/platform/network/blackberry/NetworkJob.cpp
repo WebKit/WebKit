@@ -314,9 +314,9 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
             m_response.setHTTPHeaderField(key, m_response.httpHeaderField(key) + "\r\n" + value);
             return;
         }
-    } else if (lowerKey == "www-authenticate")
+    } else if (m_extendedStatusCode == 401 && lowerKey == "www-authenticate")
         handleAuthHeader(ProtectionSpaceServerHTTP, value);
-    else if (lowerKey == "proxy-authenticate" && !BlackBerry::Platform::Client::get()->getProxyAddress().empty())
+    else if (m_extendedStatusCode == 407 && lowerKey == "proxy-authenticate" && !BlackBerry::Platform::Client::get()->getProxyAddress().empty())
         handleAuthHeader(ProtectionSpaceProxyHTTP, value);
     else if (equalIgnoringCase(key, BlackBerry::Platform::NetworkRequest::HEADER_BLACKBERRY_FTP))
         handleFTPHeader(value);
