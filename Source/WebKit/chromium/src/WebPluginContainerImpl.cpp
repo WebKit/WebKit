@@ -714,9 +714,8 @@ WebCore::IntRect WebPluginContainerImpl::windowClipRect() const
     if (m_element->renderer()->document()->renderer()) {
         // Take our element and get the clip rect from the enclosing layer and
         // frame view.
-        RenderLayer* layer = m_element->renderer()->enclosingLayer();
         clipRect.intersect(
-            m_element->document()->view()->windowClipRectForLayer(layer, true));
+            m_element->document()->view()->windowClipRectForFrameOwner(m_element, true));
     }
 
     return clipRect;

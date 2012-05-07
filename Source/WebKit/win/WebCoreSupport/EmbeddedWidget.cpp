@@ -27,8 +27,8 @@
 #include "EmbeddedWidget.h"
 
 #include <WebCore/Document.h>
-#include <WebCore/Element.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/RenderObject.h>
 
 #include "MemoryStream.h"
@@ -37,7 +37,7 @@
 
 using namespace WebCore;
 
-PassRefPtr<EmbeddedWidget> EmbeddedWidget::create(IWebEmbeddedView* view, Element* element, HWND parentWindow, const IntSize& size)
+PassRefPtr<EmbeddedWidget> EmbeddedWidget::create(IWebEmbeddedView* view, HTMLPlugInElement* element, HWND parentWindow, const IntSize& size)
 {
     RefPtr<EmbeddedWidget> widget = adoptRef(new EmbeddedWidget(view, element));
 
@@ -167,9 +167,8 @@ IntRect EmbeddedWidget::windowClipRect() const
     IntRect clipRect(m_windowRect);
     
     // Take our element and get the clip rect from the enclosing layer and frame view.
-    RenderLayer* layer = m_element->renderer()->enclosingLayer();
     FrameView* parentView = m_element->document()->view();
-    clipRect.intersect(parentView->windowClipRectForLayer(layer, true));
+    clipRect.intersect(parentView->windowClipRectForFrameOwner(m_element, true));
 
     return clipRect;
 }

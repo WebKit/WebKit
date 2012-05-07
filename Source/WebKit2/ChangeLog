@@ -1,3 +1,14 @@
+2012-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Refactor windowClipRectForLayer to remove the explicit RenderLayer dependency
+        https://bugs.webkit.org/show_bug.cgi?id=84090
+
+        Reviewed by David Hyatt.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::clipRectInWindowCoordinates):
+        Updated after windowClipRectForLayer name and signature change.
+
 2012-05-07  Andy Estes  <aestes@apple.com>
 
         ENABLE_IFRAME_SEAMLESS should be part of FEATURE_DEFINES.

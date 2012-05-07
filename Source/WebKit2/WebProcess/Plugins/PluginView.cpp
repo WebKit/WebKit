@@ -54,7 +54,6 @@
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ProxyServer.h>
 #include <WebCore/RenderEmbeddedObject.h>
-#include <WebCore/RenderLayer.h>
 #include <WebCore/ResourceLoadScheduler.h>
 #include <WebCore/ScriptValue.h>
 #include <WebCore/ScrollView.h>
@@ -752,9 +751,8 @@ IntRect PluginView::clipRectInWindowCoordinates() const
 
     Frame* frame = this->frame();
 
-    // Get the window clip rect for the enclosing layer (in window coordinates).
-    RenderLayer* layer = m_pluginElement->renderer()->enclosingLayer();
-    IntRect windowClipRect = frame->view()->windowClipRectForLayer(layer, true);
+    // Get the window clip rect for the plugin element (in window coordinates).
+    IntRect windowClipRect = frame->view()->windowClipRectForFrameOwner(m_pluginElement.get(), true);
 
     // Intersect the two rects to get the view clip rect in window coordinates.
     frameRectInWindowCoordinates.intersect(windowClipRect);

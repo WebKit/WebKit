@@ -32,19 +32,19 @@
 #include <WebCore/PluginView.h>
 
 namespace WebCore {
-    class Element;
-    class IntSize;
+class HTMLPlugInElement;
+class IntSize;
 }
 
 interface IWebEmbeddedView;
 
 class EmbeddedWidget : public WebCore::Widget, public WebCore::PluginManualLoader {
 public:
-    static PassRefPtr<EmbeddedWidget> create(IWebEmbeddedView*, WebCore::Element* element, HWND parentWindow, const WebCore::IntSize&);
+    static PassRefPtr<EmbeddedWidget> create(IWebEmbeddedView*, WebCore::HTMLPlugInElement*, HWND parentWindow, const WebCore::IntSize&);
     ~EmbeddedWidget();
 
 private:
-    EmbeddedWidget(IWebEmbeddedView* view, WebCore::Element* element)
+    EmbeddedWidget(IWebEmbeddedView* view, WebCore::HTMLPlugInElement* element)
         : m_view(view)
         , m_element(element)
         , m_window(0)
@@ -73,7 +73,7 @@ private:
     virtual void detachFromWindow();
 
     COMPtr<IWebEmbeddedView> m_view;
-    WebCore::Element* m_element;
+    WebCore::HTMLPlugInElement* m_element;
     HWND m_window;
 
     bool m_isVisible;
