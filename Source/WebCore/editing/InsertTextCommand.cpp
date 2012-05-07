@@ -116,7 +116,7 @@ void InsertTextCommand::doApply()
     if (endingSelection().isRange()) {
         if (performTrivialReplace(m_text, m_selectInsertedText))
             return;
-        deleteSelection(false, true, true, false);
+        deleteSelection(false, true, true, false, false);
         // deleteSelection eventually makes a new endingSelection out of a Position. If that Position doesn't have
         // a renderer (e.g. it is on a <frameset> in the DOM), the VisibleSelection cannot be canonicalized to 
         // anything other than NoSelection. The rest of this function requires a real endingSelection, so bail out.
