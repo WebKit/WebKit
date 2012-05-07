@@ -52,7 +52,7 @@ public:
 
     // Change the tile size. This may invalidate all the existing tiles.
     void setTileSize(const IntSize&);
-    const IntSize& tileSize() const { return m_tileSize; }
+    const IntSize& tileSize() const;
     // Change the border texel setting. This may invalidate all existing tiles.
     void setBorderTexelOption(BorderTexelOption);
     bool hasBorderTexels() const { return m_tilingData.borderTexels(); }
@@ -109,7 +109,6 @@ protected:
     CCLayerTilingData(const IntSize& tileSize, BorderTexelOption);
 
     TileMap m_tiles;
-    IntSize m_tileSize;
     TilingData m_tilingData;
 };
 

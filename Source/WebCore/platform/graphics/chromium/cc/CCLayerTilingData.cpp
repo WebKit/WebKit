@@ -40,20 +40,24 @@ PassOwnPtr<CCLayerTilingData> CCLayerTilingData::create(const IntSize& tileSize,
 }
 
 CCLayerTilingData::CCLayerTilingData(const IntSize& tileSize, BorderTexelOption border)
-    : m_tilingData(max(tileSize.width(), tileSize.height()), 0, 0, border == HasBorderTexels)
+    : m_tilingData(tileSize, IntSize(), border == HasBorderTexels)
 {
     setTileSize(tileSize);
 }
 
 void CCLayerTilingData::setTileSize(const IntSize& size)
 {
-    if (m_tileSize == size)
+    if (tileSize() == size)
         return;
 
     reset();
 
-    m_tileSize = size;
-    m_tilingData.setMaxTextureSize(max(size.width(), size.height()));
+    m_tilingData.setMaxTextureSize(size);
+}
+
+const IntSize& CCLayerTilingData::tileSize() const
+{
+    return m_tilingData.maxTextureSize();
 }
 
 void CCLayerTilingData::setBorderTexelOption(BorderTexelOption borderTexelOption)
@@ -68,7 +72,6 @@ void CCLayerTilingData::setBorderTexelOption(BorderTexelOption borderTexelOption
 
 const CCLayerTilingData& CCLayerTilingData::operator=(const CCLayerTilingData& tiler)
 {
-    m_tileSize = tiler.m_tileSize;
     m_tilingData = tiler.m_tilingData;
 
     return *this;
@@ -107,7 +110,7 @@ void CCLayerTilingData::layerRectToTileIndices(const IntRect& layerRect, int& le
 IntRect CCLayerTilingData::tileRect(const Tile* tile) const
 {
     IntRect tileRect = m_tilingData.tileBoundsWithBorder(tile->i(), tile->j());
-    tileRect.setSize(m_tileSize);
+    tileRect.setSize(tileSize());
     return tileRect;
 }
 
@@ -134,7 +137,7 @@ Region CCLayerTilingData::opaqueRegionInLayerRect(const IntRect& layerRect) cons
 
 void CCLayerTilingData::setBounds(const IntSize& size)
 {
-    m_tilingData.setTotalSize(size.width(), size.height());
+    m_tilingData.setTotalSize(size);
 
     // Any tiles completely outside our new bounds are invalid and should be dropped.
     int left, top, right, bottom;
@@ -150,7 +153,7 @@ void CCLayerTilingData::setBounds(const IntSize& size)
 
 IntSize CCLayerTilingData::bounds() const
 {
-    return IntSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
+    return m_tilingData.totalSize();
 }
 
 } // namespace WebCore

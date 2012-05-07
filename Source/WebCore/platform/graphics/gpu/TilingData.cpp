@@ -51,23 +51,21 @@ static int computeNumTiles(int maxTextureSize, int totalSize, int borderTexels)
     return totalSize > 0 ? numTiles : 0;
 }
 
-TilingData::TilingData(int maxTextureSize, int totalSizeX, int totalSizeY, bool hasBorderTexels)
+TilingData::TilingData(const IntSize& maxTextureSize, const IntSize& totalSize, bool hasBorderTexels)
     : m_maxTextureSize(maxTextureSize)
-    , m_totalSizeX(totalSizeX)
-    , m_totalSizeY(totalSizeY)
+    , m_totalSize(totalSize)
     , m_borderTexels(hasBorderTexels ? 1 : 0)
 {
     recomputeNumTiles();
 }
 
-void TilingData::setTotalSize(int totalSizeX, int totalSizeY)
+void TilingData::setTotalSize(const IntSize& totalSize)
 {
-    m_totalSizeX = totalSizeX;
-    m_totalSizeY = totalSizeY;
+    m_totalSize = totalSize;
     recomputeNumTiles();
 }
 
-void TilingData::setMaxTextureSize(int maxTextureSize)
+void TilingData::setMaxTextureSize(const IntSize& maxTextureSize)
 {
     m_maxTextureSize = maxTextureSize;
     recomputeNumTiles();
@@ -84,8 +82,8 @@ int TilingData::tileXIndexFromSrcCoord(int srcPos) const
     if (numTilesX() <= 1)
         return 0;
 
-    ASSERT(m_maxTextureSize - 2 * m_borderTexels);
-    int x = (srcPos - m_borderTexels) / (m_maxTextureSize - 2 * m_borderTexels);
+    ASSERT(m_maxTextureSize.width() - 2 * m_borderTexels);
+    int x = (srcPos - m_borderTexels) / (m_maxTextureSize.width() - 2 * m_borderTexels);
     return min(max(x, 0), numTilesX() - 1);
 }
 
@@ -94,8 +92,8 @@ int TilingData::tileYIndexFromSrcCoord(int srcPos) const
     if (numTilesY() <= 1)
         return 0;
 
-    ASSERT(m_maxTextureSize - 2 * m_borderTexels);
-    int y = (srcPos - m_borderTexels) / (m_maxTextureSize - 2 * m_borderTexels);
+    ASSERT(m_maxTextureSize.height() - 2 * m_borderTexels);
+    int y = (srcPos - m_borderTexels) / (m_maxTextureSize.height() - 2 * m_borderTexels);
     return min(max(y, 0), numTilesY() - 1);
 }
 
@@ -107,7 +105,7 @@ IntRect TilingData::tileBounds(int i, int j) const
     int width = tileSizeX(i);
     int height = tileSizeY(j);
     ASSERT(x >= 0 && y >= 0 && width >= 0 && height >= 0);
-    ASSERT(x <= totalSizeX() && y <= totalSizeY());
+    ASSERT(x <= m_totalSize.width() && y <= m_totalSize.height());
     return IntRect(x, y, width, height);
 }
 
@@ -133,14 +131,6 @@ IntRect TilingData::tileBoundsWithBorder(int i, int j) const
         bounds = IntRect(x1, y1, x2 - x1, y2 - y1);
     }
 
-    return bounds;
-}
-
-FloatRect TilingData::tileBoundsNormalized(int i, int j) const
-{
-    assertTile(i, j);
-    FloatRect bounds(tileBounds(i, j));
-    bounds.scale(1.0f / m_totalSizeX, 1.0f / m_totalSizeY);
     return bounds;
 }
 
@@ -171,13 +161,13 @@ int TilingData::tileSizeX(int xIndex) const
     ASSERT(xIndex >= 0 && xIndex < numTilesX());
 
     if (!xIndex && m_numTilesX == 1)
-        return m_totalSizeX;
+        return m_totalSize.width();
     if (!xIndex && m_numTilesX > 1)
-        return m_maxTextureSize - m_borderTexels;
+        return m_maxTextureSize.width() - m_borderTexels;
     if (xIndex < numTilesX() - 1)
-        return m_maxTextureSize - 2 * m_borderTexels;
+        return m_maxTextureSize.width() - 2 * m_borderTexels;
     if (xIndex == numTilesX() - 1)
-        return m_totalSizeX - tilePositionX(xIndex);
+        return m_totalSize.width() - tilePositionX(xIndex);
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -188,30 +178,16 @@ int TilingData::tileSizeY(int yIndex) const
     ASSERT(yIndex >= 0 && yIndex < numTilesY());
 
     if (!yIndex && m_numTilesY == 1)
-        return m_totalSizeY;
+        return m_totalSize.height();
     if (!yIndex && m_numTilesY > 1)
-        return m_maxTextureSize - m_borderTexels;
+        return m_maxTextureSize.height() - m_borderTexels;
     if (yIndex < numTilesY() - 1)
-        return m_maxTextureSize - 2 * m_borderTexels;
+        return m_maxTextureSize.height() - 2 * m_borderTexels;
     if (yIndex == numTilesY() - 1)
-        return m_totalSizeY - tilePositionY(yIndex);
+        return m_totalSize.height() - tilePositionY(yIndex);
 
     ASSERT_NOT_REACHED();
     return 0;
-}
-
-IntRect TilingData::overlappedTileIndices(const WebCore::IntRect &srcRect) const
-{
-    int x = tileXIndexFromSrcCoord(srcRect.x());
-    int y = tileYIndexFromSrcCoord(srcRect.y());
-    int r = tileXIndexFromSrcCoord(srcRect.maxX());
-    int b = tileYIndexFromSrcCoord(srcRect.maxY());
-    return IntRect(x, y, r - x, b - y);
-}
-
-IntRect TilingData::overlappedTileIndices(const WebCore::FloatRect &srcRect) const
-{
-    return overlappedTileIndices(enclosingIntRect(srcRect));
 }
 
 IntPoint TilingData::textureOffset(int xIndex, int yIndex) const
@@ -224,8 +200,8 @@ IntPoint TilingData::textureOffset(int xIndex, int yIndex) const
 
 void TilingData::recomputeNumTiles()
 {
-    m_numTilesX = computeNumTiles(m_maxTextureSize, m_totalSizeX, m_borderTexels);
-    m_numTilesY = computeNumTiles(m_maxTextureSize, m_totalSizeY, m_borderTexels);
+    m_numTilesX = computeNumTiles(m_maxTextureSize.width(), m_totalSize.width(), m_borderTexels);
+    m_numTilesY = computeNumTiles(m_maxTextureSize.height(), m_totalSize.height(), m_borderTexels);
 }
 
 }

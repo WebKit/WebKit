@@ -50,7 +50,7 @@ namespace WebCore {
 Texture::Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigned int> > tileTextureIds, Format format, int width, int height, int maxTextureSize)
     : m_context(context)
     , m_format(format)
-    , m_tiles(maxTextureSize, width, height, true)
+    , m_tiles(IntSize(maxTextureSize, maxTextureSize), IntSize(width, height), true)
     , m_tileTextureIds(tileTextureIds)
 {
 }
@@ -89,12 +89,12 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
 {
     int maxTextureSize = 0;
     context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &maxTextureSize);
-    TilingData tiling(maxTextureSize, width, height, true);
+    TilingData tiling(IntSize(maxTextureSize, maxTextureSize), IntSize(width, height), true);
 
     // Check for overflow.
     int numTiles = tiling.numTilesX() * tiling.numTilesY();
     if (numTiles / tiling.numTilesX() != tiling.numTilesY()) {
-        tiling.setTotalSize(0, 0);
+        tiling.setTotalSize(IntSize());
         numTiles = 0;
     }
 
@@ -154,13 +154,13 @@ static uint32_t* copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, i
 
 void Texture::load(void* pixels)
 {
-    updateSubRect(pixels, IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
+    updateSubRect(pixels, IntRect(0, 0, m_tiles.totalSize().width(), m_tiles.totalSize().height()));
 }
 
 void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
 {
     IntRect updateRectSanitized(updateRect);
-    updateRectSanitized.intersect(IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
+    updateRectSanitized.intersect(IntRect(0, 0, m_tiles.totalSize().width(), m_tiles.totalSize().height()));
 
     uint32_t* pixels32 = static_cast<uint32_t*>(pixels);
     unsigned int glFormat = 0;
@@ -172,8 +172,8 @@ void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
         // FIXME:  This could use PBO's to save doing an extra copy here.
     }
     int tempBuffSize = // Temporary buffer size is the smaller of the max texture size or the updateRectSanitized
-        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.width()) *
-        min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.height());
+        min(m_tiles.maxTextureSize().width(), m_tiles.borderTexels() + updateRectSanitized.width()) *
+        min(m_tiles.maxTextureSize().height(), m_tiles.borderTexels() + updateRectSanitized.height());
     OwnArrayPtr<uint32_t> tempBuff = adoptArrayPtr(new uint32_t[tempBuffSize]);
 
     for (int tile = 0; tile < m_tiles.numTilesX() * m_tiles.numTilesY(); tile++) {
@@ -197,11 +197,11 @@ void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
         if (swizzle) {
             uploadBuff = copySubRect<true>(
             pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
-            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSizeX());
+            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSize().width());
         } else {
             uploadBuff = copySubRect<false>(
             pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
-            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSizeX());
+            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSize().width());
         }
 
         m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_tileTextureIds->at(tile));

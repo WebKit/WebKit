@@ -31,6 +31,7 @@
 #ifndef TilingData_h
 #define TilingData_h
 
+#include "IntSize.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -41,12 +42,12 @@ class IntPoint;
 
 class TilingData {
 public:
-    TilingData(int maxTextureSize, int totalSizeX, int totalSizeY, bool hasBorderTexels);
-    void setTotalSize(int totalSizeX, int totalSizeY);
-    void setMaxTextureSize(int);
-    int maxTextureSize() const { return m_maxTextureSize; }
-    int totalSizeX() const { return m_totalSizeX; }
-    int totalSizeY() const { return m_totalSizeY; }
+    TilingData(const IntSize& maxTextureSize, const IntSize& totalSize, bool hasBorderTexels);
+
+    void setTotalSize(const IntSize&);
+    const IntSize& totalSize() const { return m_totalSize; }
+    void setMaxTextureSize(const IntSize&);
+    const IntSize& maxTextureSize() const { return m_maxTextureSize; }
     void setHasBorderTexels(bool);
     int borderTexels() const { return m_borderTexels; }
 
@@ -58,25 +59,21 @@ public:
 
     IntRect tileBounds(int, int) const;
     IntRect tileBoundsWithBorder(int, int) const;
-    FloatRect tileBoundsNormalized(int, int) const;
     int tilePositionX(int xIndex) const;
     int tilePositionY(int yIndex) const;
     int tileSizeX(int xIndex) const;
     int tileSizeY(int yIndex) const;
-    IntRect overlappedTileIndices(const IntRect& srcRect) const;
-    IntRect overlappedTileIndices(const FloatRect& srcRect) const;
 
     // Difference between tileBound's and tileBoundWithBorder's location().
     IntPoint textureOffset(int xIndex, int yIndex) const;
 
 private:
-    TilingData() : m_maxTextureSize(0), m_totalSizeX(0), m_totalSizeY(0) {}
+    TilingData() : m_borderTexels(0) { }
     void assertTile(int i, int j) const { ASSERT_UNUSED(i, i >= 0 && i < numTilesX()); ASSERT_UNUSED(j, j >= 0 && j < numTilesY()); }
     void recomputeNumTiles();
 
-    int m_maxTextureSize;
-    int m_totalSizeX;
-    int m_totalSizeY;
+    IntSize m_maxTextureSize;
+    IntSize m_totalSize;
     int m_borderTexels; // 0 or 1
 
     // computed values:

@@ -1,3 +1,18 @@
+2012-05-07  Adrienne Walker  <enne@google.com>
+
+        [chromium] Allow for asymmetric tile sizes on composited tiled layers
+        https://bugs.webkit.org/show_bug.cgi?id=85687
+
+        Reviewed by James Robinson.
+
+        Update tests for new constructor and function args. Add a few more
+        tests that use non-square tile sizes.
+
+        * tests/TilingDataTest.cpp:
+        (WebCore::TestTiling::TestTiling):
+        (WebCore::TEST):
+        (WebCore):
+
 2012-05-07  David Reveman  <reveman@chromium.org>
 
         [Chromium] Use GL_CHROMIUM_command_buffer_query to throttle texture uploads.
