@@ -1,3 +1,17 @@
+2012-05-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] media/track/track-cue-rendering-snap-to-lines-not-set.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=85602
+
+        Reviewed by Eric Carlson.
+
+        Update expected result for several media tests now that the
+        positioning of the controls panel is relative.
+
+        * platform/efl/media/media-controls-clone-expected.txt:
+        * platform/efl/media/video-empty-source-expected.txt:
+        * platform/efl/media/video-zoom-controls-expected.txt:
+
 2012-05-07  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening, fix failure expectation for test.

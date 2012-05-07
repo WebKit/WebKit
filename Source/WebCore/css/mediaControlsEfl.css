@@ -35,7 +35,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     -webkit-box-orient: horizontal;
     -webkit-box-align: center;
     -webkit-user-select: none;
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
     z-index: 0;

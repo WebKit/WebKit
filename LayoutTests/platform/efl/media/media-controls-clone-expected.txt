@@ -14,7 +14,7 @@ layer at (8,161) size 300x150
 layer at (8,8) size 300x150
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x150
 layer at (8,138) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,130) size 300x20
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,130) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
       RenderBlock (anonymous) at (0,0) size 63x30
@@ -36,7 +36,7 @@ layer at (288,138) size 20x20
 layer at (308,138) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (308,138) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x20
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
       RenderBlock (anonymous) at (0,0) size 63x30
@@ -58,7 +58,7 @@ layer at (588,138) size 20x20
 layer at (8,161) size 300x150
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x150
 layer at (8,291) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,130) size 300x20
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,130) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
       RenderBlock (anonymous) at (0,0) size 63x30
@@ -80,7 +80,7 @@ layer at (288,291) size 20x20
 layer at (308,291) size 300x20
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
 layer at (308,291) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x20
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
       RenderBlock (anonymous) at (0,0) size 63x30

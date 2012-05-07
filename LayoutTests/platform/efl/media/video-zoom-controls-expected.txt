@@ -11,7 +11,7 @@ layer at (57,85) size 240x180
 layer at (57,85) size 240x180
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 240x180
 layer at (57,235) size 240x30 scrollHeight 42
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,150) size 240x30
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,150) size 240x30
     RenderButton {INPUT} at (0,0) size 30x30
     RenderDeprecatedFlexibleBox {DIV} at (30,0) size 120x30
       RenderBlock (anonymous) at (0,0) size 96x42
@@ -35,7 +35,7 @@ layer at (57,310) size 240x180
 layer at (57,310) size 240x180
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 240x180
 layer at (57,460) size 240x30 scrollHeight 42
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,150) size 240x30
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,150) size 240x30
     RenderButton {INPUT} at (0,0) size 30x30
     RenderDeprecatedFlexibleBox {DIV} at (30,0) size 120x30
       RenderBlock (anonymous) at (0,0) size 96x42
