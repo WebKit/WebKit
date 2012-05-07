@@ -810,22 +810,6 @@ static bool parsePagePropertyParameters(JSContextRef context, int argumentCount,
     }
 }
 
-static bool parsePageNumber(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, int& pageNumber)
-{
-    pageNumber = 0;
-    switch (argumentCount) {
-    case 1:
-        pageNumber = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
-        if (*exception)
-            return false;
-        // Fall through.
-    case 0:
-        return true;
-    default:
-        return false;
-    }
-}
-
 static bool parsePageNumberSizeMarings(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, int& pageNumber, int& width, int& height, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
     pageNumber = 0;
