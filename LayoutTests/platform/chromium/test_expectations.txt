@@ -3912,15 +3912,13 @@ BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
-BUGWK85771 MAC LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
+BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/reflections/masked-reflection-on-composited.html = PASS TIMEOUT
-BUGWK85771 LEOPARD : compositing/overflow/scrollbar-painting.html = IMAGE
-BUGWK85771 LEOPARD : compositing/reflections/masked-reflection-on-composited.html = IMAGE
-BUGWK85771 MAC LINUX : compositing/visibility/visibility-simple-webgl-layer.html = PASS TIMEOUT
-BUGWK85771 MAC LINUX : compositing/rtl/rtl-absolute-overflow-scrolled.html = PASS TIMEOUT
-BUGWK85771 MAC LINUX : platform/chromium/compositing/lost-compositor-context.html = PASS TIMEOUT
-BUGWK85771 MAC LINUX : compositing/animation/state-at-end-event-transform-layer.html = TIMEOUT PASS
-BUGWK85771 MAC LINUX : compositing/geometry/video-opacity-overlay.html = TIMEOUT PASS
-BUGWK85771 MAC LINUX : compositing/scroll-painted-composited-content.html = TIMEOUT PASS
-BUGWK85771 MAC LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = TIMEOUT PASS
+BUGWK85771 SNOWLEOPARD LION LINUX : compositing/visibility/visibility-simple-webgl-layer.html = PASS TIMEOUT
+BUGWK85771 SNOWLEOPARD LION LINUX : compositing/rtl/rtl-absolute-overflow-scrolled.html = PASS TIMEOUT
+BUGWK85771 SNOWLEOPARD LION LINUX : platform/chromium/compositing/lost-compositor-context.html = PASS TIMEOUT
+BUGWK85771 SNOWLEOPARD LION LINUX : compositing/animation/state-at-end-event-transform-layer.html = TIMEOUT PASS
+BUGWK85771 SNOWLEOPARD LION LINUX : compositing/geometry/video-opacity-overlay.html = TIMEOUT PASS
+BUGWK85771 SNOWLEOPARD LION LINUX : compositing/scroll-painted-composited-content.html = TIMEOUT PASS
+BUGWK85771 SNOWLEOPARD LION LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = TIMEOUT PASS

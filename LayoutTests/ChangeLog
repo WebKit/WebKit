@@ -1,3 +1,11 @@
+2012-05-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix compositing expectations to not include leopard.
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-07  Shezan Baig  <shezbaig.wk@gmail.com>
 
         Selection Background Color Error
