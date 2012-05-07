@@ -887,16 +887,14 @@ ContentSecurityPolicy::~ContentSecurityPolicy()
 
 void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other) 
 {
-    ASSERT(!m_policy);
-    if (other->m_policy)
-        didReceiveHeader(other->header(), other->headerType());
+    ASSERT(m_policies.isEmpty());
+    for (CSPDirectiveListVector::const_iterator iter = other->m_policies.begin(); iter != other->m_policies.end(); ++iter)
+        didReceiveHeader((*iter)->header(), (*iter)->headerType());
 }
 
 void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
 {
-    if (m_policy)
-        return; // The first policy wins.
-    m_policy = CSPDirectiveList::create(m_scriptExecutionContext, header, type);
+    m_policies.append(CSPDirectiveList::create(m_scriptExecutionContext, header, type));
 }
 
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
@@ -904,79 +902,101 @@ void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
     m_overrideInlineStyleAllowed = value;
 }
 
-const String& ContentSecurityPolicy::header() const
+const String& ContentSecurityPolicy::deprecatedHeader() const
 {
-    return m_policy ? m_policy->header() : emptyString();
+    return m_policies.isEmpty() ? emptyString() : m_policies[0]->header();
 }
 
-ContentSecurityPolicy::HeaderType ContentSecurityPolicy::headerType() const
+ContentSecurityPolicy::HeaderType ContentSecurityPolicy::deprecatedHeaderType() const
 {
-    return m_policy ? m_policy->headerType() : EnforcePolicy;
+    return m_policies.isEmpty() ? EnforcePolicy : m_policies[0]->headerType();
+}
+
+template<bool (CSPDirectiveList::*allowed)() const>
+bool isAllowedByAll(const CSPDirectiveListVector& policies)
+{
+    for (size_t i = 0; i < policies.size(); ++i) {
+        if (!(policies[i].get()->*allowed)())
+            return false;
+    }
+    return true;
+}
+
+template<bool (CSPDirectiveList::*allowFromURL)(const KURL&) const>
+bool isAllowedByAll(const CSPDirectiveListVector& policies, const KURL& url)
+{
+    for (size_t i = 0; i < policies.size(); ++i) {
+        if (!(policies[i].get()->*allowFromURL)(url))
+            return false;
+    }
+    return true;
 }
 
 bool ContentSecurityPolicy::allowJavaScriptURLs() const
 {
-    return !m_policy || m_policy->allowJavaScriptURLs();
+    return isAllowedByAll<&CSPDirectiveList::allowJavaScriptURLs>(m_policies);
 }
 
 bool ContentSecurityPolicy::allowInlineEventHandlers() const
 {
-    return !m_policy || m_policy->allowInlineEventHandlers();
+    return isAllowedByAll<&CSPDirectiveList::allowInlineEventHandlers>(m_policies);
 }
 
 bool ContentSecurityPolicy::allowInlineScript() const
 {
-    return !m_policy || m_policy->allowInlineScript();
+    return isAllowedByAll<&CSPDirectiveList::allowInlineScript>(m_policies);
 }
 
 bool ContentSecurityPolicy::allowInlineStyle() const
 {
-    return !m_policy || m_overrideInlineStyleAllowed || m_policy->allowInlineStyle();
+    if (m_overrideInlineStyleAllowed)
+        return true;
+    return isAllowedByAll<&CSPDirectiveList::allowInlineStyle>(m_policies);
 }
 
 bool ContentSecurityPolicy::allowEval() const
 {
-    return !m_policy || m_policy->allowEval();
+    return isAllowedByAll<&CSPDirectiveList::allowEval>(m_policies);
 }
 
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowScriptFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowScriptFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowObjectFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowObjectFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowChildFrameFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowChildFrameFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowChildFrameFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowImageFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowImageFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowImageFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowStyleFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowStyleFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowStyleFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowFontFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowFontFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowFontFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowMediaFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowMediaFromSource>(m_policies, url);
 }
 
 bool ContentSecurityPolicy::allowConnectFromSource(const KURL& url) const
 {
-    return !m_policy || m_policy->allowConnectFromSource(url);
+    return isAllowedByAll<&CSPDirectiveList::allowConnectFromSource>(m_policies, url);
 }
 
 }

@@ -1,3 +1,15 @@
+2012-05-06  Adam Barth  <abarth@webkit.org>
+
+        CSP should let sites both enforce one policy and monitor another
+        https://bugs.webkit.org/show_bug.cgi?id=85561
+
+        Reviewed by Eric Seidel.
+
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::startWorkerContext):
+
 2012-05-06  Kent Tamura  <tkent@chromium.org>
 
         Rename ICULocale to LocaleICU, part 2

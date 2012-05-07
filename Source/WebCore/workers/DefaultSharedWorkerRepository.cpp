@@ -322,8 +322,8 @@ void SharedWorkerScriptLoader::notifyFinished()
         InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
         DefaultSharedWorkerRepository::instance().workerScriptLoaded(*m_proxy, m_worker->scriptExecutionContext()->userAgent(m_scriptLoader->url()),
                                                                      m_scriptLoader->script(), m_port.release(),
-                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->header(),
-                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->headerType());
+                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeader(),
+                                                                     m_worker->scriptExecutionContext()->contentSecurityPolicy()->deprecatedHeaderType());
     }
     m_worker->unsetPendingActivity(m_worker.get());
     this->deref(); // This frees this object - must be the last action in this function.

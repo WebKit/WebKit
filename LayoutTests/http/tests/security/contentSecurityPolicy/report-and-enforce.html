@@ -1,0 +1,9 @@
+<meta http-equiv="X-WebKit-CSP" content="img-src 'none'">
+<meta http-equiv="X-WebKit-CSP-Report-Only" content="script-src 'self'; report-uri resources/save-report.php">
+<script>
+// This script block will trigger a violation report but shouldn't be blocked.
+alert('PASS');
+</script>
+This image should be blocked, but should not show up in the violation report.
+<img src="../resources/abe.png">
+<script src="resources/go-to-echo-report.js"></script>

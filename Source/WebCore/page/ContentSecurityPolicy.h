@@ -37,6 +37,8 @@ class CSPDirectiveList;
 class ScriptExecutionContext;
 class KURL;
 
+typedef Vector<OwnPtr<CSPDirectiveList> > CSPDirectiveListVector;
+
 class ContentSecurityPolicy {
 public:
     static PassOwnPtr<ContentSecurityPolicy> create(ScriptExecutionContext* scriptExecutionContext)
@@ -54,8 +56,10 @@ public:
 
     void didReceiveHeader(const String&, HeaderType);
 
-    const String& header() const;
-    HeaderType headerType() const;
+    // These functions are wrong becuase they assume that there is only one header.
+    // FIXME: Replace them with functions that return vectors.
+    const String& deprecatedHeader() const;
+    HeaderType deprecatedHeaderType() const;
 
     bool allowJavaScriptURLs() const;
     bool allowInlineEventHandlers() const;
@@ -79,7 +83,7 @@ private:
 
     ScriptExecutionContext* m_scriptExecutionContext;
     bool m_overrideInlineStyleAllowed;
-    OwnPtr<CSPDirectiveList> m_policy;
+    CSPDirectiveListVector m_policies;
 };
 
 }

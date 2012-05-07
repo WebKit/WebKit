@@ -1,3 +1,18 @@
+2012-05-06  Adam Barth  <abarth@webkit.org>
+
+        CSP should let sites both enforce one policy and monitor another
+        https://bugs.webkit.org/show_bug.cgi?id=85561
+
+        Reviewed by Eric Seidel.
+
+        Test that we can enforce multiple policies and that we can enforce one
+        policy while monitoring another.
+
+        * http/tests/security/contentSecurityPolicy/combine-multiple-policies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/combine-multiple-policies.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-and-enforce.html: Added.
+
 2012-05-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] EFL's LayoutTestController setJavaScriptCanAccessClipboard implementation
