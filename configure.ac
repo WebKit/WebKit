@@ -1244,10 +1244,12 @@ if test "$enable_video" = "yes"; then
 fi
 
 # WebKit2
+# If you change the default here, please also make sure the assumptions made
+# in Tools/Scripts/webkitdirs.pm:buildAutotoolsProject still make sense.
 AC_MSG_CHECKING([whether to build Webkit2])
 AC_ARG_ENABLE(webkit2,
-    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=no]]),
-    [], [enable_webkit2="no"])
+    AC_HELP_STRING([--enable-webkit2], [build webkit2 [default=yes]]),
+    [], [enable_webkit2="yes"])
 AC_MSG_RESULT([$enable_webkit2])
 if test "$enable_webkit2" = "yes"; then
    if test "$GTK_API_VERSION" = "2.0"; then
