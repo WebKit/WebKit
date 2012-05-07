@@ -2654,9 +2654,9 @@ BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS CRASH TEXT
 BUGDPRANKE WIN DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 
-// These seem to be minor debug-only differences.
-BUGWK60135 SNOWLEOPARD DEBUG : fast/text/international/thai-line-breaks.html = IMAGE
-BUGWK60135 SNOWLEOPARD DEBUG : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
+// These seem to be minor differences (used to be debug only, started failing in release since about r116225).
+BUGWK60135 SNOWLEOPARD : fast/text/international/thai-line-breaks.html = PASS IMAGE
+BUGWK60135 SNOWLEOPARD : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
 BUGWK78544 LINUX : fast/text/international/thai-baht-space.html = PASS IMAGE IMAGE+TEXT
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PASS TIMEOUT
@@ -3914,3 +3914,4 @@ BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
 BUGWK85771 MAC LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 MAC LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
+BUGWK85771 MAC LINUX : compositing/reflections/masked-reflection-on-composited.html = PASS TIMEOUT

@@ -1,3 +1,9 @@
+2012-05-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed gardening, fast/text/international/thai-{baht-space,line-breaks}.html now fail in release, too.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][DRT] Implement LayoutTestController::execCommand
