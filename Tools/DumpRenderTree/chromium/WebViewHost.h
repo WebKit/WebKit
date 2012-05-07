@@ -315,7 +315,6 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     WebKit::WebUserMediaClientMock* userMediaClientMock();
-    webkit_support::MediaStreamUtil* mediaStreamUtil();
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
 #endif
 

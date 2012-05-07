@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests webkitGetUserMedia.");
+
+function error() {
+  testFailed('Stream generation failed.');
+  finishJSTest();
+}
+
+function getUserMedia(dictionary, callback) {
+  try {
+    navigator.webkitGetUserMedia(dictionary, callback, error);
+  } catch (e) {
+    testFailed('webkitGetUserMedia threw exception :' + e);
+    finishJSTest();
+  }
+}
+
+function gotStream3(s) {
+  stream = s;
+  testPassed('{audio:true, video:true} generated stream');
+  shouldBe('stream.audioTracks.length', '1');
+  shouldBe('stream.videoTracks.length', '1');
+  finishJSTest();
+}
+
+function gotStream2(s) {
+  stream = s;
+  testPassed('{video:true} generated stream');
+  shouldBe('stream.audioTracks.length', '0');
+  shouldBe('stream.videoTracks.length', '1');
+
+  getUserMedia({audio:true, video:true}, gotStream3);
+}
+
+function gotStream1(s) {
+  stream = s;
+  testPassed('{audio:true} generated stream');
+  shouldBe('stream.audioTracks.length', '1');
+  shouldBe('stream.videoTracks.length', '0');
+
+  getUserMedia({video:true}, gotStream2);
+}
+
+getUserMedia({audio:true}, gotStream1);
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

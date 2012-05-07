@@ -47,37 +47,22 @@ PassOwnPtr<WebUserMediaClientMock> WebUserMediaClientMock::create()
     return adoptPtr(new WebUserMediaClientMock());
 }
 
-bool WebUserMediaClientMock::IsMockStream(const WebURL& url)
-{
-    WebMediaStreamDescriptor descriptor(WebMediaStreamRegistry::lookupMediaStreamDescriptor(url));
-    if (descriptor.isNull())
-        return false;
-
-    WebVector<WebMediaStreamSource> sourceVector;
-    descriptor.sources(sourceVector);
-    WebString trackId;
-    for (size_t i = 0; i < sourceVector.size(); ++i) {
-        if (sourceVector[i].type() == WebMediaStreamSource::TypeVideo) {
-            trackId = sourceVector[i].id();
-            break;
-        }
-    }
-    return trackId.equals("mediastreamtest");
-}
-
 void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamRequest, const WebVector<WebMediaStreamSource>& audioSourcesVector, const WebVector<WebMediaStreamSource>& videoSourcesVector)
 {
     ASSERT(!streamRequest.isNull());
-
     WebUserMediaRequest request = streamRequest;
-    const size_t size = 1;
-    WebVector<WebMediaStreamSource> audioSources(size);
-    WebVector<WebMediaStreamSource> videoSources(size);
-    WebString trackId("mediastreamtest");
-    WebString audioTrackName("AudioRecord");
-    WebString videoTrackName("VideoCapture");
-    audioSources[0].initialize(trackId, WebMediaStreamSource::TypeAudio, audioTrackName);
-    videoSources[0].initialize(trackId, WebMediaStreamSource::TypeVideo, videoTrackName);
+
+    const size_t zero = 0;
+    const size_t one = 1;
+    WebVector<WebMediaStreamSource> audioSources(request.audio() ? one : zero);
+    WebVector<WebMediaStreamSource> videoSources(request.video() ? one : zero);
+
+    if (request.audio())
+        audioSources[0].initialize("MockAudioDevice#1", WebMediaStreamSource::TypeAudio, "Mock audio device");
+
+    if (request.video())
+        videoSources[0].initialize("MockVideoDevice#1", WebMediaStreamSource::TypeVideo, "Mock video device");
+
     request.requestSucceeded(audioSources, videoSources);
 }
 

@@ -1693,15 +1693,10 @@ void WebViewHost::exitFullScreenNow()
 }
 
 #if ENABLE(MEDIA_STREAM)
-webkit_support::MediaStreamUtil* WebViewHost::mediaStreamUtil()
-{
-    return userMediaClientMock();
-}
-
 webkit_support::TestMediaStreamClient* WebViewHost::testMediaStreamClient()
 {
     if (!m_testMediaStreamClient.get())
-        m_testMediaStreamClient = adoptPtr(new webkit_support::TestMediaStreamClient(mediaStreamUtil()));
+        m_testMediaStreamClient = adoptPtr(new webkit_support::TestMediaStreamClient());
     return m_testMediaStreamClient.get();
 }
 #endif

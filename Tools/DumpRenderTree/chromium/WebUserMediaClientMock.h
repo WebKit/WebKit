@@ -42,13 +42,10 @@
 
 namespace WebKit {
 
-class WebUserMediaClientMock : public WebUserMediaClient,
-                               public webkit_support::MediaStreamUtil {
+class WebUserMediaClientMock : public WebUserMediaClient {
 public:
     static PassOwnPtr<WebUserMediaClientMock> create();
     ~WebUserMediaClientMock() { }
-
-    bool IsMockStream(const WebURL&);
 
     virtual void requestUserMedia(const WebUserMediaRequest&, const WebVector<WebMediaStreamSource>&, const WebVector<WebMediaStreamSource>&) OVERRIDE;
     virtual void cancelUserMediaRequest(const WebUserMediaRequest&);

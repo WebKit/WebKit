@@ -1,3 +1,16 @@
+2012-05-07  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Enhance WebUserMediaClientMock and add a test for it
+        https://bugs.webkit.org/show_bug.cgi?id=85618
+
+        Reviewed by Adam Barth.
+
+        Adding the capability to control which MediaStreamTracks actually get created,
+        and adding a test that exercises the JS api using that capability.
+
+        * fast/mediastream/getusermedia-expected.txt: Added.
+        * fast/mediastream/getusermedia.html: Added.
+
 2012-05-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] media/track/track-cue-rendering-snap-to-lines-not-set.html fails
