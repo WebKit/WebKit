@@ -1,3 +1,9 @@
+2012-05-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed gardening, compositing/overflow/scrollbar-painting.html times out on mac & linux.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-06  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] New test introduced in r116255 is failing
