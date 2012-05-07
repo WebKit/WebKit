@@ -399,24 +399,17 @@ static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
 #endif
 }
 
-static String CGImageToDataURL(CGImageRef image, const String& mimeType, const double* quality)
+static bool CGImageEncodeToData(CGImageRef image, CFStringRef uti, const double* quality, CFMutableDataRef data)
 {
-    if (!image)
-        return "data:,";
+    if (!image || !uti || !data)
+        return false;
 
-    RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
-    if (!data)
-        return "data:,";
-
-    RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
-    ASSERT(uti);
-
-    RetainPtr<CGImageDestinationRef> destination(AdoptCF, CGImageDestinationCreateWithData(data.get(), uti.get(), 1, 0));
+    RetainPtr<CGImageDestinationRef> destination(AdoptCF, CGImageDestinationCreateWithData(data, uti, 1, 0));
     if (!destination)
-        return "data:,";
+        return false;
 
     RetainPtr<CFDictionaryRef> imageProperties = 0;
-    if (CFEqual(uti.get(), jpegUTI()) && quality && *quality >= 0.0 && *quality <= 1.0) {
+    if (CFEqual(uti, jpegUTI()) && quality && *quality >= 0.0 && *quality <= 1.0) {
         // Apply the compression quality to the JPEG image destination.
         RetainPtr<CFNumberRef> compressionQuality(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, quality));
         const void* key = kCGImageDestinationLossyCompressionQuality;
@@ -428,7 +421,17 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
     // in the calling functions, but it doesn't seem to work.
 
     CGImageDestinationAddImage(destination.get(), image, imageProperties.get());
-    CGImageDestinationFinalize(destination.get());
+    return CGImageDestinationFinalize(destination.get());
+}
+
+static String CGImageToDataURL(CGImageRef image, const String& mimeType, const double* quality)
+{
+    RetainPtr<CFStringRef> uti = utiFromMIMEType(mimeType);
+    ASSERT(uti);
+
+    RetainPtr<CFMutableDataRef> data(AdoptCF, CFDataCreateMutable(kCFAllocatorDefault, 0));
+    if (!CGImageEncodeToData(image, uti.get(), quality, data.get()))
+        return "data:,";
 
     Vector<char> base64Data;
     base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(data.get())), CFDataGetLength(data.get()), base64Data);
