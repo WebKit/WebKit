@@ -90,6 +90,9 @@ public:
 
 class MockTextureUploader : public TextureUploader {
 public:
+    MOCK_METHOD0(isBusy, bool());
+    MOCK_METHOD0(beginUploads, void());
+    MOCK_METHOD0(endUploads, void());
     MOCK_METHOD5(uploadTexture, void(GraphicsContext3D*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect, const IntRect));
 };
 

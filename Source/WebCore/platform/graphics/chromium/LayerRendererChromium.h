@@ -37,7 +37,7 @@
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "TextureCopier.h"
-#include "TextureUploader.h"
+#include "ThrottledTextureUploader.h"
 #include "TrackingTextureAllocator.h"
 #include "cc/CCLayerTreeHost.h"
 #include <wtf/HashMap.h>
@@ -78,7 +78,7 @@ public:
 class LayerRendererChromium {
     WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
 public:
-    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
+    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, PassOwnPtr<TextureUploader>);
 
     ~LayerRendererChromium();
 
@@ -144,7 +144,7 @@ protected:
     void ensureFramebuffer();
     bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
 
-    LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
+    LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, PassOwnPtr<TextureUploader>);
     bool initialize();
 
 private:
@@ -286,7 +286,7 @@ private:
 
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
     OwnPtr<AcceleratedTextureCopier> m_textureCopier;
-    OwnPtr<AcceleratedTextureUploader> m_textureUploader;
+    OwnPtr<TextureUploader> m_textureUploader;
     OwnPtr<TrackingTextureAllocator> m_contentsTextureAllocator;
     OwnPtr<TrackingTextureAllocator> m_renderSurfaceTextureAllocator;
 

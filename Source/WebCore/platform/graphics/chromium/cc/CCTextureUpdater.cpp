@@ -92,31 +92,42 @@ bool CCTextureUpdater::hasMoreUpdates() const
     return m_entries.size() || m_partialEntries.size() || m_copyEntries.size() || m_managedCopyEntries.size();
 }
 
-bool CCTextureUpdater::update(GraphicsContext3D* context, TextureAllocator* allocator, TextureCopier* copier, TextureUploader* uploader, size_t count)
+void CCTextureUpdater::update(GraphicsContext3D* context, TextureAllocator* allocator, TextureCopier* copier, TextureUploader* uploader, size_t count)
 {
     size_t index;
-    size_t maxIndex = min(m_entryIndex + count, m_entries.size());
-    for (index = m_entryIndex; index < maxIndex; ++index) {
-        UpdateEntry& entry = m_entries[index];
-        uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
-    }
 
-    bool moreUpdates = maxIndex < m_entries.size();
+    if (m_entries.size() || m_partialEntries.size()) {
+        if (uploader->isBusy())
+            return;
 
-    ASSERT(m_partialEntries.size() <= count);
-    // Make sure the number of updates including partial updates are not more
-    // than |count|.
-    if ((count - (index - m_entryIndex)) < m_partialEntries.size())
-        moreUpdates = true;
+        uploader->beginUploads();
 
-    if (moreUpdates) {
-        m_entryIndex = index;
-        return true;
-    }
+        size_t maxIndex = min(m_entryIndex + count, m_entries.size());
+        for (index = m_entryIndex; index < maxIndex; ++index) {
+            UpdateEntry& entry = m_entries[index];
+            uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
+        }
 
-    for (index = 0; index < m_partialEntries.size(); ++index) {
-        UpdateEntry& entry = m_partialEntries[index];
-        uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
+        bool moreUploads = maxIndex < m_entries.size();
+
+        ASSERT(m_partialEntries.size() <= count);
+        // We need another update batch if the number of updates remaining
+        // in |count| is greater than the remaining partial entries.
+        if ((count - (index - m_entryIndex)) < m_partialEntries.size())
+            moreUploads = true;
+
+        if (moreUploads) {
+            m_entryIndex = index;
+            uploader->endUploads();
+            return;
+        }
+
+        for (index = 0; index < m_partialEntries.size(); ++index) {
+            UpdateEntry& entry = m_partialEntries[index];
+            uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
+        }
+
+        uploader->endUploads();
     }
 
     for (index = 0; index < m_copyEntries.size(); ++index) {
@@ -136,7 +147,6 @@ bool CCTextureUpdater::update(GraphicsContext3D* context, TextureAllocator* allo
 
     // If no entries left to process, auto-clear.
     clear();
-    return false;
 }
 
 void CCTextureUpdater::clear()

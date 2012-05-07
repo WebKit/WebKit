@@ -48,6 +48,7 @@
 #include "RenderSurfaceChromium.h"
 #include "TextureCopier.h"
 #include "TextureManager.h"
+#include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
 #include "cc/CCCheckerboardDrawQuad.h"
@@ -193,9 +194,9 @@ private:
 };
 
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TextureUploader> uploader)
 {
-    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context)));
+    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context, uploader)));
     if (!layerRenderer->initialize())
         return nullptr;
 
@@ -203,11 +204,13 @@ PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChr
 }
 
 LayerRendererChromium::LayerRendererChromium(LayerRendererChromiumClient* client,
-                                             PassRefPtr<GraphicsContext3D> context)
+                                             PassRefPtr<GraphicsContext3D> context,
+                                             PassOwnPtr<TextureUploader> uploader)
     : m_client(client)
     , m_currentRenderSurface(0)
     , m_currentManagedTexture(0)
     , m_offscreenFramebufferId(0)
+    , m_textureUploader(uploader)
     , m_context(context)
     , m_defaultRenderSurface(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
@@ -1379,7 +1382,6 @@ bool LayerRendererChromium::initializeSharedObjects()
                                                            TextureManager::reclaimLimitBytes(viewportSize()),
                                                            m_capabilities.maxTextureSize);
     m_textureCopier = AcceleratedTextureCopier::create(m_context.get());
-    m_textureUploader = AcceleratedTextureUploader::create(m_context.get());
     m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     m_renderSurfaceTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     if (m_capabilities.usingTextureUsageHint)

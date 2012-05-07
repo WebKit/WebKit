@@ -34,10 +34,27 @@
 #include "cc/CCTextureUpdater.h"
 #include <wtf/CurrentTime.h>
 
-using namespace std;
 using namespace WTF;
 
 namespace WebCore {
+
+class UnthrottledTextureUploader : public TextureUploader {
+    WTF_MAKE_NONCOPYABLE(UnthrottledTextureUploader);
+public:
+    static PassOwnPtr<UnthrottledTextureUploader> create()
+    {
+        return adoptPtr(new UnthrottledTextureUploader());
+    }
+    virtual ~UnthrottledTextureUploader() { }
+
+    virtual bool isBusy() { return false; }
+    virtual void beginUploads() { }
+    virtual void endUploads() { }
+    virtual void uploadTexture(GraphicsContext3D* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
+
+protected:
+    UnthrottledTextureUploader() { }
+};
 
 PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
@@ -138,7 +155,7 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
     ASSERT(m_contextBeforeInitialization);
     {
         DebugScopedSetImplThread impl;
-        bool ok = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitialization.release());
+        bool ok = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitialization.release(), UnthrottledTextureUploader::create());
         if (ok) {
             m_layerRendererInitialized = true;
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
@@ -162,7 +179,7 @@ bool CCSingleThreadProxy::recreateContext()
     {
         DebugScopedSetImplThread impl;
         m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context);
+        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context, UnthrottledTextureUploader::create());
         if (initialized) {
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
         }
@@ -203,8 +220,14 @@ void CCSingleThreadProxy::doCommit(CCTextureUpdater& updater)
         m_layerTreeHostImpl->beginCommit();
 
         m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
-        updater.update(m_layerTreeHostImpl->context(), m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), numeric_limits<size_t>::max());
-        ASSERT(!updater.hasMoreUpdates());
+
+        // CCTextureUpdater is non-blocking and will return without updating
+        // any textures if the uploader is busy. This shouldn't be a problem
+        // here as the throttled uploader isn't used in single thread mode.
+        // For correctness, loop until no more updates are pending.
+        while (updater.hasMoreUpdates())
+            updater.update(m_layerTreeHostImpl->context(), m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), maxPartialTextureUpdates());
+
         m_layerTreeHostImpl->setVisible(m_layerTreeHost->visible());
         m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 

@@ -531,10 +531,10 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
     m_timeSourceClientAdapter->setActive(shouldTickInBackground);
 }
 
-bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context)
+bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TextureUploader> uploader)
 {
     OwnPtr<LayerRendererChromium> layerRenderer;
-    layerRenderer = LayerRendererChromium::create(this, context);
+    layerRenderer = LayerRendererChromium::create(this, context, uploader);
 
     // Since we now have a new context/layerRenderer, we cannot continue to use the old
     // resources (i.e. renderSurfaces and texture IDs).

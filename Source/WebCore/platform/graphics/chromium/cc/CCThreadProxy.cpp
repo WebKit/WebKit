@@ -57,6 +57,25 @@ static const double contextRecreationTickRate = 0.03;
 
 namespace WebCore {
 
+// FIXME: remove when ThrottledTextureUploader is ready to be used.
+class UnthrottledTextureUploader : public TextureUploader {
+    WTF_MAKE_NONCOPYABLE(UnthrottledTextureUploader);
+public:
+    static PassOwnPtr<UnthrottledTextureUploader> create(PassRefPtr<GraphicsContext3D> context)
+    {
+        return adoptPtr(new UnthrottledTextureUploader(context));
+    }
+    virtual ~UnthrottledTextureUploader() { }
+
+    virtual bool isBusy() { return false; }
+    virtual void beginUploads() { }
+    virtual void endUploads() { }
+    virtual void uploadTexture(GraphicsContext3D* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
+
+protected:
+    explicit UnthrottledTextureUploader(PassRefPtr<GraphicsContext3D>) { }
+};
+
 PassOwnPtr<CCProxy> CCThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
     return adoptPtr(new CCThreadProxy(layerTreeHost));
@@ -805,7 +824,8 @@ void CCThreadProxy::initializeLayerRendererOnImplThread(CCCompletionEvent* compl
     TRACE_EVENT("CCThreadProxy::initializeLayerRendererOnImplThread", this, 0);
     ASSERT(isImplThread());
     ASSERT(m_contextBeforeInitializationOnImplThread);
-    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitializationOnImplThread.release());
+    OwnPtr<TextureUploader> uploader = UnthrottledTextureUploader::create(m_contextBeforeInitializationOnImplThread.get());
+    *initializeSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitializationOnImplThread.release(), uploader.release());
     if (*initializeSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         if (capabilities->usingSwapCompleteCallback)
@@ -855,7 +875,8 @@ void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, G
     TRACE_EVENT0("cc", "CCThreadProxy::recreateContextOnImplThread");
     ASSERT(isImplThread());
     m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-    *recreateSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(adoptRef(contextPtr));
+    OwnPtr<TextureUploader> uploader = UnthrottledTextureUploader::create(contextPtr);
+    *recreateSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(adoptRef(contextPtr), uploader.release());
     if (*recreateSucceeded) {
         *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
         m_schedulerOnImplThread->didRecreateContext();

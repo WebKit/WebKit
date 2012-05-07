@@ -957,7 +957,7 @@ TEST(TiledLayerChromiumTest, partialUpdates)
     }
     ccLayerTreeHost->commitComplete();
 
-    // Partail update of 6 checkerboard tiles.
+    // Partial update of 6 checkerboard tiles.
     layer->invalidateRect(IntRect(50, 50, 200, 100));
     {
         DebugScopedSetImplThread implThread;
@@ -969,6 +969,20 @@ TEST(TiledLayerChromiumTest, partialUpdates)
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
         updater.update(0, &allocator, &copier, &uploader, 4);
         EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
+        EXPECT_FALSE(updater.hasMoreUpdates());
+        layer->fakeLayerTextureUpdater()->clearUpdateCount();
+        layer->pushPropertiesTo(layerImpl.get());
+    }
+    ccLayerTreeHost->commitComplete();
+
+    // Partial update of 4 tiles.
+    layer->invalidateRect(IntRect(50, 50, 100, 100));
+    {
+        DebugScopedSetImplThread implThread;
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        ccLayerTreeHost->updateLayers(updater);
+        updater.update(0, &allocator, &copier, &uploader, 4);
+        EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_FALSE(updater.hasMoreUpdates());
         layer->fakeLayerTextureUpdater()->clearUpdateCount();
         layer->pushPropertiesTo(layerImpl.get());

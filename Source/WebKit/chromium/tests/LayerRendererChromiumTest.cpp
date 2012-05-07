@@ -25,6 +25,7 @@
 #include "config.h"
 #include "LayerRendererChromium.h"
 
+#include "CCTiledLayerTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
@@ -35,6 +36,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
+using namespace WebKitTests;
 
 class FrameCountingMemoryAllocationSettingContext : public FakeWebGraphicsContext3D {
 public:
@@ -91,7 +93,7 @@ private:
 
 class FakeLayerRendererChromium : public LayerRendererChromium {
 public:
-    FakeLayerRendererChromium(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context) : LayerRendererChromium(client, context) { }
+    FakeLayerRendererChromium(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TextureUploader> uploader) : LayerRendererChromium(client, context, uploader) { }
 
     // LayerRendererChromium methods.
 
@@ -107,7 +109,7 @@ protected:
         , m_suggestHaveBackbufferNo(1, false)
         , m_context(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FrameCountingMemoryAllocationSettingContext()), GraphicsContext3D::RenderDirectlyToHostWindow))
         , m_mockContext(*static_cast<FrameCountingMemoryAllocationSettingContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_context.get())))
-        , m_layerRendererChromium(&m_mockClient, m_context.release())
+        , m_layerRendererChromium(&m_mockClient, m_context.release(), adoptPtr(new FakeTextureUploader()))
     {
     }
 
@@ -271,7 +273,7 @@ public:
 TEST(LayerRendererChromiumTest2, initializationDoesNotMakeSynchronousCalls)
 {
     FakeLayerRendererChromiumClient mockClient;
-    FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ForbidSynchronousCallContext), GraphicsContext3D::RenderDirectlyToHostWindow));
+    FakeLayerRendererChromium layerRendererChromium(&mockClient, GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new ForbidSynchronousCallContext), GraphicsContext3D::RenderDirectlyToHostWindow), adoptPtr(new FakeTextureUploader()));
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 }

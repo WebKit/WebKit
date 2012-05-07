@@ -49,8 +49,8 @@ public:
 
     bool hasMoreUpdates() const;
 
-    // Update some textures. Returns true if more textures left to process.
-    bool update(GraphicsContext3D*, TextureAllocator*, TextureCopier*, TextureUploader*, size_t count);
+    // Update some textures.
+    void update(GraphicsContext3D*, TextureAllocator*, TextureCopier*, TextureUploader*, size_t count);
 
     void clear();
 

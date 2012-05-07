@@ -31,27 +31,12 @@ namespace WebCore {
 
 class TextureUploader {
 public:
-    virtual void uploadTexture(GraphicsContext3D*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect sourceRect, const IntRect destRect) = 0;
-
-protected:
     virtual ~TextureUploader() { }
-};
 
-class AcceleratedTextureUploader : public TextureUploader {
-    WTF_MAKE_NONCOPYABLE(AcceleratedTextureUploader);
-public:
-    static PassOwnPtr<AcceleratedTextureUploader> create(PassRefPtr<GraphicsContext3D> context)
-    {
-        return adoptPtr(new AcceleratedTextureUploader(context));
-    }
-    virtual ~AcceleratedTextureUploader();
-
-    virtual void uploadTexture(GraphicsContext3D*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect sourceRect, const IntRect destRect);
-
-protected:
-    explicit AcceleratedTextureUploader(PassRefPtr<GraphicsContext3D>);
-
-    RefPtr<GraphicsContext3D> m_context;
+    virtual bool isBusy() = 0;
+    virtual void beginUploads() = 0;
+    virtual void endUploads() = 0;
+    virtual void uploadTexture(GraphicsContext3D*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect sourceRect, const IntRect destRect) = 0;
 };
 
 }
