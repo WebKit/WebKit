@@ -1000,13 +1000,13 @@ WebInspector.NetworkLogView.prototype = {
             log: (new WebInspector.HARLog(this._requests)).build()
         };
         
-        WebInspector.save(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive, null, 2), true);
+        WebInspector.fileManager.save(WebInspector.inspectedPageDomain + ".har", JSON.stringify(harArchive, null, 2), true);
     },
 
     _exportRequest: function(request)
     {
         var har = (new WebInspector.HAREntry(request)).build();
-        WebInspector.save(request.displayName + ".har", JSON.stringify(har, null, 2), true);
+        WebInspector.fileManager.save(request.displayName + ".har", JSON.stringify(har, null, 2), true);
     },
 
     _clearBrowserCache: function(event)

@@ -291,8 +291,8 @@ WebInspector.TextViewer.prototype = {
             this._delegate.populateTextAreaContextMenu(contextMenu, target && target.lineNumber);
         }
         if (this._url) {
-            contextMenu.appendItem(WebInspector.UIString("Save"), WebInspector.save.bind(WebInspector, this._url, this._textModel.text, false));
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), WebInspector.save.bind(WebInspector, this._url, this._textModel.text, true));
+            contextMenu.appendItem(WebInspector.UIString("Save"), WebInspector.fileManager.save.bind(WebInspector, this._url, this._textModel.text, false));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save as..." : "Save As..."), WebInspector.fileManager.save.bind(WebInspector, this._url, this._textModel.text, true));
         }
 
         contextMenu.show(event);
