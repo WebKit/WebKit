@@ -1,3 +1,9 @@
+2012-05-07  Andy Estes  <aestes@apple.com>
+
+        ENABLE_IFRAME_SEAMLESS should be part of FEATURE_DEFINES.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-05-07  Eric Seidel  <eric@webkit.org>
 
         Add ENABLE_IFRAME_SEAMLESS so Apple can turn off SEAMLESS if needed
