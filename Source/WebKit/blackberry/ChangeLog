@@ -1,3 +1,15 @@
+2012-05-07  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Over-scroll image path property should be relative to local application directory
+        https://bugs.webkit.org/show_bug.cgi?id=85814
+
+        Reviewed by Rob Buis.
+
+        Over-scroll image path web setting should be relative to the local directory.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::ensureOverScrollImage):
+
 2012-05-07  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Add methods need by client side

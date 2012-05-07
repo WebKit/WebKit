@@ -1207,7 +1207,7 @@ bool BackingStorePrivate::ensureOverScrollImage()
     if (s_overScrollImage && path == s_overScrollImagePath)
         return true;
 
-    std::string imagePath = Platform::Client::get()->getApplicationDirectory() + path;
+    std::string imagePath = Platform::Client::get()->getApplicationLocalDirectory() + path;
 
     SkBitmap bitmap;
 
