@@ -1,3 +1,10 @@
+2012-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/test_expectations.txt: Mark new mediastream test as
+        expected failure.
+
 2012-05-07  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Enhance WebUserMediaClientMock and add a test for it

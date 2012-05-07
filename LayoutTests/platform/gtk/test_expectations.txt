@@ -1276,6 +1276,7 @@ BUGWK79203 : fast/mediastream/argument-types.html = FAIL
 BUGWK79203 : fast/mediastream/constructors.html = FAIL
 BUGWK79203 : fast/mediastream/peerconnection-argument-types.html = FAIL
 BUGWK79203 : fast/mediastream/peerconnection-iceoptions.html = FAIL
+BUGWK79203 : fast/mediastream/getusermedia.html = FAIL
 
 BUGWK80210 : security/block-test.html = FAIL
 
