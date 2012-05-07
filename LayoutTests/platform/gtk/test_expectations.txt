@@ -491,7 +491,6 @@ BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = PASS TEXT
 BUGWK84700 : fast/dom/Window/window-postmessage-clone-frames.html = PASS TEXT
 
 BUGWK84856 : media/media-controller-playback.html = PASS TEXT
-BUGWK84858 : media/video-seek-past-end-playing.html = PASS TEXT
 
 // Sometimes asserts in debug builds (cross-platform problem): https://bugs.webkit.org/show_bug.cgi?id=59801
 BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT

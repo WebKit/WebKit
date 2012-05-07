@@ -1,3 +1,14 @@
+2012-05-07  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [GTK] media/video-seek-past-end-playing.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=84858
+
+        Reviewed by Philippe Normand.
+
+        video-seek-past-end-playing.html should work reliably after fix, removing.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-07  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderBlock::updateFirstLetterStyle.

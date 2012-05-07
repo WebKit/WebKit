@@ -1169,7 +1169,6 @@ media/video-replaces-poster.html
 media/video-reverse-play-duration.html
 media/video-seek-by-small-increment.html
 media/video-seek-past-end-paused.html
-media/video-seek-past-end-playing.html
 media/video-seekable.html
 media/video-seeking.html
 media/video-set-rate-from-pause.html

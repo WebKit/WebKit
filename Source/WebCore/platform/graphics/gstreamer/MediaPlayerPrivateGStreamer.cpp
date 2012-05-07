@@ -1368,8 +1368,6 @@ void MediaPlayerPrivateGStreamer::didEnd()
 
     m_isEndReached = true;
 
-    gst_element_set_state(m_playBin, GST_STATE_PAUSED);
-
     timeChanged();
 }
 
