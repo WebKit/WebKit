@@ -1,3 +1,21 @@
+2012-05-07  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Create LinkHighlightLayerChromium class to provide link-highlight preview animations for GraphicsLayerChromium.
+        https://bugs.webkit.org/show_bug.cgi?id=85084
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/LinkHighlightLayerDelegateTest.cpp: Added.
+        (WebCore):
+        (MockGraphicsLayerClient):
+        (WebCore::MockGraphicsLayerClient::notifyAnimationStarted):
+        (WebCore::MockGraphicsLayerClient::notifySyncRequired):
+        (WebCore::MockGraphicsLayerClient::paintContents):
+        (WebCore::MockGraphicsLayerClient::showDebugBorders):
+        (WebCore::MockGraphicsLayerClient::showRepaintCounter):
+        (WebCore::TEST):
+
 2012-05-07  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: LevelDB coding for bools is broken
