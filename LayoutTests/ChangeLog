@@ -1,3 +1,9 @@
+2012-05-06  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed expectations update for overflow-positioning.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-06  Adam Barth  <abarth@webkit.org>
 
         Content Security Policy reports should be reported with content-type application/json, should contain all required fields

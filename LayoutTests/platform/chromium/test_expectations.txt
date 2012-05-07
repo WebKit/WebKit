@@ -3911,3 +3911,5 @@ BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
 
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
+
+BUGWK85771 MAC LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
