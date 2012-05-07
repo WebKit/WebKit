@@ -1,3 +1,15 @@
+2012-05-07  Dan Bernstein  <mitz@apple.com>
+
+        webkit.org instructions for debugging WebProcess are unnecessarily complex
+        https://bugs.webkit.org/show_bug.cgi?id=85756
+
+        Reviewed by Darin Adler.
+
+        * building/debug.html: Added instructions for setting up and using the WebKit workspace for
+        debugging the Web process, as well as instructions for debugging the Web process from the
+        command line using debug-safari and debug-minibrowser.
+        * building/tools.html: Updated links and tweaked the language.
+
 2012-04-23  Daniel Bates  <dbates@webkit.org>
 
         Add notice about running xcode-select before using Xcode 4.3.2 command line tools

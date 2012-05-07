@@ -5,23 +5,20 @@
 
 <div class="mac-instructions">
 <h2>Debugging on Mac OS X</h2>
-<p>Each WebKit component -- JavaScriptCore, WebCore, and WebKit2 -- contains its own Xcode project that depends on the build location specified in the project itself. In Xcode 4.3.2, choose Xcode > Preferences > Locations, click Locations, click the Advanced button, and ensure that the build location is Legacy.</p>
+<p>To debug from within Xcode, you can use the WebKit workspace. Ensure that the Products and Intermediates locations for the workspace match those used by <code>build-webkit</code> by choosing File > Workspace Settings and clicking the Advanced button, selecting Custom, Relative to Workspace, and entering WebKitBuild both for Products and for Intermediates. Note that if you have specified a custom build location in Xcode preferences, then you don&rsquo;t need to do this.</p>
 <h3>Debugging UIProcess</h3>
 <p>Follow the instructions on the <a href="debug-mac-uiprocess.html">debugging UIProcess</a> page.</p>
 <h3>Debugging WebProcess</h3>
-<ol>
-<li><p>Launch Safari</p>
-<p>Follow the instructions on <a href="run.html">Running WebKit</a> to launch Safari from the command line with the WebKit version you built. Alternatively you can <a href="debug-mac-uiprocess.html">use the WebKit2 Xcode project to launch Safari</a>.</p>
-</li>
-<li><p>Open a project</p>
-<p>Open the Xcode project belonging to the component -- WebCore or JavaScriptCore -- you want to debug.</p>
-</li>
-<li><p>Attach to WebProcess</p>
-<p>Choose Product > Attach to Process > WebProcess.</p>
-</li>
-<li><p>See the <a href="https://developer.apple.com/library/mac/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/Debugging/Debugging.html#//apple_ref/doc/uid/TP40010215-CH3-SW1">Xcode Debugging Guide</a> for more information on using Xcode to debug software on Mac OS X.</p>
-</li>
-</ol>
+<ul>
+    <li>
+        <p>From the command line:</p>
+        <p>Execute the <code>debug-safari</code> or <code>debug-minibrowser</code> <a href="/coding/scripts.html">script</a> with the <code>--target-web-process</code> option. It will start the debugger with WebProcess as the target and with command-line arguments that will make WebProcess run Safari or MiniBrowser as its client. At the debugger prompt, enter <code>run</code> to start the process.</p>
+    </li>
+    <li>
+        <p>From Xcode:</p>
+        <p>Open the WebKit workspace and choose &ldquo;All Source (target WebProcess)&rdquo; from the Scheme pop-up menu in the toolbar, then choose Product > Run. If WebKit is already built, it is quicker to choose Product > Perform Action > Run Without Building</p>
+    </li>
+</ul>
 </div>
 <div class="windows-instructions">
 <h2>Debugging on Windows</h2>
