@@ -251,6 +251,8 @@ public:
     virtual void clearCache() = 0;
 
     virtual bool hasKeyboardFocus() = 0;
+    virtual void createPopupWebView(const Platform::IntRect& webViewRect) = 0;
+    virtual void closePopupWebView() = 0;
 };
 } // namespace WebKit
 } // namespace BlackBerry

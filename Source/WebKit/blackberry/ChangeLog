@@ -1,3 +1,15 @@
+2012-05-07  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Add methods need by client side
+        https://bugs.webkit.org/show_bug.cgi?id=85661
+
+        Reviewed by Antonio Gomes.
+
+        Add methods needed by client side when create and close HTML popup dialogs.
+        PR 154360
+
+        * Api/WebPageClient.h:
+
 2012-05-06  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Support html5 download attribute.
