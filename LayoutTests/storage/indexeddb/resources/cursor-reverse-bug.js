@@ -34,7 +34,7 @@ function populateStore()
 {
     debug("");
     debug("populating store...");
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction('store', 'readwrite')");
     evalAndLog("store = trans.objectStore('store');");
     trans.onerror = unexpectedErrorCallback;
     trans.onabort = unexpectedAbortCallback;
@@ -64,7 +64,7 @@ function testCursor()
 
     test = tests.shift();
 
-    evalAndLog("trans = db.transaction('store', IDBTransaction.READ_ONLY)");
+    evalAndLog("trans = db.transaction('store', 'readonly')");
     trans.onerror = unexpectedErrorCallback;
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = testCursor;
@@ -88,13 +88,13 @@ function testCursor()
     }
 
     debug("upperBound: " + test.upperBound + " open: " + test.open + " expected: " + test.expected);
-    storeReq = evalAndLog("storeReq = store.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)");
+    storeReq = evalAndLog("storeReq = store.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), 'prev')");
     storeReq.onsuccess = testFunction;
 
-    indexReq = evalAndLog("indexReq = index.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)");
+    indexReq = evalAndLog("indexReq = index.openCursor(IDBKeyRange.upperBound(test.upperBound, test.open), 'prev')");
     indexReq.onsuccess = testFunction;
 
-    indexKeyReq = evalAndLog("indexKeyReq = index.openKeyCursor(IDBKeyRange.upperBound(test.upperBound, test.open), IDBCursor.PREV)");
+    indexKeyReq = evalAndLog("indexKeyReq = index.openKeyCursor(IDBKeyRange.upperBound(test.upperBound, test.open), 'prev')");
     indexKeyReq.onsuccess = testFunction;
 }
 

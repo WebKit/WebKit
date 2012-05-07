@@ -15,7 +15,7 @@ objectStore = db.createObjectStore('test')
 objectStore.add(1, 1)
 objectStore.add(2, 2)
 objectStore.add(3, 3)
-trans = db.transaction(['test'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['test'], 'readwrite')
 trans.objectStore('test').openCursor()
 PASS event.target.result.key is 1
 trans.objectStore('test').add(6, 6)

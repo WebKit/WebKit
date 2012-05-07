@@ -14,17 +14,17 @@ store = db.createObjectStore('store')
 request = store.put('x', 'y')
 PASS Put success
 running first transaction
-currentTransaction = db.transaction(['store'], IDBTransaction.READ_WRITE)
+currentTransaction = db.transaction(['store'], 'readwrite')
 objectStore.put('a', 'b')
 db.close()
-Expecting exception from db.transaction(['store'], IDBTransaction.READ_WRITE)
+Expecting exception from db.transaction(['store'], 'readwrite')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 
 verify that we can reopen the db after calling close
 indexedDB.open('transaction-after-close')
 second_db = event.target.result
-currentTransaction = second_db.transaction(['store'], IDBTransaction.READ_WRITE)
+currentTransaction = second_db.transaction(['store'], 'readwrite')
 request = store.put('1', '2')
 PASS final put success
 PASS successfullyParsed is true

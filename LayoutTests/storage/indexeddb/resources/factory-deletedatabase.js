@@ -39,7 +39,7 @@ function deleteExisting()
 
 function getValue()
 {
-    transaction = evalAndLog("db.transaction('storeName', IDBTransaction.READ_WRITE)");
+    transaction = evalAndLog("db.transaction('storeName', 'readwrite')");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 

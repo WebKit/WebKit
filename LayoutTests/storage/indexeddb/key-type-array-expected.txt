@@ -16,7 +16,7 @@ preparing database
 Deleted all object stores.
 db.createObjectStore('store');
 
-trans = db.transaction('store', IDBTransaction.READ_WRITE)
+trans = db.transaction('store', 'readwrite')
 store = trans.objectStore('store')
 
 long_array = []; for (i = 0; i < 1000; ++i) { long_array.push('abc', 123, new Date(0), []); }
@@ -159,7 +159,7 @@ store.put('value27', self_referrential_array);
 store.get(self_referrential_array);
 PASS getreq.result is "value27"
 
-trans = db.transaction('store', IDBTransaction.READ_WRITE)
+trans = db.transaction('store', 'readwrite')
 store = trans.objectStore('store')
 
 array that contains itself: array = [ array ]

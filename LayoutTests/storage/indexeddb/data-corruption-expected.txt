@@ -15,10 +15,10 @@ PASS trans !== null is true
 Deleted all object stores.
 db.createObjectStore('storeName')
 addData():
-transaction = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+transaction = db.transaction(['storeName'], 'readwrite')
 request = transaction.objectStore('storeName').add({x: testDate}, 'key')
 addData():
-transaction = db.transaction(['storeName'], IDBTransaction.READ_ONLY)
+transaction = db.transaction(['storeName'], 'readonly')
 request = transaction.objectStore('storeName').get('key')
 PASS event.target.result.x.toString() == testDate.toString() is true
 PASS successfullyParsed is true

@@ -15,7 +15,7 @@ trans.oncomplete = startTest
 Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
-trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], 'readwrite')
 trans.onabort = transactionAborted
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')

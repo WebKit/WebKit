@@ -45,6 +45,31 @@ PassRefPtr<IDBCursor> IDBCursor::create(PassRefPtr<IDBCursorBackendInterface> ba
     return adoptRef(new IDBCursor(backend, request, source, transaction));
 }
 
+const AtomicString& IDBCursor::directionNext()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, next, ("next"));
+    return next;
+}
+
+const AtomicString& IDBCursor::directionNextUnique()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, nextunique, ("nextunique"));
+    return nextunique;
+}
+
+const AtomicString& IDBCursor::directionPrev()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, prev, ("prev"));
+    return prev;
+}
+
+const AtomicString& IDBCursor::directionPrevUnique()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, prevunique, ("prevunique"));
+    return prevunique;
+}
+
+
 IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
     : m_backend(backend)
     , m_request(request)
@@ -63,10 +88,13 @@ IDBCursor::~IDBCursor()
 {
 }
 
-unsigned short IDBCursor::direction() const
+const String& IDBCursor::direction() const
 {
     IDB_TRACE("IDBCursor::direction");
-    return m_backend->direction();
+    ExceptionCode ec = 0;
+    const AtomicString& direction = directionToString(m_backend->direction(), ec);
+    ASSERT(!ec);
+    return direction;
 }
 
 PassRefPtr<IDBKey> IDBCursor::key() const
@@ -206,6 +234,43 @@ void IDBCursor::setValueReady()
     m_currentPrimaryKey = m_backend->primaryKey();
     m_currentValue = IDBAny::create(m_backend->value());
     m_gotValue = true;
+}
+
+unsigned short IDBCursor::stringToDirection(const String& directionString, ExceptionCode& ec)
+{
+    if (directionString == IDBCursor::directionNext())
+        return IDBCursor::NEXT;
+    if (directionString == IDBCursor::directionNextUnique())
+        return IDBCursor::NEXT_NO_DUPLICATE;
+    if (directionString == IDBCursor::directionPrev())
+        return IDBCursor::PREV;
+    if (directionString == IDBCursor::directionPrevUnique())
+        return IDBCursor::PREV_NO_DUPLICATE;
+
+    // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
+    ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+    return 0;
+}
+
+const AtomicString& IDBCursor::directionToString(unsigned short direction, ExceptionCode& ec)
+{
+    switch (direction) {
+    case IDBCursor::NEXT:
+        return IDBCursor::directionNext();
+
+    case IDBCursor::NEXT_NO_DUPLICATE:
+        return IDBCursor::directionNextUnique();
+
+    case IDBCursor::PREV:
+        return IDBCursor::directionPrev();
+
+    case IDBCursor::PREV_NO_DUPLICATE:
+        return IDBCursor::directionPrevUnique();
+
+    default:
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        return IDBCursor::directionNext();
+    }
 }
 
 } // namespace WebCore

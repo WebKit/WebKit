@@ -14,7 +14,7 @@ PASS trans !== null is true
 trans.oncomplete = addData
 Deleted all object stores.
 db.createObjectStore('storeName', null)
-trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], 'readwrite')
 trans.onabort = unexpectedAbortCallback
 trans.oncomplete = transactionCompleted
 store = trans.objectStore('storeName')
@@ -24,7 +24,7 @@ event.preventDefault()
 PASS Transaction completed
 
 
-trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], 'readwrite')
 trans.onabort = transactionAborted1
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
@@ -33,7 +33,7 @@ Doing nothing to prevent the default action...
 PASS Transaction aborted
 
 
-trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], 'readwrite')
 trans.onabort = transactionAborted2
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')

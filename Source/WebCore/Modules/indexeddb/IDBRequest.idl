@@ -44,9 +44,7 @@ module storage {
         readonly attribute IDBTransaction transaction;
 
         // States
-        const unsigned short LOADING = 1;
-        const unsigned short DONE = 2;
-        readonly attribute unsigned short readyState;
+        readonly attribute DOMString readyState;
 
         // Events
         attribute EventListener onsuccess;

@@ -59,11 +59,12 @@ public:
 
     // Defined in the IDL
     enum ReadyState {
-        LOADING = 1,
+        PENDING = 1,
         DONE = 2,
         EarlyDeath = 3
     };
-    unsigned short readyState() const;
+
+    const String& readyState() const;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(success);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);

@@ -41,7 +41,7 @@ function testKeyPaths()
     debug("");
     debug("testKeyPaths():");
 
-    transaction = evalAndLog("transaction = db.transaction('store', IDBTransaction.READ_WRITE)");
+    transaction = evalAndLog("transaction = db.transaction('store', 'readwrite')");
     transaction.onabort = unexpectedAbortCallback;
     store = evalAndLog("store = transaction.objectStore('store')");
 

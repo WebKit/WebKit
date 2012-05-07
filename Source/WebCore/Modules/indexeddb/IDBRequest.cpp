@@ -56,7 +56,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_errorCode(0)
     , m_source(source)
     , m_transaction(transaction)
-    , m_readyState(LOADING)
+    , m_readyState(PENDING)
     , m_requestFinished(false)
     , m_cursorFinished(false)
     , m_contextStopped(false)
@@ -113,15 +113,21 @@ PassRefPtr<IDBTransaction> IDBRequest::transaction() const
     return m_transaction;
 }
 
-unsigned short IDBRequest::readyState() const
+const String& IDBRequest::readyState() const
 {
-    ASSERT(m_readyState == LOADING || m_readyState == DONE);
-    return m_readyState;
+    ASSERT(m_readyState == PENDING || m_readyState == DONE);
+    DEFINE_STATIC_LOCAL(AtomicString, pending, ("pending"));
+    DEFINE_STATIC_LOCAL(AtomicString, done, ("done"));
+
+    if (m_readyState == PENDING)
+        return pending;
+
+    return done;
 }
 
 void IDBRequest::markEarlyDeath()
 {
-    ASSERT(m_readyState == LOADING);
+    ASSERT(m_readyState == PENDING);
     m_readyState = EarlyDeath;
 }
 
@@ -133,7 +139,7 @@ bool IDBRequest::resetReadyState(IDBTransaction* transaction)
     if (m_readyState != DONE)
         return false;
 
-    m_readyState = LOADING;
+    m_readyState = PENDING;
     m_result.clear();
     m_errorCode = 0;
     m_errorMessage = String();
@@ -153,7 +159,7 @@ void IDBRequest::abort()
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
-    if (m_readyState != LOADING) {
+    if (m_readyState != PENDING) {
         ASSERT(m_readyState == DONE);
         return;
     }
@@ -186,7 +192,7 @@ void IDBRequest::setCursor(PassRefPtr<IDBCursor> cursor)
 void IDBRequest::finishCursor()
 {
     m_cursorFinished = true;
-    if (m_readyState != LOADING)
+    if (m_readyState != PENDING)
         m_requestFinished = true;
 }
 
@@ -268,7 +274,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBTransactionBackendInterface> prpBackend
     m_transaction = frontend;
 
     ASSERT(m_source->type() == IDBAny::IDBDatabaseType);
-    ASSERT(m_transaction->mode() == IDBTransaction::VERSION_CHANGE);
+    ASSERT(m_transaction->mode() == IDBTransaction::modeVersionChange());
     m_source->idbDatabase()->setVersionChangeTransaction(frontend.get());
 
     IDBPendingTransactionMonitor::removePendingTransaction(m_transaction->backend());
@@ -311,7 +317,7 @@ void IDBRequest::stop()
         return;
 
     m_contextStopped = true;
-    if (m_readyState == LOADING)
+    if (m_readyState == PENDING)
         markEarlyDeath();
 }
 

@@ -6,26 +6,26 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
 indexedDB.open(name, description)
-PASS request.readyState is IDBRequest.LOADING
+PASS request.readyState is 'pending'
 openSuccess():
-PASS request.readyState is IDBRequest.DONE
+PASS request.readyState is 'done'
 db = event.target.result
 request = db.setVersion('1')
-PASS request.readyState is IDBRequest.LOADING
+PASS request.readyState is 'pending'
 setupObjectStore():
-PASS request.readyState is IDBRequest.DONE
+PASS request.readyState is 'done'
 Deleted all object stores.
 objectStore = db.createObjectStore('foo');
 key = 10;
 request = objectStore.add({}, key);
-PASS request.readyState is IDBRequest.LOADING
+PASS request.readyState is 'pending'
 getRecord():
-PASS request.readyState is IDBRequest.DONE
+PASS request.readyState is 'done'
 PASS event.target.result is key
 request = objectStore.get(key);
-PASS request.readyState is IDBRequest.LOADING
+PASS request.readyState is 'pending'
 finalCheck():
-PASS request.readyState is IDBRequest.DONE
+PASS request.readyState is 'done'
 PASS event.target.result == null is false
 PASS successfullyParsed is true
 

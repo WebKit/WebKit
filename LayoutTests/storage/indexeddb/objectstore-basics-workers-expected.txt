@@ -77,7 +77,7 @@ PASS [Worker] store.indexNames[1] is null
 PASS [Worker] store.indexNames[100] is null
 PASS [Worker] store.indexNames.item(1) is null
 PASS [Worker] store.indexNames.item(100) is null
-[Worker] transaction = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+[Worker] transaction = db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
 [Worker] Try to insert data with a Date key:
 [Worker] store.add({x: 'foo'}, testDate)
@@ -93,18 +93,18 @@ PASS [Worker] event.target.result is "key"
 [Worker] addAgainFailure():
 PASS [Worker] event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
 [Worker] event.preventDefault()
-[Worker] db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+[Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
 [Worker] store.add({x: 'somevalue'}, 'somekey')
 [Worker] Expecting exception from store.add({x: 'othervalue'}, null)
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.DATA_ERR
-[Worker] db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+[Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
 [Worker] Expecting exception from store.add({x: null}, 'validkey')
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is IDBDatabaseException.DATA_ERR
-[Worker] db.transaction(['storeName'], IDBTransaction.READ_WRITE)
+[Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
 [Worker] store.get('key')
 [Worker] getSuccess():

@@ -17,8 +17,6 @@ PASS IDBDatabaseException.READ_ONLY_ERR is 9
 PASS IDBDatabaseException.TIMEOUT_ERR is 10
 PASS IDBDatabaseException.QUOTA_ERR is 11
 PASS IDBDatabaseException.VER_ERR is 12
-PASS IDBRequest.LOADING is 1
-PASS IDBRequest.DONE is 2
 PASS IDBCursor.NEXT is 0
 PASS IDBCursor.NEXT_NO_DUPLICATE is 1
 PASS IDBCursor.PREV is 2

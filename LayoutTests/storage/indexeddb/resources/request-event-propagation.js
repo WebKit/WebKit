@@ -40,7 +40,7 @@ function deleteExisting()
 function startTest()
 {
     debug("Verify that handler fires and that not preventing default will result in an abort");
-    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
     evalAndLog("trans.onabort = transactionAborted");
     evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
     evalAndLog("trans.onerror = allowDefault");
@@ -62,7 +62,7 @@ function transactionAborted()
     shouldBeTrue("handlerFired");
     debug("");
     debug("Verifing error");
-    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
     evalAndLog("trans.onabort = transactionAborted2");
     evalAndLog("trans.oncomplete = unexpectedAbortCallback");
     evalAndLog("trans.addEventListener('error', errorCaptureCallback, true)");
@@ -165,7 +165,7 @@ function transactionAborted2()
     shouldBeTrue("dbBubbleFired");
     debug("");
     debug("Verifing success.");
-    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction(['storeName'], 'readwrite')");
     evalAndLog("trans.oncomplete = transactionComplete");
     evalAndLog("trans.onabort = unexpectedAbortCallback");
     evalAndLog("trans.addEventListener('success', successCaptureCallback, true)");

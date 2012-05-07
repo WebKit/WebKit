@@ -15,7 +15,7 @@ Deleted all object stores.
 db.createObjectStore('store')
 store.createIndex('index', 'x', {unique: true})
 setVersionCompleted():
-transaction = db.transaction(['store'], IDBTransaction.READ_WRITE)
+transaction = db.transaction(['store'], 'readwrite')
 transaction.objectStore('store').put({x: 1}, 'foo')
 addMoreData():
 transaction.objectStore('store').put({x: 1}, 'bar')

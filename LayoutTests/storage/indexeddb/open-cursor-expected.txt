@@ -17,7 +17,7 @@ objectStore.add('myValue', 'myKey')
 Opening cursor
 event.target.source.openCursor(keyRange)
 Cursor opened successfully.
-PASS cursor.direction is 0
+PASS cursor.direction is 'next'
 PASS cursor.key is 'myKey'
 PASS cursor.value is 'myValue'
 
@@ -33,7 +33,7 @@ PASS cursor is null
 Opening cursor
 event.target.source.openCursor("myKey")
 Cursor opened successfully.
-PASS cursor.direction is 0
+PASS cursor.direction is 'next'
 PASS cursor.key is 'myKey'
 PASS cursor.value is 'myValue'
 

@@ -8,9 +8,9 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 indexedDB.open('transaction-abort-with-js-recursion-cross-frame')
 db = event.target.result
 db.setVersion('new version')
-pendingTransaction = db.transaction(['objectStore'], IDBTransaction.READ_WRITE)
+pendingTransaction = db.transaction(['objectStore'], 'readwrite')
 Start re-entrant JS
-transaction = db.transaction(['objectStore'], IDBTransaction.READ_WRITE)
+transaction = db.transaction(['objectStore'], 'readwrite')
 End re-entrant JS
 store = pendingTransaction.objectStore('objectStore')
 PASS store !== undefined is true

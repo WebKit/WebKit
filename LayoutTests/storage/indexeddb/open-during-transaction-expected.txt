@@ -14,7 +14,7 @@ database preparation complete
 
 starting transaction
 state = 'starting'
-trans = dbc1.transaction('storeName', IDBTransaction.READ_WRITE)
+trans = dbc1.transaction('storeName', 'readwrite')
 trans.objectStore('storeName').put('value', 'key')
 
 trying to open the same database

@@ -75,7 +75,7 @@ function addData()
 function ascendingTest()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.NEXT)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, 'next')");
     request.onsuccess = ascendingCallback;
     request.onerror = unexpectedErrorCallback;
     self.stage = 0;
@@ -130,7 +130,7 @@ function ascendingCallback()
 function descendingTest()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.PREV)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, 'prev')");
     request.onsuccess = descendingCallback;
     request.onerror = unexpectedErrorCallback;
     self.stage = 0;
@@ -175,7 +175,7 @@ function descendingCallback()
 function ascendingErrorTestLessThan()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.NEXT)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, 'next')");
     self.stage = 0;
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function() {
@@ -197,7 +197,7 @@ function ascendingErrorTestLessThan()
 function ascendingErrorTestEqual()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.NEXT)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, 'next')");
     self.stage = 0;
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function() {
@@ -219,7 +219,7 @@ function ascendingErrorTestEqual()
 function descendingErrorTestGreaterThan()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.PREV)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, 'prev')");
     self.stage = 0;
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function() {
@@ -241,7 +241,7 @@ function descendingErrorTestGreaterThan()
 function descendingErrorTestEqual()
 {
     debug("");
-    var request = evalAndLog("indexObject.openKeyCursor(null, IDBCursor.PREV)");
+    var request = evalAndLog("indexObject.openKeyCursor(null, 'prev')");
     self.stage = 0;
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function() {

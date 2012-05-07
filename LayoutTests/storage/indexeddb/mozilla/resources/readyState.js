@@ -18,7 +18,7 @@ function test()
     name = self.location.pathname;
     description = "My Test Database";
     request = evalAndLog("indexedDB.open(name, description)");
-    shouldBe("request.readyState", "IDBRequest.LOADING");
+    shouldBe("request.readyState", "'pending'");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -26,10 +26,10 @@ function test()
 function openSuccess()
 {
     debug("openSuccess():");
-    shouldBe("request.readyState", "IDBRequest.DONE");
+    shouldBe("request.readyState", "'done'");
     db = evalAndLog("db = event.target.result");
     request = evalAndLog("request = db.setVersion('1')");
-    shouldBe("request.readyState", "IDBRequest.LOADING");
+    shouldBe("request.readyState", "'pending'");
     request.onsuccess = setupObjectStore;
     request.onerror = unexpectedErrorCallback;
 }
@@ -37,13 +37,13 @@ function openSuccess()
 function setupObjectStore()
 {
     debug("setupObjectStore():");
-    shouldBe("request.readyState", "IDBRequest.DONE");
+    shouldBe("request.readyState", "'done'");
     deleteAllObjectStores(db);
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
     key = evalAndLog("key = 10;");
     request = evalAndLog("request = objectStore.add({}, key);");
-    shouldBe("request.readyState", "IDBRequest.LOADING");
+    shouldBe("request.readyState", "'pending'");
     request.onsuccess = getRecord;
     request.onerror = unexpectedErrorCallback;
 }
@@ -51,10 +51,10 @@ function setupObjectStore()
 function getRecord()
 {
     debug("getRecord():");
-    shouldBe("request.readyState", "IDBRequest.DONE");
+    shouldBe("request.readyState", "'done'");
     shouldBe("event.target.result", "key");
     request = evalAndLog("request = objectStore.get(key);");
-    shouldBe("request.readyState", "IDBRequest.LOADING");
+    shouldBe("request.readyState", "'pending'");
     request.onsuccess = finalCheck;
     request.onerror = unexpectedErrorCallback;
 }
@@ -62,7 +62,7 @@ function getRecord()
 function finalCheck()
 {
     debug("finalCheck():");
-    shouldBe("request.readyState", "IDBRequest.DONE");
+    shouldBe("request.readyState", "'done'");
     shouldBeFalse("event.target.result == null");
     finishJSTest();
 }

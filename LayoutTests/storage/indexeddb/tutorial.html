@@ -216,9 +216,9 @@ function onSetVersionComplete()
     // Chromium/WebKit does not support this yet.
     //
     // Next is "mode" which specifies the locking mode. The default is READ_ONLY (i.e. a shared lock).
-    // That's fine for this case, but later we'll ask for IDBTransaction.READ_WRITE. At the moment,
+    // That's fine for this case, but later we'll ask for 'readwrite'. At the moment,
     // Chromium/WebKit pretends every transaction is READ_WRITE, which is kind of bad.
-    window.currentTransaction = db.transaction("people", IDBTransaction.READ_WRITE);
+    window.currentTransaction = db.transaction("people", 'readwrite');
     currentTransaction.oncomplete = unexpectedComplete;
     currentTransaction.onabort = onTransactionAborted;
 
@@ -266,7 +266,7 @@ function unexpectedComplete()
 function onTransactionAborted()
 {
     // Now let's make a real transaction and a person to our objectStore.
-    window.currentTransaction = db.transaction("people", IDBTransaction.READ_WRITE);
+    window.currentTransaction = db.transaction("people", 'readwrite');
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");
@@ -304,7 +304,7 @@ function onPutTransactionComplete()
     // OK, now let's query the people objectStore in a couple different ways. First up, let's try get.
     // It simply takes in a key and returns a request whose result will be the value. Note that here
     // we're passing in an array for objectStoreNames rather than a simple string.
-    window.currentTransaction = db.transaction(["people"], IDBTransaction.READ_WRITE);
+    window.currentTransaction = db.transaction(["people"], 'readwrite');
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");
@@ -331,11 +331,11 @@ function onGetSuccess()
     // Now let's try opening a cursor from id 1 (exclusive/open) to id 3 (inclusive/closed). This means
     // we'll get the objects for ids 2 and 3. You can also create cursors that are only right or only
     // left bounded or ommit the bound in order to grab all objects. You can also specify a direction
-    // which can be IDBCursor.NEXT (default) for the cursor to move forward, NEXT_NO_DUPLICATE to only
+    // which can be 'next' (default) for the cursor to move forward, NEXT_NO_DUPLICATE to only
     // return unique entires (only applies to indexes with unique set to false), PREV to move backwards,
     // and PREV_NO_DUPLICATE.
     var keyRange = IDBKeyRange.bound(1, 3, true, false);
-    var request = people.openCursor(keyRange, IDBCursor.NEXT);
+    var request = people.openCursor(keyRange, 'next');
     request.onsuccess = onObjectStoreCursor;
     request.onerror = unexpectedError;
 }
@@ -388,10 +388,10 @@ function onIndexGetSuccess()
     // different IDBKeyRanges just to demonstrate how to use them, but we won't bother to handle
     // the onsuccess conditions.
     var lname = event.target.source;
-    lname.openCursor(IDBKeyRange.lowerBound("Doe", false), IDBCursor.NEXT_NO_DUPLICATE);
-    lname.openCursor(null, IDBCursor.PREV_NO_DUPLICATE);
+    lname.openCursor(IDBKeyRange.lowerBound("Doe", false), 'nextunique');
+    lname.openCursor(null, 'prevunique');
     lname.openCursor(IDBKeyRange.upperBound("ZZZZ"));
-    lname.openCursor(IDBKeyRange.only("Doe"), IDBCursor.PREV);
+    lname.openCursor(IDBKeyRange.only("Doe"), 'prev');
     lname.openCursor();
     lname.openKeyCursor();
 

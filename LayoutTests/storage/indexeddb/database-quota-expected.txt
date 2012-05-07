@@ -23,7 +23,7 @@ PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
-trans = db.transaction(['test123'], IDBTransaction.READ_WRITE)
+trans = db.transaction(['test123'], 'readwrite')
 Creating 'data' which contains 64K of data
 PASS data.length is 65536
 store = trans.objectStore('test123')

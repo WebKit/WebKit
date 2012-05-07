@@ -39,7 +39,7 @@ function setVersionComplete()
 {
     debug("setVersionComplete():");
 
-    self.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], IDBTransaction.READ_WRITE)");
+    self.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], 'readwrite')");
     transaction.onabort = abortCallback;
     transaction.oncomplete = unexpectedCompleteCallback;
 
@@ -72,7 +72,7 @@ function abortCallback()
     debug("abortCallback():");
     debug('Transaction was aborted.');
 
-    self.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], IDBTransaction.READ)");
+    self.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], 'readonly')");
     self.store = evalAndLog("store = transaction.objectStore('myObjectStore')");
     request = evalAndLog("store.get('rollbackKey123')");
     request.onerror = unexpectedErrorCallback;
