@@ -1340,11 +1340,11 @@ public:
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
     {
         LayerChromium* root = m_layerTreeHost->rootLayer();
-        if (!m_layerTreeHost->frameNumber())
+        if (!impl->sourceFrameNumber())
             EXPECT_EQ(root->scrollPosition(), m_initialScroll);
-        else if (m_layerTreeHost->frameNumber() == 1)
+        else if (impl->sourceFrameNumber() == 1)
             EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);
-        else if (m_layerTreeHost->frameNumber() == 2)
+        else if (impl->sourceFrameNumber() == 2)
             EXPECT_EQ(root->scrollPosition(), m_initialScroll + m_scrollAmount + m_scrollAmount);
     }
 
@@ -1711,10 +1711,10 @@ public:
     {
         CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()));
 
-        switch (impl->frameNumber()) {
+        switch (impl->sourceFrameNumber()) {
         case 0:
             // Number of textures should be one.
-            EXPECT_EQ(1, context->numTextures());
+            ASSERT_EQ(1, context->numTextures());
             // Number of textures used for commit should be one.
             EXPECT_EQ(1, context->numUsedTextures());
             // Verify that used texture is correct.
@@ -1725,7 +1725,7 @@ public:
         case 1:
             // Number of textures should be two as the first texture
             // is used by impl thread and cannot by used for update.
-            EXPECT_EQ(2, context->numTextures());
+            ASSERT_EQ(2, context->numTextures());
             // Number of textures used for commit should still be one.
             EXPECT_EQ(1, context->numUsedTextures());
             // First texture should not have been used.
@@ -1748,7 +1748,7 @@ public:
         // Number of textures used for draw should always be one.
         EXPECT_EQ(1, context->numUsedTextures());
 
-        if (impl->frameNumber() < 2) {
+        if (impl->sourceFrameNumber() < 1) {
             context->resetUsedTextures();
             postSetNeedsAnimateAndCommitToMainThread();
             postSetNeedsRedrawToMainThread();
@@ -1815,10 +1815,10 @@ public:
     {
         CompositorFakeWebGraphicsContext3DWithTextureTracking* context = static_cast<CompositorFakeWebGraphicsContext3DWithTextureTracking*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(impl->context()));
 
-        switch (impl->frameNumber()) {
+        switch (impl->sourceFrameNumber()) {
         case 0:
             // Number of textures should be two.
-            EXPECT_EQ(2, context->numTextures());
+            ASSERT_EQ(2, context->numTextures());
             // Number of textures used for commit should be two.
             EXPECT_EQ(2, context->numUsedTextures());
             // Verify that used textures are correct.
@@ -1830,7 +1830,7 @@ public:
         case 1:
             // Number of textures should be four as the first two
             // textures are used by the impl thread.
-            EXPECT_EQ(4, context->numTextures());
+            ASSERT_EQ(4, context->numTextures());
             // Number of textures used for commit should still be two.
             EXPECT_EQ(2, context->numUsedTextures());
             // First two textures should not have been used.
@@ -1846,7 +1846,7 @@ public:
             // Number of textures should be three as we allow one
             // partial update and the first two textures are used by
             // the impl thread.
-            EXPECT_EQ(3, context->numTextures());
+            ASSERT_EQ(3, context->numTextures());
             // Number of textures used for commit should still be two.
             EXPECT_EQ(2, context->numUsedTextures());
             // First texture should have been used.
@@ -1886,12 +1886,12 @@ public:
 
         // Number of textures used for drawing should two except for frame 4
         // where the viewport only contains one layer.
-        if (impl->frameNumber() == 4)
+        if (impl->sourceFrameNumber() == 3)
             EXPECT_EQ(1, context->numUsedTextures());
         else
             EXPECT_EQ(2, context->numUsedTextures());
 
-        if (impl->frameNumber() < 5) {
+        if (impl->sourceFrameNumber() < 4) {
             context->resetUsedTextures();
             postSetNeedsAnimateAndCommitToMainThread();
             postSetNeedsRedrawToMainThread();
