@@ -3904,9 +3904,9 @@ BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/fast/canvas/2d.te
 BUGWK83076 SNOWLEOPARD RELEASE : storage/read-and-write-transactions-dont-run-together.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : storage/read-transactions-running-concurrently.html = TIMEOUT PASS
 
-BUGDPRANKE MAC RELEASE : fast/loader/javascript-url-in-embed.html = TEXT PASS
-BUGDPRANKE MAC : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
-BUGDPRANKE MAC : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
+BUGDPRANKE MAC LINUX RELEASE : fast/loader/javascript-url-in-embed.html = TEXT PASS
+BUGDPRANKE MAC LINUX : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
+BUGDPRANKE MAC LINUX : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
 BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
 
 // Interferes with the rAF tests that are enabled
@@ -3920,3 +3920,7 @@ BUGWK85771 LEOPARD : compositing/reflections/masked-reflection-on-composited.htm
 BUGWK85771 MAC LINUX : compositing/visibility/visibility-simple-webgl-layer.html = PASS TIMEOUT
 BUGWK85771 MAC LINUX : compositing/rtl/rtl-absolute-overflow-scrolled.html = PASS TIMEOUT
 BUGWK85771 MAC LINUX : platform/chromium/compositing/lost-compositor-context.html = PASS TIMEOUT
+BUGWK85771 MAC LINUX : compositing/animation/state-at-end-event-transform-layer.html = TIMEOUT PASS
+BUGWK85771 MAC LINUX : compositing/geometry/video-opacity-overlay.html = TIMEOUT PASS
+BUGWK85771 MAC LINUX : compositing/scroll-painted-composited-content.html = TIMEOUT PASS
+BUGWK85771 MAC LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = TIMEOUT PASS
