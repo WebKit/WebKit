@@ -15,11 +15,7 @@ foreach ($httpHeaders as $name => $value) {
     }
 }
 fwrite($reportFile, "=== POST DATA ===\n");
-foreach ($_POST as $name => $value) {
-    $name = undoMagicQuotes($name);
-    $value = undoMagicQuotes($value);
-    fwrite($reportFile, "$name: $value\n");
-}
+fwrite($reportFile, file_get_contents("php://input"));
 fclose($reportFile);
 rename("csp-report.txt.tmp", "csp-report.txt");
 ?>

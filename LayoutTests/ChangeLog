@@ -1,3 +1,19 @@
+2012-05-06  Adam Barth  <abarth@webkit.org>
+
+        Content Security Policy reports should be reported with content-type application/json, should contain all required fields
+        https://bugs.webkit.org/show_bug.cgi?id=61360
+
+        Reviewed by Eric Seidel.
+
+        Update results to show JSON format.
+
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/resources/save-report.php:
+
 2012-05-06  Kenichi Ishibashi  <bashi@chromium.org>
 
         Disallow unquoted -webkit-font-feature-settings tags

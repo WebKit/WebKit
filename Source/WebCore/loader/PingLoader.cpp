@@ -110,7 +110,7 @@ void PingLoader::reportContentSecurityPolicyViolation(Frame* frame, const KURL& 
     request.setTargetType(ResourceRequest::TargetIsSubresource);
 #endif
     request.setHTTPMethod("POST");
-    request.setHTTPContentType("application/x-www-form-urlencoded");
+    request.setHTTPContentType("application/json");
     request.setHTTPBody(report);
     frame->loader()->addExtraFieldsToSubresourceRequest(request);
 

@@ -2,9 +2,8 @@ CONSOLE MESSAGE: [Report Only] Refused to execute inline script because of Conte
 
 ALERT: PASS
 CSP report received:
-CONTENT_TYPE: application/x-www-form-urlencoded
+CONTENT_TYPE: application/json
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-only.html
 REQUEST_METHOD: POST
 === POST DATA ===
-document-url: http://127.0.0.1:8000/security/contentSecurityPolicy/report-only.html
-violated-directive: script-src 'self'
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-only.html","violated-directive":"script-src 'self'"}}

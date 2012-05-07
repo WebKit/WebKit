@@ -31,6 +31,7 @@
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
+#include "InspectorValues.h"
 #include "PingLoader.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
@@ -601,12 +602,15 @@ void CSPDirectiveList::reportViolation(const String& directiveText, const String
     // sent explicitly. As for which directive was violated, that's pretty
     // harmless information.
 
-    FormDataList reportList(UTF8Encoding());
-    reportList.appendData("document-url", document->url());
+    RefPtr<InspectorObject> cspReport = InspectorObject::create();
+    cspReport->setString("document-uri", document->url());
     if (!directiveText.isEmpty())
-        reportList.appendData("violated-directive", directiveText);
+        cspReport->setString("violated-directive", directiveText);
 
-    RefPtr<FormData> report = FormData::create(reportList, UTF8Encoding());
+    RefPtr<InspectorObject> reportObject = InspectorObject::create();
+    reportObject->setObject("csp-report", cspReport.release());
+
+    RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8());
 
     for (size_t i = 0; i < m_reportURLs.size(); ++i)
         PingLoader::reportContentSecurityPolicyViolation(frame, m_reportURLs[i], report);
