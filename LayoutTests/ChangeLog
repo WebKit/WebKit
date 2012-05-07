@@ -1,3 +1,14 @@
+2012-05-07  Andy Estes  <aestes@apple.com>
+
+        Update mac-wk2 baselines.
+
+        * platform/mac-wk2/Skipped: Skip a test that times out due to WKTR's
+        EventSender implementation not supporting drag and drop.
+
+        Remove mac-wk2 platform-specific results for two tests that now match the baseline result.
+        * platform/mac-wk2/editing/selection/select-across-readonly-input-1-expected.txt: Removed.
+        * platform/mac-wk2/media/no-auto-play-in-sandbox-expected.txt: Removed.
+
 2012-05-07  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Replace numeric constants with strings
