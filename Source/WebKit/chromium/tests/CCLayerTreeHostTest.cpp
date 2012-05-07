@@ -45,10 +45,10 @@
 #include "cc/CCScopedThreadProxy.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCThreadTask.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "platform/WebThread.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/Platform.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -364,7 +364,7 @@ protected:
     static void onEndTest(void* self)
     {
         ASSERT(isMainThread());
-        webKitPlatformSupport()->currentThread()->exitRunLoop();
+        WebKit::Platform::current()->currentThread()->exitRunLoop();
     }
 
     static void dispatchSetNeedsAnimate(void* self)
@@ -506,10 +506,10 @@ protected:
         m_mainThreadProxy = CCScopedThreadProxy::create(CCProxy::mainThread());
 
         m_beginTask = new BeginTask(this);
-        webKitPlatformSupport()->currentThread()->postDelayedTask(m_beginTask, 0); // postDelayedTask takes ownership of the task
+        WebKit::Platform::current()->currentThread()->postDelayedTask(m_beginTask, 0); // postDelayedTask takes ownership of the task
         m_timeoutTask = new TimeoutTask(this);
-        webKitPlatformSupport()->currentThread()->postDelayedTask(m_timeoutTask, 5000);
-        webKitPlatformSupport()->currentThread()->enterRunLoop();
+        WebKit::Platform::current()->currentThread()->postDelayedTask(m_timeoutTask, 5000);
+        WebKit::Platform::current()->currentThread()->enterRunLoop();
 
         if (m_layerTreeHost && m_layerTreeHost->rootLayer())
             m_layerTreeHost->rootLayer()->setLayerTreeHost(0);

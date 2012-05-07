@@ -1,5 +1,18 @@
 2012-05-06  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Call currentThread through Platform.h directly
+        https://bugs.webkit.org/show_bug.cgi?id=85769
+
+        Reviewed by Kentaro Hara.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::onEndTest):
+        (WTF::CCLayerTreeHostTest::runTest):
+
+2012-05-06  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Call cryptographicallyRandomValues through Platform.h
         https://bugs.webkit.org/show_bug.cgi?id=85763
 
