@@ -122,15 +122,7 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     context->translate(-dirtyRect.x(), -dirtyRect.y());
     layer->paintGraphicsLayerContents(*context, dirtyRect);
 
-    RefPtr<Image> image;
-
-#if PLATFORM(QT)
-    image = imageBuffer->copyImage(DontCopyBackingStore);
-#else
-    // FIXME: support DontCopyBackingStore in non-Qt ports that use TextureMapper.
-    image = imageBuffer->copyImage(CopyBackingStore);
-#endif
-
+    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
     static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get())->updateContents(textureMapper, image.get(), m_size, dirtyRect);
     m_state.needsDisplay = false;
     m_state.needsDisplayRect = IntRect();
