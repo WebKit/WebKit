@@ -66,6 +66,13 @@ struct HomogeneousCoordinate {
 
 static HomogeneousCoordinate projectPoint(const TransformationMatrix& transform, const FloatPoint& p)
 {
+    // In this case, the layer we are trying to project onto is perpendicular to ray
+    // (point p and z-axis direction) that we are trying to project. This happens when the
+    // layer is rotated so that it is infinitesimally thin, or when it is co-planar with
+    // the camera origin -- i.e. when the layer is invisible anyway.
+    if (!transform.m33())
+        return HomogeneousCoordinate(0, 0, 0, 1);
+
     double x = p.x();
     double y = p.y();
     double z = -(transform.m13() * x + transform.m23() * y + transform.m43()) / transform.m33();

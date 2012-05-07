@@ -1172,7 +1172,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dOrthographicIsNotClippedBe
     EXPECT_INT_RECT_EQ(expected, actual);
 }
 
-TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dPerspectiveIsClipped)
+TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dPerspectiveWhenClippedByW)
 {
     // Test the calculateVisibleRect() function works correctly when projecting a surface
     // onto a layer, but the layer is partially behind the camera (not just behind the
@@ -1190,7 +1190,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dPerspectiveIsClipped)
     // center of the layer.
     layerToSurfaceTransform.makeIdentity();
     layerToSurfaceTransform.applyPerspective(1);
-    layerToSurfaceTransform.translate3d(0, 0, 1);
+    layerToSurfaceTransform.translate3d(-1, 0, 1);
     layerToSurfaceTransform.rotate3d(0, 45, 0);
 
     // Sanity check that this transform does indeed cause w < 0 when applying the
@@ -1199,7 +1199,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dPerspectiveIsClipped)
     CCMathUtil::mapQuad(layerToSurfaceTransform, FloatQuad(FloatRect(layerContentRect)), clipped);
     ASSERT_TRUE(clipped);
 
-    int expectedXPosition = -10;
+    int expectedXPosition = 0;
     int expectedWidth = 10;
     IntRect actual = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerContentRect, layerToSurfaceTransform);
     EXPECT_EQ(expectedXPosition, actual.x());

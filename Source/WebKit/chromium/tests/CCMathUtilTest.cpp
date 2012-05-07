@@ -99,4 +99,21 @@ TEST(CCMathUtilTest, verifyBackfaceVisibilityForPerspective)
     EXPECT_TRUE(layerSpaceToProjectionPlane.isBackFaceVisible());
 }
 
+TEST(CCMathUtilTest, verifyProjectionOfPerpendicularPlane)
+{
+    // In this case, the m33() element of the transform becomes zero, which could cause a
+    // divide-by-zero when projecting points/quads.
+
+    TransformationMatrix transform;
+    transform.makeIdentity();
+    transform.setM33(0);
+
+    FloatRect rect = FloatRect(0, 0, 1, 1);
+    FloatRect projectedRect = CCMathUtil::projectClippedRect(transform, rect);
+
+    EXPECT_EQ(0, projectedRect.x());
+    EXPECT_EQ(0, projectedRect.y());
+    EXPECT_TRUE(projectedRect.isEmpty());
+}
+
 } // namespace
