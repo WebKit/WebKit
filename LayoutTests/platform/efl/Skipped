@@ -34,6 +34,7 @@ fast/events/drag-dataTransferItemList-file-handling.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
 fast/events/drop-handler-should-not-stop-navigate.html
+fast/events/drop-with-file-paths.html
 fast/events/dropzone-004.html
 fast/events/file-input-hidden-in-ondrop.html
 fast/events/input-element-display-none-in-dragleave-crash.html
@@ -67,6 +68,7 @@ http/tests/security/clipboard/clipboard-file-access.html
 fast/events/touch
 
 # EFL's EventSender does not implement leapForward yet
+fast/events/drag-and-drop-subframe-dataTransfer.html
 editing/pasteboard/4947130.html
 editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/drag-drop-dead-frame.html
@@ -2026,3 +2028,13 @@ fast/box-shadow/shadow-buffer-partial.html
 fast/block/lineboxcontain/block-font.html
 fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
+
+# Fail until ENABLE_DATA_TRANSFER_ITEMS is enabled
+# (Other tests might also depend on it)
+editing/pasteboard/dataTransfer-setData-getData.html
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+fast/events/drag-and-drop-subframe-dataTransfer.html
+fast/events/drag-dataTransfer-live-attributes.html
+fast/events/drag-dataTransferItemList-file-handling.html
+fast/events/drag-dataTransferItemList.html
+http/tests/security/dataTransfer-set-data-file-url.html

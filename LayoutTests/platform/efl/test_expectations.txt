@@ -293,3 +293,6 @@ BUGWK85599 : http/tests/navigation/postredirect-goback1.html = TEXT
 
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
+
+// Crash shared with the GTK+ port
+BUGWK30724 : fast/loader/opaque-base-url.html = CRASH

@@ -1,3 +1,10 @@
+2012-05-06  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening. Skip more failing tests.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-06  MORITA Hajime  <morrita@google.com>
 
         [Shadow DOM] Node distribution should be refreshed before style recalc.
