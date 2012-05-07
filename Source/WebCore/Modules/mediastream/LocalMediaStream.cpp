@@ -35,19 +35,12 @@ namespace WebCore {
 
 PassRefPtr<LocalMediaStream> LocalMediaStream::create(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
-    RefPtr<LocalMediaStream> stream = adoptRef(new LocalMediaStream(context, audioSources, videoSources));
-    stream->suspendIfNeeded();
-    return stream.release();
+    return adoptRef(new LocalMediaStream(context, audioSources, videoSources));
 }
 
 LocalMediaStream::LocalMediaStream(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
     : MediaStream(context, MediaStreamDescriptor::create(createCanonicalUUIDString(), audioSources, videoSources))
 {
-}
-
-void LocalMediaStream::stopFunction()
-{
-    stop();
 }
 
 void LocalMediaStream::stop()

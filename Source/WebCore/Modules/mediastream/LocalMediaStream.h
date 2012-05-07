@@ -37,10 +37,7 @@ public:
     static PassRefPtr<LocalMediaStream> create(ScriptExecutionContext*, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
     virtual ~LocalMediaStream();
 
-    void stopFunction();
-
-    // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    void stop();
 
     // EventTarget
     virtual const AtomicString& interfaceName() const OVERRIDE;

@@ -28,7 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
+#include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamTrackList.h"
@@ -37,9 +37,7 @@
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-
-class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorOwner, public EventTarget, public ActiveDOMObject {
+class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorOwner, public EventTarget, public ContextDestructionObserver {
 public:
     // Must match the constants in the .idl file.
     enum ReadyState {
