@@ -1292,8 +1292,9 @@ _llint_op_switch_char:
     btpnz t1, tagMask, .opSwitchCharFallThrough
     loadp JSCell::m_structure[t1], t0
     bbneq Structure::m_typeInfo + TypeInfo::m_type[t0], StringType, .opSwitchCharFallThrough
+    bineq JSString::m_length[t1], 1, .opSwitchCharFallThrough
     loadp JSString::m_value[t1], t0
-    bineq StringImpl::m_length[t0], 1, .opSwitchCharFallThrough
+    btpz  t0, .opSwitchOnRope
     loadp StringImpl::m_data8[t0], t1
     btinz StringImpl::m_hashAndFlags[t0], HashFlags8BitBuffer, .opSwitchChar8Bit
     loadh [t1], t0
@@ -1310,6 +1311,10 @@ _llint_op_switch_char:
 
 .opSwitchCharFallThrough:
     dispatchInt(16[PB, PC, 8])
+
+.opSwitchOnRope:
+    callSlowPath(_llint_slow_path_switch_char)
+    dispatch(0)
 
 
 _llint_op_new_func:
