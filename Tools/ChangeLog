@@ -1,3 +1,14 @@
+2012-05-06  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Add a contributor to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=85761
+
+        Reviewed by Unreviewed.
+
+        Add myself to committers.py contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-05-06  Dan Bernstein  <mitz@apple.com>
 
         Tools part of: Building and debugging WebKit in the Xcode IDE requires a lot of setup
