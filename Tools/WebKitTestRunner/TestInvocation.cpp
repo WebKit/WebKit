@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,10 @@ static void sizeWebViewForCurrentTest(const char* pathOrURL)
     else
         TestController::shared().mainWebView()->resizeTo(normalWidth, normalHeight);
 }
+static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
+{
+    return strstr(pathOrURL, "loading/");
+}
 
 static bool shouldOpenWebInspector(const char* pathOrURL)
 {
@@ -139,6 +143,10 @@ void TestInvocation::invoke()
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("BeginTest"));
     WKRetainPtr<WKMutableDictionaryRef> beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> dumpFrameLoadDelegatesKey = adoptWK(WKStringCreateWithUTF8CString("DumpFrameLoadDelegates"));
+    WKRetainPtr<WKBooleanRef> dumpFrameLoadDelegatesValue = adoptWK(WKBooleanCreate(shouldLogFrameLoadDelegates(m_pathOrURL.c_str())));
+    WKDictionaryAddItem(beginTestMessageBody.get(), dumpFrameLoadDelegatesKey.get(), dumpFrameLoadDelegatesValue.get());
 
     WKRetainPtr<WKStringRef> dumpPixelsKey = adoptWK(WKStringCreateWithUTF8CString("DumpPixels"));
     WKRetainPtr<WKBooleanRef> dumpPixelsValue = adoptWK(WKBooleanCreate(m_dumpPixels));

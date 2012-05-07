@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,7 +106,9 @@ private:
     void platformInitialize(WKTypeRef initializationUserData);
     void resetLocalSettings();
 
-    void beginTesting();
+    void beginTesting(WKDictionaryRef initialSettings);
+
+    bool booleanForKey(WKDictionaryRef, const char* key);
 
     WKBundleRef m_bundle;
     WKBundlePageGroupRef m_pageGroup;

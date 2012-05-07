@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,7 +72,10 @@ public:
     void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
+    void dumpFrameLoadCallbacks() { setShouldDumpFrameLoadCallbacks(true); }
     void dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
+
+    void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
 
     // Special options.
     void keepWebHistory();
@@ -151,6 +154,7 @@ public:
     bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
     bool shouldDumpPixels() const { return m_dumpPixels; }
     bool shouldDumpFullScreenCallbacks() const { return m_dumpFullScreenCallbacks; }
+    bool shouldDumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
     bool isPolicyDelegatePermissive() const { return m_policyDelegatePermissive; }
 
@@ -225,6 +229,7 @@ private:
     bool m_dumpTitleChanges;
     bool m_dumpPixels;
     bool m_dumpFullScreenCallbacks;
+    bool m_dumpFrameLoadCallbacks;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;

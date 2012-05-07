@@ -1,3 +1,55 @@
+2012-05-07  Jon Lee  <jonlee@apple.com>
+
+        WebKitTestRunner needs layoutTestController.dumpFrameLoadCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=42331
+        <rdar://problem/8193641>
+
+        Reviewed by Darin Adler.
+
+        This patch sets up the framework for supporting dumpFrameLoadCallbacks, as well as
+        outputting some of the required strings. As tests become unskipped the other callbacks
+        can be supported.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl: Add dumpFrameLoadCallbacks()
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage): pass in the dictionary containing keys needed to initialize
+        dump callbacks for the layoutTestController.
+        (WTR::InjectedBundle::booleanForKey): Helper function to extract boolean value from key in WKDictionaryRef.
+        Output some warning if we are trying to extract a value that is not a boolean.
+        (WTR::InjectedBundle::beginTesting): Update to take in the dictionary passed in by the TestController.
+        We cannot set the bits on the layoutTestController until it has been created in beginTesting().
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR):
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR):
+        (WTR::dumpFrameDescriptionSuitableForTestResult): Static function similar to
+        -[WebFrame _drt_descriptionSuitableForTestResult] in DumpRenderTree.
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame): Output string.
+        (WTR::InjectedBundlePage::didCommitLoadForFrame): Output string.
+        (WTR::InjectedBundlePage::didFinishLoadForFrame): Output string.
+        (WTR::InjectedBundlePage::didReceiveTitleForFrame): Output string.
+        (WTR::InjectedBundlePage::didCancelClientRedirectForFrame): Output string.
+        (WTR::InjectedBundlePage::willPerformClientRedirectForFrame): Output string. In WK1 it's
+        "willPerformClientRedirectToURL" so we will have to use that value here.
+        (WTR::InjectedBundlePage::didFinishDocumentLoadForFrame): Output string.
+        (WTR::InjectedBundlePage::didHandleOnloadEventsForFrame): Output string.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Initialize to not dump frame load callbacks.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpFrameLoadCallbacks): Change to use setShouldDumpFrameLoadCallbacks.
+        (WTR::LayoutTestController::setShouldDumpFrameLoadCallbacks): Set bit.
+        (WTR::LayoutTestController::shouldDumpFrameLoadCallbacks): Return bit.
+        (LayoutTestController): Added m_dumpFrameLoadCallbacks to track whether to dump the output.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::shouldLogFrameLoadDelegates): Similar to DRT.
+        (WTR::TestInvocation::invoke): Based on the URL loaded, set the bit in the dictionary that gets passed
+        to the injected bundle.
+
 2012-05-07  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Enhance WebUserMediaClientMock and add a test for it
