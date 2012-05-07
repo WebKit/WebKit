@@ -2571,38 +2571,40 @@ PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(PseudoId pseudo, Re
     return document()->styleResolver()->pseudoStyleForElement(pseudo, element, parentStyle);
 }
 
-static Color decorationColor(RenderObject* renderer)
+static Color decorationColor(RenderStyle* style)
 {
     Color result;
-    if (renderer->style()->textStrokeWidth() > 0) {
+    if (style->textStrokeWidth() > 0) {
         // Prefer stroke color if possible but not if it's fully transparent.
-        result = renderer->style()->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
+        result = style->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
         if (result.alpha())
             return result;
     }
     
-    result = renderer->style()->visitedDependentColor(CSSPropertyWebkitTextFillColor);
+    result = style->visitedDependentColor(CSSPropertyWebkitTextFillColor);
     return result;
 }
 
 void RenderObject::getTextDecorationColors(int decorations, Color& underline, Color& overline,
-                                           Color& linethrough, bool quirksMode)
+                                           Color& linethrough, bool quirksMode, bool firstlineStyle)
 {
     RenderObject* curr = this;
+    RenderStyle* styleToUse = 0;
     do {
-        int currDecs = curr->style()->textDecoration();
+        styleToUse = curr->style(firstlineStyle);
+        int currDecs = styleToUse->textDecoration();
         if (currDecs) {
             if (currDecs & UNDERLINE) {
                 decorations &= ~UNDERLINE;
-                underline = decorationColor(curr);
+                underline = decorationColor(styleToUse);
             }
             if (currDecs & OVERLINE) {
                 decorations &= ~OVERLINE;
-                overline = decorationColor(curr);
+                overline = decorationColor(styleToUse);
             }
             if (currDecs & LINE_THROUGH) {
                 decorations &= ~LINE_THROUGH;
-                linethrough = decorationColor(curr);
+                linethrough = decorationColor(styleToUse);
             }
         }
         if (curr->isFloating() || curr->isPositioned() || curr->isRubyText())
@@ -2615,12 +2617,13 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {
+        styleToUse = curr->style(firstlineStyle);
         if (decorations & UNDERLINE)
-            underline = decorationColor(curr);
+            underline = decorationColor(styleToUse);
         if (decorations & OVERLINE)
-            overline = decorationColor(curr);
+            overline = decorationColor(styleToUse);
         if (decorations & LINE_THROUGH)
-            linethrough = decorationColor(curr);
+            linethrough = decorationColor(styleToUse);
     }
 }
 

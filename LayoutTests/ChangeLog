@@ -1,3 +1,21 @@
+2012-05-07  Pravin D  <pravind.2k4@gmail.com>
+
+        :first-line text-decorations are not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=6047
+
+        Reviewed by Eric Seidel.
+
+        * fast/css/first-line-text-decoration.html: Added.
+        * platform/qt-linux/fast/css/first-line-text-decoration-expected.png: Added.
+        * platform/qt-linux/fast/css/first-line-text-decoration-expected.txt: Added.
+         This test checks if text-decoration present in the tags first-line style is applied properly.
+
+        * fast/css/first-line-text-decoration-inherited-from-parent.html: Added.
+        * platform/qt-linux/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/qt-linux/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt: Added.
+         This test checks if the text-decoration and text color is chosen properly in the case where
+         the first-line style is inherited from a parent and contains such text-decorations. 
+
 2012-05-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK gardening.

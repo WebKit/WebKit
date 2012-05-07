@@ -915,7 +915,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
     
     // Get the text decoration colors.
     Color underline, overline, linethrough;
-    renderer()->getTextDecorationColors(deco, underline, overline, linethrough, true);
+    renderer()->getTextDecorationColors(deco, underline, overline, linethrough, true, isFirstLineStyle());
     
     // Use a special function for underlines to get the positioning exactly right.
     bool isPrinting = textRenderer()->document()->printing();
