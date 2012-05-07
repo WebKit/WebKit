@@ -278,7 +278,7 @@ BUGWK85213 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMA
 // Requires rebaseline after bug 85031
 BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
- 
+
 // Generate results for your platform
 BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 // Issue with SVG hittesting on strokes, fails on GTK as well.
@@ -372,3 +372,20 @@ BUGWK84839 : editing/execCommand/print.html = MISSING
 BUGWK84839 : editing/execCommand/remove-list-from-range-selection.html = MISSING
 BUGWK84839 : editing/execCommand/remove-list-item-1.html = MISSING
 BUGWK84839 : editing/execCommand/selectAll.html = MISSING
+
+// Input attribute placeholder reftests are failing.
+BUGWK85603 : fast/forms/placeholder-with-positioned-element.html = IMAGE
+BUGWK85603 : fast/forms/isindex-placeholder.html = IMAGE
+BUGWK85603 : fast/forms/input-placeholder-text-indent.html = IMAGE
+BUGWK85603 : fast/forms/textarea-placeholder-wrapping.html = IMAGE
+
+BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
+
+// Font kerning issue, fails on GTK as well.
+BUGWK76048 : fast/text/font-kerning.html = IMAGE
+
+// Ligatures rendering issue.
+BUGWK85606 : fast/text/font-variant-ligatures.html = IMAGE
+
+// Off-by-few-pixels issue for this selection reftest, fails on GTK as well.
+BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL

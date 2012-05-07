@@ -1,3 +1,16 @@
+2012-05-07  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL][DRT] Gardening current IMAGE failures
+        https://bugs.webkit.org/show_bug.cgi?id=85604
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/fast/forms/input-placeholder-text-indent-expected.png: Removed.
+        * platform/efl/fast/forms/isindex-placeholder-expected.png: Removed.
+        * platform/efl/fast/forms/placeholder-with-positioned-element-expected.png: Removed.
+        * platform/efl/fast/forms/textarea-placeholder-wrapping-expected.png: Removed.
+        * platform/efl/test_expectations.txt:
+
 2012-05-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed gardening, refined expectations for compositing failures + more suppressions.
