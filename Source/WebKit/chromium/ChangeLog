@@ -1,3 +1,15 @@
+2012-05-06  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call cryptographicallyRandomValues through Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=85763
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/ChromiumOSRandomSource.cpp:
+        (WTF::cryptographicallyRandomValuesFromOS):
+
 2012-05-06  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Add WebKit API to access multiple attribute of input element
