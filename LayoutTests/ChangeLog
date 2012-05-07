@@ -1,5 +1,15 @@
 2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
 
+        Unreviewed gardening for Qt port. Updating expectation files and skipped tests which are
+        timing out.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fullscreen/full-screen-placeholder-expected.txt: Added.
+        * platform/qt-5.0-wk2/fullscreen/full-screen-render-inline-expected.txt: Added.
+        * platform/qt-5.0-wk2/fullscreen/parent-flow-inline-with-block-child-expected.txt: Added.
+
+2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
+
         [Qt] Enable fullscreen api layout tests on WebKit2.
         https://bugs.webkit.org/show_bug.cgi?id=85616
 
