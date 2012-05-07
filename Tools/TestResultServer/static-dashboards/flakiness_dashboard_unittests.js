@@ -666,3 +666,10 @@ test('sortTests', 4, function() {
     sortTests(tests, 'bugs', BACKWARD);
     deepEqual(tests, [test3, test1, test2]);
 });
+
+test('popup', 2, function() {
+    showPopup(document.body, 'dummy content');
+    ok(document.querySelector('#popup'));
+    hidePopup();
+    ok(!document.querySelector('#popup'));
+});

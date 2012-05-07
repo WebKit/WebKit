@@ -1,3 +1,23 @@
+2012-05-07  Ojan Vafai  <ojan@chromium.org>
+
+        When embedding the flakiness dashboard, hide popups when the frame is blurred.
+        https://bugs.webkit.org/show_bug.cgi?id=85684
+
+        Reviewed by Dirk Pranke.
+
+        If you show a popup, then click elsewhere in garden-o-matic, it will now
+        properly hide it.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (showPopup):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (showPopupForBuild):
+        (generatePageForIndividualTests.if):
+        (generatePageForIndividualTests):
+        * TestResultServer/static-dashboards/flakiness_dashboard_embedded_unittests.js: Added.
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/run-embedded-unittests.html: Added.
+
 2012-05-07  Ian Vollick  <vollick@chromium.org>
 
         [chromium] WebViewHost should setCompositorSurfaceReady

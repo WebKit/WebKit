@@ -1015,7 +1015,7 @@ function showPopupForBuild(e, builder, index, opt_testName)
         html += '<li>' + linkHTMLToOpenWindow(buildBasePath + pathToFailureLog(opt_testName), 'Failure log') + '</li>';
 
     html += '</ul>';
-    showPopup(e, html);
+    showPopup(e.target, html);
 }
 
 function htmlForTestResults(test)
@@ -2337,6 +2337,9 @@ function postHeightChangedMessage()
     }
     parent.postMessage({command: 'heightChanged', height: height}, '*')
 }
+
+if (window != parent)
+    window.addEventListener('blur', hidePopup);
 
 document.addEventListener('keydown', function(e) {
     if (e.keyIdentifier == 'U+003F' || e.keyIdentifier == 'U+00BF') {
