@@ -28,12 +28,12 @@
 #include "HTMLContentElement.h"
 
 #include "ContentSelectorQuery.h"
+#include "ElementShadow.h"
 #include "HTMLContentSelector.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -90,7 +90,7 @@ void HTMLContentElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == selectAttr) {
         if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode()))
-            root->tree()->setNeedsReattachHostChildrenAndShadow();
+            root->owner()->setNeedsReattachHostChildrenAndShadow();
     } else
         InsertionPoint::parseAttribute(attr);
 }

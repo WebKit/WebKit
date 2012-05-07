@@ -34,6 +34,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
+#include "ElementShadow.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -54,7 +55,6 @@
 #include "ScrollAnimator.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "SpatialNavigation.h"
 #include "Widget.h"
 #include "htmlediting.h" // For firstPositionInOrBeforeNode
@@ -126,14 +126,14 @@ FocusScope FocusScope::focusScopeOf(Node* node)
     ASSERT(node);
     TreeScope* scope = node->treeScope();
     if (scope->rootNode()->isShadowRoot())
-        return FocusScope(toShadowRoot(scope->rootNode())->tree()->youngestShadowRoot());
+        return FocusScope(toShadowRoot(scope->rootNode())->owner()->youngestShadowRoot());
     return FocusScope(scope);
 }
 
 FocusScope FocusScope::focusScopeOwnedByShadowHost(Node* node)
 {
     ASSERT(isShadowHost(node));
-    return FocusScope(toElement(node)->shadowTree()->youngestShadowRoot());
+    return FocusScope(toElement(node)->shadow()->youngestShadowRoot());
 }
 
 FocusScope FocusScope::focusScopeOwnedByIFrame(HTMLFrameOwnerElement* frame)

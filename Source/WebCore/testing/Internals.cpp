@@ -35,6 +35,7 @@
 #include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
 #include "Element.h"
+#include "ElementShadow.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -57,7 +58,6 @@
 #include "RenderTreeAsText.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "SpellChecker.h"
 #include "TextIterator.h"
 #include "TreeScope.h"
@@ -303,7 +303,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
     }
 
     if (host->hasShadowRoot())
-        return host->shadowTree()->youngestShadowRoot();
+        return host->shadow()->youngestShadowRoot();
 
     return ShadowRoot::create(host, ec).get();
 }
@@ -325,7 +325,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngestShadowRoot(Ele
     if (!host->hasShadowRoot())
         return 0;
 
-    return host->shadowTree()->youngestShadowRoot();
+    return host->shadow()->youngestShadowRoot();
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Element* host, ExceptionCode& ec)
@@ -338,7 +338,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Eleme
     if (!host->hasShadowRoot())
         return 0;
 
-    return host->shadowTree()->oldestShadowRoot();
+    return host->shadow()->oldestShadowRoot();
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngerShadowRoot(Node* shadow, ExceptionCode& ec)
@@ -369,7 +369,7 @@ void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)
     }
 
     if (host->hasShadowRoot())
-        host->shadowTree()->removeAllShadowRoots();
+        host->shadow()->removeAllShadowRoots();
 }
 
 Element* Internals::includerFor(Node* node, ExceptionCode& ec)

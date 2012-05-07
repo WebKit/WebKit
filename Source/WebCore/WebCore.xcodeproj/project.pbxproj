@@ -1593,8 +1593,8 @@
 		57B791AA14C6A63300F202D1 /* HTMLContentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B791A814C6A63300F202D1 /* HTMLContentElement.h */; };
 		57CF497414EE36D700ECFF14 /* InsertionPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */; };
 		57CF497514EE36D700ECFF14 /* InsertionPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 57CF497314EE36D700ECFF14 /* InsertionPoint.h */; };
-		57CF4C8614F7597A00ECFF14 /* ShadowTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57CF4C8414F7597A00ECFF14 /* ShadowTree.cpp */; };
-		57CF4C8714F7597A00ECFF14 /* ShadowTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 57CF4C8514F7597A00ECFF14 /* ShadowTree.h */; };
+		57CF4C8614F7597A00ECFF14 /* ElementShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57CF4C8414F7597A00ECFF14 /* ElementShadow.cpp */; };
+		57CF4C8714F7597A00ECFF14 /* ElementShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 57CF4C8514F7597A00ECFF14 /* ElementShadow.h */; };
 		5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */; };
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8604,8 +8604,8 @@
 		57B791A814C6A63300F202D1 /* HTMLContentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLContentElement.h; sourceTree = "<group>"; };
 		57CF497214EE36D700ECFF14 /* InsertionPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertionPoint.cpp; sourceTree = "<group>"; };
 		57CF497314EE36D700ECFF14 /* InsertionPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertionPoint.h; sourceTree = "<group>"; };
-		57CF4C8414F7597A00ECFF14 /* ShadowTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowTree.cpp; sourceTree = "<group>"; };
-		57CF4C8514F7597A00ECFF14 /* ShadowTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowTree.h; sourceTree = "<group>"; };
+		57CF4C8414F7597A00ECFF14 /* ElementShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementShadow.cpp; sourceTree = "<group>"; };
+		57CF4C8514F7597A00ECFF14 /* ElementShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementShadow.h; sourceTree = "<group>"; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
 		5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTreeViewer.h; sourceTree = "<group>"; };
 		590E1B4811E4EF4B0069F784 /* DeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientation.h; sourceTree = "<group>"; };
@@ -21110,6 +21110,8 @@
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
+				57CF4C8414F7597A00ECFF14 /* ElementShadow.cpp */,
+				57CF4C8514F7597A00ECFF14 /* ElementShadow.h */,
 				2CF6878714D32EB500340F39 /* ElementAttributeData.cpp */,
 				2CF6878914D32EFF00340F39 /* ElementAttributeData.h */,
 				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
@@ -21279,8 +21281,6 @@
 				A6D169611346B49B000EB770 /* ShadowRoot.cpp */,
 				A6D169631346B4C1000EB770 /* ShadowRoot.h */,
 				A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */,
-				57CF4C8414F7597A00ECFF14 /* ShadowTree.cpp */,
-				57CF4C8514F7597A00ECFF14 /* ShadowTree.h */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
 				D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */,
 				CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */,
@@ -22690,6 +22690,7 @@
 				4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */,
 				93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */,
 				A8C4A80709D563270003AC8D /* Element.h in Headers */,
+				57CF4C8714F7597A00ECFF14 /* ElementShadow.h in Headers */,
 				2CF6878A14D32EFF00340F39 /* ElementAttributeData.h in Headers */,
 				63F5D4F70E8C4B7100C0BD04 /* ElementRareData.h in Headers */,
 				E415F1840D9A1A830033CE97 /* ElementTimeControl.h in Headers */,
@@ -24223,7 +24224,6 @@
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
-				57CF4C8714F7597A00ECFF14 /* ShadowTree.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
 				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
@@ -25864,6 +25864,7 @@
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
 				A8C4A80809D563270003AC8D /* Element.cpp in Sources */,
+				57CF4C8614F7597A00ECFF14 /* ElementShadow.cpp in Sources */,
 				2CF6878814D32EB500340F39 /* ElementAttributeData.cpp in Sources */,
 				A8CFF6CB0A1561CD000A4234 /* EllipsisBox.cpp in Sources */,
 				F55B3DBB1251F12D003EF269 /* EmailInputType.cpp in Sources */,
@@ -27364,7 +27365,6 @@
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
-				57CF4C8614F7597A00ECFF14 /* ShadowTree.cpp in Sources */,
 				A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */,
 				B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,

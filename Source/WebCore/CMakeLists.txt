@@ -574,6 +574,7 @@ SET(WebCore_SOURCES
     dom/DynamicNodeList.cpp
     dom/EditingText.cpp
     dom/Element.cpp
+    dom/ElementShadow.cpp
     dom/ElementAttributeData.cpp
     dom/EntityReference.cpp
     dom/ErrorEvent.cpp
@@ -629,7 +630,6 @@ SET(WebCore_SOURCES
     dom/SecurityContext.cpp
     dom/SelectorQuery.cpp
     dom/ShadowRoot.cpp
-    dom/ShadowTree.cpp
     dom/SpaceSplitString.cpp
     dom/StaticHashSetNodeList.cpp
     dom/StaticNodeList.cpp

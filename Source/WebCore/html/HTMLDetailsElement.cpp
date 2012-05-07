@@ -23,6 +23,7 @@
 
 #if ENABLE(DETAILS)
 
+#include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "HTMLNames.h"
 #include "HTMLSummaryElement.h"
@@ -31,7 +32,6 @@
 #include "NodeRenderingContext.h"
 #include "RenderBlock.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -124,7 +124,7 @@ Element* HTMLDetailsElement::findMainSummary() const
             return toElement(child);
     }
 
-    return static_cast<DetailsSummaryElement*>(shadowTree()->oldestShadowRoot()->firstChild())->fallbackSummary();
+    return static_cast<DetailsSummaryElement*>(shadow()->oldestShadowRoot()->firstChild())->fallbackSummary();
 }
 
 void HTMLDetailsElement::parseAttribute(Attribute* attr)

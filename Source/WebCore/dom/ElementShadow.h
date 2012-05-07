@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowTree_h
-#define ShadowTree_h
+#ifndef ElementShadow_h
+#define ElementShadow_h
 
 #include "ExceptionCode.h"
 #include "HTMLContentSelector.h"
@@ -44,10 +44,10 @@ class InsertionPoint;
 class TreeScope;
 class HTMLContentSelection;
 
-class ShadowTree {
+class ElementShadow {
 public:
-    ShadowTree();
-    ~ShadowTree();
+    ElementShadow();
+    ~ElementShadow();
 
     Element* host() const;
 
@@ -70,7 +70,7 @@ public:
 
     bool childNeedsStyleRecalc();
     bool needsStyleRecalc();
-    void recalcShadowTreeStyle(Node::StyleChange);
+    void recalcStyle(Node::StyleChange);
     void setNeedsReattachHostChildrenAndShadow();
     void clearNeedsReattachHostChildrenAndShadow();
     bool needsReattachHostChildrenAndShadow();
@@ -88,40 +88,40 @@ private:
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     HTMLContentSelector m_selector;
     bool m_needsRecalculateContent : 1;
-    WTF_MAKE_NONCOPYABLE(ShadowTree);
+    WTF_MAKE_NONCOPYABLE(ElementShadow);
 };
 
-inline bool ShadowTree::hasShadowRoot() const
+inline bool ElementShadow::hasShadowRoot() const
 {
     return !m_shadowRoots.isEmpty();
 }
 
-inline ShadowRoot* ShadowTree::youngestShadowRoot() const
+inline ShadowRoot* ElementShadow::youngestShadowRoot() const
 {
     return m_shadowRoots.head();
 }
 
-inline ShadowRoot* ShadowTree::oldestShadowRoot() const
+inline ShadowRoot* ElementShadow::oldestShadowRoot() const
 {
     return m_shadowRoots.tail();
 }
 
-inline HTMLContentSelector& ShadowTree::selector()
+inline HTMLContentSelector& ElementShadow::selector()
 {
     return m_selector;
 }
 
-inline const HTMLContentSelector& ShadowTree::selector() const
+inline const HTMLContentSelector& ElementShadow::selector() const
 {
     return m_selector;
 }
 
-inline void ShadowTree::clearNeedsReattachHostChildrenAndShadow()
+inline void ElementShadow::clearNeedsReattachHostChildrenAndShadow()
 {
     m_needsRecalculateContent = false;
 }
 
-inline Element* ShadowTree::host() const
+inline Element* ElementShadow::host() const
 {
     ASSERT(hasShadowRoot());
     return youngestShadowRoot()->host();
@@ -129,7 +129,7 @@ inline Element* ShadowTree::host() const
 
 class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {
 public:
-    explicit ShadowRootVector(ShadowTree* tree)
+    explicit ShadowRootVector(ElementShadow* tree)
     {
         for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
             append(root);

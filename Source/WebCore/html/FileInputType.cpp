@@ -23,6 +23,7 @@
 #include "FileInputType.h"
 
 #include "Chrome.h"
+#include "ElementShadow.h"
 #include "Event.h"
 #include "File.h"
 #include "FileList.h"
@@ -36,7 +37,6 @@
 #include "RenderFileUploadControl.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -294,13 +294,13 @@ void FileInputType::createShadowSubtree()
 {
     ASSERT(element()->hasShadowRoot());
     ExceptionCode ec = 0;
-    element()->shadowTree()->oldestShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
+    element()->shadow()->oldestShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
 }
 
 void FileInputType::multipleAttributeChanged()
 {
     ASSERT(element()->hasShadowRoot());
-    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->shadowTree()->oldestShadowRoot()->firstChild());
+    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->shadow()->oldestShadowRoot()->firstChild());
     if (button)
         button->setValue(element()->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
 }

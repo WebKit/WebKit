@@ -42,7 +42,7 @@ class DOMTokenList;
 class ElementRareData;
 class IntSize;
 class ShadowRoot;
-class ShadowTree;
+class ElementShadow;
 class WebKitAnimationList;
 
 enum SpellcheckAttributeState {
@@ -262,8 +262,8 @@ public:
     void recalcStyle(StyleChange = NoChange);
 
     bool hasShadowRoot() const;
-    ShadowTree* shadowTree() const;
-    ShadowTree* ensureShadowTree();
+    ElementShadow* shadow() const;
+    ElementShadow* ensureShadow();
 
     // FIXME: Remove Element::ensureShadowRoot
     // https://bugs.webkit.org/show_bug.cgi?id=77608

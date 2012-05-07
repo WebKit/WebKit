@@ -47,6 +47,7 @@
 #include "DocumentType.h"
 #include "DynamicNodeList.h"
 #include "Element.h"
+#include "ElementShadow.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventDispatchMediator.h"
@@ -85,7 +86,6 @@
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "StaticNodeList.h"
 #include "StorageEvent.h"
 #include "StyleResolver.h"
@@ -835,7 +835,7 @@ bool Node::hasNonEmptyBoundingBox() const
 
 inline static ShadowRoot* oldestShadowRootFor(const Node* node)
 {
-    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowTree()->oldestShadowRoot() : 0;
+    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadow()->oldestShadowRoot() : 0;
 }
 
 inline void Node::setStyleChange(StyleChangeType changeType)

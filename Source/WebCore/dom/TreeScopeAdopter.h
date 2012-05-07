@@ -46,7 +46,7 @@ private:
     void moveTreeToNewScope(Node*) const;
     void moveTreeToNewDocument(Node*, Document* oldDocument, Document* newDocument) const;
     void moveNodeToNewDocument(Node*, Document* oldDocument, Document* newDocument) const;
-    void moveShadowTreeToNewDocument(ShadowTree*, Document* oldDocument, Document* newDocument) const;
+    void moveShadowToNewDocument(ElementShadow*, Document* oldDocument, Document* newDocument) const;
 
     Node* m_toAdopt;
     TreeScope* m_newScope;

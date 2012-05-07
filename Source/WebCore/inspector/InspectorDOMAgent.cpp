@@ -53,6 +53,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "ElementShadow.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventListener.h"
@@ -82,7 +83,6 @@
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include "StyleSheetList.h"
@@ -341,7 +341,7 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 
     if (node->isElementNode() && toElement(node)->hasShadowRoot()) {
-        for (ShadowRoot* root = toElement(node)->shadowTree()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+        for (ShadowRoot* root = toElement(node)->shadow()->youngestShadowRoot(); root; root = root->olderShadowRoot())
             unbind(root, nodesMap);
     }
 
@@ -1228,7 +1228,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
         }
         if (element->hasShadowRoot()) {
             RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > shadowRoots = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
-            for (ShadowRoot* root = element->shadowTree()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            for (ShadowRoot* root = element->shadow()->youngestShadowRoot(); root; root = root->olderShadowRoot())
                 shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
             value->setShadowRoots(shadowRoots);
         }

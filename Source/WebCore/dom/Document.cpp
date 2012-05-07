@@ -60,6 +60,7 @@
 #include "EditingText.h"
 #include "Editor.h"
 #include "Element.h"
+#include "ElementShadow.h"
 #include "EntityReference.h"
 #include "Event.h"
 #include "EventFactory.h"
@@ -140,7 +141,6 @@
 #include "SegmentedString.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "StaticHashSetNodeList.h"
 #include "StyleResolver.h"
 #include "StyleSheetList.h"
@@ -713,7 +713,7 @@ void Document::buildAccessKeyMap(TreeScope* scope)
             m_elementsByAccessKey.set(accessKey.impl(), element);
 
         if (element->hasShadowRoot()) {
-            for (ShadowRoot* root = element->shadowTree()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            for (ShadowRoot* root = element->shadow()->youngestShadowRoot(); root; root = root->olderShadowRoot())
                 buildAccessKeyMap(root);
         }
     }

@@ -133,8 +133,8 @@ Element::~Element()
     }
 #endif
 
-    if (shadowTree())
-        rareData()->m_shadowTree.clear();
+    if (shadow())
+        rareData()->m_shadow.clear();
     if (m_attributeData)
         m_attributeData->clearAttributes(this);
 }
@@ -908,8 +908,8 @@ void Element::willRemove()
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
-    if (ShadowTree* tree = shadowTree())
-        tree->willRemove();
+    if (ElementShadow* shadow = this->shadow())
+        shadow->willRemove();
     ContainerNode::willRemove();
 }
 
@@ -974,9 +974,9 @@ void Element::attach()
     StyleResolverParentPusher parentPusher(this);
 
     // When a shadow root exists, it does the work of attaching the children.
-    if (ShadowTree* tree = shadowTree()) {
+    if (ElementShadow* shadow = this->shadow()) {
         parentPusher.push();
-        tree->attachHost(this);
+        shadow->attachHost(this);
     } else {
         if (firstChild())
             parentPusher.push();
@@ -1012,8 +1012,8 @@ void Element::detach()
     if (hasRareData())
         rareData()->resetComputedStyle();
 
-    if (ShadowTree* tree = shadowTree())
-        tree->detachHost(this);
+    if (ElementShadow* shadow = this->shadow())
+        shadow->detachHost(this);
     else
         ContainerNode::detach();
 
@@ -1157,10 +1157,10 @@ void Element::recalcStyle(StyleChange change)
 
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
     if (hasShadowRoot()) {
-        ShadowTree* tree = shadowTree();
-        if (change >= Inherit || tree->childNeedsStyleRecalc() || tree->needsStyleRecalc()) {
+        ElementShadow* shadow = this->shadow();
+        if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
             parentPusher.push();
-            tree->recalcShadowTreeStyle(change);
+            shadow->recalcStyle(change);
         }
     }
 
@@ -1197,32 +1197,32 @@ void Element::recalcStyle(StyleChange change)
 
 bool Element::hasShadowRoot() const
 {
-    if (ShadowTree* tree = shadowTree())
-        return tree->hasShadowRoot();
+    if (ElementShadow* shadow = this->shadow())
+        return shadow->hasShadowRoot();
     return false;
 }
 
-ShadowTree* Element::shadowTree() const
+ElementShadow* Element::shadow() const
 {
     if (!hasRareData())
         return 0;
 
-    return rareData()->m_shadowTree.get();
+    return rareData()->m_shadow.get();
 }
 
-ShadowTree* Element::ensureShadowTree()
+ElementShadow* Element::ensureShadow()
 {
-    if (ShadowTree* tree = ensureRareData()->m_shadowTree.get())
-        return tree;
+    if (ElementShadow* shadow = ensureRareData()->m_shadow.get())
+        return shadow;
 
-    rareData()->m_shadowTree = adoptPtr(new ShadowTree());
-    return rareData()->m_shadowTree.get();
+    rareData()->m_shadow = adoptPtr(new ElementShadow());
+    return rareData()->m_shadow.get();
 }
 
 ShadowRoot* Element::ensureShadowRoot()
 {
     if (hasShadowRoot())
-        return shadowTree()->oldestShadowRoot();
+        return shadow()->oldestShadowRoot();
 
     return ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot).get();
 }
@@ -1359,7 +1359,7 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
 
     if (hasRareData()) {
         if (hasShadowRoot())
-            shadowTree()->hostChildrenChanged();
+            shadow()->hostChildrenChanged();
     }
 }
 

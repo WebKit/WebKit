@@ -1,3 +1,13 @@
+2012-05-06  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=85265
+        [Shadow DOM] ShadowTree needs a better name
+
+        Reviewed by Dimitri Glazkov.
+
+        * win/WebKit2.def: Updated exported symbol names according to the rename.
+        * win/WebKit2CFLite.def: Updated exported symbol names according to the rename.
+
 2012-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert isPageBoxVisible to use Internals interface.

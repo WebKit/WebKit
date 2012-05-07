@@ -35,6 +35,7 @@
 #include "DateInputType.h"
 #include "DateTimeInputType.h"
 #include "DateTimeLocalInputType.h"
+#include "ElementShadow.h"
 #include "EmailInputType.h"
 #include "ExceptionCode.h"
 #include "FileInputType.h"
@@ -59,7 +60,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "SubmitInputType.h"
 #include "TelephoneInputType.h"
 #include "TextInputType.h"
@@ -394,7 +394,7 @@ void InputType::destroyShadowSubtree()
     if (!element()->hasShadowRoot())
         return;
 
-    ShadowRoot* root = element()->shadowTree()->oldestShadowRoot();
+    ShadowRoot* root = element()->shadow()->oldestShadowRoot();
     ASSERT(root);
     root->removeAllChildren();
 

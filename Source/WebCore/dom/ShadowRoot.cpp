@@ -32,12 +32,12 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
+#include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "HTMLContentSelector.h"
 #include "HTMLNames.h"
 #include "InsertionPoint.h"
 #include "NodeRareData.h"
-#include "ShadowTree.h"
 #include "SVGNames.h"
 #include "StyleResolver.h"
 #include "markup.h"
@@ -118,7 +118,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPu
     RefPtr<ShadowRoot> shadowRoot = adoptRef(new ShadowRoot(element->document()));
 
     ec = 0;
-    element->ensureShadowTree()->addShadowRoot(element, shadowRoot, ec);
+    element->ensureShadow()->addShadowRoot(element, shadowRoot, ec);
     if (ec)
         return 0;
     ASSERT(element == shadowRoot->host());
@@ -171,10 +171,10 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-ShadowTree* ShadowRoot::tree() const
+ElementShadow* ShadowRoot::owner() const
 {
     if (host())
-        return host()->shadowTree();
+        return host()->shadow();
     return 0;
 }
 

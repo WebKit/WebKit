@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
+#include "ElementShadow.h"
 #include "FileList.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
@@ -32,7 +33,6 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "TextRun.h"
 #include "VisiblePosition.h"
 #include <math.h>
@@ -225,7 +225,7 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
 
     ASSERT(input->hasShadowRoot());
 
-    Node* buttonNode = input->shadowTree()->oldestShadowRoot()->firstChild();
+    Node* buttonNode = input->shadow()->oldestShadowRoot()->firstChild();
     return buttonNode && buttonNode->isHTMLElement() && buttonNode->hasTagName(inputTag) ? static_cast<HTMLInputElement*>(buttonNode) : 0;
 }
 

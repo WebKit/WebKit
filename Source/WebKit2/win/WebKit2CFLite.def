@@ -194,7 +194,7 @@ EXPORTS
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?placeholderShouldBeVisible@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z
-        ?removeAllShadowRoots@ShadowTree@WebCore@@QAEXXZ
+        ?removeAllShadowRoots@ElementShadow@WebCore@@QAEXXZ
         ?remove@String@WTF@@QAEXIH@Z
         ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
@@ -222,7 +222,7 @@ EXPORTS
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
         ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z
-        ?shadowTree@Element@WebCore@@QBEPAVShadowTree@2@XZ
+        ?shadow@Element@WebCore@@QBEPAVElementShadow@2@XZ
         ?substring@String@WTF@@QBE?AV12@II@Z
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
         ?text@Range@WebCore@@QBE?AVString@WTF@@XZ

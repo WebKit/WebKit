@@ -26,15 +26,15 @@
 #include "TreeScopeAdopter.h"
 
 #include "Document.h"
+#include "ElementShadow.h"
 #include "NodeRareData.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 
 namespace WebCore {
 
-static inline ShadowTree* shadowTreeFor(Node* node)
+static inline ElementShadow* shadowFor(Node* node)
 {
-    return node->isElementNode() ? toElement(node)->shadowTree() : 0;
+    return node->isElementNode() ? toElement(node)->shadow() : 0;
 }
 
 void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
@@ -63,10 +63,10 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         if (willMoveToNewDocument)
             moveNodeToNewDocument(node, oldDocument, newDocument);
 
-        if (ShadowTree* tree = shadowTreeFor(node)) {
-            tree->setParentTreeScope(m_newScope);
+        if (ElementShadow* shadow = shadowFor(node)) {
+            shadow->setParentTreeScope(m_newScope);
             if (willMoveToNewDocument)
-                moveShadowTreeToNewDocument(tree, oldDocument, newDocument);
+                moveShadowToNewDocument(shadow, oldDocument, newDocument);
         }
     }
 }
@@ -75,14 +75,14 @@ void TreeScopeAdopter::moveTreeToNewDocument(Node* root, Document* oldDocument, 
 {
     for (Node* node = root; node; node = node->traverseNextNode(root)) {
         moveNodeToNewDocument(node, oldDocument, newDocument);
-        if (ShadowTree* tree = shadowTreeFor(node))
-            moveShadowTreeToNewDocument(tree, oldDocument, newDocument);
+        if (ElementShadow* shadow = shadowFor(node))
+            moveShadowToNewDocument(shadow, oldDocument, newDocument);
     }
 }
 
-inline void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowTree* tree, Document* oldDocument, Document* newDocument) const
+inline void TreeScopeAdopter::moveShadowToNewDocument(ElementShadow* shadow, Document* oldDocument, Document* newDocument) const
 {
-    for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
+    for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
         moveTreeToNewDocument(root, oldDocument, newDocument);
 }
 

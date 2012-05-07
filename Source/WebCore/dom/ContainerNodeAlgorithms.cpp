@@ -27,7 +27,7 @@
 #include "ContainerNodeAlgorithms.h"
 
 #include "Element.h"
-#include "ShadowTree.h"
+#include "ElementShadow.h"
 
 namespace WebCore {
 
@@ -46,8 +46,8 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
     if (!node->isElementNode())
         return;
 
-    if (ShadowTree* tree = toElement(node)->shadowTree()) {
-        ShadowRootVector roots(tree);
+    if (ElementShadow* shadow = toElement(node)->shadow()) {
+        ShadowRootVector roots(shadow);
         for (size_t i = 0; i < roots.size(); ++i)
             notifyNodeInsertedIntoDocument(roots[i].get());
     }
@@ -63,8 +63,8 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode*
     if (!node->isElementNode())
         return;
 
-    if (ShadowTree* tree = toElement(node)->shadowTree()) {
-        for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
+    if (ElementShadow* shadow = toElement(node)->shadow()) {
+        for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
             notifyNodeInsertedIntoTree(root);
     }
 }
@@ -87,8 +87,8 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
     if (node->document()->cssTarget() == node)
         node->document()->setCSSTarget(0);
 
-    if (ShadowTree* tree = toElement(node)->shadowTree()) {
-        ShadowRootVector roots(tree);
+    if (ElementShadow* shadow = toElement(node)->shadow()) {
+        ShadowRootVector roots(shadow);
         for (size_t i = 0; i < roots.size(); ++i)
             notifyNodeRemovedFromDocument(roots[i].get());
     }
@@ -104,8 +104,8 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode* no
     if (!node->isElementNode())
         return;
 
-    if (ShadowTree* tree = toElement(node)->shadowTree()) {
-        ShadowRootVector roots(tree);
+    if (ElementShadow* shadow = toElement(node)->shadow()) {
+        ShadowRootVector roots(shadow);
         for (size_t i = 0; i < roots.size(); ++i)
             notifyNodeRemovedFromTree(roots[i].get());
     }

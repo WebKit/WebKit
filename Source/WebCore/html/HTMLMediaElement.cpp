@@ -40,6 +40,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "DocumentLoader.h"
+#include "ElementShadow.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -75,7 +76,6 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "TimeRanges.h"
 #include "UUID.h"
 #include <limits>
@@ -4069,7 +4069,7 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
 
 MediaControls* HTMLMediaElement::mediaControls()
 {
-    return toMediaControls(shadowTree()->oldestShadowRoot()->firstChild());
+    return toMediaControls(shadow()->oldestShadowRoot()->firstChild());
 }
 
 bool HTMLMediaElement::hasMediaControls()
@@ -4077,7 +4077,7 @@ bool HTMLMediaElement::hasMediaControls()
     if (!hasShadowRoot())
         return false;
 
-    Node* node = shadowTree()->oldestShadowRoot()->firstChild();
+    Node* node = shadow()->oldestShadowRoot()->firstChild();
     return node && node->isMediaControls();
 }
 

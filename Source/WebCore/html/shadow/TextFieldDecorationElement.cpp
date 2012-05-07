@@ -33,13 +33,13 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ElementShadow.h"
 #include "Event.h"
 #include "HTMLInputElement.h"
 #include "HTMLShadowElement.h"
 #include "NodeRenderStyle.h"
 #include "RenderImage.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 
 namespace WebCore {
 
@@ -68,7 +68,7 @@ PassRefPtr<TextFieldDecorationElement> TextFieldDecorationElement::create(Docume
 
 static inline void getDecorationRootAndDecoratedRoot(HTMLInputElement* input, ShadowRoot*& decorationRoot, ShadowRoot*& decoratedRoot)
 {
-    ShadowRoot* existingRoot = input->shadowTree()->youngestShadowRoot();
+    ShadowRoot* existingRoot = input->shadow()->youngestShadowRoot();
     ShadowRoot* newRoot = 0;
     while (existingRoot->childNodeCount() == 1 && existingRoot->firstChild()->hasTagName(shadowTag)) {
         newRoot = existingRoot;

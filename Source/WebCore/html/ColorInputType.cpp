@@ -34,12 +34,12 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "Color.h"
+#include "ElementShadow.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "MouseEvent.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -117,7 +117,7 @@ void ColorInputType::createShadowSubtree()
     ExceptionCode ec = 0;
     wrapperElement->appendChild(colorSwatch.release(), ec);
     ASSERT(!ec);
-    element()->shadowTree()->oldestShadowRoot()->appendChild(wrapperElement.release(), ec);
+    element()->shadow()->oldestShadowRoot()->appendChild(wrapperElement.release(), ec);
     ASSERT(!ec);
     
     updateColorSwatch();
@@ -191,7 +191,7 @@ void ColorInputType::updateColorSwatch()
 
 HTMLElement* ColorInputType::shadowColorSwatch() const
 {
-    ShadowRoot* shadow = element()->shadowTree()->oldestShadowRoot();
+    ShadowRoot* shadow = element()->shadow()->oldestShadowRoot();
     return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
 }
 

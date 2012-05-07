@@ -24,6 +24,7 @@
 #if ENABLE(DETAILS)
 
 #include "DetailsMarkerControl.h"
+#include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
@@ -33,7 +34,6 @@
 #include "PlatformMouseEvent.h"
 #include "RenderBlock.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 
 namespace WebCore {
 

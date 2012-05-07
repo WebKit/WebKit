@@ -41,7 +41,7 @@ class DOMSelection;
 class HTMLContentElement;
 class HTMLContentSelector;
 class InsertionPoint;
-class ShadowTree;
+class ElementShadow;
 
 class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
     friend class WTF::DoublyLinkedListNode<ShadowRoot>;
@@ -71,7 +71,7 @@ public:
     void setApplyAuthorSheets(bool);
 
     Element* host() const { return shadowHost(); }
-    ShadowTree* tree() const;
+    ElementShadow* owner() const;
 
     String innerHTML() const;
     void setInnerHTML(const String&, ExceptionCode&);

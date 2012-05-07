@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "ShadowTree.h"
+#include "ElementShadow.h"
 
 #include "ContainerNodeAlgorithms.h"
 #include "Document.h"
@@ -39,12 +39,12 @@
 
 namespace WebCore {
 
-ShadowTree::ShadowTree()
+ElementShadow::ElementShadow()
     : m_needsRecalculateContent(false)
 {
 }
 
-ShadowTree::~ShadowTree()
+ElementShadow::~ElementShadow()
 {
     if (hasShadowRoot())
         removeAllShadowRoots();
@@ -68,7 +68,7 @@ static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, Excep
     return true;
 }
 
-void ShadowTree::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec)
+void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec)
 {
     ASSERT(shadowHost);
     ASSERT(shadowRoot);
@@ -89,7 +89,7 @@ void ShadowTree::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shado
     InspectorInstrumentation::didPushShadowRoot(shadowHost, shadowRoot.get());
 }
 
-void ShadowTree::removeAllShadowRoots()
+void ElementShadow::removeAllShadowRoots()
 {
     if (!hasShadowRoot())
         return;
@@ -115,20 +115,20 @@ void ShadowTree::removeAllShadowRoots()
         shadowHost->attachChildrenLazily();
 }
 
-void ShadowTree::willRemove()
+void ElementShadow::willRemove()
 {
     ShadowRootVector roots(this);
     for (size_t i = 0; i < roots.size(); ++i)
         roots[i]->willRemove();
 }
 
-void ShadowTree::setParentTreeScope(TreeScope* scope)
+void ElementShadow::setParentTreeScope(TreeScope* scope)
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
         root->setParentTreeScope(scope);
 }
 
-void ShadowTree::attach()
+void ElementShadow::attach()
 {
     // Children of m_selector is populated lazily in
     // ensureSelector(), and here we just ensure that it is in clean state.
@@ -142,14 +142,14 @@ void ShadowTree::attach()
     selector().didSelect();
 }
 
-void ShadowTree::attachHost(Element* host)
+void ElementShadow::attachHost(Element* host)
 {
     attach();
     host->attachChildrenIfNeeded();
     host->attachAsNode();
 }
 
-void ShadowTree::detach()
+void ElementShadow::detach()
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         if (root->attached())
@@ -157,14 +157,14 @@ void ShadowTree::detach()
     }
 }
 
-void ShadowTree::detachHost(Element* host)
+void ElementShadow::detachHost(Element* host)
 {
     host->detachChildrenIfNeeded();
     detach();
     host->detachAsNode();
 }
 
-InsertionPoint* ShadowTree::insertionPointFor(const Node* node) const
+InsertionPoint* ElementShadow::insertionPointFor(const Node* node) const
 {
     ASSERT(node && node->parentNode());
 
@@ -181,18 +181,18 @@ InsertionPoint* ShadowTree::insertionPointFor(const Node* node) const
     return found->insertionPoint();
 }
 
-HTMLContentSelection* ShadowTree::selectionFor(const Node* node) const
+HTMLContentSelection* ElementShadow::selectionFor(const Node* node) const
 {
     return m_selector.findFor(node);
 }
 
-void ShadowTree::reattach()
+void ElementShadow::reattach()
 {
     detach();
     attach();
 }
 
-bool ShadowTree::childNeedsStyleRecalc()
+bool ElementShadow::childNeedsStyleRecalc()
 {
     ASSERT(youngestShadowRoot());
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
@@ -202,7 +202,7 @@ bool ShadowTree::childNeedsStyleRecalc()
     return false;
 }
 
-bool ShadowTree::needsStyleRecalc()
+bool ElementShadow::needsStyleRecalc()
 {
     ASSERT(youngestShadowRoot());
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
@@ -212,7 +212,7 @@ bool ShadowTree::needsStyleRecalc()
     return false;
 }
 
-void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)
+void ElementShadow::recalcStyle(Node::StyleChange change)
 {
     ShadowRoot* youngest = youngestShadowRoot();
     if (!youngest)
@@ -240,12 +240,12 @@ void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)
     }
 }
 
-bool ShadowTree::needsReattachHostChildrenAndShadow()
+bool ElementShadow::needsReattachHostChildrenAndShadow()
 {
     return m_needsRecalculateContent || (youngestShadowRoot() && youngestShadowRoot()->hasInsertionPoint());
 }
 
-void ShadowTree::hostChildrenChanged()
+void ElementShadow::hostChildrenChanged()
 {
     ASSERT(youngestShadowRoot());
 
@@ -256,14 +256,14 @@ void ShadowTree::hostChildrenChanged()
     setNeedsReattachHostChildrenAndShadow();
 }
 
-void ShadowTree::setNeedsReattachHostChildrenAndShadow()
+void ElementShadow::setNeedsReattachHostChildrenAndShadow()
 {
     m_needsRecalculateContent = true;
 
     host()->setNeedsStyleRecalc();
 }
 
-void ShadowTree::reattachHostChildrenAndShadow()
+void ElementShadow::reattachHostChildrenAndShadow()
 {
     ASSERT(youngestShadowRoot());
 

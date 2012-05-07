@@ -62,8 +62,8 @@ protected:
     virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
 
 private:
-    void distributeHostChildren(ShadowTree*);
-    void clearDistribution(ShadowTree*);
+    void distributeHostChildren(ElementShadow*);
+    void clearDistribution(ElementShadow*);
     void attachDistributedNode();
 
     void assignShadowRoot(ShadowRoot*);

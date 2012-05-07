@@ -30,6 +30,7 @@
 #include "Attribute.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "ElementShadow.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "HTMLNames.h"
@@ -38,7 +39,6 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 #include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
 #include "SVGElementInstanceList.h"
@@ -393,7 +393,7 @@ static bool subtreeContainsDisallowedElement(Node* start)
 void SVGUseElement::clearResourceReferences()
 {
     // FIXME: We should try to optimize this, to at least allow partial reclones.
-    if (ShadowRoot* shadowTreeRootElement =  shadowTree()->oldestShadowRoot())
+    if (ShadowRoot* shadowTreeRootElement =  shadow()->oldestShadowRoot())
         shadowTreeRootElement->removeAllChildren();
 
     if (m_targetElementInstance) {
@@ -480,7 +480,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
     ASSERT(m_targetElementInstance->directUseElement() == this);
     ASSERT(m_targetElementInstance->correspondingElement() == target);
 
-    ShadowRoot* shadowTreeRootElement = shadowTree()->oldestShadowRoot();
+    ShadowRoot* shadowTreeRootElement = shadow()->oldestShadowRoot();
     ASSERT(shadowTreeRootElement);
 
     // Build shadow tree from instance tree
@@ -695,7 +695,7 @@ void SVGUseElement::buildShadowTree(SVGElement* target, SVGElementInstance* targ
     if (subtreeContainsDisallowedElement(newChild.get()))
         removeDisallowedElementsFromSubtree(newChild.get());
 
-    shadowTree()->oldestShadowRoot()->appendChild(newChild.release());
+    shadow()->oldestShadowRoot()->appendChild(newChild.release());
 }
 
 void SVGUseElement::expandUseElementsInShadowTree(Node* element)

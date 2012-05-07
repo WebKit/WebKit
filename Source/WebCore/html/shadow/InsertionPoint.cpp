@@ -31,8 +31,8 @@
 #include "config.h"
 #include "InsertionPoint.h"
 
+#include "ElementShadow.h"
 #include "ShadowRoot.h"
-#include "ShadowTree.h"
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ void InsertionPoint::attach()
     if (isShadowBoundary()) {
         ShadowRoot* root = toShadowRoot(treeScope()->rootNode());
         if (doesSelectFromHostChildren()) {
-            distributeHostChildren(root->tree());
+            distributeHostChildren(root->owner());
             attachDistributedNode();
         } else if (!root->olderShadowRoot()->assignedTo()) {
             ASSERT(!root->olderShadowRoot()->attached());
@@ -67,16 +67,16 @@ void InsertionPoint::detach()
 {
     ShadowRoot* root = toShadowRoot(shadowTreeRootNode());
     if (root && isActive()) {
-        ShadowTree* tree = root->tree();
+        ElementShadow* shadow = root->owner();
 
         if (doesSelectFromHostChildren())
-            clearDistribution(tree);
+            clearDistribution(shadow);
         else if (ShadowRoot* assignedShadowRoot = assignedFrom())
             clearAssignment(assignedShadowRoot);
 
         // When shadow element is detached, shadow tree should be recreated to re-calculate selector for
         // other insertion points.
-        tree->setNeedsReattachHostChildrenAndShadow();
+        shadow->setNeedsReattachHostChildrenAndShadow();
     }
 
     ASSERT(m_selections.isEmpty());
@@ -117,23 +117,23 @@ bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)
     return !isShadowBoundary() && HTMLElement::rendererIsNeeded(context);
 }
 
-inline void InsertionPoint::distributeHostChildren(ShadowTree* tree)
+inline void InsertionPoint::distributeHostChildren(ElementShadow* shadow)
 {
-    if (!tree->selector().isSelecting()) {
+    if (!shadow->selector().isSelecting()) {
         // If HTMLContentSelector is not int selecting phase, it means InsertionPoint is attached from
-        // non-ShadowTree node. To run distribute algorithm, we have to reattach ShadowTree.
-        tree->setNeedsReattachHostChildrenAndShadow();
+        // non-ElementShadow node. To run distribute algorithm, we have to reattach ElementShadow.
+        shadow->setNeedsReattachHostChildrenAndShadow();
         return;
     }
 
-    tree->selector().populateIfNecessary(tree->host());
-    tree->selector().unselect(&m_selections);
-    tree->selector().select(this, &m_selections);
+    shadow->selector().populateIfNecessary(shadow->host());
+    shadow->selector().unselect(&m_selections);
+    shadow->selector().select(this, &m_selections);
 }
 
-inline void InsertionPoint::clearDistribution(ShadowTree* tree)
+inline void InsertionPoint::clearDistribution(ElementShadow* shadow)
 {
-    tree->selector().unselect(&m_selections);
+    shadow->selector().unselect(&m_selections);
 }
 
 inline void InsertionPoint::attachDistributedNode()
