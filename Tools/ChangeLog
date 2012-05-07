@@ -1,3 +1,16 @@
+2012-05-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] WebGL feature is not built anymore through build-webkit after r116251
+        https://bugs.webkit.org/show_bug.cgi?id=85788
+
+        Reviewed by Martin Robinson.
+
+        Enable WebGL by default for the Gtk port. The feature is already enabled by
+        default in configure.ac, so there's no reason it shouldn't be enabled when
+        building through build-webkit.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-05-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unittest fix after r116288, because now there are more than 5 hit for the 'Eric' word.
