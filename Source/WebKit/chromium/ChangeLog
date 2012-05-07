@@ -1,3 +1,17 @@
+2012-05-07  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, rolling out r115525.
+        http://trac.webkit.org/changeset/115525
+        https://bugs.webkit.org/show_bug.cgi?id=66683
+
+        Too many pages rely on DOMTimeStamp as first argument.
+        Reverting while we consider next steps.
+
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::animate):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateAnimations):
+
 2012-05-07  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Allow UserMediaRequest::succeed to take an MediaStreamDescriptor

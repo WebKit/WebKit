@@ -45,7 +45,7 @@ static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, co
 
     return kCVReturnSuccess;
 }
-
+ 
 DisplayRefreshMonitor::~DisplayRefreshMonitor()
 {
     if (m_displayLink) {
@@ -61,7 +61,7 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
 {
     if (!m_active)
         return false;
-
+        
     if (!m_displayLink) {
         m_active = false;
         CVReturn error = CVDisplayLinkCreateWithCGDisplay(m_displayID, &m_displayLink);
@@ -78,7 +78,7 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
 
         m_active = true;
     }
-
+    
     MutexLocker lock(m_mutex);
     m_scheduled = true;
     return true;
@@ -92,11 +92,9 @@ void DisplayRefreshMonitor::displayLinkFired(double nowSeconds, double outputTim
 
     m_previousFrameDone = false;
 
-    double webKitMonotonicNow = monotonicallyIncreasingTime();
-    double timeUntilOutput = outputTimeSeconds - nowSeconds;
-    // FIXME: Should this be using webKitMonotonicNow?
-    m_monotonicAnimationStartTime = webKitMonotonicNow + timeUntilOutput;
-
+    double webKitNow = currentTime();
+    m_timestamp = webKitNow - nowSeconds + outputTimeSeconds;
+    
     callOnMainThread(refreshDisplayOnMainThread, this);
 }
 

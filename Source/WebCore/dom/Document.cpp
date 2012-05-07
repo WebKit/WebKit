@@ -5805,11 +5805,11 @@ void Document::webkitCancelAnimationFrame(int id)
     m_scriptedAnimationController->cancelCallback(id);
 }
 
-void Document::serviceScriptedAnimations(double monotonicAnimationStartTime)
+void Document::serviceScriptedAnimations(DOMTimeStamp time)
 {
     if (!m_scriptedAnimationController)
         return;
-    m_scriptedAnimationController->serviceScriptedAnimations(monotonicAnimationStartTime);
+    m_scriptedAnimationController->serviceScriptedAnimations(time);
 }
 #endif
 

@@ -2050,7 +2050,7 @@ __ZN7WebCore8createCFERKNS_15ProtectionSpaceE
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-__ZN7WebCore9FrameView25serviceScriptedAnimationsEd
+__ZN7WebCore9FrameView25serviceScriptedAnimationsEy
 #endif
 
 #if ENABLE(VIDEO)

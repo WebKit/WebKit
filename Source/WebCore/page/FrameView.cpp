@@ -2161,7 +2161,7 @@ void FrameView::unscheduleRelayout()
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-void FrameView::serviceScriptedAnimations(double monotonicAnimationStartTime)
+void FrameView::serviceScriptedAnimations(DOMTimeStamp time)
 {
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext()) {
         frame->view()->serviceScrollAnimations();
@@ -2173,7 +2173,7 @@ void FrameView::serviceScriptedAnimations(double monotonicAnimationStartTime)
         documents.append(frame->document());
 
     for (size_t i = 0; i < documents.size(); ++i)
-        documents[i]->serviceScriptedAnimations(monotonicAnimationStartTime);
+        documents[i]->serviceScriptedAnimations(time);
 }
 #endif
 
