@@ -113,7 +113,6 @@
             'tests/LayerRendererChromiumTest.cpp',
             'tests/LayerTextureUpdaterTest.cpp',
             'tests/LevelDBTest.cpp',
-            'tests/LinkHighlightLayerDelegateTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
             'tests/MockCCQuadCuller.h',
             'tests/PaintAggregatorTest.cpp',

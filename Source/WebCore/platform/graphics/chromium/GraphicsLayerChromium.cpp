@@ -45,7 +45,6 @@
 
 #include "GraphicsLayerChromium.h"
 
-#include "AnimationIdVendor.h"
 #include "Canvas2DLayerChromium.h"
 #include "ContentLayerChromium.h"
 #include "FloatConversion.h"
@@ -53,7 +52,6 @@
 #include "Image.h"
 #include "ImageLayerChromium.h"
 #include "LayerChromium.h"
-#include "LinkHighlightLayerDelegate.h"
 #include "PlatformString.h"
 #include "SystemTime.h"
 
@@ -62,6 +60,11 @@
 #include <wtf/text/CString.h>
 
 using namespace std;
+
+namespace {
+static int s_nextGroupId = 1;
+static int s_nextAnimationId = 1;
+}
 
 namespace WebCore {
 
@@ -127,8 +130,6 @@ void GraphicsLayerChromium::updateNames()
         m_transformLayer->setDebugName("TransformLayer for " + m_nameBase);
     if (m_contentsLayer)
         m_contentsLayer->setDebugName("ContentsLayer for " + m_nameBase);
-    if (m_linkHighlightLayerDelegate)
-        m_linkHighlightLayerDelegate->getContentLayer()->setDebugName("LinkHighlightLayer for " + m_nameBase);
 }
 
 bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)
@@ -406,7 +407,7 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, const String& animationName, double timeOffset)
 {
     primaryLayer()->setLayerAnimationDelegate(this);
-    return primaryLayer()->addAnimation(values, boxSize, animation, mapAnimationNameToId(animationName), AnimationIdVendor::getNextGroupId(), timeOffset);
+    return primaryLayer()->addAnimation(values, boxSize, animation, mapAnimationNameToId(animationName), s_nextGroupId++, timeOffset);
 }
 
 void GraphicsLayerChromium::pauseAnimation(const String& animationName, double timeOffset)
@@ -430,20 +431,6 @@ void GraphicsLayerChromium::suspendAnimations(double wallClockTime)
 void GraphicsLayerChromium::resumeAnimations()
 {
     primaryLayer()->resumeAnimations(monotonicallyIncreasingTime());
-}
-
-void GraphicsLayerChromium::addLinkHighlightLayer(const Path& path)
-{
-    m_linkHighlightLayerDelegate = LinkHighlightLayerDelegate::create(this, path, AnimationIdVendor::LinkHighlightAnimationId, AnimationIdVendor::getNextGroupId());
-    updateChildList();
-}
-
-void GraphicsLayerChromium::didFinishLinkHighlightLayer()
-{
-    if (m_linkHighlightLayerDelegate)
-        m_linkHighlightLayerDelegate->getContentLayer()->removeFromParent();
-
-    m_linkHighlightLayerDelegate.clear();
 }
 
 void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
@@ -525,9 +512,6 @@ void GraphicsLayerChromium::updateChildList()
         LayerChromium* childLayer = curChild->layerForParent();
         newChildren.append(childLayer);
     }
-
-    if (m_linkHighlightLayerDelegate)
-        newChildren.append(m_linkHighlightLayerDelegate->getContentLayer());
 
     for (size_t i = 0; i < newChildren.size(); ++i)
         newChildren[i]->removeFromParent();
@@ -765,7 +749,7 @@ int GraphicsLayerChromium::mapAnimationNameToId(const String& animationName)
         return 0;
 
     if (!m_animationIdMap.contains(animationName))
-        m_animationIdMap.add(animationName, AnimationIdVendor::getNextAnimationId());
+        m_animationIdMap.add(animationName, s_nextAnimationId++);
 
     return m_animationIdMap.find(animationName)->second;
 }
