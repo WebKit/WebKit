@@ -1,3 +1,27 @@
+2012-05-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Icon database path may be NULL when a new path was set.
+        https://bugs.webkit.org/show_bug.cgi?id=82456
+
+        Reviewed by Andreas Kling.
+
+        ewk_settings_icon_database_path_set calls asynchronous method WebCore::iconDatabase().open().
+        There is no notification when the new path is set by WebCore.
+        Moreover ewk_settings_icon_database_path_set keeps the new path in a local variable.
+
+        To retrieve path to icon database ewk_settings_icon_database_path_get can be called.
+        It first checks flags whether icon databse is opened and enabled. There is possibility
+        that icon database has been set through API but it hasn't been opened by WebCore yet.
+        So as a result ewk_settings_icon_database_path_get returns NULL because WebCore hasn't
+        set an appropriate flag yet.
+
+        It may happen while icon database set/get sequences.
+        Information whether icon database is opened/enabled should be exposed by separate API.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_path_get): Skip checking whether icon database is opened, enabled.
+        * ewk/ewk_settings.h:
+
 2012-05-07  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][DRT] Implement LayoutTestController::execCommand

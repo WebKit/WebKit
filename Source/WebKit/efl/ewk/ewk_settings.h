@@ -147,7 +147,7 @@ EAPI Eina_Bool        ewk_settings_icon_database_path_set(const char *path);
  * save yourself some cpu cycles and use eina_stringshare_ref()
  * instead of eina_stringshare_add() or strdup().
  *
- * @return database path or @c 0 if none is set or database is closed
+ * @return database path or @c 0 if none is set
  */
 EAPI const char      *ewk_settings_icon_database_path_get(void);
 
