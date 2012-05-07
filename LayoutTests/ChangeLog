@@ -1,3 +1,14 @@
+2012-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Page caching permission from EFL's FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=85620
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskip bug-related testcases.
+
+        * platform/efl/Skipped:
+
 2012-05-07  Andy Estes  <aestes@apple.com>
 
         Update mac-wk2 baselines.

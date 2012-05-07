@@ -884,7 +884,7 @@ bool FrameLoaderClientEfl::shouldFallBack(const ResourceError& error)
 
 bool FrameLoaderClientEfl::canCachePage() const
 {
-    return false;
+    return true;
 }
 
 Frame* FrameLoaderClientEfl::dispatchCreatePage(const NavigationAction&)

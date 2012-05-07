@@ -1,3 +1,15 @@
+2012-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Page caching permission from EFL's FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=85620
+
+        Reviewed by Gustavo Noronha Silva.
+
+        FrameLoaderClientEfl::canCachePage() returns true.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::canCachePage):
+
 2012-05-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Icon database path may be NULL when a new path was set.
