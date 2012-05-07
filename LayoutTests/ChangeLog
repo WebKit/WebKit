@@ -1,3 +1,10 @@
+2012-05-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/test_expectations.txt: Mark seamless frames as
+        failing until we enable the feature.
+
 2012-05-07  Oliver Hunt  <oliver@apple.com>
 
         LLInt doesn't check for Ropes when performing a character switch
