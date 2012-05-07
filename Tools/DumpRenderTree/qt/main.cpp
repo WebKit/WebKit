@@ -129,7 +129,7 @@ static void WTFCrashHook()
 }
 #endif
 
-static void initializeTestPlatformPlugin(int argc, const char* argv[])
+static void initializeTestPlatformPlugin(int argc, char* const argv[])
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     QPluginLoader loader(TEST_PLATFORM_PLUGIN_PATH);

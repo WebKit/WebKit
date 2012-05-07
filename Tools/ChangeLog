@@ -1,5 +1,15 @@
 2012-05-07  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Unreviewed Qt build fix.
+
+        One more try to learn how to use
+        const with a pointer array.
+
+        * DumpRenderTree/qt/main.cpp:
+        (initializeTestPlatformPlugin):
+
+2012-05-07  Balazs Kelemen  <kbalazs@webkit.org>
+
         Unreviewed build fix after r116299.
 
         * DumpRenderTree/qt/main.cpp:
