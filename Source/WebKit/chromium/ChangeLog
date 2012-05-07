@@ -1,5 +1,13 @@
 2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed: the same fix in another file for chromium win build.  Adding WebCore namespace to FileSystemTypes.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFileSystem):
+        (WebKit::WebFrameImpl::createFileEntry):
+
+2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
+
         Not reviewed: chromium win build fix attempt; adding WebCore namespace to ambiguous type name.
 
         * src/WebFileSystemCallbacksImpl.cpp:
