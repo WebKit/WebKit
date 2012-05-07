@@ -1,3 +1,13 @@
+2012-05-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unittest fix after r116288, because now there are more than 5 hit for the 'Eric' word.
+        We have only 2 'Gavin', so it is a better choice than 'Eric' for unit testing.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois):
+
 2012-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116299, r116301, and r116303.
