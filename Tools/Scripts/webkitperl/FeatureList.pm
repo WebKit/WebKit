@@ -76,7 +76,7 @@ my (
     $inputTypeTimeSupport,
     $inputTypeWeekSupport,
     $inspectorSupport,
-    $javaScriptDebuggerSupport,
+    $javascriptDebuggerSupport,
     $legacyNotificationsSupport,
     $legacyWebKitBlobBuilderSupport,
     $linkPrefetchSupport,
@@ -89,7 +89,7 @@ my (
     $mhtmlSupport,
     $microdataSupport,
     $mutationObserversSupport,
-    $netscapePluginSupport,
+    $netscapePluginAPISupport,
     $networkInfoSupport,
     $notificationsSupport,
     $orientationEventsSupport,
@@ -122,9 +122,6 @@ my (
 );
 
 my @features = (
-    { option => "3d-canvas", desc => "Toggle WebGL support",
-      define => "ENABLE_WEBGL", default => isAppleMacWebKit(), value => \$webglSupport },
-
     { option => "3d-rendering", desc => "Toggle 3D Rendering support",
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() || isQt()), value => \$threeDRenderingSupport },
 
@@ -134,7 +131,7 @@ my @features = (
     { option => "animation-api", desc => "Toggle Animation API support",
       define => "ENABLE_ANIMATION_API", default => isBlackBerry(), value => \$animationAPISupport },
 
-    { option => "battery-status-api", desc => "Toggle Battery Status API support",
+    { option => "battery-status", desc => "Toggle Battery Status support",
       define => "ENABLE_BATTERY_STATUS", default => (isEfl() || isBlackBerry()), value => \$batteryStatusSupport },
 
     { option => "blob", desc => "Toggle Blob support",
@@ -225,7 +222,7 @@ my @features = (
       define => "ENABLE_INSPECTOR", default => !isWinCE(), value => \$inspectorSupport },
 
     { option => "javascript-debugger", desc => "Toggle JavaScript Debugger support",
-      define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },
+      define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javascriptDebuggerSupport },
 
     { option => "legacy-notifications", desc => "Toggle Legacy Notifications support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => isBlackBerry(), value => \$legacyNotificationsSupport },
@@ -263,13 +260,13 @@ my @features = (
     { option => "mutation-observers", desc => "Toggle Mutation Observers support",
       define => "ENABLE_MUTATION_OBSERVERS", default => 1, value => \$mutationObserversSupport },
 
-    { option => "netscape-plugin", desc => "Toggle Netscape Plugin API support",
-      define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },
+    { option => "netscape-plugin-api", desc => "Toggle Netscape Plugin API support",
+      define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginAPISupport },
 
-    { option => "network-info", desc => "Toggle Network Information API support",
+    { option => "network-info", desc => "Toggle Network Info support",
       define => "ENABLE_NETWORK_INFO", default => isEfl(), value => \$networkInfoSupport },
 
-    { option => "notifications", desc => "Toggle Notifications Support",
+    { option => "notifications", desc => "Toggle Notifications support",
       define => "ENABLE_NOTIFICATIONS", default => isBlackBerry(), value => \$notificationsSupport },
 
     { option => "orientation-events", desc => "Toggle Orientation Events support",
@@ -334,6 +331,9 @@ my @features = (
 
     { option => "video-track", desc => "Toggle Video Track support",
       define => "ENABLE_VIDEO_TRACK", default => (isAppleWebKit() || isGtk() || isEfl()), value => \$videoTrackSupport },
+
+    { option => "webgl", desc => "Toggle WebGL support",
+      define => "ENABLE_WEBGL", default => isAppleMacWebKit(), value => \$webglSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => 0, value => \$webAudioSupport },
