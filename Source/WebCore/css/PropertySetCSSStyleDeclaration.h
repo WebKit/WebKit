@@ -68,12 +68,14 @@ private:
     virtual bool cssPropertyMatches(const CSSProperty*) const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
-    virtual void setNeedsStyleRecalc() { }
-    
-    void didMutate();
+
     CSSValue* cloneAndCacheForCSSOM(CSSValue*);
     
 protected:
+    enum MutationType { NoChanges, PropertyChanged };
+    virtual void willMutate() { }
+    virtual void didMutate(MutationType) { }
+
     StylePropertySet* m_propertySet;
     OwnPtr<HashMap<CSSValue*, RefPtr<CSSValue> > > m_cssomCSSValueClones;
 };
@@ -91,6 +93,8 @@ public:
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
 
+    void reattach(StylePropertySet*);
+
 private:
     StyleRuleCSSStyleDeclaration(StylePropertySet*, CSSRule*);
     virtual ~StyleRuleCSSStyleDeclaration();
@@ -98,8 +102,10 @@ private:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
 
     virtual CSSRule* parentRule() const OVERRIDE { return m_parentRule;  }
-    virtual void setNeedsStyleRecalc() OVERRIDE;
-    
+
+    virtual void willMutate() OVERRIDE;
+    virtual void didMutate(MutationType) OVERRIDE;
+
     unsigned m_refCount;
     CSSRule* m_parentRule;
 };
@@ -117,7 +123,8 @@ private:
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
     virtual StyledElement* parentElement() const OVERRIDE { return m_parentElement; }
     virtual void clearParentElement() OVERRIDE { m_parentElement = 0; }
-    virtual void setNeedsStyleRecalc() OVERRIDE;
+
+    virtual void didMutate(MutationType) OVERRIDE;
     
     StyledElement* m_parentElement;
 };

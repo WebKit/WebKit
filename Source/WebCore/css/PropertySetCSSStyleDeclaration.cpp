@@ -152,11 +152,14 @@ void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCod
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
+    willMutate();
+
     ec = 0;
     // FIXME: Detect syntax errors and set ec.
     m_propertySet->parseDeclaration(text, contextStyleSheet());
 
-    didMutate();
+    didMutate(PropertyChanged);
+
 #if ENABLE(MUTATION_OBSERVERS)
     mutationScope.enqueueMutationRecord();    
 #endif
@@ -213,13 +216,19 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return;
+
     bool important = priority.find("important", 0, false) != notFound;
+
+    willMutate();
+
     ec = 0;
     bool changed = m_propertySet->setProperty(propertyID, value, important, contextStyleSheet());
+
+    didMutate(changed ? PropertyChanged : NoChanges);
+
     if (changed) {
         // CSS DOM requires raising SYNTAX_ERR of parsing failed, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.
-        didMutate();
 #if ENABLE(MUTATION_OBSERVERS)
         mutationScope.enqueueMutationRecord();
 #endif
@@ -234,11 +243,16 @@ String PropertySetCSSStyleDeclaration::removeProperty(const String& propertyName
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();
+
+    willMutate();
+
     ec = 0;
     String result;
-    bool changes = m_propertySet->removeProperty(propertyID, &result);
-    if (changes) {
-        didMutate();
+    bool changed = m_propertySet->removeProperty(propertyID, &result);
+
+    didMutate(changed ? PropertyChanged : NoChanges);
+
+    if (changed) {
 #if ENABLE(MUTATION_OBSERVERS)
         mutationScope.enqueueMutationRecord();
 #endif
@@ -261,20 +275,18 @@ void PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyI
 #if ENABLE(MUTATION_OBSERVERS)
     StyleAttributeMutationScope mutationScope(this);
 #endif
+    willMutate();
+
     ec = 0;
     bool changed = m_propertySet->setProperty(propertyID, value, important, contextStyleSheet());
+
+    didMutate(changed ? PropertyChanged : NoChanges);
+
     if (changed) {
-        didMutate();
 #if ENABLE(MUTATION_OBSERVERS)
         mutationScope.enqueueMutationRecord();
 #endif
     }
-}
-
-void PropertySetCSSStyleDeclaration::didMutate()
-{
-    m_cssomCSSValueClones.clear();
-    setNeedsStyleRecalc();
 }
 
 CSSValue* PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM(CSSValue* internalValue)
@@ -339,12 +351,20 @@ void StyleRuleCSSStyleDeclaration::deref()
         delete this;
 }
 
-void StyleRuleCSSStyleDeclaration::setNeedsStyleRecalc()
+void StyleRuleCSSStyleDeclaration::willMutate()
 {
-    if (CSSStyleSheet* styleSheet = parentStyleSheet()) {
-        if (Document* document = styleSheet->ownerDocument())
-            document->styleResolverChanged(DeferRecalcStyle);
-    }
+    if (m_parentRule && m_parentRule->parentStyleSheet())
+        m_parentRule->parentStyleSheet()->willMutateRules();
+}
+
+void StyleRuleCSSStyleDeclaration::didMutate(MutationType type)
+{
+    if (type == PropertyChanged)
+        m_cssomCSSValueClones.clear();
+
+    // Style sheet mutation needs to be signaled even if the change failed. willMutateRules/didMutateRules must pair.
+    if (m_parentRule && m_parentRule->parentStyleSheet())
+        m_parentRule->parentStyleSheet()->didMutateRules();
 }
 
 CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const
@@ -352,14 +372,26 @@ CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const
     return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }
 
-void InlineCSSStyleDeclaration::setNeedsStyleRecalc()
+void StyleRuleCSSStyleDeclaration::reattach(StylePropertySet* propertySet)
 {
+    ASSERT(propertySet);
+    m_propertySet->deref();
+    m_propertySet = propertySet;
+    m_propertySet->ref();
+}
+
+void InlineCSSStyleDeclaration::didMutate(MutationType type)
+{
+    if (type == NoChanges)
+        return;
+
+    m_cssomCSSValueClones.clear();
+
     if (!m_parentElement)
         return;
     m_parentElement->setNeedsStyleRecalc(InlineStyleChange);
     m_parentElement->invalidateStyleAttribute();
     StyleAttributeMutationScope(this).didInvalidateStyleAttr();
-    return;
 }
 
 CSSStyleSheet* InlineCSSStyleDeclaration::parentStyleSheet() const

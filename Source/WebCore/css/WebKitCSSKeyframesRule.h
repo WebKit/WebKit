@@ -87,6 +87,8 @@ public:
     unsigned length() const;
     WebKitCSSKeyframeRule* item(unsigned index) const;
 
+    void reattach(StyleRuleKeyframes*);
+
 private:
     WebKitCSSKeyframesRule(StyleRuleKeyframes*, CSSStyleSheet* parent);
 
