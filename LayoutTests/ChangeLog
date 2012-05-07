@@ -1,3 +1,13 @@
+2012-05-04  Zhenyao Mo  <zmo@google.com>
+
+        vertexAttribPointer needs to reject large negative offsets
+        https://bugs.webkit.org/show_bug.cgi?id=85117
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/index-validation-expected.txt:
+        * fast/canvas/webgl/index-validation.html: Add a test case for large negative offset.
+
 2012-05-07  Pravin D  <pravind.2k4@gmail.com>
 
         :first-line text-decorations are not rendered
