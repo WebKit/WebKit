@@ -1,3 +1,17 @@
+2012-05-07  Adam Barth  <abarth@webkit.org>
+
+        Test the combination of CSP and srcdoc
+        https://bugs.webkit.org/show_bug.cgi?id=85778
+
+        Reviewed by Eric Seidel.
+
+        This test ensure that <iframe srcdoc> can't be used to bypass
+        Content-Security-Policy restrictions on script-src. We already have the
+        correct behavior. This test just verifies it.
+
+        * http/tests/security/contentSecurityPolicy/srcdoc-doesnt-bypass-script-src-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/srcdoc-doesnt-bypass-script-src.html: Added.
+
 2012-05-07  Pravin D  <pravind.2k4@gmail.com>
 
         Wrong positioning due to wrong width calculation wrt width:0
