@@ -385,3 +385,6 @@ BUGWK85606 : fast/text/font-variant-ligatures.html = IMAGE
 
 // Off-by-few-pixels issue for this selection reftest, fails on GTK as well.
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
+
+// Times-out with debug build during heavy cpu loads
+BUGWK85902 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS

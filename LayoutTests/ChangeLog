@@ -1,3 +1,15 @@
+2012-05-08  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] Layout test fast/overflow/lots-of-sibling-inline-boxes.html is flaky in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=85896
+
+        Unreviewed gardening.
+
+        Marking test as slow, since it times-out when executed using debug builds under
+        heavy processor loads.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Update Web Timing tests expectations
