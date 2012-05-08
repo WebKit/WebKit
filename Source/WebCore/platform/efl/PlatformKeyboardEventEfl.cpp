@@ -49,7 +49,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* event)
     , m_nativeVirtualKeyCode(0)
     , m_macCharCode(0)
     , m_autoRepeat(false)
-    , m_isKeypad(false)
+    , m_isKeypad(String(event->key).startsWith("KP_"))
     , m_isSystemKey(false)
 {
 }
@@ -63,7 +63,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Up* event)
     , m_nativeVirtualKeyCode(0)
     , m_macCharCode(0)
     , m_autoRepeat(false)
-    , m_isKeypad(false)
+    , m_isKeypad(String(event->key).startsWith("KP_"))
     , m_isSystemKey(false)
 {
 }

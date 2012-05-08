@@ -1,3 +1,14 @@
+2012-05-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Handling of numeric-pad keys in EFL's PlatformKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=85479
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskipped fast/events/keydown-numpad-keys.html.
+
+        * platform/efl/Skipped:
+
 2012-05-04  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Tie lifetime of SVGAnimateElement::m_animatedType to the duration of the animation
