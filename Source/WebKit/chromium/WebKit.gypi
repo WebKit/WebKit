@@ -97,7 +97,6 @@
             'tests/CompositorFakeWebGraphicsContext3D.h',
             'tests/DragImageTest.cpp',
             'tests/DrawingBufferChromiumTest.cpp',
-            'tests/EventListenerTest.cpp',
             'tests/FakeCCLayerTreeHostClient.h',
             'tests/FakeGraphicsContext3DTest.cpp',
             'tests/FakeWebGraphicsContext3D.h',
