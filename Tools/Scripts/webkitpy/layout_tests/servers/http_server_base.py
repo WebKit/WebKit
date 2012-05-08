@@ -174,12 +174,6 @@ class HttpServerBase(object):
             try:
                 s.connect(('localhost', port))
                 _log.debug("Server running on %d" % port)
-            except socket.error, e:
-                # this branch is needed on Mac 10.5 / python 2.5
-                if e.args[0] not in (errno.ECONNREFUSED, errno.ECONNRESET):
-                    raise
-                _log.debug("Server NOT running on %d: %s" % (port, e))
-                return False
             except IOError, e:
                 if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
                     raise

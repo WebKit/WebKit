@@ -1,3 +1,15 @@
+2012-05-07  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [webkitpy] Remove Python 2.5-specific workaround from http_server_base.py.
+        https://bugs.webkit.org/show_bug.cgi?id=85852
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase._is_server_running_on_all_ports): Revert the part
+        of r89412 which was a workaround for an issue with Python 2.5 on
+        Mac 10.5.
+
 2012-05-07  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         webkitdirs.pm: Make determineNumberOfCPUs work on FreeBSD.
