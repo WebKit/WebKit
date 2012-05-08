@@ -1,3 +1,32 @@
+2012-05-08  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] AutofillManager implementation upstream
+        https://bugs.webkit.org/show_bug.cgi?id=85576
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 136405
+        Implemented class AutofillManager to handle the form autofill
+        interactions.
+        It listens to text changed notification from text input, searches
+        autofill database for the suggested autofill candidate value,
+        and notifies WebPageClient to pop up a context dialog for user;
+        it also responds to user's choice by autofilling the text input.
+
+        * WebCoreSupport/AutofillManager.cpp: Added.
+        (WebCore):
+        (WebCore::AutofillManager::create):
+        (WebCore::AutofillManager::didChangeInTextField):
+        (WebCore::AutofillManager::autofillTextField):
+        (WebCore::AutofillManager::saveTextFields):
+        (WebCore::AutofillManager::clear):
+        * WebCoreSupport/AutofillManager.h: Added.
+        (WTF):
+        (WebKit):
+        (WebCore):
+        (AutofillManager):
+        (WebCore::AutofillManager::m_element):
+
 2012-05-07  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Delete previous buffer when new over-scroll image path is set

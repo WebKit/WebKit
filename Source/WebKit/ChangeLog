@@ -1,3 +1,15 @@
+2012-05-08  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] AutofillManager implementation upstream
+        https://bugs.webkit.org/show_bug.cgi?id=85576
+
+        Reviewed by Rob Buis.
+
+        Added WebKit/blackberry/WebCoreSupport/AutofillManager.cpp
+        into building system of BlackBerry porting.
+
+        * PlatformBlackBerry.cmake:
+
 2012-05-03  Jer Noble  <jer.noble@apple.com>
 
         Move WebKitFullScreenListener into its own file.
