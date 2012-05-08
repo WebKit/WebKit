@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #if !defined(NDEBUG) && defined(Q_OS_UNIX)
+#include <signal.h>
 #include <unistd.h>
 #endif
 
@@ -66,6 +67,12 @@ private:
     char** m_argv;
 };
 
+#if !defined(NDEBUG) && defined(Q_OS_UNIX)
+static void sigcontHandler(int)
+{
+}
+#endif
+
 void messageHandler(QtMsgType type, const char* message)
 {
     if (type == QtCriticalMsg) {
@@ -80,8 +87,14 @@ int main(int argc, char** argv)
 {
 #if !defined(NDEBUG) && defined(Q_OS_UNIX)
     if (qgetenv("QT_WEBKIT_PAUSE_UI_PROCESS") == "1") {
-        fprintf(stderr, "Pausing UI process, please attach to PID %d and continue... ", getpid());
+        struct sigaction newAction, oldAction;
+        newAction.sa_handler = sigcontHandler;
+        sigemptyset(&newAction.sa_mask);
+        newAction.sa_flags = 0;
+        sigaction(SIGCONT, &newAction, &oldAction);
+        fprintf(stderr, "Pausing UI process, please attach to PID %d and send signal SIGCONT... ", getpid());
         pause();
+        sigaction(SIGCONT, &oldAction, 0);
         fprintf(stderr, " OK\n");
     }
 #endif

@@ -1,3 +1,24 @@
+2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Unbreak debugging of WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=85839
+
+        Reviewed by Simon Hausmann.
+
+        When you attach GDB to a running process, it stops it.
+        http://trac.webkit.org/changeset/115958 introduced a pause()
+        call to wait the debugger to be attached to then continue
+        the execution of the WebProcess. Unfortunately the pause()
+        function does not return unless a signal handler is called.
+        This patch introduce an event handler to exit from the paused
+        state when the debugger send the signal SIGCONT. The old code
+        works with older version of GDB (<7.0) but not with newer
+        versions where the behavior of pause() is correct.
+
+        * qt/MainQt.cpp:
+        (sigcontHandler):
+        (main):
+
 2012-05-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Refactor windowClipRectForLayer to remove the explicit RenderLayer dependency
