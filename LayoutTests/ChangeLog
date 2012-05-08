@@ -1,3 +1,20 @@
+2012-05-08  Hironori Bono  <hbono@chromium.org>
+
+        [Chromium] Fix the position of an RTL resizer
+        https://bugs.webkit.org/show_bug.cgi?id=80640
+
+        Reviewed by Tony Chang.
+
+        When rendering an RTL resizer, my r110073 renders it at the same position as the
+        one used for rendering a LTR resizer. Unfortunately, this code renders the RTL
+        resizer image at an incorrect position on Mac and Linux. This change uses the
+        correct formula to calculate the position of an RTL resizer.
+
+        * platform/chromium/platform/chromium/scrollbars: Added.
+        * platform/chromium/platform/chromium/scrollbars/rtl-resizer-position-expected.png: Added.
+        * platform/chromium/platform/chromium/scrollbars/rtl-resizer-position-expected.txt: Added.
+        * platform/chromium/scrollbars/rtl-resizer-position.html: Added.
+
 2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip failing tests.

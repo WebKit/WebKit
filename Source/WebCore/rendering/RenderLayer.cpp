@@ -2651,17 +2651,15 @@ void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect res
         cornerResizerSize = resizeCornerImage->size();
     }
 
-    IntRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
     if (renderer()->style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft()) {
         context->save();
-        context->translate(imageRect.x(), imageRect.y());
-        imageRect.setX(0);
-        imageRect.setY(0);
+        context->translate(resizerCornerRect.x() + cornerResizerSize.width(), resizerCornerRect.y() + resizerCornerRect.height() - cornerResizerSize.height());
         context->scale(FloatSize(-1.0, 1.0));
-        context->drawImage(resizeCornerImage.get(), renderer()->style()->colorSpace(), imageRect);
+        context->drawImage(resizeCornerImage.get(), renderer()->style()->colorSpace(), IntRect(IntPoint(), cornerResizerSize));
         context->restore();
         return;
     }
+    IntRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
     context->drawImage(resizeCornerImage.get(), renderer()->style()->colorSpace(), imageRect);
 }
 
