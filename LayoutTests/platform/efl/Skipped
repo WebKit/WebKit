@@ -9,10 +9,6 @@ fast/dom/icon-url-property.html
 # EFL's EventSender does not implement dumpFilenameBeingDragged
 fast/events/drag-image-filename.html
 
-# EFL's EventSender does not correctly send a single wheel event when mouseScrollBy is called with both x and y not-null
-fast/events/platform-wheelevent-in-scrolling-div.html
-fast/events/remove-child-onscroll.html
-
 # EFL's EventSender does not implement continuousMouseScrollBy yet
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/wheelevent-direction-inverted-from-device.html
@@ -67,7 +63,7 @@ http/tests/security/clipboard/clipboard-file-access.html
 # EFL's EventSender does not implement addTouchPoint, clearTouchPoints, touchStart and other touch-related callbacks
 fast/events/touch
 
-# EFL's EventSender does not implement leapForward yet
+# EFL's port requires implementation of ClipboardEfl and DragClientEfl classes in order to suppport drag n drop functionality
 fast/events/drag-and-drop-subframe-dataTransfer.html
 editing/pasteboard/4947130.html
 editing/pasteboard/dataTransfer-setData-getData.html
@@ -89,7 +85,6 @@ editing/pasteboard/subframe-dragndrop-1.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
 editing/selection/5333725.html
-editing/selection/caret-bidi-first-and-last-letters.html
 editing/selection/caret-ltr-2-left.html
 editing/selection/caret-ltr-2.html
 editing/selection/caret-ltr-right.html
@@ -99,8 +94,6 @@ editing/selection/caret-rtl-2.html
 editing/selection/caret-rtl-right.html
 editing/selection/caret-rtl.html
 editing/selection/click-before-and-after-table.html
-editing/selection/click-below-rtl-text.html
-editing/selection/click-left-of-rtl-wrapping-text.html
 editing/selection/contains-boundaries.html
 editing/selection/crash-on-drag-with-mutation-events.html
 editing/selection/directionality-after-undo-replace.html
@@ -111,17 +104,10 @@ editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/extend-over-file-input-by-drag-crash.html
 editing/selection/extend-selection-after-double-click.html
 editing/selection/fake-drag.html
-editing/selection/hit-test-on-text-with-line-height.html
-editing/selection/rtl-move-selection-right-left.html
-editing/selection/select-across-readonly-input-1.html
 editing/selection/select-across-readonly-input-2.html
 editing/selection/select-across-readonly-input-3.html
 editing/selection/select-across-readonly-input-4.html
 editing/selection/select-across-readonly-input-5.html
-editing/selection/select-out-of-editable.html
-editing/selection/select-out-of-floated-contenteditable.html
-editing/selection/select-out-of-floated-input.html
-editing/selection/select-out-of-floated-textarea.html
 fast/block/positioning/hittest-on-relative-positioned-children.html
 fast/events/5056619.html
 fast/events/bogus-dropEffect-effectAllowed.html
@@ -138,33 +124,23 @@ fast/events/dropzone-001.html
 fast/events/dropzone-002.html
 fast/events/dropzone-003.html
 fast/events/dropzone-005.html
-fast/events/fire-mousedown-while-pressing-mouse-button.html
-fast/events/frame-click-focus.html
 fast/events/ondragenter.html
 fast/events/ondrop-text-html.html
-fast/events/popup-blocking-timers.html
-fast/events/remove-target-in-mouseup-deep.html
-fast/events/remove-target-in-mouseup-insertback.html
-fast/events/remove-target-in-mouseup-twice.html
-fast/events/remove-target-in-mouseup.html
 fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
-fast/events/selectstart-by-single-click-with-shift.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/touch/touch-gesture-click.html
 fast/events/zoom-dblclick.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
-fast/forms/file/file-input-hit-test.html
 fast/forms/focus-change-on-keypress.html
 fast/forms/search-cancel-button-mouseup.html
 fast/forms/search-disabled-readonly.html
 fast/forms/textfield-drag-into-disabled.html
-fast/forms/type-after-focus-rule-shrink-width.html
-fast/frames/frame-inherit-noresize-from-frameset.html
 fast/frames/frame-programmatic-noresize.html
 fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html
 fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html
+fast/forms/type-after-focus-rule-shrink-width.html
 fast/lists/drag-into-marker.html
 fast/table/click-near-anonymous-table.html
 fast/text/offsetForPosition-complex-fallback.html

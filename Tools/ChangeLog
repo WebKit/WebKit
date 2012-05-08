@@ -1,3 +1,27 @@
+2012-05-08  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][DRT] EventSender needs implementation of leapForward function
+        https://bugs.webkit.org/show_bug.cgi?id=83486
+
+        Reviewed by Eric Seidel.
+
+        Implemented leapForward function in Efl's DRT. This function is required
+        to delay and queue event execution and simulate real user behavior.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (DelayedEvent):
+        (MouseEventInfo::MouseEventInfo):
+        (MouseEventInfo):
+        (sendClick):
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (mouseMoveToCallback):
+        (leapForwardCallback):
+        (mouseScrollByCallback):
+        (feedOrQueueMouseEvent):
+        (feedMouseEvent):
+        (feedQueuedMouseEvents):
+
 2012-05-08  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][DRT] WebKit/DRT should not paint webview for the pixel tests.

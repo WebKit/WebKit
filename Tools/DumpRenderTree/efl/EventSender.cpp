@@ -103,6 +103,11 @@ enum ZoomEvent {
     ZoomOut
 };
 
+enum EventQueueStrategy {
+    FeedQueuedEvents,
+    DoNotFeedQueuedEvents
+};
+
 struct KeyEventInfo {
     KeyEventInfo(const CString& keyName, EvasKeyModifier modifiers)
         : keyName(keyName)
@@ -113,6 +118,45 @@ struct KeyEventInfo {
     const CString keyName;
     EvasKeyModifier modifiers;
 };
+
+struct MouseEventInfo {
+    MouseEventInfo(EvasMouseEvent event, EvasKeyModifier modifiers = EvasKeyModifierNone, EvasMouseButton button = EvasMouseButtonNone, int horizontalDelta = 0, int verticalDelta = 0)
+        : event(event)
+        , modifiers(modifiers)
+        , button(button)
+        , horizontalDelta(horizontalDelta)
+        , verticalDelta(verticalDelta)
+    {
+    }
+
+    EvasMouseEvent event;
+    EvasKeyModifier modifiers;
+    EvasMouseButton button;
+    int horizontalDelta;
+    int verticalDelta;
+};
+
+struct DelayedEvent {
+    DelayedEvent(MouseEventInfo* eventInfo, ulong delay = 0)
+        : eventInfo(eventInfo)
+        , delay(delay)
+    {
+    }
+
+    MouseEventInfo* eventInfo;
+    ulong delay;
+};
+
+WTF::Vector<DelayedEvent>& delayedEventQueue()
+{
+    DEFINE_STATIC_LOCAL(WTF::Vector<DelayedEvent>, staticDelayedEventQueue, ());
+    return staticDelayedEventQueue;
+}
+
+
+static void feedOrQueueMouseEvent(MouseEventInfo*, EventQueueStrategy);
+static void feedMouseEvent(MouseEventInfo*);
+static void feedQueuedMouseEvents();
 
 static void setEvasModifiers(Evas* evas, EvasKeyModifier modifiers)
 {
@@ -141,43 +185,10 @@ static EvasMouseButton translateMouseButtonNumber(int eventSenderButtonNumber)
     return EvasMouseButtonLeft;
 }
 
-static void sendMouseEvent(Evas* evas, EvasMouseEvent event, int buttonNumber, EvasKeyModifier modifiers)
-{
-    unsigned timeStamp = 0;
-
-    DumpRenderTreeSupportEfl::layoutFrame(browser->mainFrame());
-
-    setEvasModifiers(evas, modifiers);
-    if (event & EvasMouseEventMove)
-        evas_event_feed_mouse_move(evas, gLastMousePositionX, gLastMousePositionY, timeStamp++, 0);
-    if (event & EvasMouseEventDown) {
-        unsigned flags = 0;
-        if (gClickCount == 2)
-            flags |= EVAS_BUTTON_DOUBLE_CLICK;
-        else if (gClickCount == 3)
-            flags |= EVAS_BUTTON_TRIPLE_CLICK;
-
-        evas_event_feed_mouse_down(evas, buttonNumber, static_cast<Evas_Button_Flags>(flags), timeStamp++, 0);
-    }
-    if (event & EvasMouseEventUp)
-        evas_event_feed_mouse_up(evas, buttonNumber, EVAS_BUTTON_NONE, timeStamp++, 0);
-
-    const bool horizontal = !!(event & EvasMouseEventScrollLeft | event & EvasMouseEventScrollRight);
-    const bool vertical = !!(event & EvasMouseEventScrollUp | event & EvasMouseEventScrollDown);
-    if (vertical && horizontal) {
-        evas_event_feed_mouse_wheel(evas, 0, (event & EvasMouseEventScrollUp) ? 10 : -10, timeStamp, 0);
-        evas_event_feed_mouse_wheel(evas, 1, (event & EvasMouseEventScrollLeft) ? 10 : -10, timeStamp, 0);
-    } else if (vertical)
-        evas_event_feed_mouse_wheel(evas, 0, (event & EvasMouseEventScrollUp) ? 10 : -10, timeStamp, 0);
-    else if (horizontal)
-        evas_event_feed_mouse_wheel(evas, 1, (event & EvasMouseEventScrollLeft) ? 10 : -10, timeStamp, 0);
-
-    setEvasModifiers(evas, EvasKeyModifierNone);
-}
-
 static Eina_Bool sendClick(void*)
 {
-    sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventClick, EvasMouseButtonLeft, EvasKeyModifierNone);
+    MouseEventInfo* eventInfo = new MouseEventInfo(EvasMouseEventClick, EvasKeyModifierNone, EvasMouseButtonLeft);
+    feedOrQueueMouseEvent(eventInfo, FeedQueuedEvents);
     return ECORE_CALLBACK_CANCEL;
 }
 
@@ -249,8 +260,8 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     updateClickCount(button);
 
     EvasKeyModifier modifiers = argumentCount >= 2 ? modifiersFromJSValue(context, arguments[1]) : EvasKeyModifierNone;
-    sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventDown, button, modifiers);
-
+    MouseEventInfo* eventInfo = new MouseEventInfo(EvasMouseEventDown, modifiers, static_cast<EvasMouseButton>(button));
+    feedOrQueueMouseEvent(eventInfo, FeedQueuedEvents);
     gButtonCurrentlyDown = button;
     return JSValueMakeUndefined(context);
 }
@@ -271,7 +282,8 @@ static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JS
     gButtonCurrentlyDown = 0;
 
     EvasKeyModifier modifiers = argumentCount >= 2 ? modifiersFromJSValue(context, arguments[1]) : EvasKeyModifierNone;
-    sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventUp, translateMouseButtonNumber(button), modifiers);
+    MouseEventInfo* eventInfo = new MouseEventInfo(EvasMouseEventUp, modifiers, translateMouseButtonNumber(button));
+    feedOrQueueMouseEvent(eventInfo, FeedQueuedEvents);
     return JSValueMakeUndefined(context);
 }
 
@@ -287,7 +299,22 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
     if (exception && *exception)
         return JSValueMakeUndefined(context);
 
-    sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventMove, EvasMouseButtonNone, EvasKeyModifierNone);
+    MouseEventInfo* eventInfo = new MouseEventInfo(EvasMouseEventMove);
+    feedOrQueueMouseEvent(eventInfo, DoNotFeedQueuedEvents);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef leapForwardCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount > 0) {
+        const ulong leapForwardDelay = JSValueToNumber(context, arguments[0], exception);
+        if (delayedEventQueue().isEmpty())
+            delayedEventQueue().append(DelayedEvent(0, leapForwardDelay));
+        else
+            delayedEventQueue().last().delay = leapForwardDelay;
+        gTimeOffset += leapForwardDelay;
+    }
+
     return JSValueMakeUndefined(context);
 }
 
@@ -313,14 +340,17 @@ static JSValueRef mouseScrollByCallback(JSContextRef context, JSObjectRef functi
     if (argumentCount < 2)
         return JSValueMakeUndefined(context);
 
-    const int horizontal = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
+    // We need to invert scrolling values since in EFL negative z value means that
+    // canvas is scrolling down
+    const int horizontal = -(static_cast<int>(JSValueToNumber(context, arguments[0], exception)));
     if (exception && *exception)
         return JSValueMakeUndefined(context);
-    const int vertical = static_cast<int>(JSValueToNumber(context, arguments[1], exception));
+    const int vertical = -(static_cast<int>(JSValueToNumber(context, arguments[1], exception)));
     if (exception && *exception)
         return JSValueMakeUndefined(context);
 
-    sendMouseEvent(evas_object_evas_get(browser->mainFrame()), evasMouseEventFromHorizontalAndVerticalOffsets(horizontal, vertical), EvasMouseButtonNone, EvasKeyModifierNone);
+    MouseEventInfo* eventInfo = new MouseEventInfo(evasMouseEventFromHorizontalAndVerticalOffsets(horizontal, vertical), EvasKeyModifierNone, EvasMouseButtonNone, horizontal, vertical);
+    feedOrQueueMouseEvent(eventInfo, FeedQueuedEvents);
     return JSValueMakeUndefined(context);
 }
 
@@ -562,6 +592,7 @@ static JSStaticFunction staticFunctions[] = {
     { "mouseDown", mouseDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseUp", mouseUpCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseMoveTo", mouseMoveToCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "leapForward", leapForwardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "keyDown", keyDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "scheduleAsynchronousClick", scheduleAsynchronousClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "scheduleAsynchronousKeyDown", scheduleAsynchronousKeyDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -614,4 +645,69 @@ JSObjectRef makeEventSender(JSContextRef context, bool isTopFrame)
     }
 
     return JSObjectMake(context, getClass(context), 0);
+}
+
+static void feedOrQueueMouseEvent(MouseEventInfo* eventInfo, EventQueueStrategy strategy)
+{
+    if (!delayedEventQueue().isEmpty()) {
+        if (delayedEventQueue().last().eventInfo)
+            delayedEventQueue().last().eventInfo = eventInfo;
+        else
+            delayedEventQueue().append(DelayedEvent(eventInfo));
+
+        if (strategy == FeedQueuedEvents)
+            feedQueuedMouseEvents();
+    } else
+        feedMouseEvent(eventInfo);
+}
+
+static void feedMouseEvent(MouseEventInfo* eventInfo)
+{
+    if (!eventInfo)
+        return;
+
+    unsigned timeStamp = 0;
+    Evas_Object* mainFrame = browser->mainFrame();
+    Evas* evas = evas_object_evas_get(mainFrame);
+    DumpRenderTreeSupportEfl::layoutFrame(mainFrame);
+    EvasMouseEvent event = eventInfo->event;
+
+    setEvasModifiers(evas, eventInfo->modifiers);
+
+    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
+
+    // FIXME: We need to pass additional information with our events, so that
+    // we could construct correct PlatformWheelEvent. At the moment, max number
+    // of clicks is 3
+    if (gClickCount == 3)
+        flags = EVAS_BUTTON_TRIPLE_CLICK;
+    else if (gClickCount == 2)
+        flags = EVAS_BUTTON_DOUBLE_CLICK;
+
+    if (event & EvasMouseEventMove)
+        evas_event_feed_mouse_move(evas, gLastMousePositionX, gLastMousePositionY, timeStamp++, 0);
+    if (event & EvasMouseEventDown)
+        evas_event_feed_mouse_down(evas, eventInfo->button, flags, timeStamp++, 0);
+    if (event & EvasMouseEventUp)
+        evas_event_feed_mouse_up(evas, eventInfo->button, flags, timeStamp++, 0);
+    if (event & EvasMouseEventScrollLeft | event & EvasMouseEventScrollRight)
+        evas_event_feed_mouse_wheel(evas, 1, eventInfo->horizontalDelta, timeStamp, 0);
+    if (event & EvasMouseEventScrollUp | event & EvasMouseEventScrollDown)
+        evas_event_feed_mouse_wheel(evas, 0, eventInfo->verticalDelta, timeStamp, 0);
+
+    setEvasModifiers(evas, EvasKeyModifierNone);
+
+    delete eventInfo;
+}
+
+static void feedQueuedMouseEvents()
+{
+    WTF::Vector<DelayedEvent>::const_iterator it = delayedEventQueue().begin();
+    for (; it != delayedEventQueue().end(); it++) {
+        DelayedEvent delayedEvent = *it;
+        if (delayedEvent.delay)
+            usleep(delayedEvent.delay * 1000);
+        feedMouseEvent(delayedEvent.eventInfo);
+    }
+    delayedEventQueue().clear();
 }

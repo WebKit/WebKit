@@ -1,3 +1,16 @@
+2012-05-08  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][DRT] EventSender needs implementation of leapForward function
+        https://bugs.webkit.org/show_bug.cgi?id=83486
+
+        Reviewed by Eric Seidel.
+
+        Unskipping few tests that were failing due to the missing leapForward function
+        Added EFL specific test result, since EFL doesnt support 2D wheel events
+
+        * platform/efl/Skipped:
+        * platform/efl/fast/events/platform-wheelevent-in-scrolling-div-expected.txt: Added.
+
 2012-05-08  Oliver Hunt  <oliver@apple.com>
 
         Add mac results for new tests following http://trac.webkit.org/changeset/116438.
