@@ -41,7 +41,7 @@ BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/security/xss-DENIED-iframe-src-alias.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : css3/flexbox/multiline-pack.html = PASS
+BUGCR24182 SLOW DEBUG : css3/flexbox/multiline-pack.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-float32array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS CRASH
@@ -3911,6 +3911,8 @@ BUGDPRANKE MAC LINUX RELEASE : fast/loader/javascript-url-in-embed.html = TEXT P
 BUGDPRANKE MAC LINUX : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
 BUGDPRANKE MAC LINUX : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
 BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
+
+BUGWK85868 MAC : css3/filters/custom/filter-repaint-custom-rotated.html = IMAGE
 
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT

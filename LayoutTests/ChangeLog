@@ -1,3 +1,11 @@
+2012-05-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chormium] Test expectatino update
+
+        * platform/chromium/test_expectations.txt:
+         - multiline-pack.html is failing on all DEBUG bots.
+         - filter-repaint-custom-rotated.html fails on Mac.
+
 2012-05-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: do not create locations for resolved provisional breakpoints
