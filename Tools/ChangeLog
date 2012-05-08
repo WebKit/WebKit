@@ -1,3 +1,21 @@
+2012-05-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][DRT] WebKit/DRT should not paint webview for the pixel tests.
+        https://bugs.webkit.org/show_bug.cgi?id=79853
+
+        Reviewed by Eric Seidel.
+
+        Screen buffer can be different from rendered results.
+        For example, WebKit/Efl just moves tiles for ewk_view_tiled when scrolling
+        contents.
+        It means that pixel tests can't check regression of ewk_view_tiled.
+
+        This patch changes a way to provide bitmap from painting webview to capturing
+        evas.
+
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView):
+
 2012-05-08  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] Memory leak in DRT EventSender.cpp

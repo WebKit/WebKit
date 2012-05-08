@@ -37,26 +37,29 @@
 #include "PixelDumpSupportCairo.h"
 #include "RefPtrCairo.h"
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
-#include "ewk_private.h"
+#include <Ecore_Evas.h>
+#include <Evas.h>
 
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool drawSelectionRect)
 {
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(browser->mainView()));
-    Ewk_View_Private_Data* privateData = static_cast<Ewk_View_Private_Data*>(smartData->_priv);
-    const Evas_Object* mainFrame = browser->mainFrame();
+    const Evas_Object* mainView = browser->mainView();
+    Evas* evas = evas_object_evas_get(mainView);
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
 
-    int x, y, width, height;
-    if (!ewk_frame_visible_content_geometry_get(mainFrame, EINA_TRUE, &x, &y, &width, &height))
-        return 0;
+    int width, height;
+    evas_object_geometry_get(mainView, 0, 0, &width, &height);
 
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
-    RefPtr<cairo_t> context = adoptRef(cairo_create(surface.get()));
+    const void* pixels = ecore_evas_buffer_pixels_get(ecoreEvas);
+    RefPtr<cairo_surface_t> viewSurface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(const_cast<void*>(pixels)), CAIRO_FORMAT_ARGB32, width, height, width * 4));
 
-    const Eina_Rectangle rect = { x, y, width, height };
-    if (!ewk_view_paint(privateData, context.get(), &rect))
-        return 0;
+    RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
+    RefPtr<cairo_t> context = adoptRef(cairo_create(imageSurface.get()));
+
+    cairo_set_source_surface(context.get(), viewSurface.get(), 0, 0);
+    cairo_paint(context.get());
 
     if (drawSelectionRect) {
+        const Evas_Object* mainFrame = browser->mainFrame();
         const WebCore::IntRect selectionRect = DumpRenderTreeSupportEfl::selectionRectangle(mainFrame);
 
         if (!selectionRect.isEmpty()) {
