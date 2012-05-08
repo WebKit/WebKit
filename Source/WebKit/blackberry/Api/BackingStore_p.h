@@ -371,6 +371,7 @@ public:
 
     static Platform::Graphics::Buffer* s_overScrollImage;
     static std::string s_overScrollImagePath;
+    static Platform::IntSize s_overScrollImageSize;
 
 protected:
     virtual ~BackingStorePrivate();

@@ -1,3 +1,20 @@
+2012-05-08  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Over-scroll image should be tiled
+        https://bugs.webkit.org/show_bug.cgi?id=85860
+
+        Reviewed by Rob Buis.
+
+        Implement tiling for over-scroll image if image dimension don't match
+        the surface dimensions.
+
+        * Api/BackingStore.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::ensureOverScrollImage):
+        (BlackBerry::WebKit::BackingStorePrivate::paintDefaultBackground):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+
 2012-05-08  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [Blackberry] remove m_isRequestedByPlugin in ResourceRequest
