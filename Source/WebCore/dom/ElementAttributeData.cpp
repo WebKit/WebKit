@@ -45,7 +45,7 @@ static AttrList* attrListForElement(Element* element)
 {
     ASSERT(element);
     if (!element->hasAttrList())
-        return false;
+        return 0;
     ASSERT(attrListMap().contains(element));
     return attrListMap().get(element);
 }
