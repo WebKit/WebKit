@@ -1,3 +1,15 @@
+2012-05-07  Ojan Vafai  <ojan@chromium.org>
+
+        Chromium rebaselines after http://trac.webkit.org/changeset/116373.
+        Differences look to just be in platform-specific text rendering.
+
+        * platform/chromium-linux/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/chromium-mac/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/chromium-win/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/chromium-win/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt: Added.
+
 2012-05-07  Andy Estes  <aestes@apple.com>
 
         Add platform/mac/ results for new tests added by r116373.
