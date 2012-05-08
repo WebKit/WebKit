@@ -1,3 +1,15 @@
+2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][DRT] EFL's DRT does not fully support page visibility
+        https://bugs.webkit.org/show_bug.cgi?id=85032
+
+        Reviewed by Antonio Gomes.
+
+        Unskip remaining page visibility test cases now that the functionality
+        is fully implemented in EFL port.
+
+        * platform/efl/Skipped:
+
 2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Remove an accidentally committed file.

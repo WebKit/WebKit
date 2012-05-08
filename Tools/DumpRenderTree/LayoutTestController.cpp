@@ -1717,10 +1717,6 @@ static JSValueRef setPageVisibilityCallback(JSContextRef context, JSObjectRef fu
 
 static JSValueRef resetPageVisibilityCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    // Has mac & windows implementation
-    if (argumentCount < 1)
-        return JSValueMakeUndefined(context);
-
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->resetPageVisibility();
     return JSValueMakeUndefined(context);

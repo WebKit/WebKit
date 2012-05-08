@@ -1920,11 +1920,6 @@ http/tests/xmlhttprequest/remember-bad-password.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 http/tests/xmlviewer/extensions-api.html
 
-# EFL DRT doesn't fully support page visibility feature yet.
-fast/events/page-visibility-iframe-move-test.html
-fast/events/page-visibility-iframe-delete-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html
 

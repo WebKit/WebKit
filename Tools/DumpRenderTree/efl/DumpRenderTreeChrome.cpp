@@ -241,6 +241,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     ewk_view_zoom_set(mainView(), 1.0, 0, 0);
     ewk_view_scale_set(mainView(), 1.0, 0, 0);
     ewk_view_text_zoom_set(mainView(), 1.0);
+    ewk_view_visibility_state_set(mainView(), EWK_PAGE_VISIBILITY_STATE_VISIBLE, true);
 
     ewk_history_clear(ewk_view_history_get(mainView()));
 

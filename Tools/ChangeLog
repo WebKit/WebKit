@@ -1,3 +1,19 @@
+2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][DRT] EFL's DRT does not fully support page visibility
+        https://bugs.webkit.org/show_bug.cgi?id=85032
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (resetPageVisibilityCallback): Fix incorrect argumentCount check.
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues): Properly
+        reset page visibility setting between tests.
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setPageVisibility): Add support for "preview"
+        visibility state.
+
 2012-05-08  Gavin Peters  <gavinp@chromium.org>
 
         [webkit-patch] Return meaningful results from single-result queries.
