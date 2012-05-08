@@ -1,3 +1,9 @@
+2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Remove an accidentally committed file.
+
+        * platform/qt/Skipped.orig: Removed.
+
 2012-05-08  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unskip now passing tests and update platform specific expected files.
