@@ -1,3 +1,14 @@
+2012-05-08  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Implement a popup client for HTML controls
+        https://bugs.webkit.org/show_bug.cgi?id=85670
+
+        Reviewed by Rob Buis.
+
+        Add popup client file to build system.
+        
+        * PlatformBlackBerry.cmake:
+
 2012-05-08  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindGStreamer.cmake.
