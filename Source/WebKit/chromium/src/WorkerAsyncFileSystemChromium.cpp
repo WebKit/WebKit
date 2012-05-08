@@ -142,11 +142,6 @@ public:
         return adoptPtr(new WorkerFileWriterHelperCallbacks(client, path, webFileSystem, callbacks, workerContext));
     }
 
-    virtual void didSucceed()
-    {
-        ASSERT_NOT_REACHED();
-    }
-
     virtual void didReadMetadata(const FileMetadata& metadata)
     {
         ASSERT(m_callbacks);
@@ -156,27 +151,6 @@ public:
             OwnPtr<WorkerAsyncFileWriterChromium> asyncFileWriterChromium = WorkerAsyncFileWriterChromium::create(m_webFileSystem, m_path, m_workerContext, m_client, WorkerAsyncFileWriterChromium::Asynchronous);
             m_callbacks->didCreateFileWriter(asyncFileWriterChromium.release(), metadata.length);
         }
-    }
-
-    virtual void didReadDirectoryEntry(const String& name, bool isDirectory)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didReadDirectoryEntries(bool hasMore)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didOpenFileSystem(const String&, PassOwnPtr<AsyncFileSystem>)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    // Called when an AsyncFileWrter has been created successfully.
-    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long)
-    {
-        ASSERT_NOT_REACHED();
     }
 
     virtual void didFail(int code)
