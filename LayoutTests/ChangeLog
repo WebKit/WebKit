@@ -1,3 +1,30 @@
+2012-05-08  Oliver Hunt  <oliver@apple.com>
+
+        Add mac results for new tests following http://trac.webkit.org/changeset/116438.
+
+        * platform/mac/css2.1/20110323/first-letter-000-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-dynamic-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-dynamic-002-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-dynamic-003a-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-dynamic-003b-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-inherit-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-nested-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-nested-002-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-nested-003-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-nested-004-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-nested-005-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-nested-006-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-nested-007-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-quote-001-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-quote-002-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-quote-003-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-quote-004-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-quote-005-expected.txt: Added.
+        * platform/mac/css2.1/20110323/first-letter-quote-006-expected.txt: Added.
+        * platform/mac/fast/css/first-letter-nested-positioned-expected.txt: Added.
+        * platform/mac/fast/css/first-letter-quotes-no-content-before-after-expected.txt: Added.
+
 2012-05-08  Philip Rogers  <pdr@google.com>
 
         Prevent crash in animated lists
