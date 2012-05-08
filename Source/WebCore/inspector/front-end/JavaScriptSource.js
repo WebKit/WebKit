@@ -67,6 +67,14 @@ WebInspector.JavaScriptSource.prototype = {
     {
         this._consoleMessages = [];
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessagesCleared);
+    },
+
+    /**
+     * @return {string}
+     */
+    breakpointStorageId: function()
+    {
+        return this.id;
     }
 }
 
