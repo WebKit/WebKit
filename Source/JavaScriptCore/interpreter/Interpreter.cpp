@@ -2448,7 +2448,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue dividend = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue divisor = callFrame->r(vPC[3].u.operand).jsValue();
 
-        if (dividend.isInt32() && divisor.isInt32() && divisor.asInt32() != 0) {
+        if (dividend.isInt32() && divisor.isInt32() && divisor.asInt32() != 0 && divisor.asInt32() != -1) {
             JSValue result = jsNumber(dividend.asInt32() % divisor.asInt32());
             ASSERT(result);
             callFrame->uncheckedR(dst) = result;

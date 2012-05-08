@@ -1,3 +1,14 @@
+2012-05-08  Gavin Barraclough  <barraclough@apple.com>
+
+        SIGFPE on divide in classic interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=85917
+
+        Rubber stamped by Oliver Hunt.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+            - check for divisor of -1.
+
 2012-05-07  Oliver Hunt  <oliver@apple.com>
 
         Rolling out r110287
