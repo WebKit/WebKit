@@ -42,7 +42,7 @@
 #import <WebCore/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
-SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks)
+SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks, A)
 
 using namespace WebCore;
 using namespace WebKit;

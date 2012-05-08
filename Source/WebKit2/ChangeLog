@@ -1,3 +1,14 @@
+2012-05-08  Timothy Hatcher  <timothy@apple.com>
+
+        Fix the SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL macro so it passes the full path to dlopen.
+
+        <rdar://problem/11406517>
+
+        Reviewed by Mark Rowe.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm: Pass A to SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL for the version.
+        * WebProcess/WebPage/mac/WebInspectorMac.mm: Ditto.
+
 2012-05-08  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [WK2] Integrate Page Visibility state change and WK2 Suspend/Resume API
