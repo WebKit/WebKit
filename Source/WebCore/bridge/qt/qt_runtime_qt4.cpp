@@ -106,7 +106,7 @@ typedef enum {
     Object,
     Null,
     RTArray,
-    JSUint8ClampedArray
+    JSUint8ClampedArrayType
 } JSRealType;
 
 #if defined(QTWK_RUNTIME_CONVERSION_DEBUG) || defined(QTWK_RUNTIME_MATCH_DEBUG)
@@ -153,7 +153,7 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
     else if (val.isNull())
         return Null;
     else if (isJSUint8ClampedArray(val))
-        return JSUint8ClampedArray;
+        return JSUint8ClampedArrayType;
     else if (val.isObject()) {
         JSObject *object = val.toObject(exec);
         if (object->inherits(&RuntimeArray::s_info))  // RuntimeArray 'inherits' from Array, but not in C++
@@ -260,7 +260,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             case QObj:
                 hint = QMetaType::QObjectStar;
                 break;
-            case JSUint8ClampedArray:
+            case JSUint8ClampedArrayType:
                 hint = QMetaType::QByteArray;
                 break;
             case Array:
@@ -480,7 +480,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
         }
 
         case QMetaType::QByteArray: {
-            if (type == JSUint8ClampedArray) {
+            if (type == JSUint8ClampedArrayType) {
                 WTF::Uint8ClampedArray* arr = toUint8ClampedArray(value);
                 ret = QVariant(QByteArray(reinterpret_cast<const char*>(arr->data()), arr->length()));
                 dist = 0;
