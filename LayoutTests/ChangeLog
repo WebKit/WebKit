@@ -1,3 +1,19 @@
+2012-05-08  Philip Rogers  <pdr@google.com>
+
+        Prevent crash in animated lists
+        https://bugs.webkit.org/show_bug.cgi?id=85382
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/animations/animate-linear-discrete-additive-b-expected.svg: Added.
+        * svg/animations/animate-linear-discrete-additive-b.svg: Added.
+        * svg/animations/animate-linear-discrete-additive-c-expected.svg: Added.
+        * svg/animations/animate-linear-discrete-additive-c.svg: Added.
+        * svg/animations/animate-linear-discrete-additive-expected.svg: Added.
+        * svg/animations/animate-linear-discrete-additive.svg: Added.
+        * svg/animations/animate-list-crash-expected.txt: Added.
+        * svg/animations/animate-list-crash.svg: Added.
+
 2012-05-08  Ojan Vafai  <ojan@chromium.org>
 
         Chromium rebaselines after http://trac.webkit.org/changeset/116438.

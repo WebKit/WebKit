@@ -94,16 +94,18 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsi
 
     unsigned fromPointListSize = fromPointList.size();
     unsigned toPointListSize = toPointList.size();
+    unsigned toAtEndOfDurationSize = toAtEndOfDurationPointList.size();
 
     for (unsigned i = 0; i < toPointListSize; ++i) {
         FloatPoint effectiveFrom;
         if (fromPointListSize)
             effectiveFrom = fromPointList[i];
+        FloatPoint effectiveToAtEnd = i < toAtEndOfDurationSize ? toAtEndOfDurationPointList[i] : FloatPoint();
 
         float animatedX = animatedPointList[i].x();
         float animatedY = animatedPointList[i].y();
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.x(), toPointList[i].x(), toAtEndOfDurationPointList[i].x(), animatedX);
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.y(), toPointList[i].y(), toAtEndOfDurationPointList[i].y(), animatedY);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.x(), toPointList[i].x(), effectiveToAtEnd.x(), animatedX);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom.y(), toPointList[i].y(), effectiveToAtEnd.y(), animatedY);
         animatedPointList[i] = FloatPoint(animatedX, animatedY);
     }
 }
