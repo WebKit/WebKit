@@ -735,6 +735,7 @@
                                 # These tests depend on webkit_support and
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
                                 'tests/AssociatedURLLoaderTest.cpp',
+                                'tests/EventListenerTest.cpp',
                                 'tests/FrameTestHelpers.cpp',
                                 'tests/LevelDBTest.cpp',
                                 'tests/PopupMenuTest.cpp',
