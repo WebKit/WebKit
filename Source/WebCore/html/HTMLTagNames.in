@@ -68,6 +68,7 @@ iframe interfaceName=HTMLIFrameElement
 image mapToTagName=img
 img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement, constructorNeedsCreatedByParser
+intent conditional=WEB_INTENTS_TAG
 ins interfaceName=HTMLModElement
 isindex interfaceName=HTMLUnknownElement
 kbd interfaceName=HTMLElement

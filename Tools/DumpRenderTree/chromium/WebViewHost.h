@@ -57,6 +57,7 @@ class WebDeviceOrientationClientMock;
 class WebGeolocationClient;
 class WebGeolocationClientMock;
 class WebGeolocationServiceMock;
+class WebIntentServiceInfo;
 class WebSharedWorkerClient;
 class WebSpeechInputController;
 class WebSpeechInputListener;
@@ -239,7 +240,8 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual void didDetectXSS(WebKit::WebFrame*, const WebKit::WebURL&, bool didBlockEntirePage);
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
     virtual bool willCheckAndDispatchMessageEvent(WebKit::WebFrame* source, WebKit::WebSecurityOrigin target, WebKit::WebDOMMessageEvent);
-    virtual void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
+    virtual void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
+    virtual void dispatchIntent(WebKit::WebFrame*, const WebKit::WebIntentRequest&);
 
     WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
     

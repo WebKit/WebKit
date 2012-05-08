@@ -205,6 +205,13 @@ public:
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
     virtual bool willCheckAndDispatchMessageEvent(WebCore::SecurityOrigin* target, WebCore::MessageEvent*) const;
 
+#if ENABLE(WEB_INTENTS_TAG)
+    virtual void registerIntentService(const String& action,
+                                       const String& type,
+                                       const WebCore::KURL& href,
+                                       const String& title,
+                                       const String& disposition);
+#endif
 #if ENABLE(WEB_INTENTS)
     virtual void dispatchIntent(PassRefPtr<WebCore::IntentRequest>) OVERRIDE;
 #endif

@@ -68,6 +68,7 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebIntentRequest.h"
+#include "WebIntentServiceInfo.h"
 #include "WebKit.h"
 #include "WebNode.h"
 #include "WebPermissionClient.h"
@@ -1594,6 +1595,21 @@ bool FrameLoaderClientImpl::willCheckAndDispatchMessageEvent(
     return m_webFrame->client()->willCheckAndDispatchMessageEvent(
         m_webFrame, WebSecurityOrigin(target), WebDOMMessageEvent(event));
 }
+
+#if ENABLE(WEB_INTENTS_TAG)
+void FrameLoaderClientImpl::registerIntentService(
+        const String& action,
+        const String& type,
+        const KURL& href,
+        const String& title,
+        const String& disposition) {
+    if (!m_webFrame->client())
+        return;
+
+    WebIntentServiceInfo service(action, type, href, title, disposition);
+    m_webFrame->client()->registerIntentService(m_webFrame, service);
+}
+#endif
 
 #if ENABLE(WEB_INTENTS)
 void FrameLoaderClientImpl::dispatchIntent(PassRefPtr<WebCore::IntentRequest> intentRequest)

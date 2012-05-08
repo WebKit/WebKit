@@ -330,6 +330,9 @@ namespace WebCore {
 #if ENABLE(WEB_INTENTS)
         virtual void dispatchIntent(PassRefPtr<IntentRequest>) = 0;
 #endif
+#if ENABLE(WEB_INTENTS_TAG)
+        virtual void registerIntentService(const String& action, const String& type, const KURL& href, const String& title, const String& disposition) { }
+#endif
 
         virtual void dispatchWillOpenSocketStream(SocketStreamHandle*) { }
 

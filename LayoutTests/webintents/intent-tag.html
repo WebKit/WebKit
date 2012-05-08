@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script>
+function loaded() {
+    var intentTag = document.createElement("intent");
+    intentTag.setAttribute("action", "a");
+    intentTag.setAttribute("type", "t");
+    intentTag.setAttribute("href", "http://example.com/dynamic");
+    intentTag.setAttribute("title", "Dynamic Title");
+    intentTag.setAttribute("disposition", "window");
+    document.body.appendChild(intentTag);
+
+    var divTag = document.createElement("div");
+    document.body.appendChild(divTag);
+    divTag.innerHTML = "<intent action=\"aa\" type=\"bb\" title=\"cc\" href=\"http://example.com/innerhtml\" disposition=\"inline\"></intent>";
+}
+</script>
+</head>
+  <body onload="loaded()">
+    <intent action="action" type="type" title="Title" href="http://example.com/service" disposition="inline"></intent>
+    Registered Intent Service.
+  </body>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</html>

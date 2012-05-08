@@ -48,6 +48,7 @@
 #include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
 #include "WebIntent.h"
+#include "WebIntentServiceInfo.h"
 #include "WebKit.h"
 #include "WebNode.h"
 #include "WebPluginParams.h"
@@ -1320,6 +1321,12 @@ bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* source, WebSecurity
     }
 
     return false;
+}
+
+void WebViewHost::registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo& service)
+{
+    printf("Registered Web Intent Service: action=%s type=%s title=%s url=%s disposition=%s\n",
+           service.action().utf8().data(), service.type().utf8().data(), service.title().utf8().data(), service.url().spec().data(), service.disposition().utf8().data());
 }
 
 void WebViewHost::dispatchIntent(WebFrame* source, const WebIntentRequest& request)

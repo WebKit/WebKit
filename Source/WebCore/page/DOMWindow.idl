@@ -486,6 +486,8 @@ module window {
         attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLSourceElementConstructor HTMLSourceElement;
         attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaControllerConstructor MediaController;
 
+        attribute [Conditional=WEB_INTENTS_TAG] HTMLIntentElementConstructor HTMLIntentElement;
+
         attribute CanvasPatternConstructor CanvasPattern;
         attribute CanvasGradientConstructor CanvasGradient;
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;

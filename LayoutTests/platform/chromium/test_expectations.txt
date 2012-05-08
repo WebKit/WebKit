@@ -150,6 +150,9 @@ BUGWK78801 SKIP : touchadjustment/ = FAIL
 // Network Information API is not supported yet in the chromium port.
 BUGWK73528 SKIP : networkinformation = PASS FAIL
 
+// The intent tag is not yet enabled.
+BUGGBILLOCK SKIP : webintents/intent-tag.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

@@ -1,3 +1,20 @@
+2012-05-07  Greg Billock  <gbillock@google.com>
+
+        [Web Intents] Flagged-off implementation of an intent tag for registration.
+        https://bugs.webkit.org/show_bug.cgi?id=73039
+
+        Reviewed by Adam Barth.
+
+        The intent tag allows web pages to mark themselves declaratively as accepting
+        web intent delivery of particular characteristics (action/type).
+        See the spec at:
+        http://dvcs.w3.org/hg/web-intents/raw-file/tip/spec/Overview.html
+
+        * WebKit.gyp:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::registerIntentService):
+        * src/FrameLoaderClientImpl.h:
+
 2012-05-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116375.

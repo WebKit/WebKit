@@ -1,0 +1,8 @@
+Registered Web Intent Service: action=action type=type title=Title url=http://example.com/service disposition=inline
+Registered Web Intent Service: action=a type=t title=Dynamic Title url=http://example.com/dynamic disposition=window
+Registered Web Intent Service: action=aa type=bb title=cc url=http://example.com/innerhtml disposition=inline
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Registered Intent Service.
+
