@@ -812,13 +812,6 @@ canvas/philip/tests/2d.pattern.paint.repeatx.outside.html
 canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
 canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
 
-# r93794 results in ruby tests causing assertion failure
-# https://bugs.webkit.org/show_bug.cgi?id=67007
-fast/ruby/after-block-doesnt-crash.html
-fast/ruby/after-table-doesnt-crash.html
-fast/ruby/generated-after-counter-doesnt-crash.html
-fast/ruby/generated-before-and-after-counter-doesnt-crash.html
-
 # BUG: Bug in the test itself, as the input box can be big enough for the given coordinates to be inside it.
 fast/forms/input-text-click-outside.html
 

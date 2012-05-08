@@ -12,11 +12,6 @@ BUG_QT_SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
 BUG_QT_SLOW SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUG_QT_SLOW SLOW DEBUG: fast/js/dfg-inline-function-dot-caller.html = PASS
 
-BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
-
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL

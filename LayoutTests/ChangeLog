@@ -1,3 +1,13 @@
+2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening. Remove tests from test expectations and
+        from a Skipped list, because they were disabled by r94327.
+
+        * platform/efl/Skipped:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+
 2012-05-07  Kent Tamura  <tkent@chromium.org>
 
         [Chormium] Test expectatino update

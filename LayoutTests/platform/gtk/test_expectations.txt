@@ -306,11 +306,6 @@ BUGWK85843 : fast/frames/seamless = FAIL
 // Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
 
-BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
-BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
-
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS CRASH
