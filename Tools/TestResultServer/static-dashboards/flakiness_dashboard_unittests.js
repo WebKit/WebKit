@@ -673,3 +673,9 @@ test('popup', 2, function() {
     hidePopup();
     ok(!document.querySelector('#popup'));
 });
+
+test('gpuResultsPath', 3, function() {
+  equal(gpuResultsPath('777777', 'Win7 Release (ATI)'), '777777_Win7_Release_ATI_');
+  equal(gpuResultsPath('123', 'GPU Linux (dbg)(NVIDIA)'), '123_GPU_Linux_dbg_NVIDIA_');
+  equal(gpuResultsPath('12345', 'GPU Mac'), '12345_GPU_Mac');
+});

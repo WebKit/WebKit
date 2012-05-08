@@ -36,6 +36,7 @@ var GTEST_MODIFIERS = ['FLAKY', 'FAILS', 'MAYBE', 'DISABLED'];
 var TEST_URL_BASE_PATH_TRAC = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/";
 var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_results/';
+var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage.googleapis.com/runs/'
 
 // FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
 // instead of matching the values we use in the test_expectations.txt file.
@@ -1863,6 +1864,11 @@ function loadExpectations(expectationsContainer)
     }
 }
 
+function gpuResultsPath(chromeRevision, builder)
+{
+  return chromeRevision + '_' + builder.replace(/[^A-Za-z0-9]+/g, '_');
+}
+
 function loadGPUResultsForBuilder(builder, test, expectationsContainer)
 {
     var container = document.createElement('div');
@@ -1870,21 +1876,19 @@ function loadGPUResultsForBuilder(builder, test, expectationsContainer)
     container.innerHTML = '<div><b>' + builder + '</b></div>';
     expectationsContainer.appendChild(container);
 
-    var baseUrl = 'http://chromium-browser-gpu-tests.commondatastorage.googleapis.com/runs/'
     var failureIndex = indexesForFailures(builder, test)[0];
 
     var buildNumber = g_resultsByBuilder[builder].buildNumbers[failureIndex];
     var pathToLog = builderMaster(builder).logPath(builder, buildNumber) + pathToFailureLog(test);
 
     var chromeRevision = g_resultsByBuilder[builder].chromeRevision[failureIndex];
-    var builderName = builder.replace(/[^A-Za-z0-9 ]/g, '').replace(/ /g, '_');
-    var resultsUrl = baseUrl + chromeRevision + '_' + builderName + '_/';
+    var resultsUrl = GPU_RESULTS_BASE_PATH + gpuResultsPath(chromeRevision, builder);
     var filename = test.split(/\./)[1] + '.png';
 
     appendNonWebKitResults(container, pathToLog, 'non-webkit-results');
-    appendNonWebKitResults(container, resultsUrl + 'gen/' + filename, 'gpu-test-results', 'Generated');
-    appendNonWebKitResults(container, resultsUrl + 'ref/' + filename, 'gpu-test-results', 'Reference');
-    appendNonWebKitResults(container, resultsUrl + 'diff/' + filename, 'gpu-test-results', 'Diff');
+    appendNonWebKitResults(container, resultsUrl + '/gen/' + filename, 'gpu-test-results', 'Generated');
+    appendNonWebKitResults(container, resultsUrl + '/ref/' + filename, 'gpu-test-results', 'Reference');
+    appendNonWebKitResults(container, resultsUrl + '/diff/' + filename, 'gpu-test-results', 'Diff');
 }
 
 function loadNonWebKitResultsForBuilder(builder, test, expectationsContainer)

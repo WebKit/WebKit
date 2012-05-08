@@ -1,3 +1,12 @@
+2012-05-07  Dave Tu  <dtu@chromium.org>
+
+        Adjust flakiness dashboard gpu_tests image diff URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=85423
+
+        Reviewed by Ojan Vafai.
+
+        * Tools/TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2012-05-07  Liam Quinn  <lquinn@rim.com>
 
         [BlackBerry] WWW-Authenticate header on 200 response pops up authentication dialog
