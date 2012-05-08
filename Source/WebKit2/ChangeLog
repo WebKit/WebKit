@@ -1,3 +1,44 @@
+2012-05-06  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Push wheel events if there are too many in queue
+        https://bugs.webkit.org/show_bug.cgi?id=85747
+        <rdar://problem/11390790>
+
+        Reviewed by Anders Carlsson.
+
+        It is possible that a whole bunch of messages added to the message queue, or a series
+        of long-running messages, cause unresponsiveness. The reason for this is that we have
+        a scroll event waiting for acknowledgment from the web process before it sends the next
+        event. And in the time between the user has scrolled, causing a large backlog of scroll
+        events to be held in the UI process.
+
+        We should push new scroll events if the queue accumulates too many of them.
+
+        * UIProcess/WebPageProxy.h: The vector m_currentlyProcessedWheelEvents used to hold the
+        series of wheel events that were coalesced and sent as a single wheel event to the web
+        process. When the web process acknowledges this with didReceiveEvent, the UI process
+        cleared that vector, then tried to coalesce the next wheel event to send. Now we might have
+        multiple sets of coalesced wheel events that we are sending to the web process. To keep
+        track of these sets, m_currentlyProcessedWheelEvents now is a queue of Vectors.
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.cpp: Add new constant wheelEventQueueSizeThreshold representing
+        the threshold of scroll events to look for before we start pushing events.
+        (WebKit::canCoalesce): Move static function so that handleWheelEvent() has access. No changes.
+        (WebKit::coalesce): Move static function so that handleWheelEvent() has access. No changes.
+        (WebKit::coalescedWheelEvent): Move static function so that handleWheelEvent() has access. No changes.
+        (WebKit::WebPageProxy::handleWheelEvent): If we are currently waiting for acknowledgment
+        from the web process that a wheel event has been handled, we add it to the queue. We
+        check to see that the queue size is within our threshold before we return early. Otherwise
+        we will start pushing events in the queue. Refactor the rest of the function into
+        processNextQueuedWheelEvent() and sendWheelEvent(). If we are not currently waiting for
+        acknowledgment, nor have events in the queue, then we send the current wheel event.
+        (WebKit::WebPageProxy::processNextQueuedWheelEvent): Try to coalesce events based on the
+        wheel event at the head of the queue, and send that event to the web process.
+        (WebKit::WebPageProxy::sendWheelEvent): Refactored from handleWheelEvent().
+        (WebKit::WebPageProxy::didReceiveEvent): Instead of clearing m_currentlyProcessedWheelEvents,
+        which contained the set of one coalesced wheel event, we pull the head Vector, which
+        contains the same set of events. Refactor to use processNextQueuedWheelEvent().
+
 2012-05-08  Timothy Hatcher  <timothy@apple.com>
 
         Fix the SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL macro so it passes the full path to dlopen.
