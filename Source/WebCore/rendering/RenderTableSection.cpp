@@ -1294,7 +1294,7 @@ void RenderTableSection::splitColumn(unsigned pos, unsigned first)
             r[pos + 1].cells.append(r[pos].cells);
             RenderTableCell* cell = r[pos].primaryCell();
             ASSERT(cell);
-            ASSERT(cell->colSpan() >= (r[pos].inColSpan ? 1 : 0));
+            ASSERT(cell->colSpan() >= (r[pos].inColSpan ? 1u : 0));
             unsigned colleft = cell->colSpan() - r[pos].inColSpan;
             if (first > colleft)
               r[pos + 1].inColSpan = 0;
