@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -61,6 +62,8 @@ private:
     virtual bool isImageButton() const OVERRIDE;
     virtual bool isEnumeratable() OVERRIDE;
     virtual bool shouldRespectHeightAndWidthAttributes() OVERRIDE;
+    virtual unsigned height() const OVERRIDE;
+    virtual unsigned width() const OVERRIDE;
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
     IntPoint m_clickLocation; // Valid only during HTMLFormElement::prepareForSubmission().

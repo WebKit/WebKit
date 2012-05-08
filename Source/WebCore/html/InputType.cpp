@@ -6,6 +6,7 @@
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,6 +43,8 @@
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLShadowElement.h"
 #include "HiddenInputType.h"
 #include "ImageInputType.h"
@@ -770,6 +773,16 @@ String InputType::defaultToolTip() const
 bool InputType::supportsIndeterminateAppearance() const
 {
     return false;
+}
+
+unsigned InputType::height() const
+{
+    return 0;
+}
+
+unsigned InputType::width() const
+{
+    return 0;
 }
 
 namespace InputTypeNames {

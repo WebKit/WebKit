@@ -1,3 +1,25 @@
+2012-05-07  Dongwoo Im  <dw.im@samsung.com>
+
+        width/height attributes of input element cannot be accessed by JavaScript.
+        https://bugs.webkit.org/show_bug.cgi?id=70304
+
+        Reviewed by Darin Adler.
+
+        If the type of input element is image button, width/height attributes should be supported.
+        These attributes are defined in HTML5 spec.
+        http://www.w3.org/TR/html5/the-map-element.html#attr-dim-width
+
+        * fast/forms/input-width-height-attributes-expected.txt: Added.
+        * fast/forms/input-width-height-attributes-without-renderer-expected.txt: Added.
+        * fast/forms/input-width-height-attributes-without-renderer-loaded-image-expected.txt: Added.
+        * fast/forms/input-width-height-attributes-without-renderer-loaded-image.html: Added.
+        * fast/forms/input-width-height-attributes-without-renderer-not-loaded-image-expected.txt: Added.
+        * fast/forms/input-width-height-attributes-without-renderer-not-loaded-image.html: Added.
+        * fast/forms/input-width-height-attributes-without-renderer.html: Added.
+        * fast/forms/input-width-height-attributes.html: Added.
+        * fast/forms/resources/green.jpg: Added.
+        * fast/forms/resources/image-slow.pl: Added.
+
 2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         Support cross-filesystem operations in FileSystem API

@@ -1,0 +1,21 @@
+<html>
+<head>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+jsTestIsAsync = true;
+function test()
+{
+    inputElement = document.getElementById("inputElement");
+    shouldBe('inputElement.width', '50');
+    shouldBe('inputElement.height', '50');
+    finishJSTest();
+
+}
+</script>
+</head>
+<body onload="test()">
+<input id="inputElement" type="image" width="50" height="50" style="display:none">
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

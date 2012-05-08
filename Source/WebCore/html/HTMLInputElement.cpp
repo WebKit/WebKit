@@ -7,6 +7,7 @@
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1843,4 +1844,25 @@ inline void HTMLInputElement::removeFromRadioButtonGroup()
     if (CheckedRadioButtons* buttons = checkedRadioButtons())
         buttons->removeButton(this);
 }
+
+unsigned HTMLInputElement::height() const
+{
+    return m_inputType->height();
+}
+
+unsigned HTMLInputElement::width() const
+{
+    return m_inputType->width();
+}
+
+void HTMLInputElement::setHeight(unsigned height)
+{
+    setAttribute(heightAttr, String::number(height));
+}
+
+void HTMLInputElement::setWidth(unsigned width)
+{
+    setAttribute(widthAttr, String::number(width));
+}
+
 } // namespace

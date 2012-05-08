@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,11 +27,15 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "MouseEvent.h"
 #include "RenderImage.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 inline ImageInputType::ImageInputType(HTMLInputElement* element)
     : BaseButtonInputType(element)
@@ -172,6 +177,48 @@ bool ImageInputType::isEnumeratable()
 bool ImageInputType::shouldRespectHeightAndWidthAttributes()
 {
     return true;
+}
+
+unsigned ImageInputType::height() const
+{
+    RefPtr<HTMLInputElement> element = this->element();
+
+    if (!element->renderer()) {
+        // Check the attribute first for an explicit pixel value.
+        unsigned height;
+        if (parseHTMLNonNegativeInteger(element->fastGetAttribute(heightAttr), height))
+            return height;
+
+        // If the image is available, use its height.
+        if (m_imageLoader->image())
+            return m_imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).height();
+    }
+
+    element->document()->updateLayout();
+
+    RenderBox* box = element->renderBox();
+    return box ? adjustForAbsoluteZoom(box->contentHeight(), box) : 0;
+}
+
+unsigned ImageInputType::width() const
+{
+    RefPtr<HTMLInputElement> element = this->element();
+
+    if (!element->renderer()) {
+        // Check the attribute first for an explicit pixel value.
+        unsigned width;
+        if (parseHTMLNonNegativeInteger(element->fastGetAttribute(widthAttr), width))
+            return width;
+
+        // If the image is available, use its width.
+        if (m_imageLoader->image())
+            return m_imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).width();
+    }
+
+    element->document()->updateLayout();
+
+    RenderBox* box = element->renderBox();
+    return box ? adjustForAbsoluteZoom(box->contentWidth(), box) : 0;
 }
 
 } // namespace WebCore

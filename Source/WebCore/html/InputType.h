@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -274,6 +275,11 @@ public:
     virtual String serialize(double) const;
 
     virtual bool supportsIndeterminateAppearance() const;
+
+    // Gets width and height of the input element if the type of the
+    // element is image. It returns 0 if the element is not image type.
+    virtual unsigned height() const;
+    virtual unsigned width() const;
 
 protected:
     InputType(HTMLInputElement* element) : m_element(element) { }
