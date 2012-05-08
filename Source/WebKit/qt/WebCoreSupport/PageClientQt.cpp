@@ -69,6 +69,20 @@ static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformG
 #include "texmap/TextureMapperLayer.h"
 #endif
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+QWindow* QWebPageClient::ownerWindow() const
+{
+    QWidget* widget = ownerWidget();
+    if (!widget)
+        return 0;
+    if (QWindow *window = widget->windowHandle())
+        return window;
+    if (const QWidget *nativeParent = widget->nativeParentWidget())
+        return nativeParent->windowHandle();
+    return 0;
+}
+#endif
+
 namespace WebCore {
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)

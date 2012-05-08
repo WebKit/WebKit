@@ -426,6 +426,7 @@ private:
         static bool s_isRunningUnderDRT;
         static void setXKeyEventSpecificFields(XEvent*, KeyboardEvent*);
         void paintUsingXPixmap(QPainter* painter, const QRect &exposedRect);
+        QWebPageClient* platformPageClient() const;
 #endif
 #if USE(ACCELERATED_COMPOSITING_PLUGIN_LAYER)
         OwnPtr<PlatformLayer> m_platformLayer;

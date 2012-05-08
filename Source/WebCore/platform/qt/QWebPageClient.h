@@ -43,6 +43,7 @@
 
 QT_BEGIN_NAMESPACE
 class QStyle;
+class QWindow;
 QT_END_NAMESPACE
 
 namespace WebCore {
@@ -108,6 +109,9 @@ public:
 #if ENABLE(WEBGL)
     virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
                                                  PlatformGraphicsSurface3D*) = 0;
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    virtual QWindow* ownerWindow() const;
 #endif
 
 protected:

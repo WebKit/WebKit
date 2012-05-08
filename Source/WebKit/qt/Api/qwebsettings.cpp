@@ -1174,7 +1174,11 @@ void QWebSettings::enablePersistentStorage(const QString& path)
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
     // All applications can share the common QtWebkit cache file(s).
     // Path is not configurable and uses QDesktopServices::CacheLocation by default.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    QString cachePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+#else
     QString cachePath = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
+#endif
     WebCore::makeAllDirectories(cachePath);
 
     QFileInfo info(cachePath);

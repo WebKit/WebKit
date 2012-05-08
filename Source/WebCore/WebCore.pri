@@ -134,7 +134,7 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
             INCLUDEPATH += platform/mac
             # Note: XP_MACOSX is defined in npapi.h
         } else {
-            !embedded {
+            xlibAvailable() {
                 CONFIG += x11
                 LIBS += -lXrender
                 DEFINES += MOZ_X11

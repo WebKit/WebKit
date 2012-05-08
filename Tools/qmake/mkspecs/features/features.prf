@@ -80,7 +80,10 @@ haveQt(5) {
 
 # Nescape plugins support (NPAPI)
 !contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=.) {
-    unix:haveQt(4)|win32-*:!embedded:!wince*: {
+    haveQt(5):xlibAvailable() {
+        DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
+        CONFIG += plugin_backend_xlib
+    } else: unix|win32-*:!embedded:!wince* {
         DEFINES += ENABLE_NETSCAPE_PLUGIN_API=1
     }
 }

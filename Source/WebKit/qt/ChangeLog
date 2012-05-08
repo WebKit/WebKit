@@ -1,3 +1,24 @@
+2012-05-08  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] X11 plugins need to be reworked for Qt5+WK1
+        https://bugs.webkit.org/show_bug.cgi?id=80691
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::enablePersistentStorage):
+        Build fix for Qt5.
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        Inject the wmode parameter for flash so it will
+        work in windowless, non-transparent mode which
+        is the only one we support currently.
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore):
+        (WebCore::QWebPageClient::ownerWindow):
+        Added a getter for the top level window so the PluginView
+        can get it without calling into QtWidgets code.
+
 2012-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert isPageBoxVisible to use Internals interface.

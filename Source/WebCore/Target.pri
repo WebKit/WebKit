@@ -2970,11 +2970,13 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
                 plugins/mac/PluginViewMac.mm
         } else {
             SOURCES += \
-                plugins/qt/PluginContainerQt.cpp \
                 plugins/qt/PluginPackageQt.cpp \
                 plugins/qt/PluginViewQt.cpp
-            HEADERS += \
-                plugins/qt/PluginContainerQt.h
+
+            haveQt(4) {
+                SOURCES += plugins/qt/PluginContainerQt.cpp
+                HEADERS += plugins/qt/PluginContainerQt.h
+            }
         }
     }
 

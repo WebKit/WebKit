@@ -323,3 +323,19 @@ defineTest(runSyncQt) {
 
     return(true)
 }
+
+defineTest(xlibAvailable) {
+    haveQt(5) {
+        contains(QT_CONFIG, xcb-xlib) {
+            return(true)
+        } else {
+            return(false)
+        }
+    } else {
+        unix:!mac:!embedded {
+            return(true)
+        } else {
+            return(false)
+        }
+    }
+}

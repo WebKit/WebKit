@@ -31,6 +31,7 @@
 #include "npruntime_impl.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
+#include <QFileInfo>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -129,12 +130,32 @@ static void initializeGtk(QLibrary* module = 0)
     }
 }
 
+bool PluginPackage::isPluginBlacklisted()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    // TODO: enumerate all plugins that are incompatible with Qt5.
+    const QLatin1String pluginBlacklist[] = {
+        QLatin1String("skypebuttons")
+    };
+
+    QString baseName = QFileInfo(static_cast<QString>(m_path)).baseName();
+    for (unsigned i = 0; i < sizeof(pluginBlacklist) / sizeof(QLatin1String); ++i) {
+        if (baseName == pluginBlacklist[i])
+            return true;
+    }
+#endif
+    return false;
+}
+
 bool PluginPackage::load()
 {
     if (m_isLoaded) {
         m_loadCount++;
         return true;
     }
+
+    if (isPluginBlacklisted())
+        return false;
 
     m_module = new QLibrary((QString)m_path);
     m_module->setLoadHints(QLibrary::ResolveAllSymbolsHint);

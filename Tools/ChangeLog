@@ -1,3 +1,18 @@
+2012-05-08  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] X11 plugins need to be reworked for Qt5+WK1
+        https://bugs.webkit.org/show_bug.cgi?id=80691
+
+        Reviewed by Simon Hausmann.
+
+        Implement basic windowless plugin support with Qt5.
+
+        * qmake/mkspecs/features/features.prf:
+        Enable NPAPI plugins if X11 libraries are available.
+        * qmake/mkspecs/features/functions.prf:
+        Added a convenience function to determine availability
+        of X11 libraries.
+
 2012-05-07  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [webkitpy] Remove Python 2.5-specific workaround from http_server_base.py.
