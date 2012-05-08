@@ -31,24 +31,14 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
-#include "Color.h"
 #include "Document.h"
-#include "Event.h"
-#include "EventListener.h"
 #include "FloatConversion.h"
-#include "HTMLNames.h"
-#include "PlatformString.h"
+#include "RenderObject.h"
 #include "SVGAnimateElement.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
-#include "SVGURIReference.h"
-#include "SVGUseElement.h"
-#include "XLinkNames.h"
-#include <wtf/StdLibExtras.h>
-
-using namespace std;
 
 namespace WebCore {
 
@@ -339,36 +329,6 @@ bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement
         return false;
 
     return SVGStyledElement::isAnimatableCSSProperty(attributeName);
-}
-
-static inline void applyCSSPropertyToTarget(SVGElement* targetElement, CSSPropertyID id, const String& value)
-{
-    StylePropertySet* propertySet = targetElement->ensureAnimatedSMILStyleProperties();
-    if (propertySet->setProperty(id, value, false, 0))
-        targetElement->setNeedsStyleRecalc(SyntheticStyleChange);
-}
-
-void SVGAnimationElement::setTargetAttributeAnimatedCSSValue(SVGAnimatedType* animatedType)
-{
-    ASSERT(animatedType);
-    SVGElement* targetElement = this->targetElement();
-    ASSERT(targetElement);
-
-    const QualifiedName& attributeName = this->attributeName();
-    ASSERT(attributeName != anyQName());
-    CSSPropertyID id = cssPropertyID(attributeName.localName());
-
-    const String& valueAsString = animatedType->valueAsString();
-    SVGElementInstance::InstanceUpdateBlocker blocker(targetElement);
-    applyCSSPropertyToTarget(targetElement, id, valueAsString);
-
-    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        if (SVGElement* shadowTreeElement = (*it)->shadowTreeElement())
-            applyCSSPropertyToTarget(shadowTreeElement, id, valueAsString);
-    }
 }
 
 SVGAnimationElement::ShouldApplyAnimation SVGAnimationElement::shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName)

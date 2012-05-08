@@ -1,3 +1,23 @@
+2012-05-04  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Tie lifetime of SVGAnimateElement::m_animatedType to the duration of the animation
+        https://bugs.webkit.org/show_bug.cgi?id=85627
+
+        Reviewed by Antti Koivisto.
+
+        Update animate-target-id-changed.svg test to match Firefox behavior.
+        When an animation element with fill="freeze" is changed to a new target
+        eg, via animate.href = "#someOtherID", the animation effect should be removed.
+
+        Add tests for assertions I ran into while developing this patch.
+
+        * platform/chromium/test_expectations.txt: Require new results for animate-target-id-changed-expected.txt.
+        * platform/mac/svg/custom/animate-target-id-changed-expected.png:
+        * svg/animations/list-wrapper-assertion-expected.svg: Added.
+        * svg/animations/list-wrapper-assertion.svg: Added.
+        * svg/custom/animate-target-id-changed-expected.txt:
+        * svg/custom/animate-target-id-changed.svg:
+
 2012-05-08  Shezan Baig  <shezbaig.wk@gmail.com>
 
         offsetLeft broken within CSS3 columns

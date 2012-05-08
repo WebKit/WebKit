@@ -190,11 +190,10 @@ protected:
     String fromValue() const;
 
     String targetAttributeBaseValue();
-    void setTargetAttributeAnimatedCSSValue(SVGAnimatedType*);
 
     // from SVGSMILElement
-    virtual void startedActiveInterval();
-    virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
+    virtual void startedActiveInterval() OVERRIDE;
+    virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) OVERRIDE;
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;

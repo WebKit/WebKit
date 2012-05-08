@@ -196,7 +196,7 @@ static inline bool propertyTypesAreConsistent(AnimatedPropertyType expectedPrope
 }
 #endif
 
-void SVGAnimateElement::resetToBaseValue()
+void SVGAnimateElement::resetAnimatedType()
 {
     SVGAnimatedTypeAnimator* animator = ensureAnimator();
     ASSERT(m_animatedPropertyType == animator->type());
@@ -212,8 +212,10 @@ void SVGAnimateElement::resetToBaseValue()
         ASSERT(propertyTypesAreConsistent(m_animatedPropertyType, m_animatedProperties));
         if (!m_animatedType)
             m_animatedType = animator->startAnimValAnimation(m_animatedProperties);
-        else
+        else {
             animator->resetAnimValToBaseVal(m_animatedProperties, m_animatedType.get());
+            animator->animValDidChange(m_animatedProperties);
+        }
         return;
     }
 
@@ -232,21 +234,137 @@ void SVGAnimateElement::resetToBaseValue()
         m_animatedType->setValueAsString(attributeName, baseValue);
 }
 
-void SVGAnimateElement::applyResultsToTarget()
+static inline void applyCSSPropertyToTarget(SVGElement* targetElement, CSSPropertyID id, const String& value)
 {
-    ASSERT(m_animatedPropertyType != AnimatedTransformList || hasTagName(SVGNames::animateTransformTag));
-    ASSERT(m_animatedPropertyType != AnimatedUnknown);
-    ASSERT(m_animatedType);
-    ASSERT(m_animator);
+    ASSERT(!targetElement->m_deletionHasBegun);
+
+    StylePropertySet* propertySet = targetElement->ensureAnimatedSMILStyleProperties();
+    if (!propertySet->setProperty(id, value, false, 0))
+        return;
+
+    targetElement->setNeedsStyleRecalc(SyntheticStyleChange);
+}
+
+static inline void removeCSSPropertyFromTarget(SVGElement* targetElement, CSSPropertyID id)
+{
+    ASSERT(!targetElement->m_deletionHasBegun);
+    targetElement->ensureAnimatedSMILStyleProperties()->removeProperty(id);
+    targetElement->setNeedsStyleRecalc(SyntheticStyleChange);
+}
+
+static inline void applyCSSPropertyToTargetAndInstances(SVGElement* targetElement, const QualifiedName& attributeName, const String& valueAsString)
+{
+    ASSERT(targetElement);
+    if (attributeName == anyQName() || !targetElement->inDocument() || !targetElement->parentNode())
+        return;
+
+    CSSPropertyID id = cssPropertyID(attributeName.localName());
+
+    SVGElementInstance::InstanceUpdateBlocker blocker(targetElement);
+    applyCSSPropertyToTarget(targetElement, id, valueAsString);
+
+    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
+    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
+    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+        if (SVGElement* shadowTreeElement = (*it)->shadowTreeElement())
+            applyCSSPropertyToTarget(shadowTreeElement, id, valueAsString);
+    }
+}
+
+static inline void removeCSSPropertyFromTargetAndInstances(SVGElement* targetElement, const QualifiedName& attributeName)
+{
+    ASSERT(targetElement);
+    if (attributeName == anyQName() || !targetElement->inDocument() || !targetElement->parentNode())
+        return;
+
+    CSSPropertyID id = cssPropertyID(attributeName.localName());
+
+    SVGElementInstance::InstanceUpdateBlocker blocker(targetElement);
+    removeCSSPropertyFromTarget(targetElement, id);
+
+    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
+    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
+    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+        if (SVGElement* shadowTreeElement = (*it)->shadowTreeElement())
+            removeCSSPropertyFromTarget(shadowTreeElement, id);
+    }
+}
+
+static inline void notifyTargetAboutAnimValChange(SVGElement* targetElement, const QualifiedName& attributeName)
+{
+    ASSERT(!targetElement->m_deletionHasBegun);
+    targetElement->svgAttributeChanged(attributeName);
+}
+
+static inline void notifyTargetAndInstancesAboutAnimValChange(SVGElement* targetElement, const QualifiedName& attributeName)
+{
+    ASSERT(targetElement);
+    if (attributeName == anyQName() || !targetElement->inDocument() || !targetElement->parentNode())
+        return;
+
+    SVGElementInstance::InstanceUpdateBlocker blocker(targetElement);
+    notifyTargetAboutAnimValChange(targetElement, attributeName);
+
+    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
+    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
+    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+        if (SVGElement* shadowTreeElement = (*it)->shadowTreeElement())
+            notifyTargetAboutAnimValChange(shadowTreeElement, attributeName);
+    }
+}
+
+void SVGAnimateElement::clearAnimatedType(SVGElement* targetElement)
+{
+    if (!m_animatedType)
+        return;
+
+    if (!targetElement) {
+        m_animatedType.clear();
+        return;
+    }
 
     if (m_animatedProperties.isEmpty()) {
         // CSS properties animation code-path.
-        setTargetAttributeAnimatedCSSValue(m_animatedType.get());
+        removeCSSPropertyFromTargetAndInstances(targetElement, attributeName());
+        m_animatedType.clear();
         return;
     }
 
     // SVG DOM animVal animation code-path.
+    if (m_animator) {
+        m_animator->stopAnimValAnimation(m_animatedProperties);
+        notifyTargetAndInstancesAboutAnimValChange(targetElement, attributeName());
+    }
+
+    m_animatedProperties.clear();
+    m_animatedType.clear();
+}
+
+void SVGAnimateElement::applyResultsToTarget()
+{
+    ASSERT(m_animatedPropertyType != AnimatedTransformList || hasTagName(SVGNames::animateTransformTag));
+    ASSERT(m_animatedPropertyType != AnimatedUnknown);
+    ASSERT(m_animator);
+
+    // Early exit if our animated type got destructed by a previous endedActiveInterval().
+    if (!m_animatedType)
+        return;
+
+    if (m_animatedProperties.isEmpty()) {
+        // CSS properties animation code-path.
+        // Convert the result of the animation to a String and apply it as CSS property on the target & all instances.
+        applyCSSPropertyToTargetAndInstances(targetElement(), attributeName(), m_animatedType->valueAsString());
+        return;
+    }
+
+    // SVG DOM animVal animation code-path.
+    // At this point the SVG DOM values are already changed, unlike for CSS.
+    // We only have to trigger update notifications here.
     m_animator->animValDidChange(m_animatedProperties);
+    notifyTargetAndInstancesAboutAnimValChange(targetElement(), attributeName());
 }
 
 bool SVGAnimateElement::isAdditive() const
@@ -282,12 +400,7 @@ void SVGAnimateElement::targetElementWillChange(SVGElement* currentTarget, SVGEl
 {
     SVGSMILElement::targetElementWillChange(currentTarget, newTarget);
 
-    if (!m_animatedProperties.isEmpty()) {
-        ensureAnimator()->stopAnimValAnimation(m_animatedProperties);
-        m_animatedProperties.clear();
-    }
-
-    m_animatedType.clear();
+    ASSERT(!m_animatedType);
     m_fromType.clear();
     m_toType.clear();
     m_toAtEndOfDurationType.clear();

@@ -90,7 +90,7 @@ public:
     SMILTime simpleDuration() const;
 
     void seekToIntervalCorrespondingToTime(SMILTime elapsed);
-    void progress(SMILTime elapsed, SVGSMILElement* resultsElement, bool seekToTime);
+    bool progress(SMILTime elapsed, SVGSMILElement* resultsElement, bool seekToTime);
     SMILTime nextProgressTime() const;
 
     void reset();
@@ -106,7 +106,8 @@ public:
     void setDocumentOrderIndex(unsigned index) { m_documentOrderIndex = index; }
 
     virtual bool isAdditive() const = 0;
-    virtual void resetToBaseValue() = 0;
+    virtual void resetAnimatedType() = 0;
+    virtual void clearAnimatedType(SVGElement* targetElement) = 0;
     virtual void applyResultsToTarget() = 0;
 
 protected:
@@ -117,10 +118,10 @@ protected:
 
     // Sub-classes may need to take action when the target is changed.
     virtual void targetElementWillChange(SVGElement* currentTarget, SVGElement* newTarget);
-    virtual void endedActiveInterval();
 
 private:
     virtual void startedActiveInterval() = 0;
+    void endedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;
 
     enum BeginOrEnd {

@@ -81,12 +81,6 @@ public:
         ASSERT(m_animatedProperty);
         m_animatedProperty = 0;
         m_isAnimating = false;
-
-        SVGElement* element = contextElement();
-        if (!element || !element->inDocument() || !element->parentNode())
-            return;
-        ASSERT(!element->m_deletionHasBegun);
-        element->svgAttributeChanged(attributeName());
     }
 
     void animValWillChange()
@@ -98,11 +92,9 @@ public:
 
     void animValDidChange()
     {
+        // no-op for non list types.
         ASSERT(m_isAnimating);
         ASSERT(m_animatedProperty);
-
-        ASSERT(contextElement());
-        contextElement()->svgAttributeChanged(attributeName());
     }
 
 protected:

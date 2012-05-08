@@ -40,6 +40,7 @@ public:
     void commitChange()
     {
         ASSERT(m_contextElement);
+        ASSERT(!m_contextElement->m_deletionHasBegun);
         m_contextElement->invalidateSVGAttributes();
         m_contextElement->svgAttributeChanged(m_attributeName);
     }

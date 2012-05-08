@@ -164,14 +164,23 @@ static bool parsePoint(const String& s, FloatPoint& point)
     return !skipOptionalSVGSpaces(cur, end);
 }
     
-void SVGAnimateMotionElement::resetToBaseValue()
+void SVGAnimateMotionElement::resetAnimatedType()
 {
     if (!hasValidAttributeType())
         return;
-    AffineTransform* transform = targetElement()->supplementalTransform();
-    if (!transform)
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
         return;
-    transform->makeIdentity();
+    if (AffineTransform* transform = targetElement->supplementalTransform())
+        transform->makeIdentity();
+}
+
+void SVGAnimateMotionElement::clearAnimatedType(SVGElement* targetElement)
+{
+    if (!targetElement)
+        return;
+    if (AffineTransform* transform = targetElement->supplementalTransform())
+        transform->makeIdentity();
 }
 
 bool SVGAnimateMotionElement::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
