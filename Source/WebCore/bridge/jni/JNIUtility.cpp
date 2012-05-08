@@ -82,11 +82,23 @@ JavaVM* getJavaVM()
     return jvm;
 }
 
+// JDK 1.0 mistakenly declared the first parameter to AttachCurrentThread as
+// void** rather than as JNIEnv**. This quirk appears to have been carried
+// forward in implementations of Java despite what the documentation says.
+// On OS(ANDROID), however, AttachCurrentThread appears to follow the
+// documentation and expects a JNIEnv** parameter. The following typedef should
+// give each implementation what it desires.
+#if OS(ANDROID)
+typedef JNIEnv* JNIEnvDummy;
+#else
+typedef void* JNIEnvDummy;
+#endif
+
 JNIEnv* getJNIEnv()
 {
     union {
         JNIEnv* env;
-        void* dummy;
+        JNIEnvDummy dummy;
     } u;
     jint jniError = 0;
 
