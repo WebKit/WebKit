@@ -369,6 +369,10 @@ BUGWK84839 : editing/execCommand/remove-list-from-range-selection.html = MISSING
 BUGWK84839 : editing/execCommand/remove-list-item-1.html = MISSING
 BUGWK84839 : editing/execCommand/selectAll.html = MISSING
 
+// The EFL port has no support for the Fullscreen API
+BUGWK85870 SKIP : fullscreen = FAIL
+BUGWK85870 : media/video-play-require-user-gesture.html = TEXT
+
 // Input attribute placeholder reftests are failing.
 BUGWK85603 : fast/forms/placeholder-with-positioned-element.html = IMAGE
 BUGWK85603 : fast/forms/isindex-placeholder.html = IMAGE

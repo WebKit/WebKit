@@ -630,9 +630,6 @@ fast/frames/meta-refresh-user-gesture.html
 # The EFL port has no support for usermedia
 fast/mediastream
 
-# The EFL port has no support for the Fullscreen API
-fullscreen
-
 # The EFL port has no support for webarchives
 http/tests/webarchive
 svg/webarchive

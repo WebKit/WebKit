@@ -1,3 +1,17 @@
+2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] media/video-play-require-user-gesture.html test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=85900
+
+        Unreviewed gardening.
+
+        Move media/video-play-require-user-gesture.html to test_expectations.txt since
+        it requires Full Screen API support. Also move fullscreen tests from Skipped
+        list to test_expectations.txt
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-08  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] Layout test fast/overflow/lots-of-sibling-inline-boxes.html is flaky in debug builds
