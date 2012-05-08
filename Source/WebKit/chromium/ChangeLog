@@ -1,3 +1,34 @@
+2012-05-08  Tony Chang  <tony@chromium.org>
+
+        [chromium] move event_listener_unittest to webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=85836
+
+        Reviewed by James Robinson.
+
+        Porting the test from src/webkit/tools/test_shell/event_listener_unittest.cc.
+        All I did was change the style and use the FrameTestHelper to load the file.
+
+        * WebKit.gyp: Exclude file in components build.
+        * WebKit.gypi: Add new file.
+        * tests/EventListenerTest.cpp: Added.
+        (WebKit):
+        (TestWebDOMEventListener):
+        (WebKit::TestWebDOMEventListener::TestWebDOMEventListener):
+        (WebKit::TestWebDOMEventListener::~TestWebDOMEventListener):
+        (WebKit::TestWebDOMEventListener::eventCount):
+        (WebKit::TestWebDOMEventListener::eventAt):
+        (WebKit::TestWebDOMEventListener::clearEvents):
+        (WebDOMEventListenerTest):
+        (WebKit::WebDOMEventListenerTest::WebDOMEventListenerTest):
+        (WebKit::WebDOMEventListenerTest::SetUp):
+        (WebKit::WebDOMEventListenerTest::TearDown):
+        (WebKit::WebDOMEventListenerTest::mainFrame):
+        (WebKit::WebDOMEventListenerTest::document):
+        (WebKit::WebDOMEventListenerTest::executeScript):
+        (WebKit::WebDOMEventListenerTest::GetNodeID):
+        (WebKit::TEST_F):
+        * tests/data/listener/mutation_event_listener.html: Added.
+
 2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed build fix: didOpenFileSystem hides overloaded virtual function
