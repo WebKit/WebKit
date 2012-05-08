@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderButton {BUTTON} at (0,0) size 100x100 [bgcolor=#FFB6C1]
+        RenderBlock (anonymous) at (6,39) size 88x21
+          RenderText {#text} at (42,0) size 4x21
+            text run at (42,0) width 4: " "
+      RenderText {#text} at (0,0) size 0x0

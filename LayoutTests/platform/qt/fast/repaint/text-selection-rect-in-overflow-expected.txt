@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,8) size 784x100
+layer at (8,8) size 784x100 scrollY 89 scrollHeight 189
+  RenderBlock {DIV} at (0,0) size 784x100
+    RenderBR {BR} at (0,0) size 0x21
+    RenderBR {BR} at (0,21) size 0x21
+    RenderBR {BR} at (0,42) size 0x21
+    RenderBR {BR} at (0,63) size 0x21
+    RenderInline {SPAN} at (0,0) size 223x21 [bgcolor=#008000]
+      RenderText {#text} at (0,84) size 223x21
+        text run at (0,84) width 223: "Should have green background"
+    RenderBR {BR} at (223,84) size 0x21
+    RenderBR {BR} at (0,105) size 0x21
+    RenderBR {BR} at (0,126) size 0x21
+    RenderBR {BR} at (0,147) size 0x21
+    RenderBR {BR} at (0,168) size 0x21

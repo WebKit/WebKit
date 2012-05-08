@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 6: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.testRepaint()')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 359x21
+          text run at (0,0) width 359: "This tests repainting of a layer's children's outlines."
+      RenderBlock {HR} at (0,37) size 784x2 [border: (1px inset #000000)]
+layer at (8,55) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,47) size 100x100 [bgcolor=#C0C0C0]
+    RenderBlock {DIV} at (0,0) size 100x100

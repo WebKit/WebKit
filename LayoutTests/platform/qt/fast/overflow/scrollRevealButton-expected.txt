@@ -1,0 +1,42 @@
+layer at (0,0) size 784x1191
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1191
+  RenderBlock {HTML} at (0,0) size 784x1191
+    RenderBody {BODY} at (8,8) size 768x1175
+      RenderBlock (anonymous) at (0,0) size 768x21
+        RenderText {#text} at (0,0) size 378x21
+          text run at (0,0) width 378: "This test should scroll recursively to reveal the button."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,21) size 768x500
+      RenderBlock (anonymous) at (0,521) size 768x154
+        RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+          layer at (0,0) size 308x316
+            RenderView at (0,0) size 284x134
+          layer at (0,0) size 284x316
+            RenderBlock {HTML} at (0,0) size 284x316
+              RenderBody {BODY} at (8,8) size 268x300
+          layer at (8,8) size 300x300 clip at (8,8) size 284x300 scrollY 546 scrollHeight 1271
+            RenderBlock {DIV} at (0,0) size 300x300
+              RenderBlock (anonymous) at (0,0) size 284x21
+                RenderText {#text} at (0,0) size 95x21
+                  text run at (0,0) width 95: "overflow:auto"
+              RenderBlock {DIV} at (0,21) size 284x600
+              RenderBlock {DIV} at (0,771) size 284x500
+          layer at (8,83) size 150x150 clip at (8,83) size 134x150 scrollY 485 scrollHeight 877
+            RenderBlock {DIV} at (0,621) size 150x150
+              RenderBlock (anonymous) at (0,0) size 134x21
+                RenderText {#text} at (0,0) size 95x21
+                  text run at (0,0) width 95: "overflow:auto"
+              RenderBlock {DIV} at (0,21) size 134x500
+              RenderBlock (anonymous) at (0,521) size 134x56
+                RenderBR {BR} at (0,0) size 0x21
+                RenderButton {INPUT} at (2,23) size 56x31 [bgcolor=#C0C0C0]
+                  RenderBlock (anonymous) at (5,5) size 46x21
+                    RenderText at (0,0) size 46x21
+                      text run at (0,0) width 46: "Button"
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {DIV} at (0,577) size 134x300
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,675) size 768x500
+scrolled to 0,13
+frame '' scrolled to 0,91

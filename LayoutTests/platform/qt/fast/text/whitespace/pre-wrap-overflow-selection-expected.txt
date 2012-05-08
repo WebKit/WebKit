@@ -2,46 +2,48 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 260x19
-          text run at (0,0) width 260: "This test checks for a regression against "
-        RenderInline {I} at (0,0) size 729x39
-          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
-            RenderText {#text} at (260,0) size 337x19
-              text run at (260,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5619"
-          RenderText {#text} at (597,0) size 729x39
-            text run at (597,0) width 132: " CSS2: pre-wrap has"
-            text run at (0,20) width 176: "overflow/selection problems"
-        RenderText {#text} at (176,20) size 4x19
-          text run at (176,20) width 4: "."
-      RenderBlock {P} at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 687x19
-          text run at (0,0) width 687: "Both boxes should not have scroll bars. The selection should not spill out of the blue box to the right of \x{201C}text\x{201D}."
-      RenderBlock {HR} at (0,87) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {HR} at (0,220) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {PRE} at (0,236) size 108x103 [border: (4px solid #0000FF)]
-        RenderText {#text} at (4,5) size 100x93
-          text run at (4,5) width 96: "This   text "
-          text run at (100,5) width 4: "    "
-          text run at (4,24) width 72: "will wrap"
-          text run at (76,24) width 0: " "
-          text run at (4,43) width 96: "and   fit   "
-          text run at (4,62) width 80: "within the"
-          text run at (84,62) width 0: " "
-          text run at (4,81) width 32: "box."
-          text run at (36,81) width 0: " "
-layer at (8,111) size 108x103 clip at (12,115) size 100x95
-  RenderBlock {PRE} at (0,103) size 108x103 [border: (4px solid #A52A2A)]
-    RenderText {#text} at (4,5) size 100x93
-      text run at (4,5) width 96: "This   text "
-      text run at (100,5) width 4: "    "
-      text run at (4,24) width 72: "will wrap"
-      text run at (76,24) width 0: " "
-      text run at (4,43) width 96: "and   fit   "
-      text run at (4,62) width 80: "within the"
-      text run at (84,62) width 0: " "
-      text run at (4,81) width 32: "box."
-      text run at (36,81) width 0: " "
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 288x21
+          text run at (0,0) width 288: "This test checks for a regression against "
+        RenderInline {I} at (0,0) size 750x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (288,0) size 379x21
+              text run at (288,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5619"
+          RenderText {#text} at (667,0) size 750x42
+            text run at (667,0) width 83: " CSS2: pre-"
+            text run at (0,21) width 267: "wrap has overflow/selection problems"
+        RenderText {#text} at (267,21) size 4x21
+          text run at (267,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 761x21
+          text run at (0,0) width 761: "Both boxes should not have scroll bars. The selection should not spill out of the blue box to the right of \x{201C}text\x{201D}."
+      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,216) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {PRE} at (0,231) size 108x93 [border: (4px solid #0000FF)]
+        RenderText {#text} at (4,4) size 100x85
+          text run at (4,4) width 97: "This   text     will"
+          text run at (101,4) width 3: " "
+          text run at (4,21) width 27: "wrap"
+          text run at (31,21) width 0: " "
+          text run at (4,38) width 89: "and   fit   within"
+          text run at (93,38) width 4: " "
+          text run at (4,55) width 18: "the"
+          text run at (22,55) width 0: " "
+          text run at (4,72) width 25: "box."
+          text run at (29,72) width 0: " "
+layer at (8,118) size 108x93 clip at (12,122) size 100x85
+  RenderBlock {PRE} at (0,110) size 108x93 [border: (4px solid #A52A2A)]
+    RenderText {#text} at (4,4) size 100x85
+      text run at (4,4) width 97: "This   text     will"
+      text run at (101,4) width 3: " "
+      text run at (4,21) width 27: "wrap"
+      text run at (31,21) width 0: " "
+      text run at (4,38) width 89: "and   fit   within"
+      text run at (93,38) width 4: " "
+      text run at (4,55) width 18: "the"
+      text run at (22,55) width 0: " "
+      text run at (4,72) width 25: "box."
+      text run at (29,72) width 0: " "
 selection start: position 7 of child 0 {#text} of child 7 {PRE} of body
 selection end:   position 15 of child 0 {#text} of child 11 {PRE} of body

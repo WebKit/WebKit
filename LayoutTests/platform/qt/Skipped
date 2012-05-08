@@ -1543,7 +1543,6 @@ fast/dom/inline-event-attributes-release.html
 fast/forms/textarea-scrollbar-height.html
 # Final four tests before Qt buildbot is green
 # https://bugs.webkit.org/show_bug.cgi?id=27914
-fast/css/positioned-overflow-scroll.html
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
@@ -1551,7 +1550,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 fast/multicol/single-line.html
 # validationMessage: https://bugs.webkit.org/show_bug.cgi?id=27959
 fast/forms/validationMessage.html
-fast/css/color-correction-backgrounds-and-text.html
 fast/css/color-correction-on-background-image.html
 fast/css/color-correction-on-backgrounds.html
 fast/css/color-correction-on-box-shadow.html
@@ -1576,7 +1574,6 @@ fast/loader/api-test-new-window-data-load-base-url.html
 fast/loader/api-test-go-to-current-back-forward-item.html
 
 # Slider tests that need new results
-fast/forms/range/slider-padding.html
 fast/forms/range/slider-thumb-shared-style.html
 fast/forms/range/slider-thumb-stylability.html
 fast/forms/range/slider-zoomed.html
@@ -1676,74 +1673,42 @@ fast/frames/onlyCommentInIFrame.html
 fast/invalid/junk-data.xml
 fast/loader/text-document-wrapping.html
 fast/overflow/005.html
-fast/repaint/inline-outline-repaint.html
 fast/text/find-case-folding.html
-fast/text/large-text-composed-char.html
 fast/text/basic/014.html
 fast/text/international/cjk-segmentation.html
 fast/text/international/rtl-white-space-pre-wrap.html
-fast/text/whitespace/pre-wrap-overflow-selection.html
 fast/block/basic/text-indent-rtl.html
 fast/block/float/026.html
 fast/block/float/028.html
-fast/block/float/editable-text-overlapping-float.html
-fast/block/margin-collapse/103.html
-fast/block/positioning/auto/006.html
 fast/css/text-overflow-ellipsis-bidi.html
 fast/css/text-overflow-ellipsis.html
 fast/css/text-overflow-ellipsis-strict.html
-fast/dom/HTMLTextAreaElement/reset-textarea.html
 fast/dom/icon-url-property.html
-fast/dynamic/008.html
 fast/events/offsetX-offsetY.html
 fast/forms/basic-textareas.html
-fast/forms/box-shadow-override.html
 fast/forms/button-white-space.html
-fast/forms/disabled-select-change-index.html
-fast/forms/file/file-input-direction.html
-fast/forms/file/file-input-disabled.html
 fast/forms/file/hidden-input-file.html
-fast/forms/form-element-geometry.html
 fast/forms/input-appearance-height.html
 fast/forms/input-appearance-width.html
-fast/forms/input-disabled-color.html
 fast/forms/input-table.html
 fast/forms/input-value.html
 fast/forms/listbox-deselect-scroll.html
 fast/forms/listbox-hit-test-zoomed.html
-fast/forms/negativeLineHeight.html
-fast/forms/placeholder-pseudo-style.html
-fast/forms/textarea-align.html
-fast/forms/textarea-setinnerhtml.html
 fast/forms/textarea-width.html
-fast/inline/inline-borders-with-bidi-override.html
-fast/layers/scroll-rect-to-visible.html
 fast/layers/video-layer.html
 fast/media/mq-transform-02.html
 fast/media/mq-transform-03.html
-fast/overflow/image-selection-highlight.html
 fast/overflow/infiniteRecursionGuard.html
 fast/overflow/overflow_hidden.html
 fast/overflow/overflow-text-hit-testing.html
-fast/overflow/unreachable-overflow-rtl-bug.html
-fast/parser/entity-comment-in-textarea.html
-fast/parser/open-comment-in-textarea.html
-fast/repaint/focus-ring.html
-fast/repaint/selection-after-delete.html
-fast/repaint/selection-after-remove.html
 fast/repaint/shadow-multiple-horizontal.html
 fast/repaint/shadow-multiple-strict-horizontal.html
 fast/repaint/shadow-multiple-strict-vertical.html
 fast/repaint/shadow-multiple-vertical.html
-fast/replaced/border-radius-clip.html
-fast/table/003.html
-fast/table/cell-pref-width-invalidation.html
 fast/text/atsui-spacing-features.html
 fast/text/atsui-negative-spacing-features.html
 fast/text/basic/015.html
 fast/text/capitalize-boundaries.html
-fast/text/complex-text-opacity.html
-fast/text/embed-at-end-of-pre-wrap-line.html
 fast/text/international/003.html
 fast/text/international/bidi-AN-after-empty-run.html
 fast/text/international/bidi-layout-across-linebreak.html
@@ -1752,15 +1717,10 @@ fast/text/international/bidi-LDB-2-HTML.html
 fast/text/international/bidi-listbox-atsui.html
 fast/text/international/bidi-listbox.html
 fast/text/international/bidi-override.html
-fast/text/line-breaks-after-white-space.html
 fast/text/trailing-white-space-2.html
 fast/text/trailing-white-space.html
-fast/text/whitespace/normal-after-nowrap-breaking.html
-fast/text/whitespace/pre-break-word.html
-fast/text/whitespace/pre-wrap-line-test.html
 fast/text/whitespace/pre-wrap-spaces-after-newline.html
 fast/text/whitespace/tab-character-basics.html
-fast/text/word-break.html
 fast/text/word-break-run-rounding.html
 
 # -- timedout with --platform mac --ignore-metrics
@@ -1778,7 +1738,6 @@ http/tests/misc/submit-post-keygen.html
 # -- pass with --platform mac --ignore-metrics
 fast/backgrounds/animated-gif-as-background.html
 fast/block/float/independent-align-positioning.html
-fast/block/float/multiple-float-positioning.html
 fast/block/positioning/001.html
 fast/block/positioning/absolute-in-inline-ltr-2.html
 fast/block/positioning/absolute-in-inline-ltr.html
@@ -1825,23 +1784,16 @@ fast/gradients/simple-gradients.html
 fast/images/pdf-as-background.html
 fast/images/pdf-as-image-landscape.html
 fast/images/pdf-as-tiled-background.html
-fast/invalid/016.html
 fast/parser/fonts.html
-fast/repaint/button-spurious-layout-hint.html
-fast/repaint/control-clip.html
-fast/repaint/selection-clear.html
 fast/repaint/static-to-positioned.html
 fast/replaced/image-solid-color-with-alpha.html
 fast/replaced/pdf-as-image.html
 fast/replaced/width100percent-menulist.html
 fast/text/atsui-multiple-renderers.html
 fast/text/atsui-partial-selection.html
-fast/text/atsui-small-caps-punctuation-size.html
-fast/text/basic/003.html
 fast/text/basic/013.html
 fast/text/bidi-embedding-pop-and-push-same.html
 fast/text/cg-fallback-bolding.html
-fast/text/cg-vs-atsui.html
 fast/text/drawBidiText.html
 fast/text/fixed-pitch-control-characters.html
 fast/text/international/001.html
@@ -1864,7 +1816,6 @@ fast/text/international/danda-space.html
 fast/text/international/hindi-spacing.html
 fast/text/international/rtl-caret.html
 fast/text/international/thai-baht-space.html
-fast/text/letter-spacing-negative-opacity.html
 fast/text/line-breaks.html
 fast/text/selection-painted-separately.html
 fast/text/soft-hyphen-2.html
@@ -1886,7 +1837,6 @@ fast/xsl/xslt-doc-enc.xml
 fast/xsl/xslt-url.xml
 fast/xsl/default-html.html
 fast/xsl/xslt-text.html
-fast/xsl/xslt-entity.xml
 fast/xsl/xslt-extra-content-at-end.xml
 # external entities support
 fast/xsl/dtd-in-source-document.xml

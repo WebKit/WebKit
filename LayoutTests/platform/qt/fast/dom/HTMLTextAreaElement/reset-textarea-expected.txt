@@ -2,36 +2,34 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {FORM} at (0,0) size 784x56
-        RenderTextControl {TEXTAREA} at (2,2) size 184x40 [border: (1px solid #000000)]
-        RenderText {#text} at (188,30) size 4x19
-          text run at (188,30) width 4: " "
-        RenderTextControl {TEXTAREA} at (194,2) size 184x40 [border: (1px solid #000000)]
-        RenderText {#text} at (380,30) size 4x19
-          text run at (380,30) width 4: " "
-        RenderButton {INPUT} at (386,26) size 44x28 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 32x17
-            RenderText at (0,0) size 32x17
-              text run at (0,0) width 32: "Reset"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x63
+        RenderText {#text} at (204,34) size 4x21
+          text run at (204,34) width 4: " "
+        RenderText {#text} at (412,34) size 4x21
+          text run at (412,34) width 4: " "
+        RenderButton {INPUT} at (418,28) size 54x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 42x21
+            RenderText at (0,0) size 42x21
+              text run at (0,0) width 42: "Reset"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,70) size 784x76
-        RenderText {#text} at (0,0) size 366x19
-          text run at (0,0) width 366: "This test verifies that textarea controls are properly reset. "
-        RenderBR {BR} at (366,14) size 0x0
-        RenderText {#text} at (0,19) size 460x19
-          text run at (0,19) width 460: "You should see two element IDs below, and the word \"SUCCESS\" twice: "
-        RenderBR {BR} at (460,33) size 0x0
-        RenderText {#text} at (0,38) size 167x19
-          text run at (0,38) width 167: "noDefaultText: SUCCESS "
-        RenderBR {BR} at (167,52) size 0x0
-        RenderText {#text} at (0,57) size 170x19
-          text run at (0,57) width 170: "hasDefaultText: SUCCESS"
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-layer at (11,11) size 182x38
-  RenderBlock {DIV} at (1,1) size 182x38
-layer at (203,11) size 182x38
-  RenderBlock {DIV} at (1,1) size 182x38
-    RenderText {#text} at (3,0) size 77x19
-      text run at (3,0) width 77: "Default Text"
+      RenderBlock {P} at (0,79) size 784x84
+        RenderText {#text} at (0,0) size 402x21
+          text run at (0,0) width 402: "This test verifies that textarea controls are properly reset. "
+        RenderBR {BR} at (402,16) size 0x0
+        RenderText {#text} at (0,21) size 521x21
+          text run at (0,21) width 521: "You should see two element IDs below, and the word \"SUCCESS\" twice: "
+        RenderBR {BR} at (521,37) size 0x0
+        RenderText {#text} at (0,42) size 192x21
+          text run at (0,42) width 192: "noDefaultText: SUCCESS "
+        RenderBR {BR} at (192,58) size 0x0
+        RenderText {#text} at (0,63) size 196x21
+          text run at (0,63) width 196: "hasDefaultText: SUCCESS"
+layer at (10,10) size 200x46
+  RenderTextControl {TEXTAREA} at (2,2) size 200x46
+    RenderBlock {DIV} at (2,2) size 196x21
+layer at (218,10) size 200x46
+  RenderTextControl {TEXTAREA} at (210,2) size 200x46
+    RenderBlock {DIV} at (2,2) size 196x21
+      RenderText {#text} at (0,0) size 86x21
+        text run at (0,0) width 86: "Default Text"

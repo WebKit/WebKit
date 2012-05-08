@@ -1,0 +1,78 @@
+layer at (0,0) size 784x1278
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1278
+  RenderBlock {HTML} at (0,0) size 784x1278
+    RenderBody {BODY} at (8,8) size 768x1254
+      RenderBlock (anonymous) at (0,0) size 768x21
+        RenderText {#text} at (0,0) size 303x21
+          text run at (0,0) width 303: "line-height settings not reflected in textarea"
+        RenderBR {BR} at (303,0) size 0x21
+      RenderBlock {P} at (0,37) size 768x274
+        RenderText {#text} at (0,0) size 87x21
+          text run at (0,0) width 87: "TEXTAREA"
+        RenderBR {BR} at (87,0) size 0x21
+        RenderText {#text} at (406,211) size 4x21
+          text run at (406,211) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,232) size 0x21
+        RenderText {#text} at (0,253) size 158x21
+          text run at (0,253) width 158: "PARAGRAPH - works"
+      RenderBlock {P} at (0,327) size 402x202 [border: (1px dotted #C0C0C0)]
+        RenderText {#text} at (1,18) size 347x69
+          text run at (1,18) width 347: "Demo text here that wraps a bit and should demonstrate the"
+          text run at (1,70) width 134: "goodness of line-height"
+      RenderBlock (anonymous) at (0,542) size 768x42
+        RenderBR {BR} at (0,0) size 0x21
+        RenderText {#text} at (0,21) size 82x21
+          text run at (0,21) width 82: "DIV - works"
+        RenderBR {BR} at (82,21) size 0x21
+      RenderBlock {DIV} at (0,584) size 402x202 [border: (1px dotted #C0C0C0)]
+        RenderText {#text} at (1,18) size 347x69
+          text run at (1,18) width 347: "Demo text here that wraps a bit and should demonstrate the"
+          text run at (1,70) width 134: "goodness of line-height"
+      RenderBlock (anonymous) at (0,786) size 768x468
+        RenderBR {BR} at (0,0) size 0x21
+        RenderBR {BR} at (0,21) size 0x21
+        RenderText {#text} at (0,42) size 138x21
+          text run at (0,42) width 138: "Un-Styled Textarea"
+        RenderBR {BR} at (138,42) size 0x21
+        RenderText {#text} at (204,97) size 4x21
+          text run at (204,97) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,118) size 0x21
+        RenderText {#text} at (0,139) size 235x21
+          text run at (0,139) width 235: "Totally Blank Un-Styled Textarea"
+        RenderBR {BR} at (235,139) size 0x21
+        RenderText {#text} at (204,194) size 4x21
+          text run at (204,194) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,215) size 0x21
+        RenderText {#text} at (0,236) size 228x21
+          text run at (0,236) width 228: "Totally Blank STYLED Textarea"
+        RenderBR {BR} at (228,236) size 0x21
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1270) size 768x0
+layer at (8,66) size 406x206 clip at (9,67) size 404x204
+  RenderTextControl {TEXTAREA} at (0,21) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
+    RenderBlock {DIV} at (3,3) size 400x104
+      RenderText {#text} at (0,17) size 351x69
+        text run at (0,17) width 347: "Demo text here that wraps a bit and should demonstrate the"
+        text run at (347,17) width 4: " "
+        text run at (0,69) width 134: "goodness of line-height"
+layer at (10,859) size 200x46 clip at (10,859) size 184x46 scrollHeight 88
+  RenderTextControl {TEXTAREA} at (2,65) size 200x46
+    RenderBlock {DIV} at (2,2) size 180x84
+      RenderText {#text} at (0,0) size 166x84
+        text run at (0,0) width 138: "Demo text here that"
+        text run at (138,0) width 4: " "
+        text run at (0,21) width 160: "wraps a bit and should"
+        text run at (160,21) width 4: " "
+        text run at (0,42) width 114: "demonstrate the"
+        text run at (114,42) width 4: " "
+        text run at (0,63) width 166: "goodness of line-height"
+layer at (10,956) size 200x46
+  RenderTextControl {TEXTAREA} at (2,162) size 200x46
+    RenderBlock {DIV} at (2,2) size 196x21
+layer at (8,1051) size 406x206 clip at (9,1052) size 404x204
+  RenderTextControl {TEXTAREA} at (0,257) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
+    RenderBlock {DIV} at (3,3) size 400x52

@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 31x19
-          text run at (0,0) width 31: "LTR:"
-      RenderBlock (anonymous) at (0,125) size 784x19
-        RenderText {#text} at (0,0) size 31x19
-          text run at (0,0) width 31: "RTL:"
-layer at (8,27) size 106x106 clip at (11,30) size 84x84 scrollWidth 220 scrollHeight 269
-  RenderBlock (relative positioned) {DIV} at (0,19) size 106x106 [border: (3px solid #000000)]
-layer at (8,152) size 106x106 clip at (11,155) size 84x84 scrollX 136 scrollWidth 220 scrollHeight 269
-  RenderBlock (relative positioned) {DIV} at (0,144) size 106x106 [border: (3px solid #000000)]
+      RenderBlock (anonymous) at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 35x21
+          text run at (0,0) width 35: "LTR:"
+      RenderBlock (anonymous) at (0,127) size 784x21
+        RenderText {#text} at (0,0) size 35x21
+          text run at (0,0) width 35: "RTL:"
+layer at (8,29) size 106x106 clip at (11,32) size 84x84 scrollWidth 222 scrollHeight 271
+  RenderBlock (relative positioned) {DIV} at (0,21) size 106x106 [border: (3px solid #000000)]
+layer at (8,156) size 106x106 clip at (11,159) size 84x84 scrollX 138 scrollWidth 222 scrollHeight 271
+  RenderBlock (relative positioned) {DIV} at (0,148) size 106x106 [border: (3px solid #000000)]

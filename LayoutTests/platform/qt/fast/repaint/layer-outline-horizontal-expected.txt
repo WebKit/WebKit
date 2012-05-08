@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: line 5: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.testRepaint()')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 237x21
+          text run at (0,0) width 237: "This tests for regressions against "
+        RenderInline {I} at (0,0) size 777x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (237,0) size 379x21
+              text run at (237,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7943"
+          RenderText {#text} at (616,0) size 777x42
+            text run at (616,0) width 161: " Layer outline does not"
+            text run at (0,21) width 49: "repaint"
+        RenderText {#text} at (49,21) size 4x21
+          text run at (49,21) width 4: "."
+      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (10,208) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (8,76) size 784x130
+  RenderBlock (relative positioned) {DIV} at (0,68) size 784x130
+layer at (18,86) size 100x100
+  RenderBlock (positioned) {DIV} at (10,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (148,86) size 100x100 backgroundClip at (148,86) size 90x90 clip at (138,76) size 100x100 outlineClip at (138,76) size 100x100
+  RenderBlock (positioned) {DIV} at (140,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (408,86) size 100x100
+  RenderBlock (positioned) {DIV} at (400,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (538,86) size 100x100 backgroundClip at (548,96) size 90x90 clip at (548,96) size 100x100 outlineClip at (548,96) size 100x100
+  RenderBlock (positioned) {DIV} at (530,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (18,346) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,318) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]

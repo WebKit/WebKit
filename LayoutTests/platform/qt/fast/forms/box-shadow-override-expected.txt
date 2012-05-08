@@ -3,79 +3,83 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 395x19
-          text run at (0,0) width 395: "Tests that box shadow is not applied to Aqua-themed controls."
-      RenderBlock {P} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 260x19
-          text run at (0,0) width 260: "You should not see any red on this page."
-      RenderBlock {DIV} at (0,66) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,3) size 162x19
-            RenderBlock {DIV} at (0,14) size 0x0
-            RenderBlock {DIV} at (162,14) size 0x0
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 439x21
+          text run at (0,0) width 439: "Tests that box shadow is not applied to Aqua-themed controls."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 289x21
+          text run at (0,0) width 289: "You should not see any red on this page."
+      RenderBlock {DIV} at (0,74) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,0) size 171x21
+            RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,95) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,3) size 162x19
-            RenderBlock {DIV} at (0,14) size 0x0
-            RenderBlock {DIV} at (162,14) size 0x0
+      RenderBlock {DIV} at (0,103) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,0) size 171x21
+            RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,124) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,3) size 162x19
-            RenderBlock {DIV} at (0,14) size 0x0
-            RenderBlock {DIV} at (162,14) size 0x0
+      RenderBlock {DIV} at (0,132) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 186x25
+          RenderDeprecatedFlexibleBox {DIV} at (2,2) size 182x21
+            RenderBlock {DIV} at (0,10) size 0x0
+            RenderBlock {DIV} at (0,0) size 171x21
+            RenderBlock {DIV} at (171,5) size 11x11
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,153) size 784x33
-        RenderBlock {INPUT} at (3,11) size 12x12
-        RenderText {#text} at (18,7) size 4x19
-          text run at (18,7) width 4: " "
-        RenderBlock {INPUT} at (25,10) size 13x13
-        RenderText {#text} at (41,7) size 4x19
-          text run at (41,7) width 4: " "
-        RenderSlider {INPUT} at (47,2) size 129x19 [bgcolor=#FFFFFF]
-        RenderText {#text} at (178,7) size 4x19
-          text run at (178,7) width 4: " "
-        RenderFileUploadControl {INPUT} at (184,3) size 272x28
-          RenderButton {INPUT} at (0,0) size 78x28 [bgcolor=#C0C0C0]
-            RenderBlock (anonymous) at (6,6) size 66x17
-              RenderText at (0,0) size 66x17
-                text run at (0,0) width 66: "Choose File"
-        RenderText {#text} at (458,7) size 4x19
-          text run at (458,7) width 4: " "
-        RenderButton {INPUT} at (464,3) size 47x28 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 35x17
-            RenderText at (0,0) size 35x17
-              text run at (0,0) width 35: "Button"
-        RenderText {#text} at (513,7) size 4x19
-          text run at (513,7) width 4: " "
-        RenderButton {INPUT} at (519,3) size 47x28 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 35x17
-            RenderText at (0,0) size 35x17
-              text run at (0,0) width 35: "Button"
-        RenderText {#text} at (568,7) size 4x19
-          text run at (568,7) width 4: " "
-        RenderButton {INPUT} at (572,3) size 47x28 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 35x17
-            RenderText at (0,0) size 35x17
-              text run at (0,0) width 35: "Button"
-        RenderText {#text} at (619,7) size 4x19
-          text run at (619,7) width 4: " "
-        RenderButton {BUTTON} at (625,3) size 47x28 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 35x17
-            RenderText {#text} at (0,0) size 35x17
-              text run at (0,0) width 35: "Button"
+      RenderBlock (anonymous) at (0,161) size 784x42
+        RenderBlock {INPUT} at (4,18) size 12x12
+        RenderText {#text} at (20,12) size 4x21
+          text run at (20,12) width 4: " "
+        RenderBlock {INPUT} at (28,17) size 13x13
+        RenderText {#text} at (45,12) size 4x21
+          text run at (45,12) width 4: " "
+        RenderSlider {INPUT} at (51,12) size 129x16 [bgcolor=#FFFFFF]
+          RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x16
+            RenderBlock {DIV} at (0,0) size 118x16
+            RenderBlock {DIV} at (118,0) size 11x16
+        RenderText {#text} at (182,12) size 4x21
+          text run at (182,12) width 4: " "
+        RenderFileUploadControl {INPUT} at (188,6) size 306x33 "No file selected"
+          RenderButton {INPUT} at (0,0) size 99x33 [bgcolor=#C0C0C0]
+            RenderBlock (anonymous) at (6,6) size 87x21
+              RenderText at (0,0) size 87x21
+                text run at (0,0) width 87: "Choose File"
+        RenderText {#text} at (496,12) size 4x21
+          text run at (496,12) width 4: " "
+        RenderButton {INPUT} at (502,2) size 70x38 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 58x26
+            RenderText at (0,0) size 58x26
+              text run at (0,0) width 58: "Button"
+        RenderText {#text} at (574,12) size 4x21
+          text run at (574,12) width 4: " "
+        RenderButton {INPUT} at (580,6) size 58x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 46x21
+            RenderText at (0,0) size 46x21
+              text run at (0,0) width 46: "Button"
+        RenderText {#text} at (640,12) size 4x21
+          text run at (640,12) width 4: " "
+        RenderButton {INPUT} at (644,15) size 26x23 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,8) size 14x7
+            RenderText at (0,0) size 14x7
+              text run at (0,0) width 14: "Button"
+        RenderText {#text} at (670,12) size 4x21
+          text run at (670,12) width 4: " "
+        RenderButton {BUTTON} at (676,2) size 70x38 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 58x26
+            RenderText {#text} at (0,0) size 58x26
+              text run at (0,0) width 58: "Button"
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-layer at (13,79) size 162x19
-  RenderBlock {DIV} at (0,0) size 162x19
-    RenderText {#text} at (1,0) size 45x19
-      text run at (1,0) width 45: "Search"
-layer at (13,108) size 162x19
-  RenderBlock {DIV} at (0,0) size 162x19
-layer at (13,137) size 162x19
-  RenderBlock {DIV} at (0,0) size 162x19
-layer at (55,172) size 134x24
-  RenderBlock (relative positioned) {DIV} at (0,0) size 129x19
+layer at (12,86) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+    RenderText {#text} at (1,0) size 51x21
+      text run at (1,0) width 51: "Search"
+layer at (12,115) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+layer at (12,144) size 171x21
+  RenderBlock {DIV} at (0,0) size 171x21
+layer at (118,181) size 11x16
+  RenderBlock (relative positioned) {DIV} at (0,0) size 11x16

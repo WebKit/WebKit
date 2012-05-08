@@ -1,0 +1,43 @@
+CONSOLE MESSAGE: line 5: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.testRepaint()')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x562
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 194x21
+          text run at (0,0) width 194: "This is a regression test for "
+        RenderInline {I} at (0,0) size 733x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (194,0) size 379x21
+              text run at (194,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7301"
+          RenderText {#text} at (573,0) size 733x42
+            text run at (573,0) width 4: " "
+            text run at (577,0) width 156: "Text shadow does not"
+            text run at (0,21) width 113: "repaint correctly"
+        RenderText {#text} at (113,21) size 4x21
+          text run at (113,21) width 4: "."
+      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (30,90) size 724x24
+        RenderInline {SPAN} at (0,0) size 217x24 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 217x24
+            text run at (0,0) width 217: "Lorem ipsum dolor sit amet"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (30,144) size 724x24
+        RenderInline {SPAN} at (0,0) size 217x24 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 217x24
+            text run at (0,0) width 217: "Lorem ipsum dolor sit amet"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (30,198) size 724x24
+        RenderText {#text} at (0,2) size 96x21
+          text run at (0,2) width 96: "Lorem ipsum "
+        RenderInline {SPAN} at (0,0) size 108x24 [bgcolor=#C0C0C0]
+          RenderText {#text} at (96,0) size 108x24
+            text run at (96,0) width 108: "dolor sit amet"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (30,252) size 724x24
+        RenderInline {SPAN} at (0,0) size 104x24 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 104x24
+            text run at (0,0) width 104: "Lorem ipsum"
+        RenderText {#text} at (104,2) size 99x21
+          text run at (104,2) width 99: " dolor sit amet"

@@ -1,0 +1,41 @@
+layer at (0,0) size 784x1096
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1096
+  RenderBlock {HTML} at (0,0) size 784x1096
+    RenderBody {BODY} at (8,8) size 768x1080
+      RenderBlock {P} at (0,0) size 768x42
+        RenderText {#text} at (0,0) size 762x42
+          text run at (0,0) width 762: "This container has no color correction, and neither does the text inside, so it will not be visible since both are"
+          text run at (0,21) width 164: "green and uncorrected."
+      RenderBlock {DIV} at (0,58) size 200x200 [bgcolor=#008000]
+        RenderInline {SPAN} at (0,0) size 117x194 [color=#008000]
+          RenderText {#text} at (0,0) size 117x194
+            text run at (0,0) width 117: "G"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,274) size 768x42
+        RenderText {#text} at (0,0) size 762x42
+          text run at (0,0) width 762: "This container has sRGB color correction specified, and so does the text inside, so the text will not be visible"
+          text run at (0,21) width 250: "since both are green and corrected."
+      RenderBlock {DIV} at (0,332) size 200x200 [bgcolor=#008000]
+        RenderInline {SPAN} at (0,0) size 117x194 [color=#008000]
+          RenderText {#text} at (0,0) size 117x194
+            text run at (0,0) width 117: "G"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,548) size 768x42
+        RenderText {#text} at (0,0) size 761x42
+          text run at (0,0) width 761: "This container has sRGB color correction specified. The text inside does not have the property specified, but"
+          text run at (0,21) width 711: "the text inherits the container's style, so the text will not be visible since both are green and corrected."
+      RenderBlock {DIV} at (0,606) size 200x200 [bgcolor=#008000]
+        RenderInline {SPAN} at (0,0) size 117x194 [color=#008000]
+          RenderText {#text} at (0,0) size 117x194
+            text run at (0,0) width 117: "G"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,822) size 768x42
+        RenderText {#text} at (0,0) size 752x42
+          text run at (0,0) width 752: "This container has default color-correction specified, and the text has sRGB color correction specified. This"
+          text run at (0,21) width 646: "text is visible even though both are green since the text is corrected and the container is not."
+      RenderBlock {DIV} at (0,880) size 200x200 [bgcolor=#008000]
+        RenderInline {SPAN} at (0,0) size 117x194 [color=#008000]
+          RenderText {#text} at (0,0) size 117x194
+            text run at (0,0) width 117: "G"
+        RenderText {#text} at (0,0) size 0x0

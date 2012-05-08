@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 408x177
-  RenderBlock (positioned) {DIV} at (8,8) size 369x177 [border: (1px solid #FF0000)]
-    RenderText {#text} at (1,1) size 367x175
-      text run at (1,1) width 367: "Testing the bug"
+layer at (8,8) size 449x176
+  RenderBlock (positioned) {DIV} at (8,8) size 449x176 [border: (1px solid #FF0000)]
+    RenderText {#text} at (1,1) size 447x174
+      text run at (1,1) width 447: "Testing the bug"

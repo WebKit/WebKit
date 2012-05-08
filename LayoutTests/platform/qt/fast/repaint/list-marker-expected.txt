@@ -1,0 +1,47 @@
+CONSOLE MESSAGE: line 8: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.testRepaint()')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 744x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=12910"
+          RenderText {#text} at (386,0) size 744x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 354: "REGRESSION (r18756-r18765): list-bullet doesn't"
+            text run at (0,21) width 463: "redraw properly when changing the list's content using JavaScript"
+        RenderText {#text} at (463,21) size 4x21
+          text run at (463,21) width 4: "."
+      RenderBlock {UL} at (0,58) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 22x21
+              text run at (0,0) width 22: "foo"
+          RenderBlock {DIV} at (10,31) size 724x0
+      RenderBlock {UL} at (0,95) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderListMarker at (-1,0) size 7x21: bullet
+            RenderText {#text} at (16,0) size 23x21
+              text run at (16,0) width 23: "bar"
+          RenderBlock {DIV} at (10,31) size 724x0
+      RenderBlock {UL} at (0,132) size 784x21
+        RenderListItem {LI} at (0,0) size 744x21
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderListMarker at (755,0) size 7x21: bullet
+            RenderText {#text} at (722,0) size 22x21
+              text run at (722,0) width 22: "foo"
+          RenderBlock {DIV} at (10,31) size 724x0
+      RenderBlock {UL} at (0,169) size 784x21
+        RenderListItem {LI} at (0,0) size 744x21
+          RenderBlock (anonymous) at (0,0) size 744x21
+            RenderListMarker at (738,0) size 7x21: bullet
+            RenderText {#text} at (705,0) size 23x21
+              text run at (705,0) width 23: "bar"
+          RenderBlock {DIV} at (10,31) size 724x0

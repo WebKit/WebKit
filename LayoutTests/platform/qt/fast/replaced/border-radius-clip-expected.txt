@@ -1,0 +1,33 @@
+layer at (0,0) size 784x959
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x935
+  RenderBlock {HTML} at (0,0) size 784x935
+    RenderBody {BODY} at (8,8) size 768x919
+      RenderText {#text} at (0,0) size 511x21
+        text run at (0,0) width 511: "All of the replaced elements below should be clipped to a border-radius. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderImage {IMG} at (0,21) size 100x100
+      RenderText {#text} at (100,105) size 4x21
+        text run at (100,105) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderImage {INPUT} at (0,126) size 100x100
+      RenderText {#text} at (100,210) size 4x21
+        text run at (100,210) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderPartObject {IFRAME} at (0,231) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x150
+          RenderBlock {HTML} at (0,0) size 300x150
+            RenderBody {BODY} at (0,0) size 300x150
+              RenderImage {IMG} at (0,0) size 100x100
+      RenderText {#text} at (304,369) size 4x21
+        text run at (304,369) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (300,524) size 4x21
+        text run at (300,524) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderEmbeddedObject {EMBED} at (0,545) size 556x406 [bgcolor=#00FF00] [border: (3px solid #000000)]
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,398) size 300x150
+  RenderVideo {VIDEO} at (0,390) size 300x150

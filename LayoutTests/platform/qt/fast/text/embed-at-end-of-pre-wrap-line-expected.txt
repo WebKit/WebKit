@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 285x21
+          text run at (0,0) width 285: "The following boxes should be identical."
+      RenderBlock {DIV} at (0,37) size 80x52 [border: (1px solid #000000)]
+        RenderText {#text} at (5,5) size 73x42
+          text run at (5,5) width 73: "Lorem......."
+          text run at (5,26) width 4: " "
+        RenderInline {SPAN} at (0,0) size 43x21
+          RenderText {#text} at (9,26) size 43x21
+            text run at (9,26) width 43 RTL override: "muspi"
+        RenderText {#text} at (52,26) size 0x21
+          text run at (52,26) width 0: " "
+      RenderBlock {DIV} at (0,97) size 80x52 [border: (1px solid #000000)]
+        RenderText {#text} at (5,5) size 73x42
+          text run at (5,5) width 73: "Lorem......."
+          text run at (5,26) width 47: " ipsum"
+          text run at (52,26) width 0: " "

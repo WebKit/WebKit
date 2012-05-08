@@ -5,7 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 100x200
         RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
-          RenderText {#text} at (0,39) size 4x22
+          RenderText {#text} at (0,39) size 4x21
             text run at (0,39) width 4: " "
         RenderBlock (anonymous) at (0,100) size 100x100
-          RenderBR {BR} at (0,39) size 0x22
+          RenderBR {BR} at (0,39) size 0x21
+selection start: position 0 of child 1 {DIV} of child 1 {DIV} of body
+selection end:   position 0 of child 2 {BR} of child 1 {DIV} of body

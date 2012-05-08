@@ -3,19 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x20
-        RenderText {#text} at (0,0) size 53x19
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 669x19
-          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
-            RenderText {#text} at (53,0) size 337x19
-              text run at (53,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4227"
-          RenderText {#text} at (390,0) size 332x19
-            text run at (390,0) width 4: " "
-            text run at (394,0) width 328: "The ex unit doesn't work for font-variant: small-caps"
-        RenderText {#text} at (722,0) size 4x19
-          text run at (722,0) width 4: "."
-      RenderBlock {P} at (0,34) size 784x19
-        RenderText {#text} at (0,0) size 250x19
-          text run at (0,0) width 250: "There should be a green square below:"
-      RenderBlock {DIV} at (0,67) size 200x200 [bgcolor=#008000]
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 768x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 379x21
+              text run at (57,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4227"
+          RenderText {#text} at (436,0) size 768x42
+            text run at (436,0) width 4: " "
+            text run at (440,0) width 328: "The ex unit doesn't work for font-variant: small-"
+            text run at (0,21) width 34: "caps"
+        RenderText {#text} at (34,21) size 4x21
+          text run at (34,21) width 4: "."
+      RenderBlock {P} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 278x21
+          text run at (0,0) width 278: "There should be a green square below:"
+      RenderBlock {DIV} at (0,95) size 160x160 [bgcolor=#008000]

@@ -3,13 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x63
-        RenderTableSection {TBODY} at (0,0) size 784x63
-          RenderTableRow {TR} at (0,2) size 784x59
-            RenderTableCell {TD} at (2,2) size 780x59 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 778x57
-                RenderText {#text} at (0,0) size 767x57
-                  text run at (0,0) width 755: "Three cheers    for OldVet and the letter he wrote to Senator Dodd (see above Comment).  We all need to be proactive "
-                  text run at (0,19) width 767: "and contact our senators and representatives to let them know our strong feelings on this subject.  I would lose what little "
-                  text run at (0,38) width 460: "faith I have left in our government if they engineered a tax payer bailout. "
-                  text run at (460,38) width 0: " "
+      RenderTable {TABLE} at (0,0) size 784x69
+        RenderTableSection {TBODY} at (0,0) size 784x69
+          RenderTableRow {TR} at (0,2) size 784x65
+            RenderTableCell {TD} at (2,2) size 780x65 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 778x63
+                RenderText {#text} at (0,0) size 767x63
+                  text run at (0,0) width 759: "Three cheers    for OldVet and the letter he wrote to Senator Dodd (see above Comment).  We all need to be"
+                  text run at (759,0) width 4: " "
+                  text run at (0,21) width 763: "proactive and contact our senators and representatives to let them know our strong feelings on this subject.  I"
+                  text run at (763,21) width 4: " "
+                  text run at (0,42) width 659: "would lose what little faith I have left in our government if they engineered a tax payer bailout. "
+                  text run at (659,42) width 0: " "

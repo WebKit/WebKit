@@ -2,29 +2,28 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 638x19
-          text run at (0,0) width 638: "The black outline box should be a 50px by 50px square with its top right corner anchored to the right "
-        RenderInline {SPAN} at (0,0) size 27x19 [color=#0000FF]
-          RenderText {#text} at (638,0) size 27x19
-            text run at (638,0) width 27: "blue"
-        RenderText {#text} at (665,0) size 782x38
-          text run at (665,0) width 117: " border on the first"
-          text run at (0,19) width 26: "line."
-      RenderBlock {P} at (0,52) size 600x76
-        RenderText {#text} at (415,0) size 185x19
-          text run at (415,0) width 185 RTL override: "ILorem ipsum dolor sit amet, "
-        RenderText {#text} at (7,38) size 593x38
-          text run at (7,38) width 91 RTL override: "duis aute irure"
-          text run at (353,57) width 247 RTL override: "dolor in reprehenderit in voluptate velit."
-layer at (8,60) size 586x59
-  RenderInline (relative positioned) {SPAN} at (0,0) size 586x59 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #0000FF) (1px solid #808080) (20px solid #FFA500)]
-    RenderText {#text} at (38,0) size 562x38
-      text run at (38,0) width 337 RTL override: "con a pariatur. Excepteur sint occaecat cupidatat non"
-      text run at (237,19) width 363 RTL override: "proident, sunt in culp qui officia deserunt mollit animequs "
-    RenderText {#text} at (14,19) size 586x38
-      text run at (14,19) width 223 RTL override: "ILOREM ipsum dol sDuis aute irure"
-      text run at (138,38) width 462 RTL override: "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nullat "
-layer at (343,60) size 50x50
-  RenderBlock (positioned) {DIV} at (297,1) size 50x50
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 707x21
+          text run at (0,0) width 707: "The black outline box should be a 50px by 50px square with its top right corner anchored to the right "
+        RenderInline {SPAN} at (0,0) size 31x21 [color=#0000FF]
+          RenderText {#text} at (707,0) size 31x21
+            text run at (707,0) width 31: "blue"
+        RenderText {#text} at (0,21) size 157x21
+          text run at (0,21) width 157: "border on the first line."
+      RenderBlock {DIV} at (0,58) size 600x84
+        RenderText {#text} at (397,0) size 203x21
+          text run at (397,0) width 203 RTL override: "ILorem ipsum dolor sit amet, "
+        RenderText {#text} at (137,63) size 380x21
+          text run at (137,63) width 380 RTL override: "duis aute irure dolor in reprehenderit in voluptate velit."
+layer at (8,66) size 586x86
+  RenderInline (relative positioned) {SPAN} at (0,0) size 586x86 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #0000FF) (1px solid #808080) (20px solid #FFA500)]
+    RenderText {#text} at (14,0) size 586x42
+      text run at (14,0) width 343 RTL override: "con a pariatur. Excepteur sint occaecat cupidatat"
+      text run at (164,21) width 436 RTL override: "non proident, sunt in culp qui officia deserunt mollit animequs "
+    RenderText {#text} at (30,21) size 585x63
+      text run at (30,21) width 134 RTL override: "ILOREM ipsum dol"
+      text run at (15,42) width 585 RTL override: "sDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
+      text run at (557,63) width 43 RTL override: "nullat "
+layer at (505,66) size 50x50
+  RenderBlock (positioned) {DIV} at (483,1) size 50x50

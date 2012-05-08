@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 767x42
+          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
+            RenderText {#text} at (57,0) size 329x21
+              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=12590"
+          RenderText {#text} at (386,0) size 767x42
+            text run at (386,0) width 4: " "
+            text run at (390,0) width 377: "REGRESSION: Text selection is weird in textareas in"
+            text run at (0,21) width 164: "Trac wiki editing pages"
+        RenderText {#text} at (164,21) size 4x21
+          text run at (164,21) width 4: "."
+layer at (13,66) size 126x126 clip at (16,69) size 104x120 scrollY 42 scrollHeight 162
+  RenderBlock {DIV} at (5,58) size 126x126 [border: (3px solid #000000)]
+    RenderBlock {DIV} at (13,13) size 84x100
+    RenderBlock (anonymous) at (13,113) size 84x42
+      RenderInline {SPAN} at (0,0) size 45x42
+        RenderText {#text} at (0,0) size 45x21
+          text run at (0,0) width 45: "Lorem"
+        RenderBR {BR} at (45,16) size 0x0
+        RenderText {#text} at (0,21) size 43x21
+          text run at (0,21) width 43: "ipsum"
+      RenderText {#text} at (0,0) size 0x0

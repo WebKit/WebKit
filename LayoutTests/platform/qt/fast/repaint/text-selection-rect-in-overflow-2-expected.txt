@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x175
+  RenderBlock {HTML} at (0,0) size 800x175
+    RenderBody {BODY} at (8,8) size 784x159
+      RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x150
+          RenderBlock {HTML} at (0,0) size 300x150
+            RenderBody {BODY} at (8,8) size 284x134
+        layer at (8,8) size 284x100 scrollY 89 scrollHeight 189
+          RenderBlock {DIV} at (0,0) size 284x100
+            RenderBR {BR} at (0,0) size 0x21
+            RenderBR {BR} at (0,21) size 0x21
+            RenderBR {BR} at (0,42) size 0x21
+            RenderBR {BR} at (0,63) size 0x21
+            RenderText {#text} at (0,84) size 259x21
+              text run at (0,84) width 259: "Should have blue, not gray, highlight"
+            RenderBR {BR} at (259,100) size 0x0
+            RenderBR {BR} at (0,105) size 0x21
+            RenderBR {BR} at (0,126) size 0x21
+            RenderBR {BR} at (0,147) size 0x21
+            RenderBR {BR} at (0,168) size 0x21
+      RenderText {#text} at (0,0) size 0x0

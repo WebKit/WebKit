@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: line 5: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.testRepaint()')
+layer at (0,0) size 784x626
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x552
+      RenderBlock {P} at (0,0) size 768x42
+        RenderText {#text} at (0,0) size 258x21
+          text run at (0,0) width 258: "This is a test for regressions against "
+        RenderInline {I} at (0,0) size 767x42
+          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
+            RenderText {#text} at (258,0) size 379x21
+              text run at (258,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8056"
+          RenderText {#text} at (637,0) size 767x42
+            text run at (637,0) width 4: " "
+            text run at (641,0) width 126: "Flexible boxes do"
+            text run at (0,21) width 340: "not repaint their top, left and children's overflows"
+        RenderText {#text} at (340,21) size 4x21
+          text run at (340,21) width 4: "."
+      RenderBlock {HR} at (0,58) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,68) size 768x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+            RenderText {#text} at (1,1) size 195x21
+              text run at (1,1) width 195: "Lorem ipsum dolor sit amet."
+      RenderBlock {DIV} at (0,188) size 768x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,308) size 768x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,428) size 768x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+            RenderText {#text} at (1,1) size 92x189
+              text run at (1,1) width 92: "Lorem ipsum"
+              text run at (1,22) width 56: "dolor sit"
+              text run at (1,43) width 39: "amet,"
+              text run at (1,64) width 91: "consectetuer"
+              text run at (1,85) width 73: "adipiscing"
+              text run at (1,106) width 87: "elit. Etiam et"
+              text run at (1,127) width 85: "ipsum. Nam"
+              text run at (1,148) width 91: "consectetuer"
+              text run at (1,169) width 89: "mi eget velit."

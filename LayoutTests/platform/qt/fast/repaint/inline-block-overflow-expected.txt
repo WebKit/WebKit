@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 5: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.testRepaint()')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 353x21
+          text run at (0,0) width 353: "This is a repaint test of inline blocks with overflow."
+      RenderBlock {HR} at (0,37) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,47) size 784x21
+        RenderInline {SPAN} at (0,0) size 212x21
+          RenderText {#text} at (0,0) size 112x21
+            text run at (0,0) width 112: "Here comes an "
+          RenderBlock {SPAN} at (112,0) size 100x20 [bgcolor=#C0C0C0]
+            RenderText {#text} at (0,0) size 97x42
+              text run at (0,0) width 81: "inline block"
+              text run at (0,21) width 97: "with overflow."
+        RenderText {#text} at (0,0) size 0x0

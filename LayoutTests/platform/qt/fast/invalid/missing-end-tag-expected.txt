@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x195
+  RenderBlock {html} at (0,0) size 800x195
+    RenderBlock {parsererror} at (16,16) size 768x142 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x25
+        RenderText {#text} at (0,0) size 365x25
+          text run at (0,0) width 365: "This page contains the following errors:"
+      RenderBlock {div} at (18,63) size 732x16
+        RenderText {#text} at (0,0) size 338x16
+          text run at (0,0) width 338: "error on line 7 at column 7: Opening and ending tag mismatch."
+      RenderBlock {h3} at (18,97) size 732x25
+        RenderText {#text} at (0,0) size 476x25
+          text run at (0,0) width 476: "Below is a rendering of the page up to the first error."
+    RenderBlock (anonymous) at (0,174) size 800x21
+      RenderInline {body} at (0,0) size 204x21
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {p} at (0,0) size 204x21
+          RenderText {#text} at (0,0) size 204x21
+            text run at (0,0) width 204: "You should see errors above"
+        RenderText {#text} at (0,0) size 0x0
+        RenderInline {p} at (0,0) size 0x0

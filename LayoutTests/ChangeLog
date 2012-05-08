@@ -1,3 +1,177 @@
+2012-05-08  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unskip now passing tests and update platform specific expected files.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+        * platform/qt/Skipped.orig: Copied from LayoutTests/platform/qt/Skipped.
+        * platform/qt/editing/pasteboard/paste-text-014-expected.png: Added.
+        * platform/qt/fast/block/float/editable-text-overlapping-float-expected.png: Added.
+        * platform/qt/fast/block/float/editable-text-overlapping-float-expected.txt:
+        * platform/qt/fast/block/float/multiple-float-positioning-expected.png: Added.
+        * platform/qt/fast/block/float/multiple-float-positioning-expected.txt:
+        * platform/qt/fast/block/margin-collapse/103-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/103-expected.txt: Added.
+        * platform/qt/fast/block/positioning/absolute-in-inline-ltr-2-expected.png: Added.
+        * platform/qt/fast/block/positioning/absolute-in-inline-ltr-2-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-in-inline-rtl-2-expected.png: Added.
+        * platform/qt/fast/block/positioning/absolute-in-inline-rtl-2-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-in-inline-rtl-3-expected.png: Added.
+        * platform/qt/fast/block/positioning/absolute-in-inline-rtl-3-expected.txt:
+        * platform/qt/fast/block/positioning/auto/006-expected.png: Added.
+        * platform/qt/fast/block/positioning/auto/006-expected.txt:
+        * platform/qt/fast/css/apple-prefix-expected.png: Added.
+        * platform/qt/fast/css/apple-prefix-expected.txt:
+        * platform/qt/fast/css/color-correction-backgrounds-and-text-expected.png: Added.
+        * platform/qt/fast/css/color-correction-backgrounds-and-text-expected.txt: Added.
+        * platform/qt/fast/css/ex-after-font-variant-expected.png: Added.
+        * platform/qt/fast/css/ex-after-font-variant-expected.txt:
+        * platform/qt/fast/css/percentage-non-integer-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/selection-clear-expected.png.
+        * platform/qt/fast/css/percentage-non-integer-expected.txt:
+        * platform/qt/fast/css/positioned-overflow-scroll-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/selection-clear-expected.png.
+        * platform/qt/fast/css/positioned-overflow-scroll-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLImageElement/image-alt-text-expected.png: Added.
+        * platform/qt/fast/dom/HTMLImageElement/image-alt-text-expected.txt:
+        * platform/qt/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png: Added.
+        * platform/qt/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/qt/fast/dynamic/008-expected.png: Added.
+        * platform/qt/fast/dynamic/008-expected.txt:
+        * platform/qt/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/qt/fast/forms/box-shadow-override-expected.txt:
+        * platform/qt/fast/forms/disabled-select-change-index-expected.png: Added.
+        * platform/qt/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/qt/fast/forms/file/file-input-direction-expected.png: Added.
+        * platform/qt/fast/forms/file/file-input-direction-expected.txt:
+        * platform/qt/fast/forms/file/file-input-disabled-expected.png: Added.
+        * platform/qt/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/qt/fast/forms/form-element-geometry-expected.png: Added.
+        * platform/qt/fast/forms/form-element-geometry-expected.txt:
+        * platform/qt/fast/forms/input-disabled-color-expected.png: Added.
+        * platform/qt/fast/forms/input-disabled-color-expected.txt:
+        * platform/qt/fast/forms/input-text-click-outside-expected.png: Added.
+        * platform/qt/fast/forms/input-text-click-outside-expected.txt: Added.
+        * platform/qt/fast/forms/input-text-scroll-left-on-blur-expected.png: Added.
+        * platform/qt/fast/forms/input-text-scroll-left-on-blur-expected.txt: Added.
+        * platform/qt/fast/forms/negativeLineHeight-expected.png: Added.
+        * platform/qt/fast/forms/negativeLineHeight-expected.txt:
+        * platform/qt/fast/forms/placeholder-pseudo-style-expected.png: Added.
+        * platform/qt/fast/forms/placeholder-pseudo-style-expected.txt: Added.
+        * platform/qt/fast/forms/range/slider-padding-expected.png: Added.
+        * platform/qt/fast/forms/range/slider-padding-expected.txt: Added.
+        * platform/qt/fast/forms/tabbing-input-iframe-expected.png: Added.
+        * platform/qt/fast/forms/tabbing-input-iframe-expected.txt: Added.
+        * platform/qt/fast/forms/textAreaLineHeight-expected.png: Added.
+        * platform/qt/fast/forms/textAreaLineHeight-expected.txt: Added.
+        * platform/qt/fast/forms/textarea-align-expected.png: Added.
+        * platform/qt/fast/forms/textarea-align-expected.txt:
+        * platform/qt/fast/forms/textarea-scrollbar-expected.png: Added.
+        * platform/qt/fast/forms/textarea-scrollbar-expected.txt: Added.
+        * platform/qt/fast/forms/textarea-scrolled-type-expected.png: Added.
+        * platform/qt/fast/forms/textarea-scrolled-type-expected.txt: Added.
+        * platform/qt/fast/forms/textarea-setinnerhtml-expected.png: Added.
+        * platform/qt/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/qt/fast/inline/inline-borders-with-bidi-override-expected.png: Added.
+        * platform/qt/fast/inline/inline-borders-with-bidi-override-expected.txt:
+        * platform/qt/fast/invalid/016-expected.png: Added.
+        * platform/qt/fast/invalid/016-expected.txt:
+        * platform/qt/fast/invalid/missing-end-tag-expected.png: Added.
+        * platform/qt/fast/invalid/missing-end-tag-expected.txt: Added.
+        * platform/qt/fast/layers/scroll-rect-to-visible-expected.png: Added.
+        * platform/qt/fast/layers/scroll-rect-to-visible-expected.txt:
+        * platform/qt/fast/overflow/003-expected.png: Added.
+        * platform/qt/fast/overflow/003-expected.txt:
+        * platform/qt/fast/overflow/clip-rects-fixed-ancestor-expected.png: Added.
+        * platform/qt/fast/overflow/clip-rects-fixed-ancestor-expected.txt: Added.
+        * platform/qt/fast/overflow/image-selection-highlight-expected.png: Added.
+        * platform/qt/fast/overflow/image-selection-highlight-expected.txt:
+        * platform/qt/fast/overflow/overflow-rtl-expected.png: Added.
+        * platform/qt/fast/overflow/overflow-rtl-expected.txt: Added.
+        * platform/qt/fast/overflow/overflow-x-y-expected.png: Added.
+        * platform/qt/fast/overflow/overflow-x-y-expected.txt: Added.
+        * platform/qt/fast/overflow/scrollRevealButton-expected.png: Added.
+        * platform/qt/fast/overflow/scrollRevealButton-expected.txt: Added.
+        * platform/qt/fast/overflow/unreachable-overflow-rtl-bug-expected.png: Added.
+        * platform/qt/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+        * platform/qt/fast/parser/entity-comment-in-textarea-expected.png: Added.
+        * platform/qt/fast/parser/entity-comment-in-textarea-expected.txt: Added.
+        * platform/qt/fast/parser/open-comment-in-textarea-expected.png: Added.
+        * platform/qt/fast/parser/open-comment-in-textarea-expected.txt: Added.
+        * platform/qt/fast/repaint/button-spurious-layout-hint-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/selection-clear-expected.png.
+        * platform/qt/fast/repaint/button-spurious-layout-hint-expected.txt: Added.
+        * platform/qt/fast/repaint/control-clip-expected.png: Added.
+        * platform/qt/fast/repaint/control-clip-expected.txt:
+        * platform/qt/fast/repaint/flexible-box-overflow-expected.png: Added.
+        * platform/qt/fast/repaint/flexible-box-overflow-expected.txt: Added.
+        * platform/qt/fast/repaint/flexible-box-overflow-horizontal-expected.png: Added.
+        * platform/qt/fast/repaint/flexible-box-overflow-horizontal-expected.txt: Added.
+        * platform/qt/fast/repaint/focus-ring-expected.png: Added.
+        * platform/qt/fast/repaint/focus-ring-expected.txt: Added.
+        * platform/qt/fast/repaint/inline-block-overflow-expected.png: Added.
+        * platform/qt/fast/repaint/inline-block-overflow-expected.txt: Added.
+        * platform/qt/fast/repaint/inline-outline-repaint-expected.png: Added.
+        * platform/qt/fast/repaint/inline-outline-repaint-expected.txt:
+        * platform/qt/fast/repaint/layer-child-outline-expected.png: Added.
+        * platform/qt/fast/repaint/layer-child-outline-expected.txt: Added.
+        * platform/qt/fast/repaint/layer-outline-expected.png: Added.
+        * platform/qt/fast/repaint/layer-outline-expected.txt: Added.
+        * platform/qt/fast/repaint/layer-outline-horizontal-expected.png: Added.
+        * platform/qt/fast/repaint/layer-outline-horizontal-expected.txt: Added.
+        * platform/qt/fast/repaint/list-marker-expected.png: Added.
+        * platform/qt/fast/repaint/list-marker-expected.txt: Added.
+        * platform/qt/fast/repaint/selection-after-delete-expected.png: Added.
+        * platform/qt/fast/repaint/selection-after-delete-expected.txt:
+        * platform/qt/fast/repaint/selection-after-remove-expected.png: Added.
+        * platform/qt/fast/repaint/selection-after-remove-expected.txt:
+        * platform/qt/fast/repaint/selection-clear-expected.png:
+        * platform/qt/fast/repaint/selection-clear-expected.txt:
+        * platform/qt/fast/repaint/selection-gap-overflow-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/selection-gap-overflow-scroll-expected.txt: Added.
+        * platform/qt/fast/repaint/text-selection-rect-in-overflow-2-expected.png: Added.
+        * platform/qt/fast/repaint/text-selection-rect-in-overflow-2-expected.txt: Added.
+        * platform/qt/fast/repaint/text-selection-rect-in-overflow-expected.png: Added.
+        * platform/qt/fast/repaint/text-selection-rect-in-overflow-expected.txt: Added.
+        * platform/qt/fast/repaint/text-shadow-expected.png: Added.
+        * platform/qt/fast/repaint/text-shadow-expected.txt: Added.
+        * platform/qt/fast/repaint/text-shadow-horizontal-expected.png: Added.
+        * platform/qt/fast/repaint/text-shadow-horizontal-expected.txt: Added.
+        * platform/qt/fast/replaced/border-radius-clip-expected.png: Added.
+        * platform/qt/fast/replaced/border-radius-clip-expected.txt: Added.
+        * platform/qt/fast/replaced/width100percent-textarea-expected.png: Added.
+        * platform/qt/fast/replaced/width100percent-textarea-expected.txt: Added.
+        * platform/qt/fast/table/003-expected.png: Added.
+        * platform/qt/fast/table/003-expected.txt:
+        * platform/qt/fast/table/cell-pref-width-invalidation-expected.png: Added.
+        * platform/qt/fast/table/cell-pref-width-invalidation-expected.txt:
+        * platform/qt/fast/text/atsui-small-caps-punctuation-size-expected.png: Added.
+        * platform/qt/fast/text/atsui-small-caps-punctuation-size-expected.txt:
+        * platform/qt/fast/text/basic/003-expected.png: Added.
+        * platform/qt/fast/text/basic/003-expected.txt:
+        * platform/qt/fast/text/cg-vs-atsui-expected.png: Added.
+        * platform/qt/fast/text/cg-vs-atsui-expected.txt:
+        * platform/qt/fast/text/complex-text-opacity-expected.png: Added.
+        * platform/qt/fast/text/complex-text-opacity-expected.txt: Added.
+        * platform/qt/fast/text/embed-at-end-of-pre-wrap-line-expected.png: Added.
+        * platform/qt/fast/text/embed-at-end-of-pre-wrap-line-expected.txt: Added.
+        * platform/qt/fast/text/large-text-composed-char-expected.png: Added.
+        * platform/qt/fast/text/large-text-composed-char-expected.txt:
+        * platform/qt/fast/text/letter-spacing-negative-opacity-expected.png: Added.
+        * platform/qt/fast/text/letter-spacing-negative-opacity-expected.txt:
+        * platform/qt/fast/text/line-breaks-after-white-space-expected.png: Added.
+        * platform/qt/fast/text/line-breaks-after-white-space-expected.txt:
+        * platform/qt/fast/text/whitespace/normal-after-nowrap-breaking-expected.png: Added.
+        * platform/qt/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-break-word-expected.png: Added.
+        * platform/qt/fast/text/whitespace/pre-break-word-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-wrap-line-test-expected.png: Added.
+        * platform/qt/fast/text/whitespace/pre-wrap-line-test-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-wrap-overflow-selection-expected.png: Added.
+        * platform/qt/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+        * platform/qt/fast/text/word-break-expected.png: Added.
+        * platform/qt/fast/text/word-break-expected.txt:
+        * platform/qt/fast/xsl/xslt-entity-expected.png: Added.
+        * platform/qt/fast/xsl/xslt-entity-expected.txt:
+
 2012-05-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Extra line-breaks added when copying from source.
