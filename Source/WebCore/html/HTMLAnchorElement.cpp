@@ -245,9 +245,9 @@ void HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)
     dispatchSimulatedClick(0, sendMouseEvents);
 }
 
-bool HTMLAnchorElement::isURLAttribute(Attribute *attr) const
+bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attr->name() == hrefAttr || HTMLElement::isURLAttribute(attr);
+    return attribute.name() == hrefAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 bool HTMLAnchorElement::canStartSelection() const

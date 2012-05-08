@@ -184,9 +184,9 @@ TextTrack* HTMLTrackElement::track()
     return ensureTrack();
 }
 
-bool HTMLTrackElement::isURLAttribute(Attribute* attribute) const
+bool HTMLTrackElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute->name() == srcAttr || HTMLElement::isURLAttribute(attribute);
+    return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 void HTMLTrackElement::scheduleLoad()

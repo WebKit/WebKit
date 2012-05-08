@@ -225,9 +225,9 @@ void HTMLFrameElementBase::setFocus(bool received)
     }
 }
 
-bool HTMLFrameElementBase::isURLAttribute(Attribute *attr) const
+bool HTMLFrameElementBase::isURLAttribute(const Attribute& attribute) const
 {
-    return attr->name() == srcAttr || HTMLFrameOwnerElement::isURLAttribute(attr);
+    return attribute.name() == srcAttr || HTMLFrameOwnerElement::isURLAttribute(attribute);
 }
 
 int HTMLFrameElementBase::width()

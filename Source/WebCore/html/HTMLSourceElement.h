@@ -51,7 +51,7 @@ private:
     
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
     virtual void willRemove();
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     void errorEventTimerFired(Timer<HTMLSourceElement>*);
 

@@ -325,7 +325,7 @@ protected:
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual void finishParsingChildren();
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual void attach();
 
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;

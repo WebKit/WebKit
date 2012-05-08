@@ -40,7 +40,7 @@ private:
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual const QualifiedName& imageSourceAttributeName() const;
 
     virtual RenderWidget* renderWidgetForJSBindings();

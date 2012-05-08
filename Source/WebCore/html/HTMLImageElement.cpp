@@ -259,13 +259,13 @@ int HTMLImageElement::naturalHeight() const
     return m_imageLoader.image()->imageSizeForRenderer(renderer(), 1.0f).height();
 }
 
-bool HTMLImageElement::isURLAttribute(Attribute* attr) const
+bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attr->name() == srcAttr
-        || attr->name() == lowsrcAttr
-        || attr->name() == longdescAttr
-        || (attr->name() == usemapAttr && attr->value().string()[0] != '#')
-        || HTMLElement::isURLAttribute(attr);
+    return attribute.name() == srcAttr
+        || attribute.name() == lowsrcAttr
+        || attribute.name() == longdescAttr
+        || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#')
+        || HTMLElement::isURLAttribute(attribute);
 }
 
 const AtomicString& HTMLImageElement::alt() const

@@ -59,11 +59,11 @@ bool HTMLParamElement::isURLParameter(const String& name)
     return equalIgnoringCase(name, "data") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "src");
 }
 
-bool HTMLParamElement::isURLAttribute(Attribute* attr) const
+bool HTMLParamElement::isURLAttribute(const Attribute& attribute) const
 {
-    if (attr->name() == valueAttr && isURLParameter(name()))
+    if (attribute.name() == valueAttr && isURLParameter(name()))
         return true;
-    return HTMLElement::isURLAttribute(attr);
+    return HTMLElement::isURLAttribute(attribute);
 }
 
 void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

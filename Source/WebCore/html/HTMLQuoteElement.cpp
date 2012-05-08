@@ -49,9 +49,9 @@ Node::InsertionNotificationRequest HTMLQuoteElement::insertedInto(Node* insertio
     return HTMLElement::insertedInto(insertionPoint);
 }
 
-bool HTMLQuoteElement::isURLAttribute(Attribute* attribute) const
+bool HTMLQuoteElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute->name() == citeAttr || HTMLElement::isURLAttribute(attribute);
+    return attribute.name() == citeAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 }

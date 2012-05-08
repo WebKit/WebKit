@@ -183,9 +183,9 @@ void HTMLBodyElement::didNotifyDescendantInseretions(Node* insertionPoint)
         view->scheduleRelayout();
 }
 
-bool HTMLBodyElement::isURLAttribute(Attribute *attr) const
+bool HTMLBodyElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attr->name() == backgroundAttr || HTMLElement::isURLAttribute(attr);
+    return attribute.name() == backgroundAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 bool HTMLBodyElement::supportsFocus() const

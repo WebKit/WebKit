@@ -177,9 +177,9 @@ void HTMLButtonElement::accessKeyAction(bool sendMouseEvents)
     dispatchSimulatedClick(0, sendMouseEvents);
 }
 
-bool HTMLButtonElement::isURLAttribute(Attribute* attr) const
+bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attr->name() == formactionAttr || HTMLFormControlElement::isURLAttribute(attr);
+    return attribute.name() == formactionAttr || HTMLFormControlElement::isURLAttribute(attribute);
 }
 
 String HTMLButtonElement::value() const

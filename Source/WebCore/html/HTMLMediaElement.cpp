@@ -4021,9 +4021,9 @@ void HTMLMediaElement::mediaCanStart()
     loadInternal();
 }
 
-bool HTMLMediaElement::isURLAttribute(Attribute* attribute) const
+bool HTMLMediaElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute->name() == srcAttr || HTMLElement::isURLAttribute(attribute);
+    return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 void HTMLMediaElement::setShouldDelayLoadEvent(bool shouldDelay)

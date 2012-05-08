@@ -56,7 +56,7 @@ private:
     virtual void setActivatedSubmit(bool flag);
 
     virtual void accessKeyAction(bool sendMouseEvents);
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     virtual bool canStartSelection() const { return false; }
 

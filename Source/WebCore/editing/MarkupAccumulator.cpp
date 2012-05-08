@@ -170,7 +170,7 @@ void MarkupAccumulator::appendCustomAttributes(StringBuilder&, Element*, Namespa
 
 void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, const Element* element, const Attribute& attribute)
 {
-    ASSERT(element->isURLAttribute(const_cast<Attribute*>(&attribute)));
+    ASSERT(element->isURLAttribute(attribute));
     const String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
     UChar quoteChar = '"';
     String strippedURLString = resolvedURLString.stripWhiteSpace();
@@ -419,7 +419,7 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
 
     result.append('=');
 
-    if (element->isURLAttribute(const_cast<Attribute*>(&attribute)))
+    if (element->isURLAttribute(attribute))
         appendQuotedURLAttributeValue(result, element, attribute);
     else {
         result.append('"');

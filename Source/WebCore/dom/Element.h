@@ -281,7 +281,7 @@ public:
 
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }
 
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const { return false; }
 
     KURL getURLAttribute(const QualifiedName&) const;
     KURL getNonEmptyURLAttribute(const QualifiedName&) const;

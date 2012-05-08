@@ -117,9 +117,9 @@ void HTMLSourceElement::errorEventTimerFired(Timer<HTMLSourceElement>*)
     dispatchEvent(Event::create(eventNames().errorEvent, false, true));
 }
 
-bool HTMLSourceElement::isURLAttribute(Attribute* attribute) const
+bool HTMLSourceElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute->name() == srcAttr || HTMLElement::isURLAttribute(attribute);
+    return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 #if ENABLE(MICRODATA)

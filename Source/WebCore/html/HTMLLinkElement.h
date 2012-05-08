@@ -91,7 +91,7 @@ private:
     
     void setDisabledState(bool);
 
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
 private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;

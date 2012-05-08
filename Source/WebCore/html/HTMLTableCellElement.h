@@ -59,7 +59,7 @@ private:
 
     virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 };

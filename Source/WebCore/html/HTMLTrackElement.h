@@ -79,7 +79,7 @@ private:
 
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
     virtual void willRemove() OVERRIDE;
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const OVERRIDE;

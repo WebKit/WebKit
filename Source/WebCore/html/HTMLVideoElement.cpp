@@ -182,10 +182,9 @@ unsigned HTMLVideoElement::height() const
     return ok ? h : 0;
 }
     
-bool HTMLVideoElement::isURLAttribute(Attribute* attribute) const
+bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
 {
-    return HTMLMediaElement::isURLAttribute(attribute)
-        || attribute->name() == posterAttr;
+    return attribute.name() == posterAttr || HTMLMediaElement::isURLAttribute(attribute);
 }
 
 const QualifiedName& HTMLVideoElement::imageSourceAttributeName() const

@@ -62,7 +62,7 @@ private:
     virtual bool supportsFocus() const;
     virtual void setFocus(bool);
     
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual bool isFrameElementBase() const { return true; }
 
     bool viewSourceMode() const { return m_viewSource; }

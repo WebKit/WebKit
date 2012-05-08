@@ -866,11 +866,6 @@ void Element::createAttributeData() const
     m_attributeData = ElementAttributeData::create();
 }
 
-bool Element::isURLAttribute(Attribute*) const
-{
-    return false;
-}
-
 const QualifiedName& Element::imageSourceAttributeName() const
 {
     return srcAttr;
@@ -1841,7 +1836,7 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
 #if !ASSERT_DISABLED
     if (m_attributeData) {
         if (Attribute* attribute = getAttributeItem(name))
-            ASSERT(isURLAttribute(attribute));
+            ASSERT(isURLAttribute(*attribute));
     }
 #endif
     return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(getAttribute(name)));
@@ -1852,7 +1847,7 @@ KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
 #if !ASSERT_DISABLED
     if (m_attributeData) {
         if (Attribute* attribute = getAttributeItem(name))
-            ASSERT(isURLAttribute(attribute));
+            ASSERT(isURLAttribute(*attribute));
     }
 #endif
     String value = stripLeadingAndTrailingHTMLSpaces(getAttribute(name));

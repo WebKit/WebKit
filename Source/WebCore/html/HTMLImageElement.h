@@ -93,7 +93,7 @@ private:
 
     virtual bool canStartSelection() const { return false; }
 
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     virtual bool draggable() const;
 

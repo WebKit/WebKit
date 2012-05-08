@@ -77,7 +77,7 @@ private:
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
     virtual void didNotifyDescendantInseretions(Node*) OVERRIDE;
     
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     
     virtual bool supportsFocus() const;
 

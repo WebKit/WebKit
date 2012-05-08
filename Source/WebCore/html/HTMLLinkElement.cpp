@@ -390,9 +390,9 @@ void HTMLLinkElement::startLoadingDynamicSheet()
     addPendingSheet(Blocking);
 }
 
-bool HTMLLinkElement::isURLAttribute(Attribute *attr) const
+bool HTMLLinkElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attr->name() == hrefAttr || HTMLElement::isURLAttribute(attr);
+    return attribute.name() == hrefAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 KURL HTMLLinkElement::href() const

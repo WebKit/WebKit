@@ -65,9 +65,9 @@ void HTMLBaseElement::removedFrom(Node* insertionPoint)
         document()->processBaseElement();
 }
 
-bool HTMLBaseElement::isURLAttribute(Attribute* attribute) const
+bool HTMLBaseElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute->name() == hrefAttr || HTMLElement::isURLAttribute(attribute);
+    return attribute.name() == hrefAttr || HTMLElement::isURLAttribute(attribute);
 }
 
 String HTMLBaseElement::target() const

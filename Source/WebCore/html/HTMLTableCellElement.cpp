@@ -121,9 +121,9 @@ StylePropertySet* HTMLTableCellElement::additionalAttributeStyle()
     return 0;
 }
 
-bool HTMLTableCellElement::isURLAttribute(Attribute *attr) const
+bool HTMLTableCellElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attr->name() == backgroundAttr || HTMLTablePartElement::isURLAttribute(attr);
+    return attribute.name() == backgroundAttr || HTMLTablePartElement::isURLAttribute(attribute);
 }
 
 String HTMLTableCellElement::abbr() const

@@ -124,8 +124,7 @@ private:
     virtual void handleLocalEvents(Event*);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
-
-    virtual bool isURLAttribute(Attribute*) const;
+    virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     virtual void documentDidResumeFromPageCache();
 
