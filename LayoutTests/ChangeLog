@@ -1,3 +1,12 @@
+2012-05-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] fast/layers/video-layer.html needs rebaseline after bug85602 landed
+        https://bugs.webkit.org/show_bug.cgi?id=85873
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/fast/layers/video-layer-expected.txt:
+
 2012-05-08  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Add baselines for the tests which are missing expected results
