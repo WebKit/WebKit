@@ -1,5 +1,19 @@
 2012-05-08  Gavin Peters  <gavinp@chromium.org>
 
+        [webkit-patch] Return meaningful results from single-result queries.
+        https://bugs.webkit.org/show_bug.cgi?id=85367
+
+        Reviewed by Dirk Pranke.
+
+        Sometimes a quicksearch returns a single result by just redirecting to the page for that single
+        bug. This patch hacks around that by noticing the redirect target is a single page, and constructing
+        a result list consisting of that one bug.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries._fetch_bugs_from_advanced_query):
+
+2012-05-08  Gavin Peters  <gavinp@chromium.org>
+
         [webkit-patch] Add new chrome-channels command to track down current chrome release channels for a committed bug.
         https://bugs.webkit.org/show_bug.cgi?id=85368
 
