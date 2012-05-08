@@ -250,6 +250,8 @@ static void runTest(const char* cTestPathOrURL)
     gLayoutTestController->closeWebInspector();
     gLayoutTestController->setDeveloperExtrasEnabled(false);
 
+    browser->clearExtraViews();
+
     ewk_view_uri_set(browser->mainView(), "about:blank");
 
     gLayoutTestController.clear();

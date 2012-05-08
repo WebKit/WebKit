@@ -166,6 +166,14 @@ Vector<Evas_Object*> DumpRenderTreeChrome::extraViews() const
     return m_extraViews;
 }
 
+void DumpRenderTreeChrome::clearExtraViews()
+{
+    Vector<Evas_Object*>::iterator it = m_extraViews.begin();
+    for (; it != m_extraViews.end(); ++it)
+        evas_object_del(*it);
+    m_extraViews.clear();
+}
+
 Evas_Object* DumpRenderTreeChrome::mainFrame() const
 {
     return m_mainFrame;
@@ -193,11 +201,6 @@ static inline const char* defaultEditingBehavior()
 
 void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 {
-    Vector<Evas_Object*>::iterator it = m_extraViews.begin();
-    for (; it != m_extraViews.end(); ++it)
-        evas_object_del(*it);
-    m_extraViews.clear();
-
     ewk_settings_icon_database_clear();
     ewk_settings_icon_database_path_set(0);
 

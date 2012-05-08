@@ -1,3 +1,24 @@
+2012-05-08  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] [DRT] Clear extra views before setting a blank page
+        https://bugs.webkit.org/show_bug.cgi?id=85608
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We need to clear the extra views before setting a blank page,
+        otherwise it will cause more events interactions and sometimes
+        trigger a unload(). This was causing frame-crash-with-page-cache.html
+        to leak events to the next test causing any subsequent test to
+        fail.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::clearExtraViews):
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-05-08  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] X11 plugins need to be reworked for Qt5+WK1
