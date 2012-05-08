@@ -704,9 +704,17 @@ void Element::attributeChanged(Attribute* attr)
 {
     document()->incDOMTreeVersion();
 
-    if (isIdAttributeName(attr->name()))
-        idAttributeChanged(attr);
-    else if (attr->name() == HTMLNames::nameAttr)
+    if (isIdAttributeName(attr->name())) {
+        if (attributeData()) {
+            if (attr->isNull())
+                attributeData()->setIdForStyleResolution(nullAtom);
+            else if (document()->inQuirksMode())
+                attributeData()->setIdForStyleResolution(attr->value().lower());
+            else
+                attributeData()->setIdForStyleResolution(attr->value());
+        }
+        setNeedsStyleRecalc();
+    } else if (attr->name() == HTMLNames::nameAttr)
         setHasName(!attr->isNull());
 
     if (!needsStyleRecalc() && document()->attached()) {
@@ -745,19 +753,6 @@ void Element::attributeChanged(Attribute* attr)
         document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXInvalidStatusChanged, true);
 }
 
-void Element::idAttributeChanged(Attribute* attr)
-{
-    if (attributeData()) {
-        if (attr->isNull())
-            attributeData()->setIdForStyleResolution(nullAtom);
-        else if (document()->inQuirksMode())
-            attributeData()->setIdForStyleResolution(attr->value().lower());
-        else
-            attributeData()->setIdForStyleResolution(attr->value());
-    }
-    setNeedsStyleRecalc();
-}
-    
 // Returns true is the given attribute is an event handler.
 // We consider an event handler any attribute that begins with "on".
 // It is a simple solution that has the advantage of not requiring any
