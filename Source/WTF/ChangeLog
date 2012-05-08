@@ -1,5 +1,14 @@
 2012-05-08  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] OS(ANDROID) ImageDiff requires us to build WTF for both host and target
+        https://bugs.webkit.org/show_bug.cgi?id=85897
+
+        Reviewed by Tony Chang.
+
+        * WTF.gyp/WTF.gyp:
+
+2012-05-08  Adam Barth  <abarth@webkit.org>
+
         [Chromium] Assertions.cpp should work on OS(ANDROID)
         https://bugs.webkit.org/show_bug.cgi?id=85867
 
