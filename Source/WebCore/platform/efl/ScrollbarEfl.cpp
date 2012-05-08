@@ -29,9 +29,9 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-#include "NotImplemented.h"
 #include "Page.h"
 #include "ScrollbarTheme.h"
+#include "Settings.h"
 
 #include <Ecore.h>
 #include <Edje.h>
@@ -44,6 +44,9 @@ using namespace WebCore;
 
 PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
 {
+    if (Settings::mockScrollbarsEnabled())
+        return adoptRef(new Scrollbar(scrollableArea, orientation, size));
+
     return adoptRef(new ScrollbarEfl(scrollableArea, orientation, size));
 }
 
