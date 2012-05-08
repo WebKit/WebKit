@@ -140,7 +140,6 @@ public:
     bool inSelectScope(const AtomicString& tagName) const;
     bool inSelectScope(const QualifiedName&) const;
 
-    bool hasOnlyHTMLElementsInScope() const;
     bool hasNumberedHeaderElementInScope() const;
 
     bool hasOnlyOneElement() const;

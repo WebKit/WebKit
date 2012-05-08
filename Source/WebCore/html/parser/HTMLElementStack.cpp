@@ -462,19 +462,6 @@ bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& tar
     return false;
 }
 
-bool HTMLElementStack::hasOnlyHTMLElementsInScope() const
-{
-    for (ElementRecord* record = m_top.get(); record; record = record->next()) {
-        ContainerNode* node = record->node();
-        if (!isInHTMLNamespace(node))
-            return false;
-        if (isScopeMarker(node))
-            return true;
-    }
-    ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.
-    return true;
-}
-
 bool HTMLElementStack::hasNumberedHeaderElementInScope() const
 {
     for (ElementRecord* record = m_top.get(); record; record = record->next()) {
