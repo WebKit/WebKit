@@ -238,7 +238,6 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(P
     data->m_suggestedSaveName = m_suggestedSaveName;
     data->m_isXMLHTTPRequest = m_isXMLHTTPRequest;
     data->m_mustHandleInternally = m_mustHandleInternally;
-    data->m_isRequestedByPlugin = m_isRequestedByPlugin;
     data->m_forceDownload = m_forceDownload;
     data->m_targetType = m_targetType;
     return data;
@@ -252,7 +251,6 @@ void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>
     m_suggestedSaveName = data->m_suggestedSaveName;
     m_isXMLHTTPRequest = data->m_isXMLHTTPRequest;
     m_mustHandleInternally = data->m_mustHandleInternally;
-    m_isRequestedByPlugin = data->m_isRequestedByPlugin;
     m_forceDownload = data->m_forceDownload;
     m_targetType = data->m_targetType;
 }
