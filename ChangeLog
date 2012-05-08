@@ -1,3 +1,16 @@
+2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CMake] Add ENABLE_IFRAME_SEAMLESS flag
+        https://bugs.webkit.org/show_bug.cgi?id=85838
+
+        Reviewed by Eric Seidel.
+
+        Add ENABLE_IFRAME_SEAMLESS flag to CMake and enable it by default.
+        This flag was introduced by r116356.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-05-08  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] X11 plugins need to be reworked for Qt5+WK1
