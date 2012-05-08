@@ -193,6 +193,7 @@ fast/dom/shadow/shadow-boundary-events.html
 fast/dom/shadow/shadow-content-crash.html
 fast/dom/shadow/shadow-contents-fallback-dynamic.html
 fast/dom/shadow/shadow-contents-fallback.html
+fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-element-rendering-single.html
 fast/dom/shadow/shadow-element-rendering-multiple.html
@@ -280,12 +281,6 @@ inspector/styles/svg-style.xhtml
 # Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
 # https://bugs.webkit.org/show_bug.cgi?id=82886
 inspector/styles/override-screen-size.html
-
-# Needs rebaseline
-fast/repaint/scale-page-shrink.html
-
-# Needs rebaseline
-fast/js/constructor-length.html
 
 # Microdata DOM API is not yet enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=68610
@@ -1765,10 +1760,6 @@ fast/css/rtl-ordering.html
 fast/css/text-security.html
 fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
 fast/dom/HTMLImageElement/image-alt-text.html
-# meter-element.html is temporally disabled.We need to rebaseline.
-fast/dom/HTMLMeterElement/meter-element.html
-# progress-bar-value-pseudo-element.html and progress-element.html is temporally disabled. 
-# We need to rebaseline.
 fast/dom/Window/btoa-pnglet.html
 fast/encoding/denormalised-voiced-japanese-chars.html
 fast/encoding/invalid-UTF-8.html
@@ -1984,19 +1975,9 @@ tables/mozilla_expected_failures/bugs/bug2479-5.html
 tables/mozilla/bugs/bug12384.html
 tables/mozilla/bugs/bug99948.html
 
-# Needs a rebaseline
-fast/table/027.html
-fast/table/027-vertical.html
-tables/mozilla/bugs/bug14929.html
-tables/mozilla/bugs/bug2947.html
-tables/mozilla/bugs/bug27038-1.html
-tables/mozilla/bugs/bug27038-2.html
-
-# Needs a rebaseline, caused by https://bugs.webkit.org/show_bug.cgi?id=43022
-tables/mozilla_expected_failures/bugs/bug85016.html
-
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html
+
 # ============================================================================= #
 # Failed canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
 # ============================================================================= #
@@ -2284,13 +2265,6 @@ svg/zoom/page/zoom-zoom-coords.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=53868
 fast/notifications/notifications-document-close-crash.html
 
-# Needs rebaseline
-fast/dom/HTMLMeterElement/meter-element.html
-fast/dom/HTMLMeterElement/meter-boundary-values.html
-fast/dom/HTMLMeterElement/meter-optimums.html
-fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
-fast/dom/HTMLMeterElement/meter-styles.html
-
 # [Qt] inspector/styles/styles-disable-then-enable.html make inspector/styles/styles-iframe.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=58313
 inspector/styles/styles-disable-then-enable.html
@@ -2561,7 +2535,3 @@ ietestcenter/css3/flexbox/flexbox-layout-003.htm
 inspector/debugger/scripts-panel.html
 inspector/debugger/snippets-model.html
 inspector/debugger/source-frame.html
-
-# [Qt] New test introduced in r116255 is failing
-# https://bugs.webkit.org/show_bug.cgi?id=85777
-fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector.html

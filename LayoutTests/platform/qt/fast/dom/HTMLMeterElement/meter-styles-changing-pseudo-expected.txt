@@ -4,36 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H1} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 507x41
-          text run at (0,0) width 507: "Dynamically changing pseudo classes"
+        RenderText {#text} at (0,0) size 593x42
+          text run at (0,0) width 593: "Dynamically changing pseudo classes"
       RenderBlock {P} at (0,63) size 784x21
-        RenderText {#text} at (0,0) size 655x21
-          text run at (0,0) width 655: "Following meter gauge should be green - Changing the paseudo class by changing value attribute"
+        RenderText {#text} at (0,0) size 731x21
+          text run at (0,0) width 731: "Following meter gauge should be solid green - Changing the paseudo class by changing value attribute"
       RenderBlock (anonymous) at (0,100) size 784x16
         RenderMeter {METER} at (0,0) size 80x16
           RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#808080]
-          RenderBlock {DIV} at (0,0) size 72x16 [bgcolor=#008000]
-          RenderBlock {DIV} at (0,0) size 80x16
-          RenderBlock {DIV} at (0,2) size 80x14
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,132) size 784x21
-        RenderText {#text} at (0,0) size 784x21
-          text run at (0,0) width 784: "Following meter gauge should be blue - Changing the pseudo class by changing direction from horizontal to vertical."
-      RenderBlock (anonymous) at (0,169) size 784x100
-        RenderMeter {METER} at (0,0) size 80x100
-          RenderBlock {DIV} at (0,0) size 80x100
-          RenderBlock {DIV} at (0,0) size 72x100
-          RenderBlock {DIV} at (0,0) size 80x100 [bgcolor=#808080]
-          RenderBlock {DIV} at (0,10) size 80x90 [bgcolor=#0000FF]
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,285) size 784x42
-        RenderText {#text} at (0,0) size 744x42
-          text run at (0,0) width 744: "Following meter gauge should be native looking green - Changing the pseudo class by changing direction from"
-          text run at (0,21) width 144: "vertical to horizontal."
-      RenderBlock (anonymous) at (0,343) size 784x20
-        RenderMeter {METER} at (0,0) size 80x20
-          RenderBlock {DIV} at (0,0) size 80x20
-          RenderBlock {DIV} at (0,0) size 72x20
-          RenderBlock {DIV} at (0,0) size 80x20 [bgcolor=#808080]
-          RenderBlock {DIV} at (0,2) size 80x18 [bgcolor=#0000FF]
+            RenderBlock {DIV} at (0,0) size 72x16 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0

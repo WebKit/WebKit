@@ -110,13 +110,13 @@ layer at (0,0) size 784x650
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 98x45
           RenderTableRow {TR} at (0,10) size 98x25
-            RenderTableCell {TD} at (10,10) size 16x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,10) size 14x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x21
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (36,10) size 22x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,10) size 20x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x21
                 text run at (2,2) width 22: "foo"
-            RenderTableCell {TD} at (68,10) size 20x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (64,10) size 24x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x21
                 text run at (2,2) width 22: "foo"
       RenderBlock (anonymous) at (0,586) size 768x21

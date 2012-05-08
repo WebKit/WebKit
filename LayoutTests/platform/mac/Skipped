@@ -782,7 +782,6 @@ fast/animation/request-animation-frame-during-modal.html
 # window.resizeTo() does not seem to work as expected in Mac DRT. The outerWidth changes after a resizeTo()
 # but not the innerWidth. The test passes on Qt, GTK and Chromium.
 fast/css/align-positioned-object-on-resize.html
-fast/media/media-query-list-08.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=83618
 fast/dom/inline-event-attributes-release.html

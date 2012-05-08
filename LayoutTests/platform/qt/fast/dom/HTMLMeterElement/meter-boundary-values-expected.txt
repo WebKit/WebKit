@@ -4,218 +4,190 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {H1} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 359x41
-          text run at (0,0) width 359: "Meters with border values"
+        RenderText {#text} at (0,0) size 399x42
+          text run at (0,0) width 399: "Meters with border values"
       RenderBlock {UL} at (0,63) size 784x315
         RenderListItem {LI} at (40,0) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 176x21
-            text run at (0,0) width 176: "min,low,optimal,high,max"
+          RenderText {#text} at (0,0) size 180x21
+            text run at (0,0) width 180: "min,low,optimal,high,max"
         RenderListItem {LI} at (40,21) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderInline {B} at (0,0) size 8x21
-            RenderText {#text} at (0,0) size 8x21
-              text run at (0,0) width 8: "9"
-          RenderText {#text} at (8,0) size 109x21
-            text run at (8,0) width 109: "|10,20,30,40,50: "
-          RenderMeter {METER} at (117,3) size 80x16
+          RenderInline {B} at (0,0) size 9x21
+            RenderText {#text} at (0,0) size 9x21
+              text run at (0,0) width 9: "9"
+          RenderText {#text} at (9,0) size 118x21
+            text run at (9,0) width 118: "|10,20,30,40,50: "
+          RenderMeter {METER} at (127,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
+              RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,42) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (0,0) size 16x21
-              text run at (0,0) width 16: "10"
-          RenderText {#text} at (16,0) size 89x21
-            text run at (16,0) width 89: ",20,30,40,50: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (0,0) size 18x21
+              text run at (0,0) width 18: "10"
+          RenderText {#text} at (18,0) size 96x21
+            text run at (18,0) width 96: ",20,30,40,50: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
+              RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,63) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 20x21
-            text run at (0,0) width 20: "10,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (20,0) size 16x21
-              text run at (20,0) width 16: "20"
-          RenderText {#text} at (36,0) size 69x21
-            text run at (36,0) width 69: ",30,40,50: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 22x21
+            text run at (0,0) width 22: "10,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (22,0) size 18x21
+              text run at (22,0) width 18: "20"
+          RenderText {#text} at (40,0) size 74x21
+            text run at (40,0) width 74: ",30,40,50: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 20x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,12) size 80x4
-          RenderText {#text} at (185,0) size 117x21
-            text run at (185,0) width 117: "(should be green)"
+              RenderBlock {DIV} at (0,0) size 20x16
+          RenderText {#text} at (194,0) size 125x21
+            text run at (194,0) width 125: "(should be green)"
         RenderListItem {LI} at (40,84) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 40x21
-            text run at (0,0) width 40: "10,20,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (40,0) size 16x21
-              text run at (40,0) width 16: "30"
-          RenderText {#text} at (56,0) size 49x21
-            text run at (56,0) width 49: ",40,50: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 44x21
+            text run at (0,0) width 44: "10,20,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (44,0) size 18x21
+              text run at (44,0) width 18: "30"
+          RenderText {#text} at (62,0) size 52x21
+            text run at (62,0) width 52: ",40,50: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 40x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,8) size 80x8
-          RenderText {#text} at (185,0) size 117x21
-            text run at (185,0) width 117: "(should be green)"
+              RenderBlock {DIV} at (0,0) size 40x16
+          RenderText {#text} at (194,0) size 125x21
+            text run at (194,0) width 125: "(should be green)"
         RenderListItem {LI} at (40,105) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 60x21
-            text run at (0,0) width 60: "10,20,30,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (60,0) size 16x21
-              text run at (60,0) width 16: "40"
-          RenderText {#text} at (76,0) size 29x21
-            text run at (76,0) width 29: ",50: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 66x21
+            text run at (0,0) width 66: "10,20,30,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (66,0) size 18x21
+              text run at (66,0) width 18: "40"
+          RenderText {#text} at (84,0) size 30x21
+            text run at (84,0) width 30: ",50: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 60x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,4) size 80x12
-          RenderText {#text} at (185,0) size 117x21
-            text run at (185,0) width 117: "(should be green)"
+              RenderBlock {DIV} at (0,0) size 60x16
+          RenderText {#text} at (194,0) size 125x21
+            text run at (194,0) width 125: "(should be green)"
         RenderListItem {LI} at (40,126) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 80x21
-            text run at (0,0) width 80: "10,20,30,40,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (80,0) size 16x21
-              text run at (80,0) width 16: "50"
-          RenderText {#text} at (96,0) size 9x21
-            text run at (96,0) width 9: ": "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 88x21
+            text run at (0,0) width 88: "10,20,30,40,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (88,0) size 18x21
+              text run at (88,0) width 18: "50"
+          RenderText {#text} at (106,0) size 8x21
+            text run at (106,0) width 8: ": "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-          RenderText {#text} at (185,0) size 122x21
-            text run at (185,0) width 122: "(should be yellow)"
+              RenderBlock {DIV} at (0,0) size 80x16
+          RenderText {#text} at (194,0) size 130x21
+            text run at (194,0) width 130: "(should be yellow)"
         RenderListItem {LI} at (40,147) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 100x21
-            text run at (0,0) width 100: "10,20,30,40,50|"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (100,0) size 16x21
-              text run at (100,0) width 16: "51"
-          RenderText {#text} at (116,0) size 9x21
-            text run at (116,0) width 9: ": "
-          RenderMeter {METER} at (125,3) size 80x16
+          RenderText {#text} at (0,0) size 110x21
+            text run at (0,0) width 110: "10,20,30,40,50|"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (110,0) size 18x21
+              text run at (110,0) width 18: "51"
+          RenderText {#text} at (128,0) size 8x21
+            text run at (128,0) width 8: ": "
+          RenderMeter {METER} at (136,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-          RenderText {#text} at (205,0) size 122x21
-            text run at (205,0) width 122: "(should be yellow)"
+              RenderBlock {DIV} at (0,0) size 80x16
+          RenderText {#text} at (216,0) size 130x21
+            text run at (216,0) width 130: "(should be yellow)"
         RenderListItem {LI} at (40,168) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 20x21
-            text run at (0,0) width 20: "10,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (20,0) size 16x21
-              text run at (20,0) width 16: "10"
-          RenderText {#text} at (36,0) size 69x21
-            text run at (36,0) width 69: ",30,40,50: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 22x21
+            text run at (0,0) width 22: "10,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (22,0) size 18x21
+              text run at (22,0) width 18: "10"
+          RenderText {#text} at (40,0) size 74x21
+            text run at (40,0) width 74: ",30,40,50: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
+              RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,189) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 60x21
-            text run at (0,0) width 60: "10,20,30,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (60,0) size 16x21
-              text run at (60,0) width 16: "40"
-          RenderText {#text} at (76,0) size 29x21
-            text run at (76,0) width 29: ",40: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 66x21
+            text run at (0,0) width 66: "10,20,30,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (66,0) size 18x21
+              text run at (66,0) width 18: "40"
+          RenderText {#text} at (84,0) size 30x21
+            text run at (84,0) width 30: ",40: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-          RenderText {#text} at (185,0) size 117x21
-            text run at (185,0) width 117: "(should be green)"
+              RenderBlock {DIV} at (0,0) size 80x16
+          RenderText {#text} at (194,0) size 125x21
+            text run at (194,0) width 125: "(should be green)"
         RenderListItem {LI} at (40,210) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderInline {B} at (0,0) size 8x21
-            RenderText {#text} at (0,0) size 8x21
-              text run at (0,0) width 8: "9"
-          RenderText {#text} at (8,0) size 109x21
-            text run at (8,0) width 109: "|10,10,10,20,30: "
-          RenderMeter {METER} at (117,3) size 80x16
+          RenderInline {B} at (0,0) size 9x21
+            RenderText {#text} at (0,0) size 9x21
+              text run at (0,0) width 9: "9"
+          RenderText {#text} at (9,0) size 118x21
+            text run at (9,0) width 118: "|10,10,10,20,30: "
+          RenderMeter {METER} at (127,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
+              RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,231) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 40x21
-            text run at (0,0) width 40: "10,10,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (40,0) size 16x21
-              text run at (40,0) width 16: "10"
-          RenderText {#text} at (56,0) size 49x21
-            text run at (56,0) width 49: ",20,30: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 44x21
+            text run at (0,0) width 44: "10,10,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (44,0) size 18x21
+              text run at (44,0) width 18: "10"
+          RenderText {#text} at (62,0) size 52x21
+            text run at (62,0) width 52: ",20,30: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
+              RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,252) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 40x21
-            text run at (0,0) width 40: "10,20,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (40,0) size 16x21
-              text run at (40,0) width 16: "30"
-          RenderText {#text} at (56,0) size 49x21
-            text run at (56,0) width 49: ",30,30: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 44x21
+            text run at (0,0) width 44: "10,20,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (44,0) size 18x21
+              text run at (44,0) width 18: "30"
+          RenderText {#text} at (62,0) size 52x21
+            text run at (62,0) width 52: ",30,30: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-          RenderText {#text} at (185,0) size 117x21
-            text run at (185,0) width 117: "(should be green)"
+              RenderBlock {DIV} at (0,0) size 80x16
+          RenderText {#text} at (194,0) size 125x21
+            text run at (194,0) width 125: "(should be green)"
         RenderListItem {LI} at (40,273) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 100x21
-            text run at (0,0) width 100: "10,20,30,30,30|"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (100,0) size 16x21
-              text run at (100,0) width 16: "31"
-          RenderText {#text} at (116,0) size 9x21
-            text run at (116,0) width 9: ": "
-          RenderMeter {METER} at (125,3) size 80x16
+          RenderText {#text} at (0,0) size 110x21
+            text run at (0,0) width 110: "10,20,30,30,30|"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (110,0) size 18x21
+              text run at (110,0) width 18: "31"
+          RenderText {#text} at (128,0) size 8x21
+            text run at (128,0) width 8: ": "
+          RenderMeter {METER} at (136,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-          RenderText {#text} at (205,0) size 117x21
-            text run at (205,0) width 117: "(should be green)"
+              RenderBlock {DIV} at (0,0) size 80x16
+          RenderText {#text} at (216,0) size 125x21
+            text run at (216,0) width 125: "(should be green)"
         RenderListItem {LI} at (40,294) size 744x21
           RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 40x21
-            text run at (0,0) width 40: "10,20,"
-          RenderInline {B} at (0,0) size 16x21
-            RenderText {#text} at (40,0) size 16x21
-              text run at (40,0) width 16: "20"
-          RenderText {#text} at (56,0) size 49x21
-            text run at (56,0) width 49: ",20,30: "
-          RenderMeter {METER} at (105,3) size 80x16
+          RenderText {#text} at (0,0) size 44x21
+            text run at (0,0) width 44: "10,20,"
+          RenderInline {B} at (0,0) size 18x21
+            RenderText {#text} at (44,0) size 18x21
+              text run at (44,0) width 18: "20"
+          RenderText {#text} at (62,0) size 52x21
+            text run at (62,0) width 52: ",20,30: "
+          RenderMeter {METER} at (114,3) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 40x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,8) size 80x8
-          RenderText {#text} at (185,0) size 117x21
-            text run at (185,0) width 117: "(should be green)"
+              RenderBlock {DIV} at (0,0) size 40x16
+          RenderText {#text} at (194,0) size 125x21
+            text run at (194,0) width 125: "(should be green)"

@@ -1,4 +1,4 @@
-// These are the layout test expectations for the Qt port of WebKit.
+T// These are the layout test expectations for the Qt port of WebKit.
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
@@ -15,14 +15,6 @@ BUG_QT_SLOW SLOW DEBUG: fast/js/dfg-inline-function-dot-caller.html = PASS
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
-
-// Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=78412
-BUGWK78412 : tables/mozilla/bugs/bug2123.html = TEXT
-BUGWK78412 : tables/mozilla/bugs/bug2509.html = TEXT
-BUGWK78412 : tables/mozilla/bugs/bug34176.html = TEXT
-BUGWK78412 : tables/mozilla/bugs/bug44505.html = TEXT
-BUGWK78412 : tables/mozilla_expected_failures/bugs/bug59252.html = TEXT
-BUGWK78412 : tables/mozilla_expected_failures/bugs/bug7243.html = TEXT
 
 BUGWK82886 : inspector/styles/override-screen-size.html = TEXT
 
@@ -59,10 +51,6 @@ BUGWK85203 : ietestcenter/css3/multicolumn/column-containing-block-003.htm = IMA
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 BUGWK85213 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMAGE
-
-// Requires rebaseline after bug 85031
-BUGWK85565 : fast/block/float/016.html = IMAGE
-BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 
 // Generate results for your platform(s)
 BUGWK85567 : fast/images/png-suite/test.html = IMAGE

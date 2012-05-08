@@ -3,23 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 504x138 [border: (3px outset #808080)]
-        RenderTableSection {TBODY} at (3,3) size 498x132
-          RenderTableRow {TR} at (0,2) size 498x128
-            RenderTableCell {TD} at (2,2) size 494x128 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 500x124 [border: (2px outset #808080)]
-                RenderTableSection {TBODY} at (2,2) size 496x120
-                  RenderTableRow {TR} at (0,2) size 496x116
-                    RenderTableCell {TD} at (2,2) size 400x116 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (11,11) size 378x94 [border: (1px outset #808080)]
-                        RenderTableSection {TBODY} at (1,1) size 376x92
-                          RenderTableRow {TR} at (0,2) size 376x88
-                            RenderTableCell {TD} at (2,2) size 372x88 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 360x84
-                                text run at (2,2) width 356: "Have a tip or rumor to share? Just click on the icon"
-                                text run at (2,23) width 338: "and if you get a BrowserWatch net.fame be sure"
-                                text run at (2,44) width 360: "and display the icon on your own home page for all"
-                                text run at (2,65) width 47: "to see!"
-                    RenderTableCell {TD} at (404,38) size 90x43 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 504x117 [border: (3px outset #808080)]
+        RenderTableSection {TBODY} at (3,3) size 498x111
+          RenderTableRow {TR} at (0,2) size 498x107
+            RenderTableCell {TD} at (2,2) size 494x107 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 500x103 [border: (2px outset #808080)]
+                RenderTableSection {TBODY} at (2,2) size 496x99
+                  RenderTableRow {TR} at (0,2) size 496x95
+                    RenderTableCell {TD} at (2,2) size 422x95 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (11,11) size 400x73 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 398x71
+                          RenderTableRow {TR} at (0,2) size 398x67
+                            RenderTableCell {TD} at (2,2) size 394x67 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 387x63
+                                text run at (2,2) width 387: "Have a tip or rumor to share? Just click on the icon and"
+                                text run at (2,23) width 338: "if you get a BrowserWatch net.fame be sure and"
+                                text run at (2,44) width 380: "display the icon on your own home page for all to see!"
+                    RenderTableCell {TD} at (426,28) size 68x43 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (11,11) size 22x21
                         text run at (11,11) width 22: "foo"

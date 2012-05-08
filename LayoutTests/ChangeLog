@@ -1,3 +1,52 @@
+2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests, update platform specific expected files.
+
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/block/float/016-expected.png:
+        * platform/qt/fast/css/border-solid-single-edge-antialias-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/qt/fast/js/constructor-length-expected.txt: Added.
+        * platform/qt/fast/repaint/scale-page-shrink-expected.png: Added.
+        * platform/qt/fast/repaint/scale-page-shrink-expected.txt: Added.
+        * platform/qt/fast/table/027-expected.png:
+        * platform/qt/fast/table/027-expected.txt:
+        * platform/qt/fast/table/027-vertical-expected.png:
+        * platform/qt/fast/table/027-vertical-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug14929-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug14929-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2509-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2509-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug27038-1-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug27038-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug27038-2-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug27038-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2947-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2947-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug34176-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug34176-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug44505-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug59252-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug59252-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug7243-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug7243-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/qt/test_expectations.txt:
+
 2012-05-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] fast/layers/video-layer.html needs rebaseline after bug85602 landed

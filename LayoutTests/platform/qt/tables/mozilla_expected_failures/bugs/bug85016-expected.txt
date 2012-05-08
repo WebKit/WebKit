@@ -1,25 +1,25 @@
-layer at (0,0) size 983x3052
+layer at (0,0) size 959x2988
   RenderView at (0,0) size 784x584
-layer at (0,0) size 784x3052
-  RenderBlock {HTML} at (0,0) size 784x3052
-    RenderBody {BODY} at (32,32) size 720x2988
-      RenderBlock {DIV} at (32,0) size 656x668 [border: (1px solid #008000)]
-        RenderBlock {DIV} at (33,33) size 590x602 [border: (1px solid #FF0000)]
-          RenderImage {IMG} at (1,1) size 588x600
+layer at (0,0) size 784x2988
+  RenderBlock {HTML} at (0,0) size 784x2988
+    RenderBody {BODY} at (32,32) size 720x2924
+      RenderBlock {DIV} at (32,0) size 656x652 [border: (1px solid #008000)]
+        RenderBlock {DIV} at (33,33) size 590x586 [border: (1px solid #FF0000)]
+          RenderImage {IMG} at (1,1) size 588x584
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,700) size 720x21
+      RenderBlock {P} at (0,684) size 720x21
         RenderText {#text} at (0,0) size 591x21
           text run at (0,0) width 591: "percentage height images in DIV with no height (red) in a DIV with no height (green)"
-      RenderBlock {DIV} at (32,753) size 656x672 [border: (3px dotted #008000)]
-        RenderBlock {DIV} at (35,35) size 586x602 [border: (1px solid #FF0000)]
-          RenderImage {IMG} at (1,1) size 883x600
+      RenderBlock {DIV} at (32,737) size 656x656 [border: (3px dotted #008000)]
+        RenderBlock {DIV} at (35,35) size 586x586 [border: (1px solid #FF0000)]
+          RenderImage {IMG} at (1,1) size 859x584
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,1457) size 720x21
+      RenderBlock {P} at (0,1425) size 720x21
         RenderText {#text} at (0,0) size 521x21
           text run at (0,0) width 521: "percentage height image in table cell (red), in a DIV with no height (green)"
-      RenderBlock {DIV} at (32,1510) size 656x1478
-        RenderTable {TABLE} at (0,0) size 260x1478 [border: (1px solid #FF0000)]
-          RenderTableSection {TBODY} at (1,1) size 258x1476
-            RenderTableRow {TR} at (0,2) size 258x1472
-              RenderTableCell {TD} at (2,651) size 254x174 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+      RenderBlock {DIV} at (32,1478) size 656x1446
+        RenderTable {TABLE} at (0,0) size 260x1446 [border: (1px solid #FF0000)]
+          RenderTableSection {TBODY} at (1,1) size 258x1444
+            RenderTableRow {TR} at (0,2) size 258x1440
+              RenderTableCell {TD} at (2,635) size 254x174 [border: (1px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (2,2) size 250x170
