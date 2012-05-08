@@ -1,3 +1,16 @@
+2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] http/tests/security/cross-frame-access-* tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=85899
+
+        Unreviewed, move failing tests to test expectations.
+
+        http/tests/security/cross-frame-access-* tests are failing because EFL port
+        does not support showModalDialog. We need to move the test cases to test
+        expectations while the feature is implemented. 
+
+        * platform/efl/test_expectations.txt:
+
 2012-03-31  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: first-letter-nested-004.htm fails

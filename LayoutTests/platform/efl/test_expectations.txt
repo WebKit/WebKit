@@ -45,6 +45,8 @@ BUGWK84338 : editing/input/reveal-contenteditable-on-paste-vertically.html = TEX
 
 // Missing showModalDialog implementation
 BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
+BUGWK84589 : http/tests/security/cross-frame-access-call.html = TEXT
+BUGWK84589 : http/tests/security/cross-frame-access-get.html = TEXT
 
 // Issue with timing for suspend/resumeAnimations()?
 BUGWK84592 : animations/stop-animation-on-suspend.html = TEXT
