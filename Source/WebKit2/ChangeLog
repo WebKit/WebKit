@@ -1,3 +1,20 @@
+2012-05-08  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [WK2] Integrate Page Visibility state change and WK2 Suspend/Resume API
+        https://bugs.webkit.org/show_bug.cgi?id=85650
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch uses state changes of the Page Visibility API to trigger the
+        automatic suspension/resume of animations on the WebPage and its main frame,
+        in the same fashion of what is used by the Suspend/Resume API of WebKit2.
+        By telling the WebPage it will move off/on the screen and the FrameView to
+        hide/show, this patch is suspending/resuming animations (animated painting)
+        but not timers and other active DOM objects.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setVisibilityState):
+
 2012-05-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add QML/WK2 evaluateJavaScript experimental API

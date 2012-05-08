@@ -224,6 +224,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if PLATFORM(WIN)
     , m_gestureReachedScrollingLimit(false)
 #endif
+#if ENABLE(PAGE_VISIBILITY_API)
+    , m_visibilityState(WebCore::PageVisibilityStateVisible)
+#endif
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -3157,7 +3160,28 @@ void WebPage::setVisibilityState(int visibilityState, bool isInitialState)
 {
     if (!m_page)
         return;
-    m_page->setVisibilityState(static_cast<WebCore::PageVisibilityState>(visibilityState), isInitialState);
+
+    WebCore::PageVisibilityState state = static_cast<WebCore::PageVisibilityState>(visibilityState);
+
+    if (m_visibilityState == state)
+        return;
+
+    FrameView* view = m_page->mainFrame() ? m_page->mainFrame()->view() : 0;
+
+    if (state == WebCore::PageVisibilityStateVisible) {
+        m_page->didMoveOnscreen();
+        if (view)
+            view->show();
+    }
+
+    m_page->setVisibilityState(state, isInitialState);
+    m_visibilityState = state;
+
+    if (state == WebCore::PageVisibilityStateHidden) {
+        m_page->willMoveOffscreen();
+        if (view)
+            view->hide();
+    }
 }
 #endif
 
