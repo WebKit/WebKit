@@ -1,3 +1,14 @@
+2012-05-07  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Android wishes to use an empty implementation if AXObjectCache
+        https://bugs.webkit.org/show_bug.cgi?id=85842
+
+        Reviewed by Eric Seidel.
+
+        Disable accessibility on OS(ANDROID) for PLATFORM(CHROMIUM).
+
+        * wtf/Platform.h:
+
 2012-05-04  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Implement numberOfProcessorCores() for QNX
