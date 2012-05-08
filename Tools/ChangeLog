@@ -1,3 +1,16 @@
+2012-05-08  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Memory leak in DRT EventSender.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=85886
+
+        Reviewed by Martin Robinson.
+
+        Fix a memory leak in gdkModifersFromJSValue() by using JSRetainPtr for
+        JSString created with JSStringCreateWithUTF8CString.
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (gdkModifersFromJSValue):
+
 2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] glib dependency needs to be updated in jhbuild
