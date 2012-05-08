@@ -1,3 +1,41 @@
+2012-05-08  Gavin Peters  <gavinp@chromium.org>
+
+        [webkit-patch] Add new chrome-channels command to track down current chrome release channels for a committed bug.
+        https://bugs.webkit.org/show_bug.cgi?id=85368
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzillaQueries.fetch_bugs_matching_quicksearch):
+        * Scripts/webkitpy/common/net/omahaproxy.py: Added.
+        (OmahaProxy):
+        (OmahaProxy.__init__):
+        (OmahaProxy.set_url):
+        (OmahaProxy._json_url):
+        (OmahaProxy._get_json):
+        (OmahaProxy.get_revisions):
+        * Scripts/webkitpy/common/net/omahaproxy_unittest.py: Added.
+        (MockOmahaProxy):
+        (MockOmahaProxy.__init__):
+        (OmahaProxyTest):
+        (OmahaProxyTest.test_get_revisions):
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/bugsearch.py:
+        (BugSearch):
+        * Scripts/webkitpy/tool/commands/chromechannels.py: Added.
+        (ChromeChannels):
+        (__init__):
+        (execute):
+        * Scripts/webkitpy/tool/commands/chromechannels_unittest.py: Added.
+        (MockOmahaProxy):
+        (MockOmahaProxy.get_revisions):
+        (TestableChromeChannels):
+        (TestableChromeChannels.__init__):
+        (ChromeChannelsTest):
+        (ChromeChannelsTest.test_single_bug):
+        (ChromeChannelsTest.test_with_query):
+
 2012-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ unit tests.

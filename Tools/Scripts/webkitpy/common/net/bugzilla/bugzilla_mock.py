@@ -169,9 +169,9 @@ _bug2 = {
     "bug_status": "ASSIGNED",
     "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
                   "comment_email": "bar@foo.com",
-                  "text": "Message1.",
-        },
-    ],
+                  "text": "Message1.\nCommitted r35: <http://trac.webkit.org/changeset/35>",
+                  },
+                 ],
 }
 
 
@@ -183,7 +183,15 @@ _bug3 = {
     "cc_emails": [],
     "attachments": [_patch7],
     "bug_status": "NEW",
-    "comments": [],
+    "comments":  [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                   "comment_email": "bar@foo.com",
+                   "text": "Committed r30: <http://trac.webkit.org/changeset/30>",
+                   },
+                  {"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                   "comment_email": "bar@foo.com",
+                   "text": "Committed r31: <http://trac.webkit.org/changeset/31>",
+                   },
+                  ],
 }
 
 
@@ -195,7 +203,15 @@ _bug4 = {
     "cc_emails": [],
     "attachments": [_patch4, _patch5, _patch6],
     "bug_status": "REOPENED",
-    "comments": [],
+    "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                  "comment_email": "bar@foo.com",
+                  "text": "Committed r25: <http://trac.webkit.org/changeset/30>",
+                  },
+                 {"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                  "comment_email": "bar@foo.com",
+                  "text": "Rolled out in <http://trac.webkit.org/changeset/26",
+                  },
+                 ],
 }
 
 
@@ -208,7 +224,12 @@ _bug5 = {
     "attachments": [],
     "bug_status": "RESOLVED",
     "dup_id": 50002,
-    "comments": [],
+    "comments": [{"comment_date":  datetime.datetime(2011, 6, 11, 9, 4, 3),
+                  "comment_email": "bar@foo.com",
+                  "text": "Committed r15: <http://trac.webkit.org/changeset/15>",
+                  },
+                 ],
+
 }
 
 
@@ -250,6 +271,10 @@ class MockBugzillaQueries(object):
 
     def fetch_bugs_matching_search(self, search_string, author_email=None):
         return [self._bugzilla.fetch_bug(50004), self._bugzilla.fetch_bug(50003)]
+
+    def fetch_bugs_matching_quicksearch(self, search_string):
+        return [self._bugzilla.fetch_bug(50001), self._bugzilla.fetch_bug(50002),
+                self._bugzilla.fetch_bug(50003), self._bugzilla.fetch_bug(50004)]
 
 
 _mock_reviewers = [Reviewer("Foo Bar", "foo@bar.com"),

@@ -32,6 +32,13 @@ from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 class BugSearch(AbstractDeclarativeCommand):
     name = "bug-search"
     help_text = "List bugs matching a query"
+    argument_names = "QUERY"
+    long_help = \
+"""Runs the bugzilla quicksearch QUERY on bugs.webkit.org, and lists all bugs
+returned. QUERY can be as simple as a bug number or a comma delimited list of
+bug numbers.
+See https://bugzilla.mozilla.org/page.cgi?id=quicksearch.html for full
+documentation on the query format."""
 
     def execute(self, options, args, tool):
         search_string = args[0]
