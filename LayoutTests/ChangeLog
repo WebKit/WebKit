@@ -1,3 +1,85 @@
+2012-03-31  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: first-letter-nested-004.htm fails
+        https://bugs.webkit.org/show_bug.cgi?id=72987
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/first-letter-000.htm: Added.
+        * css2.1/20110323/first-letter-001.htm: Added.
+        * css2.1/20110323/first-letter-dynamic-001.htm: Added.
+        * css2.1/20110323/first-letter-dynamic-002.htm: Added.
+        * css2.1/20110323/first-letter-dynamic-003a.htm: Added.
+        * css2.1/20110323/first-letter-dynamic-003b.htm: Added.
+        * css2.1/20110323/first-letter-inherit-001.htm: Added.
+        * css2.1/20110323/first-letter-nested-001.htm: Added.
+        * css2.1/20110323/first-letter-nested-002.htm: Added.
+        * css2.1/20110323/first-letter-nested-003.htm: Added.
+        * css2.1/20110323/first-letter-nested-004.htm: Added.
+        * css2.1/20110323/first-letter-nested-005.htm: Added.
+        * css2.1/20110323/first-letter-nested-006.htm: Added.
+        * css2.1/20110323/first-letter-nested-007.htm: Added.
+        * css2.1/20110323/first-letter-quote-001.htm: Added.
+        * css2.1/20110323/first-letter-quote-002.htm: Added.
+        * css2.1/20110323/first-letter-quote-003.htm: Added.
+        * css2.1/20110323/first-letter-quote-004.htm: Added.
+        * css2.1/20110323/first-letter-quote-005.htm: Added.
+        * css2.1/20110323/first-letter-quote-006.htm: Added.
+        * fast/css/first-letter-capitalized-edit-select-crash-expected.txt:
+          Rebaselined.
+        * fast/css/first-letter-nested-positioned.htm: Added.
+           Tests that text nested inside a positioned object is styled.
+        * fast/css/first-letter-quotes-no-content-before-after.html: Added.
+           Tests that two consecutive quotes, each in a :before and :after pseudo element surrounding
+           an empty main element, get styled with first letter.
+
+        Behold! Pixel Results!
+
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-000-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-000-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-001-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-002-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-002-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003a-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003a-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-inherit-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-inherit-001-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-001-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-002-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-002-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-003-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-003-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-004-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-004-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-005-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-005-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-006-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-006-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-007-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-007-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-001-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-002-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-002-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-003-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-003-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-004-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-004-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-005-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-005-expected.txt: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-006-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-006-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/first-letter-nested-positioned-expected.png: Added.
+        * platform/chromium-linux-x86/fast/css/first-letter-nested-positioned-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/first-letter-quotes-no-content-before-after-expected.png: Added.
+        * platform/chromium-linux-x86/fast/css/first-letter-quotes-no-content-before-after-expected.txt: Added.
+
 2012-05-08  Hironori Bono  <hbono@chromium.org>
 
         [Chromium] Fix the position of an RTL resizer

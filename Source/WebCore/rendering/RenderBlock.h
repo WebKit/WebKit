@@ -505,6 +505,9 @@ private:
 
     void createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderObject* currentChild);
     void updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderObject* firstLetterContainer);
+    RenderObject* findLastObjectWithFirstLetterText(RenderObject* child, RenderObject* &firstLetterBlock);
+    RenderObject* findLastObjectAfterFirstLetterPunctuation(RenderObject* child, RenderObject* &firstLetterBlock);
+    void addFirstLetter(RenderObject* firstLetterObject, RenderObject* &firstLetterBlock);
 
     struct FloatWithRect {
         FloatWithRect(RenderBox* f)
