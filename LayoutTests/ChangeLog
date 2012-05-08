@@ -1,3 +1,14 @@
+2012-05-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Add expectations for first-line-text-decoration.html.
+
+        * platform/chromium-linux/fast/css/first-line-text-decoration-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/first-line-text-decoration-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/first-line-text-decoration-expected.png: Added.
+        * platform/chromium-mac/fast/css/first-line-text-decoration-expected.png: Added.
+        * platform/chromium-win/fast/css/first-line-text-decoration-expected.png: Added.
+        * platform/chromium-win/fast/css/first-line-text-decoration-expected.txt: Added.
+
 2012-05-07  Dongwoo Im  <dw.im@samsung.com>
 
         width/height attributes of input element cannot be accessed by JavaScript.
