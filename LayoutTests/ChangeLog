@@ -1,3 +1,10 @@
+2012-05-07  Andy Estes  <aestes@apple.com>
+
+        Add platform/mac/ results for new tests added by r116373.
+
+        * platform/mac/fast/css/first-line-text-decoration-expected.txt: Added.
+        * platform/mac/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt: Added.
+
 2012-05-04  Zhenyao Mo  <zmo@google.com>
 
         vertexAttribPointer needs to reject large negative offsets
