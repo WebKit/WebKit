@@ -152,8 +152,10 @@ WebInspector.BreakpointManager.prototype = {
     _debuggerReset: function()
     {
         var breakpoints = this._breakpoints.slice();
-        for (var i = 0; i < breakpoints.length; ++i)
+        for (var i = 0; i < breakpoints.length; ++i) {
             breakpoints[i]._resetLocations();
+            breakpoints[i]._isProvisional = true;
+        }
         this._breakpoints = [];
         this._breakpointForUILocation = {};
         this._uiSourceCodeIds = {};
@@ -164,10 +166,8 @@ WebInspector.BreakpointManager.prototype = {
         var breakpointId = /** @type {DebuggerAgent.BreakpointId} */ event.data.breakpointId;
         var location = /** @type {DebuggerAgent.Location} */ event.data.location;
         var breakpoint = this._breakpointForDebuggerId[breakpointId];
-        if (!breakpoint) {
-            // Provisional breakpoint.
+        if (!breakpoint || breakpoint._isProvisional)
             return;
-        }
         breakpoint._addResolvedLocation(location);
     },
 

@@ -1,3 +1,13 @@
+2012-05-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: do not create locations for resolved provisional breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=85716
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/breakpoint-manager-expected.txt:
+        * inspector/debugger/breakpoint-manager.html:
+
 2012-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         Compositing layers with transformed children not large enough to show contents

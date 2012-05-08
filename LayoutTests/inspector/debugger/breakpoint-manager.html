@@ -92,6 +92,7 @@ function test()
 
         reset: function()
         {
+            InspectorTest.addResult("  Resetting debugger.");
             this._scripts = {};
             this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.GlobalObjectCleared);
         },
@@ -290,7 +291,8 @@ function test()
 
             InspectorTest.addResult("\n  Navigating back to A.");
             breakpointManager._debuggerModel.reset();
-            var eventData = { breakpointId: "a.js:10:0", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
+            InspectorTest.addResult("  Resolving provisional breakpoint.");
+            var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
             breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
             addUISourceCode(breakpointManager, "a.js");
             resetBreakpointManager(breakpointManager, next);
@@ -311,6 +313,20 @@ function test()
             InspectorTest.addResult("\n  Toggling source mapping back.");
             breakpointManager._sourceMapping = defaultMapping;
             breakpointManager._debuggerModel.setSourceMapping(defaultMapping);
+            resetBreakpointManager(breakpointManager, next);
+        },
+
+        function testProvisionalBreakpointsResolve(next)
+        {
+            var serializedBreakpoints = [];
+            serializedBreakpoints.push(createBreakpoint("a.js", 10, "foo == bar", true));
+
+            var breakpointManager = createBreakpointManager(serializedBreakpoints);
+            var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
+            breakpointManager._debuggerModel.reset();
+            InspectorTest.addResult("  Resolving provisional breakpoint.");
+            var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
+            breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
             resetBreakpointManager(breakpointManager, next);
         }
     ]);

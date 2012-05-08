@@ -188,6 +188,7 @@ Running: testNavigation
     breakpointAdded(a.js, 20, , false)
 
   Navigating to B.
+  Resetting debugger.
     breakpointRemoved(a.js, 10)
     Location disposed: a.js:10
     breakpointRemoved(a.js, 20)
@@ -197,8 +198,10 @@ Running: testNavigation
     Location created: b.js:3
 
   Navigating back to A.
+  Resetting debugger.
     breakpointRemoved(b.js, 3)
     Location disposed: b.js:3
+  Resolving provisional breakpoint.
   Adding UISourceCode: a.js (url=a.js)
     debuggerModel.removeBreakpoint(a.js:10)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
@@ -250,4 +253,21 @@ Running: testSourceMapping
     breakpointRemoved(a.js, 20)
     Location disposed: a.js:20
     debuggerModel.removeBreakpoint(a.js:20)
+
+Running: testProvisionalBreakpointsResolve
+  Created breakpoints manager
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+  Adding UISourceCode: a.js (url=a.js)
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+  Resetting debugger.
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+  Resolving provisional breakpoint.
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+  Resetting breakpoint manager
+    debuggerModel.removeBreakpoint(a.js:10)
 
