@@ -1,5 +1,11 @@
 2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Unreviewed build fix: adding missing include.
+
+        * src/AsyncFileSystemChromium.cpp:
+
+2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
+
         Support cross-filesystem operations in FileSystem API
         https://bugs.webkit.org/show_bug.cgi?id=84135
 
