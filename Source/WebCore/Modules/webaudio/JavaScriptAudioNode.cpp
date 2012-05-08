@@ -151,8 +151,13 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
     AudioBuffer* outputBuffer = m_outputBuffers[doubleBufferIndex].get();
 
     // Check the consistency of input and output buffers.
-    bool buffersAreGood = inputBuffer && outputBuffer && bufferSize() == inputBuffer->length() && bufferSize() == outputBuffer->length()
-        && m_bufferReadWriteIndex + framesToProcess <= bufferSize();
+    unsigned numberOfInputChannels = m_internalInputBus.numberOfChannels();
+    bool buffersAreGood = outputBuffer && bufferSize() == outputBuffer->length() && m_bufferReadWriteIndex + framesToProcess <= bufferSize();
+
+    // If the number of input channels is zero, it's ok to have inputBuffer = 0.
+    if (m_internalInputBus.numberOfChannels())
+        buffersAreGood = buffersAreGood && inputBuffer && bufferSize() == inputBuffer->length();
+
     ASSERT(buffersAreGood);
     if (!buffersAreGood)
         return;
@@ -163,7 +168,6 @@ void JavaScriptAudioNode::process(size_t framesToProcess)
     if (!isFramesToProcessGood)
         return;
 
-    unsigned numberOfInputChannels = m_internalInputBus.numberOfChannels();
     unsigned numberOfOutputChannels = outputBus->numberOfChannels();
 
     bool channelsAreGood = (numberOfInputChannels == m_numberOfInputChannels) && (numberOfOutputChannels == m_numberOfOutputChannels);
@@ -231,8 +235,8 @@ void JavaScriptAudioNode::fireProcessEvent()
         
     AudioBuffer* inputBuffer = m_inputBuffers[m_doubleBufferIndexForEvent].get();
     AudioBuffer* outputBuffer = m_outputBuffers[m_doubleBufferIndexForEvent].get();
-    ASSERT(inputBuffer && outputBuffer);
-    if (!inputBuffer || !outputBuffer)
+    ASSERT(outputBuffer);
+    if (!outputBuffer)
         return;
 
     // Avoid firing the event if the document has already gone away.

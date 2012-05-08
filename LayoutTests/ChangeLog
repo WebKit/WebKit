@@ -1,3 +1,13 @@
+2012-05-08  Raymond Toy  <rtoy@google.com>
+
+        JavaScriptAudioNode should not ASSERT if number of input channels is 0
+        https://bugs.webkit.org/show_bug.cgi?id=85818
+
+        Reviewed by Eric Seidel.
+
+        * webaudio/javascriptaudionode-zero-input-channels-expected.txt: Added.
+        * webaudio/javascriptaudionode-zero-input-channels.html: Added.
+
 2012-05-08  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL][DRT] EventSender needs implementation of leapForward function
