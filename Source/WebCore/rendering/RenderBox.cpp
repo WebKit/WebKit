@@ -3912,6 +3912,16 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
     return rect;
 }
 
+LayoutUnit RenderBox::offsetLeft() const
+{
+    return offsetTopLeft(topLeftLocation()).x();
+}
+
+LayoutUnit RenderBox::offsetTop() const
+{
+    return offsetTopLeft(topLeftLocation()).y();
+}
+
 LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox* child, const LayoutPoint& point) const
 {
     if (!style()->isFlippedBlocksWritingMode())

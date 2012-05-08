@@ -535,71 +535,53 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
     return offset;
 }
 
-LayoutUnit RenderBoxModelObject::offsetLeft() const
+LayoutPoint RenderBoxModelObject::offsetTopLeft(const LayoutPoint& startPoint) const
 {
     // If the element is the HTML body element or does not have an associated box
     // return 0 and stop this algorithm.
     if (isBody())
-        return ZERO_LAYOUT_UNIT;
+        return LayoutPoint();
     
-    RenderBoxModelObject* offsetPar = offsetParent();
-    LayoutUnit xPos = (isBox() ? toRenderBox(this)->left() : ZERO_LAYOUT_UNIT);
+    LayoutPoint referencePoint = startPoint;
+    referencePoint.move(parent()->offsetForColumns(referencePoint));
     
     // If the offsetParent of the element is null, or is the HTML body element,
     // return the distance between the canvas origin and the left border edge 
     // of the element and stop this algorithm.
-    if (offsetPar) {
-        if (offsetPar->isBox() && !offsetPar->isBody())
-            xPos -= toRenderBox(offsetPar)->borderLeft();
+    if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
+        if (offsetParent->isBox() && !offsetParent->isBody())
+            referencePoint.move(-toRenderBox(offsetParent)->borderLeft(), -toRenderBox(offsetParent)->borderTop());
         if (!isPositioned()) {
             if (isRelPositioned())
-                xPos += relativePositionOffsetX();
-            RenderObject* curr = parent();
-            while (curr && curr != offsetPar) {
+                referencePoint.move(relativePositionOffset());
+            const RenderObject* curr = parent();
+            while (curr != offsetParent) {
                 // FIXME: What are we supposed to do inside SVG content?
                 if (curr->isBox() && !curr->isTableRow())
-                    xPos += toRenderBox(curr)->left();
+                    referencePoint.moveBy(toRenderBox(curr)->topLeftLocation());
+                referencePoint.move(curr->parent()->offsetForColumns(referencePoint));
                 curr = curr->parent();
             }
-            if (offsetPar->isBox() && offsetPar->isBody() && !offsetPar->isRelPositioned() && !offsetPar->isPositioned())
-                xPos += toRenderBox(offsetPar)->left();
+            if (offsetParent->isBox() && offsetParent->isBody() && !offsetParent->isRelPositioned() && !offsetParent->isPositioned())
+                referencePoint.moveBy(toRenderBox(offsetParent)->topLeftLocation());
         }
     }
 
-    return xPos;
+    return referencePoint;
+}
+
+LayoutUnit RenderBoxModelObject::offsetLeft() const
+{
+    // Note that RenderInline and RenderBox override this to pass a different
+    // startPoint to offsetTopLeft.
+    return offsetTopLeft(LayoutPoint()).x();
 }
 
 LayoutUnit RenderBoxModelObject::offsetTop() const
 {
-    // If the element is the HTML body element or does not have an associated box
-    // return 0 and stop this algorithm.
-    if (isBody())
-        return ZERO_LAYOUT_UNIT;
-    
-    RenderBoxModelObject* offsetPar = offsetParent();
-    LayoutUnit yPos = (isBox() ? toRenderBox(this)->top() : ZERO_LAYOUT_UNIT);
-    
-    // If the offsetParent of the element is null, or is the HTML body element,
-    // return the distance between the canvas origin and the top border edge 
-    // of the element and stop this algorithm.
-    if (offsetPar) {
-        if (offsetPar->isBox() && !offsetPar->isBody())
-            yPos -= toRenderBox(offsetPar)->borderTop();
-        if (!isPositioned()) {
-            if (isRelPositioned())
-                yPos += relativePositionOffsetY();
-            RenderObject* curr = parent();
-            while (curr && curr != offsetPar) {
-                // FIXME: What are we supposed to do inside SVG content?
-                if (curr->isBox() && !curr->isTableRow())
-                    yPos += toRenderBox(curr)->top();
-                curr = curr->parent();
-            }
-            if (offsetPar->isBox() && offsetPar->isBody() && !offsetPar->isRelPositioned() && !offsetPar->isPositioned())
-                yPos += toRenderBox(offsetPar)->top();
-        }
-    }
-    return yPos;
+    // Note that RenderInline and RenderBox override this to pass a different
+    // startPoint to offsetTopLeft.
+    return offsetTopLeft(LayoutPoint()).y();
 }
 
 int RenderBoxModelObject::pixelSnappedOffsetWidth() const

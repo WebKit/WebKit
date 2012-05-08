@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+    description("This test checks that offsetLeft and offsetTop return " +
+                "correct values when used on elements contained in multiple " +
+                "columns. We put a number of spans (of arbitrary size) in a " +
+                "multi-column div. The script at the end verifies the " +
+                "offsetLeft and offsetTop result of each span against " +
+                "pre-calculated values.");
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<style>
+    body {
+        font: Ahem;
+    }
+
+    #parent {
+        position: absolute;
+    }
+
+    #multicol {
+        -webkit-column-width: 100px;
+        -moz-column-width: 100px;
+        column-width: 100px;
+        height: 200px;
+        line-height: 18px;
+    }
+
+    #multicol span {
+        display: inline-block;
+        height: 20px;
+        background: #000;
+    }
+
+    .size1 {
+        width: 10px;
+    }
+
+    .size2 {
+        width: 20px;
+    }
+
+    .size3 {
+        width: 40px;
+    }
+</style>
+</head>
+<body>
+<div id="parent">
+    <div id="multicol">
+        <div>
+            <span class="size1"></span>
+            <span class="size2"></span>
+            <span class="size2"></span>
+            <span class="size3"></span>
+            <span class="size2"></span>
+            <span class="size1"></span>
+        </div>
+        <div>
+            <span class="size2"></span>
+            <span class="size1"></span>
+            <span class="size3"></span>
+            <span class="size3"></span>
+            <span class="size2"></span>
+            <span class="size3"></span>
+            <span class="size1"></span>
+            <span class="size2"></span>
+            <span class="size2"></span>
+            <span class="size2"></span>
+            <span class="size3"></span>
+            <span class="size2"></span>
+            <span class="size3"></span>
+            <span class="size1"></span>
+            <span class="size3"></span>
+            <span class="size3"></span>
+            <span class="size3"></span>
+            <span class="size2"></span>
+            <span class="size3"></span>
+        </div>
+        <div>
+            <span class="size3"></span>
+            <span class="size2"></span>
+            <span class="size1"></span>
+            <span class="size1"></span>
+            <span class="size2"></span>
+            <span class="size2"></span>
+            <div>
+                <span class="size2"></span>
+                <span class="size1"></span>
+                <span class="size3"></span>
+                <span class="size3"></span>
+                <span class="size1"></span>
+                <span class="size3"></span>
+                <span class="size3"></span>
+                <span class="size2"></span>
+                <div>
+                    <span class="size2"></span>
+                    <span class="size3"></span>
+                    <span class="size1"></span>
+                    <span class="size3"></span>
+                    <span class="size3"></span>
+                    <span class="size2"></span>
+                    <span class="size1"></span>
+                    <span class="size1"></span>
+                    <span class="size2"></span>
+                    <span class="size2"></span>
+                    <span class="size2"></span>
+                    <span class="size1"></span>
+                    <span class="size3"></span>
+                </div>
+                <span class="size3"></span>
+                <span class="size1"></span>
+                <span class="size3"></span>
+                <span class="size3"></span>
+                <span class="size2"></span>
+                <span class="size2"></span>
+            </div>
+            <span class="size3"></span>
+            <span class="size1"></span>
+            <span class="size3"></span>
+        </div>
+    </div>
+</div>
+<script>
+    var body = document.getElementsByTagName("body")[0];
+    var multicol = document.getElementById("multicol");
+    var offsetParent = document.getElementById("parent");
+    var spans = multicol.getElementsByTagName("span");
+
+    shouldBe("multicol.offsetParent.id", "offsetParent.id");
+
+    var expectedResults = [
+        [0,0],[14,0],[38,0],[62,0],[0,23],[24,23],[0,46],[24,46],[38,46],
+        [0,69],[44,69],[0,92],[44,92],[58,92],[82,92],[0,115],[24,115],
+        [68,115],[0,138],[44,138],[58,138],[0,161],[44,161],[123,0],[147,0],
+        [123,23],[167,23],[191,23],[205,23],[123,46],[147,46],[123,69],[147,69],
+        [161,69],[123,92],[167,92],[181,92],[123,115],[167,115],[123,138],[147,138],
+        [191,138],[123,161],[167,161],[246,0],[270,0],[284,0],[298,0],[322,0],
+        [246,23],[270,23],[284,23],[246,46],[290,46],[304,46],[246,69],[290,69],
+        [314,69],[246,92],[290,92],[304,92],
+    ];
+
+    for (var i = 0; i < spans.length; ++i) {
+        var expected = expectedResults[i];
+        shouldBe("spans[" + i + "].offsetLeft", expected[0].toString());
+        shouldBe("spans[" + i + "].offsetTop", expected[1].toString());
+    }
+</script>
+</body>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>
+

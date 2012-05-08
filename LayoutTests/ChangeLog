@@ -1,3 +1,15 @@
+2012-05-08  Shezan Baig  <shezbaig.wk@gmail.com>
+
+        offsetLeft broken within CSS3 columns
+        https://bugs.webkit.org/show_bug.cgi?id=34875
+
+        Reviewed by Julien Chaffraix.
+
+        Add test for offsetLeft and offsetTop within multi-columns.
+
+        * fast/block/positioning/offsetLeft-offsetTop-multicolumn-expected.txt: Added.
+        * fast/block/positioning/offsetLeft-offsetTop-multicolumn.html: Added.
+
 2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] media/video-play-require-user-gesture.html test is failing

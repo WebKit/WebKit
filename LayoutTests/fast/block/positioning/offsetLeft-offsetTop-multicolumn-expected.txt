@@ -1,0 +1,138 @@
+This test checks that offsetLeft and offsetTop return correct values when used on elements contained in multiple columns. We put a number of spans (of arbitrary size) in a multi-column div. The script at the end verifies the offsetLeft and offsetTop result of each span against pre-calculated values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS multicol.offsetParent.id is offsetParent.id
+PASS spans[0].offsetLeft is 0
+PASS spans[0].offsetTop is 0
+PASS spans[1].offsetLeft is 14
+PASS spans[1].offsetTop is 0
+PASS spans[2].offsetLeft is 38
+PASS spans[2].offsetTop is 0
+PASS spans[3].offsetLeft is 62
+PASS spans[3].offsetTop is 0
+PASS spans[4].offsetLeft is 0
+PASS spans[4].offsetTop is 23
+PASS spans[5].offsetLeft is 24
+PASS spans[5].offsetTop is 23
+PASS spans[6].offsetLeft is 0
+PASS spans[6].offsetTop is 46
+PASS spans[7].offsetLeft is 24
+PASS spans[7].offsetTop is 46
+PASS spans[8].offsetLeft is 38
+PASS spans[8].offsetTop is 46
+PASS spans[9].offsetLeft is 0
+PASS spans[9].offsetTop is 69
+PASS spans[10].offsetLeft is 44
+PASS spans[10].offsetTop is 69
+PASS spans[11].offsetLeft is 0
+PASS spans[11].offsetTop is 92
+PASS spans[12].offsetLeft is 44
+PASS spans[12].offsetTop is 92
+PASS spans[13].offsetLeft is 58
+PASS spans[13].offsetTop is 92
+PASS spans[14].offsetLeft is 82
+PASS spans[14].offsetTop is 92
+PASS spans[15].offsetLeft is 0
+PASS spans[15].offsetTop is 115
+PASS spans[16].offsetLeft is 24
+PASS spans[16].offsetTop is 115
+PASS spans[17].offsetLeft is 68
+PASS spans[17].offsetTop is 115
+PASS spans[18].offsetLeft is 0
+PASS spans[18].offsetTop is 138
+PASS spans[19].offsetLeft is 44
+PASS spans[19].offsetTop is 138
+PASS spans[20].offsetLeft is 58
+PASS spans[20].offsetTop is 138
+PASS spans[21].offsetLeft is 0
+PASS spans[21].offsetTop is 161
+PASS spans[22].offsetLeft is 44
+PASS spans[22].offsetTop is 161
+PASS spans[23].offsetLeft is 123
+PASS spans[23].offsetTop is 0
+PASS spans[24].offsetLeft is 147
+PASS spans[24].offsetTop is 0
+PASS spans[25].offsetLeft is 123
+PASS spans[25].offsetTop is 23
+PASS spans[26].offsetLeft is 167
+PASS spans[26].offsetTop is 23
+PASS spans[27].offsetLeft is 191
+PASS spans[27].offsetTop is 23
+PASS spans[28].offsetLeft is 205
+PASS spans[28].offsetTop is 23
+PASS spans[29].offsetLeft is 123
+PASS spans[29].offsetTop is 46
+PASS spans[30].offsetLeft is 147
+PASS spans[30].offsetTop is 46
+PASS spans[31].offsetLeft is 123
+PASS spans[31].offsetTop is 69
+PASS spans[32].offsetLeft is 147
+PASS spans[32].offsetTop is 69
+PASS spans[33].offsetLeft is 161
+PASS spans[33].offsetTop is 69
+PASS spans[34].offsetLeft is 123
+PASS spans[34].offsetTop is 92
+PASS spans[35].offsetLeft is 167
+PASS spans[35].offsetTop is 92
+PASS spans[36].offsetLeft is 181
+PASS spans[36].offsetTop is 92
+PASS spans[37].offsetLeft is 123
+PASS spans[37].offsetTop is 115
+PASS spans[38].offsetLeft is 167
+PASS spans[38].offsetTop is 115
+PASS spans[39].offsetLeft is 123
+PASS spans[39].offsetTop is 138
+PASS spans[40].offsetLeft is 147
+PASS spans[40].offsetTop is 138
+PASS spans[41].offsetLeft is 191
+PASS spans[41].offsetTop is 138
+PASS spans[42].offsetLeft is 123
+PASS spans[42].offsetTop is 161
+PASS spans[43].offsetLeft is 167
+PASS spans[43].offsetTop is 161
+PASS spans[44].offsetLeft is 246
+PASS spans[44].offsetTop is 0
+PASS spans[45].offsetLeft is 270
+PASS spans[45].offsetTop is 0
+PASS spans[46].offsetLeft is 284
+PASS spans[46].offsetTop is 0
+PASS spans[47].offsetLeft is 298
+PASS spans[47].offsetTop is 0
+PASS spans[48].offsetLeft is 322
+PASS spans[48].offsetTop is 0
+PASS spans[49].offsetLeft is 246
+PASS spans[49].offsetTop is 23
+PASS spans[50].offsetLeft is 270
+PASS spans[50].offsetTop is 23
+PASS spans[51].offsetLeft is 284
+PASS spans[51].offsetTop is 23
+PASS spans[52].offsetLeft is 246
+PASS spans[52].offsetTop is 46
+PASS spans[53].offsetLeft is 290
+PASS spans[53].offsetTop is 46
+PASS spans[54].offsetLeft is 304
+PASS spans[54].offsetTop is 46
+PASS spans[55].offsetLeft is 246
+PASS spans[55].offsetTop is 69
+PASS spans[56].offsetLeft is 290
+PASS spans[56].offsetTop is 69
+PASS spans[57].offsetLeft is 314
+PASS spans[57].offsetTop is 69
+PASS spans[58].offsetLeft is 246
+PASS spans[58].offsetTop is 92
+PASS spans[59].offsetLeft is 290
+PASS spans[59].offsetTop is 92
+PASS spans[60].offsetLeft is 304
+PASS spans[60].offsetTop is 92
+PASS successfullyParsed is true
+
+TEST COMPLETE
+    
+            
+    
+     
+         
+    
+  

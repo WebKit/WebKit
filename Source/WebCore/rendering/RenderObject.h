@@ -765,6 +765,12 @@ public:
     // If multiple-column layout results in applying an offset to the given point, add the same
     // offset to the given size.
     virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const { }
+    LayoutSize offsetForColumns(const LayoutPoint& point) const
+    {
+        LayoutSize offset;
+        adjustForColumns(offset, point);
+        return offset;
+    }
 
     virtual unsigned int length() const { return 1; }
 
