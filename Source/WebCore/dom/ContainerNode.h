@@ -228,6 +228,62 @@ inline Node* Node::highestAncestor() const
     return highest;
 }
 
+inline Node* Node::traverseNextNode() const
+{
+    if (firstChild())
+        return firstChild();
+    if (nextSibling())
+        return nextSibling();
+    const Node* node = this;
+    while (node && !node->nextSibling())
+        node = node->parentNode();
+    if (UNLIKELY(!node))
+        return 0;
+    return node->nextSibling();
+}
+
+inline Node* Node::traverseNextNode(const Node* stayWithin) const
+{
+    if (firstChild())
+        return firstChild();
+    if (UNLIKELY(this == stayWithin))
+        return 0;
+    if (nextSibling())
+        return nextSibling();
+    const Node* node = this;
+    while (node && !node->nextSibling() && (!stayWithin || node->parentNode() != stayWithin))
+        node = node->parentNode();
+    if (UNLIKELY(!node))
+        return 0;
+    return node->nextSibling();
+}
+
+inline Node* Node::traverseNextSibling() const
+{
+    if (nextSibling())
+        return nextSibling();
+    const Node* node = this;
+    while (node && !node->nextSibling())
+        node = node->parentNode();
+    if (UNLIKELY(!node))
+        return 0;
+    return node->nextSibling();
+}
+
+inline Node* Node::traverseNextSibling(const Node* stayWithin) const
+{
+    if (UNLIKELY(this == stayWithin))
+        return 0;
+    if (nextSibling())
+        return nextSibling();
+    const Node* node = this;
+    while (node && !node->nextSibling() && (!stayWithin || node->parentNode() != stayWithin))
+        node = node->parentNode();
+    if (UNLIKELY(!node))
+        return 0;
+    return node->nextSibling();
+}
+
 typedef Vector<RefPtr<Node>, 11> NodeVector;
 
 inline void getChildNodes(Node* node, NodeVector& nodes)

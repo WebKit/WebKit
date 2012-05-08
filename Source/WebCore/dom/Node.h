@@ -427,10 +427,12 @@ public:
     // This uses the same order that tags appear in the source file. If the stayWithin
     // argument is non-null, the traversal will stop once the specified node is reached.
     // This can be used to restrict traversal to a particular sub-tree.
-    Node* traverseNextNode(const Node* stayWithin = 0) const;
+    Node* traverseNextNode() const;
+    Node* traverseNextNode(const Node* stayWithin) const;
 
     // Like traverseNextNode, but skips children and starts with the next sibling.
-    Node* traverseNextSibling(const Node* stayWithin = 0) const;
+    Node* traverseNextSibling() const;
+    Node* traverseNextSibling(const Node* stayWithin) const;
 
     // Does a reverse pre-order traversal to find the node that comes before the current one in document order
     Node* traversePreviousNode(const Node* stayWithin = 0) const;
