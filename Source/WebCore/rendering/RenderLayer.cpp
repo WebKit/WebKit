@@ -4159,6 +4159,9 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     if (flags & UseLocalClipRectIfPossible) {
         LayoutRect localClipRect = layer->localClipRect();
         if (localClipRect != PaintInfo::infiniteRect()) {
+            if ((flags & IncludeSelfTransform) && layer->paintsWithTransform(PaintBehaviorNormal))
+                localClipRect = layer->transform()->mapRect(localClipRect);
+
             LayoutPoint ancestorRelOffset;
             layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
             localClipRect.moveBy(ancestorRelOffset);

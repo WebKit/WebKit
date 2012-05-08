@@ -1,3 +1,16 @@
+2012-05-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Compositing layers with transformed children not large enough to show contents
+        https://bugs.webkit.org/show_bug.cgi?id=85855
+
+        Reviewed by Dan Bernstein.
+        
+        Test having composited element with clipped, transformed children.
+
+        * compositing/geometry/bounds-clipped-composited-child-expected.png: Added.
+        * compositing/geometry/bounds-clipped-composited-child-expected.txt: Added.
+        * compositing/geometry/bounds-clipped-composited-child.html: Added.
+
 2012-05-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Add expectations for first-line-text-decoration.html.
