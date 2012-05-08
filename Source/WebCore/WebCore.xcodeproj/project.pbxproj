@@ -2982,6 +2982,7 @@
 		898785F5122E1EAC003AABDA /* JSFileReaderSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 898785F3122E1EAC003AABDA /* JSFileReaderSync.h */; };
 		89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89B5EA9F11E8003D00F2367E /* LineEnding.cpp */; };
 		89B5EAA211E8003D00F2367E /* LineEnding.h in Headers */ = {isa = PBXBuildFile; fileRef = 89B5EAA011E8003D00F2367E /* LineEnding.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		89C7C2E1155804F4007D5A7B /* FileSystemType.h in Headers */ = {isa = PBXBuildFile; fileRef = 89C7C2E0155804F4007D5A7B /* FileSystemType.h */; };
 		89CD029311C85B870070B791 /* JSWebKitBlobBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89CD029111C85B870070B791 /* JSWebKitBlobBuilder.cpp */; };
 		89CD029411C85B870070B791 /* JSWebKitBlobBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 89CD029211C85B870070B791 /* JSWebKitBlobBuilder.h */; };
 		89D08D9F12228451001241DF /* AsyncFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89D08D9C12228451001241DF /* AsyncFileSystem.cpp */; };
@@ -9977,6 +9978,7 @@
 		898785F3122E1EAC003AABDA /* JSFileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReaderSync.h; sourceTree = "<group>"; };
 		89B5EA9F11E8003D00F2367E /* LineEnding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineEnding.cpp; sourceTree = "<group>"; };
 		89B5EAA011E8003D00F2367E /* LineEnding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineEnding.h; sourceTree = "<group>"; };
+		89C7C2E0155804F4007D5A7B /* FileSystemType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemType.h; path = Modules/filesystem/FileSystemType.h; sourceTree = "<group>"; };
 		89CD029111C85B870070B791 /* JSWebKitBlobBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitBlobBuilder.cpp; sourceTree = "<group>"; };
 		89CD029211C85B870070B791 /* JSWebKitBlobBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitBlobBuilder.h; sourceTree = "<group>"; };
 		89D08D9C12228451001241DF /* AsyncFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncFileSystem.cpp; sourceTree = "<group>"; };
@@ -17481,6 +17483,7 @@
 				E1AB1EBE14E9E3B200449E13 /* FileSystemCallback.idl */,
 				8987854B122CA064003AABDA /* FileSystemCallbacks.cpp */,
 				8987854C122CA064003AABDA /* FileSystemCallbacks.h */,
+				89C7C2E0155804F4007D5A7B /* FileSystemType.h */,
 				976D6C6E122B8A3D001FD1F7 /* FileThread.cpp */,
 				976D6C6F122B8A3D001FD1F7 /* FileThread.h */,
 				976D6C70122B8A3D001FD1F7 /* FileThreadTask.h */,
@@ -22782,6 +22785,7 @@
 				89878563122CA064003AABDA /* FileSystemCallback.h in Headers */,
 				89878565122CA064003AABDA /* FileSystemCallbacks.h in Headers */,
 				26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */,
+				89C7C2E1155804F4007D5A7B /* FileSystemType.h in Headers */,
 				976D6C8E122B8A3D001FD1F7 /* FileThread.h in Headers */,
 				976D6C8F122B8A3D001FD1F7 /* FileThreadTask.h in Headers */,
 				976D6C91122B8A3D001FD1F7 /* FileWriter.h in Headers */,

@@ -47,7 +47,7 @@ class FileWriterCallback;
 
 class DOMFileSystem : public DOMFileSystemBase, public ActiveDOMObject {
 public:
-    static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
+    static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext*, const String& name, FileSystemType, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
     PassRefPtr<DirectoryEntry> root();
 
@@ -71,7 +71,7 @@ public:
     }
 
 private:
-    DOMFileSystem(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
+    DOMFileSystem(ScriptExecutionContext*, const String& name, FileSystemType, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
     // A helper template to schedule a callback task.
     template <typename CB, typename CBArg>

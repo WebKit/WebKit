@@ -33,7 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "AsyncFileSystemCallbacks.h"
+#include "DOMFileSystemBase.h"
 #include "FileSystemType.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>

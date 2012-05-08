@@ -56,7 +56,11 @@ EntryBase::~EntryBase()
 
 KURL EntryBase::toURL() const
 {
-    return m_fileSystem->asyncFileSystem()->toURL(m_fileSystem->securityOrigin()->toString(), m_fullPath);
+    // Some filesystem type may not support toURL.
+    if (!m_fileSystem->supportsToURL())
+        return KURL();
+
+    return m_fileSystem->createFileSystemURL(this);
 }
 
 } // namespace WebCore

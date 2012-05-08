@@ -1,3 +1,13 @@
+2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Support cross-filesystem operations in FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=84135
+
+        Reviewed by David Levin.
+
+        * fast/filesystem/cross-filesystem-op-expected.txt: Added.
+        * fast/filesystem/cross-filesystem-op.html: Added.
+
 2012-05-07  Ojan Vafai  <ojan@chromium.org>
 
         Chromium rebaselines after http://trac.webkit.org/changeset/116373.

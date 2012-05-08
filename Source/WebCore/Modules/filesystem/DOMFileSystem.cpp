@@ -53,16 +53,16 @@
 namespace WebCore {
 
 // static
-PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
 {
-    RefPtr<DOMFileSystem> fileSystem(adoptRef(new DOMFileSystem(context, name, asyncFileSystem)));
+    RefPtr<DOMFileSystem> fileSystem(adoptRef(new DOMFileSystem(context, name, type, rootURL, asyncFileSystem)));
     fileSystem->suspendIfNeeded();
     InspectorInstrumentation::didOpenFileSystem(fileSystem.get());
     return fileSystem.release();
 }
 
-DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
-    : DOMFileSystemBase(context, name, asyncFileSystem)
+DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+    : DOMFileSystemBase(context, name, type, rootURL, asyncFileSystem)
     , ActiveDOMObject(context, this)
 {
 }
@@ -118,7 +118,7 @@ void DOMFileSystem::createWriter(const FileEntry* fileEntry, PassRefPtr<FileWrit
     RefPtr<FileWriter> fileWriter = FileWriter::create(scriptExecutionContext());
     RefPtr<FileWriterBaseCallback> conversionCallback = ConvertToFileWriterCallback::create(successCallback);
     OwnPtr<FileWriterBaseCallbacks> callbacks = FileWriterBaseCallbacks::create(fileWriter, conversionCallback, errorCallback);
-    m_asyncFileSystem->createWriter(fileWriter.get(), fileEntry->fullPath(), callbacks.release());
+    m_asyncFileSystem->createWriter(fileWriter.get(), createFileSystemURL(fileEntry), callbacks.release());
 }
 
 namespace {
@@ -158,7 +158,7 @@ private:
 
 void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileEntry->fullPath(), GetPathCallback::create(this, fileEntry->name(), successCallback, errorCallback));
+    m_asyncFileSystem->createSnapshotFileAndReadMetadata(createFileSystemURL(fileEntry), GetPathCallback::create(this, fileEntry->name(), successCallback, errorCallback));
 }
 
 } // namespace WebCore

@@ -43,45 +43,35 @@ class WebFileSystem;
 namespace WebCore {
 
 class AsyncFileSystemCallbacks;
-class KURL;
 
 class AsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(FileSystemType type, const KURL& rootURL)
+    static PassOwnPtr<AsyncFileSystem> create()
     {
-        return adoptPtr(new AsyncFileSystemChromium(type, rootURL));
+        return adoptPtr(new AsyncFileSystemChromium());
     }
-
-    static String createIsolatedFileSystemName(const String& storageIdentifier, const String& filesystemId);
-    static PassOwnPtr<AsyncFileSystem> createIsolatedFileSystem(const String& originString, const String& filesystemId);
 
     virtual ~AsyncFileSystemChromium();
 
-    virtual KURL toURL(const String& originString, const String& fullPath) const;
-    virtual void move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void removeRecursively(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createFile(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createDirectory(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void fileExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void directoryExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void copy(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createWriter(AsyncFileWriterClient*, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 protected:
-    AsyncFileSystemChromium(FileSystemType, const KURL& rootURL);
+    AsyncFileSystemChromium();
 
     PassOwnPtr<AsyncFileSystemCallbacks> createSnapshotFileCallback(const KURL& internalBlobURL, PassOwnPtr<AsyncFileSystemCallbacks>) const;
 
     WebKit::WebFileSystem* m_webFileSystem;
-
-    // Converts a given absolute virtual path to a full origin-qualified FileSystem URL.
-    KURL virtualPathToFileSystemURL(const String& virtualPath) const;
-
-    KURL m_filesystemRootURL;
 };
 
 } // namespace WebCore

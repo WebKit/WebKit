@@ -120,7 +120,7 @@ void DataTransferItemFileSystem::webkitGetAsEntry(DataTransferItem* item, Script
 
     // The dropped entries are mapped as top-level entries in the isolated filesystem.
     String virtualPath = DOMFilePath::append("/", static_cast<File*>(file)->name());
-    domFileSystem->asyncFileSystem()->readMetadata(virtualPath, GetAsEntryCallbacks::create(domFileSystem, virtualPath, callback));
+    domFileSystem->asyncFileSystem()->readMetadata(domFileSystem->createFileSystemURL(virtualPath), GetAsEntryCallbacks::create(domFileSystem, virtualPath, callback));
 }
 
 } // namespace WebCore

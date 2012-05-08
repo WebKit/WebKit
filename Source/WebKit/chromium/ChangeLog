@@ -1,3 +1,70 @@
+2012-05-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Support cross-filesystem operations in FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=84135
+
+        Reviewed by David Levin.
+
+        Currently we pass Entry's fullPath to AsyncFileSystem layer where
+        we convert the given path to filesystem URL which includes origin and
+        filesystem type information, but in that way we cannot handle
+        cross-filesystem operations (e.g. cross-filesystem copy and move)
+        well since we end up with always attaching the source filesystem's
+        origin and type information for argument paths.
+
+        This patch does:
+        - move filesystem-type related code out of AsyncFileSystemChromium.cpp
+          (moving into DOMFileSystemChromium.cpp)
+        - change AsyncFileSystemChromium's methods implementation not to take
+          entry paths but complete filesystem URLs.
+
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::AsyncFileSystemChromium):
+        (WebCore::AsyncFileSystemChromium::move):
+        (WebCore::AsyncFileSystemChromium::copy):
+        (WebCore::AsyncFileSystemChromium::remove):
+        (WebCore::AsyncFileSystemChromium::removeRecursively):
+        (WebCore::AsyncFileSystemChromium::readMetadata):
+        (WebCore::AsyncFileSystemChromium::createFile):
+        (WebCore::AsyncFileSystemChromium::createDirectory):
+        (WebCore::AsyncFileSystemChromium::fileExists):
+        (WebCore::AsyncFileSystemChromium::directoryExists):
+        (WebCore::AsyncFileSystemChromium::readDirectory):
+        (WebCore::AsyncFileSystemChromium::createWriter):
+        (WebCore::AsyncFileSystemChromium::createSnapshotFileAndReadMetadata):
+        * src/AsyncFileSystemChromium.h:
+        (WebCore::AsyncFileSystemChromium::create):
+        (AsyncFileSystemChromium):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemHelper):
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::createAsyncFileSystem):
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl):
+        (WebKit::WebFileSystemCallbacksImpl::didOpenFileSystem):
+        * src/WebFileSystemCallbacksImpl.h:
+        (WebFileSystemCallbacksImpl):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFileSystem):
+        (WebKit::WebFrameImpl::createFileEntry):
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        (WebCore::WorkerAsyncFileSystemChromium::move):
+        (WebCore::WorkerAsyncFileSystemChromium::copy):
+        (WebCore::WorkerAsyncFileSystemChromium::remove):
+        (WebCore::WorkerAsyncFileSystemChromium::removeRecursively):
+        (WebCore::WorkerAsyncFileSystemChromium::readMetadata):
+        (WebCore::WorkerAsyncFileSystemChromium::createFile):
+        (WebCore::WorkerAsyncFileSystemChromium::createDirectory):
+        (WebCore::WorkerAsyncFileSystemChromium::fileExists):
+        (WebCore::WorkerAsyncFileSystemChromium::directoryExists):
+        (WebCore::WorkerAsyncFileSystemChromium::readDirectory):
+        (WebCore::WorkerAsyncFileSystemChromium::createWriter):
+        (WebCore::WorkerAsyncFileSystemChromium::createSnapshotFileAndReadMetadata):
+        * src/WorkerAsyncFileSystemChromium.h:
+        (WebCore::WorkerAsyncFileSystemChromium::create):
+        (WorkerAsyncFileSystemChromium):
+
 2012-05-07  Greg Billock  <gbillock@google.com>
 
         [Web Intents] Flagged-off implementation of an intent tag for registration.

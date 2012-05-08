@@ -51,12 +51,6 @@ namespace WebCore {
 
 namespace {
 
-// For isolated filesystem.
-const char isolatedPathPrefix[] = "isolated";
-
-// For external filesystem.
-const char externalPathPrefix[] = "external";
-
 // Specialized callback class for createSnapshotFileAndReadMetadata.
 class SnapshotFileCallbacks : public AsyncFileSystemCallbacks {
 public:
@@ -101,149 +95,64 @@ bool AsyncFileSystem::isAvailable()
     return true;
 }
 
-// static
-bool AsyncFileSystem::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
-{
-    if (!url.protocolIs("filesystem"))
-        return false;
-
-    if (url.innerURL()) {
-        String typeString = url.innerURL()->path().substring(1);
-        if (typeString == temporaryPathPrefix)
-            type = FileSystemTypeTemporary;
-        else if (typeString == persistentPathPrefix)
-            type = FileSystemTypePersistent;
-        else if (typeString == externalPathPrefix)
-            type = FileSystemTypeExternal;
-        else
-            return false;
-
-        filePath = decodeURLEscapeSequences(url.path());
-    }
-    return true;
-}
-
-// static
-bool AsyncFileSystem::isValidType(FileSystemType type)
-{
-    return type == FileSystemTypeTemporary || type == FileSystemTypePersistent || type == FileSystemTypeExternal;
-}
-
-AsyncFileSystemChromium::AsyncFileSystemChromium(FileSystemType type, const KURL& rootURL)
-    : AsyncFileSystem(type)
-    , m_webFileSystem(WebKit::Platform::current()->fileSystem())
-    , m_filesystemRootURL(rootURL)
+AsyncFileSystemChromium::AsyncFileSystemChromium()
+    : m_webFileSystem(WebKit::webKitPlatformSupport()->fileSystem())
 {
     ASSERT(m_webFileSystem);
-}
-
-// static
-String AsyncFileSystemChromium::createIsolatedFileSystemName(const String& storageIdentifier, const String& filesystemId)
-{
-    StringBuilder filesystemName;
-    filesystemName.append(storageIdentifier);
-    filesystemName.append(":");
-    filesystemName.append(isolatedPathPrefix);
-    filesystemName.append("_");
-    filesystemName.append(filesystemId);
-    return filesystemName.toString();
-}
-
-// static
-PassOwnPtr<AsyncFileSystem> AsyncFileSystemChromium::createIsolatedFileSystem(const String& originString, const String& filesystemId)
-{
-    // The rootURL is used in succeeding filesystem requests sent to the
-    // chromium and is validated each time in the browser process.
-    StringBuilder rootURL;
-    rootURL.append("filesystem:");
-    rootURL.append(originString);
-    rootURL.append("/");
-    rootURL.append(isolatedPathPrefix);
-    rootURL.append("/");
-    rootURL.append(filesystemId);
-    rootURL.append("/");
-
-    return AsyncFileSystemChromium::create(FileSystemTypeIsolated, KURL(ParsedURLString, rootURL.toString()));
 }
 
 AsyncFileSystemChromium::~AsyncFileSystemChromium()
 {
 }
 
-KURL AsyncFileSystemChromium::toURL(const String& originString, const String& fullPath) const
+void AsyncFileSystemChromium::move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    ASSERT(!originString.isEmpty());
-    if (originString == "null")
-        return KURL();
-
-    // For now we don't support toURL for isolated filesystem (until we resolve the isolated filesystem lifetime issue).
-    if (type() == FileSystemTypeIsolated)
-        return KURL();
-
-    if (type() == FileSystemTypeExternal) {
-        // For external filesystem originString could be different from what we have in m_filesystemRootURL.
-        StringBuilder result;
-        result.append("filesystem:");
-        result.append(originString);
-        result.append("/");
-        result.append(externalPathPrefix);
-        result.append(encodeWithURLEscapeSequences(fullPath));
-        return KURL(ParsedURLString, result.toString());
-    }
-
-    // For regular types we can just call virtualPathToFileSystemURL which appends the fullPath to the m_filesystemRootURL that should look like 'filesystem:<origin>/<typePrefix>'.
-    ASSERT(SecurityOrigin::create(m_filesystemRootURL)->toString() == originString);
-    return KURL(ParsedURLString, virtualPathToFileSystemURL(fullPath));
+    m_webFileSystem->move(sourcePath, destinationPath, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::copy(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->move(virtualPathToFileSystemURL(sourcePath), virtualPathToFileSystemURL(destinationPath), new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->copy(sourcePath, destinationPath, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->copy(virtualPathToFileSystemURL(sourcePath), virtualPathToFileSystemURL(destinationPath), new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->remove(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->remove(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->removeRecursively(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::removeRecursively(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->removeRecursively(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->readMetadata(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::readMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->readMetadata(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->createFile(path, exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::createFile(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->createFile(virtualPathToFileSystemURL(path), exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->createDirectory(path, exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::createDirectory(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->createDirectory(virtualPathToFileSystemURL(path), exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->fileExists(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::fileExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->fileExists(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->directoryExists(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
-void AsyncFileSystemChromium::directoryExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->directoryExists(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
-}
-
-void AsyncFileSystemChromium::readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
-{
-    m_webFileSystem->readDirectory(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->readDirectory(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 class FileWriterHelperCallbacks : public WebKit::WebFileSystemCallbacks {
@@ -300,28 +209,17 @@ private:
     OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
 };
 
-void AsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    KURL pathAsURL = virtualPathToFileSystemURL(path);
-    m_webFileSystem->readMetadata(pathAsURL, new FileWriterHelperCallbacks(client, pathAsURL, m_webFileSystem, callbacks));
+    m_webFileSystem->readMetadata(path, new FileWriterHelperCallbacks(client, path, m_webFileSystem, callbacks));
 }
 
-void AsyncFileSystemChromium::createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemChromium::createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    KURL pathAsURL = virtualPathToFileSystemURL(path);
     KURL internalBlobURL = BlobURL::createInternalURL();
 
     // This will create a snapshot file and register the file to a blob using the given internalBlobURL.
-    m_webFileSystem->createSnapshotFileAndReadMetadata(internalBlobURL, pathAsURL, new WebKit::WebFileSystemCallbacksImpl(createSnapshotFileCallback(internalBlobURL, callbacks)));
-}
-
-KURL AsyncFileSystemChromium::virtualPathToFileSystemURL(const String& virtualPath) const
-{
-    ASSERT(!m_filesystemRootURL.isEmpty());
-    KURL url = m_filesystemRootURL;
-    // Remove the extra leading slash.
-    url.setPath(url.path() + encodeWithURLEscapeSequences(virtualPath.substring(1)));
-    return url;
+    m_webFileSystem->createSnapshotFileAndReadMetadata(internalBlobURL, path, new WebKit::WebFileSystemCallbacksImpl(createSnapshotFileCallback(internalBlobURL, callbacks)));
 }
 
 PassOwnPtr<AsyncFileSystemCallbacks> AsyncFileSystemChromium::createSnapshotFileCallback(const KURL& internalBlobURL, PassOwnPtr<AsyncFileSystemCallbacks> callbacks) const

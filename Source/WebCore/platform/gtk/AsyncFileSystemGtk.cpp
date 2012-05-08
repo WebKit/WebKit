@@ -35,31 +35,18 @@ bool AsyncFileSystem::isAvailable()
     return false;
 }
 
-bool AsyncFileSystem::isValidType(FileSystemType type)
+PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create()
 {
-    notImplemented();
-    return false;
+    return adoptPtr(new AsyncFileSystemGtk());
 }
 
-PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(FileSystemType type)
-{
-    return adoptPtr(new AsyncFileSystemGtk(type));
-}
-
-void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystem::openFileSystem(const KURL& basePath, const String& storageIdentifier, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
     callbacks->didFail(NOT_SUPPORTED_ERR);
 }
 
-bool AsyncFileSystem::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
-{
-    notImplemented();
-    return false;
-}
-
-AsyncFileSystemGtk::AsyncFileSystemGtk(FileSystemType type)
-    : AsyncFileSystem(type)
+AsyncFileSystemGtk::AsyncFileSystemGtk()
 {
     notImplemented();
 }
@@ -69,64 +56,58 @@ AsyncFileSystemGtk::~AsyncFileSystemGtk()
     notImplemented();
 }
 
-KURL AsyncFileSystemGtk::toURL(const String& originString, const String& fullPath) const
-{
-    notImplemented();
-    return KURL();
-}
-
-void AsyncFileSystemGtk::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::copy(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::removeRecursively(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::readMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::createFile(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::createDirectory(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::fileExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::directoryExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
-void AsyncFileSystemGtk::readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }
 
 
-void AsyncFileSystemGtk::createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemGtk::createWriter(AsyncFileWriterClient* client, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
 }

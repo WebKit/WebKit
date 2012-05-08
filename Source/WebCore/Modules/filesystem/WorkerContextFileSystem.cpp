@@ -31,7 +31,6 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
-#include "DOMFileSystem.h"
 #include "DOMFileSystemBase.h"
 #include "DOMFileSystemSync.h"
 #include "DirectoryEntrySync.h"
@@ -58,12 +57,12 @@ void WorkerContextFileSystem::webkitRequestFileSystem(WorkerContext* worker, int
     }
 
     FileSystemType fileSystemType = static_cast<FileSystemType>(type);
-    if (!AsyncFileSystem::isValidType(fileSystemType)) {
+    if (!DOMFileSystemBase::isValidType(fileSystemType)) {
         DOMFileSystem::scheduleCallback(worker, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
         return;
     }
 
-    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, worker), AsynchronousFileSystem);
+    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, worker, fileSystemType), AsynchronousFileSystem);
 }
 
 PassRefPtr<DOMFileSystemSync> WorkerContextFileSystem::webkitRequestFileSystemSync(WorkerContext* worker, int type, long long size, ExceptionCode& ec)
@@ -76,13 +75,13 @@ PassRefPtr<DOMFileSystemSync> WorkerContextFileSystem::webkitRequestFileSystemSy
     }
 
     FileSystemType fileSystemType = static_cast<FileSystemType>(type);
-    if (!AsyncFileSystem::isValidType(fileSystemType)) {
+    if (!DOMFileSystemBase::isValidType(fileSystemType)) {
         ec = FileException::INVALID_MODIFICATION_ERR;
         return 0;
     }
 
     FileSystemSyncCallbackHelper helper;
-    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(helper.successCallback(), helper.errorCallback(), worker), SynchronousFileSystem);
+    LocalFileSystem::localFileSystem().requestFileSystem(worker, fileSystemType, size, FileSystemCallbacks::create(helper.successCallback(), helper.errorCallback(), worker, fileSystemType), SynchronousFileSystem);
     return helper.getResult(ec);
 }
 
@@ -97,12 +96,12 @@ void WorkerContextFileSystem::webkitResolveLocalFileSystemURL(WorkerContext* wor
 
     FileSystemType type;
     String filePath;
-    if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
+    if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
         DOMFileSystem::scheduleCallback(worker, errorCallback, FileError::create(FileError::ENCODING_ERR));
         return;
     }
 
-    LocalFileSystem::localFileSystem().readFileSystem(worker, type, ResolveURICallbacks::create(successCallback, errorCallback, worker, filePath));
+    LocalFileSystem::localFileSystem().readFileSystem(worker, type, ResolveURICallbacks::create(successCallback, errorCallback, worker, type, filePath));
 }
 
 PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncURL(WorkerContext* worker, const String& url, ExceptionCode& ec)
@@ -117,13 +116,13 @@ PassRefPtr<EntrySync> WorkerContextFileSystem::webkitResolveLocalFileSystemSyncU
 
     FileSystemType type;
     String filePath;
-    if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
+    if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
         ec = FileException::ENCODING_ERR;
         return 0;
     }
 
     FileSystemSyncCallbackHelper readFileSystemHelper;
-    LocalFileSystem::localFileSystem().readFileSystem(worker, type, FileSystemCallbacks::create(readFileSystemHelper.successCallback(), readFileSystemHelper.errorCallback(), worker), SynchronousFileSystem);
+    LocalFileSystem::localFileSystem().readFileSystem(worker, type, FileSystemCallbacks::create(readFileSystemHelper.successCallback(), readFileSystemHelper.errorCallback(), worker, type), SynchronousFileSystem);
     RefPtr<DOMFileSystemSync> fileSystem = readFileSystemHelper.getResult(ec);
     if (!fileSystem)
         return 0;

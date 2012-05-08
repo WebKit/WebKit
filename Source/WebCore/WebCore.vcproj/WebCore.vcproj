@@ -24341,6 +24341,10 @@
 				        >
 			        </File>
 			        <File
+				        RelativePath="..\Modules\filesystem\FileSystemType.h"
+				        >
+			        </File>
+			        <File
 				        RelativePath="..\Modules\filesystem\FileWriter.cpp"
 				        >
 			        </File>

@@ -404,14 +404,9 @@ int PlatformSupport::writeToFile(PlatformFileHandle handle, const char* data, in
 }
 
 #if ENABLE(FILE_SYSTEM)
-String PlatformSupport::createIsolatedFileSystemName(const String& storageIdentifier, const String& filesystemId)
+PassOwnPtr<AsyncFileSystem> PlatformSupport::createAsyncFileSystem()
 {
-    return AsyncFileSystemChromium::createIsolatedFileSystemName(storageIdentifier, filesystemId);
-}
-
-PassOwnPtr<AsyncFileSystem> PlatformSupport::createIsolatedFileSystem(const String& originString, const String& filesystemId)
-{
-    return AsyncFileSystemChromium::createIsolatedFileSystem(originString, filesystemId);
+    return AsyncFileSystemChromium::create();
 }
 #endif
 

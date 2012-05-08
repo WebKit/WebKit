@@ -34,6 +34,8 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
+#include "FileSystemType.h"
+#include "KURL.h"
 #include "PlatformString.h"
 #include "WebKitFlags.h"
 #include <wtf/PassRefPtr.h>
@@ -47,7 +49,6 @@ class EntriesCallback;
 class EntryBase;
 class EntryCallback;
 class ErrorCallback;
-class KURL;
 class MetadataCallback;
 class ScriptExecutionContext;
 class SecurityOrigin;
@@ -56,15 +57,30 @@ class VoidCallback;
 // A common base class for DOMFileSystem and DOMFileSystemSync.
 class DOMFileSystemBase : public RefCounted<DOMFileSystemBase> {
 public:
-    static PassRefPtr<DOMFileSystemBase> create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+    // Path prefixes that are used in the filesystem URLs (that can be obtained by toURL()).
+    // http://www.w3.org/TR/file-system-api/#widl-Entry-toURL
+    static const char persistentPathPrefix[];
+    static const size_t persistentPathPrefixLength;
+    static const char temporaryPathPrefix[];
+    static const size_t temporaryPathPrefixLength;
+
+    static PassRefPtr<DOMFileSystemBase> create(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     {
-        return adoptRef(new DOMFileSystemBase(context, name, asyncFileSystem));
+        return adoptRef(new DOMFileSystemBase(context, name, type, rootURL, asyncFileSystem));
     }
     virtual ~DOMFileSystemBase();
 
     const String& name() const { return m_name; }
+    FileSystemType type() const { return m_type; }
+    KURL rootURL() const { return m_filesystemRootURL; }
     AsyncFileSystem* asyncFileSystem() const { return m_asyncFileSystem.get(); }
     SecurityOrigin* securityOrigin() const;
+
+    static bool isValidType(FileSystemType);
+    static bool crackFileSystemURL(const KURL&, FileSystemType&, String& filePath);
+    bool supportsToURL() const;
+    KURL createFileSystemURL(const EntryBase*) const;
+    KURL createFileSystemURL(const String& fullPath) const;
 
     // Actual FileSystem API implementations. All the validity checks on virtual paths are done at this level.
     // They return false for immediate errors that don't involve lower AsyncFileSystem layer (e.g. for name validation errors). Otherwise they return true (but later may call back with an runtime error).
@@ -79,13 +95,18 @@ public:
     bool readDirectory(PassRefPtr<DirectoryReaderBase>, const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
 
 protected:
-    DOMFileSystemBase(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
+    DOMFileSystemBase(ScriptExecutionContext*, const String& name, FileSystemType, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
     friend class DOMFileSystemSync;
 
     ScriptExecutionContext* m_context;
     String m_name;
+    FileSystemType m_type;
+    KURL m_filesystemRootURL;
+
     mutable OwnPtr<AsyncFileSystem> m_asyncFileSystem;
 };
+
+inline bool operator==(const DOMFileSystemBase& a, const DOMFileSystemBase& b) { return a.name() == b.name() && a.type() == b.type() && a.rootURL() == b.rootURL(); }
 
 } // namespace WebCore
 

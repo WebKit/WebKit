@@ -27,21 +27,20 @@ namespace WebCore {
 
 class AsyncFileSystemBlackBerry : public AsyncFileSystem {
 public:
-    AsyncFileSystemBlackBerry(FileSystemType);
+    AsyncFileSystemBlackBerry();
     virtual ~AsyncFileSystemBlackBerry();
-    virtual KURL toURL(const String& originString, const String& fullPath) const;
-    virtual void move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void removeRecursively(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createFile(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createDirectory(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void fileExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void directoryExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createWriter(AsyncFileWriterClient*, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void copy(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createWriter(AsyncFileWriterClient*, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 };
 
 } // namespace WebCore

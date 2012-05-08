@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystemCallbacks.h"
+#include "FileSystemType.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -100,24 +101,26 @@ private:
 
 class FileSystemCallbacks : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<FileSystemCallbacks> create(PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*);
-    virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>);
+    static PassOwnPtr<FileSystemCallbacks> create(PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType);
+    virtual void didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
 private:
-    FileSystemCallbacks(PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*);
+    FileSystemCallbacks(PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType);
     RefPtr<FileSystemCallback> m_successCallback;
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    FileSystemType m_type;
 };
 
 class ResolveURICallbacks : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<ResolveURICallbacks> create(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, const String& filePath);
-    virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>);
+    static PassOwnPtr<ResolveURICallbacks> create(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType, const String& filePath);
+    virtual void didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
 private:
-    ResolveURICallbacks(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, const String& filePath);
+    ResolveURICallbacks(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType, const String& filePath);
     RefPtr<EntryCallback> m_successCallback;
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    FileSystemType m_type;
     String m_filePath;
 };
 

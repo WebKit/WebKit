@@ -50,9 +50,16 @@
 
 namespace WebCore {
 
-DOMFileSystemBase::DOMFileSystemBase(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+const char DOMFileSystemBase::persistentPathPrefix[] = "persistent";
+const size_t DOMFileSystemBase::persistentPathPrefixLength = sizeof(DOMFileSystemBase::persistentPathPrefix) - 1;
+const char DOMFileSystemBase::temporaryPathPrefix[] = "temporary";
+const size_t DOMFileSystemBase::temporaryPathPrefixLength = sizeof(DOMFileSystemBase::temporaryPathPrefix) - 1;
+
+DOMFileSystemBase::DOMFileSystemBase(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     : m_context(context)
     , m_name(name)
+    , m_type(type)
+    , m_filesystemRootURL(rootURL)
     , m_asyncFileSystem(asyncFileSystem)
 {
 }
@@ -66,9 +73,14 @@ SecurityOrigin* DOMFileSystemBase::securityOrigin() const
     return m_context->securityOrigin();
 }
 
+KURL DOMFileSystemBase::createFileSystemURL(const EntryBase* entry) const
+{
+    return createFileSystemURL(entry->fullPath());
+}
+
 bool DOMFileSystemBase::getMetadata(const EntryBase* entry, PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_asyncFileSystem->readMetadata(entry->fullPath(), MetadataCallbacks::create(successCallback, errorCallback));
+    m_asyncFileSystem->readMetadata(createFileSystemURL(entry), MetadataCallbacks::create(successCallback, errorCallback));
     return true;
 }
 
@@ -82,12 +94,14 @@ static bool verifyAndGetDestinationPathForCopyOrMove(const EntryBase* source, En
     if (!newName.isEmpty() && !DOMFilePath::isValidName(newName))
         return false;
 
+    const bool isSameFileSystem = (*source->filesystem() == *parent->filesystem());
+
     // It is an error to try to copy or move an entry inside itself at any depth if it is a directory.
-    if (source->isDirectory() && DOMFilePath::isParentOf(source->fullPath(), parent->fullPath()))
+    if (source->isDirectory() && isSameFileSystem && DOMFilePath::isParentOf(source->fullPath(), parent->fullPath()))
         return false;
 
     // It is an error to copy or move an entry into its parent if a name different from its current one isn't provided.
-    if ((newName.isEmpty() || source->name() == newName) && DOMFilePath::getDirectory(source->fullPath()) == parent->fullPath())
+    if (isSameFileSystem && (newName.isEmpty() || source->name() == newName) && DOMFilePath::getDirectory(source->fullPath()) == parent->fullPath())
         return false;
 
     destinationPath = parent->fullPath();
@@ -118,7 +132,7 @@ bool DOMFileSystemBase::move(const EntryBase* source, EntryBase* parent, const S
     if (!verifyAndGetDestinationPathForCopyOrMove(source, parent, newName, destinationPath))
         return false;
 
-    m_asyncFileSystem->move(source->fullPath(), destinationPath, EntryCallbacks::create(successCallback, errorCallback, this, destinationPath, source->isDirectory()));
+    m_asyncFileSystem->move(createFileSystemURL(source), parent->filesystem()->createFileSystemURL(destinationPath), EntryCallbacks::create(successCallback, errorCallback, parent->filesystem(), destinationPath, source->isDirectory()));
     return true;
 }
 
@@ -128,7 +142,7 @@ bool DOMFileSystemBase::copy(const EntryBase* source, EntryBase* parent, const S
     if (!verifyAndGetDestinationPathForCopyOrMove(source, parent, newName, destinationPath))
         return false;
 
-    m_asyncFileSystem->copy(source->fullPath(), destinationPath, EntryCallbacks::create(successCallback, errorCallback, this, destinationPath, source->isDirectory()));
+    m_asyncFileSystem->copy(createFileSystemURL(source), parent->filesystem()->createFileSystemURL(destinationPath), EntryCallbacks::create(successCallback, errorCallback, parent->filesystem(), destinationPath, source->isDirectory()));
     return true;
 }
 
@@ -138,7 +152,7 @@ bool DOMFileSystemBase::remove(const EntryBase* entry, PassRefPtr<VoidCallback> 
     // We don't allow calling remove() on the root directory.
     if (entry->fullPath() == String(DOMFilePath::root))
         return false;
-    m_asyncFileSystem->remove(entry->fullPath(), VoidCallbacks::create(successCallback, errorCallback));
+    m_asyncFileSystem->remove(createFileSystemURL(entry), VoidCallbacks::create(successCallback, errorCallback));
     return true;
 }
 
@@ -148,7 +162,7 @@ bool DOMFileSystemBase::removeRecursively(const EntryBase* entry, PassRefPtr<Voi
     // We don't allow calling remove() on the root directory.
     if (entry->fullPath() == String(DOMFilePath::root))
         return false;
-    m_asyncFileSystem->removeRecursively(entry->fullPath(), VoidCallbacks::create(successCallback, errorCallback));
+    m_asyncFileSystem->removeRecursively(createFileSystemURL(entry), VoidCallbacks::create(successCallback, errorCallback));
     return true;
 }
 
@@ -157,42 +171,42 @@ bool DOMFileSystemBase::getParent(const EntryBase* entry, PassRefPtr<EntryCallba
     ASSERT(entry);
     String path = DOMFilePath::getDirectory(entry->fullPath());
 
-    m_asyncFileSystem->directoryExists(path, EntryCallbacks::create(successCallback, errorCallback, this, path, true));
+    m_asyncFileSystem->directoryExists(createFileSystemURL(path), EntryCallbacks::create(successCallback, errorCallback, this, path, true));
     return true;
 }
 
 bool DOMFileSystemBase::getFile(const EntryBase* entry, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
-    if (!pathToAbsolutePath(m_asyncFileSystem->type(), entry, path, absolutePath))
+    if (!pathToAbsolutePath(m_type, entry, path, absolutePath))
         return false;
 
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, false);
     if (flags && flags->isCreate())
-        m_asyncFileSystem->createFile(absolutePath, flags->isExclusive(), callbacks.release());
+        m_asyncFileSystem->createFile(createFileSystemURL(absolutePath), flags->isExclusive(), callbacks.release());
     else
-        m_asyncFileSystem->fileExists(absolutePath, callbacks.release());
+        m_asyncFileSystem->fileExists(createFileSystemURL(absolutePath), callbacks.release());
     return true;
 }
 
 bool DOMFileSystemBase::getDirectory(const EntryBase* entry, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
-    if (!pathToAbsolutePath(m_asyncFileSystem->type(), entry, path, absolutePath))
+    if (!pathToAbsolutePath(m_type, entry, path, absolutePath))
         return false;
 
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, true);
     if (flags && flags->isCreate())
-        m_asyncFileSystem->createDirectory(absolutePath, flags->isExclusive(), callbacks.release());
+        m_asyncFileSystem->createDirectory(createFileSystemURL(absolutePath), flags->isExclusive(), callbacks.release());
     else
-        m_asyncFileSystem->directoryExists(absolutePath, callbacks.release());
+        m_asyncFileSystem->directoryExists(createFileSystemURL(absolutePath), callbacks.release());
     return true;
 }
 
 bool DOMFileSystemBase::readDirectory(PassRefPtr<DirectoryReaderBase> reader, const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     ASSERT(DOMFilePath::isAbsolute(path));
-    m_asyncFileSystem->readDirectory(path, EntriesCallbacks::create(successCallback, errorCallback, reader, path));
+    m_asyncFileSystem->readDirectory(createFileSystemURL(path), EntriesCallbacks::create(successCallback, errorCallback, reader, path));
     return true;
 }
 

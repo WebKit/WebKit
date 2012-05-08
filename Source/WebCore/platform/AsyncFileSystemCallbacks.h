@@ -49,7 +49,7 @@ public:
     virtual void didSucceed() { ASSERT_NOT_REACHED(); }
 
     // Called when a requested file system is opened.
-    virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>) { ASSERT_NOT_REACHED(); }
+    virtual void didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>) { ASSERT_NOT_REACHED(); }
 
     // Called when a file metadata is read successfully.
     virtual void didReadMetadata(const FileMetadata&) { ASSERT_NOT_REACHED(); }

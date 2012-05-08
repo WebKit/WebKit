@@ -66,12 +66,12 @@ void DOMWindowFileSystem::webkitRequestFileSystem(DOMWindow* window, int type, l
     }
 
     FileSystemType fileSystemType = static_cast<FileSystemType>(type);
-    if (!AsyncFileSystem::isValidType(fileSystemType)) {
+    if (!DOMFileSystemBase::isValidType(fileSystemType)) {
         DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
         return;
     }
 
-    LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document), AsynchronousFileSystem);
+    LocalFileSystem::localFileSystem().requestFileSystem(document, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, document, fileSystemType), AsynchronousFileSystem);
 }
 
 void DOMWindowFileSystem::webkitResolveLocalFileSystemURL(DOMWindow* window, const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
@@ -92,12 +92,12 @@ void DOMWindowFileSystem::webkitResolveLocalFileSystemURL(DOMWindow* window, con
 
     FileSystemType type;
     String filePath;
-    if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
+    if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
         DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::ENCODING_ERR));
         return;
     }
 
-    LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, filePath));
+    LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, type, filePath));
 }
 
 COMPILE_ASSERT(static_cast<int>(DOMWindowFileSystem::TEMPORARY) == static_cast<int>(FileSystemTypeTemporary), enum_mismatch);

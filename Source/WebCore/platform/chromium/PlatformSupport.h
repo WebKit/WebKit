@@ -142,8 +142,7 @@ public:
     static int writeToFile(PlatformFileHandle, const char* data, int length);
 
 #if ENABLE(FILE_SYSTEM)
-    static String createIsolatedFileSystemName(const String& storageIdentifier, const String& filesystemId);
-    static PassOwnPtr<AsyncFileSystem> createIsolatedFileSystem(const String& originString, const String& filesystemId);
+    static PassOwnPtr<AsyncFileSystem> createAsyncFileSystem();
 #endif
 
     // Font ---------------------------------------------------------------

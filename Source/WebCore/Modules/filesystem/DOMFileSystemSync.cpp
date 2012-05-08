@@ -53,11 +53,11 @@ class FileWriterBase;
 
 PassRefPtr<DOMFileSystemSync> DOMFileSystemSync::create(DOMFileSystemBase* fileSystem)
 {
-    return adoptRef(new DOMFileSystemSync(fileSystem->m_context, fileSystem->m_name, fileSystem->m_asyncFileSystem.release()));
+    return adoptRef(new DOMFileSystemSync(fileSystem->m_context, fileSystem->name(), fileSystem->type(), fileSystem->rootURL(), fileSystem->m_asyncFileSystem.release()));
 }
 
-DOMFileSystemSync::DOMFileSystemSync(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
-    : DOMFileSystemBase(context, name, asyncFileSystem)
+DOMFileSystemSync::DOMFileSystemSync(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+    : DOMFileSystemBase(context, name, type, rootURL, asyncFileSystem)
 {
 }
 
@@ -134,7 +134,7 @@ PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, E
 {
     ec = 0;
     RefPtr<CreateFileHelper::CreateFileResult> result(CreateFileHelper::CreateFileResult::create());
-    m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileEntry->fullPath(), CreateFileHelper::create(result, fileEntry->name()));
+    m_asyncFileSystem->createSnapshotFileAndReadMetadata(createFileSystemURL(fileEntry), CreateFileHelper::create(result, fileEntry->name()));
     if (!m_asyncFileSystem->waitForOperationToComplete()) {
         ec = FileException::ABORT_ERR;
         return 0;
@@ -223,7 +223,7 @@ PassRefPtr<FileWriterSync> DOMFileSystemSync::createWriter(const FileEntrySync* 
     RefPtr<LocalErrorCallback> errorCallback = LocalErrorCallback::create();
 
     OwnPtr<FileWriterBaseCallbacks> callbacks = FileWriterBaseCallbacks::create(fileWriter, successCallback, errorCallback);
-    m_asyncFileSystem->createWriter(fileWriter.get(), fileEntry->fullPath(), callbacks.release());
+    m_asyncFileSystem->createWriter(fileWriter.get(), createFileSystemURL(fileEntry), callbacks.release());
     if (!m_asyncFileSystem->waitForOperationToComplete()) {
         ec = FileException::ABORT_ERR;
         return 0;

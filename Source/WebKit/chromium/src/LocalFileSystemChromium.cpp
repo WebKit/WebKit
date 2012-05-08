@@ -194,7 +194,7 @@ static void openFileSystemHelper(ScriptExecutionContext* context, FileSystemType
         if (webView->permissionClient() && !webView->permissionClient()->allowFileSystem(webFrame))
             allowed = false;
         else
-            webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type));
+            webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks));
     } else {
 #if ENABLE(WORKERS)
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
@@ -203,7 +203,7 @@ static void openFileSystemHelper(ScriptExecutionContext* context, FileSystemType
         if (!allowFileSystemForWorker(webWorker->commonClient()))
             allowed = false;
         else
-            openFileSystemForWorker(webWorker->commonClient(), static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronousType), synchronousType);
+            openFileSystemForWorker(webWorker->commonClient(), static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, context, synchronousType), synchronousType);
 
 #else
         ASSERT_NOT_REACHED();
