@@ -72,8 +72,8 @@ public:
     int pixelSnappedY() const { return y().round(); }
     int pixelSnappedWidth() const { return snapSizeToPixel(width(), x()); }
     int pixelSnappedHeight() const { return snapSizeToPixel(height(), y()); }
-    int pixelSnappedMaxX() const { return pixelSnappedX() + pixelSnappedWidth(); }
-    int pixelSnappedMaxY() const { return pixelSnappedY() + pixelSnappedHeight(); }
+    int pixelSnappedMaxX() const { return (m_location.x() + m_size.width()).round(); }
+    int pixelSnappedMaxY() const { return (m_location.y() + m_size.height()).round(); }
 
     void setX(FractionalLayoutUnit x) { m_location.setX(x); }
     void setY(FractionalLayoutUnit y) { m_location.setY(y); }

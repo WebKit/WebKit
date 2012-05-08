@@ -478,7 +478,7 @@ static LayoutUnit accumulateRelativePositionOffsets(const RenderObject* child, R
 {
     if (!child->isAnonymousBlock() || !child->isRelPositioned())
         return 0;
-    LayoutUnit offset = 0;
+    LayoutUnit offset = ZERO_LAYOUT_UNIT;
     RenderObject* p = toRenderBlock(child)->inlineElementContinuation();
     while (p && p->isRenderInline()) {
         if (p->isRelPositioned())
@@ -540,7 +540,7 @@ LayoutUnit RenderBoxModelObject::offsetLeft() const
     // If the element is the HTML body element or does not have an associated box
     // return 0 and stop this algorithm.
     if (isBody())
-        return 0;
+        return ZERO_LAYOUT_UNIT;
     
     RenderBoxModelObject* offsetPar = offsetParent();
     LayoutUnit xPos = (isBox() ? toRenderBox(this)->left() : ZERO_LAYOUT_UNIT);
@@ -574,7 +574,7 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
     // If the element is the HTML body element or does not have an associated box
     // return 0 and stop this algorithm.
     if (isBody())
-        return 0;
+        return ZERO_LAYOUT_UNIT;
     
     RenderBoxModelObject* offsetPar = offsetParent();
     LayoutUnit yPos = (isBox() ? toRenderBox(this)->top() : ZERO_LAYOUT_UNIT);
@@ -614,7 +614,7 @@ int RenderBoxModelObject::pixelSnappedOffsetHeight() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingTop();
     if (padding.isPercent())
@@ -626,7 +626,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
@@ -638,7 +638,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
@@ -650,7 +650,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingRight();
     if (padding.isPercent())
@@ -662,7 +662,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
@@ -674,7 +674,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
@@ -686,7 +686,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingStart();
     if (padding.isPercent())
@@ -698,7 +698,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const
 {
-    LayoutUnit w = 0;
+    LayoutUnit w = ZERO_LAYOUT_UNIT;
     RenderView* renderView = 0;
     Length padding = style()->paddingEnd();
     if (padding.isPercent())

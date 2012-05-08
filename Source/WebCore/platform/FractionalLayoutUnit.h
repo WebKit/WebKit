@@ -321,6 +321,7 @@ inline bool operator==(const float a, const FractionalLayoutUnit& b)
 // For multiplication that's prone to overflow, this bounds it to FractionalLayoutUnit::max() and ::min()
 inline FractionalLayoutUnit boundedMultiply(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
 {
+#if ENABLE(SUBPIXEL_LAYOUT)
     FractionalLayoutUnit returnVal;
     long long rawVal = static_cast<long long>(a.rawValue()) * b.rawValue() / kFixedPointDenominator;
     if (rawVal > std::numeric_limits<int>::max())
@@ -329,14 +330,21 @@ inline FractionalLayoutUnit boundedMultiply(const FractionalLayoutUnit& a, const
         return FractionalLayoutUnit::min();
     returnVal.setRawValue(rawVal);
     return returnVal;
+#else
+    return a.rawValue() * b.rawValue();
+#endif
 }
 
 inline FractionalLayoutUnit operator*(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
 {
+#if ENABLE(SUBPIXEL_LAYOUT)
     FractionalLayoutUnit returnVal;
     long long rawVal = static_cast<long long>(a.rawValue()) * b.rawValue() / kFixedPointDenominator;
     returnVal.setRawValue(rawVal);
     return returnVal;
+#else
+    return a.rawValue() * b.rawValue();
+#endif
 }    
 
 inline double operator*(const FractionalLayoutUnit& a, double b)
@@ -381,10 +389,14 @@ inline double operator*(const double a, const FractionalLayoutUnit& b)
 
 inline FractionalLayoutUnit operator/(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
 {
+#if ENABLE(SUBPIXEL_LAYOUT)
     FractionalLayoutUnit returnVal;
     long long rawVal = static_cast<long long>(kFixedPointDenominator) * a.rawValue() / b.rawValue();
     returnVal.setRawValue(rawVal);
     return returnVal;
+#else
+    return a.rawValue() / b.rawValue();
+#endif
 }    
 
 inline float operator/(const FractionalLayoutUnit& a, float b)
