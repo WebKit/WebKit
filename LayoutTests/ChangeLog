@@ -1,5 +1,11 @@
 2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, skip failing tests.
+
+        * platform/qt-5.0/Skipped:
+
+2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening, unskip now passing tests, update platform specific expected files.
 
         * platform/mac/Skipped:

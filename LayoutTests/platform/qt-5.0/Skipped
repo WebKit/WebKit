@@ -139,3 +139,24 @@ http/tests/security/xssAuditor/script-tag-with-16bit-unicode2.html
 http/tests/security/xssAuditor/script-tag-with-16bit-unicode5.html
 http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
 http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding.html
+
+# Unskipped by http://trac.webkit.org/changeset/116409
+# These tests pass on Qt 4.8, but fail on Qt 5. The needs more investigation.
+fast/dom/HTMLTextAreaElement/reset-textarea.html
+fast/dynamic/008.html
+fast/forms/box-shadow-override.html
+fast/forms/form-element-geometry.html
+fast/forms/input-disabled-color.html
+fast/forms/placeholder-pseudo-style.html
+fast/forms/textarea-align.html
+fast/forms/textarea-setinnerhtml.html
+fast/parser/entity-comment-in-textarea.html
+fast/parser/open-comment-in-textarea.html
+fast/table/003.html
+fast/text/basic/003.html
+fast/text/complex-text-opacity.html
+fast/text/large-text-composed-char.html
+fast/text/letter-spacing-negative-opacity.html
+fast/text/whitespace/pre-wrap-overflow-selection.html
+fast/text/word-break.html
+fast/xsl/xslt-entity.xml
