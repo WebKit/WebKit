@@ -1,3 +1,17 @@
+2012-05-08  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Update documentation of ewk_frame_contents_alternate_set and ewk_view_zoom_range_set.
+        https://bugs.webkit.org/show_bug.cgi?id=84588
+
+        Reviewed by Eric Seidel.
+
+        In ewk_frame_contents_alternate_set, param unreachableUri is required, must not be 0.
+        In ewk_view_zoom_range_set, function returns EINA_FALSE only on failure,
+        not when zoom range is changed.
+
+        * ewk/ewk_frame.h:
+        * ewk/ewk_view.h:
+
 2012-05-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Page caching permission from EFL's FrameLoaderClient

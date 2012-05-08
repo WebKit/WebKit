@@ -2325,7 +2325,7 @@ EAPI void ewk_view_viewport_attributes_get(const Evas_Object *o, int *w, int *h,
  * @param min_scale the minimum value of the zoom range
  * @param max_scale the maximum value of the zoom range
  *
- * @return @c EINA_TRUE if zoom range is changed, @c EINA_FALSE if not or on failure
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_scale);
 

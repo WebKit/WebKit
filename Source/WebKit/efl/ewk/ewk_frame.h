@@ -396,7 +396,7 @@ EAPI Eina_Bool    ewk_frame_contents_set(Evas_Object *o, const char *contents, s
  * @param base_uri base URI to use for relative resources, may be @c 0,
  *        if provided must be an absolute uri
  * @param unreachable_uri the URI that failed to load and is getting the
- *        alternative representation
+ *        alternative representation, must @b not be @c 0
  *
  * @return @c EINA_TRUE on successful request, @c EINA_FALSE on errors
  */
