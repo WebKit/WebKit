@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+function handlePaste(event)
+{
+    var data = event.clipboardData.getData('text/plain');
+    document.getElementById("result").textContent += data.replace(/\r/g, "\\r").replace(/\n/g, "\\n");
+    event.preventDefault();
+}
+
+function runTest()
+{
+    if (!window.layoutTestController)
+        return;
+    window.layoutTestController.dumpAsText();
+
+    document.body.addEventListener('paste', handlePaste);
+    var sourceElement = document.getElementById('source');
+    var originalSource = sourceElement.textContent;
+    sourceElement.textContent = originalSource.replace(/[\\]r/g, "\r").replace(/[\\]n/g, "\n");
+
+    var range = document.createRange();
+    range.selectNode(sourceElement);
+    getSelection().addRange(range);
+    document.execCommand('copy');
+    getSelection().removeAllRanges();
+    sourceElement.textContent = originalSource;
+
+    document.execCommand('paste');
+}
+</script>
+<body onload="runTest()" contenteditable="true">
+<p id="description">This test requires DRT. It verifies that on Windows only \n's not preceded by \r are translated into \r\n by Pasteboard.</p>
+<div>Source:</div>
+<pre id="source">\nLine1\rLine2\nLine3\r\nLine4\r\r\nLine5\r\n\r\n\n</pre>
+<div>Result:</div>
+<div id="result" />
+</body>
+</html>
+

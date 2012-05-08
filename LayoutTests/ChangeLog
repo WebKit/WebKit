@@ -1,3 +1,13 @@
+2012-05-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Extra line-breaks added when copying from source.
+        https://bugs.webkit.org/show_bug.cgi?id=85282
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/win/editing/pasteboard/pasting-crlf-isnt-translated-to-crcrlf-win-expected.txt: Added.
+        * platform/win/editing/pasteboard/pasting-crlf-isnt-translated-to-crcrlf-win.html: Added.
+
 2012-05-08  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after 116361. Updated expected result.

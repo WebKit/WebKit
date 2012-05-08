@@ -298,9 +298,20 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
 
 void replaceNewlinesWithWindowsStyleNewlines(String& str)
 {
-    static const UChar Newline = '\n';
-    static const char* const WindowsNewline("\r\n");
-    str.replace(Newline, WindowsNewline);
+    DEFINE_STATIC_LOCAL(String, windowsNewline, ("\r\n"));
+    const static unsigned windowsNewlineLength = windowsNewline.length();
+
+    unsigned index = 0;
+    unsigned strLength = str.length();
+    while (index < strLength) {
+        if (str[index] != '\n' || (index > 0 && str[index - 1] == '\r')) {
+            ++index;
+            continue;
+        }
+        str.replace(index, 1, windowsNewline);
+        strLength = str.length();
+        index += windowsNewlineLength;
+    }
 }
 
 void replaceNBSPWithSpace(String& str)
