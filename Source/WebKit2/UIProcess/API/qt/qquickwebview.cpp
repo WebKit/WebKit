@@ -52,10 +52,14 @@
 #include "qwebviewportinfo_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
+#include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <QDateTime>
+#include <QtQml/QJSValue>
+#include <WKOpenPanelResultListener.h>
+#include <WKSerializedScriptValue.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
-#include <WKOpenPanelResultListener.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
@@ -67,6 +71,105 @@ static bool s_flickableViewportEnabled = true;
 static const int kAxisLockSampleCount = 5;
 static const qreal kAxisLockVelocityThreshold = 300;
 static const qreal kAxisLockVelocityDirectionThreshold = 50;
+
+struct JSCallbackClosure {
+    QPointer<QObject> receiver;
+    QByteArray method;
+    QJSValue value;
+};
+
+static inline QString toQString(JSStringRef string)
+{
+    return QString(reinterpret_cast<const QChar*>(JSStringGetCharactersPtr(string)), JSStringGetLength(string));
+}
+
+static inline QJSValue toQJSValue(JSStringRef string)
+{
+    return QJSValue(toQString(string));
+}
+
+static QJSValue buildQJSValue(QJSEngine* engine, JSGlobalContextRef context, JSValueRef value, int depth)
+{
+    QJSValue var;
+    JSValueRef exception = 0;
+
+    if (depth > 10)
+        return var;
+
+    switch (JSValueGetType(context, value)) {
+    case kJSTypeBoolean:
+        var = QJSValue(JSValueToBoolean(context, value));
+        break;
+    case kJSTypeNumber:
+        {
+            double number = JSValueToNumber(context, value, &exception);
+            if (!exception)
+                var = QJSValue(number);
+        }
+        break;
+    case kJSTypeString:
+        {
+            JSRetainPtr<JSStringRef> string = JSValueToStringCopy(context, value, &exception);
+            if (!exception)
+                var = toQJSValue(string.get());
+        }
+        break;
+    case kJSTypeObject:
+        {
+            JSObjectRef obj = JSValueToObject(context, value, &exception);
+
+            JSPropertyNameArrayRef names = JSObjectCopyPropertyNames(context, obj);
+            size_t length = JSPropertyNameArrayGetCount(names);
+
+            var = engine->newObject();
+
+            for (size_t i = 0; i < length; ++i) {
+                JSRetainPtr<JSStringRef> name = JSPropertyNameArrayGetNameAtIndex(names, i);
+                JSValueRef property = JSObjectGetProperty(context, obj, name.get(), &exception);
+
+                if (!exception) {
+                    QJSValue value = buildQJSValue(engine, context, property, depth + 1);
+                    var.setProperty(toQString(name.get()), value);
+                }
+            }
+        }
+        break;
+    }
+    return var;
+}
+
+static void javaScriptCallback(WKSerializedScriptValueRef valueRef, WKErrorRef, void* data)
+{
+    JSCallbackClosure* closure = reinterpret_cast<JSCallbackClosure*>(data);
+
+    if (closure->method.size())
+        QMetaObject::invokeMethod(closure->receiver, closure->method);
+    else {
+        QJSValue function = closure->value;
+
+        // If a callable function is supplied, we build a JavaScript value accessible
+        // in the QML engine, and calls the function with that.
+        if (function.isCallable()) {
+            QJSValue var;
+            if (valueRef) {
+                // FIXME: Slow but OK for now.
+                JSGlobalContextRef context = JSGlobalContextCreate(0);
+
+                JSValueRef exception = 0;
+                JSValueRef value = WKSerializedScriptValueDeserialize(valueRef, context, &exception);
+                var = buildQJSValue(function.engine(), context, value, /* depth */ 0);
+
+                JSGlobalContextRelease(context);
+            }
+
+            QList<QJSValue> args;
+            args.append(var);
+            function.call(args);
+        }
+    }
+
+    delete closure;
+}
 
 static QQuickWebViewPrivate* createPrivateObject(QQuickWebView* publicObject)
 {
@@ -1171,6 +1274,24 @@ void QQuickWebViewExperimental::setDevicePixelRatio(double devicePixelRatio)
     emit devicePixelRatioChanged();
 }
 
+/*!
+    \internal
+
+    \qmlmethod void WebViewExperimental::evaluateJavaScript(string script [, function(result)])
+
+    \brief Evaluates the specified JavaScript and, if supplied, calls a function with the result.
+*/
+
+void QQuickWebViewExperimental::evaluateJavaScript(const QString& script, const QJSValue& value)
+{
+    JSCallbackClosure* closure = new JSCallbackClosure;
+
+    closure->receiver = this;
+    closure->value = value;
+
+    d_ptr->webPageProxy.get()->runJavaScriptInMainFrame(script, ScriptValueCallback::create(closure, javaScriptCallback));
+}
+
 QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, int index)
 {
     const QObjectList children = property->object->children();
@@ -1725,24 +1846,14 @@ void QQuickWebView::setZoomFactor(qreal factor)
     d->setZoomFactor(factor);
 }
 
-struct JSCallbackClosure {
-    QPointer<QObject> receiver;
-    QByteArray method;
-};
-
-static void javaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void* context)
-{
-    JSCallbackClosure* closure = reinterpret_cast<JSCallbackClosure*>(context);
-    QMetaObject::invokeMethod(closure->receiver, closure->method);
-    delete closure;
-}
-
 void QQuickWebView::runJavaScriptInMainFrame(const QString &script, QObject *receiver, const char *method)
 {
     Q_D(QQuickWebView);
+
     JSCallbackClosure* closure = new JSCallbackClosure;
     closure->receiver = receiver;
     closure->method = method;
+
     d->webPageProxy.get()->runJavaScriptInMainFrame(script, ScriptValueCallback::create(closure, javaScriptCallback));
 }
 

@@ -1,3 +1,26 @@
+2012-05-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add QML/WK2 evaluateJavaScript experimental API
+        https://bugs.webkit.org/show_bug.cgi?id=85496
+
+        Reviewed by Simon Hausmann.
+
+        This is an initial patch adding support for strings,
+        numbers and bools as return values.
+
+        Test: qmltests/WebView/tst_evaluateJavaScript.qml
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (JSCallbackClosure):
+        (toQString):
+        (toQJSValue):
+        (buildQJSValue):
+        (javaScriptCallback):
+        (QQuickWebViewExperimental::evaluateJavaScript):
+        (QQuickWebView::runJavaScriptInMainFrame):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_evaluateJavaScript.qml: Added.
+
 2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Unbreak debugging of WebKit2.

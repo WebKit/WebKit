@@ -65,6 +65,7 @@ QT_BEGIN_NAMESPACE
 class QPainter;
 class QUrl;
 class QQuickFlickable;
+class QJSValue;
 QT_END_NAMESPACE
 
 
@@ -332,6 +333,7 @@ public Q_SLOTS:
     void goBackTo(int index);
     void goForwardTo(int index);
     void postMessage(const QString&);
+    void evaluateJavaScript(const QString& script, const QJSValue& value = QJSValue());
 
 Q_SIGNALS:
     void alertDialogChanged();
