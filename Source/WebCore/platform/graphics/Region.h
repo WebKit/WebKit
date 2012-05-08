@@ -95,6 +95,12 @@ private:
         void translate(const IntSize&);
         void swap(Shape&);
 
+        struct CompareContainsOperation;
+        struct CompareIntersectsOperation;
+
+        template<typename CompareOperation>
+        static bool compareShapes(const Shape& shape1, const Shape& shape2);
+
 #ifndef NDEBUG
         void dump() const;
 #endif

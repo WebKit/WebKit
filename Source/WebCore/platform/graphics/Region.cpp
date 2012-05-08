@@ -70,7 +70,7 @@ bool Region::contains(const Region& region) const
     if (!m_bounds.contains(region.m_bounds))
         return false;
 
-    return WebCore::intersect(region, *this) == region;
+    return Shape::compareShapes<Shape::CompareContainsOperation>(m_shape, region.m_shape);
 }
 
 bool Region::contains(const IntPoint& point) const
@@ -106,10 +106,7 @@ bool Region::intersects(const Region& region) const
     if (!m_bounds.intersects(region.m_bounds))
         return false;
 
-    // FIXME: this could be optimized.
-    Region tempRegion(*this);
-    tempRegion.intersect(region);
-    return !tempRegion.isEmpty();
+    return Shape::compareShapes<Shape::CompareIntersectsOperation>(m_shape, region.m_shape);
 }
 
 unsigned Region::totalArea() const
@@ -125,6 +122,104 @@ unsigned Region::totalArea() const
 
     return totalArea;
 }
+
+template<typename CompareOperation>
+bool Region::Shape::compareShapes(const Shape& aShape, const Shape& bShape)
+{
+    bool result = CompareOperation::defaultResult;
+
+    Shape::SpanIterator aSpan = aShape.spans_begin();
+    Shape::SpanIterator aSpanEnd = aShape.spans_end();
+    Shape::SpanIterator bSpan = bShape.spans_begin();
+    Shape::SpanIterator bSpanEnd = bShape.spans_end();
+
+    bool aHadSegmentInPreviousSpan = false;
+    bool bHadSegmentInPreviousSpan = false;
+    while (aSpan != aSpanEnd && bSpan != bSpanEnd) {
+        int aY = aSpan->y;
+        int aMaxY = (aSpan + 1)->y;
+        int bY = bSpan->y;
+        int bMaxY = (bSpan + 1)->y;
+
+        Shape::SegmentIterator aSegment = aShape.segments_begin(aSpan);
+        Shape::SegmentIterator aSegmentEnd = aShape.segments_end(aSpan);
+        Shape::SegmentIterator bSegment = bShape.segments_begin(bSpan);
+        Shape::SegmentIterator bSegmentEnd = bShape.segments_end(bSpan);
+
+        // Look for a non-overlapping part of the spans. If B had a segment in its previous span, then we already tested A against B within that span.
+        bool aHasSegmentInSpan = aSegment != aSegmentEnd;
+        bool bHasSegmentInSpan = bSegment != bSegmentEnd;
+        if (aY < bY && !bHadSegmentInPreviousSpan && aHasSegmentInSpan && CompareOperation::aOutsideB(result))
+            return result;
+        if (bY < aY && !aHadSegmentInPreviousSpan && bHasSegmentInSpan && CompareOperation::bOutsideA(result))
+            return result;
+
+        aHadSegmentInPreviousSpan = aHasSegmentInSpan;
+        bHadSegmentInPreviousSpan = bHasSegmentInSpan;
+
+        bool spansOverlap = bMaxY > aY && bY < aMaxY;
+        if (spansOverlap) {
+            while (aSegment != aSegmentEnd && bSegment != bSegmentEnd) {
+                int aX = *aSegment;
+                int aMaxX = *(aSegment + 1);
+                int bX = *bSegment;
+                int bMaxX = *(bSegment + 1);
+
+                bool segmentsOverlap = bMaxX > aX && bX < aMaxX;
+                if (segmentsOverlap && CompareOperation::aOverlapsB(result))
+                    return result;
+                if (aX < bX && CompareOperation::aOutsideB(result))
+                    return result;
+                if (bX < aX && CompareOperation::bOutsideA(result))
+                    return result;
+
+                if (aMaxX < bMaxX)
+                    aSegment += 2;
+                else if (bMaxX < aMaxX)
+                    bSegment += 2;
+                else {
+                    aSegment += 2;
+                    bSegment += 2;
+                }
+            }
+
+            if (aSegment != aSegmentEnd && CompareOperation::aOutsideB(result))
+                return result;
+            if (bSegment != bSegmentEnd && CompareOperation::bOutsideA(result))
+                return result;
+        }
+
+        if (aMaxY < bMaxY)
+            aSpan += 1;
+        else if (bMaxY < aMaxY)
+            bSpan += 1;
+        else {
+            aSpan += 1;
+            bSpan += 1;
+        }
+    }
+
+    if (aSpan != aSpanEnd && aSpan + 1 != aSpanEnd && CompareOperation::aOutsideB(result))
+        return result;
+    if (bSpan != bSpanEnd && bSpan + 1 != bSpanEnd && CompareOperation::bOutsideA(result))
+        return result;
+
+    return result;
+}
+
+struct Region::Shape::CompareContainsOperation {
+    const static bool defaultResult = true;
+    inline static bool aOutsideB(bool& /* result */) { return false; }
+    inline static bool bOutsideA(bool& result) { result = false; return true; }
+    inline static bool aOverlapsB(bool& /* result */) { return false; }
+};
+
+struct Region::Shape::CompareIntersectsOperation {
+    const static bool defaultResult = false;
+    inline static bool aOutsideB(bool& /* result */) { return false; }
+    inline static bool bOutsideA(bool& /* result */) { return false; }
+    inline static bool aOverlapsB(bool& result) { result = true; return true; }
+};
 
 Region::Shape::Shape()
 {
