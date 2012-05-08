@@ -84,7 +84,7 @@ def pkg_config_file_variable(package, variable):
     process = subprocess.Popen(['pkg-config', '--variable=%s' % variable, package],
                                stdout=subprocess.PIPE)
     stdout = process.communicate()[0]
-    if not process.returncode:
+    if process.returncode:
         return None
     return stdout.strip()
 
