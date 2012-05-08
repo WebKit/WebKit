@@ -1,3 +1,14 @@
+2012-05-08  Dana Jansens  <danakj@chromium.org>
+
+        Region reads past end of spans
+        https://bugs.webkit.org/show_bug.cgi?id=85909
+
+        Reviewed by Anders Carlsson.
+
+        * tests/RegionTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-05-08  Tony Chang  <tony@chromium.org>
 
         move listener_leak_test to webkit_unit_tests

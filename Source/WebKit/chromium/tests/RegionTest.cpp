@@ -205,6 +205,29 @@ TEST(RegionTest, intersectsRegion)
     TEST_NO_INTERSECT(r, IntRect(0, 3, 13, 7));
 }
 
+TEST(RegionTest, ReadPastFullSpanVectorInIntersectsTest)
+{
+    Region r;
+
+    // This region has enough spans to fill its allocated Vector exactly.
+    r.unite(IntRect(400, 300, 1, 800));
+    r.unite(IntRect(785, 585, 1, 1));
+    r.unite(IntRect(787, 585, 1, 1));
+    r.unite(IntRect(0, 587, 16, 162));
+    r.unite(IntRect(26, 590, 300, 150));
+    r.unite(IntRect(196, 750, 1, 1));
+    r.unite(IntRect(0, 766, 1, 1));
+    r.unite(IntRect(0, 782, 1, 1));
+    r.unite(IntRect(745, 798, 1, 1));
+    r.unite(IntRect(795, 882, 10, 585));
+    r.unite(IntRect(100, 1499, 586, 1));
+    r.unite(IntRect(100, 1500, 585, 784));
+    // This query rect goes past the bottom of the Region, causing the
+    // test to reach the last span and try go past it. It should not read
+    // memory off the end of the span Vector.
+    TEST_NO_INTERSECT(r, IntRect(0, 2184, 1, 150));
+}
+
 #define TEST_NO_CONTAINS(a, b)     \
 {                                  \
     Region ar = a;                 \

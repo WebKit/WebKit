@@ -135,7 +135,7 @@ bool Region::Shape::compareShapes(const Shape& aShape, const Shape& bShape)
 
     bool aHadSegmentInPreviousSpan = false;
     bool bHadSegmentInPreviousSpan = false;
-    while (aSpan != aSpanEnd && bSpan != bSpanEnd) {
+    while (aSpan != aSpanEnd && aSpan + 1 != aSpanEnd && bSpan != bSpanEnd && bSpan + 1 != bSpanEnd) {
         int aY = aSpan->y;
         int aMaxY = (aSpan + 1)->y;
         int bY = bSpan->y;
