@@ -1,3 +1,19 @@
+2012-05-08  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Add baselines for the tests which are missing expected results
+        https://bugs.webkit.org/show_bug.cgi?id=85875
+
+        Unreviewed, add EFL baselines for the tests which are missing expected
+        results.
+
+        * platform/efl/fast/css/first-line-text-decoration-expected.png: Added.
+        * platform/efl/fast/css/first-line-text-decoration-expected.txt: Added.
+        * platform/efl/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Added.
+        * platform/efl/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt: Added.
+        * platform/efl/fast/images/png-suite/test-expected.png: Added.
+        * platform/efl/fast/images/png-suite/test-expected.txt: Added.
+        * platform/efl/test_expectations.txt:
+
 2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] EFL's DRT does not fully support page visibility

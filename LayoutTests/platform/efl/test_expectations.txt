@@ -279,8 +279,6 @@ BUGWK85213 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMA
 BUGWK85565 : fast/block/float/016.html = IMAGE
 BUGWK85565 : fast/css/border-solid-single-edge-antialias.html = IMAGE
 
-// Generate results for your platform
-BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 // Issue with SVG hittesting on strokes, fails on GTK as well.
 BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
 
