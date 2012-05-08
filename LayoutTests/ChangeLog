@@ -1,5 +1,18 @@
 2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Update Web Timing tests expectations
+        https://bugs.webkit.org/show_bug.cgi?id=85622
+
+        Unreviewed Gardening.
+
+        Removed http/tests/misc/webtiming-origins.html and
+        http/tests/misc/webtiming-ssl from test expectations.
+        They started to pass after r116160.
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] http/tests/security/cross-frame-access-* tests are failing
         https://bugs.webkit.org/show_bug.cgi?id=85899
 

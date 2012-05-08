@@ -268,10 +268,6 @@ BUGWK85492 : css3/zoom-coords.xhtml = TEXT
 // Occasionally missing chunks of output
 BUGWK66873:  http/tests/loading/redirect-methods.html = TEXT
 
-// Web Timing is enabled but these tests are failing.
-BUGWK85622 : http/tests/misc/webtiming-origins.html = TEXT
-BUGWK85622 : http/tests/misc/webtiming-ssl.php = TEXT
-
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
