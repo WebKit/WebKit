@@ -219,9 +219,9 @@ IF (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/gstreamer"
 
-    ${GStreamer-App_INCLUDE_DIRS}
-    ${GStreamer-Interfaces_INCLUDE_DIRS}
-    ${GStreamer-Pbutils_INCLUDE_DIRS}
+    ${GSTREAMER_APP_INCLUDE_DIRS}
+    ${GSTREAMER_INTERFACES_INCLUDE_DIRS}
+    ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
   )
   LIST(APPEND WebCore_SOURCES
     platform/graphics/gstreamer/GRefPtrGStreamer.cpp
@@ -229,15 +229,15 @@ IF (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     platform/graphics/gstreamer/GStreamerVersioning.cpp
   )
   LIST(APPEND WebCore_LIBRARIES
-    ${GStreamer-App_LIBRARIES}
-    ${GStreamer-Interfaces_LIBRARIES}
-    ${GStreamer-Pbutils_LIBRARIES}
+    ${GSTREAMER_APP_LIBRARIES}
+    ${GSTREAMER_INTERFACES_LIBRARIES}
+    ${GSTREAMER_PBUTILS_LIBRARIES}
   )
 ENDIF ()
 
 IF (ENABLE_VIDEO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${GStreamer-Video_INCLUDE_DIRS}
+    ${GSTREAMER_VIDEO_INCLUDE_DIRS}
   )
   LIST(APPEND WebCore_SOURCES
     platform/graphics/gstreamer/GStreamerGWorld.cpp
@@ -248,7 +248,7 @@ IF (ENABLE_VIDEO)
     platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
   )
   LIST(APPEND WebCore_LIBRARIES
-    ${GStreamer-Video_LIBRARIES}
+    ${GSTREAMER_VIDEO_LIBRARIES}
   )
 ENDIF ()
 
@@ -280,8 +280,8 @@ IF (ENABLE_WEB_AUDIO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/audio/gstreamer"
 
-    ${GStreamer-Audio_INCLUDE_DIRS}
-    ${GStreamer-FFT_INCLUDE_DIRS}
+    ${GSTREAMER_AUDIO_INCLUDE_DIRS}
+    ${GSTREAMER_FFT_INCLUDE_DIRS}
   )
   LIST(APPEND WebCore_SOURCES
     platform/audio/efl/AudioBusEfl.cpp
@@ -291,8 +291,8 @@ IF (ENABLE_WEB_AUDIO)
     platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
   )
   LIST(APPEND WebCore_LIBRARIES
-    ${GStreamer-Audio_LIBRARIES}
-    ${GStreamer-FFT_LIBRARIES}
+    ${GSTREAMER_AUDIO_LIBRARIES}
+    ${GSTREAMER_FFT_LIBRARIES}
   )
   SET(WEB_AUDIO_DIR ${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/webaudio/resources)
   FILE(GLOB WEB_AUDIO_DATA "${WEBCORE_DIR}/platform/audio/resources/*.wav")
