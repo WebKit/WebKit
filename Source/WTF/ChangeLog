@@ -1,3 +1,14 @@
+2012-05-08  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Assertions.cpp should work on OS(ANDROID)
+        https://bugs.webkit.org/show_bug.cgi?id=85867
+
+        Reviewed by Eric Seidel.
+
+        Some minor ifdefs for OS(ANDROID) on PLATFORM(CHROMIUM).
+
+        * wtf/Assertions.cpp:
+
 2012-05-07  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Android wishes to use an empty implementation if AXObjectCache
