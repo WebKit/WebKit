@@ -80,13 +80,17 @@ def build_path(*args):
     return os.path.join(*(get_build_path(),) + args)
 
 
-def prefix_of_pkg_config_file(package):
-    process = subprocess.Popen(['pkg-config', '--variable=prefix', package],
-                                   stdout=subprocess.PIPE)
+def pkg_config_file_variable(package, variable):
+    process = subprocess.Popen(['pkg-config', '--variable=%s' % variable, package],
+                               stdout=subprocess.PIPE)
     stdout = process.communicate()[0]
-    if process.returncode != 0:
+    if not process.returncode:
         return None
     return stdout.strip()
+
+
+def prefix_of_pkg_config_file(package):
+    return pkg_config_file_variable(package, 'prefix')
 
 
 def gtk_version_of_pkg_config_file(pkg_config_path):

@@ -1,0 +1,353 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2011 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import common
+import subprocess
+import os
+import sys
+import optparse
+import re
+from signal import alarm, signal, SIGALRM, SIGKILL
+from gi.repository import Gio, GLib
+
+class SkippedTest:
+    def __init__(self, test, reason, bug=None, test_cases=[]):
+        self.test = test
+        self.reason = reason
+        self.bug = bug
+        self.test_cases = test_cases
+
+    def __str__(self):
+        skipped_test_str = "%s" % self.test
+        if self.test_cases:
+            skipped_test_str += " [%s]" % ", ".join(self.test_cases)
+        skipped_test_str += ": %s " % self.reason
+        if self.bug is not None:
+            skipped_test_str += "(https://bugs.webkit.org/show_bug.cgi?id=%d)" % self.bug
+        return skipped_test_str
+
+class TestTimeout(Exception):
+    pass
+
+class TestRunner:
+
+    TEST_DIRS = [ "unittests", "WebKit2APITests", "TestWebKitAPI/WTF", "TestWebKitAPI/WebKit2" ]
+
+    SKIPPED = [
+        SkippedTest("unittests/testdownload",
+                    "Test fails in GTK Linux 64-bit Release bot",
+                    82329,
+                    ["/webkit/download/not-found"]),
+        SkippedTest("unittests/testwebview",
+                    "Test times out in GTK Linux 64-bit Release bot",
+                    82328,
+                    ["/webkit/webview/icon-uri"]),
+        SkippedTest("unittests/testwebresource",
+                    "Test fails in GTK Linux 64-bit Release bot",
+                    82330,
+                    ["/webkit/webresource/sub_resource_loading"]),
+        SkippedTest("unittests/testwebinspector",
+                    "Test is flaky in GTK Linux 32-bit Release bot",
+                    82869,
+                    ["/webkit/webinspector/close-and-inspect"]),
+        SkippedTest("WebKit2APITests/TestWebKitWebView",
+                    "Test is flaky in GTK Linux 32-bit Release bot",
+                    82866,
+                    ["/webkit2/WebKitWebView/mouse-target"]),
+        SkippedTest("WebKit2APITests/TestResources",
+                    "Test is flaky in GTK Linux 32-bit Release bot",
+                    82868,
+                    ["/webkit2/WebKitWebView/resources"]),
+        SkippedTest("TestWebKitAPI/WebKit2/TestWKConnection",
+                    "Test times out",
+                    84959),
+        SkippedTest("TestWebKitAPI/WebKit2/TestRestoreSessionStateContainingFormData",
+                    "Session State is not implemented in GTK+ port",
+                    84960),
+        SkippedTest("TestWebKitAPI/WebKit2/TestSpacebarScrolling",
+                    "Test fails",
+                    84961),
+        SkippedTest("TestWebKitAPI/WebKit2/TestNewFirstVisuallyNonEmptyLayoutFrames",
+                    "Test fails",
+                    85037),
+        SkippedTest("TestWebKitAPI/WebKit2/TestMouseMoveAfterCrash",
+                    "Test is flaky",
+                    85066)
+    ]
+
+    def __init__(self, options, tests=[]):
+        self._options = options
+        self._programs_path = common.build_path("Programs")
+        self._tests = self._get_tests(tests)
+        self._skipped_tests = TestRunner.SKIPPED
+
+        # These SPI daemons need to be active for the accessibility tests to work.
+        self._spi_registryd = None
+        self._spi_bus_launcher = None
+
+    def _get_tests(self, tests):
+        if tests:
+            return tests
+
+        tests = []
+        for test_dir in self.TEST_DIRS:
+            absolute_test_dir = os.path.join(self._programs_path, test_dir)
+            if not os.path.isdir(absolute_test_dir):
+                continue
+            for test_file in os.listdir(absolute_test_dir):
+                if not test_file.lower().startswith("test"):
+                    continue
+                test_path = os.path.join(self._programs_path, test_dir, test_file)
+                if os.path.isfile(test_path) and os.access(test_path, os.X_OK):
+                    tests.append(test_path)
+        return tests
+
+    def _lookup_atspi2_binary(self, filename):
+        exec_prefix = common.pkg_config_file_variable('atspi-2', 'exec_prefix')
+        for path in ['libexec', 'lib/at-spi2-core', 'lib32/at-spi2-core', 'lib64/at-spi2-core']:
+            filepath = os.path.join(exec_prefix, path, filename)
+            if os.path.isfile(filepath):
+                return filepath
+
+        return None
+
+    def _start_accessibility_daemons(self):
+        spi_bus_launcher_path = self._lookup_atspi2_binary('at-spi-bus-launcher')
+        spi_registryd_path = self._lookup_atspi2_binary('at-spi2-registryd')
+        if not spi_bus_launcher_path or not spi_registryd_path:
+            return False
+
+        try:
+            self._ally_bus_launcher = subprocess.Popen([spi_bus_launcher_path], env=self._test_env)
+        except:
+            sys.stderr.write("Failed to launch the accessibility bus\n")
+            sys.stderr.flush()
+            return False
+
+        # We need to wait until the SPI bus is launched before trying to start the SPI
+        # registry, so we spin a main loop until the bus name appears on DBus.
+        loop = GLib.MainLoop()
+        Gio.bus_watch_name(Gio.BusType.SESSION, 'org.a11y.Bus', Gio.BusNameWatcherFlags.NONE,
+                           lambda *args: loop.quit(), None)
+        loop.run()
+
+        try:
+            self._spi_registryd = subprocess.Popen([spi_registryd_path], env=self._test_env)
+        except:
+            sys.stderr.write("Failed to launch the accessibility registry\n")
+            sys.stderr.flush()
+            return False
+
+        return True
+
+    def _setup_testing_environment(self):
+        self._test_env = os.environ
+        self._test_env["DISPLAY"] = self._options.display
+        self._test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
+        self._test_env['GSETTINGS_BACKEND'] = 'memory'
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.build_path("Libraries")
+        self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
+
+        try:
+            self._xvfb = subprocess.Popen(["Xvfb", self._options.display, "-screen", "0", "800x600x24", "-nolisten", "tcp"],
+                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except Exception as e:
+            sys.stderr.write("Failed to run Xvfb: %s\n", e)
+            sys.stderr.flush()
+            return False
+
+        # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
+        if not self._start_accessibility_daemons():
+            print "Could not start accessibility bus, so skipping TestWebKitAccessibility"
+            self._skipped_tests.append(SkippedTest("WebKit2APITests/TestWebKitAccessibility",
+                                                   "Could not start accessibility bus"))
+        return True
+
+    def _tear_down_testing_environment(self):
+        if self._spi_registryd:
+            self._spi_registryd.terminate()
+        if self._spi_bus_launcher:
+            self._spi_bus_launcher.terminate()
+        self._xvfb.terminate()
+
+    def _find_skipped_test(self, test):
+        for skipped in self._skipped_tests:
+            if test.endswith(skipped.test):
+                return skipped
+        return None
+
+    def _test_cases_to_skip(self, test):
+        if self._options.skipped_action != 'skip':
+            return []
+
+        skipped = self._find_skipped_test(test)
+        if skipped is not None:
+            return skipped.test_cases
+        return []
+
+    def _should_run_test(self, test):
+        # Skipped test are ignored, run all tests.
+        if self._options.skipped_action == 'ignore':
+            return True
+
+        skipped = self._find_skipped_test(test)
+        # By default skipped test are skipped, run them only when there are specific test cases failing.
+        if self._options.skipped_action == 'skip':
+            return skipped is None or skipped.test_cases
+
+        # Run only skipped tests.
+        return skipped is not None
+
+    def _get_child_pid_from_test_output(self, output):
+        if not output:
+            return -1
+        match = re.search(r'\(pid=(?P<child_pid>[0-9]+)\)', output)
+        if not match:
+            return -1
+        return int(match.group('child_pid'))
+
+    def _kill_process(self, pid):
+        try:
+            os.kill(pid, SIGKILL)
+        except OSError:
+            # Process already died.
+            pass
+
+    def _run_test_command(self, command, timeout=-1):
+        def alarm_handler(signum, frame):
+            raise TestTimeout
+
+        p = subprocess.Popen(command, stdout=subprocess.PIPE, env=self._test_env)
+        if timeout > 0:
+            signal(SIGALRM, alarm_handler)
+            alarm(timeout)
+
+        stdout = ""
+        try:
+            stdout = p.communicate()[0]
+            if timeout > 0:
+                alarm(0)
+            sys.stdout.write(stdout)
+            sys.stdout.flush()
+        except TestTimeout:
+            self._kill_process(p.pid)
+            child_pid = self._get_child_pid_from_test_output(stdout)
+            if child_pid > 0:
+                self._kill_process(child_pid)
+            raise
+
+        return not p.returncode
+
+    def _run_test_glib(self, test):
+        tester_command = ['gtester']
+        if self._options.verbose:
+            tester_command.append('--verbose')
+        for test_case in self._test_cases_to_skip(test):
+            tester_command.extend(['-s', test_case])
+        tester_command.append(test)
+
+        return self._run_test_command(tester_command, self._options.timeout)
+
+    def _run_test_google(self, test):
+        tester_command = [test, "--gtest_throw_on_failure"]
+        skipped_tests_cases = self._test_cases_to_skip(test)
+        if skipped_tests_cases:
+            tester_command.append("--gtest_filter=-%s" % ":".join(skipped_tests_cases))
+
+        return self._run_test_command(tester_command, self._options.timeout)
+
+    def _run_test(self, test):
+        if "unittests" in test or "WebKit2APITests" in test:
+            return self._run_test_glib(test)
+
+        if "TestWebKitAPI" in test:
+            return self._run_test_google(test)
+
+        return False
+
+    def run_tests(self):
+        if not self._tests:
+            sys.stderr.write("ERROR: tests not found in %s.\n" % (self._programs_path))
+            sys.stderr.flush()
+            return 1
+
+        if not self._setup_testing_environment():
+            return 1
+
+        # Remove skipped tests now instead of when we find them, because
+        # some tests might be skipped while setting up the test environment.
+        self._tests = [test for test in self._tests if self._should_run_test(test)]
+
+        failed_tests = []
+        timed_out_tests = []
+        try:
+            for test in self._tests:
+                success = True
+                try:
+                    success = self._run_test(test)
+                except TestTimeout:
+                    sys.stdout.write("TEST: %s: TIMEOUT\n" % test)
+                    sys.stdout.flush()
+                    timed_out_tests.append(test)
+
+                if not success:
+                    failed_tests.append(test)
+        finally:
+            self._tear_down_testing_environment()
+
+        if failed_tests:
+            names = [test.replace(self._programs_path, '', 1) for test in failed_tests]
+            sys.stdout.write("Tests failed: %s\n" % ", ".join(names))
+            sys.stdout.flush()
+
+        if timed_out_tests:
+            names = [test.replace(self._programs_path, '', 1) for test in timed_out_tests]
+            sys.stdout.write("Tests that timed out: %s\n" % ", ".join(names))
+            sys.stdout.flush()
+
+        if self._skipped_tests and self._options.skipped_action == 'skip':
+            sys.stdout.write("Tests skipped:\n%s\n" % "\n".join([str(skipped) for skipped in self._skipped_tests]))
+            sys.stdout.flush()
+
+        return len(failed_tests)
+
+if __name__ == "__main__":
+    option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
+    option_parser.add_option('-r', '--release',
+                             action='store_true', dest='release',
+                             help='Run in Release')
+    option_parser.add_option('-d', '--debug',
+                             action='store_true', dest='debug',
+                             help='Run in Debug')
+    option_parser.add_option('-v', '--verbose',
+                             action='store_true', dest='verbose',
+                             help='Run gtester in verbose mode')
+    option_parser.add_option('--display', action='store', dest='display', default=':55',
+                             help='Display to run Xvfb')
+    option_parser.add_option('--skipped', action='store', dest='skipped_action',
+                             choices=['skip', 'ignore', 'only'], default='skip',
+                             metavar='skip|ignore|only',
+                             help='Specifies how to treat the skipped tests')
+    option_parser.add_option('-t', '--timeout',
+                             action='store', type='int', dest='timeout', default=10,
+                             help='Time in seconds until a test times out')
+    options, args = option_parser.parse_args()
+
+    sys.exit(TestRunner(options, args).run_tests())

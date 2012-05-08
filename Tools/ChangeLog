@@ -1,3 +1,33 @@
+2012-05-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Google tests that time out are leaked
+        https://bugs.webkit.org/show_bug.cgi?id=84973
+
+        Reviewed by Philippe Normand.
+
+        Move Tools/Scripts/run-gtk-tests to Tools/gtk/run-api-tests
+        leaving run-gtk-tests as simple wrapper that runs run-api-tests in
+        a jhbuild environment when jhbuild is available.
+
+        * Scripts/run-gtk-tests: Run Tools/gtk/run-api-tests directly or
+        with jhbuild if present.
+        * gtk/common.py:
+        (pkg_config_file_variable): Generic function to get a variable
+        from a pkg-config file.
+        (prefix_of_pkg_config_file): Use pkg_config_file_variable with 'prefix'.
+        * gtk/run-api-tests: Copied from Tools/Scripts/run-gtk-tests.
+        (TestRunner.__init__): Use common.build_path() to get the programs path.
+        (TestRunner._lookup_atspi2_binary): Use
+        common.pkg_config_file_variable() to get the 'exec_prefix'.
+        (TestRunner._start_accessibility_daemons): Use subprocess.Popen()
+        directly instead of helper _create_process that has been removed.
+        (TestRunner._setup_testing_environment): Use subprocess.Popen()
+        directly instead of helper _create_process that has been
+        removed. Use common.top_level_path() and common.build_path()
+        instead of custom methods that have been removed too.
+        (TestRunner._run_test_command): Use subprocess.Popen() directly
+        instead of helper _create_process that has been removed.
+
 2012-05-08  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] [DRT] Clear extra views before setting a blank page
