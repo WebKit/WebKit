@@ -216,6 +216,7 @@ public:
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
+    bool hasAttrList() const { return getFlag(HasAttrListFlag); }
 
     Node* shadowAncestorNode() const;
     // Returns 0, a ShadowRoot, or a legacy shadow root.
@@ -329,6 +330,9 @@ public:
 
     void setInNamedFlow() { setFlag(InNamedFlowFlag); }
     void clearInNamedFlow() { clearFlag(InNamedFlowFlag); }
+
+    void setHasAttrList() { setFlag(HasAttrListFlag); }
+    void clearHasAttrList() { clearFlag(HasAttrListFlag); }
 
     enum ShouldSetAttached {
         SetAttached,
@@ -689,10 +693,11 @@ private:
 #else
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
 #endif
-        InNamedFlowFlag = 1 << 29
+        InNamedFlowFlag = 1 << 29,
+        HasAttrListFlag = 1 << 30
     };
 
-    // 3 bits remaining
+    // 2 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
