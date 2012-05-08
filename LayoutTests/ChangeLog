@@ -1,3 +1,146 @@
+2012-05-08  Ojan Vafai  <ojan@chromium.org>
+
+        Chromium rebaselines after http://trac.webkit.org/changeset/116438.
+
+        * platform/chromium-linux/css2.1/20110323/first-letter-000-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-000-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-001-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-001-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-dynamic-001-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-dynamic-002-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-002-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-dynamic-003a-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003a-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-dynamic-003b-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-inherit-001-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-inherit-001-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-nested-001-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-001-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-nested-002-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-002-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-nested-003-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-003-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-nested-004-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-004-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-nested-005-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-005-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-nested-006-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-006-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-nested-007-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-007-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-quote-001-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-001-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-quote-002-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-002-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-quote-003-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-003-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-quote-004-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-004-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-quote-005-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-005-expected.png.
+        * platform/chromium-linux/css2.1/20110323/first-letter-quote-006-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-006-expected.png.
+        * platform/chromium-linux/fast/css/first-letter-nested-positioned-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/fast/css/first-letter-nested-positioned-expected.png.
+        * platform/chromium-linux/fast/css/first-letter-quotes-no-content-before-after-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/fast/css/first-letter-quotes-no-content-before-after-expected.png.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-000-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-dynamic-001-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-dynamic-002-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-dynamic-003a-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-dynamic-003b-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-inherit-001-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-quote-001-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-quote-002-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-quote-003-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-quote-004-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-quote-005-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/20110323/first-letter-quote-006-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/first-letter-nested-positioned-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/first-letter-quotes-no-content-before-after-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-000-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-dynamic-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-dynamic-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-dynamic-003a-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-dynamic-003b-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-inherit-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-quote-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-quote-002-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-quote-003-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-quote-004-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-quote-005-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/20110323/first-letter-quote-006-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/first-letter-nested-positioned-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/first-letter-quotes-no-content-before-after-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-000-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-000-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-001-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-001-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-001-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-001-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-002-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-002-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-003a-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-003a-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-003b-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-dynamic-003b-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-inherit-001-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-inherit-001-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-001-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-001-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-002-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-002-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-003-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-003-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-004-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-004-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-005-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-005-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-006-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-006-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-007-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-nested-007-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-001-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-001-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-002-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-002-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-003-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-003-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-004-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-004-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-005-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-005-expected.txt: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-006-expected.png: Added.
+        * platform/chromium-mac/css2.1/20110323/first-letter-quote-006-expected.txt: Added.
+        * platform/chromium-mac/fast/css/first-letter-nested-positioned-expected.png: Added.
+        * platform/chromium-mac/fast/css/first-letter-nested-positioned-expected.txt: Added.
+        * platform/chromium-mac/fast/css/first-letter-quotes-no-content-before-after-expected.png: Added.
+        * platform/chromium-mac/fast/css/first-letter-quotes-no-content-before-after-expected.txt: Added.
+        * platform/chromium-win/css2.1/20110323/first-letter-000-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/first-letter-000-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-000-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-001-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-001-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-001-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003a-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-002-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-002-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-002-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-003a-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003a-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-003a-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003a-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-003b-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-dynamic-003b-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-inherit-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/first-letter-inherit-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-inherit-001-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-001-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-001-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-002-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-002-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-002-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-003-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-003-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-003-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-004-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-004-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-004-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-005-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-005-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-005-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-006-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-006-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-006-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-007-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-nested-007-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-nested-007-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-001-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-001-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-001-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-002-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-002-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-002-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-003-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-003-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-003-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-004-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-004-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-004-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-005-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-005-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-005-expected.txt.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-006-expected.png: Copied from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/css2.1/20110323/first-letter-quote-006-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-quote-006-expected.txt.
+        * platform/chromium-win/fast/css/first-letter-nested-positioned-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-001-expected.png.
+        * platform/chromium-win/fast/css/first-letter-nested-positioned-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/css/first-letter-nested-positioned-expected.txt.
+        * platform/chromium-win/fast/css/first-letter-quotes-no-content-before-after-expected.png: Renamed from LayoutTests/platform/chromium-linux-x86/css2.1/20110323/first-letter-dynamic-003b-expected.png.
+        * platform/chromium-win/fast/css/first-letter-quotes-no-content-before-after-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/css/first-letter-quotes-no-content-before-after-expected.txt.
+
 2012-05-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Handling of numeric-pad keys in EFL's PlatformKeyboardEvent
