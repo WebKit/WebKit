@@ -1,3 +1,11 @@
+2012-05-08  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening after 116361. Updated expected result.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/fast/js/switch-behaviour-expected.txt:
+
 2012-05-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening. Remove tests from test expectations and
