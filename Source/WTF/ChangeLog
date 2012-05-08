@@ -1,3 +1,14 @@
+2012-05-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116440.
+        http://trac.webkit.org/changeset/116440
+        https://bugs.webkit.org/show_bug.cgi?id=85904
+
+        Broke the Chromium Android bot (Requested by beverloo on
+        #webkit).
+
+        * WTF.gyp/WTF.gyp:
+
 2012-05-08  Adam Barth  <abarth@webkit.org>
 
         [Chromium] OS(ANDROID) ImageDiff requires us to build WTF for both host and target

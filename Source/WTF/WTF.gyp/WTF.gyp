@@ -93,14 +93,7 @@
             ],
           }],
         ],
-      },
-      'conditions': [
-        ['OS=="android" and android_build_type==0', {
-          # Android builds ImageDiff for host, which has a dependency on wtf.
-          # That means we need to build this target for both host and target.
-          'toolsets': ['host', 'target'],
-        }],
-      ]
+      }
     },
     {
       'target_name': 'wtf',
@@ -188,11 +181,6 @@
               },
             }],
           ],
-        }],
-        ['OS=="android" and android_build_type==0', {
-          # Android builds ImageDiff for host, which has a dependency on wtf.
-          # That means we need to build this target for both host and target.
-          'toolsets': ['host', 'target'],
         }],
       ],
     },
