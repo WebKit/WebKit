@@ -1,3 +1,16 @@
+2012-05-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic fix attempt for dashboard images.
+
+        Rubber-stamped by Antti Koivisto.
+
+        Also stop generating images for 30, 90, and 365 days since they have been timing out.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (schedule_runs_update):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Runs.chart_params):
+
 2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CMake] Add ENABLE_IFRAME_SEAMLESS flag

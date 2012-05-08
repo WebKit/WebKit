@@ -88,7 +88,7 @@ class CachedDashboardHandler(webapp2.RequestHandler):
 def schedule_runs_update(test_id, branch_id, platform_id, regenerate_runs=True):
     if regenerate_runs:
         taskqueue.add(url='/api/test/runs/update', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
-    for display_days in [7, 30, 90, 365]:
+    for display_days in [7]:
         if DashboardImage.needs_update(branch_id, platform_id, test_id, display_days):
             taskqueue.add(url='/api/test/runs/chart', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id,
                 'displayDays': display_days})

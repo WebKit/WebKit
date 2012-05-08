@@ -452,7 +452,7 @@ class Runs(db.Model):
             self.json_averages, str(self.json_min) if self.json_min else 'null', str(self.json_max) if self.json_max else 'null',
             '"%s"' % self.test.unit if self.test.unit else 'null')
 
-    def chart_params(self, display_days, now=datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)):
+    def chart_params(self, display_days, now=datetime.utcnow().replace(hour=12, minute=0, second=0, microsecond=0)):
         chart_data_x = []
         chart_data_y = []
         end_time = now
