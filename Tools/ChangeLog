@@ -1,3 +1,20 @@
+2012-05-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] glib dependency needs to be updated in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=85878
+
+        Reviewed by Martin Robinson.
+
+        Bump glib version from 2.31.8 to 2.32.2 in jhbuild.modules. This
+        addresses flakiness in media tests due to possible deadlock with the
+        following output on stderr:
+        GStreamer-WARNING **: wrong STREAM_LOCK count 0
+
+        The bug was fixed upstream by:
+        http://git.gnome.org/browse/glib/commit/?id=265f265c677bc5399dbb1cfa449cb4b915a6459f
+
+        * efl/jhbuild.modules:
+
 2012-05-07  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Unbreak debugging of WebKit2.
