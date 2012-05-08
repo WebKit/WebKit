@@ -1,3 +1,26 @@
+2012-05-08  Tony Chang  <tony@chromium.org>
+
+        move listener_leak_test to webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=85922
+
+        Reviewed by Ojan Vafai.
+
+        Porting the test from src/webkit/tools/test_shell/listener_leak_test.cc.
+        All I did was change the style and use the FrameTestHelper to load the file.
+
+        * WebKit.gyp: Exclude file in components build.
+        * WebKit.gypi: Add new file.
+        * tests/ListenerLeakTest.cpp: Added.
+        (WebKit):
+        (WebKit::GetProperty):
+        (WebKit::GetNumObjects):
+        (ListenerLeakTest):
+        (WebKit::ListenerLeakTest::ListenerLeakTest):
+        (WebKit::ListenerLeakTest::RunTest):
+        (WebKit::TEST_F):
+        * tests/data/listener/listener_leak1.html: Added.
+        * tests/data/listener/listener_leak2.html: Added.
+
 2012-05-08  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Create LinkHighlightLayerChromium class to provide link-highlight preview animations for GraphicsLayerChromium.

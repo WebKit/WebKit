@@ -738,6 +738,7 @@
                                 'tests/EventListenerTest.cpp',
                                 'tests/FrameTestHelpers.cpp',
                                 'tests/LevelDBTest.cpp',
+                                'tests/ListenerLeakTest.cpp',
                                 'tests/PopupMenuTest.cpp',
                                 'tests/RenderTableCellTest.cpp',
                                 'tests/RenderTableRowTest.cpp',

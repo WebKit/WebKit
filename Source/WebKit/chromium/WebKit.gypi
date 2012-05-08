@@ -115,6 +115,7 @@
             'tests/LayerTextureUpdaterTest.cpp',
             'tests/LevelDBTest.cpp',
             'tests/LinkHighlightTest.cpp',
+            'tests/ListenerLeakTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
             'tests/MockCCQuadCuller.h',
             'tests/PaintAggregatorTest.cpp',
