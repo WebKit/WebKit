@@ -38,6 +38,7 @@ public:
 
     IntRect bounds() const { return m_bounds; }
     bool isEmpty() const { return m_bounds.isEmpty(); }
+    bool isRect() const { return m_shape.isRect(); }
 
     Vector<IntRect> rects() const;
 
@@ -79,6 +80,7 @@ private:
 
         IntRect bounds() const;
         bool isEmpty() const { return m_spans.isEmpty(); }
+        bool isRect() const { return m_spans.size() <= 2 && m_segments.size() <= 2; }
 
         typedef const Span* SpanIterator;
         SpanIterator spans_begin() const;

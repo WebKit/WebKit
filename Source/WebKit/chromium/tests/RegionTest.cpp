@@ -362,4 +362,33 @@ TEST(RegionTest, containsRegion)
     TEST_NO_CONTAINS(container, IntRect(31, 10, 10, 20));
 }
 
+TEST(RegionTest, unite)
+{
+    Region r;
+    Region r2;
+
+    // A rect uniting a contained rect does not change the region.
+    r2 = r = IntRect(0, 0, 50, 50);
+    r2.unite(IntRect(20, 20, 10, 10));
+    EXPECT_EQ(r, r2);
+
+    // A rect uniting a containing rect gives back the containing rect.
+    r = IntRect(0, 0, 50, 50);
+    r.unite(IntRect(0, 0, 100, 100));
+    EXPECT_EQ(Region(IntRect(0, 0, 100, 100)), r);
+
+    // A complex region uniting a contained rect does not change the region.
+    r = IntRect(0, 0, 50, 50);
+    r.unite(IntRect(100, 0, 50, 50));
+    r2 = r;
+    r2.unite(IntRect(20, 20, 10, 10));
+    EXPECT_EQ(r, r2);
+
+    // A complex region uniting a containing rect gives back the containing rect.
+    r = IntRect(0, 0, 50, 50);
+    r.unite(IntRect(100, 0, 50, 50));
+    r. unite(IntRect(0, 0, 500, 500));
+    EXPECT_EQ(Region(IntRect(0, 0, 500, 500)), r);
+}
+
 } // namespace

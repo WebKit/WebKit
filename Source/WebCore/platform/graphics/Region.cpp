@@ -487,11 +487,6 @@ struct Region::Shape::UnionOperation {
             return true;
         }
         
-        if (shape2.isEmpty()) {
-            result = shape1;
-            return true;
-        }
-
         return false;
     }
 
@@ -509,18 +504,8 @@ Region::Shape Region::Shape::unionShapes(const Shape& shape1, const Shape& shape
 }
 
 struct Region::Shape::IntersectOperation {
-    static bool trySimpleOperation(const Shape& shape1, const Shape& shape2, Shape& result)
+    static bool trySimpleOperation(const Shape&, const Shape&, Shape&)
     {
-        if (shape1.isEmpty()) {
-            result = Shape();
-            return true;
-        }
-
-        if (shape2.isEmpty()) {
-            result = shape1;
-            return true;
-        }
-        
         return false;
     }
     
@@ -538,14 +523,8 @@ Region::Shape Region::Shape::intersectShapes(const Shape& shape1, const Shape& s
 }
 
 struct Region::Shape::SubtractOperation {
-    static bool trySimpleOperation(const Shape& shape1, const Shape& shape2, Region::Shape& result)
+    static bool trySimpleOperation(const Shape&, const Shape&, Region::Shape&)
     {
-        
-        if (shape1.isEmpty() || shape2.isEmpty()) {
-            result = Shape();
-            return true;
-        }
-        
         return false;
     }
     
@@ -573,6 +552,8 @@ void Region::dump() const
 
 void Region::intersect(const Region& region)
 {
+    if (m_bounds.isEmpty())
+        return;
     if (!m_bounds.intersects(region.m_bounds)) {
         m_shape = Shape();
         m_bounds = IntRect();
@@ -589,6 +570,16 @@ void Region::unite(const Region& region)
 {
     if (region.isEmpty())
         return;
+    if (isRect() && m_bounds.contains(region.m_bounds))
+        return;
+    if (region.isRect() && region.m_bounds.contains(m_bounds)) {
+        m_shape = region.m_shape;
+        m_bounds = region.m_bounds;
+        return;
+    }
+    // FIXME: We may want another way to construct a Region without doing this test when we expect it to be false.
+    if (!isRect() && contains(region))
+        return;
 
     Shape unitedShape = Shape::unionShapes(m_shape, region.m_shape);
 
@@ -598,6 +589,8 @@ void Region::unite(const Region& region)
 
 void Region::subtract(const Region& region)
 {
+    if (m_bounds.isEmpty())
+        return;
     if (region.isEmpty())
         return;
     if (!m_bounds.intersects(region.m_bounds))
