@@ -1,5 +1,17 @@
 2012-05-09  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] remove the obsolete WebFrame::referrerPolicy method
+        https://bugs.webkit.org/show_bug.cgi?id=86003
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
+2012-05-09  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] Check whether an active document loader exists before accessing it
         https://bugs.webkit.org/show_bug.cgi?id=85892
 

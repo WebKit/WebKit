@@ -143,9 +143,6 @@ public:
     // URLs
     virtual WebVector<WebIconURL> iconURLs(int iconTypes) const = 0;
 
-    // The referrer policy of the document associated with this frame.
-    virtual WebReferrerPolicy referrerPolicy() const = 0;
-
 
     // Geometry -----------------------------------------------------------
 

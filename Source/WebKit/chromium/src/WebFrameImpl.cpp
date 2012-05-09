@@ -595,11 +595,6 @@ WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
     return WebVector<WebIconURL>();
 }
 
-WebReferrerPolicy WebFrameImpl::referrerPolicy() const
-{
-    return static_cast<WebReferrerPolicy>(m_frame->document()->referrerPolicy());
-}
-
 WebSize WebFrameImpl::scrollOffset() const
 {
     FrameView* view = frameView();
