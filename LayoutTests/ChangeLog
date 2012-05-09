@@ -1,3 +1,22 @@
+2012-05-09  Takashi Sakamoto  <tasak@google.com>
+
+        ShadowRoot needs applyAuthorStyles
+        https://bugs.webkit.org/show_bug.cgi?id=78472
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/shadow-root-applyAuthorStyles.html:
+        * fast/dom/shadow/shadow-root-applyAuthorStyles-expected.html:
+        Tested four cases:
+        case 1: applyAuthorStyles is false,
+        case 2: applyAuthorStyles is true with <script>..</script>,
+        case 3: applyAuthorStyles is true with inline script declaration, and
+        case 4: applyAuthorStyles is true with important UA property.
+        The case 1, 2 and 3 specify "span { ... }" with author styles and
+        verify rendering results.
+        The case 4 specifies '<input type="file" />' with an author style,
+        text-align: end, and verify rendering result.
+
 2012-05-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] fast/overflow/scroll-div-hide-show.html testcase does not pass

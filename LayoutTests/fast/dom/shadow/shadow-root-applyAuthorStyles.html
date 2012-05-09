@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+span {
+    background-color: #eef;
+    border: solid;
+    color: #fee;
+    display: boxed-inline;
+    font-size: 24px;
+    margin: 2px;
+    outline-color: #f00;
+    padding-left: 5px;
+    text-align: start;
+    text-decoration: underline;
+}
+input[type="file"] {
+    text-align: end;
+}
+</style>
+<script src="resources/polyfill.js"></script>
+</head>
+<body>
+<div id="apply-author-style"></div>
+<div id="no-apply-author-style"></div>
+<div id="with-inline-style-declaration"></div>
+<div id="try-to-override-important"></div>
+
+<script>
+function assertTrue(id, actual) {
+   if (!actual) {
+       throw "failure:" + id +  ": assertTrue failed";
+   }
+}
+
+function assertFalse(id, actual) {
+   if (actual) {
+       throw "failure:" + id +  ": assertFalse failed";
+   }
+}
+
+function renderApplyAuthorStyleCase() {
+    var div = document.createElement('div');
+    document.getElementById('apply-author-style').appendChild(div);
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
+    shadowRoot.applyAuthorStyles = true;
+    assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
+    shadowRoot.innerHTML = '<span></span>';
+}
+
+function renderNoApplyAuthorStyleCase() {
+    var div = document.createElement('div');
+    document.getElementById('no-apply-author-style').appendChild(div);
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
+    shadowRoot.applyAuthorStyles = false;
+    assertFalse('applyAuthorStyles should be false', shadowRoot.applyAuthorStyles);
+    shadowRoot.innerHTML = '<span></span>';
+}
+
+function renderApplyAuthorStyleWithInlineStyleDeclarationCase() {
+    var div = document.createElement('div');
+    document.getElementById('with-inline-style-declaration').appendChild(div);
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
+    shadowRoot.applyAuthorStyles = true;
+    assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
+    shadowRoot.innerHTML = '<span style="border:none; color:#daa; font-size:18px; text-decoration:none"></span>';
+}
+
+function renderApplyAuthorStyleWithOverridingImportantPropertyCase() {
+    var div = document.createElement('div');
+    document.getElementById('try-to-override-important').appendChild(div);
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    assertFalse('default applyAuthorStyles', shadowRoot.applyAuthorStyles);
+    shadowRoot.applyAuthorStyles = true;
+    assertTrue('applyAuthorStyles should be true', shadowRoot.applyAuthorStyles);
+    shadowRoot.innerHTML = '<input type="file" />';
+}
+
+renderApplyAuthorStyleCase();
+renderNoApplyAuthorStyleCase();
+renderApplyAuthorStyleWithInlineStyleDeclarationCase();
+renderApplyAuthorStyleWithOverridingImportantPropertyCase();
+</script>
+</body>
+</html>

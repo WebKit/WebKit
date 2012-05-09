@@ -139,7 +139,7 @@ Element* TreeScope::findAnchor(const String& name)
     return 0;
 }
 
-bool TreeScope::applyAuthorSheets() const
+bool TreeScope::applyAuthorStyles() const
 {
     return true;
 }

@@ -1038,7 +1038,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
             // d) the rule contains shadow-ID pseudo elements
             TreeScope* treeScope = m_element->treeScope();
             if (!MatchingUARulesScope::isMatchingUARules()
-                && !treeScope->applyAuthorSheets()
+                && !treeScope->applyAuthorStyles()
 #if ENABLE(STYLE_SCOPED)
                 && (!options.scope || options.scope->treeScope() != treeScope)
 #endif

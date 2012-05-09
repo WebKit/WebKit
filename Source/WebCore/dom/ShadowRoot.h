@@ -67,8 +67,8 @@ public:
     InsertionPoint* insertionPointFor(Node*) const;
     void hostChildrenChanged();
 
-    virtual bool applyAuthorSheets() const;
-    void setApplyAuthorSheets(bool);
+    virtual bool applyAuthorStyles() const OVERRIDE;
+    void setApplyAuthorStyles(bool);
 
     Element* host() const { return shadowHost(); }
     ElementShadow* owner() const;
@@ -104,7 +104,7 @@ private:
 
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
-    bool m_applyAuthorSheets : 1;
+    bool m_applyAuthorStyles : 1;
     InsertionPoint* m_insertionPointAssignedTo;
 };
 

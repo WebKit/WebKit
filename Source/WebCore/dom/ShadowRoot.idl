@@ -35,6 +35,7 @@ module core {
         readonly attribute Element host;
         readonly attribute Element activeElement;
         readonly attribute DOMSelection selection;
+        attribute boolean applyAuthorStyles;
 
         attribute [TreatNullAs=NullString] DOMString innerHTML
             setter raises(DOMException);

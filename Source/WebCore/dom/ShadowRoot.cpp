@@ -49,7 +49,7 @@ ShadowRoot::ShadowRoot(Document* document)
     , TreeScope(this)
     , m_prev(0)
     , m_next(0)
-    , m_applyAuthorSheets(false)
+    , m_applyAuthorStyles(false)
     , m_insertionPointAssignedTo(0)
 {
     ASSERT(document);
@@ -188,14 +188,14 @@ bool ShadowRoot::hasInsertionPoint() const
     return false;
 }
 
-bool ShadowRoot::applyAuthorSheets() const
+bool ShadowRoot::applyAuthorStyles() const
 {
-    return m_applyAuthorSheets;
+    return m_applyAuthorStyles;
 }
 
-void ShadowRoot::setApplyAuthorSheets(bool value)
+void ShadowRoot::setApplyAuthorStyles(bool value)
 {
-    m_applyAuthorSheets = value;
+    m_applyAuthorStyles = value;
 }
 
 void ShadowRoot::attach()
