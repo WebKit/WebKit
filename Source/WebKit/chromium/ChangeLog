@@ -1,3 +1,13 @@
+2012-05-09  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Fixing a memory leak in WebUserMediaRequest
+        https://bugs.webkit.org/show_bug.cgi?id=85992
+
+        Reviewed by Adam Barth.
+
+        * src/WebUserMediaRequest.cpp:
+        (WebKit::WebUserMediaRequest::assign):
+
 2012-05-09  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Disable WebViewTest.TextInputType because the test is incomplete.

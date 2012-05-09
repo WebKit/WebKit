@@ -120,10 +120,7 @@ bool WebUserMediaRequest::equals(const WebUserMediaRequest& other) const
 
 void WebUserMediaRequest::assign(const WebUserMediaRequest& other)
 {
-    UserMediaRequest* p = other.m_private.get();
-    if (p)
-        p->ref();
-    m_private = p;
+    m_private = other.m_private;
 }
 
 WebUserMediaRequest::operator UserMediaRequest*() const
