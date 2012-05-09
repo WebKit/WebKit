@@ -1865,6 +1865,14 @@ void WebFrameImpl::handleIntentFailure(int intentIdentifier, const WebString& re
 {
 }
 
+void WebFrameImpl::sendOrientationChangeEvent(int orientation)
+{
+#if ENABLE(ORIENTATION_EVENTS)
+    if (m_frame)
+        m_frame->sendOrientationChangeEvent(orientation);
+#endif
+}
+
 void WebFrameImpl::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
     DOMWindow* window = m_frame->domWindow();

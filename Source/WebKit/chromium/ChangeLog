@@ -1,3 +1,21 @@
+2012-05-09  Marcus Bulach  <bulach@chromium.org>
+
+        [chromium] Exposes OrientationChangeEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=85976
+
+        Reviewed by Adam Barth.
+
+        This is used by the android port, we need to expose the existing
+        WebCore API.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::sendOrientationChangeEvent):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-05-09  Dana Jansens  <danakj@chromium.org>
 
         Early-out and avoid any copying when possible for Region operations

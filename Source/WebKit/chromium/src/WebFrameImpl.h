@@ -208,6 +208,8 @@ public:
     virtual void handleIntentResult(int, const WebString&);
     virtual void handleIntentFailure(int, const WebString&);
 
+    virtual void sendOrientationChangeEvent(int orientation);
+
     virtual void addEventListener(const WebString& eventType,
                                   WebDOMEventListener*, bool useCapture);
     virtual void removeEventListener(const WebString& eventType,
