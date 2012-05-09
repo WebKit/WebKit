@@ -1,3 +1,9 @@
+2012-05-08  Jochen Eisinger  <jochen@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-05-08  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Show borders for partial-draw-culled quads to visualize culling behaviour
