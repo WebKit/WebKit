@@ -312,6 +312,10 @@ extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 extern void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+extern void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
+#endif
+
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
 extern BOOL (*wkFilterIsManagedSession)(void);
 extern WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);
@@ -322,9 +326,5 @@ extern const char* (*wkFilterDataComplete)(WebFilterEvaluator *, int* length);
 #endif
 
 }
-
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-extern void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
-#endif
 
 #endif
