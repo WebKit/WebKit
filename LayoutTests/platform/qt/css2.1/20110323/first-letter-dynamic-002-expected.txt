@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x90
+  RenderBlock {HTML} at (0,0) size 800x90
+    RenderBody {BODY} at (8,16) size 784x58
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {Q} at (0,0) size 40x21
+          RenderInline (generated) at (0,0) size 6x21
+            RenderQuote at (0,0) size 6x21
+              text run at (0,0) width 6: "\""
+          RenderText {#text} at (6,0) size 28x21
+            text run at (6,0) width 28: "Foo"
+          RenderInline (generated) at (0,0) size 6x21
+            RenderQuote at (34,0) size 6x21
+              text run at (34,0) width 6: "\""
+      RenderBlock {P} at (0,37) size 784x21
+        RenderInline {Q} at (0,0) size 67x21
+          RenderInline (generated) at (0,0) size 27x21
+            RenderQuote at (0,0) size 27x21
+              text run at (0,0) width 27: "<1>"
+          RenderText {#text} at (27,0) size 9x21
+            text run at (27,0) width 9: "0"
+          RenderInline (generated) at (0,0) size 31x21
+            RenderQuote at (36,0) size 31x21
+              text run at (36,0) width 31: "</1>"
