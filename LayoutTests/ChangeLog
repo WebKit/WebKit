@@ -1,3 +1,16 @@
+2012-05-09  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Textarea-placeholder-wrapping.html may fail because of scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=85989
+
+        Reviewed by Ryosuke Niwa.
+
+        Increasing rows to avoid scrollbar single pixel differences
+        to cause failures of this test.
+
+        * fast/forms/textarea-placeholder-wrapping-expected.html:
+        * fast/forms/textarea-placeholder-wrapping.html:
+
 2012-05-09  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] shared-stylesheet-mutation tests are flaky
