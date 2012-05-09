@@ -41,6 +41,10 @@ function update()
     if (g_revisionHint)
         g_revisionHint.dismiss();
 
+    var gtestIframe = document.querySelector('#chromium-gtests iframe');
+    if (gtestIframe)
+        gtestIframe.src = gtestIframe.src;
+
     // FIXME: This should be a button with a progress element.
     var numberOfTestsAnalyzed = 0;
     var updating = new ui.notifications.Info('Loading commit data ...');

@@ -1,3 +1,22 @@
+2012-05-08  Ojan Vafai  <ojan@chromium.org>
+
+        Show the chromium non-layout test bots in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=85903
+
+        Reviewed by Eric Seidel.
+
+        This is just a single-line high-level overview of the chromium non-layout test bots.
+        This means that Chromium WebKit gardeners only need to keep garden-o-matic open in
+        order to do their job.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/onebar.css:
+        (#chromium-gtests iframe):
+        (#chromium-gtests):
+        (#gtest-label):
+
 2012-05-08  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Implement TextInputController.

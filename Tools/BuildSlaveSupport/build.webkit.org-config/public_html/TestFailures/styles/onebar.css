@@ -48,3 +48,18 @@
 #onebar.partytime #unexpected {
     background: url(../images/partytime.gif) center center no-repeat;
 }
+
+#chromium-gtests iframe {
+    border: 0;
+    height: 20px;
+}
+
+#chromium-gtests {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+}
+
+#gtest-label {
+    vertical-align: top;
+}
