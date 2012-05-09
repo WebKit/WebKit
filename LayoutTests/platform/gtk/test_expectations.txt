@@ -317,17 +317,7 @@ BUGWK50155 : fast/events/tabindex-focus-blur-all.html = CRASH
 
 BUGWK54470 DEBUG : svg/text/select-textLength-spacing-squeeze-1.svg = CRASH
 
-// For some reason crashes when run with all tests. Passes individually.
-BUGWKGTK : fast/forms/multiple-form-submission-protection-mouse.html = CRASH
-
-// This test crashes whatever test follows it. Perhaps it's related to the previous failure.
-BUGWKGTK : fast/dom/gc-10.html = CRASH
-
 BUGWK56309 : svg/text/text-deco-01-b.svg = CRASH
-
-BUGWK60158 : fast/dom/Geolocation/argument-types.html = CRASH
-
-BUGWK65699 : fast/loader/reload-zero-byte-plugin.html = CRASH
 
 BUGWK65183 DEBUG : editing/undo/replace-text-in-node-preserving-markers-crash.html = CRASH
 
@@ -359,9 +349,6 @@ BUGWK63611 DEBUG : editing/selection/directionality-after-undo-replace.html = CR
 
 BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin.html = CRASH
 BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin-in-subframe.html = CRASH
-
-BUGWK85043 : http/tests/inspector-enabled/console-clear-arguments-on-frame-remove.html = CRASH
-BUGWK85043 : http/tests/inspector-enabled/console-log-before-frame-navigation.html = CRASH
 
 BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
 
