@@ -1,3 +1,14 @@
+2012-05-09  Dan Winship  <danw@gnome.org>
+
+        [GTK] don't use soup_session_pause_message in webkitdownload
+        https://bugs.webkit.org/show_bug.cgi?id=85931
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_new_with_handle):
+        (webkit_download_start):
+
 2012-05-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert isPageBoxVisible to use Internals interface.

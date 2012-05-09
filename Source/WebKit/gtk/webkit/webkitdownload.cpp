@@ -421,14 +421,11 @@ WebKitDownload* webkit_download_new_with_handle(WebKitNetworkRequest* request, W
 {
     g_return_val_if_fail(request, NULL);
 
-    ResourceHandleInternal* d = handle->getInternal();
-    if (d->m_soupMessage)
-        soup_session_pause_message(webkit_get_default_session(), d->m_soupMessage.get());
-
     WebKitDownload* download = WEBKIT_DOWNLOAD(g_object_new(WEBKIT_TYPE_DOWNLOAD, "network-request", request, NULL));
     WebKitDownloadPrivate* priv = download->priv;
 
     handle->ref();
+    handle->setDefersLoading(true);
     priv->resourceHandle = handle;
 
     webkit_download_set_response(download, response);
@@ -513,10 +510,7 @@ void webkit_download_start(WebKitDownload* download)
         priv->resourceHandle = ResourceHandle::create(/* Null NetworkingContext */ NULL, core(priv->networkRequest), priv->downloadClient, false, false);
     else {
         priv->resourceHandle->setClient(priv->downloadClient);
-
-        ResourceHandleInternal* d = priv->resourceHandle->getInternal();
-        if (d->m_soupMessage)
-            soup_session_unpause_message(webkit_get_default_session(), d->m_soupMessage.get());
+        priv->resourceHandle->setDefersLoading(false);
     }
 
     priv->timer = g_timer_new();
