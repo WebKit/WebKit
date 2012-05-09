@@ -1,3 +1,20 @@
+2012-04-23  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Pass a WTF::String directly from DRT to ewebkit when possible
+        https://bugs.webkit.org/show_bug.cgi?id=84634
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Drop unnecessary const char* -> WTF::String conversions by
+        creating String objects directly in LayoutTestController out of
+        JSStringRef's and passing them to DumpRenderTreeSupportEfl.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setValueForUser):
+        (DumpRenderTreeSupportEfl::addUserStyleSheet):
+        (DumpRenderTreeSupportEfl::findString):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-05-08  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Update documentation of ewk_frame_contents_alternate_set and ewk_view_zoom_range_set.

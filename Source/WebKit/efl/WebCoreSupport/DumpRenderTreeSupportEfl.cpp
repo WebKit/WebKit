@@ -47,8 +47,6 @@
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
 #include <workers/WorkerThread.h>
-#include <wtf/OwnArrayPtr.h>
-#include <wtf/text/AtomicString.h>
 
 unsigned DumpRenderTreeSupportEfl::activeAnimationsCount(const Evas_Object* ewkFrame)
 {
@@ -336,7 +334,7 @@ void DumpRenderTreeSupportEfl::suspendAnimations(Evas_Object* ewkFrame)
         animationController->suspendAnimations();
 }
 
-void DumpRenderTreeSupportEfl::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
+void DumpRenderTreeSupportEfl::setValueForUser(JSContextRef context, JSValueRef nodeObject, const String& value)
 {
     JSC::ExecState* exec = toJS(context);
     WebCore::Element* element = WebCore::toElement(toJS(exec, nodeObject));
@@ -346,10 +344,7 @@ void DumpRenderTreeSupportEfl::setValueForUser(JSContextRef context, JSValueRef 
     if (!inputElement)
         return;
 
-    size_t bufferSize = JSStringGetMaximumUTF8CStringSize(value);
-    OwnArrayPtr<char> valueBuffer = adoptArrayPtr(new char[bufferSize]);
-    JSStringGetUTF8CString(value, valueBuffer.get(), bufferSize);
-    inputElement->setValueForUser(String::fromUTF8(valueBuffer.get()));
+    inputElement->setValueForUser(value);
 }
 
 void DumpRenderTreeSupportEfl::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
@@ -384,7 +379,7 @@ void DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(Evas
     page->settings()->setLoadsSiteIconsIgnoringImageLoadingSetting(loadsSiteIconsIgnoringImageLoadingPreferences);
 }
 
-void DumpRenderTreeSupportEfl::addUserStyleSheet(const Evas_Object* ewkView, const char* sourceCode, bool allFrames)
+void DumpRenderTreeSupportEfl::addUserStyleSheet(const Evas_Object* ewkView, const String& sourceCode, bool allFrames)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);
     if (!page)
@@ -402,14 +397,14 @@ void DumpRenderTreeSupportEfl::executeCoreCommandByName(const Evas_Object* ewkVi
     page->focusController()->focusedOrMainFrame()->editor()->command(name).execute(value);
 }
 
-bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions options)
+bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const String& text, WebCore::FindOptions options)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);
 
     if (!page)
         return false;
 
-    return page->findString(String::fromUTF8(text), options);
+    return page->findString(text, options);
 }
 
 void DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(const Evas_Object* ewkView, bool enabled)

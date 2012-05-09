@@ -184,7 +184,7 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
 void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
     WebCore::KURL baseURL(WebCore::KURL(), String::fromUTF8(ewk_frame_uri_get(browser->mainFrame())));
-    WebCore::KURL absoluteURL(baseURL, WTF::String(url->characters(), url->length()));
+    WebCore::KURL absoluteURL(baseURL, WTF::String(url->ustring().impl()));
 
     JSRetainPtr<JSStringRef> jsAbsoluteURL(
         Adopt, JSStringCreateWithUTF8CString(absoluteURL.string().utf8().data()));
@@ -270,7 +270,7 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
 
 void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
-    DumpRenderTreeSupportEfl::setValueForUser(context, nodeObject, value);
+    DumpRenderTreeSupportEfl::setValueForUser(context, nodeObject, WTF::String(value->ustring().impl()));
 }
 
 void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
@@ -515,7 +515,7 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
             options |= WebCore::StartInSelection;
     }
 
-    return DumpRenderTreeSupportEfl::findString(browser->mainView(), target->ustring().utf8().data(), options);
+    return DumpRenderTreeSupportEfl::findString(browser->mainView(), WTF::String(target->ustring().impl()), options);
 }
 
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
@@ -701,7 +701,7 @@ void LayoutTestController::addUserScript(JSStringRef, bool, bool)
 
 void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
-    DumpRenderTreeSupportEfl::addUserStyleSheet(browser->mainView(), source->ustring().utf8().data(), allFrames);
+    DumpRenderTreeSupportEfl::addUserStyleSheet(browser->mainView(), WTF::String(source->ustring().impl()), allFrames);
 }
 
 void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)

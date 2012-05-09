@@ -66,14 +66,14 @@ public:
     static WebCore::IntRect selectionRectangle(const Evas_Object* ewkFrame);
     static String suitableDRTFrameName(const Evas_Object* ewkFrame);
     static void suspendAnimations(Evas_Object* ewkFrame);
-    static void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
+    static void setValueForUser(JSContextRef, JSValueRef nodeObject, const String& value);
     static void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
     static void setDefersLoading(Evas_Object* ewkView, bool defers);
     static void setLoadsSiteIconsIgnoringImageLoadingSetting(Evas_Object* ewkView, bool loadsSiteIconsIgnoringImageLoadingPreferences);
 
-    static void addUserStyleSheet(const Evas_Object* ewkView, const char* sourceCode, bool allFrames);
+    static void addUserStyleSheet(const Evas_Object* ewkView, const String& sourceCode, bool allFrames);
     static void executeCoreCommandByName(const Evas_Object* ewkView, const char* name, const char* value);
-    static bool findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions);
+    static bool findString(const Evas_Object* ewkView, const String& text, WebCore::FindOptions);
     static bool isCommandEnabled(const Evas_Object* ewkView, const char* name);
     static void setJavaScriptProfilingEnabled(const Evas_Object* ewkView, bool enabled);
     static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);

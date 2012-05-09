@@ -1,3 +1,20 @@
+2012-04-23  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Pass a WTF::String directly from DRT to ewebkit when possible
+        https://bugs.webkit.org/show_bug.cgi?id=84634
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Drop unnecessary const char* -> WTF::String conversions by
+        creating String objects directly in LayoutTestController out of
+        JSStringRef's and passing them to DumpRenderTreeSupportEfl.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::queueLoad):
+        (LayoutTestController::setValueForUser):
+        (LayoutTestController::findString):
+        (LayoutTestController::addUserStyleSheet):
+
 2012-05-08  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL][DRT] EventSender needs implementation of leapForward function
