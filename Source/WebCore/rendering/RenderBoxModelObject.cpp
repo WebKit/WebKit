@@ -411,15 +411,6 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
                 repaint();
             }
         }
-
-        if (hasLayer()
-            && (oldStyle->hasAutoZIndex() != newStyle->hasAutoZIndex()
-                || oldStyle->zIndex() != newStyle->zIndex()
-                || oldStyle->visibility() != newStyle->visibility())) {
-            layer()->dirtyStackingContextZOrderLists();
-            if (oldStyle->hasAutoZIndex() != newStyle->hasAutoZIndex() || oldStyle->visibility() != newStyle->visibility())
-                layer()->dirtyZOrderLists();
-        }
     }
 
     RenderObject::styleWillChange(diff, newStyle);

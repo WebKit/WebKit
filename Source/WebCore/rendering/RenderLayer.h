@@ -382,7 +382,7 @@ public:
     // Get the enclosing stacking context for this layer.  A stacking context is a layer
     // that has a non-auto z-index.
     RenderLayer* stackingContext() const;
-    bool isStackingContext() const { return !hasAutoZIndex() || renderer()->isRenderView(); }
+    bool isStackingContext() const { return isStackingContext(renderer()->style()); }
 
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
@@ -443,7 +443,6 @@ public:
     void convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location) const;
     void convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutRect&) const;
 
-    bool hasAutoZIndex() const { return renderer()->style()->hasAutoZIndex(); }
     int zIndex() const { return renderer()->style()->zIndex(); }
 
     enum PaintLayerFlag {
@@ -618,6 +617,7 @@ private:
 
     void updateNormalFlowList();
 
+    bool isStackingContext(const RenderStyle* style) const { return !style->hasAutoZIndex() || renderer()->isRenderView(); }
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
 
     void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
@@ -628,6 +628,8 @@ private:
     void restoreClip(GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&);
 
     bool shouldRepaintAfterLayout() const;
+
+    void updateStackingContextsAfterStyleChange(const RenderStyle* oldStyle);
 
     void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
     void updateScrollbarsAfterLayout();
@@ -936,6 +938,8 @@ private:
 
 inline void RenderLayer::clearZOrderLists()
 {
+    ASSERT(!isStackingContext());
+
     if (m_posZOrderList) {
         delete m_posZOrderList;
         m_posZOrderList = 0;

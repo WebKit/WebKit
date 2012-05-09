@@ -147,7 +147,6 @@ void ClipRects::destroy(RenderArena* renderArena)
 RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     : m_inResizeMode(false)
     , m_scrollDimensionsDirty(true)
-    , m_zOrderListsDirty(true)
     , m_normalFlowListDirty(true)
     , m_usedTransparency(false)
     , m_paintingInsideReflection(false)
@@ -193,6 +192,9 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_resizer(0)
 {
     m_isNormalFlowOnly = shouldBeNormalFlowOnly();
+    // Non-stacking contexts should have empty z-order lists. As this is already the case,
+    // there is no need to dirty / recompute these lists.
+    m_zOrderListsDirty = isStackingContext();
 
     ScrollableArea::setConstrainsScrollingToContentEdge(false);
 
@@ -4459,8 +4461,7 @@ static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
 void RenderLayer::dirtyZOrderLists()
 {
     ASSERT(m_layerListMutationAllowed);
-    // We cannot assume that we are called on a stacking context as it
-    // is called when we just got demoted from being a stacking context.
+    ASSERT(isStackingContext());
 
     if (m_posZOrderList)
         m_posZOrderList->clear();
@@ -4676,6 +4677,31 @@ bool RenderLayer::isSelfPaintingLayer() const
         || renderer()->isRenderIFrame();
 }
 
+void RenderLayer::updateStackingContextsAfterStyleChange(const RenderStyle* oldStyle)
+{
+    if (!oldStyle)
+        return;
+
+    bool wasStackingContext = isStackingContext(oldStyle);
+    bool isStackingContext = this->isStackingContext();
+    if (isStackingContext != wasStackingContext) {
+        dirtyStackingContextZOrderLists();
+        if (isStackingContext)
+            dirtyZOrderLists();
+        else
+            clearZOrderLists();
+        return;
+    }
+
+    // FIXME: RenderLayer already handles visibility changes through our visiblity dirty bits. This logic could
+    // likely be folded along with the rest.
+    if (oldStyle->zIndex() != renderer()->style()->zIndex() || oldStyle->visibility() != renderer()->style()->visibility()) {
+        dirtyStackingContextZOrderLists();
+        if (isStackingContext)
+            dirtyZOrderLists();
+    }
+}
+
 static bool overflowCanHaveAScrollbar(EOverflow overflow)
 {
     return overflow == OAUTO || overflow == OSCROLL || overflow == OOVERLAY;
@@ -4730,7 +4756,8 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
         delete m_marquee;
         m_marquee = 0;
     }
-    
+
+    updateStackingContextsAfterStyleChange(oldStyle);
     updateScrollbarsAfterStyleChange(oldStyle);
 
     if (!hasReflection() && m_reflection)
