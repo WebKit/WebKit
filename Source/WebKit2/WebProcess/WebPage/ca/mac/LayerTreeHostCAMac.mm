@@ -58,7 +58,7 @@ LayerTreeHostCAMac::~LayerTreeHostCAMac()
     ASSERT(!m_layerHostingContext);
 }
 
-void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
+void LayerTreeHostCAMac::platformInitialize()
 {
     switch (m_webPage->layerHostingMode()) {
     case LayerHostingModeDefault:
@@ -70,9 +70,9 @@ void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
         break;
 #endif
     }
-    m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
 
-    layerTreeContext.contextID = m_layerHostingContext->contextID();
+    m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
+    m_layerTreeContext.contextID = m_layerHostingContext->contextID();
 }
 
 void LayerTreeHostCAMac::scheduleLayerFlush()
@@ -169,6 +169,7 @@ void LayerTreeHostCAMac::setLayerHostingMode(LayerHostingMode layerHostingMode)
     }
 
     m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
+    m_layerTreeContext.contextID = m_layerHostingContext->contextID();
 
     scheduleLayerFlush();
 }

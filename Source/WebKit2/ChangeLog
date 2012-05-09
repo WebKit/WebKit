@@ -1,3 +1,40 @@
+2012-05-08  Anders Carlsson  <andersca@apple.com>
+
+        DrawingAreaProxyImpl doesn't work with window server hosting
+        https://bugs.webkit.org/show_bug.cgi?id=85947
+        <rdar://problem/11213718>
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::updateAcceleratedCompositingMode):
+        Update the layer tree context and call WebPage::updateAcceleratedCompositingMode.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setLayerHostingMode):
+        If setting the layer hosting mode changed the layer tree context, send back an UpdateAcceleratedCompositingMode message
+        with the new context.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::initialize):
+        platformInitialize no longer takes a context.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+        (LayerTreeHostCA):
+        Make m_layerTreeContext protected instead.
+
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h:
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::platformInitialize):
+        Assign to m_layerTreeContext directly.
+
+        (WebKit::LayerTreeHostCAMac::setLayerHostingMode):
+        Set m_layerTreeContext.contextID.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        (WebKit::LayerTreeHostCAWin::platformInitialize):
+        Assign to m_layerTreeContext directly.
+
 2012-05-08  Jon Lee  <jonlee@apple.com>
 
         Safari warns that it needs to resend the form in an iFrame when going back

@@ -705,7 +705,11 @@ void DrawingAreaImpl::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
     if (!m_layerTreeHost)
         return;
 
+    LayerTreeContext oldLayerTreeContext = m_layerTreeHost->layerTreeContext();
     m_layerTreeHost->setLayerHostingMode(layerHostingMode);
+
+    if (m_layerTreeHost->layerTreeContext() != oldLayerTreeContext)
+        m_webPage->send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
 }
 #endif
 

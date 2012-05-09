@@ -245,6 +245,17 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t backingStoreS
     incorporateUpdate(updateInfo);
 }
 
+void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
+{
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
+    if (backingStoreStateID < m_currentBackingStoreStateID)
+        return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    updateAcceleratedCompositingMode(layerTreeContext);
+#endif
+}
+
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 {
     ASSERT(!isInAcceleratedCompositingMode());
@@ -367,6 +378,14 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 
     m_layerTreeContext = LayerTreeContext();    
     m_webPageProxy->exitAcceleratedCompositingMode();
+}
+
+void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+{
+    ASSERT(isInAcceleratedCompositingMode());
+
+    m_layerTreeContext = layerTreeContext;
+    m_webPageProxy->updateAcceleratedCompositingMode(layerTreeContext);
 }
 #endif
 
