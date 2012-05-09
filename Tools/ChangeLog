@@ -1,3 +1,20 @@
+2012-05-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][DRT] EFL's DRT needs to support LayoutTestController.dumpIconChanges()
+        https://bugs.webkit.org/show_bug.cgi?id=84435
+
+        Reviewed by Antonio Gomes.
+
+        Catch the "icon,changed" signal on the frames in EFL's DumpRenderTree
+        to support LayoutTestController's dumpIconChanges().
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::onFrameIconChanged):
+        (DumpRenderTreeChrome::onFrameCreated):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2012-05-09  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         webkit-patch upload Fails Behind Load-balancing Proxies

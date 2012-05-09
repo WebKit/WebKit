@@ -2,10 +2,6 @@
 # Tests which depend on features which have not been implemented yet
 # --------------------------------------------------------------------
 
-# Needs API to receive notifications about changed icons
-# https://bugs.webkit.org/show_bug.cgi?id=33812
-fast/dom/icon-url-property.html
-
 # EFL's EventSender does not implement dumpFilenameBeingDragged
 fast/events/drag-image-filename.html
 

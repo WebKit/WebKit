@@ -1724,6 +1724,20 @@ Ewk_Certificate_Status ewk_frame_certificate_status_get(Evas_Object* ewkFrame)
 
 /**
  * @internal
+ * Reports frame favicon changed.
+ *
+ * @param ewkFrame Frame.
+ *
+ * Emits signal: "icon,changed" with no parameters.
+ */
+void ewk_frame_icon_changed(Evas_Object* ewkFrame)
+{
+    DBG("ewkFrame=%p", ewkFrame);
+    evas_object_smart_callback_call(ewkFrame, "icon,changed", 0);
+}
+
+/**
+ * @internal
  * Reports uri changed and swap internal string reference.
  *
  * Emits signal: "uri,changed" with new uri as parameter.

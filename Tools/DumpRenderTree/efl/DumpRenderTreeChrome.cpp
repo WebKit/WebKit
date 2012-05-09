@@ -108,6 +108,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(view, "frame,created", onFrameCreated, 0);
 
     Evas_Object* mainFrame = ewk_view_frame_main_get(view);
+    evas_object_smart_callback_add(mainFrame, "icon,changed", onFrameIconChanged, 0);
     evas_object_smart_callback_add(mainFrame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(mainFrame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(mainFrame, "load,finished", onFrameLoadFinished, 0);
@@ -420,6 +421,14 @@ void DumpRenderTreeChrome::onStatusbarTextSet(void*, Evas_Object*, void* eventIn
     printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", statusbarText);
 }
 
+void DumpRenderTreeChrome::onFrameIconChanged(void*, Evas_Object* frame, void*)
+{
+    if (!done && gLayoutTestController->dumpIconChanges()) {
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - didChangeIcons\n", frameName.utf8().data());
+    }
+}
+
 void DumpRenderTreeChrome::onTitleChanged(void*, Evas_Object*, void* eventInfo)
 {
     if (!gLayoutTestController->dumpTitleChanges())
@@ -508,6 +517,7 @@ void DumpRenderTreeChrome::onFrameCreated(void*, Evas_Object*, void* eventInfo)
 {
     Evas_Object* frame = static_cast<Evas_Object*>(eventInfo);
 
+    evas_object_smart_callback_add(frame, "icon,changed", onFrameIconChanged, 0);
     evas_object_smart_callback_add(frame, "load,provisional", onFrameProvisionalLoad, 0);
     evas_object_smart_callback_add(frame, "load,committed", onFrameLoadCommitted, 0);
     evas_object_smart_callback_add(frame, "load,finished", onFrameLoadFinished, 0);

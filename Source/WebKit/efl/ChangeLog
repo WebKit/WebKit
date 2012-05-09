@@ -1,3 +1,22 @@
+2012-05-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][DRT] EFL's DRT needs to support LayoutTestController.dumpIconChanges()
+        https://bugs.webkit.org/show_bug.cgi?id=84435
+
+        Reviewed by Antonio Gomes.
+
+        Emit a "icon,changed" signal on the frame when its favion changed.
+        Clarify that the "icon,loaded" signal is only emitted for the main
+        frame.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeIcons):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_icon_changed):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_private.h:
+
 2012-05-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] LayoutTestController addUserScript implementation

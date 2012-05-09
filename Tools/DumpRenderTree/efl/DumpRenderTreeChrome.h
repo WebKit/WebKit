@@ -91,6 +91,8 @@ private:
 
     static void onFrameCreated(void*, Evas_Object*, void*);
 
+    static void onFrameIconChanged(void*, Evas_Object*, void*);
+
     static void onFrameProvisionalLoad(void*, Evas_Object*, void*);
 
     static void onFrameLoadCommitted(void*, Evas_Object*, void*);

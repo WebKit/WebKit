@@ -241,6 +241,7 @@ void ewk_frame_title_set(Evas_Object* ewkFrame, const char* title);
 void ewk_frame_view_create_for_view(Evas_Object* ewkFrame, Evas_Object* view);
 bool ewk_frame_uri_changed(Evas_Object* ewkFrame);
 void ewk_frame_force_layout(Evas_Object* ewkFrame);
+void ewk_frame_icon_changed(Evas_Object* ewkFrame);
 
 WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* ewkFrame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually);
 

@@ -596,9 +596,8 @@ void FrameLoaderClientEfl::dispatchWillClose()
 
 void FrameLoaderClientEfl::dispatchDidReceiveIcon()
 {
-    /* report received favicon only for main frame. */
-    if (ewk_view_frame_main_get(m_view) != m_frame)
-        return;
+    // IconController loads icons only for the main frame.
+    ASSERT(ewk_view_frame_main_get(m_view) == m_frame);
 
     ewk_view_frame_main_icon_received(m_view);
 }
@@ -621,9 +620,11 @@ void FrameLoaderClientEfl::dispatchDidReceiveTitle(const StringWithDirection& ti
     ewk_view_title_set(m_view, cs.data());
 }
 
-void FrameLoaderClientEfl::dispatchDidChangeIcons(WebCore::IconType)
+void FrameLoaderClientEfl::dispatchDidChangeIcons(WebCore::IconType iconType)
 {
-    notImplemented();
+    // Other touch types are apple-specific
+    ASSERT(iconType == WebCore::Favicon);
+    ewk_frame_icon_changed(m_frame);
 }
 
 void FrameLoaderClientEfl::dispatchDidCommitLoad()

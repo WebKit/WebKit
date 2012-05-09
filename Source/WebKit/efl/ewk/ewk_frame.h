@@ -39,6 +39,7 @@
  *     were changed due new layout, script actions or any other events.
  *  - "editorclient,contents,changed", void: reports that editor client's
  *    contents were changed
+ *  - "icon,changed", void: frame favicon changed.
  *  - "load,committed", void: reports load committed.
  *  - "load,document,finished", void: frame finished loading the document.
  *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
