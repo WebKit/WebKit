@@ -1,15 +1,5 @@
 description("Tests the acceptable types for arguments to navigator.getUserMedia methods.");
 
-function shouldNotThrow(expression)
-{
-  try {
-    eval(expression);
-    testPassed(expression + " did not throw exception.");
-  } catch(e) {
-    testFailed(expression + " should not throw exception. Threw exception " + e);
-  }
-}
-
 function test(expression, expressionShouldThrow, expectedException) {
     if (expressionShouldThrow) {
         if (expectedException)

@@ -1,0 +1,19 @@
+Tests webkitMediaStream.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Got local stream.
+PASS localStream.audioTracks.length is 1
+PASS localStream.videoTracks.length is 1
+PASS typeof webkitMediaStream === 'function' is true
+PASS stream = new webkitMediaStream(localStream.audioTracks, localStream.videoTracks); did not throw exception.
+PASS [object MediaStream] is non-null.
+PASS [object MediaStream] is defined.
+PASS stream.constructor.name is 'MediaStream'
+PASS stream.audioTracks.length is 1
+PASS stream.videoTracks.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

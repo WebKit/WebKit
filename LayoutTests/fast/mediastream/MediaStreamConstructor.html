@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests webkitMediaStream.");
+
+function error() {
+    testFailed('Stream generation failed.');
+    finishJSTest();
+}
+
+function getUserMedia(dictionary, callback) {
+    try {
+        navigator.webkitGetUserMedia(dictionary, callback, error);
+    } catch (e) {
+        testFailed('webkitGetUserMedia threw exception :' + e);
+        finishJSTest();
+    }
+}
+
+function gotStream(s) {
+    localStream = s;
+    testPassed('Got local stream.');
+    shouldBe('localStream.audioTracks.length', '1');
+    shouldBe('localStream.videoTracks.length', '1');
+
+    stream = null;
+    shouldBeTrue("typeof webkitMediaStream === 'function'");
+    shouldNotThrow("stream = new webkitMediaStream(localStream.audioTracks, localStream.videoTracks);");
+    shouldBeNonNull(stream);
+    shouldBeDefined(stream);
+    shouldBe("stream.constructor.name", "'MediaStream'");
+    shouldBe('stream.audioTracks.length', '1');
+    shouldBe('stream.videoTracks.length', '1');
+    finishJSTest();
+}
+
+getUserMedia({video:true, audio:true}, gotStream);
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,21 @@
+2012-05-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Adding a test for constructed from JS MediaStreams
+        https://bugs.webkit.org/show_bug.cgi?id=85883
+
+        Reviewed by Kent Tamura.
+
+        Also moved shouldNotThrow to js-test-pre, and removed it from all mediastream tests.
+
+        * fast/js/resources/js-test-pre.js:
+        (shouldNotThrow):
+        * fast/mediastream/MediaStreamConstructor-expected.txt: Added.
+        * fast/mediastream/MediaStreamConstructor.html: Added.
+        * fast/mediastream/peerconnection-argument-types-expected.txt:
+        * fast/mediastream/peerconnection-iceoptions.html:
+        * fast/mediastream/script-tests/argument-types.js:
+        * fast/mediastream/script-tests/peerconnection-argument-types.js:
+
 2012-05-09  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update for media-stream tests

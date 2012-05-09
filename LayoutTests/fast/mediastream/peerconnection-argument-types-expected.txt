@@ -3,7 +3,7 @@ Tests the acceptable types for arguments to method for DeprecatedPeerConnection 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS typeof webkitDeprecatedPeerConnection== 'function' is true
+PASS typeof webkitDeprecatedPeerConnection === 'function' is true
 PASS new webkitDeprecatedPeerConnection() threw exception TypeError: Not enough arguments.
 PASS new webkitDeprecatedPeerConnection("STUN 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
 PASS new webkitDeprecatedPeerConnection("STUN relay.example.net:3478") threw exception TypeError: Not enough arguments.

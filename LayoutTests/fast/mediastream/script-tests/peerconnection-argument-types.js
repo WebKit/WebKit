@@ -1,15 +1,5 @@
 description("Tests the acceptable types for arguments to method for DeprecatedPeerConnection defination.");
 
-function shouldNotThrow(expression)
-{
-  try {
-    eval(expression);
-    testPassed(expression + " did not throw exception.");
-  } catch(e) {
-    testFailed(expression + " should not throw exception. Threw exception " + e);
-  }
-}
-
 function test(expression, expressionShouldThrow, expectedException) {
     if (expressionShouldThrow) {
         if (expectedException)
@@ -31,7 +21,7 @@ ObjectThrowingException.prototype.toString = function() {
 }
 var objectThrowingException = new ObjectThrowingException();
 
-shouldBeTrue("typeof webkitDeprecatedPeerConnection== 'function'");
+shouldBeTrue("typeof webkitDeprecatedPeerConnection === 'function'");
 
 // 0 Argument
 test('new webkitDeprecatedPeerConnection()', true,'TypeError: Not enough arguments');
