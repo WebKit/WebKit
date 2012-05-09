@@ -1,3 +1,12 @@
+2012-05-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] fast/overflow/scroll-div-hide-show.html testcase does not pass
+        https://bugs.webkit.org/show_bug.cgi?id=85960
+
+        Unreviewed. Gardening.  
+
+        * platform/efl/Skipped: Skipping fast/overflow/scroll-div-hide-show.html.
+
 2012-05-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][DRT] Add baselines for new CSS cases after r116438

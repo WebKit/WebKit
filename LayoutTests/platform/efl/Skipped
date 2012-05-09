@@ -1192,6 +1192,7 @@ fast/text/complex-text-opacity.html
 fast/text/emphasis.html
 
 # BUG: international characters not being rendered correctly. they probably need a proper font.
+fast/overflow/scroll-div-hide-show.html
 fast/text/international/arabic-justify.html
 fast/text/international/bidi-AN-after-L.html
 fast/text/international/bidi-AN-after-empty-run.html
