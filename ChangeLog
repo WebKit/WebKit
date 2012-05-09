@@ -1,3 +1,17 @@
+2012-05-09  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Enable PAGE_POPUP in make file, and implement required methods
+        https://bugs.webkit.org/show_bug.cgi?id=85907
+
+        Reviewed by Rob Buis.
+   
+        Enable PAGE_POPUP option in make files.
+
+        Internal reviewed by Yong Li.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Split WebKit2 Makefile moving source code listings to GNUmakefile.list.am

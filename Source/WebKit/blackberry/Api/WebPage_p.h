@@ -48,6 +48,7 @@ class RenderLayer;
 class RenderObject;
 class ScrollView;
 class TransformationMatrix;
+class PagePopupBlackBerry;
 template<typename T> class Timer;
 }
 
@@ -398,6 +399,8 @@ public:
     void addBackingStoreClientForFrame(const WebCore::Frame*, BackingStoreClient*);
     void removeBackingStoreClientForFrame(const WebCore::Frame*);
 
+    void setParentPopup(WebCore::PagePopupBlackBerry* webPopup);
+
     // Clean up any document related data we might be holding.
     void clearDocumentData(const WebCore::Document*);
 
@@ -578,6 +581,11 @@ public:
 
     Vector<OwnPtr<DeferredTaskBase> > m_deferredTasks;
     WebCore::Timer<WebPagePrivate> m_deferredTasksTimer;
+
+    // The popup that opened in this webpage
+    WebCore::PagePopupBlackBerry* m_selectPopup;
+    // The popup that owned this webpage
+    WebCore::PagePopupBlackBerry* m_parentPopup;
 
 protected:
     virtual ~WebPagePrivate();

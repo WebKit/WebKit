@@ -1,3 +1,40 @@
+2012-05-09  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Enable PAGE_POPUP in make file, and implement required methods
+        https://bugs.webkit.org/show_bug.cgi?id=85907
+
+        Reviewed by Rob Buis.
+
+        Internal reviewed by Yong Li.
+
+        Enable PAGE_POPUP so we can use WebCore::PagePopup and WebCore::PagePopupClient interface.
+        Implement virtual methods in WebCore::ChromeClientBlackBerry that required for the 
+        implementation and add methods in WebKit::WebPage that needed for PagePopupClient.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        (BlackBerry::WebKit::WebPage::initPopupWebView):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::popupOpened):
+        (BlackBerry::WebKit::WebPage::popupClosed):
+        (BlackBerry::WebKit::WebPage::hasOpenedPopup):
+        (BlackBerry::WebKit::WebPage::popup):
+        (BlackBerry::WebKit::WebPagePrivate::setParentPopup):
+        * Api/WebPage.h:
+        (WebCore):
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::hasOpenedPopup):
+        (WebCore::ChromeClientBlackBerry::openPagePopup):
+        (WebCore):
+        (WebCore::ChromeClientBlackBerry::closePagePopup):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (WebCore):
+        (ChromeClientBlackBerry):
+
 2012-05-08  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry] Auth credentials set in private mode are reused in public mode.

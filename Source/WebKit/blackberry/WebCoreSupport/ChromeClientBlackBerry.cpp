@@ -47,6 +47,8 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageGroupLoadDeferrer.h"
+#include "PagePopupBlackBerry.h"
+#include "PagePopupClient.h"
 #include "PlatformString.h"
 #include "PopupMenuBlackBerry.h"
 #include "RenderView.h"
@@ -58,6 +60,7 @@
 #include "WebPage.h"
 #include "WebPageClient.h"
 #include "WebPage_p.h"
+#include "WebPopupType.h"
 #include "WebSettings.h"
 #include "WebString.h"
 #include "WindowFeatures.h"
@@ -282,8 +285,7 @@ bool ChromeClientBlackBerry::selectItemAlignmentFollowsMenuWritingDirection()
 
 bool ChromeClientBlackBerry::hasOpenedPopup() const
 {
-    notImplemented();
-    return false;
+    return m_webPagePrivate->m_webPage->hasOpenedPopup();
 }
 
 PassRefPtr<PopupMenu> ChromeClientBlackBerry::createPopupMenu(PopupMenuClient* client) const
@@ -296,6 +298,31 @@ PassRefPtr<SearchPopupMenu> ChromeClientBlackBerry::createSearchPopupMenu(PopupM
     return adoptRef(new SearchPopupMenuBlackBerry(client));
 }
 
+PagePopup* ChromeClientBlackBerry::openPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView)
+{
+    PagePopupBlackBerry* webPopup;
+
+    if (!hasOpenedPopup()) {
+        webPopup = new PagePopupBlackBerry(m_webPagePrivate, client,
+                rootViewToScreen(originBoundsInRootView));
+        m_webPagePrivate->m_webPage->popupOpened(webPopup);
+    } else {
+        webPopup = m_webPagePrivate->m_webPage->popup();
+        webPopup->closeWebPage();
+    }
+    webPopup->sendCreatePopupWebViewRequest();
+    return webPopup;
+}
+
+void ChromeClientBlackBerry::closePagePopup(PagePopup* popup)
+{
+    if (!popup)
+        return;
+
+    PagePopupBlackBerry* webPopup = m_webPagePrivate->m_webPage->popup();
+    webPopup->closePopup();
+    m_webPagePrivate->m_webPage->popupClosed();
+}
 
 void ChromeClientBlackBerry::setToolbarsVisible(bool)
 {

@@ -83,6 +83,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "PagePopupBlackBerry.h"
 #include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDatabase.h"
@@ -373,6 +374,8 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_hasInRegionScrollableAreas(false)
     , m_updateDelegatedOverlaysDispatched(false)
     , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
+    , m_selectPopup(0)
+    , m_parentPopup(0)
 {
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -3807,6 +3810,9 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
     if (mouseEvent.type() == WebCore::PlatformEvent::MouseScroll)
         return true;
 
+    if (m_parentPopup)
+        m_parentPopup->handleMouseEvent(mouseEvent);
+
     Node* node = 0;
     if (mouseEvent.inputMethod() == TouchScreen) {
         const FatFingersResult lastFatFingersResult = m_touchEventHandler->lastFatFingersResult();
@@ -5278,6 +5284,11 @@ bool WebPage::nodeHasHover(const WebDOMNode& node)
 }
 #endif
 
+void WebPage::initPopupWebView(BlackBerry::WebKit::WebPage* webPage)
+{
+    d->m_selectPopup->init(webPage);
+}
+
 String WebPagePrivate::findPatternStringForUrl(const KURL& url) const
 {
     if ((m_webSettings->shouldHandlePatternUrls() && protocolIs(url, "pattern"))
@@ -6078,6 +6089,33 @@ const String& WebPagePrivate::defaultUserAgent()
     }
 
     return *defaultUserAgent;
+}
+
+void WebPage::popupOpened(PagePopupBlackBerry* webPopup)
+{
+    ASSERT(!d->m_selectPopup);
+    d->m_selectPopup = webPopup;
+}
+
+void WebPage::popupClosed()
+{
+    ASSERT(d->m_selectPopup);
+    d->m_selectPopup = 0;
+}
+
+bool WebPage::hasOpenedPopup() const
+{
+    return d->m_selectPopup;
+}
+
+PagePopupBlackBerry* WebPage::popup()
+{
+    return d->m_selectPopup;
+}
+
+void WebPagePrivate::setParentPopup(PagePopupBlackBerry* webPopup)
+{
+    m_parentPopup = webPopup;
 }
 
 }

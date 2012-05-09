@@ -28,6 +28,8 @@ class WebPagePrivate;
 }
 
 namespace WebCore {
+class PagePopup;
+class PagePopupClient;
 
 class ChromeClientBlackBerry : public ChromeClient {
 public:
@@ -136,6 +138,9 @@ public:
     virtual bool hasOpenedPopup() const;
     virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
+
+    virtual WebCore::PagePopup* openPagePopup(WebCore::PagePopupClient*, const WebCore::IntRect&);
+    virtual void closePagePopup(WebCore::PagePopup*);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);

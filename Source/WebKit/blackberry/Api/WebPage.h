@@ -38,6 +38,7 @@ namespace WebCore {
 class ChromeClientBlackBerry;
 class Frame;
 class FrameLoaderClientBlackBerry;
+class PagePopupBlackBerry;
 }
 
 class WebDOMDocument;
@@ -332,6 +333,13 @@ public:
     void setUserViewportArguments(const WebViewportArguments&);
     void resetUserViewportArguments();
 
+    // Popup client
+    void initPopupWebView(BlackBerry::WebKit::WebPage*);
+    void popupOpened(WebCore::PagePopupBlackBerry* webPopup);
+    void popupClosed();
+    bool hasOpenedPopup() const;
+    WebCore::PagePopupBlackBerry* popup();
+
 private:
     virtual ~WebPage();
 
@@ -344,6 +352,7 @@ private:
     friend class WebKit::WebPagePrivate;
     friend class WebCore::ChromeClientBlackBerry;
     friend class WebCore::FrameLoaderClientBlackBerry;
+    friend class WebCore::PagePopupBlackBerry;
     WebPagePrivate* d;
 };
 }
