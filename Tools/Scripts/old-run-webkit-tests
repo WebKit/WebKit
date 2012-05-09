@@ -1200,8 +1200,8 @@ if (isGtk()) {
   push(@configurationArgs, '-2') if $useWebKitTestRunner;
   system "Tools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
 } elsif (isQt()) {
-  unshift @configurationArgs, qw(-style windows);
   if (getQtVersion() lt "5.0") {
+    unshift @configurationArgs, qw(-style windows);
     unshift @configurationArgs, qw(-graphicssystem raster);
   }
   if (isCygwin()) {

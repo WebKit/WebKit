@@ -1,3 +1,14 @@
+2012-05-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] ORWT fails with Qt 5 and WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=85968
+
+        Reviewed by Csaba Osztrogonác.
+
+        The Qt5 binary does not have a -style argument, so avoid using it.
+
+        * Scripts/old-run-webkit-tests:
+
 2012-05-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] LayoutTestController addUserScript implementation
