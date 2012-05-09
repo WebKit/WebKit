@@ -1,3 +1,43 @@
+2012-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Heap should not continually allocate new pages in steady state
+        https://bugs.webkit.org/show_bug.cgi?id=85936
+
+        Reviewed by Geoff Garen.
+
+        Currently, in steady state (i.e. a constant amount of live GC 
+        memory with a constant rate of allocation) assuming we've just 
+        finished a collection with X live blocks in CopiedSpace, we 
+        increase our working set by X blocks in CopiedSpace with each 
+        collection we perform. This is due to the fact that we allocate 
+        until we run out of free blocks to use in the Heap before we 
+        consider whether we should run a collection. 
+
+        In the longer term, this issue will be mostly resolved by 
+        implementing quick release for the CopiedSpace. In the shorter 
+        term, we should change our policy to check whether we should 
+        allocate before trying to use a free block from the Heap. We 
+        can change our policy to something more appropriate once we 
+        have implemented quick release.
+
+        This change should also have the convenient side effect of 
+        reducing the variance in GC-heavy tests (e.g. v8-splay) due 
+        to fact that we are doing less VM allocation during copying 
+        collection. Overall, this patch is performance neutral across 
+        the benchmarks we track.
+
+        * heap/CopiedSpace.cpp: 
+        (JSC::CopiedSpace::getFreshBlock): Shuffle the request from the BlockAllocator
+        around so that we only do it if the block request must succeed 
+        i.e. after we've already checked whether we should do a collection.
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase): Ditto.
+        (JSC::MarkedAllocator::allocateBlock): We no longer have a failure mode in this 
+        function because by the time we've called it, we've already checked whether we 
+        should run a collection so there's no point in returning null.
+        * heap/MarkedAllocator.h: Removing old arguments from function declaration.
+        (MarkedAllocator):
+
 2012-05-08  Gavin Barraclough  <barraclough@apple.com>
 
         SIGFPE on divide in classic interpreter
