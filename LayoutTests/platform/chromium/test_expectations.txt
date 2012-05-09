@@ -76,6 +76,7 @@ BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
 BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
 BUGRNIWA SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
 
+BUGWK85952 SLOW MAC WIN : http/tests/media/media-source/webm/video-media-source-play.html = PASS
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
@@ -3920,7 +3921,11 @@ BUGWK85868 MAC : css3/filters/custom/filter-repaint-custom-rotated.html = IMAGE
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
+BUGWK85949 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
+
 BUGWK85913 MAC : fast/block/positioning/offsetLeft-offsetTop-multicolumn.html = TEXT
+
+BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
@@ -3932,3 +3937,5 @@ BUGWK85771 SNOWLEOPARD LION LINUX : compositing/animation/state-at-end-event-tra
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/geometry/video-opacity-overlay.html = TIMEOUT PASS
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/scroll-painted-composited-content.html = TIMEOUT PASS
 BUGWK85771 SNOWLEOPARD LION LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = TIMEOUT PASS
+// Started flaking at around http://trac.webkit.org/changeset/116278.
+BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT

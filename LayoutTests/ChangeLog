@@ -1,3 +1,9 @@
+2012-05-08  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-08  Rakesh KN  <rakesh.kn@motorola.com>
 
         RadioNodeList support in HTMLFormElement::elements
