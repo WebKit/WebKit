@@ -201,6 +201,7 @@ fast/dom/shadow/shadow-element-rendering-multiple.html
 fast/dom/shadow/shadow-on-image.html
 fast/dom/shadow/shadow-root-activeElement.html
 fast/dom/shadow/shadow-root-append.html
+fast/dom/shadow/shadow-root-applyAuthorStyles.html
 fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-blur.html
 fast/dom/shadow/shadow-root-innerHTML.html

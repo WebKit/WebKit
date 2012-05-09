@@ -1,3 +1,11 @@
+2012-05-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0/fast/text/international/text-spliced-font-expected.png: Added.
+        * platform/qt-5.0/fast/text/international/text-spliced-font-expected.txt: Added.
+        * platform/qt/Skipped:
+
 2012-05-09  Abhishek Arya  <inferno@chromium.org>
 
         Crash in ReplaceSelectionCommand::performTrivialReplace
