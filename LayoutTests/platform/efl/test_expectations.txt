@@ -395,3 +395,5 @@ BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 
 // Times-out with debug build during heavy cpu loads
 BUGWK85902 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+
+BUGWK85799 : fast/css/font-face-download-error.html = TIMEOUT
