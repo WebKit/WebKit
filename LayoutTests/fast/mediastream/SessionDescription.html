@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests the JSEP SessionDescription.");
+
+sessionDescription = null;
+shouldNotThrow("sessionDescription = new SessionDescription('');");
+shouldThrow("sessionDescription.addCandidate()");
+shouldThrow("sessionDescription.addCandidate(null)");
+shouldThrow("sessionDescription.addCandidate(undefined)");
+shouldThrow("sessionDescription.addCandidate(42)");
+iceCandidate = null;
+shouldNotThrow("iceCandidate = new IceCandidate('', '');");
+shouldNotThrow("sessionDescription.addCandidate(iceCandidate)");
+
+window.jsTestIsAsync = false;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

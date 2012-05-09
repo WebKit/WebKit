@@ -33,6 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ExceptionBase.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +49,7 @@ public:
     static PassRefPtr<SessionDescription> create(PassRefPtr<SessionDescriptionDescriptor>);
     virtual ~SessionDescription();
 
-    void addCandidate(PassRefPtr<IceCandidate>);
+    void addCandidate(PassRefPtr<IceCandidate>, ExceptionCode&);
     String toSdp();
 
     SessionDescriptionDescriptor* descriptor();

@@ -34,7 +34,8 @@ module p2p {
         Conditional=MEDIA_STREAM,
         Constructor(in DOMString sdp)
     ] SessionDescription {
-        void addCandidate(in IceCandidate candidate);
+        [StrictTypeChecking] void addCandidate(in IceCandidate candidate)
+            raises(DOMException);
 
         DOMString toSdp();
     };

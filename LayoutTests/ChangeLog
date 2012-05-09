@@ -1,3 +1,13 @@
+2012-05-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: SessionDescription::addCandidate should not crash for malformed input
+        https://bugs.webkit.org/show_bug.cgi?id=85988
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/SessionDescription-expected.txt: Added.
+        * fast/mediastream/SessionDescription.html: Added.
+
 2012-05-09  Takashi Sakamoto  <tasak@google.com>
 
         Crash in WebCore::RenderBoxModelObject::paddingLeft

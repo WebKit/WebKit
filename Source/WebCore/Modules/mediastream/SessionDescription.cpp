@@ -34,6 +34,7 @@
 
 #include "SessionDescription.h"
 
+#include "ExceptionCode.h"
 #include "IceCandidate.h"
 #include "IceCandidateDescriptor.h"
 #include "MediaStreamCenter.h"
@@ -61,8 +62,13 @@ SessionDescription::~SessionDescription()
 {
 }
 
-void SessionDescription::addCandidate(PassRefPtr<IceCandidate> candidate)
+void SessionDescription::addCandidate(PassRefPtr<IceCandidate> candidate, ExceptionCode& ec)
 {
+    if (!candidate) {
+        ec = TYPE_MISMATCH_ERR;
+        return;
+    }
+
     m_descriptor->addCandidate(candidate->descriptor());
 }
 
