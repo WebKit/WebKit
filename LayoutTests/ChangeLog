@@ -1,5 +1,14 @@
 2012-05-08  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, a trivial test fix to remove a platform-dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=81854
+
+        * fast/forms/form-collection-radio-node-list-expected.txt:
+        * fast/forms/form-collection-radio-node-list.html:
+        Remove form controls from the document before completing the test.
+
+2012-05-08  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Test expectation update
         Skip post-in-iframe-with-back-navigation.html because it might cause a
         failure of the next test, preload-append-scan.php

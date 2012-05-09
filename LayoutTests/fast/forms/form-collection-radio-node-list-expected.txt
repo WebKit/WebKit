@@ -3,9 +3,6 @@ This test is for RadioNodeList specified at http://www.whatwg.org/specs/web-apps
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
- 
-                                       
-
 
 PASS owner.elements.length is 23
 PASS radioNodeList.length is 4

@@ -122,6 +122,8 @@ radioNodeList2[2].id = "idChanged";
 debug("After changing the id");
 shouldBe('radioNodeList2.length', '2');
 debug("");
+
+container.parentNode.removeChild(container);
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>
