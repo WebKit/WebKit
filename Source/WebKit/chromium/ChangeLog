@@ -1,5 +1,21 @@
 2012-05-08  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Reflections with masks should not occlude
+        https://bugs.webkit.org/show_bug.cgi?id=85927
+
+        Reviewed by James Robinson.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::TearDown):
+        (WebKitTests::CCOcclusionTrackerTest::createMaskLayer):
+        (CCOcclusionTrackerTest):
+        (WebKitTests::CCOcclusionTrackerTest::setMask):
+        (CCOcclusionTrackerTestReplicaWithMask):
+        (WebKitTests::CCOcclusionTrackerTestReplicaWithMask::runMyTest):
+        (WebKitTests):
+
+2012-05-08  Dana Jansens  <danakj@chromium.org>
+
         Region reads past end of spans
         https://bugs.webkit.org/show_bug.cgi?id=85909
 

@@ -230,7 +230,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToTargetRenderSu
 
     const RenderSurfaceType* oldTarget = m_stack[lastIndex].surface;
     Region oldTargetOcclusionInNewTarget = transformSurfaceOpaqueRegion<RenderSurfaceType>(oldTarget, m_stack[lastIndex].occlusionInTarget, oldTarget->originTransform());
-    if (oldTarget->hasReplica())
+    if (oldTarget->hasReplica() && !oldTarget->replicaHasMask())
         oldTargetOcclusionInNewTarget.unite(transformSurfaceOpaqueRegion<RenderSurfaceType>(oldTarget, m_stack[lastIndex].occlusionInTarget, oldTarget->replicaOriginTransform()));
 
     IntRect unoccludedSurfaceRect;

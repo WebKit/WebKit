@@ -172,6 +172,7 @@ protected:
         m_renderSurfaceLayerListChromium.clear();
         m_renderSurfaceLayerListImpl.clear();
         m_replicaLayers.clear();
+        m_maskLayers.clear();
         CCLayerTreeHost::setNeedsFilterContext(false);
     }
 
@@ -230,6 +231,15 @@ protected:
         typename Types::ContentLayerType* layerPtr = layer.get();
         setProperties(layerPtr, transform, position, bounds);
         setReplica(owningLayer, layer.release());
+        return layerPtr;
+    }
+
+    typename Types::LayerType* createMaskLayer(typename Types::LayerType* owningLayer, const IntSize& bounds)
+    {
+        typename Types::ContentLayerPtrType layer(Types::createContentLayer());
+        typename Types::ContentLayerType* layerPtr = layer.get();
+        setProperties(layerPtr, identityMatrix, FloatPoint(), bounds);
+        setMask(owningLayer, layer.release());
         return layerPtr;
     }
 
@@ -360,6 +370,17 @@ private:
         owningLayer->setReplicaLayer(layer);
     }
 
+    void setMask(LayerChromium* owningLayer, PassRefPtr<LayerChromium> layer)
+    {
+        owningLayer->setMaskLayer(layer.get());
+        m_maskLayers.append(layer);
+    }
+
+    void setMask(CCLayerImpl* owningLayer, PassOwnPtr<CCLayerImpl> layer)
+    {
+        owningLayer->setMaskLayer(layer);
+    }
+
     // These hold ownership of the layers for the duration of the test.
     typename Types::LayerPtrType m_root;
     Vector<RefPtr<LayerChromium> > m_renderSurfaceLayerListChromium;
@@ -368,6 +389,7 @@ private:
     typename Types::LayerIterator m_layerIterator;
     typename Types::LayerType* m_lastLayerVisited;
     Vector<RefPtr<LayerChromium> > m_replicaLayers;
+    Vector<RefPtr<LayerChromium> > m_maskLayers;
 };
 
 #define RUN_TEST_MAIN_THREAD_OPAQUE_LAYERS(ClassName) \
@@ -1328,6 +1350,38 @@ protected:
 };
 
 ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestReplicaWithClipping);
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestReplicaWithMask : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(100, 200));
+        typename Types::LayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 100), IntSize(50, 50), true);
+        typename Types::LayerType* replica = this->createReplicaLayer(surface, this->identityMatrix, FloatPoint(50, 50), IntSize());
+        this->createMaskLayer(replica, IntSize(10, 10));
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+        occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
+        this->visitLayer(surface, occlusion);
+
+        EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(0, 0, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+
+        this->visitContributingSurface(surface, occlusion);
+        this->enterLayer(parent, occlusion);
+
+        // The replica should not be occluding the parent, since it has a mask applied to it.
+        EXPECT_EQ_RECT(IntRect(0, 100, 50, 50), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+    }
+};
+
+ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestReplicaWithMask);
 
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestLayerScissorRectOutsideChild : public CCOcclusionTrackerTest<Types, opaqueLayers> {

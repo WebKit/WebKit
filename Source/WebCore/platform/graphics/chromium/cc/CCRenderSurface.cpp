@@ -396,6 +396,16 @@ bool CCRenderSurface::hasReplica() const
     return m_owningLayer->replicaLayer();
 }
 
+bool CCRenderSurface::hasMask() const
+{
+    return m_maskLayer;
+}
+
+bool CCRenderSurface::replicaHasMask() const
+{
+    return hasReplica() && (m_maskLayer || m_owningLayer->replicaLayer()->maskLayer());
+}
+
 void CCRenderSurface::setClipRect(const IntRect& clipRect)
 {
     if (m_clipRect == clipRect)

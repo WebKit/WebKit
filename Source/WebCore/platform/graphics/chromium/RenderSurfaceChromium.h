@@ -109,6 +109,9 @@ public:
 
     bool hasReplica() const;
 
+    bool hasMask() const;
+    bool replicaHasMask() const;
+
 private:
     LayerChromium* m_owningLayer;
     LayerChromium* m_maskLayer;

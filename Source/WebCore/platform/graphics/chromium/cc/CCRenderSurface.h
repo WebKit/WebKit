@@ -141,6 +141,9 @@ public:
 
     bool hasReplica() const;
 
+    bool hasMask() const;
+    bool replicaHasMask() const;
+
     void resetPropertyChangedFlag() { m_surfacePropertyChanged = false; }
     bool surfacePropertyChanged() const;
     bool surfacePropertyChangedOnlyFromDescendant() const;
