@@ -1,3 +1,16 @@
+2012-05-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] http/tests/loading/post-in-iframe-with-back-navigation.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=85974
+
+        Unreviewed EFL gardening.
+
+        Move http/tests/loading/post-in-iframe-with-back-navigation.html to
+        test_expectations.txt. This test was added in r116473 but fails on all
+        the bots.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-09  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Adding a test for constructed from JS MediaStreams

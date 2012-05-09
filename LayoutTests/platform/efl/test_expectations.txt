@@ -387,6 +387,9 @@ BUGWK76048 : fast/text/font-kerning.html = IMAGE
 // Ligatures rendering issue.
 BUGWK85606 : fast/text/font-variant-ligatures.html = IMAGE
 
+// Newly added test which fails on other bots too
+BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
+
 // Off-by-few-pixels issue for this selection reftest, fails on GTK as well.
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 
