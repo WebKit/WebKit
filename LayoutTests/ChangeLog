@@ -1,3 +1,15 @@
+2012-05-08  Eric Seidel  <eric@webkit.org>
+
+        Add stylesheet inheritance support to IFRAME_SEAMLESS
+        https://bugs.webkit.org/show_bug.cgi?id=85914
+
+        Reviewed by Ojan Vafai.
+
+        Update the results (for both static and dynamic inheritance)
+        now that this support is landed.
+
+        * fast/frames/seamless/seamless-css-cascade-expected.txt:
+
 2012-05-08  Raymond Toy  <rtoy@google.com>
 
         JavaScriptAudioNode should not ASSERT if number of input channels is 0

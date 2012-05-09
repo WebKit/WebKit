@@ -1,8 +1,8 @@
 Test that seamless iframes inherit styles from their parent iframe, and dymanically update when their parent document's styles update.
-FAIL window.getComputedStyle(one).color should be rgb(255, 255, 0). Was rgb(0, 0, 0).
+PASS window.getComputedStyle(one).color is "rgb(255, 255, 0)"
 PASS window.getComputedStyle(two).color is "rgb(128, 0, 128)"
-FAIL window.getComputedStyle(three).color should be rgb(255, 255, 255). Was rgb(0, 0, 0).
+PASS window.getComputedStyle(three).color is "rgb(255, 255, 255)"
 FAIL window.getComputedStyle(rootElement).color should be rgb(255, 165, 0). Was rgb(0, 0, 0).
 FAIL window.getComputedStyle(rootElement).color should be rgb(1, 2, 3). Was rgb(0, 0, 0).
-FAIL window.getComputedStyle(one).color should be rgb(3, 2, 1). Was rgb(0, 0, 0).
+PASS window.getComputedStyle(one).color is "rgb(3, 2, 1)"
 

@@ -2864,6 +2864,11 @@ void Document::addUserSheet(PassRefPtr<StyleSheetInternal> userSheet)
     styleResolverChanged(RecalcStyleImmediately);
 }
 
+void Document::seamlessParentUpdatedStylesheets()
+{
+    styleResolverChanged(RecalcStyleImmediately);
+}
+
 CSSStyleSheet* Document::elementSheet()
 {
     if (!m_elemSheet)
@@ -3490,6 +3495,22 @@ static bool styleSheetsUseRemUnits(const Vector<RefPtr<StyleSheet> >& sheets)
     return false;
 }
 
+void Document::notifySeamlessChildDocumentsOfStylesheetUpdate() const
+{
+    // If we're not in a frame yet any potential child documents won't have a StyleResolver to update.
+    if (!frame())
+        return;
+
+    // Seamless child frames are expected to notify their seamless children recursively, so we only do direct children.
+    for (Frame* child = frame()->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        Document* childDocument = child->document();
+        if (childDocument->shouldDisplaySeamlesslyWithParent()) {
+            ASSERT(childDocument->seamlessParentIFrame()->document() == this);
+            childDocument->seamlessParentUpdatedStylesheets();
+        }
+    }
+}
+
 bool Document::updateActiveStylesheets(StyleResolverUpdateFlag updateFlag)
 {
     if (m_inStyleRecalc) {
@@ -3521,7 +3542,9 @@ bool Document::updateActiveStylesheets(StyleResolverUpdateFlag updateFlag)
     m_usesRemUnits = styleSheetsUseRemUnits(m_styleSheets->vector());
     m_didCalculateStyleResolver = true;
     m_hasDirtyStyleResolver = false;
-    
+
+    notifySeamlessChildDocumentsOfStylesheetUpdate();
+
     return requiresFullStyleRecalc;
 }
 

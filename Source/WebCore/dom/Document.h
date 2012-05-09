@@ -1203,6 +1203,9 @@ private:
     bool testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal*);
     void analyzeStylesheetChange(StyleResolverUpdateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleResolverReset, bool& requiresFullStyleRecalc);
 
+    void seamlessParentUpdatedStylesheets();
+    void notifySeamlessChildDocumentsOfStylesheetUpdate() const;
+
     void deleteCustomFonts();
 
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;

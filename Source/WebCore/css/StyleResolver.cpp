@@ -61,7 +61,7 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"
-#include "HTMLElement.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
@@ -418,7 +418,23 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     }
 #endif
 
+    addStylesheetsFromSeamlessParents();
     appendAuthorStylesheets(0, document->styleSheets()->vector());
+}
+
+void StyleResolver::addStylesheetsFromSeamlessParents()
+{
+    // Build a list of stylesheet lists from our ancestors, and walk that
+    // list in reverse order so that the root-most sheets are appended first.
+    Document* childDocument = document();
+    Vector<StyleSheetList*> ancestorSheets;
+    while (HTMLIFrameElement* parentIFrame = childDocument->seamlessParentIFrame()) {
+        Document* parentDocument = parentIFrame->document();
+        ancestorSheets.append(parentDocument->styleSheets());
+        childDocument = parentDocument;
+    }
+    for (int i = ancestorSheets.size() - 1; i >= 0; i--)
+        appendAuthorStylesheets(0, ancestorSheets.at(i)->vector());
 }
 
 void StyleResolver::addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<CSSStyleSheet> >* userSheets, RuleSet& userStyle)
