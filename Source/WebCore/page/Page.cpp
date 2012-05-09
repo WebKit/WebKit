@@ -641,10 +641,16 @@ void Page::setMediaVolume(float volume)
 
 void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 {
-    if (scale == m_pageScaleFactor)
-        return;
-
     Document* document = mainFrame()->document();
+    FrameView* view = document->view();
+
+    if (scale == m_pageScaleFactor) {
+        if (view && view->scrollPosition() != origin) {
+            document->updateLayoutIgnorePendingStylesheets();
+            view->setScrollPosition(origin);
+        }
+        return;
+    }
 
     m_pageScaleFactor = scale;
 
@@ -657,12 +663,10 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
     mainFrame()->deviceOrPageScaleFactorChanged();
 #endif
 
-    if (FrameView* view = document->view()) {
-        if (view->scrollPosition() != origin) {
-          if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
-              view->layout();
-          view->setScrollPosition(origin);
-        }
+    if (view && view->scrollPosition() != origin) {
+        if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
+            view->layout();
+        view->setScrollPosition(origin);
     }
 }
 

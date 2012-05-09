@@ -9,7 +9,12 @@
     <script>
       window.enablePixelTesting = true;
 
-      function scroll() {
+      function scrollViaJavascript() {
+          var scaleFactor = 2.0;
+          if (window.internals) {
+             window.internals.settings.setPageScaleFactor(scaleFactor, 0, 0);
+          }
+
           // The page scale, as set by window.internals.settings.setPageScaleFactor should not be apparent
           // to javascript. So, we expect scrolling to (100,100) to be page coordinates, rather
           // than device pixels.
@@ -22,17 +27,19 @@
           shouldBe("window.scrollY", "100");
       }
 
-      function scaleWithEventSender() {
-          var scaleFactor = 2.0;
-          var scaleOffset = 0;
+      function scrollViaSetScaleFactor() {
           if (window.internals) {
-             window.internals.settings.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
+              // Test that the scroll offset changes even if scaleFactor remains
+              // the same.
+              window.internals.settings.setPageScaleFactor(1, 30, 30);
+              shouldBe("window.document.body.scrollTop", "30");
+              shouldBe("window.document.body.scrollLeft", "30");
           }
       }
 
       function test() {
-          scaleWithEventSender();
-          scroll();
+          scrollViaSetScaleFactor();
+          scrollViaJavascript();
       }
     </script>
     <script src="../js/resources/js-test-pre.js"></script>

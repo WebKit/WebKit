@@ -1,3 +1,5 @@
+PASS window.document.body.scrollTop is 30
+PASS window.document.body.scrollLeft is 30
 PASS window.document.body.scrollTop is 100
 PASS window.document.body.scrollLeft is 100
 PASS window.scrollX is 100
