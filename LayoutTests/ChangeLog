@@ -1,3 +1,15 @@
+2012-05-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] http/tests/loading/pdf-commit-load-callbacks.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=85957
+
+        Unreviewed gardening.
+
+        Move http/tests/loading/pdf-commit-load-callbacks.html to
+        test_expectations.txt while Bug 85956 is fixed.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-09  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         REGRESSION(r105057): Infinite loop inside SVGTextLayoutEngine::currentLogicalCharacterMetrics
