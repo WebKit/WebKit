@@ -1,3 +1,17 @@
+2012-05-09  Tony Chang  <tony@chromium.org>
+
+        add some basic perf-o-matic tests for flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=86017
+
+        Reviewed by Ryosuke Niwa.
+
+        Each of these tests take < 3s on my machine.
+
+        * Layout/flexbox-column-nowrap.html: Added.
+        * Layout/flexbox-column-wrap.html: Added.
+        * Layout/flexbox-row-nowrap.html: Added.
+        * Layout/flexbox-row-wrap.html: Added.
+
 2012-05-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: unreviewed followup fix for the performance test after r116218.

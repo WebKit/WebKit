@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+</head>
+<body style="overflow-y: scroll">
+
+<div id="flexbox" style="height: 400px; -webkit-flex-flow: column wrap; -webkit-flex-pack: center; -webkit-flex-align: center;">
+    <div style="-webkit-flex: 1 180px">1</div>
+    <div style="-webkit-flex: 2 auto">2 2</div>
+    <div style="-webkit-flex: 3 180px">3 3 3</div>
+    <div style="-webkit-flex: 4 auto">4 4 4 4</div>
+    <div style="-webkit-flex: 5 180px">5 5 5 5 5</div>
+    <div style="-webkit-flex: 6 auto">6 6 6 6 6 6</div>
+    <div style="-webkit-flex: 7 180px">7 7 7 7 7 7 7</div>
+    <div style="-webkit-flex: 8 auto">8 8 8 8 8 8 8 8</div>
+    <div style="-webkit-flex: 9 180px">9 9 9 9 9 9 9 9 9</div>
+    <div style="-webkit-flex: 10 auto">10 10 10 10 10 10 10 10 10</div>
+</div>
+
+</body>
+<script>
+function runTest()
+{
+    document.getElementById("flexbox").style.display = '-webkit-flexbox';
+    document.body.clientHeight;
+    document.getElementById("flexbox").style.display = '';
+    document.body.clientHeight;
+}
+
+PerfTestRunner.run(runTest, 180, 20, function() {
+    document.getElementById("flexbox").style.display = 'none';
+});
+</script>
+</html>
