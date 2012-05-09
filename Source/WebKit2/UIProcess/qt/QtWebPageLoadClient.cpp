@@ -22,13 +22,7 @@
 #include "QtWebPageLoadClient.h"
 
 #include "QtWebError.h"
-#include "WKStringQt.h"
-#include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
-#include "qwebloadrequest_p.h"
-#include <KURL.h>
-#include <WKFrame.h>
-#include <WebPageProxy.h>
 
 using namespace WebCore;
 
@@ -36,8 +30,6 @@ namespace WebKit {
 
 QtWebPageLoadClient::QtWebPageLoadClient(WKPageRef pageRef, QQuickWebView* webView)
     : m_webView(webView)
-    , m_webPageProxy(toImpl(pageRef))
-    , m_loadProgress(0)
 {
     WKPageLoaderClient loadClient;
     memset(&loadClient, 0, sizeof(WKPageLoaderClient));
@@ -53,57 +45,38 @@ QtWebPageLoadClient::QtWebPageLoadClient(WKPageRef pageRef, QQuickWebView* webVi
     loadClient.didStartProgress = didStartProgress;
     loadClient.didChangeProgress = didChangeProgress;
     loadClient.didFinishProgress = didFinishProgress;
-    loadClient.didFirstVisuallyNonEmptyLayoutForFrame = didFirstVisuallyNonEmptyLayoutForFrame;
     loadClient.didChangeBackForwardList = didChangeBackForwardList;
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }
 
-void QtWebPageLoadClient::completeLoadWhenProcessDidCrashIfNeeded()
-{
-    // Check if loading was ongoing, when process crashed.
-    if (!m_loadProgress || m_loadProgress == 100)
-        return;
-
-    QUrl url(KURL(WebCore::ParsedURLString, m_webPageProxy->urlAtProcessExit()));
-    QWebLoadRequest loadRequest(url, QQuickWebView::LoadFailedStatus, QLatin1String("The web process crashed."), QQuickWebView::InternalErrorDomain, 0);
-
-    emit m_webView->loadingChanged(&loadRequest);
-    setLoadProgress(100);
-}
-
 void QtWebPageLoadClient::didStartProvisionalLoad(const QUrl& url)
 {
-    QWebLoadRequest loadRequest(url, QQuickWebView::LoadStartedStatus);
-    emit m_webView->loadingChanged(&loadRequest);
+    m_webView->d_func()->provisionalLoadDidStart(url);
 }
 
 void QtWebPageLoadClient::didCommitLoad()
 {
-    emit m_webView->navigationHistoryChanged();
-    emit m_webView->urlChanged();
-    emit m_webView->titleChanged();
     m_webView->d_func()->loadDidCommit();
 }
 
 void QtWebPageLoadClient::didSameDocumentNavigation()
 {
-    emit m_webView->navigationHistoryChanged();
-    emit m_webView->urlChanged();
+    m_webView->d_func()->didSameDocumentNavigation();
 }
 
 void QtWebPageLoadClient::didReceiveTitle()
 {
-    emit m_webView->titleChanged();
+    m_webView->d_func()->titleDidChange();
 }
 
-void QtWebPageLoadClient::didFirstVisuallyNonEmptyLayout()
+void QtWebPageLoadClient::didChangeProgress(int loadProgress)
 {
-    m_webView->d_func()->didFinishFirstNonEmptyLayout();
+    m_webView->d_func()->loadProgressDidChange(loadProgress);
 }
 
 void QtWebPageLoadClient::didChangeBackForwardList()
 {
-    m_webView->d_func()->didChangeBackForwardList();
+    m_webView->d_func()->backForwardListDidChange();
 }
 
 void QtWebPageLoadClient::dispatchLoadSucceeded()
@@ -111,24 +84,17 @@ void QtWebPageLoadClient::dispatchLoadSucceeded()
     m_webView->d_func()->loadDidSucceed();
 }
 
-void QtWebPageLoadClient::dispatchLoadFailed(WKErrorRef error)
+void QtWebPageLoadClient::dispatchLoadFailed(const QtWebError& error)
 {
-    int errorCode = WKErrorGetErrorCode(error);
-    if (toImpl(error)->platformError().isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad) {
+    int errorCode = error.errorCode();
+
+    if (error.isCancellation() || errorCode == kWKErrorCodeFrameLoadInterruptedByPolicyChange || errorCode == kWKErrorCodePlugInWillHandleLoad) {
         // Make sure that LoadStartedStatus has a counterpart when e.g. requesting a download.
         dispatchLoadSucceeded();
         return;
     }
 
-    QtWebError qtError(error);
-    QWebLoadRequest loadRequest(qtError.url(), QQuickWebView::LoadFailedStatus, qtError.description(), static_cast<QQuickWebView::ErrorDomain>(qtError.type()), qtError.errorCode());
-    emit m_webView->loadingChanged(&loadRequest);
-}
-
-void QtWebPageLoadClient::setLoadProgress(int loadProgress)
-{
-    m_loadProgress = loadProgress;
-    emit m_webView->loadProgressChanged();
+    m_webView->d_func()->loadDidFail(error);
 }
 
 static QtWebPageLoadClient* toQtWebPageLoadClient(const void* clientInfo)
@@ -141,8 +107,7 @@ void QtWebPageLoadClient::didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef 
 {
     if (!WKFrameIsMainFrame(frame))
         return;
-    WebFrameProxy* wkframe = toImpl(frame);
-    QString urlStr(wkframe->provisionalURL());
+    QString urlStr(toImpl(frame)->provisionalURL());
     QUrl qUrl = urlStr;
     toQtWebPageLoadClient(clientInfo)->didStartProvisionalLoad(qUrl);
 }
@@ -191,26 +156,17 @@ void QtWebPageLoadClient::didReceiveTitleForFrame(WKPageRef, WKStringRef title, 
 
 void QtWebPageLoadClient::didStartProgress(WKPageRef, const void* clientInfo)
 {
-    QtWebPageLoadClient* client = toQtWebPageLoadClient(clientInfo);
-    client->setLoadProgress(0);
-    client->m_webView->d_func()->setIcon(QUrl());
+    toQtWebPageLoadClient(clientInfo)->didChangeProgress(0);
 }
 
 void QtWebPageLoadClient::didChangeProgress(WKPageRef page, const void* clientInfo)
 {
-    toQtWebPageLoadClient(clientInfo)->setLoadProgress(WKPageGetEstimatedProgress(page) * 100);
+    toQtWebPageLoadClient(clientInfo)->didChangeProgress(WKPageGetEstimatedProgress(page) * 100);
 }
 
 void QtWebPageLoadClient::didFinishProgress(WKPageRef, const void* clientInfo)
 {
-    toQtWebPageLoadClient(clientInfo)->setLoadProgress(100);
-}
-
-void QtWebPageLoadClient::didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef, WKFrameRef frame, WKTypeRef, const void *clientInfo)
-{
-    if (!WKFrameIsMainFrame(frame))
-        return;
-    toQtWebPageLoadClient(clientInfo)->didFirstVisuallyNonEmptyLayout();
+    toQtWebPageLoadClient(clientInfo)->didChangeProgress(100);
 }
 
 void QtWebPageLoadClient::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef, WKArrayRef, const void *clientInfo)

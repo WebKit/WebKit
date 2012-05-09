@@ -66,4 +66,9 @@ QString QtWebError::description() const
     return WKStringCopyQString(WKErrorCopyLocalizedDescription(error.get()));
 }
 
+bool QtWebError::isCancellation() const
+{
+    return toImpl(error.get())->platformError().isCancellation();
+}
+
 } // namespace WebKit

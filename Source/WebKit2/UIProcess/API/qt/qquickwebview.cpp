@@ -27,6 +27,7 @@
 #include "QtDownloadManager.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebContext.h"
+#include "QtWebError.h"
 #include "QtWebIconDatabaseClient.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageLoadClient.h"
@@ -265,6 +266,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
     , m_dialogActive(false)
+    , m_loadProgress(0)
 {
     viewport->setClip(true);
     viewport->setPixelAligned(true);
@@ -333,11 +335,71 @@ QPointF QQuickWebViewPrivate::pageItemPos()
     \qmlsignal WebView::loadingChanged(WebLoadRequest request)
 */
 
+void QQuickWebViewPrivate::provisionalLoadDidStart(const QUrl& url)
+{
+    Q_Q(QQuickWebView);
+
+    QWebLoadRequest loadRequest(url, QQuickWebView::LoadStartedStatus);
+    emit q->loadingChanged(&loadRequest);
+}
+
+void QQuickWebViewPrivate::loadDidCommit()
+{
+    Q_Q(QQuickWebView);
+    ASSERT(q->loading());
+
+    emit q->navigationHistoryChanged();
+    emit q->urlChanged();
+    emit q->titleChanged();
+}
+
+void QQuickWebViewPrivate::didSameDocumentNavigation()
+{
+    Q_Q(QQuickWebView);
+
+    emit q->navigationHistoryChanged();
+    emit q->urlChanged();
+}
+
+void QQuickWebViewPrivate::titleDidChange()
+{
+    Q_Q(QQuickWebView);
+
+    emit q->titleChanged();
+}
+
+void QQuickWebViewPrivate::loadProgressDidChange(int loadProgress)
+{
+    Q_Q(QQuickWebView);
+
+    if (!loadProgress)
+        setIcon(QUrl());
+
+    m_loadProgress = loadProgress;
+
+    emit q->loadProgressChanged();
+}
+
+void QQuickWebViewPrivate::backForwardListDidChange()
+{
+    navigationHistory->d->reset();
+}
+
 void QQuickWebViewPrivate::loadDidSucceed()
 {
     Q_Q(QQuickWebView);
     ASSERT(!q->loading());
+
     QWebLoadRequest loadRequest(q->url(), QQuickWebView::LoadSucceededStatus);
+    emit q->loadingChanged(&loadRequest);
+}
+
+void QQuickWebViewPrivate::loadDidFail(const QtWebError& error)
+{
+    Q_Q(QQuickWebView);
+    ASSERT(!q->loading());
+
+    QWebLoadRequest loadRequest(error.url(), QQuickWebView::LoadFailedStatus, error.description(), static_cast<QQuickWebView::ErrorDomain>(error.type()), error.errorCode());
     emit q->loadingChanged(&loadRequest);
 }
 
@@ -364,18 +426,22 @@ void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QUrl& pageURL, const
     setIcon(iconURL);
 }
 
-void QQuickWebViewPrivate::didChangeBackForwardList()
-{
-    navigationHistory->d->reset();
-}
-
 void QQuickWebViewPrivate::processDidCrash()
 {
-    pageView->eventHandler()->resetGestureRecognizers();
-    pageLoadClient->completeLoadWhenProcessDidCrashIfNeeded();
+    Q_Q(QQuickWebView);
 
     QUrl url(KURL(WebCore::ParsedURLString, webPageProxy->urlAtProcessExit()));
     qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(url.toString(QUrl::RemoveUserInfo)));
+
+    pageView->eventHandler()->resetGestureRecognizers();
+
+    // Check if loading was ongoing, when process crashed.
+    if (m_loadProgress > 0 && m_loadProgress < 100) {
+        QWebLoadRequest loadRequest(url, QQuickWebView::LoadFailedStatus, QLatin1String("The web process crashed."), QQuickWebView::InternalErrorDomain, 0);
+
+        loadProgressDidChange(100);
+        emit q->loadingChanged(&loadRequest);
+    }
 }
 
 void QQuickWebViewPrivate::didRelaunchProcess()
@@ -785,16 +851,6 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
-}
-
-void QQuickWebViewFlickablePrivate::loadDidCommit()
-{
-    // Due to entering provisional load before committing, we
-    // might actually be suspended here.
-}
-
-void QQuickWebViewFlickablePrivate::didFinishFirstNonEmptyLayout()
-{
 }
 
 void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& newAttributes)
@@ -1452,7 +1508,7 @@ QUrl QQuickWebView::icon() const
 int QQuickWebView::loadProgress() const
 {
     Q_D(const QQuickWebView);
-    return d->pageLoadClient->loadProgress();
+    return d->loadProgress();
 }
 
 bool QQuickWebView::canGoBack() const

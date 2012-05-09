@@ -46,6 +46,7 @@ public:
     QUrl url() const;
     int errorCode() const;
     QString description() const;
+    bool isCancellation() const;
 
     int errorCodeAsHttpStatusCode() const { return errorCode(); }
     QNetworkReply::NetworkError errorCodeAsNetworkError() const { return static_cast<QNetworkReply::NetworkError>(errorCode()); }

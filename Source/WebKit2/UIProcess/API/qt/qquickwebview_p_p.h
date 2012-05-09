@@ -41,6 +41,7 @@ class DrawingAreaProxy;
 class QtDialogRunner;
 class QtViewportInteractionEngine;
 class QtWebContext;
+class QtWebError;
 class QtWebPageLoadClient;
 class QtWebPagePolicyClient;
 class WebPageProxy;
@@ -75,12 +76,18 @@ public:
     virtual QPointF pageItemPos();
     virtual void updateContentsSize(const QSizeF&) { }
 
+    virtual void provisionalLoadDidStart(const QUrl& url);
+    virtual void loadDidCommit();
+    virtual void didSameDocumentNavigation();
+    virtual void titleDidChange();
+    virtual void loadProgressDidChange(int loadProgress);
+    virtual void backForwardListDidChange();
     virtual void loadDidSucceed();
-    virtual void loadDidCommit() { }
-    virtual void didFinishFirstNonEmptyLayout() { }
-    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr) { }
-    void didChangeBackForwardList();
+    virtual void loadDidFail(const WebKit::QtWebError& error);
 
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr) { }
+
+    int loadProgress() const { return m_loadProgress; }
     void setNeedsDisplay();
 
     virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return 0; }
@@ -193,6 +200,7 @@ protected:
     bool m_renderToOffscreenBuffer;
     bool m_dialogActive;
     QUrl m_iconURL;
+    int m_loadProgress;
 };
 
 class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {
@@ -221,8 +229,6 @@ public:
     virtual QPointF pageItemPos();
     virtual void updateContentsSize(const QSizeF&);
 
-    virtual void loadDidCommit();
-    virtual void didFinishFirstNonEmptyLayout();
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     virtual WebKit::QtViewportInteractionEngine* viewportInteractionEngine() { return interactionEngine.data(); }
     virtual void updateViewportSize();

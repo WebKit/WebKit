@@ -1,5 +1,55 @@
 2012-05-09  Zalan Bujtas  <zbujtas@gmail.com>
 
+        [Qt][WK2] Define clear split between QtWebPageLoadClient and QQuickWebViewPrivate for loading tasks.
+        https://bugs.webkit.org/show_bug.cgi?id=84527#c3
+
+        Reviewed by Simon Hausmann.
+
+        Moving loading related code and signal emission from QtWebPageLoadClient to QQuickWebViewPrivate.
+        It puts the loading code that implements an API right where the API is defined, including
+        signal emission as well as translation of WebPageProxy internals to public Qt API with correct types.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::provisionalLoadDidStart):
+        (QQuickWebViewPrivate::loadDidCommit):
+        (QQuickWebViewPrivate::didSameDocumentNavigation):
+        (QQuickWebViewPrivate::titleDidChange):
+        (QQuickWebViewPrivate::loadProgressDidChange):
+        (QQuickWebViewPrivate::backForwardListDidChange):
+        (QQuickWebViewPrivate::loadDidFail):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebView::loadProgress):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (WebKit):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::didChangeViewportProperties):
+        (QQuickWebViewPrivate::loadProgress):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtWebError.cpp:
+        (WebKit::QtWebError::isCancellation):
+        (WebKit):
+        * UIProcess/qt/QtWebError.h:
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (WebKit::QtWebPageLoadClient::QtWebPageLoadClient):
+        (WebKit):
+        (WebKit::QtWebPageLoadClient::didStartProvisionalLoad):
+        (WebKit::QtWebPageLoadClient::didCommitLoad):
+        (WebKit::QtWebPageLoadClient::didSameDocumentNavigation):
+        (WebKit::QtWebPageLoadClient::didReceiveTitle):
+        (WebKit::QtWebPageLoadClient::didChangeProgress):
+        (WebKit::QtWebPageLoadClient::didChangeBackForwardList):
+        (WebKit::QtWebPageLoadClient::dispatchLoadFailed):
+        (WebKit::QtWebPageLoadClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::QtWebPageLoadClient::didFailLoadWithErrorForFrame):
+        (WebKit::QtWebPageLoadClient::didStartProgress):
+        (WebKit::QtWebPageLoadClient::didFinishProgress):
+        * UIProcess/qt/QtWebPageLoadClient.h:
+        (WebKit):
+        (QtWebPageLoadClient):
+
+2012-05-09  Zalan Bujtas  <zbujtas@gmail.com>
+
         [Qt][WK2] Remove delayed loadDidSucceed() signaling and m_deferedUrlToLoad from QQuickWebViewPrivate
         https://bugs.webkit.org/show_bug.cgi?id=85906
 
