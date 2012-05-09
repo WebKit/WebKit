@@ -1,3 +1,16 @@
+2012-05-08  Jon Lee  <jonlee@apple.com>
+
+        Safari warns that it needs to resend the form in an iFrame when going back
+        https://bugs.webkit.org/show_bug.cgi?id=82658
+        <rdar://problem/11292558>
+
+        Reviewed by Darin Adler.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-05-07  Eric Seidel  <eric@webkit.org>
 
         Add ENABLE_IFRAME_SEAMLESS so Apple can turn off SEAMLESS if needed

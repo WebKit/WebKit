@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resending form on back navigation from POST submissions</title>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<iframe id="frame" onload="nextStep()" src="resources/post-in-iframe-with-back-navigation-page-1.php" width=300 height=300></iframe>
+<p>Resending form on back navigation from POST submissions<br/><br/>
+
+To test manually, click on the navigation links in the iframe. When going back from page 3, it should navigate to page 2 without requesting to resend the form.
+</p>
+<div id="console"></div>
+
+<script>
+var loaded = false;
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    loaded = true;
+    setTimeout(function() { layoutTestController.notifyDone(); }, 200);
+}
+
+function clickLink()
+{
+    var frame = document.getElementById("frame");
+    var link = window.frames[0].document.getElementById("link");
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(link.offsetLeft + frame.offsetLeft + 10, link.offsetTop + frame.offsetTop + 3);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+function getTitle()
+{
+    return window.frames[0].document.querySelector("h1").innerText;
+}
+
+var step = 0;
+var step2output;
+function nextStep()
+{
+    if (!loaded) {
+        setTimeout(nextStep, 10);
+        return;
+    }
+
+    switch (step++) {
+    case 0:
+        shouldBeEqualToString("getTitle()", "Page 1");
+        setTimeout(clickLink, 0);
+        break;
+    case 1:
+        shouldBeEqualToString("getTitle()", "Page 2");
+        step2output = window.frames[0].document.getElementById("submissionTime").innerText;
+        setTimeout(clickLink, 0);
+        break;
+    case 2:
+        shouldBeEqualToString("getTitle()", "Page 3");
+        setTimeout(clickLink, 0);
+        break;
+    case 3:
+        shouldBeEqualToString("getTitle()", "Page 2");
+        shouldBe("window.frames[0].document.getElementById('submissionTime').innerText", "step2output");
+        if (window.layoutTestController);
+            layoutTestController.notifyDone();
+        break;
+    }
+}
+
+successfullyParsed = true;
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -191,6 +191,10 @@ bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
+#endif
+
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
 BOOL (*wkFilterIsManagedSession)(void);
 WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);

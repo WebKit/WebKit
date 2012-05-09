@@ -1,3 +1,24 @@
+2012-05-08  Jon Lee  <jonlee@apple.com>
+
+        Safari warns that it needs to resend the form in an iFrame when going back
+        https://bugs.webkit.org/show_bug.cgi?id=82658
+        <rdar://problem/11292558>
+
+        Reviewed by Darin Adler.
+
+        Add new test which navigates a series of pages in an iframe. Each navigation is a POST.
+        At the third page we click on a back link, and expect to see stale POST data.
+
+        * http/tests/loading/post-in-iframe-with-back-navigation-expected.txt: Added.
+        * http/tests/loading/post-in-iframe-with-back-navigation.html: Added.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-1.php: Added.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-2.php: Added.
+        * http/tests/loading/resources/post-in-iframe-with-back-navigation-page-3.php: Added.
+        * http/tests/resources/js-test-post.js: Added. Copied from fast/js/resources since it is
+        inaccessible to the test server.
+        * http/tests/resources/js-test-pre.js: Added. Copied from fast/js/resources since it is
+        inaccessible to the test server.
+
 2012-05-08  Eric Seidel  <eric@webkit.org>
 
         Add stylesheet inheritance support to IFRAME_SEAMLESS

@@ -1,3 +1,14 @@
+2012-05-08  Jon Lee  <jonlee@apple.com>
+
+        Safari warns that it needs to resend the form in an iFrame when going back
+        https://bugs.webkit.org/show_bug.cgi?id=82658
+        <rdar://problem/11292558>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Add wkCFURLRequestAllowAllPostCaching.
+
 2012-05-08  Anders Carlsson  <andersca@apple.com>
 
         Can't scroll PDF in subframe
