@@ -418,6 +418,10 @@ fast/viewport/viewport-warnings-3.html
 fast/viewport/viewport-warnings-4.html
 fast/viewport/viewport-warnings-6.html
 
+# Feature disabled on EFL build
+# See https://bugs.webkit.org/show_bug.cgi?id=85425
+fast/viewport/viewport-legacy-xhtmlmp.html
+
 # viewport meta tag tests that failed because window.devicePixelRatio is not implemented
 fast/viewport/viewport-133.html
 

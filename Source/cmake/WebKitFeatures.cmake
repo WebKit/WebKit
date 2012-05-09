@@ -95,6 +95,7 @@ MACRO (WEBKIT_OPTION_BEGIN)
     WEBKIT_OPTION_DEFINE(ENABLE_XSLT "Toggle XSLT support" ON)
     WEBKIT_OPTION_DEFINE(USE_SYSTEM_MALLOC "Toggle system allocator instead of TCmalloc" OFF)
     WEBKIT_OPTION_DEFINE(USE_TILED_BACKING_STORE "Toggle Tiled Backing Store support" OFF)
+    WEBKIT_OPTION_DEFINE(USE_LEGACY_VIEWPORT_ADAPTION "Toogle legacy viewport adaption" OFF)
     WEBKIT_OPTION_DEFINE(USE_WTFURL "Toogle the use of WTFURL for URL parsing" OFF)
 ENDMACRO ()
 

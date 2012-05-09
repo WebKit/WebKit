@@ -771,8 +771,14 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
     // This should never be called more than once.
     ASSERT(!m_docType || !docType);
     m_docType = docType;
-    if (m_docType)
+    if (m_docType) {
         this->adoptIfNeeded(m_docType.get());
+#if USE(LEGACY_VIEWPORT_ADAPTION)
+        ASSERT(m_viewportArgument.type == Implicit);
+        if (m_docType->publicId().startsWith("-//wapforum//dtd xhtml mobile 1.", /* caseSensitive */ false))
+            processViewport("width=device-width, height=device-height, initial-scale=1");
+#endif
+    }
     // Doctype affects the interpretation of the stylesheets.
     clearStyleResolver();
 }

@@ -1,3 +1,14 @@
+2012-05-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Use suitable viewport values on XHTML-MP pages.
+        https://bugs.webkit.org/show_bug.cgi?id=85425
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable LEGACY_VIEWPORT_ADAPTION on Qt port.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-05-09  Jochen Eisinger  <jochen@chromium.org>
 
         When creating a new page during a navigation, prime the initial document with the correct referrer policy

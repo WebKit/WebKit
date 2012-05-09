@@ -1,3 +1,16 @@
+2012-05-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Use suitable viewport values on XHTML-MP pages.
+        https://bugs.webkit.org/show_bug.cgi?id=85425
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add LEGACY_VIEWPORT_ADAPTION use feature to cmake build system,
+        this feature will enable the use of a suitable viewport size
+        on legacy XHTML-MP pages.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2012-05-09  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Enable PAGE_POPUP in make file, and implement required methods
