@@ -498,6 +498,7 @@ class Bugzilla(object):
             self.browser.select_form(name="login")
             self.browser['Bugzilla_login'] = username
             self.browser['Bugzilla_password'] = password
+            self.browser.find_control("Bugzilla_restrictlogin").items[0].selected = False
             response = self.browser.submit()
 
             match = re.search("<title>(.+?)</title>", response.read())

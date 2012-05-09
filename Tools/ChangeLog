@@ -1,3 +1,17 @@
+2012-05-09  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        webkit-patch upload Fails Behind Load-balancing Proxies
+        https://bugs.webkit.org/show_bug.cgi?id=85980
+
+        Reviewed by Adam Barth.
+
+        Unchecking the login restriction to IP to allow the tool
+        to function behind load-balancing proxies that use multiple
+        outgoing IPs.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.authenticate):
+
 2012-05-09  Hao Zheng  <zhenghao@chromium.org>
 
         [Chromium-android] Add unit test for Android layout test script (chromium_android.py)
