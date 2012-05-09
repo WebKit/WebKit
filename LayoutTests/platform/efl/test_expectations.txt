@@ -397,3 +397,7 @@ BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = FAIL
 BUGWK85902 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 
 BUGWK85799 : fast/css/font-face-download-error.html = TIMEOUT
+
+BUGWK85879 : fast/frames/frame-crash-with-page-cache.html = CRASH
+
+BUGWK85995 : fast/events/frame-click-focus.html = TEXT
