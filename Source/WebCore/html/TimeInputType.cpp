@@ -116,6 +116,11 @@ bool TimeInputType::setMillisecondToDateComponents(double value, DateComponents*
     return date->setMillisecondsSinceMidnight(value);
 }
 
+bool TimeInputType::isTimeField() const
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif

@@ -110,6 +110,11 @@ bool DateTimeLocalInputType::setMillisecondToDateComponents(double value, DateCo
     return date->setMillisecondsSinceEpochForDateTimeLocal(value);
 }
 
+bool DateTimeLocalInputType::isDateTimeLocalField() const
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif

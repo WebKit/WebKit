@@ -1,3 +1,32 @@
+2012-05-09  Oli Lan  <olilan@chromium.org>
+
+        Adds date/time input types to WebTextInputType, and adds support for these
+        to WebViewImpl.textInputType().
+
+        Adds a new test WebViewTest.TextInputType to test WebViewImpl.textInputType(),
+        including the new types.
+
+        https://bugs.webkit.org/show_bug.cgi?id=78746
+
+        Reviewed by Kent Tamura.
+
+        * public/WebTextInputType.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputType):
+        * tests/WebViewTest.cpp:
+        (WebViewTest):
+        (WebKit::WebViewTest::testTextInputType):
+        (WebKit):
+        (WebKit::TEST_F):
+        * tests/data/input_field_date.html: Added.
+        * tests/data/input_field_datetime.html: Added.
+        * tests/data/input_field_default.html: Added.
+        * tests/data/input_field_email.html: Added.
+        * tests/data/input_field_number.html: Added.
+        * tests/data/input_field_search.html: Added.
+        * tests/data/input_field_time.html: Added.
+        * tests/data/input_field_week.html: Added.
+
 2012-05-08  Jochen Eisinger  <jochen@chromium.org>
 
         Unreviewed.  Rolled DEPS.

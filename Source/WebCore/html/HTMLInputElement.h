@@ -105,6 +105,12 @@ public:
     bool isSubmitButton() const;
     bool isTelephoneField() const;
     bool isURLField() const;
+    bool isDateField() const;
+    bool isDateTimeField() const;
+    bool isDateTimeLocalField() const;
+    bool isMonthField() const;
+    bool isTimeField() const;
+    bool isWeekField() const;
 
 #if ENABLE(INPUT_SPEECH)
     bool isSpeechEnabled() const;

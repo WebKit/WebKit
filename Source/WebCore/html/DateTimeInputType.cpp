@@ -104,6 +104,11 @@ bool DateTimeInputType::setMillisecondToDateComponents(double value, DateCompone
     return date->setMillisecondsSinceEpochForDateTime(value);
 }
 
+bool DateTimeInputType::isDateTimeField() const
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif

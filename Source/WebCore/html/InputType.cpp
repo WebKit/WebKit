@@ -707,6 +707,36 @@ bool InputType::isURLField() const
     return false;
 }
 
+bool InputType::isDateField() const
+{
+    return false;
+}
+
+bool InputType::isDateTimeField() const
+{
+    return false;
+}
+
+bool InputType::isDateTimeLocalField() const
+{
+    return false;
+}
+
+bool InputType::isMonthField() const
+{
+    return false;
+}
+
+bool InputType::isTimeField() const
+{
+    return false;
+}
+
+bool InputType::isWeekField() const
+{
+    return false;
+}
+
 bool InputType::isEnumeratable()
 {
     return true;

@@ -54,6 +54,7 @@ private:
     virtual bool scaledStepValueShouldBeInteger() const OVERRIDE;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
+    virtual bool isDateTimeLocalField() const OVERRIDE;
 };
 
 } // namespace WebCore

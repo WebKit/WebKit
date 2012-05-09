@@ -99,11 +99,15 @@ public:
     virtual bool isColorControl() const;
 #endif
     virtual bool isCheckbox() const;
+    virtual bool isDateField() const;
+    virtual bool isDateTimeField() const;
+    virtual bool isDateTimeLocalField() const;
     virtual bool isEmailField() const;
     virtual bool isFileUpload() const;
     virtual bool isHiddenType() const;
     virtual bool isImageButton() const;
     virtual bool supportLabels() const;
+    virtual bool isMonthField() const;
     virtual bool isNumberField() const;
     virtual bool isPasswordField() const;
     virtual bool isRadioButton() const;
@@ -114,7 +118,9 @@ public:
     virtual bool isTextButton() const;
     virtual bool isTextField() const;
     virtual bool isTextType() const;
+    virtual bool isTimeField() const;
     virtual bool isURLField() const;
+    virtual bool isWeekField() const;
 
     // Form value functions
 

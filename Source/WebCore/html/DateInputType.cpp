@@ -106,6 +106,11 @@ bool DateInputType::setMillisecondToDateComponents(double value, DateComponents*
     return date->setMillisecondsSinceEpochForDate(value);
 }
 
+bool DateInputType::isDateField() const
+{
+    return true;
+}
+
 #if ENABLE(CALENDAR_PICKER)
 void DateInputType::createShadowSubtree()
 {

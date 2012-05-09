@@ -1876,8 +1876,21 @@ WebTextInputType WebViewImpl::textInputType()
                 return WebTextInputTypeTelephone;
             if (input->isURLField())
                 return WebTextInputTypeURL;
+            if (input->isDateField())
+                return WebTextInputTypeDate;
+            if (input->isDateTimeField())
+                return WebTextInputTypeDateTime;
+            if (input->isDateTimeLocalField())
+                return WebTextInputTypeDateTimeLocal;
+            if (input->isMonthField())
+                return WebTextInputTypeMonth;
+            if (input->isTimeField())
+                return WebTextInputTypeTime;
+            if (input->isWeekField())
+                return WebTextInputTypeWeek;
             if (input->isTextField())
                 return WebTextInputTypeText;
+
             return WebTextInputTypeNone;
         }
 

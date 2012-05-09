@@ -1742,6 +1742,36 @@ bool HTMLInputElement::isURLField() const
     return m_inputType->isURLField();
 }
 
+bool HTMLInputElement::isDateField() const
+{
+    return m_inputType->isDateField();
+}
+
+bool HTMLInputElement::isDateTimeField() const
+{
+    return m_inputType->isDateTimeField();
+}
+
+bool HTMLInputElement::isDateTimeLocalField() const
+{
+    return m_inputType->isDateTimeLocalField();
+}
+
+bool HTMLInputElement::isMonthField() const
+{
+    return m_inputType->isMonthField();
+}
+
+bool HTMLInputElement::isTimeField() const
+{
+    return m_inputType->isTimeField();
+}
+
+bool HTMLInputElement::isWeekField() const
+{
+    return m_inputType->isWeekField();
+}
+
 bool HTMLInputElement::isEnumeratable() const
 {
     return m_inputType->isEnumeratable();

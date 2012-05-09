@@ -55,6 +55,7 @@ private:
     virtual bool parsedStepValueShouldBeInteger() const OVERRIDE;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
+    virtual bool isDateField() const OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual void createShadowSubtree() OVERRIDE;
     virtual void destroyShadowSubtree() OVERRIDE;

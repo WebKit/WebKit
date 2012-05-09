@@ -48,6 +48,12 @@ enum WebTextInputType {
     WebTextInputTypeNumber,
     WebTextInputTypeTelephone,
     WebTextInputTypeURL,
+    WebTextInputTypeDate,
+    WebTextInputTypeDateTime,
+    WebTextInputTypeDateTimeLocal,
+    WebTextInputTypeMonth,
+    WebTextInputTypeTime,
+    WebTextInputTypeWeek,
 };
 
 } // namespace WebKit

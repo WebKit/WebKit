@@ -104,6 +104,11 @@ bool WeekInputType::setMillisecondToDateComponents(double value, DateComponents*
     return date->setMillisecondsSinceEpochForWeek(value);
 }
 
+bool WeekInputType::isWeekField() const
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif
