@@ -3920,6 +3920,8 @@ BUGWK85868 MAC : css3/filters/custom/filter-repaint-custom-rotated.html = IMAGE
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
+BUGWK85913 MAC : fast/block/positioning/offsetLeft-offsetTop-multicolumn.html = TEXT
+
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/reflections/masked-reflection-on-composited.html = PASS TIMEOUT

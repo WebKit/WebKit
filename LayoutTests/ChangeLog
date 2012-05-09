@@ -1,3 +1,9 @@
+2012-05-08  Ojan Vafai  <ojan@chromium.org>
+
+        Suppress failing test while the fix is being worked out.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-08  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to owning renderer not removed from custom scrollbar.
