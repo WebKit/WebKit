@@ -256,7 +256,8 @@ void WebViewTest::testTextInputType(WebTextInputType expectedType, const std::st
     webView->close();
 }
 
-TEST_F(WebViewTest, TextInputType)
+// Disabled for https://bugs.webkit.org/show_bug.cgi?id=78746#c29
+TEST_F(WebViewTest, DISABLED_TextInputType)
 {
     testTextInputType(WebTextInputTypeText, "input_field_default.html");
     testTextInputType(WebTextInputTypePassword, "input_field_password.html");

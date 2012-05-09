@@ -1,5 +1,11 @@
 2012-05-09  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Disable WebViewTest.TextInputType because the test is incomplete.
+
+        * tests/WebViewTest.cpp:
+
+2012-05-09  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Some of *.runMultiThread tests intermittently crash.
         Mark them flaky.
 
