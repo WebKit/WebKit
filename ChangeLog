@@ -1,5 +1,21 @@
 2012-05-08  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [CMake] FindGStreamer: Fix the build with static WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=85930
+
+        Reviewed by Daniel Bates.
+
+        Building WebCore statically was failing because files in
+        WebCore/platform/gstreamer when ENABLE_VIDEO was set required
+        gstreamer-base, which was not being linked to after r116453.
+
+        Fix that by looking for gstreamer-base, requiring and linking
+        against it if GStreamer is used.
+
+        * Source/cmake/FindGStreamer.cmake:
+
+2012-05-08  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [CMake] Rewrite FindGStreamer.cmake.
         https://bugs.webkit.org/show_bug.cgi?id=85857
 

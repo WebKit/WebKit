@@ -5,6 +5,12 @@
 #  GSTREAMER_INCLUDE_DIRS - the GStreamer include directories
 #  GSTREAMER_LIBRARIES - link these to use GStreamer
 #
+# Additionally, gstreamer-base is always looked for and required, and
+# the following related variables are defined:
+#
+#  GSTREAMER_BASE_INCLUDE_DIRS - gstreamer-base's include directory
+#  GSTREAMER_BASE_LIBRARIES - link to these to use gstreamer-base
+#
 # Optionally, the COMPONENTS keyword can be passed to FIND_PACKAGE()
 # and GStreamer plugins can be looked for.  Currently, the following
 # plugins can be searched, and they define the following variables if
@@ -72,6 +78,7 @@ ENDMACRO()
 
 # 1.1. Find headers and libraries
 FIND_GSTREAMER_COMPONENT(GSTREAMER gstreamer-0.10 gst/gst.h gstreamer-0.10)
+FIND_GSTREAMER_COMPONENT(GSTREAMER_BASE gstreamer-base-0.10 gst/gst.h gstbase-0.10)
 
 # 1.2. Check GStreamer version
 IF (GSTREAMER_INCLUDE_DIRS)
@@ -112,7 +119,7 @@ FIND_GSTREAMER_COMPONENT(GSTREAMER_VIDEO gstreamer-video-0.10 gst/video/video.h 
 # ------------------------------------------------
 # 3. Process the COMPONENTS passed to FIND_PACKAGE
 # ------------------------------------------------
-SET(_GSTREAMER_REQUIRED_VARS GSTREAMER_INCLUDE_DIRS GSTREAMER_LIBRARIES VERSION_OK)
+SET(_GSTREAMER_REQUIRED_VARS GSTREAMER_INCLUDE_DIRS GSTREAMER_LIBRARIES VERSION_OK GSTREAMER_BASE_INCLUDE_DIRS GSTREAMER_BASE_LIBRARIES)
 
 FOREACH(_component ${GStreamer_FIND_COMPONENTS})
     SET(_gst_component "GSTREAMER_${_component}")
