@@ -52,19 +52,23 @@ void appendKeyframe<TransformAnimationValue, CCTransformKeyframe, CCKeyframedTra
 template <class Value, class Keyframe, class Curve>
 PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& valueList, const Animation* animation, size_t animationId, size_t groupId, double timeOffset, CCActiveAnimation::TargetProperty targetProperty)
 {
-    // FIXME: add support for different directions.
-    if (animation && animation->isDirectionSet() && animation->direction() != Animation::AnimationDirectionNormal)
-        return nullptr;
-
-    // FIXME: add support for fills forwards and fills backwards
-    if (animation && animation->isFillModeSet() && (animation->fillsForwards() || animation->fillsBackwards()))
-        return nullptr;
+    bool alternate = false;
+    bool reverse = false;
+    if (animation && animation->isDirectionSet()) {
+        Animation::AnimationDirection direction = animation->direction();
+        if (direction == Animation::AnimationDirectionAlternate || direction == Animation::AnimationDirectionAlternateReverse)
+            alternate = true;
+        if (direction == Animation::AnimationDirectionReverse || direction == Animation::AnimationDirectionAlternateReverse)
+            reverse = true;
+    }
 
     OwnPtr<Curve> curve = Curve::create();
     Vector<Keyframe> keyframes;
 
     for (size_t i = 0; i < valueList.size(); i++) {
-        const Value* originalValue = static_cast<const Value*>(valueList.at(i));
+        size_t index = reverse ? valueList.size() - i - 1 : i;
+
+        const Value* originalValue = static_cast<const Value*>(valueList.at(index));
 
         OwnPtr<CCTimingFunction> timingFunction;
         const TimingFunction* originalTimingFunction = originalValue->timingFunction();
@@ -91,7 +95,10 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
             timingFunction = CCEaseTimingFunction::create();
 
         double duration = (animation && animation->isDurationSet()) ? animation->duration() : 1;
-        appendKeyframe<Value, Keyframe, Curve>(*curve, originalValue->keyTime() * duration, originalValue, timingFunction.release());
+        double keyTime = originalValue->keyTime() * duration;
+        if (reverse)
+            keyTime = duration - keyTime;
+        appendKeyframe<Value, Keyframe, Curve>(*curve, keyTime, originalValue, timingFunction.release());
     }
 
     OwnPtr<CCActiveAnimation> anim = CCActiveAnimation::create(curve.release(), animationId, groupId, targetProperty);
@@ -101,6 +108,7 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
     if (anim.get()) {
         int iterations = (animation && animation->isIterationCountSet()) ? animation->iterationCount() : 1;
         anim->setIterations(iterations);
+        anim->setAlternatesDirection(alternate);
     }
 
     // In order to avoid skew, the main thread animation cannot tick until it has received the start time of

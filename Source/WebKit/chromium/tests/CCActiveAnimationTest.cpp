@@ -69,6 +69,16 @@ TEST(CCActiveAnimationTest, TrimTimeInfiniteIterations)
     EXPECT_EQ(0.5, anim->trimTimeToCurrentIteration(1.5));
 }
 
+TEST(CCActiveAnimationTest, TrimTimeAlternating)
+{
+    OwnPtr<CCActiveAnimation> anim(createActiveAnimation(-1));
+    anim->setAlternatesDirection(true);
+    EXPECT_EQ(0, anim->trimTimeToCurrentIteration(0));
+    EXPECT_EQ(0.5, anim->trimTimeToCurrentIteration(0.5));
+    EXPECT_EQ(1, anim->trimTimeToCurrentIteration(1));
+    EXPECT_EQ(0.75, anim->trimTimeToCurrentIteration(1.25));
+}
+
 TEST(CCActiveAnimationTest, TrimTimeStartTime)
 {
     OwnPtr<CCActiveAnimation> anim(createActiveAnimation(1));

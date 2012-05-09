@@ -45,6 +45,7 @@ CCActiveAnimation::CCActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, int ani
     , m_runState(WaitingForTargetAvailability)
     , m_iterations(1)
     , m_startTime(0)
+    , m_alternatesDirection(false)
     , m_timeOffset(0)
     , m_needsSynchronizedStartTime(false)
     , m_suspended(false)
@@ -119,11 +120,23 @@ double CCActiveAnimation::trimTimeToCurrentIteration(double monotonicTime) const
         return trimmed;
 
     // If greater than or equal to the total duration, return iteration duration.
-    if (m_iterations >= 0 && trimmed >= m_curve->duration() * m_iterations)
+    if (m_iterations >= 0 && trimmed >= m_curve->duration() * m_iterations) {
+        if (m_alternatesDirection && !(m_iterations % 2))
+            return 0;
         return m_curve->duration();
+    }
 
-    // Finally, return x where trimmed = x + n * m_animation->duration() for some positive integer n.
-    return fmod(trimmed, m_curve->duration());
+    // We need to know the current iteration if we're alternating.
+    int iteration = static_cast<int>(trimmed / m_curve->duration());
+
+    // Calculate x where trimmed = x + n * m_curve->duration() for some positive integer n.
+    trimmed = fmod(trimmed, m_curve->duration());
+
+    // If we're alternating and on an odd iteration, reverse the direction.
+    if (m_alternatesDirection && iteration % 2 == 1)
+        return m_curve->duration() - trimmed;
+
+    return trimmed;
 }
 
 PassOwnPtr<CCActiveAnimation> CCActiveAnimation::cloneForImplThread() const
@@ -135,6 +148,7 @@ PassOwnPtr<CCActiveAnimation> CCActiveAnimation::cloneForImplThread() const
     toReturn->m_pauseTime = m_pauseTime;
     toReturn->m_totalPausedTime = m_totalPausedTime;
     toReturn->m_timeOffset = m_timeOffset;
+    toReturn->m_alternatesDirection = m_alternatesDirection;
     return toReturn.release();
 }
 

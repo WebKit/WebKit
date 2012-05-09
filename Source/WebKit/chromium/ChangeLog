@@ -1,3 +1,17 @@
+2012-05-09  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Add impl-thread support for fill-mode and direction css animation properties
+        https://bugs.webkit.org/show_bug.cgi?id=77662
+
+        Reviewed by James Robinson.
+
+        * tests/CCActiveAnimationTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+
 2012-05-09  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed.  Rolled DEPS.

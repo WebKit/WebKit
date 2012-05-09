@@ -86,33 +86,6 @@ TEST(CCLayerAnimationControllerTest, createOpacityAnimation)
     EXPECT_EQ(1, curve->getValue(duration));
 }
 
-TEST(CCLayerAnimationControllerTest, ignoreUnsupportedAnimationDirections)
-{
-    FakeLayerAnimationControllerClient dummy;
-    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
-    values.insert(new FloatAnimationValue(0, 0));
-    values.insert(new FloatAnimationValue(duration, 1));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-
-    animation->setDirection(Animation::AnimationDirectionAlternate);
-    EXPECT_FALSE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
-
-    animation->setDirection(Animation::AnimationDirectionAlternateReverse);
-    EXPECT_FALSE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
-
-    animation->setDirection(Animation::AnimationDirectionReverse);
-    EXPECT_FALSE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
-
-    animation->setDirection(Animation::AnimationDirectionNormal);
-    EXPECT_TRUE(controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0));
-}
-
 TEST(CCLayerAnimationControllerTest, createTransformAnimation)
 {
     FakeLayerAnimationControllerClient dummy;
@@ -149,6 +122,127 @@ TEST(CCLayerAnimationControllerTest, createTransformAnimation)
 
     expectTranslateX(2, curve->getValue(0, boxSize));
     expectTranslateX(4, curve->getValue(duration, boxSize));
+}
+
+TEST(CCLayerAnimationControllerTest, createReversedAnimation)
+{
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    TransformOperations operations2;
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(duration, &operations2));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+    animation->setDirection(Animation::AnimationDirectionReverse);
+
+    IntSize boxSize;
+    controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0);
+
+    EXPECT_TRUE(controller->hasActiveAnimation());
+
+    CCActiveAnimation* activeAnimation = controller->getActiveAnimation(0, CCActiveAnimation::Transform);
+    EXPECT_TRUE(activeAnimation);
+
+    EXPECT_EQ(1, activeAnimation->iterations());
+    EXPECT_EQ(CCActiveAnimation::Transform, activeAnimation->targetProperty());
+
+    EXPECT_EQ(CCAnimationCurve::Transform, activeAnimation->curve()->type());
+
+    const CCTransformAnimationCurve* curve = activeAnimation->curve()->toTransformAnimationCurve();
+    EXPECT_TRUE(curve);
+
+    expectTranslateX(4, curve->getValue(0, boxSize));
+    expectTranslateX(2, curve->getValue(duration, boxSize));
+}
+
+TEST(CCLayerAnimationControllerTest, createAlternatingAnimation)
+{
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    TransformOperations operations2;
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(duration, &operations2));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+    animation->setDirection(Animation::AnimationDirectionAlternate);
+    animation->setIterationCount(2);
+
+    IntSize boxSize;
+    controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0);
+
+    EXPECT_TRUE(controller->hasActiveAnimation());
+
+    CCActiveAnimation* activeAnimation = controller->getActiveAnimation(0, CCActiveAnimation::Transform);
+    EXPECT_TRUE(activeAnimation);
+    EXPECT_TRUE(activeAnimation->alternatesDirection());
+
+    EXPECT_EQ(2, activeAnimation->iterations());
+    EXPECT_EQ(CCActiveAnimation::Transform, activeAnimation->targetProperty());
+
+    EXPECT_EQ(CCAnimationCurve::Transform, activeAnimation->curve()->type());
+
+    const CCTransformAnimationCurve* curve = activeAnimation->curve()->toTransformAnimationCurve();
+    EXPECT_TRUE(curve);
+
+    expectTranslateX(2, curve->getValue(0, boxSize));
+    expectTranslateX(4, curve->getValue(duration, boxSize));
+}
+
+TEST(CCLayerAnimationControllerTest, createReversedAlternatingAnimation)
+{
+    FakeLayerAnimationControllerClient dummy;
+    OwnPtr<CCLayerAnimationController> controller(CCLayerAnimationController::create(&dummy));
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    TransformOperations operations2;
+    operations2.operations().append(TranslateTransformOperation::create(Length(4, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(duration, &operations2));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+    animation->setDirection(Animation::AnimationDirectionAlternateReverse);
+    animation->setIterationCount(2);
+
+    IntSize boxSize;
+    controller->addAnimation(values, boxSize, animation.get(), 0, 0, 0);
+
+    EXPECT_TRUE(controller->hasActiveAnimation());
+
+    CCActiveAnimation* activeAnimation = controller->getActiveAnimation(0, CCActiveAnimation::Transform);
+    EXPECT_TRUE(activeAnimation);
+    EXPECT_TRUE(activeAnimation->alternatesDirection());
+
+    EXPECT_EQ(2, activeAnimation->iterations());
+    EXPECT_EQ(CCActiveAnimation::Transform, activeAnimation->targetProperty());
+
+    EXPECT_EQ(CCAnimationCurve::Transform, activeAnimation->curve()->type());
+
+    const CCTransformAnimationCurve* curve = activeAnimation->curve()->toTransformAnimationCurve();
+    EXPECT_TRUE(curve);
+
+    expectTranslateX(4, curve->getValue(0, boxSize));
+    expectTranslateX(2, curve->getValue(duration, boxSize));
 }
 
 TEST(CCLayerAnimationControllerTest, syncNewAnimation)

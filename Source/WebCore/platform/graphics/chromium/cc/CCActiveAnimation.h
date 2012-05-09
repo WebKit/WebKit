@@ -90,6 +90,10 @@ public:
     void suspend(double monotonicTime);
     void resume(double monotonicTime);
 
+    // If alternatesDirection is true, on odd numbered iterations we reverse the curve.
+    bool alternatesDirection() const { return m_alternatesDirection; }
+    void setAlternatesDirection(bool alternates) { m_alternatesDirection = alternates; }
+
     bool isFinishedAt(double monotonicTime) const;
     bool isFinished() const { return m_runState == Finished || m_runState == Aborted; }
 
@@ -128,6 +132,7 @@ private:
     RunState m_runState;
     int m_iterations;
     double m_startTime;
+    bool m_alternatesDirection;
 
     // The time offset effectively pushes the start of the animation back in time. This is
     // used for resuming paused animations -- an animation is added with a non-zero time
