@@ -370,17 +370,18 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
 
     const QRectF viewportRect = m_viewport->boundingRect();
 
-    qreal targetCSSScale = cssScaleFromItem(viewportRect.size().width() / endArea.size().width());
-    qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(qMin(targetCSSScale, qreal(2.5))));
+    qreal targetCSSScale = viewportRect.size().width() / endArea.size().width();
+    qreal endCSSScale = innerBoundedCSSScale(qMin(targetCSSScale, qreal(2.5)));
+    qreal endItemScale = itemScaleFromCSS(endCSSScale);
     qreal currentScale = m_content->contentsScale();
 
     // We want to end up with the target area filling the whole width of the viewport (if possible),
     // and centralized vertically where the user requested zoom. Thus our hotspot is the center of
     // the targetArea x-wise and the requested zoom position, y-wise.
-    const QPointF hotspot = QPointF(endArea.center().x(), touchPoint.y() * m_devicePixelRatio);
+    const QPointF hotspot = QPointF(endArea.center().x(), itemCoordFromCSS(touchPoint.y()));
     const QPointF viewportHotspot = viewportRect.center();
 
-    QPointF endPosition = hotspot * endItemScale - viewportHotspot;
+    QPointF endPosition = hotspot * endCSSScale - viewportHotspot;
 
     QRectF endPosRange = computePosRangeForItemAtScale(endItemScale);
     endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());
@@ -415,8 +416,9 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     case ZoomBack: {
         ScaleStackItem lastScale = m_scaleStack.takeLast();
         endItemScale = lastScale.scale;
+        endCSSScale = cssScaleFromItem(lastScale.scale);
         // Recalculate endPosition and bound it according to new scale.
-        endPosition.setY(hotspot.y() * endItemScale - viewportHotspot.y());
+        endPosition.setY(hotspot.y() * endCSSScale - viewportHotspot.y());
         endPosition.setX(lastScale.xPosition);
         endPosRange = computePosRangeForItemAtScale(endItemScale);
         endPosition = boundPosition(endPosRange.topLeft(), endPosition, endPosRange.bottomRight());

@@ -1,3 +1,15 @@
+2012-05-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Tap-to-zoom zooms to wrong area.
+        https://bugs.webkit.org/show_bug.cgi?id=85982
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix computation and take more care when to use CSS scale and when to use Item scale.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+
 2012-05-09  Zalan Bujtas  <zbujtas@gmail.com>
 
         [Qt][WK2] Define clear split between QtWebPageLoadClient and QQuickWebViewPrivate for loading tasks.
