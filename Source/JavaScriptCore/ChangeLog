@@ -1,3 +1,17 @@
+2012-05-09  Gavin Barraclough  <barraclough@apple.com>
+
+        GC race condition in OpaqueJSClass::prototype
+        https://bugs.webkit.org/show_bug.cgi?id=86034
+
+        Reviewed by Filip Pizlo.
+
+        The bug here is basically:
+            if (weakref) weakref->method()
+        where a GC may occur between the if & the method call.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+
 2012-05-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CopiedSpace does not add pinned blocks back to the to-space filter
