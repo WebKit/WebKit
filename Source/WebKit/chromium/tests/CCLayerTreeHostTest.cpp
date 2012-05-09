@@ -1096,7 +1096,12 @@ private:
     int m_numAnimates;
 };
 
+#if OS(WINDOWS)
+// http://webkit.org/b/74623
+TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded, FLAKY_runMultiThread)
+#else
 TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded, runMultiThread)
+#endif
 {
     runTestThreaded();
 }
@@ -1134,7 +1139,12 @@ public:
 private:
 };
 
+#if OS(WINDOWS)
+// http://webkit.org/b/74623
+TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, FLAKY_runMultiThread)
+#else
 TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, runMultiThread)
+#endif
 {
     runTestThreaded();
 }

@@ -1,3 +1,10 @@
+2012-05-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Some of *.runMultiThread tests intermittently crash.
+        Mark them flaky.
+
+        * tests/CCLayerTreeHostTest.cpp:
+
 2012-05-09  Oli Lan  <olilan@chromium.org>
 
         Adds date/time input types to WebTextInputType, and adds support for these
