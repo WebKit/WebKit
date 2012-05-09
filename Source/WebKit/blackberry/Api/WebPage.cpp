@@ -35,6 +35,7 @@
 #include "ContextMenuClientBlackBerry.h"
 #include "CookieManager.h"
 #include "CredentialManager.h"
+#include "CredentialStorage.h"
 #include "CredentialTransformData.h"
 #include "DOMSupport.h"
 #include "Database.h"
@@ -5993,6 +5994,8 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setShouldUseCrossOriginProtocolCheck(!webSettings->allowCrossSiteRequests());
 
     cookieManager().setPrivateMode(webSettings->isPrivateBrowsingEnabled());
+
+    CredentialStorage::setPrivateMode(webSettings->isPrivateBrowsingEnabled());
 
     if (m_mainFrame && m_mainFrame->view()) {
         Color backgroundColor(webSettings->backgroundColor());

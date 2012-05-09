@@ -1,3 +1,18 @@
+2012-05-08  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] Auth credentials set in private mode are reused in public mode.
+        https://bugs.webkit.org/show_bug.cgi?id=84697
+
+        Reviewed by Rob Buis.
+
+        Add setPrivateMode function for CredentialStorage.
+
+        We have to change Private Browsing to test, so have to write a manual test case.
+        Test: ManualTests/blackberry/http-auth-private-mode-changed.html
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+
 2012-05-08  Crystal Zhang  <haizhang@rim.com>
     
             [BlackBerry] Implement a popup client for HTML controls

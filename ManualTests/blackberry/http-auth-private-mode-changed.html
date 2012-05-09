@@ -1,0 +1,16 @@
+<html>
+  <body>
+    <p>Both http-auth-private-mode-changed.html and http-auth-private-mode-changed.php must be served over http.</p>
+    <p>This tests the behavior of http authentication when private browsering is set from on to off. This is for <a href="https://bugs.webkit.org/show_bug.cgi?id=84697">https://bugs.webkit.org/show_bug.cgi?id=84697</a></p><br>
+    <p>
+      Test steps:<br>
+      1. Set Private Browsing on. (Settings -> Privacy & Security -> Private Browsing).<br>
+      2. Press <a href="http-auth-private-mode-changed.php">Start test here</a>.<br>
+      3. When dialog pops up, enter real credential(username: "aaaa", password: "aaaa") and press Ok button.<br>
+      4. Set Private Browsing off. (Settings -> Privacy & Security -> Private Browsing).<br>
+      5. Refresh the page.<br>
+      6. There should be a dialog for you to input username and password again.<br>
+         If you can't see the dialog, this test fails.<br>
+    </p>
+  </body>
+</html>

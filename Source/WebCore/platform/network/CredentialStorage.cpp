@@ -159,4 +159,10 @@ Credential CredentialStorage::get(const KURL& url)
     return protectionSpaceToCredentialMap().get(iter->second);
 }
 
+void CredentialStorage::setPrivateMode(bool mode)
+{
+    if (!mode)
+        protectionSpaceToCredentialMap().clear();
+}
+
 } // namespace WebCore
