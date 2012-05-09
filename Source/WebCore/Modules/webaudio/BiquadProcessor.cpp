@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-BiquadProcessor::BiquadProcessor(float sampleRate, size_t numberOfChannels, bool autoInitialize)
+BiquadProcessor::BiquadProcessor(AudioContext* context, float sampleRate, size_t numberOfChannels, bool autoInitialize)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
     , m_type(LowPass)
     , m_parameter1(0)
@@ -43,9 +43,9 @@ BiquadProcessor::BiquadProcessor(float sampleRate, size_t numberOfChannels, bool
     double nyquist = 0.5 * this->sampleRate();
 
     // Create parameters for BiquadFilterNode.
-    m_parameter1 = AudioParam::create("frequency", 350.0, 10.0, nyquist);
-    m_parameter2 = AudioParam::create("Q", 1, 0.0001, 1000.0);
-    m_parameter3 = AudioParam::create("gain", 0.0, -40, 40);
+    m_parameter1 = AudioParam::create(context, "frequency", 350.0, 10.0, nyquist);
+    m_parameter2 = AudioParam::create(context, "Q", 1, 0.0001, 1000.0);
+    m_parameter3 = AudioParam::create(context, "gain", 0.0, -40, 40);
 
     if (autoInitialize)
         initialize();

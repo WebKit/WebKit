@@ -33,8 +33,7 @@ namespace WebCore {
 DelayNode::DelayNode(AudioContext* context, float sampleRate, double maxDelayTime)
     : AudioBasicProcessorNode(context, sampleRate)
 {
-    m_processor = adoptPtr(new DelayProcessor(sampleRate, 1, maxDelayTime));
-    delayTime()->setContext(context);
+    m_processor = adoptPtr(new DelayProcessor(context, sampleRate, 1, maxDelayTime));
     setNodeType(NodeTypeDelay);
 }
 

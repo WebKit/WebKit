@@ -46,19 +46,12 @@ DynamicsCompressorNode::DynamicsCompressorNode(AudioContext* context, float samp
 
     setNodeType(NodeTypeDynamicsCompressor);
 
-    m_threshold = AudioParam::create("threshold", -24, -100, 0);
-    m_knee = AudioParam::create("knee", 30, 0, 40);
-    m_ratio = AudioParam::create("ratio", 12, 1, 20);
-    m_reduction = AudioParam::create("reduction", 0, -20, 0);
-    m_attack = AudioParam::create("attack", 0.003, 0, 1);
-    m_release = AudioParam::create("release", 0.250, 0, 1);
-
-    m_threshold->setContext(context);
-    m_knee->setContext(context);
-    m_ratio->setContext(context);
-    m_reduction->setContext(context);
-    m_attack->setContext(context);
-    m_release->setContext(context);
+    m_threshold = AudioParam::create(context, "threshold", -24, -100, 0);
+    m_knee = AudioParam::create(context, "knee", 30, 0, 40);
+    m_ratio = AudioParam::create(context, "ratio", 12, 1, 20);
+    m_reduction = AudioParam::create(context, "reduction", 0, -20, 0);
+    m_attack = AudioParam::create(context, "attack", 0.003, 0, 1);
+    m_release = AudioParam::create(context, "release", 0.250, 0, 1);
 
     initialize();
 }

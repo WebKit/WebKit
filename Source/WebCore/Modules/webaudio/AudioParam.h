@@ -46,29 +46,14 @@ public:
     static const double DefaultSmoothingConstant;
     static const double SnapThreshold;
 
-    static PassRefPtr<AudioParam> create(const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
+    static PassRefPtr<AudioParam> create(AudioContext* context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
     {
-        return adoptRef(new AudioParam(name, defaultValue, minValue, maxValue, units));
+        return adoptRef(new AudioParam(context, name, defaultValue, minValue, maxValue, units));
     }
 
-    AudioParam(const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
-        : m_name(name)
-        , m_value(defaultValue)
-        , m_defaultValue(defaultValue)
-        , m_minValue(minValue)
-        , m_maxValue(maxValue)
-        , m_units(units)
-        , m_smoothedValue(defaultValue)
-        , m_smoothingConstant(DefaultSmoothingConstant)
-        , m_audioRateSignal(0)
-    {
-    }
-    
-    void setContext(AudioContext* context) { m_context = context; }
     AudioContext* context() { return m_context.get(); }
 
     float value();
-    
     void setValue(float);
 
     String name() const { return m_name; }
@@ -108,6 +93,21 @@ public:
     // Connect an audio-rate signal to control this parameter.
     void connect(AudioNodeOutput*);
     void disconnect(AudioNodeOutput*);
+
+protected:
+    AudioParam(AudioContext* context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
+        : m_context(context)
+        , m_name(name)
+        , m_value(defaultValue)
+        , m_defaultValue(defaultValue)
+        , m_minValue(minValue)
+        , m_maxValue(maxValue)
+        , m_units(units)
+        , m_smoothedValue(defaultValue)
+        , m_smoothingConstant(DefaultSmoothingConstant)
+        , m_audioRateSignal(0)
+    {
+    }
 
 private:
     void calculateAudioRateSignalValues(float* values, unsigned numberOfValues);

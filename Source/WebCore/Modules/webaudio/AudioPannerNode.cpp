@@ -56,8 +56,8 @@ AudioPannerNode::AudioPannerNode(AudioContext* context, float sampleRate)
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
     
-    m_distanceGain = AudioGain::create("distanceGain", 1.0, 0.0, 1.0);
-    m_coneGain = AudioGain::create("coneGain", 1.0, 0.0, 1.0);
+    m_distanceGain = AudioGain::create(context, "distanceGain", 1.0, 0.0, 1.0);
+    m_coneGain = AudioGain::create(context, "coneGain", 1.0, 0.0, 1.0);
 
     m_position = FloatPoint3D(0, 0, 0);
     m_orientation = FloatPoint3D(1, 0, 0);
