@@ -26,9 +26,6 @@
 #include "RenderSVGText.h"
 #include "SVGTextPositioningElement.h"
 
-// Set to a value > 0 to dump the text layout attributes
-#define DUMP_TEXT_LAYOUT_ATTRIBUTES 0
-
 namespace WebCore {
 
 SVGTextLayoutAttributesBuilder::SVGTextLayoutAttributesBuilder()
@@ -173,11 +170,6 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributes(RenderSVGText* textRo
     unsigned size = m_textPositions.size();
     for (unsigned i = 0; i < size; ++i)
         fillCharacterDataMap(m_textPositions[i]);
-
-#if DUMP_TEXT_LAYOUT_ATTRIBUTES > 0
-    fprintf(stderr, "\nDumping ALL layout attributes for RenderSVGText, renderer=%p, node=%p (m_textLength: %i)\n", textRoot, textRoot->node(), m_textLength);
-    m_characterDataMap.dump();
-#endif
 }
 
 static inline void updateCharacterData(unsigned i, float& lastRotation, SVGCharacterData& data, const SVGLengthContext& lengthContext, const SVGLengthList* xList, const SVGLengthList* yList, const SVGLengthList* dxList, const SVGLengthList* dyList, const SVGNumberList* rotateList)

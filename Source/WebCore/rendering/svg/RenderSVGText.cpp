@@ -110,24 +110,22 @@ void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, 
     SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
 }
 
-static inline void recursiveUpdateLayoutAttributes(RenderObject* start, SVGTextLayoutAttributesBuilder& builder)
-{
-    if (start->isSVGInlineText()) {
-        builder.buildLayoutAttributesForTextRenderer(toRenderSVGInlineText(start));
-        return;
-    }
-
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling())
-        recursiveUpdateLayoutAttributes(child, builder);
-}
-
-void RenderSVGText::layoutAttributesChanged(RenderObject* child)
+void RenderSVGText::subtreeChildAdded(RenderObject* child)
 {
     ASSERT(child);
     if (m_needsPositioningValuesUpdate)
         return;
+
+    // The positioning elements cache doesn't include the new 'child' yet. Clear the
+    // cache, as the next buildLayoutAttributesForTextRenderer() call rebuilds it.
+    invalidateTextPositioningElements();
+
     FontCachePurgePreventer fontCachePurgePreventer;
-    recursiveUpdateLayoutAttributes(child, m_layoutAttributesBuilder);
+    for (RenderObject* descendant = child; descendant; descendant = descendant->nextInPreOrder(child)) {
+        if (descendant->isSVGInlineText())
+            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(toRenderSVGInlineText(descendant));
+    }
+
     rebuildLayoutAttributes();
 }
 
@@ -162,12 +160,18 @@ static inline bool findPreviousAndNextAttributes(RenderObject* start, RenderSVGI
     return false;
 }
 
-void RenderSVGText::layoutAttributesWillBeDestroyed(RenderSVGInlineText* text, Vector<SVGTextLayoutAttributes*>& affectedAttributes)
+void RenderSVGText::subtreeChildWillBeDestroyed(RenderSVGInlineText* text, Vector<SVGTextLayoutAttributes*>& affectedAttributes)
 {
     ASSERT(text);
+
+    // The positioning elements cache depends on the size of each text renderer in the
+    // subtree. If this changes, clear the cache. It's going to be rebuilt below.
+    invalidateTextPositioningElements();
+
     if (m_needsPositioningValuesUpdate)
         return;
 
+    // This logic requires that the 'text' child is still inserted in the tree.
     bool stopAfterNext = false;
     SVGTextLayoutAttributes* previous = 0;
     SVGTextLayoutAttributes* next = 0;
@@ -176,6 +180,83 @@ void RenderSVGText::layoutAttributesWillBeDestroyed(RenderSVGInlineText* text, V
         affectedAttributes.append(previous);
     if (next)
         affectedAttributes.append(next);
+
+    SVGTextLayoutAttributes* currentLayoutAttributes = text->layoutAttributes();
+
+    size_t position = m_layoutAttributes.find(currentLayoutAttributes);
+    ASSERT(position != notFound);
+    m_layoutAttributes.remove(position);
+
+    ASSERT(!m_layoutAttributes.contains(currentLayoutAttributes));
+}
+
+static inline void recursiveCollectLayoutAttributes(RenderObject* start, Vector<SVGTextLayoutAttributes*>& attributes)
+{
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+        if (child->isSVGInlineText()) {
+            attributes.append(toRenderSVGInlineText(child)->layoutAttributes());
+            continue;
+        }
+
+        recursiveCollectLayoutAttributes(child, attributes);
+    }
+}
+
+static inline void checkLayoutAttributesConsistency(RenderSVGText* text, Vector<SVGTextLayoutAttributes*>& expectedLayoutAttributes)
+{
+#ifndef NDEBUG
+    Vector<SVGTextLayoutAttributes*> newLayoutAttributes;
+    recursiveCollectLayoutAttributes(text, newLayoutAttributes);
+    ASSERT(newLayoutAttributes == expectedLayoutAttributes);
+#else
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(expectedLayoutAttributes);
+#endif
+}
+
+void RenderSVGText::subtreeChildWasDestroyed(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*>& affectedAttributes)
+{
+    if (documentBeingDestroyed() || affectedAttributes.isEmpty())
+        return;
+
+    checkLayoutAttributesConsistency(this, m_layoutAttributes);
+
+    size_t size = affectedAttributes.size();
+    for (size_t i = 0; i < size; ++i)
+        m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(affectedAttributes[i]->context());
+}
+
+void RenderSVGText::subtreeStyleChanged(RenderSVGInlineText* text)
+{
+    ASSERT(text);
+    if (m_needsPositioningValuesUpdate)
+        return;
+
+    // Only update the metrics cache, but not the text positioning element cache
+    // nor the layout attributes cached in the leaf #text renderers.
+    FontCachePurgePreventer fontCachePurgePreventer;
+    for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
+        if (descendant->isSVGInlineText())
+            m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(toRenderSVGInlineText(descendant));
+    }
+}
+
+void RenderSVGText::subtreeTextChanged(RenderSVGInlineText* text)
+{
+    ASSERT(text);
+
+    // The positioning elements cache depends on the size of each text renderer in the
+    // subtree. If this changes, clear the cache. It's going to be rebuilt below.
+    invalidateTextPositioningElements();
+
+    if (m_needsPositioningValuesUpdate)
+        return;
+
+    FontCachePurgePreventer fontCachePurgePreventer;
+    for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
+        if (descendant->isSVGInlineText())
+            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(toRenderSVGInlineText(descendant));
+    }
 }
 
 void RenderSVGText::invalidateTextPositioningElements()
@@ -185,18 +266,6 @@ void RenderSVGText::invalidateTextPositioningElements()
     // has changed. Failure to clear may leave us with invalid elements, as other code paths
     // do not always cause the position elements to be marked invalid before use.
     m_layoutAttributesBuilder.clearTextPositioningElements();
-}
-
-static inline void recursiveUpdateScaledFont(RenderObject* start)
-{
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
-        if (child->isSVGInlineText()) {
-            toRenderSVGInlineText(child)->updateScaledFont();
-            continue;
-        }
-
-        recursiveUpdateScaledFont(child);
-    }
 }
 
 void RenderSVGText::layout()
@@ -215,8 +284,12 @@ void RenderSVGText::layout()
     // If the root layout size changed (eg. window size changes) or the positioning values change
     // or the transform to the root context has changed then recompute the on-screen font size.
     if (m_needsTextMetricsUpdate || SVGRenderSupport::findTreeRootObject(this)->isLayoutSizeChanged()) {
-        recursiveUpdateScaledFont(this);
-        rebuildLayoutAttributes(true);
+        for (RenderObject* descendant = this; descendant; descendant = descendant->nextInPreOrder(this)) {
+            if (descendant->isSVGInlineText())
+                toRenderSVGInlineText(descendant)->updateScaledFont();
+        }
+
+        rebuildAllLayoutAttributes();
         updateCachedBoundariesInParents = true;
         m_needsTextMetricsUpdate = false;
     }
@@ -364,7 +437,7 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
 void RenderSVGText::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderSVGBlock::addChild(child, beforeChild);
-    layoutAttributesChanged(child);
+    subtreeChildAdded(child);
 }
 
 // Fix for <rdar://problem/8048875>. We should not render :first-line CSS Style
@@ -380,38 +453,23 @@ void RenderSVGText::updateFirstLetter()
 {
 }
 
-static inline void recursiveCollectLayoutAttributes(RenderObject* start, Vector<SVGTextLayoutAttributes*>& attributes)
+void RenderSVGText::rebuildAllLayoutAttributes()
 {
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
-        if (child->isSVGInlineText()) {
-            attributes.append(toRenderSVGInlineText(child)->layoutAttributes());
-            continue;
-        }
+    m_layoutAttributes.clear();
+    recursiveCollectLayoutAttributes(this, m_layoutAttributes);
+    if (m_layoutAttributes.isEmpty())
+        return;
 
-        recursiveCollectLayoutAttributes(child, attributes);
-    }
+    m_layoutAttributesBuilder.rebuildMetricsForWholeTree(this);
 }
 
-void RenderSVGText::rebuildLayoutAttributes(bool performFullRebuild)
+void RenderSVGText::rebuildLayoutAttributes()
 {
-    if (performFullRebuild)
-        m_layoutAttributes.clear();
-
     if (m_layoutAttributes.isEmpty()) {
-        recursiveCollectLayoutAttributes(this, m_layoutAttributes);
-        if (m_layoutAttributes.isEmpty() || !performFullRebuild)
-            return;
-
-        m_layoutAttributesBuilder.rebuildMetricsForWholeTree(this);
+        rebuildAllLayoutAttributes();
         return;
     }
 
-    Vector<SVGTextLayoutAttributes*> affectedAttributes;
-    rebuildLayoutAttributes(affectedAttributes);
-}
-
-void RenderSVGText::rebuildLayoutAttributes(Vector<SVGTextLayoutAttributes*>& affectedAttributes)
-{
     // Detect changes in layout attributes and only measure those text parts that have changed!
     Vector<SVGTextLayoutAttributes*> newLayoutAttributes;
     recursiveCollectLayoutAttributes(this, newLayoutAttributes);
@@ -420,17 +478,13 @@ void RenderSVGText::rebuildLayoutAttributes(Vector<SVGTextLayoutAttributes*>& af
         return;
     }
 
-    // Compare m_layoutAttributes with newLayoutAttributes to figure out which attributes got added/removed.
+    // Compare m_layoutAttributes with newLayoutAttributes to figure out which attributes got added.
     size_t size = newLayoutAttributes.size();
     for (size_t i = 0; i < size; ++i) {
         SVGTextLayoutAttributes* attributes = newLayoutAttributes[i];
         if (m_layoutAttributes.find(attributes) == notFound)
             m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(attributes->context());
     }
-
-    size = affectedAttributes.size();
-    for (size_t i = 0; i < size; ++i)
-        m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(affectedAttributes[i]->context());
 
     m_layoutAttributes = newLayoutAttributes;
 }

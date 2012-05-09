@@ -48,17 +48,17 @@ public:
     static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject*);
 
     bool needsReordering() const { return m_needsReordering; }
+    Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
+
+    void subtreeChildAdded(RenderObject*);
+    void subtreeChildWillBeDestroyed(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*>& affectedAttributes);
+    void subtreeChildWasDestroyed(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*>& affectedAttributes);
+    void subtreeStyleChanged(RenderSVGInlineText*);
+    void subtreeTextChanged(RenderSVGInlineText*);
 
     // Call this method when either the children of a DOM text element have changed, or the length of
     // the text in any child element has changed.
     void invalidateTextPositioningElements();
-
-    void layoutAttributesChanged(RenderObject*);
-    void layoutAttributesWillBeDestroyed(RenderSVGInlineText*, Vector<SVGTextLayoutAttributes*>& affectedAttributes);
-    void rebuildLayoutAttributes(bool performFullRebuild = false);
-    void rebuildLayoutAttributes(Vector<SVGTextLayoutAttributes*>& affectedAttributes);
-
-    Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
 
 private:
     virtual const char* renderName() const { return "RenderSVGText"; }
@@ -90,6 +90,9 @@ private:
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
+
+    void rebuildAllLayoutAttributes();
+    void rebuildLayoutAttributes();
 
     bool m_needsReordering : 1;
     bool m_needsPositioningValuesUpdate : 1;

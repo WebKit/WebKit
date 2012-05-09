@@ -73,7 +73,6 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     RenderSVGText* textRoot = toRenderSVGText(block());
     ASSERT(textRoot);
 
-    textRoot->rebuildLayoutAttributes();
     Vector<SVGTextLayoutAttributes*>& layoutAttributes = textRoot->layoutAttributes();
     if (layoutAttributes.isEmpty())
         return;
