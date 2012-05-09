@@ -1,3 +1,13 @@
+2012-05-08  Rakesh KN  <rakesh.kn@motorola.com>
+
+        RadioNodeList support in HTMLFormElement::elements
+        https://bugs.webkit.org/show_bug.cgi?id=81854
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/forms/form-collection-radio-node-list-expected.txt: Added.
+        * fast/forms/form-collection-radio-node-list.html: Added.
+
 2012-05-08  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Regression: addEventListener() and removeEventListener() raise an exception on missing args

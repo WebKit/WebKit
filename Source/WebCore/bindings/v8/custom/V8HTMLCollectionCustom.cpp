@@ -32,12 +32,14 @@
 #include "V8HTMLCollection.h"
 
 #include "HTMLCollection.h"
+#include "RadioNodeList.h"
 #include "V8Binding.h"
 #include "V8HTMLAllCollection.h"
 #include "V8NamedNodesCollection.h"
 #include "V8Node.h"
 #include "V8NodeList.h"
 #include "V8Proxy.h"
+#include "V8RadioNodeList.h"
 
 namespace WebCore {
 
@@ -51,6 +53,9 @@ static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicStr
 
     if (namedItems.size() == 1)
         return toV8(namedItems.at(0).release(), isolate);
+
+    if (collection->type() == FormControls)
+        return toV8(collection->base()->radioNodeList(name).get());
 
     return toV8(V8NamedNodesCollection::create(namedItems), isolate);
 }

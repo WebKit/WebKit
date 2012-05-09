@@ -28,7 +28,9 @@
 #include "JSHTMLOptionsCollection.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
+#include "JSRadioNodeList.h"
 #include "Node.h"
+#include "RadioNodeList.h"
 #include "StaticNodeList.h"
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -40,12 +42,16 @@ namespace WebCore {
 static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
-    collection->impl()->namedItems(identifierToAtomicString(propertyName), namedItems);
+    const AtomicString& name = identifierToAtomicString(propertyName);
+    collection->impl()->namedItems(name, namedItems);
 
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
         return toJS(exec, collection->globalObject(), namedItems[0].get());
+
+    if (collection->impl()->type() == FormControls)
+       return toJS(exec, collection->globalObject(), collection->impl()->base()->radioNodeList(name).get());
 
     // FIXME: HTML5 specifies that this should be a DynamicNodeList.
     // FIXME: HTML5 specifies that non-HTMLOptionsCollection collections should return

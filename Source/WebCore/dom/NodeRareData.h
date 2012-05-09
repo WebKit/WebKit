@@ -45,6 +45,7 @@
 namespace WebCore {
 
 class LabelsNodeList;
+class RadioNodeList;
 class TreeScope;
 
 struct NodeListsNodeData {
@@ -71,6 +72,9 @@ public:
 #endif
 
     LabelsNodeList* m_labelsNodeListCache;
+
+    typedef HashMap<String, RadioNodeList*> RadioNodeListCache;
+    RadioNodeListCache m_radioNodeListCache;
 
     static PassOwnPtr<NodeListsNodeData> create()
     {

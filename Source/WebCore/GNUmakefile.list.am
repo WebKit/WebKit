@@ -466,6 +466,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSProcessingInstruction.h \
 	DerivedSources/WebCore/JSProgressEvent.cpp \
 	DerivedSources/WebCore/JSProgressEvent.h \
+	DerivedSources/WebCore/JSRadioNodeList.cpp \
+	DerivedSources/WebCore/JSRadioNodeList.h \
 	DerivedSources/WebCore/JSRange.cpp \
 	DerivedSources/WebCore/JSRangeException.cpp \
 	DerivedSources/WebCore/JSRangeException.h \
@@ -879,6 +881,7 @@ dom_binding_idls += \
 	$(WebCore)/html/MediaError.idl \
 	$(WebCore)/html/MediaKeyError.idl \
 	$(WebCore)/html/MediaKeyEvent.idl \
+	$(WebCore)/html/RadioNodeList.idl \
 	$(WebCore)/html/TextMetrics.idl \
 	$(WebCore)/html/TimeRanges.idl \
 	$(WebCore)/html/ValidityState.idl \
@@ -2532,6 +2535,8 @@ webcore_sources += \
 	Source/WebCore/html/RadioInputType.h \
 	Source/WebCore/html/RangeInputType.cpp \
 	Source/WebCore/html/RangeInputType.h \
+	Source/WebCore/html/RadioNodeList.cpp \
+	Source/WebCore/html/RadioNodeList.h \
 	Source/WebCore/html/ResetInputType.cpp \
 	Source/WebCore/html/ResetInputType.h \
 	Source/WebCore/html/SearchInputType.cpp \

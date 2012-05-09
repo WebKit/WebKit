@@ -67,6 +67,7 @@ bool HTMLCollection::shouldIncludeChildren(CollectionType type)
 #if ENABLE(MICRODATA)
     case ItemProperties:
 #endif
+    case FormControls:
         return true;
     case NodeChildren:
     case TRCells:
@@ -151,6 +152,7 @@ inline bool HTMLCollection::isAcceptableElement(Element* element) const
     case ItemProperties:
         return element->fastHasAttribute(itempropAttr);
 #endif
+    case FormControls:
     case DocumentNamedItems:
     case OtherCollection:
     case WindowNamedItems:

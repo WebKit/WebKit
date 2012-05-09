@@ -383,6 +383,7 @@ IDL_BINDINGS += \
     $$PWD/html/ImageData.idl \
     $$PWD/html/MediaController.idl \
     $$PWD/html/MediaError.idl \
+    $$PWD/html/RadioNodeList.idl \
     $$PWD/html/TextMetrics.idl \
     $$PWD/html/TimeRanges.idl \
     $$PWD/html/ValidityState.idl \

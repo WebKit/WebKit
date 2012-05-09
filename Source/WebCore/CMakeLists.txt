@@ -331,6 +331,7 @@ SET(WebCore_IDL_FILES
     html/ImageData.idl
     html/MediaController.idl
     html/MediaError.idl
+    html/RadioNodeList.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
     html/ValidityState.idl
@@ -855,6 +856,7 @@ SET(WebCore_SOURCES
     html/PasswordInputType.cpp
     html/PluginDocument.cpp
     html/RadioInputType.cpp
+    html/RadioNodeList.cpp
     html/RangeInputType.cpp
     html/ResetInputType.cpp
     html/SearchInputType.cpp

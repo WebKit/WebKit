@@ -77,6 +77,7 @@
 #include "PlatformWheelEvent.h"
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
+#include "RadioNodeList.h"
 #include "RegisteredEventListener.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
@@ -991,6 +992,9 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         && attrName != itempropAttr
         && attrName != itemtypeAttr
 #endif
+        && attrName != idAttr
+        && attrName != typeAttr
+        && attrName != checkedAttr
         && attrName != nameAttr
         && attrName != forAttr)
         return;
@@ -2329,6 +2333,10 @@ void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
     for (MicroDataItemListCache::iterator it = m_microDataItemListCache.begin(); it != itemListCacheEnd; ++it)
         it->second->invalidateCache();
 #endif
+
+    RadioNodeListCache::iterator radioNodeListCacheEnd = m_radioNodeListCache.end();
+    for (RadioNodeListCache::iterator it = m_radioNodeListCache.begin(); it != radioNodeListCacheEnd; ++it)
+        it->second->invalidateCache();
 }
 
 bool NodeListsNodeData::isEmpty() const
@@ -2351,7 +2359,10 @@ bool NodeListsNodeData::isEmpty() const
 
     if (m_labelsNodeListCache)
         return false;
-    
+
+    if (!m_radioNodeListCache.isEmpty())
+        return false;
+
     return true;
 }
 
@@ -2956,6 +2967,31 @@ void NodeRareData::clearChildNodeListCache()
 {
     if (m_childNodeList)
         m_childNodeList->invalidateCache();
+}
+
+PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
+{
+    ASSERT(hasTagName(formTag));
+
+    NodeListsNodeData* nodeLists = ensureRareData()->ensureNodeLists(this);
+
+    NodeListsNodeData::RadioNodeListCache::AddResult result = nodeLists->m_radioNodeListCache.add(name, 0);
+    if (!result.isNewEntry)
+        return PassRefPtr<RadioNodeList>(result.iterator->second);
+
+    RefPtr<RadioNodeList> list = RadioNodeList::create(name, toElement(this));
+    result.iterator->second = list.get();
+    return list.release();
+}
+
+void Node::removeCachedRadioNodeList(RadioNodeList* list, const AtomicString& name)
+{
+    ASSERT(rareData());
+    ASSERT(rareData()->nodeLists());
+
+    NodeListsNodeData* data = rareData()->nodeLists();
+    ASSERT_UNUSED(list, list == data->m_radioNodeListCache.get(name));
+    data->m_radioNodeListCache.remove(name);
 }
 
 } // namespace WebCore
