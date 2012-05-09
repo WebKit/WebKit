@@ -33,6 +33,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
+#include "TimeRanges.h"
 
 namespace WebCore {
 
@@ -127,19 +128,26 @@ static bool paintMediaSlider(RenderObject* object, const PaintInfo& paintInfo, c
     context->restore();
 
     // Draw the buffered ranges.
-    // FIXME: Draw multiple ranges if there are multiple buffered ranges.
+    // FIXME: Draw multiple ranges if there are multiple buffered ranges. http://webkit.org/b/85925
     IntRect bufferedRect = rect;
     bufferedRect.inflate(-style->borderLeftWidth());
 
     double bufferedWidth = 0.0;
-    if (mediaElement->percentLoaded() > 0.0) {
+    RefPtr<TimeRanges> bufferedTimeRanges = mediaElement->buffered();
+    if (bufferedTimeRanges->length() > 0) {
         // Account for the width of the slider thumb.
         Image* mediaSliderThumb = getMediaSliderThumb();
         double thumbWidth = mediaSliderThumb->width() / 2.0 + 1.0;
         double rectWidth = bufferedRect.width() - thumbWidth;
         if (rectWidth < 0.0)
             rectWidth = 0.0;
-        bufferedWidth = rectWidth * mediaElement->percentLoaded() + thumbWidth;
+        // Preserve old behavior pending resolution of UI design of multiple ranges (see FIXME above).
+        // http://webkit.org/b/85926
+        double fakePercentLoaded = 0;
+        float duration = mediaElement->duration();
+        if (duration && !isinf(duration))
+            fakePercentLoaded = bufferedTimeRanges->end(bufferedTimeRanges->length() - 1, ASSERT_NO_EXCEPTION) / duration;
+        bufferedWidth = rectWidth * fakePercentLoaded + thumbWidth;
     }
     bufferedRect.setWidth(bufferedWidth);
 
