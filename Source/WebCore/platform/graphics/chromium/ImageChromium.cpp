@@ -29,9 +29,12 @@
  */
 
 #include "config.h"
+#include "BitmapImage.h"
 #include "Image.h"
+#include "SharedBuffer.h"
 
-#include "PlatformSupport.h"
+#include <public/Platform.h>
+#include <public/WebData.h>
 
 namespace WebCore {
 
@@ -39,7 +42,13 @@ namespace WebCore {
 
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
-    return PlatformSupport::loadPlatformImageResource(name);
+    const WebKit::WebData& resource = WebKit::Platform::current()->loadResource(name);
+    if (resource.isEmpty())
+        return Image::nullImage();
+
+    RefPtr<Image> image = BitmapImage::create();
+    image->setData(resource, true);
+    return image.release();
 }
 
 } // namespace WebCore

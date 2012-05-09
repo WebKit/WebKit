@@ -553,17 +553,6 @@ NPObject* PlatformSupport::pluginScriptableObject(Widget* widget)
 
 // Resources ------------------------------------------------------------------
 
-PassRefPtr<Image> PlatformSupport::loadPlatformImageResource(const char* name)
-{
-    const WebData& resource = webKitPlatformSupport()->loadResource(name);
-    if (resource.isEmpty())
-        return Image::nullImage();
-
-    RefPtr<Image> image = BitmapImage::create();
-    image->setData(resource, true);
-    return image;
-}
-
 #if ENABLE(WEB_AUDIO)
 
 PassOwnPtr<AudioBus> PlatformSupport::decodeAudioFileData(const char* data, size_t size, double sampleRate)

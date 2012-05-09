@@ -196,8 +196,6 @@ public:
     static bool popupsAllowed(NPP);
 
     // Resources ----------------------------------------------------------
-    static PassRefPtr<Image> loadPlatformImageResource(const char* name);
-
 #if ENABLE(WEB_AUDIO)
     static PassOwnPtr<AudioBus> decodeAudioFileData(const char* data, size_t, double sampleRate);
 #endif

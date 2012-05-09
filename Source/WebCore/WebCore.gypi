@@ -3568,7 +3568,6 @@
             'platform/graphics/chromium/IconChromiumAndroid.cpp',
             'platform/graphics/chromium/ImageBufferDataSkia.h',
             'platform/graphics/chromium/ImageChromium.cpp',
-            'platform/graphics/chromium/ImageChromiumMac.mm',
             'platform/graphics/chromium/ImageLayerChromium.cpp',
             'platform/graphics/chromium/ImageLayerChromium.h',
             'platform/graphics/chromium/LayerChromium.cpp',
