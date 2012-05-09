@@ -854,6 +854,11 @@ fast/selectors/selection-window-inactive.html
 # autoZoomPageToFitWidth().
 inspector/styles/override-screen-size.html
 
+# The network stack unconditionally strips the header on transitions from
+# secure to insecure. It should take the referrer policy into account instead.
+# https://bugs.webkit.org/show_bug.cgi?id=86000
+http/tests/security/referrer-policy-redirect-link.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

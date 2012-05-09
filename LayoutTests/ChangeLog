@@ -1,3 +1,23 @@
+2012-05-09  Jochen Eisinger  <jochen@chromium.org>
+
+        When creating a new page during a navigation, prime the initial document with the correct referrer policy
+        https://bugs.webkit.org/show_bug.cgi?id=86001
+
+        Reviewed by Adam Barth.
+
+        Skip the test on all but chromium, see https://bugs.webkit.org/show_bug.cgi?id=86000
+
+        * http/tests/security/referrer-policy-redirect-link-expected.txt: Added.
+        * http/tests/security/referrer-policy-redirect-link.html: Added.
+        * http/tests/security/resources/referrer-policy-postmessage.php: Added.
+        * http/tests/security/resources/referrer-policy-redirect-link.html: Added.
+        * platform/efl/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-09  Adrienne Walker  <enne@google.com>
 
         Update compositing/RTL tests to fail if the root layer is shifted incorrectly

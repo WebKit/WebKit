@@ -836,3 +836,6 @@ fast/block/positioning/offsetLeft-offsetTop-multicolumn.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=85969
 http/tests/loading/post-in-iframe-with-back-navigation.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=86000
+http/tests/security/referrer-policy-redirect-link.html

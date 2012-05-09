@@ -42,6 +42,7 @@
 #include "WebDOMMessageEvent.h"
 #include "WebDataSource.h"
 #include "WebDeviceOrientationClientMock.h"
+#include "WebDocument.h"
 #include "platform/WebDragData.h"
 #include "WebElement.h"
 #include "WebFrame.h"
@@ -1199,7 +1200,7 @@ void WebViewHost::removeIdentifierForRequest(unsigned identifier)
     m_resourceIdentifierMap.remove(identifier);
 }
 
-void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest& request, const WebURLResponse& redirectResponse)
+void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRequest& request, const WebURLResponse& redirectResponse)
 {
     // Need to use GURL for host() and SchemeIs()
     GURL url = request.url();
@@ -1216,6 +1217,8 @@ void WebViewHost::willSendRequest(WebFrame*, unsigned identifier, WebURLRequest&
         printResponseDescription(redirectResponse);
         fputs("\n", stdout);
     }
+
+    request.setExtraData(webkit_support::CreateWebURLRequestExtraData(frame->document().referrerPolicy()));
 
     if (!redirectResponse.isNull() && m_blocksRedirects) {
         fputs("Returning null for this redirect\n", stdout);

@@ -1960,6 +1960,9 @@ fonts/serif.html
 security/block-test-no-port.html
 security/block-test.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=86000
+http/tests/security/referrer-policy-redirect-link.html
+
 # ============================================================================= #
 # failing tables tests
 # ============================================================================= #

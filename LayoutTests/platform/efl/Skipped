@@ -1855,6 +1855,7 @@ http/tests/security/referrer-policy-https-default.html
 http/tests/security/referrer-policy-https-never.html
 http/tests/security/referrer-policy-https-origin.html
 http/tests/security/referrer-policy-redirect.html
+http/tests/security/referrer-policy-redirect-link.html
 http/tests/security/xss-DENIED-xsl-document-redirect.xml
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml
 http/tests/ssl/referer-301.html
