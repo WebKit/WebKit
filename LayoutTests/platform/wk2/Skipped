@@ -1090,6 +1090,7 @@ editing/pasteboard/drag-drop-url-with-style.html
 fast/dom/shadow/create-content-element.html
 
 # ENABLE(SHADOW_DOM) is disabled.
+editing/shadow
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html

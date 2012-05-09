@@ -1,3 +1,28 @@
+2012-05-09  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Position should be able to have ShadowRoot as a container.
+        https://bugs.webkit.org/show_bug.cgi?id=82021
+
+        Reviewed by Ryosuke Niwa.
+
+        Skipped non-chromium port since SHADOW_DOM flag is not enabled in those platforms.
+        We will add bunch of tests for editing in Shadow DOM into editing/shadow later,
+        so I added the whole directory name to the skipped list.
+
+        * editing/shadow/doubleclick-on-meter-in-shadow-crash-expected.txt: Added.
+        * editing/shadow/doubleclick-on-meter-in-shadow-crash.html: Added.
+        * editing/shadow/rightclick-on-meter-in-shadow-crash-expected.txt: Added.
+        * editing/shadow/rightclick-on-meter-in-shadow-crash.html: Added.
+        * editing/shadow/shadow-selection-not-exported-expected.txt: Added.
+        * editing/shadow/shadow-selection-not-exported.html: Added.
+        * platform/efl/Skipped:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] LayoutTestController addUserScript implementation

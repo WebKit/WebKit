@@ -189,6 +189,8 @@ public:
 
     static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject*);
     static bool nodeIsUserSelectNone(Node*);
+
+    static ContainerNode* findParent(const Node*);
     
     void debugPosition(const char* msg = "") const;
 
@@ -203,6 +205,7 @@ private:
 
     int renderedOffset() const;
 
+    
     Position previousCharacterPosition(EAffinity) const;
     Position nextCharacterPosition(EAffinity) const;
 
@@ -244,13 +247,13 @@ inline Position positionInParentBeforeNode(const Node* node)
     // At least one caller currently hits this ASSERT though, which indicates
     // that the caller is trying to make a position relative to a disconnected node (which is likely an error)
     // Specifically, editing/deleting/delete-ligature-001.html crashes with ASSERT(node->parentNode())
-    return Position(node->nonShadowBoundaryParentNode(), node->nodeIndex(), Position::PositionIsOffsetInAnchor);
+    return Position(Position::findParent(node), node->nodeIndex(), Position::PositionIsOffsetInAnchor);
 }
 
 inline Position positionInParentAfterNode(const Node* node)
 {
-    ASSERT(node->nonShadowBoundaryParentNode());
-    return Position(node->nonShadowBoundaryParentNode(), node->nodeIndex() + 1, Position::PositionIsOffsetInAnchor);
+    ASSERT(Position::findParent(node));
+    return Position(Position::findParent(node), node->nodeIndex() + 1, Position::PositionIsOffsetInAnchor);
 }
 
 // positionBeforeNode and positionAfterNode return neighbor-anchored positions, construction is O(1)

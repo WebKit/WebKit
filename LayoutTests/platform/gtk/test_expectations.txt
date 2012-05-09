@@ -236,6 +236,7 @@ BUGWKGTK SKIP : fast/regions/style-scoped-in-flow.html = FAIL
 
 // ENABLE(SHADOW_DOM) is disabled.
 BUGWKGTK SKIP : fast/dom/shadow = FAIL
+BUGWKGTK SKIP : editing/shadow = FAIL
 
 // CSS Regions support not yet enabled.
 BUGWK57312 SKIP : fast/regions = FAIL

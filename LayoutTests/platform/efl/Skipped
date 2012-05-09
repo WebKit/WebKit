@@ -227,6 +227,7 @@ fast/media/print-restores-previous-mediatype.html
 
 # ENABLE(SHADOW_DOM) is disabled
 fast/dom/shadow
+editing/shadow
 
 # ENABLE(DATALIST) is disabled
 fast/forms/datalist
