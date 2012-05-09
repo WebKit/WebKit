@@ -550,6 +550,10 @@ http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-
 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html
 
+# new failing test after r116473
+# https://bugs.webkit.org/show_bug.cgi?id=85969
+http/tests/loading/post-in-iframe-with-back-navigation.html
+
 # This needs more attention!
 http/tests/misc/acid3.html
 

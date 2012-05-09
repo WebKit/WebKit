@@ -1,3 +1,14 @@
+2012-05-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip a failing test, remove an unnecessary platform specific expected file.
+        https://bugs.webkit.org/show_bug.cgi?id=85969
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/forms/form-collection-radio-node-list-expected.txt: Removed after r116491.
+
+
 2012-05-09  Shinya Kawanaka  <shinyak@chromium.org>
 
         Position should be able to have ShadowRoot as a container.
