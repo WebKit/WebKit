@@ -341,14 +341,6 @@ void QQuickWebViewPrivate::loadDidSucceed()
     emit q->loadingChanged(&loadRequest);
 }
 
-void QQuickWebViewPrivate::onComponentComplete()
-{
-    if (m_deferedUrlToLoad.isEmpty())
-        return;
-
-    q_ptr->setUrl(m_deferedUrlToLoad);
-}
-
 void QQuickWebViewPrivate::setNeedsDisplay()
 {
     Q_Q(QQuickWebView);
@@ -729,7 +721,6 @@ void QQuickWebViewLegacyPrivate::setZoomFactor(qreal factor)
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
     , pageIsSuspended(true)
-    , loadSuccessDispatchIsPending(false)
 {
     // Disable mouse events on the flickable web view so we do not
     // select text during pan gestures on platforms which send both
@@ -792,23 +783,8 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
     _q_resume();
 
-    if (loadSuccessDispatchIsPending) {
-        QQuickWebViewPrivate::loadDidSucceed();
-        loadSuccessDispatchIsPending = false;
-    }
-
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
-
-    QQuickWebViewPrivate::onComponentComplete();
-}
-
-void QQuickWebViewFlickablePrivate::loadDidSucceed()
-{
-    if (interactionEngine)
-        QQuickWebViewPrivate::loadDidSucceed();
-    else
-        loadSuccessDispatchIsPending = true;
 }
 
 void QQuickWebViewFlickablePrivate::loadDidCommit()
@@ -1456,11 +1432,6 @@ void QQuickWebView::setUrl(const QUrl& url)
 
     if (url.isEmpty())
         return;
-
-    if (!isComponentComplete()) {
-        d->m_deferedUrlToLoad = url;
-        return;
-    }
 
     d->webPageProxy->loadURL(url.toString());
 }

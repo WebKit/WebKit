@@ -67,6 +67,8 @@ public:
 
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
+    virtual void onComponentComplete() { }
+
     virtual void enableMouseEvents() { }
     virtual void disableMouseEvents() { }
 
@@ -74,7 +76,6 @@ public:
     virtual void updateContentsSize(const QSizeF&) { }
 
     virtual void loadDidSucceed();
-    virtual void onComponentComplete();
     virtual void loadDidCommit() { }
     virtual void didFinishFirstNonEmptyLayout() { }
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr) { }
@@ -192,7 +193,6 @@ protected:
     bool m_renderToOffscreenBuffer;
     bool m_dialogActive;
     QUrl m_iconURL;
-    QUrl m_deferedUrlToLoad;
 };
 
 class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {
@@ -216,11 +216,11 @@ public:
     virtual ~QQuickWebViewFlickablePrivate();
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
+    virtual void onComponentComplete();
+
     virtual QPointF pageItemPos();
     virtual void updateContentsSize(const QSizeF&);
 
-    virtual void loadDidSucceed();
-    virtual void onComponentComplete();
     virtual void loadDidCommit();
     virtual void didFinishFirstNonEmptyLayout();
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
@@ -237,7 +237,6 @@ public:
 private:
     QScopedPointer<WebKit::QtViewportInteractionEngine> interactionEngine;
     bool pageIsSuspended;
-    bool loadSuccessDispatchIsPending;
 };
 
 #endif // qquickwebview_p_p_h

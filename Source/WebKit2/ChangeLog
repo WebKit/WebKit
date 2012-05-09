@@ -1,3 +1,24 @@
+2012-05-09  Zalan Bujtas  <zbujtas@gmail.com>
+
+        [Qt][WK2] Remove delayed loadDidSucceed() signaling and m_deferedUrlToLoad from QQuickWebViewPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=85906
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Deferred loading activies were introduced to work around the delayed Flickable construction
+        at onComponentComplete(). QQuickWebView inherits from QQuickFlickable now,
+        so no need for the workaround anymore.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebView::setUrl):
+        (QQuickWebView::componentComplete):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::onComponentComplete):
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate):
+
 2012-05-08  Jon Lee  <jonlee@apple.com>
 
         Unreviewed build fix.
