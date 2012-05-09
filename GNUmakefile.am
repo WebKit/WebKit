@@ -83,8 +83,11 @@ webkitgtk_cppflags :=
 webkitgtk_gdom_built_sources :=
 webkitgtk_built_sources :=
 webkitgtk_built_nosources :=
+webkit2_h_api :=
 webkit2_sources :=
 webkit2_built_sources :=
+webkit2gtk_h_api :=
+webkit2gtk_built_sources :=
 webkit2_plugin_process_sources :=
 webkit2_plugin_process_built_sources :=
 webkittestrunner_built_sources :=
@@ -284,7 +287,10 @@ BUILT_SOURCES += \
 	$(webcore_built_sources) \
 	$(webcore_built_nosources) \
 	$(webkitgtk_built_sources) \
-	$(webkitgtk_built_nosources)
+	$(webkitgtk_built_nosources) \
+	$(webkit2_built_sources) \
+	$(webkit2gtk_built_sources) \
+	$(webkit2_plugin_process_built_sources)
 
 DISTCLEANFILES += \
 	$(CLEANFILES) \
