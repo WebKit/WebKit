@@ -3921,7 +3921,8 @@ BUGWK85868 MAC : css3/filters/custom/filter-repaint-custom-rotated.html = IMAGE
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
-BUGWK85949 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
+// Skip it because it seems its frame loading notifications leak to the next test.
+BUGWK85949 SKIP : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
 
 BUGWK85913 MAC : fast/block/positioning/offsetLeft-offsetTop-multicolumn.html = TEXT
 

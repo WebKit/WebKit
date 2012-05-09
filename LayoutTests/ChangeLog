@@ -1,5 +1,13 @@
 2012-05-08  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Test expectation update
+        Skip post-in-iframe-with-back-navigation.html because it might cause a
+        failure of the next test, preload-append-scan.php
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-08  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update test expectations.
 
         * platform/chromium/test_expectations.txt:
