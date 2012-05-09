@@ -85,6 +85,7 @@
       'ENABLE_POINTER_LOCK=1',
       'ENABLE_PROGRESS_TAG=1',
       'ENABLE_QUOTA=1',
+      'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
       'ENABLE_REQUEST_ANIMATION_FRAME=1',
       'ENABLE_RUBY=1',
       'ENABLE_SANDBOX=1',
@@ -173,11 +174,6 @@
       ['OS!="mac"', {
         'feature_defines': [
           'WTF_USE_WEBAUDIO_FFMPEG=1',
-        ],
-      }],
-      ['enable_register_protocol_handler==1', {
-        'feature_defines': [
-          'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
         ],
       }],
       ['enable_web_intents==1', {

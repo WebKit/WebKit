@@ -1,3 +1,15 @@
+2012-05-08  Tony Chang  <tony@chromium.org>
+
+        [chromium] force ENABLE_REGISTER_PROTOCOL_HANDLER=1 in features.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=85924
+
+        Reviewed by Adam Barth.
+
+        This has been enabled for a few months on Chromium trunk so remove the
+        ability to turn it off via a gyp flag. This simplifies features.gypi.
+
+        * features.gypi:
+
 2012-05-08  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Reflections with masks should not occlude
