@@ -112,7 +112,7 @@ function executeTests(createCSSOMObjectBeforeTest)
     mutationTest(15, 'sheet.cssRules[4].deleteRule("100%")', 'red');
     mutationTest(16, 'sheet.cssRules[5].style.setProperty("font-family", "Bar", "")', 'red');
 
-    setTimeout(finishedTests, 50);
+    setTimeout(finishedTests, 80);
 }
 
 function runTestsAfterLoadComplete(createCSSOMObjectBeforeTest)

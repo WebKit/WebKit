@@ -1,3 +1,16 @@
+2012-05-09  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] shared-stylesheet-mutation tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=85901
+
+        Reviewed by Antti Koivisto.
+
+        This test is flaky on EFL because the timeout for applying
+        the style is too short for a Debug build.
+
+        * http/tests/css/resources/shared-stylesheet-mutation.js:
+        (executeTests):
+
 2012-05-09  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] Gardening failures and crashes
