@@ -91,7 +91,7 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const Tr
 static void appendQuads(CCQuadList& quadList, Vector<OwnPtr<CCSharedQuadState> >& sharedStateList, CCTiledLayerImpl* layer, CCLayerIteratorType& it, CCOcclusionTrackerImpl& occlusionTracker)
 {
     occlusionTracker.enterLayer(it);
-    CCQuadCuller quadCuller(quadList, layer, &occlusionTracker);
+    CCQuadCuller quadCuller(quadList, layer, &occlusionTracker, false);
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
     bool hadMissingTiles = false;
     layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);

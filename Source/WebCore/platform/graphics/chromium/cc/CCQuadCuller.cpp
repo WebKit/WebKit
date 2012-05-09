@@ -31,6 +31,7 @@
 
 #include "Region.h"
 #include "TransformationMatrix.h"
+#include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCRenderPass.h"
@@ -40,14 +41,21 @@ using namespace std;
 
 namespace WebCore {
 
-CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, const CCOcclusionTrackerImpl* occlusionTracker)
+static const int debugTileBorderWidth = 1;
+static const int debugTileBorderAlpha = 120;
+static const int debugTileBorderColorRed = 160;
+static const int debugTileBorderColorGreen = 100;
+static const int debugTileBorderColorBlue = 0;
+
+CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, const CCOcclusionTrackerImpl* occlusionTracker, bool showCullingWithDebugBorderQuads)
     : m_quadList(quadList)
     , m_layer(layer)
     , m_occlusionTracker(occlusionTracker)
+    , m_showCullingWithDebugBorderQuads(showCullingWithDebugBorderQuads)
 {
 }
 
-static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const IntRect& culledRect, CCQuadList& quadList, const CCOcclusionTrackerImpl& occlusionTracker)
+static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const IntRect& culledRect, CCQuadList& quadList, const CCOcclusionTrackerImpl& occlusionTracker, bool createDebugBorderQuads)
 {
     OwnPtr<CCDrawQuad> drawQuad(passDrawQuad);
     bool keepQuad = !culledRect.isEmpty();
@@ -57,28 +65,34 @@ static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const
     occlusionTracker.overdrawMetrics().didCullForDrawing(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect);
     occlusionTracker.overdrawMetrics().didDraw(drawQuad->quadTransform(), culledRect, drawQuad->opaqueRect());
 
-    // Release the quad after we're done using it.
-    if (keepQuad)
+    if (keepQuad) {
+        if (createDebugBorderQuads && !drawQuad->isDebugQuad() && drawQuad->quadVisibleRect() != drawQuad->quadRect()) {
+            Color borderColor = Color(debugTileBorderColorRed, debugTileBorderColorGreen, debugTileBorderColorBlue, debugTileBorderAlpha);
+            quadList.append(CCDebugBorderDrawQuad::create(drawQuad->sharedQuadState(), drawQuad->quadVisibleRect(), borderColor, debugTileBorderWidth));
+        }
+
+        // Release the quad after we're done using it.
         quadList.append(drawQuad.release());
+    }
     return keepQuad;
 }
 
 bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
     IntRect culledRect = m_occlusionTracker->unoccludedContentRect(m_layer, passDrawQuad->quadRect());
-    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
+    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
 }
 
 bool CCQuadCuller::appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
     IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer->renderSurface(), false, passDrawQuad->quadRect());
-    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
+    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
 }
 
 bool CCQuadCuller::appendReplica(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
     IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer->renderSurface(), true, passDrawQuad->quadRect());
-    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker);
+    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
 }
 
 } // namespace WebCore

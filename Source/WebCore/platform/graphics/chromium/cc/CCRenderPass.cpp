@@ -60,7 +60,7 @@ CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface)
 
 void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, bool& hadMissingTiles)
 {
-    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker);
+    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker, layer->hasDebugBorders());
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
     layer->appendDebugBorderQuad(quadCuller, sharedQuadState.get());
@@ -72,7 +72,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, CCOcclus
 {
     // FIXME: render surface layers should be a CCLayerImpl-derived class and
     // not be handled specially here.
-    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker);
+    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker, layer->hasDebugBorders());
 
     CCRenderSurface* surface = layer->renderSurface();
     OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState();

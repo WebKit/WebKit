@@ -75,6 +75,7 @@ public:
     };
 
     Material material() const { return m_material; }
+    bool isDebugQuad() const { return m_material == DebugBorder; }
 
     const CCCheckerboardDrawQuad* toCheckerboardDrawQuad() const;
     const CCDebugBorderDrawQuad* toDebugBorderDrawQuad() const;
@@ -84,6 +85,8 @@ public:
     const CCTextureDrawQuad* toTextureDrawQuad() const;
     const CCTileDrawQuad* toTileDrawQuad() const;
     const CCVideoDrawQuad* toVideoDrawQuad() const;
+
+    const CCSharedQuadState* sharedQuadState() const { return m_sharedQuadState; }
 
 protected:
     CCDrawQuad(const CCSharedQuadState*, Material, const IntRect&);

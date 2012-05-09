@@ -35,12 +35,12 @@ namespace WebCore {
 class MockCCQuadCuller : public WebCore::CCQuadCuller {
 public:
     MockCCQuadCuller()
-        : CCQuadCuller(m_quadListStorage, 0, 0)
+        : CCQuadCuller(m_quadListStorage, 0, 0, false)
         , m_activeQuadList(m_quadListStorage)
     { }
 
     explicit MockCCQuadCuller(CCQuadList& externalQuadList)
-        : CCQuadCuller(externalQuadList, 0, 0)
+        : CCQuadCuller(externalQuadList, 0, 0, false)
         , m_activeQuadList(externalQuadList)
     { }
 
