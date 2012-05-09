@@ -1,5 +1,13 @@
 2012-05-09  Antti Koivisto  <antti@apple.com>
 
+        Skip failing test http/tests/loading/post-in-iframe-with-back-navigation.html.
+        
+        Not reviewed.
+
+        * platform/mac/Skipped:
+
+2012-05-09  Antti Koivisto  <antti@apple.com>
+
         Test from bug 34875 should specify font-size
         https://bugs.webkit.org/show_bug.cgi?id=85913
 
