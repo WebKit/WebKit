@@ -1,3 +1,9 @@
+2012-05-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, add a platform specific expected file for a passing test.
+
+        * platform/qt-5.0-wk2/fast/repaint/focus-ring-expected.txt: Added.
+
 2012-05-09  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium][Forms] HTMLOptionsCollection doesn't have indexed properties on property enumeration
