@@ -389,6 +389,7 @@ public:
             if (!s_ancestorLineboxDirtySet)
                 s_ancestorLineboxDirtySet = new RenderObjectAncestorLineboxDirtySet;
             s_ancestorLineboxDirtySet->add(this);
+            setNeedsLayout(true);
         } else if (s_ancestorLineboxDirtySet) {
             s_ancestorLineboxDirtySet->remove(this);
             if (s_ancestorLineboxDirtySet->isEmpty()) {

@@ -1,3 +1,15 @@
+2012-05-09  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from removal of a line break object
+        https://bugs.webkit.org/show_bug.cgi?id=85997
+
+        Reviewed by David Hyatt.
+
+        Test case to exercise crashing condition in bug 85997.
+
+        * fast/block/line-layout/line-break-removal-near-textarea-crash-expected.txt: Added
+        * fast/block/line-layout/line-break-removal-near-textarea-crash.html: Added
+
 2012-05-09  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] REGRESSION(r113678):After this change fast/text/text-stroke-width-cairo-dos.html makes the next test crash
