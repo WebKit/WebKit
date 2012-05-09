@@ -181,9 +181,9 @@ void RenderFrameSet::GridAxis::resize(int size)
     m_deltas.resize(size);
     m_deltas.fill(0);
     
-    // To track edges for resizability and borders, we need to be (size + 1).  This is because a parent frameset
+    // To track edges for resizability and borders, we need to be (size + 1). This is because a parent frameset
     // may ask us for information about our left/top/right/bottom edges in order to make its own decisions about
-    // what to do.  We are capable of tainting that parent frameset's borders, so we have to cache this info.
+    // what to do. We are capable of tainting that parent frameset's borders, so we have to cache this info.
     m_preventResize.resize(size + 1);
     m_allowBorder.resize(size + 1);
 }
@@ -342,11 +342,10 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
                 remainingLen -= changePercent;
             }
         }
-    } 
-    
-    // If we don't have any percentage columns/rows we only have fixed columns. Spread
-    // the remainder equally over all fixed columns/rows.
-    else if (remainingLen && countFixed) {
+    } else if (remainingLen && countFixed) {
+        // If we don't have any percentage columns/rows we only have
+        // fixed columns. Spread the remainder equally over all fixed
+        // columns/rows.
         int remainingFixed = remainingLen;
         int changeFixed = 0;
         
@@ -684,7 +683,7 @@ void RenderFrameSet::continueResizing(GridAxis& axis, int position)
         return;
     int currentSplitPosition = splitPosition(axis, axis.m_splitBeingResized);
     int delta = (position - currentSplitPosition) - axis.m_splitResizeOffset;
-    if (delta == 0)
+    if (!delta)
         return;
     axis.m_deltas[axis.m_splitBeingResized - 1] += delta;
     axis.m_deltas[axis.m_splitBeingResized] -= delta;
