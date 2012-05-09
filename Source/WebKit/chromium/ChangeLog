@@ -1,3 +1,9 @@
+2012-05-09  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-05-09  Marcus Bulach  <bulach@chromium.org>
 
         [chromium] Exposes OrientationChangeEvent.
