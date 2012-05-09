@@ -202,9 +202,6 @@ BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = FAIL
 
 BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
-// EFL's LayoutTestController does not implement TextInputController
-BUGWK78559 : editing/input/select-all-clear-input-method.html = TEXT
-
 // EventSender doesn't provide correct key string
 BUGWK84710 : fast/forms/textarea-type-spaces.html = TEXT
 

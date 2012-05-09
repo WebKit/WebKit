@@ -1,3 +1,9 @@
+2012-05-08  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening, unskip test after r116475.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-08  Ojan Vafai  <ojan@chromium.org>
 
         Suppress failing test while the fix is being worked out.
