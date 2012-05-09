@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,6 +30,7 @@
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
 
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -137,7 +139,7 @@ void NavigatorRegisterProtocolHandler::registerProtocolHandler(Navigator* naviga
     if (!page)
         return;
 
-    page->chrome()->registerProtocolHandler(scheme, baseURL, url, navigator->frame()->displayStringModifiedByEncoding(title));
+    page->chrome()->client()->registerProtocolHandler(scheme, baseURL, url, navigator->frame()->displayStringModifiedByEncoding(title));
 }
 
 } // namespace WebCore

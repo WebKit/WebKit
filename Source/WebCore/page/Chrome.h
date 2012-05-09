@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -136,10 +137,6 @@ namespace WebCore {
         bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
         void setStatusbarText(Frame*, const String&);
         bool shouldInterruptJavaScript();
-
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-        void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
-#endif
 
         IntRect windowResizerRect() const;
 

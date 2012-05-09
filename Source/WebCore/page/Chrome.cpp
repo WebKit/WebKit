@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -355,13 +356,6 @@ bool Chrome::shouldInterruptJavaScript()
 
     return m_client->shouldInterruptJavaScript();
 }
-
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-void Chrome::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) 
-{
-    m_client->registerProtocolHandler(scheme, baseURL, url, title);
-}
-#endif
 
 IntRect Chrome::windowResizerRect() const
 {
