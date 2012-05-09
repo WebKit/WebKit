@@ -309,8 +309,7 @@ bool IDBLevelDBBackingStore::deleteDatabase(const String& name)
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
     m_currentTransaction->remove(key);
 
-    transaction->commit();
-    return true;
+    return transaction->commit();
 }
 
 static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vector<char>& stopKey, int64_t objectStoreId, int64_t metaDataType)
@@ -1575,11 +1574,12 @@ void IDBLevelDBBackingStore::Transaction::begin()
     m_backingStore->m_currentTransaction = LevelDBTransaction::create(m_backingStore->m_db.get());
 }
 
-void IDBLevelDBBackingStore::Transaction::commit()
+bool IDBLevelDBBackingStore::Transaction::commit()
 {
     ASSERT(m_backingStore->m_currentTransaction);
-    m_backingStore->m_currentTransaction->commit();
+    bool result = m_backingStore->m_currentTransaction->commit();
     m_backingStore->m_currentTransaction.clear();
+    return result;
 }
 
 void IDBLevelDBBackingStore::Transaction::rollback()

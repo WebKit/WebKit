@@ -113,7 +113,7 @@ public:
     public:
         virtual ~Transaction() { }
         virtual void begin() = 0;
-        virtual void commit() = 0;
+        virtual bool commit() = 0;
         virtual void rollback() = 0;
     };
     virtual PassRefPtr<Transaction> createTransaction() = 0;

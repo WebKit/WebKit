@@ -93,7 +93,7 @@ private:
     public:
         static PassRefPtr<Transaction> create(IDBLevelDBBackingStore*);
         virtual void begin();
-        virtual void commit();
+        virtual bool commit();
         virtual void rollback();
 
     private:

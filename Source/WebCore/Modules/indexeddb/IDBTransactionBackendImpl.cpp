@@ -197,8 +197,10 @@ void IDBTransactionBackendImpl::commit()
 
     m_state = Finished;
     closeOpenCursors();
-    m_transaction->commit();
-    m_callbacks->onComplete();
+    if (m_transaction->commit())
+        m_callbacks->onComplete();
+    else
+        m_callbacks->onAbort();
     m_database->transactionCoordinator()->didFinishTransaction(this);
     m_database->transactionFinished(this);
     m_database = 0;
