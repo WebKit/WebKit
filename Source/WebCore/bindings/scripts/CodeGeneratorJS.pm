@@ -2119,23 +2119,24 @@ sub GenerateImplementation
                         $implIncludes{"ExceptionCode.h"} = 1;
                     }
 
-                    GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
-
-                    if (@{$function->raisesExceptions}) {
-                        push(@implContent, "    ExceptionCode ec = 0;\n");
-                    }
-
-                    if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-                        push(@implContent, "    if (!shouldAllowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
-                        push(@implContent, "        return JSValue::encode(jsNull());\n");
-                        $implIncludes{"JSDOMBinding.h"} = 1;
-                    }
-
+                    # For compatibility with legacy content, the EventListener calls are generated without GenerateArgumentsCountCheck.
                     if ($function->signature->name eq "addEventListener") {
                         push(@implContent, GenerateEventListenerCall($className, "add"));
                     } elsif ($function->signature->name eq "removeEventListener") {
                         push(@implContent, GenerateEventListenerCall($className, "remove"));
                     } else {
+                        GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
+
+                        if (@{$function->raisesExceptions}) {
+                            push(@implContent, "    ExceptionCode ec = 0;\n");
+                        }
+
+                        if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
+                            push(@implContent, "    if (!shouldAllowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                            push(@implContent, "        return JSValue::encode(jsNull());\n");
+                            $implIncludes{"JSDOMBinding.h"} = 1;
+                        }
+
                         my $numParameters = @{$function->parameters};
                         my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
                         GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $implClassName);

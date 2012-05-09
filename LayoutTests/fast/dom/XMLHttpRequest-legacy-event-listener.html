@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test addEventListener() and removeEventListener() fail silently if arguments are missing.");
+
+shouldBe('new XMLHttpRequest().addEventListener("foo")', 'undefined');
+shouldBe('new XMLHttpRequest().removeEventListener("bar")', 'undefined');
+
+shouldBe('new XMLHttpRequest().addEventListener()', 'undefined');
+shouldBe('new XMLHttpRequest().removeEventListener()', 'undefined');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

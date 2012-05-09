@@ -1,0 +1,13 @@
+Test addEventListener() and removeEventListener() fail silently if arguments are missing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new XMLHttpRequest().addEventListener("foo") is undefined
+PASS new XMLHttpRequest().removeEventListener("bar") is undefined
+PASS new XMLHttpRequest().addEventListener() is undefined
+PASS new XMLHttpRequest().removeEventListener() is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

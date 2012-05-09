@@ -1,3 +1,17 @@
+2012-05-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Regression: addEventListener() and removeEventListener() raise an exception on missing args
+        https://bugs.webkit.org/show_bug.cgi?id=85928
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/Window/window-legacy-event-listener-expected.txt: Added.
+        * fast/dom/Window/window-legacy-event-listener.html: Added.
+        * fast/dom/XMLHttpRequest-legacy-event-listener-expected.txt: Added.
+        * fast/dom/XMLHttpRequest-legacy-event-listener.html: Added.
+        * fast/dom/node-legacy-event-listener-expected.txt: Added.
+        * fast/dom/node-legacy-event-listener.html: Added.
+
 2012-05-08  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Gardening, unskip test after r116475.
