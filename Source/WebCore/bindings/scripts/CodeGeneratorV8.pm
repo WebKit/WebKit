@@ -2124,11 +2124,6 @@ sub GenerateImplementationIndexer
     my $hasCustomSetter = $dataNode->extendedAttributes->{"CustomIndexedSetter"} && !$dataNode->extendedAttributes->{"NumericIndexedGetter"};
     my $hasGetter = $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
-    # FIXME: Find a way to not have to special-case HTMLOptionsCollection.
-    if ($interfaceName eq "HTMLOptionsCollection") {
-        $hasGetter = 1;
-    }
-
     # FIXME: Investigate and remove this nastinesss. In V8, named property handling and indexer handling are apparently decoupled,
     # which means that object[X] where X is a number doesn't reach named property indexer. So we need to provide
     # simplistic, mirrored indexer handling in addition to named property handling.
@@ -2138,6 +2133,14 @@ sub GenerateImplementationIndexer
         if ($dataNode->extendedAttributes->{"CustomNamedSetter"}) {
             $hasCustomSetter = 1;
         }
+    }
+
+    my $hasEnumerator = !$isSpecialCase && IsNodeSubType($dataNode);
+
+    # FIXME: Find a way to not have to special-case HTMLOptionsCollection.
+    if ($interfaceName eq "HTMLOptionsCollection") {
+        $hasEnumerator = 1;
+        $hasGetter = 1;
     }
 
     if (!$hasGetter) {
@@ -2181,7 +2184,6 @@ END
     }
 
     my $hasDeleter = $dataNode->extendedAttributes->{"CustomDeleteProperty"};
-    my $hasEnumerator = !$isSpecialCase && IsNodeSubType($dataNode);
     my $setOn = "Instance";
 
     # V8 has access-check callback API (see ObjectTemplate::SetAccessCheckCallbacks) and it's used on DOMWindow
