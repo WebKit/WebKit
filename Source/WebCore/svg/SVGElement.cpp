@@ -26,19 +26,13 @@
 #if ENABLE(SVG)
 #include "SVGElement.h"
 
-#include "Attribute.h"
 #include "CSSCursorImageValue.h"
 #include "DOMImplementation.h"
 #include "Document.h"
 #include "Event.h"
-#include "EventListener.h"
-#include "EventNames.h"
-#include "FrameView.h"
 #include "HTMLNames.h"
 #include "NodeRenderingContext.h"
-#include "RegisteredEventListener.h"
 #include "RenderObject.h"
-#include "ShadowRoot.h"
 #include "SVGCursorElement.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
@@ -47,10 +41,7 @@
 #include "SVGSVGElement.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTextElement.h"
-#include "SVGURIReference.h"
-#include "SVGUseElement.h"
 #include "ScriptEventListener.h"
-#include "StyleResolver.h"
 #include "XMLNames.h"
 
 namespace WebCore {
@@ -423,9 +414,6 @@ bool SVGElement::childShouldCreateRenderer(const NodeRenderingContext& childCont
 void SVGElement::attributeChanged(Attribute* attr)
 {
     ASSERT(attr);
-    if (!attr)
-        return;
-
     StyledElement::attributeChanged(attr);
 
     // When an animated SVG property changes through SVG DOM, svgAttributeChanged() is called, not attributeChanged().
@@ -542,7 +530,7 @@ bool SVGElement::isAnimatableAttribute(const QualifiedName& name)
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, animatableAttributes, ());
 
     if (animatableAttributes.isEmpty()) {
-        animatableAttributes.add(HTMLNames::classAttr);
+        animatableAttributes.add(classAttr);
         animatableAttributes.add(XLinkNames::hrefAttr);
         animatableAttributes.add(SVGNames::amplitudeAttr);
         animatableAttributes.add(SVGNames::azimuthAttr);
