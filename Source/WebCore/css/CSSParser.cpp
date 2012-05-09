@@ -439,63 +439,46 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     }
 }
 
+template <typename CharType>
+static inline bool parseSimpleLength(const CharType* characters, unsigned& length, CSSPrimitiveValue::UnitTypes& unit, double& number)
+{
+    if (length > 2 && (characters[length - 2] | 0x20) == 'p' && (characters[length - 1] | 0x20) == 'x') {
+        length -= 2;
+        unit = CSSPrimitiveValue::CSS_PX;
+    } else if (length > 1 && characters[length - 1] == '%') {
+        length -= 1;
+        unit = CSSPrimitiveValue::CSS_PERCENTAGE;
+    }
+
+    // We rely on charactersToDouble for validation as well. The function
+    // will set "ok" to "false" if the entire passed-in character range does
+    // not represent a double.
+    bool ok;
+    number = charactersToDouble(characters, length, &ok);
+    return ok;
+}
+
 static bool parseSimpleLengthValue(StylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
     bool acceptsNegativeNumbers;
-    bool strict = isStrictParserMode(cssParserMode);
-    unsigned length = string.length();
+    if (!isSimpleLengthPropertyID(propertyId, acceptsNegativeNumbers))
+        return false;
 
+    unsigned length = string.length();
     double number;
-    bool ok;
     CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::CSS_NUMBER;
 
     if (string.is8Bit()) {
-        const LChar* characters8 = string.characters8();
-        if (!characters8)
+        if (!parseSimpleLength(string.characters8(), length, unit, number))
             return false;
-
-        if (!isSimpleLengthPropertyID(propertyId, acceptsNegativeNumbers))
-            return false;
-
-        if (length > 2 && (characters8[length - 2] | 0x20) == 'p' && (characters8[length - 1] | 0x20) == 'x') {
-            length -= 2;
-            unit = CSSPrimitiveValue::CSS_PX;
-        } else if (length > 1 && characters8[length - 1] == '%') {
-            length -= 1;
-            unit = CSSPrimitiveValue::CSS_PERCENTAGE;
-        }
-
-        // We rely on charactersToDouble for validation as well. The function
-        // will set "ok" to "false" if the entire passed-in character range does
-        // not represent a double.
-        number = charactersToDouble(characters8, length, &ok);
     } else {
-        const UChar* characters16 = string.characters16();
-        if (!characters16)
+        if (!parseSimpleLength(string.characters16(), length, unit, number))
             return false;
-
-        if (!isSimpleLengthPropertyID(propertyId, acceptsNegativeNumbers))
-            return false;
-
-        if (length > 2 && (characters16[length - 2] | 0x20) == 'p' && (characters16[length - 1] | 0x20) == 'x') {
-            length -= 2;
-            unit = CSSPrimitiveValue::CSS_PX;
-        } else if (length > 1 && characters16[length - 1] == '%') {
-            length -= 1;
-            unit = CSSPrimitiveValue::CSS_PERCENTAGE;
-        }
-
-        // We rely on charactersToDouble for validation as well. The function
-        // will set "ok" to "false" if the entire passed-in character range does
-        // not represent a double.
-        number = charactersToDouble(characters16, length, &ok);
     }
 
-    if (!ok)
-        return false;
     if (unit == CSSPrimitiveValue::CSS_NUMBER) {
-        if (number && strict)
+        if (number && isStrictParserMode(cssParserMode))
             return false;
         unit = CSSPrimitiveValue::CSS_PX;
     }
