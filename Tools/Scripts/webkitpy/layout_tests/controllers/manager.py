@@ -478,10 +478,10 @@ class Manager(object):
             skipped = skipped.union(self._http_tests())
 
         if num_all_test_files > 1 and not self._options.force:
-            skipped = skipped.union(self._expectations.get_tests_with_result_type(test_expectations.SKIP))
+            skipped.update(self._expectations.get_tests_with_result_type(test_expectations.SKIP))
             if self._options.skip_failing_tests:
-                failing = self._expectations.get_tests_with_result_type(test_expectations.FAIL)
-                self._test_files -= failing
+                skipped.update(self._expectations.get_tests_with_result_type(test_expectations.FAIL))
+                skipped.update(self._expectations.get_tests_with_result_type(test_expectations.FLAKY))
 
         self._test_files -= skipped
 

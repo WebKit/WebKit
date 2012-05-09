@@ -1,3 +1,28 @@
+2012-05-09  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: --skip-failing-tests should also skip flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=85941
+
+        Reviewed by Ojan Vafai.
+
+        This changes --skip-failing-tests so that we skip tests that
+        are believed to pass sometimes as well as tests that are
+        believed to always fail.
+
+        In addition, in testing this I discovered that we had lousy
+        test coverage of the details of retrying test failures and
+        --clobber-old-results, so I wrote some more tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.prepare_lists_and_print_output):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (unit_test_list):
+        (TestPort.__init__):
+        (TestDriver.run_test):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_skip_failing_tests):
+        (MainTest.test_retrying_and_flaky_tests):
+
 2012-05-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] EFL's DRT needs to support LayoutTestController.dumpIconChanges()

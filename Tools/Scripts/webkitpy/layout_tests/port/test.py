@@ -136,6 +136,7 @@ def unit_test_list():
               expected_text="foo\r\r\r\n", actual_text="foo\n")
     tests.add('failures/expected/text.html', actual_text='text_fail-png')
     tests.add('failures/expected/skip_text.html', actual_text='text diff')
+    tests.add('failures/flaky/text.html')
     tests.add('failures/unexpected/missing_text.html', expected_text=None)
     tests.add('failures/unexpected/missing_image.html', expected_image=None)
     tests.add('failures/unexpected/missing_render_tree_dump.html', actual_text="""layer at (0,0) size 800x600
@@ -334,6 +335,7 @@ class TestPort(Port):
         port_name = port_name or 'test-mac-leopard'
         Port.__init__(self, host, port_name, **kwargs)
         self._tests = unit_test_list()
+        self._flakes = set()
         self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'
         self._results_directory = None
 
@@ -513,6 +515,11 @@ class TestDriver(Driver):
 
         audio = None
         actual_text = test.actual_text
+
+        if 'flaky' in test_name and not test_name in self._port._flakes:
+            self._port._flakes.add(test_name)
+            actual_text = 'flaky text failure'
+
         if actual_text and test_args and test_name == 'passes/args.html':
             actual_text = actual_text + ' ' + ' '.join(test_args)
 
