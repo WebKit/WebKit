@@ -1,3 +1,10 @@
+2012-05-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update for media-stream tests
+        https://bugs.webkit.org/show_bug.cgi?id=85952
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Gardening. Skip a failing test, remove an unnecessary platform specific expected file.

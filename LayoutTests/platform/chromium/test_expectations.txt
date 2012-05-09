@@ -76,9 +76,6 @@ BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
 BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
 BUGRNIWA SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
 
-BUGWK85952 SLOW MAC WIN : http/tests/media/media-source/webm/video-media-source-play.html = PASS
-BUGWK85952 SLOW WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS
-
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------
@@ -3928,6 +3925,11 @@ BUGWK85949 SKIP : http/tests/loading/post-in-iframe-with-back-navigation.html = 
 BUGWK85913 MAC : fast/block/positioning/offsetLeft-offsetTop-multicolumn.html = TEXT
 
 BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
+
+BUGWK85952 MAC WIN : http/tests/media/media-source/webm/video-media-source-play.html = PASS TIMEOUT
+BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS TIMEOUT
+BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TIMEOUT
+BUGWK85952 MAC DEBUG : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TEXT
 
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
