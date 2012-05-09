@@ -43,6 +43,7 @@
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
 #include <Settings.h>
+#include <TextIterator.h>
 #include <WebKitMutationObserver.h>
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
@@ -614,4 +615,118 @@ void DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(Evas_Object* ewkVie
         return;
 
     corePage->settings()->setAuthorAndUserStylesEnabled(enabled);
+}
+
+void DumpRenderTreeSupportEfl::setComposition(Evas_Object* ewkView, const char* text, int start, int length)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page || !page->focusController() || !page->focusController()->focusedOrMainFrame())
+        return;
+
+    WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
+    if (!editor || (!editor->canEdit() && !editor->hasComposition()))
+        return;
+
+    const String compositionString = String::fromUTF8(text);
+    Vector<WebCore::CompositionUnderline> underlines;
+    underlines.append(WebCore::CompositionUnderline(0, compositionString.length(), WebCore::Color(0, 0, 0), false));
+    editor->setComposition(compositionString, underlines, start, start + length);
+}
+
+bool DumpRenderTreeSupportEfl::hasComposition(const Evas_Object* ewkView)
+{
+    const WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page || !page->focusController() || !page->focusController()->focusedOrMainFrame())
+        return false;
+
+    const WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
+    if (!editor)
+        return false;
+
+    return editor->hasComposition();
+}
+
+bool DumpRenderTreeSupportEfl::compositionRange(Evas_Object* ewkView, int* start, int* length)
+{
+    *start = *length = 0;
+
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page || !page->focusController() || !page->focusController()->focusedOrMainFrame())
+        return false;
+
+    WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
+    if (!editor || !editor->hasComposition())
+        return false;
+
+    *start = editor->compositionStart();
+    *length = editor->compositionEnd() - *start;
+    return true;
+}
+
+void DumpRenderTreeSupportEfl::confirmComposition(Evas_Object* ewkView, const char* text)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page || !page->focusController() || !page->focusController()->focusedOrMainFrame())
+        return;
+
+    WebCore::Editor* editor = page->focusController()->focusedOrMainFrame()->editor();
+    if (!editor)
+        return;
+
+    if (!editor->hasComposition()) {
+        editor->insertText(String::fromUTF8(text), 0);
+        return;
+    }
+
+    if (text) {
+        editor->confirmComposition(String::fromUTF8(text));
+        return;
+    }
+    editor->confirmComposition();
+}
+
+WebCore::IntRect DumpRenderTreeSupportEfl::firstRectForCharacterRange(Evas_Object* ewkView, int location, int length)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page || !page->focusController() || !page->focusController()->focusedOrMainFrame() || !page->focusController()->focusedOrMainFrame()->editor())
+        return WebCore::IntRect();
+
+    if ((location + length < location) && (location + length))
+        length = 0;
+
+    WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
+    WebCore::Editor* editor = frame->editor();
+
+    RefPtr<WebCore::Range> range = WebCore::TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), location, length);
+    if (!range)
+        return WebCore::IntRect();
+
+    return editor->firstRectForRange(range.get());
+}
+
+bool DumpRenderTreeSupportEfl::selectedRange(Evas_Object* ewkView, int* start, int* length)
+{
+    if (!(start && length))
+        return false;
+
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page || !page->focusController() || !page->focusController()->focusedOrMainFrame())
+        return false;
+
+    WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
+    RefPtr<WebCore::Range> range = frame->selection()->toNormalizedRange().get();
+    if (!range)
+        return false;
+
+    WebCore::Element* selectionRoot = frame->selection()->rootEditableElement();
+    WebCore::Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+
+    RefPtr<WebCore::Range> testRange = WebCore::Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    *start = WebCore::TextIterator::rangeLength(testRange.get());
+
+    WebCore::ExceptionCode ec;
+    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
+    *length = WebCore::TextIterator::rangeLength(testRange.get());
+
+    return true;
 }

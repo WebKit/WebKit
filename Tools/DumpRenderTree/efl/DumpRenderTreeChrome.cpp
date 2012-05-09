@@ -33,6 +33,7 @@
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include "NotImplemented.h"
+#include "TextInputController.h"
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #include "WebCoreTestSupport.h"
 #include "WorkQueue.h"
@@ -366,6 +367,12 @@ void DumpRenderTreeChrome::onWindowObjectCleared(void* userData, Evas_Object*, v
     JSObjectSetProperty(objectClearedInfo->context, objectClearedInfo->windowObject,
                         controllerName.get(),
                         makeEventSender(objectClearedInfo->context, !DumpRenderTreeSupportEfl::frameParent(objectClearedInfo->frame)),
+                        kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
+
+    JSRetainPtr<JSStringRef> textInputControllerName(JSStringCreateWithUTF8CString("textInputController"));
+    JSObjectSetProperty(objectClearedInfo->context, objectClearedInfo->windowObject,
+                        textInputControllerName.get(),
+                        makeTextInputController(objectClearedInfo->context),
                         kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
 
     WebCoreTestSupport::injectInternalsObject(objectClearedInfo->context);

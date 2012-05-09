@@ -15,6 +15,7 @@ SET(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/efl/JSStringUtils.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/LayoutTestControllerEfl.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/PixelDumpSupportEfl.cpp
+    ${TOOLS_DIR}/DumpRenderTree/efl/TextInputController.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/WorkQueueItemEfl.cpp
 )
 

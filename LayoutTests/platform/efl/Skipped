@@ -209,26 +209,18 @@ fast/loader/form-submission-after-beforeunload-cancel.html
 # EFL's DRT needs a PlainTextController implementation
 editing/text-iterator/basic-iteration.html
 
-# EFL's DRT needs a TextInputController
-editing/input/ime-composition-clearpreedit.html
+# EFL's DRT key down bug
+# https://bugs.webkit.org/show_bug.cgi?id=84710
 editing/input/password-echo-passnode.html
 editing/input/password-echo-passnode2.html
-editing/input/password-echo-passnode3.html
-editing/input/password-echo-textnode.html
+
+# EFL's editor doesn't cancel composition as change of value
+# https://bugs.webkit.org/show_bug.cgi?id=85122
 editing/input/setting-input-value-cancel-ime-composition.html
-editing/inserting/caret-position.html
-editing/inserting/insert-composition-whitespace.html
-editing/selection/5825350-1.html
-editing/selection/5825350-2.html
-editing/selection/mixed-editability-10.html
-editing/selection/move-left-right.html
-fast/dom/tab-in-right-alignment.html
-fast/events/ime-composition-events-001.html
+
+# EFL's textarea and textfield doesn't handle whitespace style
+# https://bugs.webkit.org/show_bug.cgi?id=85123
 fast/forms/cursor-at-editable-content-boundary.html
-fast/forms/input-maxlength-ime-completed.html
-fast/forms/input-maxlength-ime-preedit.html
-fast/text/international/thai-cursor-position.html
-svg/text/caret-in-svg-text.xhtml
 
 # EFL's LayoutTestController does not implement setMediaType
 fast/media/print-restores-previous-mediatype.html
@@ -1794,6 +1786,8 @@ transitions/default-timing-function.html
 transitions/move-after-transition.html
 transitions/svg-text-shadow-transition.html
 transitions/svg-transitions.html
+fast/dom/Window/window-properties.html
+fast/dom/prototype-inheritance-2.html
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 editing/input/reveal-contenteditable-on-input-vertically.html

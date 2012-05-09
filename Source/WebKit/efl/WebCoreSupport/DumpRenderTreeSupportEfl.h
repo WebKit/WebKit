@@ -98,6 +98,14 @@ public:
     static void setInteractiveFormValidationEnabled(Evas_Object* ewkView, bool enabled);
     static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
     static void setAuthorAndUserStylesEnabled(Evas_Object* ewkView, bool);
+
+    // TextInputController
+    static void setComposition(Evas_Object*, const char*, int, int);
+    static bool hasComposition(const Evas_Object*);
+    static bool compositionRange(Evas_Object*, int*, int*);
+    static void confirmComposition(Evas_Object*, const char*);
+    static WebCore::IntRect firstRectForCharacterRange(Evas_Object*, int, int);
+    static bool selectedRange(Evas_Object*, int*, int*);
 };
 
 #endif // DumpRenderTreeSupportEfl_h

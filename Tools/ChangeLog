@@ -1,3 +1,28 @@
+2012-05-08  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Implement TextInputController.
+        https://bugs.webkit.org/show_bug.cgi?id=78559
+
+        Reviewed by Martin Robinson.
+
+        TextInputController has been created for an input emulation purpose in DRT.
+        However, not like other ports, EFL doesn't have it.
+        Therefore, this patch will enable EFL port to have an input emulation in DRT.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onWindowObjectCleared):
+        * DumpRenderTree/efl/TextInputController.cpp: Added.
+        (setMarkedTextCallback):
+        (hasMarkedTextCallback):
+        (markedRangeCallback):
+        (insertTextCallback):
+        (unmarkTextCallback):
+        (firstRectForCharacterRangeCallback):
+        (selectedRangeCallback):
+        (makeTextInputController):
+        * DumpRenderTree/efl/TextInputController.h: Added.
+
 2012-04-23  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Pass a WTF::String directly from DRT to ewebkit when possible
