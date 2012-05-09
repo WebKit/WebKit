@@ -50,7 +50,6 @@
 #include "WebWorkerClientImpl.h"
 #include "WebWorkerRunLoop.h"
 #include "platform/WebAudioBus.h"
-#include "platform/WebClipboard.h"
 #include "platform/WebCookie.h"
 #include "platform/WebCookieJar.h"
 #include "platform/WebData.h"
@@ -101,6 +100,7 @@
 
 #include "Worker.h"
 #include "WorkerContextProxy.h"
+#include <public/WebClipboard.h>
 #include <public/WebMimeRegistry.h>
 #include <wtf/Assertions.h>
 

@@ -36,10 +36,11 @@
 #include "Frame.h"
 #include "NativeImageSkia.h"
 #include "platform/WebCommon.h"
-#include "platform/WebDragData.h"
 #include "platform/WebImage.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+
+#include <public/WebDragData.h>
 
 using namespace WebCore;
 

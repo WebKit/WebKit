@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#include "platform/WebDragData.h"
 
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
@@ -40,6 +39,7 @@
 #include "platform/WebURL.h"
 #include "platform/WebVector.h"
 
+#include <public/WebDragData.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 

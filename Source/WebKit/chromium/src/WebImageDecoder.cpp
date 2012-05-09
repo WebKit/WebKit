@@ -35,8 +35,9 @@
 #include "ICOImageDecoder.h"
 #include "SharedBuffer.h"
 #include "platform/WebData.h"
-#include "platform/WebImage.h"
 #include "platform/WebSize.h"
+
+#include <public/WebImage.h>
 
 #if WEBKIT_USING_SKIA
 #include <wtf/OwnPtr.h>

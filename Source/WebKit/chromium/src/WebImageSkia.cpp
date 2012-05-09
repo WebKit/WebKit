@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#include "platform/WebImage.h"
 
 #include "Image.h"
 #include "ImageSource.h"
@@ -39,6 +38,7 @@
 #include "platform/WebData.h"
 #include "platform/WebSize.h"
 
+#include <public/WebImage.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>

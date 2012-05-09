@@ -34,14 +34,12 @@
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "ScrollbarGroup.h"
-#include "platform/WebClipboard.h"
 #include "WebCursorInfo.h"
 #include "WebDataSourceImpl.h"
 #include "WebElement.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebPlugin.h"
 #include "platform/WebRect.h"
 #include "platform/WebString.h"
@@ -75,6 +73,8 @@
 #include "ScrollbarTheme.h"
 #include "UserGestureIndicator.h"
 #include "WheelEvent.h"
+#include <public/Platform.h>
+#include <public/WebClipboard.h>
 
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
@@ -279,7 +279,7 @@ void WebPluginContainerImpl::copy()
     if (!m_webPlugin->hasSelection())
         return;
 
-    webKitPlatformSupport()->clipboard()->writeHTML(m_webPlugin->selectionAsMarkup(), WebURL(), m_webPlugin->selectionAsText(), false);
+    WebKit::Platform::current()->clipboard()->writeHTML(m_webPlugin->selectionAsMarkup(), WebURL(), m_webPlugin->selectionAsText(), false);
 }
 
 WebElement WebPluginContainerImpl::element()

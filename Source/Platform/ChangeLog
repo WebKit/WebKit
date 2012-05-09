@@ -1,3 +1,50 @@
+2012-05-09  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move clipboard to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=85758
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::clipboard):
+        * chromium/public/WebClipboard.h: Added.
+        (WebKit):
+        (WebClipboard):
+        (WebKit::WebClipboard::sequenceNumber):
+        (WebKit::WebClipboard::isFormatAvailable):
+        (WebKit::WebClipboard::readAvailableTypes):
+        (WebKit::WebClipboard::readPlainText):
+        (WebKit::WebClipboard::readHTML):
+        (WebKit::WebClipboard::readImage):
+        (WebKit::WebClipboard::readCustomData):
+        (WebKit::WebClipboard::writePlainText):
+        (WebKit::WebClipboard::writeHTML):
+        (WebKit::WebClipboard::writeURL):
+        (WebKit::WebClipboard::writeImage):
+        (WebKit::WebClipboard::writeDataObject):
+        (WebKit::WebClipboard::~WebClipboard):
+        * chromium/public/WebDragData.h: Added.
+        (WebKit):
+        (WebDragData):
+        (WebKit::WebDragData::~WebDragData):
+        (WebKit::WebDragData::WebDragData):
+        (WebKit::WebDragData::operator=):
+        (WebKit::WebDragData::isNull):
+        * chromium/public/WebImage.h: Added.
+        (WebKit):
+        (WebImage):
+        (WebKit::WebImage::~WebImage):
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::operator=):
+        (WebKit::WebImage::getSkBitmap):
+        (WebKit::WebImage::init):
+        (WebKit::WebImage::getCGImageRef):
+
 2012-05-09  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Adding the possibility of port specific information in MediaStreamDescriptor

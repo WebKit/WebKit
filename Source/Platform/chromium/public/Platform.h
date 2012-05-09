@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class WebAudioBus;
+class WebClipboard;
 class WebFileSystem;
 class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
@@ -58,6 +59,9 @@ public:
     WEBKIT_EXPORT static void initialize(Platform*);
     WEBKIT_EXPORT static void shutdown();
     WEBKIT_EXPORT static Platform* current();
+
+    // Must return non-null.
+    virtual WebClipboard* clipboard() { return 0; }
 
     // Must return non-null.
     virtual WebMimeRegistry* mimeRegistry() { return 0; }

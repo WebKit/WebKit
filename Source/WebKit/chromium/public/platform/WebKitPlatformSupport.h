@@ -51,7 +51,6 @@ namespace WebKit {
 class WebApplicationCacheHost; // FIXME: Does this belong in platform?
 class WebApplicationCacheHostClient; // FIXME: Does this belong in platform?
 class WebBlobRegistry;
-class WebClipboard;
 class WebCookieJar;
 class WebFileUtilities;
 class WebIDBFactory; // FIXME: Does this belong in platform?
@@ -67,9 +66,6 @@ class WebWorkerRunLoop;
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
 class WebKitPlatformSupport : public Platform {
 public:
-    // Must return non-null.
-    virtual WebClipboard* clipboard() { return 0; }
-
     // Must return non-null.
     virtual WebFileUtilities* fileUtilities() { return 0; }
 

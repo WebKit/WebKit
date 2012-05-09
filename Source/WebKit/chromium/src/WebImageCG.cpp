@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#include "platform/WebImage.h"
 
 #include "Image.h"
 #include "ImageSource.h"
@@ -40,6 +39,7 @@
 
 #include <CoreGraphics/CGImage.h>
 
+#include <public/WebImage.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 

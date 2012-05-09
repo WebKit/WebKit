@@ -143,14 +143,14 @@
 #include "WheelEvent.h"
 #include "cc/CCProxy.h"
 #include "painting/GraphicsContextBuilder.h"
-#include "platform/WebDragData.h"
-#include "platform/WebImage.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
 #include <public/Platform.h>
+#include <public/WebDragData.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebGraphicsContext3D.h>
+#include <public/WebImage.h>
 #include <public/WebLayer.h>
 #include <public/WebLayerTreeView.h>
 #include <public/WebPoint.h>
