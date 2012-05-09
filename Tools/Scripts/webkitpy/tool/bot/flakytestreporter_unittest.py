@@ -125,12 +125,12 @@ If you would like to track this test fix with another bug, please close this bug
 component: Tools / Tests
 cc: abarth@webkit.org
 blocked: 50856
-MOCK add_attachment_to_bug: bug_id=50004, description=Failure diff from mock-bot-id filename=failure.diff
+MOCK add_attachment_to_bug: bug_id=60001, description=Failure diff from mock-bot-id filename=failure.diff
 MOCK bug comment: bug_id=50000, cc=None
 --- Begin comment ---
 The dummy-queue encountered the following flaky tests while processing attachment 10000:
 
-foo/bar.html bug 50004 (author: abarth@webkit.org)
+foo/bar.html bug 60001 (author: abarth@webkit.org)
 The dummy-queue is continuing to process your patch.
 --- End comment ---
 

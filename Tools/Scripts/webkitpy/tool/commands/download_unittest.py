@@ -261,8 +261,7 @@ Reason
 component: MOCK component
 cc: MOCK cc
 blocked: 50000
-MOCK reopen_bug 50000 with comment 'Re-opened since this is blocked by 50004'
-MOCK add_patch_to_bug: bug_id=50004, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
 Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
 
@@ -275,6 +274,30 @@ where ATTACHMENT_ID is the ID of this attachment.
 """
         self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
         self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
+
+    def test_create_rollout_resolved(self):
+        expected_stderr = """Preparing rollout for bug 50004.
+Updating working directory
+MOCK create_bug
+bug_title: REGRESSION(r3001): Reason
+bug_description: http://trac.webkit.org/changeset/3001 broke the build:
+Reason
+component: MOCK component
+cc: MOCK cc
+blocked: 50004
+MOCK reopen_bug 50004 with comment 'Re-opened since this is blocked by 60001'
+MOCK add_patch_to_bug: bug_id=60001, description=ROLLOUT of r3001, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
+-- Begin comment --
+Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
+
+If you would like to land the rollout faster, you can use the following command:
+
+  webkit-patch land-attachment ATTACHMENT_ID
+
+where ATTACHMENT_ID is the ID of this attachment.
+-- End comment --
+"""
+        self.assert_execute_outputs(CreateRollout(), [3001, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_rollout(self):
         expected_stderr = """Preparing rollout for bug 50000.

@@ -323,7 +323,7 @@ class MockBugzilla(object):
             log("cc: %s" % cc)
         if blocked:
             log("blocked: %s" % blocked)
-        return 50004
+        return 60001
 
     def quips(self):
         return ["Good artists copy. Great artists steal. - Pablo Picasso"]

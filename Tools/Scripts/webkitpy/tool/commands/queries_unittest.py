@@ -98,12 +98,12 @@ class FailureReasonTest(unittest.TestCase):
         command = FailureReason()
         command.bind_to_tool(tool)
         # This is an artificial example, mostly to test the CommitInfo lookup failure case.
-        self.assertEquals(command._blame_line_for_revision(None), "FAILED to fetch CommitInfo for rNone, likely missing ChangeLog")
+        self.assertEquals(command._blame_line_for_revision(0), "FAILED to fetch CommitInfo for r0, likely missing ChangeLog")
 
         def raising_mock(self):
             raise Exception("MESSAGE")
         tool.checkout().commit_info_for_revision = raising_mock
-        self.assertEquals(command._blame_line_for_revision(None), "FAILED to fetch CommitInfo for rNone, exception: MESSAGE")
+        self.assertEquals(command._blame_line_for_revision(0), "FAILED to fetch CommitInfo for r0, exception: MESSAGE")
 
 
 class PrintExpectationsTest(unittest.TestCase):

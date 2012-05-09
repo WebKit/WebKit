@@ -40,31 +40,51 @@ class MockCommitMessage(object):
         return "This is a fake commit message that is at least 50 characters."
 
 
+committer_list = CommitterList()
+
+mock_revisions = {
+    1: CommitInfo(852, "eric@webkit.org", {
+        "bug_id": 50000,
+        "author_name": "Adam Barth",
+        "author_email": "abarth@webkit.org",
+        "author": committer_list.contributor_by_email("abarth@webkit.org"),
+        "reviewer_text": "Darin Adler",
+        "reviewer": committer_list.committer_by_name("Darin Adler"),
+        "changed_files": [
+            "path/to/file",
+            "another/file",
+        ],
+    }),
+    3001: CommitInfo(3001, "tomz@codeaurora.org", {
+        "bug_id": 50004,
+        "author_name": "Tom Zakrajsek",
+        "author_email": "tomz@codeaurora.org",
+        "author": committer_list.contributor_by_email("tomz@codeaurora.org"),
+        "reviewer_text": "Darin Adler",
+        "reviewer": committer_list.committer_by_name("Darin Adler"),
+        "changed_files": [
+            "path/to/file",
+            "another/file",
+        ],
+    })
+}
+
 class MockCheckout(object):
     def __init__(self):
         # FIXME: It's unclear if a MockCheckout is very useful.  A normal Checkout
         # with a MockSCM/MockFileSystem/MockExecutive is probably better.
         self._filesystem = MockFileSystem()
 
-    # FIXME: This should move onto the Host object, and we should use a MockCommitterList for tests.
-    _committer_list = CommitterList()
-
     def commit_info_for_revision(self, svn_revision):
-        # The real Checkout would probably throw an exception, but this is the only way tests have to get None back at the moment.
-        if not svn_revision:
-            return None
-        return CommitInfo(svn_revision, "eric@webkit.org", {
-            "bug_id": 50000,
-            "author_name": "Adam Barth",
-            "author_email": "abarth@webkit.org",
-            "author": self._committer_list.contributor_by_email("abarth@webkit.org"),
-            "reviewer_text": "Darin Adler",
-            "reviewer": self._committer_list.committer_by_name("Darin Adler"),
-            "changed_files": [
-                "path/to/file",
-                "another/file",
-            ],
-        })
+        # There are legacy tests that all expected these revision numbers to map
+        # to the same commit description (now mock_revisions[1])
+        if svn_revision in [32, 123, 852, 853, 854, 1234, 21654, 21655, 21656]:
+            return mock_revisions[1]
+
+        if svn_revision in mock_revisions:
+            return mock_revisions[svn_revision]
+
+        # any "unrecognized" svn_revision will return None.
 
     def is_path_to_changelog(self, path):
         return self._filesystem.basename(path) == "ChangeLog"

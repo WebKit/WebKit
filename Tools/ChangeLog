@@ -1,3 +1,31 @@
+2012-05-09  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Fix overzealous re-opened since blocked by... message
+        https://bugs.webkit.org/show_bug.cgi?id=86020
+
+        Reviewed by Adam Barth.
+
+        Changed CreateBug behavior to only re-open a blocked bug if it
+        was RESOLVED.  Also had to update the test infrastructure slightly
+        to allow for distinct mock commit revisions, so one could point
+        to a RESOLVED bug for testing while another pointed to an OPEN bug.
+
+        Also moved default created mock bug to be 60001 instead of 50004
+        which already exists as a reference mock bug.
+
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        (MockCheckout.__init__):
+        (MockCheckout.commit_info_for_revision):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla.create_bug):
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (test_create_rollout_resolved):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (FailureReasonTest.test_blame_line_for_revision):
+        * Scripts/webkitpy/tool/steps/createbug.py:
+        (CreateBug.run):
+
 2012-05-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Use suitable viewport values on XHTML-MP pages.
