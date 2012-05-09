@@ -39,7 +39,6 @@ public:
     virtual ~RenderSVGEllipse();
 
 private:
-    virtual bool isSVGEllipse() const { return true; }
     virtual const char* renderName() const { return "RenderSVGEllipse"; }
 
     virtual void createShape();

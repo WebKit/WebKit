@@ -40,7 +40,6 @@ public:
     virtual ~RenderSVGRect();
 
 private:
-    virtual bool isSVGRect() const { return true; }
     virtual const char* renderName() const { return "RenderSVGRect"; }
 
     virtual void createShape();

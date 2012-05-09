@@ -109,7 +109,6 @@ private:
 
     virtual bool isSVGShape() const { return true; }
     virtual const char* renderName() const { return "RenderSVGShape"; }
-    virtual bool isRoundedRect() { return false; }
 
     virtual void layout();
     virtual void paint(PaintInfo&, const LayoutPoint&);
