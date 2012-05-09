@@ -1,3 +1,17 @@
+2012-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not install JavaScriptCore platform-specific headers
+        https://bugs.webkit.org/show_bug.cgi?id=85983
+
+        Reviewed by Gustavo Noronha Silva.
+
+        JavaScriptCore.h includes JSStringRefCF.h unconditionally. It was
+        renamed to JavaScript.h in r29234 and it still exists for
+        compatibility with mac and windows users.
+
+        * GNUmakefile.list.am: Remove JavaScriptCore.h, JSStringRefCF.h
+        and JSStringRefBSTR.h from the sources and headers list.
+
 2012-05-08  Gavin Barraclough  <barraclough@apple.com>
 
         ROLLING OUT r114255

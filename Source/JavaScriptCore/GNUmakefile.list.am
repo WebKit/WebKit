@@ -3,11 +3,8 @@ javascriptcore_h_api += \
 	Source/JavaScriptCore/API/JSContextRef.h \
 	Source/JavaScriptCore/API/JSObjectRef.h \
 	Source/JavaScriptCore/API/JSStringRef.h \
-	Source/JavaScriptCore/API/JSStringRefBSTR.h \
-	Source/JavaScriptCore/API/JSStringRefCF.h \
 	Source/JavaScriptCore/API/JSValueRef.h \
 	Source/JavaScriptCore/API/JavaScript.h \
-	Source/JavaScriptCore/API/JavaScriptCore.h \
 	Source/JavaScriptCore/API/WebKitAvailability.h
 
 javascriptcore_built_nosources += \
@@ -273,13 +270,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/debugger/Debugger.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/APICast.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/APIShims.h \
-	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JavaScriptCore.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JavaScript.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSBase.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSContextRef.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSObjectRef.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSRetainPtr.h \
-	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSStringRefCF.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSStringRef.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSValueRef.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/OpaqueJSString.h \
