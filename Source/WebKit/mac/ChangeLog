@@ -1,3 +1,10 @@
+2012-05-08  Kent Tamura  <tkent@chromium.org>
+
+        Fixe Chromium build, and add a FIXME comment about a layering violation.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-05-08  Jon Lee  <jonlee@apple.com>
 
         Safari warns that it needs to resend the form in an iFrame when going back

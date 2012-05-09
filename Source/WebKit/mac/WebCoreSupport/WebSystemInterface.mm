@@ -170,17 +170,20 @@ void InitWebCoreSystemInterface(void)
     INIT(SetCFURLResponseMIMEType);
 
     INIT(SetMetadataURL);
-    
+
+#if PLATFORM(MAC)
+    // FIXME: We should stop using this file in Chromium.
+
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(CreateVMPressureDispatchOnMainQueue);
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
     INIT(GetMacOSXVersionString);
     INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(CGPathAddRoundedRect);
 #endif
 
@@ -188,13 +191,14 @@ void InitWebCoreSystemInterface(void)
     INIT(CFURLRequestAllowAllPostCaching);
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
     INIT(FilterIsManagedSession);
     INIT(FilterCreateInstance);
     INIT(FilterRelease);
     INIT(FilterWasBlocked);
     INIT(FilterAddData);
     INIT(FilterDataComplete);
+#endif
 #endif
     didInit = true;
 }
