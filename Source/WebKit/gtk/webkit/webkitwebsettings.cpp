@@ -121,7 +121,9 @@ enum {
     PROP_ENABLE_WEBGL,
     PROP_ENABLE_WEB_AUDIO,
     PROP_ENABLE_ACCELERATED_COMPOSITING,
-    PROP_ENABLE_SMOOTH_SCROLLING
+    PROP_ENABLE_SMOOTH_SCROLLING,
+    PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
+    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE
 };
 
 // Create a default user agent string
@@ -972,6 +974,43 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether to enable smooth scrolling"),
                                                          FALSE,
                                                          flags));
+
+    /**
+    * WebKitWebSettings:media-playback-requires-user-gesture
+    *
+    * Whether a user gesture (such as clicking the play button) would
+    * be required to start media playback or load media. This is off
+    * by default, so media playback could start automatically. Setting
+    * it on requires a gesture by the user to start playback, or to load
+    * the media.
+    *
+    * Since: 1.10.0
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
+                                    g_param_spec_boolean("media-playback-requires-user-gesture",
+                                                         _("Media playback requires user gesture"),
+                                                         _("Whether media playback requires user gesture"),
+                                                         FALSE,
+                                                         flags));
+
+    /**
+    * WebKitWebSettings:media-playback-allows-inline
+    *
+    * Whether media playback is full-screen only or inline playback is allowed.
+    * This is true by default, so media playback can be inline. Setting it to
+    * false allows specifying that media playback should be always fullscreen.
+    *
+    * Since: 1.10.0
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
+                                    g_param_spec_boolean("media-playback-allows-inline",
+                                                         _("Media playback allows inline"),
+                                                         _("Whether media playback allows inline"),
+                                                         TRUE,
+                                                         flags));
+
 }
 
 static void webkit_web_settings_init(WebKitWebSettings* web_settings)
@@ -1150,6 +1189,12 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_SMOOTH_SCROLLING:
         priv->enableSmoothScrolling = g_value_get_boolean(value);
         break;
+    case PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE:
+        priv->mediaPlaybackRequiresUserGesture = g_value_get_boolean(value);
+        break;
+    case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
+        priv->mediaPlaybackAllowsInline = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1317,6 +1362,12 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_SMOOTH_SCROLLING:
         g_value_set_boolean(value, priv->enableSmoothScrolling);
+        break;
+    case PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE:
+        g_value_set_boolean(value, priv->mediaPlaybackRequiresUserGesture);
+        break;
+    case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
+        g_value_set_boolean(value, priv->mediaPlaybackAllowsInline);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);

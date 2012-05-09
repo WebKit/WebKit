@@ -81,6 +81,8 @@ struct _WebKitWebSettingsPrivate {
     gboolean enableWebAudio;
     gboolean enableAcceleratedCompositing;
     gboolean enableSmoothScrolling;
+    gboolean mediaPlaybackRequiresUserGesture;
+    gboolean mediaPlaybackAllowsInline;
 };
 
 WEBKIT_API void webkit_web_settings_add_extra_plugin_directory(WebKitWebView*, const gchar* directory);

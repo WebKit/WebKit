@@ -1,3 +1,29 @@
+2012-05-09  Simon Pena  <spena@igalia.com>
+
+        [GTK] Missing WebPreferences for media playback requiring user gestures and inline playback
+        https://bugs.webkit.org/show_bug.cgi?id=85194
+
+        Reviewed by Martin Robinson.
+
+        Expose WebPreferences for media playback requires user gesture and
+        media playback allows inline to GTK side.
+
+        This adds two properties (mediaPlaybackRequiresUserGesture and
+        mediaPlaybackAllowsInline) to GTK WebKit WebSettings, and connects
+        them to the WebKit WebView, so clients can programmatically modify
+        them.
+
+        * webkit/webkitwebsettings.cpp: install new properties and update
+        setter and getter
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        * webkit/webkitwebsettingsprivate.h: add media playback related
+        properties
+        * webkit/webkitwebview.cpp: connect newly added properties
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2012-05-09  Dan Winship  <danw@gnome.org>
 
         [GTK] don't use soup_session_pause_message in webkitdownload
