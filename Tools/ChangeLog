@@ -1,3 +1,19 @@
+2012-05-09  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Remove CYGWIN=tty from environment variable as its no longer supported
+        https://bugs.webkit.org/show_bug.cgi?id=85791
+
+        The CYGWIN=tty environment variable is no longer supported from Cygwin
+        version 1.7.10. This fix avoids addition of this environment variable
+        for Cygwin versions greater than 1.7.9. For supporting older versions
+        i.e. 1.7.9 or older, the script takes care of retaining the environment
+        variable.
+
+        Reviewed by Adam Roben.
+
+        * Scripts/webkitdirs.pm:
+        (setupAppleWinEnv):
+
 2012-05-09  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: --skip-failing-tests should also skip flaky tests
