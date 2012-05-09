@@ -28,8 +28,8 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my $productDir = $ENV{BUILT_PRODUCTS_DIR};
-$productDir = productDir() if !$productDir;
+my $productDir = shift @ARGV;
+$productDir = $ENV{BUILT_PRODUCTS_DIR} if !productDir;
 
 chdirWebKit();
 

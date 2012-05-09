@@ -1,3 +1,13 @@
+2012-05-09  Dan Bernstein  <mitz@apple.com>
+
+        Made build-webkit copy WebKitLibraries to the right location again after r116257
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/build-webkit: Pass the built product directory to copy-webkitlibraries-to-product-directory.
+        * Scripts/copy-webkitlibraries-to-product-directory: Use the first argument, if present, as the
+        product directory.
+
 2012-05-08  Ojan Vafai  <ojan@chromium.org>
 
         Show the chromium non-layout test bots in garden-o-matic

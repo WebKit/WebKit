@@ -245,7 +245,7 @@ if (isGtk()) {
     push @projects, ("Source/WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
 
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
-    (system("perl Tools/Scripts/copy-webkitlibraries-to-product-directory") == 0) or die;
+    (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", $productDir) == 0) or die;
 } elsif (isWinCairo()) {
     (system("perl Tools/Scripts/update-webkit-wincairo-libs") == 0) or die;
 } elsif (isAppleWinWebKit()) {
