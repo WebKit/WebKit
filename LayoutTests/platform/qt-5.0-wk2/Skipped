@@ -587,10 +587,6 @@ http/tests/navigation/https-in-page-cache.html
 # https://bugs.webkit.org/show_bug.cgi?id=83578
 fast/loader/create-frame-in-DOMContentLoaded.html
 
-# [Qt][WK2] REGRESSION(r113678):After this change fast/text/text-stroke-width-cairo-dos.html makes the next test crash
-# https://bugs.webkit.org/show_bug.cgi?id=83582
-fast/text/text-stroke-width-cairo-dos.html
-
 # Missing layoutTestController.numberOfPendingGeolocationPermissionRequests() implementation
 fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 
