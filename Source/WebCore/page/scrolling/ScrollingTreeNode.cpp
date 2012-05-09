@@ -76,6 +76,9 @@ void ScrollingTreeNode::update(ScrollingTreeState* state)
 
     if (state->changedProperties() & ScrollingTreeState::VerticalScrollbarMode)
         m_verticalScrollbarMode = state->verticalScrollbarMode();
+
+    if (state->changedProperties() & ScrollingTreeState::ScrollOrigin)
+        m_scrollOrigin = state->scrollOrigin();
 }
 
 } // namespace WebCore

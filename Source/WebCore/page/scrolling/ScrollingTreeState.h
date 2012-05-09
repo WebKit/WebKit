@@ -61,8 +61,9 @@ public:
         HasEnabledVerticalScrollbar = 1 << 8,
         HorizontalScrollbarMode = 1 << 9,
         VerticalScrollbarMode = 1 << 10,
-        ScrollLayer = 1 << 11,
-        RequestedScrollPosition = 1 << 12,
+        ScrollOrigin = 1 << 11,
+        ScrollLayer = 1 << 12,
+        RequestedScrollPosition = 1 << 13,
     };
 
     bool hasChangedProperties() const { return m_changedProperties; }
@@ -107,6 +108,9 @@ public:
     const IntPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
     void setRequestedScrollPosition(const IntPoint&);
 
+    const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
+    void setScrollOrigin(const IntPoint&);
+
     // Copies the current tree state and clears the changed properties mask in the original.
     PassOwnPtr<ScrollingTreeState> commit();
 
@@ -134,6 +138,7 @@ private:
     ScrollbarMode m_verticalScrollbarMode;
 
     IntPoint m_requestedScrollPosition;
+    IntPoint m_scrollOrigin;
 
 #if PLATFORM(MAC)
     RetainPtr<PlatformLayer> m_platformScrollLayer;

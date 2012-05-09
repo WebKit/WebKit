@@ -1040,8 +1040,11 @@ void RenderLayerCompositor::frameViewDidScroll()
     FrameView* frameView = m_renderView->frameView();
     IntPoint scrollPosition = frameView->scrollPosition();
 
-    if (TiledBacking* tiledBacking = frameView->tiledBacking())
-        tiledBacking->visibleRectChanged(frameView->visibleContentRect(false /* exclude scrollbars */));
+    if (TiledBacking* tiledBacking = frameView->tiledBacking()) {
+        IntRect visibleContentRect = frameView->visibleContentRect(false /* exclude scrollbars */);
+        visibleContentRect.move(toSize(frameView->scrollOrigin()));
+        tiledBacking->visibleRectChanged(visibleContentRect);
+    }
 
     if (!m_scrollLayer)
         return;

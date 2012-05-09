@@ -135,6 +135,8 @@ private:
         ScrollbarMode horizontalScrollbarMode;
         ScrollbarMode verticalScrollbarMode;
 
+        IntPoint scrollOrigin;
+
         IntRect viewportRect;
         IntSize contentsSize;
     };
