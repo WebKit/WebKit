@@ -295,7 +295,6 @@
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };
 		1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1449E286107D4DB400B5793F /* JSCallbackData.cpp */; };
 		144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		144FCE5C14EC79E7000D17A3 /* FractionalLayoutSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */; };
 		144FCE5D14EC79E7000D17A3 /* FractionalLayoutSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		144FCFE014EF2509000D17A3 /* FractionalLayoutRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144FCFDE14EF2509000D17A3 /* FractionalLayoutRect.cpp */; };
 		144FCFE114EF2509000D17A3 /* FractionalLayoutRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCFDF14EF2509000D17A3 /* FractionalLayoutRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7171,7 +7170,6 @@
 		1449E286107D4DB400B5793F /* JSCallbackData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackData.cpp; sourceTree = "<group>"; };
 		144FCE5114EC79BC000D17A3 /* FractionalLayoutUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutUnit.h; sourceTree = "<group>"; };
 		144FCE5414EC79E7000D17A3 /* FractionalLayoutPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutPoint.h; sourceTree = "<group>"; };
-		144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractionalLayoutSize.cpp; sourceTree = "<group>"; };
 		144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutSize.h; sourceTree = "<group>"; };
 		144FCFDE14EF2509000D17A3 /* FractionalLayoutRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FractionalLayoutRect.cpp; sourceTree = "<group>"; };
 		144FCFDF14EF2509000D17A3 /* FractionalLayoutRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FractionalLayoutRect.h; sourceTree = "<group>"; };
@@ -19399,7 +19397,6 @@
 				144FCE5414EC79E7000D17A3 /* FractionalLayoutPoint.h */,
 				144FCFDE14EF2509000D17A3 /* FractionalLayoutRect.cpp */,
 				144FCFDF14EF2509000D17A3 /* FractionalLayoutRect.h */,
-				144FCE5714EC79E7000D17A3 /* FractionalLayoutSize.cpp */,
 				144FCE5814EC79E7000D17A3 /* FractionalLayoutSize.h */,
 				BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */,
 				BCE04C890DAFF7A0007A0F41 /* Generator.h */,
@@ -26007,7 +26004,6 @@
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,
 				41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */,
 				144FCFE014EF2509000D17A3 /* FractionalLayoutRect.cpp in Sources */,
-				144FCE5C14EC79E7000D17A3 /* FractionalLayoutSize.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				A7B070D2130A409C00A3763C /* FrameActionScheduler.cpp in Sources */,
 				974A862214B7ADBB003FDC76 /* FrameDestructionObserver.cpp in Sources */,

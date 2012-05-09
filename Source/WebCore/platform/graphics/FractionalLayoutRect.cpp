@@ -148,11 +148,4 @@ FractionalLayoutRect enclosingFractionalLayoutRect(const FloatRect& rect)
 #endif
 }
 
-IntRect pixelSnappedIntRect(const FractionalLayoutRect& rect)
-{
-    IntPoint roundedLocation = roundedIntPoint(rect.location());
-    return IntRect(roundedLocation, IntSize((rect.x() + rect.width()).round() - roundedLocation.x(),
-                                            (rect.y() + rect.height()).round() - roundedLocation.y()));
-}
-
 } // namespace WebCore

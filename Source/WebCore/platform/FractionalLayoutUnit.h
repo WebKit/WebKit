@@ -66,24 +66,38 @@ public:
     // However due to compiler and platform differences adding those are non-trivial.
     // See https://bugs.webkit.org/show_bug.cgi?id=83848 for details.
     
-    FractionalLayoutUnit() : m_value(0) { }
-    FractionalLayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    FractionalLayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    FractionalLayoutUnit(unsigned int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    FractionalLayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    FractionalLayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    FractionalLayoutUnit(const FractionalLayoutUnit& value) { m_value = value.rawValue(); }
+    inline FractionalLayoutUnit() : m_value(0) { }
+#if ENABLE(SUBPIXEL_LAYOUT)
+    inline FractionalLayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    inline FractionalLayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    inline FractionalLayoutUnit(unsigned int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    inline FractionalLayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    inline FractionalLayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+#else
+    inline FractionalLayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    inline FractionalLayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    inline FractionalLayoutUnit(unsigned int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    inline FractionalLayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    inline FractionalLayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+#endif
+    inline FractionalLayoutUnit(const FractionalLayoutUnit& value) { m_value = value.rawValue(); }
 
+#if ENABLE(SUBPIXEL_LAYOUT)
     inline int toInt() const { return m_value / kFixedPointDenominator; }
-    inline unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
     inline float toFloat() const { return static_cast<float>(m_value) / kFixedPointDenominator; }
     inline double toDouble() const { return static_cast<double>(m_value) / kFixedPointDenominator; }
+#else
+    inline int toInt() const { return m_value; }
+    inline float toFloat() const { return static_cast<float>(m_value); }
+    inline double toDouble() const { return static_cast<double>(m_value); }
+#endif
+    inline unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
 
-    operator int() const { return toInt(); }
-    operator unsigned() const { return toUnsigned(); }
-    operator float() const { return toFloat(); }
-    operator double() const { return toDouble(); }
-    operator bool() const { return m_value; }
+    inline operator int() const { return toInt(); }
+    inline operator unsigned() const { return toUnsigned(); }
+    inline operator float() const { return toFloat(); }
+    inline operator double() const { return toDouble(); }
+    inline operator bool() const { return m_value; }
 
     inline FractionalLayoutUnit operator++(int)
     {
@@ -111,15 +125,23 @@ public:
     inline int ceil() const
 #endif
     {
+#if ENABLE(SUBPIXEL_LAYOUT)
         if (m_value > 0)
             return (m_value + kFixedPointDenominator - 1) / kFixedPointDenominator;
         return (m_value - kFixedPointDenominator + 1) / kFixedPointDenominator;
+#else
+        return m_value;
+#endif
     }
     inline int round() const
     {
+#if ENABLE(SUBPIXEL_LAYOUT)
         if (m_value > 0)
             return (m_value + (kFixedPointDenominator / 2)) / kFixedPointDenominator;
         return (m_value - (kFixedPointDenominator / 2)) / kFixedPointDenominator;
+#else
+        return m_value;
+#endif
     }
 
     inline int floor() const

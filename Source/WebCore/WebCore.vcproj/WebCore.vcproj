@@ -28829,10 +28829,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FractionalLayoutSize.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\FractionalLayoutSize.h"
 					>
 				</File>

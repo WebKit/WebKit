@@ -3252,7 +3252,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FractionalLayoutPoint.h \
 	Source/WebCore/platform/graphics/FractionalLayoutRect.cpp \
 	Source/WebCore/platform/graphics/FractionalLayoutRect.h \
-	Source/WebCore/platform/graphics/FractionalLayoutSize.cpp \
 	Source/WebCore/platform/graphics/FractionalLayoutSize.h \
 	Source/WebCore/platform/graphics/GeneratorGeneratedImage.cpp \
 	Source/WebCore/platform/graphics/GeneratorGeneratedImage.h \

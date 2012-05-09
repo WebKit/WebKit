@@ -56,7 +56,7 @@ public:
     FractionalLayoutSize size() const { return m_size; }
 
     IntPoint pixelSnappedLocation() const { return roundedIntPoint(m_location); }
-    IntSize pixelSnappedSize() const { return pixelSnappedIntSize(m_size, m_location); }
+    IntSize pixelSnappedSize() const { return IntSize(snapSizeToPixel(m_size.width(), m_location.x()), snapSizeToPixel(m_size.height(), m_location.y())); }
 
     void setLocation(const FractionalLayoutPoint& location) { m_location = location; }
     void setSize(const FractionalLayoutSize& size) { m_size = size; }
@@ -184,9 +184,19 @@ inline bool operator!=(const FractionalLayoutRect& a, const FractionalLayoutRect
     return a.location() != b.location() || a.size() != b.size();
 }
 
+inline IntRect pixelSnappedIntRect(const FractionalLayoutRect& rect)
+{
+#if ENABLE(SUBPIXEL_LAYOUT)
+    IntPoint roundedLocation = roundedIntPoint(rect.location());
+    return IntRect(roundedLocation, IntSize((rect.x() + rect.width()).round() - roundedLocation.x(),
+                                            (rect.y() + rect.height()).round() - roundedLocation.y()));
+#else
+    return IntRect(rect);
+#endif
+}
+
 IntRect enclosingIntRect(const FractionalLayoutRect&);
 FractionalLayoutRect enclosingFractionalLayoutRect(const FloatRect&);
-IntRect pixelSnappedIntRect(const FractionalLayoutRect&);
 
 } // namespace WebCore
 

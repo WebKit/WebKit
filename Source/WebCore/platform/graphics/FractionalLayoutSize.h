@@ -145,8 +145,6 @@ inline IntSize roundedIntSize(const FractionalLayoutSize& s)
     return IntSize(s.width().round(), s.height().round());
 }
 
-IntSize pixelSnappedIntSize(const FractionalLayoutSize&, const FractionalLayoutPoint&);
-
 } // namespace WebCore
 
 #endif // FractionalLayoutSize_h
