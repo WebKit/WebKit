@@ -1,3 +1,42 @@
+2012-05-09  Adrienne Walker  <enne@google.com>
+
+        Update compositing/RTL tests to fail if the root layer is shifted incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=85820
+
+        Reviewed by James Robinson.
+
+        For the Chromium port, if the root layer was shifted incorrectly, the
+        non-composited red indicator layers would get drawn outside the root
+        layers bounds, making it impossible to see if the test was failing.
+
+        Also turn off overflow:hidden because compositing/ tests have mock
+        scrollbars. This makes it much easier to debug these tests locally.
+
+        * compositing/rtl/rtl-absolute-expected.png:
+        * compositing/rtl/rtl-absolute-overflow-expected.png:
+        * compositing/rtl/rtl-absolute-overflow-expected.txt:
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.png:
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt:
+        * compositing/rtl/rtl-absolute-overflow-scrolled.html:
+        * compositing/rtl/rtl-absolute-overflow.html:
+        * compositing/rtl/rtl-absolute.html:
+        * compositing/rtl/rtl-fixed-expected.png:
+        * compositing/rtl/rtl-fixed-overflow-expected.png:
+        * compositing/rtl/rtl-fixed-overflow-expected.txt:
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.png:
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+        * compositing/rtl/rtl-fixed-overflow-scrolled.html:
+        * compositing/rtl/rtl-fixed-overflow.html:
+        * compositing/rtl/rtl-fixed.html:
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.png:
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.txt:
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.png:
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.txt:
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.png:
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.txt:
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.png:
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.txt:
+
 2012-05-09  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt

@@ -3,7 +3,8 @@
 <style>
     body {
         direction: rtl;
-        overflow: hidden;
+        margin: 0px;
+        background-color: red;
     }
 
     .positioned {
@@ -23,6 +24,12 @@
         background-color: green;
     }
 
+    #root {
+        width: 100%;
+        height: 100%;
+        background-color: white;
+    }
+
     #layertree {
         position: absolute;
         top: 10000px;
@@ -40,6 +47,7 @@
     window.addEventListener('load', doTest, false);
 </script>
 <body>
+    <div id="root"></div>
     <div class="positioned indicator"></div>
     <div class="positioned layer"></div>
 
