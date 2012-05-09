@@ -1,3 +1,10 @@
+2012-05-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+        video-media-source-seek.html is also SLOW?
+
 2012-05-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] http/tests/loading/pdf-commit-load-callbacks.html is failing

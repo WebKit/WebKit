@@ -77,6 +77,7 @@ BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
 BUGRNIWA SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
 
 BUGWK85952 SLOW MAC WIN : http/tests/media/media-source/webm/video-media-source-play.html = PASS
+BUGWK85952 SLOW WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
