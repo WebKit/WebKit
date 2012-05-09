@@ -1,3 +1,18 @@
+2012-05-09  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Expose WebPluginContainer of WebPlugin to embedder
+        https://bugs.webkit.org/show_bug.cgi?id=85916
+
+        Reviewed by Darin Fisher.
+
+        The browser plugin needs to access its current guest's  WebPluginContainer
+        so that it can replace the guest with another guest WebPlugin when navigating
+        across processes.
+
+        * public/WebPlugin.h:
+        (WebPlugin):
+        (WebKit::WebPlugin::container):
+
 2012-05-09  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move clipboard to Platform.h
