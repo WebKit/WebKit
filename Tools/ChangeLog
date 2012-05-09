@@ -1,3 +1,17 @@
+2012-05-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] LayoutTestController addUserScript implementation
+        https://bugs.webkit.org/show_bug.cgi?id=84718
+
+        Reviewed by Antonio Gomes.
+
+        Added implementation of addUserScript() to LayoutTestController.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues): clear added user scripts
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::addUserScript): added implementation
+
 2012-05-09  Dan Bernstein  <mitz@apple.com>
 
         Made build-webkit copy WebKitLibraries to the right location again after r116257

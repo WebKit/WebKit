@@ -694,9 +694,9 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         fprintf(stderr, "LayoutTestController::overridePreference tried to override unknown preference '%s'.\n", value->ustring().utf8().data());
 }
 
-void LayoutTestController::addUserScript(JSStringRef, bool, bool)
+void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::addUserScript(browser->mainView(), String(source->ustring().impl()), runAtStart, allFrames);
 }
 
 void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)

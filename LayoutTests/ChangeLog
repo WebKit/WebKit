@@ -1,3 +1,14 @@
+2012-05-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] LayoutTestController addUserScript implementation
+        https://bugs.webkit.org/show_bug.cgi?id=84718
+
+        Reviewed by Antonio Gomes.
+
+        Unskipped corresponding testcases.
+
+        * platform/efl/Skipped:
+
 2012-05-09  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.

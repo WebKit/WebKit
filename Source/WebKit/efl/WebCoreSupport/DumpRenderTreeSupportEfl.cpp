@@ -380,6 +380,26 @@ void DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(Evas
     page->settings()->setLoadsSiteIconsIgnoringImageLoadingSetting(loadsSiteIconsIgnoringImageLoadingPreferences);
 }
 
+void DumpRenderTreeSupportEfl::addUserScript(const Evas_Object* ewkView, const String& sourceCode, bool runAtStart, bool allFrames)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    page->group().addUserScriptToWorld(WebCore::mainThreadNormalWorld(), sourceCode, WebCore::KURL(),
+                                       nullptr, nullptr, runAtStart ? WebCore::InjectAtDocumentStart : WebCore::InjectAtDocumentEnd,
+                                       allFrames ? WebCore::InjectInAllFrames : WebCore::InjectInTopFrameOnly);
+}
+
+void DumpRenderTreeSupportEfl::clearUserScripts(const Evas_Object* ewkView)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    page->group().removeUserScriptsFromWorld(WebCore::mainThreadNormalWorld());
+}
+
 void DumpRenderTreeSupportEfl::addUserStyleSheet(const Evas_Object* ewkView, const String& sourceCode, bool allFrames)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);

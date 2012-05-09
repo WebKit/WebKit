@@ -351,21 +351,6 @@ fast/parser/pre-html5-parser-quirks.html
 # EFL's LayoutTestController overridePreference does not implement WebKitOfflineWebApplicationCacheEnabled preference
 http/tests/appcache/disabled.html
 
-# EFL's LayoutTestController does not implement addUserScript
-userscripts/document-element-available-at-start.html
-userscripts/script-not-run-for-fragments.html
-userscripts/script-run-at-end.html
-userscripts/script-run-at-start.html
-userscripts/user-script-all-frames.html
-userscripts/user-script-audio-document.html
-userscripts/user-script-image-document.html
-userscripts/user-script-plugin-document.html
-userscripts/user-script-top-frame-only.html
-userscripts/user-script-video-document.html
-userscripts/user-style-top-frame-only.html
-userscripts/window-onerror-for-isolated-world-1.html
-userscripts/window-onerror-for-isolated-world-2.html
-
 # EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
@@ -1007,6 +992,7 @@ fast/spatial-navigation/snav-fully-aligned-horizontally.html
 fast/spatial-navigation/snav-iframe-no-scrollable-content.html
 fast/spatial-navigation/snav-multiple-select.html
 fast/spatial-navigation/snav-single-select.html
+userscripts/user-script-plugin-document.html
 
 # BUG: Needs a grayish canvas background. See DumpRenderTree/chromium/WebViewHost::displayRepaintMask().
 fast/repaint/absolute-position-change-containing-block.html
@@ -1349,6 +1335,8 @@ http/tests/websocket/tests/hixie76/unicode.html
 http/tests/websocket/tests/hixie76/url-no-trailing-slash.html
 http/tests/websocket/tests/hixie76/url-with-credential.html
 http/tests/websocket/tests/hixie76/websocket-protocol-ignored.html
+userscripts/user-style-top-frame-only.html
+userscripts/window-onerror-for-isolated-world-2.html
 
 # Unexpected flakiness (tests timed out)
 http/tests/websocket/tests/hixie76/close-on-unload-and-force-gc.html
@@ -1945,6 +1933,7 @@ compositing/webgl/webgl-nonpremultiplied-blend.html
 compositing/webgl/webgl-reflection.html
 fast/text/zero-font-size.html
 fast/spatial-navigation/snav-multiple-select-focusring.html
+userscripts/script-run-at-end.html
 
 # This test requires flac codec
 media/media-can-play-flac-audio.html
