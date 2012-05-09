@@ -552,7 +552,7 @@ Structure* JSObject::createInheritorID(JSGlobalData& globalData)
     return m_inheritorID.get();
 }
 
-PropertyStorage JSObject::growPropertyStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)
+void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)
 {
     ASSERT(newSize > oldSize);
 
@@ -580,7 +580,7 @@ PropertyStorage JSObject::growPropertyStorage(JSGlobalData& globalData, size_t o
     }
 
     ASSERT(newPropertyStorage);
-    return newPropertyStorage;
+    m_propertyStorage.set(globalData, this, newPropertyStorage);
 }
 
 bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)

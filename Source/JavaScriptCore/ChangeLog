@@ -1,3 +1,31 @@
+2012-05-08  Gavin Barraclough  <barraclough@apple.com>
+
+        ROLLING OUT r114255
+        
+        GC in the middle of JSObject::allocatePropertyStorage can cause badness
+        https://bugs.webkit.org/show_bug.cgi?id=83839
+
+        Reviewed by nobody.
+
+        This breaks the world, with COLLECT_ON_EVERY_ALLOCATION enabled.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::allocatePropertyStorage):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::isUsingInlineStorage):
+        (JSC):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::transitionTo):
+        * runtime/Structure.cpp:
+        (JSC):
+        * runtime/Structure.h:
+        (JSC::Structure::didTransition):
+
 2012-05-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Heap should not continually allocate new pages in steady state

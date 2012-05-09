@@ -212,9 +212,8 @@ namespace JSC {
         bool staticFunctionsReified() { return structure()->staticFunctionsReified(); }
         void reifyStaticFunctionsForDelete(ExecState* exec);
 
-        JS_EXPORT_PRIVATE PropertyStorage growPropertyStorage(JSGlobalData&, size_t oldSize, size_t newSize);
+        JS_EXPORT_PRIVATE void allocatePropertyStorage(JSGlobalData&, size_t oldSize, size_t newSize);
         bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage.get()) == static_cast<const void*>(this + 1); }
-        void setPropertyStorage(JSGlobalData&, PropertyStorage, Structure*);
 
         void* addressOfPropertyStorage()
         {
@@ -453,14 +452,6 @@ inline bool JSObject::isGlobalThis() const
     return structure()->typeInfo().type() == GlobalThisType;
 }
 
-inline void JSObject::setPropertyStorage(JSGlobalData& globalData, PropertyStorage storage, Structure* structure)
-{
-    ASSERT(storage);
-    ASSERT(structure);
-    setStructure(globalData, structure);
-    m_propertyStorage.set(globalData, this, storage);
-}
-
 inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)
 {
     return JSFinalObject::create(exec, structure);
@@ -672,11 +663,10 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
         if ((mode == PutModePut) && !isExtensible())
             return false;
 
-        PropertyStorage newStorage = propertyStorage();
-        if (structure()->shouldGrowPropertyStorage())
-            newStorage = growPropertyStorage(globalData, structure()->propertyStorageCapacity(), structure()->suggestedNewPropertyStorageSize());
+        size_t currentCapacity = structure()->propertyStorageCapacity();
         offset = structure()->addPropertyWithoutTransition(globalData, propertyName, attributes, specificFunction);
-        setPropertyStorage(globalData, newStorage, structure());
+        if (currentCapacity != structure()->propertyStorageCapacity())
+            allocatePropertyStorage(globalData, currentCapacity, structure()->propertyStorageCapacity());
 
         ASSERT(offset < structure()->propertyStorageCapacity());
         putDirectOffset(globalData, offset, value);
@@ -688,13 +678,12 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
 
     size_t offset;
     size_t currentCapacity = structure()->propertyStorageCapacity();
-    if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, specificFunction, offset)) {
-        PropertyStorage newStorage = propertyStorage(); 
+    if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, specificFunction, offset)) {    
         if (currentCapacity != structure->propertyStorageCapacity())
-            newStorage = growPropertyStorage(globalData, currentCapacity, structure->propertyStorageCapacity());
+            allocatePropertyStorage(globalData, currentCapacity, structure->propertyStorageCapacity());
 
         ASSERT(offset < structure->propertyStorageCapacity());
-        setPropertyStorage(globalData, newStorage, structure);
+        setStructure(globalData, structure);
         putDirectOffset(globalData, offset, value);
         // This is a new property; transitions with specific values are not currently cachable,
         // so leave the slot in an uncachable state.
@@ -738,14 +727,13 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
     if ((mode == PutModePut) && !isExtensible())
         return false;
 
-    PropertyStorage newStorage = propertyStorage();
-    if (structure()->shouldGrowPropertyStorage())
-        newStorage = growPropertyStorage(globalData, structure()->propertyStorageCapacity(), structure()->suggestedNewPropertyStorageSize());
-
     Structure* structure = Structure::addPropertyTransition(globalData, this->structure(), propertyName, attributes, specificFunction, offset);
 
+    if (currentCapacity != structure->propertyStorageCapacity())
+        allocatePropertyStorage(globalData, currentCapacity, structure->propertyStorageCapacity());
+
     ASSERT(offset < structure->propertyStorageCapacity());
-    setPropertyStorage(globalData, newStorage, structure);
+    setStructure(globalData, structure);
     putDirectOffset(globalData, offset, value);
     // This is a new property; transitions with specific values are not currently cachable,
     // so leave the slot in an uncachable state.
@@ -779,20 +767,18 @@ inline void JSObject::putDirect(JSGlobalData& globalData, const Identifier& prop
 inline void JSObject::putDirectWithoutTransition(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
-    PropertyStorage newStorage = propertyStorage();
-    if (structure()->shouldGrowPropertyStorage())
-        newStorage = growPropertyStorage(globalData, structure()->propertyStorageCapacity(), structure()->suggestedNewPropertyStorageSize());
+    size_t currentCapacity = structure()->propertyStorageCapacity();
     size_t offset = structure()->addPropertyWithoutTransition(globalData, propertyName, attributes, getJSFunction(value));
-    setPropertyStorage(globalData, newStorage, structure());
+    if (currentCapacity != structure()->propertyStorageCapacity())
+        allocatePropertyStorage(globalData, currentCapacity, structure()->propertyStorageCapacity());
     putDirectOffset(globalData, offset, value);
 }
 
 inline void JSObject::transitionTo(JSGlobalData& globalData, Structure* newStructure)
 {
-    PropertyStorage newStorage = propertyStorage();
     if (structure()->propertyStorageCapacity() != newStructure->propertyStorageCapacity())
-        newStorage = growPropertyStorage(globalData, structure()->propertyStorageCapacity(), newStructure->propertyStorageCapacity());
-    setPropertyStorage(globalData, newStorage, newStructure);
+        allocatePropertyStorage(globalData, structure()->propertyStorageCapacity(), newStructure->propertyStorageCapacity());
+    setStructure(globalData, newStructure);
 }
 
 inline JSValue JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const

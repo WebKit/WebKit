@@ -62,6 +62,7 @@ EXPORTS
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
+    ?allocatePropertyStorage@JSObject@JSC@@QAEXAAVJSGlobalData@2@II@Z
     ?allocateSlowCase@MarkedAllocator@JSC@@AAEPAXXZ
     ?append@StringBuilder@WTF@@QAEXPBEI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
@@ -209,7 +210,6 @@ EXPORTS
     ?globalExec@JSGlobalObject@JSC@@QAEPAVExecState@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
     ?grow@HandleSet@JSC@@AAEXXZ
-    ?growPropertyStorage@JSObject@JSC@@QAEPAV?$WriteBarrierBase@W4Unknown@JSC@@@2@AAVJSGlobalData@2@II@Z
     ?hasInstance@JSObject@JSC@@SA_NPAV12@PAVExecState@2@VJSValue@2@2@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?hasProperty@JSObject@JSC@@QBE_NPAVExecState@2@I@Z
@@ -320,7 +320,6 @@ EXPORTS
     ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVUString@2@@Z
     ?stopSampling@JSGlobalData@JSC@@QAEXXZ
     ?substringSharingImpl@UString@JSC@@QBE?AV12@II@Z
-    ?suggestedNewPropertyStorageSize@Structure@JSC@@QAEIXZ
     ?symbolTableGet@JSVariableObject@JSC@@IAE_NABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?synthesizePrototype@JSValue@JSC@@QBEPAVJSObject@2@PAVExecState@2@@Z
     ?thisObject@DebuggerCallFrame@JSC@@QBEPAVJSObject@2@XZ

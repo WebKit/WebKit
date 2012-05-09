@@ -102,8 +102,6 @@ namespace JSC {
         bool isFrozen(JSGlobalData&);
         bool isExtensible() const { return !m_preventExtensions; }
         bool didTransition() const { return m_didTransition; }
-        bool shouldGrowPropertyStorage() { return propertyStorageCapacity() == propertyStorageSize(); }
-        JS_EXPORT_PRIVATE size_t suggestedNewPropertyStorageSize(); 
 
         Structure* flattenDictionaryStructure(JSGlobalData&, JSObject*);
 
