@@ -40,6 +40,8 @@
 #include <public/WebMediaStreamComponent.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebString.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
@@ -64,6 +66,29 @@ void WebMediaStreamDescriptor::reset()
 WebString WebMediaStreamDescriptor::label() const
 {
     return m_private->label();
+}
+
+class ExtraDataContainer : public WebCore::MediaStreamDescriptor::ExtraData {
+public:
+    ExtraDataContainer(WebMediaStreamDescriptor::ExtraData* extraData) : m_extraData(WTF::adoptPtr(extraData)) { }
+
+    WebMediaStreamDescriptor::ExtraData* extraData() { return m_extraData.get(); }
+
+private:
+    OwnPtr<WebMediaStreamDescriptor::ExtraData> m_extraData;
+};
+
+WebMediaStreamDescriptor::ExtraData* WebMediaStreamDescriptor::extraData() const
+{
+    RefPtr<MediaStreamDescriptor::ExtraData> data = m_private->extraData();
+    if (!data)
+        return 0;
+    return static_cast<ExtraDataContainer*>(data.get())->extraData();
+}
+
+void WebMediaStreamDescriptor::setExtraData(ExtraData* extraData)
+{
+    m_private->setExtraData(new ExtraDataContainer(extraData));
 }
 
 // FIXME: Cleanup when the chromium code has switched to the split sources implementation.

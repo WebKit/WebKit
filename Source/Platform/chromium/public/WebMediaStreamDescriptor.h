@@ -42,6 +42,11 @@ class WebString;
 
 class WebMediaStreamDescriptor {
 public:
+    class ExtraData {
+    public:
+        virtual ~ExtraData() { }
+    };
+
     WebMediaStreamDescriptor() { }
     WebMediaStreamDescriptor(const WebMediaStreamDescriptor& other) { assign(other); }
     ~WebMediaStreamDescriptor() { reset(); }
@@ -68,6 +73,13 @@ public:
 
     WEBKIT_EXPORT void audioSources(WebVector<WebMediaStreamComponent>&) const;
     WEBKIT_EXPORT void videoSources(WebVector<WebMediaStreamComponent>&) const;
+
+    // Extra data associated with this WebMediaStreamDescriptor.
+    // If non-null, the extra data pointer will be deleted when the object is destroyed.
+    // Setting the extra data pointer will cause any existing non-null
+    // extra data pointer to be deleted.
+    WEBKIT_EXPORT ExtraData* extraData() const;
+    WEBKIT_EXPORT void setExtraData(ExtraData*);
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaStreamDescriptor(WebCore::MediaStreamDescriptor*);

@@ -1,3 +1,17 @@
+2012-05-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Adding the possibility of port specific information in MediaStreamDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=85794
+
+        Reviewed by Adam Barth.
+
+        To facilitate for ports I have added an ExtraData field that can be used for whatever purpose is needed.
+
+        * chromium/public/WebMediaStreamDescriptor.h:
+        (ExtraData):
+        (WebKit::WebMediaStreamDescriptor::ExtraData::~ExtraData):
+        (WebMediaStreamDescriptor):
+
 2012-05-07  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move fileSystem to Platform.h

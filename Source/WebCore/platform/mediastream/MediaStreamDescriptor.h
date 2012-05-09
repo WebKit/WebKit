@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +49,11 @@ public:
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
 public:
+    class ExtraData : public RefCounted<ExtraData> {
+    public:
+        virtual ~ExtraData() { }
+    };
+
     static PassRefPtr<MediaStreamDescriptor> create(const String& label, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
     {
         return adoptRef(new MediaStreamDescriptor(label, audioSources, videoSources));
@@ -67,6 +73,9 @@ public:
     bool ended() const { return m_ended; }
     void setEnded() { m_ended = true; }
 
+    PassRefPtr<ExtraData> extraData() const { return m_extraData; }
+    void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
+
 private:
     MediaStreamDescriptor(const String& label, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
         : m_owner(0)
@@ -85,6 +94,8 @@ private:
     Vector<RefPtr<MediaStreamComponent> > m_audioComponents;
     Vector<RefPtr<MediaStreamComponent> > m_videoComponents;
     bool m_ended;
+
+    RefPtr<ExtraData> m_extraData;
 };
 
 typedef Vector<RefPtr<MediaStreamDescriptor> > MediaStreamDescriptorVector;
