@@ -64,7 +64,7 @@ private:
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 
     // LayerTreeHostCA
-    virtual void platformInitialize(LayerTreeContext&);
+    virtual void platformInitialize();
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
 
     // AbstractCACFLayerTreeHost

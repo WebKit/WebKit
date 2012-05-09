@@ -1,3 +1,10 @@
+2012-05-08  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed build fix.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h:
+        (LayerTreeHostCAWin):
+
 2012-05-08  Anders Carlsson  <andersca@apple.com>
 
         DrawingAreaProxyImpl doesn't work with window server hosting
