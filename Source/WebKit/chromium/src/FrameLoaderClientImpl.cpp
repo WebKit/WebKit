@@ -635,8 +635,14 @@ void FrameLoaderClientImpl::dispatchDidNavigateWithinPage()
     // didStopLoading only when loader is completed so that we don't fire
     // them for fragment redirection that happens in window.onload handler.
     // See https://bugs.webkit.org/show_bug.cgi?id=31838
-    bool loaderCompleted =
-        !webView->page()->mainFrame()->loader()->activeDocumentLoader()->isLoadingInAPISense();
+    //
+    // FIXME: Although FrameLoader::loadInSameDocument which invokes this
+    // method does not have a provisional document loader, we're seeing crashes
+    // where the FrameLoader is in provisional state, and thus
+    // activeDocumentLoader returns 0. Lacking any understanding of how this
+    // can happen, we do this check here to avoid crashing.
+    FrameLoader* loader = webView->page()->mainFrame()->loader();
+    bool loaderCompleted = !(loader->activeDocumentLoader() && loader->activeDocumentLoader()->isLoadingInAPISense());
 
     // Generate didStartLoading if loader is completed.
     if (webView->client() && loaderCompleted)
