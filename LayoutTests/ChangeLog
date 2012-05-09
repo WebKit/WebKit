@@ -1,3 +1,55 @@
+2012-05-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][DRT] Add baselines for new CSS cases after r116438
+        https://bugs.webkit.org/show_bug.cgi?id=85967
+
+        Unreviewed, add EFL baselines for new tests after r116438.
+
+        * platform/efl/css2.1/20110323/first-letter-000-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-000-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-003a-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-003a-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-003b-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-dynamic-003b-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-inherit-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-inherit-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-003-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-003-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-004-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-004-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-005-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-005-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-006-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-006-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-007-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-nested-007-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-001-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-001-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-002-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-002-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-003-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-003-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-004-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-004-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-005-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-005-expected.txt: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-006-expected.png: Added.
+        * platform/efl/css2.1/20110323/first-letter-quote-006-expected.txt: Added.
+        * platform/efl/fast/css/first-letter-nested-positioned-expected.png: Added.
+        * platform/efl/fast/css/first-letter-nested-positioned-expected.txt: Added.
+        * platform/efl/fast/css/first-letter-quotes-no-content-before-after-expected.png: Added.
+        * platform/efl/fast/css/first-letter-quotes-no-content-before-after-expected.txt: Added.
+
 2012-05-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, add platform specific expected files for new tests.

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x106
+  RenderBlock {HTML} at (0,0) size 800x106
+    RenderBody {BODY} at (8,16) size 784x82
+      RenderBlock {P} at (0,0) size 784x33
+        RenderInline (generated) at (0,0) size 19x33 [color=#FF00FF]
+          RenderText {#text} at (0,0) size 19x33
+            text run at (0,0) width 19: "T"
+        RenderText {#text} at (19,11) size 726x19
+          text run at (19,11) width 726: "he first letter of this paragraph should be fuchsia, in a bold face and in a bigger font size (same as in the next block)."
+      RenderBlock {DIV} at (0,49) size 784x33
+        RenderInline {SPAN} at (0,0) size 19x33 [color=#FF00FF]
+          RenderText {#text} at (0,0) size 19x33
+            text run at (0,0) width 19: "L"
+        RenderText {#text} at (19,11) size 115x19
+          text run at (19,11) width 115: "orem ipsum dolor."
