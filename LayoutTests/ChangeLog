@@ -1,3 +1,17 @@
+2012-05-09  Takashi Sakamoto  <tasak@google.com>
+
+        Crash in WebCore::RenderBoxModelObject::paddingLeft
+        https://bugs.webkit.org/show_bug.cgi?id=83889
+
+        Reviewed by Abhishek Arya.
+
+        As just invoking layoutTestController.display() invokes scrollbar's
+        WebCore::RenderScrollbarPart::paintIntoRect(), adding display() after
+        invoking layoutTestController.dumpAsText().
+
+        * scrollbars/scrollbar-percent-padding-crash.html: Added.
+        * scrollbars/scrollbar-percent-padding-crash-expected.txt: Added.
+
 2012-05-09  Antti Koivisto  <antti@apple.com>
 
         Skip failing test http/tests/loading/post-in-iframe-with-back-navigation.html.
