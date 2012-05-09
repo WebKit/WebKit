@@ -38,6 +38,12 @@ dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versionin
 LIBWEBKITGTK_VERSION=13:1:13
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
+LIBJAVASCRIPTCOREGTK_VERSION=13:1:13
+AC_SUBST([LIBJAVASCRIPTCOREGTK_VERSION])
+
+LIBWEBKIT2GTK_VERSION=13:1:13
+AC_SUBST([LIBWEBKIT2GTK_VERSION])
+
 AM_INIT_AUTOMAKE([foreign subdir-objects dist-xz no-dist-gzip tar-ustar])
 
 # Use AM_SILENT_RULES if present

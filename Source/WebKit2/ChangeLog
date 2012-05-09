@@ -1,3 +1,12 @@
+2012-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use independent version numbers for public libraries
+        https://bugs.webkit.org/show_bug.cgi?id=85984
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Use LIBWEBKIT2GTK_VERSION for library version.
+
 2012-05-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Tap-to-zoom zooms to wrong area.

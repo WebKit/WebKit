@@ -7,7 +7,7 @@ lib_LTLIBRARIES += \
 # https://bugs.webkit.org/show_bug.cgi?id=27551 is fixed we'll able to
 # simply rely on the usual symbol visibility flags.
 libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFLAGS = \
-	-version-info @LIBWEBKITGTK_VERSION@ \
+	-version-info @LIBJAVASCRIPTCOREGTK_VERSION@ \
 	$(no_undefined)
 
 nodist_EXTRA_libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \

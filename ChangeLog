@@ -1,3 +1,14 @@
+2012-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use independent version numbers for public libraries
+        https://bugs.webkit.org/show_bug.cgi?id=85984
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * configure.ac: Define LIBJAVASCRIPTCOREGTK_VERSION and
+        LIBWEBKIT2GTK_VERSION using the same version as
+        LIBWEBKITGTK_VERSION for backwards compatibility.
+
 2012-05-08  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] FindGStreamer: Fix the build with static WebCore.
