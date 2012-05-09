@@ -119,6 +119,7 @@ private:
     // ScrollableArea methods.
     virtual WebCore::IntRect scrollCornerRect() const;
     virtual WebCore::ScrollableArea* enclosingScrollableArea() const;
+    virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
     virtual void setScrollOffset(const WebCore::IntPoint&);
     virtual int scrollSize(WebCore::ScrollbarOrientation) const;
     virtual bool isActive() const;

@@ -1,3 +1,19 @@
+2012-05-08  Anders Carlsson  <andersca@apple.com>
+
+        Can't scroll PDF in subframe
+        https://bugs.webkit.org/show_bug.cgi?id=85932
+        <rdar://problem/11405527>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.mm:
+        (WebKit::BuiltInPDFView::updateScrollbars):
+        Trigger a layout when scrollbars come and go so the non fast scrollable region gets recomputed.
+
+        (WebKit::BuiltInPDFView::scrollableAreaBoundingBox):
+        Implement this by calling out to the PluginView.
+
 2012-05-06  Jon Lee  <jonlee@apple.com>
 
         [WK2] Push wheel events if there are too many in queue
