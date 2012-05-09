@@ -26,6 +26,7 @@
 #ifndef RenderScrollbar_h
 #define RenderScrollbar_h
 
+#include "Node.h"
 #include "RenderStyleConstants.h"
 #include "Scrollbar.h"
 #include <wtf/HashMap.h>
@@ -39,18 +40,17 @@ class RenderStyle;
 
 class RenderScrollbar : public Scrollbar {
 protected:
-    RenderScrollbar(ScrollableArea*, ScrollbarOrientation, RenderBox*, Frame*);
+    RenderScrollbar(ScrollableArea*, ScrollbarOrientation, Node*, Frame*);
 
 public:
     friend class Scrollbar;
-    static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, RenderBox*, Frame* owningFrame = 0);
+    static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, Node*, Frame* owningFrame = 0);
     virtual ~RenderScrollbar();
 
     static ScrollbarPart partForStyleResolve();
     static RenderScrollbar* scrollbarForStyleResolve();
 
     RenderBox* owningRenderer() const;
-    void clearOwningRenderer() { m_owner = 0; }
 
     void paintPart(GraphicsContext*, ScrollbarPart, const IntRect&);
 
@@ -80,7 +80,12 @@ private:
     PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);
     void updateScrollbarPart(ScrollbarPart, bool destroy = false);
 
-    RenderBox* m_owner;
+    // This Scrollbar(Widget) may outlive the DOM which created it (during tear down),
+    // so we keep a reference to the Node which caused this custom scrollbar creation.
+    // This will not create a reference cycle as the Widget tree is owned by our containing
+    // FrameView which this Node pointer can in no way keep alive. See webkit bug 80610.
+    RefPtr<Node> m_owner;
+
     Frame* m_owningFrame;
     HashMap<unsigned, RenderScrollbarPart*> m_parts;
 };

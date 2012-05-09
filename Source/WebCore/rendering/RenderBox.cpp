@@ -256,11 +256,6 @@ void RenderBox::willBeDestroyed()
     if (styleToUse) {
         if (RenderView* view = this->view()) {
             if (FrameView* frameView = view->frameView()) {
-                // If this renderer is owning renderer for the FrameView's custom scrollbars,
-                // we need to clear it from the scrollbar. See webkit bug 64737.
-                if (styleToUse->hasPseudoStyle(SCROLLBAR))
-                    frameView->clearOwningRendererForCustomScrollbars(this);
-
                 if (styleToUse->position() == FixedPosition)
                     frameView->removeFixedObject();
             }

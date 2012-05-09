@@ -1,3 +1,13 @@
+2012-05-08  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to owning renderer not removed from custom scrollbar.
+        https://bugs.webkit.org/show_bug.cgi?id=80610
+
+        Reviewed by Eric Seidel.
+
+        * scrollbars/scrollbar-owning-renderer-crash-expected.txt: Added.
+        * scrollbars/scrollbar-owning-renderer-crash.html: Added.
+
 2012-05-08  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Implement TextInputController.
