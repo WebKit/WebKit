@@ -1,3 +1,25 @@
+2012-05-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CopiedSpace does not add pinned blocks back to the to-space filter
+        https://bugs.webkit.org/show_bug.cgi?id=86011
+
+        Reviewed by Geoffrey Garen.
+
+        After a collection has finished, we go through the blocks in from-space 
+        and move any of them that are pinned into to-space. At the beginning of 
+        collection, we reset the to-space block filter that is used during 
+        conservative scanning and add back the blocks that are filled during the 
+        collection. However, we neglect to add back those blocks that are moved 
+        from from-space to to-space, which can cause the conservative scan to 
+        think that some pinned items are not actually in CopiedSpace.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::doneCopying): Add the pinned blocks back to the 
+        to-space filter. Also added a comment and assert for future readers that 
+        indicates that it's okay that we don't also add the block to the 
+        to-space block set since it was never removed.
+
+
 2012-05-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use independent version numbers for public libraries

@@ -183,6 +183,9 @@ void CopiedSpace::doneCopying()
         CopiedBlock* block = static_cast<CopiedBlock*>(m_fromSpace->removeHead());
         if (block->m_isPinned) {
             block->m_isPinned = false;
+            // We don't add the block to the toSpaceSet because it was never removed.
+            ASSERT(m_toSpaceSet.contains(block));
+            m_toSpaceFilter.add(reinterpret_cast<Bits>(block));
             m_toSpace->push(block);
             continue;
         }
