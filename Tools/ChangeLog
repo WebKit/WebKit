@@ -1,3 +1,31 @@
+2012-05-09  Hao Zheng  <zhenghao@chromium.org>
+
+        [Chromium-android] Add unit test for Android layout test script (chromium_android.py)
+        https://bugs.webkit.org/show_bug.cgi?id=80852
+
+        Reviewed by Adam Barth.
+
+        Add some tests to ensure that chromium android port works to some
+        extent. Some methods is hard to test, as they rely on the actual
+        behavior on device, e.g. pushing files to device.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.get_last_stacktrace): Check if dir exists.
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest):
+        (ChromiumAndroidPortTest.test_attributes):
+        (ChromiumAndroidPortTest.test_get_last_stacktrace):
+        (ChromiumAndroidPortTest.test_get_last_stacktrace.mock_run_command_no_dir):
+        (ChromiumAndroidPortTest.test_get_last_stacktrace.mock_run_command_no_file):
+        (ChromiumAndroidPortTest.test_get_last_stacktrace.mock_run_command_non_empty):
+        (ChromiumAndroidDriverTest):
+        (ChromiumAndroidDriverTest.setUp):
+        (ChromiumAndroidDriverTest.test_get_drt_return_value):
+        (ChromiumAndroidDriverTest.test_has_crash_hint):
+        (ChromiumAndroidDriverTest.test_read_prompt):
+        (ChromiumAndroidDriverTest.test_test_shell_command):
+        (ChromiumAndroidDriverTest.test_write_command_and_read_line):
+
 2012-05-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] ORWT fails with Qt 5 and WK2.

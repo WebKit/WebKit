@@ -357,7 +357,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
     def get_last_stacktrace(self):
         tombstones = self._run_adb_command(['shell', 'ls', '-n', '/data/tombstones'])
-        if not tombstones:
+        if not tombstones or tombstones.startswith('/data/tombstones: No such file or directory'):
             _log.error('DRT crashed, but no tombstone found!')
             return ''
         tombstones = tombstones.rstrip().split('\n')
