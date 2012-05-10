@@ -365,6 +365,8 @@ void QtViewportInteractionEngine::zoomToAreaGestureEnded(const QPointF& touchPoi
     if (scrollAnimationActive() || scaleAnimationActive())
         return;
 
+    m_hadUserInteraction = true;
+
     const int margin = 10; // We want at least a little bit of margin.
     QRectF endArea = itemRectFromCSS(targetArea.adjusted(-margin, -margin, margin, margin));
 

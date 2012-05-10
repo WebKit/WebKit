@@ -1,3 +1,16 @@
+2012-05-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Double tap to zoom is considered a user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=86094
+
+        Reviewed by Simon Hausmann.
+
+        This makes it so that the content size change doesn't change scale
+        after a double tap to zoom.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::zoomToAreaGestureEnded):
+
 2012-05-10  Kent Hansen  <kent.hansen@nokia.com>
 
         [Qt] Rename QDeclarative* to QQml*
