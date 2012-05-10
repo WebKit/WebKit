@@ -1,3 +1,17 @@
+2012-05-10  Varun Jain  <varunjain@google.com>
+
+        [chromium] Trigger context menu for long press gesture
+        https://bugs.webkit.org/show_bug.cgi?id=85919
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::gestureLongPress):
+        (EventSender::gestureEvent):
+        * DumpRenderTree/chromium/EventSender.h:
+        (EventSender):
+
 2012-05-10  Takashi Toyoshima  <toyoshim@chromium.org>
 
         don't use autoinstall to import pywebsocket but check it in WebKit directly.

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../js/resources/js-test-pre.js"></script>
+</head>
+<body onload="test()">
+<p>This test checks that the context menu is shown on long press gesture.</p>
+<div id="text">Testing</div>
+<div id="result">FAIL</div>
+<script>
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    document.oncontextmenu = function() { document.getElementById("result").innerHTML = "PASS"; }
+
+    var text = document.getElementById("text");
+
+    var x = text.offsetParent.offsetLeft + text.offsetLeft + 4;
+    var y = text.offsetParent.offsetTop + text.offsetTop + text.offsetHeight / 2;
+
+    if (!window.eventSender)
+        return;
+    if (eventSender.gestureLongPress) {
+        eventSender.gestureLongPress(x, y);
+    } else {
+        debug("gestureLongPress not implemented by this platform");
+        return;
+    }
+}
+</script>
+</body>
+</html>

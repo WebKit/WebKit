@@ -2599,6 +2599,18 @@ bool EventHandler::sendContextMenuEventForKey()
     return dispatchMouseEvent(eventNames().contextmenuEvent, targetNode, true, 0, mouseEvent, false);
 }
 
+#if ENABLE(GESTURE_EVENTS)
+bool EventHandler::sendContextMenuEventForGesture(const PlatformGestureEvent& event)
+{
+#if OS(WINDOWS)
+    PlatformEvent::Type eventType = PlatformEvent::MouseReleased;
+#else
+    PlatformEvent::Type eventType = PlatformEvent::MousePressed;
+#endif
+    PlatformMouseEvent mouseEvent(event.position(), event.globalPosition(), RightButton, eventType, 1, false, false, false, false, WTF::currentTime());
+    return sendContextMenuEvent(mouseEvent);
+}
+#endif // ENABLE(GESTURE_EVENTS)
 #endif // ENABLE(CONTEXT_MENUS)
 
 void EventHandler::scheduleHoverStateUpdate()

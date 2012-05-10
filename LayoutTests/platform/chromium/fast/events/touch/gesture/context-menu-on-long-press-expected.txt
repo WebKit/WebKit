@@ -1,0 +1,4 @@
+This test checks that the context menu is shown on long press gesture.
+
+Testing
+PASS

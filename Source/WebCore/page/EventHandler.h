@@ -175,6 +175,9 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     bool sendContextMenuEvent(const PlatformMouseEvent&);
     bool sendContextMenuEventForKey();
+#if ENABLE(GESTURE_EVENTS)
+    bool sendContextMenuEventForGesture(const PlatformGestureEvent&);
+#endif
 #endif
 
     void setMouseDownMayStartAutoscroll() { m_mouseDownMayStartAutoscroll = true; }

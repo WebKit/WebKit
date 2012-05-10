@@ -658,12 +658,22 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         }
         return gestureHandled;
     }
+    case WebInputEvent::GestureLongPress: {
+        if (!mainFrameImpl() || !mainFrameImpl()->frameView())
+            return false;
+
+        m_page->contextMenuController()->clearContextMenu();
+        m_contextMenuAllowed = true;
+        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
+        bool handled = mainFrameImpl()->frame()->eventHandler()->sendContextMenuEventForGesture(platformEvent);
+        m_contextMenuAllowed = false;
+        return handled;
+    }
     case WebInputEvent::GestureScrollBegin:
     case WebInputEvent::GestureScrollEnd:
     case WebInputEvent::GestureScrollUpdate:
     case WebInputEvent::GestureTapDown:
     case WebInputEvent::GestureDoubleTap:
-    case WebInputEvent::GestureLongPress:
     case WebInputEvent::GesturePinchBegin:
     case WebInputEvent::GesturePinchEnd:
     case WebInputEvent::GesturePinchUpdate: {
