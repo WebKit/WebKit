@@ -279,18 +279,20 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         // a mouse on a word, Chrome just needs to find a spelling marker on the word instread of spellchecking it.
         if (selectedFrame->settings() && selectedFrame->settings()->asynchronousSpellCheckingEnabled()) {
             RefPtr<Range> range = selectedFrame->selection()->toNormalizedRange();
-            Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(range.get(), DocumentMarker::Spelling);
-            if (!markers.isEmpty()) {
-                Vector<String> suggestions;
-                for (size_t i = 0; i < markers.size(); ++i) {
-                    if (!markers[i]->description().isEmpty()) {
-                        Vector<String> descriptions;
-                        markers[i]->description().split('\n', descriptions);
-                        suggestions.append(descriptions);
+            if (range.get()) {
+                Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(range.get(), DocumentMarker::Spelling);
+                if (!markers.isEmpty()) {
+                    Vector<String> suggestions;
+                    for (size_t i = 0; i < markers.size(); ++i) {
+                        if (!markers[i]->description().isEmpty()) {
+                            Vector<String> descriptions;
+                            markers[i]->description().split('\n', descriptions);
+                            suggestions.append(descriptions);
+                        }
                     }
+                    data.dictionarySuggestions = suggestions;
+                    data.misspelledWord = selectMisspelledWord(defaultMenu, selectedFrame);
                 }
-                data.dictionarySuggestions = suggestions;
-                data.misspelledWord = selectMisspelledWord(defaultMenu, selectedFrame);
             }
         } else if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
             data.isSpellCheckingEnabled = true;
