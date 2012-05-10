@@ -145,6 +145,7 @@ public:
     // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
     virtual IntRect visibleContentRect(bool includeScrollbars = false) const;
     virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
+    IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
     int visibleWidth() const { return visibleContentRect().width(); }
     int visibleHeight() const { return visibleContentRect().height(); }
 
@@ -294,9 +295,6 @@ protected:
 
     virtual void visibleContentsResized() = 0;
     virtual void delegatesScrollingDidChange() { }
-
-    IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
-
     // These functions are used to create/destroy scrollbars.
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
