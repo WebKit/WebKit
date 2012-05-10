@@ -1,3 +1,24 @@
+2012-05-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't draw when canDraw() is false
+        https://bugs.webkit.org/show_bug.cgi?id=85829
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::CCLayerTreeHostImplTest::CCLayerTreeHostImplTest):
+        (WebKitTests::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (CCLayerTreeHostTestCanDrawBlocksDrawing):
+        (WTF::CCLayerTreeHostTestCanDrawBlocksDrawing::CCLayerTreeHostTestCanDrawBlocksDrawing):
+        (WTF::CCLayerTreeHostTestCanDrawBlocksDrawing::beginTest):
+        (WTF::CCLayerTreeHostTestCanDrawBlocksDrawing::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestCanDrawBlocksDrawing::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestCanDrawBlocksDrawing::didCommitAndDrawFrame):
+        (WTF::CCLayerTreeHostTestCanDrawBlocksDrawing::afterTest):
+        (WTF::TEST_F):
+
 2012-05-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116573.

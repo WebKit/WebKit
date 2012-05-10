@@ -639,8 +639,18 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
 
     m_inputHandlerOnImplThread->animate(monotonicTime);
     m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
+
+    // This method is called on a forced draw, regardless of whether we are able to produce a frame,
+    // as the calling site on main thread is blocked until its request completes, and we signal
+    // completion here. If canDraw() is false, we will indicate success=false to the caller, but we
+    // must still signal completion to avoid deadlock.
+
+    // We guard prepareToDraw() with canDraw() because it always returns a valid frame, so can only
+    // be used when such a frame is possible. Since drawLayers() depends on the result of
+    // prepareToDraw(), it is guarded on canDraw() as well.
+
     CCLayerTreeHostImpl::FrameData frame;
-    bool drawFrame = m_layerTreeHostImpl->prepareToDraw(frame) || forcedDraw;
+    bool drawFrame = m_layerTreeHostImpl->canDraw() && (m_layerTreeHostImpl->prepareToDraw(frame) || forcedDraw);
     if (drawFrame) {
         m_layerTreeHostImpl->drawLayers(frame);
         result.didDraw = true;
@@ -649,9 +659,11 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
 
     // Check for a pending compositeAndReadback.
     if (m_readbackRequestOnImplThread) {
-        ASSERT(drawFrame); // This should be a forcedDraw
-        m_layerTreeHostImpl->readback(m_readbackRequestOnImplThread->pixels, m_readbackRequestOnImplThread->rect);
-        m_readbackRequestOnImplThread->success = !m_layerTreeHostImpl->isContextLost();
+        m_readbackRequestOnImplThread->success = false;
+        if (drawFrame) {
+            m_layerTreeHostImpl->readback(m_readbackRequestOnImplThread->pixels, m_readbackRequestOnImplThread->rect);
+            m_readbackRequestOnImplThread->success = !m_layerTreeHostImpl->isContextLost();
+        }
         m_readbackRequestOnImplThread->completion.signal();
         m_readbackRequestOnImplThread = 0;
     }
@@ -661,7 +673,6 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
 
     // Process any finish request
     if (m_finishAllRenderingCompletionEventOnImplThread) {
-        ASSERT(drawFrame); // This should be a forcedDraw
         m_layerTreeHostImpl->finishAllRendering();
         m_finishAllRenderingCompletionEventOnImplThread->signal();
         m_finishAllRenderingCompletionEventOnImplThread = 0;
@@ -673,7 +684,6 @@ CCScheduledActionDrawAndSwapResult CCThreadProxy::scheduledActionDrawAndSwapInte
         m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::didCommitAndDrawFrame));
     }
 
-    ASSERT(drawFrame || (!drawFrame && !forcedDraw));
     return result;
 }
 

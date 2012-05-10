@@ -348,8 +348,14 @@ bool CCSingleThreadProxy::doComposite()
       DebugScopedSetImplThread impl;
       double monotonicTime = monotonicallyIncreasingTime();
       double wallClockTime = currentTime();
-
       m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
+
+      // We guard prepareToDraw() with canDraw() because it always returns a valid frame, so can only
+      // be used when such a frame is possible. Since drawLayers() depends on the result of
+      // prepareToDraw(), it is guarded on canDraw() as well.
+      if (!m_layerTreeHostImpl->canDraw())
+          return false;
+
       CCLayerTreeHostImpl::FrameData frame;
       m_layerTreeHostImpl->prepareToDraw(frame);
       m_layerTreeHostImpl->drawLayers(frame);
