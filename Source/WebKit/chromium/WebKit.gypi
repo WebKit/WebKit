@@ -102,6 +102,7 @@
             'tests/FakeGraphicsContext3DTest.cpp',
             'tests/FakeWebGraphicsContext3D.h',
             'tests/FloatQuadTest.cpp',
+            'tests/FrameLoaderClientImplTest.cpp',
             'tests/FrameTestHelpers.cpp',
             'tests/FrameTestHelpers.h',
             'tests/IDBBindingUtilitiesTest.cpp',

@@ -1,3 +1,30 @@
+2012-05-09  Dan Alcantara  <dfalcantara@chromium.org>
+
+        [chromium] Add ability to override user agent string per-WebFrameClient
+        https://bugs.webkit.org/show_bug.cgi?id=83959
+        
+        Reviewed by Adam Barth.
+        
+        Adds a method that can be used to override the normal user agent in
+        chromium.  Also adds a unit test to check if the override is taking effect.
+
+        * WebKit.gypi:
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::userAgent):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::userAgent):
+        * tests/FrameLoaderClientImplTest.cpp: Added.
+        (WebKit):
+        (TestWebFrameClient):
+        (WebKit::TestWebFrameClient::setUserAgentOverride):
+        (FrameLoaderClientImplTest):
+        (WebKit::FrameLoaderClientImplTest::SetUp):
+        (WebKit::FrameLoaderClientImplTest::TearDown):
+        (WebKit::FrameLoaderClientImplTest::setUserAgentOverride):
+        (WebKit::FrameLoaderClientImplTest::userAgent):
+        (WebKit::TEST_F):
+
 2012-05-09  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Ensure animations get ticked at least once when added.
