@@ -1,3 +1,14 @@
+2012-05-09  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Ensure animations get ticked at least once when added.
+        https://bugs.webkit.org/show_bug.cgi?id=86013
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestTickAnimationWhileBackgrounded::animateLayers):
+        (WTF):
+
 2012-05-09  Adam Barth  <abarth@webkit.org>
 
         Implement HTML Media Capture

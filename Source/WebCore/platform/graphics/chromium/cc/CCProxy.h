@@ -86,6 +86,8 @@ public:
     virtual void setNeedsRedraw() = 0;
     virtual void setVisible(bool) = 0;
 
+    virtual void didAddAnimation() = 0;
+
     virtual bool commitRequested() const = 0;
 
     virtual void start() = 0; // Must be called before using the proxy.

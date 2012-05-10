@@ -32,6 +32,7 @@
 #include "cc/CCFontAtlas.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureUpdater.h"
+#include "cc/CCTimer.h"
 #include <wtf/CurrentTime.h>
 
 using namespace WTF;
@@ -56,6 +57,28 @@ protected:
     UnthrottledTextureUploader() { }
 };
 
+class CCSingleThreadProxyAnimationTimer : public CCTimer, CCTimerClient {
+public:
+    static PassOwnPtr<CCSingleThreadProxyAnimationTimer> create(CCSingleThreadProxy* proxy) { return adoptPtr(new CCSingleThreadProxyAnimationTimer(proxy)); }
+
+    virtual void onTimerFired() OVERRIDE
+    {
+        m_proxy->compositeImmediately();
+    }
+
+private:
+    explicit CCSingleThreadProxyAnimationTimer(CCSingleThreadProxy* proxy)
+        : CCTimer(CCProxy::mainThread(), this)
+        , m_proxy(proxy)
+    {
+    }
+
+    CCSingleThreadProxy* m_proxy;
+};
+
+// Measured in seconds.
+static const double animationTimerDelay = 1 / 60.0;
+
 PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
     return adoptPtr(new CCSingleThreadProxy(layerTreeHost));
@@ -65,6 +88,7 @@ CCSingleThreadProxy::CCSingleThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_layerTreeHost(layerTreeHost)
     , m_contextLost(false)
     , m_compositorIdentifier(-1)
+    , m_animationTimer(CCSingleThreadProxyAnimationTimer::create(this))
     , m_layerRendererInitialized(false)
     , m_nextFrameIsNewlyCommittedFrame(false)
 {
@@ -276,6 +300,11 @@ void CCSingleThreadProxy::setVisible(bool visible)
     setNeedsCommit();
 }
 
+void CCSingleThreadProxy::didAddAnimation()
+{
+    m_animationTimer->startOneShot(animationTimerDelay);
+}
+
 void CCSingleThreadProxy::stop()
 {
     TRACE_EVENT("CCSingleThreadProxy::stop", this, 0);
@@ -345,21 +374,22 @@ bool CCSingleThreadProxy::doComposite()
 {
     ASSERT(!m_contextLost);
     {
-      DebugScopedSetImplThread impl;
-      double monotonicTime = monotonicallyIncreasingTime();
-      double wallClockTime = currentTime();
-      m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
+        DebugScopedSetImplThread impl;
+        double monotonicTime = monotonicallyIncreasingTime();
+        double wallClockTime = currentTime();
 
-      // We guard prepareToDraw() with canDraw() because it always returns a valid frame, so can only
-      // be used when such a frame is possible. Since drawLayers() depends on the result of
-      // prepareToDraw(), it is guarded on canDraw() as well.
-      if (!m_layerTreeHostImpl->canDraw())
-          return false;
+        m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
 
-      CCLayerTreeHostImpl::FrameData frame;
-      m_layerTreeHostImpl->prepareToDraw(frame);
-      m_layerTreeHostImpl->drawLayers(frame);
-      m_layerTreeHostImpl->didDrawAllLayers(frame);
+        // We guard prepareToDraw() with canDraw() because it always returns a valid frame, so can only
+        // be used when such a frame is possible. Since drawLayers() depends on the result of
+        // prepareToDraw(), it is guarded on canDraw() as well.
+        if (!m_layerTreeHostImpl->canDraw() || !m_layerTreeHostImpl->visible())
+            return false;
+
+        CCLayerTreeHostImpl::FrameData frame;
+        m_layerTreeHostImpl->prepareToDraw(frame);
+        m_layerTreeHostImpl->drawLayers(frame);
+        m_layerTreeHostImpl->didDrawAllLayers(frame);
     }
 
     if (m_layerTreeHostImpl->isContextLost()) {
