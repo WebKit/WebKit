@@ -47,7 +47,8 @@ void AutofillManager::didChangeInTextField(HTMLInputElement* element)
     if (m_element != element)
         m_element = element;
 
-    // FIXME: Notify page client to popup a context dialog to display these autofill candidate items.
+    Vector<String> candidates = autofillBackingStore().get(element->getAttribute(HTMLNames::nameAttr).string(), element->value());
+    m_webPagePrivate->notifyPopupAutofillDialog(candidates, element->screenRect());
 }
 
 void AutofillManager::autofillTextField(const String& value)

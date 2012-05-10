@@ -20,6 +20,7 @@
 #include "config.h"
 #include "EditorClientBlackBerry.h"
 
+#include "AutofillManager.h"
 #include "DOMSupport.h"
 #include "DumpRenderTreeClient.h"
 #include "EditCommand.h"
@@ -511,9 +512,10 @@ void EditorClientBlackBerry::textFieldDidEndEditing(Element*)
     notImplemented();
 }
 
-void EditorClientBlackBerry::textDidChangeInTextField(Element*)
+void EditorClientBlackBerry::textDidChangeInTextField(Element* element)
 {
-    notImplemented();
+    if (HTMLInputElement* inputElement = element->toInputElement())
+        m_webPagePrivate->m_autofillManager->didChangeInTextField(inputElement);
 }
 
 bool EditorClientBlackBerry::doTextFieldCommandFromEvent(Element*, KeyboardEvent*)

@@ -196,6 +196,7 @@ public:
     void clearCache();
     void clearLocalStorage();
     void clearCredentials();
+    void clearAutofillData();
     void clearNeverRememberSites();
 
     void runLayoutTests();
@@ -340,6 +341,7 @@ public:
     bool hasOpenedPopup() const;
     WebCore::PagePopupBlackBerry* popup();
 
+    void autofillTextField(const std::string&);
 private:
     virtual ~WebPage();
 

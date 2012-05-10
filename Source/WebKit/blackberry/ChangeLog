@@ -1,3 +1,37 @@
+2012-05-09  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Autofill feature implementation for BlackBerry porting
+        https://bugs.webkit.org/show_bug.cgi?id=85577
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::autofillTextField): Added this interface
+        function to auto fill the inputting text field when user selects
+        a autofill candidate value from autofill context dialog.
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::notifyPopupAutofillDialog): Added
+        this interface function to notify WebPageClient to pop up the autofill
+        context dialog with the suggested input items.
+        (BlackBerry::WebKit::WebPage::clearAutofillData):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+        * WebCoreSupport/AutofillManager.cpp:
+        (WebCore::AutofillManager::didChangeInTextField):
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::textDidChangeInTextField): Implemented
+        this function to listen to the notification of text field change, and
+        notify AutofillManager to handle the autofill.
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent):
+        Save the name and value pair of every autofillable input text field when
+        user submitting a form.
+
 2012-05-09  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Enable PAGE_POPUP in make file, and implement required methods

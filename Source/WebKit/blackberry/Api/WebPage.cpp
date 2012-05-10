@@ -20,6 +20,7 @@
 #include "WebPage.h"
 
 #include "ApplicationCacheStorage.h"
+#include "AutofillManager.h"
 #include "BackForwardController.h"
 #include "BackForwardListImpl.h"
 #include "BackingStoreClient.h"
@@ -306,6 +307,11 @@ protected:
     typedef DeferredTask<isActive> DeferredTaskType;
 };
 
+void WebPage::autofillTextField(const string& item)
+{
+    d->m_autofillManager->autofillTextField(item.c_str());
+}
+
 WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const IntRect& rect)
     : m_webPage(webPage)
     , m_client(client)
@@ -376,6 +382,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
     , m_selectPopup(0)
     , m_parentPopup(0)
+    , m_autofillManager(AutofillManager::create(this))
 {
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -2123,6 +2130,14 @@ Credential WebPagePrivate::authenticationChallenge(const KURL& url, const Protec
 PageClientBlackBerry::SaveCredentialType WebPagePrivate::notifyShouldSaveCredential(bool isNew)
 {
     return static_cast<PageClientBlackBerry::SaveCredentialType>(m_client->notifyShouldSaveCredential(isNew));
+}
+
+void WebPagePrivate::notifyPopupAutofillDialog(const Vector<String>& candidates, const WebCore::IntRect& screenRect)
+{
+    vector<string> textItems;
+    for (size_t i = 0; i < candidates.size(); i++)
+        textItems.push_back(candidates[i].utf8().data());
+    m_client->notifyPopupAutofillDialog(textItems, screenRect);
 }
 
 bool WebPagePrivate::useFixedLayout() const
@@ -5176,6 +5191,11 @@ void WebPage::clearCredentials()
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     credentialManager().clearCredentials();
 #endif
+}
+
+void WebPage::clearAutofillData()
+{
+    AutofillManager::clear();
 }
 
 void WebPage::clearNeverRememberSites()

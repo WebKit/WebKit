@@ -36,6 +36,7 @@
 #include <BlackBerryPlatformMessage.h>
 
 namespace WebCore {
+class AutofillManager;
 class DOMWrapperWorld;
 class Document;
 class Frame;
@@ -190,6 +191,7 @@ public:
     void overflowExceedsContentsSize() { m_overflowExceedsContentsSize = true; }
     void layoutFinished();
     void setNeedTouchEvents(bool);
+    void notifyPopupAutofillDialog(const Vector<String>&, const WebCore::IntRect&);
 
     // Called according to our heuristic or from setLoadState depending on whether we have a virtual viewport.
     void zoomToInitialScaleOnLoad();
@@ -587,6 +589,7 @@ public:
     // The popup that owned this webpage
     WebCore::PagePopupBlackBerry* m_parentPopup;
 
+    RefPtr<WebCore::AutofillManager> m_autofillManager;
 protected:
     virtual ~WebPagePrivate();
 };
