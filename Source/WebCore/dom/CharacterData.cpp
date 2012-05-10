@@ -200,7 +200,7 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
     if (parentNode())
         parentNode()->childrenChanged();
     if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
-        dispatchEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
+        dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
     dispatchSubtreeModifiedEvent();
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::characterDataModified(document(), this);

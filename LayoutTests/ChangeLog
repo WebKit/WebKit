@@ -1,3 +1,12 @@
+2012-05-10  Abhishek Arya  <inferno@chromium.org>
+
+        Make DOMCharacterDataModified a scoped event (similar to r73690).
+        https://bugs.webkit.org/show_bug.cgi?id=85920
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/events/scoped/editing-commands.html: test modified to check DOMCharacterDataModified event.
+
 2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
