@@ -581,6 +581,9 @@ public:
     virtual void removeEventListener(const WebString& eventType,
                                      WebDOMEventListener*, bool useCapture) = 0;
     virtual bool dispatchEvent(const WebDOMEvent&) = 0;
+    virtual void dispatchMessageEventWithOriginCheck(
+        const WebSecurityOrigin& intendedTargetOrigin,
+        const WebDOMEvent&) = 0;
 
 
     // Web Intents ---------------------------------------------------------

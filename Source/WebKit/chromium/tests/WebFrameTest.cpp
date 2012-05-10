@@ -40,6 +40,7 @@
 #include "WebRange.h"
 #include "WebScriptSource.h"
 #include "WebSearchableFormData.h"
+#include "WebSecurityOrigin.h"
 #include "WebSecurityPolicy.h"
 #include "WebSettings.h"
 #include "WebViewClient.h"
@@ -150,6 +151,34 @@ TEST_F(WebFrameTest, ChromePageNoJavascript)
     std::string content = webView->mainFrame()->contentAsText(1024).utf8();
     EXPECT_NE(std::string::npos, content.find("Simulated Chromium History Page"));
     EXPECT_EQ(std::string::npos, content.find("Clobbered"));
+}
+
+TEST_F(WebFrameTest, DispatchMessageEventWithOriginCheck)
+{
+    registerMockedHttpURLLoad("postmessage_test.html");
+
+    // Pass true to enable JavaScript.
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "postmessage_test.html", true);
+    
+    // Send a message with the correct origin.
+    WebSecurityOrigin correctOrigin(WebSecurityOrigin::create(GURL(m_baseURL)));
+    WebDOMEvent event = webView->mainFrame()->document().createEvent("MessageEvent");
+    WebDOMMessageEvent message = event.to<WebDOMMessageEvent>();
+    WebSerializedScriptValue data(WebSerializedScriptValue::fromString("foo"));
+    message.initMessageEvent("message", false, false, data, "http://origin.com", 0, "");
+    webView->mainFrame()->dispatchMessageEventWithOriginCheck(correctOrigin, message);
+
+    // Send another message with incorrect origin.
+    WebSecurityOrigin incorrectOrigin(WebSecurityOrigin::create(GURL(m_chromeURL)));
+    webView->mainFrame()->dispatchMessageEventWithOriginCheck(incorrectOrigin, message);
+
+    // Required to see any updates in contentAsText.
+    webView->layout();
+
+    // Verify that only the first addition is in the body of the page.
+    std::string content = webView->mainFrame()->contentAsText(1024).utf8();
+    EXPECT_NE(std::string::npos, content.find("Message 1."));
+    EXPECT_EQ(std::string::npos, content.find("Message 2."));
 }
 
 #if ENABLE(VIEWPORT)

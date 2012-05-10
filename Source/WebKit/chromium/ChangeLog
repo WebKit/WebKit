@@ -1,3 +1,23 @@
+2012-05-09  Charlie Reis  <creis@chromium.org>
+
+        Add dispatchMessageEventWithOriginCheck to WebFrame
+        https://bugs.webkit.org/show_bug.cgi?id=85815
+
+        Reviewed by Adam Barth.
+
+        Tested by WebFrameTest.DispatchMessageEventWithOriginCheck.
+        Also fixes source frame bug in willCheckAndDispatchMessageEvent.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::willCheckAndDispatchMessageEvent):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::checkAndDispatchMessageEvent):
+        (WebKit):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-05-09  Hironori Bono  <hbono@chromium.org>
 
         Fix a crash in ContextMenuClientImpl::getCustomMenuFromDefaultItems
