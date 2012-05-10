@@ -397,11 +397,6 @@ public:
         WebSecurityOrigin target,
         WebDOMMessageEvent) { return false; }
 
-    // Asks the embedder if a specific user agent should be used for the given
-    // URL. Returns true if it should, along with the user agent. If false,
-    // WebKitPlatformSupport::userAgent() will be called to provide one.
-    virtual bool userAgent(const WebURL& url, WebString* userAgent) { return false; }
-
 protected:
     ~WebFrameClient() { }
 };
