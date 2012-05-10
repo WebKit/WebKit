@@ -42,6 +42,7 @@ typedef struct HRGN__* HRGN;
 typedef struct _Ecore_Evas Ecore_Evas;
 typedef struct _Ecore_Pipe Ecore_Pipe;
 typedef struct _Ecore_Timer Ecore_Timer;
+typedef struct _Eina_Hash Eina_Hash;
 typedef struct _Eina_Module Eina_Module;
 typedef struct _Evas_Object Evas_Object;
 #endif
@@ -69,6 +70,7 @@ namespace WTF {
     void deleteOwnedPtr(Ecore_Evas*);
     void deleteOwnedPtr(Ecore_Pipe*);
     void deleteOwnedPtr(Ecore_Timer*);
+    void deleteOwnedPtr(Eina_Hash*);
     void deleteOwnedPtr(Eina_Module*);
     void deleteOwnedPtr(Evas_Object*);
 #endif

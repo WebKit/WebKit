@@ -1,3 +1,18 @@
+2012-05-10  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Add OwnPtr specialization for Eina_Hash.
+        https://bugs.webkit.org/show_bug.cgi?id=85046
+
+        Reviewed by Andreas Kling.
+
+        Add an override for Eina_Hash for EFL port.
+
+        * wtf/OwnPtrCommon.h:
+        (WTF):
+        * wtf/efl/OwnPtrEfl.cpp:
+        (WTF::deleteOwnedPtr):
+        (WTF):
+
 2012-05-09  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to get useful debug logging from the JIT memory allocator

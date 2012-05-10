@@ -51,6 +51,12 @@ void deleteOwnedPtr(Ecore_Pipe* ptr)
         ecore_pipe_del(ptr);
 }
 
+void deleteOwnedPtr(Eina_Hash* ptr)
+{
+    if (ptr)
+        eina_hash_free(ptr);
+}
+
 void deleteOwnedPtr(Eina_Module* ptr)
 {
     if (ptr)
