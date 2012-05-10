@@ -1,3 +1,10 @@
+2012-05-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix compilation warning on Android.
+        https://bugs.webkit.org/show_bug.cgi?id=85958
+
+        * features.gypi: Move ENABLE_MEDIA_CAPTURE=0 to non-Android block.
+
 2012-05-09  Dan Alcantara  <dfalcantara@chromium.org>
 
         [chromium] Add ability to override user agent string per-WebFrameClient

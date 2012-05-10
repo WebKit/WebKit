@@ -71,7 +71,6 @@
       'ENABLE_LEGACY_WEBKIT_BLOB_BUILDER=1',
       'ENABLE_LINK_PREFETCH=1',
       'ENABLE_LINK_PRERENDER=1',
-      'ENABLE_MEDIA_CAPTURE=0',
       'ENABLE_MEDIA_SOURCE=1',
       'ENABLE_MEDIA_STATISTICS=1',
       'ENABLE_MEDIA_STREAM=1',
@@ -148,6 +147,7 @@
       }, {
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=1',
+          'ENABLE_MEDIA_CAPTURE=0',
           'ENABLE_PAGE_POPUP=1',
           'ENABLE_WEB_AUDIO=1',
         ],
