@@ -1523,13 +1523,6 @@ void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
     emitStore(dst, JSValue());
 }
 
-void JIT::emit_op_get_callee(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT0);
-    emitStoreCell(dst, regT0);
-}
-
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
     emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT0);

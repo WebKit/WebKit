@@ -1263,13 +1263,6 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
     addSlowCase(branchPtr(Equal, Address(regT0, JSCell::classInfoOffset()), TrustedImmPtr(&JSString::s_info)));
 }
 
-void JIT::emit_op_get_callee(Instruction* currentInstruction)
-{
-    unsigned result = currentInstruction[1].u.operand;
-    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT0);
-    emitPutVirtualRegister(result);
-}
-
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
     emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT0);

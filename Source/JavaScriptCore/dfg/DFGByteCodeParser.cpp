@@ -1567,14 +1567,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_new_regexp);
         }
             
-        case op_get_callee: {
-            if (m_inlineStackTop->m_inlineCallFrame)
-                set(currentInstruction[1].u.operand, getDirect(m_inlineStackTop->m_calleeVR));
-            else
-                set(currentInstruction[1].u.operand, addToGraph(GetCallee));
-            NEXT_OPCODE(op_get_callee);
-        }
-
         // === Bitwise operations ===
 
         case op_bitand: {

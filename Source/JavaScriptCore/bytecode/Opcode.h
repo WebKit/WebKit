@@ -43,7 +43,6 @@ namespace JSC {
         macro(op_init_lazy_reg, 2) \
         macro(op_create_arguments, 2) \
         macro(op_create_this, 2) \
-        macro(op_get_callee, 2) \
         macro(op_convert_this, 2) \
         \
         macro(op_new_object, 2) \

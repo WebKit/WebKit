@@ -512,11 +512,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             dataLog("[%4d] init_lazy_reg\t %s\n", location, registerName(exec, r0).data());
             break;
         }
-        case op_get_callee: {
-            int r0 = (++it)->u.operand;
-            dataLog("[%4d] op_get_callee %s\n", location, registerName(exec, r0).data());
-            break;
-        }
         case op_create_this: {
             int r0 = (++it)->u.operand;
             dataLog("[%4d] create_this %s\n", location, registerName(exec, r0).data());

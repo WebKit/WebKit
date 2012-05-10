@@ -234,14 +234,6 @@ _llint_op_create_this:
     dispatch(2)
 
 
-_llint_op_get_callee:
-    traceExecution()
-    loadis 8[PB, PC, 8], t0
-    loadp Callee[cfr], t1
-    storep t1, [cfr, t0, 8]
-    dispatch(2)
-
-
 _llint_op_convert_this:
     traceExecution()
     loadis 8[PB, PC, 8], t0

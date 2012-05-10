@@ -4788,17 +4788,6 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_create_activation);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_get_callee) {
-        /* op_get_callee callee(r)
-
-           Move callee into a register.
-        */
-
-        callFrame->uncheckedR(vPC[1].u.operand) = JSValue(callFrame->callee());
-
-        vPC += OPCODE_LENGTH(op_get_callee);
-        NEXT_INSTRUCTION();
-    }
     DEFINE_OPCODE(op_create_this) {
         /* op_create_this this(r) proto(r)
 

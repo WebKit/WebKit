@@ -357,15 +357,6 @@ _llint_op_create_this:
     dispatch(2)
 
 
-_llint_op_get_callee:
-    traceExecution()
-    loadi 4[PC], t0
-    loadp PayloadOffset + Callee[cfr], t1
-    storei CellTag, TagOffset[cfr, t0, 8]
-    storei t1, PayloadOffset[cfr, t0, 8]
-    dispatch(2)
-
-
 _llint_op_convert_this:
     traceExecution()
     loadi 4[PC], t0
