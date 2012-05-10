@@ -1,3 +1,13 @@
+2012-05-09  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Android needs to swizzle pixel dumps in order to get the same hash as other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=86040
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dumpImage):
+
 2012-05-09  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Build fix after r116464.

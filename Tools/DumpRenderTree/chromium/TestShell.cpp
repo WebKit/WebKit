@@ -64,6 +64,7 @@
 #include <cctype>
 #include <vector>
 #include <wtf/MD5.h>
+#include <wtf/OwnArrayPtr.h>
 
 using namespace WebKit;
 using namespace std;
@@ -666,7 +667,26 @@ void TestShell::dumpImage(SkCanvas* canvas) const
     // Compute MD5 sum.
     MD5 digester;
     Vector<uint8_t, 16> digestValue;
+#if OS(ANDROID)
+    // On Android, pixel layout is RGBA (see third_party/skia/include/core/SkColorPriv.h);
+    // however, other Chrome platforms use BGRA (see skia/config/SkUserConfig.h).
+    // To match the checksum of other Chrome platforms, we need to reorder the layout of pixels.
+    // NOTE: The following code assumes we use SkBitmap::kARGB_8888_Config,
+    // which has been checked in device.makeOpaque() (see above).
+    const uint8_t* rawPixels = reinterpret_cast<const uint8_t*>(sourceBitmap.getPixels());
+    size_t bitmapSize = sourceBitmap.getSize();
+    OwnArrayPtr<uint8_t> reorderedPixels = adoptArrayPtr(new uint8_t[bitmapSize]);
+    for (size_t i = 0; i < bitmapSize; i += 4) {
+        reorderedPixels[i] = rawPixels[i + 2]; // R
+        reorderedPixels[i + 1] = rawPixels[i + 1]; // G
+        reorderedPixels[i + 2] = rawPixels[i]; // B
+        reorderedPixels[i + 3] = rawPixels[i + 3]; // A
+    }
+    digester.addBytes(reorderedPixels.get(), bitmapSize);
+    reorderedPixels.clear();
+#else
     digester.addBytes(reinterpret_cast<const uint8_t*>(sourceBitmap.getPixels()), sourceBitmap.getSize());
+#endif
     digester.checksum(digestValue);
     string md5hash;
     md5hash.reserve(16 * 2);
@@ -681,8 +701,13 @@ void TestShell::dumpImage(SkCanvas* canvas) const
     // image is really expensive.
     if (md5hash.compare(m_params.pixelHash)) {
         std::vector<unsigned char> png;
+#if OS(ANDROID)
+        webkit_support::EncodeRGBAPNGWithChecksum(reinterpret_cast<const unsigned char*>(sourceBitmap.getPixels()), sourceBitmap.width(),
+            sourceBitmap.height(), static_cast<int>(sourceBitmap.rowBytes()), discardTransparency, md5hash, &png);
+#else
         webkit_support::EncodeBGRAPNGWithChecksum(reinterpret_cast<const unsigned char*>(sourceBitmap.getPixels()), sourceBitmap.width(),
             sourceBitmap.height(), static_cast<int>(sourceBitmap.rowBytes()), discardTransparency, md5hash, &png);
+#endif
 
         m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), &png[0], png.size(), m_params.pixelFileName.c_str());
     } else
