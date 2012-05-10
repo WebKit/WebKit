@@ -34,12 +34,14 @@
 #include "UnconditionalFinalizer.h"
 #include "VTableSpectrum.h"
 #include "WeakReferenceHarvester.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OSAllocator.h>
 #include <wtf/PageBlock.h>
+#include <wtf/text/StringHash.h>
 
 namespace JSC {
 
@@ -171,13 +173,17 @@ namespace JSC {
         ~MarkStackThreadSharedData();
         
         void reset();
-    
+
+#if ENABLE(PARALLEL_GC)
+        void resetChildren();
+#endif
+
     private:
         friend class MarkStack;
         friend class SlotVisitor;
 
 #if ENABLE(PARALLEL_GC)
-        void markingThreadMain();
+        void markingThreadMain(SlotVisitor*);
         static void markingThreadStartFunc(void* heap);
 #endif
 
@@ -187,6 +193,7 @@ namespace JSC {
         MarkStackSegmentAllocator m_segmentAllocator;
         
         Vector<ThreadIdentifier> m_markingThreads;
+        Vector<MarkStack*> m_slaveMarkStacks;
         
         Mutex m_markingLock;
         ThreadCondition m_markingCondition;
@@ -221,13 +228,14 @@ namespace JSC {
         void addOpaqueRoot(void*);
         bool containsOpaqueRoot(void*);
         int opaqueRootCount();
-        
+
+        MarkStackThreadSharedData& sharedData() { return m_shared; }
         bool isEmpty() { return m_stack.isEmpty(); }
 
         void reset();
 
         size_t visitCount() const { return m_visitCount; }
-
+        
 #if ENABLE(SIMPLE_HEAP_PROFILING)
         VTableSpectrum m_visitedTypeCounts;
 #endif
@@ -251,6 +259,7 @@ namespace JSC {
 
         void internalAppend(JSCell*);
         void internalAppend(JSValue);
+        void internalAppend(JSValue*);
         
         JS_EXPORT_PRIVATE void mergeOpaqueRoots();
         
@@ -270,6 +279,8 @@ namespace JSC {
         
         MarkStackArray m_stack;
         HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
+        typedef HashMap<StringImpl*, JSValue> UniqueStringMap;
+        UniqueStringMap m_uniqueStrings;
         
 #if !ASSERT_DISABLED
     public:

@@ -656,6 +656,9 @@ void Heap::markRoots(bool fullGC)
     visitor.doneCopying();
     visitor.reset();
     m_sharedData.reset();
+#if ENABLE(PARALLEL_GC)
+    m_sharedData.resetChildren();
+#endif
     m_storageSpace.doneCopying();
 
     m_operationInProgress = NoOperation;

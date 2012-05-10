@@ -1,3 +1,49 @@
+2012-05-10  Michael Saboff  <msaboff@apple.com>
+
+        Enh: Hash Const JSString in Backing Stores to Save Memory
+        https://bugs.webkit.org/show_bug.cgi?id=86024
+
+        Reviewed by Filip Pizlo.
+
+        During garbage collection, each marking thread keeps a HashMap of
+        strings.  While visiting via MarkStack::copyAndAppend(), we check to
+        see if the string we are visiting is already in the HashMap.  If not
+        we add it.  If so, we change the reference to the current string we're
+        visiting to the prior string.
+
+        To somewhat reduce the performance impact of this change, if a string
+        is unique at the end of a marking it will not be checked during further
+        GC phases.  In some cases this won't catch all duplicates, but we are
+        trying to catch the growth of duplicate strings.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::resetChildren): New method called by the 
+        main thread to reset the slave threads.  This is primarily done to
+        clear the m_uniqueStrings HashMap.
+        (JSC):
+        (JSC::MarkStackThreadSharedData::markingThreadMain):
+        (JSC::MarkStackThreadSharedData::markingThreadStartFunc):
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::MarkStackThreadSharedData::reset):
+        (JSC::MarkStack::reset): Added call to clear m_uniqueStrings.
+        (JSC::MarkStack::internalAppend): New method that performs the hash consting.
+        (JSC::SlotVisitor::copyAndAppend): Changed to call the new hash consting
+        internalAppend()
+        * heap/MarkStack.h:
+        (MarkStackThreadSharedData):
+        (MarkStack):
+        (JSC::MarkStack::sharedData):
+        * runtime/JSString.h:
+        (JSString): Added m_isHashConstSingleton flag, accessors for the flag and
+        code to initialize the flag.
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::isHashConstSingleton):
+        (JSC::JSString::clearHashConstSingleton):
+        (JSC::JSString::setHashConstSingleton):
+        (JSC::JSRopeString::finishCreation):
+
 2012-05-09  Filip Pizlo  <fpizlo@apple.com>
 
         JIT memory allocator is not returning memory to the OS on Darwin
