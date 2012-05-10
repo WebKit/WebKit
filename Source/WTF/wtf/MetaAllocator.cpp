@@ -29,6 +29,7 @@
 #include "config.h"
 #include "MetaAllocator.h"
 
+#include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
 
 namespace WTF {
@@ -260,6 +261,10 @@ void* MetaAllocator::findAndRemoveFreeSpace(size_t sizeInBytes)
         }
     }
     
+#if ENABLE(META_ALLOCATOR_PROFILE)
+    dumpProfile();
+#endif
+
     return result;
 }
 
@@ -381,6 +386,10 @@ void MetaAllocator::addFreeSpace(void* start, size_t sizeInBytes)
             m_freeSpaceEndAddressMap.add(end, node);
         }
     }
+    
+#if ENABLE(META_ALLOCATOR_PROFILE)
+    dumpProfile();
+#endif
 }
 
 void MetaAllocator::incrementPageOccupancy(void* address, size_t sizeInBytes)
@@ -441,7 +450,8 @@ void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)
 #if ENABLE(META_ALLOCATOR_PROFILE)
 void MetaAllocator::dumpProfile()
 {
-    dataLog("num allocations = %u, num frees = %u\n", m_numAllocations, m_numFrees);
+    dataLog("%d: MetaAllocator(%p): num allocations = %u, num frees = %u, allocated = %lu, reserved = %lu, committed = %lu\n",
+            getpid(), this, m_numAllocations, m_numFrees, m_bytesAllocated, m_bytesReserved, m_bytesCommitted);
 }
 #endif
 
