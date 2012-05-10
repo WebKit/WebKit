@@ -81,7 +81,6 @@ editing/pasteboard/subframe-dragndrop-1.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
 editing/selection/5333725.html
-editing/selection/caret-ltr-2-left.html
 editing/selection/caret-ltr-2.html
 editing/selection/caret-ltr-right.html
 editing/selection/caret-ltr.html
@@ -126,17 +125,12 @@ fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/touch/touch-gesture-click.html
-fast/events/zoom-dblclick.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
 fast/forms/focus-change-on-keypress.html
 fast/forms/search-cancel-button-mouseup.html
 fast/forms/search-disabled-readonly.html
 fast/forms/textfield-drag-into-disabled.html
-fast/frames/frame-programmatic-noresize.html
-fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html
-fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html
-fast/forms/type-after-focus-rule-shrink-width.html
 fast/lists/drag-into-marker.html
 fast/table/click-near-anonymous-table.html
 fast/text/offsetForPosition-complex-fallback.html

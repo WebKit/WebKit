@@ -651,9 +651,9 @@ static void feedOrQueueMouseEvent(MouseEventInfo* eventInfo, EventQueueStrategy 
 {
     if (!delayedEventQueue().isEmpty()) {
         if (delayedEventQueue().last().eventInfo)
-            delayedEventQueue().last().eventInfo = eventInfo;
-        else
             delayedEventQueue().append(DelayedEvent(eventInfo));
+        else
+            delayedEventQueue().last().eventInfo = eventInfo;
 
         if (strategy == FeedQueuedEvents)
             feedQueuedMouseEvents();

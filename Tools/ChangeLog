@@ -1,3 +1,15 @@
+2012-05-10  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][DRT] EventSender - set delayed event information if it was not set before
+        https://bugs.webkit.org/show_bug.cgi?id=85972
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Reset delayed event information if it is missing.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (feedOrQueueMouseEvent):
+
 2012-05-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         WebPageProxy::activeURL() should return the pending API request, even when there's no main frame
