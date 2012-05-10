@@ -207,7 +207,7 @@ static void testWebViewResources(ResourcesTest* test, gconstpointer)
 #endif
 
     // Reload.
-    webkit_web_view_reload(test->m_webView);
+    webkit_web_view_reload_bypass_cache(test->m_webView);
     test->waitUntilResourcesLoaded(4);
 }
 
