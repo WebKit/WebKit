@@ -56,4 +56,5 @@ enum {
     WebKitErrorCannotFindPlugIn =                               200,
     WebKitErrorCannotLoadPlugIn =                               201,
     WebKitErrorJavaUnavailable =                                202,
+    WebKitErrorInsecurePlugInVersion =                          203,
 };

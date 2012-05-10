@@ -214,6 +214,8 @@ String RenderEmbeddedObject::unavailablePluginReplacementText() const
         return missingPluginText();
     case PluginCrashed:
         return crashedPluginText();
+    case InsecurePluginVersion:
+        return insecurePluginVersionText();
     }
 
     ASSERT_NOT_REACHED();

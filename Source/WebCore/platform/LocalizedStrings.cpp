@@ -673,6 +673,11 @@ String crashedPluginText()
     return WEB_UI_STRING("Plug-in Failure", "Label text to be used if plugin host process has crashed");
 }
 
+String insecurePluginVersionText()
+{
+    return WEB_UI_STRING("Insecure Plug-In Version", "Label text to be used when an insecure plug-in version was blocked from loading");
+}
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     return formatLocalizedString(WEB_UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"), numberOfFiles);

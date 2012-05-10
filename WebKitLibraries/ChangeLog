@@ -1,3 +1,17 @@
+2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKit1: Add a way to blacklist specific plug-ins/plug-in versions
+        https://bugs.webkit.org/show_bug.cgi?id=86150
+        <rdar://problem/9551196>
+
+        Reviewed by Sam Weinig.
+
+        Add WKShouldBlockPlugin.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-05-08  Jon Lee  <jonlee@apple.com>
 
         Safari warns that it needs to resend the form in an iFrame when going back

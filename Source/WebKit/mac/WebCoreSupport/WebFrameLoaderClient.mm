@@ -1665,25 +1665,31 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
     NSView *view = nil;
 
     if (pluginPackage) {
-        if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
-            view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(element), loadManually);
-            
+        if (!WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
+            if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
+                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(element), loadManually);
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            WebBaseNetscapePluginView *pluginView = [[[NETSCAPE_PLUGIN_VIEW alloc]
-                initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                pluginPackage:(WebNetscapePluginPackage *)pluginPackage
-                URL:pluginURL
-                baseURL:baseURL
-                MIMEType:MIMEType
-                attributeKeys:attributeKeys
-                attributeValues:kit(paramValues)
-                loadManually:loadManually
-                element:element] autorelease];
-            
-            return adoptRef(new NetscapePluginWidget(pluginView));
-        } 
+            else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+                WebBaseNetscapePluginView *pluginView = [[[NETSCAPE_PLUGIN_VIEW alloc]
+                    initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                    pluginPackage:(WebNetscapePluginPackage *)pluginPackage
+                    URL:pluginURL
+                    baseURL:baseURL
+                    MIMEType:MIMEType
+                    attributeKeys:attributeKeys
+                    attributeValues:kit(paramValues)
+                    loadManually:loadManually
+                    element:element] autorelease];
+
+                return adoptRef(new NetscapePluginWidget(pluginView));
+            }
 #endif
+        } else {
+            errorCode = WebKitErrorInsecurePlugInVersion;
+            if (element->renderer()->isEmbeddedObject())
+                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+        }
     } else
         errorCode = WebKitErrorCannotFindPlugIn;
 
