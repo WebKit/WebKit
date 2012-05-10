@@ -249,9 +249,6 @@ editing/selection/designmode-no-caret.html
 editing/selection/selection-background.html
 fast/dom/Window/window-onFocus.html
 
-# EFL's LayoutTestController does not implement setTabKeyCyclesThroughElements
-fast/events/keypress-insert-tab.html
-
 # EFL's LayoutTestController does not implement setUseDashboardCompatibilityMode
 fast/canvas/canvas-gradient-addStop-error.html
 fast/canvas/fill-stroke-clip-reset-path.html

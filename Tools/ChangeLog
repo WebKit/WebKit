@@ -1,5 +1,20 @@
 2012-05-10  Alexander Shalamov  <alexander.shalamov@intel.com>
 
+        [EFL] LayoutTestController needs implementation of setTabKeyCyclesThroughElements
+        https://bugs.webkit.org/show_bug.cgi?id=82864
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add missing implementation for setTabKeyCyclesThroughElements to EFL's LayoutTestController
+        in order to unskip fast/events/keypress-insert-tab.html
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyDownCallback):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+
+2012-05-10  Alexander Shalamov  <alexander.shalamov@intel.com>
+
         [EFL][DRT] EventSender - set delayed event information if it was not set before
         https://bugs.webkit.org/show_bug.cgi?id=85972
 

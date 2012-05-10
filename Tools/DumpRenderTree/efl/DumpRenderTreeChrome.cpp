@@ -264,6 +264,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setEditingBehavior(mainView(), defaultEditingBehavior());
     DumpRenderTreeSupportEfl::setJavaScriptProfilingEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(mainView(), false);
+    DumpRenderTreeSupportEfl::setTabKeyCyclesThroughElements(mainView(), true);
 }
 
 static CString pathSuitableForTestResult(const char* uriString)
