@@ -27,19 +27,15 @@
 
 module('ui.failures');
 
-test('Builder', 7, function() {
-    raises(function() {
-        new ui.failures.Builder();
-    });
-
+test('Builder', 6, function() {
     var configuration;
-    configuration = new ui.failures.Builder("Webkit Linux");
+    configuration = new ui.failures.Builder("Webkit Linux", ["update", "webkit_tests"]);
     deepEqual(Object.getOwnPropertyNames(configuration.__proto__).sort(), [
         '_addSpan',
         'equals',
         'init',
     ]);
-    equal(configuration.outerHTML, '<a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux"><span class="version">lucid</span><span class="architecture">64-bit</span></a>');
+    equal(configuration.outerHTML, '<a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux"><span class="version">lucid</span><span class="architecture">64-bit</span><span class="failures"> update, webkit_tests</span></a>');
     configuration = new ui.failures.Builder("Webkit Win");
     equal(configuration.outerHTML, '<a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Win"><span class="version">xp</span></a>');
     configuration._addSpan('foo', 'bar');

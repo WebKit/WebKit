@@ -318,7 +318,7 @@ test('FailingTestsSummary (grouping)', 1, function() {
 
 test('BuildersFailing', 1, function() {
     var builderFailing = new ui.notifications.BuildersFailing('Disasterifying');
-    builderFailing.setFailingBuilders(['Webkit Linux', 'Webkit Vista']);
+    builderFailing.setFailingBuilders({'Webkit Linux': ['compile'], 'Webkit Vista': ['webkit_tests', 'update']);
     equal(builderFailing.innerHTML,
         '<div class="how">' +
             '<time class="relative"></time>' +

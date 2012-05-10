@@ -61,23 +61,7 @@ test("ui.onebar", 3, function() {
         '</ul>' +
         '<div id="unexpected" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div>' +
         '<div id="expected" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>' +
-        '<div id="results" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>' +
-        '<div id="chromium-gtests"><span id="gtest-label">Chromium gtest bots:</span>' +
-            '<iframe scrolling="no" src="http://build.chromium.org/p/chromium.webkit/horizontal_one_box_per_builder?' +
-                'builder=Win%20Builder' +
-                '&amp;builder=Win%20Reliability%20Builder' +
-                '&amp;builder=Vista%20Tests' +
-                '&amp;builder=Win%20Reliability' +
-                '&amp;builder=Win+(dbg)' +
-                '&amp;builder=Win%20Shared%20Builder%20%28dbg%29' +
-                '&amp;builder=Mac10.6%20Tests' +
-                '&amp;builder=Mac+Builder+(dbg)' +
-                '&amp;builder=Linux%20Tests' +
-                '&amp;builder=Linux%20Valgrind' +
-                '&amp;builder=Vista%20Perf' +
-                '&amp;builder=Linux%20Perf' +
-                '&amp;builder=Mac10.6%20Perf"></iframe>' +
-        '</div>');
+        '<div id="results" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>');
 
     onebar.select('expected');
     equal(window.location.hash, '#expected');

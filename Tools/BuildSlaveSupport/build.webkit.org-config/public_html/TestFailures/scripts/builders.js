@@ -41,32 +41,18 @@ function urlForBuildInfo(builderName, buildNumber)
     return kChromiumBuildBotURL + '/json/builders/' + encodeURIComponent(builderName) + '/builds/' + encodeURIComponent(buildNumber);
 }
 
-function isStepRequredForTestCoverage(step)
-{
-    switch(step.name) {
-    case kUpdateStepName:
-    case kUpdateScriptsStepName:
-    case kCompileStepName:
-    case kWebKitTestsStepName:
-        return true;
-    default:
-        return false;
-    }
-}
-
 function didFail(step)
 {
     if (step.name == kWebKitTestsStepName) {
         // run-webkit-tests fails to generate test coverage when it crashes or hangs.
         return step.text.indexOf(kCrashedOrHungOutputMarker) != -1;
     }
-    // FIXME: Is this the correct way to test for failure?
     return step.results[0] > 0;
 }
 
-function didFailStepRequredForTestCoverage(buildInfo)
+function failingSteps(buildInfo)
 {
-    return buildInfo.steps.filter(isStepRequredForTestCoverage).filter(didFail).length > 0;
+    return buildInfo.steps.filter(didFail);
 }
 
 function mostRecentCompletedBuildNumber(individualBuilderStatus)
@@ -90,11 +76,19 @@ var g_buildInfoCache = new base.AsynchronousCache(function(key, callback) {
 
 function fetchMostRecentBuildInfoByBuilder(callback)
 {
-    var buildInfoByBuilder = {};
-    var builderNames = Object.keys(config.kBuilders);
-    var requestTracker = new base.RequestTracker(builderNames.length, callback, [buildInfoByBuilder]);
     net.get(kChromiumBuildBotURL + '/json/builders', function(builderStatus) {
-        $.each(builderNames, function(index, builderName) {
+        var buildInfoByBuilder = {};
+        var builderNames = Object.keys(builderStatus);
+        var requestTracker = new base.RequestTracker(builderNames.length, callback, [buildInfoByBuilder]);
+        builderNames.forEach(function(builderName) {
+            // FIXME: Should garden-o-matic show these? I can imagine showing the deps bots being useful at least so
+            // that the gardener only need to look at garden-o-matic and never at the waterfall. Not really sure who
+            // watches the GPU bots.
+            if (builderName.indexOf('GPU') != -1 || builderName.indexOf('deps') != -1) {
+                requestTracker.requestComplete();
+                return;
+            }
+
             var buildNumber = mostRecentCompletedBuildNumber(builderStatus[builderName]);
             if (!buildNumber) {
                 buildInfoByBuilder[builderName] = null;
@@ -110,17 +104,18 @@ function fetchMostRecentBuildInfoByBuilder(callback)
     });
 }
 
-builders.buildersFailingStepRequredForTestCoverage = function(callback)
+builders.buildersFailingNonLayoutTests = function(callback)
 {
     fetchMostRecentBuildInfoByBuilder(function(buildInfoByBuilder) {
-        var builderNameList = [];
+        var failureList = {};
         $.each(buildInfoByBuilder, function(builderName, buildInfo) {
             if (!buildInfo)
                 return;
-            if (didFailStepRequredForTestCoverage(buildInfo))
-                builderNameList.push(builderName);
+            var failures = failingSteps(buildInfo);
+            if (failures.length)
+                failureList[builderName] = failures.map(function(failure) { return failure.name; });
         });
-        callback(builderNameList);
+        callback(failureList);
     });
 };
 

@@ -582,7 +582,7 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
     "times": [1318364210.066524, 1318366408.0732119]
 };
 
-test("buildersFailingStepRequredForTestCoverage", 3, function() {
+test("buildersFailing", 3, function() {
     var simulator = new NetworkSimulator();
 
     var failingBuildInfoJSON = JSON.parse(JSON.stringify(kExampleBuildInfoJSON));
@@ -608,8 +608,16 @@ test("buildersFailingStepRequredForTestCoverage", 3, function() {
     };
 
     simulator.runTest(function() {
-        builders.buildersFailingStepRequredForTestCoverage(function(builderNameList) {
-            deepEqual(builderNameList, ["Webkit Mac10.6"]);
+        builders.buildersFailingNonLayoutTests(function(builderNameList) {
+            deepEqual(builderNameList, {
+                "Webkit Linux": [
+                    "webkit_gpu_tests"
+                ],
+                "Webkit Mac10.6": [
+                    "compile",
+                    "webkit_gpu_tests"
+                ]
+            });
         });
     });
 
@@ -620,7 +628,7 @@ test("buildersFailingStepRequredForTestCoverage", 3, function() {
     ]);
 });
 
-test("buildersFailingStepRequredForTestCoverage (run-webkit-tests crash)", 3, function() {
+test("buildersFailing (run-webkit-tests crash)", 3, function() {
     var simulator = new NetworkSimulator();
 
     var builderStatusJSON = JSON.parse(JSON.stringify(kExampleBuilderStatusJSON));
@@ -648,8 +656,16 @@ test("buildersFailingStepRequredForTestCoverage (run-webkit-tests crash)", 3, fu
     };
 
     simulator.runTest(function() {
-        builders.buildersFailingStepRequredForTestCoverage(function(builderNameList) {
-            deepEqual(builderNameList, ["Webkit Linux"]);
+        builders.buildersFailingNonLayoutTests(function(builderNameList) {
+            deepEqual(builderNameList, {
+                "Webkit Linux": [
+                    "extract_build",
+                    "webkit_tests",
+                    "archive_webkit_tests_results",
+                    "webkit_gpu_tests",
+                    "archive_webkit_tests_gpu_results"
+                ]
+            });
         });
     });
 

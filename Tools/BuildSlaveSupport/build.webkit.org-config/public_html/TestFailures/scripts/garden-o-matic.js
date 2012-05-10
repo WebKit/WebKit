@@ -34,7 +34,7 @@ var g_buildersFailing = null;
 var g_unexpectedFailuresController = null;
 var g_failuresController = null;
 
-var g_losingTestCoverageBuilders = null;
+var g_nonLayoutTestFailureBuilders = null;
 
 function update()
 {
@@ -51,7 +51,7 @@ function update()
 
     g_info.add(updating);
 
-    builders.buildersFailingStepRequredForTestCoverage(g_losingTestCoverageBuilders.update.bind(g_losingTestCoverageBuilders));
+    builders.buildersFailingNonLayoutTests(g_nonLayoutTestFailureBuilders.update.bind(g_nonLayoutTestFailureBuilders));
 
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
         if (g_failuresController)
@@ -90,7 +90,6 @@ $(document).ready(function() {
         showResults: function(resultsView)
         {
             var resultsContainer = onebar.results();
-            console.log(resultsContainer);
             $(resultsContainer).empty().append(resultsView);
             onebar.select('results');
         }
@@ -100,7 +99,7 @@ $(document).ready(function() {
     g_unexpectedFailuresController = new controllers.UnexpectedFailures(model.state, unexpectedFailuresView, onebarController);
 
     g_info = new ui.notifications.Stream();
-    g_losingTestCoverageBuilders = new controllers.FailingBuilders(g_info, 'Losing test coverage');
+    g_nonLayoutTestFailureBuilders = new controllers.FailingBuilders(g_info, 'Non-layout test failures');
 
     // FIXME: This should be an Action object.
     var updateButton = document.body.insertBefore(document.createElement('button'), document.body.firstChild);

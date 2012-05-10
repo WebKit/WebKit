@@ -44,15 +44,6 @@ config.kBuilders = {
     'Webkit Mac10.7': {version: 'lion'},
 };
 
-config.kBuildersThatOnlyCompile = [
-    'Webkit Win Builder',
-    'Webkit Win Builder (dbg)',
-    // FIXME: Where is the Linux Builder?
-    'Webkit Mac Builder',
-    'Webkit Mac Builder (dbg)',
-    'Win Builder',
-];
-
 config.kTracURL = 'http://trac.webkit.org';
 config.kBugzillaURL = 'https://bugs.webkit.org';
 config.kLocalServerURL = 'http://127.0.0.1:8127';

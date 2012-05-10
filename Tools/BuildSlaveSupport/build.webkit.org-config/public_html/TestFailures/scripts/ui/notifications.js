@@ -243,12 +243,12 @@ ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
     {
         this._problem.insertBefore(document.createTextNode(message + ':'), this._problem.firstChild);
     },
-    setFailingBuilders: function(builderNameList)
+    setFailingBuilders: function(failuresList)
     {
-        $(this._effects).empty().append(builderNameList.map(function(builderName) {
+        $(this._effects).empty().append(Object.keys(failuresList).map(function(builderName) {
             var effect = document.createElement('li');
             effect.className = 'builder';
-            effect.appendChild(new ui.failures.Builder(builderName));
+            effect.appendChild(new ui.failures.Builder(builderName, failuresList[builderName]));
             return effect;
         }));
     }

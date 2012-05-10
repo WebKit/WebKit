@@ -55,23 +55,6 @@ ui.urlForEmbeddedFlakinessDashboard = function(opt_testNameList)
     return ui.urlForFlakinessDashboard(opt_testNameList) + '&showChrome=false';
 }
 
-ui.urlForChromiumGtestSummary = function()
-{
-    return 'http://build.chromium.org/p/chromium.webkit/horizontal_one_box_per_builder?' +
-        'builder=Win%20Builder' +
-        '&builder=Win%20Reliability%20Builder' +
-        '&builder=Vista%20Tests&builder=Win%20Reliability' +
-        '&builder=Win+(dbg)' +
-        '&builder=Win%20Shared%20Builder%20%28dbg%29' +
-        '&builder=Mac10.6%20Tests' +
-        '&builder=Mac+Builder+(dbg)' +
-        '&builder=Linux%20Tests' +
-        '&builder=Linux%20Valgrind' +
-        '&builder=Vista%20Perf' +
-        '&builder=Linux%20Perf' +
-        '&builder=Mac10.6%20Perf';
-}
-
 ui.rolloutReasonForTestNameList = function(testNameList)
 {
     return 'Broke:\n' + testNameList.map(function(testName) {
@@ -91,15 +74,13 @@ ui.onebar = base.extends('div', {
             '</ul>' +
             '<div id="unexpected"></div>' +
             '<div id="expected"></div>' +
-            '<div id="results"></div>' +
-            '<div id="chromium-gtests"><span id="gtest-label">Chromium gtest bots:</span>' +
-                '<iframe scrolling="no" src="' + ui.urlForChromiumGtestSummary() + '"></iframe>' +
-            '</div>';
+            '<div id="results"></div>';
         this._tabNames = [
             'unexpected',
             'expected',
             'results',
         ]
+
         this._tabIndexToSavedScrollOffset = {};
         this._tabs = $(this).tabs({
             disabled: [2],

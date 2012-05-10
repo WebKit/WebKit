@@ -1,3 +1,29 @@
+2012-05-09  Ojan Vafai  <ojan@chromium.org>
+
+        Change "losing test coverage" to cover all non-layout test problems in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=86043
+
+        Reviewed by Adam Barth.
+
+        -Get rid of the gtest iframe.
+        -Cover all non-layout test problems. Before we wouldn't catch compile failures
+        or gtest failures since they were not on the webkit testing bots.
+        -Include the list of failing steps next to the builder name. This is a lot less
+        cluttered than you'd expect and already helped me find a compile failure early.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        Delete unused map.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+
 2012-05-09  Jessie Berlin  <jberlin@apple.com>
 
         Crash using the new WKBundleDOMWindowExtensions APIs.
