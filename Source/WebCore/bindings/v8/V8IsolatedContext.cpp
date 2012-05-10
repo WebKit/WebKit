@@ -105,6 +105,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
 
 void V8IsolatedContext::destroy()
 {
+    m_perContextData.clear();
     m_frame->loader()->client()->willReleaseScriptContext(context(), m_world->id());
     m_context->get().MakeWeak(this, &contextWeakReferenceCallback);
     m_frame = 0;
