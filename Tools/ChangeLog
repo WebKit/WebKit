@@ -1,3 +1,15 @@
+2012-05-09  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Build fix after r116464.
+
+        `ulong' is a type defined by glibc, so it is not very
+        portable. Use `unsigned long' instead.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (DelayedEvent::DelayedEvent):
+        (DelayedEvent):
+        (leapForwardCallback):
+
 2012-05-09  Adam Barth  <abarth@webkit.org>
 
         [Chromium] LayoutTestController should use ENABLE guards for some features

@@ -137,14 +137,14 @@ struct MouseEventInfo {
 };
 
 struct DelayedEvent {
-    DelayedEvent(MouseEventInfo* eventInfo, ulong delay = 0)
+    DelayedEvent(MouseEventInfo* eventInfo, unsigned long delay = 0)
         : eventInfo(eventInfo)
         , delay(delay)
     {
     }
 
     MouseEventInfo* eventInfo;
-    ulong delay;
+    unsigned long delay;
 };
 
 WTF::Vector<DelayedEvent>& delayedEventQueue()
@@ -307,7 +307,7 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
 static JSValueRef leapForwardCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount > 0) {
-        const ulong leapForwardDelay = JSValueToNumber(context, arguments[0], exception);
+        const unsigned long leapForwardDelay = JSValueToNumber(context, arguments[0], exception);
         if (delayedEventQueue().isEmpty())
             delayedEventQueue().append(DelayedEvent(0, leapForwardDelay));
         else
