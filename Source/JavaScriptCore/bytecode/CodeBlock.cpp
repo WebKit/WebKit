@@ -519,8 +519,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_create_this: {
             int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            dataLog("[%4d] create_this %s %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data());
+            dataLog("[%4d] create_this %s\n", location, registerName(exec, r0).data());
             break;
         }
         case op_convert_this: {

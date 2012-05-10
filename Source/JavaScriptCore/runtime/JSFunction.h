@@ -121,6 +121,18 @@ namespace JSC {
             return OBJECT_OFFSETOF(JSFunction, m_executable);
         }
 
+        Structure* cachedInheritorID(ExecState* exec)
+        {
+            if (UNLIKELY(!m_cachedInheritorID))
+                return cacheInheritorID(exec);
+            return m_cachedInheritorID.get();
+        }
+
+        static size_t offsetOfCachedInheritorID()
+        {
+            return OBJECT_OFFSETOF(JSFunction, m_cachedInheritorID);
+        }
+
     protected:
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
@@ -129,6 +141,8 @@ namespace JSC {
         
         void finishCreation(ExecState*, NativeExecutable*, int length, const Identifier& name);
         void finishCreation(ExecState*, FunctionExecutable*, ScopeChainNode*);
+
+        Structure* cacheInheritorID(ExecState*);
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
@@ -152,6 +166,7 @@ namespace JSC {
 
         WriteBarrier<ExecutableBase> m_executable;
         WriteBarrier<ScopeChainNode> m_scopeChain;
+        WriteBarrier<Structure> m_cachedInheritorID;
     };
 
     inline bool JSValue::isFunction() const

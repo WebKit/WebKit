@@ -112,6 +112,16 @@ void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable,
     putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
 
+Structure* JSFunction::cacheInheritorID(ExecState* exec)
+{
+    JSValue prototype = get(exec, exec->globalData().propertyNames->prototype);
+    if (prototype.isObject())
+        m_cachedInheritorID.set(exec->globalData(), this, asObject(prototype)->inheritorID(exec->globalData()));
+    else
+        m_cachedInheritorID.set(exec->globalData(), this, globalObject()->emptyObjectStructure());
+    return m_cachedInheritorID.get();
+}
+
 const UString& JSFunction::name(ExecState* exec)
 {
     return asString(getDirect(exec->globalData(), exec->globalData().propertyNames->name))->tryGetValue();
@@ -332,6 +342,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot;
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        thisObject->m_cachedInheritorID.clear();
     }
     if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
         // This will trigger the property to be reified, if this is not already the case!
@@ -372,6 +383,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, const Iden
         // following the rules set out in ECMA-262 8.12.9.
         PropertySlot slot;
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        thisObject->m_cachedInheritorID.clear();
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
 

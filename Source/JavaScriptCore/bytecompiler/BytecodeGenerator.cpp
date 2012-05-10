@@ -442,17 +442,8 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, ScopeChainN
     preserveLastVar();
 
     if (isConstructor()) {
-        RefPtr<RegisterID> func = newTemporary();
-        RefPtr<RegisterID> funcProto = newTemporary();
-
-        emitOpcode(op_get_callee);
-        instructions().append(func->index());
-        // Load prototype.
-        emitGetById(funcProto.get(), func.get(), globalData()->propertyNames->prototype);
-
         emitOpcode(op_create_this);
         instructions().append(m_thisRegister.index());
-        instructions().append(funcProto->index());
     } else if (!codeBlock->isStrictMode() && (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks)) {
         emitOpcode(op_convert_this);
         instructions().append(m_thisRegister.index());

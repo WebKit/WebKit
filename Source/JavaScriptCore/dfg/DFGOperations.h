@@ -97,8 +97,7 @@ typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* DFG_OPERATION operationNewObject(ExecState*);
-JSCell* DFG_OPERATION operationCreateThis(ExecState*, JSCell* encodedOp1);
-JSCell* DFG_OPERATION operationCreateThisInlined(ExecState*, JSCell* encodedOp1, JSCell* constructor);
+JSCell* DFG_OPERATION operationCreateThis(ExecState*, JSCell* constructor);
 EncodedJSValue DFG_OPERATION operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
 EncodedJSValue DFG_OPERATION operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);

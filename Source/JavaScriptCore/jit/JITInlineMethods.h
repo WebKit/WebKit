@@ -448,6 +448,9 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
     // store the function's executable member
     storePtr(TrustedImmPtr(executable), Address(result, JSFunction::offsetOfExecutable()));
 
+    // clear the function's inheritorID
+    storePtr(TrustedImmPtr(0), Address(result, JSFunction::offsetOfCachedInheritorID()));
+
     // store the function's name
     ASSERT(executable->nameValue());
     int functionNameOffset = sizeof(JSValue) * m_codeBlock->globalObject()->functionNameOffset();

@@ -221,22 +221,17 @@ _llint_op_create_arguments:
 
 _llint_op_create_this:
     traceExecution()
-    loadis 16[PB, PC, 8], t0
-    assertNotConstant(t0)
-    loadp [cfr, t0, 8], t0
-    btpnz t0, tagMask, .opCreateThisSlow
-    loadp JSCell::m_structure[t0], t1
-    bbb Structure::m_typeInfo + TypeInfo::m_type[t1], ObjectType, .opCreateThisSlow
-    loadp JSObject::m_inheritorID[t0], t2
+    loadp Callee[cfr], t0
+    loadp JSFunction::m_cachedInheritorID[t0], t2
     btpz t2, .opCreateThisSlow
     allocateBasicJSObject(JSFinalObjectSizeClassIndex, JSGlobalData::jsFinalObjectClassInfo, t2, t0, t1, t3, .opCreateThisSlow)
     loadis 8[PB, PC, 8], t1
     storep t0, [cfr, t1, 8]
-    dispatch(3)
+    dispatch(2)
 
 .opCreateThisSlow:
     callSlowPath(_llint_slow_path_create_this)
-    dispatch(3)
+    dispatch(2)
 
 
 _llint_op_get_callee:

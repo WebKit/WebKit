@@ -3029,32 +3029,17 @@ void SpeculativeJIT::compile(Node& node)
         // then we speculate because we want to get recompiled if it isn't (since
         // otherwise we'd start taking slow path a lot).
         
-        SpeculateCellOperand proto(this, node.child1());
+        SpeculateCellOperand callee(this, node.child1());
         GPRTemporary result(this);
         GPRTemporary scratch(this);
         
-        GPRReg protoGPR = proto.gpr();
+        GPRReg calleeGPR = callee.gpr();
         GPRReg resultGPR = result.gpr();
         GPRReg scratchGPR = scratch.gpr();
         
-        proto.use();
-        
+        // Load the inheritorID. If the inheritorID is not set, go to slow path.
+        m_jit.loadPtr(MacroAssembler::Address(calleeGPR, JSFunction::offsetOfCachedInheritorID()), scratchGPR);
         MacroAssembler::JumpList slowPath;
-        
-        // Need to verify that the prototype is an object. If we have reason to believe
-        // that it's a FinalObject then we speculate on that directly. Otherwise we
-        // do the slow (structure-based) check.
-        if (at(node.child1()).shouldSpeculateFinalObject()) {
-            if (!isFinalObjectPrediction(m_state.forNode(node.child1()).m_type))
-                speculationCheck(BadType, JSValueSource::unboxedCell(protoGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(protoGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSFinalObject::s_info)));
-        } else {
-            m_jit.loadPtr(MacroAssembler::Address(protoGPR, JSCell::structureOffset()), scratchGPR);
-            slowPath.append(m_jit.branch8(MacroAssembler::Below, MacroAssembler::Address(scratchGPR, Structure::typeInfoTypeOffset()), MacroAssembler::TrustedImm32(ObjectType)));
-        }
-        
-        // Load the inheritorID (the Structure that objects who have protoGPR as the prototype
-        // use to refer to that prototype). If the inheritorID is not set, go to slow path.
-        m_jit.loadPtr(MacroAssembler::Address(protoGPR, JSObject::offsetOfInheritorID()), scratchGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, scratchGPR));
         
         emitAllocateJSFinalObject(scratchGPR, resultGPR, scratchGPR, slowPath);
@@ -3064,15 +3049,12 @@ void SpeculativeJIT::compile(Node& node)
         slowPath.link(&m_jit);
         
         silentSpillAllRegisters(resultGPR);
-        if (node.codeOrigin.inlineCallFrame)
-            callOperation(operationCreateThisInlined, resultGPR, protoGPR, node.codeOrigin.inlineCallFrame->callee.get());
-        else
-            callOperation(operationCreateThis, resultGPR, protoGPR);
+        callOperation(operationCreateThis, resultGPR, calleeGPR);
         silentFillAllRegisters(resultGPR);
         
         done.link(&m_jit);
         
-        cellResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
+        cellResult(resultGPR, m_compileIndex);
         break;
     }
 

@@ -1534,8 +1534,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_create_this: {
-            NodeIndex op1 = get(currentInstruction[2].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(CreateThis, op1));
+            if (m_inlineStackTop->m_inlineCallFrame)
+                set(currentInstruction[1].u.operand, addToGraph(CreateThis, getDirect(m_inlineStackTop->m_calleeVR)));
+            else
+                set(currentInstruction[1].u.operand, addToGraph(CreateThis, addToGraph(GetCallee)));
             NEXT_OPCODE(op_create_this);
         }
             

@@ -458,13 +458,7 @@ LLINT_SLOW_PATH_DECL(slow_path_create_this)
     ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
 #endif
     
-    Structure* structure;
-    JSValue proto = LLINT_OP(2).jsValue();
-    if (proto.isObject())
-        structure = asObject(proto)->inheritorID(globalData);
-    else
-        structure = constructor->scope()->globalObject->emptyObjectStructure();
-    
+    Structure* structure = constructor->cachedInheritorID(exec);
     LLINT_RETURN(constructEmptyObject(exec, structure));
 }
 

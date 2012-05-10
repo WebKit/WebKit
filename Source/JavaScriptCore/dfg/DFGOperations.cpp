@@ -209,39 +209,17 @@ EncodedJSValue DFG_OPERATION operationConvertThis(ExecState* exec, EncodedJSValu
     return JSValue::encode(JSValue::decode(encodedOp).toThisObject(exec));
 }
 
-inline JSCell* createThis(ExecState* exec, JSCell* prototype, JSFunction* constructor)
+JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* constructor)
 {
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+
 #if !ASSERT_DISABLED
     ConstructData constructData;
-    ASSERT(constructor->methodTable()->getConstructData(constructor, constructData) == ConstructTypeJS);
+    ASSERT(jsCast<JSFunction*>(constructor)->methodTable()->getConstructData(jsCast<JSFunction*>(constructor), constructData) == ConstructTypeJS);
 #endif
     
-    JSGlobalData& globalData = exec->globalData();
-    NativeCallFrameTracer tracer(&globalData, exec);
-
-    Structure* structure;
-    if (prototype->isObject())
-        structure = asObject(prototype)->inheritorID(globalData);
-    else
-        structure = constructor->scope()->globalObject->emptyObjectStructure();
-    
-    return constructEmptyObject(exec, structure);
-}
-
-JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSCell* prototype)
-{
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
-
-    return createThis(exec, prototype, jsCast<JSFunction*>(exec->callee()));
-}
-
-JSCell* DFG_OPERATION operationCreateThisInlined(ExecState* exec, JSCell* prototype, JSCell* constructor)
-{
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
-    
-    return createThis(exec, prototype, jsCast<JSFunction*>(constructor));
+    return constructEmptyObject(exec, jsCast<JSFunction*>(constructor)->cachedInheritorID(exec));
 }
 
 JSCell* DFG_OPERATION operationNewObject(ExecState* exec)

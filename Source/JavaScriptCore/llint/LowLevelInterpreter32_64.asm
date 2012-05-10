@@ -343,23 +343,18 @@ _llint_op_create_arguments:
 
 _llint_op_create_this:
     traceExecution()
-    loadi 8[PC], t0
-    assertNotConstant(t0)
-    bineq TagOffset[cfr, t0, 8], CellTag, .opCreateThisSlow
-    loadi PayloadOffset[cfr, t0, 8], t0
-    loadp JSCell::m_structure[t0], t1
-    bbb Structure::m_typeInfo + TypeInfo::m_type[t1], ObjectType, .opCreateThisSlow
-    loadp JSObject::m_inheritorID[t0], t2
+    loadp Callee[cfr], t0
+    loadp JSFunction::m_cachedInheritorID[t0], t2
     btpz t2, .opCreateThisSlow
     allocateBasicJSObject(JSFinalObjectSizeClassIndex, JSGlobalData::jsFinalObjectClassInfo, t2, t0, t1, t3, .opCreateThisSlow)
     loadi 4[PC], t1
     storei CellTag, TagOffset[cfr, t1, 8]
     storei t0, PayloadOffset[cfr, t1, 8]
-    dispatch(3)
+    dispatch(2)
 
 .opCreateThisSlow:
     callSlowPath(_llint_slow_path_create_this)
-    dispatch(3)
+    dispatch(2)
 
 
 _llint_op_get_callee:

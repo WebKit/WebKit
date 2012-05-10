@@ -774,19 +774,16 @@ bool AbstractState::execute(unsigned indexInBlock)
         destination.merge(PredictObjectOther);
         break;
     }
-            
+
     case CreateThis: {
-        Node& child = m_graph[node.child1()];
         AbstractValue& source = forNode(node.child1());
         AbstractValue& destination = forNode(nodeIndex);
             
-        if (child.shouldSpeculateFinalObject())
-            source.filter(PredictFinalObject);
-            
+        source.filter(PredictFunction);
         destination.set(PredictFinalObject);
         break;
     }
-            
+
     case NewObject:
         forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->emptyObjectStructure());
         m_haveStructures = true;

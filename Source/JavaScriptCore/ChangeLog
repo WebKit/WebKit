@@ -1,3 +1,81 @@
+2012-05-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Cache inheritorID on JSFunction
+        https://bugs.webkit.org/show_bug.cgi?id=85853
+
+        Reviewed by Geoff Garen & Filip Pizlo.
+
+        An object's prototype is indicated via its structure.  To create an otherwise
+        empty object with object A as its prototype, we require a structure with its
+        prototype set to point to A.  We wish to use this same structure for all empty
+        objects created with a prototype of A, so we presently store this structure as
+        a property of A, known as the inheritorID.
+
+        When a function F is invoked as a constructor, where F has a property 'prototype'
+        set to point to A, in order to create the 'this' value for the constructor to
+        use the following steps are taken:
+          - the 'prototype' proptery of F is read, via a regular [[Get]] access.
+          - the inheritorID internal property of the prototype is read.
+          - a new, empty object is constructed with its structure set to point to inheritorID.
+
+        There are two drawbacks to the current approach:
+          - it requires that every object has an inheritorID field.
+          - it requires a [[Get]] access on every constructor call to access the 'prototype' property.
+
+        Instead, switch to caching a copy of the inheritorID on the function.  Constructor
+        calls now only need read the internal property from the callee, saving a [[Get]].
+        This also means that JSObject::m_inheritorID is no longer commonly read, and in a
+        future patch we can move to storing this in a more memory efficient fashion.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateJSFunction):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_create_this):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::cacheInheritorID):
+        (JSC):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::cachedInheritorID):
+        (JSFunction):
+        (JSC::JSFunction::offsetOfCachedInheritorID):
+
 2012-05-10  Michael Saboff  <msaboff@apple.com>
 
         Enh: Hash Const JSString in Backing Stores to Save Memory
