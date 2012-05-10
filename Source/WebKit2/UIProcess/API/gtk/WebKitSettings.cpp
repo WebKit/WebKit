@@ -106,7 +106,9 @@ enum {
     PROP_ENABLE_WEBAUDIO,
     PROP_ENABLE_WEBGL,
     PROP_ZOOM_TEXT_ONLY,
-    PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD
+    PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD,
+    PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
+    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -218,6 +220,12 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
         webkit_settings_set_javascript_can_access_clipboard(settings, g_value_get_boolean(value));
+        break;
+    case PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE:
+        webkit_settings_set_media_playback_requires_user_gesture(settings, g_value_get_boolean(value));
+        break;
+    case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
+        webkit_settings_set_media_playback_allows_inline(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -334,6 +342,12 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
         g_value_set_boolean(value, webkit_settings_get_javascript_can_access_clipboard(settings));
+        break;
+    case PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE:
+        g_value_set_boolean(value, webkit_settings_get_media_playback_requires_user_gesture(settings));
+        break;
+    case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
+        g_value_set_boolean(value, webkit_settings_get_media_playback_allows_inline(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -860,6 +874,38 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("JavaScript can access clipboard"),
                                                          _("Whether JavaScript can access Clipboard"),
                                                          FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:media-playback-requires-user-gesture:
+     *
+     * Whether a user gesture (such as clicking the play button)
+     * would be required to start media playback or load media. This is off
+     * by default, so media playback could start automatically.
+     * Setting it on requires a gesture by the user to start playback, or to
+     * load the media.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
+                                    g_param_spec_boolean("media-playback-requires-user-gesture",
+                                                         _("Media playback requires user gesture"),
+                                                         _("Whether media playback requires user gesture"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:media-playback-allows-inline
+     *
+     * Whether media playback is full-screen only or inline playback is allowed.
+     * This is %TRUE by default, so media playback can be inline. Setting it to
+     * %FALSE allows specifying that media playback should be always fullscreen.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
+                                    g_param_spec_boolean("media-playback-allows-inline",
+                                                         _("Media playback allows inline"),
+                                                         _("Whether media playback allows inline"),
+                                                         TRUE,
                                                          readWriteConstructParamFlags));
 
     g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
@@ -2192,4 +2238,78 @@ void webkit_settings_set_javascript_can_access_clipboard(WebKitSettings* setting
     WKPreferencesSetDOMPasteAllowed(priv->preferences.get(), enabled);
 
     g_object_notify(G_OBJECT(settings), "javascript-can-access-clipboard");
+}
+
+/**
+ * webkit_settings_set_media_playback_requires_user_gesture:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:media-playback-requires-user-gesture property.
+ */
+void webkit_settings_set_media_playback_requires_user_gesture(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetMediaPlaybackRequiresUserGesture(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetMediaPlaybackRequiresUserGesture(priv->preferences.get(), enabled);
+
+    g_object_notify(G_OBJECT(settings), "media-playback-requires-user-gesture");
+}
+
+/**
+ * webkit_settings_get_media_playback_requires_user_gesture:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:media-playback-requires-user-gesture property.
+ *
+ * Returns: %TRUE If an user gesture is needed to play or load media
+ *    or %FALSE if no user gesture is needed.
+ */
+gboolean webkit_settings_get_media_playback_requires_user_gesture(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetMediaPlaybackRequiresUserGesture(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_media_playback_allows_inline:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:media-playback-allows-inline property.
+ */
+void webkit_settings_set_media_playback_allows_inline(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetMediaPlaybackAllowsInline(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetMediaPlaybackAllowsInline(priv->preferences.get(), enabled);
+
+    g_object_notify(G_OBJECT(settings), "media-playback-allows-inline");
+}
+
+/**
+ * webkit_settings_get_media_playback_allows_inline:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:media-playback-allows-inline property.
+ *
+ * Returns: %TRUE If inline playback is allowed for media
+ *    or %FALSE if only fullscreen playback is allowed.
+ */
+gboolean webkit_settings_get_media_playback_allows_inline(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), TRUE);
+
+    return WKPreferencesGetMediaPlaybackAllowsInline(settings->priv->preferences.get());
 }

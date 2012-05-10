@@ -321,6 +321,19 @@ WEBKIT_API void
 webkit_settings_set_javascript_can_access_clipboard            (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
+WEBKIT_API gboolean
+webkit_settings_get_media_playback_requires_user_gesture       (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_media_playback_requires_user_gesture       (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
+webkit_settings_get_media_playback_allows_inline               (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_media_playback_allows_inline               (WebKitSettings *settings,
+                                                                gboolean        enabled);
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

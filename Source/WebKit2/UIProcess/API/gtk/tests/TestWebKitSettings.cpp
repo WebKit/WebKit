@@ -209,6 +209,16 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_javascript_can_access_clipboard(settings, TRUE);
     g_assert(webkit_settings_get_javascript_can_access_clipboard(settings));
 
+    // By default, media playback doesn't require user gestures.
+    g_assert(!webkit_settings_get_media_playback_requires_user_gesture(settings));
+    webkit_settings_set_media_playback_requires_user_gesture(settings, TRUE);
+    g_assert(webkit_settings_get_media_playback_requires_user_gesture(settings));
+
+    // By default, inline media playback is allowed
+    g_assert(webkit_settings_get_media_playback_allows_inline(settings));
+    webkit_settings_set_media_playback_allows_inline(settings, FALSE);
+    g_assert(!webkit_settings_get_media_playback_allows_inline(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

@@ -1,5 +1,37 @@
 2012-05-10  Simon Pena  <spena@igalia.com>
 
+        [GTK] WK2 misses WebKitSettings for media playback requiring user gestures and inline playback
+        https://bugs.webkit.org/show_bug.cgi?id=85999
+
+        Reviewed by Martin Robinson.
+
+        Expose WebKitSettings for media playback requiring user gesture and
+        media playback allows inline to GTK side.
+
+        This adds two properties (mediaPlaybackRequiresUserGesture and
+        mediaPlaybackAllowsInline), with their setters and getters, to
+        WebKitSettings. It also updates the WebKitSettings tests so these
+        two properties are checked, and includes the new methods in the
+        documentation.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp: added the new properties and
+        their accessors
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_set_media_playback_requires_user_gesture):
+        (webkit_settings_get_media_playback_requires_user_gesture):
+        (webkit_settings_set_media_playback_allows_inline):
+        (webkit_settings_get_media_playback_allows_inline):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: included the new
+        methods in the documentation
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp: tested the newly
+        added methods
+        (testWebKitSettings):
+
+2012-05-10  Simon Pena  <spena@igalia.com>
+
         [GTK] Missing field initializers for WKPageLoaderClient
         https://bugs.webkit.org/show_bug.cgi?id=86005
 
