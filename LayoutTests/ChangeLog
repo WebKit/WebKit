@@ -1,3 +1,15 @@
+2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] ENABLE_IFRAME_SEAMLESS support
+        https://bugs.webkit.org/show_bug.cgi?id=85843
+
+        Reviewed by Eric Seidel.
+
+        Remove test expectations for the iframe seamless tests. All these
+        tests should be passing now as the feature is enabled.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed Qt gardening.

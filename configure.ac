@@ -734,6 +734,14 @@ AC_ARG_ENABLE(sandbox,
               [],[enable_sandbox="yes"])
 AC_MSG_RESULT([$enable_sandbox])
 
+# check whether to enable HTML5 iframe seamless attribute support
+AC_MSG_CHECKING([whether to enable HTML5 iframe seamless attribute support])
+AC_ARG_ENABLE(iframe-seamless,
+              AC_HELP_STRING([--enable-iframe-seamless],
+                             [enable HTML5 iframe seamless attribute support [default=yes]]),
+              [],[enable_iframe_seamless="yes"])
+AC_MSG_RESULT([$enable_sandbox])
+
 # check whether to enable HTML5 audio/video support
 AC_MSG_CHECKING([whether to enable HTML5 video support])
 AC_ARG_ENABLE(video,
@@ -1396,6 +1404,7 @@ AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = 
 AM_CONDITIONAL([ENABLE_REGISTER_PROTOCOL_HANDLER],[test "$enable_register_protocol_handler" = "yes"])
 AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = "yes"])
 AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = "yes"])
+AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1471,6 +1480,7 @@ Features:
  HTML5 FileSystem API support                             : $enable_file_system
  Quota API support                                        : $enable_quota
  HTML5 sandboxed iframe support                           : $enable_sandbox
+ HTML5 iframe seamless attribute support                  : $enable_iframe_seamless
  HTML5 video element support                              : $enable_video
  HTML5 track element support                              : $enable_video_track
  Fullscreen API support                                   : $enable_fullscreen_api

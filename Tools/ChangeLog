@@ -1,3 +1,16 @@
+2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] ENABLE_IFRAME_SEAMLESS support
+        https://bugs.webkit.org/show_bug.cgi?id=85843
+
+        Reviewed by Eric Seidel.
+
+        Add the iframe-seamless option to the options list. This makes it
+        possible to enable the iframe seamless support through build-webkit
+        script. Enabled by default for all the ports.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-05-10  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL][webkitpy] Do not redefine check_build() in EflPort.

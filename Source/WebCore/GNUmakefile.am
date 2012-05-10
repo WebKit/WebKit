@@ -656,6 +656,14 @@ FEATURE_DEFINES += ENABLE_WEB_TIMING=1
 webcore_cppflags += -DENABLE_WEB_TIMING=1
 endif  # END ENABLE_WEB_TIMING
 
+# ---
+# HTML iframe seamless attribute support
+# ---
+if ENABLE_IFRAME_SEAMLESS
+FEATURE_DEFINES += ENABLE_IFRAME_SEAMLESS=1
+webcore_cppflags += -DENABLE_IFRAME_SEAMLESS=1
+endif  # END ENABLE_IFRAME_SEAMLESS
+
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	$(AM_V_GEN)

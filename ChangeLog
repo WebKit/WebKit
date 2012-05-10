@@ -1,3 +1,15 @@
+2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] ENABLE_IFRAME_SEAMLESS support
+        https://bugs.webkit.org/show_bug.cgi?id=85843
+
+        Reviewed by Eric Seidel.
+
+        Add a configuration option for enabling the iframe seamless
+        attribute support, enabling it by default.
+
+        * configure.ac:
+
 2012-05-09  Stephen Chenney  <schenney@chromium.org>
 
         SVG Filters allow invalid elements as children
