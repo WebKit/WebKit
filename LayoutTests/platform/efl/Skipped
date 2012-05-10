@@ -1336,7 +1336,6 @@ http/tests/websocket/tests/hixie76/unicode.html
 http/tests/websocket/tests/hixie76/url-no-trailing-slash.html
 http/tests/websocket/tests/hixie76/url-with-credential.html
 http/tests/websocket/tests/hixie76/websocket-protocol-ignored.html
-userscripts/user-style-top-frame-only.html
 userscripts/window-onerror-for-isolated-world-2.html
 
 # Unexpected flakiness (tests timed out)

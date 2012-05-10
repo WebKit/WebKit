@@ -1,3 +1,16 @@
+2012-05-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] Clear added user style sheets before a new testcase execution.
+        https://bugs.webkit.org/show_bug.cgi?id=84792
+
+        Reviewed Gustavo Noronha Silva.
+
+        The added user style sheets from the previous testcases are cleared in order to avoid 
+        flaky results.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+
 2012-05-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move suspendAnimations to use Internals interface.

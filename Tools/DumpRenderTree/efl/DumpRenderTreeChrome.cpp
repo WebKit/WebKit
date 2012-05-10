@@ -255,6 +255,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::clearFrameName(mainFrame());
     DumpRenderTreeSupportEfl::clearOpener(mainFrame());
     DumpRenderTreeSupportEfl::clearUserScripts(mainView());
+    DumpRenderTreeSupportEfl::clearUserStyleSheets(mainView());
     DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(mainView(), true);
     DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(mainView(), true);
     DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(mainView(), false);

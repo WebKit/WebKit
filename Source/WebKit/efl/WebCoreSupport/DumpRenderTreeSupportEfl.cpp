@@ -397,6 +397,15 @@ void DumpRenderTreeSupportEfl::addUserStyleSheet(const Evas_Object* ewkView, con
     page->group().addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), sourceCode, WebCore::KURL(), nullptr, nullptr, allFrames ? WebCore::InjectInAllFrames : WebCore::InjectInTopFrameOnly);
 }
 
+void DumpRenderTreeSupportEfl::clearUserStyleSheets(const Evas_Object* ewkView)
+{
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    page->group().removeUserStyleSheetsFromWorld(WebCore::mainThreadNormalWorld());
+}
+
 void DumpRenderTreeSupportEfl::executeCoreCommandByName(const Evas_Object* ewkView, const char* name, const char* value)
 {
     WebCore::Page* page = EWKPrivate::corePage(ewkView);
