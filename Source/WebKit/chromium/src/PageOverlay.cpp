@@ -48,8 +48,6 @@ WebCanvas* ToWebCanvas(GraphicsContext* gc)
 {
 #if WEBKIT_USING_SKIA
     return gc->platformContext()->canvas();
-#elif WEBKIT_USING_CG
-    return gc->platformContext();
 #endif
 }
 

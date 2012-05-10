@@ -35,8 +35,6 @@
 
 #if WEBKIT_USING_SKIA
 #include <SkBitmap.h>
-#elif WEBKIT_USING_CG
-typedef struct CGImage* CGImageRef;
 #endif
 
 #if WEBKIT_IMPLEMENTATION
@@ -99,25 +97,6 @@ private:
     void init() { }
     SkBitmap m_bitmap;
 
-#elif WEBKIT_USING_CG
-    WebImage(CGImageRef imageRef)
-    {
-        init();
-        assign(imageRef);
-    }
-
-    WebImage& operator=(CGImageRef imageRef)
-    {
-        assign(imageRef);
-        return *this;
-    }
-
-    CGImageRef getCGImageRef() const { return m_imageRef; }
-
-private:
-    void init() { m_imageRef = 0; }
-    WEBKIT_EXPORT void assign(CGImageRef);
-    CGImageRef m_imageRef;
 #endif
 };
 

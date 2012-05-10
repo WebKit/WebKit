@@ -128,8 +128,6 @@ void WebPluginContainerImpl::paint(GraphicsContext* gc, const IntRect& damageRec
 
 #if WEBKIT_USING_SKIA
     WebCanvas* canvas = gc->platformContext()->canvas();
-#elif WEBKIT_USING_CG
-    WebCanvas* canvas = gc->platformContext();
 #endif
 
     IntRect windowRect =
@@ -261,8 +259,6 @@ bool WebPluginContainerImpl::printPage(int pageNumber,
     gc->save();
 #if WEBKIT_USING_SKIA
     WebCanvas* canvas = gc->platformContext()->canvas();
-#elif WEBKIT_USING_CG
-    WebCanvas* canvas = gc->platformContext();
 #endif
     bool ret = m_webPlugin->printPage(pageNumber, canvas);
     gc->restore();

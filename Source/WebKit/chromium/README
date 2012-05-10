@@ -37,8 +37,6 @@ DEFINES
 
   WEBKIT_USING_SKIA is defined when using Skia as the graphics library.
 
-  WEBKIT_USING_CG is defined when using CG as the graphics library.
-
   WEBKIT_USING_V8 is defined when using V8 as the JavaScript library.
 
   WEBKIT_USING_JSC is defined when using JSC as the JavaScript library.

@@ -33,32 +33,13 @@
 
 #include "GraphicsContext.h"
 
-#if WEBKIT_USING_CG
-#include "LocalCurrentGraphicsContext.h"
-#elif WEBKIT_USING_SKIA
+#if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
 #endif
 
 namespace WebKit {
 
-#if WEBKIT_USING_CG
-
-class GraphicsContextBuilder {
-public:
-    GraphicsContextBuilder(WebCanvas* canvas)
-        : m_graphicsContext(canvas)
-        , m_localContext(&m_graphicsContext) 
-    {
-    }
-
-    WebCore::GraphicsContext& context() { return m_graphicsContext; }
-
-private:
-    WebCore::GraphicsContext m_graphicsContext;
-    WebCore::LocalCurrentGraphicsContext m_localContext;
-};
-
-#elif WEBKIT_USING_SKIA
+#if WEBKIT_USING_SKIA
 
 class GraphicsContextBuilder {
 public:

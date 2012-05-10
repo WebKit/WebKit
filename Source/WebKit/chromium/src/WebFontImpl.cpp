@@ -101,9 +101,6 @@ void WebFontImpl::drawText(WebCanvas* canvas, const WebTextRun& run, const WebFl
 
 #if WEBKIT_USING_SKIA
     gc.platformContext()->setDrawingToImageBuffer(!canvasIsOpaque);
-#elif WEBKIT_USING_CG
-    // FIXME hook canvasIsOpaque up to the platform-specific indicators for
-    // whether subpixel AA can be used for this draw.
 #endif
 
     gc.save();

@@ -66,8 +66,6 @@ void WebContentLayerImpl::paintContents(GraphicsContext& gc, const IntRect& clip
         return;
 #if WEBKIT_USING_SKIA
     WebCanvas* canvas = gc.platformContext()->canvas();
-#elif WEBKIT_USING_CG
-    WebCanvas* canvas = gc.platformContext();
 #endif
     m_contentClient->paintContents(canvas, WebRect(clip));
 }

@@ -1,3 +1,18 @@
+2012-05-10  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove dead code behind unused WEBKIT_USING_CG
+        https://bugs.webkit.org/show_bug.cgi?id=86018
+
+        Reviewed by Adam Barth.
+
+        We never use CoreGraphics as the backend for GraphicsContext in
+        Chromium, so this is all dead code.
+
+        * chromium/public/WebCanvas.h:
+        (WebKit):
+        * chromium/public/WebImage.h:
+        (WebImage):
+
 2012-05-09  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move clipboard to Platform.h
