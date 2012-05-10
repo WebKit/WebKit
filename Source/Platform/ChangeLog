@@ -1,5 +1,23 @@
 2012-05-10  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Remove WEBKIT_USING_SKIA ifdefs that are always true
+        https://bugs.webkit.org/show_bug.cgi?id=86121
+
+        Reviewed by Adam Barth.
+
+        Chromium always uses Skia now, so this just removes the barriers
+        around code that was previously #if'd.
+
+        * chromium/public/WebCanvas.h:
+        (WebKit):
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::onCreateGrGLInterface):
+        * chromium/public/WebImage.h:
+        (WebImage):
+
+2012-05-10  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Remove dead code behind unused WEBKIT_USING_CG
         https://bugs.webkit.org/show_bug.cgi?id=86018
 

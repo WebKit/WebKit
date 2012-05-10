@@ -30,8 +30,6 @@
 
 namespace WebKit {
 
-#if WEBKIT_USING_SKIA
-
 namespace {
     void bindWebGraphicsContext3DGLContextCallback(const GrGLInterface* interface)
     {
@@ -48,7 +46,5 @@ GrGLInterface* WebGraphicsContext3D::createGrGLInterface()
     }
     return interface;
 }
-
-#endif
 
 } // namespace WebKit

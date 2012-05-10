@@ -1,3 +1,37 @@
+2012-05-10  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove WEBKIT_USING_SKIA ifdefs that are always true
+        https://bugs.webkit.org/show_bug.cgi?id=86121
+
+        Reviewed by Adam Barth.
+
+        Chromium always uses Skia now, so this just removes the barriers
+        around code that was previously #if'd.
+
+        * README:
+        * src/DragClientImpl.cpp:
+        (WebKit::DragClientImpl::startDrag):
+        * src/PageOverlay.cpp:
+        * src/PlatformSupport.cpp:
+        (WebCore::PlatformSupport::clipboardWriteImage):
+        (WebCore::PlatformSupport::paintScrollbarThumb):
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::paintContents):
+        * src/WebFontImpl.cpp:
+        (WebKit::WebFontImpl::drawText):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::printPage):
+        (WebKit::WebFrameImpl::printPagesWithBoundaries):
+        * src/WebGraphicsContext3D.cpp:
+        (WebKit::WebGraphicsContext3D::createGrGLInterface):
+        * src/WebImageDecoder.cpp:
+        (WebKit::WebImageDecoder::getFrameAtIndex):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::paint):
+        (WebKit::WebPluginContainerImpl::printPage):
+        * src/painting/GraphicsContextBuilder.h:
+        (WebKit):
+
 2012-05-10  Tom Sepez  <tsepez@chromium.org>
 
         [Chromium] WebFrameTest.ChromePageNoJavascript isn't catching regressions

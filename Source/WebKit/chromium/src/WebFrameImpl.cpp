@@ -1493,9 +1493,7 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
 
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
-#if WEBKIT_USING_SKIA
     gc.platformContext()->setPrinting(true);
-#endif
 
     return m_printContext->spoolPage(gc, page);
 }
@@ -1971,9 +1969,7 @@ void WebFrameImpl::printPagesWithBoundaries(WebCanvas* canvas, const WebSize& pa
 
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& graphicsContext = builder.context();
-#if WEBKIT_USING_SKIA
     graphicsContext.platformContext()->setPrinting(true);
-#endif
 
     m_printContext->spoolAllPagesWithBoundaries(graphicsContext,
         FloatSize(pageSizeInPixels.width, pageSizeInPixels.height));

@@ -33,17 +33,11 @@
 
 #include "WebCommon.h"
 
-#if WEBKIT_USING_SKIA
 class SkCanvas;
-#endif
 
 namespace WebKit {
 
-#if WEBKIT_USING_SKIA
 typedef SkCanvas WebCanvas;
-#else
-#error "Need to define WebCanvas"
-#endif
 
 } // namespace WebKit
 

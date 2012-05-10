@@ -46,9 +46,7 @@ namespace {
 
 WebCanvas* ToWebCanvas(GraphicsContext* gc)
 {
-#if WEBKIT_USING_SKIA
     return gc->platformContext()->canvas();
-#endif
 }
 
 } // namespace

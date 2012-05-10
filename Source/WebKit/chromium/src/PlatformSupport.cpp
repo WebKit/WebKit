@@ -80,9 +80,7 @@
 #include "platform/android/WebThemeEngine.h"
 #endif
 
-#if WEBKIT_USING_SKIA
 #include "NativeImageSkia.h"
-#endif
 
 #include "AsyncFileSystemChromium.h"
 #include "BitmapImage.h"
@@ -224,11 +222,7 @@ void PlatformSupport::clipboardWriteImage(NativeImagePtr image,
                                          const KURL& sourceURL,
                                          const String& title)
 {
-#if WEBKIT_USING_SKIA
     WebImage webImage(image->bitmap());
-#else
-    WebImage webImage(image);
-#endif
     webKitPlatformSupport()->clipboard()->writeImage(webImage, sourceURL, title);
 }
 
@@ -672,11 +666,7 @@ void PlatformSupport::paintScrollbarThumb(
     webThemeScrollbarInfo.visibleSize = scrollbarInfo.visibleSize;
     webThemeScrollbarInfo.totalSize = scrollbarInfo.totalSize;
 
-#if WEBKIT_USING_SKIA
     WebKit::WebCanvas* webCanvas = gc->platformContext()->canvas();
-#else
-    WebKit::WebCanvas* webCanvas = gc->platformContext();
-#endif
     webKitPlatformSupport()->themeEngine()->paintScrollbarThumb(
         webCanvas,
         static_cast<WebThemeEngine::State>(state),

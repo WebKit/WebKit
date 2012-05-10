@@ -89,11 +89,7 @@ void DragClientImpl::startDrag(DragImageRef dragImage,
     WebPoint offsetPoint(offsetSize.width(), offsetSize.height());
     m_webView->startDragging(
         dragData, static_cast<WebDragOperationsMask>(dragOperationMask),
-#if WEBKIT_USING_SKIA
         dragImage ? WebImage(*dragImage) : WebImage(),
-#else
-        dragImage ? WebImage(dragImage) : WebImage(),
-#endif
         offsetPoint);
 }
 

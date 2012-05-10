@@ -30,9 +30,7 @@
 #include "platform/WebRect.h"
 #include "GraphicsContext.h"
 #include "platform/WebCanvas.h"
-#if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
-#endif
 
 using namespace WebCore;
 
@@ -64,9 +62,7 @@ void WebContentLayerImpl::paintContents(GraphicsContext& gc, const IntRect& clip
 {
     if (!m_contentClient)
         return;
-#if WEBKIT_USING_SKIA
     WebCanvas* canvas = gc.platformContext()->canvas();
-#endif
     m_contentClient->paintContents(canvas, WebRect(clip));
 }
 

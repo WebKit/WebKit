@@ -80,9 +80,7 @@
 #include "PlatformGestureEvent.h"
 #endif
 
-#if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
-#endif
 
 using namespace WebCore;
 
@@ -126,9 +124,7 @@ void WebPluginContainerImpl::paint(GraphicsContext* gc, const IntRect& damageRec
     IntPoint origin = view->windowToContents(IntPoint(0, 0));
     gc->translate(static_cast<float>(origin.x()), static_cast<float>(origin.y()));
 
-#if WEBKIT_USING_SKIA
     WebCanvas* canvas = gc->platformContext()->canvas();
-#endif
 
     IntRect windowRect =
         IntRect(view->contentsToWindow(damageRect.location()), damageRect.size());
@@ -257,9 +253,7 @@ bool WebPluginContainerImpl::printPage(int pageNumber,
                                        WebCore::GraphicsContext* gc)
 {
     gc->save();
-#if WEBKIT_USING_SKIA
     WebCanvas* canvas = gc->platformContext()->canvas();
-#endif
     bool ret = m_webPlugin->printPage(pageNumber, canvas);
     gc->restore();
     return ret;

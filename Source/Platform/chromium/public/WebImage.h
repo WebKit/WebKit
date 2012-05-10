@@ -33,9 +33,7 @@
 
 #include "WebCommon.h"
 
-#if WEBKIT_USING_SKIA
 #include <SkBitmap.h>
-#endif
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class Image; }
@@ -81,7 +79,6 @@ public:
     WebImage& operator=(const WTF::PassRefPtr<WebCore::Image>&);
 #endif
 
-#if WEBKIT_USING_SKIA
     WebImage(const SkBitmap& bitmap) : m_bitmap(bitmap) { }
 
     WebImage& operator=(const SkBitmap& bitmap)
@@ -97,7 +94,6 @@ private:
     void init() { }
     SkBitmap m_bitmap;
 
-#endif
 };
 
 } // namespace WebKit

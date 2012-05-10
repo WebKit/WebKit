@@ -38,9 +38,7 @@
 
 #define USE_WGC3D_TYPES
 
-#if WEBKIT_USING_SKIA
 struct GrGLInterface;
-#endif
 
 namespace WebKit {
 
@@ -413,14 +411,10 @@ public:
     virtual void getQueryivEXT(WGC3Denum target, WGC3Denum pname, WGC3Dint* params) { }
     virtual void getQueryObjectuivEXT(WebGLId query, WGC3Denum pname, WGC3Duint* params) { }
 
-#if WEBKIT_USING_SKIA
     GrGLInterface* createGrGLInterface();
-#endif
 
 protected:
-#if WEBKIT_USING_SKIA
     virtual GrGLInterface* onCreateGrGLInterface() { return 0; }
-#endif
 
 };
 

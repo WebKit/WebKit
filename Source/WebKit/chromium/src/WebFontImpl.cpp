@@ -99,9 +99,7 @@ void WebFontImpl::drawText(WebCanvas* canvas, const WebTextRun& run, const WebFl
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
 
-#if WEBKIT_USING_SKIA
     gc.platformContext()->setDrawingToImageBuffer(!canvasIsOpaque);
-#endif
 
     gc.save();
     gc.setFillColor(color, ColorSpaceDeviceRGB);

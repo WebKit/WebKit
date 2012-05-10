@@ -33,13 +33,9 @@
 
 #include "GraphicsContext.h"
 
-#if WEBKIT_USING_SKIA
 #include "PlatformContextSkia.h"
-#endif
 
 namespace WebKit {
-
-#if WEBKIT_USING_SKIA
 
 class GraphicsContextBuilder {
 public:
@@ -55,10 +51,6 @@ private:
     WebCore::PlatformContextSkia m_platformContext;
     WebCore::GraphicsContext m_graphicsContext;
 };
-
-#else
-#error "Need to define GraphicsContextBuilder!"
-#endif
 
 } // namespace WebKit
 
