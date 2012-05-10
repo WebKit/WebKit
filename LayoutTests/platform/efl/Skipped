@@ -902,7 +902,6 @@ fast/events/drag-in-frames.html
 fast/events/drag-parent-node.html
 
 # BUG: keyboard-related bugs, generally in the EventSender-PlatformKeyboardEventEfl interaction
-fast/events/js-keyboard-event-creation.html
 fast/events/key-events-in-input-button.html
 fast/events/key-events-in-input-text.html
 fast/events/option-tab.html

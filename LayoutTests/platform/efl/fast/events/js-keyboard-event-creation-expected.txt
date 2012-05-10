@@ -1,0 +1,6 @@
+ 
+This tests that DOMKeyboardEvents are created correctly in the JavaScript API.
+
+keydown - key: U+0009@0 (keyCode/charCode: 9/0) modifiers: false,false,false,false
+
+keyup - key: U+0009@0 (keyCode/charCode: 9/0) modifiers: false,false,true,false
