@@ -1,3 +1,12 @@
+2012-05-10  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Gardening of flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=86069
+
+        Unreviewed gardening.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-10  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] LayoutTestController needs implementation of setTabKeyCyclesThroughElements

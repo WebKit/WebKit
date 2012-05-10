@@ -64,8 +64,6 @@ BUGWKEFL SKIP : storage/storageinfo-no-callbacks.html = FAIL
 BUGWKEFL SKIP : storage/storageinfo-query-usage.html = FAIL
 BUGWKEFL SKIP : storage/storageinfo-request-quota.html = FAIL
 
-BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = TEXT TIMEOUT PASS
-
 // EFL's LayoutTestController does not implement originsWithLocalStorage.
 BUGWKEFL SKIP : storage/domstorage/localstorage/storagetracker = FAIL
 
@@ -185,9 +183,6 @@ BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMA
 BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
 BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
-
-// Test doesn't work when the machine is under heavy load.
-BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
 
 // Turn on blob support for the EFL port.
 BUGWK85363 : fast/dom/DOMURL/check-instanceof-domurl-functions.html = TEXT
@@ -401,3 +396,26 @@ BUGWK85799 : fast/css/font-face-download-error.html = TIMEOUT
 BUGWK85879 : fast/frames/frame-crash-with-page-cache.html = CRASH
 
 BUGWK85995 : fast/events/frame-click-focus.html = TEXT
+
+BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
+
+// Perf tests are way too slow on debug builds.
+WONTFIX DEBUG : perf/adding-radio-buttons.html = FAIL PASS
+WONTFIX DEBUG : perf/array-binary-search.html = FAIL PASS
+WONTFIX DEBUG : perf/mouse-event.html = FAIL PASS
+
+// Flaky tests.
+BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT PASS
+BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = FAIL PASS
+BUGWK83878 : media/track/track-mode.html = TEXT PASS
+BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
+BUGWK86072 : media/sources-fallback-codecs.html = FAIL PASS
+BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-001.htm = IMAGE PASS
+BUGWK86073 : ietestcenter/css3/flexbox/flexbox-layout-003.htm = IMAGE PASS
+BUGWK86074 : media/svg-as-image-with-media-blocked.html = CRASH PASS
+BUGWK86075 : fast/events/message-port-close.html = CRASH PASS
+BUGWK86078 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT PASS
+BUGWK86079 : http/tests/misc/link-rel-icon-beforeload.html = TEXT PASS
+BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS
+BUGWK86082 : security/block-test.html = TEXT PASS
+BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
