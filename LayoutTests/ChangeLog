@@ -1,3 +1,19 @@
+2012-05-09  Tony Gentilcore  <tonyg@chromium.org>
+
+        Subresources loaded after a reload completes shouldn't be revalidated.
+        https://bugs.webkit.org/show_bug.cgi?id=84614
+
+        Tests by Darin Fisher.
+
+        Reviewed by Darin Fisher.
+
+        * http/tests/cache/loaded-from-cache-after-reload-expected.txt: Added.
+        * http/tests/cache/loaded-from-cache-after-reload-within-iframe-expected.txt: Added.
+        * http/tests/cache/loaded-from-cache-after-reload-within-iframe.html: Added.
+        * http/tests/cache/loaded-from-cache-after-reload.html: Added.
+        * http/tests/cache/resources/loaded-from-cache-after-reload-within-iframe-subframe.html: Added.
+        * http/tests/cache/resources/random-cached.cgi: Added.
+
 2012-05-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Use suitable viewport values on XHTML-MP pages.
