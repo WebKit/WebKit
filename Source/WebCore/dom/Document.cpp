@@ -3646,7 +3646,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
     m_focusedNode = 0;
 
     // Remove focus from the existing focus node (if any)
-    if (oldFocusedNode && !oldFocusedNode->inDetach()) {
+    if (oldFocusedNode) {
         if (oldFocusedNode->active())
             oldFocusedNode->setActive(false);
 

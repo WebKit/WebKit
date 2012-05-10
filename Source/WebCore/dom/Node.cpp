@@ -1344,8 +1344,6 @@ void Node::attach()
 
 void Node::detach()
 {
-    setFlag(InDetachFlag);
-
     if (renderer())
         renderer()->destroyAndCleanupAnonymousWrappers();
     setRenderer(0);
@@ -1360,8 +1358,6 @@ void Node::detach()
     clearFlag(IsHoveredFlag);
     clearFlag(InActiveChainFlag);
     clearFlag(IsAttachedFlag);
-
-    clearFlag(InDetachFlag);
 }
 
 // FIXME: This code is used by editing.  Seems like it could move over there and not pollute Node.
