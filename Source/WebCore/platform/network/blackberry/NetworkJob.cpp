@@ -20,7 +20,6 @@
 #include "NetworkJob.h"
 
 #include "AboutData.h"
-#include "Base64.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CookieManager.h"
@@ -41,10 +40,9 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformWebKitCredits.h>
 #include <BuildInformation.h>
+#include <LocalizeResource.h>
 #include <network/MultipartStream.h>
-#include <network/NetworkRequest.h>
 #include <network/NetworkStreamFactory.h>
-#include <wtf/ASCIICType.h>
 
 namespace WebCore {
 
@@ -65,39 +63,12 @@ inline static bool isUnauthorized(int statusCode)
     return statusCode == 401;
 }
 
-static void escapeDecode(const char* src, int length, Vector<char>& out)
-{
-    out.resize(length);
-    const char* const srcEnd = src + length;
-    char* dst = out.data();
-    for (; src < srcEnd; ) {
-        char inputChar = *src++;
-        if (inputChar == '%' && src + 2 <= srcEnd) {
-            int digit1 = 0;
-            char character = *src++;
-            if (isASCIIHexDigit(character))
-                digit1 = toASCIIHexValue(character);
-
-            int digit2 = 0;
-            character = *src++;
-            if (isASCIIHexDigit(character))
-                digit2 = toASCIIHexValue(character);
-
-            *dst++ = (digit1 << 4) | digit2;
-        } else
-            *dst++ = inputChar;
-    }
-    out.resize(dst - out.data());
-}
-
 NetworkJob::NetworkJob()
     : m_playerId(0)
-    , m_loadDataTimer(this, &NetworkJob::fireLoadDataTimer)
     , m_loadAboutTimer(this, &NetworkJob::fireLoadAboutTimer)
     , m_deleteJobTimer(this, &NetworkJob::fireDeleteJobTimer)
     , m_streamFactory(0)
     , m_isFile(false)
-    , m_isData(false)
     , m_isAbout(false)
     , m_isFTP(false)
     , m_isFTPDir(true)
@@ -134,7 +105,6 @@ bool NetworkJob::initialize(int playerId,
 
     m_response.setURL(url);
     m_isFile = url.protocolIs("file") || url.protocolIs("local");
-    m_isData = url.protocolIs("data");
     m_isAbout = url.protocolIs("about");
     m_isFTP = url.protocolIs("ftp");
 
@@ -160,8 +130,8 @@ bool NetworkJob::initialize(int playerId,
         m_isOverrideContentType = true;
     }
 
-    // No need to create the streams for data and about.
-    if (m_isData || m_isAbout)
+    // No need to create the streams for about.
+    if (m_isAbout)
         return true;
 
     if (!request.getSuggestedSaveName().empty()) {
@@ -188,11 +158,6 @@ int NetworkJob::cancelJob()
 
     // Cancel jobs loading local data by killing the timer, and jobs
     // getting data from the network by calling the inherited URLStream::cancel.
-    if (m_loadDataTimer.isActive()) {
-        m_loadDataTimer.stop();
-        notifyClose(BlackBerry::Platform::FilterStream::StatusCancelled);
-        return 0;
-    }
 
     if (m_loadAboutTimer.isActive()) {
         m_loadAboutTimer.stop();
@@ -612,7 +577,9 @@ void NetworkJob::sendResponseIfNeeded()
     if (isError(m_extendedStatusCode) && !m_dataReceived)
         return;
 
-    String urlFilename = m_response.url().lastPathComponent();
+    String urlFilename;
+    if (!m_response.url().protocolIsData() && !m_response.url().protocolIs("about"))
+        urlFilename = m_response.url().lastPathComponent();
 
     // Get the MIME type that was set by the content sniffer
     // if there's no custom sniffer header, try to set it from the Content-Type header
@@ -635,18 +602,18 @@ void NetworkJob::sendResponseIfNeeded()
         m_response.setExpectedContentLength(contentLength.toInt64());
 
     // Set suggested filename for downloads from the Content-Disposition header; if this fails,
-    // fill it in from the url and sniffed mime type;Skip this for data and about URLs,
+    // fill it in from the url and sniffed mime type;Skip this for about URLs,
     // because they have no Content-Disposition header and the format is wrong to be a filename.
-    if (!m_isData && !m_isAbout) {
+    if (!m_isAbout) {
         String suggestedFilename = filenameFromHTTPContentDisposition(m_contentDisposition);
         if (suggestedFilename.isEmpty()) {
             // Check and see if an extension already exists.
             String mimeExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
             if (urlFilename.isEmpty()) {
                 if (mimeExtension.isEmpty()) // No extension found for the mimeType.
-                    suggestedFilename = String("Untitled");
+                    suggestedFilename = String(BlackBerry::Platform::LocalizeResource::getString(BlackBerry::Platform::FILENAME_UNTITLED));
                 else
-                    suggestedFilename = String("Untitled") + "." + mimeExtension;
+                    suggestedFilename = String(BlackBerry::Platform::LocalizeResource::getString(BlackBerry::Platform::FILENAME_UNTITLED)) + "." + mimeExtension;
             } else {
                 if (urlFilename.reverseFind('.') == notFound && !mimeExtension.isEmpty())
                    suggestedFilename = urlFilename + '.' + mimeExtension;
@@ -673,72 +640,6 @@ void NetworkJob::sendMultipartResponseIfNeeded()
         m_handle->client()->didReceiveResponse(m_handle.get(), *m_multipartResponse);
         m_multipartResponse = nullptr;
     }
-}
-
-void NetworkJob::parseData()
-{
-    Vector<char> result;
-
-    String contentType("text/plain;charset=US-ASCII");
-
-    String data(m_response.url().string().substring(5));
-    Vector<String> hparts;
-    bool isBase64 = false;
-
-    size_t index = data.find(',');
-    if (index != notFound && index > 0) {
-        contentType = data.left(index).lower();
-        data = data.substring(index + 1);
-
-        contentType.split(';', hparts);
-        Vector<String>::iterator i;
-        for (i = hparts.begin(); i != hparts.end(); ++i) {
-            if (i->stripWhiteSpace().lower() == "base64") {
-                isBase64 = true;
-                String value = *i;
-                do {
-                    if (*i == value) {
-                        int position = i - hparts.begin();
-                        hparts.remove(position);
-                        i = hparts.begin() + position;
-                    } else
-                        ++i;
-                } while (i != hparts.end());
-                break;
-            }
-        }
-        contentType = String();
-        for (i = hparts.begin(); i != hparts.end(); ++i) {
-            if (i > hparts.begin())
-                contentType += ",";
-
-            contentType += *i;
-        }
-    } else if (!index)
-        data = data.substring(1); // Broken header.
-
-    {
-        CString latin = data.latin1();
-        escapeDecode(latin.data(), latin.length(), result);
-    }
-
-    if (isBase64) {
-        String s(result.data(), result.size());
-        CString latin = s.removeCharacters(isSpaceOrNewline).latin1();
-        result.clear();
-        result.append(latin.data(), latin.length());
-        Vector<char> bytesOut;
-        if (base64Decode(result, bytesOut))
-            result.swap(bytesOut);
-        else
-            result.clear();
-    }
-
-    notifyStatusReceived(result.isEmpty() ? 404 : 200, 0);
-    notifyStringHeaderReceived("Content-Type", contentType);
-    notifyStringHeaderReceived("Content-Length", String::number(result.size()));
-    notifyDataReceivedPlain(result.data(), result.size());
-    notifyClose(BlackBerry::Platform::FilterStream::StatusSuccess);
 }
 
 bool NetworkJob::handleAuthHeader(const ProtectionSpaceServerType space, const String& header)

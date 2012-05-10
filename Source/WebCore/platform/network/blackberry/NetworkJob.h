@@ -60,7 +60,6 @@ public:
     bool isRunning() const { return m_isRunning; }
 #endif
     bool isCancelled() const { return m_cancelled; }
-    void loadDataURL() { m_loadDataTimer.startOneShot(0); }
     void loadAboutURL();
     int cancelJob();
     bool isDeferringLoading() const { return m_deferLoadingCount > 0; }
@@ -113,19 +112,12 @@ private:
     void sendResponseIfNeeded();
     void sendMultipartResponseIfNeeded();
 
-    void fireLoadDataTimer(Timer<NetworkJob>*)
-    {
-        parseData();
-    }
-
     void fireLoadAboutTimer(Timer<NetworkJob>*)
     {
         handleAbout();
     }
 
     void fireDeleteJobTimer(Timer<NetworkJob>*);
-
-    void parseData();
 
     void handleAbout();
 
@@ -151,7 +143,6 @@ private:
     String m_pageGroupName;
     RefPtr<ResourceHandle> m_handle;
     ResourceResponse m_response;
-    Timer<NetworkJob> m_loadDataTimer;
     Timer<NetworkJob> m_loadAboutTimer;
     OwnPtr<ResourceResponse> m_multipartResponse;
     Timer<NetworkJob> m_deleteJobTimer;
@@ -160,7 +151,6 @@ private:
     String m_contentDisposition;
     BlackBerry::Platform::NetworkStreamFactory* m_streamFactory;
     bool m_isFile;
-    bool m_isData;
     bool m_isAbout;
     bool m_isFTP;
     bool m_isFTPDir;
