@@ -1,3 +1,17 @@
+2012-05-10  Simon Pena  <spena@igalia.com>
+
+        [GTK] Missing field initializers for WKPageLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=86005
+
+        Reviewed by Martin Robinson.
+
+        Initialize willGoToBackForwardListItem and
+        interactionOccurredWhileProcessUnresponsive fields of
+        WKPageLoaderClient.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView):
+
 2012-05-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Double tap to zoom is considered a user interaction
