@@ -881,7 +881,7 @@
                     'files': [
                         '<@(devtools_files)',
                         '<@(webinspector_files)',
-                        '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
+                        '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendCommands.js',
                     ],
                     'conditions': [
                         ['debug_devtools==0', {
@@ -1012,7 +1012,7 @@
                     '<@(_inspector_html)',
                     '<@(devtools_files)',
                     '<@(webinspector_files)',
-                    '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
+                    '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendCommands.js',
                     '<@(_workers_files)',
                     '<@(webinspector_image_files)',
                     '<@(devtools_image_files)',
@@ -1075,7 +1075,7 @@
                             '<@(_input_page)',
                             '<@(webinspector_files)',
                             '<@(devtools_files)',
-                            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js'
+                            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendCommands.js'
                         ],
                         'search_path': [
                             '../../WebCore/inspector/front-end',

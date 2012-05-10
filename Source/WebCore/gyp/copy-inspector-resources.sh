@@ -2,7 +2,7 @@
 
 # Copy all the Inspector front-end resources.
 ditto "${SRCROOT}/../inspector/front-end" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector"
-ditto "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector"
+ditto "${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendCommands.js" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector"
 
 # Remove the WebKit.qrc file since it is not used on the Mac (this file is for Qt).
 rm -f "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/WebKit.qrc"

@@ -1,3 +1,14 @@
+2012-05-10  Sam D  <dsam2912@gmail.com>
+
+        Web Inspector: rename InspectorBackendStub.js to InspectorBackendCommands.js
+        https://bugs.webkit.org/show_bug.cgi?id=72306
+
+        Changed name for InspectorBackendStub.js to InspectorBackendCommands.js
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebKit.gyp:
+
 2012-05-09  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Mark CCLayerTreeHostTestSetNeedsCommit2.runMultiThread and

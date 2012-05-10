@@ -57,7 +57,7 @@ WALDOCSSVALUES = $$PWD/css/CSSValueKeywords.in
 
 INSPECTOR_JSON = $$PWD/inspector/Inspector.json
 
-INSPECTOR_BACKEND_STUB_QRC = $$PWD/inspector/front-end/InspectorBackendStub.qrc
+INSPECTOR_BACKEND_COMMANDS_QRC = $$PWD/inspector/front-end/InspectorBackendCommands.qrc
 
 INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
@@ -755,11 +755,11 @@ inspectorJSON.commands = python $$inspectorJSON.script $$PWD/inspector/Inspector
 inspectorJSON.depends = $$inspectorJSON.script
 GENERATORS += inspectorJSON
 
-inspectorBackendStub.output = InspectorBackendStub.qrc
-inspectorBackendStub.input = INSPECTOR_BACKEND_STUB_QRC
-inspectorBackendStub.commands = $$QMAKE_COPY $$toSystemPath($$INSPECTOR_BACKEND_STUB_QRC) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}InspectorBackendStub.qrc
-inspectorBackendStub.add_output_to_sources = false
-GENERATORS += inspectorBackendStub
+inspectorBackendCommands.output = InspectorBackendCommands.qrc
+inspectorBackendCommands.input = INSPECTOR_BACKEND_COMMANDS_QRC
+inspectorBackendCommands.commands = $$QMAKE_COPY $$toSystemPath($$INSPECTOR_BACKEND_COMMANDS_QRC) ${QMAKE_FUNC_FILE_OUT_PATH}$${QMAKE_DIR_SEP}InspectorBackendCommands.qrc
+inspectorBackendCommands.add_output_to_sources = false
+GENERATORS += inspectorBackendCommands
 
 # GENERATOR 2-a: inspector injected script source compiler
 injectedScriptSource.output = InjectedScriptSource.h

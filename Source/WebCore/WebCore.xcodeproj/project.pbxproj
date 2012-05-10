@@ -25063,7 +25063,7 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/inspector/front-end",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendCommands.js",
 			);
 			name = "Copy Inspector Resources";
 			outputPaths = (
@@ -25071,7 +25071,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${CONFIGURATION:=Production} == \"Production\" ]]; then\n    # Don't install the Inspector front-end in Production builds.\n    # Keep InspectorBackend*.js files so they can be used by other front-ends.\n    ditto \"${SRCROOT}/inspector/front-end/InspectorBackend.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"\n    ditto \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"\n    exit\nfi\n\n# Copy all the Inspector front-end resources.\nditto \"${SRCROOT}/inspector/front-end\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\nditto \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendStub.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"\n\n# Remove any qrc files since they are not used on the Mac (they are for Qt).\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"*.qrc\n\n# Remove *.re2js files, they are only used to generate some .js files.\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"*.re2js\n\n# Remove any .svn directories that may have been copied over.\nfind \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\" -name \".svn\" -type d | xargs rm -rf\n";
+			shellScript = "if [[ ${CONFIGURATION:=Production} == \"Production\" ]]; then\n    # Don't install the Inspector front-end in Production builds.\n    # Keep InspectorBackend*.js files so they can be used by other front-ends.\n    ditto \"${SRCROOT}/inspector/front-end/InspectorBackend.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"\n    ditto \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendCommands.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"\n    exit\nfi\n\n# Copy all the Inspector front-end resources.\nditto \"${SRCROOT}/inspector/front-end\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\nditto \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendCommands.js\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"\n\n# Remove any qrc files since they are not used on the Mac (they are for Qt).\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"*.qrc\n\n# Remove *.re2js files, they are only used to generate some .js files.\nrm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector/\"*.re2js\n\n# Remove any .svn directories that may have been copied over.\nfind \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\" -name \".svn\" -type d | xargs rm -rf\n";
 		};
 		37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;

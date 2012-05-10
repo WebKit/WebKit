@@ -7205,7 +7205,7 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InjectedScriptSource.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendDispatcher.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendDispatcher.h',
-            '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendStub.js',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorBackendCommands.js',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorFrontend.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorFrontend.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/InspectorTypeBuilder.cpp',

@@ -30,7 +30,7 @@ RESOURCES += \
 include_webinspector {
     RESOURCES += \
         $$PWD/inspector/front-end/WebKit.qrc \
-        $${WEBCORE_GENERATED_SOURCES_DIR}/InspectorBackendStub.qrc
+        $${WEBCORE_GENERATED_SOURCES_DIR}/InspectorBackendCommands.qrc
 }
 
 SOURCES += \

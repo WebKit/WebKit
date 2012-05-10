@@ -188,9 +188,9 @@ FILE (STRINGS ${WEBCORE_DIR}/inspector/front-end/inspector.html SCRIPT_TAGS REGE
 FOREACH (_line IN LISTS SCRIPT_TAGS)
     STRING (STRIP ${_line} _stripped_line)
     STRING (REGEX REPLACE "<script.* src=\"(.*\\.js)\".*></script>" "\\1" _js_file ${_stripped_line})
-    STRING (COMPARE EQUAL ${_js_file} "InspectorBackendStub.js" _comp_result)
+    STRING (COMPARE EQUAL ${_js_file} "InspectorBackendCommands.js" _comp_result)
     IF ( ${_comp_result} )
-        # InspectorBackendStub.js was generated with the build, should get it from DERIVED_SOURCES_WEBCORE_DIR.
+        # InspectorBackendCommands.js was generated with the build, should get it from DERIVED_SOURCES_WEBCORE_DIR.
         SET (_js_file "${DERIVED_SOURCES_WEBCORE_DIR}/${_js_file}")
     ELSE ()
         SET (_js_file "${WEBCORE_DIR}/inspector/front-end/${_js_file}")

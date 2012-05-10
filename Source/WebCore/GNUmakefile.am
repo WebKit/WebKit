@@ -774,8 +774,8 @@ DerivedSources/WebCore/InspectorBackendDispatcher.cpp: $(WebCore)/inspector/Insp
 DerivedSources/WebCore/InspectorTypeBuilder.h: DerivedSources/WebCore/InspectorTypeBuilder.cpp
 DerivedSources/WebCore/InspectorTypeBuilder.cpp: DerivedSources/WebCore/InspectorFrontend.h
 DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFrontend.cpp
-DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendStub.js
-DerivedSources/WebCore/InspectorBackendStub.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
+DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendCommands.js
+DerivedSources/WebCore/InspectorBackendCommands.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
 DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
 DerivedSources/WebCore/InjectedScriptSource.h: $(WebCore)/inspector/InjectedScriptSource.js
 	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
@@ -1056,7 +1056,7 @@ EXTRA_DIST += \
 webinspectordir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/webinspector
 dist_webinspector_DATA = \
 	$(WebCore)/English.lproj/localizedStrings.js \
-	DerivedSources/WebCore/InspectorBackendStub.js \
+	DerivedSources/WebCore/InspectorBackendCommands.js \
 	$(shell ls $(WebCore)/inspector/front-end/*.js) \
 	$(shell ls $(WebCore)/inspector/front-end/*.html) \
 	$(shell ls $(WebCore)/inspector/front-end/*.css)
@@ -1078,7 +1078,7 @@ ${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
 		$(WebCore)/inspector/front-end/UglifyJS/*.js \
 		$(WebCore)/inspector/front-end/*.css \
 		$(WebCore)/inspector/front-end/Images/* \
-		DerivedSources/WebCore/InspectorBackendStub.js \
+		DerivedSources/WebCore/InspectorBackendCommands.js \
 		$(WebCore)/English.lproj/localizedStrings.js
 	$(AM_V_GEN)
 	$(AM_V_at)mkdir -p ${GENSOURCES_INSPECTOR}/UglifyJS

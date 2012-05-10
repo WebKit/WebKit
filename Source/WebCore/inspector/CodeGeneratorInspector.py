@@ -2912,7 +2912,7 @@ frontend_cpp_file = open(output_cpp_dirname + "/InspectorFrontend.cpp", "w")
 typebuilder_h_file = open(output_header_dirname + "/InspectorTypeBuilder.h", "w")
 typebuilder_cpp_file = open(output_cpp_dirname + "/InspectorTypeBuilder.cpp", "w")
 
-backend_js_file = open(output_cpp_dirname + "/InspectorBackendStub.js", "w")
+backend_js_file = open(output_cpp_dirname + "/InspectorBackendCommands.js", "w")
 
 
 backend_h_file.write(Templates.backend_h.substitute(None,

@@ -367,7 +367,7 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorFrontend.h',
             '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorTypeBuilder.cpp',
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InspectorTypeBuilder.h',
-            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendCommands.js',
           ],
           'variables': {
             'generator_include_dirs': [
