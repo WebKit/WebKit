@@ -210,6 +210,7 @@ committers_unable_to_review = [
     Committer("Carlos Garcia Campos", ["cgarcia@igalia.com", "carlosgc@gnome.org", "carlosgc@webkit.org"], "KaL"),
     Committer("Carol Szabo", ["carol@webkit.org", "carol.szabo@nokia.com"], "cszabo1"),
     Committer("Cary Clark", ["caryclark@google.com", "caryclark@chromium.org"], "caryclark"),
+    Committer("Charles Reis", "creis@chromium.org", "creis"),
     Committer("Charles Wei", ["charles.wei@torchmobile.com.cn"], "cswei"),
     Committer("Chris Evans", ["cevans@google.com", "cevans@chromium.org"]),
     Committer("Chris Guillory", ["ctguil@chromium.org", "chris.guillory@google.com"], "ctguil"),
