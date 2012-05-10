@@ -790,12 +790,12 @@ WebInspector.HeapProfileHeader = function(profileType, title, uid, maxJSObjectId
 WebInspector.HeapProfileHeader.prototype = {
     /**
      * @override
-     * @param {Function} callback
+     * @param {function(WebInspector.HeapSnapshotProxy):void} callback
      */
     load: function(callback)
     {
         if (this._loaded) {
-            callback.call(null);
+            callback(this._proxy);
             return;
         }
 
