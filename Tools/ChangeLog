@@ -1,3 +1,13 @@
+2012-05-10  Lei Zhang  <thestig@chromium.org>
+
+        [chromium] Set Valgrind environment variables for layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=86156
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.setup_environ_for_server):
+
 2012-05-10  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [webkitpy][EFL] It should be possible to use a wrapper command for ImageDiff.
