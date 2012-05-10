@@ -478,15 +478,6 @@ void DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(Evas_Object* e
     editorClient->setSelectTrailingWhitespaceEnabled(enabled);
 }
 
-void DumpRenderTreeSupportEfl::setTabKeyCyclesThroughElements(const Evas_Object* ewkView, bool cycles)
-{
-    WebCore::Page* page = EWKPrivate::corePage(ewkView);
-    if (!page)
-        return;
-
-    page->setTabKeyCyclesThroughElements(cycles);
-}
-
 void DumpRenderTreeSupportEfl::garbageCollectorCollect()
 {
     WebCore::gcController().garbageCollectNow();

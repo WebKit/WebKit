@@ -497,12 +497,7 @@ static void sendKeyDown(Evas* evas, KeyEventInfo* keyEventInfo)
 static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     OwnPtr<KeyEventInfo> keyEventInfo = adoptPtr(createKeyEventInfo(context, argumentCount, arguments, exception));
-    Evas_Object* mainFrame = browser->mainFrame();
-
-    // Focus of the main frame could be lost during the test
-    // Therefore, setting focus to the main frame
-    evas_object_focus_set(mainFrame, true);
-    sendKeyDown(evas_object_evas_get(mainFrame), keyEventInfo.get());
+    sendKeyDown(evas_object_evas_get(browser->mainFrame()), keyEventInfo.get());
 
     return JSValueMakeUndefined(context);
 }

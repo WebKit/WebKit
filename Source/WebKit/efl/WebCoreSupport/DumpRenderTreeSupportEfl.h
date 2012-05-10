@@ -80,7 +80,6 @@ public:
     static void setJavaScriptProfilingEnabled(const Evas_Object* ewkView, bool enabled);
     static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);
     static void setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled);
-    static void setTabKeyCyclesThroughElements(const Evas_Object* ewkView, bool cycles);
 
     static void garbageCollectorCollect();
     static void garbageCollectorCollectOnAlternateThread(bool waitUntilDone);

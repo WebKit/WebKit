@@ -241,9 +241,9 @@ void LayoutTestController::setMainFrameIsFirstResponder(bool)
     notImplemented();
 }
 
-void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
+void LayoutTestController::setTabKeyCyclesThroughElements(bool)
 {
-    DumpRenderTreeSupportEfl::setTabKeyCyclesThroughElements(browser->mainView(), cycles);
+    notImplemented();
 }
 
 void LayoutTestController::setUseDashboardCompatibilityMode(bool)

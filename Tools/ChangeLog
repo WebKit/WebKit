@@ -1,3 +1,18 @@
+2012-05-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116633.
+        http://trac.webkit.org/changeset/116633
+        https://bugs.webkit.org/show_bug.cgi?id=86093
+
+        Breaks EFL tests (Requested by kov on #webkit).
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::resetDefaultsToConsistentValues):
+        * DumpRenderTree/efl/EventSender.cpp:
+        (keyDownCallback):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setTabKeyCyclesThroughElements):
+
 2012-05-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Memory leaks found in EFL DRT
