@@ -581,7 +581,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     // m_downstreamEnd's block has been emptied out by deletion.  There is no content inside of it to
     // move, so just remove it.
-    Element* endBlock = static_cast<Element*>(enclosingBlock(m_downstreamEnd.deprecatedNode()));
+    Element* endBlock = enclosingBlock(m_downstreamEnd.deprecatedNode());
     if (!endBlock || !endBlock->contains(startOfParagraphToMove.deepEquivalent().deprecatedNode()) || !startOfParagraphToMove.deepEquivalent().deprecatedNode()) {
         removeNode(enclosingBlock(m_downstreamEnd.deprecatedNode()));
         return;

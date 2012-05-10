@@ -310,9 +310,10 @@ bool isInline(const Node* node)
 // FIXME: Pass a position to this function.  The enclosing block of [table, x] for example, should be the 
 // block that contains the table and not the table, and this function should be the only one responsible for 
 // knowing about these kinds of special cases.
-Node* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
+Element* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
 {
-    return static_cast<Element*>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule));
+    Node* enclosingNode = enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule);
+    return enclosingNode && enclosingNode->isElementNode() ? toElement(enclosingNode) : 0;
 }
 
 TextDirection directionOfEnclosingBlock(const Position& position)

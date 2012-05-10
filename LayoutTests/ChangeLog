@@ -1,3 +1,13 @@
+2012-05-10  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in InsertParagraphSeparatorCommand::doApply.
+        https://bugs.webkit.org/show_bug.cgi?id=84995
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/inserting/insert-paragraph-seperator-crash-expected.txt: Added.
+        * editing/inserting/insert-paragraph-seperator-crash.html: Added.
+
 2012-05-10  Joe Thomas  <joethomas@motorola.com>
 
         [CSS3 Backgrounds and Borders] Add background-size to the background shorthand
