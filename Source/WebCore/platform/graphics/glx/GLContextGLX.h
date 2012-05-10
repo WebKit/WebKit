@@ -63,7 +63,6 @@ private:
     GLContextGLX(GLXContext, Pixmap, GLXPixmap);
 
     GLXContext m_context;
-    Display* m_display;
     XID m_window;
     GLXPbuffer m_pbuffer;
     Pixmap m_pixmap;

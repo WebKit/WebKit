@@ -240,8 +240,8 @@ GLContextGLX::~GLContextGLX()
         // This may be necessary to prevent crashes with NVidia's closed source drivers. Originally
         // from Mozilla's 3D canvas implementation at: http://bitbucket.org/ilmari/canvas3d/
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        glXMakeCurrent(m_display, None, None);
-        glXDestroyContext(m_display, m_context);
+        glXMakeCurrent(sharedDisplay(), None, None);
+        glXDestroyContext(sharedDisplay(), m_context);
     }
 
     if (m_pbuffer) {
