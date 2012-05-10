@@ -218,7 +218,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
 #endif
     bindMethod("startSpeechInput", &LayoutTestController::startSpeechInput);
-    bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
     bindMethod("testRepaint", &LayoutTestController::testRepaint);
     bindMethod("waitForPolicyDelegate", &LayoutTestController::waitForPolicyDelegate);
     bindMethod("waitUntilDone", &LayoutTestController::waitUntilDone);
@@ -1065,19 +1064,6 @@ int LayoutTestController::numberOfActiveAnimations()
     return controller->numberOfActiveAnimations();
 }
 
-void LayoutTestController::suspendAnimations()
-{
-    WebFrame* webFrame = m_shell->webView()->mainFrame();
-    if (!webFrame)
-        return;
-
-    WebAnimationController* controller = webFrame->animationController();
-    if (!controller)
-        return;
-
-    controller->suspendAnimations();
-}
-
 void LayoutTestController::resumeAnimations()
 {
     WebFrame* webFrame = m_shell->webView()->mainFrame();
@@ -1160,12 +1146,6 @@ void LayoutTestController::disableAutoResizeMode(const CppArgumentList& argument
 void LayoutTestController::numberOfActiveAnimations(const CppArgumentList&, CppVariant* result)
 {
     result->set(numberOfActiveAnimations());
-}
-
-void LayoutTestController::suspendAnimations(const CppArgumentList&, CppVariant* result)
-{
-    suspendAnimations();
-    result->setNull();
 }
 
 void LayoutTestController::resumeAnimations(const CppArgumentList&, CppVariant* result)

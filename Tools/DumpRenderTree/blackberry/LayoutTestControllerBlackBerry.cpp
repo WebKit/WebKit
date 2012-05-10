@@ -705,12 +705,6 @@ void LayoutTestController::setViewModeMediaFeature(const JSStringRef mode)
     notImplemented();
 }
 
-void LayoutTestController::suspendAnimations() const
-{
-    if (mainFrame && mainFrame->animation())
-        mainFrame->animation()->suspendAnimations();
-}
-
 void LayoutTestController::resumeAnimations() const
 {
     if (mainFrame && mainFrame->animation())

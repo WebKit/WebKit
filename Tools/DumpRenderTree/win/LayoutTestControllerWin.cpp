@@ -1122,15 +1122,6 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return number;
 }
 
-void LayoutTestController::suspendAnimations() const
-{
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return;
-
-    framePrivate->suspendAnimations();
-}
-
 void LayoutTestController::resumeAnimations() const
 {
     COMPtr<IWebFramePrivate> framePrivate(Query, frame);

@@ -998,15 +998,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return controller->numberOfActiveAnimations(frame->document());
 }
 
-- (void) _suspendAnimations
-{
-    Frame* frame = core(self);
-    if (!frame)
-        return;
-        
-    frame->animation()->suspendAnimations();
-}
-
 - (void) _resumeAnimations
 {
     Frame* frame = core(self);

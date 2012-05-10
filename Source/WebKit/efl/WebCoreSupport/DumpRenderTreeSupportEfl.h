@@ -65,7 +65,6 @@ public:
     static void resumeAnimations(Evas_Object* ewkFrame);
     static WebCore::IntRect selectionRectangle(const Evas_Object* ewkFrame);
     static String suitableDRTFrameName(const Evas_Object* ewkFrame);
-    static void suspendAnimations(Evas_Object* ewkFrame);
     static void setValueForUser(JSContextRef, JSValueRef nodeObject, const String& value);
     static void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
     static void setDefersLoading(Evas_Object* ewkView, bool defers);

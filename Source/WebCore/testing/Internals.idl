@@ -132,6 +132,8 @@ module window {
 
         readonly attribute InternalSettings settings;
 
+        void suspendAnimations(in Document document) raises (DOMException);
+
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
         void setBatteryStatus(in Document document, in DOMString eventType, in boolean charging, in double chargingTime, in double dischargingTime, in double level) raises (DOMException);
 #endif

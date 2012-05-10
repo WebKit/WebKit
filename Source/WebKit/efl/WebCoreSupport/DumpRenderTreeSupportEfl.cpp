@@ -323,18 +323,6 @@ String DumpRenderTreeSupportEfl::suitableDRTFrameName(const Evas_Object* ewkFram
     return String("frame (anonymous)");
 }
 
-void DumpRenderTreeSupportEfl::suspendAnimations(Evas_Object* ewkFrame)
-{
-    WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
-
-    if (!frame)
-        return;
-
-    WebCore::AnimationController *animationController = frame->animation();
-    if (animationController)
-        animationController->suspendAnimations();
-}
-
 void DumpRenderTreeSupportEfl::setValueForUser(JSContextRef context, JSValueRef nodeObject, const String& value)
 {
     JSC::ExecState* exec = toJS(context);

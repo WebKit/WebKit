@@ -255,3 +255,4 @@ EXPORTS
         ?webkitWillExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?webkitDidExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
+        ?suspendAnimations@AnimationController@WebCore@@QAEXXZ

@@ -313,11 +313,6 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return 0;
 }
 
-void LayoutTestController::suspendAnimations() const
-{
-    // FIXME: implement
-}
-
 void LayoutTestController::resumeAnimations() const
 {
     // FIXME: implement

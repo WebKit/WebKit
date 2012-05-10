@@ -40,8 +40,8 @@
     
     function suspend()
     {
-        if (window.layoutTestController)
-            layoutTestController.suspendAnimations();
+        if (window.internals)
+            internals.suspendAnimations(document);
     }
     
     function resume()

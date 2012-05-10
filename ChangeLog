@@ -1,3 +1,12 @@
+2012-05-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move suspendAnimations to use Internals interface.
+        https://bugs.webkit.org/show_bug.cgi?id=85986
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/autotools/symbols.filter: Add a symbol filter for suspendAnimations. 
+
 2012-05-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Use suitable viewport values on XHTML-MP pages.

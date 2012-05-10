@@ -1,3 +1,17 @@
+2012-05-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move suspendAnimations to use Internals interface.
+        https://bugs.webkit.org/show_bug.cgi?id=85986
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove suspendAnimations functions, because it is able to work in the 
+        cross-port way through the Internals interface.
+
+        * WebKit.order:
+        * WebView/WebFrame.mm:
+        * WebView/WebFramePrivate.h:
+
 2012-05-08  Kent Tamura  <tkent@chromium.org>
 
         Fixe Chromium build, and add a FIXME comment about a layering violation.

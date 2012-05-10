@@ -1008,6 +1008,20 @@ bool Internals::isPageBoxVisible(Document* document, int pageNumber, ExceptionCo
     return document->isPageBoxVisible(pageNumber);
 }
 
+void Internals::suspendAnimations(Document* document, ExceptionCode& ec) const
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    AnimationController* controller = document->frame()->animation();
+    if (!controller)
+        return;
+
+    controller->suspendAnimations();
+}
+
 #if ENABLE(FULLSCREEN_API)
 void Internals::webkitWillEnterFullScreenForElement(Document* document, Element* element)
 {

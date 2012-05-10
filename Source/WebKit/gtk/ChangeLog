@@ -1,3 +1,17 @@
+2012-05-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move suspendAnimations to use Internals interface.
+        https://bugs.webkit.org/show_bug.cgi?id=85986
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove suspendAnimations functions, because it is able to work in the 
+        cross-port way through the Internals interface.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-05-09  Simon Pena  <spena@igalia.com>
 
         [GTK] Missing WebPreferences for media playback requiring user gestures and inline playback

@@ -648,11 +648,6 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return DumpRenderTreeSupportEfl::activeAnimationsCount(browser->mainFrame());
 }
 
-void LayoutTestController::suspendAnimations() const
-{
-    DumpRenderTreeSupportEfl::suspendAnimations(browser->mainFrame());
-}
-
 void LayoutTestController::resumeAnimations() const
 {
     DumpRenderTreeSupportEfl::resumeAnimations(browser->mainFrame());

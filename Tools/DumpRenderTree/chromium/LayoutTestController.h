@@ -243,7 +243,6 @@ public:
     void enableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void disableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void numberOfActiveAnimations(const CppArgumentList&, CppVariant*);
-    void suspendAnimations(const CppArgumentList&, CppVariant*);
     void resumeAnimations(const CppArgumentList&, CppVariant*);
     void disableImageLoading(const CppArgumentList&, CppVariant*);
     void setIconDatabaseEnabled(const CppArgumentList&, CppVariant*);
@@ -574,7 +573,6 @@ private:
     bool pauseTransitionAtTimeOnElementWithId(const WebKit::WebString& propertyName, double time, const WebKit::WebString& elementId);
     bool elementDoesAutoCompleteForElementWithId(const WebKit::WebString&);
     int numberOfActiveAnimations();
-    void suspendAnimations();
     void resumeAnimations();
 
     // Used for test timeouts.

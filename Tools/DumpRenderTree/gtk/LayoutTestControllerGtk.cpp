@@ -787,11 +787,6 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return DumpRenderTreeSupportGtk::numberOfActiveAnimations(mainFrame);
 }
 
-void LayoutTestController::suspendAnimations() const
-{
-    DumpRenderTreeSupportGtk::suspendAnimations(mainFrame);
-}
-
 void LayoutTestController::resumeAnimations() const
 {
     DumpRenderTreeSupportGtk::resumeAnimations(mainFrame);
