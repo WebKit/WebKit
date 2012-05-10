@@ -1,3 +1,18 @@
+2012-05-09  Hayato Ito  <hayato@chromium.org>
+
+        Remove unused test expectation files.
+        https://bugs.webkit.org/show_bug.cgi?id=85973
+
+        Reviewed by Ojan Vafai.
+
+        Since cell-shrinkback.html is a reftest, these txt and png
+        expectations files are not used by test runner and cause warning messages when running tests.
+
+        * platform/chromium-linux/fast/multicol/cell-shrinkback-expected.png: Removed.
+        * platform/chromium-win/fast/multicol/cell-shrinkback-expected.png: Removed.
+        * platform/qt/fast/multicol/cell-shrinkback-expected.png: Removed.
+        * platform/qt/fast/multicol/cell-shrinkback-expected.txt: Removed.
+
 2012-05-09  Adam Barth  <abarth@webkit.org>
 
         Implement HTML Media Capture
