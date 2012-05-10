@@ -32,6 +32,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(INPUT_SPEECH)
+
 using namespace WebKit;
 
 PassOwnPtr<MockWebSpeechInputController> MockWebSpeechInputController::create(WebSpeechInputListener* listener)
@@ -196,3 +198,5 @@ void MockWebSpeechInputController::SpeechTask::runIfValid()
     m_object->m_speechTask = 0;
     m_object->speechTaskFired();
 }
+
+#endif
