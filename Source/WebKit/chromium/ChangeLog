@@ -1,3 +1,17 @@
+2012-05-10  Tom Sepez  <tsepez@chromium.org>
+
+        [Chromium] WebFrameTest.ChromePageNoJavascript isn't catching regressions
+        https://bugs.webkit.org/show_bug.cgi?id=86046
+
+        Reviewed by Adam Barth.
+
+        Test both cases for registerURLSchemeAsNotAllowingJavascriptURLs.  Also add
+        a call to layout() to ensure the javascript result is seen.
+        
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit):
+
 2012-05-10  Varun Jain  <varunjain@google.com>
 
         [chromium] Trigger context menu for long press gesture

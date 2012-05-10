@@ -137,19 +137,40 @@ TEST_F(WebFrameTest, FormWithNullFrame)
     WebSearchableFormData searchableDataForm(forms[0]);
 }
 
+TEST_F(WebFrameTest, ChromePageJavascript)
+{
+    registerMockedChromeURLLoad("history.html");
+ 
+    // Pass true to enable JavaScript.
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_chromeURL + "history.html", true);
+
+    // Try to run JS against the chrome-style URL.
+    FrameTestHelpers::loadFrame(webView->mainFrame(), "javascript:document.body.appendChild(document.createTextNode('Clobbered'))");
+
+    // Required to see any updates in contentAsText.
+    webView->layout();
+
+    // Now retrieve the frame's text and ensure it was modified by running javascript.
+    std::string content = webView->mainFrame()->contentAsText(1024).utf8();
+    EXPECT_NE(std::string::npos, content.find("Clobbered"));
+}
+
 TEST_F(WebFrameTest, ChromePageNoJavascript)
 {
     registerMockedChromeURLLoad("history.html");
 
+    /// Pass true to enable JavaScript.
     WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_chromeURL + "history.html", true);
 
-    // Try to run JS against the chrome-style URL.
+    // Try to run JS against the chrome-style URL after prohibiting it.
     WebSecurityPolicy::registerURLSchemeAsNotAllowingJavascriptURLs("chrome");
     FrameTestHelpers::loadFrame(webView->mainFrame(), "javascript:document.body.appendChild(document.createTextNode('Clobbered'))");
 
-    // Now retrieve the frames text and see if it was clobbered.
+    // Required to see any updates in contentAsText.
+    webView->layout();
+
+    // Now retrieve the frame's text and ensure it wasn't modified by running javascript.
     std::string content = webView->mainFrame()->contentAsText(1024).utf8();
-    EXPECT_NE(std::string::npos, content.find("Simulated Chromium History Page"));
     EXPECT_EQ(std::string::npos, content.find("Clobbered"));
 }
 
