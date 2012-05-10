@@ -55,8 +55,6 @@ public:
         return adoptPtr(new ElementAttributeData);
     }
 
-    ~ElementAttributeData();
-
     void clearClass() { m_classNames.clear(); }
     void setClass(const String& className, bool shouldFoldCase);
     const SpaceSplitString& classNames() const { return m_classNames; }

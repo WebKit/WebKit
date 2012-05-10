@@ -127,10 +127,6 @@ void ElementAttributeData::removeAttr(Element* element, const QualifiedName& nam
     ASSERT_NOT_REACHED();
 }
 
-ElementAttributeData::~ElementAttributeData()
-{
-}
-
 void ElementAttributeData::setClass(const String& className, bool shouldFoldCase)
 {
     m_classNames.set(className, shouldFoldCase);
