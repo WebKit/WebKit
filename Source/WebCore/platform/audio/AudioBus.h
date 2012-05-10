@@ -109,10 +109,6 @@ public:
     // Scales all samples by the same amount.
     void scale(float scale);
 
-    // Master gain for this bus - used with sumWithGainFrom() below
-    void setGain(float gain) { m_busGain = gain; }
-    float gain() const { return m_busGain; }
-
     void reset() { m_isFirstTime = true; } // for de-zippering
 
     // Assuming sourceBus has the same topology, copies sample data from each channel of sourceBus to our corresponding channel.
@@ -122,12 +118,11 @@ public:
     // Our own internal gain m_busGain is ignored.
     void sumFrom(const AudioBus &sourceBus);
 
-    // Copy or sum each channel from sourceBus into our corresponding channel.
+    // Copy each channel from sourceBus into our corresponding channel.
     // We scale by targetGain (and our own internal gain m_busGain), performing "de-zippering" to smoothly change from *lastMixGain to (targetGain*m_busGain).
-    // The caller is responsible for setting up lastMixGain to point to storage which is unique for every "stream" which will be summed to this bus.
+    // The caller is responsible for setting up lastMixGain to point to storage which is unique for every "stream" which will be applied to this bus.
     // This represents the dezippering memory.
     void copyWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain);
-    void sumWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain);
 
     // Copies the sourceBus by scaling with sample-accurate gain values.
     void copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, float* gainValues, unsigned numberOfGainValues);
@@ -143,16 +138,11 @@ public:
 protected:
     AudioBus() { };
 
-    void processWithGainFrom(const AudioBus &sourceBus, float* lastMixGain, float targetGain, bool sumToBus);
-    void processWithGainFromMonoStereo(const AudioBus &sourceBus, float* lastMixGain, float targetGain, bool sumToBus);
-
     size_t m_length;
-
     Vector<OwnPtr<AudioChannel> > m_channels;
-
     int m_layout;
-
     float m_busGain;
+    OwnPtr<AudioFloatArray> m_dezipperGainValues;
     bool m_isFirstTime;
     float m_sampleRate; // 0.0 if unknown or N/A
 };
