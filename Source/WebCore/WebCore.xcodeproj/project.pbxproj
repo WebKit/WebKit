@@ -5819,6 +5819,7 @@
 		D630E2AC149BF344005B2F93 /* HistogramSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F93 /* HistogramSupport.h */; };
 		D630E2AC149BF344005B2F94 /* StatsCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F94 /* StatsCounter.h */; };
 		D630E2AC149BF344005B2F95 /* MemoryUsageSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F95 /* MemoryUsageSupport.h */; };
+		D630E2AC149BF344005B2F96 /* EventTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F96 /* EventTracer.h */; };
 		D6E276AF14637455001D280A /* MutationObserverRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6E276AD14637455001D280A /* MutationObserverRegistration.cpp */; };
 		D6E276B014637455001D280A /* MutationObserverRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E276AE14637455001D280A /* MutationObserverRegistration.h */; };
 		D6E528A3149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6E528A1149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp */; };
@@ -5826,6 +5827,7 @@
 		D6FDAEF3149C06190037B1E1 /* HistogramSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */; };
 		D6FDAEF3149C06190037B1E2 /* StatsCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E2 /* StatsCounter.cpp */; };
 		D6FDAEF3149C06190037B1E3 /* MemoryUsageSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E3 /* MemoryUsageSupport.cpp */; };
+		D6FDAEF3149C06190037B1E4 /* EventTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E4 /* EventTracer.cpp */; };
 		D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D70AD65513E1342B005B50B4 /* RenderRegion.cpp */; };
 		D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = D70AD65613E1342B005B50B4 /* RenderRegion.h */; };
 		D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D72F6D77153159A3001EE44E /* FlowThreadController.cpp */; };
@@ -12970,6 +12972,7 @@
 		D630E2AB149BF344005B2F93 /* HistogramSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistogramSupport.h; sourceTree = "<group>"; };
 		D630E2AB149BF344005B2F94 /* StatsCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatsCounter.h; sourceTree = "<group>"; };
 		D630E2AB149BF344005B2F95 /* MemoryUsageSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryUsageSupport.h; sourceTree = "<group>"; };
+		D630E2AB149BF344005B2F96 /* EventTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTracer.h; sourceTree = "<group>"; };
 		D6E276AD14637455001D280A /* MutationObserverRegistration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationObserverRegistration.cpp; sourceTree = "<group>"; };
 		D6E276AE14637455001D280A /* MutationObserverRegistration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationObserverRegistration.h; sourceTree = "<group>"; };
 		D6E528A1149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationObserverInterestGroup.cpp; sourceTree = "<group>"; };
@@ -12977,6 +12980,7 @@
 		D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistogramSupport.cpp; sourceTree = "<group>"; };
 		D6FDAEF2149C06190037B1E2 /* StatsCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatsCounter.cpp; sourceTree = "<group>"; };
 		D6FDAEF2149C06190037B1E3 /* MemoryUsageSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryUsageSupport.cpp; sourceTree = "<group>"; };
+		D6FDAEF2149C06190037B1E4 /* EventTracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTracer.cpp; sourceTree = "<group>"; };
 		D70AD65513E1342B005B50B4 /* RenderRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRegion.cpp; sourceTree = "<group>"; };
 		D70AD65613E1342B005B50B4 /* RenderRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRegion.h; sourceTree = "<group>"; };
 		D72F6D77153159A3001EE44E /* FlowThreadController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlowThreadController.cpp; sourceTree = "<group>"; };
@@ -20273,6 +20277,8 @@
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
 				A7CFB3D00B7ED10A0070C32D /* DragImage.h */,
 				1CA19E150DC255CA0065A994 /* EventLoop.h */,
+				D6FDAEF2149C06190037B1E4 /* EventTracer.cpp */,
+				D630E2AB149BF344005B2F96 /* EventTracer.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
 				414B867113AD074E00B4B373 /* FileIconLoader.cpp */,
@@ -22740,6 +22746,7 @@
 				E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */,
 				97AA3CA5145237CC003E1DA6 /* EventTargetHeaders.h in Headers */,
 				97AA3CA6145237CC003E1DA6 /* EventTargetInterfaces.h in Headers */,
+				D630E2AC149BF344005B2F96 /* EventTracer.h in Headers */,
 				BC60D8F30D2A11E000B9918F /* ExceptionBase.h in Headers */,
 				935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */,
 				973DC640145A9409002842C2 /* ExceptionCodeDescription.h in Headers */,
@@ -25906,6 +25913,7 @@
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
 				E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */,
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
+				D6FDAEF3149C06190037B1E4 /* EventTracer.cpp in Sources */,
 				BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */,
 				973DC63F145A9409002842C2 /* ExceptionCodeDescription.cpp in Sources */,
 				A7CACDB113CE875C00BBBE3F /* ExceptionCodePlaceholder.cpp in Sources */,

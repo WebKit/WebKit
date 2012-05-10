@@ -1104,6 +1104,7 @@ SET(WebCore_SOURCES
     platform/DateComponents.cpp
     platform/DragData.cpp
     platform/DragImage.cpp
+    platform/EventTracer.cpp
     platform/FileChooser.cpp
     platform/FileIconLoader.cpp
     platform/FileSystem.cpp

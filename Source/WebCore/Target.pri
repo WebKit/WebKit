@@ -1081,6 +1081,7 @@ SOURCES += \
     platform/DateComponents.cpp \
     platform/DragData.cpp \
     platform/DragImage.cpp \
+    platform/EventTracer.cpp \
     platform/FileChooser.cpp \
     platform/FileIconLoader.cpp \
     platform/FileStream.cpp \
@@ -2188,6 +2189,7 @@ HEADERS += \
     platform/DateComponents.h \
     platform/DragData.h \
     platform/DragImage.h \
+    platform/EventTracer.h \
     platform/FileChooser.h \
     platform/FileStream.h \
     platform/FileStreamClient.h \

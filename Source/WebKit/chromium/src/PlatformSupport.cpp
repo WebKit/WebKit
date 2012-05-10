@@ -785,28 +785,6 @@ void PlatformSupport::paintThemePart(
 
 #endif
 
-// Trace Event ----------------------------------------------------------------
-
-const unsigned char* PlatformSupport::getTraceCategoryEnabledFlag(const char* categoryName)
-{
-    return webKitPlatformSupport()->getTraceCategoryEnabledFlag(categoryName);
-}
-int PlatformSupport::addTraceEvent(char phase,
-                                   const unsigned char* categoryEnabledFlag,
-                                   const char* name,
-                                   unsigned long long id,
-                                   int numArgs,
-                                   const char** argNames,
-                                   const unsigned char* argTypes,
-                                   const unsigned long long* argValues,
-                                   int thresholdBeginId,
-                                   long long threshold,
-                                   unsigned char flags)
-{
-    return webKitPlatformSupport()->addTraceEvent(
-        phase, categoryEnabledFlag, name, id, numArgs, argNames, argTypes, argValues,  thresholdBeginId, threshold, flags);
-}
-
 // Visited Links --------------------------------------------------------------
 
 LinkHash PlatformSupport::visitedLinkHash(const UChar* url, unsigned length)

@@ -1,5 +1,17 @@
 2012-05-10  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Call addTraceEvent and getTraceCategoryEnabledFlag directly
+        https://bugs.webkit.org/show_bug.cgi?id=85399
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
+2012-05-10  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Remove WEBKIT_USING_SKIA ifdefs that are always true
         https://bugs.webkit.org/show_bug.cgi?id=86121
 

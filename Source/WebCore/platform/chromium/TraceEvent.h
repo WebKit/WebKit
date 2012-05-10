@@ -163,7 +163,7 @@
 #ifndef TraceEvent_h
 #define TraceEvent_h
 
-#include "PlatformSupport.h"
+#include "EventTracer.h"
 
 #include <wtf/DynamicAnnotations.h>
 #include <wtf/text/CString.h>
@@ -463,7 +463,7 @@
 // const unsigned char*
 //     TRACE_EVENT_API_GET_CATEGORY_ENABLED(const char* category_name)
 #define TRACE_EVENT_API_GET_CATEGORY_ENABLED \
-    WebCore::PlatformSupport::getTraceCategoryEnabledFlag
+    WebCore::EventTracer::getTraceCategoryEnabledFlag
 
 // Add a trace event to the platform tracing system. Returns thresholdBeginId
 // for use in a corresponding end TRACE_EVENT_API_ADD_TRACE_EVENT call.
@@ -480,7 +480,7 @@
 //                    long long threshold,
 //                    unsigned char flags)
 #define TRACE_EVENT_API_ADD_TRACE_EVENT \
-    WebCore::PlatformSupport::addTraceEvent
+    WebCore::EventTracer::addTraceEvent
 
 ////////////////////////////////////////////////////////////////////////////////
 

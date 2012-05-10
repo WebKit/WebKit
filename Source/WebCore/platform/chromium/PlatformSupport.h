@@ -365,20 +365,6 @@ public:
     static void paintThemePart(GraphicsContext*, ThemePart, ThemePaintState, const IntRect&, const ThemePaintExtraParams*);
 #endif
 
-    // Trace Event --------------------------------------------------------
-    static const unsigned char* getTraceCategoryEnabledFlag(const char* categoryName);
-    static int addTraceEvent(char phase,
-                             const unsigned char* categoryEnabledFlag,
-                             const char* name,
-                             unsigned long long id,
-                             int numArgs,
-                             const char** argNames,
-                             const unsigned char* argTypes,
-                             const unsigned long long* argValues,
-                             int thresholdBeginId,
-                             long long threshold,
-                             unsigned char flags);
-
     // Visited links ------------------------------------------------------
     static LinkHash visitedLinkHash(const UChar* url, unsigned length);
     static LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL);
