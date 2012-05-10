@@ -2561,6 +2561,9 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
 
         var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this._sidebarPane.valueElement);
         var wordString = wordRange.toString();
+        if (this._isValueSuggestion(wordString))
+            return false;
+
         var replacementString;
         var prefix, suffix, number;
 
@@ -2609,6 +2612,14 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
             return true;
         }
         return false;
+    },
+
+    _isValueSuggestion: function(word)
+    {
+        if (!word)
+            return false;
+        word = word.toLowerCase();
+        return this._cssCompletions.keySet().hasOwnProperty(word);
     },
 
     _buildPropertyCompletions: function(textPrompt, wordRange, force, completionsReadyCallback)
