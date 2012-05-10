@@ -188,29 +188,33 @@ bool RenderImage::updateIntrinsicSizeIfNeeded(const IntSize& newSize, bool image
 
 void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* rect)
 {
+    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->imageSize(style()->effectiveZoom()), imageSizeChanged);
+
+    // In the case of generated image content using :before/:after/content, we might not be
+    // in the render tree yet. In that case, we just need to update our intrinsic size.
+    // layout() will be called after we are inserted in the tree which will take care of
+    // what we are doing here.
+    if (!containingBlock())
+        return;
+
     bool shouldRepaint = true;
-    if (updateIntrinsicSizeIfNeeded(m_imageResource->imageSize(style()->effectiveZoom()), imageSizeChanged)) {
-        // In the case of generated image content using :before/:after, we might not be in the
-        // render tree yet.  In that case, we don't need to worry about check for layout, since we'll get a
-        // layout when we get added in to the render tree hierarchy later.
-        if (containingBlock()) {
-            // lets see if we need to relayout at all..
-            int oldwidth = width();
-            int oldheight = height();
-            if (!preferredLogicalWidthsDirty())
-                setPreferredLogicalWidthsDirty(true);
-            computeLogicalWidth();
-            computeLogicalHeight();
+    if (intrinsicSizeChanged) {
+        // lets see if we need to relayout at all..
+        int oldwidth = width();
+        int oldheight = height();
+        if (!preferredLogicalWidthsDirty())
+            setPreferredLogicalWidthsDirty(true);
+        computeLogicalWidth();
+        computeLogicalHeight();
 
-            if (imageSizeChanged || width() != oldwidth || height() != oldheight) {
-                shouldRepaint = false;
-                if (!selfNeedsLayout())
-                    setNeedsLayout(true);
-            }
-
-            setWidth(oldwidth);
-            setHeight(oldheight);
+        if (imageSizeChanged || width() != oldwidth || height() != oldheight) {
+            shouldRepaint = false;
+            if (!selfNeedsLayout())
+                setNeedsLayout(true);
         }
+
+        setWidth(oldwidth);
+        setHeight(oldheight);
     }
 
     if (shouldRepaint) {

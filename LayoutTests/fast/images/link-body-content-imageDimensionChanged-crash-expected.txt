@@ -1,0 +1,5 @@
+Bug 85912: Crash in computedCSSPadding* functions due to RenderImage::imageDimensionsChanged called during attachment
+
+This test PASSED if it did not crash.
+
+

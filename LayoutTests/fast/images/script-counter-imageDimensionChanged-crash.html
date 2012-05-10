@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPAQMAAAABGAcJAAAAA1BMVEUAgACc+aWRAAAADElEQVR42mNgIAEAAAAtAAH7KhMqAAAAAElFTkSuQmCC");
+    padding-top: 100%;
+}
+
+body {
+    content: counter(foobar);
+}
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<p> Bug <a href="http://webkit.org/b/85912">85912</a>: Crash in computedCSSPadding* functions due to RenderImage::imageDimensionsChanged called during attachment</p>
+<p> This test PASSED if it did not crash. </p>
+<div>
+<script src="inexistant.js"></script>
+<body>
+</body>
+</html>
