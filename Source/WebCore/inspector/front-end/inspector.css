@@ -259,7 +259,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     border-radius: 5px;
 }
 
-.toolbar-search-item {
+#toolbar-search-item {
     display: -webkit-box;
     -webkit-box-orient: horizontal;
     -webkit-box-align: center;
@@ -271,11 +271,12 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     font-size: 16px;
 }
 
-#toolbar-search-navigation-control {
-    width: 40px;
+.with-navigation-buttons #search {
+    width: 165px;
 }
 
 .toolbar-search-navigation-label {
+    display: none;
     border: 1px solid transparent;
     border-radius: 2px;
     padding: 3px;
@@ -283,6 +284,10 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     width: 18px;
     height: 18px;
     float: right;
+}
+
+.with-navigation-buttons .toolbar-search-navigation-label {
+    display: block;
 }
 
 .toolbar-search-navigation-label:hover {

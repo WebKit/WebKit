@@ -36,7 +36,7 @@ WebInspector.SearchController = function()
 {
     this.element = document.getElementById("search");
     this._matchesElement = document.getElementById("search-results-matches");
-    this._toolbarLabelElement = document.getElementById("search-toolbar-label");
+    this._searchItemElement = document.getElementById("toolbar-search-item");
     this._searchControlBoxElement = document.getElementById("toolbar-search-navigation-control");
 
     this.element.addEventListener("search", this._onSearch.bind(this), false); // when the search is emptied
@@ -70,12 +70,7 @@ WebInspector.SearchController.prototype = {
         if (!panelName)
             return;
         var newLabel = WebInspector.UIString("Search %s", panelName);
-        if (WebInspector.isCompactMode())
-            this.element.setAttribute("placeholder", newLabel);
-        else {
-            this.element.removeAttribute("placeholder");
-            this._toolbarLabelElement.textContent = newLabel;
-        }
+        this.element.setAttribute("placeholder", newLabel);
     },
 
     cancelSearch: function()
@@ -156,13 +151,10 @@ WebInspector.SearchController.prototype = {
 
     _updateSearchNavigationButtonState: function(visible)
     {
-        if (visible) {
-            this._searchNavigationNext.removeStyleClass("hidden");
-            this._searchNavigationPrev.removeStyleClass("hidden");
-        } else {
-            this._searchNavigationNext.addStyleClass("hidden");
-            this._searchNavigationPrev.addStyleClass("hidden");
-        }
+        if (visible)
+            this._searchItemElement.addStyleClass("with-navigation-buttons");
+        else
+            this._searchItemElement.removeStyleClass("with-navigation-buttons");
     },
 
     /**
@@ -338,7 +330,7 @@ WebInspector.SearchController.prototype = {
         var searchNavigationControlElement = document.createElement("div");
         var searchNavigationIconElement = document.createElement("div");
         
-        searchNavigationControlElement.className = "toolbar-search-navigation-label hidden";
+        searchNavigationControlElement.className = "toolbar-search-navigation-label";
         
         switch (direction) {
         case "prev":
