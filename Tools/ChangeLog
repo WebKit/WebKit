@@ -1,3 +1,32 @@
+2012-05-10  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [webkitpy][EFL] It should be possible to use a wrapper command for ImageDiff.
+        https://bugs.webkit.org/show_bug.cgi?id=86145
+
+        Reviewed by Dirk Pranke.
+
+        The GTK+ and EFL ports use jhbuild to build a few base libraries
+        which are then used when building the port itself. Programs such
+        as DRT and ImageDiff are then supposed to be run with the
+        `run-with-jhbuild' wrapper so that the libraries are properly
+        found and loaded.
+
+        This was already the case for DumpRenderTree (EflPort defines the
+        'wrapper' option for that), but it was not possible to do the same
+        with ImageDiff so far.
+
+        The code which created the ImageDiff command-line call has been
+        moved to a separate method, _image_diff_command, which is then
+        overridden by EflPort to add the jhbuild wrapper.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.__init__):
+        (EflPort._image_diff_command):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort):
+        (WebKitPort._image_diff_command):
+        (WebKitPort._start_image_diff_process):
+
 2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] ENABLE_IFRAME_SEAMLESS support

@@ -42,7 +42,9 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
     def __init__(self, *args, **kwargs):
         WebKitPort.__init__(self, *args, **kwargs)
 
-        self.set_option_default('wrapper', self.path_from_webkit_base('Tools', 'efl', 'run-with-jhbuild'))
+        self._jhbuild_wrapper_path = self.path_from_webkit_base('Tools', 'efl', 'run-with-jhbuild')
+
+        self.set_option_default('wrapper', self._jhbuild_wrapper_path)
 
     def _port_flag_for_scripts(self):
         return "--efl"
@@ -61,6 +63,9 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
 
     def _path_to_image_diff(self):
         return self._build_path('bin', 'ImageDiff')
+
+    def _image_diff_command(self, *args, **kwargs):
+        return [self._jhbuild_wrapper_path] + super(EflPort, self)._image_diff_command(*args, **kwargs)
 
     def _path_to_webcore_library(self):
         static_path = self._build_path('WebCore', 'libwebcore_efl.a')

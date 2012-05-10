@@ -170,7 +170,7 @@ class WebKitPort(Port):
         process = self._start_image_diff_process(expected_contents, actual_contents, tolerance=tolerance)
         return self._read_image_diff(process)
 
-    def _start_image_diff_process(self, expected_contents, actual_contents, tolerance=None):
+    def _image_diff_command(self, tolerance=None):
         # FIXME: There needs to be a more sane way of handling default
         # values for options so that you can distinguish between a default
         # value of None and a default value that wasn't set.
@@ -179,7 +179,12 @@ class WebKitPort(Port):
                 tolerance = self.get_option('tolerance')
             else:
                 tolerance = 0.1
+
         command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
+        return command
+
+    def _start_image_diff_process(self, expected_contents, actual_contents, tolerance=None):
+        command = self._image_diff_command(tolerance)
         environment = self.setup_environ_for_server('ImageDiff')
         process = server_process.ServerProcess(self, 'ImageDiff', command, environment)
 
