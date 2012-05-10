@@ -88,7 +88,7 @@ WebMediaStreamDescriptor::ExtraData* WebMediaStreamDescriptor::extraData() const
 
 void WebMediaStreamDescriptor::setExtraData(ExtraData* extraData)
 {
-    m_private->setExtraData(new ExtraDataContainer(extraData));
+    m_private->setExtraData(adoptRef(new ExtraDataContainer(extraData)));
 }
 
 // FIXME: Cleanup when the chromium code has switched to the split sources implementation.

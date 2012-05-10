@@ -1,3 +1,15 @@
+2012-05-10  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Fix the ExtraData functionality in WebMediaStreamDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=86087
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/WebUserMediaClientMock.cpp:
+        (MockExtraData):
+        (WebKit):
+        (WebKit::WebUserMediaClientMock::requestUserMedia):
+
 2012-05-10  Varun Jain  <varunjain@google.com>
 
         [chromium] Trigger context menu for long press gesture

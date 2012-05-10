@@ -42,6 +42,11 @@
 
 namespace WebKit {
 
+class MockExtraData : public WebMediaStreamDescriptor::ExtraData {
+public:
+    int foo;
+};
+
 PassOwnPtr<WebUserMediaClientMock> WebUserMediaClientMock::create()
 {
     return adoptPtr(new WebUserMediaClientMock());
@@ -63,7 +68,12 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
     if (request.video())
         videoSources[0].initialize("MockVideoDevice#1", WebMediaStreamSource::TypeVideo, "Mock video device");
 
-    request.requestSucceeded(audioSources, videoSources);
+    WebKit::WebMediaStreamDescriptor descriptor;
+    descriptor.initialize("foobar", audioSources, videoSources);
+
+    descriptor.setExtraData(new MockExtraData());
+
+    request.requestSucceeded(descriptor);
 }
 
 void WebUserMediaClientMock::cancelUserMediaRequest(const WebUserMediaRequest&)
