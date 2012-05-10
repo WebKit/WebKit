@@ -1,3 +1,10 @@
+2012-05-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Mark CCLayerTreeHostTestSetNeedsCommit2.runMultiThread and
+        CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity.runMultiThread flaky.
+
+        * tests/CCLayerTreeHostTest.cpp:
+
 2012-05-09  Dan Alcantara  <dfalcantara@chromium.org>
 
         [chromium] Add ability to override user agent string per-WebFrameClient

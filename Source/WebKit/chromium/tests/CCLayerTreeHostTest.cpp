@@ -788,7 +788,12 @@ private:
     int m_numDraws;
 };
 
+#if OS(WINDOWS)
+// http://webkit.org/b/74623
+TEST_F(CCLayerTreeHostTestSetNeedsCommit2, FLAKY_runMultiThread)
+#else
 TEST_F(CCLayerTreeHostTestSetNeedsCommit2, runMultiThread)
+#endif
 {
     runTestThreaded();
 }
@@ -1220,7 +1225,12 @@ public:
     }
 };
 
+#if OS(WINDOWS)
+// http://webkit.org/b/74623
+TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, FLAKY_runMultiThread)
+#else
 TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, runMultiThread)
+#endif
 {
     runTestThreaded();
 }
