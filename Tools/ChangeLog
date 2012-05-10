@@ -1,5 +1,14 @@
 2012-05-09  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Android's DRT doesn't want to build WebUserMediaClientMock
+        https://bugs.webkit.org/show_bug.cgi?id=86045
+
+        Reviewed by Eric Seidel.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+
+2012-05-09  Adam Barth  <abarth@webkit.org>
+
         [Chromium] MockWebSpeechInputController.cpp should be guarded by ENABLE(INPUT_SPEECH)
         https://bugs.webkit.org/show_bug.cgi?id=86041
 

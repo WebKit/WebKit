@@ -46,8 +46,6 @@
             'chromium/WebPermissions.h',
             'chromium/WebPreferences.cpp',
             'chromium/WebPreferences.h',
-            'chromium/WebUserMediaClientMock.cpp',
-            'chromium/WebUserMediaClientMock.h',
             'chromium/WebViewHost.cpp',
             'chromium/WebViewHost.h',
         ],
@@ -93,7 +91,13 @@
                     'chromium/WebThemeEngineDRTMac.mm',
                     'chromium/WebThemeEngineDRTMac.h',
                 ],
-            }],            
+            }],
+            ['OS!="android"', {
+                'drt_files': [
+                    'chromium/WebUserMediaClientMock.cpp',
+                    'chromium/WebUserMediaClientMock.h',
+                ],
+            }],
         ],
     }
 }
