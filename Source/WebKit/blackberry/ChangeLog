@@ -1,3 +1,28 @@
+2012-05-10  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Assertions and assumptions in BackingStoreClient around m_frame and m_frame->view() are invalid
+        https://bugs.webkit.org/show_bug.cgi?id=86096
+
+        Reviewed by Rob Buis.
+
+        A Frame's FrameView has always to be checked since it is
+        a volatile object, and gets created and destroyed all the time.
+
+        We have been facing a particular issue, where during our automated
+        interaction tests, the main frame object was being pinch zoomed in
+        the middle of it creation, and WebKit thread was blocked by a mutex.
+        In practice, it is a case that would not be possible in a real
+        world scenario, but shows that the ASSERTs are bogus regardless.
+
+        * WebKitSupport/BackingStoreClient.cpp:
+        (BlackBerry::WebKit::BackingStoreClient::scrollPosition):
+        (BlackBerry::WebKit::BackingStoreClient::setScrollPosition):
+        (BlackBerry::WebKit::BackingStoreClient::maximumScrollPosition):
+        (BlackBerry::WebKit::BackingStoreClient::viewportSize):
+        (BlackBerry::WebKit::BackingStoreClient::transformedViewportSize):
+        (BlackBerry::WebKit::BackingStoreClient::visibleContentsRect):
+        (BlackBerry::WebKit::BackingStoreClient::contentsSize):
+
 2012-05-09  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Autofill feature implementation for BlackBerry porting

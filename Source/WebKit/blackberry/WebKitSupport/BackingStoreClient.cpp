@@ -168,6 +168,9 @@ IntPoint BackingStoreClient::transformedAbsoluteLocation() const
 IntPoint BackingStoreClient::scrollPosition() const
 {
     ASSERT(m_frame);
+    if (!m_frame->view())
+        return IntPoint();
+
     return m_frame->view()->scrollPosition() - pointToSize(m_frame->view()->minimumScrollPosition());
 }
 
@@ -178,7 +181,10 @@ IntPoint BackingStoreClient::transformedScrollPosition() const
 
 void BackingStoreClient::setScrollPosition(const IntPoint& pos)
 {
-    ASSERT(m_frame->view());
+    ASSERT(m_frame);
+    if (!m_frame->view())
+        return;
+
     if (pos == scrollPosition())
         return;
 
@@ -196,7 +202,10 @@ void BackingStoreClient::setScrollPosition(const IntPoint& pos)
 
 IntPoint BackingStoreClient::maximumScrollPosition() const
 {
-    ASSERT(m_frame->view());
+    ASSERT(m_frame);
+    if (!m_frame->view())
+        return IntPoint();
+
     return m_frame->view()->maximumScrollPosition() - pointToSize(m_frame->view()->minimumScrollPosition());
 }
 
@@ -220,7 +229,10 @@ IntSize BackingStoreClient::transformedActualVisibleSize() const
 
 IntSize BackingStoreClient::viewportSize() const
 {
-    ASSERT(m_frame->view());
+    ASSERT(m_frame);
+    if (!m_frame->view())
+        return IntSize();
+
     if (isMainFrame())
         return m_webPage->d->viewportSize();
 
@@ -229,10 +241,13 @@ IntSize BackingStoreClient::viewportSize() const
 
 IntSize BackingStoreClient::transformedViewportSize() const
 {
+    ASSERT(m_frame);
+    if (!m_frame->view())
+        return IntSize();
+
     if (isMainFrame())
         return m_webPage->d->transformedViewportSize();
 
-    ASSERT(m_frame->view());
     const IntSize untransformedViewportSize = m_frame->view()->visibleContentRect().size();
     const FloatPoint transformedBottomRight = m_webPage->d->m_transformationMatrix->mapPoint(
         FloatPoint(untransformedViewportSize.width(), untransformedViewportSize.height()));
@@ -241,7 +256,10 @@ IntSize BackingStoreClient::transformedViewportSize() const
 
 IntRect BackingStoreClient::visibleContentsRect() const
 {
-    ASSERT(m_frame->view());
+    ASSERT(m_frame);
+    if (!m_frame->view())
+        return IntRect();
+
     IntRect visibleContentRect = m_frame->view()->visibleContentRect();
     if (isMainFrame())
         return visibleContentRect;
@@ -273,7 +291,10 @@ IntRect BackingStoreClient::transformedVisibleContentsRect() const
 
 IntSize BackingStoreClient::contentsSize() const
 {
-    ASSERT(m_frame->view());
+    ASSERT(m_frame);
+    if (!m_frame->view())
+        return IntSize();
+
     return m_frame->view()->contentsSize();
 }
 
