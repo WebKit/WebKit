@@ -34,11 +34,15 @@ KURL::KURL(const QUrl& url)
 
 KURL::operator QUrl() const
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     QString str = QString::fromRawData(reinterpret_cast<const QChar*>(m_string.characters()), m_string.length());
     QByteArray ba = str.toUtf8();
 
     QUrl url = QUrl::fromEncoded(ba);
     return url;
+#else
+    return QUrl(m_string);
+#endif
 }
 
 String KURL::fileSystemPath() const
