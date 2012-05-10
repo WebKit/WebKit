@@ -1,3 +1,51 @@
+2012-05-10  Kent Hansen  <kent.hansen@nokia.com>
+
+        [Qt] Rename QDeclarative* to QQml*
+        https://bugs.webkit.org/show_bug.cgi?id=86089
+
+        Reviewed by Simon Hausmann.
+
+        The QtDeclarative module was deprecated in favor of QtQml.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::_q_onReceivedResponseFromDownload):
+        (QQuickWebViewExperimental::alertDialog):
+        (QQuickWebViewExperimental::setAlertDialog):
+        (QQuickWebViewExperimental::confirmDialog):
+        (QQuickWebViewExperimental::setConfirmDialog):
+        (QQuickWebViewExperimental::promptDialog):
+        (QQuickWebViewExperimental::setPromptDialog):
+        (QQuickWebViewExperimental::authenticationDialog):
+        (QQuickWebViewExperimental::setAuthenticationDialog):
+        (QQuickWebViewExperimental::proxyAuthenticationDialog):
+        (QQuickWebViewExperimental::setProxyAuthenticationDialog):
+        (QQuickWebViewExperimental::certificateVerificationDialog):
+        (QQuickWebViewExperimental::setCertificateVerificationDialog):
+        (QQuickWebViewExperimental::itemSelector):
+        (QQuickWebViewExperimental::setItemSelector):
+        (QQuickWebViewExperimental::filePicker):
+        (QQuickWebViewExperimental::setFilePicker):
+        (QQuickWebViewExperimental::databaseQuotaDialog):
+        (QQuickWebViewExperimental::setDatabaseQuotaDialog):
+        (QQuickWebViewExperimental::schemeDelegates_At):
+        (QQuickWebViewExperimental::schemeDelegates_Append):
+        (QQuickWebViewExperimental::schemeDelegates_Count):
+        (QQuickWebViewExperimental::schemeDelegates_Clear):
+        (QQuickWebViewExperimental::schemeDelegates):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/qwebiconimageprovider.cpp:
+        (QWebIconImageProvider::QWebIconImageProvider):
+        * UIProcess/API/qt/qwebiconimageprovider_p.h:
+        * UIProcess/API/qt/qwebviewportinfo_p.h:
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner):
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+        (WebPopupMenuProxyQt):
+
 2012-05-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix sites with a viewport meta tag when devicePixelRatio isn't explicitely set on the WebView

@@ -23,7 +23,7 @@
 #include "qwebkitglobal.h"
 #include <QtQuick/QQuickImageProvider>
 
-class QWEBKIT_EXPORT QWebIconImageProvider : public QDeclarativeImageProvider {
+class QWEBKIT_EXPORT QWebIconImageProvider : public QQuickImageProvider {
 public:
     QWebIconImageProvider();
     ~QWebIconImageProvider();

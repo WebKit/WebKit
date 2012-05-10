@@ -489,7 +489,7 @@ void QQuickWebViewPrivate::_q_onReceivedResponseFromDownload(QWebDownloadItem* d
         return;
 
     Q_Q(QQuickWebView);
-    QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
+    QQmlEngine::setObjectOwnership(downloadItem, QQmlEngine::JavaScriptOwnership);
     emit q->experimental()->downloadRequested(downloadItem);
 }
 
@@ -1099,13 +1099,13 @@ void QQuickWebViewExperimental::postMessage(const QString& message)
     d->context->postMessageToNavigatorQtObject(d->webPageProxy.get(), message);
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::alertDialog() const
+QQmlComponent* QQuickWebViewExperimental::alertDialog() const
 {
     Q_D(const QQuickWebView);
     return d->alertDialog;
 }
 
-void QQuickWebViewExperimental::setAlertDialog(QDeclarativeComponent* alertDialog)
+void QQuickWebViewExperimental::setAlertDialog(QQmlComponent* alertDialog)
 {
     Q_D(QQuickWebView);
     if (d->alertDialog == alertDialog)
@@ -1114,13 +1114,13 @@ void QQuickWebViewExperimental::setAlertDialog(QDeclarativeComponent* alertDialo
     emit alertDialogChanged();
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::confirmDialog() const
+QQmlComponent* QQuickWebViewExperimental::confirmDialog() const
 {
     Q_D(const QQuickWebView);
     return d->confirmDialog;
 }
 
-void QQuickWebViewExperimental::setConfirmDialog(QDeclarativeComponent* confirmDialog)
+void QQuickWebViewExperimental::setConfirmDialog(QQmlComponent* confirmDialog)
 {
     Q_D(QQuickWebView);
     if (d->confirmDialog == confirmDialog)
@@ -1134,7 +1134,7 @@ QWebNavigationHistory* QQuickWebViewExperimental::navigationHistory() const
     return d_ptr->navigationHistory.get();
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::promptDialog() const
+QQmlComponent* QQuickWebViewExperimental::promptDialog() const
 {
     Q_D(const QQuickWebView);
     return d->promptDialog;
@@ -1148,7 +1148,7 @@ QWebPreferences* QQuickWebViewExperimental::preferences() const
     return d->preferences.get();
 }
 
-void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDialog)
+void QQuickWebViewExperimental::setPromptDialog(QQmlComponent* promptDialog)
 {
     Q_D(QQuickWebView);
     if (d->promptDialog == promptDialog)
@@ -1157,13 +1157,13 @@ void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDia
     emit promptDialogChanged();
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::authenticationDialog() const
+QQmlComponent* QQuickWebViewExperimental::authenticationDialog() const
 {
     Q_D(const QQuickWebView);
     return d->authenticationDialog;
 }
 
-void QQuickWebViewExperimental::setAuthenticationDialog(QDeclarativeComponent* authenticationDialog)
+void QQuickWebViewExperimental::setAuthenticationDialog(QQmlComponent* authenticationDialog)
 {
     Q_D(QQuickWebView);
     if (d->authenticationDialog == authenticationDialog)
@@ -1172,13 +1172,13 @@ void QQuickWebViewExperimental::setAuthenticationDialog(QDeclarativeComponent* a
     emit authenticationDialogChanged();
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::proxyAuthenticationDialog() const
+QQmlComponent* QQuickWebViewExperimental::proxyAuthenticationDialog() const
 {
     Q_D(const QQuickWebView);
     return d->proxyAuthenticationDialog;
 }
 
-void QQuickWebViewExperimental::setProxyAuthenticationDialog(QDeclarativeComponent* proxyAuthenticationDialog)
+void QQuickWebViewExperimental::setProxyAuthenticationDialog(QQmlComponent* proxyAuthenticationDialog)
 {
     Q_D(QQuickWebView);
     if (d->proxyAuthenticationDialog == proxyAuthenticationDialog)
@@ -1186,13 +1186,13 @@ void QQuickWebViewExperimental::setProxyAuthenticationDialog(QDeclarativeCompone
     d->proxyAuthenticationDialog = proxyAuthenticationDialog;
     emit proxyAuthenticationDialogChanged();
 }
-QDeclarativeComponent* QQuickWebViewExperimental::certificateVerificationDialog() const
+QQmlComponent* QQuickWebViewExperimental::certificateVerificationDialog() const
 {
     Q_D(const QQuickWebView);
     return d->certificateVerificationDialog;
 }
 
-void QQuickWebViewExperimental::setCertificateVerificationDialog(QDeclarativeComponent* certificateVerificationDialog)
+void QQuickWebViewExperimental::setCertificateVerificationDialog(QQmlComponent* certificateVerificationDialog)
 {
     Q_D(QQuickWebView);
     if (d->certificateVerificationDialog == certificateVerificationDialog)
@@ -1201,13 +1201,13 @@ void QQuickWebViewExperimental::setCertificateVerificationDialog(QDeclarativeCom
     emit certificateVerificationDialogChanged();
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::itemSelector() const
+QQmlComponent* QQuickWebViewExperimental::itemSelector() const
 {
     Q_D(const QQuickWebView);
     return d->itemSelector;
 }
 
-void QQuickWebViewExperimental::setItemSelector(QDeclarativeComponent* itemSelector)
+void QQuickWebViewExperimental::setItemSelector(QQmlComponent* itemSelector)
 {
     Q_D(QQuickWebView);
     if (d->itemSelector == itemSelector)
@@ -1216,13 +1216,13 @@ void QQuickWebViewExperimental::setItemSelector(QDeclarativeComponent* itemSelec
     emit itemSelectorChanged();
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::filePicker() const
+QQmlComponent* QQuickWebViewExperimental::filePicker() const
 {
     Q_D(const QQuickWebView);
     return d->filePicker;
 }
 
-void QQuickWebViewExperimental::setFilePicker(QDeclarativeComponent* filePicker)
+void QQuickWebViewExperimental::setFilePicker(QQmlComponent* filePicker)
 {
     Q_D(QQuickWebView);
     if (d->filePicker == filePicker)
@@ -1231,13 +1231,13 @@ void QQuickWebViewExperimental::setFilePicker(QDeclarativeComponent* filePicker)
     emit filePickerChanged();
 }
 
-QDeclarativeComponent* QQuickWebViewExperimental::databaseQuotaDialog() const
+QQmlComponent* QQuickWebViewExperimental::databaseQuotaDialog() const
 {
     Q_D(const QQuickWebView);
     return d->databaseQuotaDialog;
 }
 
-void QQuickWebViewExperimental::setDatabaseQuotaDialog(QDeclarativeComponent* databaseQuotaDialog)
+void QQuickWebViewExperimental::setDatabaseQuotaDialog(QQmlComponent* databaseQuotaDialog)
 {
     Q_D(QQuickWebView);
     if (d->databaseQuotaDialog == databaseQuotaDialog)
@@ -1333,7 +1333,7 @@ void QQuickWebViewExperimental::evaluateJavaScript(const QString& script, const 
     d_ptr->webPageProxy.get()->runJavaScriptInMainFrame(script, ScriptValueCallback::create(closure, javaScriptCallback));
 }
 
-QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, int index)
+QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QQmlListProperty<QQuickUrlSchemeDelegate>* property, int index)
 {
     const QObjectList children = property->object->children();
     if (index < children.count())
@@ -1341,7 +1341,7 @@ QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QDeclarat
     return 0;
 }
 
-void QQuickWebViewExperimental::schemeDelegates_Append(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, QQuickUrlSchemeDelegate *scheme)
+void QQuickWebViewExperimental::schemeDelegates_Append(QQmlListProperty<QQuickUrlSchemeDelegate>* property, QQuickUrlSchemeDelegate *scheme)
 {
     QObject* schemeParent = property->object;
     scheme->setParent(schemeParent);
@@ -1353,12 +1353,12 @@ void QQuickWebViewExperimental::schemeDelegates_Append(QDeclarativeListProperty<
     d->webPageProxy->registerApplicationScheme(scheme->scheme());
 }
 
-int QQuickWebViewExperimental::schemeDelegates_Count(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property)
+int QQuickWebViewExperimental::schemeDelegates_Count(QQmlListProperty<QQuickUrlSchemeDelegate>* property)
 {
     return property->object->children().count();
 }
 
-void QQuickWebViewExperimental::schemeDelegates_Clear(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property)
+void QQuickWebViewExperimental::schemeDelegates_Clear(QQmlListProperty<QQuickUrlSchemeDelegate>* property)
 {
     const QObjectList children = property->object->children();
     for (int index = 0; index < children.count(); index++) {
@@ -1368,9 +1368,9 @@ void QQuickWebViewExperimental::schemeDelegates_Clear(QDeclarativeListProperty<Q
     }
 }
 
-QDeclarativeListProperty<QQuickUrlSchemeDelegate> QQuickWebViewExperimental::schemeDelegates()
+QQmlListProperty<QQuickUrlSchemeDelegate> QQuickWebViewExperimental::schemeDelegates()
 {
-    return QDeclarativeListProperty<QQuickUrlSchemeDelegate>(schemeParent, 0,
+    return QQmlListProperty<QQuickUrlSchemeDelegate>(schemeParent, 0,
             QQuickWebViewExperimental::schemeDelegates_Append,
             QQuickWebViewExperimental::schemeDelegates_Count,
             QQuickWebViewExperimental::schemeDelegates_At,

@@ -29,7 +29,7 @@
 using namespace WebKit;
 
 QWebIconImageProvider::QWebIconImageProvider()
-    : QDeclarativeImageProvider(QDeclarativeImageProvider::Image)
+    : QQuickImageProvider(QQuickImageProvider::Image)
 {
 }
 

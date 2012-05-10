@@ -51,7 +51,7 @@ class QWebNavigationHistory;
 class QWebViewportInfo;
 
 QT_BEGIN_NAMESPACE
-class QDeclarativeComponent;
+class QQmlComponent;
 QT_END_NAMESPACE
 
 class QQuickWebViewPrivate {
@@ -183,15 +183,15 @@ protected:
 
     FlickableAxisLocker axisLocker;
 
-    QDeclarativeComponent* alertDialog;
-    QDeclarativeComponent* confirmDialog;
-    QDeclarativeComponent* promptDialog;
-    QDeclarativeComponent* authenticationDialog;
-    QDeclarativeComponent* certificateVerificationDialog;
-    QDeclarativeComponent* itemSelector;
-    QDeclarativeComponent* proxyAuthenticationDialog;
-    QDeclarativeComponent* filePicker;
-    QDeclarativeComponent* databaseQuotaDialog;
+    QQmlComponent* alertDialog;
+    QQmlComponent* confirmDialog;
+    QQmlComponent* promptDialog;
+    QQmlComponent* authenticationDialog;
+    QQmlComponent* certificateVerificationDialog;
+    QQmlComponent* itemSelector;
+    QQmlComponent* proxyAuthenticationDialog;
+    QQmlComponent* filePicker;
+    QQmlComponent* databaseQuotaDialog;
 
     WebCore::ViewportAttributes attributes;
 

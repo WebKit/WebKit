@@ -27,7 +27,7 @@
 #include <QtCore/QPointer>
 #include <QtCore/QSize>
 #include <QtCore/QVariant>
-#include <QtDeclarative/QtDeclarative>
+#include <QtQml/QtQml>
 
 class QQuickWebViewPrivate;
 
