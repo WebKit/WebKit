@@ -56,8 +56,6 @@ public:
     virtual bool initialize(WebPluginContainer*) = 0;
     virtual void destroy() = 0;
 
-    virtual WebPluginContainer* container() const { return 0; }
-
     virtual NPObject* scriptableObject() = 0;
 
     // Returns true if the form submission value is successfully obtained
