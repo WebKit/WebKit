@@ -3867,7 +3867,6 @@ BUGWK83954 : fast/table/colspanMinWidth.html = TEXT
 BUGWK83954 : fast/table/overflowHidden.html = TEXT
 BUGWK83954 : fast/table/spanOverlapRepaint.html = TEXT
 BUGWK83954 : fast/table/text-field-baseline.html = TEXT
-BUGWK83954 : tables/mozilla/bugs/bug1188.html = IMAGE TEXT
 BUGWK83954 WIN LINUX : fast/block/float/avoiding-float-centered.html = TEXT
 BUGWK83954 WIN LINUX : fast/clip/008.html = TEXT
 BUGWK83954 WIN LINUX : fast/clip/011.html = TEXT
@@ -3924,7 +3923,7 @@ BUGNOEL : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.
 BUGNOEL : svg/repaint/image-href-change.svg = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug101674.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug10565.html = IMAGE
-BUGNOEL : tables/mozilla/bugs/bug1188.html = IMAGE
+BUGNOEL : tables/mozilla/bugs/bug1188.html = IMAGE+TEXT
 BUGNOEL : tables/mozilla/bugs/bug11026.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug120107.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug1271.html = IMAGE
@@ -4054,7 +4053,7 @@ BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-ove
 
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT

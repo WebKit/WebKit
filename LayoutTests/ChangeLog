@@ -1,3 +1,9 @@
+2012-05-10  Jian Li  <jianli@chromium.org>
+
+        Unreviewed chromium gardening. Updated failed tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] ENABLE_IFRAME_SEAMLESS support
