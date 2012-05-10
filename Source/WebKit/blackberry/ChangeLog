@@ -1,3 +1,20 @@
+2012-05-10  Mike Fenton  <mifenton@rim.com>
+
+        Caret node boundary should be adjusted to account for the visible region.
+        https://bugs.webkit.org/show_bug.cgi?id=86116
+
+        Reviewed by Antonio Gomes.
+
+        PR 138988.
+
+        Update the node bounding box to be clipped and adjusted
+        for the visible region of the frame.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+
 2012-05-10  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Assertions and assumptions in BackingStoreClient around m_frame and m_frame->view() are invalid

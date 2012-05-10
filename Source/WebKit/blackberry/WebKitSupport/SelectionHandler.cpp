@@ -955,14 +955,14 @@ void SelectionHandler::caretPositionChanged()
     // This function should only reach this point if input mode is active.
     ASSERT(m_webPage->m_inputHandler->isInputMode());
 
+    WebCore::IntPoint frameOffset(m_webPage->frameOffset(m_webPage->focusedOrMainFrame()));
+    WebCore::IntRect clippingRectForContent(clippingRectForVisibleContent());
     if (m_webPage->focusedOrMainFrame()->selection()->selectionType() == VisibleSelection::CaretSelection) {
-        WebCore::IntPoint frameOffset = m_webPage->frameOffset(m_webPage->focusedOrMainFrame());
-
         caretLocation = m_webPage->focusedOrMainFrame()->selection()->selection().visibleStart().absoluteCaretBounds();
         caretLocation.move(frameOffset.x(), frameOffset.y());
 
         // Clip against the containing frame and node boundaries.
-        caretLocation.intersect(clippingRectForVisibleContent());
+        caretLocation.intersect(clippingRectForContent);
     }
 
     m_caretActive = !caretLocation.isEmpty();
@@ -975,6 +975,19 @@ void SelectionHandler::caretPositionChanged()
 
     bool singleLineInput = !m_webPage->m_inputHandler->isMultilineInputMode();
     WebCore::IntRect nodeBoundingBox = singleLineInput ? m_webPage->m_inputHandler->boundingBoxForInputField() : WebCore::IntRect();
+
+    if (!nodeBoundingBox.isEmpty()) {
+        nodeBoundingBox.move(frameOffset.x(), frameOffset.y());
+
+        // Clip against the containing frame and node boundaries.
+        nodeBoundingBox.intersect(clippingRectForContent);
+
+        nodeBoundingBox = m_webPage->mapToTransformed(nodeBoundingBox);
+        m_webPage->clipToTransformedContentsRect(nodeBoundingBox);
+    }
+
+    DEBUG_SELECTION(LogLevelInfo, "SelectionHandler::single line %s single line bounding box %d, %d, %dx%d",
+                    singleLineInput ? "true" : "false", nodeBoundingBox.x(), nodeBoundingBox.y(), nodeBoundingBox.width(), nodeBoundingBox.height());
 
     m_webPage->m_client->notifyCaretChanged(caretLocation, m_webPage->m_touchEventHandler->lastFatFingersResult().isTextInput() /* userTouchTriggered */, singleLineInput, nodeBoundingBox);
 }
