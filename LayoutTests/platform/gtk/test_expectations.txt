@@ -146,7 +146,6 @@ BUGWKGTK SKIP : fast/events/constructors/speech-recognition-event-constructor.ht
 // Web Timing issues.
 BUGWKGTK : fast/dom/Window/window-properties-performance.html = FAIL
 BUGWKGTK : http/tests/misc/webtiming-origins.html = FAIL
-BUGWKGTK : http/tests/misc/webtiming-ssl.php = FAIL
 
 // FileSystem API is not supported.
 BUGWKGTK SKIP : fast/filesystem = FAIL
@@ -619,7 +618,6 @@ BUGWK44478 SKIP : fast/text/hyphenate-locale.html = FAIL
 // This port doesn't support v8 i18n extension.
 BUGWKGTK : fast/js/i18n-bindings-locale.html = FAIL
 
-BUGWKGTK : http/tests/appcache/fallback.html = FAIL
 BUGWKGTK : http/tests/appcache/origin-quota.html = FAIL
 BUGWKGTK : http/tests/appcache/origin-quota-continued-download.html = FAIL
 BUGWKGTK : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = FAIL
@@ -828,7 +826,6 @@ BUGWK37613 SKIP : editing/execCommand/print.html = TIMEOUT
 
 // Need to dump context menu items on eventSender.contextClick(true).
 BUGWK39102 : editing/spelling/context-menu-suggestions.html = FAIL
-BUGWK39102 : editing/selection/context-menu-on-text.html = FAIL
 
 // Some input type=range tests fail because of the size
 // of the slider thumb in GTK+ themes.
@@ -1048,9 +1045,6 @@ BUGWK44316 : platform/gtk/accessibility/object-attributes.html = FAIL
 BUGWK44316 : platform/gtk/accessibility/title-and-alt.html = FAIL
 
 // viewport meta tag tests that differ from the Opera results
-BUGWKGTK : fast/viewport/viewport-65.html = FAIL
-BUGWKGTK : fast/viewport/viewport-82.html = FAIL
-BUGWKGTK : fast/viewport/viewport-84.html = FAIL
 BUGWKGTK : fast/viewport/viewport-87.html = FAIL
 BUGWKGTK : fast/viewport/viewport-126.html = FAIL
 BUGWKGTK : fast/viewport/viewport-127.html = FAIL
@@ -1150,9 +1144,6 @@ BUGWK65709 : canvas/philip/tests/2d.drawImage.outsidesource.html = FAIL
 // missing multipart/x-mixed-replace support in libsoup
 BUGWK68979 : http/tests/multipart/stop-crash.html = FAIL
 BUGWK68979 : http/tests/multipart/load-last-non-html-frame.php = FAIL
-
-// REGRESSION(r96870): editing/pasteboard/smart-paste-008.html = FAIL fails on non-Mac
-BUGWK69587 : editing/pasteboard/smart-paste-008.html = FAIL
 
 // Fails because it does not throw a couple of expected exceptions
 BUGWKGTK : http/tests/local/fileapi/send-sliced-dragged-file.html = FAIL
@@ -1278,8 +1269,6 @@ BUGWK82020 : plugins/netscape-dom-access-and-reload.html = FAIL
 BUGWKGTK : fast/table/colspanMinWidth-vertical.html = FAIL
 
 BUGWK83560 : fast/events/drop-with-file-paths.html = FAIL
-
-BUGWK83675 : fast/multicol/cell-shrinkback.html = FAIL
 
 // EditorClient::checkTextOfParagraph() is not implemented.
 BUGWKGTK : editing/spelling/spelling-marker-description.html = FAIL

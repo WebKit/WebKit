@@ -1,3 +1,15 @@
+2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=85591
+
+        Unreviewed, unskipping another batch of tests that are passing but have
+        test expectations present that indicate a failure is expected. Their
+        bug entries will be properly updated after they either remain stable and
+        passing or they backfire.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] Clear added user style sheets before a new testcase execution.
