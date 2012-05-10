@@ -1,3 +1,27 @@
+2012-05-10  Dave Tharp  <dtharp@codeaurora.org>
+
+        Integrate IETC CSS : values and units tests
+        https://bugs.webkit.org/show_bug.cgi?id=85307
+
+        Reviewed by Adam Barth.
+
+        Added the IETC values and unit tests and associated reference tests.
+
+        Also removed two "file not found" test entries in the mac test_expectations.txt
+        file that were causing a style check failure.
+
+        * ietestcenter/css3/valuesandunits/units-000-expected.htm: Added.
+        * ietestcenter/css3/valuesandunits/units-000.htm: Added.
+        * ietestcenter/css3/valuesandunits/units-010-expected.htm: Added.
+        * ietestcenter/css3/valuesandunits/units-010.htm: Added.
+        * ietestcenter/css3/valuesandunits/units-020-expected.htm: Added.
+        * ietestcenter/css3/valuesandunits/units-020.htm: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+
 2012-05-10  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] ewk_view_paint_contents may trigger assertion failure

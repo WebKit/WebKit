@@ -3978,7 +3978,7 @@ BUGNOEL : tables/mozilla/other/cell_widths.html = IMAGE
 BUGNOEL : tables/mozilla_expected_failures/bugs/bug6933.html = IMAGE
 BUGNOEL : tables/mozilla_expected_failures/other/test4.html = IMAGE
 
-// Skip until SUBPIXEL_LAYOUT is enabled 
+// Skip until SUBPIXEL_LAYOUT is enabled
 BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html  = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
@@ -4053,3 +4053,6 @@ BUGWK85771 SNOWLEOPARD LION LINUX : platform/chromium/virtual/threaded/compositi
 BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
 
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
+
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE

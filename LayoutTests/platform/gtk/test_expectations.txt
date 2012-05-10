@@ -1339,6 +1339,8 @@ BUGWK86061 : http/tests/security/referrer-policy-redirect-link.html = FAIL
 BUGWK86062 : svg/text/add-tspan-position-bug.html = IMAGE
 BUGWK86062 : svg/text/modify-tspan-position-bug.html = IMAGE
 
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

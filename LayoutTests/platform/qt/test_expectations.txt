@@ -1,4 +1,4 @@
-T// These are the layout test expectations for the Qt port of WebKit.
+// These are the layout test expectations for the Qt port of WebKit.
 //
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
@@ -57,3 +57,6 @@ BUGWK85567 : fast/images/png-suite/test.html = IMAGE
 
 // Interferes with the tests that should pass
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
+
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
