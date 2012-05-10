@@ -2,7 +2,7 @@ Test that seamless iframes inherit styles from their parent iframe, and dymanica
 PASS window.getComputedStyle(one).color is "rgb(255, 255, 0)"
 PASS window.getComputedStyle(two).color is "rgb(128, 0, 128)"
 PASS window.getComputedStyle(three).color is "rgb(255, 255, 255)"
-FAIL window.getComputedStyle(rootElement).color should be rgb(255, 165, 0). Was rgb(0, 0, 0).
-FAIL window.getComputedStyle(rootElement).color should be rgb(1, 2, 3). Was rgb(0, 0, 0).
+PASS window.getComputedStyle(rootElement).color is "rgb(255, 165, 0)"
+PASS window.getComputedStyle(rootElement).color is "rgb(1, 2, 3)"
 PASS window.getComputedStyle(one).color is "rgb(3, 2, 1)"
 

@@ -41,6 +41,7 @@ inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Docume
     : HTMLFrameElementBase(tagName, document)
 {
     ASSERT(hasTagName(iframeTag));
+    setHasCustomWillOrDidRecalcStyle();
 }
 
 PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document* document)
@@ -118,6 +119,15 @@ void HTMLIFrameElement::removedFrom(Node* insertionPoint)
 bool HTMLIFrameElement::shouldDisplaySeamlessly() const
 {
     return contentDocument() && contentDocument()->mayDisplaySeamlessWithParent() && hasAttribute(seamlessAttr);
+}
+
+void HTMLIFrameElement::didRecalcStyle(StyleChange styleChange)
+{
+    if (!shouldDisplaySeamlessly())
+        return;
+    Document* childDocument = contentDocument();
+    if (styleChange >= Inherit || childDocument->childNeedsStyleRecalc() || childDocument->needsStyleRecalc())
+        contentDocument()->recalcStyle(styleChange);
 }
 
 #if ENABLE(MICRODATA)

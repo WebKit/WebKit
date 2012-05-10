@@ -1527,13 +1527,28 @@ PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSF
 {
     Frame* frame = document->frame();
 
+    // HTML5 states that seamless iframes should replace default CSS values
+    // with values inherited from the containing iframe element. However,
+    // some values (such as the case of designMode = "on") still need to
+    // be set by this "document style".
     RefPtr<RenderStyle> documentStyle = RenderStyle::create();
+    bool seamlessWithParent = document->shouldDisplaySeamlesslyWithParent();
+    if (seamlessWithParent) {
+        RenderStyle* iframeStyle = document->seamlessParentIFrame()->renderStyle();
+        if (iframeStyle)
+            documentStyle->inheritFrom(iframeStyle);
+    }
+
+    // FIXME: It's not clear which values below we want to override in the seamless case!
     documentStyle->setDisplay(BLOCK);
-    documentStyle->setRTLOrdering(document->visuallyOrdered() ? VisualOrder : LogicalOrder);
-    documentStyle->setZoom(frame && !document->printing() ? frame->pageZoomFactor() : 1);
-    documentStyle->setPageScaleTransform(frame ? frame->frameScaleFactor() : 1);
+    if (!seamlessWithParent) {
+        documentStyle->setRTLOrdering(document->visuallyOrdered() ? VisualOrder : LogicalOrder);
+        documentStyle->setZoom(frame && !document->printing() ? frame->pageZoomFactor() : 1);
+        documentStyle->setPageScaleTransform(frame ? frame->frameScaleFactor() : 1);
+        documentStyle->setLocale(document->contentLanguage());
+    }
+    // FIXME: This overrides any -webkit-user-modify inherited from the parent iframe.
     documentStyle->setUserModify(document->inDesignMode() ? READ_WRITE : READ_ONLY);
-    documentStyle->setLocale(document->contentLanguage());
 
     Element* docElement = document->documentElement();
     RenderObject* docElementRenderer = docElement ? docElement->renderer() : 0;
@@ -1561,6 +1576,10 @@ PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSF
             }
         }
     }
+
+    // Seamless iframes want to inherit their font from their parent iframe, so early return before setting the font.
+    if (seamlessWithParent)
+        return documentStyle.release();
 
     FontDescription fontDescription;
     fontDescription.setUsePrinterFont(document->printing());

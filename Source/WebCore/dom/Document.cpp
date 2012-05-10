@@ -1651,6 +1651,9 @@ void Document::scheduleForcedStyleRecalc()
 
 void Document::scheduleStyleRecalc()
 {
+    // FIXME: In the seamless case, we should likely schedule a style recalc
+    // on our parent and instead return early here.
+
     if (m_styleRecalcTimer.isActive() || inPageCache())
         return;
 
@@ -1704,7 +1707,10 @@ void Document::recalcStyle(StyleChange change)
     
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
-    
+
+    // FIXME: In the seamless case, we may wish to exit early in the child after recalcing our parent chain.
+    // I have not yet found a test which requires such.
+
     if (m_hasDirtyStyleResolver)
         updateActiveStylesheets(RecalcStyleImmediately);
 
@@ -1730,7 +1736,8 @@ void Document::recalcStyle(StyleChange change)
     if (m_pendingStyleRecalcShouldForce)
         change = Force;
 
-    if (change == Force) {
+    // Recalculating the root style (on the document) is not needed in the common case.
+    if ((change == Force) || (shouldDisplaySeamlesslyWithParent() && (change >= Inherit))) {
         // style selector may set this again during recalc
         m_hasNodesWithPlaceholderStyle = false;
         

@@ -1,3 +1,16 @@
+2012-05-10  Eric Seidel  <eric@webkit.org>
+
+        Make IFRAME_SEAMLESS child documents inherit styles from their parent iframe element
+        https://bugs.webkit.org/show_bug.cgi?id=85940
+
+        Reviewed by Ojan Vafai.
+
+        This single pass is deceptive.  seamless-designMode exists
+        to make sure that we do not regress application of Document-level
+        styles in the child document.
+
+        * fast/frames/seamless/seamless-css-cascade-expected.txt:
+
 2012-05-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in computedCSSPadding* functions due to RenderImage::imageDimensionsChanged called during attachment
