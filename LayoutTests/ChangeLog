@@ -1,3 +1,13 @@
+2012-05-10  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10972577> and https://bugs.webkit.org/show_bug.cgi?id=80170
+        Contents of noscript elements turned into strings in WebArchives
+
+        Reviewed by Andy Estes.
+
+        * webarchive/ignore-noscript-if-scripting-enabled-expected.txt: Added.
+        * webarchive/ignore-noscript-if-scripting-enabled.html: Added.
+
 2012-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to floats not removed from first-letter element.

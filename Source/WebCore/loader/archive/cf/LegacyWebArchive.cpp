@@ -44,7 +44,9 @@
 #include "Logging.h"
 #include "markup.h"
 #include "Node.h"
+#include "Page.h"
 #include "Range.h"
+#include "Settings.h"
 #include "SharedBuffer.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -438,9 +440,18 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* f
     Frame* frame = document ? document->frame() : 0;
     if (!frame)
         return create();
+
+    // If the page was loaded with javascript enabled, we don't want to archive <noscript> tags
+    // In practice we don't actually know whether scripting was enabled when the page was originally loaded
+    // but we can approximate that by checking if scripting is enabled right now.
+    OwnPtr<Vector<QualifiedName> > tagNamesToFilter;
+    if (frame->page() && frame->page()->settings()->isScriptEnabled()) {
+        tagNamesToFilter = adoptPtr(new Vector<QualifiedName>);
+        tagNamesToFilter->append(HTMLNames::noscriptTag);
+    }
         
     Vector<Node*> nodeList;
-    String markupString = createMarkup(node, IncludeNode, &nodeList);
+    String markupString = createMarkup(node, IncludeNode, &nodeList, DoNotResolveURLs, tagNamesToFilter.get());
     Node::NodeType nodeType = node->nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = frame->documentTypeString() + markupString;

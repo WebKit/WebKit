@@ -39,6 +39,7 @@ namespace WebCore {
     class Element;
     class KURL;
     class Node;
+    class QualifiedName;
     class Range;
 
     typedef int ExceptionCode;
@@ -60,7 +61,7 @@ namespace WebCore {
 
     String createMarkup(const Range*,
         Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
-    String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs);
+    String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = 0);
     
     String createFullMarkup(const Node*);
     String createFullMarkup(const Range*);
