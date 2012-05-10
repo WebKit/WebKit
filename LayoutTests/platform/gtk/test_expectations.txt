@@ -1263,6 +1263,7 @@ BUGWK78819 : fast/workers/shared-worker-load-error.html = FAIL
 
 BUGWK79203 : fast/mediastream/argument-types.html = FAIL
 BUGWK79203 : fast/mediastream/constructors.html = FAIL
+BUGWK79203 : fast/mediastream/MediaStreamConstructor.html = FAIL
 BUGWK79203 : fast/mediastream/peerconnection-argument-types.html = FAIL
 BUGWK79203 : fast/mediastream/peerconnection-iceoptions.html = FAIL
 BUGWK79203 : fast/mediastream/getusermedia.html = FAIL
@@ -1338,6 +1339,16 @@ BUGWK85700 : fullscreen/non-ancestor-iframe.html = FAIL
 
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
+
+// Started failing after it was added in r116473
+BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = FAIL
+
+// Started failing after it was added in r116563
+BUGWK86061 : http/tests/security/referrer-policy-redirect-link.html = FAIL
+
+// Started failing after they were added in r116498
+BUGWK86062 : svg/text/add-tspan-position-bug.html = IMAGE
+BUGWK86062 : svg/text/modify-tspan-position-bug.html = IMAGE
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

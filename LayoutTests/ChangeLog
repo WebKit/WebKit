@@ -1,3 +1,9 @@
+2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move suspendAnimations to use Internals interface.
