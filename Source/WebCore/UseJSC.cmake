@@ -250,7 +250,7 @@ ENDIF ()
 IF (ENABLE_NOTIFICATIONS)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSDesktopNotificationsCustom.cpp
-        bindings/js/JSNotificationsCustom.cpp
+        bindings/js/JSNotificationCustom.cpp
     )
 ENDIF ()
 
