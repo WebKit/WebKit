@@ -260,7 +260,6 @@ protected:
 
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
-    enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
     virtual void willChangeForm() OVERRIDE;
     virtual void didChangeForm() OVERRIDE;
@@ -344,11 +343,6 @@ private:
     
     virtual void subtreeHasChanged();
 
-    bool getAllowedValueStepWithDecimalPlaces(AnyStepHandling, double*, unsigned*) const;
-
-    // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
-    void applyStep(double count, AnyStepHandling, TextFieldEventBehavior, ExceptionCode&);
-    double alignValueForStep(double value, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces);
 
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;

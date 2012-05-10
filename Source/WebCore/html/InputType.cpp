@@ -5,7 +5,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 #include "config.h"
 #include "InputType.h"
 
+#include "AXObjectCache.h"
 #include "BeforeTextInsertedEvent.h"
 #include "ButtonInputType.h"
 #include "CheckboxInputType.h"
@@ -813,6 +814,241 @@ unsigned InputType::height() const
 unsigned InputType::width() const
 {
     return 0;
+}
+
+void InputType::applyStep(double count, AnyStepHandling anyStepHandling, TextFieldEventBehavior eventBehavior, ExceptionCode& ec)
+{
+    double step;
+    unsigned stepDecimalPlaces, currentDecimalPlaces;
+    if (!getAllowedValueStepWithDecimalPlaces(anyStepHandling, &step, &stepDecimalPlaces)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    const double nan = numeric_limits<double>::quiet_NaN();
+    double current = parseToDoubleWithDecimalPlaces(element()->value(), nan, &currentDecimalPlaces);
+    if (!isfinite(current)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    double newValue = current + step * count;
+    if (isinf(newValue)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    double acceptableErrorValue = acceptableError(step);
+    if (newValue - minimum() < -acceptableErrorValue) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    if (newValue < minimum())
+        newValue = minimum();
+
+    const AtomicString& stepString = element()->fastGetAttribute(stepAttr);
+    if (!equalIgnoringCase(stepString, "any"))
+        newValue = alignValueForStep(newValue, step, currentDecimalPlaces, stepDecimalPlaces);
+
+    if (newValue - maximum() > acceptableErrorValue) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    if (newValue > maximum())
+        newValue = maximum();
+
+    element()->setValueAsNumber(newValue, ec, eventBehavior);
+
+    if (AXObjectCache::accessibilityEnabled())
+         element()->document()->axObjectCache()->postNotification(element()->renderer(), AXObjectCache::AXValueChanged, true);
+}
+
+double InputType::alignValueForStep(double newValue, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces)
+{
+    if (newValue >= pow(10.0, 21.0))
+        return newValue;
+
+    unsigned baseDecimalPlaces;
+    double base = stepBaseWithDecimalPlaces(&baseDecimalPlaces);
+    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
+    if (element()->stepMismatch(element()->value())) {
+        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, currentDecimalPlaces)));
+        newValue = round(newValue * scale) / scale;
+    } else {
+        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
+        newValue = round((base + round((newValue - base) / step) * step) * scale) / scale;
+    }
+
+    return newValue;
+}
+
+bool InputType::getAllowedValueStep(double* step) const
+{
+    return getAllowedValueStepWithDecimalPlaces(RejectAny, step, 0);
+}
+
+bool InputType::getAllowedValueStepWithDecimalPlaces(AnyStepHandling anyStepHandling, double* step, unsigned* decimalPlaces) const
+{
+    ASSERT(step);
+    double defaultStepValue = defaultStep();
+    double stepScaleFactorValue = stepScaleFactor();
+    if (!isfinite(defaultStepValue) || !isfinite(stepScaleFactorValue))
+        return false;
+    const AtomicString& stepString = element()->fastGetAttribute(stepAttr);
+    if (stepString.isEmpty()) {
+        *step = defaultStepValue * stepScaleFactorValue;
+        if (decimalPlaces)
+            *decimalPlaces = 0;
+        return true;
+    }
+
+    if (equalIgnoringCase(stepString, "any")) {
+        switch (anyStepHandling) {
+        case RejectAny:
+            return false;
+        case AnyIsDefaultStep:
+            *step = defaultStepValue * stepScaleFactorValue;
+            if (decimalPlaces)
+                *decimalPlaces = 0;
+            return true;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    double parsed;
+    if (!decimalPlaces) {
+        if (!parseToDoubleForNumberType(stepString, &parsed) || parsed <= 0.0) {
+            *step = defaultStepValue * stepScaleFactorValue;
+            return true;
+        }
+    } else {
+        if (!parseToDoubleForNumberTypeWithDecimalPlaces(stepString, &parsed, decimalPlaces) || parsed <= 0.0) {
+            *step = defaultStepValue * stepScaleFactorValue;
+            *decimalPlaces = 0;
+            return true;
+        }
+    }
+    // For date, month, week, the parsed value should be an integer for some types.
+    if (parsedStepValueShouldBeInteger())
+        parsed = max(round(parsed), 1.0);
+    double result = parsed * stepScaleFactorValue;
+    // For datetime, datetime-local, time, the result should be an integer.
+    if (scaledStepValueShouldBeInteger())
+        result = max(round(result), 1.0);
+    ASSERT(result > 0);
+    *step = result;
+    return true;
+}
+
+void InputType::stepUp(int n, ExceptionCode& ec)
+{
+    applyStep(n, RejectAny, DispatchNoEvent, ec);
+}
+
+void InputType::stepUpFromRenderer(int n)
+{
+    // The differences from stepUp()/stepDown():
+    //
+    // Difference 1: the current value
+    // If the current value is not a number, including empty, the current value is assumed as 0.
+    //   * If 0 is in-range, and matches to step value
+    //     - The value should be the +step if n > 0
+    //     - The value should be the -step if n < 0
+    //     If -step or +step is out of range, new value should be 0.
+    //   * If 0 is smaller than the minimum value
+    //     - The value should be the minimum value for any n
+    //   * If 0 is larger than the maximum value
+    //     - The value should be the maximum value for any n
+    //   * If 0 is in-range, but not matched to step value
+    //     - The value should be the larger matched value nearest to 0 if n > 0
+    //       e.g. <input type=number min=-100 step=3> -> 2
+    //     - The value should be the smaler matched value nearest to 0 if n < 0
+    //       e.g. <input type=number min=-100 step=3> -> -1
+    //   As for date/datetime-local/month/time/week types, the current value is assumed as "the current local date/time".
+    //   As for datetime type, the current value is assumed as "the current date/time in UTC".
+    // If the current value is smaller than the minimum value:
+    //  - The value should be the minimum value if n > 0
+    //  - Nothing should happen if n < 0
+    // If the current value is larger than the maximum value:
+    //  - The value should be the maximum value if n < 0
+    //  - Nothing should happen if n > 0
+    //
+    // Difference 2: clamping steps
+    // If the current value is not matched to step value:
+    // - The value should be the larger matched value nearest to 0 if n > 0
+    //   e.g. <input type=number value=3 min=-100 step=3> -> 5
+    // - The value should be the smaler matched value nearest to 0 if n < 0
+    //   e.g. <input type=number value=3 min=-100 step=3> -> 2
+    //
+    // n is assumed as -n if step < 0.
+
+    ASSERT(isSteppable());
+    if (!isSteppable())
+        return;
+    ASSERT(n);
+    if (!n)
+        return;
+
+    unsigned stepDecimalPlaces, baseDecimalPlaces;
+    double step, base;
+    // FIXME: Not any changes after stepping, even if it is an invalid value, may be better.
+    // (e.g. Stepping-up for <input type="number" value="foo" step="any" /> => "foo")
+    if (!getAllowedValueStepWithDecimalPlaces(AnyIsDefaultStep, &step, &stepDecimalPlaces))
+      return;
+    base = stepBaseWithDecimalPlaces(&baseDecimalPlaces);
+    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
+
+    int sign;
+    if (step > 0)
+        sign = n;
+    else if (step < 0)
+        sign = -n;
+    else
+        sign = 0;
+
+    const double nan = numeric_limits<double>::quiet_NaN();
+    String currentStringValue = element()->value();
+    double current = parseToDouble(currentStringValue, nan);
+    if (!isfinite(current)) {
+        ExceptionCode ec;
+        current = defaultValueForStepUp();
+        double nextDiff = step * n;
+        if (current < minimum() - nextDiff)
+            current = minimum() - nextDiff;
+        if (current > maximum() - nextDiff)
+            current = maximum() - nextDiff;
+        element()->setValueAsNumber(current, ec, DispatchInputAndChangeEvent);
+    }
+    if ((sign > 0 && current < minimum()) || (sign < 0 && current > maximum()))
+        element()->setValue(serialize(sign > 0 ? minimum() : maximum()), DispatchInputAndChangeEvent);
+    else {
+        ExceptionCode ec;
+        if (element()->stepMismatch(element()->value())) {
+            ASSERT(step);
+            double newValue;
+            double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
+
+            if (sign < 0)
+                newValue = round((base + floor((current - base) / step) * step) * scale) / scale;
+            else if (sign > 0)
+                newValue = round((base + ceil((current - base) / step) * step) * scale) / scale;
+            else
+                newValue = current;
+
+            if (newValue < minimum())
+                newValue = minimum();
+            if (newValue > maximum())
+                newValue = maximum();
+
+            element()->setValueAsNumber(newValue, ec, n == 1 || n == -1 ? DispatchInputAndChangeEvent : DispatchNoEvent);
+            current = newValue;
+            if (n > 1)
+                applyStep(n - 1, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
+            else if (n < -1)
+                applyStep(n + 1, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
+        } else
+            applyStep(n, AnyIsDefaultStep, DispatchInputAndChangeEvent, ec);
+    }
 }
 
 namespace InputTypeNames {

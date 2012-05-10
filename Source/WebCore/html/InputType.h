@@ -160,6 +160,9 @@ public:
     virtual bool stepMismatch(const String&, double step) const;
     virtual double stepBase() const;
     virtual double stepBaseWithDecimalPlaces(unsigned*) const;
+    virtual bool getAllowedValueStep(double*) const;
+    virtual void stepUp(int, ExceptionCode&);
+    virtual void stepUpFromRenderer(int);
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
     virtual bool parsedStepValueShouldBeInteger() const;
@@ -296,6 +299,13 @@ protected:
     Chrome* chrome() const;
 
 private:
+    enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
+
+    // Helper for stepUp()/stepDown(). Adds step value * count to the current value.
+    void applyStep(double count, AnyStepHandling, TextFieldEventBehavior, ExceptionCode&);
+    double alignValueForStep(double value, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces);
+    bool getAllowedValueStepWithDecimalPlaces(AnyStepHandling, double*, unsigned*) const;
+
     // Raw pointer because the HTMLInputElement object owns this InputType object.
     HTMLInputElement* m_element;
 };
