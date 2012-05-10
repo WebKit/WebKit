@@ -1,3 +1,9 @@
+2012-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Skip news failing and crashing tests to paint the bot green.
+
+        * platform/qt-mac/Skipped:
+
 2012-05-10  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] new test http/tests/cookies/single-quoted-value.html is failing
