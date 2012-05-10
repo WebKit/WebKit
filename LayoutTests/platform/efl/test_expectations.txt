@@ -420,5 +420,6 @@ BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS
 BUGWK86082 : security/block-test.html = TEXT PASS
 BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
 
-BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+// Tests imported in r116658
+BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE

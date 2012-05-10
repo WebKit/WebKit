@@ -1,3 +1,12 @@
+2012-05-10  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Gardening away IETC crash for now
+        https://bugs.webkit.org/show_bug.cgi?id=86115
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-10  Jian Li  <jianli@chromium.org>
 
         Unreviewed chromium gardening. Marked tests as failure.
