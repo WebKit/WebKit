@@ -420,7 +420,6 @@ protected:
     {
     }
 
-    virtual void willRemove();
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
     virtual void removedFrom(Node*) OVERRIDE;
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);

@@ -307,21 +307,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     return true;
 }
 
-void ContainerNode::willRemove()
-{
-    RefPtr<Node> protect(this);
-
-    NodeVector children;
-    getChildNodes(this, children);
-    for (size_t i = 0; i < children.size(); ++i) {
-        if (children[i]->parentNode() != this) // Check for child being removed from subtree while removing.
-            continue;
-        children[i]->willRemove();
-    }
-
-    Node::willRemove();
-}
-
 static void willRemoveChild(Node* child)
 {
 #if ENABLE(MUTATION_OBSERVERS)
@@ -332,7 +317,7 @@ static void willRemoveChild(Node* child)
 
     dispatchChildRemovalEvents(child);
     child->document()->nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
-    child->willRemove();
+    ChildFrameDisconnector(child).disconnect();
 }
 
 static void willRemoveChildren(ContainerNode* container)
@@ -356,8 +341,13 @@ static void willRemoveChildren(ContainerNode* container)
 
         // fire removed from document mutation events.
         dispatchChildRemovalEvents(child);
-        child->willRemove();
+        ChildFrameDisconnector(child).disconnect();
     }
+}
+
+void ContainerNode::disconnectDescendantFrames()
+{
+    ChildFrameDisconnector(this).disconnect();
 }
 
 bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)

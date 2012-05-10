@@ -54,23 +54,26 @@ public:
     virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
+    void disconnectContentFrame();
 
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document*);
-
     void setSandboxFlags(SandboxFlags);
-
-    virtual void willRemove();
 
 private:
     friend class Frame;
 
-    virtual bool isFrameOwnerElement() const { return true; }
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
 
     Frame* m_contentFrame;
     SandboxFlags m_sandboxFlags;
 };
+
+inline HTMLFrameOwnerElement* toFrameOwnerElement(Node* node)
+{
+    ASSERT(!node || node->isFrameOwnerElement());
+    return static_cast<HTMLFrameOwnerElement*>(node);
+}
 
 } // namespace WebCore
 

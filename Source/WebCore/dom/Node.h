@@ -211,13 +211,13 @@ public:
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
-    virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
     bool hasAttrList() const { return getFlag(HasAttrListFlag); }
+    bool isFrameOwnerElement() const { return getFlag(IsFrameOwnerElementFlag); }
 
     Node* shadowAncestorNode() const;
     // Returns 0, a ShadowRoot, or a legacy shadow root.
@@ -496,8 +496,6 @@ public:
 
     void reattach();
     void reattachIfAttached();
-
-    virtual void willRemove();
     void createRendererIfNeeded();
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const { return true; }
@@ -696,10 +694,11 @@ private:
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
 #endif
         InNamedFlowFlag = 1 << 29,
-        HasAttrListFlag = 1 << 30
+        HasAttrListFlag = 1 << 30,
+        IsFrameOwnerElementFlag = 1 << 31
     };
 
-    // 2 bits remaining
+    // 1 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -715,6 +714,7 @@ protected:
         CreateShadowRoot = CreateContainer | IsShadowRootFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
+        CreateFrameOwnerElement = CreateHTMLElement | IsFrameOwnerElementFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag,
         CreateDocument = CreateContainer | InDocumentFlag
     };

@@ -166,31 +166,18 @@ void HTMLStyleElement::removedFrom(Node* insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
 
-    if (insertionPoint->inDocument()) {
 #if ENABLE(STYLE_SCOPED)
-        // In come cases on teardown willRemove is not called - test here for unregistering again
-        // FIXME: Do we need to bother?
-        if (m_isRegisteredWithScopingNode)
-            unregisterWithScopingNode();
-#endif
-        StyleElement::removedFromDocument(document(), this);
-    }
-}
-
-
-#if ENABLE(STYLE_SCOPED)
-void HTMLStyleElement::willRemove()
-{
     // In the current implementation, <style scoped> is only registered if the node is in the document.
     // That is, because willRemove() is also called if an ancestor is removed from the document.
     // Now, if we want to register <style scoped> even if it's not inDocument,
     // we'd need to find a way to discern whether that is the case, or whether <style scoped> itself is about to be removed.
-    ASSERT(!scoped() || !inDocument() || m_isRegisteredWithScopingNode || !RuntimeEnabledFeatures::styleScopedEnabled());
     if (m_isRegisteredWithScopingNode)
         unregisterWithScopingNode();
-    HTMLElement::willRemove();
-}
 #endif
+
+    if (insertionPoint->inDocument())
+        StyleElement::removedFromDocument(document(), this);
+}
 
 void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {

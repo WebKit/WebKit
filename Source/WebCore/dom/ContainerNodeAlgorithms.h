@@ -265,6 +265,61 @@ inline void ChildNodeRemovalNotifier::notify(Node* node)
         notifyNodeRemovedFromTree(toContainerNode(node));
 }
 
+class ChildFrameDisconnector {
+public:
+    explicit ChildFrameDisconnector(Node* root);
+    void disconnect();
+
+private:
+    void collectDescendant(Node* root);
+    void collectDescendant(ElementShadow*);
+
+    class Target {
+    public:
+        Target(Node* element)
+            : m_owner(element)
+            , m_ownerParent(element->parentNode())
+        { }
+
+        bool isValid() const { return m_owner->parentNode() == m_ownerParent; }
+        void disconnect();
+
+    private:
+        RefPtr<Node> m_owner;
+        Node* m_ownerParent;
+    };
+
+    Vector<Target, 10> m_list;
+};
+
+inline ChildFrameDisconnector::ChildFrameDisconnector(Node* root)
+{
+    collectDescendant(root);
+}
+
+inline void ChildFrameDisconnector::collectDescendant(Node* root)
+{
+    for (Node* node = root; node; node = node->traverseNextNode(root)) {
+        if (!node->isElementNode())
+            continue;
+        Element* element = toElement(node);
+        if (element->isFrameOwnerElement())
+            m_list.append(node);
+        if (element->hasShadowRoot())
+            collectDescendant(element->shadow());
+    }
+}
+
+inline void ChildFrameDisconnector::disconnect()
+{
+    unsigned size = m_list.size();
+    for (unsigned i = 0; i < size; ++i) {
+        Target& target = m_list[i];
+        if (target.isValid())
+            target.disconnect();
+    };
+}
+
 } // namespace WebCore
 
 #endif // ContainerNodeAlgorithms_h

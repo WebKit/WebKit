@@ -78,7 +78,8 @@ private:
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
-    virtual void willRemove() OVERRIDE;
+
+    virtual void removedFrom(Node*) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
 #if ENABLE(MICRODATA)

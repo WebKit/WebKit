@@ -1342,10 +1342,6 @@ void Node::attach()
     clearNeedsStyleRecalc();
 }
 
-void Node::willRemove()
-{
-}
-
 void Node::detach()
 {
     setFlag(InDetachFlag);

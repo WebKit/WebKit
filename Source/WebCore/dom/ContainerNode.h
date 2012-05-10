@@ -72,7 +72,6 @@ public:
 
     virtual void attach() OVERRIDE;
     virtual void detach() OVERRIDE;
-    virtual void willRemove() OVERRIDE;
     virtual LayoutRect getRect() const OVERRIDE;
     virtual void setFocus(bool = true) OVERRIDE;
     virtual void setActive(bool active = true, bool pause = false) OVERRIDE;
@@ -93,6 +92,8 @@ public:
     void detachAsNode();
     void detachChildren();
     void detachChildrenIfNeeded();
+
+    void disconnectDescendantFrames();
 
 protected:
     ContainerNode(Document*, ConstructionType = CreateContainer);

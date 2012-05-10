@@ -515,9 +515,7 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
         m_frame->document()->cancelParsing();
         m_frame->document()->stopActiveDOMObjects();
         if (m_frame->document()->attached()) {
-            m_frame->document()->willRemove();
             m_frame->document()->prepareForDestruction();
-            
             m_frame->document()->removeFocusedNodeOfSubtree(m_frame->document());
         }
     }

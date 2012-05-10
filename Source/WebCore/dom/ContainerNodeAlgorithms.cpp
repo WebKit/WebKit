@@ -28,6 +28,7 @@
 
 #include "Element.h"
 #include "ElementShadow.h"
+#include "HTMLFrameOwnerElement.h"
 
 namespace WebCore {
 
@@ -109,6 +110,18 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode* no
         for (size_t i = 0; i < roots.size(); ++i)
             notifyNodeRemovedFromTree(roots[i].get());
     }
+}
+
+void ChildFrameDisconnector::collectDescendant(ElementShadow* shadow)
+{
+    for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
+        collectDescendant(root);
+}
+
+void ChildFrameDisconnector::Target::disconnect()
+{
+    ASSERT(isValid());
+    toFrameOwnerElement(m_owner.get())->disconnectContentFrame();
 }
 
 }

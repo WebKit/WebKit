@@ -58,8 +58,6 @@ public:
     void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ExceptionCode&);
     void removeAllShadowRoots();
 
-    void willRemove();
-
     void setParentTreeScope(TreeScope*);
 
     void attach();

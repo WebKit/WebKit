@@ -83,12 +83,15 @@ Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(Node* insertio
     return InsertionDone;
 }
 
-void HTMLTrackElement::willRemove()
+void HTMLTrackElement::removedFrom(Node* insertionPoint)
 {
-    if (HTMLMediaElement* parent = mediaElement())
+    HTMLMediaElement* parent = mediaElement();
+    if (!parent && WebCore::isMediaElement(insertionPoint))
+        parent = toMediaElement(insertionPoint);
+    if (parent)
         parent->willRemoveTrack(this);
 
-    HTMLElement::willRemove();
+    HTMLElement::removedFrom(insertionPoint);
 }
 
 void HTMLTrackElement::parseAttribute(Attribute* attribute)
