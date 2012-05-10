@@ -2778,8 +2778,7 @@ Eina_Bool ewk_view_paint(Ewk_View_Private_Data* priv, cairo_t* cr, const Eina_Re
     WebCore::FrameView* view = priv->mainFrame->view();
     EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
 
-    if (view->needsLayout())
-        view->forceLayout();
+    view->updateLayoutAndStyleIfNeededRecursive();
     WebCore::GraphicsContext graphicsContext(cr);
     WebCore::IntRect rect(*area);
 
@@ -2806,6 +2805,7 @@ Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data* priv, cairo_t* cr, cons
     WebCore::GraphicsContext graphicsContext(cr);
     WebCore::IntRect rect(*area);
 
+    view->updateLayoutAndStyleIfNeededRecursive();
     cairo_save(cr);
     graphicsContext.save();
     graphicsContext.clip(rect);

@@ -1,3 +1,14 @@
+2012-05-10  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] ewk_view_paint_contents may trigger assertion failure
+        https://bugs.webkit.org/show_bug.cgi?id=85058
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Unskipping media-fragments that pass after the assertion failure was fixed.
+
+        * platform/efl/Skipped:
+
 2012-05-10  Erik Arvidsson  <arv@chromium.org>
 
         Add test that makes sure wrappers are setup using the correct window scope

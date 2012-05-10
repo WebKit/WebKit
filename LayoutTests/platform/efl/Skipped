@@ -1038,16 +1038,6 @@ media/media-fullscreen-not-in-document.html
 media/media-controller-playback.html
 media/media-element-play-after-eos.html
 media/media-extension-with-fragment.html
-media/media-fragments/TC0001-TC0009.html
-media/media-fragments/TC0010-TC0019.html
-media/media-fragments/TC0020-TC0029.html
-media/media-fragments/TC0030-TC0039.html
-media/media-fragments/TC0040-TC0049.html
-media/media-fragments/TC0050-TC0059.html
-media/media-fragments/TC0060-TC0069.html
-media/media-fragments/TC0070-TC0079.html
-media/media-fragments/TC0080-TC0089.html
-media/media-fragments/TC0090-TC0099.html
 media/media-initialTime.html
 media/media-load-event.html
 media/media-startTime.html

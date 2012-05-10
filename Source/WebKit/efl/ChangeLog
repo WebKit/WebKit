@@ -1,3 +1,23 @@
+2012-05-10  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] ewk_view_paint_contents may trigger assertion failure
+        https://bugs.webkit.org/show_bug.cgi?id=85058
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fixing assertion failure triggered in media/media-fragment cases.
+        The assertion is hit because of a race between scheduleRelayout() and
+        the EWK's idle tiling painting. This is exposed by test cases
+        that rapidly insert child nodes to the document which lead to
+        scheduleRelayout() calls. Using the general purpose defensive
+        layout function, not causing any extra relayout work if there's
+        nothing to be done, but still avoiding the assertion failure if
+        layout is needed.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_paint):
+        (ewk_view_paint_contents):
+
 2012-05-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116633.
