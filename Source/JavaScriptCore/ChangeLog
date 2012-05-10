@@ -3,6 +3,17 @@
         GC race condition in OpaqueJSClass::prototype
         https://bugs.webkit.org/show_bug.cgi?id=86034
 
+        Build fix.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+            - Eeeep, landed bad version of patch!
+
+2012-05-09  Gavin Barraclough  <barraclough@apple.com>
+
+        GC race condition in OpaqueJSClass::prototype
+        https://bugs.webkit.org/show_bug.cgi?id=86034
+
         Reviewed by Filip Pizlo.
 
         The bug here is basically:

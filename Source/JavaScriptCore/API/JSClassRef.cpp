@@ -213,7 +213,7 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
         return prototype;
 
     // Recursive, but should be good enough for our purposes
-    prototype = JSCallbackObject<JSNonFinalObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
+    JSObject* prototype = JSCallbackObject<JSNonFinalObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData); // set jsClassData as the object's private data, so it can clear our reference on destruction
     if (parentClass) {
         if (JSObject* parentPrototype = parentClass->prototype(exec))
             prototype->setPrototype(exec->globalData(), parentPrototype);
