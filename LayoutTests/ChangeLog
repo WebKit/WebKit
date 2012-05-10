@@ -1,3 +1,12 @@
+2012-05-10  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] new test http/tests/cookies/single-quoted-value.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=86066
+
+        Unreviewed gardening after r116601
+
+        * platform/qt/Skipped:
+
 2012-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Make DOMCharacterDataModified a scoped event (similar to r73690).
