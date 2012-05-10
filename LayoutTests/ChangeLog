@@ -1,3 +1,12 @@
+2012-05-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] REGRESSION(r116560): It made 7 compositing tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=86086
+
+        Unreviewed gardening, skip new failing tests.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-10  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt

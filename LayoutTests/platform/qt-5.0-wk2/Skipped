@@ -599,3 +599,13 @@ fast/events/touch/basic-single-touch-events.html
 fast/sub-pixel/client-width-height-snapping.html
 fast/sub-pixel/layout-boxes-with-zoom.html
 fast/sub-pixel/size-of-box-with-zoom.html
+
+# [Qt] REGRESSION(r116560): It made 7 compositing tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=86086
+compositing/rtl/rtl-absolute-overflow.html
+compositing/rtl/rtl-fixed-overflow-scrolled.html
+compositing/rtl/rtl-fixed-overflow.html
+compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html
+compositing/rtl/rtl-iframe-absolute-overflow.html
+compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
+compositing/rtl/rtl-iframe-fixed-overflow.html
