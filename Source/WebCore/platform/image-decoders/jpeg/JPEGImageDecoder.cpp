@@ -70,7 +70,6 @@ extern "C" {
 #endif
 
 #if defined(JCS_ALPHA_EXTENSIONS) && ASSUME_LITTLE_ENDIAN
-inline J_DCT_METHOD dctMethod() { return JDCT_IFAST; }
 #define TURBO_JPEG_RGB_SWIZZLE
 #if USE(SKIA) && (!SK_R32_SHIFT && SK_G32_SHIFT == 8 && SK_B32_SHIFT == 16)
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_RGBA; }
@@ -79,14 +78,15 @@ inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_EXT_BGRA; }
 #endif
 inline bool turboSwizzled(J_COLOR_SPACE colorSpace) { return colorSpace == rgbOutputColorSpace(); }
 #else
-inline J_DCT_METHOD dctMethod() { return JDCT_ISLOW; }
 inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_RGB; }
 #endif
 
 #if OS(ANDROID)
+inline J_DCT_METHOD dctMethod() { return JDCT_IFAST; }
 inline J_DITHER_MODE ditherMode() { return JDITHER_NONE; }
 inline bool doFancyUpsampling() { return false; }
 #else
+inline J_DCT_METHOD dctMethod() { return JDCT_ISLOW; }
 inline J_DITHER_MODE ditherMode() { return JDITHER_FS; }
 inline bool doFancyUpsampling() { return true; }
 #endif
