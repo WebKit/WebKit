@@ -96,7 +96,7 @@ PassRefPtr<MediaHints> PeerConnection00::createMediaHints(const Dictionary& dict
     bool audio = hasLocalAudioTrack();
     bool video = hasLocalVideoTrack();
     dictionary.get("has_audio", audio);
-    dictionary.get("has_video", audio);
+    dictionary.get("has_video", video);
     return MediaHints::create(audio, video);
 }
 
