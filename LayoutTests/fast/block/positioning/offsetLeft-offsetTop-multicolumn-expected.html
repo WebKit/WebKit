@@ -12,14 +12,13 @@
     span {
         display: inline-block;
         height: 20px;
+        background: green;
         padding: 2px;
-        background: red;
     }
 
     .size1 {
         width: 10px;
     }
-
     .size2 {
         width: 20px;
     }
@@ -39,6 +38,10 @@ identically sized green span for each of the red spans, and places it at the
 offsetLeft and offsetTop of the red span, using absolute position. This ensures
 that the green span completely covers the red span.
 </p>
+<!--
+Note: This is the test reference file. Therefore, there is no script and
+      all the spans are set to green in the css.
+-->
 <div id="multicol">
     <div>
         <span class="size1"></span>
@@ -112,21 +115,5 @@ that the green span completely covers the red span.
         <span class="size3"></span>
     </div>
 </div>
-<script>
-    var body = document.getElementsByTagName("body")[0];
-    var multicol = document.getElementById("multicol");
-    var spans = multicol.getElementsByTagName("span");
-    for (var i = 0; i < spans.length; ++i) {
-        var item = spans[i];
-        var cover = document.createElement("span");
-        cover.setAttribute("class", item.getAttribute("class"));
-        cover.setAttribute("style", "background: green; " +
-                                    "z-index: 10; " +
-                                    "position: absolute; " +
-                                    "left: " + item.offsetLeft + "px; " +
-                                    "top: " + item.offsetTop + "px;");
-        body.appendChild(cover);
-    }
-</script>
 </body>
 </html>

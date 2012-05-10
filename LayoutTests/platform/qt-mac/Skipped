@@ -5657,7 +5657,6 @@ fast/block/float/editable-text-overlapping-float.html
 fast/block/float/multiple-float-positioning.html
 fast/block/margin-collapse/103.html
 fast/block/positioning/auto/006.html
-fast/block/positioning/offsetLeft-offsetTop-multicolumn.html
 fast/css/color-correction-backgrounds-and-text.html
 fast/css/first-letter-nested-positioned.htm
 fast/css/first-letter-quotes-no-content-before-after.html

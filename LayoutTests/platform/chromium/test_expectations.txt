@@ -4029,8 +4029,6 @@ BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 // Skip it because it seems its frame loading notifications leak to the next test.
 BUGWK85949 SKIP : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
 
-BUGWK85913 MAC : fast/block/positioning/offsetLeft-offsetTop-multicolumn.html = TEXT
-
 BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 
 // Requires ENABLE(MEDIA_CAPTURE)
