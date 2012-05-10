@@ -265,6 +265,10 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
             }
         }
     }
+    if (targetNode) {
+        targetArea = targetNode->document()->view()->contentsToWindow(targetArea);
+        targetPoint = targetNode->document()->view()->contentsToWindow(targetPoint);
+    }
 
     return (targetNode);
 }

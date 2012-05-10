@@ -774,8 +774,6 @@ PassRefPtr<ClientRect> Internals::bestZoomableAreaForTouchPoint(long x, long y, 
     Node* targetNode;
     IntRect zoomableArea;
     document->frame()->eventHandler()->bestZoomableAreaForTouchPoint(point, radius, zoomableArea, targetNode);
-    if (targetNode)
-        zoomableArea = targetNode->document()->view()->contentsToWindow(zoomableArea);
 
     return ClientRect::create(zoomableArea);
 }
