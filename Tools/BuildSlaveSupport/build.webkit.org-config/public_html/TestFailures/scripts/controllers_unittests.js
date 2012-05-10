@@ -73,4 +73,34 @@ test("UnexpectedFailures", 3, function() {
     });
 });
 
+test("controllers.FailingBuilders", 3, function() {
+    var MockView = base.extends('div', {
+        add: function(node) {
+            this.appendChild(node);
+        }
+    })
+    var view = new MockView();
+    var failingBuilders = new controllers.FailingBuilders(view, 'dummy message');
+    ok(!failingBuilders.hasFailures());
+
+    failingBuilders.update({'DummyBuilder': ['webkit_tests']});
+    ok(failingBuilders.hasFailures());
+
+    equal(view.outerHTML, '<div>' +
+        '<li style="opacity: 0; ">' +
+            '<div class="how"><time class="relative"></time></div>' +
+            '<div class="what">' +
+                '<div class="problem">dummy message:' +
+                    '<ul class="effects">' +
+                        '<li class="builder"><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=DummyBuilder">' +
+                            '<span class="version">DummyBuilder</span><span class="failures"> webkit_tests</span></a>' +
+                        '</li>' +
+                    '</ul>' +
+                '</div>' +
+                '<ul class="causes"></ul>' +
+            '</div>' +
+        '</li>' +
+    '</div>')
+});
+
 })();

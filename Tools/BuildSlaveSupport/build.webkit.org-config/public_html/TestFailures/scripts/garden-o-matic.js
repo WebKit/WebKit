@@ -36,6 +36,14 @@ var g_failuresController = null;
 
 var g_nonLayoutTestFailureBuilders = null;
 
+function updatePartyTime()
+{
+    if (!g_unexpectedFailuresController.length() && !g_nonLayoutTestFailureBuilders.hasFailures())
+        $('#onebar').addClass('partytime');
+    else
+        $('#onebar').removeClass('partytime');
+}
+
 function update()
 {
     if (g_revisionHint)
@@ -51,7 +59,10 @@ function update()
 
     g_info.add(updating);
 
-    builders.buildersFailingNonLayoutTests(g_nonLayoutTestFailureBuilders.update.bind(g_nonLayoutTestFailureBuilders));
+    builders.buildersFailingNonLayoutTests(function(failuresList) {
+        g_nonLayoutTestFailureBuilders.update(failuresList);
+        updatePartyTime();
+    });
 
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
         if (g_failuresController)
@@ -63,10 +74,7 @@ function update()
             updating.update('Analyzing test failures ... ' + ++numberOfTestsAnalyzed + ' tests analyzed.');
             g_unexpectedFailuresController.update(failureAnalysis);
         }, function() {
-            if (!g_unexpectedFailuresController.length())
-                $('#onebar').addClass('partytime');
-            else
-                $('#onebar').removeClass('partytime');
+            updatePartyTime();
             g_unexpectedFailuresController.purge();
 
             updating.dismiss();

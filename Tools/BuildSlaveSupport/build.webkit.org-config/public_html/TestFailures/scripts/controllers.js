@@ -287,6 +287,10 @@ controllers.FailingBuilders = base.extends(Object, {
         this._message = message;
         this._notification = null;
     },
+    hasFailures: function()
+    {
+        return !!this._notification;
+    },
     update: function(failuresList)
     {
         if (Object.keys(failuresList).length == 0) {
