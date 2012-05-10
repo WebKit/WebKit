@@ -1,3 +1,16 @@
+2012-05-09  Hayato Ito  <hayato@chromium.org>
+
+        Improve a warning message for a reftest having an unused expectation file.
+        https://bugs.webkit.org/show_bug.cgi?id=85975
+
+        Reviewed by Adam Barth.
+
+        The current warning message is not intuitive. It might be better to update the message
+        so that it encourage users to remove unused expectation files.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__):
+
 2012-05-09  Ojan Vafai  <ojan@chromium.org>
 
         Change "losing test coverage" to cover all non-layout test problems in garden-o-matic
