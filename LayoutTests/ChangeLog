@@ -1,3 +1,16 @@
+2012-05-10  Erik Arvidsson  <arv@chromium.org>
+
+        Add test that makes sure wrappers are setup using the correct window scope
+        https://bugs.webkit.org/show_bug.cgi?id=85526
+
+        Reviewed by Ojan Vafai.
+
+        This tests the same thing as the recently removed fast/dom/prototype-inheritance.html test.
+
+        * fast/dom/wrapper-scope-expected.txt: Added.
+        * fast/dom/wrapper-scope.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Crash in InsertParagraphSeparatorCommand::doApply.

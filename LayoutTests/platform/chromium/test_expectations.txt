@@ -4051,3 +4051,5 @@ BUGWK85771 SNOWLEOPARD LION LINUX : compositing/scroll-painted-composited-conten
 BUGWK85771 SNOWLEOPARD LION LINUX : platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html = TIMEOUT PASS
 // Started flaking at around http://trac.webkit.org/changeset/116278.
 BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
+
+BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
