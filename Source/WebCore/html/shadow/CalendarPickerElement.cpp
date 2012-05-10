@@ -68,6 +68,12 @@ PassRefPtr<CalendarPickerElement> CalendarPickerElement::create(Document* docume
     return adoptRef(new CalendarPickerElement(document));
 }
 
+CalendarPickerElement::~CalendarPickerElement()
+{
+    closePopup();
+    ASSERT(!m_popup);
+}
+
 RenderObject* CalendarPickerElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderDetailsMarker(this);
