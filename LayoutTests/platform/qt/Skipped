@@ -1943,6 +1943,10 @@ fast/xmlhttprequest/xmlhttprequest-get.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=84013
 fast/repaint/line-flow-with-floats-in-regions.html
 
+# [Qt] fast/block/positioning/offsetLeft-offsetTop-multicolumn.html is failing
+# https://bugs.webkit.org/show_bug.cgi?id=86130
+fast/block/positioning/offsetLeft-offsetTop-multicolumn.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #

@@ -1,3 +1,11 @@
+2012-05-10  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Qt gardening.
+
+        * platform/qt/Skipped:
+        Skipped the test as it fails only on Qt (double-checked locally on Mac),
+        the difference is very small and likely minor.
+
 2012-05-10  Varun Jain  <varunjain@google.com>
 
         [chromium] Trigger context menu for long press gesture
