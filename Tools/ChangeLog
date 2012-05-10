@@ -1,3 +1,18 @@
+2012-05-10  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL][webkitpy] Do not redefine check_build() in EflPort.
+        https://bugs.webkit.org/show_bug.cgi?id=86124
+
+        Reviewed by Dirk Pranke.
+
+        Remove an old FIXME and do not redefine check_build in EflPort;
+        once build-dumprendertree recognizes --efl, we can use the
+        check_build implementation in WebKitPort.
+
+        * Scripts/build-dumprendertree:
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.check_build):
+
 2012-05-10  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Fix the ExtraData functionality in WebMediaStreamDescriptor

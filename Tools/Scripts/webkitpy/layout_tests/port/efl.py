@@ -62,10 +62,6 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
     def _path_to_image_diff(self):
         return self._build_path('bin', 'ImageDiff')
 
-    # FIXME: I doubt EFL wants to override this method.
-    def check_build(self, needs_http):
-        return self._check_driver()
-
     def _path_to_webcore_library(self):
         static_path = self._build_path('WebCore', 'libwebcore_efl.a')
         dyn_path = self._build_path('WebCore', 'libwebcore_efl.so')
