@@ -1,3 +1,14 @@
+2012-05-09  Stephen Chenney  <schenney@chromium.org>
+
+        SVG Filters allow invalid elements as children
+        https://bugs.webkit.org/show_bug.cgi?id=83979
+
+        Reviewed by Nikolas Zimmermann.
+
+        This test will crash upon load in Chromium, unless the associated fix is in.
+
+        * ManualTests/bugzilla-83979.svg: Added.
+
 2012-05-09  Kent Tamura  <tkent@chromium.org>
 
         Calendar Picker: Fix a crash by changing input type.
@@ -35,7 +46,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=85907
 
         Reviewed by Rob Buis.
-   
+
         Enable PAGE_POPUP option in make files.
 
         Internal reviewed by Yong Li.
