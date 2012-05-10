@@ -578,6 +578,7 @@ public:
 
     virtual void attach();
     virtual void detach();
+    void prepareForDestruction();
 
     // Override ScriptExecutionContext methods to do additional work
     virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;

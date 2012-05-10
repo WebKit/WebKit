@@ -47,8 +47,9 @@ public:
     static PassRefPtr<DOMApplicationCache> create(Frame* frame) { return adoptRef(new DOMApplicationCache(frame)); }
     ~DOMApplicationCache() { ASSERT(!m_frame); }
 
-    virtual void disconnectFrame() OVERRIDE;
-    virtual void reconnectFrame(Frame*) OVERRIDE;
+    virtual void disconnectFrameForPageCache() OVERRIDE;
+    virtual void reconnectFrameFromPageCache(Frame*) OVERRIDE;
+    virtual void willDestroyGlobalObjectInFrame() OVERRIDE;
 
     unsigned short status() const;
     void update(ExceptionCode&);

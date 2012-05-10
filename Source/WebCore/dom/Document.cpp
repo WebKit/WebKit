@@ -2070,6 +2070,13 @@ void Document::detach()
     m_renderArena.clear();
 }
 
+void Document::prepareForDestruction()
+{
+    if (DOMWindow* window = this->domWindow())
+        window->willDetachDocumentFromFrame();
+    detach();
+}
+
 void Document::removeAllEventListeners()
 {
     EventTarget::removeAllEventListeners();

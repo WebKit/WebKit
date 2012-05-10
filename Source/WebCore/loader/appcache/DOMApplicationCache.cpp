@@ -47,20 +47,25 @@ DOMApplicationCache::DOMApplicationCache(Frame* frame)
         cacheHost->setDOMApplicationCache(this);
 }
 
-void DOMApplicationCache::disconnectFrame()
+void DOMApplicationCache::disconnectFrameForPageCache()
 {
-    ApplicationCacheHost* cacheHost = applicationCacheHost();
-    if (cacheHost)
+    if (ApplicationCacheHost* cacheHost = applicationCacheHost())
         cacheHost->setDOMApplicationCache(0);
-    DOMWindowProperty::disconnectFrame();
+    DOMWindowProperty::disconnectFrameForPageCache();
 }
 
-void DOMApplicationCache::reconnectFrame(Frame* frame)
+void DOMApplicationCache::reconnectFrameFromPageCache(Frame* frame)
 {
-    DOMWindowProperty::reconnectFrame(frame);
-    ApplicationCacheHost* cacheHost = applicationCacheHost();
-    if (cacheHost)
+    DOMWindowProperty::reconnectFrameFromPageCache(frame);
+    if (ApplicationCacheHost* cacheHost = applicationCacheHost())
         cacheHost->setDOMApplicationCache(this);
+}
+
+void DOMApplicationCache::willDestroyGlobalObjectInFrame()
+{
+    if (ApplicationCacheHost* cacheHost = applicationCacheHost())
+        cacheHost->setDOMApplicationCache(0);
+    DOMWindowProperty::willDestroyGlobalObjectInFrame();
 }
 
 ApplicationCacheHost* DOMApplicationCache::applicationCacheHost() const

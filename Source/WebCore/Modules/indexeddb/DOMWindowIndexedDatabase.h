@@ -43,8 +43,11 @@ public:
 
     static IDBFactory* webkitIndexedDB(DOMWindow*);
 
-    virtual void disconnectFrame() OVERRIDE;
-    virtual void reconnectFrame(Frame*) OVERRIDE;
+    virtual void disconnectFrameForPageCache() OVERRIDE;
+    virtual void reconnectFrameFromPageCache(Frame*) OVERRIDE;
+    virtual void willDestroyGlobalObjectInCachedFrame() OVERRIDE;
+    virtual void willDestroyGlobalObjectInFrame() OVERRIDE;
+    virtual void willDetachGlobalObjectFromFrame() OVERRIDE;
 
 private:
     explicit DOMWindowIndexedDatabase(DOMWindow*);

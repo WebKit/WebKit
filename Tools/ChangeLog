@@ -1,3 +1,75 @@
+2012-05-09  Jessie Berlin  <jberlin@apple.com>
+
+        Crash using the new WKBundleDOMWindowExtensions APIs.
+        https://bugs.webkit.org/show_bug.cgi?id=85888
+
+        Reviewed by Brady Eidson.
+
+        Cached frames can live slightly longer than the page, but most clients unregister themselves
+        and do other cleanup in the willDestroyPage callback, making them miss the
+        willDestroyGlobalObjectForDOMWindowExtension callbacks.
+
+        The calls to willDestroyGlobalObjectForDOMWindowExtension in the DOMWindowExtensionBasic
+        test were all being invoked underneath WebPage::close. This is unrealistic. Update that test
+        to destroy the BundleDOMWindowExtensions in response to the willDestroyPage callback.
+
+        Add a test to verify that willDestroyGlobalObjectForDOMWindowExtension is being called for
+        pages that don't go into the page cache.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add DOMWindowExtensionNoCache.cpp, DOMWindowExtensionNoCache_Bundle.cpp, simple-unload.html
+        and simple-iframe-unload.html
+
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic.cpp:
+        (TestWebKitAPI):
+        Remove the expected messages for willDestroyGlobalObjectForDOMWindowExtension.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        Do not bother to keep track of the live extension count - all of them are expected to be
+        live until the test completes.
+        (TestWebKitAPI::TEST):
+        Fix the calls to EXPECT to pass the expected value first, and use EXPECT_WK_STREQ so that
+        message failures will be clearer.
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionBasic::willDestroyPage):
+        Clean up the BundleDOMWindowExtensions.
+        (TestWebKitAPI::DOMWindowExtensionBasic::willDestroyGlobalObjectForDOMWindowExtension):
+        Add an ASSERT_NOT_REACHED.
+
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        Keep track of the messages received so they can be checked at the end of the test.
+        (TestWebKitAPI::TEST):
+        Navigate to uncacheable pages and back.
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp: Copied from Tools/TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp.
+        (DOMWindowExtensionNoCache):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::DOMWindowExtensionNoCache):
+        Set up all the states for each BundleDOMWindowExtension.
+        (TestWebKitAPI::DOMWindowExtensionNoCache::frameLoadFinished):
+        Tell the UI Process about the states of the BundleDOMWindowExtensions.
+        (TestWebKitAPI::DOMWindowExtensionNoCache::sendExtensionStateMessage):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::initialize):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::didCreatePage):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::willDestroyPage):
+        Remvoe the remaining BundleDOMWindowExtensions, send the updated state, and finish the test.
+        (TestWebKitAPI::DOMWindowExtensionNoCache::updateExtensionStateRecord):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::sendBundleMessage):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::globalObjectIsAvailableForFrame):
+        (TestWebKitAPI::DOMWindowExtensionNoCache::willDisconnectDOMWindowExtensionFromGlobalObject):
+        ASSERT that these pages not going into the page cache are not getting disconnected to go into
+        the page cache.
+        (TestWebKitAPI::DOMWindowExtensionNoCache::didReconnectDOMWindowExtensionToGlobalObject):
+        Ditto about getting reconnected when coming out of the page cache.
+        (TestWebKitAPI::DOMWindowExtensionNoCache::willDestroyGlobalObjectForDOMWindowExtension):
+        Tell the UI Process, update the state, and get rid of the BundleDOMWindowExtension.
+        (TestWebKitAPI::didFinishLoadForFrameCallback):
+        (TestWebKitAPI::globalObjectIsAvailableForFrameCallback):
+        (TestWebKitAPI::willDisconnectDOMWindowExtensionFromGlobalObjectCallback):
+        (TestWebKitAPI::didReconnectDOMWindowExtensionToGlobalObjectCallback):
+        (TestWebKitAPI::willDestroyGlobalObjectForDOMWindowExtensionCallback):
+
+        * TestWebKitAPI/Tests/WebKit2/simple-iframe-unload.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/simple-unload.html: Added.
+
 2012-05-09  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Android's DRT doesn't want to build WebUserMediaClientMock

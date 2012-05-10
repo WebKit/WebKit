@@ -390,6 +390,9 @@ namespace WebCore {
         // by the document that is currently active in m_frame.
         bool isCurrentlyDisplayedInFrame() const;
 
+        void willDetachDocumentFromFrame();
+        void willDestroyCachedFrame();
+
     private:
         explicit DOMWindow(Frame*);
 
@@ -411,6 +414,7 @@ namespace WebCore {
         void clearDOMWindowProperties();
         void disconnectDOMWindowProperties();
         void reconnectDOMWindowProperties();
+        void willDestroyDocumentInFrame();
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         KURL m_url;

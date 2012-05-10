@@ -45,7 +45,8 @@ public:
     ~PointerLock();
 
     // DOMWindowProperty Interface
-    virtual void disconnectFrame() OVERRIDE;
+    virtual void disconnectFrameForPageCache() OVERRIDE;
+    virtual void willDestroyGlobalObjectInFrame() OVERRIDE;
 
     void lock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback);
     void unlock();
