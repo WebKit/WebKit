@@ -1,3 +1,10 @@
+2012-05-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Attempt to fix an Android build error.
+        https://bugs.webkit.org/show_bug.cgi?id=86045
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+
 2012-05-09  Ojan Vafai  <ojan@chromium.org>
 
         Don't show partytime if there are non-layout test failures.
