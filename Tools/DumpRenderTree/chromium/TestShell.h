@@ -95,7 +95,9 @@ public:
     EventSender* eventSender() const { return m_eventSender.get(); }
     AccessibilityController* accessibilityController() const { return m_accessibilityController.get(); }
     GamepadController* gamepadController() const { return m_gamepadController.get(); }
+#if ENABLE(NOTIFICATIONS)
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
+#endif
     TestEventPrinter* printer() const { return m_printer.get(); }
 
     WebPreferences* preferences() { return &m_prefs; }
@@ -217,7 +219,9 @@ private:
     OwnPtr<EventSender> m_eventSender;
     OwnPtr<LayoutTestController> m_layoutTestController;
     OwnPtr<TextInputController> m_textInputController;
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     OwnPtr<NotificationPresenter> m_notificationPresenter;
+#endif
     OwnPtr<WebViewHost> m_webViewHost;
     OwnPtr<WebKit::WebThread> m_webCompositorThread;
 

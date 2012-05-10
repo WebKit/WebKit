@@ -93,8 +93,10 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     // names to their methods will be done by calling bindToJavaScript() (defined
     // by CppBoundClass, the parent to LayoutTestController).
     bindMethod("addFileToPasteboardOnDrag", &LayoutTestController::addFileToPasteboardOnDrag);
+#if ENABLE(INPUT_SPEECH)
     bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
     bindMethod("setMockSpeechInputDumpRect", &LayoutTestController::setMockSpeechInputDumpRect);
+#endif
     bindMethod("addOriginAccessWhitelistEntry", &LayoutTestController::addOriginAccessWhitelistEntry);
     bindMethod("addUserScript", &LayoutTestController::addUserScript);
     bindMethod("addUserStyleSheet", &LayoutTestController::addUserStyleSheet);
@@ -132,7 +134,9 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setIsolatedWorldSecurityOrigin", &LayoutTestController::setIsolatedWorldSecurityOrigin);
     bindMethod("execCommand", &LayoutTestController::execCommand);
     bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
+#if ENABLE(NOTIFICATIONS)
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
+#endif
     bindMethod("findString", &LayoutTestController::findString);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
     bindMethod("hasCustomPageSizeStyle", &LayoutTestController::hasCustomPageSizeStyle);
@@ -210,7 +214,9 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setXSSAuditorEnabled", &LayoutTestController::setXSSAuditorEnabled);
     bindMethod("setAsynchronousSpellCheckingEnabled", &LayoutTestController::setAsynchronousSpellCheckingEnabled);
     bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
+#if ENABLE(NOTIFICATIONS)
     bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
+#endif
     bindMethod("startSpeechInput", &LayoutTestController::startSpeechInput);
     bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
     bindMethod("testRepaint", &LayoutTestController::testRepaint);
@@ -1186,6 +1192,7 @@ void LayoutTestController::callShouldCloseOnWebView(const CppArgumentList&, CppV
     result->set(m_shell->webView()->dispatchBeforeUnloadEvent());
 }
 
+#if ENABLE(NOTIFICATIONS)
 void LayoutTestController::grantDesktopNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
@@ -1211,6 +1218,7 @@ void LayoutTestController::simulateDesktopNotificationClick(const CppArgumentLis
 #endif
         result->set(false);
 }
+#endif
 
 void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(const CppArgumentList& arguments, CppVariant* result)
 {
@@ -1960,6 +1968,7 @@ void LayoutTestController::abortModal(const CppArgumentList& arguments, CppVaria
     result->setNull();
 }
 
+#if ENABLE(INPUT_SPEECH)
 void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1979,6 +1988,7 @@ void LayoutTestController::setMockSpeechInputDumpRect(const CppArgumentList& arg
     if (MockWebSpeechInputController* controller = m_shell->webViewHost()->speechInputControllerMock())
         controller->setDumpRect(arguments[0].value.boolValue);
 }
+#endif
 
 void LayoutTestController::startSpeechInput(const CppArgumentList& arguments, CppVariant* result)
 {

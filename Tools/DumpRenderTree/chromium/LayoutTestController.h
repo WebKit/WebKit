@@ -249,10 +249,12 @@ public:
     void setIconDatabaseEnabled(const CppArgumentList&, CppVariant*);
     void dumpSelectionRect(const CppArgumentList&, CppVariant*);
 
+#if ENABLE(NOTIFICATIONS)
     // Grants permission for desktop notifications to an origin
     void grantDesktopNotificationPermission(const CppArgumentList&, CppVariant*);
     // Simulates a click on a desktop notification.
     void simulateDesktopNotificationClick(const CppArgumentList&, CppVariant*);
+#endif
 
     void setDomainRelaxationForbiddenForURLScheme(const CppArgumentList&, CppVariant*);
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
@@ -374,8 +376,10 @@ public:
     void abortModal(const CppArgumentList&, CppVariant*);
 
     // Speech input related functions.
+#if ENABLE(INPUT_SPEECH)
     void addMockSpeechInputResult(const CppArgumentList&, CppVariant*);
     void setMockSpeechInputDumpRect(const CppArgumentList&, CppVariant*);
+#endif
     void startSpeechInput(const CppArgumentList&, CppVariant*);
 
     void layerTreeAsText(const CppArgumentList& args, CppVariant* result);

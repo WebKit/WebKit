@@ -1,3 +1,20 @@
+2012-05-09  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] LayoutTestController should use ENABLE guards for some features
+        https://bugs.webkit.org/show_bug.cgi?id=86030
+
+        Reviewed by Eric Seidel.
+
+        These features are disabled on OS(ANDROID) and so shouldn't be compiled
+        when the feature is off.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+
 2012-05-09  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Fix overzealous re-opened since blocked by... message
