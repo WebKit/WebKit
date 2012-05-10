@@ -403,7 +403,8 @@ template <class Iterator, class Run>
 bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
 {
     // This gets called from bidiFirst when setting up our start position.
-    ASSERT(!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty());
+    // FIXME: Re-enable this assert once https://bugs.webkit.org/show_bug.cgi?id=76574 is fixed.
+    // ASSERT(!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty());
 
     using namespace WTF::Unicode;
 
