@@ -1,3 +1,22 @@
+2012-05-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Implement fit-to-width behaviour
+        https://bugs.webkit.org/show_bug.cgi?id=86085
+
+        Reviewed by Simon Hausmann.
+
+        We don't restrict the minimum scale to the layout viewport anymore,
+        but instead update the minimum scale when the content size changes.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::minimumScale):
+        (QWebViewportInfo::maximumScale):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-05-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         WebPageProxy::activeURL() should return the pending API request, even when there's no main frame

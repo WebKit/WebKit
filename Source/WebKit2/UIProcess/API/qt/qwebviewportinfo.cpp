@@ -62,11 +62,17 @@ QVariant QWebViewportInfo::initialScale() const
 
 QVariant QWebViewportInfo::minimumScale() const
 {
+    if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
+        return interactionEngine->m_minimumScale;
+
     return m_webViewPrivate->attributes.minimumScale;
 }
 
 QVariant QWebViewportInfo::maximumScale() const
 {
+    if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
+        return interactionEngine->m_maximumScale;
+
     return m_webViewPrivate->attributes.maximumScale;
 }
 

@@ -109,6 +109,7 @@ struct ViewportArguments {
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport);
 void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport);
 void restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);
+float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentSize);
 
 void setViewportFeature(const String& keyString, const String& valueString, Document*, void* data);
 void reportViewportWarning(Document*, ViewportErrorCode, const String& replacement1, const String& replacement2);

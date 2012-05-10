@@ -857,11 +857,8 @@ void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::V
 {
     Q_Q(QQuickWebView);
 
-    QSize viewportSize = q->boundingRect().size().toSize();
-
     // FIXME: Revise these when implementing fit-to-width.
     WebCore::ViewportAttributes attr = newAttributes;
-    WebCore::restrictMinimumScaleFactorToViewportSize(attr, viewportSize);
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(attr);
 
     // FIXME: Resetting here can reset more than needed. For instance it will end deferrers.
@@ -949,8 +946,20 @@ void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
 void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 {
     Q_Q(QQuickWebView);
+    QSize viewportSize = q->boundingRect().size().toSize();
+
     pageView->setContentsSize(newSize);
     q->experimental()->viewportInfo()->didUpdateContentsSize();
+
+    float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(attributes, viewportSize, newSize);
+
+    if (!qFuzzyCompare(minimumScale, attributes.minimumScale)) {
+        interactionEngine->setCSSScaleBounds(minimumScale, attributes.maximumScale);
+        q->experimental()->viewportInfo()->didUpdateViewportConstraints();
+
+        if (!interactionEngine->hadUserInteraction() && !pageIsSuspended)
+            interactionEngine->setCSSScale(minimumScale);
+    }
 }
 
 /*!

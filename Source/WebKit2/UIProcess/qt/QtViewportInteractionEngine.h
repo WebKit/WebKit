@@ -35,6 +35,8 @@ class QQuickWebView;
 class QWheelEvent;
 QT_END_NAMESPACE
 
+class QWebViewportInfo;
+
 namespace WebKit {
 
 class ViewportUpdateDeferrer;
@@ -114,7 +116,7 @@ private Q_SLOTS:
 
 private:
     friend class ViewportUpdateDeferrer;
-    friend class QWebViewportInfo;
+    friend class ::QWebViewportInfo;
 
     QQuickWebView* const m_viewport;
     QQuickWebPage* const m_content;
