@@ -109,11 +109,11 @@ class PyWebSocket(http_server.Lighttpd):
         output_log = self._filesystem.join(self._output_dir, log_file_name + "-out.txt")
         self._wsout = self._filesystem.open_text_file_for_writing(output_log)
 
-        from webkitpy.thirdparty.autoinstalled.pywebsocket import mod_pywebsocket
+        from webkitpy.thirdparty import mod_pywebsocket
         python_interp = sys.executable
         # FIXME: Use self._filesystem.path_to_module(self.__module__) instead of __file__
         # I think this is trying to get the chrome directory?  Doesn't the port object know that?
-        pywebsocket_base = self._filesystem.join(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.abspath(__file__)))), 'thirdparty', 'autoinstalled', 'pywebsocket')
+        pywebsocket_base = self._filesystem.join(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.dirname(self._filesystem.abspath(__file__)))), 'thirdparty')
         pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
         start_cmd = [
             python_interp, '-u', pywebsocket_script,

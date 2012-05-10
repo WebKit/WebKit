@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright 2011, Google Inc.
+# All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,32 +27,30 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import unittest
 
-from webkitpy.thirdparty import AutoinstallImportHook
+"""This file exports public symbols.
+"""
 
-class ThirdpartyTest(unittest.TestCase):
-    def test_import_hook(self):
-        # Add another import hook and make sure we get called.
-        class MockImportHook(AutoinstallImportHook):
-            def __init__(self):
-                AutoinstallImportHook.__init__(self)
-                self._eliza_installed = False
 
-            def _install_eliza(self):
-                self.eliza_installed = True
+from mod_pywebsocket._stream_base import BadOperationException
+from mod_pywebsocket._stream_base import ConnectionTerminatedException
+from mod_pywebsocket._stream_base import InvalidFrameException
+from mod_pywebsocket._stream_base import InvalidUTF8Exception
+from mod_pywebsocket._stream_base import UnsupportedFrameException
+from mod_pywebsocket._stream_hixie75 import StreamHixie75
+from mod_pywebsocket._stream_hybi import Frame
+from mod_pywebsocket._stream_hybi import Stream
+from mod_pywebsocket._stream_hybi import StreamOptions
 
-        mock_import_hook = MockImportHook()
-        try:
-            # The actual AutoinstallImportHook should be installed before us,
-            # so these modules will get installed before MockImportHook runs.
-            sys.meta_path.append(mock_import_hook)
-            from webkitpy.thirdparty.autoinstalled import eliza
-            self.assertTrue(mock_import_hook.eliza_installed)
+# These methods are intended to be used by WebSocket client developers to have
+# their implementations receive broken data in tests.
+from mod_pywebsocket._stream_hybi import create_close_frame
+from mod_pywebsocket._stream_hybi import create_header
+from mod_pywebsocket._stream_hybi import create_length_header
+from mod_pywebsocket._stream_hybi import create_ping_frame
+from mod_pywebsocket._stream_hybi import create_pong_frame
+from mod_pywebsocket._stream_hybi import create_binary_frame
+from mod_pywebsocket._stream_hybi import create_text_frame
 
-        finally:
-            sys.meta_path.remove(mock_import_hook)
 
-if __name__ == '__main__':
-    unittest.main()
+# vi:sts=4 sw=4 et

@@ -80,8 +80,6 @@ class AutoinstallImportHook(object):
             self._install_eliza()
         elif '.irc' in fullname:
             self._install_irc()
-        elif '.pywebsocket' in fullname:
-            self._install_pywebsocket()
         elif '.buildbot' in fullname:
             self._install_buildbot()
 
@@ -127,12 +125,6 @@ class AutoinstallImportHook(object):
                           url_subpath="irclib.py")
         installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
                           url_subpath="ircbot.py")
-
-    def _install_pywebsocket(self):
-        pywebsocket_dir = self._fs.join(_AUTOINSTALLED_DIR, "pywebsocket")
-        installer = AutoInstaller(target_dir=pywebsocket_dir)
-        installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.7.4.tar.gz",
-                          url_subpath="pywebsocket-0.7.4/src/mod_pywebsocket")
 
     def _install(self, url, url_subpath):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)

@@ -1,3 +1,352 @@
+2012-05-10  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        don't use autoinstall to import pywebsocket but check it in WebKit directly.
+        https://bugs.webkit.org/show_bug.cgi?id=86107
+
+        Reviewed by Adam Barth.
+
+        This change removes pywebsocket from webkitpy's autoinstall list and
+        imports pywebsocket 0.7.4 directly into webkitpy/thirparty.
+
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket._prepare_config):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_irc):
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_import_hook.MockImportHook.__init__):
+        (ThirdpartyTest.test_import_hook.MockImportHook._install_eliza):
+        (ThirdpartyTest):
+        (ThirdpartyTest.test_import_hook):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/COPYING: Added.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/__init__.py: Added.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_base.py: Added.
+        (ConnectionTerminatedException):
+        (InvalidFrameException):
+        (BadOperationException):
+        (UnsupportedFrameException):
+        (InvalidUTF8Exception):
+        (StreamBase):
+        (StreamBase.__init__):
+        (StreamBase._read):
+        (StreamBase._write):
+        (StreamBase.receive_bytes):
+        (StreamBase._read_until):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hixie75.py: Added.
+        (for):
+        (StreamHixie75):
+        (StreamHixie75.for):
+        (StreamHixie75.__init__):
+        (StreamHixie75.send_message):
+        (StreamHixie75._read_payload_length_hixie75):
+        (StreamHixie75.receive_message):
+        (StreamHixie75._send_closing_handshake):
+        (StreamHixie75.close_connection):
+        (StreamHixie75.send_ping):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/_stream_hybi.py: Added.
+        (Frame):
+        (Frame.__init__):
+        (create_length_header):
+        (create_header):
+        (_build_frame):
+        (_filter_and_format_frame_object):
+        (create_binary_frame):
+        (create_text_frame):
+        (FragmentedFrameBuilder):
+        (FragmentedFrameBuilder.to):
+        (FragmentedFrameBuilder.__init__):
+        (FragmentedFrameBuilder.build):
+        (_create_control_frame):
+        (create_ping_frame):
+        (create_pong_frame):
+        (create_close_frame):
+        (StreamOptions):
+        (StreamOptions.__init__):
+        (Stream):
+        (Stream.for):
+        (Stream.__init__):
+        (Stream._receive_frame):
+        (Stream._receive_frame_as_frame_object):
+        (Stream.send_message):
+        (Stream.receive_message):
+        (Stream._send_closing_handshake):
+        (Stream.close_connection):
+        (Stream.send_ping):
+        (Stream._send_pong):
+        (Stream._drain_received_data):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/common.py: Added.
+        (is_control_opcode):
+        (ExtensionParameter):
+        (ExtensionParameter.__init__):
+        (ExtensionParameter.name):
+        (ExtensionParameter.add_parameter):
+        (ExtensionParameter.get_parameters):
+        (ExtensionParameter.get_parameter_names):
+        (ExtensionParameter.has_parameter):
+        (ExtensionParameter.get_parameter_value):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/dispatch.py: Added.
+        (DispatchException):
+        (DispatchException.__init__):
+        (_default_passive_closing_handshake_handler):
+        (_normalize_path):
+        (_create_path_to_resource_converter):
+        (_create_path_to_resource_converter.converter):
+        (_enumerate_handler_file_paths):
+        (_HandlerSuite):
+        (_HandlerSuite.__init__):
+        (_source_handler_file):
+        (_extract_handler):
+        (Dispatcher):
+        (Dispatcher.maintains):
+        (Dispatcher.__init__):
+        (Dispatcher.add_resource_path_alias):
+        (Dispatcher.source_warnings):
+        (Dispatcher.do_extra_handshake):
+        (Dispatcher.transfer_data):
+        (Dispatcher.passive_closing_handshake):
+        (Dispatcher.get_handler_suite):
+        (Dispatcher._source_handler_files_in_dir):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/extensions.py: Added.
+        (ExtensionProcessorInterface):
+        (ExtensionProcessorInterface.get_extension_response):
+        (ExtensionProcessorInterface.setup_stream_options):
+        (DeflateStreamExtensionProcessor):
+        (DeflateStreamExtensionProcessor.__init__):
+        (DeflateStreamExtensionProcessor.get_extension_response):
+        (DeflateStreamExtensionProcessor.setup_stream_options):
+        (DeflateFrameExtensionProcessor):
+        (DeflateFrameExtensionProcessor.__init__):
+        (DeflateFrameExtensionProcessor.get_extension_response):
+        (DeflateFrameExtensionProcessor.setup_stream_options):
+        (DeflateFrameExtensionProcessor.setup_stream_options._OutgoingFilter):
+        (DeflateFrameExtensionProcessor.setup_stream_options._OutgoingFilter.__init__):
+        (DeflateFrameExtensionProcessor.setup_stream_options._OutgoingFilter.filter):
+        (DeflateFrameExtensionProcessor.setup_stream_options._IncomingFilter):
+        (DeflateFrameExtensionProcessor.setup_stream_options._IncomingFilter.__init__):
+        (DeflateFrameExtensionProcessor.setup_stream_options._IncomingFilter.filter):
+        (DeflateFrameExtensionProcessor.set_response_window_bits):
+        (DeflateFrameExtensionProcessor.set_response_no_context_takeover):
+        (DeflateFrameExtensionProcessor.enable_outgoing_compression):
+        (DeflateFrameExtensionProcessor.disable_outgoing_compression):
+        (DeflateFrameExtensionProcessor._outgoing_filter):
+        (DeflateFrameExtensionProcessor._incoming_filter):
+        (get_extension_processor):
+        (get_extension_processor.is):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/__init__.py: Added.
+        (try):
+        (do_handshake):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/_base.py: Added.
+        (AbortedByUserException):
+        (HandshakeException):
+        (HandshakeException.__init__):
+        (VersionException):
+        (VersionException.__init__):
+        (get_default_port):
+        (validate_subprotocol):
+        (parse_host_header):
+        (format_header):
+        (build_location):
+        (get_mandatory_header):
+        (validate_mandatory_header):
+        (check_request_line):
+        (check_header_lines):
+        (parse_token_list):
+        (_parse_extension_param):
+        (_parse_extension):
+        (parse_extensions):
+        (format_extensions):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/draft75.py: Added.
+        (Handshaker):
+        (Handshaker.performs):
+        (Handshaker.__init__):
+        (Handshaker.do_handshake):
+        (Handshaker._set_resource):
+        (Handshaker._set_origin):
+        (Handshaker._set_location):
+        (Handshaker._set_subprotocol):
+        (Handshaker._set_protocol_version):
+        (Handshaker._sendall):
+        (Handshaker._send_handshake):
+        (Handshaker._check_header_lines):
+        (Handshaker._check_first_lines):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi.py: Added.
+        (compute_accept):
+        (Handshaker):
+        (Handshaker.__init__):
+        (Handshaker._validate_connection_header):
+        (Handshaker.do_handshake):
+        (Handshaker._get_origin):
+        (Handshaker._check_version):
+        (Handshaker._set_protocol):
+        (Handshaker._parse_extensions):
+        (Handshaker._validate_key):
+        (Handshaker._get_key):
+        (Handshaker._send_handshake):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/handshake/hybi00.py: Added.
+        (Handshaker):
+        (Handshaker.__init__):
+        (Handshaker.do_handshake):
+        (Handshaker._set_resource):
+        (Handshaker._set_subprotocol):
+        (Handshaker._set_location):
+        (Handshaker._set_origin):
+        (Handshaker._set_protocol_version):
+        (Handshaker._set_challenge_response):
+        (Handshaker._get_key_value):
+        (Handshaker._get_challenge):
+        (Handshaker._send_handshake):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/headerparserhandler.py: Added.
+        (ApacheLogHandler):
+        (ApacheLogHandler.__init__):
+        (ApacheLogHandler.emit):
+        (_configure_logging):
+        (_parse_option):
+        (_create_dispatcher):
+        (headerparserhandler):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/http_header_util.py: Added.
+        (_is_char):
+        (_is_ctl):
+        (ParsingState):
+        (ParsingState.__init__):
+        (peek):
+        (consume):
+        (consume_string):
+        (consume_lws):
+        (consume_lwses):
+        (consume_token):
+        (consume_token_or_quoted_string):
+        (quote_if_necessary):
+        (parse_uri):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/memorizingfile.py: Added.
+        (MemorizingFile):
+        (MemorizingFile.__init__):
+        (MemorizingFile.__getattribute__):
+        (MemorizingFile.readline):
+        (MemorizingFile.get_memorized_lines):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/msgutil.py: Added.
+        (close_connection):
+        (send_message):
+        (receive_message):
+        (send_ping):
+        (MessageReceiver):
+        (MessageReceiver.receives):
+        (MessageReceiver.provides):
+        (MessageReceiver.should):
+        (MessageReceiver.__init__):
+        (MessageReceiver.run):
+        (MessageReceiver.receive):
+        (MessageReceiver.receive_nowait):
+        (MessageReceiver.stop):
+        (MessageSender):
+        (MessageSender.sends):
+        (MessageSender.provides):
+        (MessageSender.should):
+        (MessageSender.__init__):
+        (MessageSender.run):
+        (MessageSender.send):
+        (MessageSender.send_nowait):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/standalone.py: Added.
+        (_StandaloneConnection):
+        (_StandaloneConnection.__init__):
+        (_StandaloneConnection.get_local_addr):
+        (_StandaloneConnection.get_remote_addr):
+        (_StandaloneConnection.write):
+        (_StandaloneConnection.read):
+        (_StandaloneConnection.get_memorized_lines):
+        (_StandaloneRequest):
+        (_StandaloneRequest.__init__):
+        (_StandaloneRequest.get_uri):
+        (_StandaloneRequest.get_method):
+        (_StandaloneRequest.is_https):
+        (_StandaloneRequest._drain_received_data):
+        (_StandaloneSSLConnection):
+        (_StandaloneSSLConnection.for):
+        (_StandaloneSSLConnection.__init__):
+        (_StandaloneSSLConnection.__getattribute__):
+        (_StandaloneSSLConnection.__setattr__):
+        (_StandaloneSSLConnection.makefile):
+        (WebSocketServer):
+        (WebSocketServer.__init__):
+        (WebSocketServer._create_sockets):
+        (WebSocketServer.server_bind):
+        (WebSocketServer.server_activate):
+        (WebSocketServer.server_close):
+        (WebSocketServer.fileno):
+        (WebSocketServer.handle_error):
+        (WebSocketServer.get_request):
+        (WebSocketServer.serve_forever):
+        (WebSocketServer.shutdown):
+        (WebSocketRequestHandler):
+        (WebSocketRequestHandler.setup):
+        (WebSocketRequestHandler.setup.SocketServer):
+        (WebSocketRequestHandler.__init__):
+        (WebSocketRequestHandler.parse_request):
+        (WebSocketRequestHandler.log_request):
+        (WebSocketRequestHandler.log_error):
+        (WebSocketRequestHandler.is_cgi):
+        (_configure_logging):
+        (_alias_handlers):
+        (_build_option_parser):
+        (ThreadMonitor):
+        (ThreadMonitor.__init__):
+        (ThreadMonitor.run):
+        (_parse_args_and_config):
+        (_main):
+        (_main.if):
+        (_main.if.__check_script):
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/stream.py: Copied from Tools/Scripts/webkitpy/thirdparty/__init___unittest.py.
+        * Scripts/webkitpy/thirdparty/mod_pywebsocket/util.py: Added.
+        (get_stack_trace):
+        (prepend_message_to_exception):
+        (__translate_interp):
+        (get_script_interp):
+        (wrap_popen3_for_win):
+        (wrap_popen3_for_win.__wrap_popen3):
+        (hexify):
+        (get_class_logger):
+        (NoopMasker):
+        (NoopMasker.__init__):
+        (NoopMasker.mask):
+        (RepeatedXorMasker):
+        (RepeatedXorMasker.__init__):
+        (RepeatedXorMasker.mask):
+        (DeflateRequest):
+        (DeflateRequest.for):
+        (DeflateRequest.__init__):
+        (DeflateRequest.__getattribute__):
+        (DeflateRequest.__setattr__):
+        (_Deflater):
+        (_Deflater.__init__):
+        (_Deflater.compress_and_flush):
+        (_Inflater):
+        (_Inflater.__init__):
+        (_Inflater.decompress):
+        (_Inflater.append):
+        (_Inflater.reset):
+        (_RFC1979Deflater):
+        (_RFC1979Deflater.that):
+        (_RFC1979Deflater.__init__):
+        (_RFC1979Deflater.filter):
+        (_RFC1979Inflater):
+        (_RFC1979Inflater.for):
+        (_RFC1979Inflater.__init__):
+        (_RFC1979Inflater.filter):
+        (DeflateSocket):
+        (DeflateSocket.for):
+        (DeflateSocket.__init__):
+        (DeflateSocket.recv):
+        (DeflateSocket.sendall):
+        (DeflateSocket.send):
+        (DeflateConnection):
+        (DeflateConnection.for):
+        (DeflateConnection.__init__):
+        (DeflateConnection.get_remote_addr):
+        (DeflateConnection.put_bytes):
+        (DeflateConnection.read):
+        (DeflateConnection.write):
+        (_is_ewouldblock_errno):
+        (drain_received_data):
+
 2012-05-10  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL][webkitpy] Define the 'wrapper' option in EflPort instead of creating a EflDriver.
