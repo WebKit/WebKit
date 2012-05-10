@@ -33,9 +33,8 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "KURL.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -55,7 +54,7 @@ public:
     const String& fullPath() const { return m_fullPath; }
     const String& name() const { return m_name; }
 
-    KURL toURL() const;
+    String toURL() const;
 
 protected:
     EntryBase(PassRefPtr<DOMFileSystemBase>, const String& fullPath);

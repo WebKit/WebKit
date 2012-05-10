@@ -54,13 +54,13 @@ EntryBase::~EntryBase()
 {
 }
 
-KURL EntryBase::toURL() const
+String EntryBase::toURL() const
 {
     // Some filesystem type may not support toURL.
     if (!m_fileSystem->supportsToURL())
-        return KURL();
+        return String();
 
-    return m_fileSystem->createFileSystemURL(this);
+    return m_fileSystem->createFileSystemURL(this).string();
 }
 
 } // namespace WebCore
