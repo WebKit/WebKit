@@ -3888,6 +3888,7 @@ BUGNOEL : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
 BUGNOEL : fast/backgrounds/size/contain-and-cover.html = IMAGE
 BUGNOEL : fast/block/float/014.html = IMAGE
 BUGNOEL : fast/css/line-height-determined-by-primary-font.html = IMAGE
+BUGNOEL : fast/images/color-jpeg-with-color-profile.html = IMAGE
 BUGNOEL : fast/images/gray-scale-jpeg-with-color-profile.html = IMAGE
 BUGNOEL : fast/images/image-css3-content-data.html = IMAGE
 BUGNOEL : fast/images/rgb-jpeg-with-adobe-marker-only.html = IMAGE
@@ -3923,6 +3924,7 @@ BUGNOEL : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.
 BUGNOEL : svg/repaint/image-href-change.svg = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug101674.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug10565.html = IMAGE
+BUGNOEL : tables/mozilla/bugs/bug1188.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug11026.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug120107.html = IMAGE
 BUGNOEL : tables/mozilla/bugs/bug1271.html = IMAGE
@@ -4056,3 +4058,5 @@ BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
 BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
+
+BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT

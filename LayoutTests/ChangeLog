@@ -1,3 +1,9 @@
+2012-05-10  Jian Li  <jianli@chromium.org>
+
+        Unreviewed chromium gardening. Marked tests as failure.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-10  Dave Tharp  <dtharp@codeaurora.org>
 
         Integrate IETC CSS : values and units tests
