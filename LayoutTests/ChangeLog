@@ -1,3 +1,25 @@
+2012-05-10  Joe Thomas  <joethomas@motorola.com>
+
+        [CSS3 Backgrounds and Borders] Add background-size to the background shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=27577
+
+        Reviewed by Alexis Menard.
+
+        Added CSSPropertyBackgroundSize to the background shorthand propery. Added the logic for parsing background-size.
+        bakground-size appears after background-position followed by a '/'.
+        The specification related to this change is http://www.w3.org/TR/css3-background/#the-background
+
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt: Added.
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html: Added.
+        * fast/backgrounds/size/backgroundSize-in-background-shorthand-expected.html: Added.
+        * fast/backgrounds/size/backgroundSize-in-background-shorthand.html: Added.
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand.html:
+        * fast/inspector-support/style-expected.txt:
+        * inspector/styles/lazy-computed-style-expected.txt:
+        * inspector/styles/styles-computed-trace-expected.txt:
+        * inspector/styles/styles-new-API-expected.txt:
+
 2012-05-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116633.

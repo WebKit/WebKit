@@ -53,6 +53,7 @@ body.main2: [regular]
 ['background-origin':'initial' is-important] @[undefined-undefined] style
 ['background-clip':'initial' is-important] @[undefined-undefined] style
 ['background-color':'green' is-important] @[undefined-undefined] style
+['background-size':'initial' is-important] @[undefined-undefined] style
 
 rule
 body.mainpage: [regular]
@@ -164,6 +165,7 @@ body.main2: [regular]
 ['background-origin':'initial' is-important] @[undefined-undefined] style
 ['background-clip':'initial' is-important] @[undefined-undefined] style
 ['background-color':'green' is-important] @[undefined-undefined] style
+['background-size':'initial' is-important] @[undefined-undefined] style
 
 rule
 body::after: [regular]
@@ -331,6 +333,7 @@ html *, body[foo="bar"]: [regular]
 ['background-origin':'initial'] @[undefined-undefined] style
 ['background-clip':'initial'] @[undefined-undefined] style
 ['background-color':'black'] @[undefined-undefined] style
+['background-size':'initial'] @[undefined-undefined] style
 
 rule
 body: [regular]
@@ -379,6 +382,7 @@ html *, body[foo="bar"]: [regular]
 ['background-origin':'initial'] @[undefined-undefined] style
 ['background-clip':'initial'] @[undefined-undefined] style
 ['background-color':'black'] @[undefined-undefined] style
+['background-size':'initial'] @[undefined-undefined] style
 
 rule
 body: [regular]
@@ -405,6 +409,7 @@ body.main2: [regular]
 ['background-origin':'initial' is-important] @[undefined-undefined] style
 ['background-clip':'initial' is-important] @[undefined-undefined] style
 ['background-color':'green' is-important] @[undefined-undefined] style
+['background-size':'initial' is-important] @[undefined-undefined] style
 
 === After property manipulations ===
 

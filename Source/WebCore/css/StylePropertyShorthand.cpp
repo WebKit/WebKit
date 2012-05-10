@@ -25,7 +25,6 @@
 
 namespace WebCore {
 
-// FIXME: Add CSSPropertyBackgroundSize to the shorthand.
 const StylePropertyShorthand& backgroundShorthand()
 {
     static const CSSPropertyID backgroundProperties[] = {
@@ -34,10 +33,11 @@ const StylePropertyShorthand& backgroundShorthand()
         CSSPropertyBackgroundRepeatX,
         CSSPropertyBackgroundRepeatY,
         CSSPropertyBackgroundAttachment,
+        CSSPropertyBackgroundClip,
+        CSSPropertyBackgroundOrigin,
         CSSPropertyBackgroundPositionX,
         CSSPropertyBackgroundPositionY,
-        CSSPropertyBackgroundClip,
-        CSSPropertyBackgroundOrigin
+        CSSPropertyBackgroundSize
     };
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, backgroundShorthand, (backgroundProperties, WTF_ARRAY_LENGTH(backgroundProperties)));
     return backgroundShorthand;

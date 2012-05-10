@@ -2290,11 +2290,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyBackground: {
         // Position must come before color in this array because a plain old "0" is a legal color
         // in quirks mode but it's usually the X coordinate of a position.
-        // FIXME: Add CSSPropertyBackgroundSize to the shorthand.
         const CSSPropertyID properties[] = { CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat,
                                    CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition, CSSPropertyBackgroundOrigin,
-                                   CSSPropertyBackgroundClip, CSSPropertyBackgroundColor };
-        return parseFillShorthand(propId, properties, 7, important);
+                                   CSSPropertyBackgroundClip, CSSPropertyBackgroundColor, CSSPropertyBackgroundSize };
+        return parseFillShorthand(propId, properties, WTF_ARRAY_LENGTH(properties), important);
     }
     case CSSPropertyWebkitMask: {
         const CSSPropertyID properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat,
@@ -2584,6 +2583,7 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
     RefPtr<CSSValue> repeatYValue;
     bool foundClip = false;
     int i;
+    bool foundBackgroundPositionCSSProperty = false;
 
     while (m_valueList->current()) {
         CSSParserValue* val = m_valueList->current();
@@ -2613,8 +2613,21 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
                 break;
         }
 
+        bool backgroundSizeCSSPropertyExpected = false;
+        if ((val->unit == CSSParserValue::Operator && val->iValue == '/') && foundBackgroundPositionCSSProperty) {
+            backgroundSizeCSSPropertyExpected = true;
+            m_valueList->next();
+        }
+
+        foundBackgroundPositionCSSProperty = false;
         bool found = false;
         for (i = 0; !found && i < numProperties; ++i) {
+
+            if (backgroundSizeCSSPropertyExpected && properties[i] != CSSPropertyBackgroundSize)
+                continue;
+            if (!backgroundSizeCSSPropertyExpected && properties[i] == CSSPropertyBackgroundSize)
+                continue;
+
             if (!parsedProperty[i]) {
                 RefPtr<CSSValue> val1;
                 RefPtr<CSSValue> val2;
@@ -2639,6 +2652,8 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
                         addFillValue(clipValue, val1.release());
                         foundClip = true;
                     }
+                    if (properties[i] == CSSPropertyBackgroundPosition)
+                        foundBackgroundPositionCSSProperty =  true;
                 }
             }
         }

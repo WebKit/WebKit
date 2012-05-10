@@ -309,6 +309,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
         bool useRepeatXShorthand = false;
         bool useRepeatYShorthand = false;
         bool useSingleWordShorthand = false;
+        bool foundBackgroundPositionYCSSProperty = false;
         for (unsigned j = 0; j < size; j++) {
             RefPtr<CSSValue> value;
             if (values[j]) {
@@ -360,6 +361,11 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
             if (value && !value->isImplicitInitialValue()) {
                 if (!layerRes.isNull())
                     layerRes += " ";
+                if (foundBackgroundPositionYCSSProperty && shorthand.properties()[j] == CSSPropertyBackgroundSize) 
+                    layerRes += "/ ";
+                if (!foundBackgroundPositionYCSSProperty && shorthand.properties()[j] == CSSPropertyBackgroundSize) 
+                    continue;
+
                 if (useRepeatXShorthand) {
                     useRepeatXShorthand = false;
                     layerRes += getValueName(CSSValueRepeatX);
@@ -371,6 +377,9 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
                     layerRes += value->cssText();
                 } else
                     layerRes += value->cssText();
+
+                if (shorthand.properties()[j] == CSSPropertyBackgroundPositionY)
+                    foundBackgroundPositionYCSSProperty = true;
             }
         }
 

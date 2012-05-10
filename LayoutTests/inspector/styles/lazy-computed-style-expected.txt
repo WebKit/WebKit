@@ -19,6 +19,7 @@ background: gray;
     background-origin: initial;
     background-clip: initial;
     background-color: gray;
+    background-size: initial;
 
 [expanded] 
 #inspected  { (lazy-computed-style.html:10)
@@ -49,6 +50,8 @@ background-image: none;
     #inspected - initial lazy-computed-style.html:15
 background-origin: padding-box;
     #inspected - initial lazy-computed-style.html:15
+background-size: auto;
+    #inspected - initial lazy-computed-style.html:15
 display: block;
     div - block user agent stylesheet
 font-family: Courier;
@@ -71,6 +74,7 @@ background: gray;
     background-origin: initial;
     background-clip: initial;
     background-color: gray;
+    background-size: initial;
 
 [expanded] 
 #inspected  { (lazy-computed-style.html:10)

@@ -2343,12 +2343,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitFilter:
             return valueForFilter(style.get());
 #endif
-        case CSSPropertyBackground: {
-            const CSSPropertyID properties[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage,
-                                        CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment,
-                                        CSSPropertyBackgroundPosition };
-            return getCSSPropertyValuesForShorthandProperties(StylePropertyShorthand(properties, WTF_ARRAY_LENGTH(properties)));
-        }
+        case CSSPropertyBackground:
+            return getBackgroundShorthandValue();
         case CSSPropertyBorder: {
             RefPtr<CSSValue> value = getPropertyCSSValue(CSSPropertyBorderTop, DoNotUpdateLayout);
             const CSSPropertyID properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom,
@@ -2693,6 +2689,19 @@ String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID prope
 void CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool, ExceptionCode& ec)
 {
     ec = NO_MODIFICATION_ALLOWED_ERR;
+}
+
+PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getBackgroundShorthandValue() const
+{
+    // CSSPropertyBackgroundPosition should be at the end of the array so that CSSPropertyBackgroundSize can be appended followed by '/'.
+    static const CSSPropertyID properties[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage,
+                                                 CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment,
+                                                 CSSPropertyBackgroundPosition };
+
+    RefPtr<CSSValueList> list = CSSValueList::createSlashSeparated();
+    list->append(getCSSPropertyValuesForShorthandProperties(StylePropertyShorthand(properties, WTF_ARRAY_LENGTH(properties))));
+    list->append(getPropertyCSSValue(CSSPropertyBackgroundSize, DoNotUpdateLayout));
+    return list.release();
 }
 
 } // namespace WebCore
