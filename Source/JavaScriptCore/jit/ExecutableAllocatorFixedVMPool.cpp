@@ -78,12 +78,26 @@ protected:
     
     virtual void notifyNeedPage(void* page)
     {
+#if OS(DARWIN)
+        UNUSED_PARAM(page);
+#else
         m_reservation.commit(page, pageSize());
+#endif
     }
     
     virtual void notifyPageIsFree(void* page)
     {
+#if OS(DARWIN)
+        for (;;) {
+            int result = madvise(page, pageSize(), MADV_FREE);
+            if (!result)
+                return;
+            ASSERT(result == -1);
+            ASSERT(errno == EAGAIN);
+        }
+#else
         m_reservation.decommit(page, pageSize());
+#endif
     }
 
 private:

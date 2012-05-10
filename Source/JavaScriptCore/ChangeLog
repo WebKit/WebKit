@@ -1,5 +1,20 @@
 2012-05-09  Filip Pizlo  <fpizlo@apple.com>
 
+        JIT memory allocator is not returning memory to the OS on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=86047
+        <rdar://problem/11414948>
+
+        Reviewed by Geoff Garen.
+        
+        Work around the problem by using a different madvise() flag, but only for the JIT memory
+        allocator. Also put in ASSERTs that the call is actually working.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::notifyNeedPage):
+        (JSC::FixedVMPoolExecutableAllocator::notifyPageIsFree):
+
+2012-05-09  Filip Pizlo  <fpizlo@apple.com>
+
         It should be possible to get useful debug logging from the JIT memory allocator
         https://bugs.webkit.org/show_bug.cgi?id=86042
 
