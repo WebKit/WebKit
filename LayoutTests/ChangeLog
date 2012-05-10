@@ -1,3 +1,13 @@
+2012-05-10  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in FontCache::releaseFontData due to infinite float size.
+        https://bugs.webkit.org/show_bug.cgi?id=86110
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/large-font-size-crash-expected.txt: Added.
+        * fast/css/large-font-size-crash.html: Added.
+
 2012-05-10  Eric Seidel  <eric@webkit.org>
 
         Make IFRAME_SEAMLESS child documents inherit styles from their parent iframe element
