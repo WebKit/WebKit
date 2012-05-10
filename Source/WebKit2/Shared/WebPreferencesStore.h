@@ -115,6 +115,7 @@ namespace WebKit {
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
+    macro(DevicePixelRatio, devicePixelRatio, Double, double, 1.0) \
     macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
     \
 
@@ -131,7 +132,6 @@ namespace WebKit {
     macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \
     macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
     macro(LayoutFallbackWidth, layoutFallbackWidth, UInt32, uint32_t, 980) \
-    macro(DevicePixelRatio, devicePixelRatio, Double, double, 1.0) \
     macro(DeviceWidth, deviceWidth, UInt32, uint32_t, 480) \
     macro(DeviceHeight, deviceHeight, UInt32, uint32_t, 854) \
     macro(PDFDisplayMode, pdfDisplayMode, UInt32, uint32_t, 1) \

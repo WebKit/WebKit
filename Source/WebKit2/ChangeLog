@@ -1,3 +1,20 @@
+2012-05-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix sites with a viewport meta tag when devicePixelRatio isn't explicitely set on the WebView
+        https://bugs.webkit.org/show_bug.cgi?id=86002
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The preference was recently changed to a double ratio, but was still left under
+        FOR_EACH_WEBKIT_UINT32_PREFERENCE and was initialized to inf instead of 1.0.
+        This would cause the viewport constraints to apply a multi-millionaire device
+        pixel ratio and make the contents invisible.
+
+        This moves it with other double preferences under FOR_EACH_WEBKIT_DOUBLE_PREFERENCE.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+
 2012-05-10  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Implement fit-to-width behaviour
