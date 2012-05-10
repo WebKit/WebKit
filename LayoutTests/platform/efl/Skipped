@@ -1941,6 +1941,9 @@ userscripts/script-run-at-end.html
 # This test requires flac codec
 media/media-can-play-flac-audio.html
 
+# Requires ENABLE(MEDIA_CAPTURE)
+fast/forms/file/file-input-capture.html
+
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html
 

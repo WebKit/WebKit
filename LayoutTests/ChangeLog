@@ -1,3 +1,22 @@
+2012-05-09  Adam Barth  <abarth@webkit.org>
+
+        Implement HTML Media Capture
+        https://bugs.webkit.org/show_bug.cgi?id=85958
+
+        Reviewed by Eric Seidel.
+
+        * fast/forms/file/file-input-capture-expected.txt: Added.
+        * fast/forms/file/file-input-capture.html: Added.
+            - Test that the capture attribute works properly.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/Skipped:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+            - Skip the test on all platforms. The feature is enabled only on
+              Android, which isn't yet able to run LayoutTests upstream.
+
 2012-05-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Subresources loaded after a reload completes shouldn't be revalidated.

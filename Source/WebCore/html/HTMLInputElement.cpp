@@ -1837,6 +1837,29 @@ bool HTMLInputElement::isIndeterminate() const
     return m_inputType->supportsIndeterminateAppearance() && indeterminate();
 }
 
+#if ENABLE(MEDIA_CAPTURE)
+String HTMLInputElement::capture() const
+{
+    if (!isFileUpload())
+        return String();
+
+    String capture = fastGetAttribute(captureAttr).lower();
+    if (capture == "camera"
+        || capture == "camcorder"
+        || capture == "microphone"
+        || capture == "filesystem")
+        return capture;
+
+    return "filesystem";
+}
+
+void HTMLInputElement::setCapture(const String& value)
+{
+    setAttribute(captureAttr, value);
+}
+
+#endif
+
 bool HTMLInputElement::isInRequiredRadioButtonGroup() const
 {
     ASSERT(isRadioButton());

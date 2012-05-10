@@ -1,3 +1,16 @@
+2012-05-09  Adam Barth  <abarth@webkit.org>
+
+        Implement HTML Media Capture
+        https://bugs.webkit.org/show_bug.cgi?id=85958
+
+        Reviewed by Eric Seidel.
+
+        * features.gypi:
+        * public/WebFileChooserParams.h:
+        (WebFileChooserParams):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runOpenPanel):
+
 2012-05-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't draw when canDraw() is false

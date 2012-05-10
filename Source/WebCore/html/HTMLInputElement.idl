@@ -115,5 +115,7 @@ module html {
         readonly attribute URL absoluteImageURL;
 #endif
 
+        // See http://www.w3.org/TR/html-media-capture/
+        attribute [Conditional=MEDIA_CAPTURE] DOMString capture;
     };
 }

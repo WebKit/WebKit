@@ -58,6 +58,7 @@ bgcolor
 bgproperties
 border
 bordercolor
+capture
 cellpadding
 cellspacing
 char

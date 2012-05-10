@@ -188,6 +188,9 @@ void FileInputType::handleDOMActivateEvent(Event* event)
 #endif
         settings.acceptMIMETypes = input->acceptMIMETypes();
         settings.selectedFiles = m_fileList->paths();
+#if ENABLE(MEDIA_CAPTURE)
+        settings.capture = input->capture();
+#endif
         chrome->runOpenPanel(input->document()->frame(), newFileChooser(settings));
     }
     event->setDefaultHandled();

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description("Tests the capture attribute of &lt;input type='file'&gt;");
+
+var input = document.createElement("input");
+
+shouldBeTrue("'capture' in input");
+shouldBe("input.capture", "''");
+
+input.setAttribute("type", "file");
+
+shouldBe("input.capture", "'filesystem'");
+
+input.setAttribute("capture", "CaMerA");
+shouldBe("input.capture", "'camera'");
+
+input.setAttribute("capture", "camcorder");
+shouldBe("input.capture", "'camcorder'");
+
+input.setAttribute("capture", "MiCroPhonE");
+shouldBe("input.capture", "'microphone'");
+
+input.setAttribute("capture", "xyzzy");
+shouldBe("input.capture", "'filesystem'");
+
+input.capture = "CamCorder";
+shouldBe("input.capture", "'camcorder'");
+shouldBe("input.getAttribute('capture')", "'CamCorder'");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>

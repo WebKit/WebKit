@@ -62,6 +62,14 @@ struct WebFileChooserParams {
     //  - replacing with other files
     // before opening a file chooser dialog.
     WebVector<WebString> selectedFiles;
+    // See http://www.w3.org/TR/html-media-capture/ for the semantics of the
+    // capture attribute. This string will either be empty (meaning the feature
+    // is disabled) or one of the following values:
+    //  - filesystem (default)
+    //  - camera
+    //  - camcorder
+    //  - microphone
+    WebString capture;
 
     WebFileChooserParams()
         : multiSelect(false)

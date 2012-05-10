@@ -815,6 +815,9 @@ fast/sub-pixel/size-of-box-with-zoom.html
 # https://bugs.webkit.org/show_bug.cgi?id=84357
 media/audio-repaint.html
 
+# Requires ENABLE(MEDIA_CAPTURE)
+fast/forms/file/file-input-capture.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=85522
 http/tests/security/sandboxed-iframe-modify-self.html
 

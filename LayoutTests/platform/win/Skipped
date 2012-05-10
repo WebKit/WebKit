@@ -1718,6 +1718,9 @@ fast/table/cell-pref-width-invalidation.html
 # The inner <input> should now grow to take the full cell's height.
 fast/table/colspanMinWidth-vertical.html
 
+# Requires ENABLE(MEDIA_CAPTURE)
+fast/forms/file/file-input-capture.html
+
 # This should only be a layer change.
 # http://webkit.org/b/82129
 fast/box-shadow/shadow-buffer-partial.html
