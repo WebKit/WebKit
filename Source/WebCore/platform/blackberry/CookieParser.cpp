@@ -109,16 +109,21 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
     unsigned tokenEnd = start; // Token end contains the position of the '=' or the end of a token
     unsigned pairEnd = start; // Pair end contains always the position of the ';'
 
-    // find the *first* ';' and the '=' (if they exist)
-    bool quoteFound = false;
+    // Find the first ';' which is not double-quoted and the '=' (if they exist).
     bool foundEqual = false;
-    while (pairEnd < end && (cookie[pairEnd] != ';' || quoteFound)) {
-        if (tokenEnd == start && cookie[pairEnd] == '=') {
-            tokenEnd = pairEnd;
-            foundEqual = true;
+    while (pairEnd < end && cookie[pairEnd] != ';') {
+        if (cookie[pairEnd] == '=') {
+            if (tokenEnd == start) {
+                tokenEnd = pairEnd;
+                foundEqual = true;
+            }
+        } else if (cookie[pairEnd] == '"') {
+            size_t secondQuotePosition = cookie.find('"', pairEnd + 1);
+            if (secondQuotePosition != notFound && secondQuotePosition <= end) {
+                pairEnd = secondQuotePosition + 1;
+                continue;
+            }
         }
-        if (cookie[pairEnd] == '"')
-            quoteFound = !quoteFound;
         pairEnd++;
     }
 
