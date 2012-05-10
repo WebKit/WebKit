@@ -189,7 +189,7 @@ void HTMLPlugInImageElement::updateWidgetIfNecessary()
     if (!needsWidgetUpdate() || useFallbackContent() || isImageType())
         return;
 
-    if (!renderEmbeddedObject() || renderEmbeddedObject()->pluginCrashedOrWasMissing())
+    if (!renderEmbeddedObject() || renderEmbeddedObject()->showsUnavailablePluginIndicator())
         return;
 
     updateWidget(CreateOnlyNonNetscapePlugins);

@@ -539,8 +539,11 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsig
     uiDelegate->mouseDidMoveOverElement(m_webView, element.get(), modifierFlags);
 }
 
-bool WebChromeClient::shouldMissingPluginMessageBeButton() const
+bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
+    if (pluginUnavailabilityReason != RenderEmbeddedObject::PluginMissing)
+        return false;
+
     COMPtr<IWebUIDelegate> uiDelegate;
     if (FAILED(m_webView->uiDelegate(&uiDelegate)))
         return false;
@@ -551,8 +554,10 @@ bool WebChromeClient::shouldMissingPluginMessageBeButton() const
     return uiDelegatePrivate3;
 }
 
-void WebChromeClient::missingPluginButtonClicked(Element* element) const
+void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
+    ASSERT_UNUSED(pluginUnavailabilityReason, pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing);
+
     COMPtr<IWebUIDelegate> uiDelegate;
     if (FAILED(m_webView->uiDelegate(&uiDelegate)))
         return;

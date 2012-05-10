@@ -1,3 +1,20 @@
+2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Rename the missing plug-in indicator to the unavailable plug-in indicator
+        https://bugs.webkit.org/show_bug.cgi?id=86136
+
+        Reviewed by Sam Weinig.
+
+        Update for WebCore changes.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginProcessCrashed):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
 2012-05-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebView/resources times out

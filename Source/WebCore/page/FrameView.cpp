@@ -2279,7 +2279,7 @@ void FrameView::updateWidget(RenderEmbeddedObject* object)
         return;
 
     // No need to update if it's already crashed or known to be missing.
-    if (object->pluginCrashedOrWasMissing())
+    if (object->showsUnavailablePluginIndicator())
         return;
 
     // FIXME: This could turn into a real virtual dispatch if we defined

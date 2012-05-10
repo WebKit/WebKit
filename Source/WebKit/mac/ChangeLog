@@ -1,3 +1,17 @@
+2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        Rename the missing plug-in indicator to the unavailable plug-in indicator
+        https://bugs.webkit.org/show_bug.cgi?id=86136
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView pluginHostDied]):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        (WebChromeClient::unavailablePluginButtonClicked):
+
 2012-05-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move suspendAnimations to use Internals interface.

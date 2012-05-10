@@ -276,7 +276,7 @@ bool HTMLObjectElement::hasValidClassId()
 // moved down into HTMLPluginImageElement.cpp
 void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
 {
-    ASSERT(!renderEmbeddedObject()->pluginCrashedOrWasMissing());
+    ASSERT(!renderEmbeddedObject()->showsUnavailablePluginIndicator());
     ASSERT(needsWidgetUpdate());
     setNeedsWidgetUpdate(false);
     // FIXME: This should ASSERT isFinishedParsingChildren() instead.

@@ -1109,7 +1109,7 @@ void PluginView::pluginProcessCrashed()
         return;
         
     RenderEmbeddedObject* renderer = toRenderEmbeddedObject(m_pluginElement->renderer());
-    renderer->setShowsCrashedPluginIndicator();
+    renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
     
     Widget::invalidate();
 }
