@@ -135,8 +135,16 @@ TEST(WebKit2, PageLoadBasic)
     policyClient.decidePolicyForResponse = decidePolicyForResponse;
     WKPageSetPagePolicyClient(webView.page(), &policyClient);
 
+    // Before loading anything, the active url should be null
+    EXPECT_NULL(WKPageCopyActiveURL(webView.page()));
+
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
+
+    // But immediately after starting a load, the active url should reflect the request
+    WKRetainPtr<WKURLRef> activeUrl = adoptWK(WKPageCopyActiveURL(webView.page()));
+    ASSERT_NOT_NULL(activeUrl.get());
+    EXPECT_TRUE(WKURLIsEqual(activeUrl.get(), url.get()));
 
     Util::run(&test1Done);
 }

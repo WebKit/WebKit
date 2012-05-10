@@ -1,3 +1,26 @@
+2012-05-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        WebPageProxy::activeURL() should return the pending API request, even when there's no main frame
+        https://bugs.webkit.org/show_bug.cgi?id=85806
+
+        The m_pendingAPIRequestURL member is used (presumably) to mask over the async
+        nature of WebKit2, so that starting a load of a URL will reflect that URL
+        immedeatly from activeURL, even if the request has not been passed over to
+        the web process yet and reflected there.
+
+        This works well, except in the case of the initial request, where the main
+        frame creation happens on the web process side and is notified back to the
+        UI process. Until we've recived the notification we don't know about the main
+        frame, and this race condition will potentially give us an empty url instead
+        of the pending request.
+
+        To solve this we always return the pending API request if it's set, even
+        when there's no mainframe yet (that we known about).
+
+        Reviewed by Simon Hausmann.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+
 2012-05-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] Clear added user style sheets before a new testcase execution.
