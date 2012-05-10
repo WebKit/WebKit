@@ -252,8 +252,6 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
     JSTestEventTarget* castedThis = jsCast<JSTestEventTarget*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestEventTarget::s_info);
     TestEventTarget* impl = static_cast<TestEventTarget*>(castedThis->impl());
-    if (exec->argumentCount() < 2)
-        return throwVMError(exec, createNotEnoughArgumentsError(exec));
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
@@ -269,8 +267,6 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
     JSTestEventTarget* castedThis = jsCast<JSTestEventTarget*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestEventTarget::s_info);
     TestEventTarget* impl = static_cast<TestEventTarget*>(castedThis->impl());
-    if (exec->argumentCount() < 2)
-        return throwVMError(exec, createNotEnoughArgumentsError(exec));
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());

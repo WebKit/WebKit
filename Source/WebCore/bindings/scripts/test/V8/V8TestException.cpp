@@ -112,7 +112,7 @@ v8::Handle<v8::Object> V8TestException::wrapSlow(PassRefPtr<TestException> impl,
 
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapperHandle);
+    V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapperHandle, isolate);
     return wrapper;
 }
 
