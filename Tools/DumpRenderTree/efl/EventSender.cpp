@@ -236,7 +236,8 @@ static EvasKeyModifier modifiersFromJSValue(JSContextRef context, const JSValueR
         return EvasKeyModifierNone;
 
     unsigned modifier = 0;
-    int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, JSStringCreateWithUTF8CString("length"), 0), 0);
+    JSRetainPtr<JSStringRef> lengthProperty(Adopt, JSStringCreateWithUTF8CString("length"));
+    int modifiersCount = JSValueToNumber(context, JSObjectGetProperty(context, modifiersArray, lengthProperty.get(), 0), 0);
     for (int i = 0; i < modifiersCount; ++i)
         modifier |= static_cast<unsigned>(modifierFromJSValue(context, JSObjectGetPropertyAtIndex(context, modifiersArray, i, 0)));
     return static_cast<EvasKeyModifier>(modifier);

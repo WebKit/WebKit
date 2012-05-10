@@ -367,7 +367,7 @@ void DumpRenderTreeChrome::onWindowObjectCleared(void* userData, Evas_Object*, v
     gcController->makeWindowObject(objectClearedInfo->context, objectClearedInfo->windowObject, &exception);
     ASSERT(!exception);
 
-    JSRetainPtr<JSStringRef> controllerName(JSStringCreateWithUTF8CString("eventSender"));
+    JSRetainPtr<JSStringRef> controllerName(Adopt, JSStringCreateWithUTF8CString("eventSender"));
     JSObjectSetProperty(objectClearedInfo->context, objectClearedInfo->windowObject,
                         controllerName.get(),
                         makeEventSender(objectClearedInfo->context, !DumpRenderTreeSupportEfl::frameParent(objectClearedInfo->frame)),

@@ -1,3 +1,18 @@
+2012-05-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Memory leaks found in EFL DRT
+        https://bugs.webkit.org/show_bug.cgi?id=85889
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fix two memory leaks in EFL's DRT by using JSRetainPtr for JSString
+        created with JSStringCreateWithUTF8CString.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onWindowObjectCleared):
+        * DumpRenderTree/efl/EventSender.cpp:
+        (modifiersFromJSValue):
+
 2012-05-10  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] LayoutTestController needs implementation of setTabKeyCyclesThroughElements
