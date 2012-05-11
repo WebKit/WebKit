@@ -607,6 +607,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         m_transformLayer = LayerChromium::create();
         m_transformLayer->setPreserves3D(true);
         m_transformLayer->setLayerAnimationDelegate(this);
+        m_transformLayer->setLayerAnimationController(m_layer->releaseLayerAnimationController());
 
         // Copy the position from this layer.
         updateLayerPosition();
@@ -637,6 +638,9 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         m_layer->removeFromParent();
         if (m_transformLayer->parent())
             m_transformLayer->parent()->replaceChild(m_transformLayer.get(), m_layer.get());
+
+        m_layer->setLayerAnimationDelegate(this);
+        m_layer->setLayerAnimationController(m_transformLayer->releaseLayerAnimationController());
 
         // Release the transform layer.
         m_transformLayer->setLayerAnimationDelegate(0);

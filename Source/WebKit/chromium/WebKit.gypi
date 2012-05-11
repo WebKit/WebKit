@@ -105,6 +105,7 @@
             'tests/FrameLoaderClientImplTest.cpp',
             'tests/FrameTestHelpers.cpp',
             'tests/FrameTestHelpers.h',
+            'tests/GraphicsLayerChromiumTest.cpp',
             'tests/IDBBindingUtilitiesTest.cpp',
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',

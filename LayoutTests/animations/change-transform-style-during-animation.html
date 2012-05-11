@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #container {
+      -webkit-transform: translateZ(0px);
+      -webkit-perspective: 400;
+    }
+
+    #revealed {
+      position: absolute;
+      left: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: green;
+    }
+
+    #animated {
+      position: absolute;
+      left: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: red;
+      -webkit-transform: translateZ(10px);
+      -webkit-transform-style: preserve-3d;
+      -webkit-animation-duration: 100ms;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-iteration-count: 1;
+    }
+
+    @-webkit-keyframes anim {
+      from { -webkit-transform: translateZ(0px) translateX(0px); }
+      to { -webkit-transform: translateZ(200px) translateX(-200px); }
+    }
+   </style>
+
+   <script src="resources/animation-test-helpers.js"></script>
+   <script>
+     if (window.layoutTestController) {
+       layoutTestController.dumpAsText();
+       layoutTestController.waitUntilDone();
+     }
+
+     function animationDone()
+     {
+       var animated = document.getElementById('animated');
+       var result;
+       var expected = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -200, 0, 200, 1];
+       var computed = getPropertyValue("webkitTransform", "animated");
+       if (comparePropertyValue("webkitTransform", computed, expected, 0.002)) {
+         result = "PASS - Computed final position is correct.";
+       } else {
+         result = "FAIL - Computed final position is incorrect. Expected " + expected + ", got " + computed;
+       }
+       document.getElementById('result').innerHTML = result;
+       layoutTestController.notifyDone();
+     }
+
+     function animationStarted()
+     {
+       var animated = document.getElementById('animated');
+       animated.style.webkitTransformStyle = 'flat';
+     }
+
+     function startTest()
+     {
+       var animated = document.getElementById('animated');
+       animated.style.webkitAnimationName = "anim";
+       animated.addEventListener('webkitAnimationEnd', animationDone);
+       waitForAnimationToStart(animated, animationStarted);
+     }
+   </script>
+</head>
+<body onload="startTest()">
+  <!-- Test for DRT pauseAnimationAtTimeOnElementWithId() API on animations with multiple keyframes -->
+  <div id="container">
+    <div id="revealed"></div>
+    <div id="animated"></div>
+  </div>
+  <div id="result"></div>
+</body>
+</html>

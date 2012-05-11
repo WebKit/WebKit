@@ -632,7 +632,18 @@ void LayerChromium::resumeAnimations(double monotonicTime)
 void LayerChromium::setLayerAnimationController(PassOwnPtr<CCLayerAnimationController> layerAnimationController)
 {
     m_layerAnimationController = layerAnimationController;
+    if (m_layerAnimationController) {
+        m_layerAnimationController->setClient(this);
+        m_layerAnimationController->setForceSync();
+    }
     setNeedsCommit();
+}
+
+PassOwnPtr<CCLayerAnimationController> LayerChromium::releaseLayerAnimationController()
+{
+    OwnPtr<CCLayerAnimationController> toReturn = m_layerAnimationController.release();
+    m_layerAnimationController = CCLayerAnimationController::create(this);
+    return toReturn.release();
 }
 
 bool LayerChromium::hasActiveAnimation() const
@@ -643,7 +654,8 @@ bool LayerChromium::hasActiveAnimation() const
 void LayerChromium::notifyAnimationStarted(const CCAnimationEvent& event, double wallClockTime)
 {
     m_layerAnimationController->notifyAnimationStarted(event);
-    m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
+    if (m_layerAnimationDelegate)
+        m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
 }
 
 void LayerChromium::notifyAnimationFinished(double wallClockTime)

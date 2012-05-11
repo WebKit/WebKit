@@ -1,3 +1,21 @@
+2012-05-11  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Ensure that animations continue to run when transform-style is changed
+        https://bugs.webkit.org/show_bug.cgi?id=83283
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/GraphicsLayerChromiumTest.cpp: Added.
+        (WebKitTests):
+        (MockGraphicsLayerClient):
+        (WebKitTests::MockGraphicsLayerClient::notifyAnimationStarted):
+        (WebKitTests::MockGraphicsLayerClient::notifySyncRequired):
+        (WebKitTests::MockGraphicsLayerClient::paintContents):
+        (WebKitTests::MockGraphicsLayerClient::showDebugBorders):
+        (WebKitTests::MockGraphicsLayerClient::showRepaintCounter):
+        (WebKitTests::TEST):
+
 2012-05-11  Min Qin  <qinmin@google.com>
 
         split MediaPlayer::enterFullscreen into 2 seperate functions

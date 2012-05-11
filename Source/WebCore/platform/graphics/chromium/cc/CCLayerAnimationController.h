@@ -90,6 +90,12 @@ public:
     // function updates the corresponding main thread animation's start time.
     void notifyAnimationStarted(const CCAnimationEvent&);
 
+    // If a sync is forced, then the next time animation updates are pushed to the impl
+    // thread, all animations will be transferred.
+    void setForceSync() { m_forceSync = true; }
+
+    void setClient(CCLayerAnimationControllerClient*);
+
 protected:
     explicit CCLayerAnimationController(CCLayerAnimationControllerClient*);
 
@@ -99,6 +105,7 @@ private:
     void pushNewAnimationsToImplThread(CCLayerAnimationController*) const;
     void removeAnimationsCompletedOnMainThread(CCLayerAnimationController*) const;
     void pushPropertiesToImplThread(CCLayerAnimationController*) const;
+    void replaceImplThreadAnimations(CCLayerAnimationController*) const;
 
     void startAnimationsWaitingForNextTick(double monotonicTime, CCAnimationEventsVector*);
     void startAnimationsWaitingForStartTime(double monotonicTime, CCAnimationEventsVector*);
@@ -107,6 +114,9 @@ private:
     void purgeFinishedAnimations(double monotonicTime, CCAnimationEventsVector*);
 
     void tickAnimations(double monotonicTime);
+
+    // If this is true, we force a sync to the impl thread.
+    bool m_forceSync;
 
     CCLayerAnimationControllerClient* m_client;
     Vector<OwnPtr<CCActiveAnimation> > m_activeAnimations;

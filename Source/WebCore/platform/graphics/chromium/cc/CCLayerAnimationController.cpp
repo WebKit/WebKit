@@ -124,7 +124,8 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
 } // namepace
 
 CCLayerAnimationController::CCLayerAnimationController(CCLayerAnimationControllerClient* client)
-    : m_client(client)
+    : m_forceSync(false)
+    , m_client(client)
 {
 }
 
@@ -203,9 +204,14 @@ void CCLayerAnimationController::resumeAnimations(double monotonicTime)
 // are kept in sync.
 void CCLayerAnimationController::pushAnimationUpdatesTo(CCLayerAnimationController* controllerImpl)
 {
-    pushNewAnimationsToImplThread(controllerImpl);
-    removeAnimationsCompletedOnMainThread(controllerImpl);
-    pushPropertiesToImplThread(controllerImpl);
+    if (m_forceSync) {
+        replaceImplThreadAnimations(controllerImpl);
+        m_forceSync = false;
+    } else {
+        pushNewAnimationsToImplThread(controllerImpl);
+        removeAnimationsCompletedOnMainThread(controllerImpl);
+        pushPropertiesToImplThread(controllerImpl);
+    }
 }
 
 void CCLayerAnimationController::animate(double monotonicTime, CCAnimationEventsVector* events)
@@ -253,13 +259,17 @@ bool CCLayerAnimationController::isAnimatingProperty(CCActiveAnimation::TargetPr
 void CCLayerAnimationController::notifyAnimationStarted(const CCAnimationEvent& event)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
-        if (m_activeAnimations[i]->group() == event.groupId && m_activeAnimations[i]->targetProperty() == event.targetProperty) {
-            ASSERT(m_activeAnimations[i]->needsSynchronizedStartTime());
+        if (m_activeAnimations[i]->group() == event.groupId && m_activeAnimations[i]->targetProperty() == event.targetProperty && m_activeAnimations[i]->needsSynchronizedStartTime()) {
             m_activeAnimations[i]->setNeedsSynchronizedStartTime(false);
             m_activeAnimations[i]->setStartTime(event.monotonicTime);
             return;
         }
     }
+}
+
+void CCLayerAnimationController::setClient(CCLayerAnimationControllerClient* client)
+{
+    m_client = client;
 }
 
 void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationController* controllerImpl) const
@@ -281,6 +291,7 @@ void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationC
         ASSERT(!toAdd->needsSynchronizedStartTime());
         // The new animation should be set to run as soon as possible.
         toAdd->setRunState(CCActiveAnimation::WaitingForTargetAvailability, 0);
+        toAdd->setStartTime(0);
         controllerImpl->add(toAdd.release());
     }
 }
@@ -435,6 +446,13 @@ void CCLayerAnimationController::purgeFinishedAnimations(double monotonicTime, C
         } else
             i++;
     }
+}
+
+void CCLayerAnimationController::replaceImplThreadAnimations(CCLayerAnimationController* controllerImpl) const
+{
+    controllerImpl->m_activeAnimations.clear();
+    for (size_t i = 0; i < m_activeAnimations.size(); ++i)
+        controllerImpl->add(m_activeAnimations[i]->cloneForImplThread());
 }
 
 void CCLayerAnimationController::tickAnimations(double monotonicTime)
