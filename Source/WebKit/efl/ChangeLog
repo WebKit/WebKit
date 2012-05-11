@@ -1,3 +1,17 @@
+2012-05-10  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Editor doesn't cancel composition as change of value
+        https://bugs.webkit.org/show_bug.cgi?id=85122
+
+        Reviewed by Martin Robinson.
+
+        IME composition should be cancelled when the value of input element is changed programmatically.
+        However, EFL port doesn't cancel as change of value.
+        Therefore, this patch will fix the bug.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::respondToChangedSelection):
+
 2012-05-10  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] ewk_view_paint_contents may trigger assertion failure
