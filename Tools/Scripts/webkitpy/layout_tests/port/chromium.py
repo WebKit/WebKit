@@ -344,7 +344,7 @@ class ChromiumPort(Port):
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         new_stderr = stderr
         if stderr and 'AddressSanitizer' in stderr:
-            asan_filter_path = self.path_from_chromium_base('third_party', 'asan', 'scripts', 'asan_symbolize.py')
+            asan_filter_path = self.path_from_chromium_base('tools', 'valgrind', 'asan', 'asan_symbolize.py')
             if self._filesystem.exists(asan_filter_path):
                 output = self._executive.run_command([asan_filter_path], input=stderr)
                 new_stderr = self._executive.run_command(['c++filt'], input=output)
