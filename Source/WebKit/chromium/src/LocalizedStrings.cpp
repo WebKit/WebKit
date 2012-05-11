@@ -215,7 +215,7 @@ String crashedPluginText()
     return String("Plug-in Failure");
 }
 
-String insecurePluginVersionText)(
+String insecurePluginVersionText()
 {
     notImplemented();
     return String();

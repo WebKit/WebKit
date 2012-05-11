@@ -1,3 +1,10 @@
+2012-05-10  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Fix chromium build break.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::insecurePluginVersionText):
+
 2012-05-10  Michael Nordman  <michaeln@google.com>
 
         [chromium] DomStorage events handling needs TLC (2)
