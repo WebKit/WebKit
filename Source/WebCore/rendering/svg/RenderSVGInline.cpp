@@ -124,7 +124,7 @@ void RenderSVGInline::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderInline::addChild(child, beforeChild);
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
-        textRenderer->subtreeChildAdded(child);
+        textRenderer->layoutAttributesChanged(child);
 }
 
 }

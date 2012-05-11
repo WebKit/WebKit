@@ -81,16 +81,28 @@ void RenderSVGInlineText::willBeDestroyed()
     }
 
     Vector<SVGTextLayoutAttributes*> affectedAttributes;
-    textRenderer->subtreeChildWillBeDestroyed(this, affectedAttributes);
+    textRenderer->layoutAttributesWillBeDestroyed(this, affectedAttributes);
+
     RenderText::willBeDestroyed();
-    textRenderer->subtreeChildWasDestroyed(this, affectedAttributes);
+    if (affectedAttributes.isEmpty())
+        return;
+
+    if (!documentBeingDestroyed())
+        textRenderer->rebuildLayoutAttributes(affectedAttributes);
 }
 
 void RenderSVGInlineText::setTextInternal(PassRefPtr<StringImpl> text)
 {
     RenderText::setTextInternal(text);
-    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
-        textRenderer->subtreeTextChanged(this);
+
+    // When the underlying text content changes, call both textDOMChanged() & layoutAttributesChanged()
+    // The former will clear the SVGTextPositioningElement cache, which depends on the textLength() of
+    // the RenderSVGInlineText objects, and thus needs to be rebuild. The latter will assure that the
+    // SVGTextLayoutAttributes associated with the RenderSVGInlineText will be updated.
+    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this)) {
+        textRenderer->invalidateTextPositioningElements();
+        textRenderer->layoutAttributesChanged(this);
+    }
 }
 
 void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -115,7 +127,7 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
 
     // The text metrics may be influenced by style changes.
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
-        textRenderer->subtreeStyleChanged(this);
+        textRenderer->layoutAttributesChanged(this);
 }
 
 InlineTextBox* RenderSVGInlineText::createTextBox()
