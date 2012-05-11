@@ -1384,7 +1384,7 @@ static bool needsMicrosoftMessengerDOMDocumentWorkaround()
     // Note that other users of WebKit API use nil requests or requests with nil URLs, so we
     // only implement this workaround when the request had a non-nil URL.
     if (!resourceRequest.url().isValid() && [request URL])
-        resourceRequest.setURL([NSURL fileURLWithPath:[[request URL] absoluteString]]);
+        resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:[[request URL] absoluteString]]]);
 
     coreFrame->loader()->load(resourceRequest, false);
 }
@@ -1427,7 +1427,7 @@ static NSURL *createUniqueWebDataURL()
     
     if (!MIMEType)
         MIMEType = @"text/html";
-    [self _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:[baseURL _webkit_URLFromURLOrPath] unreachableURL:nil];
+    [self _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:[baseURL _webkit_URLFromURLOrSchemelessFileURL] unreachableURL:nil];
 }
 
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL unreachableURL:(NSURL *)unreachableURL
@@ -1440,14 +1440,14 @@ static NSURL *createUniqueWebDataURL()
 {
     WebCoreThreadViolationCheckRoundTwo();
 
-    [self _loadHTMLString:string baseURL:[baseURL _webkit_URLFromURLOrPath] unreachableURL:nil];
+    [self _loadHTMLString:string baseURL:[baseURL _webkit_URLFromURLOrSchemelessFileURL] unreachableURL:nil];
 }
 
 - (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
     WebCoreThreadViolationCheckRoundTwo();
 
-    [self _loadHTMLString:string baseURL:[baseURL _webkit_URLFromURLOrPath] unreachableURL:[unreachableURL _webkit_URLFromURLOrPath]];
+    [self _loadHTMLString:string baseURL:[baseURL _webkit_URLFromURLOrSchemelessFileURL] unreachableURL:[unreachableURL _webkit_URLFromURLOrSchemelessFileURL]];
 }
 
 - (void)loadArchive:(WebArchive *)archive

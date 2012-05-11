@@ -1,3 +1,27 @@
+2012-05-11  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11361907> and https://bugs.webkit.org/show_bug.cgi?id=86265
+        REGRESSION(r104885): Images missing from printed YummySoup! recipes
+
+        We thought clients were passing paths as URLs.
+        It turns out it was more likely they were passing file: URLs with the file: scheme removed.
+        And that jives perfectly with the behavior change caused by r104885.
+        
+        Reviewed by Alexey Proskuryakov.
+
+        Rename _webkit_URLFromURLOrPath to _webkit_URLFromURLOrSchemelessFileURL, and change it
+        to create the new URL simply by appending "file:":
+        * Misc/WebNSURLExtras.h:
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _webkit_URLFromURLOrSchemelessFileURL]):
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame loadRequest:]): Create the fixed url simply by appending "file:" to the
+          existing URL string.
+        (-[WebFrame loadData:MIMEType:textEncodingName:baseURL:]):
+        (-[WebFrame loadHTMLString:baseURL:]):
+        (-[WebFrame loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+
 2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move resumeAnimations to use Internals interface
