@@ -428,8 +428,14 @@ void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
         m_frontend->setRecordingProfile(isProfiling);
 }
 
-void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
+void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
 {
+    bool ok;
+    unsigned id = heapSnapshotObjectId.toUInt(&ok);
+    if (!ok) {
+        *error = "Invalid heap snapshot object id";
+        return;
+    }
     ScriptObject heapObject = ScriptProfiler::objectByHeapObjectId(id);
     if (heapObject.hasNoValue()) {
         *error = "Object is not available";
@@ -443,6 +449,22 @@ void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, int id,
     result = injectedScript.wrapObject(heapObject, objectGroup ? *objectGroup : "");
     if (!result)
         *error = "Failed to wrap object";
+}
+
+void InspectorProfilerAgent::getHeapObjectId(ErrorString* errorString, const String& objectId, String* heapSnapshotObjectId)
+{
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    if (injectedScript.hasNoValue()) {
+        *errorString = "Inspected context has gone";
+        return;
+    }
+    ScriptValue value = injectedScript.findObjectById(objectId);
+    if (value.hasNoValue() || value.isUndefined()) {
+        *errorString = "Object with given id not found";
+        return;
+    }
+    unsigned id = ScriptProfiler::getHeapObjectId(value);
+    *heapSnapshotObjectId = String::number(id);
 }
 
 } // namespace WebCore

@@ -190,6 +190,18 @@ PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapSerializedObj
     return scriptValue.hasNoValue() ? 0 : wrapObject(scriptValue, groupName);
 }
 
+ScriptValue InjectedScript::findObjectById(const String& objectId) const
+{
+    ASSERT(!hasNoValue());
+    ScriptFunctionCall function(m_injectedScriptObject, "findObjectById");
+    function.appendArgument(objectId);
+
+    bool hadException = false;
+    ScriptValue resultValue = callFunctionWithEvalEnabled(function, hadException);
+    ASSERT(!hadException);
+    return resultValue;
+}
+
 void InjectedScript::inspectNode(Node* node)
 {
     ASSERT(!hasNoValue());

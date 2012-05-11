@@ -384,10 +384,15 @@ InjectedScript.prototype = {
         return this._idToWrappedObject[objectId.id];
     },
 
-    nodeForObjectId: function(objectId)
+    findObjectById: function(objectId)
     {
         var parsedObjectId = this._parseObjectId(objectId);
-        var object = this._objectForId(parsedObjectId);
+        return this._objectForId(parsedObjectId);
+    },
+
+    nodeForObjectId: function(objectId)
+    {
+        var object = this.findObjectById(objectId);
         if (!object || this._subtype(object) !== "node")
             return null;
         return object;

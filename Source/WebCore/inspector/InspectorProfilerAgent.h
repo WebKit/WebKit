@@ -96,7 +96,8 @@ public:
     virtual void takeHeapSnapshot(ErrorString*);
     void toggleRecordButton(bool isProfiling);
 
-    virtual void getObjectByHeapObjectId(ErrorString*, int id, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result);
+    virtual void getObjectByHeapObjectId(ErrorString*, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result);
+    virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId);
 
 protected:
     InspectorProfilerAgent(InstrumentingAgents*, InspectorConsoleAgent*, InspectorState*, InjectedScriptManager*);

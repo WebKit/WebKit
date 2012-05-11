@@ -2596,6 +2596,11 @@
                     { "name": "head", "type": "object", "optional": true },
                     { "name": "bottomUpHead", "type": "object", "optional": true }
                 ]
+            },
+            {
+                "id": "HeapSnapshotObjectId",
+                "type": "string",
+                "description": "Heap snashot object id."
             }
         ],
         "commands": [
@@ -2664,11 +2669,20 @@
             {
                 "name": "getObjectByHeapObjectId",
                 "parameters": [
-                    { "name": "objectId", "type": "integer" },
+                    { "name": "objectId", "$ref": "HeapSnapshotObjectId" },
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Evaluation result." }
+                ]
+            },
+            {
+                "name": "getHeapObjectId",
+                "parameters": [
+                    { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "Identifier of the object to get heap object id for." }
+                ],
+                "returns": [
+                    { "name": "heapSnapshotObjectId", "$ref": "HeapSnapshotObjectId", "description": "Id of the heap snapshot object corresponding to the passed remote object id." }
                 ]
             }
         ],
