@@ -63,6 +63,7 @@ public:
     bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*, SerializationErrorMode = Throwing);
+    PassRefPtr<SerializedScriptValue> serialize(ScriptState*, MessagePortArray*, ArrayBufferArray*, bool&);
     static ScriptValue deserialize(ScriptState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
 
 #if ENABLE(INSPECTOR)

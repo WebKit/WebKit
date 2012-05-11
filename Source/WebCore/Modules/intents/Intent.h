@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "MessagePort.h"
 #include "MessagePortChannel.h"
+#include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +44,6 @@
 
 namespace WebCore {
 
-class ScriptState;
 class SerializedScriptValue;
 
 typedef int ExceptionCode;

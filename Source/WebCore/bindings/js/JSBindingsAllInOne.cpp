@@ -28,6 +28,7 @@
 #include "CallbackFunction.cpp"
 #include "DOMObjectHashTableMap.cpp"
 #include "DOMWrapperWorld.cpp"
+#include "Dictionary.cpp"
 #include "GCController.cpp"
 #include "JSArrayBufferCustom.cpp"
 #include "JSAttrCustom.cpp"

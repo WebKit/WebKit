@@ -3,6 +3,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/filesystem"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/intents"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/websockets"
@@ -2504,6 +2505,20 @@ IF (ENABLE_WEB_AUDIO)
         platform/audio/SincResampler.cpp
         platform/audio/VectorMath.cpp
         platform/audio/ZeroPole.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_WEB_INTENTS)
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/intents/DOMWindowIntents.idl
+        Modules/intents/Intent.idl
+        Modules/intents/IntentResultCallback.idl
+        Modules/intents/NavigatorIntents.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+       Modules/intents/Intent.cpp
+       Modules/intents/IntentRequest.cpp
+       Modules/intents/NavigatorIntents.cpp
     )
 ENDIF ()
 

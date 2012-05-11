@@ -33,7 +33,6 @@
 
 #include "ExceptionCode.h"
 #include "MessagePort.h"
-#include "ScriptState.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {

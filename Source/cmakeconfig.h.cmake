@@ -70,6 +70,7 @@
 #cmakedefine01 ENABLE_VIEWPORT_REFLOW
 #cmakedefine01 ENABLE_WEBGL
 #cmakedefine01 ENABLE_WEB_AUDIO
+#cmakedefine01 ENABLE_WEB_INTENTS
 #cmakedefine01 ENABLE_WEB_SOCKETS
 #cmakedefine01 ENABLE_WEB_TIMING
 #cmakedefine01 ENABLE_WORKERS

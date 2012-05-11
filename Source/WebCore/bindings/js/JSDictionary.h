@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class Dictionary;
 class DOMWindow;
 class EventTarget;
 class Node;
@@ -59,6 +60,7 @@ public:
     bool get(const char* propertyName, Result&) const;
 
     JSC::ExecState* execState() const { return m_exec; }
+    JSC::JSObject* initializerObject() const { return m_initializerObject; }
     bool isValid() const { return m_exec && m_initializerObject; }
 
 private:
@@ -86,6 +88,7 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned short& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long long& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, double& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, Dictionary& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, String& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, ScriptValue& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<SerializedScriptValue>& result);

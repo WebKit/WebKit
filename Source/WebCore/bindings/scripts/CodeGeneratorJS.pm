@@ -262,6 +262,8 @@ sub AddIncludesForType
         $includesRef->{"JSDOMStringList.h"} = 1;
     } elsif ($type eq "unsigned long[]") {
         $includesRef->{"<wtf/Vector.h>"} = 1;
+    } elsif ($type eq "SerializedScriptValue") {
+        $includesRef->{"SerializedScriptValue.h"} = 1;
     } elsif ($isCallback) {
         $includesRef->{"JS${type}.h"} = 1;
     } elsif (IsTypedArrayType($type)) {
@@ -2604,11 +2606,11 @@ sub GenerateCallbackHeader
                 push(@headerContent, "    COMPILE_ASSERT(false)");
             }
 
-            push(@headerContent, "    virtual " . GetNativeType($function->signature->type) . " " . $function->signature->name . "(");
+            push(@headerContent, "    virtual " . GetNativeTypeForCallbacks($function->signature->type) . " " . $function->signature->name . "(");
 
             my @args = ();
             foreach my $param (@params) {
-                push(@args, GetNativeType($param->type) . " " . $param->name);
+                push(@args, GetNativeTypeForCallbacks($param->type) . " " . $param->name);
             }
             push(@headerContent, join(", ", @args));
 
@@ -2683,7 +2685,7 @@ sub GenerateCallbackImplementation
             }
 
             AddIncludesForTypeInImpl($function->signature->type);
-            push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(");
+            push(@implContent, "\n" . GetNativeTypeForCallbacks($function->signature->type) . " ${className}::" . $function->signature->name . "(");
 
             my @args = ();
             my @argsCheck = ();
@@ -2691,7 +2693,7 @@ sub GenerateCallbackImplementation
             foreach my $param (@params) {
                 my $paramName = $param->name;
                 AddIncludesForTypeInImpl($param->type, 1);
-                push(@args, GetNativeType($param->type) . " " . $paramName);
+                push(@args, GetNativeTypeForCallbacks($param->type) . " " . $paramName);
                 if ($thisType and $thisType eq $param->type) {
                     push(@argsCheck, <<END);
     ASSERT(${paramName});
@@ -2717,6 +2719,8 @@ END
                     push(@implContent, "    args.append(jsString(exec, ${paramName}));\n");
                 } elsif ($param->type eq "boolean") {
                     push(@implContent, "    args.append(jsBoolean(${paramName}));\n");
+                } elsif ($param->type eq "SerializedScriptValue") {
+                    push(@implContent, "    args.append($paramName ? $paramName->deserialize(exec, m_data->globalObject(), 0) : jsNull());\n");
                 } else {
                     push(@implContent, "    args.append(toJS(exec, m_data->globalObject(), ${paramName}));\n");
                 }
@@ -2830,6 +2834,14 @@ sub GetNativeType
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
+}
+
+sub GetNativeTypeForCallbacks
+{
+    my $type = shift;
+    return "SerializedScriptValue*" if $type eq "SerializedScriptValue";
+
+    return GetNativeType($type);
 }
 
 sub GetSVGPropertyTypes
