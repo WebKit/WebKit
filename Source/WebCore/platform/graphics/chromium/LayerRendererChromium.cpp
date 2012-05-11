@@ -143,6 +143,24 @@ bool needsLionIOSurfaceReadbackWorkaround()
 #endif
 }
 
+class UnthrottledTextureUploader : public TextureUploader {
+    WTF_MAKE_NONCOPYABLE(UnthrottledTextureUploader);
+public:
+    static PassOwnPtr<UnthrottledTextureUploader> create()
+    {
+        return adoptPtr(new UnthrottledTextureUploader());
+    }
+    virtual ~UnthrottledTextureUploader() { }
+
+    virtual bool isBusy() { return false; }
+    virtual void beginUploads() { }
+    virtual void endUploads() { }
+    virtual void uploadTexture(GraphicsContext3D* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
+
+protected:
+    UnthrottledTextureUploader() { }
+};
+
 } // anonymous namespace
 
 class LayerRendererSwapBuffersCompleteCallbackAdapter : public Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM {
@@ -194,9 +212,9 @@ private:
 };
 
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TextureUploader> uploader)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context, TextureUploaderOption textureUploaderSetting)
 {
-    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context, uploader)));
+    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context, textureUploaderSetting)));
     if (!layerRenderer->initialize())
         return nullptr;
 
@@ -205,17 +223,17 @@ PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChr
 
 LayerRendererChromium::LayerRendererChromium(LayerRendererChromiumClient* client,
                                              PassRefPtr<GraphicsContext3D> context,
-                                             PassOwnPtr<TextureUploader> uploader)
+                                             TextureUploaderOption textureUploaderSetting)
     : m_client(client)
     , m_currentRenderSurface(0)
     , m_currentManagedTexture(0)
     , m_offscreenFramebufferId(0)
-    , m_textureUploader(uploader)
     , m_context(context)
     , m_defaultRenderSurface(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
     , m_isViewportChanged(false)
     , m_isFramebufferDiscarded(false)
+    , m_textureUploaderSetting(textureUploaderSetting)
 {
 }
 
@@ -1382,6 +1400,10 @@ bool LayerRendererChromium::initializeSharedObjects()
                                                            TextureManager::reclaimLimitBytes(viewportSize()),
                                                            m_capabilities.maxTextureSize);
     m_textureCopier = AcceleratedTextureCopier::create(m_context.get());
+    if (m_textureUploaderSetting == ThrottledUploader)
+        m_textureUploader = ThrottledTextureUploader::create(m_context.get());
+    else
+        m_textureUploader = UnthrottledTextureUploader::create();
     m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     m_renderSurfaceTextureAllocator = TrackingTextureAllocator::create(m_context.get());
     if (m_capabilities.usingTextureUsageHint)

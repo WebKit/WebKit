@@ -122,7 +122,7 @@ public:
     void finishAllRendering();
     int frameNumber() const { return m_frameNumber; }
 
-    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TextureUploader>);
+    bool initializeLayerRenderer(PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
     bool isContextLost();
     LayerRendererChromium* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;
