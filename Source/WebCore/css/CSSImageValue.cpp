@@ -82,8 +82,8 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         m_accessedImage = true;
 
         ResourceRequest request(loader->document()->completeURL(url));
-        if (CachedImage* cachedImage = loader->requestImage(request))
-            m_image = StyleCachedImage::create(cachedImage);
+        if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request))
+            m_image = StyleCachedImage::create(cachedImage.get());
     }
 
     return (m_image && m_image->isCachedImage()) ? static_cast<StyleCachedImage*>(m_image.get()) : 0;

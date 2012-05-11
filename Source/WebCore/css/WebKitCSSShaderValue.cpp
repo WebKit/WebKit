@@ -59,8 +59,8 @@ StyleCachedShader* WebKitCSSShaderValue::cachedShader(CachedResourceLoader* load
         m_accessedShader = true;
 
         ResourceRequest request(loader->document()->completeURL(m_url));
-        if (CachedShader* cachedShader = loader->requestShader(request))
-            m_shader = StyleCachedShader::create(cachedShader);
+        if (CachedResourceHandle<CachedShader> cachedShader = loader->requestShader(request))
+            m_shader = StyleCachedShader::create(cachedShader.get());
     }
 
     return (m_shader && m_shader->isCachedShader()) ? static_cast<StyleCachedShader*>(m_shader.get()) : 0;

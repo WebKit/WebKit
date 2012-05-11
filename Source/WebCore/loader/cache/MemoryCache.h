@@ -129,7 +129,6 @@ public:
     void evictResources();
     
     void setPruneEnabled(bool enabled) { m_pruneEnabled = enabled; }
-    bool pruneEnabled() const { return m_pruneEnabled; }
     void prune();
     void pruneToPercentage(float targetPercentLive);
 

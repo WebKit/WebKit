@@ -106,8 +106,8 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
         // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
         ImageWithScale image = bestImageForScaleFactor();
         ResourceRequest request(loader->document()->completeURL(image.imageURL));
-        if (CachedImage* cachedImage = loader->requestImage(request)) {
-            m_imageSet = StyleCachedImageSet::create(cachedImage, image.scaleFactor, this);
+        if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request)) {
+            m_imageSet = StyleCachedImageSet::create(cachedImage.get(), image.scaleFactor, this);
             m_accessedBestFitImage = true;
         }
     }

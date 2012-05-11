@@ -1,3 +1,23 @@
+2012-05-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash in 3rd party WebKit apps that disable cache at a wrong time
+        https://bugs.webkit.org/show_bug.cgi?id=86027
+        <rdar://problem/10615880>
+
+        Reviewed by Antti Koivisto.
+
+        Added a test that's very similar to MemoryCachePruneWithinResourceLoadDelegate,
+        but for disabling the cache instead of triggering a prune.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/MemoryCacheDisableWithinResourceLoadDelegate.html: Added.
+        * TestWebKitAPI/Tests/mac/MemoryCacheDisableWithinResourceLoadDelegate.mm: Added.
+        (-[MemoryCacheDisableTestResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        (-[MemoryCacheDisableTestResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        (-[MemoryCacheDisableTestResourceLoadDelegate webView:resource:didFinishLoadingFromDataSource:]):
+        (-[MemoryCacheDisableTestResourceLoadDelegate webView:resource:didFailLoadingWithError:fromDataSource:]):
+        (TestWebKitAPI::TEST):
+
 2012-05-10  Anders Carlsson  <andersca@apple.com>
 
         WebKit2: Add a way to blacklist specific plug-ins/plug-in versions
