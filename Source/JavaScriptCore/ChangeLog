@@ -1,3 +1,17 @@
+2012-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Clarified JSGlobalData (JavaScript VM) lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=85142
+
+        Reviewed by Alexey Proskuryakov.
+
+        (Follow-up fix.)
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate): Restored some code I removed because I misread an #ifdef.
+        (We don't need to test BUILDING_ON_LEOPARD, but we still need the linked-on
+        test, because apps might have been linked on older OS's.)
+
 2012-05-11  Sam Weinig  <sam@webkit.org>
 
         Fix crash seen when running with libgmalloc

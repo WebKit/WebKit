@@ -38,6 +38,12 @@
 #include "UStringBuilder.h"
 #include <wtf/text/StringHash.h>
 
+#if OS(DARWIN)
+#include <mach-o/dyld.h>
+
+static const int32_t webkitFirstVersionWithConcurrentGlobalContexts = 0x2100500; // 528.5.0
+#endif
+
 using namespace JSC;
 
 // From the API's perspective, a context group remains alive iff
@@ -67,6 +73,16 @@ void JSContextGroupRelease(JSContextGroupRef group)
 JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
     initializeThreading();
+
+#if OS(DARWIN)
+    // If the application was linked before JSGlobalContextCreate was changed to use a unique JSGlobalData,
+    // we use a shared one for backwards compatibility.
+    if (NSVersionOfLinkTimeLibrary("JavaScriptCore") <= webkitFirstVersionWithConcurrentGlobalContexts) {
+        JSLock lock(LockForReal);
+        return JSGlobalContextCreateInGroup(toRef(&JSGlobalData::sharedInstance()), globalObjectClass);
+    }
+#endif // OS(DARWIN)
+
     return JSGlobalContextCreateInGroup(0, globalObjectClass);
 }
 
