@@ -1,3 +1,11 @@
+2012-05-11  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed expectation update.
+
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+
 2012-05-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening.
