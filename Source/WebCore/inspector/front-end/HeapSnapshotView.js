@@ -688,7 +688,10 @@ WebInspector.HeapSnapshotView.prototype = {
             this.filterSelectElement.appendChild(filterOption);
         }
 
+        if (this.profile._fromFile)
+            return;
         for (var i = this.filterSelectElement.length - 1, n = list.length; i < n; ++i) {
+            var profile = list[i];
             var filterOption = document.createElement("option");
             var title = list[i].title;
             if (!title.indexOf(UserInitiatedProfileName)) {
@@ -751,11 +754,13 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 
     /**
      * @override
+     * @param {string=} title
      * @return {WebInspector.ProfileHeader}
      */
-    createTemporaryProfile: function()
+    createTemporaryProfile: function(title)
     {
-        return new WebInspector.ProfileHeader(WebInspector.HeapSnapshotProfileType.TypeId, WebInspector.UIString("Snapshotting\u2026"));
+        title = title || WebInspector.UIString("Snapshotting\u2026");
+        return new WebInspector.HeapProfileHeader(title);
     },
 
     /**
@@ -765,7 +770,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
      */
     createProfile: function(profile)
     {
-        return new WebInspector.HeapProfileHeader(profile.typeId, profile.title, profile.uid, profile.maxJSObjectId || 0);
+        return new WebInspector.HeapProfileHeader(profile.title, profile.uid, profile.maxJSObjectId || 0);
     }
 }
 
@@ -774,16 +779,16 @@ WebInspector.HeapSnapshotProfileType.prototype.__proto__ = WebInspector.ProfileT
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {string} profileType
  * @param {string} title
- * @param {number} uid
- * @param {number} maxJSObjectId
+ * @param {number=} uid
+ * @param {number=} maxJSObjectId
  */
-WebInspector.HeapProfileHeader = function(profileType, title, uid, maxJSObjectId)
+WebInspector.HeapProfileHeader = function(title, uid, maxJSObjectId)
 {
-    WebInspector.ProfileHeader.call(this, profileType, title, uid);
+    WebInspector.ProfileHeader.call(this, WebInspector.HeapSnapshotProfileType.TypeId, title, uid);
     this.maxJSObjectId = maxJSObjectId;
     this._loaded = false;
+    this._fromFile = false;
     this._totalNumberOfChunks = 0;
 }
 
@@ -799,14 +804,8 @@ WebInspector.HeapProfileHeader.prototype = {
             return;
         }
 
-        if (!this._proxy) {
-            function setProfileWait(event) {
-                this.sidebarElement.wait = event.data;
-            }
-            var worker = new WebInspector.HeapSnapshotWorker();
-            worker.addEventListener("wait", setProfileWait, this);
-            this._proxy = worker.createObject("WebInspector.HeapSnapshotLoader");
-        }
+        if (!this._proxy)
+            this._setupWorker();
 
         if (this._proxy.startLoading(callback)) {
             this.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026");
@@ -817,6 +816,16 @@ WebInspector.HeapProfileHeader.prototype = {
             }
             ProfilerAgent.getProfile(this.typeId, this.uid, done.bind(this));
         }
+    },
+
+    _setupWorker: function()
+    {
+        function setProfileWait(event) {
+            this.sidebarElement.wait = event.data;
+        }
+        var worker = new WebInspector.HeapSnapshotWorker();
+        worker.addEventListener("wait", setProfileWait, this);
+        this._proxy = worker.createObject("WebInspector.HeapSnapshotLoader");
     },
 
     /**
@@ -832,7 +841,7 @@ WebInspector.HeapProfileHeader.prototype = {
             this._savedChunksCount = 0;
             WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._saveStatusUpdate, this);
         } else
-            this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 %d\%", Math.floor(this._savedChunksCount * 100 / this._totalNumberOfChunks));
+            this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 %d\%", (this._savedChunksCount * 100 / this._totalNumberOfChunks).toFixed(2));
     },
 
     /**
@@ -857,6 +866,7 @@ WebInspector.HeapProfileHeader.prototype = {
             this.sidebarElement.subtitle = Number.bytesToString(snapshotProxy.totalSize);
             this.sidebarElement.wait = false;
             var worker = /** @type {WebInspector.HeapSnapshotWorker} */ snapshotProxy.worker;
+            this.isTemporary = false;
             worker.startCheckingForLongRunningCalls();
         }
         if (this._proxy.finishLoading(parsed.bind(this)))
@@ -867,34 +877,107 @@ WebInspector.HeapProfileHeader.prototype = {
      * @override
      * @return {boolean}
      */
-    canSave: function()
+    canSaveToFile: function()
     {
-        return this._loaded && !this._savedChunksCount && WebInspector.fileManager.canAppend();
+        return !this._fromFile && this._loaded && !this._savedChunksCount && WebInspector.fileManager.canAppend();
     },
 
     /**
      * @override
      */
-    save: function()
+    saveToFile: function()
     {
         /**
          * @param {WebInspector.Event} event
          */
-        function startWritingSnapshot(event)
+        function startSavingSnapshot(event)
         {
             if (event.data !== this._fileName)
                 return;
             this.sidebarElement.wait = true;
             this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 %d\%", 0);
             this._savedChunksCount = 0;
-            WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.SavedURL, startWritingSnapshot, this);
+            WebInspector.fileManager.removeEventListener(WebInspector.FileManager.EventTypes.SavedURL, startSavingSnapshot, this);
             WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.AppendedToURL, this._saveStatusUpdate, this);
             ProfilerAgent.getProfile(this.typeId, this.uid);
         }
 
         this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".json";
-        WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.SavedURL, startWritingSnapshot, this);
+        WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.SavedURL, startSavingSnapshot, this);
         WebInspector.fileManager.save(this._fileName, "", true);
+    },
+
+    /**
+     * @return {boolean}
+     */
+    canLoadFromFile: function()
+    {
+        return false;
+    },
+
+    /**
+     * @override
+     * @param {File} file
+     */
+    loadFromFile: function(file)
+    {
+        function onError(e)
+        {
+            switch(e.target.error.code) {
+            case e.target.error.NOT_FOUND_ERR:
+                this.sidebarElement.subtitle = WebInspector.UIString("'%s' not found.", file.name);
+            break;
+            case e.target.error.NOT_READABLE_ERR:
+                this.sidebarElement.subtitle = WebInspector.UIString("'%s' is not readable", file.name);
+            break;
+            case e.target.error.ABORT_ERR:
+                break;
+            default:
+                this.sidebarElement.subtitle = WebInspector.UIString("'%s' error %d", file.name, e.target.error.code);
+            }
+        }
+
+        this._fromFile = true;
+        this.title = file.name;
+        this.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026");
+        this.sidebarElement.wait = true;
+        this._setupWorker();
+        this._proxy.startLoading(function() { });
+
+        function loadNextChunk(file, reader, loadedSize)
+        {
+            var chunkSize = 10000000;
+            var size = file.size < loadedSize + chunkSize ? file.size - loadedSize : chunkSize;
+            var nextPart = file.webkitSlice(loadedSize, loadedSize + size);
+            reader.readAsText(nextPart);
+        }
+
+        /**
+         * @param {Event} event
+         */
+        function onLoad(event)
+        {
+            if (event.target.readyState !== FileReader.DONE)
+                return;
+
+            this._loadedSize += event.target.result.length;
+            this._proxy.pushJSONChunk(event.target.result);
+            this.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026 %d%", (this._loadedSize * 100 / file.size).toFixed(2));
+
+            if (this._loadedSize === file.size) {
+                this._loaded = true;
+                this.finishHeapSnapshot();
+                return;
+            }
+
+            loadNextChunk(file, reader, this._loadedSize);
+        }
+
+        var reader = new FileReader();
+        reader.onload = onLoad.bind(this);
+        reader.onerror = onError;
+        this._loadedSize = 0;
+        loadNextChunk(file, reader, this._loadedSize);
     }
 }
 

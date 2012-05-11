@@ -91,9 +91,10 @@ WebInspector.ProfileType.prototype = {
 
     // Must be implemented by subclasses.
     /**
+     * @param {string=} title
      * @return {WebInspector.ProfileHeader}
      */
-    createTemporaryProfile: function()
+    createTemporaryProfile: function(title)
     {
         throw new Error("Needs implemented.");
     },
@@ -145,9 +146,19 @@ WebInspector.ProfileHeader.prototype = {
     /**
      * @return {boolean}
      */
-    canSave: function() { return false; },
+    canSaveToFile: function() { return false; },
 
-    save: function() { throw new Error("Needs implemented"); }
+    saveToFile: function() { throw new Error("Needs implemented"); },
+
+    /**
+     * @return {boolean}
+     */
+    canLoadFromFile: function() { return false; },
+
+    /**
+     * @param {File} file
+     */
+    loadFromFile: function(file) { throw new Error("Needs implemented"); }
 }
 
 /**
@@ -210,6 +221,8 @@ WebInspector.ProfilesPanel = function()
 
     if (!Capabilities.profilerCausesRecompilation || WebInspector.settings.profilerEnabled.get())
         ProfilerAgent.enable(this._profilerWasEnabled.bind(this));
+
+    this._createFileSelectorElement();
 }
 
 WebInspector.ProfilesPanel.EventTypes = {
@@ -218,6 +231,41 @@ WebInspector.ProfilesPanel.EventTypes = {
 }
 
 WebInspector.ProfilesPanel.prototype = {
+    _createFileSelectorElement: function()
+    {
+        if (this._fileSelectorElement)
+            this.element.removeChild(this._fileSelectorElement);
+
+        var fileSelectorElement = document.createElement("input");
+        fileSelectorElement.type = "file";
+        fileSelectorElement.style.zIndex = -1;
+        fileSelectorElement.style.position = "absolute";
+        fileSelectorElement.onchange = this._loadFromFile.bind(this);
+        this.element.appendChild(fileSelectorElement);
+        this._fileSelectorElement = fileSelectorElement;
+    },
+
+    _loadFromFile: function(event)
+    {
+        var file = this._fileSelectorElement.files[0];
+        if (!file.name.endsWith(".heapsnapshot")) {
+            WebInspector.log(WebInspector.UIString("Only heap snapshots from files with extension '.heapsnapshot' can be loaded."));
+            return;
+        }
+
+        if (!!this.findTemporaryProfile(WebInspector.HeapSnapshotProfileType.TypeId)) {
+            WebInspector.log(WebInspector.UIString("Can't load profile when other profile is recording."));
+            return;
+        }
+
+        var profileType = this.getProfileType(WebInspector.HeapSnapshotProfileType.TypeId);
+        var temporaryProfile = profileType.createTemporaryProfile(UserInitiatedProfileName + "." + file.name);
+        this.addProfileHeader(temporaryProfile);
+
+        temporaryProfile.loadFromFile(file);
+        this._createFileSelectorElement();
+    },
+
     get toolbarItemLabel()
     {
         return WebInspector.UIString("Profiles");
@@ -1109,10 +1157,10 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     handleContextMenuEvent: function(event)
     {
         var profile = this.profile;
-        if (!profile.canSave())
-            return;
         var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.UIString("Save profile"), profile.save.bind(profile));
+        if (profile.canSaveToFile())
+            contextMenu.appendItem(WebInspector.UIString("Save profile\u2026"), profile.saveToFile.bind(profile));
+        contextMenu.appendItem(WebInspector.UIString("Load profile\u2026"), WebInspector.panels.profiles._fileSelectorElement.click.bind(WebInspector.panels.profiles._fileSelectorElement));
         contextMenu.show(event);
     }
 }
