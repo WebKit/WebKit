@@ -31,7 +31,7 @@
 #include "config.h"
 #include "RetainedDOMInfo.h"
 
-#include "Node.h"
+#include "ContainerNode.h"
 
 namespace WebCore {
 
