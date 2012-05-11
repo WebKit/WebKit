@@ -1,0 +1,94 @@
+<html>
+<head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <style>
+        #scrolloffsetcontainer {
+            position: absolute;
+            top: 500px;
+            height: 1000px;
+        }
+        body {
+            margin: 0px;
+        }
+        #div0 { margin-left: 20px; height: 100px; box-sizing: border-box; }
+        #div1 { margin-left: 10px; height: 100px; box-sizing: border-box; }
+    </style>
+</head>
+<body onload="runTests()">
+
+<div id=scrolloffsetcontainer>
+    <div id=div0>
+        <a id=a0 href="#div0">Link 0</a>
+    </div>
+    <div id=div1>
+        <a id=a1 href="#div1">Link 1</a>
+    </div>
+</div>
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    var adjustedNode;
+    var adjustedPoint;
+    function nodeAtTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
+        if (adjustedNode && adjustedNode.nodeType == 3) // TEXT node
+            adjustedNode = adjustedNode.parentNode;
+        return adjustedNode;
+    }
+    function adjustedPointAtTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var position = internals.touchPositionAdjustedToBestClickableNode(x, y, width, height, document);
+        return position;
+    }
+
+    function testDirectTouches()
+    {
+        adjustedNode = nodeAtTouch(40, 130, 50);
+        shouldBeEqualToString('adjustedNode.id', 'a0');
+
+        adjustedNode = nodeAtTouch(30, 230, 50);
+        shouldBeEqualToString('adjustedNode.id', 'a1');
+    }
+    function testAdjustedTouches()
+    {
+        adjustedPoint = adjustedPointAtTouch(10, 120, 80);
+        shouldBeNonNull('adjustedPoint', null);
+        adjustedNode = document.elementFromPoint(adjustedPoint.x, adjustedPoint.y);
+        shouldBeEqualToString('adjustedNode.id', 'a0');
+
+        adjustedPoint = adjustedPointAtTouch(5, 220, 80);
+        shouldBeNonNull('adjustedPoint', null);
+        adjustedNode = document.elementFromPoint(adjustedPoint.x, adjustedPoint.y);
+        shouldBeEqualToString('adjustedNode.id', 'a1');
+    }
+
+    function runTests()
+    {
+        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+            description('Test touch adjustment when main frame is scroll offset.');
+            window.scrollBy(0,400);
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            testDirectTouches();
+            testAdjustedTouches();
+            isSuccessfullyParsed();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

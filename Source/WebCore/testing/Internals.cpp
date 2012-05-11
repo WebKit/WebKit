@@ -725,11 +725,12 @@ PassRefPtr<WebKitPoint> Internals::touchPositionAdjustedToBestClickableNode(long
 
     Node* targetNode;
     IntPoint adjustedPoint;
-    document->frame()->eventHandler()->bestClickableNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
-    if (targetNode)
-        adjustedPoint = targetNode->document()->view()->contentsToWindow(adjustedPoint);
 
-    return WebKitPoint::create(adjustedPoint.x(), adjustedPoint.y());
+    bool foundNode = document->frame()->eventHandler()->bestClickableNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
+    if (foundNode)
+        return WebKitPoint::create(adjustedPoint.x(), adjustedPoint.y());
+
+    return 0;
 }
 
 Node* Internals::touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document* document, ExceptionCode& ec)
@@ -760,9 +761,11 @@ PassRefPtr<ClientRect> Internals::bestZoomableAreaForTouchPoint(long x, long y, 
 
     Node* targetNode;
     IntRect zoomableArea;
-    document->frame()->eventHandler()->bestZoomableAreaForTouchPoint(point, radius, zoomableArea, targetNode);
+    bool foundNode = document->frame()->eventHandler()->bestZoomableAreaForTouchPoint(point, radius, zoomableArea, targetNode);
+    if (foundNode)
+        return ClientRect::create(zoomableArea);
 
-    return ClientRect::create(zoomableArea);
+    return 0;
 }
 #endif
 

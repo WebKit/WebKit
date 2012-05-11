@@ -1,3 +1,15 @@
+2012-05-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Internals::touchPositionAdjustedToBestClickableNode adjust twice for scroll-offset
+        https://bugs.webkit.org/show_bug.cgi?id=86205
+
+        Reviewed by Simon Hausmann.
+
+        Add test of touchPositionAdjustedToBestClickableNode with scroll-offset.
+
+        * touchadjustment/scroll-offset-expected.txt: Added.
+        * touchadjustment/scroll-offset.html: Added.
+
 2012-05-11  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Updat test expectations.
