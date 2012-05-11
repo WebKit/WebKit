@@ -41,7 +41,7 @@ WebInspector.DebuggerPresentationModel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 
-    new WebInspector.DebuggerPresentationModelResourceBinding(this);
+    new WebInspector.DebuggerResourceBinding();
     new WebInspector.PresentationConsoleMessageHelper();
 }
 
@@ -87,44 +87,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
             var eventData = { uiSourceCodeList: addedItems, oldUISourceCodeList: removedItems };
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, eventData);
         }
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @return {boolean}
-     */
-    canEditScriptSource: function(uiSourceCode)
-    {
-        return WebInspector.debuggerModel.canSetScriptSource() && uiSourceCode.isEditable;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {string} newSource
-     * @param {function(?Protocol.Error)} callback
-     */
-    setScriptSource: function(uiSourceCode, newSource, callback)
-    {
-        var rawLocation = uiSourceCode.uiLocationToRawLocation(0, 0);
-        var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
-
-        /**
-         * @this {WebInspector.DebuggerPresentationModel}
-         * @param {?Protocol.Error} error
-         */
-        function didEditScriptSource(error)
-        {
-            callback(error);
-            if (error)
-                return;
-
-            var resource = WebInspector.resourceForURL(script.sourceURL);
-            if (resource)
-                resource.addRevision(newSource);
-
-            uiSourceCode.contentChanged(newSource);
-        }
-        WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
     },
 
     _debuggerReset: function()
@@ -269,15 +231,52 @@ WebInspector.PresentationConsoleMessage.prototype = {
 /**
  * @constructor
  * @implements {WebInspector.ResourceDomainModelBinding}
- * @param {WebInspector.DebuggerPresentationModel} model
  */
-WebInspector.DebuggerPresentationModelResourceBinding = function(model)
+WebInspector.DebuggerResourceBinding = function()
 {
-    this._presentationModel = model;
     WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Script, this);
 }
 
-WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
+
+/**
+ * @param {WebInspector.UISourceCode} uiSourceCode
+ * @return {boolean}
+ */
+WebInspector.DebuggerResourceBinding.canEditScriptSource = function(uiSourceCode)
+{
+    return WebInspector.debuggerModel.canSetScriptSource() && uiSourceCode.isEditable;
+}
+
+/**
+ * @param {WebInspector.UISourceCode} uiSourceCode
+ * @param {string} newSource
+ * @param {function(?Protocol.Error)} callback
+ */
+WebInspector.DebuggerResourceBinding.setScriptSource = function(uiSourceCode, newSource, callback)
+{
+    var rawLocation = uiSourceCode.uiLocationToRawLocation(0, 0);
+    var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
+
+    /**
+     * @this {WebInspector.DebuggerPresentationModel}
+     * @param {?Protocol.Error} error
+     */
+    function didEditScriptSource(error)
+    {
+        callback(error);
+        if (error)
+            return;
+
+        var resource = WebInspector.resourceForURL(script.sourceURL);
+        if (resource)
+            resource.addRevision(newSource);
+
+        uiSourceCode.contentChanged(newSource);
+    }
+    WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
+}
+
+WebInspector.DebuggerResourceBinding.prototype = {
     /**
      * @param {WebInspector.Resource} resource
      * @return {boolean}
@@ -285,7 +284,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
     canSetContent: function(resource)
     {
         var uiSourceCode = this._uiSourceCodeForResource(resource);
-        return !!uiSourceCode && this._presentationModel.canEditScriptSource(uiSourceCode);
+        return !!uiSourceCode && WebInspector.DebuggerResourceBinding.canEditScriptSource(uiSourceCode);
     },
 
     /**
@@ -314,7 +313,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
      */
     _uiSourceCodeForResource: function(resource)
     {
-        var uiSourceCodes = this._presentationModel.uiSourceCodes();
+        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             if (uiSourceCodes[i].url === resource.url)
                 return uiSourceCodes[i];
@@ -333,7 +332,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
     _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent, oldContentEncoded, mimeType)
     {
         /**
-         * @this {WebInspector.DebuggerPresentationModelResourceBinding}
+         * @this {WebInspector.DebuggerResourceBinding}
          * @param {?string} error
          */
         function callback(error)
@@ -341,11 +340,11 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
             if (userCallback)
                 userCallback(error);
         }
-        this._presentationModel.setScriptSource(uiSourceCode, content, callback.bind(this));
+        WebInspector.DebuggerResourceBinding.setScriptSource(uiSourceCode, content, callback.bind(this));
     }
 }
 
-WebInspector.DebuggerPresentationModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
+WebInspector.DebuggerResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
 
 /**
  * @type {?WebInspector.DebuggerPresentationModel}

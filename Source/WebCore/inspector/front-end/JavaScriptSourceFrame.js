@@ -100,15 +100,18 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this._uiSourceCode.requestContent(mycallback.bind(this));
     },
 
+    /**
+     * @return {boolean}
+     */
     canEditSource: function()
     {
-        return this._model.canEditScriptSource(this._uiSourceCode);
+        return WebInspector.DebuggerResourceBinding.canEditScriptSource(this._uiSourceCode);
     },
 
     editContent: function(newContent, callback)
     {
         this._editingContent = true;
-        this._model.setScriptSource(this._uiSourceCode, newContent, callback);
+        WebInspector.DebuggerResourceBinding.setScriptSource(this._uiSourceCode, newContent, callback);
     },
 
     /**
