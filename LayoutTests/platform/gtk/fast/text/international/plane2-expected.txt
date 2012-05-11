@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
           text run at (0,36) width 331: "two Chinese fonts for Ext B shipped with Windows."
       RenderBlock {DIV} at (0,70) size 784x74
         RenderBlock {DIV} at (0,0) size 784x37
-          RenderText {#text} at (0,0) size 111x36
-            text run at (0,0) width 111: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"
+          RenderText {#text} at (0,0) size 124x36
+            text run at (0,0) width 124: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"
         RenderBlock {DIV} at (0,37) size 784x37
-          RenderText {#text} at (0,0) size 111x36
-            text run at (0,0) width 111: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"
+          RenderText {#text} at (0,0) size 124x36
+            text run at (0,0) width 124: "\x{4E00} \x{3400} \x{D867}\x{DE8A}\x{D867}\x{DE49}\x{D867}\x{DEDB}"

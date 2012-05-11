@@ -1,3 +1,60 @@
+2012-05-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after fonts update in r116778.
+
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/gtk/fast/css/line-height-determined-by-primary-font-expected.txt:
+        * platform/gtk/fast/dynamic/text-combine-expected.txt:
+        * platform/gtk/fast/encoding/denormalised-voiced-japanese-chars-expected.txt:
+        * platform/gtk/fast/repaint/japanese-rl-selection-clear-expected.txt:
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.txt:
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * platform/gtk/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/gtk/fast/ruby/nested-ruby-expected.txt:
+        * platform/gtk/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/gtk/fast/text/backslash-to-yen-sign-expected.txt:
+        * platform/gtk/fast/text/emphasis-combined-text-expected.txt:
+        * platform/gtk/fast/text/emphasis-vertical-expected.txt:
+        * platform/gtk/fast/text/international/001-expected.txt:
+        * platform/gtk/fast/text/international/002-expected.txt:
+        * platform/gtk/fast/text/international/003-expected.txt:
+        * platform/gtk/fast/text/international/plane2-expected.txt:
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/gtk/fast/text/international/text-spliced-font-expected.txt:
+        * platform/gtk/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/gtk/fast/text/international/vertical-text-metrics-test-expected.txt:
+        * platform/gtk/fast/text/international/wrap-CJK-001-expected.txt:
+        * platform/gtk/fast/text/justify-ideograph-complex-expected.txt:
+        * platform/gtk/fast/text/justify-ideograph-simple-expected.txt:
+        * platform/gtk/fast/text/justify-ideograph-vertical-expected.txt:
+        * platform/gtk/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/gtk/fast/writing-mode/border-vertical-lr-expected.txt:
+        * platform/gtk/fast/writing-mode/fallback-orientation-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-lr-selection-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-lr-text-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-rl-selection-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-rl-text-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/gtk/fast/writing-mode/vertical-align-table-baseline-expected.txt:
+        * platform/gtk/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+        * platform/gtk/fast/writing-mode/vertical-font-fallback-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-fonts-01-t-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/svg/dom/altGlyph-dom-expected.txt:
+        * platform/gtk/svg/text/text-fonts-01-t-expected.txt:
+
 2012-05-11  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Compute the best target node on a GestureTap event

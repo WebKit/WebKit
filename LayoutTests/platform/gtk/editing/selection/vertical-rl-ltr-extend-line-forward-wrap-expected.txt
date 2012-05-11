@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x145
-  RenderBlock {HTML} at (0,0) size 800x145
-    RenderBody {BODY} at (8,16) size 784x116
+layer at (0,0) size 800x193
+  RenderBlock {HTML} at (0,0) size 800x193
+    RenderBody {BODY} at (8,16) size 784x164
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 642x19
-          text run at (0,0) width 642: "This tests horizontal caret movement in vertical writing mode. \"\x{306F}\x{732B}\x{3067}\x{3042}\x{308B}\x{3002}\" and \"\x{540D}\x{524D}\" must be selected."
-      RenderBlock {DIV} at (0,34) size 68x82
-        RenderBlock {P} at (16,0) size 36x82
-          RenderText {#text} at (0,0) size 37x80
-            text run at (0,0) width 80: "\x{543E}\x{8F29}\x{306F}\x{732B}\x{3067}\x{3042}\x{308B}\x{3002}"
-            text run at (18,0) width 80: "\x{540D}\x{524D}\x{306F}\x{307E}\x{3060}\x{7121}\x{3044}\x{3002}"
-      RenderBlock (anonymous) at (0,116) size 784x0
+        RenderText {#text} at (0,0) size 690x19
+          text run at (0,0) width 690: "This tests horizontal caret movement in vertical writing mode. \"\x{306F}\x{732B}\x{3067}\x{3042}\x{308B}\x{3002}\" and \"\x{540D}\x{524D}\" must be selected."
+      RenderBlock {DIV} at (0,34) size 68x130
+        RenderBlock {P} at (16,0) size 36x130
+          RenderText {#text} at (0,0) size 37x128
+            text run at (0,0) width 128: "\x{543E}\x{8F29}\x{306F}\x{732B}\x{3067}\x{3042}\x{308B}\x{3002}"
+            text run at (18,0) width 128: "\x{540D}\x{524D}\x{306F}\x{307E}\x{3060}\x{7121}\x{3044}\x{3002}"
+      RenderBlock (anonymous) at (0,164) size 784x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {PRE} at (0,129) size 784x0
+      RenderBlock {PRE} at (0,177) size 784x0
 selection start: position 2 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body
 selection end:   position 10 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body

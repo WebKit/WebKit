@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 211x19
           text run at (0,0) width 211: "This should be pointing upwards:"
-      RenderBlock {DIV} at (0,34) size 92x48
-        RenderText {#text} at (1,0) size 90x48
-          text run at (1,0) width 48: "\x{3008}"
+      RenderBlock {DIV} at (0,34) size 92x80
+        RenderText {#text} at (1,0) size 90x80
+          text run at (1,0) width 80: "\x{3008}"

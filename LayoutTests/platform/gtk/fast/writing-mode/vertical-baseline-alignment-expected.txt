@@ -4,13 +4,13 @@ layer at (536,0) size 264x600
   RenderBlock {HTML} at (0,0) size 264x600
     RenderBody {BODY} at (24,8) size 216x584
       RenderBlock {P} at (0,0) size 110x584
-        RenderInline {SPAN} at (0,0) size 28x62
-          RenderText {#text} at (21,0) size 28x62
-            text run at (21,0) width 62: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
+        RenderInline {SPAN} at (0,0) size 28x102
+          RenderText {#text} at (21,0) size 28x102
+            text run at (21,0) width 102: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
         RenderInline {SPAN} at (0,0) size 109x461
-          RenderText {#text} at (0,62) size 54x341
-            text run at (0,62) width 341: "PARAGRAPH 1 "
-          RenderBR {BR} at (0,403) size 54x0
+          RenderText {#text} at (0,102) size 54x341
+            text run at (0,102) width 341: "PARAGRAPH 1 "
+          RenderBR {BR} at (0,443) size 54x0
           RenderText {#text} at (55,0) size 54x297
             text run at (55,0) width 297: "MORE TEXT. "
           RenderInline {SPAN} at (0,0) size 14x164
@@ -18,11 +18,11 @@ layer at (536,0) size 264x600
               text run at (87,297) width 164: "SHOULD NOT BE CENTERED."
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (134,0) size 82x584
-        RenderInline {SPAN} at (0,0) size 28x433
-          RenderText {#text} at (48,0) size 28x62
-            text run at (48,0) width 62: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} "
+        RenderInline {SPAN} at (0,0) size 28x473
+          RenderText {#text} at (48,0) size 28x102
+            text run at (48,0) width 102: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} "
           RenderInline {SPAN} at (0,0) size 54x371
-            RenderText {#text} at (27,62) size 54x341
-              text run at (27,62) width 341: "PARAGRAPH 2 "
-            RenderImage {IMG} at (0,403) size 70x30 [bgcolor=#008000]
+            RenderText {#text} at (27,102) size 54x341
+              text run at (27,102) width 341: "PARAGRAPH 2 "
+            RenderImage {IMG} at (0,443) size 70x30 [bgcolor=#008000]
             RenderText {#text} at (0,0) size 0x0
