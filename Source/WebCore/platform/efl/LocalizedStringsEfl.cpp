@@ -560,6 +560,12 @@ String crashedPluginText()
     return String::fromUTF8("plugin crashed");
 }
 
+String insecurePluginVersionText()
+{
+    notImplemented();
+    return String();
+}
+
 String localizedString(const char* key)
 {
     return String::fromUTF8(key, strlen(key));

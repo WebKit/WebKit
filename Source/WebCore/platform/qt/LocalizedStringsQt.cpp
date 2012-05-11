@@ -445,6 +445,12 @@ String crashedPluginText()
     return String();
 }
 
+String insecurePluginVersionText()
+{
+    notImplemented();
+    return String();
+}
+
 String multipleFileUploadText(unsigned)
 {
     notImplemented();
