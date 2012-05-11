@@ -1,3 +1,9 @@
+2012-05-10  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-10  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Editor doesn't cancel composition as change of value
