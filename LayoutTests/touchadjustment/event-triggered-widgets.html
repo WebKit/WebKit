@@ -1,7 +1,7 @@
 <html>
 <head>
 <style>
-    .box { border: 1px solid black; border-radius: 5px 5px; margin: 1em; max-width: 40em; }
+    .box { border: 1px solid black; border-radius: 5px 5px; margin: 1em; width: 40em; }
 </style>
 
 <script src="../fast/js/resources/js-test-pre.js"></script>
@@ -27,6 +27,14 @@
         return pos;
     }
 
+    function findBestClickableNode(x, y, width, height)
+    {
+        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
+        if (adjustedNode && adjustedNode.nodeType == 3) // TEXT node
+            adjustedNode = adjustedNode.parentNode;
+        return adjustedNode;
+    }
+
     function testDirectTouch(element)
     {
         var pos = findAbsolutePosition(element);
@@ -34,10 +42,7 @@
         var y = pos.top + element.clientHeight / 2 - 1;
         var width = 3;
         var height = 3;
-        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-
-        if (adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
+        adjustedNode = findBestClickableNode(x, y, width, height);
     }
 
     function testDirectFatFinger(element)
@@ -47,9 +52,7 @@
         var y = pos.top - 5 ;
         var width = element.clientHeight;
         var height = element.clientHeight + 10;
-        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        if (adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
+        adjustedNode = findBestClickableNode(x, y, width, height);
     }
 
     function testIndirectFatFinger(element)
@@ -59,9 +62,7 @@
         var y = pos.top - 7;
         var width = 10;
         var height = 10;
-        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        if (adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
+        adjustedNode = findBestClickableNode(x, y, width, height);
     }
 
     function testTouchHit(elementid, touchType) {
@@ -151,7 +152,7 @@ Mouse-over here should give a text input-field.
 </div>
 
 <div id=test4 class=box onfocus='triggerInput()'>
-    <span tabindex=1> Focusing here should only give focus outline.
+    <span tabindex=1> Focusing here should only give focus outline to this inner text.
     </span>
 </div>
 

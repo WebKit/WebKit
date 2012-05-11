@@ -27,5 +27,5 @@ TEST COMPLETE
 Focus here should give a text input-field.
 Mouse-over here should give a text input-field.
 Hovering here should give a text input-field. 
-Focusing here should only give focus outline.
+Focusing here should only give focus outline to this inner text.
 Focusing here should give a text input-field.

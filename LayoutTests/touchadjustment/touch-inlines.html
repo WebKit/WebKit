@@ -53,10 +53,10 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
         debug('Test a few direct misses.');
 
         adjustedNode = testRoundTouch(56, 60, 8)
-        shouldEvaluateTo('adjustedNode', 'null');
+        shouldBeNull('adjustedNode');
 
-        adjustedNode = testRoundTouch(20, 160, 4)
-        shouldEvaluateTo('adjustedNode', 'null');
+        adjustedNode = testRoundTouch(20, 166, 4)
+        shouldBeNull('adjustedNode');
 
     }
 
@@ -70,13 +70,13 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
         adjustedNode = testRoundTouch(85, 80, 20)
         shouldBeEqualToString('adjustedNode.id', '3');
 
-        adjustedNode = testRoundTouch(120, 60, 20)
+        adjustedNode = testRoundTouch(120, 66, 30)
         shouldBeEqualToString('adjustedNode.id', '4');
 
         adjustedNode = testRoundTouch(40, 100, 20)
         shouldBeEqualToString('adjustedNode.id', '4');
 
-        adjustedNode = testRoundTouch(20, 165, 20)
+        adjustedNode = testRoundTouch(20, 174, 30)
         shouldBeEqualToString('adjustedNode.id', '6');
 
     }

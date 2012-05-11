@@ -1,3 +1,16 @@
+2012-05-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Two of the touch-adjustment tests are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=86218
+
+        Reviewed by Simon Hausmann.
+
+        Move the touch points and text so the tests are more stable.
+
+        * touchadjustment/event-triggered-widgets-expected.txt:
+        * touchadjustment/event-triggered-widgets.html:
+        * touchadjustment/touch-inlines.html:
+
 2012-05-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][DRT] SVG Batik test fails to display Chinese characters
