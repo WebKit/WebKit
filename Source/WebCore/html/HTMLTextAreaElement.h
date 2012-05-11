@@ -47,8 +47,10 @@ public:
     int textLength() const { return value().length(); }
     virtual int maxLength() const;
     void setMaxLength(int, ExceptionCode&);
-    bool valueMissing(const String& value) const { return isRequiredFormControl() && !disabled() && !readOnly() && value.isEmpty(); }
-    bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
+    // For ValidityState
+    virtual String validationMessage() const OVERRIDE;
+    virtual bool valueMissing() const OVERRIDE;
+    virtual bool tooLong() const OVERRIDE;
     bool isValidValue(const String&) const;
     
     virtual HTMLElement* innerTextElement() const;
@@ -107,6 +109,9 @@ private:
     virtual void accessKeyAction(bool sendMouseEvents);
 
     virtual bool shouldUseInputMethod();
+
+    bool valueMissing(const String& value) const { return isRequiredFormControl() && !disabled() && !readOnly() && value.isEmpty(); }
+    bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
 
     int m_rows;
     int m_cols;

@@ -56,7 +56,7 @@ public:
     // Note that the object elements are always barred from constraint validation.
     String validationMessage() { return String(); }
     bool checkValidity() { return true; }
-    void setCustomValidity(const String&) { }
+    virtual void setCustomValidity(const String&) OVERRIDE { }
 
     using TreeShared<ContainerNode>::ref;
     using TreeShared<ContainerNode>::deref;

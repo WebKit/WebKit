@@ -41,6 +41,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
 #include "KeyboardEvent.h"
+#include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
@@ -145,8 +146,22 @@ bool HTMLSelectElement::hasPlaceholderLabelOption() const
     return !listIndex && option->value().isEmpty();
 }
 
+String HTMLSelectElement::validationMessage() const
+{
+    if (!willValidate())
+        return String();
+
+    if (customError())
+        return customValidationMessage();
+
+    return valueMissing() ? validationMessageValueMissingForSelectText() : String();
+}
+
 bool HTMLSelectElement::valueMissing() const
 {
+    if (!willValidate())
+        return false;
+
     if (!isRequiredFormControl())
         return false;
 

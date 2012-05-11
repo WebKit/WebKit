@@ -101,7 +101,7 @@ public:
     bool checkValidity(Vector<RefPtr<FormAssociatedElement> >* unhandledInvalidControls = 0);
     // This must be called when a validation constraint or control value is changed.
     void setNeedsValidityCheck();
-    void setCustomValidity(const String&);
+    virtual void setCustomValidity(const String&) OVERRIDE;
 
     bool readOnly() const { return m_readOnly; }
 
