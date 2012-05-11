@@ -1,3 +1,16 @@
+2012-05-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [GTK] LayoutTests/svg/batik/text/verticalText.svg fails to display Chinese characters
+        https://bugs.webkit.org/show_bug.cgi?id=86198
+
+        Reviewed by Martin Robinson.
+
+        Rebaseline svg/batik/text/verticalText.svg now that GTK's
+        DumpRenderTree is able to display Chinese characters.
+
+        * platform/gtk/svg/batik/text/verticalText-expected.png:
+        * platform/gtk/svg/batik/text/verticalText-expected.txt:
+
 2012-05-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Two of the touch-adjustment tests are flaky.

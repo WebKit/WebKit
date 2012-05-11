@@ -1,5 +1,17 @@
 2012-05-11  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [GTK] LayoutTests/svg/batik/text/verticalText.svg fails to display Chinese characters
+        https://bugs.webkit.org/show_bug.cgi?id=86198
+
+        Reviewed by Martin Robinson.
+
+        Update webkitgtk-fonts package to v0.0.3 in order to get new Kochi
+        Mincho / Gothic fonts to display Japanese and Chinese characters.
+
+        * gtk/jhbuild.modules:
+
+2012-05-11  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][DRT] SVG Batik test fails to display Chinese characters
         https://bugs.webkit.org/show_bug.cgi?id=84461
 
