@@ -173,6 +173,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 {
     interpreter = new Interpreter;
 
+    if (isSharedInstance())
+        turnOffVerifier();
+
     // Need to be careful to keep everything consistent here
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
     JSLock lock(SilenceAssertionsOnly);

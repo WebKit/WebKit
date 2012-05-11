@@ -1,3 +1,16 @@
+2012-05-11  Oliver Hunt  <oliver@apple.com>
+
+        Appease thread verifier when dealing with the JSC API's shared VM
+        https://bugs.webkit.org/show_bug.cgi?id=86268
+
+        Reviewed by Geoffrey Garen.
+
+        If we're the shared VM, just disable the verifier.  This makes debug builds
+        livable against non-webkit clients.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
 2012-05-11  Filip Pizlo  <fpizlo@apple.com>
 
         JIT memory allocator is not returning memory to the OS on Darwin
