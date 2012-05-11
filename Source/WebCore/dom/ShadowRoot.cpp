@@ -151,8 +151,8 @@ void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
 
 DOMSelection* ShadowRoot::selection()
 {
-    if (document())
-        return document()->getSelection();
+    if (document() && document()->domWindow())
+        return document()->domWindow()->getSelection();
     return 0;
 }
 

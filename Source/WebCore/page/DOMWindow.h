@@ -428,6 +428,7 @@ namespace WebCore {
         HashSet<DOMWindowProperty*> m_properties;
 
         mutable RefPtr<Screen> m_screen;
+        mutable RefPtr<DOMSelection> m_selection;
         mutable RefPtr<History> m_history;
         mutable RefPtr<Crypto>  m_crypto;
         mutable RefPtr<BarInfo> m_locationbar;
