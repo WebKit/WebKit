@@ -38,6 +38,24 @@ using namespace WTF;
 
 namespace WebCore {
 
+class UnthrottledTextureUploader : public TextureUploader {
+    WTF_MAKE_NONCOPYABLE(UnthrottledTextureUploader);
+public:
+    static PassOwnPtr<UnthrottledTextureUploader> create()
+    {
+        return adoptPtr(new UnthrottledTextureUploader());
+    }
+    virtual ~UnthrottledTextureUploader() { }
+
+    virtual bool isBusy() { return false; }
+    virtual void beginUploads() { }
+    virtual void endUploads() { }
+    virtual void uploadTexture(GraphicsContext3D* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) { texture->updateRect(context, allocator, sourceRect, destRect); }
+
+protected:
+    UnthrottledTextureUploader() { }
+};
+
 PassOwnPtr<CCProxy> CCSingleThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 {
     return adoptPtr(new CCSingleThreadProxy(layerTreeHost));
@@ -137,7 +155,7 @@ bool CCSingleThreadProxy::initializeLayerRenderer()
     ASSERT(m_contextBeforeInitialization);
     {
         DebugScopedSetImplThread impl;
-        bool ok = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitialization.release(), UnthrottledUploader);
+        bool ok = m_layerTreeHostImpl->initializeLayerRenderer(m_contextBeforeInitialization.release(), UnthrottledTextureUploader::create());
         if (ok) {
             m_layerRendererInitialized = true;
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
@@ -161,7 +179,7 @@ bool CCSingleThreadProxy::recreateContext()
     {
         DebugScopedSetImplThread impl;
         m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
-        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context, UnthrottledUploader);
+        initialized = m_layerTreeHostImpl->initializeLayerRenderer(context, UnthrottledTextureUploader::create());
         if (initialized) {
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
         }
