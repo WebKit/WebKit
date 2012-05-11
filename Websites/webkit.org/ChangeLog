@@ -1,3 +1,17 @@
+2012-05-10  Darin Adler  <darin@apple.com>
+
+        Add a link to WebKit trademark terms of use, other small website changes
+        https://bugs.webkit.org/show_bug.cgi?id=86112
+
+        Reviewed by Dan Bernstein.
+
+        * contact.html: Use RIGHT SINGLE QUOTATION MARK instead of APOSTROPHE as appropriate.
+        Fixed awkward use of the phrase "per itself" and the use of "intent" where "intend"
+        was intended.
+
+        * nav.inc: Added mention of the WebKit trademark and a link to the trademark terms
+        of use on the macosforge.org terms of use page.
+
 2012-05-07  Dan Bernstein  <mitz@apple.com>
 
         webkit.org instructions for debugging WebProcess are unnecessarily complex
