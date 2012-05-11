@@ -89,7 +89,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
-    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel.breakpointManager, this._showSourceLine.bind(this));
+    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(WebInspector.breakpointManager, this._showSourceLine.bind(this));
     if (Capabilities.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
         this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
@@ -307,7 +307,7 @@ WebInspector.ScriptsPanel.prototype = {
         } else {
             function didGetUILocation(uiLocation)
             {
-                var breakpoint = this._presentationModel.breakpointManager.findBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber);
+                var breakpoint = WebInspector.breakpointManager.findBreakpoint(uiLocation.uiSourceCode, uiLocation.lineNumber);
                 if (!breakpoint)
                     return;
                 this.sidebarPanes.jsBreakpoints.highlightBreakpoint(breakpoint);

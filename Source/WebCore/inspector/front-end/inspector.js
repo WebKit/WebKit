@@ -413,6 +413,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.debuggerModel = new WebInspector.DebuggerModel();
     this.snippetsModel = new WebInspector.SnippetsModel();
+    this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel);
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
 
     this.drawer = new WebInspector.Drawer();

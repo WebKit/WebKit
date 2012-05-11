@@ -37,10 +37,6 @@ WebInspector.DebuggerPresentationModel = function()
     this._scriptMapping = new WebInspector.MainScriptMapping();
     this._scriptMapping.addEventListener(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
 
-    this._presentationCallFrames = [];
-
-    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, WebInspector.debuggerModel);
-
     this._pendingConsoleMessages = {};
     this._consoleMessageLiveLocations = [];
 
@@ -61,11 +57,6 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
-    get breakpointManager()
-    {
-        return this._breakpointManager;
-    },
-
     /**
      * @param {DebuggerAgent.Location} rawLocation
      * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate

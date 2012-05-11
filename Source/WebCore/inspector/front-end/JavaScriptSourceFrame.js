@@ -39,7 +39,7 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, model, uiSourceCode)
 {
     this._scriptsPanel = scriptsPanel;
     this._model = model;
-    this._breakpointManager = this._model.breakpointManager;
+    this._breakpointManager = WebInspector.breakpointManager;
     this._uiSourceCode = uiSourceCode;
 
     var locations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);

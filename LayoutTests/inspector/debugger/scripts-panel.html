@@ -45,7 +45,6 @@ function test()
             var data = { oldUISourceCodeList: oldUISourceCodeList, uiSourceCodeList: newUISourceCodeList };
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, data);
         }
-        model.breakpointManager = new WebInspector.BreakpointManager(breakpointStorage, WebInspector.debuggerModel, null);
         return model;
     }
     function createUISouceCode(url)

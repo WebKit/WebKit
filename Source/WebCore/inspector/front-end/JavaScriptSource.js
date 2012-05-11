@@ -48,7 +48,7 @@ WebInspector.JavaScriptSource = function(id, url, contentProvider, sourceMapping
     // FIXME: postpone breakpoints restore to after the mapping has been established.
     setTimeout(function() {
         if (!this._formatted)
-            WebInspector.debuggerPresentationModel.breakpointManager.restoreBreakpoints(this);
+            WebInspector.breakpointManager.restoreBreakpoints(this);
     }.bind(this), 0);
 }
 
@@ -147,7 +147,7 @@ WebInspector.JavaScriptSource.prototype = {
                 delete this._togglingFormatter;
                 this._formatterMapping = formatterMapping;
                 this.updateLiveLocations();
-                WebInspector.debuggerPresentationModel.breakpointManager.restoreBreakpoints(this);
+                WebInspector.breakpointManager.restoreBreakpoints(this);
                 callback();
             }
         }

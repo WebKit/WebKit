@@ -1,3 +1,12 @@
+2012-05-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: move breakpoint manager from debuggerPresentationModel to WebInspector.
+        https://bugs.webkit.org/show_bug.cgi?id=86220
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/scripts-panel.html:
+
 2012-05-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [GTK] LayoutTests/svg/batik/text/verticalText.svg fails to display Chinese characters
