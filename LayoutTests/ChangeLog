@@ -1,3 +1,9 @@
+2012-05-11  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Rebaseline one test for chromium mac.
+
+        * platform/chromium-mac-leopard/css3/filters/custom/effect-color-check-expected.png: Added.
+
 2012-05-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after fonts update in r116778.
