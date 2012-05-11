@@ -4168,9 +4168,8 @@ LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, bool makeChildP
         if (logicalBottom > logicalHeight()) {
             // If the object is not in the list, we add it now.
             if (!containsFloat(r->m_renderer)) {
-                LayoutUnit leftOffset = isHorizontalWritingMode() ? -childLogicalLeft : -childLogicalTop;
-                LayoutUnit topOffset = isHorizontalWritingMode() ? -childLogicalTop : -childLogicalLeft;
-                FloatingObject* floatingObj = new FloatingObject(r->type(), LayoutRect(r->x() - leftOffset, r->y() - topOffset, r->width(), r->height()));
+                LayoutSize offset = isHorizontalWritingMode() ? LayoutSize(-childLogicalLeft, -childLogicalTop) : LayoutSize(-childLogicalTop, -childLogicalLeft);
+                FloatingObject* floatingObj = new FloatingObject(r->type(), LayoutRect(r->frameRect().location() - offset, r->frameRect().size()));
                 floatingObj->m_renderer = r->m_renderer;
 
                 // The nearest enclosing layer always paints the float (so that zindex and stacking
@@ -4237,10 +4236,8 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, LayoutUnit logicalLeftOf
         FloatingObject* r = *prevIt;
         if (logicalBottomForFloat(r) > logicalTopOffset) {
             if (!m_floatingObjects || !m_floatingObjects->set().contains(r)) {
-                LayoutUnit leftOffset = isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
-                LayoutUnit topOffset = isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
-                
-                FloatingObject* floatingObj = new FloatingObject(r->type(), LayoutRect(r->x() - leftOffset, r->y() - topOffset, r->width(), r->height()));
+                LayoutSize offset = isHorizontalWritingMode() ? LayoutSize(logicalLeftOffset, logicalTopOffset) : LayoutSize(logicalTopOffset, logicalLeftOffset);
+                FloatingObject* floatingObj = new FloatingObject(r->type(), LayoutRect(r->frameRect().location() - offset, r->frameRect().size()));
 
                 // Applying the child's margin makes no sense in the case where the child was passed in.
                 // since this margin was added already through the modification of the |logicalLeftOffset| variable
@@ -7197,8 +7194,8 @@ inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::T
 inline RenderBlock::FloatingObjectInterval RenderBlock::FloatingObjects::intervalForFloatingObject(FloatingObject* floatingObject)
 {
     if (m_horizontalWritingMode)
-        return RenderBlock::FloatingObjectInterval(floatingObject->pixelSnappedY(), floatingObject->pixelSnappedMaxY(), floatingObject);
-    return RenderBlock::FloatingObjectInterval(floatingObject->pixelSnappedX(), floatingObject->pixelSnappedMaxX(), floatingObject);
+        return RenderBlock::FloatingObjectInterval(floatingObject->frameRect().pixelSnappedY(), floatingObject->frameRect().pixelSnappedMaxY(), floatingObject);
+    return RenderBlock::FloatingObjectInterval(floatingObject->frameRect().pixelSnappedX(), floatingObject->frameRect().pixelSnappedMaxX(), floatingObject);
 }
 
 void RenderBlock::FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
@@ -7342,7 +7339,7 @@ String ValueToString<int>::string(const int value)
 
 String ValueToString<RenderBlock::FloatingObject*>::string(const RenderBlock::FloatingObject* floatingObject)
 {
-    return String::format("%p (%dx%d %dx%d)", floatingObject, floatingObject->pixelSnappedX(), floatingObject->pixelSnappedY(), floatingObject->pixelSnappedMaxX(), floatingObject->pixelSnappedMaxY());
+    return String::format("%p (%dx%d %dx%d)", floatingObject, floatingObject->frameRect().pixelSnappedX(), floatingObject->frameRect().pixelSnappedY(), floatingObject->frameRect().pixelSnappedMaxX(), floatingObject->frameRect().pixelSnappedMaxY());
 }
 
 #endif
