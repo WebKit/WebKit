@@ -47,11 +47,6 @@ WebInspector.HelpScreen = function(title)
 
     closeButton.textContent = "\u2716"; // Code stands for HEAVY MULTIPLICATION X.
     closeButton.addEventListener("click", this.hide.bind(this), false);
-    this._closeKeys = [
-        WebInspector.KeyboardShortcut.Keys.Enter.code,
-        WebInspector.KeyboardShortcut.Keys.Esc.code,
-        WebInspector.KeyboardShortcut.Keys.Space.code,
-    ];
 }
 
 WebInspector.HelpScreen.visibleScreen_ = null;
@@ -88,9 +83,22 @@ WebInspector.HelpScreen.prototype = {
         }
     },
 
+    /**
+     * @param {number} keyCode
+     * @return {boolean}
+     */
+    isClosingKey: function(keyCode)
+    {
+        return [
+            WebInspector.KeyboardShortcut.Keys.Enter.code,
+            WebInspector.KeyboardShortcut.Keys.Esc.code,
+            WebInspector.KeyboardShortcut.Keys.Space.code,
+        ].indexOf(keyCode) >= 0;
+    },
+
     _onKeyDown: function(event)
     {
-        if (this._isShown && this._closeKeys.indexOf(event.keyCode) >= 0) {
+        if (this._isShown && this.isClosingKey(event.keyCode)) {
             this.hide();
             event.consume();
         }

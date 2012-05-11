@@ -114,6 +114,18 @@ WebInspector.SettingsScreen = function()
 }
 
 WebInspector.SettingsScreen.prototype = {
+
+    /**
+     * @override
+     */
+    isClosingKey: function(keyCode)
+    {
+        return [
+            WebInspector.KeyboardShortcut.Keys.Enter.code,
+            WebInspector.KeyboardShortcut.Keys.Esc.code,
+        ].indexOf(keyCode) >= 0;
+    },
+
     /**
      * @param {string} name
      * @param {boolean=} right
