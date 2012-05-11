@@ -6,13 +6,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -618,13 +618,13 @@ canvas/philip/tests/2d.path.arc.scale.1.html
 # https://bugs.webkit.org/show_bug.cgi?id=81604
 http/tests/media/video-useragent.html
 media/audio-garbage-collect.html
- 
+
 # parser test that times out waiting for notifyDone
 # http://bugs.webkit.org/show_bug.cgi?id=81618
 fast/workers/storage/use-same-database-in-page-and-workers.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=81276
-# Allowed to regress to fix a crash. 
+# Allowed to regress to fix a crash.
 fast/inline/continuation-outlines-with-layers.html
 
 # Not possible to set UA string for media requests with all Mac media engines.
@@ -829,10 +829,6 @@ fast/dom/xmlhttprequest-constructor-in-detached-document.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=85525
 media/video-played-reset.html
-
-# [Mac] IETC flexbox reference tests have pixel differences (due to embedded color profiles?)
-# https://bugs.webkit.org/show_bug.cgi?id=85666
-ietestcenter/css3/flexbox/
 
 # https://bugs.webkit.org/show_bug.cgi?id=85969
 http/tests/loading/post-in-iframe-with-back-navigation.html

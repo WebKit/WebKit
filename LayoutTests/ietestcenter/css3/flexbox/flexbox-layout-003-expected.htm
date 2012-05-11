@@ -7,24 +7,26 @@
         <style type="text/css">
             .parent
             {
-                background: green;
+                background: url('../support/flexbox_300x200_red.png') no-repeat green;
                 width:500px;
                 height:500px;
                 position: relative;
             }
-            .childa
+            .box
+            {
+                width:300px;
+                height:200px;
+                background: url('../support/flexbox_200x100_red.png') no-repeat green;
+            }
+            .child
             {
                 width:100px;
                 height:100px;
-                background: green;
+                background: url('../support/flexbox_100x100_green.png') no-repeat green;
                 position: absolute;
             }
-            .childb
+            .two
             {
-                width:100px;
-                height:100px;
-                background: green;
-                position: absolute;
                 left: 100px;
             }
         </style>
@@ -32,8 +34,10 @@
     <body>
         <p>Test passes if there is no red visible on the page.</p>
         <div class="parent">
-            <div class="childa">parent is 300x200px</div>
-            <div class="childb">two children are 100x100px</div>
+            <div class="box">
+                <div class="child">parent is 300x200px</div>
+                <div class="child two">two children are 100x100px</div>
+            </div>
         </div>
     </body>
 </html>

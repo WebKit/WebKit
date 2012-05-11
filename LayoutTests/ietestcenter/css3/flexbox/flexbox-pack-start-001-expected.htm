@@ -7,7 +7,7 @@
         <style type="text/css">
             .box
             {
-                background: green;
+                background: url('../support/flexbox_100x100_green.png') top right no-repeat red;
                 width: 400px;
                 height: 100px;
                 position: relative;
@@ -18,10 +18,6 @@
                 height: 100px;
                 background: green;
                 position: absolute;
-            }
-            .c1
-            {
-                left: 0px;
             }
             .c2
             {
@@ -37,7 +33,7 @@
     <body>
         <p>This test passes if there is no red showing.</p>
         <div class="box">
-            <div class="child c1">Box1</div>
+            <div class="child">Box1</div>
             <div class="child c2">Box2</div>
             <div class="child c3">Box3</div>
         </div>

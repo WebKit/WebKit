@@ -10,12 +10,31 @@
                 background: green;
                 width: 300px;
                 height: 100px;
+                position: relative;
+            }
+            .child
+            {
+                width: 100px;
+                height: 100px;
+                background: url('../support/flexbox_100x100_green.png') top left no-repeat green;
+                position: absolute;
+            }
+            .two
+            {
+                left: 100px;
+            }
+            .three
+            {
+                left: 200px;
             }
         </style>
     </head>
     <body>
         <p>This test passes if there is no red showing.</p>
         <div>
+            <div class="child"></div>
+            <div class="child two"></div>
+            <div class="child three"></div>
         </div>
     </body>
 </html>

@@ -2535,18 +2535,6 @@ http/tests/inspector/network/network-initiator.html
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
-# [Qt] ietestcenter/css3/flexbox tests fail on 32 bit
-# https://bugs.webkit.org/show_bug.cgi?id=85596
-ietestcenter/css3/flexbox/flexbox-align-end-001.htm
-ietestcenter/css3/flexbox/flexbox-align-start-001.htm
-ietestcenter/css3/flexbox/flexbox-flex-001.htm
-ietestcenter/css3/flexbox/flexbox-flex-002.htm
-ietestcenter/css3/flexbox/flexbox-flex-003.htm
-ietestcenter/css3/flexbox/flexbox-groups-001.htm
-ietestcenter/css3/flexbox/flexbox-groups-002.htm
-ietestcenter/css3/flexbox/flexbox-groups-004.htm
-ietestcenter/css3/flexbox/flexbox-layout-003.htm
-
 # REGRESSION(r116134): It made 3 inspector tests fail
 inspector/debugger/scripts-panel.html
 inspector/debugger/snippets-model.html

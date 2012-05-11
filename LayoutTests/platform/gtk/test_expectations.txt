@@ -294,7 +294,7 @@ BUGWK78801 : touchadjustment = FAIL
 // IETC flexbox failures
 BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
 BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
-BUGWK85213 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMAGE
+BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMAGE
 
 // These tests require subpixel layout to be enabled
 BUGWK60318 : fast/sub-pixel = FAIL
