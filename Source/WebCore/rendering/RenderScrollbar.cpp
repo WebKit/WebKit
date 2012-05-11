@@ -270,11 +270,9 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
     RenderScrollbarPart* partRenderer = m_parts.get(partType);
     if (!partRenderer && needRenderer) {
         partRenderer = new (owningRenderer()->renderArena()) RenderScrollbarPart(owningRenderer()->document(), this, partType);
-        partRenderer->setParent(owningRenderer());
         m_parts.set(partType, partRenderer);
     } else if (partRenderer && !needRenderer) {
         m_parts.remove(partType);
-        partRenderer->setParent(0);
         partRenderer->destroy();
         partRenderer = 0;
     }

@@ -35,8 +35,6 @@ class RenderScrollbar;
 
 class RenderScrollbarPart : public RenderBlock {
 public:
-    friend class RenderScrollbar;
-
     RenderScrollbarPart(Node*, RenderScrollbar* = 0, ScrollbarPart = NoPart);
     virtual ~RenderScrollbarPart();
 

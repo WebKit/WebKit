@@ -1,3 +1,15 @@
+2012-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116527.
+        http://trac.webkit.org/changeset/116527
+        https://bugs.webkit.org/show_bug.cgi?id=86199
+
+        Causing crashes on ClusterFuzz (Requested by inferno-sec on
+        #webkit).
+
+        * scrollbars/scrollbar-percent-padding-crash-expected.txt: Removed.
+        * scrollbars/scrollbar-percent-padding-crash.html: Removed.
+
 2012-05-11  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update wrong expectations.
