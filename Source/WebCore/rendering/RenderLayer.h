@@ -635,7 +635,7 @@ private:
     void updateScrollbarsAfterLayout();
 
     friend IntSize RenderBox::scrolledContentOffset() const;
-    IntSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
+    IntSize scrolledContentOffset() const { return m_scrollOffset; }
 
     // The normal operator new is disallowed on all render objects.
     void* operator new(size_t) throw();
@@ -883,11 +883,9 @@ protected:
     // The layer's width/height
     IntSize m_layerSize;
 
-    // Our scroll offsets if the view is scrolled.
+    // This is the (scroll) offset from scrollOrigin().
     IntSize m_scrollOffset;
 
-    IntSize m_scrollOverflow;
-    
     // The width/height of our scrolled area.
     LayoutSize m_scrollSize;
 

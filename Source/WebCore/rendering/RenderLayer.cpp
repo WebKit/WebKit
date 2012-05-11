@@ -2432,13 +2432,12 @@ void RenderLayer::computeScrollDimensions()
 
     m_scrollDimensionsDirty = false;
 
-    m_scrollOverflow.setWidth(overflowLeft() - box->borderLeft());
-    m_scrollOverflow.setHeight(overflowTop() - box->borderTop());
-
     m_scrollSize.setWidth(overflowRight() - overflowLeft());
     m_scrollSize.setHeight(overflowBottom() - overflowTop());
 
-    setScrollOrigin(IntPoint(-m_scrollOverflow.width(), -m_scrollOverflow.height()));
+    int scrollableLeftOverflow = overflowLeft() - box->borderLeft();
+    int scrollableTopOverflow = overflowTop() - box->borderTop();
+    setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
 }
 
 bool RenderLayer::hasHorizontalOverflow() const
