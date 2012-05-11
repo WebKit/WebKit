@@ -162,10 +162,14 @@ a:hover{
 #notice, #trademark, #terms {
     min-width: 0px;
     padding: 0px;
-    margin: 30px 10px 10px -5px;
+    margin: 10px 10px 10px -5px;
     font-size: 9px;
     line-height: 11px;
     color: #aaa !important;
+}
+
+#notice {
+    margin-top: 30px;
 }
 
 #notice a {
