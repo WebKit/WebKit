@@ -1569,7 +1569,8 @@ Element *Node::enclosingBlockFlowElement() const
 
 bool Node::isRootEditableElement() const
 {
-    return rendererIsEditable() && isElementNode() && (!parentNode() || !parentNode()->rendererIsEditable() || hasTagName(bodyTag));
+    return rendererIsEditable() && isElementNode() && (!parentNode() || !parentNode()->rendererIsEditable()
+        || !parentNode()->isElementNode() || hasTagName(bodyTag));
 }
 
 Element* Node::rootEditableElement(EditableType editableType) const
