@@ -4,8 +4,8 @@ FunctionCall Properties:
 {
     startTime : <number>
     data : {
-        scriptName : "InjectedScript"
-        scriptLine : 1
+        scriptName : <string>
+        scriptLine : <number>
     }
     children : <object>
     endTime : <number>
@@ -18,8 +18,8 @@ FunctionCall Properties:
 {
     startTime : <number>
     data : {
-        scriptName : "InjectedScript"
-        scriptLine : 1
+        scriptName : <string>
+        scriptLine : <number>
     }
     children : <object>
     endTime : <number>
