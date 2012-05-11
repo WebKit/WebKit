@@ -38,7 +38,6 @@ from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.user import User
-from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -61,13 +60,10 @@ class RebaselineTest(AbstractDeclarativeCommand):
     help_text = "Rebaseline a single test from a buildbot.  (Currently works only with build.chromium.org buildbots.)"
     argument_names = "BUILDER_NAME TEST_NAME [PLATFORMS_TO_MOVE_EXISTING_BASELINES_TO]"
 
-    def __init__(self, options=None, **kwargs):
-        super(RebaselineTest, self).__init__(options, **kwargs)
-        self._zip_file_sets = {}
-
-    def _results_zip_url(self, builder_name):
+    def _results_url(self, builder_name):
         # FIXME: Generalize this command to work with non-build.chromium.org builders.
-        return self._tool.chromium_buildbot().builder_with_name(builder_name).accumulated_results_url().replace('results/layout-test-results', 'layout-test-results.zip')
+        builder = self._tool.chromium_buildbot().builder_with_name(builder_name)
+        return builder.accumulated_results_url()
 
     def _baseline_directory(self, builder_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
@@ -133,35 +129,18 @@ class RebaselineTest(AbstractDeclarativeCommand):
     def _file_name_for_expected_result(self, test_name, suffix):
         return "%s-expected.%s" % (self._test_root(test_name), suffix)
 
-    def _zip_file_set(self, url):
-        return ZipFileSet(url)
-
-    def _fetch_baseline(self, builder_name, test_name, suffix):
-        # FIXME: See https://bugs.webkit.org/show_bug.cgi?id=84762 ... fetching the whole
-        # zip file and then extracting individual results is much slower than just fetching
-        # the result directly from the buildbot, but it guarantees that we are getting correct results.
-        member_name = self._file_name_for_actual_result(test_name, suffix)
-        zip_url = self._results_zip_url(builder_name)
-        if not builder_name in self._zip_file_sets:
-            print "Retrieving " + zip_url
-            self._zip_file_sets[builder_name] = self._zip_file_set(zip_url)
-
-        try:
-            data = self._zip_file_sets[builder_name].read('layout-test-results/' + member_name)
-            print "  Found " + member_name
-            return data
-        except KeyError, e:
-            return None
-
     def _rebaseline_test(self, builder_name, test_name, platforms_to_move_existing_baselines_to, suffix):
+        results_url = self._results_url(builder_name)
         baseline_directory = self._baseline_directory(builder_name)
 
+        source_baseline = "%s/%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
         target_baseline = self._tool.filesystem.join(baseline_directory, self._file_name_for_expected_result(test_name, suffix))
 
         if platforms_to_move_existing_baselines_to:
             self._copy_existing_baseline(platforms_to_move_existing_baselines_to, test_name, suffix)
 
-        self._save_baseline(self._fetch_baseline(builder_name, test_name, suffix), target_baseline)
+        print "Retrieving %s." % source_baseline
+        self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
     def _rebaseline_test_and_update_expectations(self, builder_name, test_name, platforms_to_move_existing_baselines_to):
         for suffix in _baseline_suffix_list:

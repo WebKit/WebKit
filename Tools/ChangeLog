@@ -1,3 +1,29 @@
+2012-05-11  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch rebaseline should fetch stale expectations :)
+        https://bugs.webkit.org/show_bug.cgi?id=86231
+
+        Unreviewed, build fix.
+
+        This change reverts r115492 and goes back to fetching individual
+        baselines from the layout tests directory, rather than fetching
+        entire zip files. The performance hit over networks for people
+        far away from the bots has turned out to be severe, so we need a
+        better solution to this.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._results_url):
+        (RebaselineTest._file_name_for_expected_result):
+        (RebaselineTest._rebaseline_test):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_test):
+        (test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_no_existing_result):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+
 2012-05-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [GTK] LayoutTests/svg/batik/text/verticalText.svg fails to display Chinese characters
