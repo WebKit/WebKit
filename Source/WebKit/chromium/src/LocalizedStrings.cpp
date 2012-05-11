@@ -215,6 +215,12 @@ String crashedPluginText()
     return String("Plug-in Failure");
 }
 
+String insecurePluginVersionText)(
+{
+    notImplemented();
+    return String();
+}
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     return query(WebLocalizedString::MultipleFileUploadText, String::number(numberOfFiles));
