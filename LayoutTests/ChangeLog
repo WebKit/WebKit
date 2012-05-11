@@ -1,3 +1,9 @@
+2012-05-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, skip a new failing test.
+
+        * platform/qt/Skipped:
+
 2012-05-11  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed expectation update.
