@@ -1,3 +1,14 @@
+2012-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116802.
+        http://trac.webkit.org/changeset/116802
+        https://bugs.webkit.org/show_bug.cgi?id=86260
+
+        This patch causes compiling error to chromium builds
+        (Requested by jianli_ on #webkit).
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-11  Dave Tharp  <dtharp@codeaurora.org>
 
         Integrate IETC CSS : xml namespace tests
