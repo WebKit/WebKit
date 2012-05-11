@@ -329,6 +329,9 @@
           'link_settings': {
             'libraries': [
               '<(adjusted_library_path)',
+
+              # libWebKitSystemInterfaceLeopard.a references _kCIFormatRGBA8.
+              '$(SDKROOT)/System/Library/Frameworks/QuartzCore.framework',
             ],
           },  # link_settings
         },  # target webkit_system_interface
