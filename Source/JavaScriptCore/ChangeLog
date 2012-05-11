@@ -1,3 +1,16 @@
+2012-05-11  Sam Weinig  <sam@webkit.org>
+
+        Fix crash seen when running with libgmalloc
+        <rdar://problem/11435411>
+        https://bugs.webkit.org/show_bug.cgi?id=86232
+
+        Reviewed by Gavin Barraclough.
+
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::markingThreadMain):
+        Don't delete the SlotVisitor before the ParallelModeEnabler has had a chance to run its
+        destructor.
+
 2012-05-10  Gavin Barraclough  <barraclough@apple.com>
 
         Remove op_get_callee

@@ -228,8 +228,10 @@ void MarkStackThreadSharedData::resetChildren()
 void MarkStackThreadSharedData::markingThreadMain(SlotVisitor* slotVisitor)
 {
     WTF::registerGCThread();
-    ParallelModeEnabler enabler(*slotVisitor);
-    slotVisitor->drainFromShared(SlotVisitor::SlaveDrain);
+    {
+        ParallelModeEnabler enabler(*slotVisitor);
+        slotVisitor->drainFromShared(SlotVisitor::SlaveDrain);
+    }
     delete slotVisitor;
 }
 
