@@ -283,14 +283,6 @@ bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
     return false;
 }
 
-bool InputType::stepMismatch(const String& value) const
-{
-    double step;
-    if (!getAllowedValueStep(&step))
-        return false;
-    return stepMismatch(value, step);
-}
-
 bool InputType::stepMismatch(const String&, double) const
 {
     // Non-supported types should be rejected by HTMLInputElement::getAllowedValueStep().
@@ -344,41 +336,6 @@ String InputType::typeMismatchText() const
 String InputType::valueMissingText() const
 {
     return validationMessageValueMissingText();
-}
-
-String InputType::validationMessage() const
-{
-    const String value = element()->value();
-
-    // The order of the following checks is meaningful. e.g. We'd like to show the
-    // valueMissing message even if the control has other validation errors.
-    if (valueMissing(value))
-        return valueMissingText();
-
-    if (typeMismatch())
-        return typeMismatchText();
-
-    if (patternMismatch(value))
-        return validationMessagePatternMismatchText();
-
-    if (element()->tooLong())
-        return validationMessageTooLongText(numGraphemeClusters(value), element()->maxLength());
-
-    if (rangeUnderflow(value))
-        return validationMessageRangeUnderflowText(serialize(minimum()));
-
-    if (rangeOverflow(value))
-        return validationMessageRangeOverflowText(serialize(maximum()));
-
-    if (stepMismatch(value)) {
-        String stepString;
-        double step;
-        if (getAllowedValueStep(&step))
-            stepString = serializeForNumberType(step / stepScaleFactor());
-        return validationMessageStepMismatchText(serialize(stepBase()), stepString);
-    }
-
-    return String();
 }
 
 void InputType::handleClickEvent(MouseEvent*)
@@ -913,7 +870,7 @@ double InputType::alignValueForStep(double newValue, double step, unsigned curre
     unsigned baseDecimalPlaces;
     double base = stepBaseWithDecimalPlaces(&baseDecimalPlaces);
     baseDecimalPlaces = min(baseDecimalPlaces, 16u);
-    if (stepMismatch(element()->value())) {
+    if (element()->stepMismatch(element()->value())) {
         double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, currentDecimalPlaces)));
         newValue = round(newValue * scale) / scale;
     } else {
@@ -1066,7 +1023,7 @@ void InputType::stepUpFromRenderer(int n)
         element()->setValue(serialize(sign > 0 ? minimum() : maximum()), DispatchInputAndChangeEvent);
     else {
         ExceptionCode ec;
-        if (stepMismatch(element()->value())) {
+        if (element()->stepMismatch(element()->value())) {
             ASSERT(step);
             double newValue;
             double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));

@@ -157,69 +157,6 @@ void FormAssociatedElement::formAttributeChanged()
         resetFormOwner();
 }
 
-bool FormAssociatedElement::customError() const
-{
-    const HTMLElement* element = toHTMLElement(this);
-    return element->willValidate() && !m_customValidationMessage.isEmpty();
-}
-
-bool FormAssociatedElement::patternMismatch() const
-{
-    return false;
-}
-
-bool FormAssociatedElement::rangeOverflow() const
-{
-    return false;
-}
-
-bool FormAssociatedElement::rangeUnderflow() const
-{
-    return false;
-}
-
-bool FormAssociatedElement::stepMismatch() const
-{
-    return false;
-}
-
-bool FormAssociatedElement::tooLong() const
-{
-    return false;
-}
-
-bool FormAssociatedElement::typeMismatch() const
-{
-    return false;
-}
-
-bool FormAssociatedElement::valid() const
-{
-    bool someError = typeMismatch() || stepMismatch() || rangeUnderflow() || rangeOverflow()
-        || tooLong() || patternMismatch() || valueMissing() || customError();
-    return !someError;
-}
-
-bool FormAssociatedElement::valueMissing() const
-{
-    return false;
-}
-
-String FormAssociatedElement::customValidationMessage() const
-{
-    return m_customValidationMessage;
-}
-
-String FormAssociatedElement::validationMessage() const
-{
-    return customError() ? m_customValidationMessage : String();
-}
-
-void FormAssociatedElement::setCustomValidity(const String& error)
-{
-    m_customValidationMessage = error;
-}
-
 const HTMLElement* toHTMLElement(const FormAssociatedElement* associatedElement)
 {
     if (associatedElement->isFormControlElement())

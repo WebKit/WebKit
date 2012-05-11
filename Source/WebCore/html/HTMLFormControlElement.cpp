@@ -484,8 +484,7 @@ void HTMLFormControlElement::setNeedsValidityCheck()
 
 void HTMLFormControlElement::setCustomValidity(const String& error)
 {
-    FormAssociatedElement::setCustomValidity(error);
-    setNeedsValidityCheck();
+    validity()->setCustomErrorMessage(error);
 }
 
 void HTMLFormControlElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)

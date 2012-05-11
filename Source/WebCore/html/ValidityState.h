@@ -57,7 +57,11 @@ public:
 private:
     ValidityState(FormAssociatedElement* control) : m_control(control) { }
 
+    static bool isValidColorString(const String&);
+    static bool isValidEmailAddress(const String&);
+
     FormAssociatedElement* m_control;
+    String m_customErrorMessage;
 };
 
 } // namespace WebCore

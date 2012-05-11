@@ -37,7 +37,6 @@
 #include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
-#include "LocalizedStrings.h"
 #include "RenderTextControlMultiLine.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -422,33 +421,6 @@ void HTMLTextAreaElement::setMaxLength(int newValue, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR;
     else
         setAttribute(maxlengthAttr, String::number(newValue));
-}
-
-String HTMLTextAreaElement::validationMessage() const
-{
-    if (!willValidate())
-        return String();
-
-    if (customError())
-        return customValidationMessage();
-
-    if (valueMissing())
-        return validationMessageValueMissingText();
-
-    if (tooLong())
-        return validationMessageTooLongText(numGraphemeClusters(value()), maxLength());
-
-    return String();
-}
-
-bool HTMLTextAreaElement::valueMissing() const
-{
-    return willValidate() && valueMissing(value());
-}
-
-bool HTMLTextAreaElement::tooLong() const
-{
-    return willValidate() && tooLong(value(), CheckDirtyFlag);
 }
 
 bool HTMLTextAreaElement::tooLong(const String& value, NeedsToCheckDirtyFlag check) const

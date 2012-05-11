@@ -60,22 +60,6 @@ public:
 
     void formRemovedFromTree(const Node* formRoot);
 
-    // ValidityState attribute implementations
-    bool customError() const;
-
-    // Override functions for patterMismatch, rangeOverflow, rangerUnderflow,
-    // stepMismatch, tooLong and valueMissing must call willValidate method.
-    virtual bool patternMismatch() const;
-    virtual bool rangeOverflow() const;
-    virtual bool rangeUnderflow() const;
-    virtual bool stepMismatch() const;
-    virtual bool tooLong() const;
-    virtual bool typeMismatch() const;
-    virtual bool valueMissing() const;
-    virtual String validationMessage() const;
-    bool valid() const;
-    virtual void setCustomValidity(const String&);
-
 protected:
     FormAssociatedElement();
 
@@ -92,8 +76,6 @@ protected:
     virtual void willChangeForm();
     virtual void didChangeForm();
 
-    String customValidationMessage() const;
-
 private:
     virtual const AtomicString& formControlName() const = 0;
 
@@ -102,7 +84,6 @@ private:
 
     HTMLFormElement* m_form;
     OwnPtr<ValidityState> m_validityState;
-    String m_customValidationMessage;
 };
 
 HTMLElement* toHTMLElement(FormAssociatedElement*);

@@ -140,7 +140,7 @@ public:
     virtual void setValueAsNumber(double, TextFieldEventBehavior, ExceptionCode&) const;
 
     // Validation functions
-    virtual String validationMessage() const;
+
     virtual bool supportsValidation() const;
     virtual bool typeMismatchFor(const String&) const;
     // Type check for the current input value. We do nothing for some types
@@ -157,7 +157,6 @@ public:
     virtual double minimum() const;
     virtual double maximum() const;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
-    bool stepMismatch(const String&) const;
     virtual bool stepMismatch(const String&, double step) const;
     virtual double stepBase() const;
     virtual double stepBaseWithDecimalPlaces(unsigned*) const;
