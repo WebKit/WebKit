@@ -1,3 +1,13 @@
+2012-05-10  Hajime Morrita  <morrita@google.com>
+
+        WebKit should support tab-size.
+        https://bugs.webkit.org/show_bug.cgi?id=52994
+
+        Reviewed by Simon Fraser.
+
+        * src/WebTextRun.cpp:
+        (WebKit::WebTextRun::operator WebCore::TextRun):
+
 2012-05-10  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r116594.

@@ -1,3 +1,16 @@
+2012-05-10  MORITA Hajime  <morrita@google.com>
+
+        WebKit should support tab-size.
+        https://bugs.webkit.org/show_bug.cgi?id=52994
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/tab-size-expected.html: Added.
+        * fast/css/tab-size.html: Added.
+        * platform/chromium-linux/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2012-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Crash in FontCache::releaseFontData due to infinite float size.

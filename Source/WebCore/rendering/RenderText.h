@@ -123,8 +123,6 @@ public:
 
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
 
-    bool allowTabs() const { return !style()->collapseWhiteSpace(); }
-
     void checkConsistency() const;
 
     virtual void computePreferredLogicalWidths(float leadWidth);

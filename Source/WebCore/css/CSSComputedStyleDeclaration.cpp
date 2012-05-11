@@ -157,6 +157,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyRight,
     CSSPropertySpeak,
     CSSPropertyTableLayout,
+    CSSPropertyTabSize,
     CSSPropertyTextAlign,
     CSSPropertyTextDecoration,
     CSSPropertyTextIndent,
@@ -1591,6 +1592,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             if (style->hasAutoColumnWidth())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             return zoomAdjustedPixelValue(style->columnWidth(), style.get());
+        case CSSPropertyTabSize:
+            return cssValuePool().createValue(style->tabSize(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitRegionBreakAfter:
             return cssValuePool().createValue(style->regionBreakAfter());
         case CSSPropertyWebkitRegionBreakBefore:

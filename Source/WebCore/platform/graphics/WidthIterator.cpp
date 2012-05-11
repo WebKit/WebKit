@@ -117,10 +117,9 @@ unsigned WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
         // Now that we have a glyph and font data, get its width.
         float width;
-        if (character == '\t' && m_run.allowTabs()) {
-            float tabWidth = m_font->tabWidth(*fontData);
-            width = tabWidth - fmodf(m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding, tabWidth);
-        } else {
+        if (character == '\t' && m_run.allowTabs())
+            width = m_font->tabWidth(*fontData, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding);
+        else {
             width = fontData->widthForGlyph(glyph);
 
 #if ENABLE(SVG)

@@ -1948,7 +1948,7 @@ static inline float textWidth(RenderText* text, unsigned from, unsigned len, con
     ASSERT(run.charactersLength() >= run.length());
 
     run.setCharacterScanForCodePath(!text->canUseSimpleFontCodePath());
-    run.setAllowTabs(!collapseWhiteSpace);
+    run.setTabSize(!collapseWhiteSpace, text->style()->tabSize());
     run.setXPos(xPos);
     return font.width(run);
 }
@@ -1980,7 +1980,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     run.setCharactersLength(text->textLength() - lastSpace);
     ASSERT(run.charactersLength() >= run.length());
 
-    run.setAllowTabs(!collapseWhiteSpace);
+    run.setTabSize(!collapseWhiteSpace, text->style()->tabSize());
     run.setXPos(xPos + lastSpaceWordSpacing);
 
     unsigned prefixLength = font.offsetForPosition(run, maxPrefixWidth, false);

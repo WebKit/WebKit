@@ -37,6 +37,7 @@ class ExpectedTextRunSize {
 #endif
     float float3;
     uint32_t bitfields : 9;
+    unsigned anUnsigned;
     RefPtr<TextRun::RenderingContext> renderingContext;
 };
 

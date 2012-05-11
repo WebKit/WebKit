@@ -58,7 +58,7 @@ public:
 
     typedef unsigned RoundingHacks;
 
-    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
+    TextRun(const UChar* c, int len, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_characters(c)
         , m_charactersLength(len)
         , m_len(len)
@@ -68,17 +68,18 @@ public:
 #endif
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
-        , m_allowTabs(allowTabs)
+        , m_allowTabs(false)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
         , m_characterScanForCodePath(characterScanForCodePath)
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
+        , m_tabSize(0)
     {
     }
 
-    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
+    TextRun(const String& s, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true, RoundingHacks roundingHacks = RunRounding | WordRounding)
         : m_characters(s.characters())
         , m_charactersLength(s.length())
         , m_len(s.length())
@@ -88,13 +89,14 @@ public:
 #endif
         , m_expansion(expansion)
         , m_expansionBehavior(expansionBehavior)
-        , m_allowTabs(allowTabs)
+        , m_allowTabs(false)
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
         , m_characterScanForCodePath(characterScanForCodePath)
         , m_applyRunRounding((roundingHacks & RunRounding) && s_allowsRoundingHacks)
         , m_applyWordRounding((roundingHacks & WordRounding) && s_allowsRoundingHacks)
         , m_disableSpacing(false)
+        , m_tabSize(0)
     {
     }
 
@@ -114,7 +116,9 @@ public:
 #endif
 
     bool allowTabs() const { return m_allowTabs; }
-    void setAllowTabs(bool allowTabs) { m_allowTabs = allowTabs; }
+    unsigned tabSize() const { return m_tabSize; }
+    void setTabSize(bool, unsigned);
+
     float xPos() const { return m_xpos; }
     void setXPos(float xPos) { m_xpos = xPos; }
     float expansion() const { return m_expansion; }
@@ -166,6 +170,7 @@ private:
 #if ENABLE(SVG)
     float m_horizontalGlyphStretch;
 #endif
+
     float m_expansion;
     ExpansionBehavior m_expansionBehavior : 2;
     unsigned m_allowTabs : 1;
@@ -175,8 +180,15 @@ private:
     unsigned m_applyRunRounding : 1;
     unsigned m_applyWordRounding : 1;
     unsigned m_disableSpacing : 1;
+    unsigned m_tabSize;
     RefPtr<RenderingContext> m_renderingContext;
 };
+
+inline void TextRun::setTabSize(bool allow, unsigned size)
+{
+    m_allowTabs = allow;
+    m_tabSize = size;
+}
 
 }
 

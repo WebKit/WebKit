@@ -1973,6 +1973,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         addProperty(propId, val.release(), important);
         return true;
     }
+    case CSSPropertyTabSize:
+        validPrimitive = validUnit(value, FInteger | FNonNeg);
+        break;
     case CSSPropertyWebkitAspectRatio:
         return parseAspectRatio(important);
     case CSSPropertyBorderRadius:

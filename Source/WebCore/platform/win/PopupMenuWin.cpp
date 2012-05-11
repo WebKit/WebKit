@@ -636,10 +636,8 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
 
         String itemText = client()->itemText(index);
             
-        unsigned length = itemText.length();
-        const UChar* string = itemText.characters();
         TextDirection direction = (itemText.defaultWritingDirection() == WTF::Unicode::RightToLeft) ? RTL : LTR;
-        TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, direction);
+        TextRun textRun(itemText, 0, 0, TextRun::AllowTrailingExpansion, direction);
 
         context.setFillColor(optionTextColor, ColorSpaceDeviceRGB);
         

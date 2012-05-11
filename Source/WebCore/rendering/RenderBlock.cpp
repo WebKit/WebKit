@@ -7274,7 +7274,7 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
             directionalOverride |= isOverride(style->unicodeBidi());
     }
 
-    TextRun run(characters, length, false, 0, 0, expansion, textDirection, directionalOverride);
+    TextRun run(characters, length, 0, 0, expansion, textDirection, directionalOverride);
     if (textRunNeedsRenderingContext(font))
         run.setRenderingContext(SVGTextRunRenderingContext::create(context));
 

@@ -160,7 +160,9 @@ public:
     // Metrics that we query the FontFallbackList for.
     const FontMetrics& fontMetrics() const { return primaryFont()->fontMetrics(); }
     float spaceWidth() const { return primaryFont()->spaceWidth() + m_letterSpacing; }
-    float tabWidth(const SimpleFontData& fontData) const { return 8 * fontData.spaceWidth() + letterSpacing(); }
+    float tabWidth(const SimpleFontData&, unsigned tabSize, float position) const;
+    float tabWidth(unsigned tabSize, float position) const { return tabWidth(*primaryFont(), tabSize, position); }
+
     int emphasisMarkAscent(const AtomicString&) const;
     int emphasisMarkDescent(const AtomicString&) const;
     int emphasisMarkHeight(const AtomicString&) const;
@@ -301,6 +303,14 @@ inline bool Font::isFixedPitch() const
 inline FontSelector* Font::fontSelector() const
 {
     return m_fontList ? m_fontList->fontSelector() : 0;
+}
+
+inline float Font::tabWidth(const SimpleFontData& fontData, unsigned tabSize, float position) const
+{
+    if (!tabSize)
+        return letterSpacing();
+    float tabWidth = tabSize * fontData.spaceWidth() + letterSpacing();
+    return tabWidth - fmodf(position, tabWidth);
 }
 
 }

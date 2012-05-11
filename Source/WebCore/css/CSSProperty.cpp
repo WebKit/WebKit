@@ -279,6 +279,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyQuotes:
     case CSSPropertyResize:
     case CSSPropertySpeak:
+    case CSSPropertyTabSize:
     case CSSPropertyTextAlign:
     case CSSPropertyTextDecoration:
     case CSSPropertyTextIndent:

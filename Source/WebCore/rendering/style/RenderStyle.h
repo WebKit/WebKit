@@ -909,6 +909,9 @@ public:
 
     TextCombine textCombine() const { return static_cast<TextCombine>(rareNonInheritedData->m_textCombine); }
     bool hasTextCombine() const { return textCombine() != TextCombineNone; }
+
+    unsigned tabSize() const { return rareInheritedData->m_tabSize; }
+
     // End CSS3 Getters
 
     const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
@@ -1325,6 +1328,8 @@ public:
     void setFilter(const FilterOperations& ops) { SET_VAR(rareNonInheritedData.access()->m_filter, m_operations, ops); }
 #endif
 
+    void setTabSize(unsigned size) { SET_VAR(rareInheritedData, m_tabSize, size); }
+
     // End CSS3 Setters
 
     void setLineGrid(const AtomicString& lineGrid) { SET_VAR(rareInheritedData, m_lineGrid, lineGrid); }
@@ -1663,6 +1668,8 @@ public:
     static Length initialGridItemColumn() { return Length(); }
     static Length initialGridItemRow() { return Length(); }
 #endif
+
+    static unsigned initialTabSize() { return 8; }
 
     static const AtomicString& initialLineGrid() { return nullAtom; }
     static LineSnap initialLineSnap() { return LineSnapNone; }

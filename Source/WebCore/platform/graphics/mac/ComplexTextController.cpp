@@ -516,10 +516,9 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             CGGlyph glyph = treatAsSpace ? fontData->spaceGlyph() : glyphs[i];
             CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
 
-            if (ch == '\t' && m_run.allowTabs()) {
-                float tabWidth = m_font.tabWidth(*fontData);
-                advance.width = tabWidth - fmodf(m_run.xPos() + m_totalWidth + widthSinceLastCommit, tabWidth);
-            } else if (Font::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
+            if (ch == '\t' && m_run.allowTabs())
+                advance.width = m_font.tabWidth(*fontData, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);
+            else if (Font::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.width = 0;
                 glyph = fontData->spaceGlyph();
             }
