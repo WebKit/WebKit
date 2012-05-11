@@ -2856,6 +2856,9 @@ SOURCES += \
     platform/graphics/qt/FontPlatformDataQt.cpp \
     platform/graphics/qt/FloatPointQt.cpp \
     platform/graphics/qt/FloatRectQt.cpp \
+    platform/graphics/qt/FractionalLayoutPointQt.cpp \
+    platform/graphics/qt/FractionalLayoutRectQt.cpp \
+    platform/graphics/qt/FractionalLayoutSizeQt.cpp \
     platform/graphics/qt/GradientQt.cpp \
     platform/graphics/qt/GraphicsContextQt.cpp \
     platform/graphics/qt/IconQt.cpp \

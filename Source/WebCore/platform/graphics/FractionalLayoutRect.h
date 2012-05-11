@@ -35,6 +35,14 @@
 #include "IntRect.h"
 #include <wtf/Vector.h>
 
+#if PLATFORM(QT)
+#include <qglobal.h>
+QT_BEGIN_NAMESPACE
+class QRect;
+class QRectF;
+QT_END_NAMESPACE
+#endif
+
 namespace WebCore {
 
 class FloatRect;
@@ -152,6 +160,12 @@ public:
     FractionalLayoutRect transposedRect() const { return FractionalLayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
     static FractionalLayoutRect infiniteRect() {return FractionalLayoutRect(FractionalLayoutUnit::min() / 2, FractionalLayoutUnit::min() / 2, FractionalLayoutUnit::max(), FractionalLayoutUnit::max()); }
+
+#if PLATFORM(QT)
+    explicit FractionalLayoutRect(const QRect&);
+    explicit FractionalLayoutRect(const QRectF&);
+    operator QRectF() const;
+#endif
 
 private:
     FractionalLayoutPoint m_location;
