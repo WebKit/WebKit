@@ -119,4 +119,25 @@ builders.buildersFailingNonLayoutTests = function(callback)
     });
 };
 
+builders.perfBuilders = function(callback)
+{
+    fetchMostRecentBuildInfoByBuilder(function(buildInfoByBuilder) {
+        var perfTestMap = {};
+        $.each(buildInfoByBuilder, function(builderName, buildInfo) {
+            if (!buildInfo || builderName.indexOf('Perf') == -1)
+                return;
+            buildInfo.steps.forEach(function(step) {
+                // FIXME: If the compile is broken, grab an older build.
+                // If the compile/update is broken, no steps will have a results url.
+                if (!step.urls.results)
+                    return;
+                if (!perfTestMap[step.name])
+                    perfTestMap[step.name] = [];
+                perfTestMap[step.name].push({ builder: builderName, url: step.urls.results });
+            });
+        });
+        callback(perfTestMap);
+    });
+}
+
 })();

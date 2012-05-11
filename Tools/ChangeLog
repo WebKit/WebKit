@@ -1,3 +1,25 @@
+2012-05-10  Ojan Vafai  <ojan@chromium.org>
+
+        Add a perf tab to garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=86169
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a first stab at making it easier to view the Chromium WebKit canary
+        perf graphs. For now, it's just a couple select elements and an iframe.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/garden-o-matic.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/perf.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/perf_unittests.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/perf.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move resumeAnimations to use Internals interface

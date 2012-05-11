@@ -71,14 +71,17 @@ ui.onebar = base.extends('div', {
                 '<li><a href="#unexpected">Unexpected Failures</a></li>' +
                 '<li><a href="#expected">Expected Failures</a></li>' +
                 '<li><a href="#results">Results</a></li>' +
+                '<li><a href="#perf">perf</a></li>' +
             '</ul>' +
             '<div id="unexpected"></div>' +
             '<div id="expected"></div>' +
-            '<div id="results"></div>';
+            '<div id="results"></div>' +
+            '<div id="perf"></div>';
         this._tabNames = [
             'unexpected',
             'expected',
             'results',
+            'perf',
         ]
 
         this._tabIndexToSavedScrollOffset = {};
@@ -153,6 +156,10 @@ ui.onebar = base.extends('div', {
     results: function()
     {
         return this.tabNamed('results');
+    },
+    perf: function()
+    {
+        return this.tabNamed('perf');
     },
     _selectInternal: function(tabName) {
         var tabIndex = this._tabNames.indexOf(tabName);
