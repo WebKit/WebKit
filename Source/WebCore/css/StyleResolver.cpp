@@ -4046,6 +4046,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue *value)
     case CSSPropertyRight:
     case CSSPropertySize:
     case CSSPropertySpeak:
+    case CSSPropertyTabSize:
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
     case CSSPropertyTextDecoration:
