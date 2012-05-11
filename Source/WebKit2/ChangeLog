@@ -1,3 +1,12 @@
+2012-05-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        REGRESSION(r116205): [GTK]: build no longer supports thin archives
+        https://bugs.webkit.org/show_bug.cgi?id=86207
+
+        * GNUmakefile.am: link libWebCoreModules to the webkit2gtk shared
+        library; tell the linker to ignore internal unresolved symbols for
+        PluginProcess and avoid linking libWebCoreModules.
+
 2012-05-11  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed build fix attempt.

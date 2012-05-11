@@ -911,9 +911,6 @@ libWebCore_la_CPPFLAGS = \
 	$(XRENDER_CFLAGS) \
 	$(XT_CFLAGS)
 
-libWebCore_la_LIBADD = \
-	libWebCoreModules.la
-
 libWebCoreModules_la_SOURCES = \
 	$(webcore_modules_sources)
 

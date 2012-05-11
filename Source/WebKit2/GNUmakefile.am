@@ -151,6 +151,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDF
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD = \
 	-lpthread \
 	libWebCore.la \
+	libWebCoreModules.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libWebCoreGtk.la \
 	$(CAIRO_LIBS) \
@@ -472,6 +473,13 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(XT_LIBS) \
 	$(WINMM_LIBS) \
 	$(ZLIB_LIBS)
+
+# libWebCore and libWebCoreModules have circular dependencies that only seem to
+# be a problem when linking the plugin process; we don't really care about
+# modules for the plugin process, though, so to work around that we ignore
+# internal unresolved symbols
+Programs_WebKitPluginProcess_LDFLAGS = \
+	-Wl,--unresolved-symbols=ignore-in-object-files
 
 Programs_WebKitPluginProcess_CXXFLAGS = \
 	$(SYMBOL_VISIBILITY_INLINES) \
