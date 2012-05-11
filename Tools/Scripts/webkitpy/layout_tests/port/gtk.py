@@ -125,8 +125,9 @@ class GtkPort(WebKitPort, PulseAudioSanitizer):
         cmd = ['gdb', '-ex', 'thread apply all bt', '--batch', str(self._path_to_driver()), coredump_path]
         proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.wait()
-        errors = [l.strip() for l in proc.stderr.readlines()]
-        return (proc.stdout.read(), errors)
+        errors = [l.strip().decode('utf8', 'ignore') for l in proc.stderr.readlines()]
+        trace = proc.stdout.read().decode('utf8', 'ignore')
+        return (trace, errors)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         pid_representation = str(pid or '<unknown>')

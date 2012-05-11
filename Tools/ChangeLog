@@ -1,3 +1,11 @@
+2012-05-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK 64-bit Debug bot fix attempt.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._get_gdb_output): Ignore unicode decoding errors when
+        processing gdb output.
+
 2012-05-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         REGRESSION(r116205): [GTK]: build no longer supports thin archives
