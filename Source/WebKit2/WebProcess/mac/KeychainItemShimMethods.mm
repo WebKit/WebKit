@@ -28,7 +28,7 @@
 
 #if defined(BUILDING_ON_SNOW_LEOPARD)
 
-#import "KeychainShimResponseMap.h"
+#import "BlockingResponseMap.h"
 #import "SecKeychainItemRequestData.h"
 #import "SecKeychainItemResponseData.h"
 #import "WebProcess.h"
@@ -141,9 +141,9 @@ static bool webFreeKeychainItemContent(void* data)
     return true;
 }
 
-static KeychainShimResponseMap<SecKeychainItemResponseData>& responseMap()
+static BlockingResponseMap<SecKeychainItemResponseData>& responseMap()
 {
-    AtomicallyInitializedStatic(KeychainShimResponseMap<SecKeychainItemResponseData>&, responseMap = *new KeychainShimResponseMap<SecKeychainItemResponseData>);
+    AtomicallyInitializedStatic(BlockingResponseMap<SecKeychainItemResponseData>&, responseMap = *new BlockingResponseMap<SecKeychainItemResponseData>);
     return responseMap;
 }
 

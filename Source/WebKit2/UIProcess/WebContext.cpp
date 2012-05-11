@@ -147,6 +147,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyAlways)
 #endif
     , m_processTerminationEnabled(true)
+    , m_pluginWorkQueue("com.apple.CoreIPC.PluginQueue")
 {
 #if !LOG_DISABLED
     WebKit::initializeLogChannelsIfNecessary();
@@ -165,6 +166,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 
 WebContext::~WebContext()
 {
+    if (m_process && m_process->isValid())
+        m_process->connection()->removeQueueClient(this);
+
     ASSERT(contexts().find(this) != notFound);
     contexts().remove(contexts().find(this));
 
@@ -354,6 +358,8 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
     ASSERT_UNUSED(process, process == m_process);
 
     m_visitedLinkProvider.processDidFinishLaunching();
+
+    m_process->connection()->addQueueClient(this);
     
     // Sometimes the memorySampler gets initialized after process initialization has happened but before the process has finished launching
     // so check if it needs to be started here
@@ -604,20 +610,39 @@ void WebContext::addVisitedLinkHash(LinkHash linkHash)
     m_visitedLinkProvider.addVisitedLink(linkHash);
 }
 
-void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
+void WebContext::sendDidGetPlugins(uint64_t requestID, const Vector<PluginInfo>& pluginInfos)
+{
+    ASSERT(isMainThread());
+
+    Vector<PluginInfo> plugins(pluginInfos);
+
+#if PLATFORM(MAC)
+    // Add built-in PDF last, so that it's not used when a real plug-in is installed.
+    // NOTE: This has to be done on the main thread as it calls localizedString().
+    if (!omitPDFSupport())
+        plugins.append(BuiltInPDFView::pluginInfo());
+#endif
+
+    process()->send(Messages::WebProcess::DidGetPlugins(requestID, plugins), 0);
+}
+
+void WebContext::handleGetPlugins(uint64_t requestID, bool refresh)
 {
     if (refresh)
         m_pluginInfoStore.refresh();
+
+    Vector<PluginInfo> pluginInfos;
 
     Vector<PluginModuleInfo> plugins = m_pluginInfoStore.plugins();
     for (size_t i = 0; i < plugins.size(); ++i)
         pluginInfos.append(plugins[i].info);
 
-#if PLATFORM(MAC)
-    // Add built-in PDF last, so that it's not used when a real plug-in is installed.
-    if (!omitPDFSupport())
-        pluginInfos.append(BuiltInPDFView::pluginInfo());
-#endif
+    RunLoop::main()->dispatch(bind(&WebContext::sendDidGetPlugins, this, requestID, pluginInfos));
+}
+
+void WebContext::getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refresh)
+{
+    m_pluginWorkQueue.dispatch(bind(&WebContext::handleGetPlugins, this, requestID, refresh));
 }
 
 void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked)
@@ -927,6 +952,14 @@ void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, u
 void WebContext::garbageCollectJavaScriptObjects()
 {
     sendToAllProcesses(Messages::WebProcess::GarbageCollectJavaScriptObjects());
+}
+
+void WebContext::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
+{
+    if (messageID.is<CoreIPC::MessageClassWebContext>()) {
+        didReceiveWebContextMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
+        return;
+    }
 }
 
 } // namespace WebKit

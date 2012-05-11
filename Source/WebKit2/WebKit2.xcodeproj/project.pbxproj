@@ -203,7 +203,6 @@
 		1AAF0C4B12B16334008E49E2 /* ArgumentCodersCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */; };
 		1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */; };
 		1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */; };
-		1AB42E8714BBBBB2004272F7 /* KeychainShimResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB42E8614BBBBB2004272F7 /* KeychainShimResponseMap.h */; };
 		1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */; };
 		1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */; };
 		1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */; };
@@ -327,6 +326,7 @@
 		37C4E9F6131C6E7E0029BD5A /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = B396EA5512E0ED2D00F4FEB7 /* config.h */; };
 		37F623B812A57B6200E3FDF6 /* WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F623B712A57B6200E3FDF6 /* WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */; };
+		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */; };
 		510FBB9B1288C95E00AFFDF4 /* WebContextMenuItemData.h in Headers */ = {isa = PBXBuildFile; fileRef = 510FBB991288C95E00AFFDF4 /* WebContextMenuItemData.h */; };
@@ -1212,7 +1212,6 @@
 		1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ArgumentCodersCF.cpp; sourceTree = "<group>"; };
 		1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TiledCoreAnimationDrawingArea.mm; sourceTree = "<group>"; };
 		1AAF263714687C39004A1E8A /* TiledCoreAnimationDrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledCoreAnimationDrawingArea.h; sourceTree = "<group>"; };
-		1AB42E8614BBBBB2004272F7 /* KeychainShimResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainShimResponseMap.h; sourceTree = "<group>"; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
 		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };
@@ -1349,6 +1348,7 @@
 		37948406150C4B9600E52CE9 /* WKRenderLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderLayer.cpp; sourceTree = "<group>"; };
 		37948407150C4B9600E52CE9 /* WKRenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRenderLayer.h; sourceTree = "<group>"; };
 		37F623B712A57B6200E3FDF6 /* WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindOptions.h; sourceTree = "<group>"; };
+		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
 		510031F61379CACB00C8DFE4 /* WebProcessShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebProcessShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
 		510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenuItemData.cpp; sourceTree = "<group>"; };
@@ -2228,7 +2228,6 @@
 			children = (
 				512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */,
 				512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */,
-				1AB42E8614BBBBB2004272F7 /* KeychainShimResponseMap.h */,
 				511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */,
 				511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */,
 				BC3065C312592F8900E71278 /* WebProcessMac.mm */,
@@ -2344,6 +2343,7 @@
 				5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */,
 				B63403F814910D57001070B5 /* APIObject.cpp */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
+				4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */,
 				BC3065F91259344E00E71278 /* CacheModel.h */,
 				1A2D956E12848564001EB962 /* ChildProcess.cpp */,
 				1A2D956D12848564001EB962 /* ChildProcess.h */,
@@ -3889,6 +3889,7 @@
 				1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */,
 				1A3D610213A7CC2A00F95D4E /* PluginModuleInfo.h in Headers */,
 				1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */,
+				4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */,
 				1A0EC906124C0AB8007EF4A5 /* PluginProcessConnection.h in Headers */,
 				1A0EC90F124C0AF5007EF4A5 /* PluginProcessConnectionManager.h in Headers */,
 				1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */,
@@ -4193,7 +4194,6 @@
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
-				1AB42E8714BBBBB2004272F7 /* KeychainShimResponseMap.h in Headers */,
 				E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,

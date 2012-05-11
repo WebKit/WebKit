@@ -54,6 +54,8 @@ messages -> WebProcess {
     ClearPluginSiteData(Vector<WTF::String> pluginPaths, Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 #endif
 
+    DidGetPlugins(uint64_t requestID, Vector<WebCore::PluginInfo> plugins) DispatchOnConnectionQueue
+
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessCrashed(String pluginProcess) DispatchOnConnectionQueue
 #endif

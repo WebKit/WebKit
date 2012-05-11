@@ -27,6 +27,7 @@
 #define PluginInfoStore_h
 
 #include "PluginModuleInfo.h"
+#include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
     class KURL;
@@ -87,6 +88,8 @@ private:
     Vector<String> m_additionalPluginsDirectories;
     Vector<PluginModuleInfo> m_plugins;
     bool m_pluginListIsUpToDate;
+
+    mutable Mutex m_pluginsLock;
 };
     
 } // namespace WebKit

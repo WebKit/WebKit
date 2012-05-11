@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeychainShimResponseMap_h
-#define KeychainShimResponseMap_h
+#ifndef BlockingResponseMap_h
+#define BlockingResponseMap_h
 
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -32,7 +32,7 @@
 #include <wtf/ThreadingPrimitives.h>
 
 template<typename T>
-class KeychainShimResponseMap {
+class BlockingResponseMap {
 public:
     PassOwnPtr<T> waitForResponse(uint64_t requestID)
     {
@@ -64,6 +64,4 @@ private:
     HashMap<uint64_t, OwnPtr<T> > m_responses;
 };
 
-
-
-#endif // KeychainShimResponseMap_h
+#endif // BlockingResponseMap_h

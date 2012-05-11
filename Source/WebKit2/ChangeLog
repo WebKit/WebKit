@@ -1,3 +1,78 @@
+2012-05-11  Andreas Kling  <kling@webkit.org>
+
+        WK2/Plugins: Move enumeration of plugins to a secondary UIProcess thread.
+        <http://webkit.org/b/86143>
+        <rdar://problem/10777218>
+
+        Reviewed by Anders Carlsson.
+
+        To avoid spins beneath PluginInfoStore::getPluginInfo(), do this work on a secondary
+        thread in the UIProcess.
+
+        * Shared/APIObject.h:
+
+            Made APIObject a ThreadSafeRefCounted. In the context of this patch, this is to
+            be able to dispatch bound Functions on WebContext.
+
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        (WebKit::responseMap):
+        * WebProcess/mac/SecItemShimMethods.mm:
+        (WebKit::responseMap):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * Shared/BlockingResponseMap.h:
+        (BlockingResponseMap):
+        (BlockingResponseMap::waitForResponse):
+        (BlockingResponseMap::didReceiveResponse):
+
+             Renamed from Source/WebKit2/WebProcess/mac/KeychainShimResponseMap.h.
+             Generalize this somewhat since it's useful in more than just the keychain scenario.
+             This can/should be generalized further, but that's a topic for another patch.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::plugins):
+        (WebKit::PluginInfoStore::findPluginForMIMEType):
+        (WebKit::PluginInfoStore::findPluginForExtension):
+        (WebKit::PluginInfoStore::findPlugin):
+        (WebKit::PluginInfoStore::infoForPluginWithPath):
+
+            Slap a mutex on the PluginInfoStore since it can now be called from both the
+            main thread (via WKFrameCanShowMIMEType) and the GetPlugin work queue.
+
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::processDidFinishLaunching):
+        (WebKit::WebContext::sendDidGetPlugins):
+        (WebKit::WebContext::handleGetPlugins):
+        (WebKit::WebContext::getPlugins):
+        (WebKit::WebContext::didReceiveMessageOnConnectionWorkQueue):
+
+            Make GetPlugins a DispatchOnConnectionQueue message and execute it on a new
+            plug-in work queue. This effectively makes the GetPlugin call asynchronous.
+            On Mac, the built-in PDF reader is still registered on the main thread as that
+            ends up calling into localizedString().
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didGetPlugins):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
+            Add a DidGetPlugins message to WebProcess. This is passed directly to the handler
+            in WebPlatformStrategies.cpp.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::responseMap):
+        (WebKit::handleDidGetPlugins):
+        (WebKit::generateRequestID):
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+
+            Use a BlockingResponseMap to block the WebProcess main thread until the UIProcess
+            responds with DidGetPlugins.
+
 2012-05-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         REGRESSION(r116205): [GTK]: build no longer supports thin archives

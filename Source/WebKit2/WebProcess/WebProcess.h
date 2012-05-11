@@ -30,6 +30,7 @@
 #include "ChildProcess.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
+#include "PluginInfoStore.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
@@ -242,6 +243,8 @@ private:
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveWebProcessMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, bool& didHandleMessage);
+
+    void didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const Vector<WebCore::PluginInfo>&);
 
     RefPtr<WebConnectionToUIProcess> m_connection;
 

@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+class APIObject : public ThreadSafeRefCounted<APIObject> {
 public:
     enum Type {
         // Base types
