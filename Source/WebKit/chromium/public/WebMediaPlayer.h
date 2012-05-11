@@ -184,10 +184,11 @@ public:
     virtual MediaKeyException addKey(const WebString& keySystem, const unsigned char* key, unsigned keyLength, const unsigned char* initData, unsigned initDataLength, const WebString& sessionId) { return MediaKeyExceptionKeySystemNotSupported; }
     virtual MediaKeyException cancelKeyRequest(const WebString& keySystem, const WebString& sessionId) { return MediaKeyExceptionKeySystemNotSupported; }
 
-    // Instuct WebMediaPlayer to enter/exit fullscreen.
-    // Returns true if the player can enter fullscreen.
-    virtual bool enterFullscreen() { return false; }
+    // Instruct WebMediaPlayer to enter/exit fullscreen.
+    virtual void enterFullscreen() { }
     virtual void exitFullscreen() { }
+    // Returns true if the player can enter fullscreen.
+    virtual bool canEnterFullscreen() const { return false; }
 };
 
 } // namespace WebKit

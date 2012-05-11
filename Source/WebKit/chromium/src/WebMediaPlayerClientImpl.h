@@ -135,8 +135,9 @@ public:
     virtual unsigned audioDecodedByteCount() const;
     virtual unsigned videoDecodedByteCount() const;
 #if USE(NATIVE_FULLSCREEN_VIDEO)
-    virtual bool enterFullscreen() const;
+    virtual void enterFullscreen();
     virtual void exitFullscreen();
+    virtual bool canEnterFullscreen() const;
 #endif
 
 #if ENABLE(WEB_AUDIO)

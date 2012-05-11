@@ -1602,8 +1602,10 @@ void WebViewImpl::enterFullScreenForElement(WebCore::Element* element)
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     if (element && element->isMediaElement()) {
         HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
-        if (mediaElement->player() && mediaElement->player()->enterFullscreen())
+        if (mediaElement->player() && mediaElement->player()->canEnterFullscreen()) {
+            mediaElement->player()->enterFullscreen();
             m_provisionalFullScreenElement = element;
+        }
         return;
     }
 #endif

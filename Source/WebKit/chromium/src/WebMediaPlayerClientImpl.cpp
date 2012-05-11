@@ -340,17 +340,21 @@ void WebMediaPlayerClientImpl::pause()
 }
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
-bool WebMediaPlayerClientImpl::enterFullscreen() const
+void WebMediaPlayerClientImpl::enterFullscreen()
 {
     if (m_webMediaPlayer)
-        return m_webMediaPlayer->enterFullscreen();
-    return false;
+        m_webMediaPlayer->enterFullscreen();
 }
 
 void WebMediaPlayerClientImpl::exitFullscreen()
 {
     if (m_webMediaPlayer)
         m_webMediaPlayer->exitFullscreen();
+}
+
+bool WebMediaPlayerClientImpl::canEnterFullscreen() const
+{
+    return m_webMediaPlayer && m_webMediaPlayer->canEnterFullscreen();
 }
 #endif
 

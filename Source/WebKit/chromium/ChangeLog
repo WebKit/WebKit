@@ -1,3 +1,28 @@
+2012-05-11  Min Qin  <qinmin@google.com>
+
+        split MediaPlayer::enterFullscreen into 2 seperate functions
+        https://bugs.webkit.org/show_bug.cgi?id=86052
+
+        Reviewed by Adam Barth.
+
+        In WebCore, we splitted bool enterFullscreen() into two seperate calls:
+        void enterFullscreen() and bool canEnterFullscreen()
+        This is the change in the chromium part that we needed to support the WebCore change
+        No behavior change, just refactoring.
+
+        * public/WebMediaPlayer.h:
+        (WebMediaPlayer):
+        (WebKit::WebMediaPlayer::enterFullscreen):
+        (WebKit::WebMediaPlayer::canEnterFullscreen):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::enterFullscreen):
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::exitFullscreen):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::enterFullScreenForElement):
+
 2012-05-11  David Reveman  <reveman@chromium.org>
 
         [Chromium] Move instantiation of texture uploader to LayerRendererChromium.
