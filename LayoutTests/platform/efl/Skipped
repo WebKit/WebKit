@@ -142,27 +142,6 @@ http/tests/security/drag-drop-different-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
 svg/text/select-text-svgfont.html
 
-# EFL's EventSender does not implement contextClick yet
-editing/pasteboard/copy-standalone-image-crash.html
-editing/selection/5354455-1.html
-editing/selection/5354455-2.html
-editing/selection/button-right-click.html
-editing/selection/context-menu-on-text.html
-editing/selection/context-menu-text-selection.html
-editing/selection/empty-cell-right-click.html
-editing/selection/extend-after-mouse-selection.html
-editing/selection/shift-click.html
-editing/spelling/context-menu-suggestions.html
-editing/spelling/spellcheck-input-search-crash.html
-fast/events/context-no-deselect.html
-fast/events/context-onmousedown-event.html
-fast/events/contextmenu-scrolled-page-with-frame.html
-fast/events/menu-keydown-on-hidden-element.html
-fast/events/right-click-focus.html
-fast/events/selectstart-prevent-selection-on-right-click.html
-media/context-menu-actions.html
-media/controls-right-click-on-timebar.html
-
 # EFL's DRT needs to show modal dialogs
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/events/scroll-event-during-modal-dialog.html

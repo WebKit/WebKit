@@ -421,3 +421,23 @@ BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 // New test introduced in r116694 fails
 BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT
+
+// EFL's EventSender does not implement contextClick yet
+BUGWK86091 : editing/pasteboard/copy-standalone-image-crash.html = TEXT
+BUGWK86091 : editing/selection/5354455-1.html = TEXT
+BUGWK86091 : editing/selection/button-right-click.html = TEXT
+BUGWK86091 : editing/selection/context-menu-on-text.html = TEXT
+BUGWK86091 : editing/selection/context-menu-text-selection.html = TEXT
+BUGWK86091 : editing/selection/empty-cell-right-click.html = TEXT
+BUGWK86091 : editing/spelling/context-menu-suggestions.html = TEXT
+BUGWK86091 : editing/spelling/spellcheck-input-search-crash.html = TEXT
+BUGWK86091 : fast/events/context-onmousedown-event.html = TEXT
+BUGWK86091 : fast/events/contextmenu-scrolled-page-with-frame.html = TEXT
+BUGWK86091 : fast/events/right-click-focus.html = TEXT
+BUGWK86091 : fast/events/selectstart-prevent-selection-on-right-click.html = TEXT
+BUGWK86091 : media/context-menu-actions.html = TEXT
+BUGWK86091 : media/controls-right-click-on-timebar.html = TEXT
+
+// EFL's EventSender contextClick, needs baselines
+BUGWK86091 : editing/selection/5354455-2.html = MISSING
+BUGWK86091 : fast/events/context-no-deselect.html = MISSING

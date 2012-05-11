@@ -1,3 +1,15 @@
+2012-05-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Gardening failure test cases.
+        https://bugs.webkit.org/show_bug.cgi?id=86212
+
+        Unreviewed EFL gardening.
+
+        Test expectations update, moving related bugs from Skipped list to test_expectations.txt.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt: adding new bug regarding to missing contextClick implementation.
+
 2012-05-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: move breakpoint manager from debuggerPresentationModel to WebInspector.
