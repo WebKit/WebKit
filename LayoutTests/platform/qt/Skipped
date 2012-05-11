@@ -2555,3 +2555,15 @@ inspector/debugger/source-frame.html
 # [Qt] new test http/tests/cookies/single-quoted-value.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=86066
 http/tests/cookies/single-quoted-value.html
+
+# ietestcenter/css3/valuesandunits/units-000.htm asserts
+# https://bugs.webkit.org/show_bug.cgi?id=86176
+ietestcenter/css3/valuesandunits/units-000.htm
+
+# Viewport attribute values are leaked when document.write() is used.
+# https://bugs.webkit.org/show_bug.cgi?id=86077
+html5lib/runner.html
+
+# [Qt] tab-size CSS property doesn't work at all
+# https://bugs.webkit.org/show_bug.cgi?id=86179
+fast/css/tab-size.html

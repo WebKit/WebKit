@@ -1,3 +1,12 @@
+2012-05-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt: Updated after r116723.
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Updated after r116723.
+        * platform/qt/Skipped: Skip new crashing and failing tests.
+        * platform/qt/svg/css/getComputedStyle-basic-expected.txt: Updated after r116723.
+
 2012-05-10  MORITA Hajime  <morrita@google.com>
 
         ElementShadow should minimize the usage of "ShadowRoot" name
