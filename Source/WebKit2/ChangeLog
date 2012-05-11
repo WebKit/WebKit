@@ -1,3 +1,10 @@
+2012-05-11  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed build fix attempt.
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+
 2012-05-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Allow sending URI request data in chunks
