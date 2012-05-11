@@ -46,6 +46,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
 #include "DOMImplementation.h"
+#include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DeviceMotionController.h"
@@ -5090,12 +5091,6 @@ void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
     Element* element = static_cast<Element*>(node);
     if (element->isFocusable())
         element->updateFocusAppearance(m_updateFocusAppearanceRestoresSelection);
-}
-
-// FF method for accessing the selection added for compatibility.
-DOMSelection* Document::getSelection() const
-{
-    return frame() ? frame()->domWindow()->getSelection() : 0;
 }
 
 void Document::attachRange(Range* range)
