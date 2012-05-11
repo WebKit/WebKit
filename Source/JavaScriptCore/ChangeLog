@@ -1,3 +1,30 @@
+2012-05-11  Michael Saboff  <msaboff@apple.com>
+
+        Rolling out r116659.
+
+        Causes ASSERT failures on bots.
+
+        Rubber stamped by Geoff Garen.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::markingThreadMain):
+        (JSC::MarkStackThreadSharedData::markingThreadStartFunc):
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::MarkStackThreadSharedData::reset):
+        (JSC::MarkStack::reset):
+        (JSC):
+        (JSC::SlotVisitor::copyAndAppend):
+        * heap/MarkStack.h:
+        (MarkStackThreadSharedData):
+        (MarkStack):
+        * runtime/JSString.h:
+        (JSString):
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::is8Bit):
+        (JSC::JSRopeString::finishCreation):
+
 2012-05-11  Oliver Hunt  <oliver@apple.com>
 
         Appease thread verifier when dealing with the JSC API's shared VM

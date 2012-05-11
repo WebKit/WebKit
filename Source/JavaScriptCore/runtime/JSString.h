@@ -67,7 +67,6 @@ namespace JSC {
         friend class JSGlobalData;
         friend class SpecializedThunkJIT;
         friend class JSRopeString;
-        friend class MarkStack;
         friend struct ThunkHelpers;
 
         typedef JSCell Base;
@@ -92,7 +91,6 @@ namespace JSC {
             Base::finishCreation(globalData);
             m_length = length;
             m_is8Bit = m_value.impl()->is8Bit();
-            m_isHashConstSingleton = false;
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length, size_t cost)
@@ -101,7 +99,6 @@ namespace JSC {
             Base::finishCreation(globalData);
             m_length = length;
             m_is8Bit = m_value.impl()->is8Bit();
-            m_isHashConstSingleton = false;
             Heap::heap(this)->reportExtraMemoryCost(cost);
         }
 
@@ -111,7 +108,6 @@ namespace JSC {
             Base::finishCreation(globalData);
             m_length = 0;
             m_is8Bit = true;
-            m_isHashConstSingleton = false;
         }
         
     public:
@@ -165,13 +161,9 @@ namespace JSC {
     protected:
         bool isRope() const { return m_value.isNull(); }
         bool is8Bit() const { return m_is8Bit; }
-        bool isHashConstSingleton() const { return m_isHashConstSingleton; }
-        void clearHashConstSingleton() { m_isHashConstSingleton = false; }
-        void setHashConstSingleton() { m_isHashConstSingleton = true; }
 
         // A string is represented either by a UString or a rope of fibers.
         bool m_is8Bit : 1;
-        bool m_isHashConstSingleton : 1;
         unsigned m_length;
         mutable UString m_value;
 
@@ -241,7 +233,6 @@ namespace JSC {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length();
             m_is8Bit = (s1->is8Bit() && s2->is8Bit());
-            m_isHashConstSingleton = false;
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
         }
@@ -251,7 +242,6 @@ namespace JSC {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length() + s3->length();
             m_is8Bit = (s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
-            m_isHashConstSingleton = false;
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
             m_fibers[2].set(globalData, this, s3);

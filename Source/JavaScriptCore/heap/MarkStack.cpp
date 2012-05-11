@@ -36,7 +36,6 @@
 #include "JSObject.h"
 #include "ScopeChain.h"
 #include "Structure.h"
-#include "UString.h"
 #include "WriteBarrier.h"
 #include <wtf/MainThread.h>
 
@@ -219,26 +218,19 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other)
 }
 
 #if ENABLE(PARALLEL_GC)
-void MarkStackThreadSharedData::resetChildren()
-{
-    for (unsigned i = 0; i < m_slaveMarkStacks.size(); ++i)
-       m_slaveMarkStacks[i]->reset();
-}
-
-void MarkStackThreadSharedData::markingThreadMain(SlotVisitor* slotVisitor)
+void MarkStackThreadSharedData::markingThreadMain()
 {
     WTF::registerGCThread();
     {
-        ParallelModeEnabler enabler(*slotVisitor);
-        slotVisitor->drainFromShared(SlotVisitor::SlaveDrain);
+        SlotVisitor slotVisitor(*this);
+        ParallelModeEnabler enabler(slotVisitor);
+        slotVisitor.drainFromShared(SlotVisitor::SlaveDrain);
     }
-    delete slotVisitor;
 }
 
-void MarkStackThreadSharedData::markingThreadStartFunc(void* myVisitor)
+void MarkStackThreadSharedData::markingThreadStartFunc(void* shared)
 {
-    SlotVisitor* slotVisitor = static_cast<SlotVisitor*>(myVisitor);
-    slotVisitor->sharedData().markingThreadMain(slotVisitor);
+    static_cast<MarkStackThreadSharedData*>(shared)->markingThreadMain();
 }
 #endif
 
@@ -251,9 +243,7 @@ MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
 {
 #if ENABLE(PARALLEL_GC)
     for (unsigned i = 1; i < Options::numberOfGCMarkers; ++i) {
-        SlotVisitor* slotVisitor = new SlotVisitor(*this);
-        m_slaveMarkStacks.append(slotVisitor);
-        m_markingThreads.append(createThread(markingThreadStartFunc, slotVisitor, "JavaScriptCore::Marking"));
+        m_markingThreads.append(createThread(markingThreadStartFunc, this, "JavaScriptCore::Marking"));
         ASSERT(m_markingThreads.last());
     }
 #endif
@@ -285,6 +275,7 @@ void MarkStackThreadSharedData::reset()
 #else
     ASSERT(m_opaqueRoots.isEmpty());
 #endif
+    
     m_weakReferenceHarvesters.removeAll();
 }
 
@@ -297,7 +288,6 @@ void MarkStack::reset()
 #else
     m_opaqueRoots.clear();
 #endif
-    m_uniqueStrings.clear();
 }
 
 void MarkStack::append(ConservativeRoots& conservativeRoots)
@@ -498,34 +488,6 @@ void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
     return CopiedSpace::allocateFromBlock(m_copyBlock, bytes);
 }
 
-inline void MarkStack::internalAppend(JSValue* slot)
-{
-    ASSERT(slot);
-    JSValue value = *slot;
-    ASSERT(value);
-    if (!value.isCell())
-        return;
-
-    if (value.isString()) {
-        JSString* string = jsCast<JSString*>(value.asCell());
-        if (!string->isHashConstSingleton() && string->length() > 1 && !string->isRope()) {
-            UniqueStringMap::AddResult addResult = m_uniqueStrings.add(string->string().impl(), value);
-            if (addResult.isNewEntry)
-                string->setHashConstSingleton();
-            else {
-                JSValue existingJSValue = addResult.iterator->second;
-                if (value != existingJSValue)
-                    jsCast<JSString*>(existingJSValue.asCell())->clearHashConstSingleton();
-                *slot = existingJSValue;
-                return;
-            }
-        }
-    }
-
-    internalAppend(value.asCell());
-}
-
-
 void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsigned length)
 {
     void* oldPtr = *ptr;
@@ -539,7 +501,7 @@ void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsig
             newValues[i] = value;
             if (!value)
                 continue;
-            internalAppend(&newValues[i]);
+            internalAppend(value);
         }
 
         memcpy(newPtr, oldPtr, jsValuesOffset);
