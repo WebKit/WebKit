@@ -1261,6 +1261,11 @@ WebViewImpl* WebViewImpl::fromPage(Page* page)
     return static_cast<WebViewImpl*>(chromeClient->webView());
 }
 
+PageGroup* WebViewImpl::defaultPageGroup()
+{
+    return PageGroup::pageGroup(pageGroupName);
+}
+
 // WebWidget ------------------------------------------------------------------
 
 void WebViewImpl::close()

@@ -69,6 +69,7 @@ class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
 class Page;
+class PageGroup;
 class PagePopup;
 class PagePopupClient;
 class PlatformGestureCurveTarget;
@@ -299,6 +300,12 @@ public:
     WebCore::Node* focusedWebCoreNode();
 
     static WebViewImpl* fromPage(WebCore::Page*);
+
+    // A pageGroup identifies a namespace of pages. Page groups are used on PLATFORM(MAC)
+    // for some programs that use HTML views to display things that don't seem like
+    // web pages to the user (so shouldn't have visited link coloring). We only use
+    // one page group.
+    static WebCore::PageGroup* defaultPageGroup();
 
     WebViewClient* client()
     {

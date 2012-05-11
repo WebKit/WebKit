@@ -38,9 +38,6 @@ namespace WebKit {
 
 class WebURL;
 
-// In WebCore, there's one distinct StorageArea per origin per StorageNamespace. This
-// class wraps a StorageArea.  All the methods have obvious connections to the spec:
-// http://dev.w3.org/html5/webstorage/
 class WebStorageArea {
 public:
     virtual ~WebStorageArea() { }
@@ -63,16 +60,34 @@ public:
     virtual WebString getItem(const WebString& key) = 0;
 
     // Set the value that corresponds to a specific key. Result will either be ResultOK
-    // or some particular error. The value is NOT set when there's an error.  url is the
+    // or some particular error. The value is NOT set when there's an error. |pageUrl| is the
     // url that should be used if a storage event fires.
-    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL&, Result&, WebString& oldValue) = 0;
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL& pageUrl, Result& result)
+    {
+        WebString unused;
+        setItem(key, newValue, pageUrl, result, unused);
+    }
 
-    // Remove the value associated with a particular key.  url is the url that should be used
+
+    // Remove the value associated with a particular key. |pageUrl| is the url that should be used
     // if a storage event fires.
-    virtual void removeItem(const WebString& key, const WebURL& url, WebString& oldValue) = 0;
+    virtual void removeItem(const WebString& key, const WebURL& pageUrl)
+    {
+        WebString unused;
+        removeItem(key, pageUrl, unused);
+    }
 
-    // Clear all key/value pairs.  url is the url that should be used if a storage event fires.
-    virtual void clear(const WebURL& url, bool& somethingCleared) = 0;
+    // Clear all key/value pairs. |pageUrl| is the url that should be used if a storage event fires.
+    virtual void clear(const WebURL& pageUrl)
+    {
+        bool unused;
+        clear(pageUrl, unused);
+    }
+
+    // DEPRECATED - being replaced by the async variants above which do not return oldValues or block until completion.
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL&, Result&, WebString& oldValue) = 0;
+    virtual void removeItem(const WebString& key, const WebURL& pageUrl, WebString& oldValue) = 0;
+    virtual void clear(const WebURL& pageUrl, bool& somethingCleared) = 0;
 };
 
 } // namespace WebKit

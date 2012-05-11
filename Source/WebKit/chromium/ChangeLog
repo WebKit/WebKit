@@ -1,3 +1,45 @@
+2012-05-10  Michael Nordman  <michaeln@google.com>
+
+        [chromium] DomStorage events handling needs TLC (2)
+        https://bugs.webkit.org/show_bug.cgi?id=85221
+        Alter the WebStorageArea virtual interface such that the mutators no longer
+        return old values. This is to allow implementations of the interface to operate
+        more asynchronously.
+
+        Also clean up from the last patch, remove support for the DEPRECATED event
+        dispatching API.
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp: delete three files indicated below
+        * public/WebStorageArea.h:
+        (WebKit::WebStorageArea::setItem): no longer returns the old value
+        (WebKit::WebStorageArea::removeItem): no longer returns the old value
+        (WebKit::WebStorageArea::clear): no longer returns a bool indicated if something was cleared
+        * public/WebStorageEventDispatcher.h: removed the DEPRECATED instance methods
+        * public/WebStorageNamespace.h: removed the DEPRECATED close() method
+        * public/platform/WebKitPlatformSupport.h: removed the DEPRECATED dispatchStorageEvent() method
+        * src/StorageAreaProxy.cpp: removed the DEPREACTED storageEvent() method
+        (WebCore::StorageAreaProxy::setItem): no return value
+        (WebCore::StorageAreaProxy::removeItem): no return value
+        (WebCore::StorageAreaProxy::clear): no return value
+        (WebCore::StorageAreaProxy::dispatchLocalStorageEvent): remove an early return thats no longer needed
+        (WebCore::findPageWithSessionStorageNamespace): switched to passing pageGroup by ptr value instead of by name
+        (WebCore::StorageAreaProxy::dispatchSessionStorageEvent): remove an early return thats no longer needed
+        * src/StorageAreaProxy.h:
+        (WebCore):
+        (StorageAreaProxy):
+        * src/StorageEventDispatcherImpl.cpp: Deleted the file.
+        * src/StorageEventDispatcherImpl.h: Deleted the file.
+        * src/WebStorageEventDispatcherImpl.cpp: Deleted the DEPRECATED instance methods.
+        (WebKit::WebStorageEventDispatcher::dispatchLocalStorageEvent): use WebViewImpl::defaultPageGroup
+        (WebKit::WebStorageEventDispatcher::dispatchSessionStorageEvent): use WebViewImpl::defaultPageGroup
+        * src/WebStorageEventDispatcherImpl.h: Deleted the file.
+        * src/WebViewImpl.cpp: added a static method to retrieve a ptr to the default page group,
+        (WebKit::WebViewImpl::defaultPageGroup):
+        * src/WebViewImpl.h:
+
+
 2012-05-10  Anders Carlsson  <andersca@apple.com>
 
         Add insecurePluginVersionText stub here too.
