@@ -1,3 +1,15 @@
+2012-05-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] [WK2] Memory leak in PluginProcessProxy::scanPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=86240
+
+        Reviewed by Martin Robinson.
+
+        Free the output received from the g_spawn_sync().
+
+        * UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+
 2012-05-11  Andreas Kling  <kling@webkit.org>
 
         WK2/Plugins: Move enumeration of plugins to a secondary UIProcess thread.

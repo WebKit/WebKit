@@ -31,6 +31,7 @@
 #include "PluginProcessCreationParameters.h"
 #include "ProcessExecutablePath.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/GOwnPtrGtk.h>
 #include <glib.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -54,8 +55,8 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     argv[3] = 0;
 
     gint status;
-    gchar* stdOut;
-    if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut, 0, &status, 0))
+    GOwnPtr<gchar> stdOut;
+    if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut.outPtr(), 0, &status, 0))
         return false;
     if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS)
         return false;
@@ -63,7 +64,7 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     const unsigned kNumLinesExpected = 3;
     String lines[kNumLinesExpected];
     unsigned lineIndex = 0;
-    const UChar* current = reinterpret_cast<const UChar*>(stdOut);
+    const UChar* current = reinterpret_cast<const UChar*>(stdOut.get());
     while (lineIndex < kNumLinesExpected) {
         const UChar* start = current;
         while (*current++ != UChar('\n')) { }
