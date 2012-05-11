@@ -52,6 +52,11 @@ void TextureMapperTile::paint(TextureMapper* textureMapper, const Transformation
     textureMapper->drawTexture(*texture().get(), rect(), transform, opacity, mask);
 }
 
+TextureMapperTiledBackingStore::TextureMapperTiledBackingStore()
+    : m_drawsDebugBorders(false)
+{
+}
+
 void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapper* textureMapper)
 {
     if (!m_image)
@@ -66,8 +71,11 @@ void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper* texture
     updateContentsFromImageIfNeeded(textureMapper);
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(rect(), targetRect));
-    for (size_t i = 0; i < m_tiles.size(); ++i)
+    for (size_t i = 0; i < m_tiles.size(); ++i) {
         m_tiles[i].paint(textureMapper, adjustedTransform, opacity, mask);
+        if (m_drawsDebugBorders)
+            textureMapper->drawBorder(m_debugBorderColor, m_debugBorderWidth, m_tiles[i].rect(), adjustedTransform);
+    }
 }
 
 void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSize& size, const IntSize& tileSize, bool hasAlpha)
@@ -150,6 +158,12 @@ PassRefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const
     }
 
     return PassRefPtr<BitmapTexture>();
+}
+
+void TextureMapperTiledBackingStore::setDebugBorder(const Color& color, float width)
+{
+    m_debugBorderColor = color;
+    m_debugBorderWidth = width;
 }
 
 }

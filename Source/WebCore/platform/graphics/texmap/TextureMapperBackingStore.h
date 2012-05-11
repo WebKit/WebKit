@@ -72,13 +72,20 @@ public:
     void setContentsToImage(Image* image) { m_image = image; }
     void updateContentsFromImageIfNeeded(TextureMapper*);
 
+    void setShowDebugBorders(bool drawsDebugBorders) { m_drawsDebugBorders = drawsDebugBorders; }
+    void setDebugBorder(const Color&, float width);
+
 private:
-    TextureMapperTiledBackingStore() { }
+    TextureMapperTiledBackingStore();
     void createOrDestroyTilesIfNeeded(const FloatSize& backingStoreSize, const IntSize& tileSize, bool hasAlpha);
 
     Vector<TextureMapperTile> m_tiles;
     FloatSize m_size;
     RefPtr<Image> m_image;
+
+    bool m_drawsDebugBorders;
+    Color m_debugBorderColor;
+    float m_debugBorderWidth;
 };
 
 }

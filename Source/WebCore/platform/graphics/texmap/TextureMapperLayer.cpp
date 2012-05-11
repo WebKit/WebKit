@@ -90,7 +90,7 @@ void TextureMapperLayer::computeTransformsRecursive()
         sortByZOrder(m_children, 0, m_children.size());
 }
 
-void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, GraphicsLayer* layer)
+void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, GraphicsLayerTextureMapper* layer)
 {
     if (!layer || !textureMapper)
         return;
@@ -123,7 +123,13 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     layer->paintGraphicsLayerContents(*context, dirtyRect);
 
     RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
-    static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get())->updateContents(textureMapper, image.get(), m_size, dirtyRect);
+
+    TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
+    backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect);
+
+    backingStore->setShowDebugBorders(layer->showDebugBorders());
+    backingStore->setDebugBorder(m_debugBorderColor, m_debugBorderWidth);
+
     m_state.needsDisplay = false;
     m_state.needsDisplayRect = IntRect();
 }
@@ -372,6 +378,8 @@ void TextureMapperLayer::syncCompositingStateSelf(GraphicsLayerTextureMapper* gr
     if (changeMask == NoChanges && graphicsLayer->m_animations.isEmpty())
         return;
 
+    graphicsLayer->updateDebugIndicators();
+
     if (changeMask & ParentChange) {
         TextureMapperLayer* newParent = toTextureMapperLayer(graphicsLayer->parent());
         if (newParent != m_parent) {
@@ -544,6 +552,14 @@ void TextureMapperLayer::setScrollPositionDeltaIfNeeded(const IntPoint& delta)
     else
         m_scrollPositionDelta = delta;
     m_transform.setPosition(m_state.pos + m_scrollPositionDelta);
+}
+
+void TextureMapperLayer::setDebugBorder(const Color& color, float width)
+{
+    // The default values for GraphicsLayer debug borders are a little
+    // hard to see (some less than one pixel wide), so we double their size here.
+    m_debugBorderColor = color;
+    m_debugBorderWidth = width * 2;
 }
 
 }

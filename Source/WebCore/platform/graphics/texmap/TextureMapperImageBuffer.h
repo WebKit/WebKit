@@ -48,6 +48,7 @@ private:
 
 class TextureMapperImageBuffer : public TextureMapper {
 public:
+    virtual void drawBorder(const Color& color, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) { };
     virtual void drawTexture(const BitmapTexture&, const FloatRect& targetRect, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
     virtual void beginClip(const TransformationMatrix&, const FloatRect&);
     virtual void bindSurface(BitmapTexture* surface) { m_currentSurface = surface;}

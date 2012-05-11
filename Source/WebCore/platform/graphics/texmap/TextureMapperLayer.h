@@ -106,6 +106,7 @@ public:
         , m_centerZ(0)
         , m_shouldUpdateBackingStoreFromLayer(true)
         , m_textureMapper(0)
+        , m_debugBorderWidth(0)
     { }
 
     virtual ~TextureMapperLayer();
@@ -128,6 +129,8 @@ public:
 
     void setScrollPositionDeltaIfNeeded(const IntPoint&);
     void setFixedToViewport(bool fixed) { m_fixedToViewport = fixed; }
+
+    void setDebugBorder(const Color&, float width);
 
 private:
     TextureMapperLayer* rootLayer();
@@ -152,7 +155,7 @@ private:
     void paintSelf(const TextureMapperPaintOptions&);
     void paintSelfAndChildren(const TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
-    void updateBackingStore(TextureMapper*, GraphicsLayer*);
+    void updateBackingStore(TextureMapper*, GraphicsLayerTextureMapper*);
 
     void syncAnimations();
     bool isVisible() const;
@@ -230,6 +233,8 @@ private:
     TextureMapperAnimations m_animations;
     IntPoint m_scrollPositionDelta;
     bool m_fixedToViewport;
+    Color m_debugBorderColor;
+    float m_debugBorderWidth;
 };
 
 

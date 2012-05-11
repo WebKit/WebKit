@@ -92,6 +92,58 @@ static const char* vertexShaderSourceSimple =
         }
     );
 
+static const char* vertexShaderSourceSolidColor =
+    VERTEX_SHADER(
+        uniform mat4 InMatrix;
+        attribute vec4 InVertex;
+        void main(void)
+        {
+            gl_Position = InMatrix * InVertex;
+        }
+    );
+
+
+static const char* fragmentShaderSourceSolidColor =
+    VERTEX_SHADER(
+        uniform vec4 Color;
+        void main(void)
+        {
+            gl_FragColor = Color;
+        }
+    );
+
+PassRefPtr<TextureMapperShaderProgramSolidColor> TextureMapperShaderManager::solidColorProgram()
+{
+    return static_pointer_cast<TextureMapperShaderProgramSolidColor>(getShaderProgram(SolidColor));
+}
+
+PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProgram(ShaderType shaderType)
+{
+    RefPtr<TextureMapperShaderProgram> program;
+    if (shaderType == Invalid)
+        return program;
+
+    TextureMapperShaderProgramMap::iterator it = m_textureMapperShaderProgramMap.find(shaderType);
+    if (it != m_textureMapperShaderProgramMap.end())
+        return it->second;
+
+    switch (shaderType) {
+    case Simple:
+        program = TextureMapperShaderProgramSimple::create();
+        break;
+    case OpacityAndMask:
+        program = TextureMapperShaderProgramOpacityAndMask::create();
+        break;
+    case SolidColor:
+        program = TextureMapperShaderProgramSolidColor::create();
+        break;
+    case Invalid:
+        ASSERT_NOT_REACHED();
+    }
+    m_textureMapperShaderProgramMap.add(shaderType, program);
+    return program;
+}
+
 void TextureMapperShaderProgram::initializeProgram()
 {
     const char* vertexShaderSourceProgram = vertexShaderSource();
@@ -159,6 +211,28 @@ const char* TextureMapperShaderProgramSimple::fragmentShaderSource() const
 void TextureMapperShaderProgramSimple::prepare(float opacity, const BitmapTexture* maskTexture)
 {
     glUniform1f(m_opacityVariable, opacity);
+}
+
+PassRefPtr<TextureMapperShaderProgramSolidColor> TextureMapperShaderProgramSolidColor::create()
+{
+    return adoptRef(new TextureMapperShaderProgramSolidColor());
+}
+
+TextureMapperShaderProgramSolidColor::TextureMapperShaderProgramSolidColor()
+{
+    initializeProgram();
+    getUniformLocation(m_matrixVariable, "InMatrix");
+    getUniformLocation(m_colorVariable, "Color");
+}
+
+const char* TextureMapperShaderProgramSolidColor::vertexShaderSource() const
+{
+    return vertexShaderSourceSolidColor;
+}
+
+const char* TextureMapperShaderProgramSolidColor::fragmentShaderSource() const
+{
+    return fragmentShaderSourceSolidColor;
 }
 
 PassRefPtr<TextureMapperShaderProgramOpacityAndMask> TextureMapperShaderProgramOpacityAndMask::create()
