@@ -253,20 +253,21 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
 
 // Transforms the given dimensions with the given matrix. Used to see how big
 // images will be once transformed.
-static void TransformDimensions(const SkMatrix& matrix, float srcWidth, float srcHeight, float* destWidth, float* destHeight) {
+static void TransformDimensions(const SkMatrix& matrix, float srcWidth, float srcHeight, float* destWidth, float* destHeight)
+{
     // Transform 3 points to see how long each side of the bitmap will be.
-    SkPoint src_points[3];  // (0, 0), (width, 0), (0, height).
-    src_points[0].set(0, 0);
-    src_points[1].set(SkFloatToScalar(srcWidth), 0);
-    src_points[2].set(0, SkFloatToScalar(srcHeight));
+    SkPoint srcPoints[3]; // (0, 0), (width, 0), (0, height).
+    srcPoints[0].set(0, 0);
+    srcPoints[1].set(SkFloatToScalar(srcWidth), 0);
+    srcPoints[2].set(0, SkFloatToScalar(srcHeight));
 
     // Now measure the length of the two transformed vectors relative to the
     // transformed origin to see how big the bitmap will be. Note: for skews,
     // this isn't the best thing, but we don't have skews.
-    SkPoint dest_points[3];
-    matrix.mapPoints(dest_points, src_points, 3);
-    *destWidth = SkScalarToFloat((dest_points[1] - dest_points[0]).length());
-    *destHeight = SkScalarToFloat((dest_points[2] - dest_points[0]).length());
+    SkPoint destPoints[3];
+    matrix.mapPoints(destPoints, srcPoints, 3);
+    *destWidth = SkScalarToFloat((destPoints[1] - destPoints[0]).length());
+    *destHeight = SkScalarToFloat((destPoints[2] - destPoints[0]).length());
 }
 
 // A helper method for translating negative width and height values.
@@ -428,13 +429,13 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
 
     NativeImageSkia* bm = nativeImageForCurrentFrame();
     if (!bm)
-        return;  // It's too early and we don't have an image yet.
+        return; // It's too early and we don't have an image yet.
 
     FloatRect normDstRect = normalizeRect(dstRect);
     FloatRect normSrcRect = normalizeRect(srcRect);
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
-        return;  // Nothing to draw.
+        return; // Nothing to draw.
 
     paintSkBitmap(ctxt->platformContext(),
                   *bm,
@@ -458,7 +459,7 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
     FloatRect normSrcRect = normalizeRect(srcRect);
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
-        return;  // Nothing to draw.
+        return; // Nothing to draw.
 
     paintSkBitmap(ctxt->platformContext(),
                   m_nativeImage,
@@ -486,4 +487,4 @@ PassRefPtr<BitmapImageSingleFrameSkia> BitmapImageSingleFrameSkia::create(const 
     return adoptRef(new BitmapImageSingleFrameSkia(bitmap));
 }
 
-}  // namespace WebCore
+} // namespace WebCore
