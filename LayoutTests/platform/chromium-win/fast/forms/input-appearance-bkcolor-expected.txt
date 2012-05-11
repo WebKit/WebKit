@@ -7,12 +7,14 @@ layer at (0,0) size 800x600
         text run at (0,0) width 544: "This tests that background color and background images can be set on the new text fields. "
       RenderBR {BR} at (544,15) size 0x0
       RenderTextControl {INPUT} at (2,22) size 155x22 [bgcolor=#FFC0CB] [border: (2px inset #000000)]
-        RenderBlock {DIV} at (2,3) size 151x16
-          RenderText {#text} at (1,0) size 116x16
-            text run at (1,0) width 116: "This should be pink."
       RenderText {#text} at (159,23) size 4x19
         text run at (159,23) width 4: " "
       RenderBR {BR} at (163,38) size 0x0
       RenderTextControl {INPUT} at (2,48) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderBlock {DIV} at (2,3) size 151x16
       RenderText {#text} at (0,0) size 0x0
+layer at (12,33) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
+    RenderText {#text} at (1,0) size 116x16
+      text run at (1,0) width 116: "This should be pink."
+layer at (12,59) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16

@@ -164,6 +164,8 @@ rect: style.getPropertyValue(speak) : normal
 rect: style.getPropertyCSSValue(speak) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(table-layout) : auto
 rect: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(tab-size) : 8
+rect: style.getPropertyCSSValue(tab-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-align) : -webkit-auto
 rect: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-decoration) : none
@@ -692,6 +694,8 @@ g: style.getPropertyValue(speak) : normal
 g: style.getPropertyCSSValue(speak) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(table-layout) : auto
 g: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(tab-size) : 8
+g: style.getPropertyCSSValue(tab-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-align) : -webkit-auto
 g: style.getPropertyCSSValue(text-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-decoration) : none

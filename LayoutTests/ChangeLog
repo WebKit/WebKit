@@ -1,3 +1,60 @@
+2012-05-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for some tests, and optimization.
+
+        * fast/block/float/032-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/032-expected.txt.
+        * fast/forms/input-appearance-bkcolor-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/input-appearance-bkcolor-expected.txt.
+        * fast/images/color-jpeg-with-color-profile-expected.png: Renamed from LayoutTests/platform/efl/fast/images/color-jpeg-with-color-profile-expected.png.
+        * platform/chromium-linux-x86/fast/forms/date/date-appearance-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-leopard/fast/block/float/032-expected.png:
+        * platform/chromium-mac-leopard/fast/block/float/032-expected.txt:
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle/computed-style-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt.
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-bkcolor-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-bkcolor-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/forms/text-style-color-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/images/color-jpeg-with-color-profile-expected.png:
+        * platform/chromium-mac-leopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug99948-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-bkcolor-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-bkcolor-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/text-style-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug99948-expected.png:
+        * platform/chromium-mac/fast/block/float/032-expected.png:
+        * platform/chromium-mac/fast/block/float/032-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-mac/fast/forms/input-appearance-bkcolor-expected.png:
+        * platform/chromium-mac/fast/forms/input-appearance-bkcolor-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/text-style-color-expected.png:
+        * platform/chromium-mac/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/chromium-mac/fast/images/color-jpeg-with-color-profile-expected.png:
+        * platform/chromium-mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug99948-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug99948-expected.txt: Removed.
+        * platform/chromium-win-vista/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/chromium-win-vista/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win-xp/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-win/fast/block/float/032-expected.txt:
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-bkcolor-expected.txt:
+        * platform/chromium-win/fast/forms/text-style-color-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug99948-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/block/float/032-expected.txt: Removed.
+        * platform/gtk/fast/forms/input-appearance-bkcolor-expected.txt: Removed.
+        * platform/gtk/fast/images/color-jpeg-with-color-profile-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug99948-expected.txt: Removed.
+        * tables/mozilla/bugs/bug99948-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug99948-expected.txt.
+
 2012-05-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: use div, not span as a parent element for ElementsTreeOutline in Audits panel
