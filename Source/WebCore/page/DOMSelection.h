@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,15 +39,18 @@
 namespace WebCore {
 
     class Frame;
-    class Range;
     class Node;
+    class Range;
+    class TreeScope;
     class VisibleSelection;
 
     typedef int ExceptionCode;
 
-    class DOMSelection : public RefCounted<DOMSelection>, public DOMWindowProperty {
+    class DOMSelection : public RefCounted<DOMSelection> {
     public:
-        static PassRefPtr<DOMSelection> create(Frame* frame) { return adoptRef(new DOMSelection(frame)); }
+        static PassRefPtr<DOMSelection> create(const TreeScope* treeScope) { return adoptRef(new DOMSelection(treeScope)); }
+
+        void clearTreeScope();
 
         // Safari Selection Object API
         // These methods return the valid equivalents of internal editing positions.
@@ -84,11 +88,16 @@ namespace WebCore {
 
         String toString();
 
+        Frame* frame() const { return m_frame; }
+
         // Microsoft Selection Object API
         void empty();
 
     private:
-        explicit DOMSelection(Frame*);
+        const TreeScope* m_treeScope;
+        Frame* m_frame;
+
+        explicit DOMSelection(const TreeScope*);
 
         // Convenience method for accessors, does not NULL check m_frame.
         const VisibleSelection& visibleSelection() const;

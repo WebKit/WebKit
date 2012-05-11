@@ -27,6 +27,7 @@
 #include "TreeScope.h"
 
 #include "ContainerNode.h"
+#include "DOMSelection.h"
 #include "Document.h"
 #include "Element.h"
 #include "FocusController.h"
@@ -36,6 +37,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
+#include "RuntimeEnabledFeatures.h"
 #include "TreeScopeAdopter.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -54,6 +56,10 @@ TreeScope::TreeScope(ContainerNode* rootNode)
 
 TreeScope::~TreeScope()
 {
+    if (m_selection) {
+        m_selection->clearTreeScope();
+        m_selection = 0;
+    }
 }
 
 void TreeScope::destroyTreeScopeData()
@@ -114,6 +120,18 @@ HTMLMapElement* TreeScope::getImageMap(const String& url) const
     if (rootNode()->document()->isHTMLDocument())
         return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
     return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByMapName(AtomicString(name).impl(), this));
+}
+
+DOMSelection* TreeScope::getSelection() const
+{
+    if (!rootNode()->document()->frame())
+        return 0;
+
+    if (m_selection)
+        return m_selection.get();
+
+    m_selection = DOMSelection::create(rootNode()->document());
+    return m_selection.get();
 }
 
 Element* TreeScope::findAnchor(const String& name)

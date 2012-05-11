@@ -58,9 +58,16 @@ static Node* selectionShadowAncestor(Frame* frame)
     return shadowAncestor;
 }
 
-DOMSelection::DOMSelection(Frame* frame)
-    : DOMWindowProperty(frame)
+DOMSelection::DOMSelection(const TreeScope* treeScope)
+    : m_treeScope(treeScope)
+    , m_frame(treeScope->rootNode()->document()->frame())
 {
+}
+
+void DOMSelection::clearTreeScope()
+{
+    m_frame = 0;
+    m_treeScope = 0;
 }
 
 const VisibleSelection& DOMSelection::visibleSelection() const

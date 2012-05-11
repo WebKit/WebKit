@@ -399,7 +399,6 @@ DOMWindow::~DOMWindow()
 #ifndef NDEBUG
     if (!m_suspendedForPageCache) {
         ASSERT(!m_screen);
-        ASSERT(!m_selection);
         ASSERT(!m_history);
         ASSERT(!m_crypto);
         ASSERT(!m_locationbar);
@@ -572,7 +571,6 @@ void DOMWindow::clearDOMWindowProperties()
     m_properties.clear();
 
     m_screen = 0;
-    m_selection = 0;
     m_history = 0;
     m_crypto = 0;
     m_locationbar = 0;
@@ -886,11 +884,10 @@ void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTarg
 
 DOMSelection* DOMWindow::getSelection()
 {
-    if (!isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame() || !m_frame)
         return 0;
-    if (!m_selection)
-        m_selection = DOMSelection::create(m_frame);
-    return m_selection.get();
+
+    return m_frame->document()->getSelection();
 }
 
 Element* DOMWindow::frameElement() const
