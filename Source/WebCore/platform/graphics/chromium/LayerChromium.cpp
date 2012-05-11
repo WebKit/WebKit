@@ -600,10 +600,8 @@ bool LayerChromium::addAnimation(const KeyframeValueList& values, const IntSize&
         return false;
 
     bool addedAnimation = m_layerAnimationController->addAnimation(values, boxSize, animation, animationId, groupId, timeOffset);
-    if (addedAnimation) {
-        m_layerTreeHost->didAddAnimation();
+    if (addedAnimation)
         setNeedsCommit();
-    }
     return addedAnimation;
 }
 

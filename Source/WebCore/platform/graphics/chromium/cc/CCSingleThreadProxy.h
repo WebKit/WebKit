@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class CCLayerTreeHost;
-class CCSingleThreadProxyAnimationTimer;
 
 class CCSingleThreadProxy : public CCProxy, CCLayerTreeHostImplClient {
 public:
@@ -60,7 +59,6 @@ public:
     virtual void setNeedsRedraw() OVERRIDE;
     virtual bool commitRequested() const OVERRIDE;
     virtual void setVisible(bool) OVERRIDE;
-    virtual void didAddAnimation() OVERRIDE;
     virtual void start() OVERRIDE;
     virtual void stop() OVERRIDE;
     virtual size_t maxPartialTextureUpdates() const OVERRIDE { return std::numeric_limits<size_t>::max(); }
@@ -95,8 +93,6 @@ private:
     // Holds on to the context between initializeContext() and initializeLayerRenderer() calls. Shouldn't
     // be used for anything else.
     RefPtr<GraphicsContext3D> m_contextBeforeInitialization;
-
-    OwnPtr<CCSingleThreadProxyAnimationTimer> m_animationTimer;
 
     // Used on the CCThread, but checked on main thread during initialization/shutdown.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;

@@ -1,3 +1,16 @@
+2012-05-10  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r116594.
+        http://trac.webkit.org/changeset/116594
+        https://bugs.webkit.org/show_bug.cgi?id=86013
+
+        r116594 might have made some composition tests flaky.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestTickAnimationWhileBackgrounded::animateLayers):
+        (WTF):
+        (WTF::TEST_F):
+
 2012-05-10  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Fix chromium build break.

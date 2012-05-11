@@ -119,7 +119,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_maxPageScale(0)
     , m_needsAnimateLayers(false)
     , m_pinchGestureActive(false)
-    , m_timeSourceClientAdapter(CCLayerTreeHostImplTimeSourceAdapter::create(this, CCDelayBasedTimeSource::create(lowFrequencyAnimationInterval, CCProxy::currentThread())))
+    , m_timeSourceClientAdapter(CCLayerTreeHostImplTimeSourceAdapter::create(this, CCDelayBasedTimeSource::create(lowFrequencyAnimationInterval * 1000.0, CCProxy::currentThread())))
     , m_fpsCounter(CCFrameRateCounter::create())
     , m_debugRectHistory(CCDebugRectHistory::create())
 {

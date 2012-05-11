@@ -281,7 +281,6 @@ void CCLayerAnimationController::pushNewAnimationsToImplThread(CCLayerAnimationC
         ASSERT(!toAdd->needsSynchronizedStartTime());
         // The new animation should be set to run as soon as possible.
         toAdd->setRunState(CCActiveAnimation::WaitingForTargetAvailability, 0);
-        toAdd->setStartTime(0);
         controllerImpl->add(toAdd.release());
     }
 }

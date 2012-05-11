@@ -233,8 +233,10 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 
     // We may have added an animation during the tree sync. This will cause both layer tree hosts
     // to visit their controllers.
-    if (rootLayer() && m_needsAnimateLayers)
+    if (rootLayer()) {
         hostImpl->setNeedsAnimateLayers();
+        m_needsAnimateLayers = true;
+    }
 
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setViewportSize(viewportSize());
@@ -337,12 +339,6 @@ void CCLayerTreeHost::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> eve
     setAnimationEventsRecursive(*events, m_rootLayer.get(), wallClockTime);
 }
 
-void CCLayerTreeHost::didAddAnimation()
-{
-    m_needsAnimateLayers = true;
-    m_proxy->didAddAnimation();
-}
-
 void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
 {
     if (m_rootLayer == rootLayer)
@@ -411,8 +407,10 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
 
     // We may have added an animation during the tree sync. This will cause both layer tree hosts
     // to visit their controllers.
-    if (rootLayer() && m_needsAnimateLayers)
+    if (rootLayer()) {
         hostImpl->setNeedsAnimateLayers();
+        m_needsAnimateLayers = true;
+    }
 }
 
 void CCLayerTreeHost::setContentsMemoryAllocationLimitBytes(size_t bytes)
