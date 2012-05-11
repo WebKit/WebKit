@@ -1,3 +1,22 @@
+2012-05-11  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Make CSS Shaders render to texture framebuffers
+        https://bugs.webkit.org/show_bug.cgi?id=85113
+
+        Reviewed by Dean Jackson.
+
+        Added a test to check that colors are not switched and the resulting image is not mirrored.
+
+        * css3/filters/custom/effect-color-check-expected.png: Added.
+        * css3/filters/custom/effect-color-check-expected.txt: Added.
+        * css3/filters/custom/effect-color-check.html: Added.
+        * css3/filters/resources/color-fill.fs: Added.
+        * platform/chromium-linux/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-color-check-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-11  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Tests needs rebaselining after r116776

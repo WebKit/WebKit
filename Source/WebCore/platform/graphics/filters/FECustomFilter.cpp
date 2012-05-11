@@ -77,6 +77,9 @@ FECustomFilter::FECustomFilter(Filter* filter, HostWindow* hostWindow, PassRefPt
                                CustomFilterOperation::MeshType meshType)
     : FilterEffect(filter)
     , m_hostWindow(hostWindow)
+    , m_frameBuffer(0)
+    , m_depthBuffer(0)
+    , m_destTexture(0)
     , m_program(program)
     , m_parameters(parameters)
     , m_meshRows(meshRows)
@@ -93,6 +96,27 @@ PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, HostWindow* ho
     return adoptRef(new FECustomFilter(filter, hostWindow, program, parameters, meshRows, meshColumns, meshBoxType, meshType));
 }
 
+FECustomFilter::~FECustomFilter()
+{
+    deleteRenderBuffers();
+}
+
+void FECustomFilter::deleteRenderBuffers()
+{
+    if (m_frameBuffer) {
+        m_context->deleteFramebuffer(m_frameBuffer);
+        m_frameBuffer = 0;
+    }
+    if (m_depthBuffer) {
+        m_context->deleteRenderbuffer(m_depthBuffer);
+        m_depthBuffer = 0;
+    }
+    if (m_destTexture) {
+        m_context->deleteTexture(m_destTexture);
+        m_destTexture = 0;
+    }
+}
+
 void FECustomFilter::platformApplySoftware()
 {
     Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
@@ -106,11 +130,11 @@ void FECustomFilter::platformApplySoftware()
     IntSize newContextSize(effectDrawingRect.size());
     bool hadContext = m_context;
     if (!m_context)
-        initializeContext(newContextSize);
+        initializeContext();
     
     if (!hadContext || m_contextSize != newContextSize)
         resizeContext(newContextSize);
-    
+
     // Do not draw the filter if the input image cannot fit inside a single GPU texture.
     if (m_inputTexture->tiles().numTilesX() != 1 || m_inputTexture->tiles().numTilesY() != 1)
         return;
@@ -118,6 +142,9 @@ void FECustomFilter::platformApplySoftware()
     // The shader had compiler errors. We cannot draw anything.
     if (!m_shader->isInitialized())
         return;
+
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
+    m_context->viewport(0, 0, newContextSize.width(), newContextSize.height());
     
     m_context->clearColor(0, 0, 0, 0);
     m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT);
@@ -126,15 +153,11 @@ void FECustomFilter::platformApplySoftware()
     
     m_context->drawElements(GraphicsContext3D::TRIANGLES, m_mesh->indicesCount(), GraphicsContext3D::UNSIGNED_SHORT, 0);
     
-    m_drawingBuffer->commit();
-
-    RefPtr<ImageData> imageData = m_context->paintRenderingResultsToImageData(m_drawingBuffer.get());
-    Uint8ClampedArray* gpuResult = imageData->data();
-    ASSERT(gpuResult->length() == dstPixelArray->length());
-    memcpy(dstPixelArray->data(), gpuResult->data(), gpuResult->length());
+    ASSERT(static_cast<size_t>(newContextSize.width() * newContextSize.height() * 4) == dstPixelArray->length());
+    m_context->readPixels(0, 0, newContextSize.width(), newContextSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, dstPixelArray->data());
 }
 
-void FECustomFilter::initializeContext(const IntSize& contextSize)
+void FECustomFilter::initializeContext()
 {
     GraphicsContext3D::Attributes attributes;
     attributes.preserveDrawingBuffer = true;
@@ -142,7 +165,7 @@ void FECustomFilter::initializeContext(const IntSize& contextSize)
     
     ASSERT(!m_context.get());
     m_context = GraphicsContext3D::create(attributes, m_hostWindow, GraphicsContext3D::RenderOffscreen);
-    m_drawingBuffer = DrawingBuffer::create(m_context.get(), contextSize, DrawingBuffer::Discard, DrawingBuffer::Alpha);
+    m_context->enable(GraphicsContext3D::DEPTH_TEST);
     
     m_shader = m_program->createShaderWithContext(m_context.get());
     m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
@@ -152,11 +175,31 @@ void FECustomFilter::initializeContext(const IntSize& contextSize)
 
 void FECustomFilter::resizeContext(const IntSize& newContextSize)
 {
-    m_inputTexture = 0;
-    m_drawingBuffer->reset(newContextSize);
-    m_context->reshape(newContextSize.width(), newContextSize.height());
-    m_context->viewport(0, 0, newContextSize.width(), newContextSize.height());
     m_inputTexture = Texture::create(m_context.get(), Texture::RGBA8, newContextSize.width(), newContextSize.height());
+    
+    if (!m_frameBuffer)
+        m_frameBuffer = m_context->createFramebuffer();
+    if (!m_depthBuffer)
+        m_depthBuffer = m_context->createRenderbuffer();
+    if (!m_destTexture) {
+        m_destTexture = m_context->createTexture();
+        m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_destTexture);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+        m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+    }
+    
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_destTexture);
+    m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, newContextSize.width(), newContextSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE);
+
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
+    m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_destTexture, 0);
+    
+    m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+    m_context->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, newContextSize.width(), newContextSize.height());
+    m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+    
     m_contextSize = newContextSize;
 }
 
@@ -222,12 +265,7 @@ void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
     
     if (m_shader->projectionMatrixLocation() != -1) {
         TransformationMatrix projectionMatrix; 
-#if PLATFORM(CHROMIUM)
-        // We flip-y the projection matrix here because Chromium will flip-y the resulting image for us.
-        orthogonalProjectionMatrix(projectionMatrix, -0.5, 0.5, 0.5, -0.5);
-#else
         orthogonalProjectionMatrix(projectionMatrix, -0.5, 0.5, -0.5, 0.5);
-#endif
         float glProjectionMatrix[16];
         projectionMatrix.toColumnMajorFloatArray(glProjectionMatrix);
         m_context->uniformMatrix4fv(m_shader->projectionMatrixLocation(), 1, false, &glProjectionMatrix[0]);

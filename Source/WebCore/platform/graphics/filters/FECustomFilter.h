@@ -35,6 +35,7 @@
 #include "CustomFilterOperation.h"
 #include "Filter.h"
 #include "FilterEffect.h"
+#include "GraphicsTypes3D.h"
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -69,8 +70,10 @@ private:
     FECustomFilter(Filter*, HostWindow*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
+    ~FECustomFilter();
     
-    void initializeContext(const IntSize& contextSize);
+    void initializeContext();
+    void deleteRenderBuffers();
     void resizeContext(const IntSize& newContextSize);
     void bindVertexAttribute(int attributeLocation, unsigned size, unsigned& offset);
     void bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter*);
@@ -80,11 +83,14 @@ private:
     HostWindow* m_hostWindow;
     
     RefPtr<GraphicsContext3D> m_context;
-    RefPtr<DrawingBuffer> m_drawingBuffer;
     RefPtr<Texture> m_inputTexture;
     RefPtr<CustomFilterShader> m_shader;
     RefPtr<CustomFilterMesh> m_mesh;
     IntSize m_contextSize;
+
+    Platform3DObject m_frameBuffer;
+    Platform3DObject m_depthBuffer;
+    Platform3DObject m_destTexture;
 
     RefPtr<CustomFilterProgram> m_program;
     CustomFilterParameterList m_parameters;

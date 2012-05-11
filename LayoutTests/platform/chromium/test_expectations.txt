@@ -2789,6 +2789,7 @@ BUGWK82783 SKIP : css3/filters/nested-filter.html = FAIL
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = FAIL
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = FAIL
 BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom.html = FAIL
+BUGWK84800 SKIP WIN LINUX : css3/filters/custom/effect-color-check.html = FAIL
 
 // <style scoped> not yet enabled.
 BUGWK49142 SKIP : fast/css/style-scoped = PASS
