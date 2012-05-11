@@ -49,6 +49,7 @@ class WebPeerConnection00Handler;
 class WebPeerConnection00HandlerClient;
 class WebPeerConnectionHandler;
 class WebPeerConnectionHandlerClient;
+class WebStorageNamespace;
 class WebURL;
 class WebURLLoader;
 class WebSocketStreamHandle;
@@ -78,6 +79,12 @@ public:
 
     // Must return non-null.
     virtual WebFileSystem* fileSystem() { return 0; }
+
+    // DOM Storage --------------------------------------------------
+
+    // Return a LocalStorage namespace that corresponds to the following path.
+    virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) { return 0; }
+
 
     // Gamepad -------------------------------------------------------------
 
