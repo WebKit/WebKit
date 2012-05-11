@@ -74,11 +74,13 @@ public:
     virtual void setContentsMemoryAllocationLimitBytes(size_t) = 0;
 };
 
+enum TextureUploaderOption { ThrottledUploader, UnthrottledUploader };
+
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium {
     WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
 public:
-    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, PassOwnPtr<TextureUploader>);
+    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
 
     ~LayerRendererChromium();
 
@@ -144,7 +146,7 @@ protected:
     void ensureFramebuffer();
     bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
 
-    LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, PassOwnPtr<TextureUploader>);
+    LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>, TextureUploaderOption);
     bool initialize();
 
 private:
@@ -298,6 +300,7 @@ private:
 
     bool m_isViewportChanged;
     bool m_isFramebufferDiscarded;
+    TextureUploaderOption m_textureUploaderSetting;
 };
 
 

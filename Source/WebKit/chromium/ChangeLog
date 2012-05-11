@@ -1,3 +1,18 @@
+2012-05-10  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Move instantiation of texture uploader to LayerRendererChromium.
+        https://bugs.webkit.org/show_bug.cgi?id=85893
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKitTests::CCLayerTreeHostImplTest::CCLayerTreeHostImplTest):
+        (WebKitTests::TEST_F):
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeLayerRendererChromium::FakeLayerRendererChromium):
+        (LayerRendererChromiumTest::LayerRendererChromiumTest):
+        (TEST):
+
 2012-05-10  Min Qin  <qinmin@google.com>
 
         split MediaPlayer::enterFullscreen into 2 seperate functions
