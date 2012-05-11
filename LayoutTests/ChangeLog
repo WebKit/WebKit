@@ -1,3 +1,53 @@
+2012-05-11  Dave Tharp  <dtharp@codeaurora.org>
+
+        Integrate IETC CSS : xml namespace tests
+        https://bugs.webkit.org/show_bug.cgi?id=86144
+
+        Reviewed by Adam Barth.
+
+        Integrating 17 IETC xml namespace tests, along with associated 
+        reference tests.
+
+        * ietestcenter/css3/namespaces/declaring-001-expected.xml: Added.
+        * ietestcenter/css3/namespaces/declaring-001.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-007-expected.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-007.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-008-expected.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-008.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-009-expected.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-009.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-010-expected.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-010.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-011-expected.xml: Added.
+        * ietestcenter/css3/namespaces/prefix-011.xml: Added.
+        * ietestcenter/css3/namespaces/qualifiedNames-001-expected.xml: Added.
+        * ietestcenter/css3/namespaces/qualifiedNames-001.xml: Added.
+        * ietestcenter/css3/namespaces/scope-003-expected.xml: Added.
+        * ietestcenter/css3/namespaces/scope-003.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-016-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-016.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-017-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-017.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-018-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-018.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-019-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-019.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-020-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-020.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-021-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-021.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-022-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-022.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-023-expected.xml: Added.
+        * ietestcenter/css3/namespaces/syntax-023.xml: Added.
+        * ietestcenter/css3/namespaces/terminology-001-expected.xml: Added.
+        * ietestcenter/css3/namespaces/terminology-001.xml: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+
 2012-05-11  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Mark 1 crashed test for chromium mac.

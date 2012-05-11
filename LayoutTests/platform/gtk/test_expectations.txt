@@ -1339,6 +1339,11 @@ BUGWK86062 : svg/text/modify-tspan-position-bug.html = IMAGE
 
 BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
+
+// IETC namespace failures
+BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
+BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
+BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

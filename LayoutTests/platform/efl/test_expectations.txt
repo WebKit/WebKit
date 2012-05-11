@@ -441,3 +441,8 @@ BUGWK86091 : media/controls-right-click-on-timebar.html = TEXT
 // EFL's EventSender contextClick, needs baselines
 BUGWK86091 : editing/selection/5354455-2.html = MISSING
 BUGWK86091 : fast/events/context-no-deselect.html = MISSING
+
+// IETC namespace failures
+BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
+BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
+BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
