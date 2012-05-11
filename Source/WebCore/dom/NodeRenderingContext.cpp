@@ -71,7 +71,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     }
 
     if (parent->isElementNode() || parent->isShadowRoot()) {
-        if (parent->isElementNode() && toElement(parent)->hasShadowRoot())
+        if (parent->isElementNode())
             m_visualParentShadow = toElement(parent)->shadow();
         else if (parent->isShadowRoot())
             m_visualParentShadow = toShadowRoot(parent)->owner();

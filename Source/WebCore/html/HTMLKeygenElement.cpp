@@ -86,7 +86,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
         option->appendChild(Text::create(document, keys[i]), ec);
     }
 
-    ASSERT(!hasShadowRoot());
+    ASSERT(!shadow());
     RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot);
     root->appendChild(select, ec);
 }
@@ -131,7 +131,6 @@ void HTMLKeygenElement::reset()
 
 HTMLSelectElement* HTMLKeygenElement::shadowSelect() const
 {
-    ASSERT(hasShadowRoot());
     ShadowRoot* root = this->shadow()->oldestShadowRoot();
     return root ? toHTMLSelectElement(root->firstChild()) : 0;
 }

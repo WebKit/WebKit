@@ -6,10 +6,6 @@ testRemoveContentToRecalc2
 PASS
 testRemoveContentAndRemoveLightChildren
 PASS
-testRemoveContentAndRemoveShadowRoot1
-PASS
-testRemoveContentAndRemoveShadowRoot2
-PASS
 testAppendContent1
 PASS
 testAppendContent2

@@ -5,17 +5,11 @@ This tests that dynamically created ShadowRoot should be rendered correctly.
 Can only run within DRT.
 </div>
 <div id="host1">Light children should not be rendered.</div>
-<div id="host2">Light children should be rendered after a shadow root is removed.</div>
 <script>
 if (window.internals) {
     var host1 = document.querySelector('#host1');
     var shadowRoot = window.internals.ensureShadowRoot(host1);
     shadowRoot.appendChild(document.createTextNode('Shadow should be rendered.'));
-
-    var host2 = document.querySelector('#host2');
-    var shadowRoot = window.internals.ensureShadowRoot(host2);
-    shadowRoot.appendChild(document.createTextNode('Shadow should not be rendered.'));
-    window.internals.removeShadowRoot(host2);
 }
 </script>
 </body>

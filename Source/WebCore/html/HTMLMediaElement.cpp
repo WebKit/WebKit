@@ -4073,10 +4073,11 @@ MediaControls* HTMLMediaElement::mediaControls()
 
 bool HTMLMediaElement::hasMediaControls()
 {
-    if (!hasShadowRoot())
+    ElementShadow* elementShadow = shadow();
+    if (!elementShadow)
         return false;
 
-    Node* node = shadow()->oldestShadowRoot()->firstChild();
+    Node* node = elementShadow->oldestShadowRoot()->firstChild();
     return node && node->isMediaControls();
 }
 

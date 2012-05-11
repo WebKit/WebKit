@@ -46,8 +46,7 @@ ElementShadow::ElementShadow()
 
 ElementShadow::~ElementShadow()
 {
-    if (hasShadowRoot())
-        removeAllShadowRoots();
+    removeAllShadowRoots();
 }
 
 static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
@@ -91,9 +90,6 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
 
 void ElementShadow::removeAllShadowRoots()
 {
-    if (!hasShadowRoot())
-        return;
-
     // Dont protect this ref count.
     Element* shadowHost = host();
 

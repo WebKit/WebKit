@@ -35,10 +35,6 @@ if (window.internals) {
     shadow = internals.ensureShadowRoot(p);
     shouldBe('shadow.nodeName', '"#shadow-root"');
     shouldBe('shadow === internals.shadowRoot(p)', 'true');
-
-    // Can strip elements of shadows
-    internals.removeShadowRoot(keygen);
-    shouldBe('internals.shadowRoot(keygen)', 'null');
 }
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

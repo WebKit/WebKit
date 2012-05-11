@@ -6,7 +6,6 @@ PASS exceptionCode is DOMException.INVALID_ACCESS_ERR
 PASS internals.shadowRoot(p) is null
 PASS shadow.nodeName is "#shadow-root"
 PASS shadow === internals.shadowRoot(p) is true
-PASS internals.shadowRoot(keygen) is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

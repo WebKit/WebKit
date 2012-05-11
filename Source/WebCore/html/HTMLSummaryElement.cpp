@@ -80,7 +80,7 @@ bool HTMLSummaryElement::childShouldCreateRenderer(const NodeRenderingContext& c
 
 void HTMLSummaryElement::createShadowSubtree()
 {
-    ASSERT(!hasShadowRoot());
+    ASSERT(!shadow());
     RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot);
     root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION, true);
     root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION, true);

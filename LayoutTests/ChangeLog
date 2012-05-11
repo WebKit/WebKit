@@ -1,3 +1,23 @@
+2012-05-10  MORITA Hajime  <morrita@google.com>
+
+        ElementShadow should minimize the usage of "ShadowRoot" name
+        https://bugs.webkit.org/show_bug.cgi?id=85970
+
+        Reviewed by Dimitri Glazkov.
+
+        Removed tests cases which exercise shadow root removals.
+        Such functionality was only available from Internals object
+        and it made little sense to test it.
+
+        * fast/dom/shadow/content-element-move-expected.txt:
+        * fast/dom/shadow/content-element-move.html:
+        * fast/dom/shadow/dynamically-created-shadow-root-expected.html:
+        * fast/dom/shadow/dynamically-created-shadow-root.html:
+        * fast/dom/shadow/layout-tests-can-access-shadow-expected.txt:
+        * fast/dom/shadow/layout-tests-can-access-shadow.html:
+        * fast/dom/shadow/multiple-shadowroot-expected.txt:
+        * fast/dom/shadow/multiple-shadowroot.html:
+
 2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move resumeAnimations to use Internals interface

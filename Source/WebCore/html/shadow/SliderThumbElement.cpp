@@ -358,7 +358,7 @@ const AtomicString& TrackLimiterElement::shadowPseudoId() const
 TrackLimiterElement* trackLimiterElementOf(Node* node)
 {
     ASSERT(node);
-    ASSERT(node->toInputElement()->hasShadowRoot());
+    ASSERT(node->toInputElement()->shadow());
     ShadowRoot* shadow = node->toInputElement()->shadow()->oldestShadowRoot();
     ASSERT(shadow);
     Node* limiter = shadow->firstChild()->lastChild();

@@ -21,9 +21,6 @@ var shadowRoot3 = new WebKitShadowRoot(div);
 shouldBe("internals.shadowRoot(div)", "shadowRoot3");
 shouldBe("internals.olderShadowRoot(shadowRoot3)", "shadowRoot2");
 
-internals.removeShadowRoot(div);
-shouldBe("internals.shadowRoot(div)", "null");
-
 var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

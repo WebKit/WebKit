@@ -1140,8 +1140,7 @@ void Element::recalcStyle(StyleChange change)
     StyleResolverParentPusher parentPusher(this);
 
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
-    if (hasShadowRoot()) {
-        ElementShadow* shadow = this->shadow();
+    if (ElementShadow* shadow = this->shadow()) {
         if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
             parentPusher.push();
             shadow->recalcStyle(change);
@@ -1179,13 +1178,6 @@ void Element::recalcStyle(StyleChange change)
         didRecalcStyle(change);
 }
 
-bool Element::hasShadowRoot() const
-{
-    if (ElementShadow* shadow = this->shadow())
-        return shadow->hasShadowRoot();
-    return false;
-}
-
 ElementShadow* Element::shadow() const
 {
     if (!hasRareData())
@@ -1205,8 +1197,8 @@ ElementShadow* Element::ensureShadow()
 
 ShadowRoot* Element::ensureShadowRoot()
 {
-    if (hasShadowRoot())
-        return shadow()->oldestShadowRoot();
+    if (ElementShadow* shadow = this->shadow())
+        return shadow->oldestShadowRoot();
 
     return ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot).get();
 }
@@ -1341,10 +1333,8 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
     else
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
 
-    if (hasRareData()) {
-        if (hasShadowRoot())
-            shadow()->hostChildrenChanged();
-    }
+    if (ElementShadow * shadow = this->shadow())
+        shadow->hostChildrenChanged();
 }
 
 void Element::beginParsingChildren()

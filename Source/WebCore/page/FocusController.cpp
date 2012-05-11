@@ -65,11 +65,6 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-static inline bool isShadowHost(const Node* node)
-{
-    return node && node->isElementNode() && toElement(node)->hasShadowRoot();
-}
-
 static inline ComposedShadowTreeWalker walkerFrom(const Node* node)
 {
     return ComposedShadowTreeWalker(node, ComposedShadowTreeWalker::DoNotCrossUpperBoundary);

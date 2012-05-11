@@ -302,8 +302,8 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
         return 0;
     }
 
-    if (host->hasShadowRoot())
-        return host->shadow()->youngestShadowRoot();
+    if (ElementShadow* shadow = host->shadow())
+        return shadow->youngestShadowRoot();
 
     return ShadowRoot::create(host, ec).get();
 }
@@ -322,10 +322,9 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngestShadowRoot(Ele
         return 0;
     }
 
-    if (!host->hasShadowRoot())
-        return 0;
-
-    return host->shadow()->youngestShadowRoot();
+    if (ElementShadow* shadow = host->shadow())
+        return shadow->youngestShadowRoot();
+    return 0;
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Element* host, ExceptionCode& ec)
@@ -335,10 +334,9 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Eleme
         return 0;
     }
 
-    if (!host->hasShadowRoot())
-        return 0;
-
-    return host->shadow()->oldestShadowRoot();
+    if (ElementShadow* shadow = host->shadow())
+        return shadow->oldestShadowRoot();
+    return 0;
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngerShadowRoot(Node* shadow, ExceptionCode& ec)
@@ -359,17 +357,6 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::olderShadowRoot(Node* 
     }
 
     return toShadowRoot(shadow)->olderShadowRoot();
-}
-
-void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)
-{
-    if (!host) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    if (host->hasShadowRoot())
-        host->shadow()->removeAllShadowRoots();
 }
 
 Element* Internals::includerFor(Node* node, ExceptionCode& ec)

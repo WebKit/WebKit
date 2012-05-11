@@ -340,9 +340,11 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
             unbind(contentDocument, nodesMap);
     }
 
-    if (node->isElementNode() && toElement(node)->hasShadowRoot()) {
-        for (ShadowRoot* root = toElement(node)->shadow()->youngestShadowRoot(); root; root = root->olderShadowRoot())
-            unbind(root, nodesMap);
+    if (node->isElementNode()) {
+        if (ElementShadow* shadow = toElement(node)->shadow()) {
+            for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
+                unbind(root, nodesMap);
+        }
     }
 
     nodesMap->remove(node);
@@ -1226,9 +1228,11 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
             if (doc)
                 value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
         }
-        if (element->hasShadowRoot()) {
+
+        ElementShadow* shadow = element->shadow();
+        if (shadow) {
             RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > shadowRoots = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
-            for (ShadowRoot* root = element->shadow()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
                 shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
             value->setShadowRoots(shadowRoots);
         }

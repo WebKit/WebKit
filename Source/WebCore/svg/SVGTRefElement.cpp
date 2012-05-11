@@ -164,7 +164,7 @@ void SVGTRefElement::updateReferencedText()
     if (Element* target = SVGURIReference::targetElementFromIRIString(href(), document()))
         textContent = target->textContent();
 
-    ASSERT(hasShadowRoot());
+    ASSERT(shadow());
     ShadowRoot* root = shadow()->oldestShadowRoot();
     if (!root->firstChild())
         root->appendChild(SVGShadowText::create(document(), textContent), ASSERT_NO_EXCEPTION);
@@ -180,7 +180,7 @@ void SVGTRefElement::detachTarget()
     String emptyContent;
     ExceptionCode ignore = 0;
 
-    ASSERT(hasShadowRoot());
+    ASSERT(shadow());
     Node* container = shadow()->oldestShadowRoot()->firstChild();
     if (container)
         container->setTextContent(emptyContent, ignore);

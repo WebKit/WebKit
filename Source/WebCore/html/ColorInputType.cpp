@@ -107,7 +107,7 @@ Color ColorInputType::valueAsColor() const
 
 void ColorInputType::createShadowSubtree()
 {
-    ASSERT(element()->hasShadowRoot());
+    ASSERT(element()->shadow());
 
     Document* document = element()->document();
     RefPtr<HTMLDivElement> wrapperElement = HTMLDivElement::create(document);

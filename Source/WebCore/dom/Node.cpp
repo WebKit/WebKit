@@ -836,7 +836,11 @@ bool Node::hasNonEmptyBoundingBox() const
 
 inline static ShadowRoot* oldestShadowRootFor(const Node* node)
 {
-    return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadow()->oldestShadowRoot() : 0;
+    if (!node->isElementNode())
+        return 0;
+    if (ElementShadow* shadow = toElement(node)->shadow())
+        return shadow->oldestShadowRoot();
+    return 0;
 }
 
 inline void Node::setStyleChange(StyleChangeType changeType)

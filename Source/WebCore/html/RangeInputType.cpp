@@ -160,7 +160,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
     Node* targetNode = event->target()->toNode();
     if (event->button() != LeftButton || !targetNode)
         return;
-    ASSERT(element()->hasShadowRoot());
+    ASSERT(element()->shadow());
     if (targetNode != element() && !targetNode->isDescendantOf(element()->shadow()->oldestShadowRoot()))
         return;
     SliderThumbElement* thumb = sliderThumbElementOf(element());
@@ -237,7 +237,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
 void RangeInputType::createShadowSubtree()
 {
-    ASSERT(element()->hasShadowRoot());
+    ASSERT(element()->shadow());
 
     Document* document = element()->document();
     RefPtr<HTMLDivElement> track = HTMLDivElement::create(document);

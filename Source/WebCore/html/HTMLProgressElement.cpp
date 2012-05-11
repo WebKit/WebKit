@@ -151,7 +151,7 @@ void HTMLProgressElement::didElementStateChange()
 
 void HTMLProgressElement::createShadowSubtree()
 {
-    ASSERT(!hasShadowRoot());
+    ASSERT(!shadow());
 
     RefPtr<ProgressBarElement> bar = ProgressBarElement::create(document());
     m_value = ProgressValueElement::create(document());

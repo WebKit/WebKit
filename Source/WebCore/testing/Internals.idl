@@ -49,7 +49,6 @@ module window {
         Node youngerShadowRoot(in Node root) raises (DOMException);
 #endif
         Element includerFor(in Node node) raises (DOMException);
-        void removeShadowRoot(in Element host) raises (DOMException);
         DOMString shadowPseudoId(in Element element) raises (DOMException);
         Element createContentElement(in Document document) raises(DOMException);
         Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);

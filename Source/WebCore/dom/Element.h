@@ -261,7 +261,6 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     void recalcStyle(StyleChange = NoChange);
 
-    bool hasShadowRoot() const;
     ElementShadow* shadow() const;
     ElementShadow* ensureShadow();
 
@@ -712,6 +711,11 @@ inline bool Node::hasID() const
 inline bool Node::hasClass() const
 {
     return isElementNode() && toElement(this)->hasClass();
+}
+
+inline bool isShadowHost(const Node* node)
+{
+    return node && node->isElementNode() && toElement(node)->shadow();
 }
 
 } // namespace

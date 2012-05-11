@@ -50,13 +50,10 @@ public:
     ~ElementShadow();
 
     Element* host() const;
-
-    bool hasShadowRoot() const;
     ShadowRoot* youngestShadowRoot() const;
     ShadowRoot* oldestShadowRoot() const;
 
     void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ExceptionCode&);
-    void removeAllShadowRoots();
 
     void setParentTreeScope(TreeScope*);
 
@@ -82,17 +79,13 @@ public:
     const HTMLContentSelector& selector() const;
 
 private:
+    void removeAllShadowRoots();
 
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     HTMLContentSelector m_selector;
     bool m_needsRecalculateContent : 1;
     WTF_MAKE_NONCOPYABLE(ElementShadow);
 };
-
-inline bool ElementShadow::hasShadowRoot() const
-{
-    return !m_shadowRoots.isEmpty();
-}
 
 inline ShadowRoot* ElementShadow::youngestShadowRoot() const
 {
@@ -121,7 +114,7 @@ inline void ElementShadow::clearNeedsReattachHostChildrenAndShadow()
 
 inline Element* ElementShadow::host() const
 {
-    ASSERT(hasShadowRoot());
+    ASSERT(!m_shadowRoots.isEmpty());
     return youngestShadowRoot()->host();
 }
 

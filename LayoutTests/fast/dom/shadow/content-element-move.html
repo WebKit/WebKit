@@ -126,86 +126,6 @@ function testRemoveContentAndRemoveLightChildren(callIfDone) {
     setTimeout(f, 0);
 }
 
-function testRemoveShadowRoot(callIfDone) {
-    var root = document.createElement('div');
-
-    // Create light tree.
-    root.innerHTML = "<span>LIGHT</span>";
-
-    // Create shadow tree.
-    var content = createContentWithSelect('span', 'FALLBACK');
-    var sr = internals.ensureShadowRoot(root);
-    sr.appendChild(createSpanWithText("BEFORE"));
-    sr.appendChild(content);
-    sr.appendChild(createSpanWithText("AFTER"));
-
-    document.getElementById('actual-container').appendChild(root);
-
-    var f = (function(root, content, callIfDone) {
-        return function() {
-            internals.removeShadowRoot(root);
-            document.getElementById('expect-container').innerHTML = "<div><span>LIGHT</span></div>";
-            callIfDone();
-        };
-    })(root, content, callIfDone);
-
-    setTimeout(f, 0);
-}
-
-function testRemoveContentAndRemoveShadowRoot1(callIfDone) {
-    var root = document.createElement('div');
-
-    // Create light tree.
-    root.innerHTML = "<span>LIGHT</span>";
-
-    // Create shadow tree.
-    var content = createContentWithSelect('span', 'FALLBACK');
-    var sr = internals.ensureShadowRoot(root);
-    sr.appendChild(createSpanWithText("BEFORE"));
-    sr.appendChild(content);
-    sr.appendChild(createSpanWithText("AFTER"));
-
-    document.getElementById('actual-container').appendChild(root);
-
-    var f = (function(root, content, callIfDone) {
-        return function() {
-            content.parentNode.removeChild(content);
-            internals.removeShadowRoot(root);
-            document.getElementById('expect-container').innerHTML = "<div><span>LIGHT</span></div>";
-            callIfDone();
-        };
-    })(root, content, callIfDone);
-
-    setTimeout(f, 0);
-}
-
-function testRemoveContentAndRemoveShadowRoot2(callIfDone) {
-    var root = document.createElement('div');
-
-    // Create light tree.
-    root.innerHTML = "<span>LIGHT 1</span><span class='c1'>LIGHT 2</span>";
-
-    // Create shadow tree.
-    var content = createContentWithSelect('.c1', 'FALLBACK');
-    var sr = internals.ensureShadowRoot(root);
-    sr.appendChild(createSpanWithText("BEFORE"));
-    sr.appendChild(content);
-    sr.appendChild(createSpanWithText("AFTER"));
-
-    document.getElementById('actual-container').appendChild(root);
-
-    var f = (function(root, content, callIfDone) {
-        return function() {
-            content.parentNode.removeChild(content);
-            internals.removeShadowRoot(root);
-            document.getElementById('expect-container').innerHTML = "<div><span>LIGHT 1</span><span>LIGHT 2</span></div>";
-            callIfDone();
-        };
-    })(root, content, callIfDone);
-
-    setTimeout(f, 0);
-}
-
 function testAppendContent1(callIfDone) {
     var root = document.createElement('div');
 
@@ -386,8 +306,6 @@ var testFuncs = [
     testRemoveContentToRecalc1,
     testRemoveContentToRecalc2,
     testRemoveContentAndRemoveLightChildren,
-    testRemoveContentAndRemoveShadowRoot1,
-    testRemoveContentAndRemoveShadowRoot2,
     testAppendContent1,
     testAppendContent2,
     testAppendContent3,

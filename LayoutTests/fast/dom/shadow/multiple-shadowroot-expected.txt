@@ -10,7 +10,6 @@ PASS internals.shadowRoot(div) is shadowRoot2
 PASS internals.olderShadowRoot(shadowRoot2) is shadowRoot1
 PASS internals.shadowRoot(div) is shadowRoot3
 PASS internals.olderShadowRoot(shadowRoot3) is shadowRoot2
-PASS internals.shadowRoot(div) is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

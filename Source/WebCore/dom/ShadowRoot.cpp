@@ -122,7 +122,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPu
     if (ec)
         return 0;
     ASSERT(element == shadowRoot->host());
-    ASSERT(element->hasShadowRoot());
+    ASSERT(element->shadow());
     return shadowRoot.release();
 }
 

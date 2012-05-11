@@ -395,11 +395,11 @@ void InputType::createShadowSubtree()
 
 void InputType::destroyShadowSubtree()
 {
-    if (!element()->hasShadowRoot())
+    ElementShadow* shadow = element()->shadow();
+    if (!shadow)
         return;
 
-    ShadowRoot* root = element()->shadow()->oldestShadowRoot();
-    ASSERT(root);
+    ShadowRoot* root = shadow->oldestShadowRoot();
     root->removeAllChildren();
 
     // It's ok to clear contents of all other ShadowRoots because they must have

@@ -221,7 +221,7 @@ bool TextFieldInputType::shouldHaveSpinButton() const
 
 void TextFieldInputType::createShadowSubtree()
 {
-    ASSERT(element()->hasShadowRoot());
+    ASSERT(element()->shadow());
 
     ASSERT(!m_innerText);
     ASSERT(!m_innerBlock);

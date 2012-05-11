@@ -85,7 +85,7 @@ PassRefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName&
 
 void HTMLTextAreaElement::createShadowSubtree()
 {
-    ASSERT(!hasShadowRoot());
+    ASSERT(!shadow());
     RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot);
     root->appendChild(TextControlInnerTextElement::create(document()), ASSERT_NO_EXCEPTION);
 }

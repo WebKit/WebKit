@@ -116,11 +116,6 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> under
     gNodesDispatchingSimulatedClicks->remove(node);
 }
 
-static inline bool isShadowHost(Node* node)
-{
-    return node->isElementNode() && toElement(node)->hasShadowRoot();
-}
-
 PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors)
 {
     Vector<EventContext>::const_iterator lowestCommonBoundary = m_ancestors.end();

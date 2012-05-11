@@ -1,3 +1,14 @@
+2012-05-10  MORITA Hajime  <morrita@google.com>
+
+        ElementShadow should minimize the usage of "ShadowRoot" name
+        https://bugs.webkit.org/show_bug.cgi?id=85970
+
+        Reviewed by Dimitri Glazkov.
+
+        Removed symbols which no longer exists
+
+        * Source/autotools/symbols.filter:
+
 2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move resumeAnimations to use Internals interface

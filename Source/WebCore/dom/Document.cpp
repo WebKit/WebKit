@@ -712,8 +712,8 @@ void Document::buildAccessKeyMap(TreeScope* scope)
         if (!accessKey.isEmpty())
             m_elementsByAccessKey.set(accessKey.impl(), element);
 
-        if (element->hasShadowRoot()) {
-            for (ShadowRoot* root = element->shadow()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+        if (ElementShadow* shadow = element->shadow()) {
+            for (ShadowRoot* root = shadow->youngestShadowRoot(); root; root = root->olderShadowRoot())
                 buildAccessKeyMap(root);
         }
     }

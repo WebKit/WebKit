@@ -35,11 +35,6 @@
 
 namespace WebCore {
 
-static inline bool isShadowHost(const Node* node)
-{
-    return node && node->isElementNode() && toElement(node)->hasShadowRoot();
-}
-
 static inline ElementShadow* shadowFor(const Node* node)
 {
     if (node && node->isElementNode())
@@ -99,7 +94,7 @@ Node* ComposedShadowTreeWalker::traverseChild(const Node* node, TraversalDirecti
     ASSERT(node);
     if (canCrossUpperBoundary()) {
         ElementShadow* shadow = shadowFor(node);
-        return (shadow && shadow->hasShadowRoot()) ? traverseLightChildren(shadow->youngestShadowRoot(), direction)
+        return shadow ? traverseLightChildren(shadow->youngestShadowRoot(), direction)
             : traverseLightChildren(node, direction);
     }
     if (isShadowHost(node))

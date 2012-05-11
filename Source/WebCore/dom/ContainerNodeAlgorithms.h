@@ -305,8 +305,8 @@ inline void ChildFrameDisconnector::collectDescendant(Node* root)
         Element* element = toElement(node);
         if (element->isFrameOwnerElement())
             m_list.append(node);
-        if (element->hasShadowRoot())
-            collectDescendant(element->shadow());
+        if (ElementShadow* shadow = element->shadow())
+            collectDescendant(shadow);
     }
 }
 
