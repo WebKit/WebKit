@@ -4055,6 +4055,10 @@ BUGTKENT MAC : css3/selectors3/xml/css3-modsel-68.xml = IMAGE
 BUGTKENT MAC : css3/selectors3/xml/css3-modsel-69.xml = IMAGE
 BUGTKENT MAC : fast/forms/input-disabled-color.html = IMAGE
 BUGTKENT MAC : fast/inline/continuation-outlines.html = IMAGE
+BUGTKENT WIN : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+
+BUGWK86170 LINUX : plugins/embed-attributes-style.html = IMAGE
+BUGWK86170 SNOWLEOPARD : compositing/plugins/composited-plugin.html = IMAGE
 
 BUGWK85952 MAC WIN : http/tests/media/media-source/webm/video-media-source-play.html = PASS TIMEOUT
 BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS TIMEOUT

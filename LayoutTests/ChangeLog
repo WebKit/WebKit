@@ -1,3 +1,9 @@
+2012-05-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] add audit formatters for remote objects and DOM elements
