@@ -33,7 +33,7 @@ layer at (0,0) size 785x613
                 RenderText {#text} at (1,1) size 207x19
                   text run at (1,1) width 207: "text with value property changed"
               RenderTableCell {TD} at (328,2) size 312x34 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (3,3) size 195x28 [bgcolor=#FFFFFF]
               RenderTableCell {TD} at (642,9) size 62x20 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x19
                   text run at (1,1) width 28: "after"
@@ -45,7 +45,7 @@ layer at (0,0) size 785x613
                 RenderText {#text} at (1,1) size 244x19
                   text run at (1,1) width 244: "password with value property changed"
               RenderTableCell {TD} at (328,38) size 312x34 [r=1 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (3,3) size 195x28 [bgcolor=#FFFFFF]
               RenderTableCell {TD} at (642,45) size 62x20 [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x19
                   text run at (1,1) width 28: "after"
@@ -80,7 +80,7 @@ layer at (0,0) size 785x613
                 RenderText {#text} at (1,1) size 224x19
                   text run at (1,1) width 224: "button with value property changed"
               RenderTableCell {TD} at (328,118) size 312x42 [r=4 c=1 rs=1 cs=1]
-                RenderButton {INPUT} at (3,3) size 61x36 [color=#202020]
+                RenderButton {INPUT} at (3,3) size 61x36 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (15,8) size 31x18
                     RenderText at (0,0) size 31x19
                       text run at (0,0) width 31: "after"
@@ -119,7 +119,7 @@ layer at (0,0) size 785x613
                 RenderText {#text} at (1,1) size 205x19
                   text run at (1,1) width 205: "text with value attribute changed"
               RenderTableCell {TD} at (328,207) size 312x34 [r=7 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (3,3) size 195x28 [bgcolor=#FFFFFF]
               RenderTableCell {TD} at (642,214) size 62x20 [r=7 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x19
                   text run at (1,1) width 28: "after"
@@ -157,7 +157,7 @@ layer at (0,0) size 785x613
                   text run at (1,1) width 284: "check box with value property changed, then"
                   text run at (1,19) width 95: "turned into text"
               RenderTableCell {TD} at (328,307) size 312x34 [r=10 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (3,3) size 195x28 [bgcolor=#FFFFFF]
               RenderTableCell {TD} at (642,314) size 62x20 [r=10 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x19
                   text run at (1,1) width 28: "after"
@@ -183,7 +183,7 @@ layer at (0,0) size 785x613
                   text run at (1,1) width 282: "check box with value attribute changed, then"
                   text run at (1,19) width 95: "turned into text"
               RenderTableCell {TD} at (328,387) size 312x34 [r=12 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (3,3) size 195x28 [bgcolor=#FFFFFF]
               RenderTableCell {TD} at (642,394) size 62x20 [r=12 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x19
                   text run at (1,1) width 28: "after"
@@ -196,7 +196,7 @@ layer at (0,0) size 785x613
                   text run at (1,1) width 204: "file with value property changed"
               RenderTableCell {TD} at (328,425) size 312x42 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (3,3) size 306x36 "No file selected"
-                  RenderButton {INPUT} at (0,0) size 117x36 [color=#202020]
+                  RenderButton {INPUT} at (0,0) size 117x36 [bgcolor=#C0C0C0]
                     RenderBlock (anonymous) at (15,8) size 87x18
                       RenderText at (0,0) size 87x19
                         text run at (0,0) width 87: "Choose File"

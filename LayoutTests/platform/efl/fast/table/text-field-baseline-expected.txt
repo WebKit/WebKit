@@ -28,7 +28,7 @@ layer at (0,0) size 800x482
                 RenderText {#text} at (0,0) size 25x19
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,0) size 199x32 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
         RenderBlock {HR} at (0,48) size 784x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,66) size 784x36
           RenderText {#text} at (0,0) size 781x37
@@ -41,37 +41,37 @@ layer at (0,0) size 800x482
                 RenderText {#text} at (0,0) size 25x19
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,0) size 209x32 [r=0 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
             RenderTableRow {DIV} at (0,32) size 234x32
               RenderTableCell {DT} at (0,40) size 25x18 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,32) size 209x32 [r=1 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
             RenderTableRow {DIV} at (0,64) size 234x32
               RenderTableCell {DT} at (0,72) size 25x18 [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,64) size 209x32 [r=2 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
             RenderTableRow {DIV} at (0,96) size 234x32
               RenderTableCell {DT} at (0,104) size 25x18 [r=3 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,96) size 209x32 [r=3 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
             RenderTableRow {DIV} at (0,128) size 234x32
               RenderTableCell {DT} at (0,136) size 25x18 [r=4 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,128) size 209x32 [r=4 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
             RenderTableRow {DIV} at (0,160) size 234x32
               RenderTableCell {DT} at (0,168) size 25x18 [r=5 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19
                   text run at (0,0) width 25: "Foo"
               RenderTableCell {DD} at (25,160) size 209x32 [r=5 c=1 rs=1 cs=1]
-                RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
             RenderTableRow {DIV} at (0,192) size 234x36
               RenderTableCell {DT} at (0,210) size 25x18 [r=6 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 25x19

@@ -10,7 +10,7 @@ layer at (0,0) size 800x231
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 layer at (10,28) size 112x190 clip at (10,28) size 97x190 scrollY 137 scrollHeight 586
-  RenderTextControl {TEXTAREA} at (2,2) size 112x190 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,2) size 112x190 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 90x576
       RenderText {#text} at (0,0) size 27x559
         text run at (0,0) width 18: "00"

@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x19
         RenderText {#text} at (0,0) size 0x0
 layer at (8,62) size 550x250
-  RenderTextControl {TEXTAREA} at (0,18) size 550x250 [color=#202020]
+  RenderTextControl {TEXTAREA} at (0,18) size 550x250 [color=#333333] [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 543x36
       RenderText {#text} at (0,0) size 541x25
         text run at (0,0) width 541: "1234567890abcdefghijABCDEFGHIJ1234567890abcdefghijABCDEFGHIJ12345X7890abcdefghijABCDEFGXIJ1234"

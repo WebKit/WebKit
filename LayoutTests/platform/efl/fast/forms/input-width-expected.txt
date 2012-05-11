@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTextControl {INPUT} at (2,2) size 69x28 [color=#202020]
+      RenderTextControl {INPUT} at (2,2) size 69x28 [bgcolor=#FFFFFF]
       RenderText {#text} at (0,0) size 0x0
 layer at (14,16) size 62x18
   RenderBlock {DIV} at (4,6) size 62x18

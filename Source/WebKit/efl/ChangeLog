@@ -1,3 +1,15 @@
+2012-05-11  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] Input Attribute Placeholder RefTests failing
+        https://bugs.webkit.org/show_bug.cgi?id=85603
+
+        Reviewed by Hajime Morita.
+
+        Removing color classes which we don't need anymore after
+        RenderThemeEfl.cpp is less aggressively overriding styling.
+
+        * DefaultTheme/default.edc:
+
 2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move resumeAnimations to use Internals interface

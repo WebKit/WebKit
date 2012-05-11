@@ -11,13 +11,13 @@ layer at (0,0) size 800x546
         RenderTableSection {TBODY} at (0,0) size 243x244
           RenderTableRow {TR} at (0,2) size 243x240
             RenderTableCell {TD} at (2,86) size 239x72 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (22,22) size 195x28 [color=#202020]
+              RenderTextControl {INPUT} at (22,22) size 195x28 [bgcolor=#FFFFFF]
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,278) size 243x244
         RenderTableSection {TBODY} at (0,0) size 243x244
           RenderTableRow {TR} at (0,2) size 243x240
             RenderTableCell {TD} at (2,86) size 239x72 [bgcolor=#90EE90] [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (22,22) size 195x28 [color=#202020]
+              RenderTextControl {INPUT} at (22,22) size 195x28 [bgcolor=#FFFFFF]
               RenderText {#text} at (0,0) size 0x0
 layer at (36,164) size 188x18 scrollHeight 19
   RenderBlock {DIV} at (4,6) size 188x18

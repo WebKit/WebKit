@@ -204,10 +204,6 @@ editing/text-iterator/basic-iteration.html
 editing/input/password-echo-passnode.html
 editing/input/password-echo-passnode2.html
 
-# EFL's textarea and textfield doesn't handle whitespace style
-# https://bugs.webkit.org/show_bug.cgi?id=85123
-fast/forms/cursor-at-editable-content-boundary.html
-
 # EFL's LayoutTestController does not implement setMediaType
 fast/media/print-restores-previous-mediatype.html
 

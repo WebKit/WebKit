@@ -4,44 +4,44 @@ layer at (0,0) size 800x400
   RenderBlock {HTML} at (0,0) size 800x400
     RenderBody {BODY} at (8,16) size 784x368
       RenderBlock {P} at (0,0) size 784x32
-        RenderTextControl {INPUT} at (587,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (587,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,48) size 784x32
-        RenderTextControl {INPUT} at (587,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (587,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,96) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,144) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,192) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,240) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,288) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,336) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,0) size 188x18
         RenderText {#text} at (0,0) size 0x0

@@ -6,21 +6,21 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 368x19
         text run at (0,0) width 368: "This tests that aqua-style search fields do not honor height."
       RenderBR {BR} at (368,15) size 0x0
-      RenderTextControl {INPUT} at (0,118) size 72x10 [color=#202020]
+      RenderTextControl {INPUT} at (0,118) size 72x10 [bgcolor=#FFFFFF]
         RenderDeprecatedFlexibleBox {DIV} at (4,2) size 65x7
           RenderBlock {DIV} at (0,3) size 0x0
           RenderBlock {DIV} at (0,0) size 65x7
           RenderBlock {DIV} at (65,3) size 0x0
       RenderText {#text} at (72,113) size 4x19
         text run at (72,113) width 4: " "
-      RenderTextControl {INPUT} at (78,102) size 175x40 [color=#202020]
+      RenderTextControl {INPUT} at (78,102) size 175x40 [bgcolor=#FFFFFF]
         RenderDeprecatedFlexibleBox {DIV} at (4,6) size 168x30
           RenderBlock {DIV} at (0,15) size 0x0
           RenderBlock {DIV} at (0,6) size 168x17
           RenderBlock {DIV} at (168,15) size 0x0
       RenderText {#text} at (255,113) size 4x19
         text run at (255,113) width 4: " "
-      RenderTextControl {INPUT} at (261,18) size 319x200 [color=#202020]
+      RenderTextControl {INPUT} at (261,18) size 319x200 [bgcolor=#FFFFFF]
         RenderDeprecatedFlexibleBox {DIV} at (4,6) size 312x190
           RenderBlock {DIV} at (0,95) size 0x0
           RenderBlock {DIV} at (0,79) size 312x31

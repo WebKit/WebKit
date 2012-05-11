@@ -20,27 +20,27 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,243) size 784x50
 layer at (10,44) size 472x46
-  RenderTextControl {TEXTAREA} at (2,2) size 472x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,2) size 472x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 465x18
       RenderText {#text} at (0,0) size 250x19
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (10,97) size 472x46
-  RenderTextControl {TEXTAREA} at (2,55) size 472x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,55) size 472x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 465x18
       RenderText {#text} at (0,0) size 250x19
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (10,150) size 472x46
-  RenderTextControl {TEXTAREA} at (2,108) size 472x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,108) size 472x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 465x18
       RenderText {#text} at (0,0) size 250x19
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (10,203) size 472x46
-  RenderTextControl {TEXTAREA} at (2,161) size 472x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,161) size 472x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 465x18
       RenderText {#text} at (0,0) size 250x19
         text run at (0,0) width 250: "This is should be aligned to the left."
 layer at (10,253) size 472x46
-  RenderTextControl {TEXTAREA} at (2,2) size 472x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,2) size 472x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 465x18
       RenderText {#text} at (0,0) size 250x19
         text run at (0,0) width 250: "This is should be aligned to the left."

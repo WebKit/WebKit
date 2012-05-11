@@ -22,23 +22,23 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (0,222) size 0x36
               RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
               RenderBlock {FORM} at (0,293) size 769x540
-                RenderButton {INPUT} at (2,2) size 161x36 [color=#202020]
+                RenderButton {INPUT} at (2,2) size 161x36 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (15,8) size 131x18
                     RenderText at (0,0) size 131x19
                       text run at (0,0) width 131: "Submit with POST"
                 RenderBR {BR} at (165,25) size 0x0
-                RenderButton {INPUT} at (2,42) size 316x36 [color=#202020]
+                RenderButton {INPUT} at (2,42) size 316x36 [bgcolor=#C0C0C0]
                   RenderBlock (anonymous) at (15,8) size 286x18
                     RenderText at (0,0) size 286x19
                       text run at (0,0) width 286: "Submit with POST followed by a redirect"
                 RenderBR {BR} at (320,65) size 0x0
                 RenderText {#text} at (0,80) size 376x36
                   text run at (0,80) width 376: "Here are some form elements"
-                RenderTextControl {INPUT} at (378,88) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (378,88) size 195x28 [bgcolor=#FFFFFF]
                 RenderBR {BR} at (575,109) size 0x0
                 RenderText {#text} at (0,118) size 334x36
                   text run at (0,118) width 334: "that we can use for testing"
-                RenderTextControl {INPUT} at (336,126) size 195x28 [color=#202020]
+                RenderTextControl {INPUT} at (336,126) size 195x28 [bgcolor=#FFFFFF]
                 RenderBR {BR} at (533,147) size 0x0
                 RenderBlock {INPUT} at (4,176) size 12x12
                 RenderText {#text} at (20,156) size 73x36
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (20,267) size 130x36
                   text run at (20,267) width 130: " option #2"
                 RenderBR {BR} at (150,296) size 0x0
-                RenderMenuList {SELECT} at (2,306) size 355x38 [color=#202020]
+                RenderMenuList {SELECT} at (2,306) size 355x38 [bgcolor=#FFFFFF]
                   RenderBlock (anonymous) at (15,10) size 299x18
                     RenderText at (0,0) size 84x19
                       text run at (0,0) width 84: "Initial Value"
@@ -104,7 +104,7 @@ layer at (0,0) size 800x600
         layer at (348,433) size 188x18
           RenderBlock {DIV} at (4,6) size 188x18
         layer at (10,649) size 292x190
-          RenderTextControl {TEXTAREA} at (2,348) size 292x190 [color=#202020]
+          RenderTextControl {TEXTAREA} at (2,348) size 292x190 [bgcolor=#FFFFFF]
             RenderBlock {DIV} at (4,6) size 285x36
               RenderText {#text} at (0,0) size 234x19
                 text run at (0,0) width 234: "More initial text before user input."

@@ -212,14 +212,6 @@ private:
     Color m_inactiveSelectionBackgroundColor;
     Color m_inactiveSelectionForegroundColor;
     Color m_focusRingColor;
-    Color m_buttonTextBackgroundColor;
-    Color m_buttonTextForegroundColor;
-    Color m_comboTextBackgroundColor;
-    Color m_comboTextForegroundColor;
-    Color m_entryTextBackgroundColor;
-    Color m_entryTextForegroundColor;
-    Color m_searchTextBackgroundColor;
-    Color m_searchTextForegroundColor;
     Color m_sliderThumbColor;
 
 #if ENABLE(VIDEO)

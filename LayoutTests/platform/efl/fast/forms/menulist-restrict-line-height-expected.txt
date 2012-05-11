@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 417x19
         text run at (0,0) width 417: "This tests that we don't honor line-height for styled popup buttons."
       RenderBR {BR} at (417,15) size 0x0
-      RenderMenuList {SELECT} at (2,20) size 276x27 [color=#202020]
+      RenderMenuList {SELECT} at (2,20) size 276x27 [bgcolor=#ADD8E6]
         RenderBlock (anonymous) at (15,10) size 220x7
           RenderText at (0,-6) size 220x19
             text run at (0,-6) width 220: "This text should not be clipped."

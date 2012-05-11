@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         text run at (0,0) width 250: "This tests that styled popups look right. "
         text run at (250,0) width 304: "(Aqua for now- later, we will honor the styling)."
       RenderBR {BR} at (554,15) size 0x0
-      RenderMenuList {SELECT} at (2,20) size 81x38 [color=#202020]
+      RenderMenuList {SELECT} at (2,20) size 81x38 [bgcolor=#FF0000]
         RenderBlock (anonymous) at (15,10) size 25x18
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "test"
@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (528,75) size 0x0
       RenderInline {SPAN} at (0,0) size 99x29 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,80) size 81x38 [color=#202020]
+        RenderMenuList {SELECT} at (7,80) size 81x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 25x18
             RenderText at (0,0) size 25x19
               text run at (0,0) width 25: "test"
@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (625,135) size 0x0
       RenderInline {SPAN} at (0,0) size 99x29 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,140) size 81x38 [color=#202020]
+        RenderMenuList {SELECT} at (7,140) size 81x38
           RenderBlock (anonymous) at (15,10) size 25x18
             RenderText at (0,0) size 25x19
               text run at (0,0) width 25: "test"
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (637,195) size 0x0
       RenderInline {SPAN} at (0,0) size 99x29 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,200) size 81x38 [color=#202020]
+        RenderMenuList {SELECT} at (7,200) size 81x38
           RenderBlock (anonymous) at (15,10) size 25x18
             RenderText at (0,0) size 25x19
               text run at (0,0) width 25: "test"
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,240) size 498x19
         text run at (0,240) width 498: "This tests that background is white if only background-image:none is specified."
       RenderBR {BR} at (498,255) size 0x0
-      RenderMenuList {SELECT} at (2,260) size 81x38 [color=#202020]
+      RenderMenuList {SELECT} at (2,260) size 81x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 25x18
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "test"
@@ -66,7 +66,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,300) size 418x19
         text run at (0,300) width 418: "This tests that the image specified for background-image is visible."
       RenderBR {BR} at (418,315) size 0x0
-      RenderMenuList {SELECT} at (2,320) size 81x38 [color=#202020]
+      RenderMenuList {SELECT} at (2,320) size 81x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 25x18
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "test"

@@ -8,21 +8,21 @@ layer at (0,0) size 800x600
           text run at (0,0) width 783: "Test appearances of spin buttons. Disabled state and read-only state should have appearances different from the normal state."
       RenderBlock {DIV} at (0,34) size 784x37
         RenderInline {LABEL} at (0,0) size 325x19
-          RenderTextControl {INPUT} at (2,2) size 237x33 [color=#202020]
+          RenderTextControl {INPUT} at (2,2) size 237x33 [bgcolor=#FFFFFF]
             RenderDeprecatedFlexibleBox {DIV} at (4,6) size 230x23
               RenderBlock {DIV} at (0,0) size 230x23
           RenderText {#text} at (241,12) size 84x19
             text run at (241,12) width 84: " Normal state"
       RenderBlock {DIV} at (0,71) size 784x37
         RenderInline {LABEL} at (0,0) size 333x19
-          RenderTextControl {INPUT} at (2,2) size 237x33 [color=#202020]
+          RenderTextControl {INPUT} at (2,2) size 237x33 [bgcolor=#FFFFFF]
             RenderDeprecatedFlexibleBox {DIV} at (4,6) size 230x23
               RenderBlock {DIV} at (0,0) size 230x23
           RenderText {#text} at (241,12) size 92x19
             text run at (241,12) width 92: " Disabled state"
       RenderBlock {DIV} at (0,108) size 784x37
         RenderInline {LABEL} at (0,0) size 343x19
-          RenderTextControl {INPUT} at (2,2) size 237x33 [color=#202020]
+          RenderTextControl {INPUT} at (2,2) size 237x33 [bgcolor=#FFFFFF]
             RenderDeprecatedFlexibleBox {DIV} at (4,6) size 230x23
               RenderBlock {DIV} at (0,0) size 230x23
           RenderText {#text} at (241,12) size 102x19
@@ -32,7 +32,7 @@ layer at (14,50) size 230x23 scrollHeight 24
     RenderText {#text} at (1,0) size 11x24
       text run at (1,0) width 11: "0"
 layer at (14,87) size 230x23 scrollHeight 24
-  RenderBlock {DIV} at (0,0) size 230x23 [color=#747474]
+  RenderBlock {DIV} at (0,0) size 230x23 [color=#545454]
     RenderText {#text} at (1,0) size 11x24
       text run at (1,0) width 11: "0"
 layer at (14,124) size 230x23 scrollHeight 24

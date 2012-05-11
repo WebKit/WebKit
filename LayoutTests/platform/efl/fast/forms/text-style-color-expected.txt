@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           RenderInline {LABEL} at (0,0) size 521x19
             RenderText {#text} at (0,8) size 322x19
               text run at (0,8) width 322: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (324,2) size 195x28 [color=#202020]
+            RenderTextControl {INPUT} at (324,2) size 195x28 [bgcolor=#FFFFFF]
         RenderBlock {HR} at (0,50) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,94) size 784x18
         RenderText {#text} at (0,0) size 145x19
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           RenderInline {LABEL} at (0,0) size 521x19
             RenderText {#text} at (0,8) size 322x19
               text run at (0,8) width 322: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (324,2) size 195x28 [color=#202020]
+            RenderTextControl {INPUT} at (324,2) size 195x28 [color=#FF0000] [bgcolor=#FFFFFF]
         RenderBlock {HR} at (0,50) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,188) size 784x18
         RenderText {#text} at (0,0) size 212x19
@@ -48,10 +48,10 @@ layer at (0,0) size 800x600
             RenderTextControl {INPUT} at (324,2) size 194x24 [color=#FF0000] [bgcolor=#008000] [border: (2px inset #FF0000)]
         RenderBlock {HR} at (0,46) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,368) size 784x60
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (199,8) size 4x19
           text run at (199,8) width 4: " "
-        RenderTextControl {INPUT} at (205,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,2) size 195x28 [color=#FF0000] [bgcolor=#FFFFFF]
         RenderText {#text} at (402,8) size 4x19
           text run at (402,8) width 4: " "
         RenderTextControl {INPUT} at (408,5) size 194x24 [bgcolor=#008000] [border: (2px inset #000000)]

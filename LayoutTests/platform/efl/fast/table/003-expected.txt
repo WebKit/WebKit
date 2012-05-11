@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 37x19
                 text run at (1,1) width 37: "URL:"
             RenderTableCell {TD} at (45,2) size 737x34 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 735x28 [color=#202020]
+              RenderTextControl {INPUT} at (1,3) size 735x28 [bgcolor=#FFFFFF]
           RenderTableRow {TR} at (0,38) size 784x20
             RenderTableCell {TD} at (2,38) size 780x20 [bgcolor=#FF0000] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 253x19
@@ -77,5 +77,5 @@ layer at (0,0) size 800x600
 layer at (58,19) size 728x18
   RenderBlock {DIV} at (4,6) size 728x18
 layer at (16,251) size 202x26 clip at (16,251) size 187x26 scrollHeight 28
-  RenderTextControl {TEXTAREA} at (4,2) size 202x26 [color=#202020]
+  RenderTextControl {TEXTAREA} at (4,2) size 202x26 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 180x18

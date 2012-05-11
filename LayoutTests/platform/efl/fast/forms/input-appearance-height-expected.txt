@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,18) size 784x358
         RenderText {#text} at (0,8) size 36x19
           text run at (0,8) width 36: "input "
-        RenderTextControl {INPUT} at (38,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (38,2) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (235,8) size 4x19
           text run at (235,8) width 4: " "
         RenderBR {BR} at (239,23) size 0x0
         RenderText {#text} at (0,40) size 27x19
           text run at (0,40) width 27: "text "
-        RenderTextControl {INPUT} at (29,34) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (29,34) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (226,40) size 4x19
           text run at (226,40) width 4: " "
         RenderBR {BR} at (230,55) size 0x0
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,95) size 24x19
           text run at (0,95) width 24: "file "
         RenderFileUploadControl {INPUT} at (26,87) size 306x36 "No file selected"
-          RenderButton {INPUT} at (0,0) size 117x36 [color=#202020]
+          RenderButton {INPUT} at (0,0) size 117x36 [bgcolor=#C0C0C0]
             RenderBlock (anonymous) at (15,8) size 87x18
               RenderText at (0,0) size 87x19
                 text run at (0,0) width 87: "Choose File"
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (176,179) size 0x0
         RenderText {#text} at (0,192) size 33x19
           text run at (0,192) width 33: "reset "
-        RenderButton {INPUT} at (35,184) size 72x36 [color=#202020]
+        RenderButton {INPUT} at (35,184) size 72x36 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (15,8) size 42x18
             RenderText at (0,0) size 42x19
               text run at (0,0) width 42: "Reset"
@@ -67,7 +67,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (113,207) size 0x0
         RenderText {#text} at (0,232) size 46x19
           text run at (0,232) width 46: "submit "
-        RenderButton {INPUT} at (48,224) size 80x36 [color=#202020]
+        RenderButton {INPUT} at (48,224) size 80x36 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (15,8) size 50x18
             RenderText at (0,0) size 50x19
               text run at (0,0) width 50: "Submit"
@@ -76,19 +76,19 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (134,247) size 0x0
         RenderText {#text} at (0,270) size 49x19
           text run at (0,270) width 49: "isindex "
-        RenderTextControl {INPUT} at (51,264) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (51,264) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (248,270) size 4x19
           text run at (248,270) width 4: " "
         RenderBR {BR} at (252,285) size 0x0
         RenderText {#text} at (0,302) size 64x19
           text run at (0,302) width 64: "password "
-        RenderTextControl {INPUT} at (66,296) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (66,296) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (263,302) size 4x19
           text run at (263,302) width 4: " "
         RenderBR {BR} at (267,317) size 0x0
         RenderText {#text} at (0,334) size 44x19
           text run at (0,334) width 44: "search "
-        RenderTextControl {INPUT} at (46,328) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (46,328) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18

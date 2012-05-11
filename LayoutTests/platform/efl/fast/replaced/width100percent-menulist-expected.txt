@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x46
           RenderTableRow {TR} at (0,1) size 784x44
             RenderTableCell {TD} at (1,1) size 85x44 [r=0 c=0 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,3) size 83x38 [color=#202020]
+              RenderMenuList {SELECT} at (1,3) size 83x38 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (15,10) size 27x18
                   RenderText at (0,0) size 27x19
                     text run at (0,0) width 27: "one"
             RenderTableCell {TD} at (87,1) size 58x44 [r=0 c=1 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,3) size 56x38 [color=#202020]
+              RenderMenuList {SELECT} at (1,3) size 56x38 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (15,10) size 0x18
                   RenderText at (0,0) size 25x19
                     text run at (0,0) width 25: "two"
             RenderTableCell {TD} at (146,1) size 58x44 [r=0 c=2 rs=1 cs=1]
-              RenderMenuList {SELECT} at (1,3) size 56x38 [color=#202020]
+              RenderMenuList {SELECT} at (1,3) size 56x38 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (15,10) size 0x18
                   RenderText at (0,0) size 36x19
                     text run at (0,0) width 36: "three"

@@ -6,7 +6,7 @@ layer at (0,0) size 785x930
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 layer at (10,10) size 382x910
-  RenderTextControl {TEXTAREA} at (2,2) size 382x910 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,2) size 382x910 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 375x18
       RenderText {#text} at (0,0) size 84x19
         text run at (0,0) width 84: "Sample text"

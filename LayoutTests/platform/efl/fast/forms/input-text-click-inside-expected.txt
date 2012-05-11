@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 425x75 [bgcolor=#FFFF00]
-        RenderTextControl {INPUT} at (27,27) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (27,27) size 195x28 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,91) size 784x36
         RenderText {#text} at (0,0) size 739x37
           text run at (0,0) width 739: "This test clicks inside an input element, and must result in the element receiving focus. If the test succeeds the element"

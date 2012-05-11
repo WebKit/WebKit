@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 385x19
           text run at (0,0) width 385: "Only the second search field should have a cancel button (\x{D7})."
       RenderBlock (anonymous) at (0,34) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (199,8) size 4x19
           text run at (199,8) width 4: " "
-        RenderTextControl {INPUT} at (205,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,2) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18

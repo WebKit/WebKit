@@ -4,17 +4,17 @@ layer at (0,0) size 785x738
   RenderBlock {HTML} at (0,0) size 785x738
     RenderBody {BODY} at (8,8) size 769x722
       RenderBlock {DIV} at (0,0) size 32x722 [border: (1px solid #FF0000)]
-        RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
-        RenderTextControl {INPUT} at (3,35) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (3,3) size 195x28 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (3,35) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
         RenderImage {IMG} at (1,65) size 27x27 [border: (1px solid #000000)]
         RenderImage {IMG} at (1,92) size 27x27 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (3,121) size 65x36 [color=#202020]
+        RenderButton {INPUT} at (3,121) size 65x36 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (15,8) size 35x18
             RenderText at (0,0) size 35x19
               text run at (0,0) width 35: "input"
-        RenderButton {INPUT} at (3,161) size 65x36 [color=#202020]
+        RenderButton {INPUT} at (3,161) size 65x36 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (15,8) size 35x18
             RenderText at (0,0) size 35x19
               text run at (0,0) width 35: "input"
@@ -28,11 +28,11 @@ layer at (0,0) size 785x738
             RenderText {#text} at (0,0) size 44x19
               text run at (0,0) width 44: "button"
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (3,289) size 98x38 [color=#202020]
+        RenderMenuList {SELECT} at (3,289) size 98x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 42x18
             RenderText at (0,0) size 42x19
               text run at (0,0) width 42: "select"
-        RenderMenuList {SELECT} at (3,331) size 98x38 [color=#202020]
+        RenderMenuList {SELECT} at (3,331) size 98x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 42x18
             RenderText at (0,0) size 42x19
               text run at (0,0) width 42: "select"

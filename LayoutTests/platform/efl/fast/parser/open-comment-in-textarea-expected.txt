@@ -6,12 +6,13 @@ layer at (0,0) size 800x600
       RenderText {#text} at (206,35) size 246x19
         text run at (206,35) width 246: " This should not be part of the textarea."
 layer at (10,10) size 202x46 clip at (10,10) size 187x46 scrollHeight 82
-  RenderTextControl {TEXTAREA} at (2,2) size 202x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,2) size 202x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 180x72
-      RenderText {#text} at (0,0) size 179x55
+      RenderText {#text} at (0,0) size 180x55
         text run at (0,0) width 23: "<!--"
         text run at (23,0) width 0: " "
         text run at (0,18) width 179: "This should be part of the"
-        text run at (0,36) width 65: " textarea."
-        text run at (65,36) width 0: " "
+        text run at (179,18) width 1: " "
+        text run at (0,36) width 61: "textarea."
+        text run at (61,36) width 0: " "
       RenderBR {BR} at (0,54) size 0x19

@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (204,185) size 52x19
         text run at (204,185) width 52: "185 442"
 layer at (8,8) size 200x200 clip at (8,8) size 185x200 scrollHeight 442
-  RenderTextControl {TEXTAREA} at (0,0) size 200x200 [color=#202020]
+  RenderTextControl {TEXTAREA} at (0,0) size 200x200 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 178x432
       RenderText {#text} at (0,0) size 107x415
         text run at (0,0) width 107: "Lots of content."

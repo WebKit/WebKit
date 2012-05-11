@@ -60,15 +60,18 @@ layer at (8,60) size 406x206 clip at (9,61) size 404x204
         text run at (347,18) width 4: " "
         text run at (0,70) width 134: "goodness of line-height"
 layer at (10,830) size 202x46 clip at (10,830) size 187x46 scrollHeight 82
-  RenderTextControl {TEXTAREA} at (2,56) size 202x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,56) size 202x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 180x72
-      RenderText {#text} at (0,0) size 178x73
-        text run at (0,0) width 177: "Demo text here that wrap"
-        text run at (0,18) width 178: "s a bit and should demon"
-        text run at (0,36) width 177: "strate the goodness of lin"
-        text run at (0,54) width 58: "e-height"
+      RenderText {#text} at (0,0) size 166x73
+        text run at (0,0) width 138: "Demo text here that"
+        text run at (138,0) width 4: " "
+        text run at (0,18) width 160: "wraps a bit and should"
+        text run at (160,18) width 4: " "
+        text run at (0,36) width 114: "demonstrate the"
+        text run at (114,36) width 4: " "
+        text run at (0,54) width 166: "goodness of line-height"
 layer at (10,919) size 202x46
-  RenderTextControl {TEXTAREA} at (2,145) size 202x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,145) size 202x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 195x18
 layer at (8,1006) size 406x206 clip at (9,1007) size 404x204
   RenderTextControl {TEXTAREA} at (0,232) size 406x206 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]

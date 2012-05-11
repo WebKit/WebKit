@@ -7,7 +7,7 @@ layer at (0,0) size 800x110
         RenderTableSection {TBODY} at (1,1) size 93x50
           RenderTableRow {TR} at (0,2) size 93x46
             RenderTableCell {TD} at (2,2) size 89x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderMenuList {SELECT} at (4,4) size 81x38 [color=#202020]
+              RenderMenuList {SELECT} at (4,4) size 81x38 [bgcolor=#FFFFFF]
                 RenderBlock (anonymous) at (15,10) size 25x18
                   RenderText at (0,0) size 25x19
                     text run at (0,0) width 25: "test"

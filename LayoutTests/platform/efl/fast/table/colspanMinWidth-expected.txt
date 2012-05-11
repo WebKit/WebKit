@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,2) size 209x34
                     RenderTableCell {TD} at (2,18) size 2x2 [bgcolor=#FF00FF] [r=0 c=0 rs=1 cs=1]
                     RenderTableCell {TD} at (6,2) size 201x34 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
-                      RenderTextControl {INPUT} at (3,3) size 195x28 [color=#202020]
+                      RenderTextControl {INPUT} at (3,3) size 195x28 [bgcolor=#FFFFFF]
                       RenderText {#text} at (0,0) size 0x0
 layer at (24,30) size 188x18
   RenderBlock {DIV} at (4,6) size 188x18

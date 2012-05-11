@@ -10,93 +10,93 @@ layer at (0,0) size 800x472
         RenderText {#text} at (0,0) size 481x19
           text run at (0,0) width 481: "Apply \"text-overflow:clip\" to inputs. The following input should be clipped:"
         RenderBR {BR} at (481,0) size 0x19
-        RenderTextControl {INPUT} at (2,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,20) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (199,26) size 4x19
           text run at (199,26) width 4: " "
-        RenderTextControl {INPUT} at (205,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,20) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (402,26) size 4x19
           text run at (402,26) width 4: " "
-        RenderTextControl {INPUT} at (408,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (408,20) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,52) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,52) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (199,58) size 4x19
           text run at (199,58) width 4: " "
-        RenderTextControl {INPUT} at (205,52) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,52) size 195x28 [bgcolor=#FFFFFF]
         RenderBR {BR} at (402,58) size 0x19
-        RenderTextControl {INPUT} at (2,84) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,84) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (199,90) size 4x19
           text run at (199,90) width 4: " "
-        RenderTextControl {INPUT} at (205,84) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,84) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (402,90) size 4x19
           text run at (402,90) width 4: " "
-        RenderTextControl {INPUT} at (408,84) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (408,84) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,116) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,116) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (199,122) size 4x19
           text run at (199,122) width 4: " "
-        RenderTextControl {INPUT} at (205,116) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,116) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,196) size 784x146
         RenderText {#text} at (0,0) size 536x19
           text run at (0,0) width 536: "Apply \"text-overflow:ellipsis\" to inputs. The following input should show an ellipsis:"
         RenderBR {BR} at (536,0) size 0x19
-        RenderTextControl {INPUT} at (2,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,20) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (199,26) size 4x19
           text run at (199,26) width 4: " "
-        RenderTextControl {INPUT} at (205,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,20) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (402,26) size 4x19
           text run at (402,26) width 4: " "
-        RenderTextControl {INPUT} at (408,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (408,20) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,52) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,52) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (199,58) size 4x19
           text run at (199,58) width 4: " "
-        RenderTextControl {INPUT} at (205,52) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,52) size 195x28 [bgcolor=#FFFFFF]
         RenderBR {BR} at (402,58) size 0x19
-        RenderTextControl {INPUT} at (2,84) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,84) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (199,90) size 4x19
           text run at (199,90) width 4: " "
-        RenderTextControl {INPUT} at (205,84) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,84) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (402,90) size 4x19
           text run at (402,90) width 4: " "
-        RenderTextControl {INPUT} at (408,84) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (408,84) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,116) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,116) size 195x28 [bgcolor=#FFFFFF]
           RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 188x18
             RenderBlock {DIV} at (188,9) size 0x0
         RenderText {#text} at (199,122) size 4x19
           text run at (199,122) width 4: " "
-        RenderTextControl {INPUT} at (205,116) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (205,116) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,358) size 784x82
         RenderText {#text} at (0,0) size 233x19
@@ -104,19 +104,19 @@ layer at (0,0) size 800x472
         RenderBR {BR} at (233,0) size 0x19
         RenderText {#text} at (0,26) size 239x19
           text run at (0,26) width 239: "Clip to ellipsis (should show ellipsis): "
-        RenderTextControl {INPUT} at (241,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (241,20) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (438,26) size 4x19
           text run at (438,26) width 4: " "
-        RenderTextControl {INPUT} at (444,20) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (444,20) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (641,26) size 4x19
           text run at (641,26) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderText {#text} at (0,58) size 262x19
           text run at (0,58) width 262: "Ellipsis to clip (should not show ellipsis): "
-        RenderTextControl {INPUT} at (264,52) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (264,52) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (461,58) size 4x19
           text run at (461,58) width 4: " "
-        RenderTextControl {INPUT} at (467,52) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (467,52) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (664,58) size 4x19
           text run at (664,58) width 4: " "
         RenderBR {BR} at (0,0) size 0x0

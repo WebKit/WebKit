@@ -6,23 +6,23 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 462x19
         text run at (0,0) width 462: "This tests that empty select controls and buttons have the correct baseline."
       RenderBR {BR} at (462,15) size 0x0
-      RenderMenuList {SELECT} at (2,20) size 56x38 [color=#202020]
+      RenderMenuList {SELECT} at (2,20) size 56x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 0x18
-          RenderBR at (0,0) size 0x19
+          RenderBR at (0,0) size 0x19 [bgcolor=#FFFFFF]
       RenderText {#text} at (60,30) size 29x19
         text run at (60,30) width 29: " test "
-      RenderMenuList {SELECT} at (91,20) size 81x38 [color=#202020]
+      RenderMenuList {SELECT} at (91,20) size 81x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 25x18
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "test"
       RenderText {#text} at (174,30) size 4x19
         text run at (174,30) width 4: " "
-      RenderMenuList {SELECT} at (180,20) size 56x38 [color=#202020]
+      RenderMenuList {SELECT} at (180,20) size 56x38 [color=#00008B] [bgcolor=#ADD8E6]
         RenderBlock (anonymous) at (15,10) size 0x18
-          RenderBR at (0,0) size 0x19
+          RenderBR at (0,0) size 0x19 [bgcolor=#ADD8E6]
       RenderText {#text} at (238,30) size 29x19
         text run at (238,30) width 29: " test "
-      RenderMenuList {SELECT} at (269,20) size 81x38 [color=#202020]
+      RenderMenuList {SELECT} at (269,20) size 81x38 [color=#00008B] [bgcolor=#ADD8E6]
         RenderBlock (anonymous) at (15,10) size 25x18
           RenderText at (0,0) size 25x19
             text run at (0,0) width 25: "test"

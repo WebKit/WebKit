@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
               RenderTableRow {TR} at (0,2) size 95x42
                 RenderTableCell {TD} at (2,22) size 2x2 [r=0 c=0 rs=1 cs=1]
                 RenderTableCell {TD} at (6,2) size 87x42 [r=0 c=1 rs=1 cs=1]
-                  RenderButton {INPUT} at (3,3) size 81x36 [color=#202020]
+                  RenderButton {INPUT} at (3,3) size 81x36 [bgcolor=#C0C0C0]
                     RenderBlock (anonymous) at (15,8) size 51x18
                       RenderText at (0,0) size 51x19
                         text run at (0,0) width 51: "Search"

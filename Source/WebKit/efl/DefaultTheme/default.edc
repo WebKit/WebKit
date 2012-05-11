@@ -35,26 +35,6 @@ color_classes {
       color: 26 26 226 255; /* foreground */
       /* no background, consider transparent */
    }
-   color_class {
-      name: "webkit/button/text";
-      color: 32 32 32 255;
-      /* no background, consider transparent */
-   }
-   color_class {
-      name: "webkit/combo/text";
-      color: 32 32 32 255;
-      /* no background, consider transparent */
-   }
-   color_class {
-      name: "webkit/entry/text";
-      color: 32 32 32 255;
-      /* no background, consider transparent */
-   }
-   color_class {
-      name: "webkit/search/text";
-      color: 32 32 32 255;
-      /* no background, consider transparent */
-   }
 }
 
 collections {

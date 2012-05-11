@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 436x19
         text run at (0,0) width 436: "When the label contains only white space, the containing text is used."
       RenderBR {BR} at (436,15) size 0x0
-      RenderMenuList {SELECT} at (2,20) size 460x38 [color=#202020]
+      RenderMenuList {SELECT} at (2,20) size 460x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 404x18
           RenderText at (0,0) size 404x19
             text run at (0,0) width 404: "white space label should display empty string to match IE"

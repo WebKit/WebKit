@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,12) size 73x19
         text run at (0,12) width 73: "Test result: "
-      RenderMenuList {SELECT} at (75,2) size 100x38 [color=#202020]
+      RenderMenuList {SELECT} at (75,2) size 100x38 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 44x18
           RenderText at (0,0) size 44x19
             text run at (0,0) width 44: "PASS"

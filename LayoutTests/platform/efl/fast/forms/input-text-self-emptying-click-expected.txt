@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,48) size 784x36
         RenderText {#text} at (0,0) size 776x37

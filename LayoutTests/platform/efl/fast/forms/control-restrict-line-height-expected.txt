@@ -6,21 +6,21 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 519x19
         text run at (0,0) width 519: "This tests that we don't honor line-height for controls that have restricted font size. "
       RenderBR {BR} at (0,0) size 0x0
-      RenderMenuList {SELECT} at (2,20) size 414x46 [color=#202020]
+      RenderMenuList {SELECT} at (2,20) size 414x46 [bgcolor=#FFFFFF]
         RenderBlock (anonymous) at (15,10) size 358x26
           RenderText at (0,3) size 358x19
             text run at (0,3) width 358: "This text should be centered vertically in the button"
       RenderText {#text} at (418,33) size 4x19
         text run at (418,33) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderButton {INPUT} at (2,70) size 388x44 [color=#202020]
+      RenderButton {INPUT} at (2,70) size 388x44 [bgcolor=#C0C0C0]
         RenderBlock (anonymous) at (15,8) size 358x26
           RenderText at (0,3) size 358x19
             text run at (0,3) width 358: "This text should be centered vertically in the button"
       RenderText {#text} at (392,81) size 4x19
         text run at (392,81) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderTextControl {INPUT} at (2,118) size 195x36 [color=#202020]
+      RenderTextControl {INPUT} at (2,118) size 195x36 [bgcolor=#FFFFFF]
         RenderDeprecatedFlexibleBox {DIV} at (4,6) size 188x26
           RenderBlock {DIV} at (0,13) size 0x0
           RenderBlock {DIV} at (0,0) size 188x26

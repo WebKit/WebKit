@@ -10,11 +10,11 @@ layer at (0,0) size 800x585
         RenderTableSection {TBODY} at (0,0) size 784x36
           RenderTableRow {TR} at (0,1) size 784x34
             RenderTableCell {TD} at (1,1) size 197x34 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 195x28 [color=#202020]
+              RenderTextControl {INPUT} at (1,3) size 195x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (199,1) size 9x34 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (209,1) size 9x34 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (219,8) size 564x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "
@@ -25,11 +25,11 @@ layer at (0,0) size 800x585
         RenderTableSection {TBODY} at (0,0) size 946x36
           RenderTableRow {TR} at (0,1) size 946x34
             RenderTableCell {TD} at (1,1) size 917x34 [r=0 c=0 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 915x28 [color=#202020]
+              RenderTextControl {INPUT} at (1,3) size 915x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (919,1) size 9x34 [r=0 c=1 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (929,1) size 9x34 [r=0 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (1,3) size 7x28 [color=#202020]
+              RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (939,8) size 6x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
                 text run at (1,1) width 4: " "

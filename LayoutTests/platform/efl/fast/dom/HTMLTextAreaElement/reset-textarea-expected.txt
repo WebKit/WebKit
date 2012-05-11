@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (206,35) width 4: " "
         RenderText {#text} at (416,35) size 4x19
           text run at (416,35) width 4: " "
-        RenderButton {INPUT} at (422,27) size 72x36 [color=#202020]
+        RenderButton {INPUT} at (422,27) size 72x36 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (15,8) size 42x18
             RenderText at (0,0) size 42x19
               text run at (0,0) width 42: "Reset"
@@ -26,10 +26,10 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,54) size 176x19
           text run at (0,54) width 176: "hasDefaultText: SUCCESS"
 layer at (10,10) size 202x46
-  RenderTextControl {TEXTAREA} at (2,2) size 202x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,2) size 202x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 195x18
 layer at (220,10) size 202x46
-  RenderTextControl {TEXTAREA} at (212,2) size 202x46 [color=#202020]
+  RenderTextControl {TEXTAREA} at (212,2) size 202x46 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 195x18
       RenderText {#text} at (0,0) size 86x19
         text run at (0,0) width 86: "Default Text"

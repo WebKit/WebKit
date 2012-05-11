@@ -17,7 +17,7 @@ layer at (0,0) size 785x3176
           text run at (0,18) width 117: "back up to the top."
       RenderBlock {DIV} at (0,86) size 769x3000
       RenderBlock (anonymous) at (0,3086) size 769x32
-        RenderTextControl {INPUT} at (2,2) size 195x28 [color=#202020]
+        RenderTextControl {INPUT} at (2,2) size 195x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,3134) size 769x18
         RenderText {#text} at (0,0) size 404x19

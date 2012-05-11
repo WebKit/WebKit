@@ -1,3 +1,160 @@
+2012-05-11  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] Input Attribute Placeholder RefTests failing
+        https://bugs.webkit.org/show_bug.cgi?id=85603
+
+        Reviewed by Hajime Morita.
+
+        Rebaselining after we're allowing color styling of menulists,
+        search and text fields and textareas and after removing
+        whitespace handling override.
+
+        * platform/efl/Skipped:
+        * platform/efl/css3/selectors3/html/css3-modsel-161-expected.txt:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-161-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-161-expected.txt:
+        * platform/efl/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/efl/fast/block/float/float-avoidance-expected.txt:
+        * platform/efl/fast/block/margin-collapse/103-expected.txt:
+        * platform/efl/fast/css/continuationCrash-expected.txt:
+        * platform/efl/fast/css/input-search-padding-expected.txt:
+        * platform/efl/fast/css/line-height-expected.txt:
+        * platform/efl/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/efl/fast/css/rtl-ordering-expected.txt:
+        * platform/efl/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/efl/fast/css/text-overflow-input-expected.txt:
+        * platform/efl/fast/css/text-transform-select-expected.txt:
+        * platform/efl/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/efl/fast/dom/isindex-001-expected.txt:
+        * platform/efl/fast/dom/isindex-002-expected.txt:
+        * platform/efl/fast/dynamic/008-expected.txt:
+        * platform/efl/fast/events/autoscroll-expected.txt:
+        * platform/efl/fast/forms/003-expected.txt:
+        * platform/efl/fast/forms/004-expected.txt:
+        * platform/efl/fast/forms/HTMLOptionElement_label01-expected.txt:
+        * platform/efl/fast/forms/HTMLOptionElement_label02-expected.txt:
+        * platform/efl/fast/forms/HTMLOptionElement_label03-expected.txt:
+        * platform/efl/fast/forms/HTMLOptionElement_label04-expected.txt:
+        * platform/efl/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/efl/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/efl/fast/forms/basic-buttons-expected.txt:
+        * platform/efl/fast/forms/basic-inputs-expected.txt:
+        * platform/efl/fast/forms/blankbuttons-expected.txt:
+        * platform/efl/fast/forms/box-shadow-override-expected.txt:
+        * platform/efl/fast/forms/button-positioned-expected.txt:
+        * platform/efl/fast/forms/button-sizes-expected.txt:
+        * platform/efl/fast/forms/button-style-color-expected.txt:
+        * platform/efl/fast/forms/button-table-styles-expected.txt:
+        * platform/efl/fast/forms/button-text-transform-expected.txt:
+        * platform/efl/fast/forms/control-clip-overflow-expected.txt:
+        * platform/efl/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/efl/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/efl/fast/forms/encoding-test-expected.txt:
+        * platform/efl/fast/forms/fieldset-align-expected.txt:
+        * platform/efl/fast/forms/file/file-input-direction-expected.txt:
+        * platform/efl/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/efl/fast/forms/floating-textfield-relayout-expected.txt:
+        * platform/efl/fast/forms/formmove3-expected.txt:
+        * platform/efl/fast/forms/input-align-expected.txt:
+        * platform/efl/fast/forms/input-appearance-default-bkcolor-expected.txt:
+        * platform/efl/fast/forms/input-appearance-focus-expected.txt:
+        * platform/efl/fast/forms/input-appearance-height-expected.txt:
+        * platform/efl/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/efl/fast/forms/input-appearance-selection-expected.txt:
+        * platform/efl/fast/forms/input-appearance-visibility-expected.txt:
+        * platform/efl/fast/forms/input-appearance-width-expected.txt:
+        * platform/efl/fast/forms/input-button-sizes-expected.txt:
+        * platform/efl/fast/forms/input-disabled-color-expected.txt:
+        * platform/efl/fast/forms/input-double-click-selection-gap-bug-expected.txt:
+        * platform/efl/fast/forms/input-field-text-truncated-expected.txt:
+        * platform/efl/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/efl/fast/forms/input-readonly-empty-expected.txt:
+        * platform/efl/fast/forms/input-spaces-expected.txt:
+        * platform/efl/fast/forms/input-table-expected.txt:
+        * platform/efl/fast/forms/input-text-click-inside-expected.txt:
+        * platform/efl/fast/forms/input-text-option-delete-expected.txt:
+        * platform/efl/fast/forms/input-text-self-emptying-click-expected.txt:
+        * platform/efl/fast/forms/input-text-word-wrap-expected.txt:
+        * platform/efl/fast/forms/input-type-text-min-width-expected.txt:
+        * platform/efl/fast/forms/input-value-expected.txt:
+        * platform/efl/fast/forms/input-width-expected.txt:
+        * platform/efl/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/efl/fast/forms/menulist-narrow-width-expected.txt:
+        * platform/efl/fast/forms/menulist-no-overflow-expected.txt:
+        * platform/efl/fast/forms/menulist-restrict-line-height-expected.txt:
+        * platform/efl/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/efl/fast/forms/menulist-style-color-expected.txt:
+        * platform/efl/fast/forms/menulist-width-change-expected.txt:
+        * platform/efl/fast/forms/minWidthPercent-expected.txt:
+        * platform/efl/fast/forms/number/input-appearance-number-rtl-expected.txt:
+        * platform/efl/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/efl/fast/forms/number/input-appearance-spinbutton-layer-expected.txt:
+        * platform/efl/fast/forms/option-script-expected.txt:
+        * platform/efl/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/efl/fast/forms/option-text-clip-expected.txt:
+        * platform/efl/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/efl/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/efl/fast/forms/search-rtl-expected.txt:
+        * platform/efl/fast/forms/searchfield-heights-expected.txt:
+        * platform/efl/fast/forms/select-align-expected.txt:
+        * platform/efl/fast/forms/select-background-none-expected.txt:
+        * platform/efl/fast/forms/select-baseline-expected.txt:
+        * platform/efl/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/efl/fast/forms/select-dirty-parent-pref-widths-expected.txt:
+        * platform/efl/fast/forms/select-initial-position-expected.txt:
+        * platform/efl/fast/forms/select-selected-expected.txt:
+        * platform/efl/fast/forms/select-size-expected.txt:
+        * platform/efl/fast/forms/select-style-expected.txt:
+        * platform/efl/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/efl/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/efl/fast/forms/selectlist-minsize-expected.txt:
+        * platform/efl/fast/forms/stuff-on-my-optgroup-expected.txt:
+        * platform/efl/fast/forms/tabbing-input-iframe-expected.txt:
+        * platform/efl/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/efl/fast/forms/text-style-color-expected.txt:
+        * platform/efl/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/efl/fast/forms/textarea-align-expected.txt:
+        * platform/efl/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/efl/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/efl/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/efl/fast/forms/textarea-width-expected.txt:
+        * platform/efl/fast/forms/textfield-focus-ring-expected.txt:
+        * platform/efl/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/efl/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/efl/fast/html/details-no-summary4-expected.txt:
+        * platform/efl/fast/html/details-open-javascript-expected.txt:
+        * platform/efl/fast/html/details-open2-expected.txt:
+        * platform/efl/fast/html/details-open4-expected.txt:
+        * platform/efl/fast/html/details-replace-summary-child-expected.txt:
+        * platform/efl/fast/html/details-replace-text-expected.txt:
+        * platform/efl/fast/html/keygen-expected.txt:
+        * platform/efl/fast/invalid/014-expected.txt:
+        * platform/efl/fast/lists/dynamic-marker-crash-expected.txt:
+        * platform/efl/fast/overflow/overflow-x-y-expected.txt:
+        * platform/efl/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/efl/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/efl/fast/parser/document-write-option-expected.txt:
+        * platform/efl/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/efl/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/efl/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/efl/fast/repaint/search-field-cancel-expected.txt:
+        * platform/efl/fast/repaint/subtree-root-skipped-expected.txt:
+        * platform/efl/fast/replaced/replaced-breaking-expected.txt:
+        * platform/efl/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/efl/fast/replaced/three-selects-break-expected.txt:
+        * platform/efl/fast/replaced/width100percent-button-expected.txt:
+        * platform/efl/fast/replaced/width100percent-menulist-expected.txt:
+        * platform/efl/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/efl/fast/replaced/width100percent-textfield-expected.txt:
+        * platform/efl/fast/table/003-expected.txt:
+        * platform/efl/fast/table/colspanMinWidth-expected.txt:
+        * platform/efl/fast/table/spanOverlapRepaint-expected.txt:
+        * platform/efl/fast/table/text-field-baseline-expected.txt:
+        * platform/efl/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/efl/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/efl/test_expectations.txt:
+        * platform/efl/transforms/2d/zoom-menulist-expected.txt:
+
 2012-05-11  Antti Koivisto  <antti@apple.com>
 
         Assertion failure in ietestcenter/css3/valuesandunits/units-000.htm

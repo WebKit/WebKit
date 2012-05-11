@@ -254,10 +254,6 @@ BUGWK85493 : fast/css/square-button-appearance.html = TEXT
 
 BUGWK85494 : fast/css/button-height.html = TEXT
 
-BUGWK85497 : fast/css/pseudo-required-optional-004.html = TEXT
-BUGWK85497 : fast/css/pseudo-required-optional-006.html = TEXT
-BUGWK85497 : fast/css/pseudo-valid-007.html = TEXT
-
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK85466 : css3/images/cross-fade-background-size.html = TEXT
@@ -374,12 +370,6 @@ BUGWK85956 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
 // The EFL port has no support for the Fullscreen API
 BUGWK85870 SKIP : fullscreen = FAIL
 BUGWK85870 : media/video-play-require-user-gesture.html = TEXT
-
-// Input attribute placeholder reftests are failing.
-BUGWK85603 : fast/forms/placeholder-with-positioned-element.html = IMAGE
-BUGWK85603 : fast/forms/isindex-placeholder.html = IMAGE
-BUGWK85603 : fast/forms/input-placeholder-text-indent.html = IMAGE
-BUGWK85603 : fast/forms/textarea-placeholder-wrapping.html = IMAGE
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
