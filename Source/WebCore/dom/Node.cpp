@@ -1088,26 +1088,33 @@ void Node::removeCachedChildNodeList()
     rareData()->setChildNodeList(0);
 }
 
-Node* Node::traverseNextAncestorSibling() const
+Node* Node::traverseNextNode(const Node* stayWithin) const
 {
-    ASSERT(!nextSibling());
-    for (const Node* node = parentNode(); node; node = node->parentNode()) {
-        if (node->nextSibling())
-            return node->nextSibling();
-    }
+    if (firstChild())
+        return firstChild();
+    if (this == stayWithin)
+        return 0;
+    if (nextSibling())
+        return nextSibling();
+    const Node *n = this;
+    while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
+        n = n->parentNode();
+    if (n)
+        return n->nextSibling();
     return 0;
 }
 
-Node* Node::traverseNextAncestorSibling(const Node* stayWithin) const
+Node* Node::traverseNextSibling(const Node* stayWithin) const
 {
-    ASSERT(!nextSibling());
-    ASSERT(this != stayWithin);
-    for (const Node* node = parentNode(); node; node = node->parentNode()) {
-        if (node == stayWithin)
-            return 0;
-        if (node->nextSibling())
-            return node->nextSibling();
-    }
+    if (this == stayWithin)
+        return 0;
+    if (nextSibling())
+        return nextSibling();
+    const Node *n = this;
+    while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
+        n = n->parentNode();
+    if (n)
+        return n->nextSibling();
     return 0;
 }
 

@@ -431,12 +431,10 @@ public:
     // This uses the same order that tags appear in the source file. If the stayWithin
     // argument is non-null, the traversal will stop once the specified node is reached.
     // This can be used to restrict traversal to a particular sub-tree.
-    Node* traverseNextNode() const;
-    Node* traverseNextNode(const Node* stayWithin) const;
+    Node* traverseNextNode(const Node* stayWithin = 0) const;
 
     // Like traverseNextNode, but skips children and starts with the next sibling.
-    Node* traverseNextSibling() const;
-    Node* traverseNextSibling(const Node* stayWithin) const;
+    Node* traverseNextSibling(const Node* stayWithin = 0) const;
 
     // Does a reverse pre-order traversal to find the node that comes before the current one in document order
     Node* traversePreviousNode(const Node* stayWithin = 0) const;
@@ -768,9 +766,6 @@ private:
     virtual RenderStyle* virtualComputedStyle(PseudoId = NOPSEUDO);
 
     Element* ancestorElement() const;
-
-    Node* traverseNextAncestorSibling() const;
-    Node* traverseNextAncestorSibling(const Node* stayWithin) const;
 
     // Use Node::parentNode as the consistent way of querying a parent node.
     // This method is made private to ensure a compiler error on call sites that

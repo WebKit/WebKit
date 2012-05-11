@@ -229,36 +229,6 @@ inline Node* Node::highestAncestor() const
     return highest;
 }
 
-inline Node* Node::traverseNextSibling() const
-{
-    if (nextSibling())
-        return nextSibling();
-    return traverseNextAncestorSibling();
-}
-
-inline Node* Node::traverseNextNode() const
-{
-    if (firstChild())
-        return firstChild();
-    return traverseNextSibling();
-}
-
-inline Node* Node::traverseNextSibling(const Node* stayWithin) const
-{
-    if (this == stayWithin)
-        return 0;
-    if (nextSibling())
-        return nextSibling();
-    return traverseNextAncestorSibling(stayWithin);
-}
-
-inline Node* Node::traverseNextNode(const Node* stayWithin) const
-{
-    if (firstChild())
-        return firstChild();
-    return traverseNextSibling(stayWithin);
-}
-
 typedef Vector<RefPtr<Node>, 11> NodeVector;
 
 inline void getChildNodes(Node* node, NodeVector& nodes)
