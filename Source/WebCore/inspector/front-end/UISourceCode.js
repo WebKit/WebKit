@@ -51,11 +51,16 @@ WebInspector.UISourceCode = function(id, url, contentProvider, sourceMapping)
      */
     this._requestContentCallbacks = [];
     this._liveLocations = [];
+    /**
+     * @type {Array.<WebInspector.PresentationConsoleMessage>}
+     */
+    this._consoleMessages = [];
 }
 
 WebInspector.UISourceCode.Events = {
     ContentChanged: "ContentChanged",
     ConsoleMessageAdded: "ConsoleMessageAdded",
+    ConsoleMessageRemoved: "ConsoleMessageRemoved",
     ConsoleMessagesCleared: "ConsoleMessagesCleared"
 }
 
@@ -206,7 +211,34 @@ WebInspector.UISourceCode.prototype = {
     /**
      * @return {Array.<WebInspector.PresentationConsoleMessage>}
      */
-    consoleMessages: function() {}
+    consoleMessages: function()
+    {
+        return this._consoleMessages;
+    },
+
+    /**
+     * @param {WebInspector.PresentationConsoleMessage} message
+     */
+    consoleMessageAdded: function(message)
+    {
+        this._consoleMessages.push(message);
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessageAdded, message);
+    },
+
+    /**
+     * @param {WebInspector.PresentationConsoleMessage} message
+     */
+    consoleMessageRemoved: function(message)
+    {
+        this._consoleMessages.remove(message);
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessageRemoved, message);
+    },
+
+    consoleMessagesCleared: function()
+    {
+        this._consoleMessages = [];
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessagesCleared);
+    }
 }
 
 WebInspector.UISourceCode.prototype.__proto__ = WebInspector.Object.prototype;

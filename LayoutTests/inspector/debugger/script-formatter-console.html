@@ -7,7 +7,7 @@
 
 function f1()
 {
-    console.log("Test message.");
+    console.error("Test message.");
 }
 
 var test = function()
@@ -30,12 +30,18 @@ var test = function()
             function didEvaluate()
             {
                 dumpConsoleMessageURLs();
+                InspectorTest.addResult("Pre-format row message list:");
+                InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._rowMessages)));
+                InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._messageBubbles)));
                 sourceFrame._uiSourceCode.setFormatted(true, didFormatLinkText);
             }
 
             function didFormatLinkText()
             {
                 dumpConsoleMessageURLs();
+                InspectorTest.addResult("Post-format row message list:");
+                InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._rowMessages)));
+                InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._messageBubbles)));
                 next();
             }
         }

@@ -59,6 +59,7 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, model, uiSourceCode)
 
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._onContentChanged, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
+    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageRemoved, this._consoleMessageRemoved, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
 }
 
@@ -142,7 +143,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add conditional breakpoint…" : "Add Conditional Breakpoint…"), this._editBreakpointCondition.bind(this, lineNumber));
         } else {
             // This row has a breakpoint, we want to show edit and remove breakpoint, and either disable or enable.
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove breakpoint" : "Remove Breakpoint"), breakpoint.remove.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove breakpoint" : "Remove Breakpoint"), breakpoint.remove.bind(breakpoint));
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Edit breakpoint…" : "Edit Breakpoint…"), this._editBreakpointCondition.bind(this, lineNumber, breakpoint));
             if (breakpoint.enabled())
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Disable breakpoint" : "Disable Breakpoint"), breakpoint.setEnabled.bind(breakpoint, false));
@@ -520,9 +521,16 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _consoleMessageAdded: function(event)
     {
-        var message = event.data;
+        var message = /** @type {WebInspector.PresentationConsoleMessage} */ event.data;
         if (this.loaded)
             this.addMessageToSource(message.lineNumber, message.originalMessage);
+    },
+
+    _consoleMessageRemoved: function(event)
+    {
+        var message = /** @type {WebInspector.PresentationConsoleMessage} */ event.data;
+        if (this.loaded)
+            this.removeMessageFromSource(message.lineNumber, message.originalMessage);
     },
 
     _consoleMessagesCleared: function(event)
@@ -563,7 +571,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _continueToLine: function(lineNumber)
     {
-        this._model.continueToLine(this._uiSourceCode, lineNumber);
+        var rawLocation = this._uiSourceCode.uiLocationToRawLocation(lineNumber, 0);
+        WebInspector.debuggerModel.continueToLocation(rawLocation);
     },
 
     /**

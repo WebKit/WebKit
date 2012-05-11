@@ -40,10 +40,6 @@ WebInspector.JavaScriptSource = function(id, url, contentProvider, sourceMapping
 {
     WebInspector.UISourceCode.call(this, id, url, contentProvider, sourceMapping);
 
-    /**
-     * @type {Array.<WebInspector.PresentationConsoleMessage>}
-     */
-    this._consoleMessages = [];
     this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
     // FIXME: postpone breakpoints restore to after the mapping has been established.
     setTimeout(function() {
@@ -53,29 +49,6 @@ WebInspector.JavaScriptSource = function(id, url, contentProvider, sourceMapping
 }
 
 WebInspector.JavaScriptSource.prototype = {
-    /**
-     * @return {Array.<WebInspector.PresentationConsoleMessage>}
-     */
-    consoleMessages: function()
-    {
-        return this._consoleMessages;
-    },
-
-    /**
-     * @param {WebInspector.PresentationConsoleMessage} message
-     */
-    consoleMessageAdded: function(message)
-    {
-        this._consoleMessages.push(message);
-        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessageAdded, message);
-    },
-
-    consoleMessagesCleared: function()
-    {
-        this._consoleMessages = [];
-        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ConsoleMessagesCleared);
-    },
-
     /**
      * @param {?string} content
      * @param {boolean} contentEncoded

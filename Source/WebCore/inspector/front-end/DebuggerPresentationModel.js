@@ -37,17 +37,12 @@ WebInspector.DebuggerPresentationModel = function()
     this._scriptMapping = new WebInspector.MainScriptMapping();
     this._scriptMapping.addEventListener(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
 
-    this._pendingConsoleMessages = {};
-    this._consoleMessageLiveLocations = [];
-
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 
-    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
-    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
-
     new WebInspector.DebuggerPresentationModelResourceBinding(this);
+    new WebInspector.PresentationConsoleMessageHelper();
 }
 
 WebInspector.DebuggerPresentationModel.Events = {
@@ -58,32 +53,12 @@ WebInspector.DebuggerPresentationModel.Events = {
 
 WebInspector.DebuggerPresentationModel.prototype = {
     /**
-     * @param {DebuggerAgent.Location} rawLocation
-     * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
-     * @return {WebInspector.LiveLocation}
-     */
-    createLiveLocation: function(rawLocation, updateDelegate)
-    {
-        var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
-        return script.createLiveLocation(rawLocation, updateDelegate);
-    },
-
-    /**
      * @param {WebInspector.Event} event
      */
     _parsedScriptSource: function(event)
     {
         var script = /** @type {WebInspector.Script} */ event.data;
         this._scriptMapping.addScript(script);
-        this._addPendingConsoleMessagesToScript(script);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _failedToParseScriptSource: function(event)
-    {
-        this._parsedScriptSource(event);
     },
 
     /**
@@ -152,6 +127,31 @@ WebInspector.DebuggerPresentationModel.prototype = {
         WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
     },
 
+    _debuggerReset: function()
+    {
+        this._scriptMapping.reset();
+    }
+}
+
+WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ */
+WebInspector.PresentationConsoleMessageHelper = function()
+{
+    this._pendingConsoleMessages = {};
+    this._presentationConsoleMessages = [];
+
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
+
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
+}
+
+WebInspector.PresentationConsoleMessageHelper.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
@@ -174,13 +174,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     _addConsoleMessageToScript: function(message, rawLocation)
     {
-        function updateLocation(uiLocation)
-        {
-            var presentationMessage = new WebInspector.PresentationConsoleMessage(uiLocation.uiSourceCode, uiLocation.lineNumber, message);
-            uiLocation.uiSourceCode.consoleMessageAdded(presentationMessage);
-        }
-        var liveLocation = this.createLiveLocation(rawLocation, updateLocation.bind(this));
-        this._consoleMessageLiveLocations.push(liveLocation);
+        this._presentationConsoleMessages.push(new WebInspector.PresentationConsoleMessage(message, rawLocation));
     },
 
     /**
@@ -194,10 +188,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
-     * @param {WebInspector.Script} script
+     * @param {WebInspector.Event} event
      */
-    _addPendingConsoleMessagesToScript: function(script)
+    _parsedScriptSource: function(event)
     {
+        var script = /** @type {WebInspector.Script} */ event.data;
+
         var messages = this._pendingConsoleMessages[script.sourceURL];
         if (!messages)
             return;
@@ -221,45 +217,53 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _consoleCleared: function()
     {
         this._pendingConsoleMessages = {};
-        for (var i = 0; i < this._consoleMessageLiveLocations.length; ++i)
-            this._consoleMessageLiveLocations[i].dispose();
-        this._consoleMessageLiveLocations = [];
-        var uiSourceCodes = this.uiSourceCodes();
+        for (var i = 0; i < this._presentationConsoleMessages.length; ++i)
+            this._presentationConsoleMessages[i].dispose();
+        this._presentationConsoleMessages = [];
+        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             uiSourceCodes[i].consoleMessagesCleared();
     },
 
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     */
-    continueToLine: function(uiSourceCode, lineNumber)
-    {
-        var rawLocation = uiSourceCode.uiLocationToRawLocation(lineNumber, 0);
-        WebInspector.debuggerModel.continueToLocation(rawLocation);
-    },
-
     _debuggerReset: function()
     {
-        this._scriptMapping.reset();
         this._pendingConsoleMessages = {};
-        this._consoleMessageLiveLocations = [];
+        this._presentationConsoleMessages = [];
     }
 }
 
-WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
-
 /**
  * @constructor
- * @param {WebInspector.UISourceCode} uiSourceCode
- * @param {number} lineNumber
- * @param {WebInspector.ConsoleMessage} originalMessage
+ * @param {WebInspector.ConsoleMessage} message
+ * @param {DebuggerAgent.Location} rawLocation
  */
-WebInspector.PresentationConsoleMessage = function(uiSourceCode, lineNumber, originalMessage)
+WebInspector.PresentationConsoleMessage = function(message, rawLocation)
 {
-    this.uiSourceCode = uiSourceCode;
-    this.lineNumber = lineNumber;
-    this.originalMessage = originalMessage;
+    this.originalMessage = message;
+    this._liveLocation = WebInspector.debuggerModel.createLiveLocation(rawLocation, this._updateLocation.bind(this));
+}
+
+WebInspector.PresentationConsoleMessage.prototype = {
+    /**
+     * @param {WebInspector.UILocation} uiLocation
+     */
+    _updateLocation: function(uiLocation)
+    {
+        if (this._uiLocation)
+            this._uiLocation.uiSourceCode.consoleMessageRemoved(this);
+        this._uiLocation = uiLocation;
+        this._uiLocation.uiSourceCode.consoleMessageAdded(this);
+    },
+
+    get lineNumber()
+    {
+        return this._uiLocation.lineNumber;
+    },
+
+    dispose: function()
+    {
+        this._liveLocation.dispose();
+    }
 }
 
 /**
