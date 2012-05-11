@@ -141,7 +141,6 @@ public:
     static void clearFrameName(QWebFrame* frame);
     static void overwritePluginDirectories();
     static int numberOfActiveAnimations(QWebFrame*);
-    static void resumeAnimations(QWebFrame*);
     static int numberOfPages(QWebFrame* frame, float width, float height);
     static int pageNumberForElementById(QWebFrame* frame, const QString& id, float width, float height);
     static bool hasDocumentElement(QWebFrame* frame);

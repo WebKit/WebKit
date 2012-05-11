@@ -164,6 +164,7 @@ public:
     void setNetworkInformation(Document*, const String& eventType, long bandwidth, bool metered, ExceptionCode&);
 
     void suspendAnimations(Document*, ExceptionCode&) const;
+    void resumeAnimations(Document*, ExceptionCode&) const;
 
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;

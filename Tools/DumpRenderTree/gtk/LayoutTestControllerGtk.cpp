@@ -787,11 +787,6 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return DumpRenderTreeSupportGtk::numberOfActiveAnimations(mainFrame);
 }
 
-void LayoutTestController::resumeAnimations() const
-{
-    DumpRenderTreeSupportGtk::resumeAnimations(mainFrame);
-}
-
 static gboolean booleanFromValue(gchar* value)
 {
     return !g_ascii_strcasecmp(value, "true") || !g_ascii_strcasecmp(value, "1");

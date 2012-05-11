@@ -313,11 +313,6 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return 0;
 }
 
-void LayoutTestController::resumeAnimations() const
-{
-    // FIXME: implement
-}
-
 unsigned LayoutTestController::workerThreadCount() const
 {
     // FIXME: implement

@@ -187,7 +187,6 @@ public slots:
     bool elementDoesAutoCompleteForElementWithId(const QString& elementId);
 
     unsigned numberOfActiveAnimations() const;
-    void resumeAnimations() const;
 
     void addOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);

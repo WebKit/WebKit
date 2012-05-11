@@ -1,3 +1,18 @@
+2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move resumeAnimations to use Internals interface
+        https://bugs.webkit.org/show_bug.cgi?id=86063
+
+        Reviewed by Alexey Proskuryakov.
+
+        Call resumeAnimations functions from internals, because it is able to work in the
+        cross-port way through the Internals interface.
+
+        * animations/play-state-suspend.html:
+        * animations/stop-animation-on-suspend.html:
+        * animations/suspend-resume-animation-events.html:
+        * animations/suspend-resume-animation.html:
+
 2012-05-10  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

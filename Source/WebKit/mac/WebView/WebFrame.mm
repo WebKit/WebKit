@@ -998,15 +998,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return controller->numberOfActiveAnimations(frame->document());
 }
 
-- (void) _resumeAnimations
-{
-    Frame* frame = core(self);
-    if (!frame)
-        return;
-
-    frame->animation()->resumeAnimations();
-}
-
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     if (_private->coreFrame->selection()->isNone() || !fragment)

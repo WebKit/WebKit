@@ -1221,7 +1221,6 @@ _WKExecutableWasLinkedOnOrBeforeSnowLeopard
 __ZNK7WebCore12ChromeClient29dispatchViewportDataDidChangeERKNS_17ViewportArgumentsE
 -[WebView(WebPrivate) setFrameSize:]
 -[WebFrame(WebKitDebug) renderTreeAsExternalRepresentationForPrinting:]
--[WebFrame(WebPrivate) _resumeAnimations]
 +[WebView(WebPrivate) _pointingHandCursor]
 _WKGetCFURLResponseURL
 _WKGetCFURLResponseHTTPResponse

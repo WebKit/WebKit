@@ -165,7 +165,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
     bindMethod("repaintSweepHorizontally", &LayoutTestController::repaintSweepHorizontally);
     bindMethod("resetPageVisibility", &LayoutTestController::resetPageVisibility);
-    bindMethod("resumeAnimations", &LayoutTestController::resumeAnimations);
     bindMethod("setAcceptsEditing", &LayoutTestController::setAcceptsEditing);
     bindMethod("setAllowDisplayOfInsecureContent", &LayoutTestController::setAllowDisplayOfInsecureContent);
     bindMethod("setAllowFileAccessFromFileURLs", &LayoutTestController::setAllowFileAccessFromFileURLs);
@@ -1064,19 +1063,6 @@ int LayoutTestController::numberOfActiveAnimations()
     return controller->numberOfActiveAnimations();
 }
 
-void LayoutTestController::resumeAnimations()
-{
-    WebFrame* webFrame = m_shell->webView()->mainFrame();
-    if (!webFrame)
-        return;
-
-    WebAnimationController* controller = webFrame->animationController();
-    if (!controller)
-        return;
-
-    controller->resumeAnimations();
-}
-
 void LayoutTestController::pauseAnimationAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set(false);
@@ -1146,12 +1132,6 @@ void LayoutTestController::disableAutoResizeMode(const CppArgumentList& argument
 void LayoutTestController::numberOfActiveAnimations(const CppArgumentList&, CppVariant* result)
 {
     result->set(numberOfActiveAnimations());
-}
-
-void LayoutTestController::resumeAnimations(const CppArgumentList&, CppVariant* result)
-{
-    resumeAnimations();
-    result->setNull();
 }
 
 void LayoutTestController::disableImageLoading(const CppArgumentList&, CppVariant* result)

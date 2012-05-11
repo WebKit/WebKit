@@ -72,7 +72,6 @@ public:
     static bool pauseTransition(WebKitWebFrame*, const char* name, double time, const char* element);
     static WTF::CString markerTextForListItem(WebKitWebFrame*, JSContextRef, JSValueRef nodeObject);
     static unsigned int numberOfActiveAnimations(WebKitWebFrame*);
-    static void resumeAnimations(WebKitWebFrame*);
     static void clearMainFrameName(WebKitWebFrame*);
     static AtkObject* getFocusedAccessibleElement(WebKitWebFrame*);
     static AtkObject* getRootAccessibleElement(WebKitWebFrame*);

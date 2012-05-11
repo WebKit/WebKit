@@ -110,8 +110,6 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT renderTreeAsExternalRepresentation([in] BOOL forPrinting, [out, retval] BSTR* result);
 
-    HRESULT resumeAnimations();
-
     HRESULT loadPlainTextString([in] BSTR string, [in] BSTR url);
 
     HRESULT clearOpener();

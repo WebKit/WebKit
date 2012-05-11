@@ -114,7 +114,6 @@ public:
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
     bool pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId);
     void suspendAnimations();
-    void resumeAnimations();
     
     // Compositing testing.
     JSRetainPtr<JSStringRef> layerTreeAsText() const;

@@ -363,15 +363,6 @@ unsigned int DumpRenderTreeSupportGtk::numberOfActiveAnimations(WebKitWebFrame* 
     return coreFrame->animation()->numberOfActiveAnimations(coreFrame->document());
 }
 
-void DumpRenderTreeSupportGtk::resumeAnimations(WebKitWebFrame* frame)
-{
-    Frame* coreFrame = core(frame);
-    if (!coreFrame)
-        return;
-
-    return coreFrame->animation()->resumeAnimations();
-}
-
 void DumpRenderTreeSupportGtk::clearMainFrameName(WebKitWebFrame* frame)
 {
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));

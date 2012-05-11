@@ -278,18 +278,6 @@ String DumpRenderTreeSupportEfl::responseMimeType(const Evas_Object* ewkFrame)
     return documentLoader->responseMIMEType();
 }
 
-void DumpRenderTreeSupportEfl::resumeAnimations(Evas_Object* ewkFrame)
-{
-    WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
-
-    if (!frame)
-        return;
-
-    WebCore::AnimationController *animationController = frame->animation();
-    if (animationController)
-        animationController->resumeAnimations();
-}
-
 WebCore::IntRect DumpRenderTreeSupportEfl::selectionRectangle(const Evas_Object* ewkFrame)
 {
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);

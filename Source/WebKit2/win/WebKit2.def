@@ -256,3 +256,4 @@ EXPORTS
         ?webkitDidExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?isPageBoxVisible@Document@WebCore@@QAE_NH@Z
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
+        ?resumeAnimations@AnimationController@WebCore@@QAEXXZ

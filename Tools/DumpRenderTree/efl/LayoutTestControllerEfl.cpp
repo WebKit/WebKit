@@ -648,11 +648,6 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return DumpRenderTreeSupportEfl::activeAnimationsCount(browser->mainFrame());
 }
 
-void LayoutTestController::resumeAnimations() const
-{
-    DumpRenderTreeSupportEfl::resumeAnimations(browser->mainFrame());
-}
-
 static inline bool toBool(JSStringRef value)
 {
     return equals(value, "true") || equals(value, "1");

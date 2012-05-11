@@ -62,7 +62,6 @@ public:
     static unsigned pendingUnloadEventCount(const Evas_Object* ewkFrame);
     static String renderTreeDump(Evas_Object* ewkFrame);
     static String responseMimeType(const Evas_Object* ewkFrame);
-    static void resumeAnimations(Evas_Object* ewkFrame);
     static WebCore::IntRect selectionRectangle(const Evas_Object* ewkFrame);
     static String suitableDRTFrameName(const Evas_Object* ewkFrame);
     static void setValueForUser(JSContextRef, JSValueRef nodeObject, const String& value);
