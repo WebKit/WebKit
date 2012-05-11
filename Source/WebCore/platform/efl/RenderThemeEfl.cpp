@@ -421,49 +421,6 @@ static void renderThemeEflColorClassFocusRing(void* data, Evas_Object* object, c
     that->setFocusRingColor(fr, fg, fb, fa);
 }
 
-static void renderThemeEflColorClassButtonText(void* data, Evas_Object* object, const char* signal, const char* source)
-{
-    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
-    int fr, fg, fb, fa, br, bg, bb, ba;
-
-    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
-        return;
-
-    that->setButtonTextColor(fr, fg, fb, fa, br, bg, bb, ba);
-}
-
-static void renderThemeEflColorClassComboText(void* data, Evas_Object* object, const char* signal, const char* source)
-{
-    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
-    int fr, fg, fb, fa, br, bg, bb, ba;
-
-    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
-        return;
-
-    that->setComboTextColor(fr, fg, fb, fa, br, bg, bb, ba);
-}
-
-static void renderThemeEflColorClassEntryText(void* data, Evas_Object* object, const char* signal, const char* source)
-{
-    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
-    int fr, fg, fb, fa, br, bg, bb, ba;
-
-    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
-        return;
-
-    that->setEntryTextColor(fr, fg, fb, fa, br, bg, bb, ba);
-}
-
-static void renderThemeEflColorClassSearchText(void* data, Evas_Object* object, const char* signal, const char* source)
-{
-    RenderThemeEfl* that = static_cast<RenderThemeEfl *>(data);
-    int fr, fg, fb, fa, br, bg, bb, ba;
-    if (!edje_object_color_class_get(object, source, &fr, &fg, &fb, &fa, &br, &bg, &bb, &ba, 0, 0, 0, 0))
-        return;
-
-    that->setSearchTextColor(fr, fg, fb, fa, br, bg, bb, ba);
-}
-
 void RenderThemeEfl::createCanvas()
 {
     ASSERT(!m_canvas);
