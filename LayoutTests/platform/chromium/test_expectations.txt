@@ -4072,9 +4072,6 @@ BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
-// Caused by r116798.
-BUGRNIWA MAC DEBUG : editing/execCommand/format-block-without-body-crash.html = CRASH
-
 // IETC namespace failures
 BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE

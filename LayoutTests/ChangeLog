@@ -1,3 +1,9 @@
+2012-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove a Chromium test expectation now that the regression is fixed in r116814.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116802.
