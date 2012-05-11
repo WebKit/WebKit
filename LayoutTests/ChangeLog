@@ -1,3 +1,13 @@
+2012-05-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Updat test expectations.
+
+        * platform/chromium-mac-leopard/fast/block/float/032-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/block/float/032-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/block/float/032-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/float/032-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2012-05-11  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] Input Attribute Placeholder RefTests failing
