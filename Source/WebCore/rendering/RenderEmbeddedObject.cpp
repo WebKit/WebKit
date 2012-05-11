@@ -102,11 +102,28 @@ bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
 }
 #endif
 
+static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
+{
+    switch (pluginUnavailabilityReason) {
+    case RenderEmbeddedObject::PluginMissing:
+        return missingPluginText();
+    case RenderEmbeddedObject::PluginCrashed:
+        return crashedPluginText();
+    case RenderEmbeddedObject::InsecurePluginVersion:
+        return insecurePluginVersionText();
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
 void RenderEmbeddedObject::setPluginUnavailabilityReason(PluginUnavailabilityReason pluginUnavailabilityReason)
 {
     ASSERT(!m_showsUnavailablePluginIndicator);
     m_showsUnavailablePluginIndicator = true;
     m_pluginUnavailabilityReason = pluginUnavailabilityReason;
+
+    m_unavailablePluginReplacementText = unavailablePluginReplacementText(pluginUnavailabilityReason);
 }
 
 bool RenderEmbeddedObject::showsUnavailablePluginIndicator() const
@@ -193,8 +210,8 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     fontDescription.setComputedSize(fontDescription.specifiedSize());
     font = Font(fontDescription, 0, 0);
     font.update(0);
-    
-    run = TextRun(unavailablePluginReplacementText());
+
+    run = TextRun(m_unavailablePluginReplacementText);
     textWidth = font.width(run);
     
     replacementTextRect.setSize(FloatSize(textWidth + replacementTextRoundedRectLeftRightTextMargin * 2, replacementTextRoundedRectHeight));
@@ -205,21 +222,6 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     path.addRoundedRect(replacementTextRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
 
     return true;
-}
-
-String RenderEmbeddedObject::unavailablePluginReplacementText() const
-{
-    switch (m_pluginUnavailabilityReason) {
-    case PluginMissing:
-        return missingPluginText();
-    case PluginCrashed:
-        return crashedPluginText();
-    case InsecurePluginVersion:
-        return insecurePluginVersionText();
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
 }
 
 void RenderEmbeddedObject::layout()

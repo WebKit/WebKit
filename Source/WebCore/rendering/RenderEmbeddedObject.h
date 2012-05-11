@@ -78,12 +78,12 @@ private:
     bool isInUnavailablePluginIndicator(MouseEvent*) const;
     bool isInUnavailablePluginIndicator(const LayoutPoint&) const;
     bool getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth) const;
-    String unavailablePluginReplacementText() const;
 
     bool m_hasFallbackContent; // FIXME: This belongs on HTMLObjectElement.
 
     bool m_showsUnavailablePluginIndicator;
     PluginUnavailabilityReason m_pluginUnavailabilityReason;
+    String m_unavailablePluginReplacementText;
     bool m_unavailablePluginIndicatorIsPressed;
     bool m_mouseDownWasInUnavailablePluginIndicator;
 };
