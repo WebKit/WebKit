@@ -473,6 +473,12 @@ String crashedPluginText()
     return String::fromUTF8(_("Plug-in Failure"));
 }
 
+String insecurePluginVersionText()
+{
+    notImplemented();
+    return String();
+}
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     // FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
