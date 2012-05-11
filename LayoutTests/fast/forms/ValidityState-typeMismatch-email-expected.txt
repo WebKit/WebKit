@@ -32,6 +32,13 @@ PASS "a
 PASS "a
 @p.com" is a valid email address. It was sanitized to "a@p.com".
 PASS "" is a valid email address. 
+PASS " " is a valid email address. It was sanitized to "".
+PASS " a@p.com" is a valid email address. It was sanitized to "a@p.com".
+PASS "a@p.com " is a valid email address. It was sanitized to "a@p.com".
+PASS " a@p.com " is a valid email address. It was sanitized to "a@p.com".
+PASS " a@p.com " is a valid email address. It was sanitized to "a@p.com".
+PASS "	a@p.com	" is a valid email address. It was sanitized to "a@p.com".
+PASS "a@p.com" is a valid email address. It was sanitized to "a@p.com".
 Invalid single addresses when 'multiple' attribute is not set.
 PASS "invalid:email@example.com" is a invalid email address. 
 PASS "@somewhere.com" is a invalid email address. 
@@ -49,16 +56,6 @@ PASS "someone@some:where.com" is a invalid email address.
 PASS "." is a invalid email address. 
 PASS "F/s/f/a@feo+re.com" is a invalid email address. 
 PASS "some+long+email+address@some+host-weird-/looking.com" is a invalid email address. 
-PASS " " is a invalid email address. 
-PASS " a@p.com" is a invalid email address. 
-PASS "a@p.com " is a invalid email address. 
-PASS " a@p.com " is a invalid email address. 
-PASS " a@p.com " is a invalid email address. 
-PASS "	a@p.com	" is a invalid email address. 
-PASS "a@p.com" is a invalid email address. 
-PASS "a@p.com" is a invalid email address. 
-PASS " a@p.com " is a invalid email address. 
-PASS "　a@p.com　" is a invalid email address. 
 PASS "a @p.com" is a invalid email address. 
 PASS "a @p.com" is a invalid email address. 
 PASS "a	@p.com" is a invalid email address. 

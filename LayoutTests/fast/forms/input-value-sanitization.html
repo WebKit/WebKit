@@ -21,7 +21,7 @@ input = document.createElement('input');
 input.multiple = false;
 input.type = 'email';
 input.setAttribute('value', ' tkent@chromium.org, tkent@example.***  \r\n');
-shouldBe('input.value', '" tkent@chromium.org, tkent@example.***  "');
+shouldBe('input.value', '"tkent@chromium.org, tkent@example.***"');
 
 debug('');
 debug('Number:');

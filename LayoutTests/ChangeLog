@@ -1,3 +1,15 @@
+2012-05-11  Keishi Hattori  <keishi@webkit.org>
+
+        Sanitization algorithm for input type=email should strip whitespaces
+        https://bugs.webkit.org/show_bug.cgi?id=86177
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/ValidityState-typeMismatch-email-expected.txt:
+        * fast/forms/input-value-sanitization-expected.txt:
+        * fast/forms/input-value-sanitization.html:
+        * fast/forms/resources/ValidityState-typeMismatch-email.js:
+
 2012-05-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Search box doesn't allow CSS selectors anymore

@@ -4,7 +4,7 @@ Tests for value sanitization algorithm.
 Email with multiple:
 PASS input.value is "tkent@chromium.org,tkent@example.!!!"
 Email without multiple:
-PASS input.value is " tkent@chromium.org, tkent@example.***  "
+PASS input.value is "tkent@chromium.org, tkent@example.***"
 
 Number:
 PASS input.value is "65536"

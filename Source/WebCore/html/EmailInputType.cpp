@@ -96,7 +96,7 @@ String EmailInputType::sanitizeValue(const String& proposedValue) const
 {
     String noLineBreakValue = proposedValue.removeCharacters(isHTMLLineBreak);
     if (!element()->multiple())
-        return noLineBreakValue;
+        return stripLeadingAndTrailingHTMLSpaces(noLineBreakValue);
     Vector<String> addresses;
     noLineBreakValue.split(',', true, addresses);
     StringBuilder strippedValue;
