@@ -55,6 +55,7 @@
 #include "HTMLNames.h"
 #include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
+#include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
@@ -222,9 +223,9 @@ bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, co
     return decodeSharedBuffer(buffer, textEncodingName, result);
 }
 
-PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
+PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
 {
-    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, state, injectedScriptManager, client));
+    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, inspectorAgent, state, injectedScriptManager, client));
 }
 
 // static
@@ -307,9 +308,10 @@ TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::cachedResourceTypeJson
     return resourceTypeJson(cachedResourceType(cachedResource));
 }
 
-InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
+InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
     : InspectorBaseAgent<InspectorPageAgent>("Page", instrumentingAgents, inspectorState)
     , m_page(page)
+    , m_inspectorAgent(inspectorAgent)
     , m_injectedScriptManager(injectedScriptManager)
     , m_client(client)
     , m_frontend(0)
@@ -343,6 +345,9 @@ void InspectorPageAgent::restore()
         double fontScaleFactor = m_state->getDouble(PageAgentState::pageAgentFontScaleFactorOverride);
         bool fitWindow = m_state->getBoolean(PageAgentState::pageAgentFitWindow);
         updateViewMetrics(width, height, fontScaleFactor, fitWindow);
+
+        if (m_inspectorAgent->didCommitLoadFired())
+            frameNavigated(m_page->mainFrame()->loader()->documentLoader());
     }
 }
 

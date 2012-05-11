@@ -84,7 +84,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_inspectorAgent = inspectorAgentPtr.get();
     m_agents.append(inspectorAgentPtr.release());
 
-    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_state.get(), m_injectedScriptManager.get(), inspectorClient));
+    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, m_state.get(), m_injectedScriptManager.get(), inspectorClient));
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(pageAgentPtr.release());
@@ -274,7 +274,6 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
 
     for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
         (*it)->restore();
-    m_inspectorAgent->emitCommitLoadIfNeeded();
 }
 
 void InspectorController::setProcessId(long processId)

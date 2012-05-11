@@ -80,12 +80,6 @@ InspectorAgent::~InspectorAgent()
     m_instrumentingAgents->setInspectorAgent(0);
 }
 
-void InspectorAgent::emitCommitLoadIfNeeded()
-{
-    if (m_didCommitLoadFired)
-        InspectorInstrumentation::didCommitLoad(m_inspectedPage->mainFrame(), m_inspectedPage->mainFrame()->loader()->documentLoader());
-}
-
 void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
 {
     if (world != mainThreadNormalWorld())

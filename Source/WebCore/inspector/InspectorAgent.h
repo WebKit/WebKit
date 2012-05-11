@@ -80,7 +80,7 @@ public:
 
     void didCommitLoad();
     void domContentLoadedEventFired();
-    void emitCommitLoadIfNeeded();
+    bool didCommitLoadFired() { return m_didCommitLoadFired; }
 
 #if ENABLE(WORKERS)
     void didCreateWorker(intptr_t, const String& url, bool isSharedWorker);
