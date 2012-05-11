@@ -21,28 +21,9 @@ function test()
             for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
                 loader.pushJSONChunk(sourceStringified.slice(i, i + partSize));
             var result = loader.finishLoading();
-            InspectorTest.assertSnapshotEquals(new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock()), result);
-            next();
-        },
-
-        function heapSnapshotSeparateEdgesLoaderTest(next)
-        {
-            var source = InspectorTest.createHeapSnapshotSplitNodesEdgesMockRaw();
-            var sourceStringified = JSON.stringify(source);
-            var partSize = sourceStringified.length >> 3;
-            var loader = new WebInspector.HeapSnapshotLoader();
-            for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
-                loader.pushJSONChunk(sourceStringified.slice(i, i + partSize));
-            var result = loader.finishLoading();
-            // Patch it a bit to make it identical to the specimen.
-            result._onlyNodes = new Uint32Array(result._onlyNodes);
+            result._nodes = new Uint32Array(result._nodes);
             result._containmentEdges = new Uint32Array(result._containmentEdges);
-            var specimen = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
-            delete result._metaNode;
-            delete specimen._metaNode;
-            delete specimen._edgesCountOffset;
-            delete specimen._firstEdgeOffset;
-            InspectorTest.assertSnapshotEquals(specimen, result);
+            InspectorTest.assertSnapshotEquals(new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock()), result);
             next();
         }
     ]);

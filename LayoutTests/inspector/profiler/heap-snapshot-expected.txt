@@ -13,8 +13,6 @@ Running: heapSnapshotNodeAndEdgeTest
 
 Running: heapSnapshotSimpleTest
 
-Running: testNodesAndEdgesSeparationInHeapSnapshot
-
 Running: heapSnapshotRetainersTest
 
 Running: heapSnapshotAggregatesTest

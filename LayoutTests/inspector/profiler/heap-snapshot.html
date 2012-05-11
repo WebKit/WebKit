@@ -95,52 +95,6 @@ function test()
             next();
         },
 
-        function testNodesAndEdgesSeparationInHeapSnapshot(next)
-        {
-            var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
-            function validateNewIndex()
-            {
-                var copiedNodeIndex = 0;
-                for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), copiedNodeIndex += this._nodeFieldCount) {
-                    var originalNode = nodesIter.node;
-                    var copiedNode = this._onlyNodes[copiedNodeIndex];
-
-                    if (originalNode.id !== this._onlyNodes[copiedNodeIndex + this._nodeIdOffset])
-                        throw new Error("Id mismatch: " + originalNode.id);
-
-                    if (originalNode._type() !== this._onlyNodes[copiedNodeIndex + this._nodeTypeOffset])
-                        throw new Error("Node type mismatch: " + originalNode.id);
-
-                    // Validate containment edges.
-                    var firstEdgeIndex = this._onlyNodes[copiedNodeIndex + this._edgesCountOffset];
-                    var nextNodeIndex = copiedNodeIndex + this._nodeFieldCount;
-                    var lastEdgeIndex = (nextNodeIndex < this._onlyNodes.length)
-                                      ? this._onlyNodes[nextNodeIndex + this._edgesCountOffset]
-                                      : this._containmentEdges.length;
-
-                    if (originalNode.edgesCount !== (lastEdgeIndex - firstEdgeIndex) / this._edgeFieldsCount)
-                        throw new Error("Edges count mismatch: " + originalNode.id);
-
-                    for (var edgeIter = originalNode.edges, copiedEdgeIndex = firstEdgeIndex; edgeIter.hasNext(); edgeIter.next(), copiedEdgeIndex += this._edgeFieldsCount) {
-                        if (edgeIter.edge._type() !== this._containmentEdges[copiedEdgeIndex + this._edgeTypeOffset])
-                            throw new Error("Edge type mismatch: " + edgeIter.edge.type);
-
-                        var toNodeIndex = this._containmentEdges[copiedEdgeIndex + this._edgeToNodeOffset];
-                        if (edgeIter.edge.node.id !== this._onlyNodes[toNodeIndex + this._nodeIdOffset])
-                            throw new Error("Edge to node id mismatch: " + edgeIter.edge.node.id);
-                    }
-                }
-            }
-            try {
-                validateNewIndex.call(snapshot);
-            } catch (e) {
-                InspectorTest.addResult(e);
-                throw e;
-            }
-            next();
-        },
-
-
         function heapSnapshotRetainersTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());

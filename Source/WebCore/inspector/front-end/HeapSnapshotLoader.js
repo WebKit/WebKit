@@ -147,26 +147,9 @@ WebInspector.HeapSnapshotLoader.prototype = {
             if (bracketIndex === -1)
                 return;
             this._json = this._json.slice(bracketIndex + 1);
-            if (this._snapshot.snapshot.meta) {
-                var node_fields_count = this._snapshot.snapshot.meta.node_fields.length;
-                var nodes_length = this._snapshot.snapshot.node_count * node_fields_count;
-                this._array = new WebInspector.Uint32Array(nodes_length);
-                this._snapshot.snapshot.meta.separate_edges = true;
-                this._state = "parse-nodes";
-            } else {
-                this._state = "parse-nodes-meta-info";
-            }
-            this.pushJSONChunk("");
-            break;
-        }
-        case "parse-nodes-meta-info": {
-            var closingBracketIndex = this._findBalancedCurlyBrackets();
-            if (closingBracketIndex === -1)
-                return;
-            this._snapshot.snapshot.meta = JSON.parse(this._json.slice(0, closingBracketIndex));
-            this._json = this._json.slice(closingBracketIndex);
-            this._array = new WebInspector.Uint32Array();
-            this._array.push(0);
+            var node_fields_count = this._snapshot.snapshot.meta.node_fields.length;
+            var nodes_length = this._snapshot.snapshot.node_count * node_fields_count;
+            this._array = new WebInspector.Uint32Array(nodes_length);
             this._state = "parse-nodes";
             this.pushJSONChunk("");
             break;
@@ -174,13 +157,8 @@ WebInspector.HeapSnapshotLoader.prototype = {
         case "parse-nodes": {
             if (this._parseUintArray())
                 return;
-            if (this._snapshot.snapshot.meta.separate_edges) {
-                this._snapshot.onlyNodes = this._array.array;
-                this._state = "find-edges";
-            } else {
-                this._snapshot.nodes = this._array.array;
-                this._state = "find-strings";
-            }
+            this._snapshot.nodes = this._array.array;
+            this._state = "find-edges";
             this._array = null;
             this.pushJSONChunk("");
             break;
@@ -204,7 +182,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
         case "parse-edges": {
             if (this._parseUintArray())
                 return;
-            this._snapshot.containmentEdges = this._array.array;
+            this._snapshot.edges = this._array.array;
             this._array = null;
             this._state = "find-strings";
             this.pushJSONChunk("");

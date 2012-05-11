@@ -28,7 +28,7 @@ InspectorTest.createHeapSnapshotMockObject = function()
         //       b\v    /
         //         B (6) -bd- D (12)
         //
-        _onlyNodes: [
+        _nodes: [
             0, 0, 0,
             1, 1, 6,
             1, 2, 12,
@@ -46,37 +46,18 @@ InspectorTest.createHeapSnapshotMockObject = function()
 
 InspectorTest.createHeapSnapshotMockRaw = function()
 {
-    return {
-        snapshot: {},
-        nodes: [
-            { fields: ["type", "name", "id", "self_size", "retained_size", "dominator", "children_count", "children"],
-              types: [["hidden", "object"], "", "", "", "", "", "", { fields: ["type", "name_or_index", "to_node"], types: [["element", "property"], "", ""] }] },
-            // Effectively the same graph as in createHeapSnapshotMockObject,
-            // but having full set of fields.
-            // 
-            // A triple in parentheses indicates node index, self size and
-            // retained size.
-            // 
-            //          --- A (14,2,2) --ac- C (40,4,10) -ce- E(57,6,6)
-            //         /    |                /
-            //  "" (1,0,20) 1       --bc-----
-            //         \    v      /
-            //          --- B (27,3,8) --bd- D (50,5,5)
-            //
-            0, 0, 1, 0, 20,  1, 2, 1,  6, 14, 1,  7, 27,
-            1, 1, 2, 2,  2,  1, 2, 0,  1, 27, 1,  8, 40,
-            1, 2, 3, 3,  8,  1, 2, 1,  9, 40, 1, 10, 50,
-            1, 3, 4, 4, 10,  1, 1, 1, 11, 57,
-            1, 4, 5, 5,  5, 27, 0,
-            1, 5, 6, 6,  6, 40, 0],
-        strings: ["", "A", "B", "C", "D", "E", "a", "b", "ac", "bc", "bd", "ce"]
-    };
-};
-
-InspectorTest.createHeapSnapshotSplitNodesEdgesMockRaw = function()
-{
-    // Return the same snapshot as above but having the nodes and edges
-    // separated.
+    // Effectively the same graph as in createHeapSnapshotMockObject,
+    // but having full set of fields.
+    //
+    // A triple in parentheses indicates node index, self size and
+    // retained size.
+    //
+    //          --- A (14,2,2) --ac- C (40,4,10) -ce- E(57,6,6)
+    //         /    |                /
+    //  "" (1,0,20) 1       --bc-----
+    //         \    v      /
+    //          --- B (27,3,8) --bd- D (50,5,5)
+    //
     return {
         snapshot: {
             meta: {
@@ -105,11 +86,8 @@ InspectorTest.createHeapSnapshotSplitNodesEdgesMockRaw = function()
 
 InspectorTest._postprocessHeapSnapshotMock = function(mock)
 {
-    mock.snapshot.meta = mock.nodes[0];
-    mock.nodes[0] = 0;
-    var tempNodes = new Int32Array(1000);
-    tempNodes.set(mock.nodes);
-    mock.nodes = tempNodes.subarray(0, mock.nodes.length);
+    mock.nodes = new Int32Array(mock.nodes);
+    mock.edges = new Int32Array(mock.edges);
     return mock;
 };
 
@@ -121,35 +99,50 @@ InspectorTest.createHeapSnapshotMock = function()
 InspectorTest.createHeapSnapshotMockWithDOM = function()
 {
     return InspectorTest._postprocessHeapSnapshotMock({
-        snapshot: {},
+        snapshot: {
+            meta: {
+                node_fields: ["type", "name", "id", "edges_index"],
+                node_types: [["hidden", "object"], "", "", ""],
+                edge_fields: ["type", "name_or_index", "to_node"],
+                edge_types: [["element", "hidden", "internal"], "", ""]
+            },
+            node_count: 13,
+            edge_count: 13
+        },
         nodes: [
-            { fields: ["type", "name", "id", "children_count", "children"],
-              types: [["hidden", "object"], "", "", "", { fields: ["type", "name_or_index", "to_node"], types: [["element", "hidden", "internal"], "", ""] }] },
             // A tree with Window objects.
             //
             //    |----->Window--->A
-            //    |                \
+            //    |             \
             //    |----->Window--->B--->C
             //    |        |     \
             //  (root)   hidden   --->D--internal / "native"-->N
             //    |         \         |
             //    |----->E   H     internal
             //    |                   v
-            //    |----->F--->G------>M
+            //    |----->F--->G       M
             //
-            /* (root) */    0,  0,  1, 4, 0,  1, 17, 0, 2, 27, 0, 3, 40, 0, 4, 44,
-            /* Window */    1, 11,  2, 2, 0,  1, 51, 0, 2, 55,
-            /* Window */    1, 11,  3, 3, 0,  1, 55, 0, 2, 62, 1, 3, 72,
-            /* E */         1,  5,  4, 0,
-            /* F */         1,  6,  5, 1, 0,  1, 76,
-            /* A */         1,  1,  6, 0,
-            /* B */         1,  2,  7, 1, 0,  1, 80,
-            /* D */         1,  4,  8, 2, 2, 12, 84, 2, 1, 88,
-            /* H */         1,  8,  9, 0,
-            /* G */         1,  7, 10, 0,
-            /* C */         1,  3, 11, 0,
-            /* N */         1, 10, 12, 0,
-            /* M */         1,  9, 13, 0
+            /* (root) */    0,  0,  1,  0,
+            /* Window */    1, 11,  2, 12,
+            /* Window */    1, 11,  3, 18,
+            /* E */         1,  5,  4, 27,
+            /* F */         1,  6,  5, 27,
+            /* A */         1,  1,  6, 30,
+            /* B */         1,  2,  7, 30,
+            /* D */         1,  4,  8, 33,
+            /* H */         1,  8,  9, 39,
+            /* G */         1,  7, 10, 39,
+            /* C */         1,  3, 11, 39,
+            /* N */         1, 10, 12, 39,
+            /* M */         1,  9, 13, 39
+            ],
+        edges: [
+            /* from (root) */  0,  1,  4, 0, 2,  8, 0, 3, 12, 0, 4, 16,
+            /* from Window */  0,  1, 20, 0, 2, 24,
+            /* from Window */  0,  1, 24, 0, 2, 28, 1, 3, 32,
+            /* from F */       0,  1, 36,
+            /* from B */       0,  1, 40,
+            /* from D */       2, 12, 44, 2, 1, 48
             ],
         strings: ["", "A", "B", "C", "D", "E", "F", "G", "H", "M", "N", "Window", "native"]
     });
@@ -385,50 +378,57 @@ InspectorTest.createHeapSnapshot = function(instanceCount, firstId)
     // 
     // Instances of A have 12 bytes size, instances of B has 16 bytes size.
     var sizeOfA = 12;
-    var sizeOfB = 16;  
+    var sizeOfB = 16;
+    var nodes = [];
+    var edges = [];
 
-    function generateNodes()
-    {
-        var nodes = [null];
-        // Push the 'meta-root' node.
-        nodes.push(0, 0, 1, 0, (sizeOfA + sizeOfB) * instanceCount, 1, 1, 4, 1, null);
-        // Push instances of A and B.
-        var indexesOfB = [];
-        var nextId = firstId || 5;
-        for (var i = 0; i < instanceCount; ++i) {
-            var indexOfA = nodes.length;
-            nodes.push(3, 1, nextId++, sizeOfA, sizeOfA, null, 1, 2, 3, indexOfA);
-            var indexOfB = nodes.length;
-            // Set dominator of A.
-            nodes[indexOfA + 5] = indexOfB;
-            nodes.push(3, 2, nextId++, sizeOfB, sizeOfB + sizeOfA, null, 1, 2, 3, indexOfA);
-            indexesOfB.push(indexOfB);
-        }
-        var indexOfGCRoots = nodes.length;
-        nodes.push(3, 4, 3, 0, (sizeOfA + sizeOfB) * instanceCount, 1, instanceCount);
-        // Set dominator of B.
-        for (var i = 0; i < instanceCount; ++i) {
-            nodes[indexesOfB[i] + 5] = indexOfGCRoots;
-        }
-        // Set (GC roots) as child of meta-root.
-        nodes[10] = indexOfGCRoots;
-        // Push instances of B as children of GC roots.
-        for (var i = 0; i < instanceCount; ++i) {
-            nodes.push(1, i + 1, indexesOfB[i]);
-        }
-        return nodes;
+    function addEdge(type, nameOrIndex, toNode) {
+      var edgeIndex = edges.length;
+      edges.push(type, nameOrIndex, toNode);
+      return edgeIndex;
+    }
+
+    nodes.push(0, 0, 1, 0, (sizeOfA + sizeOfB) * instanceCount, 0, addEdge(4, 1, null));
+    // Push instances of A and B.
+    var indexesOfB = [];
+    var nextId = firstId || 5;
+    for (var i = 0; i < instanceCount; ++i) {
+        var indexOfA = nodes.length;
+        nodes.push(3, 1, nextId++, sizeOfA, sizeOfA, null, addEdge(2, 3, indexOfA));
+        var indexOfB = nodes.length;
+        // Set dominator of A.
+        nodes[indexOfA + 5] = indexOfB;
+        nodes.push(3, 2, nextId++, sizeOfB, sizeOfB + sizeOfA, null, addEdge(2, 3, indexOfA));
+        indexesOfB.push(indexOfB);
+    }
+    var indexOfGCRoots = nodes.length;
+    nodes.push(3, 4, 3, 0, (sizeOfA + sizeOfB) * instanceCount, 0, edges.length);
+    // Set dominator of B.
+    for (var i = 0; i < instanceCount; ++i) {
+        nodes[indexesOfB[i] + 5] = indexOfGCRoots;
+    }
+    // Set (GC roots) as child of meta-root.
+    edges[2] = indexOfGCRoots;
+    // Push instances of B as children of GC roots.
+    for (var i = 0; i < instanceCount; ++i) {
+        addEdge(1, i + 1, indexesOfB[i]);
     }
 
     var result = {
-        "snapshot": {},
-        "nodes": generateNodes(),
+        "snapshot": {
+            "meta": {
+                "node_fields": ["type","name","id","self_size","retained_size","dominator","edges_index"],
+                "node_types": [["hidden","array","string","object","code","closure","regexp","number","native"],"string","number","number","number","number","number"],
+                "edge_fields": ["type","name_or_index","to_node"],
+                "edge_types": [["context","element","property","internal","hidden","shortcut"],"string_or_number","node"]
+            }
+        },
+        "nodes": nodes,
+        "edges": edges,
         "strings": ["", "A", "B", "a", "(GC roots)"]
     };
-    result.nodes[0] = {
-        "fields":["type","name","id","self_size","retained_size","dominator","children_count","children"],
-        "types":[["hidden","array","string","object","code","closure","regexp","number","native"],"string","number","number","number","number","number",{
-            "fields":["type","name_or_index","to_node"],
-            "types":[["context","element","property","internal","hidden","shortcut"],"string_or_number","node"]}]};
+    result.snapshot.node_count = result.nodes.length / result.snapshot.meta.node_fields.length;
+    result.snapshot.edge_count = result.edges.length / result.snapshot.meta.edge_fields.length;
     return result;
 };
 

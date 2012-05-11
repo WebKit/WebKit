@@ -1,3 +1,22 @@
+2012-05-11  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Remove support of combined nodes and edges serialization schema.
+        https://bugs.webkit.org/show_bug.cgi?id=86209
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/profiler/heap-snapshot-expected.txt:
+        * inspector/profiler/heap-snapshot-loader-expected.txt:
+        * inspector/profiler/heap-snapshot-loader.html:
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockObject):
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockRaw):
+        (initialize_HeapSnapshotTest.InspectorTest._postprocessHeapSnapshotMock):
+        (initialize_HeapSnapshotTest.InspectorTest.createHeapSnapshotMockWithDOM):
+        (initialize_HeapSnapshotTest.):
+        (initialize_HeapSnapshotTest):
+        * inspector/profiler/heap-snapshot.html:
+
 2012-05-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Internals::touchPositionAdjustedToBestClickableNode adjust twice for scroll-offset
