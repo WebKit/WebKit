@@ -3689,7 +3689,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
         if (oldFocusedNode == this && oldFocusedNode->hasOneRef())
             return true;
             
-        if (oldFocusedNode == oldFocusedNode->rootEditableElement())
+        if (oldFocusedNode->isRootEditableElement())
             frame()->editor()->didEndEditing();
 
         if (view()) {
@@ -3702,7 +3702,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
     }
 
     if (newFocusedNode) {
-        if (newFocusedNode == newFocusedNode->rootEditableElement() && !acceptsEditingFocus(newFocusedNode.get())) {
+        if (newFocusedNode->isRootEditableElement() && !acceptsEditingFocus(newFocusedNode.get())) {
             // delegate blocks focus change
             focusChangeBlocked = true;
             goto SetFocusedNodeDone;
@@ -3738,7 +3738,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
         }
         m_focusedNode->setFocus(true);
 
-        if (m_focusedNode == m_focusedNode->rootEditableElement())
+        if (m_focusedNode->isRootEditableElement())
             frame()->editor()->didBeginEditing();
 
         // eww, I suck. set the qt focus correctly

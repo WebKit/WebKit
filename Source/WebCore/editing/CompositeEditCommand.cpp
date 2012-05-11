@@ -971,7 +971,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
     RefPtr<Node> lastNode;
     RefPtr<Node> outerNode = passedOuterNode;
 
-    if (outerNode == outerNode->rootEditableElement()) {
+    if (outerNode->isRootEditableElement()) {
         topNode = blockElement;
         lastNode = blockElement;
     } else {

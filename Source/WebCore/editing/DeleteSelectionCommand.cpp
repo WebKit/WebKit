@@ -352,7 +352,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         }
     }
     
-    if (isTableStructureNode(node.get()) || node == node->rootEditableElement()) {
+    if (isTableStructureNode(node.get()) || node->isRootEditableElement()) {
         // Do not remove an element of table structure; remove its contents.
         // Likewise for the root editable element.
         Node* child = node->firstChild();

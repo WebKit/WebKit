@@ -611,7 +611,7 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
         return true;
 
     // FIXME: Might want to disable this check for caretBrowsing
-    if (oldFocusedNode && oldFocusedNode->rootEditableElement() == oldFocusedNode && !relinquishesEditingFocus(oldFocusedNode))
+    if (oldFocusedNode && oldFocusedNode->isRootEditableElement() && !relinquishesEditingFocus(oldFocusedNode))
         return false;
 
     m_page->editorClient()->willSetInputMethodState();

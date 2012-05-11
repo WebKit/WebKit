@@ -1567,6 +1567,11 @@ Element *Node::enclosingBlockFlowElement() const
     return 0;
 }
 
+bool Node::isRootEditableElement() const
+{
+    return rendererIsEditable() && isElementNode() && (!parentNode() || !parentNode()->rendererIsEditable() || hasTagName(bodyTag));
+}
+
 Element* Node::rootEditableElement(EditableType editableType) const
 {
     if (editableType == HasEditableAXRole)

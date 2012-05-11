@@ -201,7 +201,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Create block to be inserted.
     RefPtr<Element> blockToInsert;
-    if (startBlock == startBlock->rootEditableElement()) {
+    if (startBlock->isRootEditableElement()) {
         blockToInsert = createDefaultParagraphElement(document());
         nestNewBlock = true;
     } else if (shouldUseDefaultParagraphElement(startBlock.get())) 
