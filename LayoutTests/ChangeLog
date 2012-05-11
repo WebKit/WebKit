@@ -1,3 +1,17 @@
+2012-05-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Rebaseline compositing/geometry/horizontal-scroll-composited.html after r107389
+
+        Unreviewed test expectations update.
+
+        * platform/chromium-linux-x86/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/chromium-linux/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/chromium-mac-leopard/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/chromium-mac-snowleopard/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/chromium-mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-win-xp/compositing/geometry/horizontal-scroll-composited-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-10  MORITA Hajime  <morrita@google.com>
 
         WebKit should support tab-size.

@@ -3875,7 +3875,6 @@ BUGWK83954 : fast/forms/input-text-double-click.html = TEXT
 BUGWK83954 : http/tests/navigation/javascriptlink-frames.html = TEXT
 BUGWK83954 : fast/forms/date/date-appearance.html = TEXT
 
-BUGNOEL : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGNOEL : compositing/geometry/vertical-scroll-composited.html = IMAGE
 BUGNOEL : fast/backgrounds/size/backgroundSize17.html = IMAGE
 BUGNOEL : fast/backgrounds/size/backgroundSize18.html = IMAGE
@@ -3981,7 +3980,7 @@ BUGNOEL : tables/mozilla_expected_failures/other/test4.html = IMAGE
 
 // Skip until SUBPIXEL_LAYOUT is enabled
 BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
-BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html  = FAIL
+BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
 
 BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
