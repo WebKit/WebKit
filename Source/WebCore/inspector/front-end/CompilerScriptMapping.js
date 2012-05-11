@@ -71,7 +71,7 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     uiSourceCodeList: function()
     {
-        var result = []
+        var result = [];
         for (var url in this._uiSourceCodeByURL)
             result.push(this._uiSourceCodeByURL[url]);
         return result;
@@ -116,7 +116,7 @@ WebInspector.CompilerScriptMapping.prototype = {
                 contentProvider = new WebInspector.StaticContentProvider("text/javascript", sourceContent);
             else
                 contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL);
-            var uiSourceCode = new WebInspector.JavaScriptSource(sourceURL, sourceURL, contentProvider);
+            var uiSourceCode = new WebInspector.JavaScriptSource(sourceURL, sourceURL, contentProvider, this);
             uiSourceCode.isContentScript = script.isContentScript;
             uiSourceCode.isEditable = false;
             this._uiSourceCodeByURL[sourceURL] = uiSourceCode;

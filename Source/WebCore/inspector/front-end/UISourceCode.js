@@ -35,13 +35,15 @@
  * @param {string} id
  * @param {string} url
  * @param {WebInspector.ContentProvider} contentProvider
+ * @param {WebInspector.SourceMapping} sourceMapping
  */
-WebInspector.UISourceCode = function(id, url, contentProvider)
+WebInspector.UISourceCode = function(id, url, contentProvider, sourceMapping)
 {
     this._id = id;
     this._url = url;
     this._parsedURL = new WebInspector.ParsedURL(url);
     this._contentProvider = contentProvider;
+    this._sourceMapping = sourceMapping;
     this.isContentScript = false;
     this.isEditable = false;
     /**
@@ -91,10 +93,9 @@ WebInspector.UISourceCode.prototype = {
             callback(this._content, false, this._mimeType);
             return;
         }
-
         this._requestContentCallbacks.push(callback);
         if (this._requestContentCallbacks.length === 1)
-            this._contentProvider.requestContent(this._didRequestContent.bind(this));
+            this._contentProvider.requestContent(this.fireContentAvailable.bind(this));
     },
 
     /**
@@ -106,6 +107,22 @@ WebInspector.UISourceCode.prototype = {
         var oldContent = this._content;
         this._content = newContent;
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.ContentChanged, {oldContent: oldContent, content: newContent});
+    },
+
+    /**
+     * @return {string}
+     */
+    mimeType: function()
+    {
+        return this._mimeType;
+    },
+
+    /**
+     * @return {?string}
+     */
+    content: function()
+    {
+        return this._content;
     },
 
     /**
@@ -124,15 +141,34 @@ WebInspector.UISourceCode.prototype = {
      * @param {boolean} contentEncoded
      * @param {string} mimeType
      */
-    _didRequestContent: function(content, contentEncoded, mimeType)
+    fireContentAvailable: function(content, contentEncoded, mimeType)
     {
         this._contentLoaded = true;
         this._mimeType = mimeType;
         this._content = content;
 
-        for (var i = 0; i < this._requestContentCallbacks.length; ++i)
-            this._requestContentCallbacks[i](content, contentEncoded, mimeType);
+        var callbacks = this._requestContentCallbacks.slice();
         this._requestContentCallbacks = [];
+        for (var i = 0; i < callbacks.length; ++i)
+            callbacks[i](content, contentEncoded, mimeType);
+    },
+
+    /**
+     * @return {boolean}
+     */
+    contentLoaded: function()
+    {
+        return this._contentLoaded;
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {DebuggerAgent.Location}
+     */
+    uiLocationToRawLocation: function(lineNumber, columnNumber)
+    {
+        return this._sourceMapping.uiLocationToRawLocation(this, lineNumber, columnNumber);
     },
 
     /**

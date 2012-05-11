@@ -1,3 +1,21 @@
+2012-05-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: pass source mapping into UISourceCode's constructor; move formatting outside mapping.
+        https://bugs.webkit.org/show_bug.cgi?id=86099
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/linkifier.html:
+        * inspector/debugger/pause-in-inline-script.html:
+        * inspector/debugger/raw-source-code-expected.txt:
+        * inspector/debugger/raw-source-code.html:
+        * inspector/debugger/resources/test-navigation.html: Removed.
+        * inspector/debugger/script-formatter-breakpoints-expected.txt:
+        * inspector/debugger/script-formatter-breakpoints.html:
+        * inspector/debugger/script-formatter-console.html:
+        * inspector/debugger/selected-call-frame-after-formatting-source.html:
+
 2012-05-11  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Remove support of combined nodes and edges serialization schema.

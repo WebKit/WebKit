@@ -146,7 +146,8 @@ WebInspector.Script.prototype = {
      */
     isInlineScript: function()
     {
-        return !!this.sourceURL && this.lineOffset !== 0 && this.columnOffset !== 0;
+        var startsAtZero = !this.lineOffset && !this.columnOffset;
+        return !!this.sourceURL && !startsAtZero;
     },
 
     /**
@@ -157,8 +158,7 @@ WebInspector.Script.prototype = {
     {
         console.assert(rawLocation.scriptId === this.scriptId);
         var uiLocation = this._sourceMapping.rawLocationToUILocation(rawLocation);
-        // FIXME: uiLocation will never be null after the next refactoring step.
-        return uiLocation ? uiLocation.uiSourceCode.overrideLocation(uiLocation) : null;
+        return uiLocation.uiSourceCode.overrideLocation(uiLocation);
     },
 
     /**

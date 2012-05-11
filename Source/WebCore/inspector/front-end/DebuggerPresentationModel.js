@@ -39,15 +39,13 @@ WebInspector.DebuggerPresentationModel = function()
 
     this._presentationCallFrames = [];
 
-    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, WebInspector.debuggerModel, this._scriptMapping);
-    this._breakpointsActive = true;
+    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, WebInspector.debuggerModel);
 
     this._pendingConsoleMessages = {};
     this._consoleMessageLiveLocations = [];
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.CallFrameSelected, this._callFrameSelected, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 
     WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
@@ -66,26 +64,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
     get breakpointManager()
     {
         return this._breakpointManager;
-    },
-
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     * @return {?WebInspector.UILocation}
-     */
-    rawLocationToUILocation: function(rawLocation)
-    {
-        return this._scriptMapping.rawLocationToUILocation(rawLocation);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
-     */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
-    {
-        return this._scriptMapping.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
     },
 
     /**
@@ -117,12 +95,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._parsedScriptSource(event);
     },
 
-    _callFrameSelected: function(event)
-    {
-        var callFrame = /** @type {WebInspector.DebuggerModel.CallFrame} */ event.data;
-        this._scriptMapping.forceUpdateSourceMapping(callFrame.location);
-    },
-
     /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
@@ -138,9 +110,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         var removedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["removedItems"];
         var addedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["addedItems"];
-        
-        for (var i = 0; i < addedItems.length; ++i)
-            WebInspector.debuggerPresentationModel.breakpointManager.restoreBreakpoints(addedItems[i]);
 
         if (!removedItems.length) {
             for (var i = 0; i < addedItems.length; ++i)
@@ -170,7 +139,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     setScriptSource: function(uiSourceCode, newSource, callback)
     {
-        var rawLocation = this.uiLocationToRawLocation(uiSourceCode, 0, 0);
+        var rawLocation = uiSourceCode.uiLocationToRawLocation(0, 0);
         var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
 
         /**
@@ -190,15 +159,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
             uiSourceCode.contentChanged(newSource);
         }
         WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
-    },
-
-    /**
-     * @param {boolean} formatSource
-     */
-    setFormatSource: function(formatSource)
-    {
-        this._breakpointManager.reset();
-        this._scriptMapping.setFormatSource(formatSource);
     },
 
     /**
@@ -284,13 +244,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     continueToLine: function(uiSourceCode, lineNumber)
     {
-        var rawLocation = this.uiLocationToRawLocation(uiSourceCode, lineNumber, 0);
+        var rawLocation = uiSourceCode.uiLocationToRawLocation(lineNumber, 0);
         WebInspector.debuggerModel.continueToLocation(rawLocation);
-    },
-
-    removeAllBreakpoints: function()
-    {
-        this._breakpointManager.removeAllBreakpoints();
     },
 
     _debuggerReset: function()

@@ -38,26 +38,23 @@
  * @param {WebInspector.Script} script
  * @param {WebInspector.Resource} resource
  * @param {WebInspector.NetworkRequest} request
- * @param {WebInspector.ScriptFormatter} formatter
- * @param {boolean} formatted
+ * @param {WebInspector.SourceMapping} sourceMapping
  */
-WebInspector.RawSourceCode = function(id, script, resource, request, formatter, formatted)
+WebInspector.RawSourceCode = function(id, script, resource, request, sourceMapping)
 {
     this.id = id;
     this.url = script.sourceURL;
     this.isContentScript = script.isContentScript;
     this._scripts = [script];
-    this._formatter = formatter;
-    this._formatted = formatted;
     this._resource = resource;
     this._pendingRequest = request;
+    this._sourceMapping = sourceMapping;
 
-    this._hasNewScripts = true;
-
+    this._uiSourceCode = null;
     if (this._pendingRequest)
         this._pendingRequest.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._finishedLoading, this);
     else
-        this._updateSourceMapping();
+        this._uiSourceCode = this._createUISourceCode(this.url);
 }
 
 WebInspector.RawSourceCode.Events = {
@@ -71,7 +68,6 @@ WebInspector.RawSourceCode.prototype = {
     addScript: function(script)
     {
         this._scripts.push(script);
-        this._hasNewScripts = true;
     },
 
     /**
@@ -80,9 +76,35 @@ WebInspector.RawSourceCode.prototype = {
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        if (this._sourceMapping)
-            return this._sourceMapping.rawLocationToUILocation(rawLocation);
-        return null;
+        var uiSourceCode = this._uiSourceCode || this._temporaryUISourceCode;
+        if (!uiSourceCode) {
+            this._temporaryUISourceCode = this._createUISourceCode("tmp-" + this.url);
+            uiSourceCode = this._temporaryUISourceCode;
+            this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeChanged, { uiSourceCode: uiSourceCode });
+        }
+        return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber, rawLocation.columnNumber || 0);
+    },
+
+    /**
+     * @param {string} id
+     * @return {WebInspector.UISourceCode}
+     */
+    _createUISourceCode: function(id)
+    {
+        var isStandaloneScript = this._scripts.length === 1 && !this._scripts[0].isInlineScript();
+
+        var contentProvider;
+        if (this._resource)
+            contentProvider = this._resource;
+        else if (isStandaloneScript)
+            contentProvider = this._scripts[0];
+        else
+            contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
+
+        var uiSourceCode = new WebInspector.JavaScriptSource(id, this.url, contentProvider, this._sourceMapping);
+        uiSourceCode.isContentScript = this.isContentScript;
+        uiSourceCode.isEditable = isStandaloneScript;
+        return uiSourceCode;
     },
 
     /**
@@ -93,9 +115,9 @@ WebInspector.RawSourceCode.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
-        if (this._sourceMapping)
-            return this._sourceMapping.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
-        return null;
+        if (this.url)
+            return WebInspector.debuggerModel.createRawLocationByURL(this.url, lineNumber, columnNumber);
+        return WebInspector.debuggerModel.createRawLocation(this._scripts[0], lineNumber, columnNumber);
     },
 
     /**
@@ -103,240 +125,17 @@ WebInspector.RawSourceCode.prototype = {
      */
     uiSourceCode: function()
     {
-        if (this._sourceMapping)
-            return this._sourceMapping.uiSourceCode();
-        return null;
-    },
-
-    /**
-     * @param {boolean} formatted
-     */
-    setFormatted: function(formatted)
-    {
-        if (this._formatted === formatted)
-            return;
-        this._formatted = formatted;
-        this._updateSourceMapping();
+        return this._uiSourceCode || this._temporaryUISourceCode;
     },
 
     _finishedLoading: function(event)
     {
         this._resource = WebInspector.resourceForURL(this._pendingRequest.url);
         delete this._pendingRequest;
-        this._updateSourceMapping();
-    },
-
-    /**
-     * @param {WebInspector.Script} script
-     */
-    forceUpdateSourceMapping: function(script)
-    {
-        if (!this._pendingRequest || !this._hasNewScripts)
-            return;
-        this._hasNewScripts = false;
-        this._updateSourceMapping();
-    },
-
-    _updateSourceMapping: function()
-    {
-        if (this._updatingSourceMapping) {
-            this._updateNeeded = true;
-            return;
-        }
-        this._updatingSourceMapping = true;
-        this._updateNeeded = false;
-
-        this._createSourceMapping(didCreateSourceMapping.bind(this));
-
-        /**
-         * @this {WebInspector.RawSourceCode}
-         * @param {WebInspector.RawSourceCode.SourceMapping} sourceMapping
-         */
-        function didCreateSourceMapping(sourceMapping)
-        {
-            this._updatingSourceMapping = false;
-            if (sourceMapping && !this._updateNeeded)
-                this._saveSourceMapping(sourceMapping);
-            else
-                this._updateSourceMapping();
-        }
-    },
-
-    _createContentProvider: function()
-    {
-        if (this._resource)
-            return this._resource;
-        if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
-            return this._scripts[0];
-        return new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
-    },
-
-    /**
-     * @param {function(WebInspector.RawSourceCode.SourceMapping)} callback
-     */
-    _createSourceMapping: function(callback)
-    {
-        var originalContentProvider = this._createContentProvider();
-        if (!this._formatted) {
-            var uiSourceCode = this._createUISourceCode(this.url, this.url, originalContentProvider);
-            var sourceMapping = new WebInspector.RawSourceCode.PlainSourceMapping(this, uiSourceCode);
-            callback(sourceMapping);
-            return;
-        }
-
-        /**
-         * @this {WebInspector.RawSourceCode}
-         * @param {?string} content
-         * @param {boolean} contentEncoded
-         * @param {string} mimeType
-         */
-        function didRequestContent(content, contentEncoded, mimeType)
-        {
-            /**
-             * @this {WebInspector.RawSourceCode}
-             * @param {string} formattedContent
-             * @param {WebInspector.FormattedSourceMapping} mapping
-             */
-            function didFormatContent(formattedContent, mapping)
-            {
-                var contentProvider = new WebInspector.StaticContentProvider(mimeType, formattedContent)
-                var uiSourceCode = this._createUISourceCode("deobfuscated:" + this.url, this.url, contentProvider);
-                var sourceMapping = new WebInspector.RawSourceCode.FormattedSourceMapping(this, uiSourceCode, mapping);
-                callback(sourceMapping);
-            }
-            this._formatter.formatContent(mimeType, content || "", didFormatContent.bind(this));
-        }
-        originalContentProvider.requestContent(didRequestContent.bind(this));
-    },
-
-    /**
-     * @param {string} id
-     * @param {string} url
-     * @param {WebInspector.ContentProvider} contentProvider
-     */
-    _createUISourceCode: function(id, url, contentProvider)
-    {
-        var uiSourceCode = new WebInspector.JavaScriptSource(id, url, contentProvider);
-        uiSourceCode.isContentScript = this.isContentScript;
-        uiSourceCode.isEditable = this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset && !this._formatted;
-        return uiSourceCode;
-    },
-
-    /**
-     * @param {WebInspector.RawSourceCode.SourceMapping} sourceMapping
-     */
-    _saveSourceMapping: function(sourceMapping)
-    {
-        var oldUISourceCode;
-        if (this._sourceMapping)
-            oldUISourceCode = this._sourceMapping.uiSourceCode();
-        this._sourceMapping = sourceMapping;
-        this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeChanged, { oldUISourceCode: oldUISourceCode });
+        var oldUISourceCode = this._uiSourceCode || this._temporaryUISourceCode;
+        this._uiSourceCode = this._createUISourceCode(this.url);
+        this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeChanged, { uiSourceCode: this._uiSourceCode, oldUISourceCode: oldUISourceCode });
     }
 }
 
 WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @interface
- * @extends {WebInspector.SourceMapping}
- */
-WebInspector.RawSourceCode.SourceMapping = function()
-{
-}
-
-WebInspector.RawSourceCode.SourceMapping.prototype = {
-    /**
-     * @return {WebInspector.UISourceCode}
-     */
-    uiSourceCode: function() { }
-}
-
-/**
- * @constructor
- * @implements {WebInspector.RawSourceCode.SourceMapping}
- * @param {WebInspector.RawSourceCode} rawSourceCode
- * @param {WebInspector.UISourceCode} uiSourceCode
- */
-WebInspector.RawSourceCode.PlainSourceMapping = function(rawSourceCode, uiSourceCode)
-{
-    this._rawSourceCode = rawSourceCode;
-    this._uiSourceCode = uiSourceCode;
-}
-
-WebInspector.RawSourceCode.PlainSourceMapping.prototype = {
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     * @return {WebInspector.UILocation}
-     */
-    rawLocationToUILocation: function(rawLocation)
-    {
-        return new WebInspector.UILocation(this._uiSourceCode, rawLocation.lineNumber, rawLocation.columnNumber || 0);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
-     */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
-    {
-        console.assert(uiSourceCode === this._uiSourceCode);
-        return WebInspector.debuggerModel.createRawLocation(this._rawSourceCode._scripts[0], lineNumber, columnNumber);
-    },
-
-    /**
-     * @return {WebInspector.UISourceCode}
-     */
-    uiSourceCode: function()
-    {
-        return this._uiSourceCode;
-    }
-}
-
-/**
- * @constructor
- * @implements {WebInspector.RawSourceCode.SourceMapping}
- * @param {WebInspector.RawSourceCode} rawSourceCode
- * @param {WebInspector.UISourceCode} uiSourceCode
- * @param {WebInspector.FormattedSourceMapping} mapping
- */
-WebInspector.RawSourceCode.FormattedSourceMapping = function(rawSourceCode, uiSourceCode, mapping)
-{
-    this._rawSourceCode = rawSourceCode;
-    this._uiSourceCode = uiSourceCode;
-    this._mapping = mapping;
-}
-
-WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     */
-    rawLocationToUILocation: function(rawLocation)
-    {
-        var location = this._mapping.originalToFormatted(rawLocation.lineNumber, rawLocation.columnNumber || 0);
-        return new WebInspector.UILocation(this._uiSourceCode, location[0], location[1]);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
-     */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
-    {
-        console.assert(uiSourceCode === this._uiSourceCode);
-        var location = this._mapping.formattedToOriginal(lineNumber, columnNumber);
-        return WebInspector.debuggerModel.createRawLocation(this._rawSourceCode._scripts[0], location[0], location[1]);
-    },
-
-    /**
-     * @return {WebInspector.UISourceCode}
-     */
-    uiSourceCode: function()
-    {
-        return this._uiSourceCode;
-    }
-}

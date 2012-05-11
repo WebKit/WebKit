@@ -120,11 +120,15 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         var oldContent = /** @type {string} */ event.data.oldContent;
         var content = /** @type {string} */ event.data.content;
 
-        var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
-        for (var i = 0; i < breakpointLocations.length; ++i)
-            breakpointLocations[i].breakpoint.remove();
-        this.setContent(content, false, "text/javascript");
-        this._updateBreakpointsAfterLiveEdit(oldContent, content, breakpointLocations);
+        if (this._uiSourceCode.togglingFormatter())
+            this.setContent(content, false, this._uiSourceCode.mimeType());
+        else {
+            var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
+            for (var i = 0; i < breakpointLocations.length; ++i)
+                breakpointLocations[i].breakpoint.remove();
+            this.setContent(content, false, this._uiSourceCode.mimeType());
+            this._updateBreakpointsAfterLiveEdit(oldContent, content, breakpointLocations);
+        }
     },
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber)
@@ -510,9 +514,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
         var breakpoint = /** @type {WebInspector.BreakpointManager.Breakpoint} */ event.data.breakpoint;
         var remainingBreakpoint = this._breakpointManager.findBreakpoint(this._uiSourceCode, uiLocation.lineNumber);
-        if (!remainingBreakpoint && this.loaded) {
+        if (!remainingBreakpoint && this.loaded)
             this._removeBreakpointDecoration(uiLocation.lineNumber);
-        }
     },
 
     _consoleMessageAdded: function(event)

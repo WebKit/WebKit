@@ -164,7 +164,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._reset.bind(this, false));
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this)
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
 
@@ -219,6 +219,8 @@ WebInspector.ScriptsPanel.prototype = {
     _handleUISourceCodeAdded: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        if (this._toggleFormatSourceButton.toggled)
+            uiSourceCode.setFormatted(true);
         this._uiSourceCodeAdded(uiSourceCode);
     },
 
@@ -396,7 +398,7 @@ WebInspector.ScriptsPanel.prototype = {
     showFunctionDefinition: function(functionLocation)
     {
         WebInspector.showPanelForAnchorNavigation(this);
-        var uiLocation = this._presentationModel.rawLocationToUILocation(functionLocation);
+        var uiLocation = WebInspector.debuggerModel.rawLocationToUILocation(functionLocation);
         this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
     },
 
@@ -423,15 +425,13 @@ WebInspector.ScriptsPanel.prototype = {
      */
     _showFile: function(uiSourceCode)
     {
-        if (!this._navigator.isScriptSourceAdded(uiSourceCode))
-            return null;
-
         var sourceFrame = this._getOrCreateSourceFrame(uiSourceCode);
         if (this._currentUISourceCode === uiSourceCode)
             return sourceFrame;
         this._currentUISourceCode = uiSourceCode;
 
-        this._navigator.revealUISourceCode(uiSourceCode);
+        if (this._navigator.isScriptSourceAdded(uiSourceCode))
+            this._navigator.revealUISourceCode(uiSourceCode);
         this._editorContainer.showFile(uiSourceCode);
         this._updateScriptViewStatusBarItems();
 
@@ -517,7 +517,7 @@ WebInspector.ScriptsPanel.prototype = {
     _revealExecutionLine: function(uiLocation)
     {
         // Some scripts (anonymous and snippets evaluations) are not added to files select by default.
-        this._addUISourceCode(uiLocation.uiSourceCode);
+        this._editorContainer.uiSourceCodeAdded(uiLocation.uiSourceCode);
         var sourceFrame = this._showFile(uiLocation.uiSourceCode);
         sourceFrame.revealLine(uiLocation.lineNumber);
     },
@@ -913,7 +913,9 @@ WebInspector.ScriptsPanel.prototype = {
     _toggleFormatSource: function()
     {
         this._toggleFormatSourceButton.toggled = !this._toggleFormatSourceButton.toggled;
-        this._presentationModel.setFormatSource(this._toggleFormatSourceButton.toggled);
+        var uiSourceCodes = this._presentationModel.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            uiSourceCodes[i].setFormatted(this._toggleFormatSourceButton.toggled);
     },
 
     addToWatch: function(expression)

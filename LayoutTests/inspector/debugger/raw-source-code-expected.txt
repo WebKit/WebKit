@@ -19,21 +19,3 @@ UISourceCode is content script: false
 Mime type: text/html
 Script source: <resource content>
 
-Running: testForceUpdateSourceMapping
-Mime type: text/html
-Script source:   <script><script source 1></script>
-Mime type: text/html
-Script source:   <script><script source 1></script> <script><script source 2></script>
-Mime type: text/html
-Script source: <resource content>
-
-Running: testFormattingWithFinishedResource
-Mime type: text/javascript
-Script source: <resource content>
-Mime type: text/javascript
-Script source: <formatted> <resource content>
-Mime type: text/javascript
-Script source: <resource content>
-
-Running: testFormattingWithPendingResource
-

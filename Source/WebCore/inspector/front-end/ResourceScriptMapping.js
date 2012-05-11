@@ -39,8 +39,6 @@ WebInspector.ResourceScriptMapping = function()
     this._rawSourceCodeForURL = {};
     this._rawSourceCodeForDocumentURL = {};
     this._rawSourceCodeForUISourceCode = new Map();
-    this._formatter = new WebInspector.ScriptFormatter();
-    this._formatSource = false;
 }
 
 WebInspector.ResourceScriptMapping.prototype = {
@@ -114,7 +112,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             }
         }
 
-        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, request, this._formatter, this._formatSource);
+        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, request, this);
         this._rawSourceCodes.push(rawSourceCode);
         this._bindScriptToRawSourceCode(script, rawSourceCode);
         if (isInlineScript)
@@ -131,8 +129,9 @@ WebInspector.ResourceScriptMapping.prototype = {
     _handleUISourceCodeChanged: function(event)
     {
         var rawSourceCode = /** @type {WebInspector.RawSourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
         var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
-        this._uiSourceCodeChanged(rawSourceCode, oldUISourceCode, rawSourceCode.uiSourceCode());
+        this._uiSourceCodeChanged(rawSourceCode, oldUISourceCode, uiSourceCode);
     },
 
     /**
@@ -168,28 +167,6 @@ WebInspector.ResourceScriptMapping.prototype = {
         this._rawSourceCodeForScriptId[script.scriptId] = rawSourceCode;
         this._rawSourceCodeForURL[script.sourceURL] = rawSourceCode;
         script.setSourceMapping(this);
-    },
-
-    /**
-     * @param {boolean} formatSource
-     */
-    setFormatSource: function(formatSource)
-    {
-        if (this._formatSource === formatSource)
-            return;
-
-        this._formatSource = formatSource;
-        for (var i = 0; i < this._rawSourceCodes.length; ++i)
-            this._rawSourceCodes[i].setFormatted(this._formatSource);
-    },
-
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     */
-    forceUpdateSourceMapping: function(rawLocation)
-    {
-        var rawSourceCode = this._rawSourceCodeForScriptId[rawLocation.scriptId];
-        rawSourceCode.forceUpdateSourceMapping();
     },
 
     reset: function()

@@ -14,22 +14,23 @@ var test = function()
 {
     var panel = WebInspector.panels.scripts;
     var worker = new Worker("ScriptFormatterWorker.js");
+    var sourceFrame;
 
     InspectorTest.runDebuggerTestSuite([
         function testConsoleMessagesForFormattedScripts(next)
         {
             InspectorTest.showScriptSource("script-formatter-console.html", didShowScriptSource);
 
-            function didShowScriptSource(sourceFrame)
+            function didShowScriptSource(frame)
             {
+                sourceFrame = frame;
                 InspectorTest.evaluateInPage("f1()", didEvaluate);
             }
 
             function didEvaluate()
             {
                 dumpConsoleMessageURLs();
-                InspectorTest.addSniffer(WebInspector, "formatLinkText", setTimeout.bind(window, didFormatLinkText, 0));
-                panel._toggleFormatSource();
+                sourceFrame._uiSourceCode.setFormatted(true, didFormatLinkText);
             }
 
             function didFormatLinkText()

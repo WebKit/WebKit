@@ -145,7 +145,7 @@ WebInspector.ScriptsSearchResultsPane.prototype = {
     createAnchor: function(file, lineNumber, columnNumber)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ file;
-        var rawLocation = WebInspector.debuggerPresentationModel.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
+        var rawLocation = uiSourceCode.uiLocationToRawLocation(lineNumber, columnNumber);
         var anchor = this._linkifier.linkifyRawLocation(rawLocation);
         anchor.removeChildren();
         return anchor;

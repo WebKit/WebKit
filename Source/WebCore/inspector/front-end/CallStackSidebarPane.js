@@ -139,13 +139,17 @@ WebInspector.CallStackSidebarPane.prototype = {
 
     setStatus: function(status)
     {
-        var statusMessageElement = document.createElement("div");
-        statusMessageElement.className = "info";
+        if (!this._statusMessageElement) {
+            this._statusMessageElement = document.createElement("div");
+            this._statusMessageElement.className = "info";
+            this.bodyElement.appendChild(this._statusMessageElement);
+        }
         if (typeof status === "string")
-            statusMessageElement.textContent = status;
-        else
-            statusMessageElement.appendChild(status);
-        this.bodyElement.appendChild(statusMessageElement);
+            this._statusMessageElement.textContent = status;
+        else {
+            this._statusMessageElement.removeChildren();
+            this._statusMessageElement.appendChild(status);
+        }
     }
 }
 

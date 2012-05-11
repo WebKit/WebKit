@@ -55,14 +55,14 @@ function test()
         return formatter;
     };
 
-    function createRawSourceCode(script, request, formatted, compilerSourceMapping)
+    function createRawSourceCode(script, request, compilerSourceMapping)
     {
         var resource = null;
         if (request && request.finished) {
             resource = request.resource();
             request = null;
         }
-        var rawSourceCode = new WebInspector.RawSourceCode("id", script, resource, request, createScriptFormatterMock(), !!formatted, compilerSourceMapping);
+        var rawSourceCode = new WebInspector.RawSourceCode("id", script, resource, request, compilerSourceMapping);
         rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeChanged, defaultUISourceCodeChangedHandler);
         return rawSourceCode;
     }
@@ -140,7 +140,6 @@ function test()
                 InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.addScript(script2);
-                rawSourceCode.forceUpdateSourceMapping();
                 next();
             }
         },
@@ -165,159 +164,10 @@ function test()
                 InspectorTest.addResult("Script source: " + content);
 
                 rawSourceCode.addScript(script2);
-                rawSourceCode.forceUpdateSourceMapping();
                 InspectorTest.checkUILocation(uiSourceCode, 1, 20, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 20)));
                 InspectorTest.checkRawLocation(script1, 1, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 1, 0));
                 InspectorTest.checkRawLocation(script2, 6, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 6, 0));
 
-                next();
-            }
-        },
-
-        function testForceUpdateSourceMapping(next)
-        {
-            WebInspector.debuggerModel._reset();
-            var script1 = InspectorTest.createScriptMock("index.html", 0, 10, false, "<script source 1>");
-            var script2 = InspectorTest.createScriptMock("index.html", 0, 45, false, "<script source 2>");
-            var script3 = InspectorTest.createScriptMock("index.html", 1, 10, false, "<script source 3>");
-            var request = createPendingRequestMock("document", "<resource content>");
-            var rawSourceCode = createRawSourceCode(script1, request);
-
-            InspectorTest.assertTrue(!rawSourceCode.uiSourceCode());
-            waitForUISourceCodeChangedEvent(rawSourceCode, requestContent);
-            rawSourceCode.forceUpdateSourceMapping();
-
-            function requestContent()
-            {
-                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
-                var uiSourceCode = rawSourceCode.uiSourceCode();
-                uiSourceCode.requestContent(didRequestContentOneScript);
-            }
-
-            function didRequestContentOneScript(content, contentEncoded, mimeType)
-            {
-                InspectorTest.addResult("Mime type: " + mimeType);
-                InspectorTest.addResult("Script source: " + content);
-
-                rawSourceCode.forceUpdateSourceMapping();
-                rawSourceCode.addScript(script2);
-                waitForUISourceCodeChangedEvent(rawSourceCode, requestContentTwoScripts);
-                rawSourceCode.forceUpdateSourceMapping();
-            }
-
-            function requestContentTwoScripts()
-            {
-                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
-                var uiSourceCode = rawSourceCode.uiSourceCode();
-                uiSourceCode.requestContent(didRequestContentTwoScripts);
-            }
-
-            function didRequestContentTwoScripts(content, contentEncoded, mimeType)
-            {
-                InspectorTest.addResult("Mime type: " + mimeType);
-                InspectorTest.addResult("Script source: " + content);
-
-                rawSourceCode.forceUpdateSourceMapping();
-                waitForUISourceCodeChangedEvent(rawSourceCode, requestContentRequest);
-                finishRequest(request);
-            }
-
-            function requestContentRequest()
-            {
-                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
-                var uiSourceCode = rawSourceCode.uiSourceCode();
-                uiSourceCode.requestContent(didRequestContentRequest);
-            }
-
-            function didRequestContentRequest(content, contentEncoded, mimeType)
-            {
-                InspectorTest.addResult("Mime type: " + mimeType);
-                InspectorTest.addResult("Script source: " + content);
-
-                rawSourceCode.addScript(script3);
-                rawSourceCode.forceUpdateSourceMapping();
-
-                next();
-            }
-        },
-
-        function testFormattingWithFinishedResource(next)
-        {
-            WebInspector.debuggerModel._reset();
-            var script = InspectorTest.createScriptMock("foo.js", 0, 0, true, "<script source>");
-            var request = createFinishedRequestMock("script", "<resource content>");
-            var rawSourceCode = createRawSourceCode(script, request, false);
-
-            InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
-            var uiSourceCode = rawSourceCode.uiSourceCode();
-            InspectorTest.checkUILocation(uiSourceCode, 1, 2, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
-            InspectorTest.checkRawLocation(script, 2, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 2, 0));
-            uiSourceCode.requestContent(didRequestContent);
-
-            function didRequestContent(content, contentEncoded, mimeType)
-            {
-                InspectorTest.addResult("Mime type: " + mimeType);
-                InspectorTest.addResult("Script source: " + content);
-
-                rawSourceCode.setFormatted(true);
-                waitForUISourceCodeChangedEvent(rawSourceCode, requestFormattedContent);
-                rawSourceCode._formatter.finish();
-            }
-
-            function requestFormattedContent()
-            {
-                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
-                var uiSourceCode = rawSourceCode.uiSourceCode();
-                InspectorTest.checkUILocation(uiSourceCode, 2, 4, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
-                InspectorTest.checkRawLocation(script, 1, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 2, 0));
-                uiSourceCode.requestContent(didRequestFormattedContent);
-            }
-
-            function didRequestFormattedContent(content, contentEncoded, mimeType)
-            {
-                InspectorTest.addResult("Mime type: " + mimeType);
-                InspectorTest.addResult("Script source: " + content);
-
-                waitForUISourceCodeChangedEvent(rawSourceCode, requestNotFormattedContent);
-                rawSourceCode.setFormatted(false);
-            }
-
-            function requestNotFormattedContent()
-            {
-                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
-                var uiSourceCode = rawSourceCode.uiSourceCode();
-                InspectorTest.checkUILocation(uiSourceCode, 1, 2, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
-                InspectorTest.checkRawLocation(script, 2, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 2, 0));
-                uiSourceCode.requestContent(didRequestNotFormattedContent);
-            }
-
-            function didRequestNotFormattedContent(content, contentEncoded, mimeType)
-            {
-                InspectorTest.addResult("Mime type: " + mimeType);
-                InspectorTest.addResult("Script source: " + content);
-
-                next();
-            }
-        },
-
-        function testFormattingWithPendingResource(next)
-        {
-            WebInspector.debuggerModel._reset();
-            var script = InspectorTest.createScriptMock("foo.js", 0, 0, true, "<script source>");
-            var request = createPendingRequestMock("script", "<resource content>");
-            var rawSourceCode = createRawSourceCode(script, request, true);
-
-            InspectorTest.assertTrue(!rawSourceCode.uiSourceCode());
-            finishRequest(request);
-            waitForUISourceCodeChangedEvent(rawSourceCode, checkMapping);
-            rawSourceCode._formatter.finish();
-
-            function checkMapping()
-            {
-                InspectorTest.assertTrue(!!rawSourceCode.uiSourceCode());
-                var uiSourceCode = rawSourceCode.uiSourceCode();
-                InspectorTest.checkUILocation(uiSourceCode, 2, 4, rawSourceCode.rawLocationToUILocation(createRawLocation(1, 2)));
-                InspectorTest.checkRawLocation(script, 1, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 2, 0));
                 next();
             }
         }

@@ -4,30 +4,20 @@ Debugger was enabled.
 
 Running: testBreakpointsInOriginalAndFormattedSource
 Script execution paused.
-
-Dump breakpoint sidebar pane:
+Breakpoint sidebar pane while paused in raw
 
     script-formatter-breakpoints.html:11
     var f=0;
 Script execution resumed.
-Page reloaded.
-Navigated to test-navigation.html
-Page reloaded.
-Navigated back to test page.
-
-Dump breakpoint sidebar pane:
-
 Script execution paused.
+Breakpoint sidebar pane while paused in pretty printed
 
-Dump breakpoint sidebar pane:
-
-    script-formatter-breakpoints.html:25
-    return 0;
-Script execution resumed.
-
-Dump breakpoint sidebar pane:
+    script-formatter-breakpoints.html:18
+    var f = 0;
+Breakpoint sidebar pane while paused in raw
 
     script-formatter-breakpoints.html:11
     var f=0;
+Script execution resumed.
 Debugger was disabled.
 

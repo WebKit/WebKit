@@ -12,15 +12,10 @@ function f1()
     return 0;
 }
 
-function f2()
-{
-    var x = 0;
-    return 0;
-}
-
 var test = function()
 {
     var panel = WebInspector.panels.scripts;
+    var sourceFrame;
 
     InspectorTest.runDebuggerTestSuite([
         function testBreakpointsInOriginalAndFormattedSource(next)
@@ -28,8 +23,9 @@ var test = function()
             var root;
             InspectorTest.showScriptSource("script-formatter-breakpoints.html", didShowScriptSource);
 
-            function didShowScriptSource(sourceFrame)
+            function didShowScriptSource(frame)
             {
+                sourceFrame = frame;
                 root = sourceFrame._url.substr(0, sourceFrame._url.lastIndexOf("/") + 1);
                 InspectorTest.setBreakpoint(sourceFrame, 10, "", true);
                 InspectorTest.waitUntilPaused(pausedInF1);
@@ -38,65 +34,36 @@ var test = function()
 
             function pausedInF1(callFrames)
             {
-                InspectorTest.assertEquals("f1", callFrames[0].functionName);
-                dumpBreakpointSidebarPane();
+                dumpBreakpointSidebarPane("while paused in raw");
                 InspectorTest.resumeExecution(resumed);
             }
 
             function resumed()
             {
-                InspectorTest.navigate(root + "resources/test-navigation.html", didNavigateAnotherPage);
+                sourceFrame._uiSourceCode.setFormatted(true, didFormatPage);
             }
 
-            function didNavigateAnotherPage()
+            function didFormatPage()
             {
-                InspectorTest.addResult("Navigated to test-navigation.html");
-                panel._toggleFormatSource();
-                InspectorTest.showScriptSource("test-navigation.html", didShowAnotherPage);
-            }
-
-            function didShowAnotherPage(sourceFrame)
-            {
-                InspectorTest.navigate(root + "script-formatter-breakpoints.html", didNavigateBack);
-            }
-
-            function didNavigateBack()
-            {
-                InspectorTest.addResult("Navigated back to test page.");
-                dumpBreakpointSidebarPane();
-                InspectorTest.showScriptSource("script-formatter-breakpoints.html", didShowFormattedScriptSource);
-            }
-
-            function didShowFormattedScriptSource(sourceFrame)
-            {
-                // There should be no breakpoint in f1 since script is pretty-printed now.
+                // There should be a breakpoint in f1 although script is pretty-printed.
+                InspectorTest.waitUntilPaused(pausedInF1Again);
                 InspectorTest.evaluateInPageWithTimeout("f1()");
-                InspectorTest.setBreakpoint(panel.visibleView, 24, "", true);
-                InspectorTest.waitUntilPaused(pausedInF2);
-                InspectorTest.evaluateInPageWithTimeout("f2()");
             }
 
-            function pausedInF2(callFrames)
+            function pausedInF1Again(callFrames)
             {
-                InspectorTest.assertEquals("f2", callFrames[0].functionName);
-                dumpBreakpointSidebarPane();
-                panel._toggleFormatSource();
-                InspectorTest.resumeExecution(resumedF2);
-            }
-
-            function resumedF2()
-            {
-                dumpBreakpointSidebarPane();
-                next();
+                dumpBreakpointSidebarPane("while paused in pretty printed");
+                sourceFrame._uiSourceCode.setFormatted(false);
+                dumpBreakpointSidebarPane("while paused in raw");
+                InspectorTest.resumeExecution(next);
             }
         }
     ]);
 
-    function dumpBreakpointSidebarPane()
+    function dumpBreakpointSidebarPane(title)
     {
         var paneElement = WebInspector.panels.scripts.sidebarPanes.jsBreakpoints.listElement
-        InspectorTest.addResult("");
-        InspectorTest.addResult("Dump breakpoint sidebar pane:");
+        InspectorTest.addResult("Breakpoint sidebar pane " + title);
         InspectorTest.addResult(InspectorTest.textContentWithLineBreaks(paneElement));
     }
 }

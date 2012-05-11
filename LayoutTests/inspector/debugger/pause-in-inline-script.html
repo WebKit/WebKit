@@ -35,7 +35,6 @@ var test = function()
         InspectorTest.addResult("Paused: " + !!WebInspector.debuggerModel.debuggerPausedDetails());
         InspectorTest.reloadPage(didReload.bind(this));
         WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, didPauseAfterReload, this); 
-
     }
 
     function didReload()
@@ -47,7 +46,20 @@ var test = function()
     function didPauseAfterReload(details)
     {
         InspectorTest.addResult("didPauseAfterReload");
-        InspectorTest.showScriptSource(testName, didShowScript.bind(this));
+        for (var scriptId in WebInspector.debuggerModel.scripts) {
+            var script = WebInspector.debuggerModel.scripts[scriptId];
+            if (script.sourceURL && script.sourceURL.indexOf(testName) !== -1 && script.lineOffset == 6) {
+                var location = new WebInspector.DebuggerModel.Location(script, 6, 0);
+                var uiLocation = WebInspector.debuggerModel.rawLocationToUILocation(location);
+                WebInspector.panels.scripts.showUISourceCode(uiLocation.uiSourceCode);
+                var sourceFrame = WebInspector.panels.scripts.visibleView;
+                if (sourceFrame.loaded)
+                    didShowScript(sourceFrame);
+                else
+                    InspectorTest.addSniffer(sourceFrame, "onTextViewerContentLoaded", didShowScript.bind(null, sourceFrame));
+                return;
+            }
+        }
     }
 
     function didShowScript(sourceFrame)

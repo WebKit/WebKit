@@ -9,7 +9,7 @@ function test()
     var defaultMapping = {
         rawLocationToUILocation: function(rawLocation)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null);
+            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null, this);
             return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber, 0);
         },
 
@@ -22,7 +22,7 @@ function test()
     var shiftingMapping = {
         rawLocationToUILocation: function(rawLocation)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null);
+            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null, this);
             return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber + 10, 0);
         },
 
@@ -136,7 +136,7 @@ function test()
     {
         breakpointManager._debuggerModel._addScript(id, url);
         InspectorTest.addResult("  Adding UISourceCode: " + id + " (url=" + (url || id) + ")");
-        var uiSourceCode = new WebInspector.JavaScriptSource(id, url || id, null);
+        var uiSourceCode = new WebInspector.JavaScriptSource(id, url || id, null, defaultMapping);
         breakpointManager.restoreBreakpoints(uiSourceCode);
         return uiSourceCode;
     }

@@ -33,13 +33,11 @@
  * @extends {WebInspector.Object}
  * @param {WebInspector.Setting} breakpointStorage
  * @param {WebInspector.DebuggerModel} debuggerModel
- * @param {WebInspector.MainScriptMapping} sourceMapping
  */
-WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel, sourceMapping)
+WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel)
 {
     this._storage = new WebInspector.BreakpointManager.Storage(this, breakpointStorage);
     this._debuggerModel = debuggerModel;
-    this._sourceMapping = sourceMapping;
 
     this._breakpoints = [];
     this._breakpointForDebuggerId = {};
@@ -69,7 +67,7 @@ WebInspector.BreakpointManager.prototype = {
         // Erase provisional breakpoints prior to restoring them.
         for (var debuggerId in this._breakpointForDebuggerId) {
             var breakpoint = this._breakpointForDebuggerId[debuggerId];
-            if (breakpoint._primaryUILocation.uiSourceCode.id !== uiSourceCode.id)
+            if (breakpoint._sourceCodeStorageId !== sourceFileId)
                 continue;
             this._debuggerModel.removeBreakpoint(debuggerId);
             delete this._breakpointForDebuggerId[debuggerId];
@@ -241,6 +239,7 @@ WebInspector.BreakpointManager.Breakpoint = function(breakpointManager, uiSource
 {
     this._breakpointManager = breakpointManager;
     this._primaryUILocation = new WebInspector.UILocation(uiSourceCode, lineNumber, 0);
+    this._sourceCodeStorageId = uiSourceCode.breakpointStorageId();
     this._liveLocations = [];
     this._uiLocations = new Map();
 
@@ -345,7 +344,7 @@ WebInspector.BreakpointManager.Breakpoint.prototype = {
 
     _setInDebugger: function()
     {
-        var rawLocation = this._breakpointManager._sourceMapping.uiLocationToRawLocation(this._primaryUILocation.uiSourceCode, this._primaryUILocation.lineNumber, 0);
+        var rawLocation = this._primaryUILocation.uiLocationToRawLocation();
         this._breakpointManager._debuggerModel.setBreakpointByScriptLocation(rawLocation, this._condition, didSetBreakpoint.bind(this));
         /**
          * @this {WebInspector.BreakpointManager.Breakpoint}

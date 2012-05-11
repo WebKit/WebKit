@@ -41,6 +41,16 @@ WebInspector.UILocation = function(uiSourceCode, lineNumber, columnNumber)
     this.columnNumber = columnNumber;
 }
 
+WebInspector.UILocation.prototype = {
+    /**
+     * @return {DebuggerAgent.Location}
+     */
+    uiLocationToRawLocation: function()
+    {
+        return this.uiSourceCode.uiLocationToRawLocation(this.lineNumber, this.columnNumber);
+    }
+}
+
 /**
  * @interface
  */
@@ -132,7 +142,6 @@ WebInspector.MainScriptMapping = function()
         this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
 
     this._mappingForScriptId = {};
-    this._mappingForUISourceCode = new Map();
 }
 
 WebInspector.MainScriptMapping.Events = {
@@ -140,26 +149,6 @@ WebInspector.MainScriptMapping.Events = {
 }
 
 WebInspector.MainScriptMapping.prototype = {
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     * @return {WebInspector.UILocation}
-     */
-    rawLocationToUILocation: function(rawLocation)
-    {
-        return this._mappingForScriptId[rawLocation.scriptId].rawLocationToUILocation(rawLocation);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
-     */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
-    {
-        return this._mappingForUISourceCode.get(uiSourceCode).uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
-    },
-
     /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
@@ -208,32 +197,7 @@ WebInspector.MainScriptMapping.prototype = {
      */
     _handleUISourceCodeListChanged: function(event)
     {
-        var scriptMapping = /** @type {WebInspector.ScriptMapping} */ event.target;
-        var removedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["removedItems"];
-        var addedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["addedItems"];
-
-        for (var i = 0; i < removedItems.length; ++i)
-            this._mappingForUISourceCode.remove(removedItems[i]);
-        for (var i = 0; i < addedItems.length; ++i)
-            this._mappingForUISourceCode.put(addedItems[i], scriptMapping);
         this.dispatchEventToListeners(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, event.data);
-    },
-
-    /**
-     * @param {boolean} formatSource
-     */
-    setFormatSource: function(formatSource)
-    {
-        this._resourceMapping.setFormatSource(formatSource);
-    },
-
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     */
-    forceUpdateSourceMapping: function(rawLocation)
-    {
-        if (this._mappingForScriptId[rawLocation.scriptId] === this._resourceMapping)
-            this._resourceMapping.forceUpdateSourceMapping(rawLocation);
     },
 
     reset: function()
@@ -241,7 +205,6 @@ WebInspector.MainScriptMapping.prototype = {
         for (var i = 0; i < this._mappings.length; ++i)
             this._mappings[i].reset();
         this._mappingForScriptId = {};
-        this._mappingForUISourceCode = new Map();
     }
 }
 

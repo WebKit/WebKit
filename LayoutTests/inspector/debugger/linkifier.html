@@ -16,29 +16,32 @@ function test()
     var linkifier;
     var link;
     var script;
+    var uiSourceCode;
 
     function waitForScripts()
     {
-        var continued = false;
-        function scriptAdded(event)
-        {
-            if (script)
-                return;
-
-            if (event.data.sourceURL === WebInspector.inspectedPageURL && event.data.lineOffset === 4) {
-                script = event.data;
-                setTimeout(debuggerTest, 0);
-            }
-        }
-
-        InspectorTest.queryScripts(function(script) { scriptAdded({ data: script }) });
-        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, scriptAdded);
+        InspectorTest.showScriptSource("linkifier.html", debuggerTest);
     }
 
     function debuggerTest()
     {
-        linkifier = new WebInspector.Linkifier();
+        var scripts = WebInspector.debuggerModel.scripts;
+        for (var scriptId in scripts) {
+            var scriptCandidate = scripts[scriptId];
+            if (scriptCandidate.sourceURL === WebInspector.inspectedPageURL && scriptCandidate.lineOffset === 4) {
+                script = scriptCandidate;
+                break;
+            }
+        }
+        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes.length; ++i) {
+            if (uiSourceCodes[i].url === WebInspector.inspectedPageURL) {
+                uiSourceCode = uiSourceCodes[i];
+                break;
+            }
+        }
 
+        linkifier = new WebInspector.Linkifier();
         var count1 = liveLocationsCount();
         link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 8, 0, "dummy-class");
         var count2 = liveLocationsCount();
@@ -47,14 +50,14 @@ function test()
         InspectorTest.addResult("original location: " + link.textContent);
 
         InspectorTest.addSniffer(linkifier._formatter, "formatLiveAnchor", linkUpdated);
-        WebInspector.debuggerPresentationModel.setFormatSource(true);
+        uiSourceCode.setFormatted(true);
     }
 
     function linkUpdated()
     {
         InspectorTest.addResult("pretty printed location: " + link.textContent);
         InspectorTest.addSniffer(linkifier._formatter, "formatLiveAnchor", linkReverted);
-        WebInspector.debuggerPresentationModel.setFormatSource(false);
+        uiSourceCode.setFormatted(false);
     }
 
     function linkReverted()
