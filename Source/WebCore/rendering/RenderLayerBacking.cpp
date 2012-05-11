@@ -54,6 +54,8 @@
 #include "StyleResolver.h"
 #include "TiledBacking.h"
 
+#include <wtf/CurrentTime.h>
+
 #if ENABLE(CSS_FILTERS)
 #include "FilterEffectRenderer.h"
 #endif
