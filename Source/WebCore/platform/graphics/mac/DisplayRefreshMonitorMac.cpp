@@ -54,7 +54,7 @@ DisplayRefreshMonitor::~DisplayRefreshMonitor()
         m_displayLink = 0;
     }
 
-    cancelCallOnMainThread(DisplayRefreshMonitor::refreshDisplayOnMainThread, this);
+    cancelCallOnMainThread(DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread, this);
 }
 
 bool DisplayRefreshMonitor::requestRefreshCallback()
@@ -87,7 +87,7 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
 void DisplayRefreshMonitor::displayLinkFired(double nowSeconds, double outputTimeSeconds)
 {
     MutexLocker lock(m_mutex);
-    if (!m_scheduled || !m_previousFrameDone)
+    if (!m_previousFrameDone)
         return;
 
     m_previousFrameDone = false;
@@ -95,7 +95,7 @@ void DisplayRefreshMonitor::displayLinkFired(double nowSeconds, double outputTim
     double webKitNow = currentTime();
     m_timestamp = webKitNow - nowSeconds + outputTimeSeconds;
     
-    callOnMainThread(refreshDisplayOnMainThread, this);
+    callOnMainThread(handleDisplayRefreshedNotificationOnMainThread, this);
 }
 
 }

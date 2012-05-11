@@ -1,3 +1,15 @@
+2012-05-11  Simon Fraser  <simon.fraser@apple.com>
+
+        CVDisplayLink keeps running after a single requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=86174
+
+        Reviewed by Sam Weinig.
+        
+        Test removing a frame inside its requestAnimationFrame callback.
+
+        * fast/animation/request-animation-frame-detach-element2-expected.txt: Added.
+        * fast/animation/request-animation-frame-detach-element2.html: Added.
+
 2012-05-11  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Ensure that animations continue to run when transform-style is changed

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+window.onload = function() {
+    var el = document.getElementsByTagName("iframe")[0];
+    window.frames[0].webkitRequestAnimationFrame(function() {
+        el.parentNode.removeChild(el);
+    });
+
+    if (window.layoutTestController) {
+        window.setTimeout(function() {
+            layoutTestController.display();
+            layoutTestController.notifyDone();
+        }, 50);
+    }
+}
+</script>
+Test passes is there is no crash.
+<iframe></iframe>
+<iframe></iframe>

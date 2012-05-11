@@ -40,7 +40,7 @@ void DisplayAnimationClient::animationFrameChanged()
 DisplayRefreshMonitor::~DisplayRefreshMonitor()
 {
     stopAnimationClient();
-    cancelCallOnMainThread(DisplayRefreshMonitor::refreshDisplayOnMainThread, this);
+    cancelCallOnMainThread(DisplayRefreshMonitor::handleDisplayRefreshedNotificationOnMainThread, this);
 }
 
 void DisplayRefreshMonitor::startAnimationClient()
@@ -83,7 +83,7 @@ void DisplayRefreshMonitor::displayLinkFired()
 
     m_timestamp = currentTime();
 
-    callOnMainThread(refreshDisplayOnMainThread, this);
+    callOnMainThread(handleDisplayRefreshedNotificationOnMainThread, this);
 }
 
 }

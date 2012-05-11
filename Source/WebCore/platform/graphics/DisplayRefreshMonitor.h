@@ -29,8 +29,11 @@
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
 #include "PlatformScreen.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
-#include <wtf/Vector.h>
 #if PLATFORM(BLACKBERRY)
 #include <BlackBerryPlatformAnimation.h>
 #endif
@@ -86,9 +89,13 @@ private:
 // Monitor for display refresh messages for a given screen
 //
 
-class DisplayRefreshMonitor {
+class DisplayRefreshMonitor : public RefCounted<DisplayRefreshMonitor> {
 public:
-    DisplayRefreshMonitor(PlatformDisplayID);
+    static PassRefPtr<DisplayRefreshMonitor> create(PlatformDisplayID displayID)
+    {
+        return adoptRef(new DisplayRefreshMonitor(displayID));
+    }
+    
     ~DisplayRefreshMonitor();
     
     // Return true if callback request was scheduled, false if it couldn't be
@@ -97,30 +104,33 @@ public:
     void windowScreenDidChange(PlatformDisplayID);
     
     bool hasClients() const { return m_clients.size(); }
-    void addClient(DisplayRefreshMonitorClient* client) { m_clients.append(client); }
-    bool removeClient(DisplayRefreshMonitorClient* client)
-    {
-        size_t i = m_clients.find(client);
-        if (i == notFound)
-            return false;
-        m_clients.remove(i);
-        return true;
-    }
+    void addClient(DisplayRefreshMonitorClient*);
+    bool removeClient(DisplayRefreshMonitorClient*);
     
     PlatformDisplayID displayID() const { return m_displayID; }
 
+    bool shouldBeTerminated() const
+    {
+        const int maxInactiveFireCount = 10;
+        return !m_scheduled && m_unscheduledFireCount > maxInactiveFireCount;
+    }
+    
 private:
-    void notifyClients();
-    static void refreshDisplayOnMainThread(void* data);
+    DisplayRefreshMonitor(PlatformDisplayID);
+
+    void displayDidRefresh();
+    static void handleDisplayRefreshedNotificationOnMainThread(void* data);
 
     double m_timestamp;
     bool m_active;
     bool m_scheduled;
     bool m_previousFrameDone;
+    int m_unscheduledFireCount; // Number of times the display link has fired with no clients.
     PlatformDisplayID m_displayID;
-    DisplayRefreshMonitorManager* m_manager;
     Mutex m_mutex;
-    Vector<DisplayRefreshMonitorClient*> m_clients;
+    
+    typedef HashSet<DisplayRefreshMonitorClient*> DisplayRefreshMonitorClientSet;
+    DisplayRefreshMonitorClientSet m_clients;
 #if PLATFORM(BLACKBERRY)
 public:
     void displayLinkFired();
@@ -154,11 +164,15 @@ public:
     void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient*);
 
 private:
-    DisplayRefreshMonitorManager() { }
-
-    size_t findMonitor(PlatformDisplayID) const;
+    friend class DisplayRefreshMonitor;
+    void displayDidRefresh(DisplayRefreshMonitor*);
     
-    Vector<DisplayRefreshMonitor*> m_monitors;
+    DisplayRefreshMonitorManager() { }
+    DisplayRefreshMonitor* ensureMonitorForClient(DisplayRefreshMonitorClient*);
+
+    // We know nothing about the values of PlatformDisplayIDs, so use UnsignedWithZeroKeyHashTraits.
+    typedef HashMap<uint64_t, RefPtr<DisplayRefreshMonitor>, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t> > DisplayRefreshMonitorMap;
+    DisplayRefreshMonitorMap m_monitors;
 };
 
 }
