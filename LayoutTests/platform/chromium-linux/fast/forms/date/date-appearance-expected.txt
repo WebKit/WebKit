@@ -7,98 +7,116 @@ layer at (0,0) size 800x310
         RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
             RenderBlock {DIV} at (0,0) size 135x16
-              RenderBlock {DIV} at (0,0) size 135x16
-                RenderText {#text} at (1,0) size 36x16
-                  text run at (1,0) width 36: "4/2/12"
             RenderDetailsMarker {DIV} at (135,2) size 16x12: down
-          RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 94x16
-              text run at (1,0) width 94: "Month/Day/Year"
       RenderBlock {DIV} at (0,26) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
             RenderBlock {DIV} at (0,0) size 135x16
-              RenderBlock {DIV} at (0,0) size 135x16
-                RenderText {#text} at (1,0) size 36x16
-                  text run at (1,0) width 36: "4/2/12"
             RenderDetailsMarker {DIV} at (135,2) size 16x12: down
-          RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 94x16
-              text run at (1,0) width 94: "Month/Day/Year"
       RenderBlock {DIV} at (0,52) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [color=#545454] [bgcolor=#EBEBE4] [border: (2px inset #545454)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
             RenderBlock {DIV} at (0,0) size 135x16
-              RenderBlock {DIV} at (0,0) size 135x16
-                RenderText {#text} at (1,0) size 36x16
-                  text run at (1,0) width 36: "4/2/12"
             RenderDetailsMarker {DIV} at (135,2) size 16x12: down
-          RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 94x16
-              text run at (1,0) width 94: "Month/Day/Year"
       RenderBlock {DIV} at (0,78) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
             RenderBlock {DIV} at (0,0) size 135x16
-              RenderBlock {DIV} at (0,0) size 135x16
-                RenderText {#text} at (1,0) size 36x16
-                  text run at (1,0) width 36: "4/2/12"
             RenderDetailsMarker {DIV} at (135,2) size 16x12: down
-          RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 94x16
-              text run at (1,0) width 94: "Month/Day/Year"
       RenderBlock {DIV} at (0,104) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
             RenderBlock {DIV} at (0,0) size 135x16
-              RenderBlock {DIV} at (0,0) size 135x16
-                RenderText {#text} at (1,0) size 36x16
-                  text run at (1,0) width 36: "4/2/12"
             RenderDetailsMarker {DIV} at (135,2) size 16x12: down
-          RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 94x16
-              text run at (1,0) width 94: "Month/Day/Year"
       RenderBlock {DIV} at (0,130) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [color=#FFFFFF] [bgcolor=#000000] [border: (2px inset #FFFFFF)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 151x16
             RenderBlock {DIV} at (0,0) size 135x16
-              RenderBlock {DIV} at (0,0) size 135x16
-                RenderText {#text} at (1,0) size 36x16
-                  text run at (1,0) width 36: "4/2/12"
             RenderDetailsMarker {DIV} at (135,2) size 16x12: down
-          RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 94x16
-              text run at (1,0) width 94: "Month/Day/Year"
       RenderBlock {DIV} at (0,156) size 784x46
         RenderTextControl {INPUT} at (2,2) size 334x42 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 330x36
             RenderBlock {DIV} at (0,0) size 291x36
-              RenderBlock {DIV} at (0,0) size 291x36
-                RenderText {#text} at (1,0) size 84x35
-                  text run at (1,0) width 84: "4/2/12"
             RenderDetailsMarker {DIV} at (291,3) size 39x29: down
-          RenderBlock {DIV} at (2,3) size 291x36 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 213x35
-              text run at (1,0) width 213: "Month/Day/Year"
       RenderBlock {DIV} at (0,202) size 784x46
         RenderTextControl {INPUT} at (2,2) size 334x42 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 330x36
             RenderBlock {DIV} at (0,0) size 291x36
-              RenderBlock {DIV} at (0,0) size 291x36
-                RenderText {#text} at (1,0) size 84x35
-                  text run at (1,0) width 84: "4/2/12"
             RenderDetailsMarker {DIV} at (291,3) size 39x29: down
-          RenderBlock {DIV} at (2,3) size 291x36 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 213x35
-              text run at (1,0) width 213: "Month/Day/Year"
       RenderBlock {DIV} at (0,248) size 784x46
         RenderTextControl {INPUT} at (2,2) size 334x42 [color=#545454] [bgcolor=#EBEBE4] [border: (2px inset #545454)]
           RenderDeprecatedFlexibleBox {DIV} at (2,3) size 330x36
             RenderBlock {DIV} at (0,0) size 291x36
-              RenderBlock {DIV} at (0,0) size 291x36
-                RenderText {#text} at (1,0) size 84x35
-                  text run at (1,0) width 84: "4/2/12"
             RenderDetailsMarker {DIV} at (291,3) size 39x29: down
-          RenderBlock {DIV} at (2,3) size 291x36 [color=#A9A9A9]
-            RenderText {#text} at (1,0) size 213x35
-              text run at (1,0) width 213: "Month/Day/Year"
+layer at (12,13) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
+    RenderText {#text} at (1,0) size 36x16
+      text run at (1,0) width 36: "4/2/12"
+layer at (12,13) size 135x16
+  RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 94x16
+      text run at (1,0) width 94: "Month/Day/Year"
+layer at (12,39) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
+    RenderText {#text} at (1,0) size 36x16
+      text run at (1,0) width 36: "4/2/12"
+layer at (12,39) size 135x16
+  RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 94x16
+      text run at (1,0) width 94: "Month/Day/Year"
+layer at (12,65) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
+    RenderText {#text} at (1,0) size 36x16
+      text run at (1,0) width 36: "4/2/12"
+layer at (12,65) size 135x16
+  RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 94x16
+      text run at (1,0) width 94: "Month/Day/Year"
+layer at (12,91) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
+    RenderText {#text} at (1,0) size 36x16
+      text run at (1,0) width 36: "4/2/12"
+layer at (12,91) size 135x16
+  RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 94x16
+      text run at (1,0) width 94: "Month/Day/Year"
+layer at (12,117) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
+    RenderText {#text} at (1,0) size 36x16
+      text run at (1,0) width 36: "4/2/12"
+layer at (12,117) size 135x16
+  RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 94x16
+      text run at (1,0) width 94: "Month/Day/Year"
+layer at (12,143) size 135x16
+  RenderBlock {DIV} at (0,0) size 135x16
+    RenderText {#text} at (1,0) size 36x16
+      text run at (1,0) width 36: "4/2/12"
+layer at (12,143) size 135x16
+  RenderBlock {DIV} at (2,3) size 135x16 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 94x16
+      text run at (1,0) width 94: "Month/Day/Year"
+layer at (12,169) size 291x36
+  RenderBlock {DIV} at (0,0) size 291x36
+    RenderText {#text} at (1,0) size 84x35
+      text run at (1,0) width 84: "4/2/12"
+layer at (12,169) size 291x36
+  RenderBlock {DIV} at (2,3) size 291x36 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 213x35
+      text run at (1,0) width 213: "Month/Day/Year"
+layer at (12,215) size 291x36
+  RenderBlock {DIV} at (0,0) size 291x36
+    RenderText {#text} at (1,0) size 84x35
+      text run at (1,0) width 84: "4/2/12"
+layer at (12,215) size 291x36
+  RenderBlock {DIV} at (2,3) size 291x36 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 213x35
+      text run at (1,0) width 213: "Month/Day/Year"
+layer at (12,261) size 291x36
+  RenderBlock {DIV} at (0,0) size 291x36
+    RenderText {#text} at (1,0) size 84x35
+      text run at (1,0) width 84: "4/2/12"
+layer at (12,261) size 291x36
+  RenderBlock {DIV} at (2,3) size 291x36 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 213x35
+      text run at (1,0) width 213: "Month/Day/Year"

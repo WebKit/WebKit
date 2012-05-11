@@ -1,3 +1,12 @@
+2012-05-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update wrong expectations.
+
+        * platform/chromium-linux-x86/fast/forms/date/date-appearance-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/date/date-appearance-expected.txt:
+        * platform/chromium-mac-leopard/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Renamed from LayoutTests/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt.
+
 2012-05-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][DRT] Gardening failure cases on EFL build bot
