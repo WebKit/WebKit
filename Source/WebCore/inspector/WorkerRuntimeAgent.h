@@ -47,10 +47,11 @@ public:
         return adoptPtr(new WorkerRuntimeAgent(instrumentingAgents, state, injectedScriptManager, context));
     }
     virtual ~WorkerRuntimeAgent();
+    virtual void setReportExecutionContextCreation(ErrorString*, bool);
 
 private:
     WorkerRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, WorkerContext*);
-    virtual ScriptState* scriptStateForEval(ErrorString*, const String* frameId);
+    virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();
     WorkerContext* m_workerContext;

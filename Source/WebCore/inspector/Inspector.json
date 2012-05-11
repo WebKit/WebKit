@@ -427,7 +427,26 @@
                     { "name": "value", "type": "any", "optional": true, "description": "Primitive value." },
                     { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Remote object handle." }
                 ]
+            },
+            {
+                "id": "ExecutionContextId",
+                "type": "integer",
+                "description": "Id of an execution context.",
+                "hidden": true
+            },
+            {
+                "id": "ExecutionContextDescription",
+                "type": "object",
+                "description": "Description of an isolated world.",
+                "properties": [
+                    { "name": "id", "$ref": "ExecutionContextId", "description": "Unique id of the execution context. It can be used to specify in which execution context script evaluation should be performed." },
+                    { "name": "isPageContext", "type": "boolean", "description": "True if this is a context where inpspected web page scripts run. False if it is a content script isolated context." },
+                    { "name": "name", "type": "string", "description": "Human readable name describing given context." },
+                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the owning frame." }
+                ],
+                "hidden": true
             }
+
         ],
         "commands": [
             {
@@ -437,7 +456,7 @@
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation.", "hidden": true },
                     { "name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions and mute console. Overrides setPauseOnException state.", "hidden": true },
-                    { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Specifies in which frame to perform evaluation.", "hidden": true },
+                    { "name": "contextId", "type": "integer", "optional": true, "description": "Specifies in which isolated context to perform evaluation. Each content script lives in an isolated context and this parameter may be used to specify on of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page.", "hidden": true },
                     { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." }
                 ],
                 "returns": [
@@ -490,6 +509,24 @@
                 "name": "run",
                 "hidden": true,
                 "description": "Tells inspected instance(worker or page) that it can run in case it was started paused."
+            },
+            {
+                "name": "setReportExecutionContextCreation",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "Reporting enabled state." }
+                ],
+                "hidden": true,
+                "description": "Enables reporting about creation of isolated contexts by means of <code>isolatedContextCreated</code> event. When the reporting gets enabled the event will be sent immediately for each existing isolated context."
+            }
+
+        ],
+        "events": [
+            {
+                "name": "isolatedContextCreated",
+                "parameters": [
+                    { "name": "context", "$ref": "ExecutionContextDescription", "description": "A newly created isolated contex." }
+                ],
+                "description": "Issued when new isolated context is created."
             }
         ]
     },

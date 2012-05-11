@@ -631,6 +631,14 @@ v8::Local<v8::Context> V8Proxy::mainWorldContext()
     return v8::Local<v8::Context>::New(windowShell()->context());
 }
 
+v8::Local<v8::Context> V8Proxy::isolatedWorldContext(int worldId)
+{
+    IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldId);
+    if (iter == m_isolatedWorlds.end())
+        return v8::Local<v8::Context>();
+    return v8::Local<v8::Context>::New(iter->second->context());
+}
+
 bool V8Proxy::matchesCurrentContext()
 {
     v8::Handle<v8::Context> context;
@@ -725,6 +733,21 @@ int V8Proxy::contextDebugId(v8::Handle<v8::Context> context)
     if (!comma)
         return -1;
     return atoi(comma + 1);
+}
+
+void V8Proxy::collectIsolatedContexts(Vector<std::pair<ScriptState*, SecurityOrigin*> >& result)
+{
+    v8::HandleScope handleScope;
+    for (IsolatedWorldMap::iterator it = m_isolatedWorlds.begin(); it != m_isolatedWorlds.end(); ++it) {
+        V8IsolatedContext* isolatedContext = it->second;
+        if (!isolatedContext->securityOrigin())
+            continue;
+        v8::Handle<v8::Context> v8Context = isolatedContext->context();
+        if (v8Context.IsEmpty())
+            continue;
+        ScriptState* scriptState = ScriptState::forContext(v8::Local<v8::Context>::New(v8Context));
+        result.append(std::pair<ScriptState*, SecurityOrigin*>(scriptState, isolatedContext->securityOrigin()));
+    }
 }
 
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)

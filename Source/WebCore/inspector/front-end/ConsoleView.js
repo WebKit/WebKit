@@ -47,9 +47,16 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this._contextSelectElement = document.createElement("select");
     this._contextSelectElement.id = "console-context";
     this._contextSelectElement.className = "status-bar-item";
+    this._contextSelectElement.addEventListener("change", this._updateIsolatedWorldSelector.bind(this), false);
 
-    if (hideContextSelector)
+    this._isolatedWorldSelectElement = document.createElement("select");
+    this._isolatedWorldSelectElement.id = "console-context";
+    this._isolatedWorldSelectElement.className = "status-bar-item";
+
+    if (hideContextSelector) {
         this._contextSelectElement.addStyleClass("hidden");
+        this._isolatedWorldSelectElement.addStyleClass("hidden");
+    }
 
     this.messagesElement = document.createElement("div");
     this.messagesElement.id = "console-messages";
@@ -127,7 +134,7 @@ WebInspector.ConsoleView.Events = {
 WebInspector.ConsoleView.prototype = {
     get statusBarItems()
     {
-        return [this._clearConsoleButton.element, this._contextSelectElement, this._filterBarElement];
+        return [this._clearConsoleButton.element, this._contextSelectElement, this._isolatedWorldSelectElement, this._filterBarElement];
     },
 
     addContext: function(context)
@@ -139,26 +146,87 @@ WebInspector.ConsoleView.prototype = {
         context._consoleOption = option;
         this._contextSelectElement.appendChild(option);
         context.addEventListener(WebInspector.FrameEvaluationContext.EventTypes.Updated, this._contextUpdated, this);
+        context.addEventListener(WebInspector.FrameEvaluationContext.EventTypes.AddedExecutionContext, this._addedExecutionContext, this);
+        this._updateIsolatedWorldSelector();
     },
 
     removeContext: function(context)
     {
         this._contextSelectElement.removeChild(context._consoleOption);
+        this._updateIsolatedWorldSelector();
+    },
+
+    _updateIsolatedWorldSelector: function()
+    {
+        var context = this._currentEvaluationContext();
+        if (!context) {
+            this._isolatedWorldSelectElement.addStyleClass("hidden");
+            return;
+        }
+
+        var isolatedContexts = context.isolatedContexts();
+        if (!isolatedContexts.length) {
+            this._isolatedWorldSelectElement.addStyleClass("hidden");
+            return;
+        }
+        this._isolatedWorldSelectElement.removeStyleClass("hidden");
+        this._isolatedWorldSelectElement.removeChildren();
+        this._appendIsolatedContextOption(context.mainWorldContext());
+        for (var i = 0; i < isolatedContexts.length; i++)
+            this._appendIsolatedContextOption(isolatedContexts[i]);
+    },
+
+    _appendIsolatedContextOption: function(isolatedContext)
+    {
+        if (!isolatedContext)
+            return;
+        var option = document.createElement("option");
+        option.text = isolatedContext.name;
+        option.title = isolatedContext.id;
+        option._executionContextId = isolatedContext.id;
+        this._isolatedWorldSelectElement.appendChild(option);
     },
 
     _contextUpdated: function(event)
     {
         var context = event.data;
-        var option= context._consoleOption;
+        var option = context._consoleOption;
         option.text = context.displayName;
         option.title = context.url;
     },
 
+    _addedExecutionContext: function(event)
+    {
+        var context = event.data;
+        if (context === this._currentEvaluationContext())
+            this._updateIsolatedWorldSelector();
+    },
+
     _currentEvaluationContextId: function()
+    {
+        var result = this._currentIsolatedContextId();
+        if (result !== undefined)
+            return result;
+        var context = this._currentEvaluationContext();
+        if (context && context.mainWorldContext())
+            return context.mainWorldContext().id;
+        return undefined;
+    },
+
+    _currentEvaluationContext: function()
     {
         if (this._contextSelectElement.selectedIndex === -1)
             return undefined;
-        return this._contextSelectElement[this._contextSelectElement.selectedIndex]._context.frameId;
+        return this._contextSelectElement[this._contextSelectElement.selectedIndex]._context;
+    },
+
+    _currentIsolatedContextId: function()
+    {
+        if (this._isolatedWorldSelectElement.hasStyleClass("hidden"))
+            return undefined;
+        if (this._isolatedWorldSelectElement.selectedIndex === -1)
+            return undefined;
+        return this._isolatedWorldSelectElement[this._isolatedWorldSelectElement.selectedIndex]._executionContextId;
     },
 
     _updateFilter: function(e)
@@ -620,7 +688,8 @@ WebInspector.ConsoleView.prototype = {
             else
                 callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
         }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentEvaluationContextId(), returnByValue, evalCallback);
+        var contextId = this._currentEvaluationContextId();
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId, returnByValue, evalCallback);
     },
 
     evaluateUsingTextPrompt: function(expression, showResultOnly)

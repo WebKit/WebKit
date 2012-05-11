@@ -39,6 +39,12 @@
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 
+#if USE(JSC)
+namespace JSC {
+class ExecState;
+}
+#endif
+
 namespace WebCore {
 
 class CSSRule;
@@ -63,12 +69,19 @@ class ScriptArguments;
 class ScriptCallStack;
 class ScriptExecutionContext;
 class ScriptProfile;
+class SecurityOrigin;
 class ShadowRoot;
 class StorageArea;
 class StyleRule;
 class WorkerContext;
 class WorkerContextProxy;
 class XMLHttpRequest;
+
+#if USE(JSC)
+typedef JSC::ExecState ScriptState;
+#else
+class ScriptState;
+#endif
 
 #if ENABLE(WEB_SOCKETS)
 struct WebSocketFrame;
@@ -119,6 +132,7 @@ public:
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScript(Frame*, const String& url, int lineNumber);
     static void didEvaluateScript(const InspectorInstrumentationCookie&);
+    static void didCreateIsolatedContext(Frame*, ScriptState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext*, int timerId);
     static void didFireTimer(const InspectorInstrumentationCookie&);
     static void didBeginFrame(Page*);
@@ -278,6 +292,7 @@ private:
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents*, const String& url, int lineNumber);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&);
+    static void didCreateIsolatedContextImpl(InstrumentingAgents*, Frame*, ScriptState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
     static void didBeginFrameImpl(InstrumentingAgents*);
@@ -703,6 +718,15 @@ inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumen
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
         didEvaluateScriptImpl(cookie);
+#endif
+}
+
+inline void InspectorInstrumentation::didCreateIsolatedContext(Frame* frame, ScriptState* scriptState, SecurityOrigin* origin)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        return didCreateIsolatedContextImpl(instrumentingAgents, frame, scriptState, origin);
 #endif
 }
 

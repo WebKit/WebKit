@@ -58,6 +58,7 @@ public:
     pair<long, ScriptObject> injectScript(const String& source, ScriptState*);
     InjectedScript injectedScriptFor(ScriptState*);
     InjectedScript injectedScriptForId(long);
+    long injectedScriptIdFor(ScriptState*);
     InjectedScript injectedScriptForObjectId(const String& objectId);
     void discardInjectedScripts();
     void discardInjectedScriptsFor(DOMWindow*);
@@ -80,6 +81,8 @@ private:
     IdToInjectedScriptMap m_idToInjectedScript;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
     InspectedStateAccessCheck m_inspectedStateAccessCheck;
+    typedef HashMap<ScriptState*, long> ScriptStateToId;
+    ScriptStateToId m_scriptStateToId;
 };
 
 } // namespace WebCore

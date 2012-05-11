@@ -244,6 +244,7 @@ namespace WebCore {
 
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> mainWorldContext();
+        v8::Local<v8::Context> isolatedWorldContext(int worldId);
         bool matchesCurrentContext();
 
         // FIXME: This should eventually take DOMWrapperWorld argument!
@@ -251,6 +252,7 @@ namespace WebCore {
 
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
+        void collectIsolatedContexts(Vector<std::pair<ScriptState*, SecurityOrigin*> >&);
 
         // Registers a v8 extension to be available on webpages. Will only
         // affect v8 contexts initialized after this call. Takes ownership of

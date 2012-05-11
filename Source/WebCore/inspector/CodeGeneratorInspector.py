@@ -185,7 +185,7 @@ class DomainNameFixes:
 
         return Res
 
-    skip_js_bind_domains = set(["Runtime", "DOMDebugger"])
+    skip_js_bind_domains = set(["DOMDebugger"])
 
 
 class RawTypes(object):

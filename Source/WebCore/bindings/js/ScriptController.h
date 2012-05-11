@@ -40,6 +40,7 @@ struct NPObject;
 
 namespace JSC {
     class JSGlobalObject;
+    class ExecState;
 
     namespace Bindings {
         class RootObject;
@@ -52,6 +53,7 @@ class HTMLPlugInElement;
 class Frame;
 class ScriptSourceCode;
 class ScriptValue;
+class SecurityOrigin;
 class Widget;
 
 typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
@@ -143,6 +145,7 @@ public:
 
 #if ENABLE(INSPECTOR)
     static void setCaptureCallStackForUncaughtExceptions(bool);
+    void collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*> >&);
 #endif
 
 #if PLATFORM(MAC)

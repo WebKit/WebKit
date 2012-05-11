@@ -53,6 +53,7 @@ class InspectorRuntimeAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
 class Page;
+class PageRuntimeAgent;
 class WorkerContext;
 
 class InstrumentingAgents {
@@ -67,6 +68,7 @@ public:
         , m_inspectorDOMAgent(0)
         , m_inspectorResourceAgent(0)
         , m_inspectorRuntimeAgent(0)
+        , m_pageRuntimeAgent(0)
         , m_inspectorTimelineAgent(0)
         , m_inspectorDOMStorageAgent(0)
 #if ENABLE(SQL_DATABASE)
@@ -107,6 +109,9 @@ public:
 
     InspectorRuntimeAgent* inspectorRuntimeAgent() const { return m_inspectorRuntimeAgent; }
     void setInspectorRuntimeAgent(InspectorRuntimeAgent* agent) { m_inspectorRuntimeAgent = agent; }
+
+    PageRuntimeAgent* pageRuntimeAgent() const { return m_pageRuntimeAgent; }
+    void setPageRuntimeAgent(PageRuntimeAgent* agent) { m_pageRuntimeAgent = agent; }
 
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
@@ -150,6 +155,7 @@ private:
     InspectorDOMAgent* m_inspectorDOMAgent;
     InspectorResourceAgent* m_inspectorResourceAgent;
     InspectorRuntimeAgent* m_inspectorRuntimeAgent;
+    PageRuntimeAgent* m_pageRuntimeAgent;
     InspectorTimelineAgent* m_inspectorTimelineAgent;
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
 #if ENABLE(SQL_DATABASE)

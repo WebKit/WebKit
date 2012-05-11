@@ -61,6 +61,7 @@ class Frame;
 class HTMLPlugInElement;
 class PagePopupClient;
 class ScriptSourceCode;
+class ScriptState;
 class Widget;
 
 class ScriptController {
@@ -134,6 +135,7 @@ public:
 
 #if ENABLE(INSPECTOR)
     static void setCaptureCallStackForUncaughtExceptions(bool);
+    void collectIsolatedContexts(Vector<std::pair<ScriptState*, SecurityOrigin*> >&);
 #endif
 
     bool canExecuteScripts(ReasonForCallingCanExecuteScripts);

@@ -79,7 +79,24 @@ InjectedScriptHost* InjectedScriptManager::injectedScriptHost()
 
 InjectedScript InjectedScriptManager::injectedScriptForId(long id)
 {
-    return m_idToInjectedScript.get(id);
+    IdToInjectedScriptMap::iterator it = m_idToInjectedScript.find(id);
+    if (it != m_idToInjectedScript.end())
+        return it->second;
+    for (ScriptStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
+        if (it->second == id)
+            return injectedScriptFor(it->first);
+    }
+    return InjectedScript();
+}
+
+long InjectedScriptManager::injectedScriptIdFor(ScriptState* scriptState)
+{
+    ScriptStateToId::iterator it = m_scriptStateToId.find(scriptState);
+    if (it != m_scriptStateToId.end())
+        return it->second;
+    long id = m_nextInjectedScriptId++;
+    m_scriptStateToId.set(scriptState, id);
+    return id;
 }
 
 InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& objectId)
@@ -89,7 +106,7 @@ InjectedScript InjectedScriptManager::injectedScriptForObjectId(const String& ob
         long injectedScriptId = 0;
         bool success = parsedObjectId->asObject()->getNumber("injectedScriptId", &injectedScriptId);
         if (success)
-            return injectedScriptForId(injectedScriptId);
+            return m_idToInjectedScript.get(injectedScriptId);
     }
     return InjectedScript();
 }
@@ -100,10 +117,14 @@ void InjectedScriptManager::discardInjectedScripts()
     for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != end; ++it)
         discardInjectedScript(it->second.scriptState());
     m_idToInjectedScript.clear();
+    m_scriptStateToId.clear();
 }
 
 void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
 {
+    if (m_scriptStateToId.isEmpty())
+        return;
+
     Vector<long> idsToRemove;
     IdToInjectedScriptMap::iterator end = m_idToInjectedScript.end();
     for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != end; ++it) {
@@ -111,11 +132,22 @@ void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
         if (window != domWindowFromScriptState(scriptState))
             continue;
         discardInjectedScript(scriptState);
+        m_scriptStateToId.remove(scriptState);
         idsToRemove.append(it->first);
     }
 
     for (size_t i = 0; i < idsToRemove.size(); i++)
         m_idToInjectedScript.remove(idsToRemove[i]);
+
+    // Now remove script states that have id but no injected script.
+    Vector<ScriptState*> scriptStatesToRemove;
+    for (ScriptStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
+        ScriptState* scriptState = it->first;
+        if (window == domWindowFromScriptState(scriptState))
+            scriptStatesToRemove.append(scriptState);
+    }
+    for (size_t i = 0; i < scriptStatesToRemove.size(); i++)
+        m_scriptStateToId.remove(scriptStatesToRemove[i]);
 }
 
 bool InjectedScriptManager::canAccessInspectedWorkerContext(ScriptState*)
@@ -136,7 +168,7 @@ String InjectedScriptManager::injectedScriptSource()
 
 pair<long, ScriptObject> InjectedScriptManager::injectScript(const String& source, ScriptState* scriptState)
 {
-    long id = m_nextInjectedScriptId++;
+    long id = injectedScriptIdFor(scriptState);
     return std::make_pair(id, createInjectedScript(source, scriptState, id));
 }
 

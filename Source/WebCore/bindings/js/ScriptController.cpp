@@ -326,6 +326,11 @@ PassRefPtr<Bindings::RootObject> ScriptController::createRootObject(void* native
 void ScriptController::setCaptureCallStackForUncaughtExceptions(bool)
 {
 }
+
+void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*> >&)
+{
+    // FIXME(85709): support isolated contexts inspection for JSC.
+}
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

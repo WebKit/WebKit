@@ -467,6 +467,11 @@ void ScriptController::setCaptureCallStackForUncaughtExceptions(bool value)
 {
     v8::V8::SetCaptureStackTraceForUncaughtExceptions(value, ScriptCallStack::maxCallStackSizeToCapture, stackTraceOptions);
 }
+
+void ScriptController::collectIsolatedContexts(Vector<std::pair<ScriptState*, SecurityOrigin*> >& result)
+{
+    m_proxy->collectIsolatedContexts(result);
+}
 #endif
 
 void ScriptController::attachDebugger(void*)

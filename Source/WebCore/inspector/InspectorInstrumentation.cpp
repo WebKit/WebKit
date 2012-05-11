@@ -61,6 +61,7 @@
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "PageRuntimeAgent.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
@@ -112,6 +113,10 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
             debuggerAgent->didClearMainFrameWindowObject();
     }
 #endif
+    if (PageRuntimeAgent* pageRuntimeAgent = instrumentingAgents->pageRuntimeAgent()) {
+        if (world == mainThreadNormalWorld())
+            pageRuntimeAgent->didClearWindowObject(frame);
+    }
 }
 
 bool InspectorInstrumentation::isDebuggerPausedImpl(InstrumentingAgents* instrumentingAgents)
@@ -361,6 +366,12 @@ void InspectorInstrumentation::didEvaluateScriptImpl(const InspectorInstrumentat
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didEvaluateScript();
+}
+
+void InspectorInstrumentation::didCreateIsolatedContextImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, ScriptState* scriptState, SecurityOrigin* origin)
+{
+    if (PageRuntimeAgent* runtimeAgent = instrumentingAgents->pageRuntimeAgent())
+        runtimeAgent->didCreateIsolatedContext(frame, scriptState, origin);
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents* instrumentingAgents, int timerId)
