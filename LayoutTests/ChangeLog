@@ -1,3 +1,15 @@
+2012-05-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Gardening failure cases on editing/style and editing/pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=86184
+
+        Unreviewed EFL gardening.
+
+        Test expectations update.
+
+        * platform/efl/test_expectations.txt: adding tests regarding to missing beginDragWithFiles
+        execCommand('copy') and execCommand('paste') implementation.
+
 2012-05-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][DRT] fast/css/getComputedStyle/computed-style-without-renderer.html fails on EFL

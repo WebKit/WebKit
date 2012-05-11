@@ -34,6 +34,11 @@ BUGWK84333 : fast/files/file-reader-directory-crash.html = TIMEOUT
 BUGWK84333 : fast/events/drop-handler-should-not-stop-navigate.html = TIMEOUT
 BUGWK84333 : fast/events/drop-with-file-paths.html = TEXT
 BUGWK84333 : fast/forms/file/recover-file-input-in-unposted-form.html = TEXT
+BUGWK84333 : editing/pasteboard/data-transfer-items-drag-drop-entry.html = TEXT
+BUGWK84333 : editing/pasteboard/data-transfer-items-drag-drop-file.html = TEXT
+BUGWK84333 : editing/pasteboard/drag-files-to-editable-element.html = TEXT
+BUGWK84333 : editing/pasteboard/file-drag-to-editable.html = TEXT
+BUGWK84333 : editing/pasteboard/file-input-files-access.html = TEXT
 
 // LayoutTestController.pathToLocalResource needs special handling of file URLs to /tmp.
 BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT TEXT
@@ -42,6 +47,8 @@ BUGWK84336 : fast/dom/frame-loading-via-document-write.html = TIMEOUT TEXT
 BUGWK84338 : fast/events/clipboard-dataTransferItemList.html = TEXT
 BUGWK84338 : editing/input/paste-text-ending-with-interchange-newline.html = TEXT
 BUGWK84338 : editing/input/reveal-contenteditable-on-paste-vertically.html = TEXT
+BUGWK84338 : editing/style/apply-through-end-of-document.html = TEXT
+BUGWK84338 : editing/style/non-inheritable-styles.html = TEXT
 
 // Missing showModalDialog implementation
 BUGWK84589 : fast/animation/request-animation-frame-during-modal.html = TEXT
