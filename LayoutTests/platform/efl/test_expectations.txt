@@ -402,8 +402,6 @@ BUGWK85799 : fast/css/font-face-download-error.html = TIMEOUT
 
 BUGWK85879 : fast/frames/frame-crash-with-page-cache.html = CRASH
 
-BUGWK85995 : fast/events/frame-click-focus.html = TEXT
-
 BUGWKEFL SLOW DEBUG : http/tests/incremental/slow-utf8-html.pl = PASS
 
 // Perf tests are way too slow on debug builds.
@@ -430,3 +428,6 @@ BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
 // Tests imported in r116658
 BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
+
+// New test introduced in r116694 fails
+BUGWK86182 : fast/frames/seamless/seamless-inherited-document-style.html = TEXT

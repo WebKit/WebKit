@@ -1,3 +1,12 @@
+2012-05-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][DRT] Gardening failure cases on EFL build bot
+        https://bugs.webkit.org/show_bug.cgi?id=86192
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Gardening failure cases on editing/style and editing/pasteboard
