@@ -159,7 +159,7 @@ a:hover{
     text-decoration: underline;
 }
 
-#notice, #terms {
+#notice, #trademark, #terms {
     min-width: 0px;
     padding: 0px;
     margin: 30px 10px 10px -5px;

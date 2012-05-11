@@ -1,3 +1,10 @@
+2012-05-11  Darin Adler  <darin@apple.com>
+
+        CSS tweak needed for the trademark terms of use.
+
+        * css/main.css:
+        (#notice, #trademark, #terms): Added #trademark.
+
 2012-05-10  Darin Adler  <darin@apple.com>
 
         Add a link to WebKit trademark terms of use, other small website changes
