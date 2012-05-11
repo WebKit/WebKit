@@ -1,3 +1,13 @@
+2012-05-11  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT memory allocator is not returning memory to the OS on Darwin
+        https://bugs.webkit.org/show_bug.cgi?id=86047
+
+        Reviewed by Geoff Garen.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::notifyPageIsFree):
+
 2012-05-11  Geoffrey Garen  <ggaren@apple.com>
 
         Clarified JSGlobalData (JavaScript VM) lifetime
