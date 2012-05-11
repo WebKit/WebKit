@@ -67,20 +67,20 @@ public:
     void didFinishLoadForFrame(WebCore::Frame*);
     void didFinishDocumentLoadForFrame(WebCore::Frame*);
     void didClearWindowObjectInWorld(WebCore::DOMWrapperWorld*, JSGlobalContextRef, JSObjectRef windowObject);
-    void didReceiveTitleForFrame(const WTF::String& title, WebCore::Frame*);
+    void didReceiveTitleForFrame(const String& title, WebCore::Frame*);
     void didDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
     void didDispatchWillPerformClientRedirect();
     void didHandleOnloadEventsForFrame(WebCore::Frame*);
     void didReceiveResponseForFrame(WebCore::Frame*, const WebCore::ResourceResponse&);
 
     // ChromeClient delegates
-    void addMessageToConsole(const WTF::String& message, unsigned int lineNumber, const WTF::String& sourceID);
-    void runJavaScriptAlert(const WTF::String& message);
-    bool runJavaScriptConfirm(const WTF::String& message);
-    WTF::String runJavaScriptPrompt(const WTF::String& message, const WTF::String& defaultValue);
-    bool runBeforeUnloadConfirmPanel(const WTF::String& message);
-    void setStatusText(const WTF::String&);
-    void exceededDatabaseQuota(WebCore::SecurityOrigin*, const WTF::String& name);
+    void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID);
+    void runJavaScriptAlert(const String& message);
+    bool runJavaScriptConfirm(const String& message);
+    String runJavaScriptPrompt(const String& message, const String& defaultValue);
+    bool runBeforeUnloadConfirmPanel(const String& message);
+    void setStatusText(const String&);
+    void exceededDatabaseQuota(WebCore::SecurityOrigin*, const String& name);
     bool allowsOpeningWindow();
     void windowCreated(WebPage*);
 
@@ -91,46 +91,49 @@ public:
     void didEndEditing();
     void didChange();
     void didChangeSelection();
-    bool findString(const WTF::String&, WebCore::FindOptions);
+    bool findString(const String&, WebCore::FindOptions);
     bool shouldBeginEditingInDOMRange(WebCore::Range*);
     bool shouldEndEditingInDOMRange(WebCore::Range*);
     bool shouldDeleteDOMRange(WebCore::Range*);
     bool shouldChangeSelectedDOMRangeToDOMRangeAffinityStillSelecting(WebCore::Range* fromRange, WebCore::Range* toRange, int affinity, bool stillSelecting);
     bool shouldInsertNode(WebCore::Node*, WebCore::Range*, int insertAction);
-    bool shouldInsertText(const WTF::String&, WebCore::Range*, int insertAction);
+    bool shouldInsertText(const String&, WebCore::Range*, int insertAction);
 
     bool isSelectTrailingWhitespaceEnabled() const { return s_selectTrailingWhitespaceEnabled; }
     void setSelectTrailingWhitespaceEnabled(bool enabled) { s_selectTrailingWhitespaceEnabled = enabled; }
 
 private:
-    void runTest(const WTF::String& url);
+    void runTest(const String& url);
     void runTests();
+    void runCurrentTest();
+    void getRefTests(const String& testName);
 
     void processWork(WebCore::Timer<DumpRenderTree>*);
 
 private:
     static DumpRenderTree* s_currentInstance;
 
-    WTF::String dumpFramesAsText(WebCore::Frame*);
+    String dumpFramesAsText(WebCore::Frame*);
     void locationChangeForFrame(WebCore::Frame*);
 
     void doneDrt();
     void getTestsToRun();
-    bool isHTTPTest(const WTF::String& test);
-    WTF::String renderTreeDump() const;
+    bool isHTTPTest(const String& test);
+    String renderTreeDump() const;
     void resetToConsistentStateBeforeTesting();
     void runRemainingTests();
     void invalidateAnyPreviousWaitToDumpWatchdog();
     void waitToDumpWatchdogTimerFired(WebCore::Timer<DumpRenderTree>*);
 
-    Vector<WTF::String> m_tests;
-    Vector<WTF::String>::iterator m_currentTest;
+    Vector<String> m_tests;
+    Vector<String>::iterator m_currentTest;
+    Vector<String> m_refTests; // Reference tests for current test
 
-    WTF::String m_resultsDir;
-    WTF::String m_indexFile;
-    WTF::String m_doneFile;
-    WTF::String m_currentHttpTest;
-    WTF::String m_currentTestFile;
+    String m_resultsDir;
+    String m_indexFile;
+    String m_doneFile;
+    String m_currentHttpTest;
+    String m_currentTestFile;
 
     GCController* m_gcController;
     AccessibilityController* m_accessibilityController;
@@ -141,6 +144,7 @@ private:
 
     bool m_acceptsEditing;
     bool m_loadFinished;
+    bool m_runningRefTests;
     static bool s_selectTrailingWhitespaceEnabled;
 };
 }

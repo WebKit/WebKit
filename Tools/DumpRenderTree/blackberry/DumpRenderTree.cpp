@@ -82,19 +82,19 @@ static const char* httpPrefixURL = "http://127.0.0.1:8000/";
 
 using namespace std;
 
-static WTF::String drtAffinityDescription(WebCore::EAffinity affinity)
+static String drtAffinityDescription(WebCore::EAffinity affinity)
 {
     if (affinity == WebCore::UPSTREAM)
-        return WTF::String("NSSelectionAffinityUpstream");
+        return String("NSSelectionAffinityUpstream");
     if (affinity == WebCore::DOWNSTREAM)
-        return WTF::String("NSSelectionAffinityDownstream");
+        return String("NSSelectionAffinityDownstream");
     return "";
 }
 
-static WTF::String drtDumpPath(WebCore::Node* node)
+static String drtDumpPath(WebCore::Node* node)
 {
     WebCore::Node* parent = node->parentNode();
-    WTF::String str = WTF::String::format("%s", node->nodeName().utf8().data());
+    String str = String::format("%s", node->nodeName().utf8().data());
     if (parent) {
         str.append(" > ");
         str.append(drtDumpPath(parent));
@@ -102,27 +102,27 @@ static WTF::String drtDumpPath(WebCore::Node* node)
     return str;
 }
 
-static WTF::String drtRangeDescription(WebCore::Range* range)
+static String drtRangeDescription(WebCore::Range* range)
 {
     if (!range)
         return "(null)";
-    return WTF::String::format("range from %d of %s to %d of %s", range->startOffset(), drtDumpPath(range->startContainer()).utf8().data(), range->endOffset(), drtDumpPath(range->endContainer()).utf8().data());
+    return String::format("range from %d of %s to %d of %s", range->startOffset(), drtDumpPath(range->startContainer()).utf8().data(), range->endOffset(), drtDumpPath(range->endContainer()).utf8().data());
 }
 
-static WTF::String drtFrameDescription(WebCore::Frame* frame)
+static String drtFrameDescription(WebCore::Frame* frame)
 {
-    WTF::String name = frame->tree()->uniqueName().string();
+    String name = frame->tree()->uniqueName().string();
     if (frame == mainFrame) {
         if (!name.isNull() && name.length())
-            return WTF::String::format("main frame \"%s\"", name.utf8().data());
+            return String::format("main frame \"%s\"", name.utf8().data());
         return "main frame";
     }
     if (!name.isNull())
-        return WTF::String::format("frame \"%s\"", name.utf8().data());
+        return String::format("frame \"%s\"", name.utf8().data());
     return "frame (anonymous)";
 }
 
-static bool shouldLogFrameLoadDelegates(const WTF::String& url)
+static bool shouldLogFrameLoadDelegates(const String& url)
 {
     return url.contains("loading/");
 }
@@ -133,7 +133,7 @@ namespace WebKit {
 DumpRenderTree* DumpRenderTree::s_currentInstance = 0;
 bool DumpRenderTree::s_selectTrailingWhitespaceEnabled = false;
 
-static void createFile(const WTF::String& fileName)
+static void createFile(const String& fileName)
 {
     FILE* fd = fopen(fileName.utf8().data(), "wb");
     fclose(fd);
@@ -147,8 +147,9 @@ DumpRenderTree::DumpRenderTree(BlackBerry::WebKit::WebPage* page)
     , m_waitToDumpWatchdogTimer(this, &DumpRenderTree::waitToDumpWatchdogTimerFired)
     , m_workTimer(this, &DumpRenderTree::processWork)
     , m_acceptsEditing(true)
+    , m_runningRefTests(false)
 {
-    WTF::String sdcardPath = SDCARD_PATH;
+    String sdcardPath = SDCARD_PATH;
     m_resultsDir = sdcardPath + "/results/";
     m_indexFile = sdcardPath + "/index.drt";
     m_doneFile = sdcardPath + "/done";
@@ -164,7 +165,7 @@ DumpRenderTree::~DumpRenderTree()
     delete m_accessibilityController;
 }
 
-void DumpRenderTree::runTest(const WTF::String& url)
+void DumpRenderTree::runTest(const String& url)
 {
     createFile(m_resultsDir + *m_currentTest + ".dump.crash");
 
@@ -172,8 +173,8 @@ void DumpRenderTree::runTest(const WTF::String& url)
     resetToConsistentStateBeforeTesting();
     if (shouldLogFrameLoadDelegates(url))
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
-    WTF::String stdoutFile = m_resultsDir + *m_currentTest + ".dump";
-    WTF::String stderrFile = m_resultsDir + *m_currentTest + ".stderr";
+    String stdoutFile = m_resultsDir + *m_currentTest + ".dump";
+    String stderrFile = m_resultsDir + *m_currentTest + ".stderr";
 
     // FIXME: we should preserve the original stdout and stderr here but aren't doing
     // that yet due to issues with dup, etc.
@@ -196,6 +197,40 @@ void DumpRenderTree::doneDrt()
     (m_page->client())->notifyRunLayoutTestsFinished();
 }
 
+void DumpRenderTree::getRefTests(const String& testName)
+{
+    if (m_runningRefTests)
+        return;
+
+    const char* suffixes[] = {"-expected", "-expected-mismatch"};
+    const int countofSuffixes = sizeof(suffixes) / sizeof(const char*);
+    // FIXME: Currently we only have ref tests with .html extension, you many need to add more
+    // when they have more extensions(.htm, .shtml, .xhtml, etc.).
+    const char* extensions[] = {".html", ".svg"};
+    const int countofExtensions = sizeof(extensions) / sizeof(const char*);
+    String layoutDir = kSDCLayoutTestsURI + 7; // 7: strlen("file://"), layoutDir: "/developer/LayoutTests/"
+
+    size_t iEnd = testName.reverseFind('.');
+
+    String nameWithoutExtension = testName.substring(0, iEnd);
+    for (int i = 0; i < countofSuffixes; ++i)
+        for (int j = 0; j < countofExtensions; ++j) {
+            String candidateFile = layoutDir + nameWithoutExtension + suffixes[i] + extensions[j];
+            if (!access(candidateFile.utf8().data(), F_OK))
+                m_refTests.append(nameWithoutExtension + suffixes[i] + extensions[j]);
+        }
+}
+
+void DumpRenderTree::runCurrentTest()
+{
+    if (isHTTPTest(m_currentTest->utf8().data())) {
+        m_currentHttpTest = m_currentTest->utf8().data();
+        m_currentHttpTest.remove(0, strlen(httpTestSyntax));
+        runTest(httpPrefixURL + m_currentHttpTest);
+    } else
+        runTest(kSDCLayoutTestsURI + *m_currentTest);
+}
+
 void DumpRenderTree::runRemainingTests()
 {
     // FIXME: fflush should not be necessary but is temporarily required due to a bug in stdio output.
@@ -203,17 +238,21 @@ void DumpRenderTree::runRemainingTests()
     fflush(stderr);
 
     if (m_currentTest >= m_tests.end() - 1) {
-        doneDrt();
-        return;
-    }
-
-    m_currentTest++;
-    if (isHTTPTest(m_currentTest->utf8().data())) {
-        m_currentHttpTest = m_currentTest->utf8().data();
-        m_currentHttpTest.remove(0, strlen(httpTestSyntax));
-        runTest(httpPrefixURL + m_currentHttpTest);
+        // Run ref-tests after real tests were finished
+        if (!m_runningRefTests && !m_refTests.isEmpty()) {
+            m_tests.clear();
+            m_tests.append(m_refTests);
+            m_refTests.clear();
+            m_currentTest = m_tests.begin();
+            m_runningRefTests = true;
+        } else {
+            doneDrt();
+            return;
+        }
     } else
-        runTest(kSDCLayoutTestsURI + *m_currentTest);
+        m_currentTest++;
+
+    runCurrentTest();
 }
 
 void DumpRenderTree::resetToConsistentStateBeforeTesting()
@@ -302,25 +341,19 @@ void DumpRenderTree::runTests()
         doneDrt();
         return;
     }
-
-    if (isHTTPTest(m_currentTest->utf8().data())) {
-        m_currentHttpTest = m_currentTest->utf8().data();
-        m_currentHttpTest.remove(0, strlen(httpTestSyntax));
-        runTest(httpPrefixURL + m_currentHttpTest);
-    } else
-        runTest(kSDCLayoutTestsURI + *m_currentTest);
+    runCurrentTest();
 }
 
 
-WTF::String DumpRenderTree::dumpFramesAsText(WebCore::Frame* frame)
+String DumpRenderTree::dumpFramesAsText(WebCore::Frame* frame)
 {
-    WTF::String s;
+    String s;
     WebCore::Element* documentElement = frame->document()->documentElement();
     if (!documentElement)
         return s.utf8().data();
 
     if (frame->tree()->parent())
-        s = WTF::String::format("\n--------\nFrame: '%s'\n--------\n", frame->tree()->uniqueName().string().utf8().data());
+        s = String::format("\n--------\nFrame: '%s'\n--------\n", frame->tree()->uniqueName().string().utf8().data());
 
     s += documentElement->innerText() + "\n";
 
@@ -332,16 +365,16 @@ WTF::String DumpRenderTree::dumpFramesAsText(WebCore::Frame* frame)
     return s;
 }
 
-static void dumpToFile(const WTF::String& data)
+static void dumpToFile(const String& data)
 {
     fwrite(data.utf8().data(), 1, data.utf8().length(), stdout);
 }
 
-bool DumpRenderTree::isHTTPTest(const WTF::String& test)
+bool DumpRenderTree::isHTTPTest(const String& test)
 {
     if (test.length() < strlen(httpTestSyntax))
         return false;
-    WTF::String testLower = test.lower();
+    String testLower = test.lower();
     int lenHttpTestSyntax = strlen(httpTestSyntax);
     return testLower.substring(0, lenHttpTestSyntax) == httpTestSyntax
             && testLower.substring(lenHttpTestSyntax, strlen(localTestSyntax)) != localTestSyntax;
@@ -349,7 +382,7 @@ bool DumpRenderTree::isHTTPTest(const WTF::String& test)
 
 void DumpRenderTree::getTestsToRun()
 {
-    Vector<WTF::String> files;
+    Vector<String> files;
 
     FILE* fd = fopen(m_indexFile.utf8().data(), "r");
     fseek(fd, 0, SEEK_END);
@@ -358,10 +391,15 @@ void DumpRenderTree::getTestsToRun()
     OwnArrayPtr<char> buf = adoptArrayPtr(new char[size]);
     fread(buf.get(), 1, size, fd);
     fclose(fd);
-    WTF::String s(buf.get(), size);
+    String s(buf.get(), size);
     s.split("\n", files);
 
     m_tests = files;
+
+    // Find ref-tests for each of the real tests, one test may have multiple expected ref-tests
+    // and multiple mismatch ref-tests.
+    for (Vector<String>::iterator iter = files.begin(); files.end() != iter; ++iter)
+        getRefTests(*iter);
 }
 
 void DumpRenderTree::invalidateAnyPreviousWaitToDumpWatchdog()
@@ -370,7 +408,7 @@ void DumpRenderTree::invalidateAnyPreviousWaitToDumpWatchdog()
     waitForPolicy = false;
 }
 
-WTF::String DumpRenderTree::renderTreeDump() const
+String DumpRenderTree::renderTreeDump() const
 {
     if (mainFrame) {
         if (mainFrame->view() && mainFrame->view()->layoutPending())
@@ -386,9 +424,9 @@ static bool historyItemCompare(const RefPtr<WebCore::HistoryItem>& a, const RefP
     return codePointCompare(a->urlString(), b->urlString()) < 0;
 }
 
-static WTF::String dumpHistoryItem(PassRefPtr<WebCore::HistoryItem> item, int indent, bool current)
+static String dumpHistoryItem(PassRefPtr<WebCore::HistoryItem> item, int indent, bool current)
 {
-    WTF::String result;
+    String result;
 
     int start = 0;
     if (current) {
@@ -398,12 +436,12 @@ static WTF::String dumpHistoryItem(PassRefPtr<WebCore::HistoryItem> item, int in
     for (int i = start; i < indent; i++)
         result += " ";
 
-    WTF::String url = item->urlString();
+    String url = item->urlString();
     if (url.contains("file://")) {
-        static WTF::String layoutTestsString("/LayoutTests/");
-        static WTF::String fileTestString("(file test):");
+        static String layoutTestsString("/LayoutTests/");
+        static String fileTestString("(file test):");
 
-        WTF::String res = url.substring(url.find(layoutTestsString) + layoutTestsString.length());
+        String res = url.substring(url.find(layoutTestsString) + layoutTestsString.length());
         if (res.isEmpty())
             return result;
 
@@ -412,7 +450,7 @@ static WTF::String dumpHistoryItem(PassRefPtr<WebCore::HistoryItem> item, int in
     } else
         result += url;
 
-    WTF::String target = item->target();
+    String target = item->target();
     if (!target.isEmpty())
         result += " (in frame \"" + target + "\")";
 
@@ -430,9 +468,9 @@ static WTF::String dumpHistoryItem(PassRefPtr<WebCore::HistoryItem> item, int in
     return result;
 }
 
-static WTF::String dumpBackForwardListForWebView()
+static String dumpBackForwardListForWebView()
 {
-    WTF::String result = "\n============== Back Forward List ==============\n";
+    String result = "\n============== Back Forward List ==============\n";
     // FORMAT:
     // "        (file test):fast/loader/resources/click-fragment-link.html  **nav target**"
     // "curr->  (file test):fast/loader/resources/click-fragment-link.html#testfragment  **nav target**"
@@ -460,24 +498,24 @@ void DumpRenderTree::dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
 
-    WTF::String dumpFile = m_resultsDir + *m_currentTest + ".dump";
+    String dumpFile = m_resultsDir + *m_currentTest + ".dump";
 
-    WTF::String resultMimeType = "text/plain";
-    WTF::String responseMimeType = mainFrame->loader()->documentLoader()->responseMIMEType();
+    String resultMimeType = "text/plain";
+    String responseMimeType = mainFrame->loader()->documentLoader()->responseMIMEType();
 
     bool dumpAsText = gLayoutTestController->dumpAsText() || responseMimeType == "text/plain";
-    WTF::String data = dumpAsText ? dumpFramesAsText(mainFrame) : renderTreeDump();
+    String data = dumpAsText ? dumpFramesAsText(mainFrame) : renderTreeDump();
 
     if (gLayoutTestController->dumpBackForwardList())
         data += dumpBackForwardListForWebView();
 
-    WTF::String result = "Content-Type: " + resultMimeType + "\n" + data;
+    String result = "Content-Type: " + resultMimeType + "\n" + data;
 
     dumpToFile(result);
     if (m_dumpPixels && !dumpAsText && gLayoutTestController->generatePixelResults())
         dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
 
-    WTF::String crashFile = dumpFile + ".crash";
+    String crashFile = dumpFile + ".crash";
     unlink(crashFile.utf8().data());
 
     testDone = true;
@@ -605,7 +643,7 @@ void DumpRenderTree::didClearWindowObjectInWorld(WebCore::DOMWrapperWorld*, JSGl
     WebCoreTestSupport::injectInternalsObject(context);
 }
 
-void DumpRenderTree::didReceiveTitleForFrame(const WTF::String& title, WebCore::Frame* frame)
+void DumpRenderTree::didReceiveTitleForFrame(const String& title, WebCore::Frame* frame)
 {
     if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
         printf("%s - didReceiveTitle: %s\n", drtFrameDescription(frame).utf8().data(), title.utf8().data());
@@ -615,45 +653,45 @@ void DumpRenderTree::didReceiveTitleForFrame(const WTF::String& title, WebCore::
 }
 
 // ChromeClient delegates.
-void DumpRenderTree::addMessageToConsole(const WTF::String& message, unsigned int lineNumber, const WTF::String& sourceID)
+void DumpRenderTree::addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID)
 {
     printf("CONSOLE MESSAGE: line %d: %s\n", lineNumber, message.utf8().data());
 }
 
-void DumpRenderTree::runJavaScriptAlert(const WTF::String& message)
+void DumpRenderTree::runJavaScriptAlert(const String& message)
 {
     if (!testDone)
         printf("ALERT: %s\n", message.utf8().data());
 }
 
-bool DumpRenderTree::runJavaScriptConfirm(const WTF::String& message)
+bool DumpRenderTree::runJavaScriptConfirm(const String& message)
 {
     if (!testDone)
         printf("CONFIRM: %s\n", message.utf8().data());
     return true;
 }
 
-WTF::String DumpRenderTree::runJavaScriptPrompt(const WTF::String& message, const WTF::String& defaultValue)
+String DumpRenderTree::runJavaScriptPrompt(const String& message, const String& defaultValue)
 {
     if (!testDone)
         printf("PROMPT: %s, default text: %s\n", message.utf8().data(), defaultValue.utf8().data());
     return defaultValue;
 }
 
-bool DumpRenderTree::runBeforeUnloadConfirmPanel(const WTF::String& message)
+bool DumpRenderTree::runBeforeUnloadConfirmPanel(const String& message)
 {
     if (!testDone)
         printf("CONFIRM NAVIGATION: %s\n", message.utf8().data());
     return true;
 }
 
-void DumpRenderTree::setStatusText(const WTF::String& status)
+void DumpRenderTree::setStatusText(const String& status)
 {
     if (gLayoutTestController->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", status.utf8().data());
 }
 
-void DumpRenderTree::exceededDatabaseQuota(WebCore::SecurityOrigin* origin, const WTF::String& name)
+void DumpRenderTree::exceededDatabaseQuota(WebCore::SecurityOrigin* origin, const String& name)
 {
     if (!testDone && gLayoutTestController->dumpDatabaseCallbacks())
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n", origin->protocol().utf8().data(), origin->host().utf8().data(), origin->port(), name.utf8().data());
@@ -696,7 +734,7 @@ void DumpRenderTree::didChangeSelection()
         printf("EDITING DELEGATE: webViewDidChangeSelection:%s\n", "WebViewDidChangeSelectionNotification");
 }
 
-bool DumpRenderTree::findString(const WTF::String& string, WebCore::FindOptions options)
+bool DumpRenderTree::findString(const String& string, WebCore::FindOptions options)
 {
     WebCore::Page* page = mainFrame ? mainFrame->page() : 0;
     return page && page->findString(string, options);
@@ -751,7 +789,7 @@ bool DumpRenderTree::shouldInsertNode(WebCore::Node* node, WebCore::Range* range
     return m_acceptsEditing;
 }
 
-bool DumpRenderTree::shouldInsertText(const WTF::String& text, WebCore::Range* range, int action)
+bool DumpRenderTree::shouldInsertText(const String& text, WebCore::Range* range, int action)
 {
     if (!testDone && gLayoutTestController->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n", text.utf8().data(), drtRangeDescription(range).utf8().data(), insertActionString((WebCore::EditorInsertAction)action));

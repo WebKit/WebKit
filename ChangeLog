@@ -1,3 +1,28 @@
+2012-05-11  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Update DumpRenderTree.cpp to also run ref-tests if there're any
+        https://bugs.webkit.org/show_bug.cgi?id=86055
+
+        Reviewed by Rob Buis.
+
+        Ref-tests are tests with suffix "-expected", "-expected-mismatch" and a valid
+        extension(".html", ".htm", etc.).
+        Currently torch-launcher only run tests parsed by NRWT, with ref-tests
+        excluded. As a result, if a test have ref-tests (which were not run), our
+        DumpRenderTree Perl script will think there's a crash and exit with code 1.
+        So NRWT will report the result as CRASH.
+        We need to update DumpRenderTree.cpp to try to find ref-tests and run them.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::DumpRenderTree):
+        (BlackBerry::WebKit::DumpRenderTree::getRefTests):
+        (WebKit):
+        (BlackBerry::WebKit::DumpRenderTree::runCurrentTest):
+        (BlackBerry::WebKit::DumpRenderTree::runRemainingTests):
+        (BlackBerry::WebKit::DumpRenderTree::runTests):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (DumpRenderTree):
+
 2012-05-10  MORITA Hajime  <morrita@google.com>
 
         ElementShadow should minimize the usage of "ShadowRoot" name
