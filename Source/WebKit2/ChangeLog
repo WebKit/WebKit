@@ -1,5 +1,56 @@
 2012-05-10  Anders Carlsson  <andersca@apple.com>
 
+        PDF files won't scroll in Safari when using Adobe plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=86167
+        <rdar://problem/11389719>
+
+        Reviewed by Sam Weinig.
+
+        Add a way to whitelist plug-ins that we know will process wheel events correctly. Add the new
+        Adobe Reader plug-in to this whitelist. Only send wheel events to plug-ins that are in the whitelist.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::wantsWheelEvents):
+        (WebKit):
+        * PluginProcess/PluginControllerProxy.h:
+        (PluginControllerProxy):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        * PluginProcess/WebProcessConnection.h:
+        (WebProcessConnection):
+        * PluginProcess/WebProcessConnection.messages.in:
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/PluginQuirks.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::wantsWheelEvents):
+        (WebKit):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        (BuiltInPDFView):
+        * WebProcess/Plugins/PDF/BuiltInPDFView.mm:
+        (WebKit::BuiltInPDFView::wantsWheelEvents):
+        (WebKit):
+        * WebProcess/Plugins/Plugin.h:
+        (Plugin):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::PluginProxy):
+        (WebKit::PluginProxy::initialize):
+        (WebKit::PluginProxy::wantsWheelEvents):
+        (WebKit):
+        * WebProcess/Plugins/PluginProxy.h:
+        (PluginProxy):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::initializePlugin):
+        (WebKit::PluginView::wantsWheelEvents):
+        (WebKit):
+        (WebKit::PluginView::handleEvent):
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView):
+
+2012-05-10  Anders Carlsson  <andersca@apple.com>
+
         WebKit2: Add a way to blacklist specific plug-ins/plug-in versions
         https://bugs.webkit.org/show_bug.cgi?id=86164
         <rdar://problem/9551196>

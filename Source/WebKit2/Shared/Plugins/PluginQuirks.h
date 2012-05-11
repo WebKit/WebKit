@@ -93,6 +93,10 @@ public:
         WantsMozillaUserAgent,
 #endif
 
+        // This isn't really a quirk as much as the opposite of a quirk. By default, we don't send wheel events
+        // to plug-ins unless we know that they handle them correctly. Adobe Reader on Mac handles wheel events correctly.
+        WantsWheelEvents,
+
         NumPluginQuirks
     };
     

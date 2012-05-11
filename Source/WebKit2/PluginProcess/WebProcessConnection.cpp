@@ -225,7 +225,7 @@ void WebProcessConnection::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
 }
 
-void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, bool& result, uint32_t& remoteLayerClientID)
+void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID)
 {
     OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, creationParameters);
 
@@ -241,6 +241,7 @@ void WebProcessConnection::createPlugin(const PluginCreationParameters& creation
     if (!result)
         return;
 
+    wantsWheelEvents = pluginControllerProxyPtr->wantsWheelEvents();
 #if PLATFORM(MAC)
     remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
 #endif

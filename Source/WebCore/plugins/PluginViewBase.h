@@ -57,6 +57,9 @@ public:
     virtual Scrollbar* horizontalScrollbar() { return 0; }
     virtual Scrollbar* verticalScrollbar() { return 0; }
 
+    // FIXME: This is a hack that works around the fact that the WebKit2 PluginView isn't a ScrollableArea.
+    virtual bool wantsWheelEvents() { return false; }
+
 protected:
     PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
     

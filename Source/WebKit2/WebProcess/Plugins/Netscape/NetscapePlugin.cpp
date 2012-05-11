@@ -676,6 +676,11 @@ bool NetscapePlugin::isTransparent()
     return m_isTransparent;
 }
 
+bool NetscapePlugin::wantsWheelEvents()
+{
+    return m_pluginModule->pluginQuirks().contains(PluginQuirks::WantsWheelEvents);
+}
+
 void NetscapePlugin::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
 {
     ASSERT(m_isStarted);

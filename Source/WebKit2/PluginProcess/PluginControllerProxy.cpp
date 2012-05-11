@@ -148,6 +148,11 @@ void PluginControllerProxy::destroy()
     m_connection->removePluginControllerProxy(this, plugin);
 }
 
+bool PluginControllerProxy::wantsWheelEvents() const
+{
+    return m_plugin->wantsWheelEvents();
+}
+
 void PluginControllerProxy::paint()
 {
     ASSERT(!m_dirtyRect.isEmpty());

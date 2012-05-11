@@ -471,6 +471,12 @@ bool BuiltInPDFView::isTransparent()
     return false;
 }
 
+bool BuiltInPDFView::wantsWheelEvents()
+{
+    // We return false here even though we do want wheel events, because we add ourselves to the scrollable area set in updateScrollbars().
+    return false;
+}
+
 void BuiltInPDFView::geometryDidChange(const IntSize& pluginSize, const IntRect& clipRect, const AffineTransform& pluginToRootViewTransform)
 {
     if (m_pluginSize == pluginSize) {

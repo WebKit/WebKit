@@ -114,13 +114,22 @@ static Region computeNonFastScrollableRegion(Frame* mainFrame)
         if (!frameView)
             continue;
 
-        const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas();
-        if (!scrollableAreas)
-            continue;
+        if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
+            for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
+                ScrollableArea* scrollableArea = *it;
+                nonFastScrollableRegion.unite(scrollableArea->scrollableAreaBoundingBox());
+            }
+        }
 
-        for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
-            ScrollableArea* scrollableArea = *it;
-            nonFastScrollableRegion.unite(scrollableArea->scrollableAreaBoundingBox());
+        if (const HashSet<RefPtr<Widget> >* children = frameView->children()) {
+            for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(), end = children->end(); it != end; ++it) {
+                if (!(*it)->isPluginViewBase())
+                    continue;
+                
+                PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>((*it).get());
+                if (pluginViewBase->wantsWheelEvents())
+                    nonFastScrollableRegion.unite(pluginViewBase->frameRect());
+            }
         }
     }
 

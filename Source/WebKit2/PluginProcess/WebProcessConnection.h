@@ -68,7 +68,7 @@ private:
 
     // Message handlers.
     void didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
-    void createPlugin(const PluginCreationParameters&, bool& result, uint32_t& remoteLayerClientID);
+    void createPlugin(const PluginCreationParameters&, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID);
     void destroyPlugin(uint64_t pluginInstanceID);
 
     RefPtr<CoreIPC::Connection> m_connection;

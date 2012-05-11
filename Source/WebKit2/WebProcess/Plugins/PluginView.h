@@ -111,6 +111,7 @@ private:
     virtual bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
+    virtual bool wantsWheelEvents();
 
     // WebCore::Widget
     virtual void setFrameRect(const WebCore::IntRect&);

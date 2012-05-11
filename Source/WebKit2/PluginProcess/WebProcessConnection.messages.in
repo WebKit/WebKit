@@ -24,7 +24,7 @@
 
 messages -> WebProcessConnection {
     # Creates a plug-in instance using the given creation parameters.
-    CreatePlugin(WebKit::PluginCreationParameters pluginCreationParameters) -> (bool result, uint32_t remoteLayerClientID)
+    CreatePlugin(WebKit::PluginCreationParameters pluginCreationParameters) -> (bool result, bool wantsWheelEvents, uint32_t remoteLayerClientID)
 
     # Destroys the plug-in instance with the given instance ID.
     DestroyPlugin(uint64_t pluginInstanceID) -> ()
