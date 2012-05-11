@@ -2,6 +2,7 @@ Tests that elements panel search is returning proper results.
 
 FooBar
 
+Found by selector
 
 Running: testSetUp
 
@@ -28,4 +29,7 @@ Running: testPartialAttributeVal_ue
 
 Running: testXPathAttribute
 < d i v   a t t r = " f o o " > < / d i v >
+
+Running: testSelector
+< s p a n > F o u n d   b y   s e l e c t o r < / s p a n >
 

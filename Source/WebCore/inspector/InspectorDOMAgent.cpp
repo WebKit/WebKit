@@ -884,6 +884,19 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
                 resultCollector.add(node);
             }
         }
+
+        // Selector evaluation
+        for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
+            Document* document = *it;
+            ExceptionCode ec = 0;
+            RefPtr<NodeList> nodeList = document->querySelectorAll(whitespaceTrimmedQuery, ec);
+            if (ec || !nodeList)
+                continue;
+
+            unsigned size = nodeList->length();
+            for (unsigned i = 0; i < size; ++i)
+                resultCollector.add(nodeList->item(i));
+        }
     }
 
     *searchId = IdentifiersFactory::createIdentifier();

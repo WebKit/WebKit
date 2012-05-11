@@ -71,6 +71,11 @@ function test()
         function testXPathAttribute(next)
         {
             WebInspector.domAgent.performSearch("//html" + "//@attr", searchCallback.bind(this, next));
+        },
+
+        function testSelector(next)
+        {
+            WebInspector.domAgent.performSearch("d" + "iv.divclass span", searchCallback.bind(this, next));
         }
     ]);
 
@@ -87,6 +92,7 @@ Tests that elements panel search is returning proper results.
 <input value="InputVal">
 <div attr="foo"></div>
 <div id="terminator"></div>
+<div class="divclass"><span>Found by selector</span></div>
 
 </body>
 </html>

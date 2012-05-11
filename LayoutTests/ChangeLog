@@ -1,3 +1,13 @@
+2012-05-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Search box doesn't allow CSS selectors anymore
+        https://bugs.webkit.org/show_bug.cgi?id=86196
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/elements/elements-panel-search-expected.txt:
+        * inspector/elements/elements-panel-search.html:
+
 2012-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116527.
