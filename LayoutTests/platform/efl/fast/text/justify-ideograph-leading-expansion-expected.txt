@@ -5,21 +5,21 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x124
         RenderBlock {DIV} at (0,0) size 106x42 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 86x19
-            text run at (3,3) width 86: "a. b. "
+          RenderText {#text} at (3,3) size 80x19
+            text run at (3,3) width 80: "a. b. "
           RenderInline {SPAN} at (0,0) size 4x19
-            RenderText {#text} at (89,3) size 4x19
-              text run at (89,3) width 4: "i"
-          RenderText {#text} at (93,3) size 100x37
-            text run at (93,3) width 10: "\x{306F}"
+            RenderText {#text} at (83,3) size 4x19
+              text run at (83,3) width 4: "i"
+          RenderText {#text} at (87,3) size 100x37
+            text run at (87,3) width 16: "\x{306F}"
             text run at (3,21) width 56: "xxxxxxx"
         RenderBlock {DIV} at (0,50) size 106x42 [border: (3px solid #000000)]
           RenderText {#text} at (3,3) size 100x37
             text run at (3,3) width 100: "a. b. i\x{306F}"
             text run at (3,21) width 56: "xxxxxxx"
         RenderBlock {DIV} at (0,100) size 106x24 [border: (3px solid #000000)]
-          RenderText {#text} at (3,3) size 198x19
-            text run at (3,3) width 198: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"
+          RenderText {#text} at (3,3) size 216x19
+            text run at (3,3) width 216: "xxxxxxxxxxxxxxxxxxxxx\x{FF08}\x{624B}\x{FF09}"
       RenderBlock {DIV} at (0,132) size 784x88
         RenderBlock {DIV} at (0,0) size 106x24 [border: (3px solid #000000)]
           RenderText {#text} at (3,3) size 0x19

@@ -1,3 +1,39 @@
+2012-05-11  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Tests needs rebaselining after r116776
+        https://bugs.webkit.org/show_bug.cgi?id=86227
+
+        Unreviewed gardening.
+
+        * platform/efl/fast/css/line-height-determined-by-primary-font-expected.png:
+        * platform/efl/fast/css/line-height-determined-by-primary-font-expected.txt:
+        * platform/efl/fast/dynamic/text-combine-expected.png:
+        * platform/efl/fast/dynamic/text-combine-expected.txt:
+        * platform/efl/fast/encoding/denormalised-voiced-japanese-chars-expected.png:
+        * platform/efl/fast/encoding/denormalised-voiced-japanese-chars-expected.txt:
+        * platform/efl/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/efl/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * platform/efl/fast/ruby/base-shorter-than-text-expected.png:
+        * platform/efl/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/efl/fast/ruby/nested-ruby-expected.png:
+        * platform/efl/fast/ruby/nested-ruby-expected.txt:
+        * platform/efl/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/efl/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/efl/fast/text/backslash-to-yen-sign-expected.png:
+        * platform/efl/fast/text/backslash-to-yen-sign-expected.txt:
+        * platform/efl/fast/text/emphasis-combined-text-expected.png:
+        * platform/efl/fast/text/emphasis-combined-text-expected.txt:
+        * platform/efl/fast/text/justify-ideograph-leading-expansion-expected.png:
+        * platform/efl/fast/text/justify-ideograph-leading-expansion-expected.txt:
+        * platform/efl/fast/text/justify-ideograph-simple-expected.png:
+        * platform/efl/fast/text/justify-ideograph-simple-expected.txt:
+        * platform/efl/fast/text/justify-ideograph-vertical-expected.png:
+        * platform/efl/fast/text/justify-ideograph-vertical-expected.txt:
+        * platform/efl/fast/writing-mode/vertical-align-table-baseline-expected.png:
+        * platform/efl/fast/writing-mode/vertical-align-table-baseline-expected.txt:
+        * platform/efl/fast/writing-mode/vertical-baseline-alignment-expected.png:
+        * platform/efl/fast/writing-mode/vertical-baseline-alignment-expected.txt:
+
 2012-05-11  Simon Fraser  <simon.fraser@apple.com>
 
         CVDisplayLink keeps running after a single requestAnimationFrame
