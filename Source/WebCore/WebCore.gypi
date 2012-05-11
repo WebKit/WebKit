@@ -8289,6 +8289,7 @@
             'platform/chromium/support/WebMediaStreamSource.cpp',
             'platform/chromium/support/WebMediaStreamSourcesRequest.cpp',
             'platform/chromium/support/WebThreadSafeData.cpp',
+            'platform/chromium/support/WebTransformationMatrix.cpp',
             'platform/chromium/support/WebURL.cpp',
             'platform/chromium/support/WebURLError.cpp',
             'platform/chromium/support/WebURLRequest.cpp',

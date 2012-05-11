@@ -1,3 +1,17 @@
+2012-05-11  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Create WebTransformationMatrix interface for chromium platform
+        https://bugs.webkit.org/show_bug.cgi?id=86049
+
+        Reviewed by James Robinson.
+
+        * Platform.gyp/Platform.gyp:
+        * Platform.gypi:
+        * chromium/public/WebTransformationMatrix.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebTransformationMatrix):
+
 2012-05-10  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove WEBKIT_USING_SKIA ifdefs that are always true

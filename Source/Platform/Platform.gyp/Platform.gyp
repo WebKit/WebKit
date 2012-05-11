@@ -59,6 +59,7 @@
                 # directory for all ports and just use them as normal.
                 'webcore_headers': [
                     '../../WebCore/platform/graphics/FloatPoint.h',
+                    '../../WebCore/platform/graphics/FloatPoint3D.h',
                     '../../WebCore/platform/graphics/FloatQuad.h',
                     '../../WebCore/platform/graphics/FloatRect.h',
                     '../../WebCore/platform/graphics/FloatSize.h',
