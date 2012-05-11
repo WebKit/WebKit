@@ -50,7 +50,8 @@ public:
     void initializeClient(const WKSoupRequestManagerClient*);
 
     void registerURIScheme(const String& scheme);
-    void handleURIRequest(const WebData*, const String& mimeType, uint64_t requestID);
+    void didHandleURIRequest(const WebData*, uint64_t contentLength, const String& mimeType, uint64_t requestID);
+    void didReceiveURIRequestData(const WebData*, uint64_t requestID);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 

@@ -23,6 +23,7 @@
 #include "DataReference.h"
 #include "MessageID.h"
 #include "WebKitSoupRequestGeneric.h"
+#include "WebKitSoupRequestInputStream.h"
 #include "WebProcess.h"
 #include "WebSoupRequestManagerProxyMessages.h"
 #include <WebCore/ErrorsGtk.h>
@@ -75,16 +76,25 @@ void WebSoupRequestManager::registerURIScheme(const String& scheme)
     soup_session_feature_add_feature(SOUP_SESSION_FEATURE(requester.get()), WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
 }
 
-void WebSoupRequestManager::handleURIRequest(const CoreIPC::DataReference& requestData, const String& mimeType, uint64_t requestID)
+void WebSoupRequestManager::didHandleURIRequest(const CoreIPC::DataReference& requestData, uint64_t contentLength, const String& mimeType, uint64_t requestID)
 {
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(m_requestMap.take(requestID));
     ASSERT(result.get());
 
     GRefPtr<WebKitSoupRequestGeneric> request = adoptGRef(WEBKIT_SOUP_REQUEST_GENERIC(g_async_result_get_source_object(G_ASYNC_RESULT(result.get()))));
     if (requestData.size()) {
-        webkitSoupRequestGenericSetContentLength(request.get(), requestData.size());
-        webkitSoupRequestGenericSetContentType(request.get(), mimeType.utf8().data());
-        GInputStream* dataStream = g_memory_input_stream_new_from_data(requestData.data(), requestData.size(), 0);
+        webkitSoupRequestGenericSetContentLength(request.get(), contentLength ? contentLength : -1);
+        webkitSoupRequestGenericSetContentType(request.get(), !mimeType.isEmpty() ? mimeType.utf8().data() : 0);
+
+        GInputStream* dataStream;
+        if (requestData.size() == contentLength) {
+            // We don't expect more data, so we can just create a GMemoryInputStream with all the data.
+            dataStream = g_memory_input_stream_new_from_data(g_memdup(requestData.data(), requestData.size()), contentLength, g_free);
+        } else {
+            dataStream = webkitSoupRequestInputStreamNew(contentLength);
+            webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream), requestData.data(), requestData.size());
+            m_requestStreamMap.set(requestID, dataStream);
+        }
         g_simple_async_result_set_op_res_gpointer(result.get(), dataStream, g_object_unref);
     } else {
         GOwnPtr<char> uriString(soup_uri_to_string(soup_request_get_uri(SOUP_REQUEST(request.get())), FALSE));
@@ -94,6 +104,15 @@ void WebSoupRequestManager::handleURIRequest(const CoreIPC::DataReference& reque
                                         resourceError.errorCode(), "%s", resourceError.localizedDescription().utf8().data());
     }
     g_simple_async_result_complete(result.get());
+}
+
+void WebSoupRequestManager::didReceiveURIRequestData(const CoreIPC::DataReference& requestData, uint64_t requestID)
+{
+    GInputStream* dataStream = m_requestStreamMap.get(requestID);
+    ASSERT(dataStream);
+    webkitSoupRequestInputStreamAddData(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream), requestData.data(), requestData.size());
+    if (webkitSoupRequestInputStreamFinished(WEBKIT_SOUP_REQUEST_INPUT_STREAM(dataStream)))
+        m_requestStreamMap.remove(requestID);
 }
 
 void WebSoupRequestManager::send(GSimpleAsyncResult* result)

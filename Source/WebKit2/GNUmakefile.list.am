@@ -939,6 +939,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/soup/WebSoupRequestManager.h \
 	Source/WebKit2/WebProcess/soup/WebKitSoupRequestGeneric.cpp \
 	Source/WebKit2/WebProcess/soup/WebKitSoupRequestGeneric.h \
+	Source/WebKit2/WebProcess/soup/WebKitSoupRequestInputStream.cpp \
+	Source/WebKit2/WebProcess/soup/WebKitSoupRequestInputStream.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp \

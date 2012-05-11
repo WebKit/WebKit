@@ -54,11 +54,13 @@ private:
     void didReceiveWebSoupRequestManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     void registerURIScheme(const String& scheme);
-    void handleURIRequest(const CoreIPC::DataReference&, const String& mimeType, uint64_t requestID);
+    void didHandleURIRequest(const CoreIPC::DataReference&, uint64_t contentLength, const String& mimeType, uint64_t requestID);
+    void didReceiveURIRequestData(const CoreIPC::DataReference&, uint64_t requestID);
 
     WebProcess* m_process;
     GRefPtr<GPtrArray> m_schemes;
     HashMap<uint64_t, GSimpleAsyncResult*> m_requestMap;
+    HashMap<uint64_t, GInputStream*> m_requestStreamMap;
 };
 
 } // namespace WebKit

@@ -43,10 +43,15 @@ void WKSoupRequestManagerSetClient(WKSoupRequestManagerRef soupRequestManagerRef
 
 void WKSoupRequestManagerRegisterURIScheme(WKSoupRequestManagerRef soupRequestManagerRef, WKStringRef schemeRef)
 {
-    toImpl(soupRequestManagerRef)->registerURIScheme(toImpl(schemeRef)->string());
+    toImpl(soupRequestManagerRef)->registerURIScheme(toWTFString(schemeRef));
 }
 
-void WKSoupRequestManagerHandleURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKDataRef data, WKStringRef mimeTypeRef, uint64_t requestID)
+void WKSoupRequestManagerDidHandleURIRequest(WKSoupRequestManagerRef soupRequestManagerRef, WKDataRef data, uint64_t contentLength, WKStringRef mimeTypeRef, uint64_t requestID)
 {
-    toImpl(soupRequestManagerRef)->handleURIRequest(toImpl(data), toImpl(mimeTypeRef)->string(), requestID);
+    toImpl(soupRequestManagerRef)->didHandleURIRequest(toImpl(data), contentLength, toWTFString(mimeTypeRef), requestID);
+}
+
+void WKSoupRequestManagerDidReceiveURIRequestData(WKSoupRequestManagerRef soupRequestManagerRef, WKDataRef data, uint64_t requestID)
+{
+    toImpl(soupRequestManagerRef)->didReceiveURIRequestData(toImpl(data), requestID);
 }

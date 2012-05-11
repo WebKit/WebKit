@@ -1,3 +1,69 @@
+2012-05-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Allow sending URI request data in chunks
+        https://bugs.webkit.org/show_bug.cgi?id=85880
+
+        Reviewed by Martin Robinson.
+
+        The API to handle custom URI schemes will receive an input stream
+        to read from. Current code requires to buffer the whole stream
+        before sending it to the WebProcess. This patch allows to send the
+        data in chunks while it's read from the stream.
+
+        * GNUmakefile.list.am: Add new files to compilation
+        * UIProcess/API/C/soup/WKSoupRequestManager.cpp:
+        (WKSoupRequestManagerRegisterURIScheme): Use toWTFString() to
+        convert from WKString to WTFString.
+        (WKSoupRequestManagerDidHandleURIRequest): Use didHandleURIRequest
+        as it has been renamed.
+        (WKSoupRequestManagerDidReceiveURIRequestData): New method to send
+        more data for the uri request to the web process.
+        * UIProcess/API/C/soup/WKSoupRequestManager.h:
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::didHandleURIRequest):
+        HandleURIRequest has been renamed to DidHandleURIRequest.
+        (WebKit::WebSoupRequestManagerProxy::didReceiveURIRequestData):
+        Send DidReceiveURIRequestData message to the web process.
+        (WebKit::WebSoupRequestManagerProxy::didReceiveURIRequest): Use
+        didHandleURIRequest as it has been renamed.
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        (WebSoupRequestManagerProxy):
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp: Added.
+        (AsyncReadData::AsyncReadData): Helper struct to store information
+        about pending async read operations.
+        (_WebKitSoupRequestInputStreamPrivate):
+        (webkitSoupRequestInputStreamReadAsyncResultComplete): Read the
+        data from the memory input stream and complete the async read
+        operation.
+        (webkitSoupRequestInputStreamReadAsync): Read the data from the
+        memory input stream and complete the async read operation if
+        there's data to read, or save the async result to be completed
+        when more data is added to the stream.
+        (webkitSoupRequestInputStreamReadFinish): Finish an async read
+        started with webkitSoupRequestInputStreamReadAsync.
+        (webkitSoupRequestInputStreamFinalize):
+        (webkit_soup_request_input_stream_init):
+        (webkit_soup_request_input_stream_class_init):
+        (webkitSoupRequestInputStreamNew): Create a new input stream with
+        a fixed size or 0 if content length is not known.
+        (webkitSoupRequestInputStreamAddData): Add more data to the
+        stream and complete any pending async read.
+        (webkitSoupRequestInputStreamFinished): Whether all data expected
+        by the stream has been received.
+        * WebProcess/soup/WebKitSoupRequestInputStream.h: Added.
+        * WebProcess/soup/WebSoupRequestManager.cpp:
+        (WebKit::WebSoupRequestManager::didHandleURIRequest): Create a
+        WebKitSoupRequestInputStream if we haven't received all the
+        request data in the HandleURIRequest message. Otherwise just
+        create a memory input stream with all the data.
+        (WebKit::WebSoupRequestManager::didReceiveURIRequestData): Add the data
+        received to the WebKitSoupRequestInputStream associated to the
+        given request identifier.
+        * WebProcess/soup/WebSoupRequestManager.h:
+        * WebProcess/soup/WebSoupRequestManager.messages.in: Add
+        contentLength parameter to DidHandleURIRequest message and add
+        DidReceiveURIRequestData message.
+
 2012-05-10  MORITA Hajime  <morrita@google.com>
 
         ElementShadow should minimize the usage of "ShadowRoot" name
