@@ -54,8 +54,12 @@ TextureLayerChromium::TextureLayerChromium(TextureLayerChromiumClient* client)
 
 TextureLayerChromium::~TextureLayerChromium()
 {
-    if (m_rateLimitContext && m_client && layerTreeHost())
-        layerTreeHost()->stopRateLimiter(m_client->context());
+    if (layerTreeHost()) {
+        if (m_textureId)
+            layerTreeHost()->acquireLayerTextures();
+        if (m_rateLimitContext && m_client)
+            layerTreeHost()->stopRateLimiter(m_client->context());
+    }
 }
 
 PassOwnPtr<CCLayerImpl> TextureLayerChromium::createCCLayerImpl()
@@ -91,6 +95,10 @@ void TextureLayerChromium::setRateLimitContext(bool rateLimit)
 
 void TextureLayerChromium::setTextureId(unsigned id)
 {
+    if (m_textureId == id)
+        return;
+    if (m_textureId && layerTreeHost())
+        layerTreeHost()->acquireLayerTextures();
     m_textureId = id;
     setNeedsCommit();
 }
@@ -101,6 +109,13 @@ void TextureLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 
     if (m_rateLimitContext && m_client && layerTreeHost())
         layerTreeHost()->startRateLimiter(m_client->context());
+}
+
+void TextureLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
+{
+    if (m_textureId && layerTreeHost() && host != layerTreeHost())
+        layerTreeHost()->acquireLayerTextures();
+    LayerChromium::setLayerTreeHost(host);
 }
 
 bool TextureLayerChromium::drawsContent() const
