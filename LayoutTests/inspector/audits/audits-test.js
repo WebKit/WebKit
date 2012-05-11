@@ -21,7 +21,7 @@ InspectorTest.collectTextContent = function(element, level)
         if (child.nodeType === Node.TEXT_NODE) {
             for (var i = 0; i < level; ++i)
                 nodeOutput += " ";
-            nodeOutput += child.nodeValue;
+            nodeOutput += child.nodeValue.replace("\u200B", "");
         } else if (child.nodeType === Node.ELEMENT_NODE) {
             if (nodeOutput !== "") {
                 InspectorTest.addResult(nodeOutput);

@@ -23,6 +23,9 @@ function extension_testAudits(nextTest)
         nestedNode.expanded = true;
         nestedNode.addChild(results.createSnippet("function rand()\n{\n    return 4;\n}"));
         nestedNode.addChild(results.createResourceLink("file:///path/to/error.html", 10));
+        nestedNode.addChild(results.createObject("({a: 42, b: 'foo'})", "object details"));
+        nestedNode.addChild(results.createNode("document.getElementById('test-element')"));
+
         webInspector.inspectedWindow.eval("location.href", function(inspectedPageURL) {
             nestedNode.addChild(results.createResourceLink(inspectedPageURL, 20));
 
@@ -68,5 +71,6 @@ function extension_testAudits(nextTest)
 </head>
 <body onload="runTest()">
 <p>Tests audits support in WebInspector Extensions API</p>
+<span id="test-element"><b></b></span>
 </body>
 </html>

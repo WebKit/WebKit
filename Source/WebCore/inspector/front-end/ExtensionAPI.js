@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -498,6 +498,8 @@ function AuditResultImpl(id)
     this.createURL = this._nodeFactory.bind(null, "url");
     this.createSnippet = this._nodeFactory.bind(null, "snippet");
     this.createText = this._nodeFactory.bind(null, "text");
+    this.createObject = this._nodeFactory.bind(null, "object");
+    this.createNode = this._nodeFactory.bind(null, "node");
 }
 
 AuditResultImpl.prototype = {

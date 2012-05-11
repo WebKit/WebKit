@@ -1,6 +1,6 @@
 Tests audits support in WebInspector Extensions API
 
-Started extension.
+ Started extension.
 Running tests...
 RUNNING TEST: extension_testAudits
   Extension audits
@@ -19,6 +19,25 @@ RUNNING TEST: extension_testAudits
     return 4;
 }
          /path/to/error.html:10
+            object details
+             a
+             : 
+             42
+             b
+             : 
+             "foo"
+             __proto__
+             : 
+             Object
+            <
+             span
+             
+              id
+             ="
+              test-element
+             "
+            >
+           
          extensions-audits.html:20
     Passed rule
      this rule always passes ok

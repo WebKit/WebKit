@@ -10,12 +10,13 @@ Added audit category, result dump follows:
         removeListener : <function>
     }
 }
-  Extension audits
 category.onAuditStarted fired, results dump follows:
 {
     createURL : <function>
     createSnippet : <function>
     createText : <function>
+    createObject : <function>
+    createNode : <function>
     addResult : <function>
     createResult : <function>
     done : <function>
@@ -35,5 +36,6 @@ category.onAuditStarted fired, results dump follows:
     expanded : false
     addChild : <function>
 }
+  Extension audits
 All tests done.
 

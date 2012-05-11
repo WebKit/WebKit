@@ -178,6 +178,18 @@
     margin: 0;
 }
 
+.audit-result-tree ol.outline-disclosure {
+    -webkit-padding-start: 0;
+}
+
+.audit-result-tree .section .header {
+    padding-left: 13px;
+}
+
+.audit-result-tree .section .header::before {
+    left: 2px;
+}
+
 .audit-result-tree li {
     padding: 0 0 0 14px;
     margin-top: 1px;

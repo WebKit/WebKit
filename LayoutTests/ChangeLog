@@ -1,3 +1,18 @@
+2012-05-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] add audit formatters for remote objects and DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=86108
+
+        Reviewed by Pavel Feldman.
+
+        - rebaselined tests to account for two new AuditResults method and their results;
+
+        * inspector/extensions/extensions-audits-api-expected.txt:
+        * inspector/extensions/extensions-audits-expected.txt:
+        * inspector/extensions/extensions-audits-tests.js:
+        (initialize_ExtensionsAuditsTest.InspectorTest.startExtensionAudits.onAuditsDone):
+        * inspector/extensions/extensions-audits.html:
+
 2012-05-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, skip a new failing test.

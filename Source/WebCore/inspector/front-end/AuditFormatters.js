@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -96,5 +96,75 @@ WebInspector.AuditFormatters = {
     {
         // FIXME: use WebInspector.DebuggerPresentationModel.Linkifier
         return WebInspector.linkifyResourceAsNode(url, line, "console-message-url webkit-html-resource-link");
+    },
+
+    /**
+     * @param {string} expression
+     * @param {string} title
+     */
+    object: function(expression, title)
+    {
+        var parentElement = document.createElement("div");
+        function onEvaluate(remoteObject)
+        {
+            var section = new WebInspector.ObjectPropertiesSection(remoteObject, title);
+            section.expanded = true;
+            section.editable = false;
+            parentElement.appendChild(section.element);
+        }
+        WebInspector.AuditFormatters.Utilities.evaluate(expression, onEvaluate);
+        return parentElement;
+    },
+
+    /**
+     * @param {string} expression
+     */
+    node: function(expression)
+    {
+        var treeOutline = new WebInspector.ElementsTreeOutline(false, false, true);
+        /**
+         * @param {?number} nodeId
+         */
+        function onNodeAvailable(nodeId)
+        {
+            if (!nodeId)
+                return;
+            treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
+            treeOutline.element.addStyleClass("outline-disclosure");
+            treeOutline.setVisible(true);
+        }
+        /**
+         * @param {WebInspector.RemoteObject} remoteObject
+         */
+        function onEvaluate(remoteObject)
+        {
+            remoteObject.pushNodeToFrontend(onNodeAvailable);
+        }
+        WebInspector.AuditFormatters.Utilities.evaluate(expression, onEvaluate);
+        return treeOutline.element;
     }
 };
+
+WebInspector.AuditFormatters.Utilities = {
+    /**
+     * @param {string} expression
+     * @param {function(WebInspector.RemoteObject)} callback
+     */
+    evaluate: function(expression, callback)
+    {
+        /**
+         * @param {?string} error
+         * @param {?RuntimeAgent.RemoteObject} result
+         * @param {boolean=} wasThrown
+         */
+        function onEvaluate(error, result, wasThrown)
+        {
+            if (wasThrown)
+                return;
+            var object = WebInspector.RemoteObject.fromPayload(result);
+            callback(object);
+        }
+        RuntimeAgent.evaluate(expression, "extension-watch", true, undefined, undefined, undefined, onEvaluate);
+    }
+};
+

@@ -15,7 +15,10 @@ function extension_testAuditsAPI(nextTest)
         dumpObject(results);
         var node = results.createResult("Subtree");
         dumpObject(node);
-        results.done();
+        // Make sure dumpObject() pushes stuff through before we continue.
+        evaluateOnFrontend("InspectorTest.runAfterPendingDispatches(reply)", function() {
+            results.done();
+        });
     }
     var category = webInspector.audits.addCategory("Extension audits", 20);
     category.onAuditStarted.addListener(onStartAuditCategory);
