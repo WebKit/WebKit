@@ -1,3 +1,12 @@
+2012-05-11  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][DRT] fast/css/getComputedStyle/computed-style-without-renderer.html fails on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=86190
+
+        Unreviewed, EFL rebaseline after r116723.
+
+        * platform/efl/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2012-05-11  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for some tests, and optimization.
