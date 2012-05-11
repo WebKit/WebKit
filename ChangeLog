@@ -1,3 +1,9 @@
+2012-05-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, exclude some files we don't use from the build.
+
+        * wscript:
+
 2012-05-11  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Fix a reference counting issue in UserMediaRequest

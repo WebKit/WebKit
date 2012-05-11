@@ -493,6 +493,8 @@ def common_configure(conf):
             conf.check_cfg(path='curl-config', args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
 
         if not sys.platform.startswith('darwin'):
+            # this is needed to keep ld from hitting the 4gb process limit under Linux/Unix.
+            conf.env.append_value('LINKFLAGS', ['-Wl,--no-keep-memory'])
             conf.check_cfg(package='cairo', args='--cflags --libs', uselib_store='WX', mandatory=True)
             conf.check_cfg(package='pango', args='--cflags --libs', uselib_store='WX', mandatory=True)
             conf.check_cfg(package='gtk+-2.0', args='--cflags --libs', uselib_store='WX', mandatory=True)

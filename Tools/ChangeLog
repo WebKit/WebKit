@@ -1,3 +1,10 @@
+2012-05-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Fix memory exhausted errors from 32-bit ld on *nix.
+
+        * waf/build/settings.py:
+        (common_configure):
+
 2012-05-11  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch rebaseline should fetch stale expectations :)

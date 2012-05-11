@@ -340,9 +340,13 @@ def build(bld):
         excludes.append('JSNavigatorCustom.cpp')
         excludes.append('WebGLContextEvent.cpp')
         excludes.append('FileSystemPOSIX.cpp')
+        excludes.append('LocaleICU.cpp')
+        excludes.append('LocalizedDateICU.cpp')
+        excludes.append('PlatformGestureRecognizer.cpp')
         excludes.append('SharedBufferPOSIX.cpp')
         excludes.append('TouchAdjustment.cpp')
         excludes.append('DNSResolveQueue.cpp')
+        excludes.append('WebDOMRadioNodeList.cpp')
         
         # These files appear not to build with older versions of ICU
         excludes.append('LocalizedNumberICU.cpp')
@@ -361,9 +365,6 @@ def build(bld):
         
         # once we move over to the new FPD implementation, remove this.
         excludes.append('FontPlatformData.cpp')
-        
-        # we don't use gestures currently
-        excludes.append('PlatformGestureRecognizer.cpp')
         
         # we need a better system to exclude CF stuff
         excludes.append('HyphenationCF.cpp')
