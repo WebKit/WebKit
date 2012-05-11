@@ -2399,12 +2399,13 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTest
     m_uiClient.mouseDidMoveOverElement(this, hitTestResultData, modifiers, userData.get());
 }
 
-void WebPageProxy::missingPluginButtonClicked(const String& mimeType, const String& url, const String& pluginsPageURL)
+void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& url, const String& pluginsPageURL)
 {
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(pluginsPageURL);
 
-    m_uiClient.missingPluginButtonClicked(this, mimeType, url, pluginsPageURL);
+    WKPluginUnavailabilityReason pluginUnavailabilityReason = static_cast<WKPluginUnavailabilityReason>(opaquePluginUnavailabilityReason);
+    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, mimeType, url, pluginsPageURL);
 }
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
@@ -3618,6 +3619,11 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType)
 {
     m_loaderClient.didFailToInitializePlugin(this, mimeType);
+}
+
+void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType)
+{
+    m_loaderClient.didBlockInsecurePluginVersion(this, mimeType);
 }
 
 bool WebPageProxy::willHandleHorizontalScrollEvents() const

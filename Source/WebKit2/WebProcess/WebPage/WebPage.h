@@ -103,6 +103,7 @@ namespace WebCore {
     class GraphicsContext;
     class Frame;
     class FrameView;
+    class HTMLPlugInElement;
     class KeyboardEvent;
     class Page;
     class PrintContext;
@@ -256,7 +257,7 @@ public:
     WebCore::Frame* mainFrame() const; // May return 0.
     WebCore::FrameView* mainFrameView() const; // May return 0.
 
-    PassRefPtr<Plugin> createPlugin(WebFrame*, const Plugin::Parameters&);
+    PassRefPtr<Plugin> createPlugin(WebFrame*, WebCore::HTMLPlugInElement*, const Plugin::Parameters&);
 
     EditorState editorState() const;
 

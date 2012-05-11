@@ -70,7 +70,7 @@ public:
 
     void setStatusText(WebPageProxy*, const String&);
     void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResult::Data&, WebEvent::Modifiers, APIObject*);
-    void missingPluginButtonClicked(WebPageProxy*, const String& mimeType, const String& url, const String& pluginsPageURL);
+    void unavailablePluginButtonClicked(WebPageProxy*, WKPluginUnavailabilityReason, const String& mimeType, const String& url, const String& pluginsPageURL);
     
     bool implementsDidNotHandleKeyEvent() const;
     void didNotHandleKeyEvent(WebPageProxy*, const NativeWebKeyboardEvent&);

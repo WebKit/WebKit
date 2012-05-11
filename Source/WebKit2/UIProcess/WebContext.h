@@ -217,7 +217,7 @@ private:
 
     // Plugins
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>&);
-    void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath);
+    void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked);
 #if !ENABLE(PLUGIN_PROCESS)
     void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
     void didClearPluginSiteData(uint64_t callbackID);

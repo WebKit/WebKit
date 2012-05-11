@@ -620,7 +620,7 @@ void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
 #endif
 }
 
-void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath)
+void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked)
 {
     MESSAGE_CHECK_URL(urlString);
 
@@ -629,6 +629,12 @@ void WebContext::getPluginPath(const String& mimeType, const String& urlString, 
     PluginModuleInfo plugin = pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
     if (!plugin.path)
         return;
+
+    blocked = false;
+    if (pluginInfoStore().shouldBlockPlugin(plugin)) {
+        blocked = true;
+        return;
+    }
 
     pluginPath = plugin.path;
 }

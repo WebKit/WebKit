@@ -174,12 +174,18 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestRe
     m_client.mouseDidMoveOverElement(toAPI(page), toAPI(webHitTestResult.get()), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
 }
 
-void WebUIClient::missingPluginButtonClicked(WebPageProxy* page, const String& mimeType, const String& url, const String& pluginsPageURL)
+void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUnavailabilityReason pluginUnavailabilityReason, const String& mimeType, const String& url, const String& pluginsPageURL)
 {
-    if (!m_client.missingPluginButtonClicked)
+    if (pluginUnavailabilityReason == kWKPluginUnavailabilityReasonPluginMissing) {
+        if (m_client.missingPluginButtonClicked_deprecatedForUseWithV0)
+            m_client.missingPluginButtonClicked_deprecatedForUseWithV0(toAPI(page), toAPI(mimeType.impl()), toAPI(url.impl()), toAPI(pluginsPageURL.impl()), m_client.clientInfo);
+    }
+
+    if (!m_client.unavailablePluginButtonClicked)
         return;
 
-    m_client.missingPluginButtonClicked(toAPI(page), toAPI(mimeType.impl()), toAPI(url.impl()), toAPI(pluginsPageURL.impl()), m_client.clientInfo);
+    m_client.unavailablePluginButtonClicked(toAPI(page), pluginUnavailabilityReason, toAPI(mimeType.impl()), toAPI(url.impl()), toAPI(pluginsPageURL.impl()), m_client.clientInfo);
+
 }
 
 bool WebUIClient::implementsDidNotHandleKeyEvent() const

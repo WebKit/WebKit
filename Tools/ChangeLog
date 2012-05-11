@@ -1,3 +1,19 @@
+2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+        WebKit2: Add a way to blacklist specific plug-ins/plug-in versions
+        https://bugs.webkit.org/show_bug.cgi?id=86164
+        <rdar://problem/9551196>
+
+        Reviewed by Sam Weinig.
+
+        Update for WK2 API changes.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+
 2012-05-10  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: [chromium] fix path to asan symbolize script
