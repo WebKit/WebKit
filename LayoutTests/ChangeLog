@@ -1,3 +1,12 @@
+2012-05-11  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: use div, not span as a parent element for ElementsTreeOutline in Audits panel
+        https://bugs.webkit.org/show_bug.cgi?id=86188
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/extensions/extensions-audits-expected.txt: rebaseline to account for extra <div>.
+
 2012-05-11  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

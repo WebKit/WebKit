@@ -121,7 +121,7 @@ WebInspector.AuditFormatters = {
      */
     node: function(expression)
     {
-        var treeOutline = new WebInspector.ElementsTreeOutline(false, false, true);
+        var parentElement = document.createElement("div");
         /**
          * @param {?number} nodeId
          */
@@ -129,9 +129,11 @@ WebInspector.AuditFormatters = {
         {
             if (!nodeId)
                 return;
+            var treeOutline = new WebInspector.ElementsTreeOutline(false, false, true);
             treeOutline.rootDOMNode = WebInspector.domAgent.nodeForId(nodeId);
             treeOutline.element.addStyleClass("outline-disclosure");
             treeOutline.setVisible(true);
+            parentElement.appendChild(treeOutline.element);
         }
         /**
          * @param {WebInspector.RemoteObject} remoteObject
@@ -141,7 +143,7 @@ WebInspector.AuditFormatters = {
             remoteObject.pushNodeToFrontend(onNodeAvailable);
         }
         WebInspector.AuditFormatters.Utilities.evaluate(expression, onEvaluate);
-        return treeOutline.element;
+        return parentElement;
     }
 };
 

@@ -29,15 +29,15 @@ RUNNING TEST: extension_testAudits
              __proto__
              : 
              Object
-            <
-             span
-             
-              id
-             ="
-              test-element
-             "
-            >
-           
+             <
+              span
+              
+               id
+              ="
+               test-element
+              "
+             >
+            
          extensions-audits.html:20
     Passed rule
      this rule always passes ok
