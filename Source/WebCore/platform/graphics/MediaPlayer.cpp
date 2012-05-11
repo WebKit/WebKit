@@ -770,14 +770,21 @@ void MediaPlayer::setControls(bool controls)
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || USE(NATIVE_FULLSCREEN_VIDEO)
-bool MediaPlayer::enterFullscreen() const
+void MediaPlayer::enterFullscreen()
 {
-    return m_private->enterFullscreen();
+    m_private->enterFullscreen();
 }
 
 void MediaPlayer::exitFullscreen()
 {
     m_private->exitFullscreen();
+}
+#endif
+
+#if USE(NATIVE_FULLSCREEN_VIDEO)
+bool MediaPlayer::canEnterFullscreen() const
+{
+    return m_private->canEnterFullscreen();
 }
 #endif
 

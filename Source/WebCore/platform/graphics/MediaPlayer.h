@@ -327,8 +327,12 @@ public:
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO) || USE(NATIVE_FULLSCREEN_VIDEO)
-    bool enterFullscreen() const;
+    void enterFullscreen();
     void exitFullscreen();
+#endif
+
+#if USE(NATIVE_FULLSCREEN_VIDEO)
+    bool canEnterFullscreen() const;
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
