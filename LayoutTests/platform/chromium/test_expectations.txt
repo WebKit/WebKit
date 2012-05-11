@@ -143,8 +143,9 @@ BUGWK72010 SKIP : fast/dom/navigator-vibration.html = FAIL
 // Battery Status API is not supported yet in the chromium port.
 BUGWK62698 SKIP : batterystatus = PASS FAIL
 
-// Touch Adjustment is not supported yet in the chromium port.
-BUGWK78801 SKIP : touchadjustment/ = FAIL
+// Unskip after investigation of failure by Allan Sandfeld Jensen
+BUGWK85101 SKIP : touchadjustment/event-triggered-widgets.html = FAIL
+BUGWK85101 SKIP : touchadjustment/touch-inlines.html = FAIL
 
 // Network Information API is not supported yet in the chromium port.
 BUGWK73528 SKIP : networkinformation = PASS FAIL
