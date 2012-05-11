@@ -839,3 +839,6 @@ http/tests/loading/post-in-iframe-with-back-navigation.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=86000
 http/tests/security/referrer-policy-redirect-link.html
+
+# Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
+ietestcenter/css3/valuesandunits/units-000.htm
