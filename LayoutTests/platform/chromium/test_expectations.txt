@@ -4072,3 +4072,6 @@ BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
+
+// Caused by r116798.
+BUGRNIWA MAC DEBUG : editing/execCommand/format-block-without-body-crash.html = CRASH

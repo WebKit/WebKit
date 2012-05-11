@@ -1,5 +1,11 @@
 2012-05-11  Jian Li  <jianli@chromium.org>
 
+        Unreviewed. Mark 1 crashed test for chromium mac.
+
+        * platform/chromium/test_expectations.txt:
+
+2012-05-11  Jian Li  <jianli@chromium.org>
+
         Unreviewed. Rebaseline one test for chromium mac.
 
         * platform/chromium-mac-leopard/css3/filters/custom/effect-color-check-expected.png: Added.
