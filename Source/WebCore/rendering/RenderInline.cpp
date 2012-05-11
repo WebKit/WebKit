@@ -505,15 +505,106 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
-void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+template<typename GeneratorContext>
+void RenderInline::generateLineBoxRects(GeneratorContext yield) const
 {
     if (!alwaysCreateLineBoxes())
-        culledInlineAbsoluteRects(this, rects, toLayoutSize(accumulatedOffset));
+        generateCulledLineBoxRects(yield, this);
     else if (InlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
-            rects.append(enclosingIntRect(FloatRect(accumulatedOffset + curr->topLeft(), curr->size())));
+            yield(FloatRect(curr->topLeft(), curr->size()));
     } else
-        rects.append(IntRect(roundedIntPoint(accumulatedOffset), IntSize()));
+        yield(FloatRect());
+}
+
+template<typename GeneratorContext>
+void RenderInline::generateCulledLineBoxRects(GeneratorContext yield, const RenderInline* container) const
+{
+    if (!culledInlineFirstLineBox()) {
+        yield(FloatRect());
+        return;
+    }
+
+    bool isHorizontal = style()->isHorizontalWritingMode();
+
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        if (curr->isFloatingOrPositioned())
+            continue;
+            
+        // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
+        // direction (aligned to the root box's baseline).
+        if (curr->isBox()) {
+            RenderBox* currBox = toRenderBox(curr);
+            if (currBox->inlineBoxWrapper()) {
+                RootInlineBox* rootBox = currBox->inlineBoxWrapper()->root();
+                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
+                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
+                if (isHorizontal)
+                    yield(FloatRect(currBox->inlineBoxWrapper()->x() - currBox->marginLeft(), logicalTop, currBox->width() + currBox->marginWidth(), logicalHeight));
+                else
+                    yield(FloatRect(logicalTop, currBox->inlineBoxWrapper()->y() - currBox->marginTop(), logicalHeight, currBox->height() + currBox->marginHeight()));
+            }
+        } else if (curr->isRenderInline()) {
+            // If the child doesn't need line boxes either, then we can recur.
+            RenderInline* currInline = toRenderInline(curr);
+            if (!currInline->alwaysCreateLineBoxes())
+                currInline->generateCulledLineBoxRects(yield, container);
+            else {
+                for (InlineFlowBox* childLine = currInline->firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
+                    RootInlineBox* rootBox = childLine->root();
+                    int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
+                    int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
+                    if (isHorizontal)
+                        yield(FloatRect(childLine->x() - childLine->marginLogicalLeft(),
+                            logicalTop,
+                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight(),
+                            logicalHeight));
+                    else
+                        yield(FloatRect(logicalTop,
+                            childLine->y() - childLine->marginLogicalLeft(),
+                            logicalHeight,
+                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight()));
+                }
+            }
+        } else if (curr->isText()) {
+            RenderText* currText = toRenderText(curr);
+            for (InlineTextBox* childText = currText->firstTextBox(); childText; childText = childText->nextTextBox()) {
+                RootInlineBox* rootBox = childText->root();
+                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
+                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
+                if (isHorizontal)
+                    yield(FloatRect(childText->x(), logicalTop, childText->logicalWidth(), logicalHeight));
+                else
+                    yield(FloatRect(logicalTop, childText->y(), logicalHeight, childText->logicalWidth()));
+            }
+        }
+    }
+}
+
+namespace {
+
+class AbsoluteRectsGeneratorContext {
+public:
+    AbsoluteRectsGeneratorContext(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset)
+        : m_rects(rects)
+        , m_accumulatedOffset(accumulatedOffset) { }
+
+    void operator()(const FloatRect& rect)
+    {
+        IntRect intRect = enclosingIntRect(rect);
+        intRect.move(m_accumulatedOffset.x(), m_accumulatedOffset.y());
+        m_rects.append(intRect);
+    }
+private:
+    Vector<IntRect>& m_rects;
+    const LayoutPoint& m_accumulatedOffset;
+};
+
+} // unnamed namespace
+
+void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+{
+    generateLineBoxRects(AbsoluteRectsGeneratorContext(rects, accumulatedOffset));
 
     if (continuation()) {
         if (continuation()->isBox()) {
@@ -524,156 +615,34 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accu
     }
 }
 
-void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vector<IntRect>& rects, const LayoutSize& offset) const
-{
-    if (!culledInlineFirstLineBox()) {
-        rects.append(IntRect(offset.width(), offset.height(), 0, 0));
-        return;
-    }
 
-    bool isHorizontal = style()->isHorizontalWritingMode();
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        if (curr->isFloatingOrPositioned())
-            continue;
-            
-        // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
-        // direction (aligned to the root box's baseline).
-        if (curr->isBox()) {
-            RenderBox* currBox = toRenderBox(curr);
-            if (currBox->inlineBoxWrapper()) {
-                RootInlineBox* rootBox = currBox->inlineBoxWrapper()->root();
-                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                FloatRect result;
-                if (isHorizontal)
-                    result = FloatRect(offset.width() + currBox->inlineBoxWrapper()->x() - currBox->marginLeft(), offset.height() + logicalTop, currBox->width() + currBox->marginWidth(), logicalHeight);
-                else
-                    result = FloatRect(offset.width() + logicalTop, offset.height() + currBox->inlineBoxWrapper()->y() - currBox->marginTop(), logicalHeight, currBox->height() + currBox->marginHeight());
-                rects.append(enclosingIntRect(result));
-            }
-        } else if (curr->isRenderInline()) {
-            // If the child doesn't need line boxes either, then we can recur.
-            RenderInline* currInline = toRenderInline(curr);
-            if (!currInline->alwaysCreateLineBoxes())
-                currInline->culledInlineAbsoluteRects(container, rects, offset);
-            else {
-                for (InlineFlowBox* childLine = currInline->firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
-                    RootInlineBox* rootBox = childLine->root();
-                    int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                    int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                    FloatRect result;
-                    if (isHorizontal)
-                        result = FloatRect(offset.width() + childLine->x() - childLine->marginLogicalLeft(),
-                            offset.height() + logicalTop,
-                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight(),
-                            logicalHeight);
-                    else
-                        result = FloatRect(offset.width() + logicalTop,
-                            offset.height() + childLine->y() - childLine->marginLogicalLeft(),
-                            logicalHeight,
-                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight());
-                    rects.append(enclosingIntRect(result));
-                }
-            }
-        } else if (curr->isText()) {
-            RenderText* currText = toRenderText(curr);
-            for (InlineTextBox* childText = currText->firstTextBox(); childText; childText = childText->nextTextBox()) {
-                RootInlineBox* rootBox = childText->root();
-                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                FloatRect result;
-                if (isHorizontal)
-                    result = FloatRect(offset.width() + childText->x(), offset.height() + logicalTop, childText->logicalWidth(), logicalHeight);
-                else
-                    result = FloatRect(offset.width() + logicalTop, offset.height() + childText->y(), logicalHeight, childText->logicalWidth());
-                rects.append(enclosingIntRect(result));
-            }
-        }
+namespace {
+
+class AbsoluteQuadsGeneratorContext {
+public:
+    AbsoluteQuadsGeneratorContext(const RenderInline* renderer, Vector<FloatQuad>& quads, bool* wasFixed)
+        : m_renderer(renderer)
+        , m_quads(quads)
+        , m_wasFixed(wasFixed) { }
+
+    void operator()(const FloatRect& rect)
+    {
+        m_quads.append(m_renderer->localToAbsoluteQuad(rect));
     }
-}
+private:
+    const RenderInline* m_renderer;
+    Vector<FloatQuad>& m_quads;
+    bool* m_wasFixed;
+};
+
+} // unnamed namespace
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    if (!alwaysCreateLineBoxes())
-        culledInlineAbsoluteQuads(this, quads);
-    else if (InlineFlowBox* curr = firstLineBox()) {
-        for (; curr; curr = curr->nextLineBox()) {
-            FloatRect localRect(curr->x(), curr->y(), curr->width(), curr->height());
-            quads.append(localToAbsoluteQuad(localRect, false, wasFixed));
-        }
-    } else
-        quads.append(localToAbsoluteQuad(FloatRect(), false, wasFixed));
+    generateLineBoxRects(AbsoluteQuadsGeneratorContext(this, quads, wasFixed));
 
     if (continuation())
         continuation()->absoluteQuads(quads, wasFixed);
-}
-
-void RenderInline::culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>& quads) const
-{
-    if (!culledInlineFirstLineBox()) {
-        quads.append(localToAbsoluteQuad(FloatRect()));
-        return;
-    }
-
-    bool isHorizontal = style()->isHorizontalWritingMode();
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        if (curr->isFloatingOrPositioned())
-            continue;
-            
-        // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
-        // direction (aligned to the root box's baseline).
-        if (curr->isBox()) {
-            RenderBox* currBox = toRenderBox(curr);
-            if (currBox->inlineBoxWrapper()) {
-                RootInlineBox* rootBox = currBox->inlineBoxWrapper()->root();
-                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                FloatRect result;
-                if (isHorizontal)
-                    result = FloatRect(currBox->inlineBoxWrapper()->x() - currBox->marginLeft(), logicalTop, currBox->width() + currBox->marginWidth(), logicalHeight);
-                else
-                    result = FloatRect(logicalTop, currBox->inlineBoxWrapper()->y() - currBox->marginTop(), logicalHeight, currBox->height() + currBox->marginHeight());
-                quads.append(localToAbsoluteQuad(result));
-            }
-        } else if (curr->isRenderInline()) {
-            // If the child doesn't need line boxes either, then we can recur.
-            RenderInline* currInline = toRenderInline(curr);
-            if (!currInline->alwaysCreateLineBoxes())
-                currInline->culledInlineAbsoluteQuads(container, quads);
-            else {
-                for (InlineFlowBox* childLine = currInline->firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
-                    RootInlineBox* rootBox = childLine->root();
-                    int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                    int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                    FloatRect result;
-                    if (isHorizontal)
-                        result = FloatRect(childLine->x() - childLine->marginLogicalLeft(),
-                            logicalTop,
-                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight(),
-                            logicalHeight);
-                    else
-                        result = FloatRect(logicalTop,
-                            childLine->y() - childLine->marginLogicalLeft(),
-                            logicalHeight,
-                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight());
-                    quads.append(localToAbsoluteQuad(result));
-                }
-            }
-        } else if (curr->isText()) {
-            RenderText* currText = toRenderText(curr);
-            for (InlineTextBox* childText = currText->firstTextBox(); childText; childText = childText->nextTextBox()) {
-                RootInlineBox* rootBox = childText->root();
-                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                FloatRect result;
-                if (isHorizontal)
-                    result = FloatRect(childText->x(), logicalTop, childText->logicalWidth(), logicalHeight);
-                else
-                    result = FloatRect(logicalTop, childText->y(), logicalHeight, childText->logicalWidth());
-                quads.append(localToAbsoluteQuad(result));
-            }
-        }
-    }
 }
 
 LayoutUnit RenderInline::offsetLeft() const
@@ -785,11 +754,28 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point)
     return RenderBoxModelObject::positionForPoint(point);
 }
 
+namespace {
+
+class LinesBoundingBoxGeneratorContext {
+public:
+    LinesBoundingBoxGeneratorContext(FloatRect& rect) : m_rect(rect) { }
+    void operator()(const FloatRect& rect)
+    {
+        m_rect.uniteIfNonZero(rect);
+    }
+private:
+    FloatRect& m_rect;
+};
+
+} // unnamed namespace
+
 IntRect RenderInline::linesBoundingBox() const
 {
     if (!alwaysCreateLineBoxes()) {
         ASSERT(!firstLineBox());
-        return enclosingIntRect(culledInlineBoundingBox(this));
+        FloatRect floatResult;
+        generateCulledLineBoxRects(LinesBoundingBoxGeneratorContext(floatResult), this);
+        return enclosingIntRect(floatResult);
     }
 
     IntRect result;
@@ -819,66 +805,6 @@ IntRect RenderInline::linesBoundingBox() const
     }
 
     return result;
-}
-
-FloatRect RenderInline::culledInlineBoundingBox(const RenderInline* container) const
-{
-    FloatRect result;
-    bool isHorizontal = style()->isHorizontalWritingMode();
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        if (curr->isFloatingOrPositioned())
-            continue;
-            
-        // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
-        // direction (aligned to the root box's baseline).
-        if (curr->isBox()) {
-            RenderBox* currBox = toRenderBox(curr);
-            if (currBox->inlineBoxWrapper()) {
-                RootInlineBox* rootBox = currBox->inlineBoxWrapper()->root();
-                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                if (isHorizontal)
-                    result.uniteIfNonZero(FloatRect(currBox->inlineBoxWrapper()->x() - currBox->marginLeft(), logicalTop, currBox->width() + currBox->marginWidth(), logicalHeight));
-                else
-                    result.uniteIfNonZero(FloatRect(logicalTop, currBox->inlineBoxWrapper()->y() - currBox->marginTop(), logicalHeight, currBox->height() + currBox->marginHeight()));
-            }
-        } else if (curr->isRenderInline()) {
-            // If the child doesn't need line boxes either, then we can recur.
-            RenderInline* currInline = toRenderInline(curr);
-            if (!currInline->alwaysCreateLineBoxes())
-                result.uniteIfNonZero(currInline->culledInlineBoundingBox(container));
-            else {
-                for (InlineFlowBox* childLine = currInline->firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
-                    RootInlineBox* rootBox = childLine->root();
-                    int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                    int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                    if (isHorizontal)
-                        result.uniteIfNonZero(FloatRect(childLine->x() - childLine->marginLogicalLeft(),
-                            logicalTop,
-                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight(),
-                            logicalHeight));
-                    else
-                        result.uniteIfNonZero(FloatRect(logicalTop,
-                            childLine->y() - childLine->marginLogicalLeft(),
-                            logicalHeight,
-                            childLine->logicalWidth() + childLine->marginLogicalLeft() + childLine->marginLogicalRight()));
-                                     
-                }
-            }
-        } else if (curr->isText()) {
-            RenderText* currText = toRenderText(curr);
-            for (InlineTextBox* childText = currText->firstTextBox(); childText; childText = childText->nextTextBox()) {
-                RootInlineBox* rootBox = childText->root();
-                int logicalTop = rootBox->logicalTop() + (rootBox->renderer()->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox->isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox->isFirstLineStyle())->font().fontMetrics().height();
-                if (isHorizontal)
-                    result.uniteIfNonZero(FloatRect(childText->x(), logicalTop, childText->logicalWidth(), logicalHeight));
-                else
-                    result.uniteIfNonZero(FloatRect(logicalTop, childText->y(), logicalHeight, childText->logicalWidth()));
-            }
-        }
-    }
-    return enclosingLayoutRect(result);
 }
 
 InlineBox* RenderInline::culledInlineFirstLineBox() const
@@ -931,7 +857,9 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
 
 LayoutRect RenderInline::culledInlineVisualOverflowBoundingBox() const
 {
-    LayoutRect result(culledInlineBoundingBox(this));
+    FloatRect floatResult;
+    generateCulledLineBoxRects(LinesBoundingBoxGeneratorContext(floatResult), this);
+    LayoutRect result(enclosingLayoutRect(floatResult));
     bool isHorizontal = style()->isHorizontalWritingMode();
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (curr->isFloatingOrPositioned())
@@ -1366,12 +1294,7 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset)
 {
-    if (!alwaysCreateLineBoxes())
-        culledInlineAbsoluteRects(this, rects, toLayoutSize(additionalOffset));
-    else {
-        for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            rects.append(enclosingIntRect(FloatRect(additionalOffset.x() + curr->x(), additionalOffset.y() + curr->y(), curr->width(), curr->height())));
-    }
+    generateLineBoxRects(AbsoluteRectsGeneratorContext(rects, additionalOffset));
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText() && !curr->isListMarker()) {
