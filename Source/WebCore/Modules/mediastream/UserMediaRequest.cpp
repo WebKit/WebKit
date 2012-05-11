@@ -111,6 +111,8 @@ void UserMediaRequest::fail()
 
 void UserMediaRequest::contextDestroyed()
 {
+    RefPtr<UserMediaRequest> protect(this);
+
     if (m_controller) {
         m_controller->cancelUserMediaRequest(this);
         m_controller = 0;

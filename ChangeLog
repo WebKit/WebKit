@@ -1,3 +1,12 @@
+2012-05-11  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Fix a reference counting issue in UserMediaRequest
+        https://bugs.webkit.org/show_bug.cgi?id=86210
+
+        Reviewed by Abhishek Arya.
+
+        * ManualTests/user-media-request-crash.html: Added.
+
 2012-05-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         Web Intents code only supports V8
