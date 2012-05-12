@@ -43,6 +43,7 @@ WebLayerTreeView::Settings::operator CCSettings() const
     settings.acceleratePainting = acceleratePainting;
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
+    settings.showPaintRects = showPaintRects;
     settings.refreshRate = refreshRate;
     settings.perTilePainting = perTilePainting;
     settings.partialSwapEnabled = partialSwapEnabled;

@@ -49,6 +49,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     : m_settings(settings)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
+    , m_showPaintRects(false)
     , m_viewportEnabled(false)
 {
     ASSERT(settings);
@@ -331,6 +332,11 @@ void WebSettingsImpl::setShowFPSCounter(bool show)
 void WebSettingsImpl::setShowPlatformLayerTree(bool show)
 {
     m_showPlatformLayerTree = show;
+}
+
+void WebSettingsImpl::setShowPaintRects(bool show)
+{
+    m_showPaintRects = show;
 }
 
 void WebSettingsImpl::setEditingBehavior(EditingBehavior behavior)

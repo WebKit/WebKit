@@ -615,6 +615,8 @@ private:
     virtual bool handleKeyEvent(const WebKeyboardEvent&) OVERRIDE;
     virtual bool handleCharEvent(const WebKeyboardEvent&) OVERRIDE;
 
+    WebSettingsImpl* settingsImpl();
+
     WebViewClient* m_client;
     WebAutofillClient* m_autofillClient;
     WebPermissionClient* m_permissionClient;

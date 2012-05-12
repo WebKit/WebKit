@@ -2060,12 +2060,17 @@ void WebViewImpl::didChangeWindowResizerRect()
 
 // WebView --------------------------------------------------------------------
 
-WebSettings* WebViewImpl::settings()
+WebSettingsImpl* WebViewImpl::settingsImpl()
 {
     if (!m_webSettings)
         m_webSettings = adoptPtr(new WebSettingsImpl(m_page->settings()));
     ASSERT(m_webSettings);
     return m_webSettings.get();
+}
+
+WebSettings* WebViewImpl::settings()
+{
+    return settingsImpl();
 }
 
 WebString WebViewImpl::pageEncoding() const
@@ -3308,8 +3313,9 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         WebLayerTreeView::Settings layerTreeViewSettings;
         layerTreeViewSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
-        layerTreeViewSettings.showFPSCounter = settings()->showFPSCounter();
-        layerTreeViewSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
+        layerTreeViewSettings.showFPSCounter = settingsImpl()->showFPSCounter();
+        layerTreeViewSettings.showPlatformLayerTree = settingsImpl()->showPlatformLayerTree();
+        layerTreeViewSettings.showPaintRects = settingsImpl()->showPaintRects();
 
         layerTreeViewSettings.perTilePainting = page()->settings()->perTileDrawingEnabled();
         layerTreeViewSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();

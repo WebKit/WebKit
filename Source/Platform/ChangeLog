@@ -1,3 +1,14 @@
+2012-05-11  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Plumb --show-paint-rects to accelerated compositor
+        https://bugs.webkit.org/show_bug.cgi?id=86255
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+
 2012-05-11  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move createLocalStorageNamespace to Platform.h

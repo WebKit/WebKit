@@ -104,9 +104,8 @@ public:
     virtual void setWebGLErrorsToConsoleEnabled(bool) = 0;
     virtual void setShowDebugBorders(bool) = 0;
     virtual void setShowFPSCounter(bool) = 0;
-    virtual bool showFPSCounter() const = 0;
     virtual void setShowPlatformLayerTree(bool) = 0;
-    virtual bool showPlatformLayerTree() const = 0;
+    virtual void setShowPaintRects(bool) = 0;
     virtual void setEditingBehavior(EditingBehavior) = 0;
     virtual void setAcceleratedCompositingEnabled(bool) = 0;
     virtual void setForceCompositingMode(bool) = 0;

@@ -52,6 +52,7 @@ public:
             : acceleratePainting(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
+            , showPaintRects(false)
             , refreshRate(0)
             , perTilePainting(false)
             , partialSwapEnabled(false)
@@ -62,6 +63,7 @@ public:
         bool acceleratePainting;
         bool showFPSCounter;
         bool showPlatformLayerTree;
+        bool showPaintRects;
         double refreshRate;
         bool perTilePainting;
         bool partialSwapEnabled;

@@ -1,3 +1,29 @@
+2012-05-11  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Plumb --show-paint-rects to accelerated compositor
+        https://bugs.webkit.org/show_bug.cgi?id=86255
+
+        Reviewed by James Robinson.
+
+        * public/WebSettings.h:
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setShowPaintRects):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::showFPSCounter):
+        (WebKit::WebSettingsImpl::showPlatformLayerTree):
+        (WebKit::WebSettingsImpl::showPaintRects):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::settingsImpl):
+        (WebKit::WebViewImpl::settings):
+        (WebKit):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+
 2012-05-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Do a DEPS roll per build failure caused by r116810.
