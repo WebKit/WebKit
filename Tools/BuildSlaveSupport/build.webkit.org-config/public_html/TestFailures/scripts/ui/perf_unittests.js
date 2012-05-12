@@ -46,7 +46,7 @@ var kDummyPerfGraphData = {
     ]
 };
 
-asyncTest("builders.perfBuilders", 4, function() {
+asyncTest("View", 7, function() {
     var oldPerfBuilders = builders.perfBuilders;
     builders.perfBuilders = function(callback) {
         setTimeout(function() { callback(kDummyPerfGraphData) }, 0);
@@ -63,15 +63,14 @@ asyncTest("builders.perfBuilders", 4, function() {
             '</ol>' +
             '<div class="title-bar">' +
                 '<select><option>dummy_perf_test_1</option><option>dummy_perf_test_2</option></select>' +
+                '<ul class="actions"><li><button class="action previous">\u25C0</button></li><li><button class="action next">\u25B6</button></li></ul>' +
                 '<select><option value="http://dummyurl1">Mac10.6 Perf</option></select>' +
                 '<a class="pop-out" target="_blank" href="http://dummyurl1">Pop out</a>' +
             '</div>' +
             '<iframe src="http://dummyurl1"></iframe>' +
         '</div>');
 
-        var suiteSelector = view.querySelectorAll('select')[0];
-        suiteSelector.selectedIndex = 1;
-        view._updateBuilderPicker();
+        view._nextGraph();
 
         equal(view.outerHTML, '<div id="perf-view">' +
             '<ol class="notifications">' +
@@ -81,15 +80,14 @@ asyncTest("builders.perfBuilders", 4, function() {
             '</ol>' +
             '<div class="title-bar">' +
                 '<select><option>dummy_perf_test_1</option><option>dummy_perf_test_2</option></select>' +
+                '<ul class="actions"><li><button class="action previous">\u25C0</button></li><li><button class="action next">\u25B6</button></li></ul>' +
                 '<a class="pop-out" target="_blank" href="http://dummyurl2">Pop out</a>' +
                 '<select><option value="http://dummyurl2">Mac10.6 Perf</option><option value="http://dummyurl3">Linux Perf</option></select>' +
             '</div>' +
             '<iframe src="http://dummyurl2"></iframe>' +
         '</div>');
 
-        var builderSelector = view.querySelectorAll('select')[1];
-        builderSelector.selectedIndex = 1;
-        view._displayGraph();
+        view._nextGraph();
 
         equal(view.outerHTML, '<div id="perf-view">' +
             '<ol class="notifications">' +
@@ -99,15 +97,14 @@ asyncTest("builders.perfBuilders", 4, function() {
             '</ol>' +
             '<div class="title-bar">' +
                 '<select><option>dummy_perf_test_1</option><option>dummy_perf_test_2</option></select>' +
+                '<ul class="actions"><li><button class="action previous">\u25C0</button></li><li><button class="action next">\u25B6</button></li></ul>' +
                 '<a class="pop-out" target="_blank" href="http://dummyurl3">Pop out</a>' +
                 '<select><option value="http://dummyurl2">Mac10.6 Perf</option><option value="http://dummyurl3">Linux Perf</option></select>' +
             '</div>' +
             '<iframe src="http://dummyurl3"></iframe>' +
         '</div>');
 
-        var suiteSelector = view.querySelectorAll('select')[0];
-        suiteSelector.selectedIndex = 0;
-        view._updateBuilderPicker();
+        view._nextGraph();
 
         equal(view.outerHTML, '<div id="perf-view">' +
             '<ol class="notifications">' +
@@ -117,6 +114,58 @@ asyncTest("builders.perfBuilders", 4, function() {
             '</ol>' +
             '<div class="title-bar">' +
                 '<select><option>dummy_perf_test_1</option><option>dummy_perf_test_2</option></select>' +
+                '<ul class="actions"><li><button class="action previous">\u25C0</button></li><li><button class="action next">\u25B6</button></li></ul>' +
+                '<a class="pop-out" target="_blank" href="http://dummyurl3">Pop out</a>' +
+                '<select><option value="http://dummyurl2">Mac10.6 Perf</option><option value="http://dummyurl3">Linux Perf</option></select>' +
+            '</div>' +
+            '<iframe src="http://dummyurl3"></iframe>' +
+        '</div>');
+
+        view._previousGraph();
+
+        equal(view.outerHTML, '<div id="perf-view">' +
+            '<ol class="notifications">' +
+                '<li style="opacity: 0; ">' +
+                    '<div class="how"></div><div class="what">Loading list of perf dashboards...</div>' +
+                '</li>' +
+            '</ol>' +
+            '<div class="title-bar">' +
+                '<select><option>dummy_perf_test_1</option><option>dummy_perf_test_2</option></select>' +
+                '<ul class="actions"><li><button class="action previous">\u25C0</button></li><li><button class="action next">\u25B6</button></li></ul>' +
+                '<a class="pop-out" target="_blank" href="http://dummyurl2">Pop out</a>' +
+                '<select><option value="http://dummyurl2">Mac10.6 Perf</option><option value="http://dummyurl3">Linux Perf</option></select>' +
+            '</div>' +
+            '<iframe src="http://dummyurl2"></iframe>' +
+        '</div>');
+
+        view._previousGraph();
+
+        equal(view.outerHTML, '<div id="perf-view">' +
+            '<ol class="notifications">' +
+                '<li style="opacity: 0; ">' +
+                    '<div class="how"></div><div class="what">Loading list of perf dashboards...</div>' +
+                '</li>' +
+            '</ol>' +
+            '<div class="title-bar">' +
+                '<select><option>dummy_perf_test_1</option><option>dummy_perf_test_2</option></select>' +
+                '<ul class="actions"><li><button class="action previous">\u25C0</button></li><li><button class="action next">\u25B6</button></li></ul>' +
+                '<a class="pop-out" target="_blank" href="http://dummyurl1">Pop out</a>' +
+                '<select><option value="http://dummyurl1">Mac10.6 Perf</option></select>' +
+            '</div>' +
+            '<iframe src="http://dummyurl1"></iframe>' +
+        '</div>');
+
+        view._previousGraph();
+
+        equal(view.outerHTML, '<div id="perf-view">' +
+            '<ol class="notifications">' +
+                '<li style="opacity: 0; ">' +
+                    '<div class="how"></div><div class="what">Loading list of perf dashboards...</div>' +
+                '</li>' +
+            '</ol>' +
+            '<div class="title-bar">' +
+                '<select><option>dummy_perf_test_1</option><option>dummy_perf_test_2</option></select>' +
+                '<ul class="actions"><li><button class="action previous">\u25C0</button></li><li><button class="action next">\u25B6</button></li></ul>' +
                 '<a class="pop-out" target="_blank" href="http://dummyurl1">Pop out</a>' +
                 '<select><option value="http://dummyurl1">Mac10.6 Perf</option></select>' +
             '</div>' +

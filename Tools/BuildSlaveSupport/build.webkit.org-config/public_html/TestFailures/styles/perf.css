@@ -35,8 +35,10 @@
     margin: 0;
 }
 
+#perf-view .actions,
 #perf-view .pop-out {
     float: right;
+    margin: 0;
 }
 
 #perf-view > iframe {

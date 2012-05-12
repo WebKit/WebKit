@@ -1,3 +1,14 @@
+2012-05-11  Ojan Vafai  <ojan@chromium.org>
+
+        Add previous/next buttons the garden-o-matics perf panel
+        https://bugs.webkit.org/show_bug.cgi?id=86280
+
+        Reviewed by Dimitri Glazkov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/perf.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/perf_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/perf.css:
+
 2012-05-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Fix memory exhausted errors from 32-bit ld on *nix.

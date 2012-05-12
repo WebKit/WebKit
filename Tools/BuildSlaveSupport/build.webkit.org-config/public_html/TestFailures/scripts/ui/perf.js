@@ -70,11 +70,21 @@ ui.perf.View = base.extends('div', {
         this.appendChild(this._titleBar);
 
         var testSuites = Object.keys(graphData);
-        var suitePicker = new ui.perf.Picker(testSuites, this._updateBuilderPicker.bind(this));
+        var suitePicker = new ui.perf.Picker(testSuites, this._onChangeSuite.bind(this));
         this._titleBar.appendChild(suitePicker);
 
+        this._titleBar.appendChild(new ui.actions.List([new ui.actions.Previous(), new ui.actions.Next()]));
+
+        $(this).bind('next', this._nextGraph.bind(this));
+        $(this).bind('previous', this._previousGraph.bind(this));
+
         this._suitePicker = suitePicker;
+        this._onChangeSuite();
+    },
+    _onChangeSuite: function()
+    {
         this._updateBuilderPicker();
+        this._displayGraph();
     },
     _updateBuilderPicker: function()
     {
@@ -90,10 +100,9 @@ ui.perf.View = base.extends('div', {
         });
         this._builderPicker = new ui.perf.Picker(builders, this._displayGraph.bind(this), urls);
         this._titleBar.appendChild(this._builderPicker);
-
-        this._displayGraph();
     },
-    _displayGraph: function() {
+    _displayGraph: function()
+    {
         var popOutLink = this.querySelector('.pop-out');
         if (!popOutLink) {
             popOutLink = document.createElement('a');
@@ -112,6 +121,40 @@ ui.perf.View = base.extends('div', {
         var url = this._builderPicker[this._builderPicker.selectedIndex].value;
         popOutLink.href = url;
         graph.src = url;
+    },
+    _nextGraph: function()
+    {
+        if (!this._builderPicker)
+            return;
+
+        if (this._builderPicker.selectedIndex < this._builderPicker.length - 1) {
+            this._builderPicker.selectedIndex++;
+            this._displayGraph();
+            return;
+        }
+
+        if (this._suitePicker.selectedIndex < this._suitePicker.length - 1) {
+            this._suitePicker.selectedIndex++;
+            this._onChangeSuite();
+        }
+    },
+    _previousGraph: function()
+    {
+        if (!this._builderPicker)
+            return;
+
+        if (this._builderPicker.selectedIndex > 0) {
+            this._builderPicker.selectedIndex--;
+            this._displayGraph();
+            return;
+        }
+
+        if (this._suitePicker.selectedIndex > 0) {
+            this._suitePicker.selectedIndex--;
+            this._updateBuilderPicker();
+            this._builderPicker.selectedIndex = this._builderPicker.length - 1;
+            this._displayGraph();
+        }
     }
 });
 
