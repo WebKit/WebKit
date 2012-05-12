@@ -48,10 +48,13 @@ WebInspector.ShortcutsScreen.prototype = {
         return section;
     },
 
-    show: function(onHide)
+    /**
+     * @override
+     */
+    wasShown: function()
     {
         this._buildTable(this.contentElement);
-        WebInspector.HelpScreen.prototype.show.call(this, onHide);
+        WebInspector.HelpScreen.prototype.wasShown.call(this);
     },
 
     /**

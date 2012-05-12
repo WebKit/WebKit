@@ -205,13 +205,9 @@ WebInspector.WorkerManager.prototype = {
 
     _disconnectedFromWorker: function()
     {
-        function onHide()
-        {
-            WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
-        }
         var screen = new WebInspector.WorkerTerminatedScreen();
         WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, screen.hide, screen);
-        screen.show(onHide.bind(this));
+        screen.showModal();
     }
 }
 
@@ -270,6 +266,17 @@ WebInspector.WorkerTerminatedScreen = function()
     var p = this.contentElement.createChild("p");
     p.addStyleClass("help-section");
     p.textContent = WebInspector.UIString("Inspected worker has terminated. Once it restarts we will attach to it automatically.");
+}
+
+WebInspector.WorkerTerminatedScreen.prototype = {
+    /**
+     * @override
+     */
+    willHide: function()
+    {
+        WebInspector.debuggerModel.removeEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this.hide, this);
+        WebInspector.HelpScreen.prototype.willHide.call(this);
+    }
 }
 
 WebInspector.WorkerTerminatedScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;

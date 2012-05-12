@@ -1,23 +1,23 @@
 .help-window-outer {
     position: absolute;
-    top: 60px;
+    top: 12px;
     left: 5%;
     width: 90%;
-    bottom: 40px;
+    bottom: 12px;
     z-index: 2000;
 }
 
 body.compact .help-window-outer {
-    top: 32px;
+    top: 0;
     left: 0;
     width: 100%;
-    bottom: 23px;
+    bottom: 0;
 }
 
 .help-window-main {
     max-height: 100%;
     color: white;
-    background-color: rgba(34, 34, 34, 0.85);
+    background-color: rgba(17, 17, 17, 0.85);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     border-top-width: 0;
@@ -26,22 +26,14 @@ body.compact .help-window-outer {
 
 body.compact .help-window-main {
     height: 100%;
-    padding: 10px;
-}
-
-body.compact .help-window-main {
     border-radius: 0;
-    -webkit-box-shadow: 0 0 0;
 }
 
 .help-window-caption {
     border-bottom: solid 1px rgb(153, 153, 153);
-    margin: 0 16px;
+    margin: 0 8px;
+    padding: 0 2px;
     line-height: 36px;
-}
-
-body.compact .help-window-caption {
-    margin: 0;
 }
 
 .help-window-title {
@@ -54,7 +46,8 @@ body.compact .help-window-caption {
     overflow-x: hidden;
     scrollbar-width: 11px;
     -webkit-box-flex: 1;
-    margin: 0px 16px 16px 16px;
+    margin: 8px;
+    padding: 0 4px;
     font-size: 13px;
 }
 
@@ -95,12 +88,8 @@ body.compact .help-window-caption {
     margin: 10px 0;
 }
 
-body.compact .help-close-button {
-    margin: 0;
-}
-
 body.compact .help-content {
-    margin: 8px 0 0 8px;
+    margin-bottom: 8px;
 }
 
 .help-close-button:hover {
@@ -185,13 +174,12 @@ body.platform-mac .help-key {
 }
 
 .help-content p.help-section {
-    margin-bottom: 15px;
+    margin: 0 0 15px 0;
 }
 
 .help-section-title {
     color: rgb(221, 221, 0);
     text-align: left;
-    padding-top: 8px;
 }
 
 .settings-experiments-warning-subsection-warning {
@@ -217,7 +205,7 @@ body.platform-mac .help-key {
     background-color: rgb(64, 64, 64);
     color: white;
     border-color: black;
-    padding: 0px 4px;
+    padding: 0 4px;
 }
 
 .help-content select:disabled {

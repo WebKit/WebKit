@@ -30,11 +30,15 @@
 
 /**
  * @constructor
+ * @param {!function()} onHide
  * @extends {WebInspector.HelpScreen}
  */
-WebInspector.SettingsScreen = function()
+WebInspector.SettingsScreen = function(onHide)
 {
     WebInspector.HelpScreen.call(this, WebInspector.UIString("Settings"));
+
+    /** @type {!function()} */
+    this._onHide = onHide;
 
     this._leftColumnElement = document.createElement("td");
     this._rightColumnElement = document.createElement("td");
@@ -124,6 +128,15 @@ WebInspector.SettingsScreen.prototype = {
             WebInspector.KeyboardShortcut.Keys.Enter.code,
             WebInspector.KeyboardShortcut.Keys.Esc.code,
         ].indexOf(keyCode) >= 0;
+    },
+
+    /**
+     * @override
+     */
+    willHide: function()
+    {
+        this._onHide();
+        WebInspector.HelpScreen.prototype.willHide.call(this);
     },
 
     /**
@@ -593,3 +606,52 @@ WebInspector.SettingsScreen.prototype = {
 }
 
 WebInspector.SettingsScreen.prototype.__proto__ = WebInspector.HelpScreen.prototype;
+
+/**
+ * @constructor
+ */
+WebInspector.SettingsController = function()
+{
+    this._statusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Settings"), "settings-status-bar-item");;
+    this._statusBarButton.addEventListener("click", this._buttonClicked.bind(this), false);
+
+    /** @type {?WebInspector.SettingsScreen} */
+    this._settingsScreen;
+}
+
+WebInspector.SettingsController.prototype =
+{
+    get statusBarItem()
+    {
+        return this._statusBarButton.element;
+    },
+
+    _buttonClicked: function()
+    {
+        if (this._statusBarButton.toggled)
+            this._hideSettingsScreen();
+        else
+            this._showSettingsScreen();
+    },
+
+    _onHideSettingsScreen: function()
+    {
+        this._statusBarButton.toggled = false;
+        delete this._settingsScreen;
+    },
+
+    _showSettingsScreen: function()
+    {
+        if (!this._settingsScreen)
+            this._settingsScreen = new WebInspector.SettingsScreen(this._onHideSettingsScreen.bind(this));
+
+        this._settingsScreen.showModal();
+        this._statusBarButton.toggled = true;
+    },
+
+    _hideSettingsScreen: function()
+    {
+        if (this._settingsScreen)
+            this._settingsScreen.hide();
+    }
+}
