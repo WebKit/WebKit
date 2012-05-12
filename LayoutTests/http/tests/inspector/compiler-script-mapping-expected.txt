@@ -16,4 +16,5 @@ Running: testCompilerScriptMapping
 Running: testInlinedSourceMap
 
 Running: testSourceMapCouldNotBeLoaded
+compiled.js
 

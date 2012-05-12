@@ -34,15 +34,21 @@
  */
 WebInspector.DebuggerPresentationModel = function()
 {
-    this._scriptMapping = new WebInspector.MainScriptMapping();
-    this._scriptMapping.addEventListener(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
+    this._mappings = [];
+  
+    this._resourceMapping = new WebInspector.ResourceScriptMapping();
+    this._mappings.push(this._resourceMapping);
+    this._compilerMapping = new WebInspector.CompilerScriptMapping();
+    this._mappings.push(this._compilerMapping);
+    this._snippetsMapping = new WebInspector.SnippetsScriptMapping();
+    this._mappings.push(this._snippetsMapping);
+  
+    for (var i = 0; i < this._mappings.length; ++i)
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
-
-    new WebInspector.DebuggerResourceBinding();
-    new WebInspector.PresentationConsoleMessageHelper();
 }
 
 WebInspector.DebuggerPresentationModel.Events = {
@@ -58,7 +64,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _parsedScriptSource: function(event)
     {
         var script = /** @type {WebInspector.Script} */ event.data;
-        this._scriptMapping.addScript(script);
+        var mapping = this._mappingForScript(script);
+        mapping.addScript(script);
     },
 
     /**
@@ -66,7 +73,13 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     uiSourceCodes: function()
     {
-        return this._scriptMapping.uiSourceCodeList();
+        var result = [];
+        for (var i = 0; i < this._mappings.length; ++i) {
+            var uiSourceCodeList = this._mappings[i].uiSourceCodeList();
+            for (var j = 0; j < uiSourceCodeList.length; ++j)
+                result.push(uiSourceCodeList[j]);
+        }
+        return result;
     },
 
     /**
@@ -89,262 +102,33 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
     },
 
+    /**
+     * @param {WebInspector.Script} script
+     * @return {WebInspector.ScriptMapping}
+     */
+    _mappingForScript: function(script)
+    {
+        if (WebInspector.experimentsSettings.snippetsSupport.isEnabled()) {
+            if (WebInspector.snippetsModel.snippetIdForSourceURL(script.sourceURL))
+                return this._snippetsMapping;
+        }
+
+        if (WebInspector.settings.sourceMapsEnabled.get() && script.sourceMapURL) {
+            if (this._compilerMapping.loadSourceMapForScript(script))
+                return this._compilerMapping;
+        }
+
+        return this._resourceMapping;
+    },
+
     _debuggerReset: function()
     {
-        this._scriptMapping.reset();
+        for (var i = 0; i < this._mappings.length; ++i)
+            this._mappings[i].reset();
     }
 }
 
 WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @constructor
- */
-WebInspector.PresentationConsoleMessageHelper = function()
-{
-    this._pendingConsoleMessages = {};
-    this._presentationConsoleMessages = [];
-
-    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._consoleMessageAdded, this);
-    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._consoleCleared, this);
-
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
-}
-
-WebInspector.PresentationConsoleMessageHelper.prototype = {
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _consoleMessageAdded: function(event)
-    {
-        var message = /** @type {WebInspector.ConsoleMessage} */ event.data;
-        if (!message.url || !message.isErrorOrWarning())
-            return;
-
-        var rawLocation = message.location();
-        if (rawLocation)
-            this._addConsoleMessageToScript(message, rawLocation);
-        else
-            this._addPendingConsoleMessage(message);
-    },
-
-    /**
-     * @param {WebInspector.ConsoleMessage} message
-     * @param {DebuggerAgent.Location} rawLocation
-     */
-    _addConsoleMessageToScript: function(message, rawLocation)
-    {
-        this._presentationConsoleMessages.push(new WebInspector.PresentationConsoleMessage(message, rawLocation));
-    },
-
-    /**
-     * @param {WebInspector.ConsoleMessage} message
-     */
-    _addPendingConsoleMessage: function(message)
-    {
-        if (!this._pendingConsoleMessages[message.url])
-            this._pendingConsoleMessages[message.url] = [];
-        this._pendingConsoleMessages[message.url].push(message);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _parsedScriptSource: function(event)
-    {
-        var script = /** @type {WebInspector.Script} */ event.data;
-
-        var messages = this._pendingConsoleMessages[script.sourceURL];
-        if (!messages)
-            return;
-
-        var pendingMessages = [];
-        for (var i = 0; i < messages.length; i++) {
-            var message = messages[i];
-            var rawLocation = message.location();
-            if (script.scriptId === rawLocation.scriptId)
-                this._addConsoleMessageToScript(messages, rawLocation);
-            else
-                pendingMessages.push(message);
-        }
-
-        if (pendingMessages.length)
-            this._pendingConsoleMessages[script.sourceURL] = pendingMessages;
-        else
-            delete this._pendingConsoleMessages[script.sourceURL];
-    },
-
-    _consoleCleared: function()
-    {
-        this._pendingConsoleMessages = {};
-        for (var i = 0; i < this._presentationConsoleMessages.length; ++i)
-            this._presentationConsoleMessages[i].dispose();
-        this._presentationConsoleMessages = [];
-        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
-        for (var i = 0; i < uiSourceCodes.length; ++i)
-            uiSourceCodes[i].consoleMessagesCleared();
-    },
-
-    _debuggerReset: function()
-    {
-        this._pendingConsoleMessages = {};
-        this._presentationConsoleMessages = [];
-    }
-}
-
-/**
- * @constructor
- * @param {WebInspector.ConsoleMessage} message
- * @param {DebuggerAgent.Location} rawLocation
- */
-WebInspector.PresentationConsoleMessage = function(message, rawLocation)
-{
-    this.originalMessage = message;
-    this._liveLocation = WebInspector.debuggerModel.createLiveLocation(rawLocation, this._updateLocation.bind(this));
-}
-
-WebInspector.PresentationConsoleMessage.prototype = {
-    /**
-     * @param {WebInspector.UILocation} uiLocation
-     */
-    _updateLocation: function(uiLocation)
-    {
-        if (this._uiLocation)
-            this._uiLocation.uiSourceCode.consoleMessageRemoved(this);
-        this._uiLocation = uiLocation;
-        this._uiLocation.uiSourceCode.consoleMessageAdded(this);
-    },
-
-    get lineNumber()
-    {
-        return this._uiLocation.lineNumber;
-    },
-
-    dispose: function()
-    {
-        this._liveLocation.dispose();
-    }
-}
-
-/**
- * @constructor
- * @implements {WebInspector.ResourceDomainModelBinding}
- */
-WebInspector.DebuggerResourceBinding = function()
-{
-    WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Script, this);
-}
-
-
-/**
- * @param {WebInspector.UISourceCode} uiSourceCode
- * @return {boolean}
- */
-WebInspector.DebuggerResourceBinding.canEditScriptSource = function(uiSourceCode)
-{
-    return WebInspector.debuggerModel.canSetScriptSource() && uiSourceCode.isEditable;
-}
-
-/**
- * @param {WebInspector.UISourceCode} uiSourceCode
- * @param {string} newSource
- * @param {function(?Protocol.Error)} callback
- */
-WebInspector.DebuggerResourceBinding.setScriptSource = function(uiSourceCode, newSource, callback)
-{
-    var rawLocation = uiSourceCode.uiLocationToRawLocation(0, 0);
-    var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
-
-    /**
-     * @this {WebInspector.DebuggerPresentationModel}
-     * @param {?Protocol.Error} error
-     */
-    function didEditScriptSource(error)
-    {
-        callback(error);
-        if (error)
-            return;
-
-        var resource = WebInspector.resourceForURL(script.sourceURL);
-        if (resource)
-            resource.addRevision(newSource);
-
-        uiSourceCode.contentChanged(newSource);
-    }
-    WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
-}
-
-WebInspector.DebuggerResourceBinding.prototype = {
-    /**
-     * @param {WebInspector.Resource} resource
-     * @return {boolean}
-     */
-    canSetContent: function(resource)
-    {
-        var uiSourceCode = this._uiSourceCodeForResource(resource);
-        return !!uiSourceCode && WebInspector.DebuggerResourceBinding.canEditScriptSource(uiSourceCode);
-    },
-
-    /**
-     * @param {WebInspector.Resource} resource
-     * @param {string} content
-     * @param {boolean} majorChange
-     * @param {function(?string)} userCallback
-     */
-    setContent: function(resource, content, majorChange, userCallback)
-    {
-        if (!majorChange)
-            return;
-
-        var uiSourceCode = this._uiSourceCodeForResource(resource);
-        if (!uiSourceCode) {
-            userCallback("Resource is not editable");
-            return;
-        }
-
-        resource.requestContent(this._setContentWithInitialContent.bind(this, uiSourceCode, content, userCallback));
-    },
-
-    /**
-     * @param {WebInspector.Resource} resource
-     * @return {WebInspector.UISourceCode}
-     */
-    _uiSourceCodeForResource: function(resource)
-    {
-        var uiSourceCodes = WebInspector.debuggerPresentationModel.uiSourceCodes();
-        for (var i = 0; i < uiSourceCodes.length; ++i) {
-            if (uiSourceCodes[i].url === resource.url)
-                return uiSourceCodes[i];
-        }
-        return null;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {string} content
-     * @param {function(?string)} userCallback
-     * @param {?string} oldContent
-     * @param {boolean} oldContentEncoded
-     * @param {string} mimeType
-     */
-    _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent, oldContentEncoded, mimeType)
-    {
-        /**
-         * @this {WebInspector.DebuggerResourceBinding}
-         * @param {?string} error
-         */
-        function callback(error)
-        {
-            if (userCallback)
-                userCallback(error);
-        }
-        WebInspector.DebuggerResourceBinding.setScriptSource(uiSourceCode, content, callback.bind(this));
-    }
-}
-
-WebInspector.DebuggerResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
 
 /**
  * @type {?WebInspector.DebuggerPresentationModel}

@@ -37,6 +37,7 @@
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
     <file>DebuggerPresentationModel.js</file>
+    <file>DebuggerResourceBinding.js</file>
     <file>Dialog.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>
@@ -101,6 +102,7 @@
     <file>PanelEnablerView.js</file>
     <file>Placard.js</file>
     <file>Popover.js</file>
+    <file>PresentationConsoleMessageHelper.js</file>
     <file>ProfileDataGridTree.js</file>
     <file>ProfileLauncherView.js</file>
     <file>ProfilesPanel.js</file>

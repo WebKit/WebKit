@@ -1,3 +1,13 @@
+2012-05-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: merge MainScriptMapping into DebuggerPresentationModel; move other classes into their own files.
+        https://bugs.webkit.org/show_bug.cgi?id=86285
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/compiler-script-mapping-expected.txt:
+        * http/tests/inspector/compiler-script-mapping.html:
+
 2012-05-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Rebaseline for some tests.

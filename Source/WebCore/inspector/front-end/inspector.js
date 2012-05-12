@@ -415,6 +415,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.snippetsModel = new WebInspector.SnippetsModel();
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel);
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
+    new WebInspector.DebuggerResourceBinding();
 
     this.drawer = new WebInspector.Drawer();
     this.consoleView = new WebInspector.ConsoleView(WebInspector.WorkerManager.isWorkerFrontend());

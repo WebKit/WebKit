@@ -38,6 +38,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     WebInspector.settings.navigatorWasOnceHidden = WebInspector.settings.createSetting("navigatorWasOnceHidden", false);
 
     this._presentationModel = presentationModel;
+    new WebInspector.PresentationConsoleMessageHelper();
 
     function viewGetter()
     {

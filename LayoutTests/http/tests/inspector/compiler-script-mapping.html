@@ -192,18 +192,17 @@ function test()
         {
             WebInspector.settings.sourceMapsEnabled.set(true);
             WebInspector.debuggerModel._reset();
-            var mainScriptMapping = new WebInspector.MainScriptMapping();
-            mainScriptMapping.addEventListener(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, uiSourceCodeListChanged);
+            var debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
+            debuggerPresentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeAdded, uiSourceCodeAdded);
 
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json_";
             console.error = function() {}; // Error message is platform dependent.
-            mainScriptMapping.addScript(script);
+            debuggerPresentationModel._parsedScriptSource({data:script});
 
-            function uiSourceCodeListChanged(event)
+            function uiSourceCodeAdded(event)
             {
-                InspectorTest.assertEquals(1, event.data.addedItems.length);
-                InspectorTest.assertEquals("compiled.js", event.data.addedItems[0].url);
+                InspectorTest.addResult(event.data.url);
                 next();
             }
         }

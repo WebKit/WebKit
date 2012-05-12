@@ -74229,6 +74229,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DebuggerResourceBinding.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\dialog.css"
 					>
 				</File>
@@ -74546,6 +74550,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\Popover.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\PresentationConsoleMessageHelper.js"
 					>
 				</File>
 				<File
