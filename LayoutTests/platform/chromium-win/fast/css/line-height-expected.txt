@@ -13,10 +13,11 @@ layer at (0,0) size 800x600
           text run at (161,0) width 425: " Selecting text in text field with {line-height:100%} causes it to bounce."
       RenderBlock {DIV} at (0,20) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 151x16
-            RenderText {#text} at (1,0) size 75x16
-              text run at (1,0) width 75: "Lorem Ipsum"
       RenderBlock {DIV} at (0,46) size 784x20
         RenderText {#text} at (0,0) size 755x19
           text run at (0,0) width 542: "Select the text in the text field using horizontal mouse movements, then drag up and down. "
           text run at (542,0) width 213: "The text should not move vertically."
+layer at (12,33) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
+    RenderText {#text} at (1,0) size 75x16
+      text run at (1,0) width 75: "Lorem Ipsum"

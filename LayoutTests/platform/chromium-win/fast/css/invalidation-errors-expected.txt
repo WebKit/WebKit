@@ -12,15 +12,16 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,36) size 784x0
         RenderInline {DIV} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderBlock (floating) {DIV} at (0,0) size 200x200 [color=#FFFFFF] [bgcolor=#006400]
-            RenderText {#text} at (0,0) size 197x128
-              text run at (0,0) width 163: "this text should be left-"
-              text run at (0,16) width 161: "aligned, all lower-case,"
-              text run at (0,32) width 171: "normal font, white, 14px,"
-              text run at (0,48) width 183: "bold, normally spaced and"
-              text run at (0,64) width 171: "wrapped, in a darkgreen"
-              text run at (0,80) width 103: "200x200px div "
-              text run at (103,80) width 94: "in the top left"
-              text run at (0,96) width 181: "corner with no borders or"
-              text run at (0,112) width 61: "outlines."
         RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 200x200
+  RenderBlock (floating) {DIV} at (0,0) size 200x200 [color=#FFFFFF] [bgcolor=#006400]
+    RenderText {#text} at (0,0) size 197x128
+      text run at (0,0) width 163: "this text should be left-"
+      text run at (0,16) width 161: "aligned, all lower-case,"
+      text run at (0,32) width 171: "normal font, white, 14px,"
+      text run at (0,48) width 183: "bold, normally spaced and"
+      text run at (0,64) width 171: "wrapped, in a darkgreen"
+      text run at (0,80) width 103: "200x200px div "
+      text run at (103,80) width 94: "in the top left"
+      text run at (0,96) width 181: "corner with no borders or"
+      text run at (0,112) width 61: "outlines."

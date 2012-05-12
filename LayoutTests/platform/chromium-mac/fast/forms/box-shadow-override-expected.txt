@@ -14,9 +14,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 119x13
             RenderBlock {DIV} at (0,1) size 8x11
             RenderBlock {DIV} at (8,0) size 98x13
-              RenderBlock {DIV} at (0,0) size 98x13
-                RenderText {#text} at (1,0) size 36x13
-                  text run at (1,0) width 36: "Search"
             RenderBlock {DIV} at (106,1) size 13x11
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,91) size 784x23
@@ -24,7 +21,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 119x13
             RenderBlock {DIV} at (0,1) size 17x11
             RenderBlock {DIV} at (17,0) size 89x13
-              RenderBlock {DIV} at (0,0) size 89x13
             RenderBlock {DIV} at (106,1) size 13x11
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,114) size 784x23
@@ -32,7 +28,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 119x13
             RenderBlock {DIV} at (0,1) size 22x11
             RenderBlock {DIV} at (22,0) size 84x13
-              RenderBlock {DIV} at (0,0) size 84x13
             RenderBlock {DIV} at (106,1) size 13x11
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,137) size 784x32
@@ -78,5 +73,13 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 64x23
               text run at (0,0) width 64: "Button"
         RenderText {#text} at (0,0) size 0x0
+layer at (21,81) size 98x13
+  RenderBlock {DIV} at (0,0) size 98x13
+    RenderText {#text} at (1,0) size 36x13
+      text run at (1,0) width 36: "Search"
+layer at (30,104) size 89x13
+  RenderBlock {DIV} at (0,0) size 89x13
+layer at (35,127) size 84x13
+  RenderBlock {DIV} at (0,0) size 84x13
 layer at (107,153) size 15x15
   RenderBlock (relative positioned) {DIV} at (0,0) size 15x15

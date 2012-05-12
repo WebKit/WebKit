@@ -5,9 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x26
         RenderTextControl {INPUT} at (0,2) size 600x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 596x16
-            RenderText {#text} at (1,0) size 511x16
-              text run at (1,0) width 511: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
         RenderText {#text} at (600,3) size 4x19
           text run at (600,3) width 4: " "
         RenderBR {BR} at (604,18) size 0x0
@@ -37,4 +34,8 @@ layer at (0,0) size 800x600
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 312x19
             text run at (0,0) width 312: "Success: document.execCommand(\"Paste\") == true"
+layer at (10,13) size 596x16
+  RenderBlock {DIV} at (2,3) size 596x16
+    RenderText {#text} at (1,0) size 511x16
+      text run at (1,0) width 511: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
 caret: position 94 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 0 {INPUT} of body

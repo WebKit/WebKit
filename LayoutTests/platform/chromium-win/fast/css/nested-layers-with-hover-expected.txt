@@ -3,12 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x20
-        RenderTable at (0,0) size 770x20
-          RenderTableSection (anonymous) at (0,0) size 770x20
       RenderBlock {DIV} at (0,20) size 784x20
         RenderText {#text} at (0,0) size 210x19
           text run at (0,0) width 210: "PASSED: The hover effect works!"
+layer at (8,8) size 784x20
+  RenderBlock {DIV} at (0,0) size 784x20
+    RenderTable at (0,0) size 770x20
+      RenderTableSection (anonymous) at (0,0) size 770x20
 layer at (8,8) size 770x20
   RenderTableRow {DIV} at (0,0) size 770x20 [bgcolor=#0000FF]
     RenderTableCell (anonymous) at (0,0) size 770x20 [r=0 c=0 rs=1 cs=1]

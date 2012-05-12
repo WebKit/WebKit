@@ -9,7 +9,8 @@ layer at (0,0) size 800x600
           text run at (0,14) width 350: "test passes. If they are cut off by the bottom of the input box, the test fails."
       RenderBlock (anonymous) at (0,39) size 784x25
         RenderTextControl {INPUT} at (0,2) size 300x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 296x15
-            RenderText {#text} at (1,0) size 91x15
-              text run at (1,0) width 91: "something gjpqy"
         RenderText {#text} at (0,0) size 0x0
+layer at (10,52) size 296x15
+  RenderBlock {DIV} at (2,3) size 296x15
+    RenderText {#text} at (1,0) size 91x15
+      text run at (1,0) width 91: "something gjpqy"

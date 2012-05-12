@@ -7,9 +7,10 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x26
           RenderTableRow {TR} at (0,2) size 784x22
             RenderTableCell {TD} at (2,2) size 634x22 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (267,1) size 100x20
-                RenderText {#text} at (0,0) size 56x19
-                  text run at (0,0) width 56: "ddddddd"
             RenderTableCell {TD} at (638,2) size 144x22 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x19
                 text run at (1,1) width 21: "test"
+layer at (277,11) size 100x20
+  RenderBlock {DIV} at (267,1) size 100x20
+    RenderText {#text} at (0,0) size 56x19
+      text run at (0,0) width 56: "ddddddd"

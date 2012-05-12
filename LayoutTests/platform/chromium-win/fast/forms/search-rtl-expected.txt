@@ -28,13 +28,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 211x16
             RenderBlock {DIV} at (2,1) size 18x13
             RenderBlock {DIV} at (23,0) size 176x16
-              RenderBlock {DIV} at (0,0) size 176x16
-                RenderText {#text} at (32,0) size 143x16
-                  text run at (32,0) width 23 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-                  text run at (55,0) width 21: "she"
-                  text run at (76,0) width 46 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-                  text run at (122,0) width 14: "he"
-                  text run at (136,0) width 39 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
             RenderBlock {DIV} at (199,3) size 9x9
         RenderText {#text} at (221,29) size 4x19
           text run at (221,29) width 4: " "
@@ -43,7 +36,6 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 151x16
             RenderBlock {DIV} at (2,1) size 18x13
             RenderBlock {DIV} at (23,0) size 116x16
-              RenderBlock {DIV} at (0,0) size 116x16
             RenderBlock {DIV} at (139,3) size 9x9
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,130) size 784x20
@@ -57,4 +49,14 @@ layer at (36,49) size 116x16 scrollX 28 scrollWidth 144
       text run at (16,0) width 46 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (62,0) width 14: "he"
       text run at (76,0) width 39 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (36,75) size 176x16
+  RenderBlock {DIV} at (0,0) size 176x16
+    RenderText {#text} at (32,0) size 143x16
+      text run at (32,0) width 23 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (55,0) width 21: "she"
+      text run at (76,0) width 46 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (122,0) width 14: "he"
+      text run at (136,0) width 39 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (36,101) size 116x16
+  RenderBlock {DIV} at (0,0) size 116x16
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

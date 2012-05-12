@@ -7,7 +7,8 @@ layer at (0,0) size 800x600
         text run at (0,0) width 449: "This tests that the default background color for the new text fields is white. "
       RenderBR {BR} at (449,15) size 0x0
       RenderTextControl {INPUT} at (2,22) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderBlock {DIV} at (2,3) size 151x16
-          RenderText {#text} at (1,0) size 122x16
-            text run at (1,0) width 122: "This should be white."
       RenderText {#text} at (0,0) size 0x0
+layer at (12,33) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
+    RenderText {#text} at (1,0) size 122x16
+      text run at (1,0) width 122: "This should be white."

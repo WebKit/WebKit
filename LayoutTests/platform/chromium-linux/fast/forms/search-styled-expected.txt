@@ -7,9 +7,10 @@ layer at (0,0) size 800x41
         RenderDeprecatedFlexibleBox {DIV} at (18,4) size 132x13
           RenderBlock {DIV} at (2,1) size 15x11
           RenderBlock {DIV} at (20,0) size 101x13
-            RenderBlock {DIV} at (0,0) size 101x13
           RenderBlock {DIV} at (121,2) size 8x8
       RenderText {#text} at (0,0) size 0x0
+layer at (48,14) size 101x13
+  RenderBlock {DIV} at (0,0) size 101x13
 layer at (48,14) size 101x13 scrollWidth 104
   RenderBlock {DIV} at (38,4) size 101x13 [color=#A9A9A9]
     RenderText {#text} at (1,0) size 102x13

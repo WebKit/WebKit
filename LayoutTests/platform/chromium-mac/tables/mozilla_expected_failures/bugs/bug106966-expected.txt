@@ -122,11 +122,6 @@ layer at (0,0) size 785x1401
             RenderTableCell {TD} at (82,15) size 53x20 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 129x18
                 text run at (1,1) width 129: "contentwithoutspace"
-        RenderTableSection {TFOOT} at (25,93) size 150x50
-          RenderTableRow {TR} at (0,15) size 150x20
-            RenderTableCell {TD} at (15,15) size 52x20 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 30x18
-                text run at (1,1) width 30: "cell1"
 layer at (8,144) size 200x118 clip at (18,144) size 180x118 scrollWidth 227
   RenderTable {TABLE} at (0,136) size 200x118 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
     RenderBlock {CAPTION} at (0,0) size 200x18
@@ -175,6 +170,12 @@ layer at (33,1150) size 150x50 scrollWidth 212
       RenderTableCell {TD} at (82,15) size 53x20 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
         RenderText {#text} at (1,1) size 129x18
           text run at (1,1) width 129: "contentwithoutspace"
+layer at (33,1318) size 150x50
+  RenderTableSection {TFOOT} at (25,93) size 150x50
+    RenderTableRow {TR} at (0,15) size 150x20
+      RenderTableCell {TD} at (15,15) size 52x20 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
+        RenderText {#text} at (1,1) size 30x18
+          text run at (1,1) width 30: "cell1"
 layer at (115,1333) size 53x20 scrollWidth 131
   RenderTableCell {TD} at (82,15) size 53x20 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (1,1) size 129x18

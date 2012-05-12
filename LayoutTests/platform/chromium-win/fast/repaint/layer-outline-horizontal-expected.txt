@@ -15,7 +15,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (744,0) size 4x19
           text run at (744,0) width 4: "."
       RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (10,186) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (18,194) size 100x100 clip at (19,195) size 98x98
+  RenderBlock {DIV} at (10,186) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
 layer at (8,54) size 784x130
   RenderBlock (relative positioned) {DIV} at (0,46) size 784x130
 layer at (18,64) size 100x100

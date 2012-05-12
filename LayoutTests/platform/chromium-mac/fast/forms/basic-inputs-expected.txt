@@ -39,22 +39,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (137,3) size 27x18
           text run at (137,3) width 27: "text "
         RenderTextControl {INPUT} at (166,3) size 125x19 [color=#545454] [bgcolor=#FFFFFF] [border: (2px inset #545454)]
-          RenderBlock {DIV} at (3,3) size 119x13
-            RenderText {#text} at (1,0) size 18x13
-              text run at (1,0) width 18: "foo"
         RenderText {#text} at (293,3) size 19x18
           text run at (293,3) width 12: "b "
           text run at (305,3) width 7: "a"
         RenderTextControl {INPUT} at (314,3) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,3) size 119x13
-            RenderText {#text} at (1,0) size 19x13
-              text run at (1,0) width 19: "\x{2022}\x{2022}\x{2022}"
         RenderText {#text} at (1,26) size 64x18
           text run at (1,26) width 64: "password "
         RenderTextControl {INPUT} at (67,26) size 125x19 [color=#545454] [bgcolor=#FFFFFF] [border: (2px inset #545454)]
-          RenderBlock {DIV} at (3,3) size 119x13
-            RenderText {#text} at (1,0) size 19x13
-              text run at (1,0) width 19: "\x{2022}\x{2022}\x{2022}"
         RenderText {#text} at (194,26) size 8x18
           text run at (194,26) width 8: "b"
       RenderBlock {DIV} at (10,374) size 450x21 [border: (1px solid #FF0000)]
@@ -79,3 +70,15 @@ layer at (31,330) size 119x13 scrollWidth 166
   RenderBlock {DIV} at (3,3) size 119x13
     RenderText {#text} at (1,0) size 164x13
       text run at (1,0) width 164: "foobarbazfoobarbazfoobarbaz"
+layer at (187,330) size 119x13
+  RenderBlock {DIV} at (3,3) size 119x13
+    RenderText {#text} at (1,0) size 18x13
+      text run at (1,0) width 18: "foo"
+layer at (335,330) size 119x13
+  RenderBlock {DIV} at (3,3) size 119x13
+    RenderText {#text} at (1,0) size 19x13
+      text run at (1,0) width 19: "\x{2022}\x{2022}\x{2022}"
+layer at (88,353) size 119x13
+  RenderBlock {DIV} at (3,3) size 119x13
+    RenderText {#text} at (1,0) size 19x13
+      text run at (1,0) width 19: "\x{2022}\x{2022}\x{2022}"

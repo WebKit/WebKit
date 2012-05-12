@@ -18,13 +18,14 @@ layer at (0,0) size 785x3178
       RenderBlock {DIV} at (0,92) size 769x3000
       RenderBlock (anonymous) at (0,3092) size 769x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 151x16
-            RenderText {#text} at (1,0) size 136x16
-              text run at (1,0) width 136: "select some of this text"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,3134) size 769x20
         RenderText {#text} at (0,0) size 387x19
           text run at (0,0) width 387: "If the bug does not occur, you'll be left down here at the bottom."
+layer at (12,3105) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
+    RenderText {#text} at (1,0) size 136x16
+      text run at (1,0) width 136: "select some of this text"
 selection start: position 1 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
 selection end:   position 14 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 7 {INPUT} of body
 scrolled to 0,2578

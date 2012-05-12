@@ -8,15 +8,9 @@ layer at (0,0) size 800x600
           text run at (0,0) width 722: "This test uses the new text field to test focus() and blur() and to make sure that onFocus and onBlur events fire correctly."
       RenderBlock {P} at (0,36) size 784x26
         RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 151x16
-            RenderText {#text} at (1,0) size 90x16
-              text run at (1,0) width 90: "My Text Field 1"
         RenderText {#text} at (159,3) size 4x19
           text run at (159,3) width 4: " "
         RenderTextControl {INPUT} at (165,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 151x16
-            RenderText {#text} at (1,0) size 90x16
-              text run at (1,0) width 90: "My Text Field 2"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,78) size 784x80
         RenderBR {BR} at (0,0) size 0x19
@@ -29,5 +23,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,60) size 309x19
           text run at (0,60) width 309: "Test Passed. Text field 2's onFocus event has fired."
       RenderBlock {P} at (0,174) size 784x0
+layer at (12,49) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
+    RenderText {#text} at (1,0) size 90x16
+      text run at (1,0) width 90: "My Text Field 1"
+layer at (175,49) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
+    RenderText {#text} at (1,0) size 90x16
+      text run at (1,0) width 90: "My Text Field 2"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of child 1 {P} of body
 selection end:   position 15 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of child 1 {P} of body

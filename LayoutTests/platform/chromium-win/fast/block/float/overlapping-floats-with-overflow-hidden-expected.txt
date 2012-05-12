@@ -8,4 +8,5 @@ layer at (0,0) size 800x600
           text run at (0,0) width 226: "There should be no red visible below."
       RenderBlock {DIV} at (0,20) size 520x0
         RenderBlock (floating) {DIV} at (0,0) size 520x356 [bgcolor=#FF0000]
-        RenderBlock (floating) {DIV} at (0,0) size 520x356 [bgcolor=#008000]
+layer at (8,28) size 520x356
+  RenderBlock (floating) {DIV} at (0,0) size 520x356 [bgcolor=#008000]

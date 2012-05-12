@@ -422,7 +422,6 @@ layer at (0,0) size 785x3617
             RenderText {#text} at (0,3) size 307x19
               text run at (0,3) width 307: "This is a searchable index. Enter search keywords: "
             RenderTextControl {INPUT} at (309,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-              RenderBlock {DIV} at (2,3) size 151x16
       RenderBlock (anonymous) at (0,1916) size 769x2
         RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,1926) size 769x20
@@ -877,3 +876,5 @@ layer at (0,0) size 785x3617
                     RenderText {#text} at (39,0) size 160x19
                       text run at (39,0) width 160: "All of this should be green."
                   RenderText {#text} at (0,0) size 0x0
+layer at (319,1908) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16

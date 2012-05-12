@@ -1,3 +1,433 @@
+2012-05-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for some tests.
+
+        * css3/selectors3/html/css3-modsel-23-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-23-expected.txt.
+        * css3/selectors3/html/css3-modsel-24-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-24-expected.txt.
+        * css3/selectors3/html/css3-modsel-68-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-68-expected.txt.
+        * css3/selectors3/html/css3-modsel-69-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-69-expected.txt.
+        * css3/selectors3/xhtml/css3-modsel-23-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-23-expected.txt.
+        * css3/selectors3/xhtml/css3-modsel-24-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-24-expected.txt.
+        * css3/selectors3/xhtml/css3-modsel-68-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-68-expected.txt.
+        * css3/selectors3/xhtml/css3-modsel-69-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-69-expected.txt.
+        * css3/selectors3/xml/css3-modsel-23-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-23-expected.txt.
+        * css3/selectors3/xml/css3-modsel-24-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-24-expected.txt.
+        * css3/selectors3/xml/css3-modsel-68-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-68-expected.txt.
+        * css3/selectors3/xml/css3-modsel-69-expected.txt: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-69-expected.txt.
+        * fast/block/float/033-expected.txt:
+        * fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/float-not-removed-from-next-sibling3-expected.txt.
+        * fast/block/float/in-margin-expected.png: Renamed from LayoutTests/platform/efl/fast/block/float/in-margin-expected.png.
+        * fast/block/float/overlapping-floats-with-overflow-hidden-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/overlapping-floats-with-overflow-hidden-expected.txt.
+        * fast/block/float/shrink-to-avoid-float-complexity-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/shrink-to-avoid-float-complexity-expected.txt.
+        * fast/block/lineboxcontain/parsing-invalid-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/lineboxcontain/parsing-invalid-expected.txt.
+        * fast/clip/017-expected.png: Renamed from LayoutTests/platform/efl/fast/clip/017-expected.png.
+        * fast/css/invalidation-errors-2-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/invalidation-errors-2-expected.txt.
+        * fast/css/invalidation-errors-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/invalidation-errors-expected.txt.
+        * fast/css/nested-layers-with-hover-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/nested-layers-with-hover-expected.txt.
+        * fast/dynamic/subtree-boundary-percent-height-expected.png: Renamed from LayoutTests/platform/efl/fast/dynamic/subtree-boundary-percent-height-expected.png.
+        * fast/dynamic/subtree-no-common-root-static-y-expected.png: Renamed from LayoutTests/platform/efl/fast/dynamic/subtree-no-common-root-static-y-expected.png.
+        * fast/dynamic/subtree-table-cell-height-expected.png: Renamed from LayoutTests/platform/efl/fast/dynamic/subtree-table-cell-height-expected.png.
+        * fast/inline/continuation-outlines-expected.txt: Renamed from LayoutTests/platform/efl/fast/inline/continuation-outlines-expected.txt.
+        * fast/layers/self-painting-outline-expected.png: Renamed from LayoutTests/platform/efl/fast/layers/self-painting-outline-expected.png.
+        * fast/multicol/layers-split-across-columns-expected.txt: Renamed from LayoutTests/platform/efl/fast/multicol/layers-split-across-columns-expected.txt.
+        * fast/overflow/004-expected.txt: Renamed from LayoutTests/platform/efl/fast/overflow/004-expected.txt.
+        * fast/overflow/clip-rects-fixed-ancestor-expected.txt: Renamed from LayoutTests/platform/efl/fast/overflow/clip-rects-fixed-ancestor-expected.txt.
+        * fast/overflow/line-clamp-expected.txt: Renamed from LayoutTests/platform/efl/fast/overflow/line-clamp-expected.txt.
+        * fast/overflow/overflow-focus-ring-expected.txt: Renamed from LayoutTests/platform/efl/fast/overflow/overflow-focus-ring-expected.txt.
+        * fast/repaint/layer-outline-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/layer-outline-expected.txt.
+        * fast/repaint/layer-outline-horizontal-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/layer-outline-horizontal-expected.txt.
+        * fast/repaint/opacity-change-on-overflow-float-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/opacity-change-on-overflow-float-expected.txt.
+        * fast/repaint/subtree-root-clip-3-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/subtree-root-clip-3-expected.png.
+        * fast/table/029-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/029-expected.txt.
+        * fast/table/overflowHidden-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/overflowHidden-expected.txt.
+        * platform/chromium-linux-x86/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-linux-x86/fast/text/selection-rect-rounding-expected.txt: Added.
+        * platform/chromium-linux/fast/block/margin-collapse/103-expected.txt:
+        * platform/chromium-linux/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-linux/fast/forms/input-baseline-expected.txt:
+        * platform/chromium-linux/fast/forms/input-text-double-click-expected.txt:
+        * platform/chromium-linux/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-linux/fast/forms/search-styled-expected.txt:
+        * platform/chromium-linux/fast/forms/searchfield-heights-expected.txt:
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-linux/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/chromium-linux/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-linux/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-linux/fast/text/selection-rect-rounding-expected.txt: Added.
+        * platform/chromium-linux/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/chromium-linux/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/chromium-linux/tables/mozilla/other/move_row-expected.txt:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-23-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-24-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-68-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/html/css3-modsel-69-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-23-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-24-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-68-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xhtml/css3-modsel-69-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-23-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-24-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-68-expected.png:
+        * platform/chromium-mac-leopard/css3/selectors3/xml/css3-modsel-69-expected.png:
+        * platform/chromium-mac-leopard/fast/events/context-no-deselect-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-disabled-color-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/inline/continuation-outlines-expected.png:
+        * platform/chromium-mac-leopard/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-mac-leopard/fast/text/selection-rect-rounding-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/events/context-no-deselect-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-disabled-color-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/inline/continuation-outlines-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/text/selection-rect-rounding-expected.txt:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-23-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-24-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-68-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-69-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-23-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-24-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-68-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-69-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-23-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-24-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-68-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-69-expected.png:
+        * platform/chromium-mac/fast/block/float/overlapping-floats-with-overflow-hidden-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/float/shrink-to-avoid-float-complexity-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/lineboxcontain/parsing-invalid-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/input-search-padding-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/invalidation-errors-2-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/invalidation-errors-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/line-height-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/nested-layers-with-hover-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/text-input-with-webkit-border-radius-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/isindex-001-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/isindex-002-expected.txt: Removed.
+        * platform/chromium-mac/fast/events/context-no-deselect-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/basic-inputs-expected.txt:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-mac/fast/forms/encoding-test-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/fieldset-align-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/floating-textfield-relayout-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-align-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-default-bkcolor-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-disabled-expected.txt:
+        * platform/chromium-mac/fast/forms/input-appearance-focus-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-mac/fast/forms/input-appearance-readonly-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-visibility-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-appearance-width-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-baseline-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-mac/fast/forms/input-double-click-selection-gap-bug-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-field-text-truncated-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-placeholder-visibility-1-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-placeholder-visibility-3-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-readonly-empty-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-spaces-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-table-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-text-click-inside-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-text-click-outside-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-text-double-click-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-text-option-delete-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-text-self-emptying-click-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/input-width-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/chromium-mac/fast/forms/plaintext-mode-2-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/chromium-mac/fast/forms/search-cancel-button-style-sharing-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/search-display-none-cancel-button-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/search-rtl-expected.png:
+        * platform/chromium-mac/fast/forms/search-styled-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/tabbing-input-iframe-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/textfield-focus-ring-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-mac/fast/forms/visual-hebrew-text-field-expected.txt: Removed.
+        * platform/chromium-mac/fast/frames/take-focus-from-iframe-expected.txt: Removed.
+        * platform/chromium-mac/fast/html/details-no-summary4-expected.txt: Removed.
+        * platform/chromium-mac/fast/html/details-open-javascript-expected.txt: Removed.
+        * platform/chromium-mac/fast/html/details-open2-expected.txt: Removed.
+        * platform/chromium-mac/fast/html/details-open4-expected.txt: Removed.
+        * platform/chromium-mac/fast/inline/continuation-outlines-expected.png:
+        * platform/chromium-mac/fast/invalid/residual-style-expected.txt: Removed.
+        * platform/chromium-mac/fast/lists/dynamic-marker-crash-expected.txt: Removed.
+        * platform/chromium-mac/fast/multicol/layers-split-across-columns-expected.txt: Removed.
+        * platform/chromium-mac/fast/overflow/004-expected.txt: Removed.
+        * platform/chromium-mac/fast/overflow/clip-rects-fixed-ancestor-expected.txt: Removed.
+        * platform/chromium-mac/fast/overflow/line-clamp-expected.txt: Removed.
+        * platform/chromium-mac/fast/overflow/overflow-focus-ring-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/layer-outline-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/layer-outline-horizontal-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/opacity-change-on-overflow-float-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt: Removed.
+        * platform/chromium-mac/fast/replaced/replaced-breaking-mixture-expected.txt: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-textfield-expected.txt: Removed.
+        * platform/chromium-mac/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-mac/fast/speech/speech-bidi-rendering-expected.txt: Removed.
+        * platform/chromium-mac/fast/table/003-expected.txt: Removed.
+        * platform/chromium-mac/fast/table/029-expected.txt: Removed.
+        * platform/chromium-mac/fast/table/colspanMinWidth-expected.txt: Removed.
+        * platform/chromium-mac/fast/table/overflowHidden-expected.txt: Removed.
+        * platform/chromium-mac/fast/table/spanOverlapRepaint-expected.txt: Removed.
+        * platform/chromium-mac/fast/table/text-field-baseline-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-mac/fast/transforms/transformed-focused-text-input-expected.txt: Removed.
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.txt: Removed.
+        * platform/chromium-mac/plugins/mouse-click-plugin-clears-selection-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/45621-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug12384-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug154780-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug24200-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-2-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-3-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug2479-4-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug4382-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-1-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug46368-2-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug51037-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug55545-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug7342-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/dom/tableDom-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/other/move_row-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug45621-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt: Removed.
+        * platform/chromium-win-vista/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-win-vista/fast/text/selection-rect-rounding-expected.txt: Added.
+        * platform/chromium-win-xp/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win-xp/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-win-xp/fast/text/selection-rect-rounding-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/overlapping-floats-with-overflow-hidden-expected.txt:
+        * platform/chromium-win/fast/block/float/shrink-to-avoid-float-complexity-expected.txt:
+        * platform/chromium-win/fast/block/lineboxcontain/parsing-invalid-expected.txt:
+        * platform/chromium-win/fast/block/margin-collapse/103-expected.txt:
+        * platform/chromium-win/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-win/fast/css/invalidation-errors-2-expected.txt:
+        * platform/chromium-win/fast/css/invalidation-errors-expected.txt:
+        * platform/chromium-win/fast/css/line-height-expected.txt:
+        * platform/chromium-win/fast/css/nested-layers-with-hover-expected.txt:
+        * platform/chromium-win/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/chromium-win/fast/css/text-overflow-input-expected.txt:
+        * platform/chromium-win/fast/dom/isindex-001-expected.txt:
+        * platform/chromium-win/fast/dom/isindex-002-expected.txt:
+        * platform/chromium-win/fast/events/autoscroll-expected.txt:
+        * platform/chromium-win/fast/events/context-no-deselect-expected.txt:
+        * platform/chromium-win/fast/forms/basic-inputs-expected.txt:
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-win/fast/forms/encoding-test-expected.txt:
+        * platform/chromium-win/fast/forms/fieldset-align-expected.txt:
+        * platform/chromium-win/fast/forms/floating-textfield-relayout-expected.txt:
+        * platform/chromium-win/fast/forms/input-align-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-default-bkcolor-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-disabled-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-focus-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-readonly-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-selection-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-visibility-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-width-expected.txt:
+        * platform/chromium-win/fast/forms/input-baseline-expected.txt:
+        * platform/chromium-win/fast/forms/input-double-click-selection-gap-bug-expected.txt:
+        * platform/chromium-win/fast/forms/input-field-text-truncated-expected.txt:
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/chromium-win/fast/forms/input-readonly-empty-expected.txt:
+        * platform/chromium-win/fast/forms/input-spaces-expected.txt:
+        * platform/chromium-win/fast/forms/input-table-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-click-inside-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-click-outside-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-double-click-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-option-delete-expected.txt:
+        * platform/chromium-win/fast/forms/input-text-self-emptying-click-expected.txt:
+        * platform/chromium-win/fast/forms/input-width-expected.txt:
+        * platform/chromium-win/fast/forms/number/input-appearance-number-rtl-expected.txt:
+        * platform/chromium-win/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-win/fast/forms/number/input-appearance-spinbutton-layer-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/chromium-win/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/chromium-win/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/chromium-win/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/chromium-win/fast/forms/search-rtl-expected.txt:
+        * platform/chromium-win/fast/forms/search-styled-expected.txt:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.txt:
+        * platform/chromium-win/fast/forms/tabbing-input-iframe-expected.txt:
+        * platform/chromium-win/fast/forms/textfield-focus-ring-expected.txt:
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-win/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/chromium-win/fast/html/details-no-summary4-expected.txt:
+        * platform/chromium-win/fast/html/details-open-javascript-expected.txt:
+        * platform/chromium-win/fast/html/details-open2-expected.txt:
+        * platform/chromium-win/fast/html/details-open4-expected.txt:
+        * platform/chromium-win/fast/invalid/residual-style-expected.txt:
+        * platform/chromium-win/fast/lists/dynamic-marker-crash-expected.txt:
+        * platform/chromium-win/fast/multicol/layers-split-across-columns-expected.txt:
+        * platform/chromium-win/fast/overflow/004-expected.txt:
+        * platform/chromium-win/fast/overflow/clip-rects-fixed-ancestor-expected.txt:
+        * platform/chromium-win/fast/overflow/line-clamp-expected.txt:
+        * platform/chromium-win/fast/overflow/overflow-focus-ring-expected.txt:
+        * platform/chromium-win/fast/repaint/layer-outline-expected.txt:
+        * platform/chromium-win/fast/repaint/layer-outline-horizontal-expected.txt:
+        * platform/chromium-win/fast/repaint/opacity-change-on-overflow-float-expected.txt:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/chromium-win/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/chromium-win/fast/replaced/width100percent-textfield-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.txt:
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.txt:
+        * platform/chromium-win/fast/table/003-expected.txt:
+        * platform/chromium-win/fast/table/029-expected.txt:
+        * platform/chromium-win/fast/table/colspanMinWidth-expected.txt:
+        * platform/chromium-win/fast/table/overflowHidden-expected.txt:
+        * platform/chromium-win/fast/table/spanOverlapRepaint-expected.txt:
+        * platform/chromium-win/fast/table/text-field-baseline-expected.txt:
+        * platform/chromium-win/fast/text/selection-painted-separately-expected.txt:
+        * platform/chromium-win/fast/text/selection-rect-rounding-expected.txt:
+        * platform/chromium-win/fast/transforms/transformed-focused-text-input-expected.txt:
+        * platform/chromium-win/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/chromium-win/plugins/mouse-click-plugin-clears-selection-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/45621-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug12384-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug154780-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug55545-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/chromium-win/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/chromium-win/tables/mozilla/other/move_row-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug45621-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+        * platform/chromium/fast/block/float/033-expected.txt: Removed.
+        * platform/chromium/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/chromium/fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Removed.
+        * platform/chromium/fast/block/float/float-overflow-hidden-containing-block-width-expected.txt: Removed.
+        * platform/chromium/fast/block/float/in-margin-expected.txt: Removed.
+        * platform/chromium/fast/clip/017-expected.txt: Removed.
+        * platform/chromium/fast/dynamic/subtree-boundary-percent-height-expected.txt: Removed.
+        * platform/chromium/fast/dynamic/subtree-no-common-root-static-y-expected.txt: Removed.
+        * platform/chromium/fast/dynamic/subtree-table-cell-height-expected.txt: Removed.
+        * platform/chromium/fast/layers/self-painting-outline-expected.txt: Removed.
+        * platform/chromium/fast/repaint/subtree-root-clip-3-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/block/float/033-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-23-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-24-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-68-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-69-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-23-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-24-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-68-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-69-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-23-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-24-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-68-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-69-expected.txt: Removed.
+        * platform/gtk/fast/block/float/033-expected.txt: Removed.
+        * platform/gtk/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/gtk/fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Removed.
+        * platform/gtk/fast/block/float/float-overflow-hidden-containing-block-width-expected.txt: Removed.
+        * platform/gtk/fast/block/float/in-margin-expected.png: Removed.
+        * platform/gtk/fast/block/float/in-margin-expected.txt: Removed.
+        * platform/gtk/fast/block/float/overlapping-floats-with-overflow-hidden-expected.txt: Removed.
+        * platform/gtk/fast/block/float/shrink-to-avoid-float-complexity-expected.txt: Removed.
+        * platform/gtk/fast/block/lineboxcontain/parsing-invalid-expected.txt: Removed.
+        * platform/gtk/fast/clip/017-expected.png: Removed.
+        * platform/gtk/fast/clip/017-expected.txt: Removed.
+        * platform/gtk/fast/css/invalidation-errors-2-expected.txt: Removed.
+        * platform/gtk/fast/css/invalidation-errors-expected.txt: Removed.
+        * platform/gtk/fast/css/nested-layers-with-hover-expected.txt: Removed.
+        * platform/gtk/fast/dynamic/subtree-boundary-percent-height-expected.png: Removed.
+        * platform/gtk/fast/dynamic/subtree-boundary-percent-height-expected.txt: Removed.
+        * platform/gtk/fast/dynamic/subtree-no-common-root-static-y-expected.png: Removed.
+        * platform/gtk/fast/dynamic/subtree-no-common-root-static-y-expected.txt: Removed.
+        * platform/gtk/fast/dynamic/subtree-table-cell-height-expected.png: Removed.
+        * platform/gtk/fast/dynamic/subtree-table-cell-height-expected.txt: Removed.
+        * platform/gtk/fast/inline/continuation-outlines-expected.txt: Removed.
+        * platform/gtk/fast/layers/self-painting-outline-expected.png: Removed.
+        * platform/gtk/fast/layers/self-painting-outline-expected.txt: Removed.
+        * platform/gtk/fast/multicol/layers-split-across-columns-expected.txt: Removed.
+        * platform/gtk/fast/overflow/004-expected.txt: Removed.
+        * platform/gtk/fast/overflow/clip-rects-fixed-ancestor-expected.txt: Removed.
+        * platform/gtk/fast/overflow/line-clamp-expected.txt: Removed.
+        * platform/gtk/fast/overflow/overflow-focus-ring-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layer-outline-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layer-outline-horizontal-expected.txt: Removed.
+        * platform/gtk/fast/repaint/opacity-change-on-overflow-float-expected.txt: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-3-expected.png: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-3-expected.txt: Removed.
+        * platform/gtk/fast/table/029-expected.txt: Removed.
+        * platform/gtk/fast/table/overflowHidden-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug154780-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug45621-expected.png: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug45621-expected.txt: Removed.
+        * platform/mac/fast/block/float/033-expected.txt: Removed.
+        * platform/mac/fast/block/float/float-not-removed-from-next-sibling3-expected.png: Removed.
+        * platform/mac/fast/block/float/float-overflow-hidden-containing-block-width-expected.txt: Removed.
+        * platform/mac/fast/block/float/in-margin-expected.txt: Removed.
+        * platform/mac/fast/clip/017-expected.txt: Removed.
+        * platform/mac/fast/dynamic/subtree-boundary-percent-height-expected.txt: Removed.
+        * platform/mac/fast/dynamic/subtree-no-common-root-static-y-expected.txt: Removed.
+        * platform/mac/fast/dynamic/subtree-table-cell-height-expected.txt: Removed.
+        * platform/qt/fast/block/float/avoidance-rtl-expected.txt: Removed.
+        * platform/qt/fast/block/float/float-overflow-hidden-containing-block-width-expected.txt: Removed.
+        * platform/qt/fast/block/float/in-margin-expected.txt: Removed.
+        * platform/qt/fast/clip/017-expected.txt: Removed.
+        * platform/qt/fast/css/resize-single-axis-expected.txt: Removed.
+        * platform/qt/fast/dynamic/subtree-boundary-percent-height-expected.txt: Removed.
+        * platform/qt/fast/dynamic/subtree-no-common-root-static-y-expected.txt: Removed.
+        * platform/qt/fast/dynamic/subtree-table-cell-height-expected.txt: Removed.
+        * platform/qt/fast/layers/self-painting-outline-expected.txt: Removed.
+        * platform/qt/fast/repaint/subtree-root-clip-3-expected.txt: Removed.
+        * tables/mozilla/bugs/bug154780-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug154780-expected.txt.
+        * tables/mozilla_expected_failures/bugs/bug45621-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/bugs/bug45621-expected.png.
+        * tables/mozilla_expected_failures/bugs/bug45621-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/bugs/bug45621-expected.txt.
+
 2012-05-11  Noel Gordon  <noel.gordon@gmail.com>
 
         Optimise and update test expectations after r116636

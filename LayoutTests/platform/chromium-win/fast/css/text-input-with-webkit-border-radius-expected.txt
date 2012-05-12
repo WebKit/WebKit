@@ -19,8 +19,9 @@ layer at (0,0) size 800x141
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 127x16
             RenderBlock {DIV} at (0,2) size 1x11
             RenderBlock {DIV} at (1,0) size 114x16
-              RenderBlock {DIV} at (0,0) size 114x16
-                RenderText {#text} at (1,0) size 64x16
-                  text run at (1,0) width 64: "default text"
             RenderBlock {DIV} at (115,3) size 9x9
         RenderText {#text} at (0,0) size 0x0
+layer at (23,100) size 114x16
+  RenderBlock {DIV} at (0,0) size 114x16
+    RenderText {#text} at (1,0) size 64x16
+      text run at (1,0) width 64: "default text"

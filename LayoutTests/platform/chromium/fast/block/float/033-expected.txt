@@ -1,7 +1,0 @@
-layer at (0,0) size 785x2008
-  RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2008
-  RenderBlock {HTML} at (0,0) size 785x2008
-    RenderBody {BODY} at (8,8) size 769x584
-      RenderBlock (floating) {DIV} at (469,0) size 300x2000
-        RenderBlock {DIV} at (0,0) size 300x2000 [bgcolor=#0000FF]

@@ -133,10 +133,8 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (2,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 119x13
             RenderBlock {DIV} at (0,0) size 105x13
-              RenderBlock {DIV} at (0,0) size 105x13
             RenderBlock {DIV} at (105,0) size 14x14
         RenderTextControl {INPUT} at (131,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (3,3) size 119x13
         RenderText {#text} at (0,0) size 0x0
 layer at (14,48) size 94x10 scrollWidth 170
   RenderBlock {DIV} at (3,3) size 94x10
@@ -266,3 +264,7 @@ layer at (379,305) size 209x27 scrollWidth 484
   RenderBlock {DIV} at (0,0) size 209x27
     RenderText {#text} at (1,0) size 482x27
       text run at (1,0) width 482: "A quick brown fox jumps over the lazy dog"
+layer at (13,357) size 105x13
+  RenderBlock {DIV} at (0,0) size 105x13
+layer at (142,357) size 119x13
+  RenderBlock {DIV} at (3,3) size 119x13
