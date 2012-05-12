@@ -1319,9 +1319,6 @@ BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 // Requires ENABLE(MEDIA_CAPTURE)
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
-// Generate results for your platform(s)
-BUGWK85567 : fast/images/png-suite/test.html = IMAGE
-
 BUGWK85700 : fullscreen/non-ancestor-iframe.html = FAIL
 
 // Interferes with the rAF tests that are enabled
@@ -1344,7 +1341,10 @@ BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 BUGWK86283 : fast/dom/CSSStyleDeclaration/empty-string-property.html = FAIL
 BUGWK86283 : fast/dom/collection-null-like-arguments.html = FAIL
 
+// Web view needs to be redrawn once more and completely before dumping pixel results
+// otherwise pixel results are incomplete/incorrect
 BUGWK86284 : fast/css/tab-size.html = IMAGE
+BUGWK86284 : fast/images/png-suite/test.html = MISSING
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

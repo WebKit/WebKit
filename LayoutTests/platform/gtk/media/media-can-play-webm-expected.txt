@@ -1,0 +1,10 @@
+Test HTMLMediaElement canPlayType() method for webm media containers.
+
+These tests may be expected to fail if the WebKit port does not support the format.
+
+EXPECTED (video.canPlayType('audio/webm') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm') == 'maybe') OK
+EXPECTED (video.canPlayType('audio/webm; codecs=vorbis') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs=vp8,vorbis') == 'probably') OK
+END OF TEST
+

@@ -1,3 +1,37 @@
+2012-05-12  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, GTK gardening. Also add baselines for new tests after
+        r116001, r116373 and r116438.
+
+        * platform/gtk/css2.1/20110323/first-letter-000-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-dynamic-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-dynamic-002-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-dynamic-003a-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-dynamic-003b-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-inherit-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-nested-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-nested-002-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-nested-003-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-nested-004-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-nested-005-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-nested-006-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-nested-007-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-quote-001-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-quote-002-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-quote-003-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-quote-004-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-quote-005-expected.txt: Added.
+        * platform/gtk/css2.1/20110323/first-letter-quote-006-expected.txt: Added.
+        * platform/gtk/fast/css/first-letter-nested-positioned-expected.txt: Added.
+        * platform/gtk/fast/css/first-letter-quotes-no-content-before-after-expected.txt: Added.
+        * platform/gtk/fast/css/first-line-text-decoration-expected.txt: Added.
+        * platform/gtk/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt: Added.
+        * platform/gtk/media/media-can-play-webm-expected.txt: Added.
+        * platform/gtk/svg/as-image/image-respects-deviceScaleFactor-expected.txt: Added.
+        * platform/gtk/svg/as-image/image-respects-pageScaleFactor-expected.txt: Added.
+        * platform/gtk/test_expectations.txt:
+
 2012-05-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectations
