@@ -74,7 +74,7 @@ public:
     bool allowStyleFromSource(const KURL&) const;
     bool allowFontFromSource(const KURL&) const;
     bool allowMediaFromSource(const KURL&) const;
-    bool allowConnectFromSource(const KURL&) const;
+    bool allowConnectToSource(const KURL&) const;
 
     void setOverrideAllowInlineStyle(bool);
 

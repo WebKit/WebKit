@@ -503,7 +503,7 @@ public:
     bool allowStyleFromSource(const KURL&) const;
     bool allowFontFromSource(const KURL&) const;
     bool allowMediaFromSource(const KURL&) const;
-    bool allowConnectFromSource(const KURL&) const;
+    bool allowConnectToSource(const KURL&) const;
 
 private:
     explicit CSPDirectiveList(ScriptExecutionContext*);
@@ -544,7 +544,7 @@ private:
     OwnPtr<CSPDirective> m_mediaSrc;
     OwnPtr<CSPDirective> m_connectSrc;
 
-    Vector<KURL> m_reportURLs;
+    Vector<KURL> m_reportURIs;
 };
 
 CSPDirectiveList::CSPDirectiveList(ScriptExecutionContext* scriptExecutionContext)
@@ -580,7 +580,7 @@ void CSPDirectiveList::reportViolation(const String& directiveText, const String
     String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
     m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
 
-    if (m_reportURLs.isEmpty())
+    if (m_reportURIs.isEmpty())
         return;
 
     // FIXME: Support sending reports from worker.
@@ -618,8 +618,8 @@ void CSPDirectiveList::reportViolation(const String& directiveText, const String
 
     RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8());
 
-    for (size_t i = 0; i < m_reportURLs.size(); ++i)
-        PingLoader::reportContentSecurityPolicyViolation(frame, m_reportURLs[i], report);
+    for (size_t i = 0; i < m_reportURIs.size(); ++i)
+        PingLoader::reportContentSecurityPolicyViolation(frame, m_reportURIs[i], report);
 }
 
 void CSPDirectiveList::logUnrecognizedDirective(const String& name) const
@@ -738,7 +738,7 @@ bool CSPDirectiveList::allowMediaFromSource(const KURL& url) const
     return checkSourceAndReportViolation(operativeDirective(m_mediaSrc.get()), url, type);
 }
 
-bool CSPDirectiveList::allowConnectFromSource(const KURL& url) const
+bool CSPDirectiveList::allowConnectToSource(const KURL& url) const
 {
     DEFINE_STATIC_LOCAL(String, type, ("connect"));
     return checkSourceAndReportViolation(operativeDirective(m_connectSrc.get()), url, type);
@@ -826,7 +826,7 @@ void CSPDirectiveList::parseReportURI(const String& value)
 
         if (urlBegin < position) {
             String url = String(urlBegin, position - urlBegin);
-            m_reportURLs.append(m_scriptExecutionContext->completeURL(url));
+            m_reportURIs.append(m_scriptExecutionContext->completeURL(url));
         }
     }
 }
@@ -879,7 +879,7 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
         m_connectSrc = createCSPDirective(name, value);
     else if (!m_haveSandboxPolicy && equalIgnoringCase(name, sandbox))
         applySandboxPolicy(value);
-    else if (m_reportURLs.isEmpty() && equalIgnoringCase(name, reportURI))
+    else if (m_reportURIs.isEmpty() && equalIgnoringCase(name, reportURI))
         parseReportURI(value);
     else
         logUnrecognizedDirective(name);
@@ -1004,9 +1004,9 @@ bool ContentSecurityPolicy::allowMediaFromSource(const KURL& url) const
     return isAllowedByAll<&CSPDirectiveList::allowMediaFromSource>(m_policies, url);
 }
 
-bool ContentSecurityPolicy::allowConnectFromSource(const KURL& url) const
+bool ContentSecurityPolicy::allowConnectToSource(const KURL& url) const
 {
-    return isAllowedByAll<&CSPDirectiveList::allowConnectFromSource>(m_policies, url);
+    return isAllowedByAll<&CSPDirectiveList::allowConnectToSource>(m_policies, url);
 }
 
 }

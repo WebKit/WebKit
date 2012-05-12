@@ -88,7 +88,7 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, con
         return 0;
     }
 
-    if (!context->contentSecurityPolicy()->allowConnectFromSource(fullURL)) {
+    if (!context->contentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return 0;

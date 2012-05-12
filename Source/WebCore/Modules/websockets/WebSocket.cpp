@@ -221,7 +221,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         return;
     }
 
-    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectFromSource(m_url)) {
+    if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(m_url)) {
         m_state = CLOSED;
 
         // FIXME: Should this be throwing an exception?
