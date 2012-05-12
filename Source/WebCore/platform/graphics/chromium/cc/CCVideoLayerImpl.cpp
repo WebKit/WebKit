@@ -80,12 +80,17 @@ CCVideoLayerImpl::CCVideoLayerImpl(int id, WebKit::WebVideoFrameProvider* provid
     , m_frame(0)
 {
     memcpy(m_streamTextureMatrix, flipTransform, sizeof(m_streamTextureMatrix));
-    provider->setVideoFrameProviderClient(this);
+
+    // This only happens during a commit on the compositor thread while the main
+    // thread is blocked. That makes this a thread-safe call to set the video
+    // frame provider client that does not require a lock. The same is true of
+    // the call in the destructor.
+    m_provider->setVideoFrameProviderClient(this);
 }
 
 CCVideoLayerImpl::~CCVideoLayerImpl()
 {
-    MutexLocker locker(m_providerMutex);
+    // See comment in constructor for why this doesn't need a lock.
     if (m_provider) {
         m_provider->setVideoFrameProviderClient(0);
         m_provider = 0;
@@ -96,7 +101,10 @@ CCVideoLayerImpl::~CCVideoLayerImpl()
 
 void CCVideoLayerImpl::stopUsingProvider()
 {
+    // Block the provider from shutting down until this client is done
+    // using the frame.
     MutexLocker locker(m_providerMutex);
+    ASSERT(!m_frame);
     m_provider = 0;
 }
 
