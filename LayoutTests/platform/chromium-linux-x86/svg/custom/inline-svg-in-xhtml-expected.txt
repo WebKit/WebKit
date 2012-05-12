@@ -26,7 +26,7 @@ layer at (48,38) size 722x542 layerType: foreground only
           RenderTextControl {input} at (105,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {p} at (14,83) size 688x26
-          RenderButton {button} at (2,2) size 65x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderButton {button} at (2,2) size 65x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
             RenderBlock (anonymous) at (8,3) size 49x16
               RenderText {#text} at (0,0) size 49x16
                 text run at (0,0) width 49: "Activate!"

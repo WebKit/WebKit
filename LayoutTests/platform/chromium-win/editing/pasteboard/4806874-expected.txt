@@ -11,7 +11,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,3) size 32x19
           text run at (0,3) width 32: "Hello"
         RenderTextControl {INPUT} at (34,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 151x16
         RenderText {#text} at (191,3) size 3x19
           text run at (191,3) width 3: ":"
+layer at (44,49) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
 caret: position 1 of child 1 {INPUT} of child 2 {DIV} of body

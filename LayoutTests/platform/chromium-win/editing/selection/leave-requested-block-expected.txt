@@ -24,8 +24,9 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (2,18) size 780x20
           RenderText {#text} at (0,0) size 650x19
             text run at (0,0) width 650: "Select All while inside this editable block should create a selection that does not extend outside of this block."
-      RenderBlock {P} at (0,164) size 784x20
-        RenderText {#text} at (0,0) size 401x19
-          text run at (0,0) width 401: "This is a paragraph outside the editable block with overflow:hidden"
+layer at (8,172) size 784x20
+  RenderBlock {P} at (0,164) size 784x20
+    RenderText {#text} at (0,0) size 401x19
+      text run at (0,0) width 401: "This is a paragraph outside the editable block with overflow:hidden"
 selection start: position 0 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body
 selection end:   position 113 of child 0 {#text} of child 1 {P} of child 5 {DIV} of body

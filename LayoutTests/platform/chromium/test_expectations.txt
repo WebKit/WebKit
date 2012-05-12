@@ -3579,11 +3579,41 @@ BUGWK84065 WIN DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
 BUGWK84065 MAC DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
 BUGWK84065 WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
 
+// IETC grid layout
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
 BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
 BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
+// IETC multi-column
+BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
+BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
+BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE
+BUGWK84764 : ietestcenter/css3/multicolumn/column-width-applies-to-001.htm = IMAGE
+BUGWK84767 : ietestcenter/css3/multicolumn/column-width-applies-to-002.htm = IMAGE
+BUGWK84768 : ietestcenter/css3/multicolumn/column-width-applies-to-003.htm = IMAGE
+BUGWK84769 : ietestcenter/css3/multicolumn/column-width-applies-to-004.htm = IMAGE
+BUGWK84770 : ietestcenter/css3/multicolumn/column-width-applies-to-007.htm = IMAGE
+BUGWK84771 : ietestcenter/css3/multicolumn/column-width-applies-to-009.htm = IMAGE
+BUGWK84772 : ietestcenter/css3/multicolumn/column-width-applies-to-010.htm = IMAGE
+BUGWK84773 : ietestcenter/css3/multicolumn/column-width-applies-to-012.htm = IMAGE
+BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMAGE
+BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
+BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
+BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
+// IETC flexbox failures
+BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
+BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
+BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMAGE
+// IETC CSS units
+BUGWK85308 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
+BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
+BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
+// IETC namespace failures
+BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
+BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
+BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
+
 
 BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html = CRASH
 BUGWK84125 DEBUG : http/tests/websocket/tests/hixie76/workers/close-in-worker.html = CRASH
@@ -3609,8 +3639,7 @@ BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html 
 
 BUGWK84689 SNOWLEOPARD : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TIMEOUT PASS
 
-// Needs a text rebaseline after bug 83954
-BUGWK84698 LINUX : fast/forms/placeholder-position.html = IMAGE+TEXT TEXT
+BUGWK84698 LINUX : fast/forms/placeholder-position.html = FAIL PASS
 
 BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT PASS
 
@@ -3652,22 +3681,6 @@ BUGWK83568 : svg/custom/js-update-style.svg = IMAGE
 
 BUGWK84972 MAC WIN DEBUG : webaudio/audioparam-exponentialRampToValueAtTime.html = PASS CRASH
 BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
-
-BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
-BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
-BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE
-BUGWK84764 : ietestcenter/css3/multicolumn/column-width-applies-to-001.htm = IMAGE
-BUGWK84767 : ietestcenter/css3/multicolumn/column-width-applies-to-002.htm = IMAGE
-BUGWK84768 : ietestcenter/css3/multicolumn/column-width-applies-to-003.htm = IMAGE
-BUGWK84769 : ietestcenter/css3/multicolumn/column-width-applies-to-004.htm = IMAGE
-BUGWK84770 : ietestcenter/css3/multicolumn/column-width-applies-to-007.htm = IMAGE
-BUGWK84771 : ietestcenter/css3/multicolumn/column-width-applies-to-009.htm = IMAGE
-BUGWK84772 : ietestcenter/css3/multicolumn/column-width-applies-to-010.htm = IMAGE
-BUGWK84773 : ietestcenter/css3/multicolumn/column-width-applies-to-012.htm = IMAGE
-BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMAGE
-BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
-BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
-BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
 BUGWK85038 : http/tests/inspector/network/network-initiator.html = TEXT TIMEOUT
 BUGWK85082 XP DEBUG : platform/chromium/media/video-capture-preview.html = CRASH PASS
@@ -3715,35 +3728,7 @@ BUGWK83954 WIN LINUX LION : fast/text/textIteratorNilRenderer.html = TEXT
 
 // Those tests need a text baseline after allocating more layers.
 // The change should only be layer addition.
-BUGWK83954 SLOW : editing/inserting/before-after-input-element.html = TEXT
-BUGWK83954 SLOW : editing/pasteboard/4806874.html = TEXT
-BUGWK83954 LINUX WIN : editing/pasteboard/drop-text-without-selection.html = TEXT
-BUGWK83954 SLOW : editing/pasteboard/input-field-1.html = TEXT
-BUGWK83954 SLOW : editing/selection/3690703-2.html = TEXT
-BUGWK83954 SLOW : editing/selection/3690703.html = TEXT
-BUGWK83954 SLOW : editing/selection/3690719.html = TEXT
-BUGWK83954 SLOW : editing/selection/4895428-3.html = TEXT
-BUGWK83954 SLOW : editing/selection/4975120.html = TEXT
-BUGWK83954 SLOW : editing/selection/drag-select-1.html = TEXT
-BUGWK83954 SLOW : editing/selection/expanding-selections.html = TEXT
-BUGWK83954 SLOW : editing/selection/leave-requested-block.html = TEXT
-BUGWK83954 SLOW : editing/selection/select-across-readonly-input-1.html = TEXT
-BUGWK83954 SLOW : editing/selection/select-across-readonly-input-2.html = TEXT
-BUGWK83954 SLOW : editing/selection/select-across-readonly-input-3.html = TEXT
-BUGWK83954 SLOW : editing/selection/select-across-readonly-input-4.html = TEXT
-BUGWK83954 SLOW : editing/selection/select-across-readonly-input-5.html = TEXT
-BUGWK83954 MAC : fast/block/lineboxcontain/block-font.html = TEXT
-BUGWK83954 MAC : fast/block/lineboxcontain/block-glyphs.html = TEXT
-BUGWK83954 MAC : fast/block/lineboxcontain/font.html = TEXT
-BUGWK83954 WIN MAC : fast/forms/placeholder-position.html = TEXT
-BUGWK83954 WIN LINUX : svg/custom/inline-svg-in-xhtml.xml = TEXT
-BUGWK83954 WIN LINUX : svg/hixie/mixed/003.xml = TEXT
-BUGWK83954 WIN LINUX SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = TEXT
 BUGWK83954 LINUX : fast/table/colspanMinWidth-vertical.html = TEXT
-BUGWK83954 WIN LINUX : fast/block/float/avoiding-float-centered.html = TEXT
-BUGWK83954 WIN LINUX : fast/clip/008.html = TEXT
-BUGWK83954 WIN LINUX : fast/clip/011.html = TEXT
-BUGWK83954 WIN LINUX : fast/clip/012.html = TEXT
 
 // Skip until SUBPIXEL_LAYOUT is enabled
 BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL
@@ -3751,11 +3736,6 @@ BUGWK85532 SKIP : fast/sub-pixel/layout-boxes-with-zoom.html = FAIL
 BUGWK85532 SKIP : fast/sub-pixel/size-of-box-with-zoom.html = FAIL
 
 BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
-
-// IETC flexbox failures
-BUGWK85211 : ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm = IMAGE
-BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
-BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm = CRASH IMAGE
 
 BUGWK85553 DEBUG : http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html = TIMEOUT
 
@@ -3799,15 +3779,13 @@ BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 // Requires ENABLE(MEDIA_CAPTURE)
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
-// Need rebaseline
-
-BUGWK86170 LINUX : plugins/embed-attributes-style.html = IMAGE
-BUGWK86170 SNOWLEOPARD : compositing/plugins/composited-plugin.html = IMAGE
-
 BUGWK85952 MAC WIN : http/tests/media/media-source/webm/video-media-source-play.html = PASS TIMEOUT
-BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS TIMEOUT
-BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TIMEOUT
-BUGWK85952 MAC DEBUG : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TEXT
+//BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS TIMEOUT
+//BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TIMEOUT
+//BUGWK85952 MAC DEBUG : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TEXT
+// Need to revert Chromium r136679
+BUGTKENT : http/tests/media/media-source/webm/video-media-source-seek.html = CRASH TIMEOUT
+BUGTKENT : http/tests/media/media-source/webm/video-media-source-state-changes.html = CRASH TIMEOUT
 
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
@@ -3824,13 +3802,5 @@ BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-ove
 
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
-BUGWK85308 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
-BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
-BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
-
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
-// IETC namespace failures
-BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
-BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
-BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE

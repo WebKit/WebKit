@@ -18,8 +18,9 @@ layer at (0,0) size 800x600
             text run at (0,0) width 20: "foo"
         RenderBlock (anonymous) at (0,20) size 784x26
           RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderBlock {DIV} at (2,3) size 151x16
         RenderBlock {DIV} at (0,46) size 784x20
           RenderText {#text} at (0,0) size 21x19
             text run at (0,0) width 21: "baz"
+layer at (12,109) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
 caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 2 {DIV} of body

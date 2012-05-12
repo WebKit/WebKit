@@ -1,3 +1,75 @@
+2012-05-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+
+        * fast/block/float/avoiding-float-centered-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/avoiding-float-centered-expected.txt.
+        * fast/clip/008-expected.txt: Renamed from LayoutTests/platform/efl/fast/clip/008-expected.txt.
+        * fast/clip/011-expected.txt: Renamed from LayoutTests/platform/efl/fast/clip/011-expected.txt.
+        * fast/clip/012-expected.txt: Renamed from LayoutTests/platform/efl/fast/clip/012-expected.txt.
+        * platform/chromium-linux-x86/fast/speech/input-appearance-searchandspeech-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt.
+        * platform/chromium-linux-x86/svg/custom/inline-svg-in-xhtml-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.txt.
+        * platform/chromium-linux/editing/selection/3690703-2-expected.txt:
+        * platform/chromium-linux/editing/selection/3690703-expected.txt:
+        * platform/chromium-linux/editing/selection/3690719-expected.txt:
+        * platform/chromium-mac-leopard/fast/block/lineboxcontain/block-glyphs-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/block/lineboxcontain/block-glyphs-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/block/lineboxcontain/block-glyphs-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/block/lineboxcontain/block-glyphs-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.txt: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.txt.
+        * platform/chromium-mac/editing/inserting/before-after-input-element-expected.txt: Removed.
+        * platform/chromium-mac/editing/pasteboard/4806874-expected.txt: Removed.
+        * platform/chromium-mac/editing/pasteboard/input-field-1-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/3690703-2-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/3690703-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/3690719-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/4895428-3-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/4975120-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/drag-select-1-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/expanding-selections-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/leave-requested-block-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-1-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-2-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-3-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-4-expected.txt: Removed.
+        * platform/chromium-mac/editing/selection/select-across-readonly-input-5-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/lineboxcontain/block-font-expected.txt: Removed.
+        * platform/chromium-mac/fast/block/lineboxcontain/block-glyphs-expected.txt:
+        * platform/chromium-mac/fast/block/lineboxcontain/font-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac/fast/forms/placeholder-position-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/chromium-mac/fast/forms/search-rtl-expected.png:
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-win/editing/inserting/before-after-input-element-expected.txt:
+        * platform/chromium-win/editing/pasteboard/4806874-expected.txt:
+        * platform/chromium-win/editing/pasteboard/drop-text-without-selection-expected.txt:
+        * platform/chromium-win/editing/pasteboard/input-field-1-expected.txt:
+        * platform/chromium-win/editing/selection/3690703-2-expected.txt:
+        * platform/chromium-win/editing/selection/3690703-expected.txt:
+        * platform/chromium-win/editing/selection/3690719-expected.txt:
+        * platform/chromium-win/editing/selection/4895428-3-expected.txt:
+        * platform/chromium-win/editing/selection/4975120-expected.txt:
+        * platform/chromium-win/editing/selection/drag-select-1-expected.txt:
+        * platform/chromium-win/editing/selection/expanding-selections-expected.txt:
+        * platform/chromium-win/editing/selection/leave-requested-block-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-1-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-2-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-3-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-4-expected.txt:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-5-expected.txt:
+        * platform/chromium-win/fast/block/float/avoiding-float-centered-expected.txt:
+        * platform/chromium-win/fast/clip/008-expected.txt:
+        * platform/chromium-win/fast/clip/011-expected.txt:
+        * platform/chromium-win/fast/clip/012-expected.txt:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/003-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/block/float/avoiding-float-centered-expected.txt: Removed.
+        * platform/gtk/fast/clip/008-expected.txt: Removed.
+        * platform/gtk/fast/clip/011-expected.txt: Removed.
+        * platform/gtk/fast/clip/012-expected.txt: Removed.
+
 2012-05-12  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, GTK gardening.

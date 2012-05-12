@@ -18,7 +18,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 4x19
           RenderText {#text} at (193,0) size 4x19
             text run at (193,0) width 4: " "
-      RenderBlock {P} at (0,92) size 784x20
-        RenderText {#text} at (0,0) size 142x19
-          text run at (0,0) width 142: "This text is not editable."
+layer at (8,100) size 784x20
+  RenderBlock {P} at (0,92) size 784x20
+    RenderText {#text} at (0,0) size 142x19
+      text run at (0,0) width 142: "This text is not editable."
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of body

@@ -5,9 +5,6 @@ layer at (0,0) size 800x307
     RenderBody {body} at (8,16) size 784x283
       RenderBlock {p} at (0,0) size 784x26
         RenderTextControl {input} at (2,2) size 335x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {div} at (2,3) size 331x16
-            RenderText {#text} at (1,0) size 137x16
-              text run at (1,0) width 137: "This test has PASSED."
       RenderBlock {p} at (0,42) size 784x20
         RenderText {#text} at (0,0) size 440x19
           text run at (0,0) width 440: "It should say \"PASSED\" above and there should be a green circle below."
@@ -16,3 +13,7 @@ layer at (0,0) size 800x307
           RenderSVGEllipse {circle} at (8,94) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=50.00] [cy=50.00] [r=50.00]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
+layer at (12,21) size 331x16
+  RenderBlock {div} at (2,3) size 331x16
+    RenderText {#text} at (1,0) size 137x16
+      text run at (1,0) width 137: "This test has PASSED."
