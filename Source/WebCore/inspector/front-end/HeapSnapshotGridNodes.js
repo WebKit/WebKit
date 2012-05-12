@@ -44,6 +44,13 @@ WebInspector.HeapSnapshotGridNode = function(tree, hasChildren, provider)
     this._provider = provider;
     this._dataGrid = tree;
     this._instanceCount = 0;
+
+    this._savedChildren = null;
+    /**
+     * List of position ranges for all visible nodes: [startPos1, endPos1),...,[startPosN, endPosN)
+     * Position is an item position in the provider.
+     */
+    this._retrievedChildrenRanges = [];
     this.addEventListener("populate", this._populate, this);
 }
 
@@ -106,7 +113,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
     _populate: function(event)
     {
         this.removeEventListener("populate", this._populate, this);
-        function sorted(ignored)
+        function sorted()
         {
             this._populateChildren();
         }
@@ -114,84 +121,154 @@ WebInspector.HeapSnapshotGridNode.prototype = {
     },
 
     /**
-     * @param {?number} howMany
-     * @param {?number} atIndex
+     * @param {?number} fromPosition
+     * @param {?number} toPosition
      */
-    _populateChildren: function(howMany, atIndex, afterPopulate)
+    _populateChildren: function(fromPosition, toPosition, afterPopulate)
     {
-        howMany = howMany || this._dataGrid.defaultPopulateCount();
-        atIndex = atIndex || this.children.length;
-        var haveSavedChildren = !!this._savedChildren;
-        if (haveSavedChildren) {
-            haveSavedChildren = false;
-            for (var c in this._savedChildren) {
-                haveSavedChildren = true;
-                break;
-            }
-        }
-
-        var part = 0;
-        function callSerialize()
+        fromPosition = fromPosition || 0;
+        toPosition = toPosition || fromPosition + this._dataGrid.defaultPopulateCount();
+        var firstNotSerializedPosition = fromPosition;
+        function serializeNextChunk()
         {
-            if (part >= howMany)
+            if (firstNotSerializedPosition >= toPosition)
                 return;
-            part += this._dataGrid.defaultPopulateCount();
-            this._provider.serializeSubsequentItems(this._dataGrid.defaultPopulateCount(), childrenRetrieved.bind(this));
+            var end = Math.min(firstNotSerializedPosition + this._dataGrid.defaultPopulateCount(), toPosition);
+            this._provider.serializeItemsRange(firstNotSerializedPosition, end, childrenRetrieved.bind(this));
+            firstNotSerializedPosition = end;
+        }
+        function insertRetrievedChild(item, insertionIndex)
+        {
+            if (this._savedChildren) {
+                var hash = this._childHashForEntity(item);
+                if (hash in this._savedChildren) {
+                    this.insertChild(this._savedChildren[hash], insertionIndex);
+                    return;
+                }
+            }
+            this.insertChild(this._createChildNode(item), insertionIndex);
+        }
+        function insertShowMoreButton(from, to, insertionIndex)
+        {
+            var button = new WebInspector.ShowMoreDataGridNode(this._populateChildren.bind(this), from, to, this._dataGrid.defaultPopulateCount());
+            this.insertChild(button, insertionIndex);
         }
         function childrenRetrieved(items)
         {
-            var length = items.totalLength;
-            for (var i = 0, l = items.length; i < l; ++i) {
-                var item = items[i];
-                if (haveSavedChildren) {
-                    var hash = this._childHashForEntity(item);
-                    if (hash in this._savedChildren) {
-                        this.insertChild(this._savedChildren[hash], atIndex++);
-                        continue;
+            var itemIndex = 0;
+            var itemPosition = items.startPosition;
+            var insertionIndex = 0;
+
+            if (!this._retrievedChildrenRanges.length) {
+                if (items.startPosition > 0) {
+                    this._retrievedChildrenRanges.push({from: 0, to: 0});
+                    insertShowMoreButton.call(this, 0, items.startPosition, insertionIndex);
+                }
+                this._retrievedChildrenRanges.push({from: items.startPosition, to: items.endPosition});
+                for (var i = 0, l = items.length; i < l; ++i)
+                    insertRetrievedChild.call(this, items[i], insertionIndex++);
+                if (items.endPosition < items.totalLength)
+                    insertShowMoreButton.call(this, items.endPosition, items.totalLength, insertionIndex++);
+            } else {
+                var rangeIndex = 0;
+                var found = false;
+                var range;
+                while (rangeIndex < this._retrievedChildrenRanges.length) {
+                    range = this._retrievedChildrenRanges[rangeIndex];
+                    if (range.to >= itemPosition) {
+                        found = true;
+                        break;
+                    }
+                    insertionIndex += range.to - range.from;
+                    // Skip the button if there is one.
+                    if (range.to < items.totalLength)
+                        insertionIndex += 1;
+                    ++rangeIndex;
+                }
+
+                if (!found || items.startPosition < range.from) {
+                    // Update previous button.
+                    this.children[insertionIndex - 1].setEndPosition(items.startPosition);
+                    insertShowMoreButton.call(this, items.startPosition, found ? range.from : items.totalLength, insertionIndex);
+                    range = {from: items.startPosition, to: items.startPosition};
+                    if (!found)
+                        rangeIndex = this._retrievedChildrenRanges.length;
+                    this._retrievedChildrenRanges.splice(rangeIndex, 0, range);
+                } else {
+                    insertionIndex += itemPosition - range.from;
+                }
+                // At this point insertionIndex is always an index before button or between nodes.
+                // Also it is always true here that range.from <= itemPosition <= range.to
+
+                // Stretch the range right bound to include all new items.
+                while (range.to < items.endPosition) {
+                    // Skip already added nodes.
+                    var skipCount = range.to - itemPosition;
+                    insertionIndex += skipCount;
+                    itemIndex += skipCount;
+                    itemPosition = range.to;
+
+                    // We're at the position before button: ...<?node>x<button>
+                    var nextRange = this._retrievedChildrenRanges[rangeIndex + 1];
+                    var newEndOfRange = nextRange ? nextRange.from : items.totalLength;
+                    if (newEndOfRange > items.endPosition)
+                        newEndOfRange = items.endPosition;
+                    while (itemPosition < newEndOfRange) {
+                        insertRetrievedChild.call(this, items[itemIndex++], insertionIndex++);
+                        ++itemPosition;
+                    }
+                    // Merge with the next range.
+                    if (nextRange && newEndOfRange === nextRange.from) {
+                        range.to = nextRange.to;
+                        // Remove "show next" button if there is one.
+                        this.removeChild(this.children[insertionIndex]);
+                        this._retrievedChildrenRanges.splice(rangeIndex + 1, 1);
+                    } else {
+                        range.to = newEndOfRange;
+                        // Remove or update next button.
+                        if (newEndOfRange === items.totalLength)
+                            this.removeChild(this.children[insertionIndex]);
+                        else
+                            this.children[insertionIndex].setStartPosition(items.endPosition);
                     }
                 }
-                this.insertChild(this._createChildNode(item), atIndex++);
             }
+
+            // TODO: fix this.
             this._instanceCount += items.length;
-            if (part < howMany) {
-                setTimeout(callSerialize.bind(this), 0);
+            if (firstNotSerializedPosition < toPosition) {
+                setTimeout(serializeNextChunk.bind(this), 0);
                 return;
             }
 
-            if (items.hasNext)
-                this.insertChild(new WebInspector.ShowMoreDataGridNode(this._populateChildren.bind(this), this._dataGrid.defaultPopulateCount(), length), atIndex++);
             if (afterPopulate)
                 afterPopulate();
-            function notify()
-            {
-                this.dispatchEventToListeners("populate complete");
-            }
-            setTimeout(notify.bind(this), 0);
+            this.dispatchEventToListeners("populate complete");
         }
-        setTimeout(callSerialize.bind(this), 0);
+        setTimeout(serializeNextChunk.bind(this), 0);
     },
 
     _saveChildren: function()
     {
-        this._savedChildren = {};
+        this._savedChildren = null;
         for (var i = 0, childrenCount = this.children.length; i < childrenCount; ++i) {
             var child = this.children[i];
-            if (child.expanded)
-                this._savedChildren[this._childHashForNode(child)] = child;
+            if (!child.expanded)
+                continue;
+            if (!this._savedChildren)
+                this._savedChildren = {};
+            this._savedChildren[this._childHashForNode(child)] = child;
         }
     },
 
     sort: function()
     {
         this._dataGrid.recursiveSortingEnter();
-        function afterSort(sorted)
+        function afterSort()
         {
-            if (!sorted) {
-                this._dataGrid.recursiveSortingLeave();
-                return;
-            }
             this._saveChildren();
             this.removeChildren();
+            this._retrievedChildrenRanges = [];
 
             function afterPopulate()
             {
@@ -204,7 +281,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             }
             var instanceCount = this._instanceCount;
             this._instanceCount = 0;
-            this._populateChildren(instanceCount, null, afterPopulate.bind(this));
+            this._populateChildren(0, instanceCount, afterPopulate.bind(this));
         }
         this._provider.sortAndRewind(this.comparator(), afterSort.bind(this));
     }
@@ -693,7 +770,6 @@ WebInspector.HeapSnapshotDiffNodesProvider = function(addedNodesProvider, delete
     this._deletedNodesProvider = deletedNodesProvider;
     this._addedCount = addedCount;
     this._removedCount = removedCount;
-    this._serializedItemsCount = 0;
 }
 
 WebInspector.HeapSnapshotDiffNodesProvider.prototype = {
@@ -708,22 +784,23 @@ WebInspector.HeapSnapshotDiffNodesProvider.prototype = {
         callback(false);
     },
 
-    serializeSubsequentItems: function(count, callback)
+    serializeItemsRange: function(beginPosition, endPosition, callback)
     {
         function didReceiveAllItems(items)
         {
-            this._serializedItemsCount += items.length;
             items.totalLength = this._addedCount + this._removedCount;
             callback(items);
         }
 
         function didReceiveDeletedItems(addedItems, items)
         {
+            if (!addedItems.length)
+                addedItems.startPosition = this._addedCount + items.startPosition;
             for (var i = 0; i < items.length; i++) {
                 items[i].isAddedNotRemoved = false;
                 addedItems.push(items[i]);
             }
-            addedItems.hasNext = items.hasNext;
+            addedItems.endPosition = this._addedCount + items.endPosition;
             didReceiveAllItems.call(this, addedItems);
         }
 
@@ -731,26 +808,22 @@ WebInspector.HeapSnapshotDiffNodesProvider.prototype = {
         {
             for (var i = 0; i < items.length; i++)
                 items[i].isAddedNotRemoved = true;
-            if (items.length < count)
-                return this._deletedNodesProvider.serializeSubsequentItems(count - items.length, didReceiveDeletedItems.bind(this, items));
+            if (items.endPosition < endPosition)
+                return this._deletedNodesProvider.serializeItemsRange(0, endPosition - items.endPosition, didReceiveDeletedItems.bind(this, items));
 
             items.totalLength = this._addedCount + this._removedCount;
-            if (!items.hasNext)
-                items.hasNext = !!this._removedCount;
             didReceiveAllItems.call(this, items);
         }
 
-        if (this._serializedItemsCount < this._addedCount)
-            this._addedNodesProvider.serializeSubsequentItems(count, didReceiveAddedItems.bind(this));
+        if (beginPosition < this._addedCount)
+            this._addedNodesProvider.serializeItemsRange(beginPosition, endPosition, didReceiveAddedItems.bind(this));
         else
-            this._deletedNodesProvider.serializeSubsequentItems(count, didReceiveDeletedItems.bind(this, []));
+            this._deletedNodesProvider.serializeItemsRange(beginPosition - this._addedCount, endPosition - this._addedCount, didReceiveDeletedItems.bind(this, []));
     },
 
     sortAndRewind: function(comparator, callback)
     {
-        this._serializedItemsCount = 0;
-
-        function afterSort(ignored)
+        function afterSort()
         {
             this._deletedNodesProvider.sortAndRewind(comparator, callback);
         }

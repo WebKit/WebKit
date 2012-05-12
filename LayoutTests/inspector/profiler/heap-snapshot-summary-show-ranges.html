@@ -1,0 +1,121 @@
+<html>
+<head>
+  <script src="../../http/tests/inspector/inspector-test.js"></script>
+  <script src="heap-snapshot-test.js"></script>
+<script>
+
+function test()
+{
+    var instanceCount = 50;
+    function createHeapSnapshot()
+    {
+        return InspectorTest.createHeapSnapshot(instanceCount);
+    }
+
+    InspectorTest.runHeapSnapshotTestSuite([
+        function testShowAll(next)
+        {
+            InspectorTest.takeAndOpenSnapshot(createHeapSnapshot, step1);
+
+            function step1()
+            {
+                InspectorTest.switchToView("Summary", step2);
+            }
+
+            function step2()
+            {
+                var row = InspectorTest.findRow("object", "A");
+                InspectorTest.assertEquals(true, !!row, "\"A\" row");
+                InspectorTest.expandRow(row, step3);
+            }
+
+            function checkShowMoreButton(showMoreButton, expectedStartPosition, expectedEndPosition)
+            {
+                InspectorTest.assertEquals(true , showMoreButton instanceof WebInspector.ShowMoreDataGridNode, "Show more button node not found");
+                InspectorTest.assertEquals(expectedStartPosition , showMoreButton._startPosition, "Incorrect start position");
+                InspectorTest.assertEquals(expectedEndPosition , showMoreButton._endPosition, "Incorrect end position");
+            }
+
+            function step3(row)
+            {
+                // _positionRanges: [0, 10)
+                var count = row.data["count"];
+                InspectorTest.assertEquals(instanceCount.toString(), count);
+
+                var defaultChunkSize = row._dataGrid.defaultPopulateCount();
+                InspectorTest.assertEquals(10, defaultChunkSize);
+
+
+                var showMoreButton = row.children[defaultChunkSize];
+                checkShowMoreButton(showMoreButton, defaultChunkSize, instanceCount);
+
+                row._populateChildren(30, 40, step4.bind(this, row));
+            }
+
+            function step4(row)
+            {
+                // _positionRanges: [0, 10) [30, 40)
+                checkShowMoreButton(row.children[10], 10, 30);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (40 - 30)], 40, instanceCount);
+
+                row._populateChildren(20, 25, step5.bind(this, row));
+            }
+
+            function step5(row)
+            {
+                // _positionRanges: [0, 10) [20, 25) [30, 40)
+                checkShowMoreButton(row.children[10], 10, 20);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (25 - 20)], 25, 30);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (25 - 20) + 1 + (40 - 30)], 40, instanceCount);
+
+                row._populateChildren(28, 35, step6.bind(this, row));
+            }
+
+            function step6(row)
+            {
+                // _positionRanges: [0, 10) [20, 25) [28, 40)
+                checkShowMoreButton(row.children[10], 10, 20);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (25 - 20)], 25, 28);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (25 - 20) + 1 + (40 - 28)], 40, instanceCount);
+
+                row._populateChildren(18, 26, step7.bind(this, row));
+            }
+
+            function step7(row)
+            {
+                // _positionRanges: [0, 10) [18, 26) [28, 40)
+                checkShowMoreButton(row.children[10], 10, 18);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (26 - 18)], 26, 28);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (26 - 18) + 1 + (40 - 28)], 40, instanceCount);
+
+                row._populateChildren(15, 45, step8.bind(this, row));
+            }
+
+            function step8(row)
+            {
+                // _positionRanges: [0, 10) [15, 45)
+                checkShowMoreButton(row.children[10], 10, 15);
+                checkShowMoreButton(row.children[(10 - 0) + 1 + (45 - 15)], 45, instanceCount);
+
+                row._populateChildren(10, 15, step9.bind(this, row));
+                setTimeout(next, 0);
+            }
+
+            function step9(row)
+            {
+                // _positionRanges: [0, 45)
+                checkShowMoreButton(row.children[45], 45, instanceCount);
+                setTimeout(next, 0);
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests showing several node ranges in the Summary view of detailed heap snapshot.
+</p>
+</body>
+</html>

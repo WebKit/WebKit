@@ -1347,7 +1347,7 @@ WebInspector.HeapSnapshotFilteredOrderedIterator = function(iterator, filter, un
     this._iterationOrder = null;
     this._position = 0;
     this._currentComparator = null;
-    this._lastComparator = null;
+    this._sortedPrefixLength = 0;
 }
 
 WebInspector.HeapSnapshotFilteredOrderedIterator.prototype = {
@@ -1435,28 +1435,50 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype = {
         ++this._position;
     },
 
-    serializeSubsequentItems: function(count)
+    /**
+     * @param {number} begin
+     * @param {number} end
+     */
+    serializeItemsRange: function(begin, end)
     {
         this._createIterationOrder();
+        if (begin > end)
+            throw new Error("Start position > end position: " + begin + " > " + end);
+        if (end >= this._iterationOrder.length)
+            end = this._iterationOrder.length;
+        if (this._sortedPrefixLength < end) {
+            this.sort(this._currentComparator, this._sortedPrefixLength, this._iterationOrder.length - 1, end - this._sortedPrefixLength);
+            this._sortedPrefixLength = end;
+        }
+
+        this._position = begin;
+        var startPosition = this._position;
+        var count = end - begin;
         var result = new Array(count);
-        if (this._lastComparator !== this._currentComparator)
-            this.sort(this._currentComparator, this._position, this._iterationOrder.length - 1, count);
         for (var i = 0 ; i < count && this.hasNext(); ++i, this.next())
-            result[i] = this._serialize(this.item);
+            result[i] = this.serializeItem(this.item);
         result.length = i;
-        result.hasNext = this.hasNext();
         result.totalLength = this._iterationOrder.length;
+
+        result.startPosition = startPosition;
+        result.endPosition = this._position;
         return result;
+    },
+
+    sortAll: function()
+    {
+        this._createIterationOrder();
+        if (this._sortedPrefixLength === this._iterationOrder.length)
+            return;
+        this.sort(this._currentComparator, this._sortedPrefixLength, this._iterationOrder.length - 1, this._iterationOrder.length);
+        this._sortedPrefixLength = this._iterationOrder.length;
     },
 
     sortAndRewind: function(comparator)
     {
-        this._lastComparator = this._currentComparator;
         this._currentComparator = comparator;
-        var result = this._lastComparator !== this._currentComparator;
-        if (result)
-            this.first();
-        return result;
+        this._sortedPrefixLength = 0;
+        this.first();
     }
 }
 
@@ -1476,12 +1498,12 @@ WebInspector.HeapSnapshotEdgesProvider = function(snapshot, filter, edgesIter)
 }
 
 WebInspector.HeapSnapshotEdgesProvider.prototype = {
-    _serialize: function(edge)
+    serializeItem: function(edge)
     {
         return {
             name: edge.name,
             propertyAccessor: edge.toString(),
-            node: WebInspector.HeapSnapshotNodesProvider.prototype._serialize(edge.node),
+            node: WebInspector.HeapSnapshotNodesProvider.prototype.serializeItem(edge.node),
             nodeIndex: edge.nodeIndex,
             type: edge.type,
             distanceToWindow: edge.node.distanceToWindow
@@ -1571,7 +1593,7 @@ WebInspector.HeapSnapshotNodesProvider = function(snapshot, filter, nodeIndexes)
 }
 
 WebInspector.HeapSnapshotNodesProvider.prototype = {
-    _serialize: function(node)
+    serializeItem: function(node)
     {
         return {
             id: node.id,

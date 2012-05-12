@@ -218,6 +218,10 @@ Object.defineProperty(Array.prototype, "upperBound",
     }
 });
 
+Object.defineProperty(Uint32Array.prototype, "sort", {
+   value: Array.prototype.sort
+});
+
 (function() {
 var partition = {
     /**

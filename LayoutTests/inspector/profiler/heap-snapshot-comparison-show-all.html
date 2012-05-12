@@ -51,7 +51,7 @@ function test()
                 for (var i = 0; i < words.length; ++i) {
                     var maybeNumber = parseInt(words[i], 10);
                     if (!isNaN(maybeNumber))
-                        InspectorTest.assertEquals(countA + countB, maybeNumber, buttonsNode.showAll.textContent);
+                        InspectorTest.assertEquals(countA + countB - row._dataGrid.defaultPopulateCount(), maybeNumber, buttonsNode.showAll.textContent);
                 }
                 InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
             }

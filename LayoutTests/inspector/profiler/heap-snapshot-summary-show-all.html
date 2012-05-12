@@ -39,7 +39,7 @@ function test()
                 for (var i = 0; i < words.length; ++i) {
                     var maybeNumber = parseInt(words[i], 10);
                     if (!isNaN(maybeNumber))
-                        InspectorTest.assertEquals(instanceCount, maybeNumber, buttonsNode.showAll.textContent);
+                        InspectorTest.assertEquals(instanceCount - row._dataGrid.defaultPopulateCount(), maybeNumber, buttonsNode.showAll.textContent);
                 }
                 InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
             }

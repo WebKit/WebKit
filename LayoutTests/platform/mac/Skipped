@@ -282,6 +282,7 @@ inspector/debugger/xhr-breakpoints.html
 # https://bugs.webkit.org/show_bug.cgi?id=50485
 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
+inspector/profiler/heap-snapshot-summary-show-ranges.html
 
 # Skipping newly added tests while I'm finding out what is wrong.
 # https://bugs.webkit.org/show_bug.cgi?id=59706

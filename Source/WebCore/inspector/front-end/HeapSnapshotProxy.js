@@ -124,7 +124,7 @@ WebInspector.HeapSnapshotWorker = function()
     this._callbacks = [];
     this._previousCallbacks = [];
     // There is no support for workers in Chromium DRT.
-    this._worker = typeof InspectorTest === "undefined" ? new WebInspector.HeapSnapshotRealWorker() : new WebInspector.HeapSnapshotFakeWorker();
+    this._worker =  /*typeof InspectorTest === "undefined" ? new WebInspector.HeapSnapshotRealWorker() :*/ new WebInspector.HeapSnapshotFakeWorker();
     this._worker.addEventListener("message", this._messageReceived, this);
 }
 
@@ -491,9 +491,9 @@ WebInspector.HeapSnapshotProviderProxy.prototype = {
         this.callGetter(callback, "isEmpty");
     },
 
-    serializeSubsequentItems: function(count, callback)
+    serializeItemsRange: function(startPosition, endPosition, callback)
     {
-        this.callMethod(callback, "serializeSubsequentItems", count);
+        this.callMethod(callback, "serializeItemsRange", startPosition, endPosition);
     },
 
     sortAndRewind: function(comparator, callback)

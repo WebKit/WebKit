@@ -31,33 +31,50 @@
 /**
  * @constructor
  * @extends {WebInspector.DataGridNode}
+ * @param {function(number, number)} callback
+ * @param {number} startPosition
+ * @param {number} endPosition
+ * @param {number} chunkSize
  */
-WebInspector.ShowMoreDataGridNode = function(callback, nextCount, allCount)
+WebInspector.ShowMoreDataGridNode = function(callback, startPosition, endPosition, chunkSize)
 {
-    function populate(count)
-    {
-        var index = this.parent.children.indexOf(this);
-        this.parent.removeChild(this);
-        callback(count, index);
-    }
+    WebInspector.DataGridNode.call(this, {summaryRow:true}, false);
+    this._callback = callback;
+    this._startPosition = startPosition;
+    this._endPosition = endPosition;
+    this._chunkSize = chunkSize;
 
     this.showNext = document.createElement("button");
     this.showNext.setAttribute("type", "button");
-    this.showNext.textContent = WebInspector.UIString("Show next %d", nextCount);
-    this.showNext.addEventListener("click", populate.bind(this, nextCount), false);
+    this.showNext.addEventListener("click", this._showNextChunk.bind(this), false);
 
-    if (allCount) {
-        this.showAll = document.createElement("button");
-        this.showAll.setAttribute("type", "button");
-        this.showAll.textContent = WebInspector.UIString("Show all %d", allCount);
-        this.showAll.addEventListener("click", populate.bind(this, allCount), false);
-    }
+    this.showAll = document.createElement("button");
+    this.showAll.setAttribute("type", "button");
+    this.showAll.addEventListener("click", this._showAll.bind(this), false);
 
-    WebInspector.DataGridNode.call(this, {summaryRow:true}, false);
+    this._updateLabels();
     this.selectable = false;
 }
 
 WebInspector.ShowMoreDataGridNode.prototype = {
+    _showNextChunk: function()
+    {
+        this._callback(this._startPosition, this._startPosition + this._chunkSize);
+    },
+
+    _showAll: function()
+    {
+        this._callback(this._startPosition, this._endPosition);
+    },
+
+    _updateLabels: function()
+    {
+        var totalSize = this._endPosition - this._startPosition;
+        var nextChunkSize = Math.min(this._chunkSize, totalSize);
+        this.showNext.textContent = WebInspector.UIString("Show next %d", nextChunkSize);
+        this.showAll.textContent = WebInspector.UIString("Show all %d", totalSize);
+    },
+
     createCells: function()
     {
         var cell = document.createElement("td");
@@ -76,6 +93,24 @@ WebInspector.ShowMoreDataGridNode.prototype = {
             cell = document.createElement("td");
             this._element.appendChild(cell);
         }
+    },
+
+    /**
+     * @param {number} from
+     */
+    setStartPosition: function(from)
+    {
+        this._startPosition = from;
+        this._updateLabels();
+    },
+
+    /**
+     * @param {number} to
+     */
+    setEndPosition: function(to)
+    {
+        this._endPosition = to;
+        this._updateLabels();
     },
 
     /**
