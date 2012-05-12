@@ -368,7 +368,6 @@ public:
     // Visited links ------------------------------------------------------
     static LinkHash visitedLinkHash(const UChar* url, unsigned length);
     static LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL);
-    static bool isLinkVisited(LinkHash);
 
     static void didStartWorkerRunLoop(WorkerRunLoop*);
     static void didStopWorkerRunLoop(WorkerRunLoop*);

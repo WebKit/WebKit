@@ -830,11 +830,6 @@ LinkHash PlatformSupport::visitedLinkHash(const KURL& base,
     return webKitPlatformSupport()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
-bool PlatformSupport::isLinkVisited(LinkHash visitedLinkHash)
-{
-    return webKitPlatformSupport()->isLinkVisited(visitedLinkHash);
-}
-
 // These are temporary methods that the WebKit layer can use to call to the
 // Glue layer. Once the Glue layer moves entirely into the WebKit layer, these
 // methods will be deleted.
