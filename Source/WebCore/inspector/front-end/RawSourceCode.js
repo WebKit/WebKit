@@ -54,7 +54,7 @@ WebInspector.RawSourceCode = function(id, script, resource, request, sourceMappi
     if (this._pendingRequest)
         this._pendingRequest.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._finishedLoading, this);
     else
-        this._uiSourceCode = this._createUISourceCode(this.url);
+        this._uiSourceCode = this._createUISourceCode();
 }
 
 WebInspector.RawSourceCode.Events = {
@@ -78,7 +78,7 @@ WebInspector.RawSourceCode.prototype = {
     {
         var uiSourceCode = this._uiSourceCode || this._temporaryUISourceCode;
         if (!uiSourceCode) {
-            this._temporaryUISourceCode = this._createUISourceCode("tmp-" + this.url);
+            this._temporaryUISourceCode = this._createUISourceCode();
             uiSourceCode = this._temporaryUISourceCode;
             this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeChanged, { uiSourceCode: uiSourceCode });
         }
@@ -86,10 +86,9 @@ WebInspector.RawSourceCode.prototype = {
     },
 
     /**
-     * @param {string} id
      * @return {WebInspector.UISourceCode}
      */
-    _createUISourceCode: function(id)
+    _createUISourceCode: function()
     {
         var isStandaloneScript = this._scripts.length === 1 && !this._scripts[0].isInlineScript();
 
@@ -101,7 +100,7 @@ WebInspector.RawSourceCode.prototype = {
         else
             contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
 
-        var uiSourceCode = new WebInspector.JavaScriptSource(id, this.url, contentProvider, this._sourceMapping);
+        var uiSourceCode = new WebInspector.JavaScriptSource(this.url, contentProvider, this._sourceMapping);
         uiSourceCode.isContentScript = this.isContentScript;
         uiSourceCode.isEditable = isStandaloneScript;
         return uiSourceCode;
@@ -133,7 +132,7 @@ WebInspector.RawSourceCode.prototype = {
         this._resource = WebInspector.resourceForURL(this._pendingRequest.url);
         delete this._pendingRequest;
         var oldUISourceCode = this._uiSourceCode || this._temporaryUISourceCode;
-        this._uiSourceCode = this._createUISourceCode(this.url);
+        this._uiSourceCode = this._createUISourceCode();
         this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeChanged, { uiSourceCode: this._uiSourceCode, oldUISourceCode: oldUISourceCode });
     }
 }

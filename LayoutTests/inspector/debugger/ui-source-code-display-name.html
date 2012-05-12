@@ -6,7 +6,7 @@ function test()
 {
     function dumpUISourceCodeDisplayName(url)
     {
-        var uiSourceCode = new WebInspector.UISourceCode("id", url, null, null);
+        var uiSourceCode = new WebInspector.UISourceCode(url, null, null);
         InspectorTest.addResult("UISourceCode display name for url \"" + url + "\" is \"" + WebInspector.TabbedEditorContainer.prototype._titleForFile(uiSourceCode) + "\".");
     }
 

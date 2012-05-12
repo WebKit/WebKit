@@ -31,14 +31,13 @@
 /**
  * @constructor
  * @extends {WebInspector.UISourceCode}
- * @param {string} id
  * @param {string} url
  * @param {WebInspector.ContentProvider} contentProvider
  * @param {WebInspector.SourceMapping} sourceMapping
  */
-WebInspector.JavaScriptSource = function(id, url, contentProvider, sourceMapping)
+WebInspector.JavaScriptSource = function(url, contentProvider, sourceMapping)
 {
-    WebInspector.UISourceCode.call(this, id, url, contentProvider, sourceMapping);
+    WebInspector.UISourceCode.call(this, url, contentProvider, sourceMapping);
 
     this._formatterMapping = new WebInspector.IdentityFormatterSourceMapping();
     // FIXME: postpone breakpoints restore to after the mapping has been established.

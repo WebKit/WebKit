@@ -41,7 +41,7 @@ WebInspector.BreakpointManager = function(breakpointStorage, debuggerModel)
 
     this._breakpoints = [];
     this._breakpointForDebuggerId = {};
-    this._breakpointsForUILocation = {};
+    this._breakpointsForUISourceCode = new Map();
     this._sourceFilesWithRestoredBreakpoints = {};
 
     this._debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointResolved, this._breakpointResolved, this);
@@ -114,8 +114,9 @@ WebInspector.BreakpointManager.prototype = {
      */
     findBreakpoint: function(uiSourceCode, lineNumber)
     {
-        var breakpoints = this._breakpointsForUILocation[uiSourceCode.id + ":" + lineNumber];
-        return breakpoints ? breakpoints[0] : null;
+        var breakpoints = this._breakpointsForUISourceCode.get(uiSourceCode);
+        var lineBreakpoints = breakpoints ? breakpoints[lineNumber] : null;
+        return lineBreakpoints ? lineBreakpoints[0] : null;
     },
 
     /**
@@ -166,7 +167,7 @@ WebInspector.BreakpointManager.prototype = {
             breakpoints[i]._isProvisional = true;
         }
         this._breakpoints = [];
-        this._breakpointsForUILocation = {};
+        this._breakpointsForUISourceCode.clear();
         this._sourceFilesWithRestoredBreakpoints = {};
     },
 
@@ -198,13 +199,19 @@ WebInspector.BreakpointManager.prototype = {
      */
     _uiLocationAdded: function(breakpoint, uiLocation)
     {
-        var key = uiLocation.uiSourceCode.id + ":" + uiLocation.lineNumber;
-        var breakpoints = this._breakpointsForUILocation[key];
+        var breakpoints = this._breakpointsForUISourceCode.get(uiLocation.uiSourceCode);
         if (!breakpoints) {
-            breakpoints = [];
-            this._breakpointsForUILocation[key] = breakpoints;
+            breakpoints = {};
+            this._breakpointsForUISourceCode.put(uiLocation.uiSourceCode, breakpoints);
         }
-        breakpoints.push(breakpoint);
+
+        var lineBreakpoints = breakpoints[uiLocation.lineNumber];
+        if (!lineBreakpoints) {
+            lineBreakpoints = [];
+            breakpoints[uiLocation.lineNumber] = lineBreakpoints;
+        }
+
+        lineBreakpoints.push(breakpoint);
         this.dispatchEventToListeners(WebInspector.BreakpointManager.Events.BreakpointAdded, {breakpoint: breakpoint, uiLocation: uiLocation});
     },
 
@@ -214,13 +221,17 @@ WebInspector.BreakpointManager.prototype = {
      */
     _uiLocationRemoved: function(breakpoint, uiLocation)
     {
-        var key = uiLocation.uiSourceCode.id + ":" + uiLocation.lineNumber;
-        var breakpoints = this._breakpointsForUILocation[key];
+      var breakpoints = this._breakpointsForUISourceCode.get(uiLocation.uiSourceCode);
         if (!breakpoints)
             return;
-        breakpoints.remove(breakpoint);
-        if (!breakpoints.length)
-            delete this._breakpointsForUILocation[key];
+
+        var lineBreakpoints = breakpoints[uiLocation.lineNumber];
+        if (!lineBreakpoints)
+            return;
+
+        lineBreakpoints.remove(breakpoint);
+        if (!lineBreakpoints.length)
+            delete breakpoints[uiLocation.lineNumber];
         this.dispatchEventToListeners(WebInspector.BreakpointManager.Events.BreakpointRemoved, {breakpoint: breakpoint, uiLocation: uiLocation});
     }
 }

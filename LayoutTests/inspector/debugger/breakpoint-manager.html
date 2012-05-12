@@ -6,29 +6,29 @@
 
 function test()
 {
+    var uiSourceCodes = {};
+
     var defaultMapping = {
         rawLocationToUILocation: function(rawLocation)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null, this);
-            return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber, 0);
+            return new WebInspector.UILocation(uiSourceCodes[rawLocation.scriptId], rawLocation.lineNumber, 0);
         },
 
         uiLocationToRawLocation: function(uiSourceCode, lineNumber)
         {
-            return { scriptId: uiSourceCode.id, lineNumber: lineNumber, columnNumber: 0 };
+            return { scriptId: uiSourceCode.url, lineNumber: lineNumber, columnNumber: 0 };
         }
     };
 
     var shiftingMapping = {
         rawLocationToUILocation: function(rawLocation)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(rawLocation.scriptId, rawLocation.scriptId, null, this);
-            return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber + 10, 0);
+            return new WebInspector.UILocation(uiSourceCodes[rawLocation.scriptId], rawLocation.lineNumber + 10, 0);
         },
 
         uiLocationToRawLocation: function(uiSourceCode, lineNumber)
         {
-            return { scriptId: uiSourceCode.id, lineNumber: lineNumber - 10, columnNumber: 0 };
+            return { scriptId: uiSourceCode.url, lineNumber: lineNumber - 10, columnNumber: 0 };
         }
     };
 
@@ -114,13 +114,13 @@ function test()
     {
         var breakpoint = event.data.breakpoint;
         var uiLocation = event.data.uiLocation;
-        InspectorTest.addResult("    breakpointAdded(" + [uiLocation.uiSourceCode.id, uiLocation.lineNumber, breakpoint.condition(), breakpoint.enabled()].join(", ") + ")");
+        InspectorTest.addResult("    breakpointAdded(" + [uiLocation.uiSourceCode.url, uiLocation.lineNumber, breakpoint.condition(), breakpoint.enabled()].join(", ") + ")");
     }
 
     function breakpointRemoved(event)
     {
         var uiLocation = event.data.uiLocation;
-        InspectorTest.addResult("    breakpointRemoved(" + [uiLocation.uiSourceCode.id, uiLocation.lineNumber].join(", ") + ")");
+        InspectorTest.addResult("    breakpointRemoved(" + [uiLocation.uiSourceCode.url, uiLocation.lineNumber].join(", ") + ")");
     }
 
     InspectorTest.addSniffer(WebInspector.Script.prototype, "createLiveLocation", function(rawLocation)
@@ -132,11 +132,12 @@ function test()
         InspectorTest.addResult("    Location disposed: " + this._rawLocation.scriptId + ":" + this._rawLocation.lineNumber);
     }, true);
 
-    function addUISourceCode(breakpointManager, id, url)
+    function addUISourceCode(breakpointManager, url)
     {
-        breakpointManager._debuggerModel._addScript(id, url);
-        InspectorTest.addResult("  Adding UISourceCode: " + id + " (url=" + (url || id) + ")");
-        var uiSourceCode = new WebInspector.JavaScriptSource(id, url || id, null, defaultMapping);
+        breakpointManager._debuggerModel._addScript(url, url);
+        InspectorTest.addResult("  Adding UISourceCode: " + url + ")");
+        var uiSourceCode = new WebInspector.JavaScriptSource(url, null, defaultMapping);
+        uiSourceCodes[url] = uiSourceCode;
         breakpointManager.restoreBreakpoints(uiSourceCode);
         return uiSourceCode;
     }
@@ -171,13 +172,13 @@ function test()
 
     function setBreakpoint(breakpointManager, uiSourceCode, lineNumber, condition, enabled)
     {
-        InspectorTest.addResult("  Setting breakpoint at " + uiSourceCode.id + ":" + lineNumber + " enabled:" + enabled + " condition:" + condition);
+        InspectorTest.addResult("  Setting breakpoint at " + uiSourceCode.url + ":" + lineNumber + " enabled:" + enabled + " condition:" + condition);
         return breakpointManager.setBreakpoint(uiSourceCode, lineNumber, condition, enabled);
     }
 
     function removeBreakpoint(breakpointManager, uiSourceCode, lineNumber)
     {
-        InspectorTest.addResult("  Removing breakpoint at " + uiSourceCode.id + ":" + lineNumber);
+        InspectorTest.addResult("  Removing breakpoint at " + uiSourceCode.url + ":" + lineNumber);
         breakpointManager.findBreakpoint(uiSourceCode, lineNumber).remove();
     }
 
@@ -194,6 +195,7 @@ function test()
         dumpBreakpointStorage(breakpointManager);
         InspectorTest.addResult("  Resetting breakpoint manager");
         breakpointManager.reset();
+        uiSourceCodes = {};
         next();
     }
 

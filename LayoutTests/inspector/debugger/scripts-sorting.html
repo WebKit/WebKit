@@ -11,10 +11,9 @@ function test()
 
     var navigatorFileSelector = new WebInspector.ScriptsNavigator();
 
-    var nextId = 1;
     function addUISourceCode(url, isContentScript)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(nextId++, url, null, null);
+        var uiSourceCode = new WebInspector.UISourceCode(url, null, null);
         uiSourceCode.isContentScript = isContentScript;
         navigatorFileSelector.addUISourceCode(uiSourceCode);
     }

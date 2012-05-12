@@ -13,7 +13,7 @@ function test()
 
     function addUISourceCode(url, isContentScript)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(0, url, null, null);
+        var uiSourceCode = new WebInspector.UISourceCode(url, null, null);
         uiSourceCode.isContentScript = isContentScript;
         navigatorFileSelector.addUISourceCode(uiSourceCode);
     }

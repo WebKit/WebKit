@@ -1,3 +1,18 @@
+2012-05-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: remove UISourceCode.id since it is no longer used.
+        https://bugs.webkit.org/show_bug.cgi?id=86286
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/debugger/breakpoint-manager.html:
+        * inspector/debugger/raw-source-code.html:
+        * inspector/debugger/scripts-file-selector.html:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/scripts-sorting.html:
+        * inspector/debugger/ui-source-code-display-name.html:
+        * inspector/debugger/ui-source-code.html:
+
 2012-05-12  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.

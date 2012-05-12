@@ -32,14 +32,12 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
- * @param {string} id
  * @param {string} url
  * @param {WebInspector.ContentProvider} contentProvider
  * @param {WebInspector.SourceMapping} sourceMapping
  */
-WebInspector.UISourceCode = function(id, url, contentProvider, sourceMapping)
+WebInspector.UISourceCode = function(url, contentProvider, sourceMapping)
 {
-    this._id = id;
     this._url = url;
     this._parsedURL = new WebInspector.ParsedURL(url);
     this._contentProvider = contentProvider;
@@ -65,14 +63,6 @@ WebInspector.UISourceCode.Events = {
 }
 
 WebInspector.UISourceCode.prototype = {
-    /**
-     * @return {string}
-     */
-    get id()
-    {
-        return this._id;
-    },
-
     /**
      * @return {string}
      */

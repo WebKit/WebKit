@@ -97,7 +97,7 @@ function test()
             var rawSourceCode = createRawSourceCode(script, null);
 
             var uiSourceCode = rawSourceCode.uiSourceCode();
-            InspectorTest.addResult("UISourceCode: " + rawSourceCode.uiSourceCode().id);
+            InspectorTest.addResult("UISourceCode: " + rawSourceCode.uiSourceCode().url);
             InspectorTest.addResult("UISourceCode is content script: " + uiSourceCode.isContentScript);
             InspectorTest.checkUILocation(uiSourceCode, 0, 5, rawSourceCode.rawLocationToUILocation(createRawLocation(0, 5)));
             InspectorTest.checkRawLocation(script, 10, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 10, 0));

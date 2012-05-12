@@ -4,7 +4,7 @@ Tests BreakpointManager class.
 Running: testSetBreakpoint
   Created breakpoints manager
   Dumping Storage
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
   Setting breakpoint at a.js:30 enabled:true condition:
     debuggerModel.setBreakpoint(a.js:30:)
     breakpointAdded(a.js, 30, , true)
@@ -19,7 +19,7 @@ Running: testSetBreakpoint
 Running: testSetDisabledBreakpoint
   Created breakpoints manager
   Dumping Storage
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
   Setting breakpoint at a.js:30 enabled:false condition:
     breakpointAdded(a.js, 30, , false)
   Dumping Storage
@@ -39,7 +39,7 @@ Running: testSetDisabledBreakpoint
 Running: testSetConditionalBreakpoint
   Created breakpoints manager
   Dumping Storage
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
   Setting breakpoint at a.js:30 enabled:true condition:condition
     debuggerModel.setBreakpoint(a.js:30:condition)
     breakpointAdded(a.js, 30, condition, true)
@@ -66,7 +66,7 @@ Running: testRestoreBreakpoints
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:false condition:
     b.js:3 enabled:true condition:
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
@@ -87,12 +87,12 @@ Running: testRestoreBreakpointsTwice
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:false condition:
     b.js:3 enabled:true condition:
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
     breakpointAdded(a.js, 20, , false)
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
   Dumping Storage
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:false condition:
@@ -109,7 +109,7 @@ Running: testRemoveBreakpoints
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:false condition:
     b.js:3 enabled:true condition:
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
@@ -135,7 +135,7 @@ Running: testRemoveBreakpoints
 Running: testSetBreakpointThatShifts
   Created breakpoints manager
   Dumping Storage
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
   Setting breakpoint at a.js:1015 enabled:true condition:
     debuggerModel.setBreakpoint(a.js:1015:)
     breakpointAdded(a.js, 1025, , true)
@@ -150,7 +150,7 @@ Running: testSetBreakpointThatShifts
 Running: testSetBreakpointThatShiftsTwice
   Created breakpoints manager
   Dumping Storage
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
   Setting breakpoint at a.js:1015 enabled:true condition:
     debuggerModel.setBreakpoint(a.js:1015:)
     breakpointAdded(a.js, 1025, , true)
@@ -166,7 +166,7 @@ Running: testSetBreakpointThatShiftsTwice
 Running: testSetBreakpointOutsideScript
   Created breakpoints manager
   Dumping Storage
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.setBreakpoint(a.js:2500:)
     breakpointAdded(a.js, 2500, , true)
   Dumping Storage
@@ -181,7 +181,7 @@ Running: testNavigation
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:false condition:
     b.js:3 enabled:true condition:
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
@@ -192,7 +192,7 @@ Running: testNavigation
     breakpointRemoved(a.js, 10)
     Location disposed: a.js:10
     breakpointRemoved(a.js, 20)
-  Adding UISourceCode: b.js (url=b.js)
+  Adding UISourceCode: b.js)
     debuggerModel.setBreakpoint(b.js:3:)
     breakpointAdded(b.js, 3, , true)
     Location created: b.js:3
@@ -202,7 +202,7 @@ Running: testNavigation
     breakpointRemoved(b.js, 3)
     Location disposed: b.js:3
   Resolving provisional breakpoint.
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.removeBreakpoint(a.js:10)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
@@ -224,7 +224,7 @@ Running: testSourceMapping
   Dumping Storage
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:true condition:
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
@@ -258,7 +258,7 @@ Running: testProvisionalBreakpointsResolve
   Created breakpoints manager
   Dumping Storage
     a.js:10 enabled:true condition:foo == bar
-  Adding UISourceCode: a.js (url=a.js)
+  Adding UISourceCode: a.js)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
     Location created: a.js:10
