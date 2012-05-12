@@ -1,3 +1,632 @@
+2012-05-11  Noel Gordon  <noel.gordon@gmail.com>
+
+        Optimise and update test expectations after r116636
+
+        Unreviewed test expectations update.
+
+        * fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Renamed from LayoutTests/platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt.
+        * fast/block/float/014-expected.txt: Renamed from LayoutTests/platform/efl/fast/block/float/014-expected.txt.
+        * fast/images/gray-scale-jpeg-with-color-profile-expected.txt:
+        * fast/repaint/backgroundSizeRepaint-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/backgroundSizeRepaint-expected.txt.
+        * fast/repaint/clipped-relative-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/clipped-relative-expected.txt.
+        * fast/repaint/selected-replaced-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/selected-replaced-expected.txt.
+        * fast/replaced/absolute-image-sizing-expected.txt: Renamed from LayoutTests/platform/efl/fast/replaced/absolute-image-sizing-expected.txt.
+        * fast/replaced/image-onload-expected.txt: Renamed from LayoutTests/platform/efl/fast/replaced/image-onload-expected.txt.
+        * fast/replaced/image-sizing-expected.txt: Renamed from LayoutTests/platform/efl/fast/replaced/image-sizing-expected.txt.
+        * fast/replaced/width100percent-image-expected.txt: Renamed from LayoutTests/platform/efl/fast/replaced/width100percent-image-expected.txt.
+        * fast/writing-mode/background-horizontal-bt-expected.txt: Renamed from LayoutTests/platform/efl/fast/writing-mode/background-horizontal-bt-expected.txt.
+        * fast/writing-mode/background-vertical-lr-expected.txt: Renamed from LayoutTests/platform/efl/fast/writing-mode/background-vertical-lr-expected.txt.
+        * fast/writing-mode/background-vertical-rl-expected.txt: Renamed from LayoutTests/platform/efl/fast/writing-mode/background-vertical-rl-expected.txt.
+        * platform/chromium-linux-x86/fast/backgrounds/size/backgroundSize20-expected.png: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/size/backgroundSize21-expected.png: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/size/backgroundSize22-expected.png: Added.
+        * platform/chromium-linux-x86/fast/replaced/image-tag-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug120107-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug1271-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug12908-2-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug13169-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug196870-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/bugs/bug50695-2-expected.png: Added.
+        * platform/chromium-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize20-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize21-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/size/backgroundSize22-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-linux/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/chromium-linux/fast/block/float/014-expected.png:
+        * platform/chromium-linux/fast/images/gray-scale-jpeg-with-color-profile-expected.png:
+        * platform/chromium-linux/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/chromium-linux/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-linux/fast/repaint/clipped-relative-expected.png:
+        * platform/chromium-linux/fast/repaint/selected-replaced-expected.png:
+        * platform/chromium-linux/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-linux/fast/replaced/image-onload-expected.png:
+        * platform/chromium-linux/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-linux/fast/replaced/image-tag-expected.png: Added.
+        * platform/chromium-linux/fast/replaced/width100percent-image-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-01-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-04-t-expected.png:
+        * platform/chromium-linux/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-linux/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-linux/svg/custom/image-rescale-clip-expected.png:
+        * platform/chromium-linux/svg/custom/image-rescale-scroll-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug10565-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/chromium-linux/tables/mozilla/bugs/bug120107-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1271-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug12908-1-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug12908-2-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug13169-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug17138-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug196870-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug29314-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug50695-2-expected.png: Added.
+        * platform/chromium-linux/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug86708-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/misc-expected.png:
+        * platform/chromium-linux/tables/mozilla/core/row_span-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_baseline-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_middle-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tbody_valign_top-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_baseline-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_middle-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/td_valign_top-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_baseline-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_middle-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tfoot_valign_top-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_baseline-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_middle-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/th_valign_top-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_baseline-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_middle-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/thead_valign_top-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_baseline-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_bottom-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_middle-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/tr_valign_top-expected.png:
+        * platform/chromium-linux/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-mac-leopard/fast/backgrounds/size/backgroundSize20-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/backgrounds/size/backgroundSize21-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/backgrounds/size/backgroundSize22-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/block/float/014-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/clipped-relative-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/selected-replaced-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/image-onload-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-mac-leopard/fast/replaced/image-tag-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/replaced/width100percent-image-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-mac-leopard/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-mac-leopard/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/image-rescale-clip-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/image-rescale-scroll-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug10565-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug120107-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1271-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug12908-1-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug12908-2-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug13169-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug17138-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug196870-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug50695-2-expected.png: Added.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug86708-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/core/misc-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/core/row_span-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_baseline-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_bottom-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_middle-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tbody_valign_top-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_baseline-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_bottom-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_middle-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/td_valign_top-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_baseline-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_bottom-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_middle-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tfoot_valign_top-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_baseline-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_bottom-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_middle-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/th_valign_top-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_baseline-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_middle-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/thead_valign_top-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_baseline-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_bottom-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_middle-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/marvin/tr_valign_top-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-mac-snowleopard/fast/backgrounds/size/backgroundSize20-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/size/backgroundSize21-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/size/backgroundSize22-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/block/float/014-expected.png:
+        * platform/chromium-mac-snowleopard/fast/images/gray-scale-jpeg-with-color-profile-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/clipped-relative-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/selected-replaced-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/image-onload-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/image-tag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-image-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-mac-snowleopard/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-mac-snowleopard/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/image-rescale-clip-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/image-rescale-scroll-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug10565-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug120107-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1271-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug12908-1-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug12908-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug13169-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug17138-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug196870-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug29314-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug50695-2-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug86708-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/misc-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/row_span-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tbody_valign_baseline-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tbody_valign_bottom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tbody_valign_middle-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tbody_valign_top-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/td_valign_baseline-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/td_valign_bottom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/td_valign_middle-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/td_valign_top-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tfoot_valign_baseline-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tfoot_valign_bottom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tfoot_valign_middle-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tfoot_valign_top-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/th_valign_baseline-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/th_valign_bottom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/th_valign_middle-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/th_valign_top-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/thead_valign_baseline-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/thead_valign_middle-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/thead_valign_top-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tr_valign_baseline-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tr_valign_bottom-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tr_valign_middle-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/marvin/tr_valign_top-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-mac/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize17-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize18-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize19-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize20-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize21-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/chromium-mac/fast/block/float/014-expected.png:
+        * platform/chromium-mac/fast/images/gray-scale-jpeg-with-color-profile-expected.png:
+        * platform/chromium-mac/fast/images/image-css3-content-data-expected.png:
+        * platform/chromium-mac/fast/images/rgb-jpeg-with-adobe-marker-only-expected.png:
+        * platform/chromium-mac/fast/images/ycbcr-with-cmyk-color-profile-expected.png:
+        * platform/chromium-mac/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/chromium-mac/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-mac/fast/repaint/clipped-relative-expected.png:
+        * platform/chromium-mac/fast/repaint/selected-replaced-expected.png:
+        * platform/chromium-mac/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-mac/fast/replaced/image-onload-expected.png:
+        * platform/chromium-mac/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-mac/fast/replaced/image-tag-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-image-expected.png:
+        * platform/chromium-mac/fast/writing-mode/background-horizontal-bt-expected.png:
+        * platform/chromium-mac/fast/writing-mode/background-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/background-vertical-rl-expected.png:
+        * platform/chromium-mac/platform/chromium/compositing/img-layer-grow-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/struct-image-01-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/struct-image-04-t-expected.png:
+        * platform/chromium-mac/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-mac/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-mac/svg/custom/image-rescale-clip-expected.png:
+        * platform/chromium-mac/svg/custom/image-rescale-expected.png:
+        * platform/chromium-mac/svg/custom/image-rescale-scroll-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-mac/svg/repaint/image-href-change-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug10565-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1188-expected.txt: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug120107-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1271-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug12908-1-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug12908-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug13169-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug17138-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug196870-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug29314-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug50695-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug86708-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/misc-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/row_span-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_baseline-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_bottom-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_middle-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tbody_valign_top-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_baseline-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_bottom-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_middle-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/td_valign_top-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_baseline-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_bottom-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_middle-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tfoot_valign_top-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_baseline-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_bottom-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_middle-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/th_valign_top-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_baseline-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_middle-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/thead_valign_top-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_baseline-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_bottom-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_middle-expected.png:
+        * platform/chromium-mac/tables/mozilla/marvin/tr_valign_top-expected.png:
+        * platform/chromium-mac/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium-win-vista/fast/backgrounds/size/backgroundSize20-expected.png: Added.
+        * platform/chromium-win-vista/fast/backgrounds/size/backgroundSize21-expected.png: Added.
+        * platform/chromium-win-vista/fast/backgrounds/size/backgroundSize22-expected.png: Added.
+        * platform/chromium-win-vista/fast/replaced/image-tag-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla/bugs/bug120107-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla/bugs/bug1271-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla/bugs/bug12908-2-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla/bugs/bug13169-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla/bugs/bug196870-expected.png: Added.
+        * platform/chromium-win-vista/tables/mozilla/bugs/bug50695-2-expected.png: Added.
+        * platform/chromium-win-xp/fast/backgrounds/size/backgroundSize20-expected.png: Added.
+        * platform/chromium-win-xp/fast/backgrounds/size/backgroundSize21-expected.png: Added.
+        * platform/chromium-win-xp/fast/backgrounds/size/backgroundSize22-expected.png: Added.
+        * platform/chromium-win-xp/fast/replaced/image-tag-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug120107-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug1271-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug12908-2-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug13169-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug196870-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/bugs/bug50695-2-expected.png: Added.
+        * platform/chromium-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize17-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize18-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize19-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize20-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize21-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/contain-and-cover-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/chromium-win/fast/block/float/014-expected.png:
+        * platform/chromium-win/fast/images/gray-scale-jpeg-with-color-profile-expected.png:
+        * platform/chromium-win/fast/images/image-css3-content-data-expected.png:
+        * platform/chromium-win/fast/images/rgb-jpeg-with-adobe-marker-only-expected.png:
+        * platform/chromium-win/fast/images/ycbcr-with-cmyk-color-profile-expected.png:
+        * platform/chromium-win/fast/repaint/backgroundSizeRepaint-expected.png:
+        * platform/chromium-win/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/chromium-win/fast/repaint/clipped-relative-expected.png:
+        * platform/chromium-win/fast/repaint/selected-replaced-expected.png:
+        * platform/chromium-win/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-win/fast/replaced/image-onload-expected.png:
+        * platform/chromium-win/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-win/fast/replaced/image-tag-expected.png:
+        * platform/chromium-win/fast/replaced/width100percent-image-expected.png:
+        * platform/chromium-win/fast/writing-mode/background-horizontal-bt-expected.png:
+        * platform/chromium-win/fast/writing-mode/background-vertical-lr-expected.png:
+        * platform/chromium-win/fast/writing-mode/background-vertical-rl-expected.png:
+        * platform/chromium-win/platform/chromium/compositing/img-layer-grow-expected.png: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-image-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-01-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-04-t-expected.png:
+        * platform/chromium-win/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-win/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-win/svg/custom/image-rescale-clip-expected.png:
+        * platform/chromium-win/svg/custom/image-rescale-expected.png:
+        * platform/chromium-win/svg/custom/image-rescale-scroll-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-win/svg/repaint/image-href-change-expected.png: Added.
+        * platform/chromium-win/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug10565-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug120107-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1271-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug12908-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug12908-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug13169-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug15544-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug17138-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug196870-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug29314-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4093-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug50695-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug5797-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug625-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug6404-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug82946-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug86708-expected.png:
+        * platform/chromium-win/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium-win/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/chromium-win/tables/mozilla/core/misc-expected.png:
+        * platform/chromium-win/tables/mozilla/core/row_span-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tbody_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/td_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tfoot_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/th_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/thead_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_baseline-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_bottom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_middle-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/tr_valign_top-expected.png:
+        * platform/chromium-win/tables/mozilla/other/cell_widths-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/other/test4-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/images/gray-scale-jpeg-with-color-profile-expected.txt: Removed.
+        * platform/efl/tables/mozilla/bugs/bug29314-expected.txt: Removed.
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Removed.
+        * platform/gtk/fast/block/float/014-expected.txt: Removed.
+        * platform/gtk/fast/images/gray-scale-jpeg-with-color-profile-expected.txt: Removed.
+        * platform/gtk/fast/repaint/backgroundSizeRepaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/clipped-relative-expected.txt: Removed.
+        * platform/gtk/fast/repaint/selected-replaced-expected.txt: Removed.
+        * platform/gtk/fast/replaced/absolute-image-sizing-expected.txt: Removed.
+        * platform/gtk/fast/replaced/image-onload-expected.txt: Removed.
+        * platform/gtk/fast/replaced/image-sizing-expected.txt: Removed.
+        * platform/gtk/fast/replaced/width100percent-image-expected.txt: Removed.
+        * platform/gtk/fast/writing-mode/background-horizontal-bt-expected.txt: Removed.
+        * platform/gtk/fast/writing-mode/background-vertical-lr-expected.txt: Removed.
+        * platform/gtk/fast/writing-mode/background-vertical-rl-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/scrollbar-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/selectionlist-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug10565-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug11026-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug12908-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug1296-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug1430-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug15544-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug17138-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug29314-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug2981-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug4093-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug4284-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug4427-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug56563-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug5797-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug625-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug6404-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug82946-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/core/bloomberg-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/core/col_widths_auto_autoFix-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/core/misc-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/core/row_span-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tbody_valign_baseline-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tbody_valign_bottom-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tbody_valign_middle-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tbody_valign_top-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/td_valign_baseline-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/td_valign_bottom-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/td_valign_middle-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/td_valign_top-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tfoot_valign_baseline-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tfoot_valign_bottom-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tfoot_valign_middle-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tfoot_valign_top-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/th_valign_baseline-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/th_valign_bottom-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/th_valign_middle-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/th_valign_top-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/thead_valign_baseline-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/thead_valign_bottom-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/thead_valign_middle-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/thead_valign_top-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tr_valign_baseline-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tr_valign_bottom-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tr_valign_middle-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/marvin/tr_valign_top-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/other/cell_widths-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug6933-expected.txt: Removed.
+        * platform/mac/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Removed.
+        * platform/mac/fast/images/gray-scale-jpeg-with-color-profile-expected.txt: Removed.
+        * platform/mac/tables/mozilla/bugs/bug29314-expected.txt: Removed.
+        * platform/qt/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Removed.
+        * platform/qt/fast/images/gray-scale-jpeg-with-color-profile-expected.txt: Copied from LayoutTests/fast/images/gray-scale-jpeg-with-color-profile-expected.txt.
+        * platform/qt/tables/mozilla/bugs/bug29314-expected.txt: Copied from LayoutTests/tables/mozilla/bugs/bug29314-expected.txt.
+        * svg/carto.net/scrollbar-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/scrollbar-expected.txt.
+        * svg/carto.net/selectionlist-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/selectionlist-expected.txt.
+        * tables/mozilla/bugs/bug10565-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug10565-expected.txt.
+        * tables/mozilla/bugs/bug11026-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug11026-expected.txt.
+        * tables/mozilla/bugs/bug12908-1-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug12908-1-expected.txt.
+        * tables/mozilla/bugs/bug1296-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug1296-expected.txt.
+        * tables/mozilla/bugs/bug1430-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug1430-expected.txt.
+        * tables/mozilla/bugs/bug15544-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug15544-expected.txt.
+        * tables/mozilla/bugs/bug17138-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug17138-expected.txt.
+        * tables/mozilla/bugs/bug29314-expected.txt:
+        * tables/mozilla/bugs/bug2981-2-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug2981-2-expected.txt.
+        * tables/mozilla/bugs/bug4093-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug4093-expected.txt.
+        * tables/mozilla/bugs/bug4284-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug4284-expected.txt.
+        * tables/mozilla/bugs/bug4427-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug4427-expected.txt.
+        * tables/mozilla/bugs/bug56563-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug56563-expected.txt.
+        * tables/mozilla/bugs/bug5797-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug5797-expected.txt.
+        * tables/mozilla/bugs/bug625-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug625-expected.txt.
+        * tables/mozilla/bugs/bug6404-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug6404-expected.txt.
+        * tables/mozilla/bugs/bug82946-2-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug82946-2-expected.txt.
+        * tables/mozilla/core/bloomberg-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/core/bloomberg-expected.txt.
+        * tables/mozilla/core/col_widths_auto_autoFix-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/core/col_widths_auto_autoFix-expected.txt.
+        * tables/mozilla/core/misc-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/core/misc-expected.txt.
+        * tables/mozilla/core/row_span-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/core/row_span-expected.txt.
+        * tables/mozilla/marvin/tbody_valign_baseline-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tbody_valign_baseline-expected.txt.
+        * tables/mozilla/marvin/tbody_valign_bottom-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tbody_valign_bottom-expected.txt.
+        * tables/mozilla/marvin/tbody_valign_middle-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tbody_valign_middle-expected.txt.
+        * tables/mozilla/marvin/tbody_valign_top-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tbody_valign_top-expected.txt.
+        * tables/mozilla/marvin/td_valign_baseline-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/td_valign_baseline-expected.txt.
+        * tables/mozilla/marvin/td_valign_bottom-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/td_valign_bottom-expected.txt.
+        * tables/mozilla/marvin/td_valign_middle-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/td_valign_middle-expected.txt.
+        * tables/mozilla/marvin/td_valign_top-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/td_valign_top-expected.txt.
+        * tables/mozilla/marvin/tfoot_valign_baseline-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tfoot_valign_baseline-expected.txt.
+        * tables/mozilla/marvin/tfoot_valign_bottom-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tfoot_valign_bottom-expected.txt.
+        * tables/mozilla/marvin/tfoot_valign_middle-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tfoot_valign_middle-expected.txt.
+        * tables/mozilla/marvin/tfoot_valign_top-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tfoot_valign_top-expected.txt.
+        * tables/mozilla/marvin/th_valign_baseline-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/th_valign_baseline-expected.txt.
+        * tables/mozilla/marvin/th_valign_bottom-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/th_valign_bottom-expected.txt.
+        * tables/mozilla/marvin/th_valign_middle-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/th_valign_middle-expected.txt.
+        * tables/mozilla/marvin/th_valign_top-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/th_valign_top-expected.txt.
+        * tables/mozilla/marvin/thead_valign_baseline-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/thead_valign_baseline-expected.txt.
+        * tables/mozilla/marvin/thead_valign_bottom-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/thead_valign_bottom-expected.txt.
+        * tables/mozilla/marvin/thead_valign_middle-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/thead_valign_middle-expected.txt.
+        * tables/mozilla/marvin/thead_valign_top-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/thead_valign_top-expected.txt.
+        * tables/mozilla/marvin/tr_valign_baseline-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tr_valign_baseline-expected.txt.
+        * tables/mozilla/marvin/tr_valign_bottom-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tr_valign_bottom-expected.txt.
+        * tables/mozilla/marvin/tr_valign_middle-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tr_valign_middle-expected.txt.
+        * tables/mozilla/marvin/tr_valign_top-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/tr_valign_top-expected.txt.
+        * tables/mozilla/other/cell_widths-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/other/cell_widths-expected.txt.
+        * tables/mozilla_expected_failures/bugs/bug6933-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/bugs/bug6933-expected.txt.
+
 2012-05-11  David Barton  <dbarton@mathscribe.com>
 
         Convert some MathML layout tests to reftests
