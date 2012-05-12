@@ -382,6 +382,11 @@ WebInspector.HeapSnapshotProxy.prototype = {
         this.callMethod(callback, "calculateSnapshotDiff", baseSnapshotId, baseSnapshotAggregates);
     },
 
+    nodeClassName: function(snapshotObjectId, callback)
+    {
+        this.callMethod(callback, "nodeClassName", snapshotObjectId);
+    },
+
     createEdgesProvider: function(nodeIndex, filter)
     {
         return this.callFactoryMethod(null, "createEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, filter);
@@ -486,6 +491,11 @@ WebInspector.HeapSnapshotProviderProxy = function(worker, objectId)
 }
 
 WebInspector.HeapSnapshotProviderProxy.prototype = {
+    nodePosition: function(snapshotObjectId, callback)
+    {
+        this.callMethod(callback, "nodePosition", snapshotObjectId);
+    },
+
     isEmpty: function(callback)
     {
         this.callGetter(callback, "isEmpty");

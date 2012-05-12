@@ -84,6 +84,14 @@ WebInspector.HeapSnapshotGridNode.prototype = {
     {
     },
 
+    /**
+     * @override
+     */
+    wasDetached: function()
+    {
+        this._dataGrid.nodeWasDetached(this);
+    },
+
     _toPercentString: function(num)
     {
         return num.toFixed(0) + "\u2009%"; // \u2009 is a thin space.
@@ -689,6 +697,36 @@ WebInspector.HeapSnapshotConstructorNode = function(tree, className, aggregate, 
 }
 
 WebInspector.HeapSnapshotConstructorNode.prototype = {
+    /**
+     * @param {number} snapshotObjectId
+     */
+    revealNodeBySnapshotObjectId: function(snapshotObjectId)
+    {
+        function didGetNodePosition(nodePosition)
+        {
+            if (nodePosition !== -1)
+                this._populateChildren(nodePosition, null, didPopulateChildren.bind(this, nodePosition));
+        }
+
+        function didPopulateChildren(nodePosition)
+        {
+            var indexOfFirsChildInRange = 0;
+            for (var i = 0; i < this._retrievedChildrenRanges.length; i++) {
+               var range = this._retrievedChildrenRanges[i];
+               if (range.from <= nodePosition && nodePosition < range.to) {
+                   var childIndex = indexOfFirsChildInRange + nodePosition - range.from;
+                   var instanceNode = this.children[childIndex];
+                   this._dataGrid.highlightNode(instanceNode);
+                   return;
+               }
+               indexOfFirsChildInRange += range.to - range.from + 1;
+            }
+        }
+
+        this.expand();
+        this._provider.nodePosition(snapshotObjectId, didGetNodePosition.bind(this));
+    },
+
     createCell: function(columnIdentifier)
     {
         var cell = columnIdentifier !== "object" ? this._createValueCell(columnIdentifier) : WebInspector.HeapSnapshotGridNode.prototype.createCell.call(this, columnIdentifier);

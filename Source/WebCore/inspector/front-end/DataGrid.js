@@ -1606,6 +1606,12 @@ WebInspector.DataGridNode.prototype = {
 
         for (var i = 0; i < this.children.length; ++i)
             this.children[i]._detach();
+
+        this.wasDetached();
+    },
+
+    wasDetached: function()
+    {
     },
 
     savePosition: function()

@@ -80,6 +80,14 @@ WebInspector.ContextMenu.prototype = {
         this._items.push({type: "separator"});
     },
 
+    /**
+     * @return {boolean}
+     */
+    isEmpty: function()
+    {
+        return !this._items.length;
+    },
+
     _itemSelected: function(id)
     {
         if (this._handlers[id])

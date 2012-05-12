@@ -264,7 +264,9 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatParameterAsObject: function(obj, elem)
     {
-        elem.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description).element);
+        var section = new WebInspector.ObjectPropertiesSection(obj, obj.description);
+        section.enableContextMenu();
+        elem.appendChild(section.element);
     },
 
     _formatParameterAsNode: function(object, elem)

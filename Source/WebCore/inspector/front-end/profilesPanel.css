@@ -186,3 +186,12 @@
 body.inactive .profile-launcher-view-content button.running:not(.status-bar-item) {
     color: rgb(220, 130, 130);
 }
+
+.highlighted-row {
+    -webkit-animation: "row_highlight" 2s 0s;
+}
+
+@-webkit-keyframes row_highlight {
+    from {background-color: rgb(255, 255, 120); }
+    to { background-color: white; }
+}

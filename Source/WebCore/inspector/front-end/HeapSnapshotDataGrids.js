@@ -40,6 +40,10 @@ WebInspector.HeapSnapshotSortableDataGrid = function(columns)
      * @type {number}
      */
     this._recursiveSortingDepth = 0;
+    /**
+     * @type {WebInspector.HeapSnapshotGridNode}
+     */
+    this._highlightedNode = null;
     this.addEventListener("sorting changed", this.sortingChanged, this);
 }
 
@@ -68,6 +72,37 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
     topLevelNodes: function()
     {
         return this.rootNode().children;
+    },
+
+    /**
+     * @param {ProfilerAgent.HeapSnapshotObjectId} heapSnapshotObjectId
+     */
+    highlightObjectByHeapSnapshotId: function(heapSnapshotObjectId)
+    {
+    },
+
+    /**
+     * @param {WebInspector.HeapSnapshotGridNode} node
+     */
+    highlightNode: function(node)
+    {
+        this._clearCurrentHighlight();
+        this._highlightedNode = node;
+        this._highlightedNode.element.addStyleClass("highlighted-row");
+    },
+
+    nodeWasDetached: function(node)
+    {
+        if (this._highlightedNode === node)
+            this._clearCurrentHighlight();
+    },
+
+    _clearCurrentHighlight: function()
+    {
+        if (!this._highlightedNode)
+            return
+        this._highlightedNode.element.removeStyleClass("highlighted-row");
+        this._highlightedNode = null;
     },
 
     changeNameFilter: function(filter)
@@ -166,6 +201,10 @@ WebInspector.HeapSnapshotViewportDataGrid = function(columns)
     this._topLevelNodes = [];
     this._topPadding = new WebInspector.HeapSnapshotPaddingNode();
     this._bottomPadding = new WebInspector.HeapSnapshotPaddingNode();
+    /**
+     * @type {WebInspector.HeapSnapshotGridNode}
+     */
+    this._nodeToHighlightAfterScroll = null;
 }
 
 WebInspector.HeapSnapshotViewportDataGrid.prototype = {
@@ -233,6 +272,16 @@ WebInspector.HeapSnapshotViewportDataGrid.prototype = {
         this._topLevelNodes = [];
     },
 
+    /**
+     * @override
+     * @param {WebInspector.HeapSnapshotGridNode} node
+     */
+    highlightNode: function(node)
+    {
+        node.element.scrollIntoViewIfNeeded(true);
+        this._nodeToHighlightAfterScroll = node;
+    },
+
     _addPaddingRows: function(top, bottom)
     {
         if (this._topPadding.element.parentNode !== this.dataTableBody)
@@ -257,6 +306,11 @@ WebInspector.HeapSnapshotViewportDataGrid.prototype = {
     _onScroll: function(event)
     {
         this.updateVisibleNodes();
+
+        if (this._nodeToHighlightAfterScroll) {
+            WebInspector.HeapSnapshotSortableDataGrid.prototype.highlightNode.call(this, this._nodeToHighlightAfterScroll);
+            this._nodeToHighlightAfterScroll = null;
+        }
     }
 }
 
@@ -371,6 +425,8 @@ WebInspector.HeapSnapshotConstructorsDataGrid = function()
     WebInspector.HeapSnapshotViewportDataGrid.call(this, columns);
     this._profileIndex = -1;
     this._topLevelNodes = [];
+
+    this._objectIdToSelect = null;
 }
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
@@ -385,12 +441,42 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         }[sortColumn];
     },
 
+    /**
+     * @override
+     * @param {ProfilerAgent.HeapSnapshotObjectId} id
+     */
+    highlightObjectByHeapSnapshotId: function(id)
+    {
+        if (!this.snapshot) {
+            this._objectIdToSelect = id;
+            return;
+        }
+
+        function didGetClassName(className)
+        {
+            var constructorNodes = this.topLevelNodes();
+            for (var i = 0; i < constructorNodes.length; i++) {
+                var parent = constructorNodes[i];
+                if (parent._name === className) {
+                    parent.revealNodeBySnapshotObjectId(parseInt(id, 10));
+                    return;
+                }
+            }
+        }
+        this.snapshot.nodeClassName(parseInt(id, 10), didGetClassName.bind(this));
+    },
+
     setDataSource: function(snapshotView, snapshot)
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
         if (this._profileIndex === -1)
             this._populateChildren();
+
+        if (this._objectIdToSelect) {
+            this.highlightObjectByHeapSnapshotId(this._objectIdToSelect);
+            this._objectIdToSelect = null;
+        }
     },
 
     _populateChildren: function()

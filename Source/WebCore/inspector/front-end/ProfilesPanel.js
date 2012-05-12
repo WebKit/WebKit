@@ -229,6 +229,7 @@ WebInspector.ProfilesPanel = function()
     this._createFileSelectorElement();
     this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
 
+    WebInspector.ObjectPropertiesSection.addContextMenuProvider(new WebInspector.RevealInHeapSnapshotContextMenuProvider());
 }
 
 WebInspector.ProfilesPanel.EventTypes = {
@@ -573,6 +574,27 @@ WebInspector.ProfilesPanel.prototype = {
                 result.push(profile);
         }
         return result;
+    },
+
+    /**
+     * @param {ProfilerAgent.HeapSnapshotObjectId} snapshotObjectId
+     */
+    showObject: function(snapshotObjectId)
+    {
+        var heapProfiles = this.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
+        for (var i = 0; i < heapProfiles.length; i++) {
+            var profile = heapProfiles[i];
+            // TODO: allow to choose snapshot if there are several options.
+            if (profile.maxJSObjectId >= snapshotObjectId) {
+                this.showProfile(profile);
+                profile._profileView.changeView("Summary", function() {
+                    if (profile._profileView.dataGrid !==  profile._profileView.constructorsDataGrid)
+                        return;
+                    profile._profileView.dataGrid.highlightObjectByHeapSnapshotId(snapshotObjectId);
+                });
+                break;
+            }
+        }
     },
 
     /**
@@ -1040,6 +1062,52 @@ WebInspector.ProfilesPanel.prototype = {
 }
 
 WebInspector.ProfilesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+
+
+/**
+ * @implements {WebInspector.ObjectPropertiesSection.ContextMenuProvider}
+ * @constructor
+ */
+WebInspector.RevealInHeapSnapshotContextMenuProvider = function()
+{
+}
+
+WebInspector.RevealInHeapSnapshotContextMenuProvider.prototype = {
+    /**
+     * @override
+     * @param {WebInspector.ObjectPropertiesSection} section
+     * @param {WebInspector.ContextMenu} contextMenu
+     */
+    populateContextMenu: function(section, contextMenu)
+    {
+        if (WebInspector.inspectorView.currentPanel() !== WebInspector.panels.profiles)
+            return;
+
+        var objectId = section.object.objectId;
+        if (!objectId)
+            return;
+
+        var heapProfiles = WebInspector.panels.profiles.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
+        if (!heapProfiles.length)
+            return;
+
+        function revealInSummaryView()
+        {
+            ProfilerAgent.getHeapObjectId(objectId, didReceiveHeapObjectId.bind(this));
+        }
+
+        function didReceiveHeapObjectId(error, result)
+        {
+            if (WebInspector.inspectorView.currentPanel() !== WebInspector.panels.profiles)
+                return;
+            if (!error)
+                WebInspector.panels.profiles.showObject(result);
+        }
+
+        contextMenu.appendItem(WebInspector.UIString("Reveal in Summary View"), revealInSummaryView.bind(this));
+    }
+}
+
 
 /**
  * @constructor

@@ -1286,6 +1286,15 @@ WebInspector.HeapSnapshot.prototype = {
         return diff;
     },
 
+    nodeClassName: function(snapshotObjectId)
+    {
+        for (var it = this._allNodes; it.hasNext(); it.next()) {
+            if (it.node.id === snapshotObjectId)
+                return it.node.className;
+        }
+        return null;
+    },
+
     _parseFilter: function(filter)
     {
         if (!filter)
@@ -1593,6 +1602,22 @@ WebInspector.HeapSnapshotNodesProvider = function(snapshot, filter, nodeIndexes)
 }
 
 WebInspector.HeapSnapshotNodesProvider.prototype = {
+    nodePosition: function(snapshotObjectId)
+    {
+        this._createIterationOrder();
+        if (this.isEmpty)
+            return -1;
+        this.sortAll();
+
+        var node = new WebInspector.HeapSnapshotNode(this.snapshot);
+        for (var i = 0; i < this._iterationOrder.length; i++) {
+            node.nodeIndex = this._iterationOrder[i];
+            if (node.id === snapshotObjectId)
+                return i;
+        }
+        return -1;
+    },
+
     serializeItem: function(node)
     {
         return {
