@@ -132,6 +132,7 @@ public:
 #endif
 
     virtual bool isFullscreen() const;
+    virtual bool isElementPaused() const;
     virtual bool isTabVisible() const;
     virtual int showErrorDialog(BlackBerry::Platform::MMRPlayer::Error);
     virtual BlackBerry::Platform::Graphics::Window* platformWindow();

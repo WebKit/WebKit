@@ -1,3 +1,16 @@
+2012-05-12  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Allow the platform media player to determine the media element's paused/playing status
+        https://bugs.webkit.org/show_bug.cgi?id=86235
+
+        Reviewed by George Staikos.
+
+        This test replaces the source element of a playing media object
+        and makes sure the new source element begins playing.
+
+        * media/media-continues-playing-after-replace-source-expected.txt: Added.
+        * media/media-continues-playing-after-replace-source.html: Added.
+
 2012-05-12  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, GTK gardening. Also add baselines for new tests after

@@ -722,6 +722,14 @@ bool MediaPlayerPrivate::isFullscreen() const
     return m_fullscreenWebPageClient;
 }
 
+bool MediaPlayerPrivate::isElementPaused() const
+{
+    HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_webCorePlayer->mediaPlayerClient());
+    if (!element || element->paused())
+        return true;
+    return false;
+}
+
 bool MediaPlayerPrivate::isTabVisible() const
 {
     if (frameView() && frameView()->hostWindow())

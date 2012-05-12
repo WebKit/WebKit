@@ -1,0 +1,108 @@
+<html>
+    <title>Test media source replacement</title>
+    <body>
+
+    <p>Test that media keeps playing when the source element is replaced.</p>
+
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+        var timeupdateEventCount = 0;
+        var skippedCount = 0;
+        var sourceReplaced = false;
+
+        function swapAudio() {
+            v = document.getElementsByTagName('audio')[0];
+            v.removeChild(v.childNodes[0]);
+            var s = document.createElement('source');
+            s.src = findMediaFile("audio", "content/test");
+            v.appendChild(s);
+        }
+
+        function errorListener(event)
+        {
+             logResult(false, "Caught 'error' event, audio.error.code = " + this.error.code);
+             endTest();
+        }
+
+        function canplaythroughListener(event)
+        {
+             consoleWrite("EVENT(canplaythrough)");
+             testElement = this;
+             testExpected("testElement.currentTime", 0);
+             this.play();
+        }
+
+        function playingListener(event)
+        {
+             consoleWrite("EVENT(playing)");
+        }
+
+        function timeupdateListener(event)
+        {
+            ++timeupdateEventCount;
+
+            if (timeupdateEventCount-skippedCount == 1) {
+                // First time update after source replacement should be 0.
+                // We allow one late time update to come in from the previous
+                // source element. This was done to help the cr-linux test
+                // pass, and does not necessarily indicate a problem.
+                if (sourceReplaced) {
+                    if (skippedCount >= 1 || this.currentTime == 0) {
+                        testElement = this;
+                        testExpected("testElement.currentTime", 0);
+                    } else {
+                        // The time is not 0 as expected. Hope this is a
+                        // late update from the previous source.
+                        ++skippedCount;
+                    }
+                }
+            } else if (timeupdateEventCount-skippedCount >= 2) {
+                // We wait 2 timeupdate events so we are sure the media engine
+                // is playing the media, and make sure time is advancing.
+                testElement = this;
+                testExpected("testElement.currentTime", 0, '>');
+                if (!sourceReplaced) {
+                    consoleWrite("Replacing the media's source element:");
+                    sourceReplaced = true;
+                    timeupdateEventCount = 0;
+                    skippedCount = 0;
+                    // The ports are not consistent in regards to whether
+                    // the canplaythrough and playing events are triggered
+                    // a second time, so stop listening for them. This was
+                    // done to help the cr-linux test pass, and does not
+                    // necessarily indicate a problem.
+                    this.removeEventListener('playing', playingListener);
+                    this.removeEventListener('canplaythrough', canplaythroughListener);
+                    swapAudio();
+                } else {
+                    this.removeEventListener('timeupdate', timeupdateListener);
+                    this.pause();
+                    endTest();
+                }
+            }
+        }
+
+        function testAudioElement(count)
+        {
+            timeupdateEventCount = 0;
+            skippedCount = 0;
+            var audioElement = document.getElementsByTagName('audio')[count];
+            //audioElement.removeChild(audioElement.childNodes[0]);
+            audioElement.addEventListener('error', errorListener);
+            audioElement.addEventListener('canplaythrough', canplaythroughListener);
+            audioElement.addEventListener('timeupdate', timeupdateListener);
+            audioElement.addEventListener('playing', playingListener);
+
+            var s = document.createElement('source');
+            s.src = findMediaFile("audio", "content/silence");
+            audioElement.appendChild(s);
+
+        }
+
+        document.write("<audio controls></audio>");
+        testAudioElement(0);
+    </script>
+
+    </body>
+</html>
