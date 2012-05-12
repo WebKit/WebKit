@@ -160,6 +160,20 @@ WebInspector.TabbedPane.prototype = {
 
     /**
      * @param {string} id
+     */
+    closeOtherTabs: function(id)
+    {
+        var tabs = this._tabs.slice();
+        for (var i = 0; i < tabs.length; ++i) {
+            if (tabs[i].id !== id)
+                this._innerCloseTab(tabs[i].id, true);
+        }
+        this._updateTabElements();
+        this.selectTab(id, true);
+    },
+
+    /**
+     * @param {string} id
      * @param {boolean=} userGesture
      */
     selectTab: function(id, userGesture)
@@ -614,6 +628,8 @@ WebInspector.TabbedPaneTab.prototype = {
         else {
             this._tabElement = tabElement;
             tabElement.addEventListener("click", this._tabClicked.bind(this), false);
+            if (this._closeable)
+                tabElement.addEventListener("contextmenu", this._tabContextMenu.bind(this), false);
         }
         
         return tabElement;
@@ -637,5 +653,29 @@ WebInspector.TabbedPaneTab.prototype = {
         else
             this._tabbedPane.selectTab(this.id, true);
         this._tabbedPane.focus();
+    },
+
+    _tabContextMenu: function(event)
+    {
+        function close()
+        {
+            this._tabbedPane.closeTab(this.id, true);
+        }
+  
+        function closeOthers()
+        {
+            this._tabbedPane.closeOtherTabs(this.id);
+        }
+  
+        function closeAll()
+        {
+            this._tabbedPane.closeAllTabs(true);
+        }
+  
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Close"), close.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Close Others"), closeOthers.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Close All"), closeAll.bind(this));
+        contextMenu.show(event);
     }
 }
