@@ -564,14 +564,20 @@ WebInspector.CPUProfileType.prototype = {
         return this._recording ? WebInspector.UIString("Stop CPU profiling.") : WebInspector.UIString("Start CPU profiling.");
     },
 
+    /**
+     * @override
+     * @return {boolean}
+     */
     buttonClicked: function()
     {
         if (this._recording) {
             this.stopRecordingProfile();
             WebInspector.networkManager.enableResourceTracking();
+            return false;
         } else {
             WebInspector.networkManager.disableResourceTracking();
             this.startRecordingProfile();
+            return true;
         }
     },
 

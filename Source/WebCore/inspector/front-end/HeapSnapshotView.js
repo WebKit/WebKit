@@ -727,9 +727,14 @@ WebInspector.HeapSnapshotProfileType.prototype = {
         return WebInspector.UIString("Take heap snapshot.");
     },
 
+    /**
+     * @override
+     * @return {boolean}
+     */
     buttonClicked: function()
     {
         WebInspector.panels.profiles.takeHeapSnapshot();
+        return false;
     },
 
     get treeItemTitle()

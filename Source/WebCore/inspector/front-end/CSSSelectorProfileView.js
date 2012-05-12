@@ -283,12 +283,19 @@ WebInspector.CSSSelectorProfileType.prototype = {
         return this._recording ? WebInspector.UIString("Stop CSS selector profiling.") : WebInspector.UIString("Start CSS selector profiling.");
     },
 
+    /**
+     * @override
+     * @return {boolean}
+     */
     buttonClicked: function()
     {
-        if (this._recording)
+        if (this._recording) {
             this.stopRecordingProfile();
-        else
+            return false;
+        } else {
             this.startRecordingProfile();
+            return true;
+        }
     },
 
     get treeItemTitle()

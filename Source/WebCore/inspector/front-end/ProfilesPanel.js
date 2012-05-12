@@ -57,8 +57,12 @@ WebInspector.ProfileType.prototype = {
         return this._name;
     },
 
+    /**
+     * @return {boolean}
+     */
     buttonClicked: function()
     {
+        return false;
     },
 
     viewForProfile: function(profile)
@@ -280,7 +284,8 @@ WebInspector.ProfilesPanel.prototype = {
 
     toggleRecordButton: function()
     {
-        this._selectedProfileType.buttonClicked();
+        var isProfiling = this._selectedProfileType.buttonClicked();
+        this.dispatchEventToListeners(isProfiling ? WebInspector.ProfilesPanel.EventTypes.ProfileStarted : WebInspector.ProfilesPanel.EventTypes.ProfileFinished);
     },
 
     wasShown: function()
@@ -491,14 +496,7 @@ WebInspector.ProfilesPanel.prototype = {
             if (!this.visibleView)
                 this.showProfile(profile);
             this.dispatchEventToListeners("profile added");
-            this.dispatchEventToListeners(WebInspector.ProfilesPanel.EventTypes.ProfileFinished);
-            this.recordButton.toggled = false;
-        } else {
-            this.dispatchEventToListeners(WebInspector.ProfilesPanel.EventTypes.ProfileStarted);
-            this.recordButton.toggled = true;
         }
-
-        this.recordButton.title = this._selectedProfileType.buttonTooltip;
     },
 
     /**
@@ -1005,6 +1003,9 @@ WebInspector.ProfilesPanel.prototype = {
             this.addProfileHeader(temporaryProfile);
         else
             this._removeTemporaryProfile(profileType);
+        this.recordButton.toggled = isProfiling;
+        this.recordButton.title = profileTypeObject.buttonTooltip;
+        this.dispatchEventToListeners(isProfiling ? WebInspector.ProfilesPanel.EventTypes.ProfileStarted : WebInspector.ProfilesPanel.EventTypes.ProfileFinished);
     },
 
     takeHeapSnapshot: function()
@@ -1014,7 +1015,11 @@ WebInspector.ProfilesPanel.prototype = {
             var profileTypeObject = this.getProfileType(WebInspector.HeapSnapshotProfileType.TypeId);
             this.addProfileHeader(profileTypeObject.createTemporaryProfile());
         }
-        ProfilerAgent.takeHeapSnapshot();
+        this.dispatchEventToListeners(WebInspector.ProfilesPanel.EventTypes.ProfileStarted);
+        function done() {
+            this.dispatchEventToListeners(WebInspector.ProfilesPanel.EventTypes.ProfileFinished);
+        }
+        ProfilerAgent.takeHeapSnapshot(done.bind(this));
         WebInspector.userMetrics.ProfilesHeapProfileTaken.record();
     },
 
