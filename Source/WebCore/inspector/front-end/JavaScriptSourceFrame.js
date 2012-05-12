@@ -108,10 +108,13 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         return WebInspector.DebuggerResourceBinding.canEditScriptSource(this._uiSourceCode);
     },
 
-    editContent: function(newContent, callback)
+    /**
+     * @param {string} text 
+     */
+    commitEditing: function(text)
     {
         this._editingContent = true;
-        WebInspector.DebuggerResourceBinding.setScriptSource(this._uiSourceCode, newContent, callback);
+        WebInspector.DebuggerResourceBinding.setScriptSource(this._uiSourceCode, text, this._didEditContent.bind(this, text));
     },
 
     /**
@@ -173,7 +176,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (isDirty)
             this._setScriptSourceIsDirty(true);
         else
-            this.didEditContent(null, this._originalContent);
+            this._didEditContent(this._originalContent, null);
     },
 
     _setScriptSourceIsDirty: function(isDirty)
@@ -200,13 +203,14 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
     },
 
-    didEditContent: function(error, content)
+    _didEditContent: function(content, error)
     {
         delete this._editingContent;
 
-        WebInspector.SourceFrame.prototype.didEditContent.call(this, error, content);
-        if (error)
+        if (error) {
+            WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
             return;
+        }
 
         this._originalContent = content;
         this._isDirty = false;

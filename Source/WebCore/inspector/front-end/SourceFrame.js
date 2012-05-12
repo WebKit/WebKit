@@ -516,29 +516,18 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.inheritScrollPositions(sourceFrame._textViewer);
     },
 
+    /**
+     * @return {boolean}
+     */
     canEditSource: function()
     {
         return false;
     },
 
-    commitEditing: function()
-    {
-        function callback(error)
-        {
-            this.didEditContent(error, this._textModel.text);
-        }
-        this.editContent(this._textModel.text, callback.bind(this));
-    },
-
-    didEditContent: function(error, content)
-    {
-        if (error) {
-            WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
-            return;
-        }
-    },
-
-    editContent: function(newContent, callback)
+    /**
+     * @param {string} text 
+     */
+    commitEditing: function(text)
     {
     }
 }
@@ -568,7 +557,7 @@ WebInspector.TextViewerDelegateForSourceFrame.prototype = {
 
     commitEditing: function()
     {
-        this._sourceFrame.commitEditing();
+        this._sourceFrame.commitEditing(this._sourceFrame._textModel.text);
     },
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber)
