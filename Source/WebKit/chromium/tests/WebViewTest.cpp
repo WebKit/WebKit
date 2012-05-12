@@ -143,6 +143,25 @@ TEST_F(WebViewTest, FocusIsInactive)
     webView->close();
 }
 
+TEST_F(WebViewTest, ActiveState)
+{
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "visible_iframe.html");
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "visible_iframe.html");
+
+    ASSERT_TRUE(webView);
+
+    webView->setIsActive(true);
+    EXPECT_TRUE(webView->isActive());
+
+    webView->setIsActive(false);
+    EXPECT_FALSE(webView->isActive());
+
+    webView->setIsActive(true);
+    EXPECT_TRUE(webView->isActive());
+
+    webView->close();
+}
+
 void WebViewTest::testAutoResize(const WebSize& minAutoResize, const WebSize& maxAutoResize,
                                  const std::string& pageWidth, const std::string& pageHeight,
                                  int expectedWidth, int expectedHeight,
