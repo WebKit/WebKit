@@ -75,8 +75,6 @@ public:
     // Must be called from the scrolling thread. Handles the wheel event.
     void handleWheelEvent(const PlatformWheelEvent&);
 
-    void setMainFrameScrollPosition(const IntPoint&);
-
     void invalidate();
     void commitNewTreeState(PassOwnPtr<ScrollingTreeState>);
 
