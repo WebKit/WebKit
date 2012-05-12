@@ -1,3 +1,19 @@
+2012-03-27  Adam Klein  <adamk@chromium.org>
+
+        Hold a reference to refChild in insertBefore before calling collectChildrenAndRemoveFromOldParent
+        https://bugs.webkit.org/show_bug.cgi?id=82377
+
+        Reviewed by Ryosuke Niwa.
+
+        This fixes a regression from r111925.
+
+        Test: fast/dom/insertBefore-refChild-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore): Move the 'next' RefPtr above the call to
+        collectChildrenAndRemoveFromOldParent and rename refChildPreviousSibling
+        to 'prev' (matching appendChild and replaceChild).
+
 2012-04-26  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] WebKitGTK+ 1.8.1 fails to build when disabling HTML Video feature
