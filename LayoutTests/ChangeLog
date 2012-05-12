@@ -1,5 +1,55 @@
 2012-05-11  David Barton  <dbarton@mathscribe.com>
 
+        Convert some MathML layout tests to reftests
+        https://bugs.webkit.org/show_bug.cgi?id=86250
+
+        Reviewed by Ryosuke Niwa.
+
+        * mathml/presentation/msub-base-changed-expected.html: Added.
+        * mathml/presentation/msub-sub-changed-expected.html: Added.
+        * mathml/presentation/msubsup-base-changed-expected.html: Added.
+        * mathml/presentation/msubsup-sub-changed-expected.html: Added.
+        * mathml/presentation/msubsup-sup-changed-expected.html: Added.
+        * mathml/presentation/msup-base-changed-expected.html: Added.
+        * mathml/presentation/msup-sup-changed-expected.html: Added.
+        * platform/efl/mathml/presentation/msub-base-changed-expected.png: Removed.
+        * platform/efl/mathml/presentation/msub-base-changed-expected.txt: Removed.
+        * platform/efl/mathml/presentation/msub-sub-changed-expected.png: Removed.
+        * platform/efl/mathml/presentation/msub-sub-changed-expected.txt: Removed.
+        * platform/efl/mathml/presentation/msubsup-base-changed-expected.png: Removed.
+        * platform/efl/mathml/presentation/msubsup-base-changed-expected.txt: Removed.
+        * platform/efl/mathml/presentation/msubsup-sub-changed-expected.png: Removed.
+        * platform/efl/mathml/presentation/msubsup-sub-changed-expected.txt: Removed.
+        * platform/efl/mathml/presentation/msubsup-sup-changed-expected.png: Removed.
+        * platform/efl/mathml/presentation/msubsup-sup-changed-expected.txt: Removed.
+        * platform/efl/mathml/presentation/msup-base-changed-expected.png: Removed.
+        * platform/efl/mathml/presentation/msup-base-changed-expected.txt: Removed.
+        * platform/efl/mathml/presentation/msup-sup-changed-expected.png: Removed.
+        * platform/efl/mathml/presentation/msup-sup-changed-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/msub-base-changed-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/msub-sub-changed-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/msubsup-base-changed-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/msubsup-sub-changed-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/msubsup-sup-changed-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/msup-base-changed-expected.txt: Removed.
+        * platform/gtk/mathml/presentation/msup-sup-changed-expected.txt: Removed.
+        * platform/mac/mathml/presentation/msub-base-changed-expected.png: Removed.
+        * platform/mac/mathml/presentation/msub-base-changed-expected.txt: Removed.
+        * platform/mac/mathml/presentation/msub-sub-changed-expected.png: Removed.
+        * platform/mac/mathml/presentation/msub-sub-changed-expected.txt: Removed.
+        * platform/mac/mathml/presentation/msubsup-base-changed-expected.png: Removed.
+        * platform/mac/mathml/presentation/msubsup-base-changed-expected.txt: Removed.
+        * platform/mac/mathml/presentation/msubsup-sub-changed-expected.png: Removed.
+        * platform/mac/mathml/presentation/msubsup-sub-changed-expected.txt: Removed.
+        * platform/mac/mathml/presentation/msubsup-sup-changed-expected.png: Removed.
+        * platform/mac/mathml/presentation/msubsup-sup-changed-expected.txt: Removed.
+        * platform/mac/mathml/presentation/msup-base-changed-expected.png: Removed.
+        * platform/mac/mathml/presentation/msup-base-changed-expected.txt: Removed.
+        * platform/mac/mathml/presentation/msup-sup-changed-expected.png: Removed.
+        * platform/mac/mathml/presentation/msup-sup-changed-expected.txt: Removed.
+
+2012-05-11  David Barton  <dbarton@mathscribe.com>
+
         use after free in WebCore::RenderObject::document
         https://bugs.webkit.org/show_bug.cgi?id=84891
 
