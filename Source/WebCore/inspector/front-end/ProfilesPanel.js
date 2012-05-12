@@ -223,6 +223,8 @@ WebInspector.ProfilesPanel = function()
         ProfilerAgent.enable(this._profilerWasEnabled.bind(this));
 
     this._createFileSelectorElement();
+    this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
+
 }
 
 WebInspector.ProfilesPanel.EventTypes = {
@@ -390,12 +392,17 @@ WebInspector.ProfilesPanel.prototype = {
     _handleContextMenuEvent: function(event)
     {
         var element = event.srcElement;
-        while (element && !element.treeElement)
+        while (element && !element.treeElement && element !== this.element)
             element = element.parentElement;
         if (!element)
             return;
-        if (element.treeElement.handleContextMenuEvent)
+        if (element.treeElement && element.treeElement.handleContextMenuEvent) {
             element.treeElement.handleContextMenuEvent(event);
+            return;
+        }
+        var contextMenu = new WebInspector.ContextMenu();
+        contextMenu.appendItem(WebInspector.UIString("Load profile\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
+        contextMenu.show(event);
     },
 
     /**
