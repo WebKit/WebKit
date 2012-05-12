@@ -37,6 +37,7 @@ class TextureMapperShaderProgram;
 // An OpenGL-ES2 implementation of TextureMapper.
 class TextureMapperGL : public TextureMapper {
 public:
+    static PassOwnPtr<TextureMapperGL> create() { return adoptPtr(new TextureMapperGL); }
     TextureMapperGL();
     virtual ~TextureMapperGL();
 
@@ -47,24 +48,20 @@ public:
 
     typedef int Flags;
 
-    // reimps from TextureMapper
-    virtual void drawBorder(const Color&, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix());
-    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
-    virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
-    virtual void bindSurface(BitmapTexture* surface);
-    virtual void beginClip(const TransformationMatrix&, const FloatRect&);
-    virtual void beginPainting(PaintFlags = 0);
-    virtual void endPainting();
-    virtual void endClip();
-    virtual IntSize maxTextureSize() { return IntSize(2000, 2000); }
-    virtual PassRefPtr<BitmapTexture> createTexture();
-    virtual const char* type() const;
-    static PassOwnPtr<TextureMapperGL> create() { return adoptPtr(new TextureMapperGL); }
-    void setGraphicsContext(GraphicsContext* context) { m_context = context; }
-    GraphicsContext* graphicsContext() { return m_context; }
-    virtual bool isOpenGLBacked() const { return true; }
-    void platformUpdateContents(NativeImagePtr, const IntRect&, const IntRect&);
-    virtual AccelerationMode accelerationMode() const { return OpenGLMode; }
+    // TextureMapper implementation
+    virtual void drawBorder(const Color&, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) OVERRIDE;
+    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture) OVERRIDE;
+    virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture) OVERRIDE;
+    virtual void bindSurface(BitmapTexture* surface) OVERRIDE;
+    virtual void beginClip(const TransformationMatrix&, const FloatRect&) OVERRIDE;
+    virtual void beginPainting(PaintFlags = 0) OVERRIDE;
+    virtual void endPainting() OVERRIDE;
+    virtual void endClip() OVERRIDE;
+    virtual IntSize maxTextureSize() const OVERRIDE { return IntSize(2000, 2000); }
+    virtual PassRefPtr<BitmapTexture> createTexture() OVERRIDE;
+    virtual GraphicsContext* graphicsContext() OVERRIDE { return m_context; }
+    virtual AccelerationMode accelerationMode() const OVERRIDE { return OpenGLMode; }
+    virtual void setGraphicsContext(GraphicsContext* context) OVERRIDE { m_context = context; }
 
 #if ENABLE(CSS_FILTERS)
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation&);

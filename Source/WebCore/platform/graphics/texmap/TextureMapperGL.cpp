@@ -393,11 +393,6 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
     drawRect(targetRect, modelViewMatrix, shaderInfo.get(), GL_TRIANGLE_FAN, needsBlending);
 }
 
-const char* TextureMapperGL::type() const
-{
-    return "OpenGL";
-}
-
 bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
 {
     return contentsSize == m_textureSize;
