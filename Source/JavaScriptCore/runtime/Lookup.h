@@ -129,13 +129,13 @@ namespace JSC {
         JS_EXPORT_PRIVATE void deleteTable() const;
 
         // Find an entry in the table, and return the entry.
-        ALWAYS_INLINE const HashEntry* entry(JSGlobalData* globalData, const Identifier& identifier) const
+        ALWAYS_INLINE const HashEntry* entry(JSGlobalData* globalData, PropertyName identifier) const
         {
             initializeIfNeeded(globalData);
             return entry(identifier);
         }
 
-        ALWAYS_INLINE const HashEntry* entry(ExecState* exec, const Identifier& identifier) const
+        ALWAYS_INLINE const HashEntry* entry(ExecState* exec, PropertyName identifier) const
         {
             initializeIfNeeded(exec);
             return entry(identifier);
@@ -199,7 +199,7 @@ namespace JSC {
         }
 
     private:
-        ALWAYS_INLINE const HashEntry* entry(const Identifier& identifier) const
+        ALWAYS_INLINE const HashEntry* entry(PropertyName identifier) const
         {
             ASSERT(table);
 
@@ -221,7 +221,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void createTable(JSGlobalData*) const;
     };
 
-    JS_EXPORT_PRIVATE bool setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, const Identifier& propertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE bool setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, PropertyName, PropertySlot&);
 
     /**
      * This method does it all (looking in the hashtable, checking for function
@@ -230,7 +230,7 @@ namespace JSC {
      * unknown property).
      */
     template <class ThisImp, class ParentImp>
-    inline bool getStaticPropertySlot(ExecState* exec, const HashTable* table, ThisImp* thisObj, const Identifier& propertyName, PropertySlot& slot)
+    inline bool getStaticPropertySlot(ExecState* exec, const HashTable* table, ThisImp* thisObj, PropertyName propertyName, PropertySlot& slot)
     {
         const HashEntry* entry = table->entry(exec, propertyName);
 
@@ -245,7 +245,7 @@ namespace JSC {
     }
 
     template <class ThisImp, class ParentImp>
-    inline bool getStaticPropertyDescriptor(ExecState* exec, const HashTable* table, ThisImp* thisObj, const Identifier& propertyName, PropertyDescriptor& descriptor)
+    inline bool getStaticPropertyDescriptor(ExecState* exec, const HashTable* table, ThisImp* thisObj, PropertyName propertyName, PropertyDescriptor& descriptor)
     {
         const HashEntry* entry = table->entry(exec, propertyName);
         
@@ -271,7 +271,7 @@ namespace JSC {
      * a dummy getValueProperty.
      */
     template <class ParentImp>
-    inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
+    inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)
     {
         if (ParentImp::getOwnPropertySlot(thisObj, exec, propertyName, slot))
             return true;
@@ -289,7 +289,7 @@ namespace JSC {
      * a dummy getValueProperty.
      */
     template <class ParentImp>
-    inline bool getStaticFunctionDescriptor(ExecState* exec, const HashTable* table, JSObject* thisObj, const Identifier& propertyName, PropertyDescriptor& descriptor)
+    inline bool getStaticFunctionDescriptor(ExecState* exec, const HashTable* table, JSObject* thisObj, PropertyName propertyName, PropertyDescriptor& descriptor)
     {
         if (ParentImp::getOwnPropertyDescriptor(static_cast<ParentImp*>(thisObj), exec, propertyName, descriptor))
             return true;
@@ -310,7 +310,7 @@ namespace JSC {
      * Using this instead of getStaticPropertySlot removes the need for a FuncImp class.
      */
     template <class ThisImp, class ParentImp>
-    inline bool getStaticValueSlot(ExecState* exec, const HashTable* table, ThisImp* thisObj, const Identifier& propertyName, PropertySlot& slot)
+    inline bool getStaticValueSlot(ExecState* exec, const HashTable* table, ThisImp* thisObj, PropertyName propertyName, PropertySlot& slot)
     {
         const HashEntry* entry = table->entry(exec, propertyName);
 
@@ -328,7 +328,7 @@ namespace JSC {
      * Using this instead of getStaticPropertyDescriptor removes the need for a FuncImp class.
      */
     template <class ThisImp, class ParentImp>
-    inline bool getStaticValueDescriptor(ExecState* exec, const HashTable* table, ThisImp* thisObj, const Identifier& propertyName, PropertyDescriptor& descriptor)
+    inline bool getStaticValueDescriptor(ExecState* exec, const HashTable* table, ThisImp* thisObj, PropertyName propertyName, PropertyDescriptor& descriptor)
     {
         const HashEntry* entry = table->entry(exec, propertyName);
         
@@ -348,7 +348,7 @@ namespace JSC {
      * is found it sets the value and returns true, else it returns false.
      */
     template <class ThisImp>
-    inline bool lookupPut(ExecState* exec, const Identifier& propertyName, JSValue value, const HashTable* table, ThisImp* thisObj, bool shouldThrow = false)
+    inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSValue value, const HashTable* table, ThisImp* thisObj, bool shouldThrow = false)
     {
         const HashEntry* entry = table->entry(exec, propertyName);
         
@@ -373,7 +373,7 @@ namespace JSC {
      * then it calls put() on the ParentImp class.
      */
     template <class ThisImp, class ParentImp>
-    inline void lookupPut(ExecState* exec, const Identifier& propertyName, JSValue value, const HashTable* table, ThisImp* thisObj, PutPropertySlot& slot)
+    inline void lookupPut(ExecState* exec, PropertyName propertyName, JSValue value, const HashTable* table, ThisImp* thisObj, PutPropertySlot& slot)
     {
         if (!lookupPut<ThisImp>(exec, propertyName, value, table, thisObj, slot.isStrictMode()))
             ParentImp::put(thisObj, exec, propertyName, value, slot); // not found: forward to parent

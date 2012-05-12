@@ -63,12 +63,12 @@ void JSTestExceptionConstructor::finishCreation(ExecState* exec, JSDOMGlobalObje
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestExceptionPrototype::self(exec, globalObject), DontDelete | ReadOnly);
 }
 
-bool JSTestExceptionConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestExceptionConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return getStaticValueSlot<JSTestExceptionConstructor, JSDOMWrapper>(exec, &JSTestExceptionConstructorTable, jsCast<JSTestExceptionConstructor*>(cell), propertyName, slot);
 }
 
-bool JSTestExceptionConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestExceptionConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticValueDescriptor<JSTestExceptionConstructor, JSDOMWrapper>(exec, &JSTestExceptionConstructorTable, jsCast<JSTestExceptionConstructor*>(object), propertyName, descriptor);
 }
@@ -118,21 +118,21 @@ JSTestException::~JSTestException()
     releaseImplIfNotNull();
 }
 
-bool JSTestException::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestException::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestException* thisObject = jsCast<JSTestException*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestException, Base>(exec, &JSTestExceptionTable, thisObject, propertyName, slot);
 }
 
-bool JSTestException::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestException::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestException* thisObject = jsCast<JSTestException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueDescriptor<JSTestException, Base>(exec, &JSTestExceptionTable, thisObject, propertyName, descriptor);
 }
 
-JSValue jsTestExceptionName(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestExceptionName(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestException* castedThis = jsCast<JSTestException*>(asObject(slotBase));
     UNUSED_PARAM(exec);
@@ -142,7 +142,7 @@ JSValue jsTestExceptionName(ExecState* exec, JSValue slotBase, const Identifier&
 }
 
 
-JSValue jsTestExceptionConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestExceptionConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestException* domObject = jsCast<JSTestException*>(asObject(slotBase));
     return JSTestException::getConstructor(exec, domObject->globalObject());

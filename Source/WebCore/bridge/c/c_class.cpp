@@ -73,24 +73,26 @@ CClass* CClass::classForIsA(NPClass* isa)
     return aClass;
 }
 
-MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance) const
+MethodList CClass::methodsNamed(PropertyName identifier, Instance* instance) const
 {
+    UString name(identifier.impl());
+    
     MethodList methodList;
 
-    Method* method = _methods.get(identifier.ustring().impl());
+    Method* method = _methods.get(name.impl());
     if (method) {
         methodList.append(method);
         return methodList;
     }
 
-    NPIdentifier ident = _NPN_GetStringIdentifier(identifier.ascii().data());
+    NPIdentifier ident = _NPN_GetStringIdentifier(name.ascii().data());
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (_isa->hasMethod && _isa->hasMethod(obj, ident)){
         Method* aMethod = new CMethod(ident); // deleted in the CClass destructor
         {
             JSLock lock(SilenceAssertionsOnly);
-            _methods.set(identifier.ustring().impl(), aMethod);
+            _methods.set(name.impl(), aMethod);
         }
         methodList.append(aMethod);
     }
@@ -98,20 +100,22 @@ MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance
     return methodList;
 }
 
-Field* CClass::fieldNamed(const Identifier& identifier, Instance* instance) const
+Field* CClass::fieldNamed(PropertyName identifier, Instance* instance) const
 {
-    Field* aField = _fields.get(identifier.ustring().impl());
+    UString name(identifier.impl());
+    
+    Field* aField = _fields.get(name.impl());
     if (aField)
         return aField;
     
-    NPIdentifier ident = _NPN_GetStringIdentifier(identifier.ascii().data());
+    NPIdentifier ident = _NPN_GetStringIdentifier(name.ascii().data());
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (_isa->hasProperty && _isa->hasProperty(obj, ident)){
         aField = new CField(ident); // deleted in the CClass destructor
         {
             JSLock lock(SilenceAssertionsOnly);
-            _fields.set(identifier.ustring().impl(), aField);
+            _fields.set(name.impl(), aField);
         }
     }
     return aField;

@@ -66,7 +66,7 @@ const char* QtClass::name() const
 // and not get wrapped in RuntimeMethod). Also, use this for methods,
 // so we can cache the object and return the same object for the same
 // identifier.
-JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifier& identifier)
+JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName identifier)
 {
     QtInstance* qtinst = static_cast<QtInstance*>(inst);
 
@@ -86,7 +86,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
     if (normal.contains('(') && (index = m_metaObject->indexOfMethod(normal)) != -1) {
         QMetaMethod m = m_metaObject->method(index);
         if (m.access() != QMetaMethod::Private) {
-            QtRuntimeMetaMethod* val = QtRuntimeMetaMethod::create(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
+            QtRuntimeMetaMethod* val = QtRuntimeMetaMethod::create(exec, ustring, static_cast<QtInstance*>(inst), index, normal, false);
             qtinst->m_methods.insert(name, WriteBarrier<JSObject>(exec->globalData(), qtinst->createRuntimeObject(exec), val));
             return val;
         }
@@ -109,7 +109,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
 #else
         if (normal == m.name()) {
 #endif
-            QtRuntimeMetaMethod* val = QtRuntimeMetaMethod::create(exec, identifier, static_cast<QtInstance*>(inst), index, normal, false);
+            QtRuntimeMetaMethod* val = QtRuntimeMetaMethod::create(exec, ustring, static_cast<QtInstance*>(inst), index, normal, false);
             qtinst->m_methods.insert(name, WriteBarrier<JSObject>(exec->globalData(), qtinst->createRuntimeObject(exec), val));
             return val;
         }
@@ -119,7 +119,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, const Identifie
 }
 
 // This functionality is handled by the fallback case above...
-MethodList QtClass::methodsNamed(const Identifier&, Instance*) const
+MethodList QtClass::methodsNamed(PropertyName, Instance*) const
 {
     return MethodList();
 }
@@ -127,7 +127,7 @@ MethodList QtClass::methodsNamed(const Identifier&, Instance*) const
 // ### we may end up with a different search order than QtScript by not
 // folding this code into the fallbackMethod above, but Fields propagate out
 // of the binding code
-Field* QtClass::fieldNamed(const Identifier& identifier, Instance* instance) const
+Field* QtClass::fieldNamed(PropertyName identifier, Instance* instance) const
 {
     // Check static properties first
     QtInstance* qtinst = static_cast<QtInstance*>(instance);

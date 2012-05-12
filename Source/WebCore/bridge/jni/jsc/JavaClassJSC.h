@@ -41,8 +41,8 @@ public:
     JavaClass(jobject);
     ~JavaClass();
 
-    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
-    virtual Field* fieldNamed(const Identifier&, Instance*) const;
+    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Field* fieldNamed(PropertyName, Instance*) const;
 
     bool isNumberClass() const;
     bool isBooleanClass() const;

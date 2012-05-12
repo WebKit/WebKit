@@ -51,7 +51,7 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE InternalFunction(JSGlobalObject*, Structure*);
 
-        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, const Identifier& name);
+        JS_EXPORT_PRIVATE void finishCreation(JSGlobalData&, const UString& name);
 
         static CallType getCallData(JSCell*, CallData&);
     };

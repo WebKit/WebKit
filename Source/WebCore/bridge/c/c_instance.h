@@ -59,7 +59,7 @@ public:
     virtual JSValue valueOf(ExecState*) const;
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
-    virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName);
+    virtual JSValue getMethod(ExecState*, PropertyName);
     virtual JSValue invokeMethod(ExecState*, RuntimeMethod* method);
     virtual bool supportsInvokeDefaultMethod() const;
     virtual JSValue invokeDefaultMethod(ExecState*);

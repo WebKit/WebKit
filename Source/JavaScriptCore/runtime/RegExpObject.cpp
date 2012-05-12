@@ -37,10 +37,10 @@
 
 namespace JSC {
 
-static JSValue regExpObjectGlobal(ExecState*, JSValue, const Identifier&);
-static JSValue regExpObjectIgnoreCase(ExecState*, JSValue, const Identifier&);
-static JSValue regExpObjectMultiline(ExecState*, JSValue, const Identifier&);
-static JSValue regExpObjectSource(ExecState*, JSValue, const Identifier&);
+static JSValue regExpObjectGlobal(ExecState*, JSValue, PropertyName);
+static JSValue regExpObjectIgnoreCase(ExecState*, JSValue, PropertyName);
+static JSValue regExpObjectMultiline(ExecState*, JSValue, PropertyName);
+static JSValue regExpObjectSource(ExecState*, JSValue, PropertyName);
 
 } // namespace JSC
 
@@ -88,7 +88,7 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->m_lastIndex);
 }
 
-bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().lastIndex) {
         RegExpObject* regExp = asRegExpObject(cell);
@@ -98,7 +98,7 @@ bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
     return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), propertyName, slot);
 }
 
-bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     if (propertyName == exec->propertyNames().lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
@@ -108,7 +108,7 @@ bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, c
     return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, descriptor);
 }
 
-bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     if (propertyName == exec->propertyNames().lastIndex)
         return false;
@@ -136,7 +136,7 @@ static bool reject(ExecState* exec, bool throwException, const char* message)
     return false;
 }
 
-bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
 {
     if (propertyName == exec->propertyNames().lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
@@ -163,22 +163,22 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, const Id
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, shouldThrow);
 }
 
-JSValue regExpObjectGlobal(ExecState*, JSValue slotBase, const Identifier&)
+JSValue regExpObjectGlobal(ExecState*, JSValue slotBase, PropertyName)
 {
     return jsBoolean(asRegExpObject(slotBase)->regExp()->global());
 }
 
-JSValue regExpObjectIgnoreCase(ExecState*, JSValue slotBase, const Identifier&)
+JSValue regExpObjectIgnoreCase(ExecState*, JSValue slotBase, PropertyName)
 {
     return jsBoolean(asRegExpObject(slotBase)->regExp()->ignoreCase());
 }
  
-JSValue regExpObjectMultiline(ExecState*, JSValue slotBase, const Identifier&)
+JSValue regExpObjectMultiline(ExecState*, JSValue slotBase, PropertyName)
 {            
     return jsBoolean(asRegExpObject(slotBase)->regExp()->multiline());
 }
 
-JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
 {
     UString pattern = asRegExpObject(slotBase)->regExp()->pattern();
     unsigned length = pattern.length();
@@ -268,7 +268,7 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
     return jsString(exec, result.toUString());
 }
 
-void RegExpObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().lastIndex) {
         asRegExpObject(cell)->setLastIndex(exec, value, slot.isStrictMode());

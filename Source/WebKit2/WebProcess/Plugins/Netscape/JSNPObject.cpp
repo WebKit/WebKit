@@ -43,7 +43,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static NPIdentifier npIdentifierFromIdentifier(const Identifier& identifier)
+static NPIdentifier npIdentifierFromIdentifier(PropertyName identifier)
 {
     return static_cast<NPIdentifier>(IdentifierRep::get(identifier.ustring().utf8().data()));
 }
@@ -252,7 +252,7 @@ ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& construc
     return ConstructTypeHost;
 }
 
-bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
@@ -278,7 +278,7 @@ bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
     return false;
 }
 
-bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSNPObject* thisObject = jsCast<JSNPObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
@@ -308,7 +308,7 @@ bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, con
     return false;
 }
 
-void JSNPObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
@@ -347,7 +347,7 @@ void JSNPObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
     releaseNPVariantValue(&variant);
 }
 
-bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSNPObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     return jsCast<JSNPObject*>(cell)->deleteProperty(exec, npIdentifierFromIdentifier(propertyName));
 }
@@ -436,7 +436,7 @@ void JSNPObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
     npnMemFree(identifiers);
 }
 
-JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
     ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);
@@ -472,7 +472,7 @@ JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Iden
     return propertyValue;
 }
 
-JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, const Identifier& methodName)
+JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, PropertyName methodName)
 {
     JSNPObject* thisObj = static_cast<JSNPObject*>(asObject(slotBase));
     ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);
@@ -481,7 +481,7 @@ JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, const Identi
         return throwInvalidAccessError(exec);
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(methodName);
-    return JSNPMethod::create(exec, thisObj->globalObject(), methodName, npIdentifier);
+    return JSNPMethod::create(exec, thisObj->globalObject(), methodName.ustring(), npIdentifier);
 }
 
 JSObject* JSNPObject::throwInvalidAccessError(ExecState* exec)

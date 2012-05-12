@@ -38,10 +38,10 @@ namespace WebCore {
     JSC::Bindings::Instance* pluginInstance(Node*);
     JSC::JSObject* pluginScriptObject(JSC::ExecState* exec, JSHTMLElement* jsHTMLElement);
 
-    JSC::JSValue runtimeObjectPropertyGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
-    bool runtimeObjectCustomGetOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&, JSHTMLElement*);
-    bool runtimeObjectCustomGetOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&, JSHTMLElement*);
-    bool runtimeObjectCustomPut(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&);
+    JSC::JSValue runtimeObjectPropertyGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+    bool runtimeObjectCustomGetOwnPropertySlot(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, JSHTMLElement*);
+    bool runtimeObjectCustomGetOwnPropertyDescriptor(JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&, JSHTMLElement*);
+    bool runtimeObjectCustomPut(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&);
     JSC::CallType runtimeObjectGetCallData(JSHTMLElement*, JSC::CallData&);
 
 } // namespace WebCore

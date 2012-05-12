@@ -535,7 +535,7 @@ void JSArray::setLengthWritable(ExecState* exec, bool writable)
 }
 
 // Defined in ES5.1 15.4.5.1
-bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     JSArray* array = jsCast<JSArray*>(object);
 
@@ -618,10 +618,9 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, const Identif
     }
 
     // 4. Else if P is an array index (15.4), then
-    bool isArrayIndex;
     // a. Let index be ToUint32(P).
-    unsigned index = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex) {
         // b. Reject if index >= oldLen and oldLenDesc.[[Writable]] is false.
         if (index >= array->length() && !array->isLengthWritable())
             return reject(exec, throwException, "Attempting to define numeric property on array with non-writable length property.");
@@ -665,7 +664,7 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
 }
 
-bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSArray* thisObject = jsCast<JSArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
@@ -673,15 +672,14 @@ bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier
         return true;
     }
 
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex)
+    unsigned i = propertyName.asIndex();
+    if (i != PropertyName::NotAnIndex)
         return JSArray::getOwnPropertySlotByIndex(thisObject, exec, i, slot);
 
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
@@ -691,9 +689,8 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const 
 
     ArrayStorage* storage = thisObject->m_storage;
     
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex) {
+    unsigned i = propertyName.asIndex();
+    if (i != PropertyName::NotAnIndex) {
         if (i >= storage->m_length)
             return false;
         if (i < thisObject->m_vectorLength) {
@@ -714,12 +711,11 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const 
 }
 
 // ECMA 15.4.5.1
-void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSArray* thisObject = jsCast<JSArray*>(cell);
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex) {
+    unsigned i = propertyName.asIndex();
+    if (i != PropertyName::NotAnIndex) {
         putByIndex(thisObject, exec, i, value, slot.isStrictMode());
         return;
     }
@@ -919,12 +915,11 @@ bool JSArray::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSVa
     return true;
 }
 
-bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSArray* thisObject = jsCast<JSArray*>(cell);
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex)
+    unsigned i = propertyName.asIndex();
+    if (i != PropertyName::NotAnIndex)
         return thisObject->methodTable()->deletePropertyByIndex(thisObject, exec, i);
 
     if (propertyName == exec->propertyNames().length)

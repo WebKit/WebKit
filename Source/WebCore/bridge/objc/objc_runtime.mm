@@ -192,7 +192,7 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const Identifier& propertyName)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const UString& propertyName)
     : JSNonFinalObject(globalObject->globalData(), structure)
     , _instance(i)
     , _item(propertyName)
@@ -210,21 +210,21 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot& slot)
+bool ObjcFallbackObjectImp::getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot& slot)
 {
     // keep the prototype from getting called instead of just returning false
     slot.setUndefined();
     return true;
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor& descriptor)
+bool ObjcFallbackObjectImp::getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor& descriptor)
 {
     // keep the prototype from getting called instead of just returning false
     descriptor.setUndefined();
     return true;
 }
 
-void ObjcFallbackObjectImp::put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&)
+void ObjcFallbackObjectImp::put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&)
 {
 }
 
@@ -249,7 +249,7 @@ static EncodedJSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec)
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         ObjcClass* objcClass = static_cast<ObjcClass*>(objcInstance->getClass());
         OwnPtr<ObjcMethod> fallbackMethod(adoptPtr(new ObjcMethod(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:))));
-        const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->callee())->propertyName();
+        const UString& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(exec->callee())->propertyName();
         RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.characters(), nameIdentifier.length()));
         fallbackMethod->setJavaScriptName(name.get());
         result = objcInstance->invokeObjcMethod(exec, fallbackMethod.get());
@@ -270,7 +270,7 @@ CallType ObjcFallbackObjectImp::getCallData(JSCell* cell, CallData& callData)
     return CallTypeHost;
 }
 
-bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, const Identifier&)
+bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, PropertyName)
 {
     return false;
 }
@@ -278,7 +278,7 @@ bool ObjcFallbackObjectImp::deleteProperty(JSCell*, ExecState*, const Identifier
 JSValue ObjcFallbackObjectImp::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType)
 {
     const ObjcFallbackObjectImp* thisObject = jsCast<const ObjcFallbackObjectImp*>(object);
-    return thisObject->_instance->getValueOfUndefinedField(exec, thisObject->_item);
+    return thisObject->_instance->getValueOfUndefinedField(exec, Identifier(exec, thisObject->_item));
 }
 
 bool ObjcFallbackObjectImp::toBoolean(ExecState *) const

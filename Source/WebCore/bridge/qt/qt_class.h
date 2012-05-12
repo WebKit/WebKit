@@ -41,10 +41,10 @@ public:
     virtual ~QtClass();
 
     virtual const char* name() const;
-    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
-    virtual Field* fieldNamed(const Identifier&, Instance*) const;
+    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Field* fieldNamed(PropertyName, Instance*) const;
 
-    virtual JSValue fallbackObject(ExecState*, Instance*, const Identifier&);
+    virtual JSValue fallbackObject(ExecState*, Instance*, PropertyName);
 
 private:
     QtClass(const QtClass&); // prohibit copying

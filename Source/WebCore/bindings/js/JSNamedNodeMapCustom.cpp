@@ -35,15 +35,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, const Identifier& propertyName)
+bool JSNamedNodeMap::canGetItemsForName(ExecState*, NamedNodeMap* impl, PropertyName propertyName)
 {
-    return impl->getNamedItem(identifierToString(propertyName));
+    return impl->getNamedItem(propertyNameToString(propertyName));
 }
 
-JSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSNamedNodeMap* thisObj = jsCast<JSNamedNodeMap*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl()->getNamedItem(identifierToString(propertyName)));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->getNamedItem(propertyNameToString(propertyName)));
 }
 
 void JSNamedNodeMap::visitChildren(JSCell* cell, SlotVisitor& visitor)

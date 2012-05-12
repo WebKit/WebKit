@@ -55,13 +55,13 @@ void RuntimeMethod::destroy(JSCell* cell)
     jsCast<RuntimeMethod*>(cell)->RuntimeMethod::~RuntimeMethod();
 }
 
-void RuntimeMethod::finishCreation(JSGlobalData& globalData, const Identifier& ident)
+void RuntimeMethod::finishCreation(JSGlobalData& globalData, const UString& ident)
 {
     Base::finishCreation(globalData, ident);
     ASSERT(inherits(&s_info));
 }
 
-JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)
+JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
 {
     RuntimeMethod* thisObj = static_cast<RuntimeMethod*>(asObject(slotBase));
 
@@ -74,7 +74,7 @@ JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, const Identifi
     return jsNumber(thisObj->_methodList->at(0)->numParameters());
 }
 
-bool RuntimeMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool RuntimeMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
     RuntimeMethod* thisObject = jsCast<RuntimeMethod*>(cell);
     if (propertyName == exec->propertyNames().length) {
@@ -85,7 +85,7 @@ bool RuntimeMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Iden
     return InternalFunction::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool RuntimeMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor &descriptor)
+bool RuntimeMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor &descriptor)
 {
     RuntimeMethod* thisObject = jsCast<RuntimeMethod*>(object);
     if (propertyName == exec->propertyNames().length) {

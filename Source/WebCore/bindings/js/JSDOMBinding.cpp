@@ -107,11 +107,11 @@ JSValue jsStringOrFalse(ExecState* exec, const KURL& url)
     return jsString(exec, url.string());
 }
 
-AtomicStringImpl* findAtomicString(const Identifier& identifier)
+AtomicStringImpl* findAtomicString(PropertyName propertyName)
 {
-    if (identifier.isNull())
+    StringImpl* impl = propertyName.impl();
+    if (!impl)
         return 0;
-    StringImpl* impl = identifier.impl();
     ASSERT(impl->existingHash());
     return AtomicString::find(impl->characters(), impl->length(), impl->existingHash());
 }
@@ -243,9 +243,9 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
     frame->domWindow()->printErrorMessage(message);
 }
 
-JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName, objectProtoFuncToString);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.impl(), objectProtoFuncToString);
 }
 
 Structure* getCachedDOMStructure(JSDOMGlobalObject* globalObject, const ClassInfo* classInfo)

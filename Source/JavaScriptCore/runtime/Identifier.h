@@ -63,10 +63,6 @@ namespace JSC {
         static Identifier from(JSGlobalData*, int y);
         static Identifier from(JSGlobalData*, double y);
 
-        JS_EXPORT_PRIVATE static uint32_t toUInt32(const UString&, bool& ok);
-        uint32_t toUInt32(bool& ok) const { return toUInt32(m_string, ok); }
-        unsigned toArrayIndex(bool& ok) const;
-
         bool isNull() const { return m_string.isNull(); }
         bool isEmpty() const { return m_string.isEmpty(); }
         

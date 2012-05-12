@@ -113,7 +113,7 @@ class CRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+    static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const UString& name, Bindings::MethodList& list)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
@@ -136,7 +136,7 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const Identifier& name)
+    void finishCreation(JSGlobalData& globalData, const UString& name)
     {
         Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));
@@ -146,10 +146,10 @@ private:
 
 const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_info, 0, 0, CREATE_METHOD_TABLE(CRuntimeMethod) };
 
-JSValue CInstance::getMethod(ExecState* exec, const Identifier& propertyName)
+JSValue CInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return CRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return CRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.impl(), methodList);
 }
 
 JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)

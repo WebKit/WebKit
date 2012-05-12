@@ -47,14 +47,14 @@ public:
     virtual JSValue valueOf(ExecState*) const;
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
 
-    virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName);
+    virtual JSValue getMethod(ExecState*, PropertyName);
     JSValue invokeObjcMethod(ExecState*, ObjcMethod* method);
     virtual JSValue invokeMethod(ExecState*, RuntimeMethod* method);
     virtual bool supportsInvokeDefaultMethod() const;
     virtual JSValue invokeDefaultMethod(ExecState*);
 
-    JSValue getValueOfUndefinedField(ExecState*, const Identifier&) const;
-    virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValue);
+    JSValue getValueOfUndefinedField(ExecState*, PropertyName) const;
+    virtual bool setValueOfUndefinedField(ExecState*, PropertyName, JSValue);
 
     ObjectStructPtr getObject() const { return _instance.get(); }
     

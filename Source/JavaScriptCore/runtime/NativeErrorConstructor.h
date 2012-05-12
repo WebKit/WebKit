@@ -53,7 +53,7 @@ namespace JSC {
     protected:
         void finishCreation(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& name)
         {
-            Base::finishCreation(exec->globalData(), Identifier(exec, name));
+            Base::finishCreation(exec->globalData(), name);
             ASSERT(inherits(&s_info));
 
             NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, name, this);

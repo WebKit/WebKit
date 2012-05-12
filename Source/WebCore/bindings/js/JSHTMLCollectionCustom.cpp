@@ -39,10 +39,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, const Identifier& propertyName)
+static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, PropertyName propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
-    const AtomicString& name = identifierToAtomicString(propertyName);
+    const AtomicString& name = propertyNameToAtomicString(propertyName);
     collection->impl()->namedItems(name, namedItems);
 
     if (namedItems.isEmpty())
@@ -59,12 +59,12 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, cons
     return toJS(exec, collection->globalObject(), StaticNodeList::adopt(namedItems).get());
 }
 
-bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection, const Identifier& propertyName)
+bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection, PropertyName propertyName)
 {
-    return collection->hasNamedItem(identifierToAtomicString(propertyName));
+    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSHTMLCollection::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSHTMLCollection::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSHTMLCollection* thisObj = jsCast<JSHTMLCollection*>(asObject(slotBase));
     return getNamedItems(exec, thisObj, propertyName);

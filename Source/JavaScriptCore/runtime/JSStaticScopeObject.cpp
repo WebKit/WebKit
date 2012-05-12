@@ -54,7 +54,7 @@ JSObject* JSStaticScopeObject::toThisObject(JSCell*, ExecState* exec)
     return exec->globalThisValue();
 }
 
-void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(cell);
     if (slot.isStrictMode()) {
@@ -78,7 +78,7 @@ void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& p
     ASSERT_NOT_REACHED();
 }
 
-void JSStaticScopeObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSStaticScopeObject::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(object);
     if (thisObject->symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
@@ -87,7 +87,7 @@ void JSStaticScopeObject::putDirectVirtual(JSObject* object, ExecState* exec, co
     ASSERT_NOT_REACHED();
 }
 
-bool JSStaticScopeObject::getOwnPropertySlot(JSCell* cell, ExecState*, const Identifier& propertyName, PropertySlot& slot)
+bool JSStaticScopeObject::getOwnPropertySlot(JSCell* cell, ExecState*, PropertyName propertyName, PropertySlot& slot)
 {
     return jsCast<JSStaticScopeObject*>(cell)->symbolTableGet(propertyName, slot);
 }

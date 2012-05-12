@@ -30,22 +30,22 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue nonCachingStaticReplaceFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+static JSValue nonCachingStaticReplaceFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName, jsLocationPrototypeFunctionReplace);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.impl(), jsLocationPrototypeFunctionReplace);
 }
 
-static JSValue nonCachingStaticReloadFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+static JSValue nonCachingStaticReloadFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName, jsLocationPrototypeFunctionReload);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.impl(), jsLocationPrototypeFunctionReload);
 }
 
-static JSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+static JSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName, jsLocationPrototypeFunctionAssign);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.impl(), jsLocationPrototypeFunctionAssign);
 }
 
-bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     Frame* frame = impl()->frame();
     if (!frame) {
@@ -86,7 +86,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& p
     return true;
 }
 
-bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     Frame* frame = impl()->frame();
     if (!frame) {
@@ -125,7 +125,7 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identif
     return true;
 }
 
-bool JSLocation::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -152,7 +152,7 @@ bool JSLocation::putDelegate(ExecState* exec, const Identifier& propertyName, JS
     return false;
 }
 
-bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
@@ -170,7 +170,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     if (descriptor.isAccessorDescriptor() && (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf))
         return false;
@@ -276,12 +276,12 @@ JSValue JSLocation::toStringFunction(ExecState* exec)
     return jsString(exec, impl()->toString());
 }
 
-bool JSLocationPrototype::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue, PutPropertySlot&)
+bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&)
 {
     return (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf);
 }
 
-bool JSLocationPrototype::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool JSLocationPrototype::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     if (descriptor.isAccessorDescriptor() && (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf))
         return false;

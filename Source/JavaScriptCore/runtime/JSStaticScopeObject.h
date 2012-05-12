@@ -44,10 +44,10 @@ namespace JSC{
         static void visitChildren(JSCell*, SlotVisitor&);
         bool isDynamicScope(bool& requiresDynamicChecks) const;
         static JSObject* toThisObject(JSCell*, ExecState*);
-        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-        static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-        static void putDirectVirtual(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
+        static void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(globalData, globalObject, proto, TypeInfo(StaticScopeObjectType, StructureFlags), &s_info); }
 

@@ -92,14 +92,14 @@ void JSDOMWindow::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 template<NativeFunction nativeFunction, int length>
-JSValue nonCachingStaticFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+JSValue nonCachingStaticFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), length, propertyName, nativeFunction);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), length, propertyName.impl(), nativeFunction);
 }
 
-static JSValue childFrameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+static JSValue childFrameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
-    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(identifierToAtomicString(propertyName))->domWindow());
+    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))->domWindow());
 }
 
 static JSValue indexGetter(ExecState* exec, JSValue slotBase, unsigned index)
@@ -107,7 +107,7 @@ static JSValue indexGetter(ExecState* exec, JSValue slotBase, unsigned index)
     return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(index)->domWindow());
 }
 
-static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(asObject(slotBase));
     Document* document = thisObj->impl()->frame()->document();
@@ -116,13 +116,13 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, const Identifi
     ASSERT(document);
     ASSERT(document->isHTMLDocument());
 
-    HTMLCollection* collection = document->windowNamedItems(identifierToAtomicString(propertyName));
+    HTMLCollection* collection = document->windowNamedItems(propertyNameToAtomicString(propertyName));
     if (collection->length() == 1)
         return toJS(exec, thisObj, collection->firstItem());
     return toJS(exec, thisObj, collection);
 }
 
-bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     // When accessing a Window cross-domain, functions are always the native built-in ones, and they
@@ -220,7 +220,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
     // naming frames things that conflict with window properties that
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
-    if (thisObject->impl()->frame()->tree()->scopedChild(identifierToAtomicString(propertyName))) {
+    if (thisObject->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))) {
         slot.setCustom(thisObject, childFrameGetter);
         return true;
     }
@@ -242,9 +242,9 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
     // We need to test the correct priority order.
 
     // allow window[1] or parent[1] etc. (#56983)
-    bool ok;
-    unsigned i = propertyName.toArrayIndex(ok);
-    if (ok && i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
+        ASSERT(i != PropertyName::NotAnIndex);
         slot.setCustomIndex(thisObject, i, indexGetter);
         return true;
     }
@@ -268,7 +268,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Never allow cross-domain getOwnPropertyDescriptor
@@ -310,16 +310,16 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, co
     // naming frames things that conflict with window properties that
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
-    if (thisObject->impl()->frame()->tree()->scopedChild(identifierToAtomicString(propertyName))) {
+    if (thisObject->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))) {
         PropertySlot slot;
         slot.setCustom(thisObject, childFrameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
     
-    bool ok;
-    unsigned i = propertyName.toArrayIndex(ok);
-    if (ok && i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
+        ASSERT(i != PropertyName::NotAnIndex);
         PropertySlot slot;
         slot.setCustomIndex(thisObject, i, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
@@ -341,7 +341,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, co
     return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
-void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     if (!thisObject->impl()->frame())
@@ -361,7 +361,7 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, const Identifier& propertyN
         Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     // Only allow deleting properties by frames in the same origin.
@@ -388,7 +388,7 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
+bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
@@ -396,7 +396,7 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec,
         return false;
 
     // Don't allow shadowing location using accessor properties.
-    if (descriptor.isAccessorDescriptor() && propertyName == "location")
+    if (descriptor.isAccessorDescriptor() && propertyName == Identifier(exec, "location"))
         return false;
 
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);

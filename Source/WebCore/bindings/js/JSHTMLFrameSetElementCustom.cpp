@@ -41,16 +41,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* frameSet, const Identifier& propertyName)
+bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* frameSet, PropertyName propertyName)
 {
-    Node* frame = frameSet->children()->namedItem(identifierToAtomicString(propertyName));
+    Node* frame = frameSet->children()->namedItem(propertyNameToAtomicString(propertyName));
     return frame && frame->hasTagName(frameTag);
 }
 
-JSValue JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     HTMLElement* element = jsCast<JSHTMLElement*>(asObject(slotBase))->impl();
-    Node* frameElement = element->children()->namedItem(identifierToAtomicString(propertyName));
+    Node* frameElement = element->children()->namedItem(propertyNameToAtomicString(propertyName));
     if (Document* document = static_cast<HTMLFrameElement*>(frameElement)->contentDocument()) {
         if (JSDOMWindowShell* window = toJSDOMWindowShell(document->frame(), currentWorld(exec)))
             return window;

@@ -52,9 +52,9 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
-        static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
+        static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
 
-        JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
+        JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
         JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         
         bool isDynamicScope(bool& requiresDynamicChecks) const;
@@ -89,18 +89,18 @@ namespace JSC {
         PassOwnArrayPtr<WriteBarrier<Unknown> > copyRegisterArray(JSGlobalData&, WriteBarrier<Unknown>* src, size_t count, size_t callframeStarts);
         void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray);
 
-        bool symbolTableGet(const Identifier&, PropertySlot&);
-        JS_EXPORT_PRIVATE bool symbolTableGet(const Identifier&, PropertyDescriptor&);
-        bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
-        bool symbolTablePut(ExecState*, const Identifier&, JSValue, bool shouldThrow);
-        bool symbolTablePutWithAttributes(JSGlobalData&, const Identifier&, JSValue, unsigned attributes);
+        bool symbolTableGet(PropertyName, PropertySlot&);
+        JS_EXPORT_PRIVATE bool symbolTableGet(PropertyName, PropertyDescriptor&);
+        bool symbolTableGet(PropertyName, PropertySlot&, bool& slotIsWriteable);
+        bool symbolTablePut(ExecState*, PropertyName, JSValue, bool shouldThrow);
+        bool symbolTablePutWithAttributes(JSGlobalData&, PropertyName, JSValue, unsigned attributes);
 
         SymbolTable* m_symbolTable; // Maps name -> offset from "r" in register file.
         WriteBarrier<Unknown>* m_registers; // "r" in the register file.
         OwnArrayPtr<WriteBarrier<Unknown> > m_registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
     };
 
-    inline bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
+    inline bool JSVariableObject::symbolTableGet(PropertyName propertyName, PropertySlot& slot)
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
         if (!entry.isNull()) {
@@ -110,7 +110,7 @@ namespace JSC {
         return false;
     }
 
-    inline bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertySlot& slot, bool& slotIsWriteable)
+    inline bool JSVariableObject::symbolTableGet(PropertyName propertyName, PropertySlot& slot, bool& slotIsWriteable)
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
         if (!entry.isNull()) {
@@ -121,7 +121,7 @@ namespace JSC {
         return false;
     }
 
-    inline bool JSVariableObject::symbolTablePut(ExecState* exec, const Identifier& propertyName, JSValue value, bool shouldThrow)
+    inline bool JSVariableObject::symbolTablePut(ExecState* exec, PropertyName propertyName, JSValue value, bool shouldThrow)
     {
         JSGlobalData& globalData = exec->globalData();
         ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
@@ -138,7 +138,7 @@ namespace JSC {
         return true;
     }
 
-    inline bool JSVariableObject::symbolTablePutWithAttributes(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
+    inline bool JSVariableObject::symbolTablePutWithAttributes(JSGlobalData& globalData, PropertyName propertyName, JSValue value, unsigned attributes)
     {
         ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 

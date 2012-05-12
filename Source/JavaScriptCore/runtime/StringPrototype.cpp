@@ -147,12 +147,12 @@ void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject*, JSString*
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
-bool StringPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool StringPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
     return getStaticFunctionSlot<StringObject>(exec, ExecState::stringTable(exec), jsCast<StringPrototype*>(cell), propertyName, slot);
 }
 
-bool StringPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool StringPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticFunctionDescriptor<StringObject>(exec, ExecState::stringTable(exec), jsCast<StringPrototype*>(object), propertyName, descriptor);
 }

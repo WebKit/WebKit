@@ -30,11 +30,11 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NumberConstructor);
 
-static JSValue numberConstructorNaNValue(ExecState*, JSValue, const Identifier&);
-static JSValue numberConstructorNegInfinity(ExecState*, JSValue, const Identifier&);
-static JSValue numberConstructorPosInfinity(ExecState*, JSValue, const Identifier&);
-static JSValue numberConstructorMaxValue(ExecState*, JSValue, const Identifier&);
-static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&);
+static JSValue numberConstructorNaNValue(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorNegInfinity(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorPosInfinity(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorMaxValue(ExecState*, JSValue, PropertyName);
+static JSValue numberConstructorMinValue(ExecState*, JSValue, PropertyName);
 
 } // namespace JSC
 
@@ -63,7 +63,7 @@ NumberConstructor::NumberConstructor(JSGlobalObject* globalObject, Structure* st
 
 void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberPrototype)
 {
-    Base::finishCreation(exec->globalData(), Identifier(exec, numberPrototype->s_info.className));
+    Base::finishCreation(exec->globalData(), numberPrototype->s_info.className);
     ASSERT(inherits(&s_info));
 
     // Number.Prototype
@@ -73,42 +73,42 @@ void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberP
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool NumberConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool NumberConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(cell), propertyName, slot);
 }
 
-bool NumberConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool NumberConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticValueDescriptor<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(object), propertyName, descriptor);
 }
 
-void NumberConstructor::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void NumberConstructor::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     lookupPut<NumberConstructor, InternalFunction>(exec, propertyName, value, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(cell), slot);
 }
 
-static JSValue numberConstructorNaNValue(ExecState*, JSValue, const Identifier&)
+static JSValue numberConstructorNaNValue(ExecState*, JSValue, PropertyName)
 {
     return jsNaN();
 }
 
-static JSValue numberConstructorNegInfinity(ExecState*, JSValue, const Identifier&)
+static JSValue numberConstructorNegInfinity(ExecState*, JSValue, PropertyName)
 {
     return jsNumber(-std::numeric_limits<double>::infinity());
 }
 
-static JSValue numberConstructorPosInfinity(ExecState*, JSValue, const Identifier&)
+static JSValue numberConstructorPosInfinity(ExecState*, JSValue, PropertyName)
 {
     return jsNumber(std::numeric_limits<double>::infinity());
 }
 
-static JSValue numberConstructorMaxValue(ExecState*, JSValue, const Identifier&)
+static JSValue numberConstructorMaxValue(ExecState*, JSValue, PropertyName)
 {
     return jsNumber(1.7976931348623157E+308);
 }
 
-static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&)
+static JSValue numberConstructorMinValue(ExecState*, JSValue, PropertyName)
 {
     return jsNumber(5E-324);
 }

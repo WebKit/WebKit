@@ -39,7 +39,7 @@ ErrorConstructor::ErrorConstructor(JSGlobalObject* globalObject, Structure* stru
 
 void ErrorConstructor::finishCreation(ExecState* exec, ErrorPrototype* errorPrototype)
 {
-    Base::finishCreation(exec->globalData(), Identifier(exec, errorPrototype->classInfo()->className));
+    Base::finishCreation(exec->globalData(), errorPrototype->classInfo()->className);
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum);

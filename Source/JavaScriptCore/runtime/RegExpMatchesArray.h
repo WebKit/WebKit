@@ -81,7 +81,7 @@ namespace JSC {
                 reifyMatchProperty(exec);
         }
 
-        static bool getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+        static bool getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
         {
             RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             thisObject->reifyAllPropertiesIfNecessary(exec);
@@ -98,14 +98,14 @@ namespace JSC {
             return JSArray::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
         }
 
-        static bool getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+        static bool getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
         {
             RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
             thisObject->reifyAllPropertiesIfNecessary(exec);
             return JSArray::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
         }
 
-        static void put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue v, PutPropertySlot& slot)
+        static void put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue v, PutPropertySlot& slot)
         {
             RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             thisObject->reifyAllPropertiesIfNecessary(exec);
@@ -119,7 +119,7 @@ namespace JSC {
             JSArray::putByIndex(thisObject, exec, propertyName, v, shouldThrow);
         }
 
-        static bool deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+        static bool deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
         {
             RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             thisObject->reifyAllPropertiesIfNecessary(exec);
@@ -140,7 +140,7 @@ namespace JSC {
             JSArray::getOwnPropertyNames(thisObject, exec, arr, mode);
         }
 
-        static bool defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+        static bool defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
         {
             RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
             thisObject->reifyAllPropertiesIfNecessary(exec);

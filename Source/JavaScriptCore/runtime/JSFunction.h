@@ -55,7 +55,7 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const Identifier& name, NativeFunction nativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+        JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const UString& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
         static JSFunction* create(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChain)
         {
@@ -139,19 +139,19 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSFunction(ExecState*, JSGlobalObject*, Structure*);
         JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
         
-        void finishCreation(ExecState*, NativeExecutable*, int length, const Identifier& name);
+        void finishCreation(ExecState*, NativeExecutable*, int length, const UString& name);
         void finishCreation(ExecState*, FunctionExecutable*, ScopeChainNode*);
 
         Structure* cacheInheritorID(ExecState*);
 
-        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
-        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
+        static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
 
-        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-        static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
+        static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -160,9 +160,9 @@ namespace JSC {
         
         JS_EXPORT_PRIVATE bool isHostFunctionNonInline() const;
 
-        static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
-        static JSValue callerGetter(ExecState*, JSValue, const Identifier&);
-        static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
+        static JSValue argumentsGetter(ExecState*, JSValue, PropertyName);
+        static JSValue callerGetter(ExecState*, JSValue, PropertyName);
+        static JSValue lengthGetter(ExecState*, JSValue, PropertyName);
 
         WriteBarrier<ExecutableBase> m_executable;
         WriteBarrier<ScopeChainNode> m_scopeChain;

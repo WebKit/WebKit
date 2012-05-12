@@ -36,12 +36,12 @@
 namespace JSC {
 
     class ExecState;
-    class Identifier;
     class JSCell;
     class JSGlobalData;
     class JSGlobalObject;
     class JSObject;
     class JSString;
+    class PropertyName;
     class PropertySlot;
     class PutPropertySlot;
     class UString;
@@ -219,12 +219,12 @@ namespace JSC {
         float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
 
         // Object operations, with the toObject operation included.
-        JSValue get(ExecState*, const Identifier& propertyName) const;
-        JSValue get(ExecState*, const Identifier& propertyName, PropertySlot&) const;
+        JSValue get(ExecState*, PropertyName) const;
+        JSValue get(ExecState*, PropertyName, PropertySlot&) const;
         JSValue get(ExecState*, unsigned propertyName) const;
         JSValue get(ExecState*, unsigned propertyName, PropertySlot&) const;
-        void put(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        void putToPrimitive(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        void put(ExecState*, PropertyName, JSValue, PutPropertySlot&);
+        void putToPrimitive(ExecState*, PropertyName, JSValue, PutPropertySlot&);
         void putByIndex(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
 
         JSObject* toThisObject(ExecState*) const;

@@ -91,37 +91,37 @@ UString JSDOMWindowShell::className(const JSObject* object)
     return thisObject->window()->methodTable()->className(thisObject->window());
 }
 
-bool JSDOMWindowShell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSDOMWindowShell::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
     return thisObject->window()->methodTable()->getOwnPropertySlot(thisObject->window(), exec, propertyName, slot);
 }
 
-bool JSDOMWindowShell::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSDOMWindowShell::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(object);
     return thisObject->window()->methodTable()->getOwnPropertyDescriptor(thisObject->window(), exec, propertyName, descriptor);
 }
 
-void JSDOMWindowShell::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSDOMWindowShell::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
     thisObject->window()->methodTable()->put(thisObject->window(), exec, propertyName, value, slot);
 }
 
-void JSDOMWindowShell::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSDOMWindowShell::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(object);
     thisObject->window()->putDirectVirtual(thisObject->window(), exec, propertyName, value, attributes);
 }
 
-bool JSDOMWindowShell::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
+bool JSDOMWindowShell::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(object);
     return thisObject->window()->methodTable()->defineOwnProperty(thisObject->window(), exec, propertyName, descriptor, shouldThrow);
 }
 
-bool JSDOMWindowShell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSDOMWindowShell::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSDOMWindowShell* thisObject = jsCast<JSDOMWindowShell*>(cell);
     return thisObject->window()->methodTable()->deleteProperty(thisObject->window(), exec, propertyName);

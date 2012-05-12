@@ -28,15 +28,15 @@ namespace WebCore {
 
 using namespace JSC;
 
-bool JSDOMMimeTypeArray::canGetItemsForName(ExecState*, DOMMimeTypeArray* mimeTypeArray, const Identifier& propertyName)
+bool JSDOMMimeTypeArray::canGetItemsForName(ExecState*, DOMMimeTypeArray* mimeTypeArray, PropertyName propertyName)
 {
-    return mimeTypeArray->canGetItemsForName(identifierToAtomicString(propertyName));
+    return mimeTypeArray->canGetItemsForName(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSDOMMimeTypeArray::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSDOMMimeTypeArray::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSDOMMimeTypeArray* thisObj = jsCast<JSDOMMimeTypeArray*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl()->namedItem(identifierToAtomicString(propertyName)));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->namedItem(propertyNameToAtomicString(propertyName)));
 }
 
 } // namespace WebCore

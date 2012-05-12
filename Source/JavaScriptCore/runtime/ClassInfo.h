@@ -45,19 +45,19 @@ namespace JSC {
         typedef ConstructType (*GetConstructDataFunctionPtr)(JSCell*, ConstructData&);
         GetConstructDataFunctionPtr getConstructData;
 
-        typedef void (*PutFunctionPtr)(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        typedef void (*PutFunctionPtr)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
         PutFunctionPtr put;
 
         typedef void (*PutByIndexFunctionPtr)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         PutByIndexFunctionPtr putByIndex;
 
-        typedef bool (*DeletePropertyFunctionPtr)(JSCell*, ExecState*, const Identifier&);
+        typedef bool (*DeletePropertyFunctionPtr)(JSCell*, ExecState*, PropertyName);
         DeletePropertyFunctionPtr deleteProperty;
 
         typedef bool (*DeletePropertyByIndexFunctionPtr)(JSCell*, ExecState*, unsigned);
         DeletePropertyByIndexFunctionPtr deletePropertyByIndex;
 
-        typedef bool (*GetOwnPropertySlotFunctionPtr)(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        typedef bool (*GetOwnPropertySlotFunctionPtr)(JSCell*, ExecState*, PropertyName, PropertySlot&);
         GetOwnPropertySlotFunctionPtr getOwnPropertySlot;
 
         typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSCell*, ExecState*, unsigned, PropertySlot&);
@@ -81,13 +81,13 @@ namespace JSC {
         typedef bool (*HasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue, JSValue);
         HasInstanceFunctionPtr hasInstance;
 
-        typedef void (*PutWithAttributesFunctionPtr)(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
+        typedef void (*PutWithAttributesFunctionPtr)(JSObject*, ExecState*, PropertyName propertyName, JSValue, unsigned attributes);
         PutWithAttributesFunctionPtr putDirectVirtual;
 
-        typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&, bool);
+        typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool);
         DefineOwnPropertyFunctionPtr defineOwnProperty;
 
-        typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
         GetOwnPropertyDescriptorFunctionPtr getOwnPropertyDescriptor;
     };
 

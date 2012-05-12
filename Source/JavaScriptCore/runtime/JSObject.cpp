@@ -120,7 +120,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned
 }
 
 // ECMA 8.6.2.2
-void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT(value);
@@ -192,7 +192,7 @@ void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, 
     thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }
 
-void JSObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSObject::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     PutPropertySlot slot;
@@ -221,7 +221,7 @@ bool JSObject::allowsAccessFrom(ExecState* exec)
     return globalObject->globalObjectMethodTable()->allowsAccessFrom(globalObject, exec);
 }
 
-void JSObject::putDirectAccessor(JSGlobalData& globalData, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSObject::putDirectAccessor(JSGlobalData& globalData, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(value.isGetterSetter() && (attributes & Accessor));
 
@@ -240,7 +240,7 @@ void JSObject::putDirectAccessor(JSGlobalData& globalData, const Identifier& pro
     structure()->setHasGetterSetterProperties(propertyName == globalData.propertyNames->underscoreProto);
 }
 
-bool JSObject::hasProperty(ExecState* exec, const Identifier& propertyName) const
+bool JSObject::hasProperty(ExecState* exec, PropertyName propertyName) const
 {
     PropertySlot slot;
     return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
@@ -253,7 +253,7 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 }
 
 // ECMA 8.6.2.5
-bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
 
@@ -278,7 +278,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& p
     return true;
 }
 
-bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) const
+bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const
 {
     PropertySlot slot;
     return const_cast<JSObject*>(this)->methodTable()->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
@@ -290,7 +290,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned pro
     return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, propertyName));
 }
 
-static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSObject* object, const Identifier& propertyName)
+static ALWAYS_INLINE JSValue callDefaultValueFunction(ExecState* exec, const JSObject* object, PropertyName propertyName)
 {
     JSValue function = object->get(exec, propertyName);
     CallData callData;
@@ -344,7 +344,7 @@ JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, Preferre
     return throwError(exec, createTypeError(exec, "No default value"));
 }
 
-const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifier& propertyName) const
+const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, PropertyName propertyName) const
 {
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         if (const HashTable* propHashTable = info->propHashTable(exec)) {
@@ -381,7 +381,7 @@ bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyN
     return descriptor.enumerable();
 }
 
-bool JSObject::getPropertySpecificValue(ExecState* exec, const Identifier& propertyName, JSCell*& specificValue) const
+bool JSObject::getPropertySpecificValue(ExecState* exec, PropertyName propertyName, JSCell*& specificValue) const
 {
     unsigned attributes;
     if (structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound)
@@ -510,7 +510,7 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
     structure()->setStaticFunctionsReified();
 }
 
-void JSObject::removeDirect(JSGlobalData& globalData, const Identifier& propertyName)
+void JSObject::removeDirect(JSGlobalData& globalData, PropertyName propertyName)
 {
     if (structure()->get(globalData, propertyName) == WTF::notFound)
         return;
@@ -583,7 +583,7 @@ void JSObject::allocatePropertyStorage(JSGlobalData& globalData, size_t oldSize,
     m_propertyStorage.set(globalData, this, newPropertyStorage);
 }
 
-bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     unsigned attributes = 0;
     JSCell* cell = 0;
@@ -594,7 +594,7 @@ bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const
     return true;
 }
 
-bool JSObject::getPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSObject::getPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSObject* object = this;
     while (true) {
@@ -607,7 +607,7 @@ bool JSObject::getPropertyDescriptor(ExecState* exec, const Identifier& property
     }
 }
 
-static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& propertyName, PropertyDescriptor& descriptor, unsigned attributes, const PropertyDescriptor& oldDescriptor)
+static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName propertyName, PropertyDescriptor& descriptor, unsigned attributes, const PropertyDescriptor& oldDescriptor)
 {
     if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
         if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
@@ -662,7 +662,7 @@ private:
     JSGlobalData& m_globalData;
 };
 
-bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     // Track on the globaldata that we're in define property.
     // Currently DefineOwnProperty uses delete to remove properties when they are being replaced

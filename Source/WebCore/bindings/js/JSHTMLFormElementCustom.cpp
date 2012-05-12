@@ -37,20 +37,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSHTMLFormElement::canGetItemsForName(ExecState*, HTMLFormElement* form, const Identifier& propertyName)
+bool JSHTMLFormElement::canGetItemsForName(ExecState*, HTMLFormElement* form, PropertyName propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
-    form->getNamedElements(identifierToAtomicString(propertyName), namedItems);
+    form->getNamedElements(propertyNameToAtomicString(propertyName), namedItems);
     return namedItems.size();
 }
 
-JSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSHTMLElement* jsForm = jsCast<JSHTMLFormElement*>(asObject(slotBase));
     HTMLFormElement* form = static_cast<HTMLFormElement*>(jsForm->impl());
 
     Vector<RefPtr<Node> > namedItems;
-    form->getNamedElements(identifierToAtomicString(propertyName), namedItems);
+    form->getNamedElements(propertyNameToAtomicString(propertyName), namedItems);
     
     if (namedItems.isEmpty())
         return jsUndefined();

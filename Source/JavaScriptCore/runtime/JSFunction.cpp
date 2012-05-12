@@ -59,7 +59,7 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
-JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
+JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const UString& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
     NativeExecutable* executable;
 #if !ENABLE(JIT)
@@ -92,12 +92,12 @@ JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeCha
 {
 }
 
-void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const Identifier& name)
+void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const UString& name)
 {
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     m_executable.set(exec->globalData(), this, executable);
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
@@ -183,14 +183,14 @@ CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
     return CallTypeJS;
 }
 
-JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSFunction* thisObj = jsCast<JSFunction*>(slotBase);
     ASSERT(!thisObj->isHostFunction());
     return exec->interpreter()->retrieveArgumentsFromVMCode(exec, thisObj);
 }
 
-JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSFunction* thisObj = jsCast<JSFunction*>(slotBase);
     ASSERT(!thisObj->isHostFunction());
@@ -205,14 +205,14 @@ JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, const Identi
     return throwTypeError(exec, "Function.caller used to retrieve strict caller");
 }
 
-JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)
+JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
 {
     JSFunction* thisObj = jsCast<JSFunction*>(slotBase);
     ASSERT(!thisObj->isHostFunction());
     return jsNumber(thisObj->jsExecutable()->parameterCount());
 }
 
-bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction())
@@ -267,7 +267,7 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostFunction())
@@ -330,7 +330,7 @@ void JSFunction::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction()) {
@@ -359,7 +359,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
     Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
     // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
@@ -372,7 +372,7 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
 
-bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostFunction())
@@ -455,7 +455,7 @@ UString getCalculatedDisplayName(CallFrame* callFrame, JSObject* object)
         return function->calculatedDisplayName(callFrame);
     if (InternalFunction* function = jsDynamicCast<InternalFunction*>(object))
         return function->calculatedDisplayName(callFrame);
-    return callFrame->globalData().propertyNames->emptyIdentifier.ustring();
+    return "";
 }
 
 } // namespace JSC

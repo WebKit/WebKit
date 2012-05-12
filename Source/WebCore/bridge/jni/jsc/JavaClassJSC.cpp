@@ -114,7 +114,7 @@ JavaClass::~JavaClass()
     m_methods.clear();
 }
 
-MethodList JavaClass::methodsNamed(const Identifier& identifier, Instance*) const
+MethodList JavaClass::methodsNamed(PropertyName identifier, Instance*) const
 {
     MethodList* methodList = m_methods.get(identifier.ustring().impl());
 
@@ -123,7 +123,7 @@ MethodList JavaClass::methodsNamed(const Identifier& identifier, Instance*) cons
     return MethodList();
 }
 
-Field* JavaClass::fieldNamed(const Identifier& identifier, Instance*) const
+Field* JavaClass::fieldNamed(PropertyName identifier, Instance*) const
 {
     return m_fields.get(identifier.ustring().impl());
 }

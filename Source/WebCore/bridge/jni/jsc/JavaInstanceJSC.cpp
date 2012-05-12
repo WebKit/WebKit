@@ -118,7 +118,7 @@ class JavaRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static JavaRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+    static JavaRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const UString& name, Bindings::MethodList& list)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
@@ -141,7 +141,7 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const Identifier& name)
+    void finishCreation(JSGlobalData& globalData, const UString& name)
     {
         Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));
@@ -150,10 +150,10 @@ private:
 
 const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMethod::s_info, 0, 0, CREATE_METHOD_TABLE(JavaRuntimeMethod) };
 
-JSValue JavaInstance::getMethod(ExecState* exec, const Identifier& propertyName)
+JSValue JavaInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return JavaRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return JavaRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.ustring(), methodList);
 }
 
 JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)

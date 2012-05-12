@@ -177,12 +177,12 @@ private:
 
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
-    static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     
-    static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-    static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned);
 
     static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue proto);
@@ -209,9 +209,9 @@ private:
     static EncodedJSValue JSC_HOST_CALL call(ExecState*);
     static EncodedJSValue JSC_HOST_CALL construct(ExecState*);
    
-    JSValue getStaticValue(ExecState*, const Identifier&);
-    static JSValue staticFunctionGetter(ExecState*, JSValue, const Identifier&);
-    static JSValue callbackGetter(ExecState*, JSValue, const Identifier&);
+    JSValue getStaticValue(ExecState*, PropertyName);
+    static JSValue staticFunctionGetter(ExecState*, JSValue, PropertyName);
+    static JSValue callbackGetter(ExecState*, JSValue, PropertyName);
 
     OwnPtr<JSCallbackObjectData> m_callbackObjectData;
 };

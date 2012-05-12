@@ -47,7 +47,7 @@ FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* st
 {
 }
 
-void FunctionPrototype::finishCreation(ExecState* exec, const Identifier& name)
+void FunctionPrototype::finishCreation(ExecState* exec, const UString& name)
 {
     Base::finishCreation(exec->globalData(), name);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
@@ -55,16 +55,16 @@ void FunctionPrototype::finishCreation(ExecState* exec, const Identifier& name)
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction)
 {
-    JSFunction* toStringFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().toString, functionProtoFuncToString);
+    JSFunction* toStringFunction = JSFunction::create(exec, globalObject, 0, exec->propertyNames().toString.ustring(), functionProtoFuncToString);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().toString, toStringFunction, DontEnum);
 
-    *applyFunction = JSFunction::create(exec, globalObject, 2, exec->propertyNames().apply, functionProtoFuncApply);
+    *applyFunction = JSFunction::create(exec, globalObject, 2, exec->propertyNames().apply.ustring(), functionProtoFuncApply);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().apply, *applyFunction, DontEnum);
 
-    *callFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().call, functionProtoFuncCall);
+    *callFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().call.ustring(), functionProtoFuncCall);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().call, *callFunction, DontEnum);
 
-    JSFunction* bindFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().bind, functionProtoFuncBind);
+    JSFunction* bindFunction = JSFunction::create(exec, globalObject, 1, exec->propertyNames().bind.ustring(), functionProtoFuncBind);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().bind, bindFunction, DontEnum);
 }
 
@@ -207,9 +207,8 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
             length = targetLength - numBoundArgs;
     }
 
-    Identifier name(exec, target.get(exec, exec->propertyNames().name).toString(exec)->value(exec));
-
-    return JSValue::encode(JSBoundFunction::create(exec, globalObject, targetObject, exec->argument(0), boundArgs, length, name));
+    JSString* name = target.get(exec, exec->propertyNames().name).toString(exec);
+    return JSValue::encode(JSBoundFunction::create(exec, globalObject, targetObject, exec->argument(0), boundArgs, length, name->value(exec)));
 }
 
 } // namespace JSC

@@ -51,7 +51,7 @@ public:
 
     void visitAggregate(SlotVisitor&);
 
-    virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName);
+    virtual JSValue getMethod(ExecState*, PropertyName);
     virtual JSValue invokeMethod(ExecState*, RuntimeMethod*);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
@@ -65,8 +65,8 @@ public:
 
     static PassRefPtr<QtInstance> getQtInstance(QObject*, PassRefPtr<RootObject>, QScriptEngine::ValueOwnership ownership);
 
-    virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(JSObject*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+    virtual bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    virtual void put(JSObject*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     void removeCachedMethod(JSObject*);
 

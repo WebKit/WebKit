@@ -38,22 +38,22 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue nonCachingStaticBackFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+static JSValue nonCachingStaticBackFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName, jsHistoryPrototypeFunctionBack);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.impl(), jsHistoryPrototypeFunctionBack);
 }
 
-static JSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+static JSValue nonCachingStaticForwardFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName, jsHistoryPrototypeFunctionForward);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 0, propertyName.impl(), jsHistoryPrototypeFunctionForward);
 }
 
-static JSValue nonCachingStaticGoFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
+static JSValue nonCachingStaticGoFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)
 {
-    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName, jsHistoryPrototypeFunctionGo);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), 1, propertyName.impl(), jsHistoryPrototypeFunctionGo);
 }
 
-bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     // When accessing History cross-domain, functions are always the native built-in ones.
     // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
@@ -93,7 +93,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& pr
     return true;
 }
 
-bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     if (!impl()->frame()) {
         descriptor.setUndefined();
@@ -138,7 +138,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifi
     return true;
 }
 
-bool JSHistory::putDelegate(ExecState* exec, const Identifier&, JSValue, PutPropertySlot&)
+bool JSHistory::putDelegate(ExecState* exec, PropertyName, JSValue, PutPropertySlot&)
 {
     // Only allow putting by frames in the same origin.
     if (!shouldAllowAccessToFrame(exec, impl()->frame()))
@@ -146,7 +146,7 @@ bool JSHistory::putDelegate(ExecState* exec, const Identifier&, JSValue, PutProp
     return false;
 }
 
-bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSHistory* thisObject = jsCast<JSHistory*>(cell);
     // Only allow deleting by frames in the same origin.

@@ -41,10 +41,10 @@ public:
     // Return the cached ObjC of the specified name.
     static ObjcClass *classForIsA(ClassStructPtr);
     
-    virtual MethodList methodsNamed(const Identifier&, Instance *instance) const;
-    virtual Field *fieldNamed(const Identifier&, Instance *instance) const;
+    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Field *fieldNamed(PropertyName, Instance*) const;
 
-    virtual JSValue fallbackObject(ExecState *exec, Instance *instance, const Identifier &propertyName);
+    virtual JSValue fallbackObject(ExecState*, Instance*, PropertyName);
     
     ClassStructPtr isa() { return _isa; }
     

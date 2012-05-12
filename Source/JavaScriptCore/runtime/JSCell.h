@@ -106,10 +106,10 @@ namespace JSC {
         const ClassInfo* classInfo() const;
         const ClassInfo* validatedClassInfo() const;
         const MethodTable* methodTable() const;
-        static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         
-        static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
+        static bool deleteProperty(JSCell*, ExecState*, PropertyName);
         static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
 
         static JSObject* toThisObject(JSCell*, ExecState*);
@@ -121,7 +121,7 @@ namespace JSC {
         // fastGetOwnPropertySlot to getOwnPropertySlot. Callers should always
         // call this function, not its slower virtual counterpart. (For integer
         // property names, we want a similar interface with appropriate optimizations.)
-        bool fastGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        bool fastGetOwnPropertySlot(ExecState*, PropertyName, PropertySlot&);
         JSValue fastGetOwnProperty(ExecState*, const UString&);
 
         static ptrdiff_t structureOffset()
@@ -150,7 +150,7 @@ namespace JSC {
         void finishCreation(JSGlobalData&, Structure*, CreatingEarlyCellTag);
 
         // Base implementation; for non-object classes implements getPropertySlot.
-        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
 
         // Dummy implementations of override-able static functions for classes to put in their MethodTable
@@ -159,9 +159,9 @@ namespace JSC {
         static NO_RETURN_DUE_TO_ASSERT void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static UString className(const JSObject*);
         static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue prototypeProperty);
-        static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, const Identifier& propertyName, JSValue, unsigned attributes);
-        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+        static NO_RETURN_DUE_TO_ASSERT void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
+        static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
     private:
         friend class LLIntOffsetsExtractor;

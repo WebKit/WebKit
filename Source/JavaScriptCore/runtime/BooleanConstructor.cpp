@@ -38,7 +38,7 @@ BooleanConstructor::BooleanConstructor(JSGlobalObject* globalObject, Structure* 
 
 void BooleanConstructor::finishCreation(ExecState* exec, BooleanPrototype* booleanPrototype)
 {
-    Base::finishCreation(exec->globalData(), Identifier(exec, booleanPrototype->classInfo()->className));
+    Base::finishCreation(exec->globalData(), booleanPrototype->classInfo()->className);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor

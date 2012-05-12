@@ -62,9 +62,9 @@ class Class {
     WTF_MAKE_NONCOPYABLE(Class); WTF_MAKE_FAST_ALLOCATED;
 public:
     Class() { }
-    virtual MethodList methodsNamed(const Identifier&, Instance*) const = 0;
-    virtual Field* fieldNamed(const Identifier&, Instance*) const = 0;
-    virtual JSValue fallbackObject(ExecState*, Instance*, const Identifier&) { return jsUndefined(); }
+    virtual MethodList methodsNamed(PropertyName, Instance*) const = 0;
+    virtual Field* fieldNamed(PropertyName, Instance*) const = 0;
+    virtual JSValue fallbackObject(ExecState*, Instance*, PropertyName) { return jsUndefined(); }
 
     virtual ~Class() { }
 };
@@ -89,9 +89,9 @@ public:
     void willInvalidateRuntimeObject();
 
     // Returns false if the value was not set successfully.
-    virtual bool setValueOfUndefinedField(ExecState*, const Identifier&, JSValue) { return false; }
+    virtual bool setValueOfUndefinedField(ExecState*, PropertyName, JSValue) { return false; }
 
-    virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName) = 0;
+    virtual JSValue getMethod(ExecState*, PropertyName) = 0;
     virtual JSValue invokeMethod(ExecState*, RuntimeMethod* method) = 0;
 
     virtual bool supportsInvokeDefaultMethod() const { return false; }
@@ -110,9 +110,9 @@ public:
 
     virtual ~Instance();
 
-    virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&) { return false; }
-    virtual bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&) { return false; }
-    virtual void put(JSObject*, ExecState*, const Identifier&, JSValue, PutPropertySlot&) { }
+    virtual bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&) { return false; }
+    virtual bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&) { return false; }
+    virtual void put(JSObject*, ExecState*, PropertyName, JSValue, PutPropertySlot&) { }
 
 protected:
     virtual void virtualBegin() { }

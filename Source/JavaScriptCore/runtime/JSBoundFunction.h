@@ -37,7 +37,7 @@ class JSBoundFunction : public JSFunction {
 public:
     typedef JSFunction Base;
 
-    static JSBoundFunction* create(ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const Identifier&);
+    static JSBoundFunction* create(ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const UString&);
 
     static bool hasInstance(JSObject*, ExecState*, JSValue, JSValue proto);
 
@@ -61,7 +61,7 @@ protected:
 private:
     JSBoundFunction(ExecState*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs);
     
-    void finishCreation(ExecState*, NativeExecutable*, int, const Identifier&);
+    void finishCreation(ExecState*, NativeExecutable*, int, const UString&);
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;

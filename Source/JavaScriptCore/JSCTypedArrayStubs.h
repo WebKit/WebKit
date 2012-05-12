@@ -52,10 +52,10 @@ public: \
         return ptr; \
     }\
 \
-    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);\
-    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);\
+    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName propertyName, JSC::PropertySlot&);\
+    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName propertyName, JSC::PropertyDescriptor&);\
     static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\
-    static void put(JSC::JSCell*, JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\
+    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName propertyName, JSC::JSValue, JSC::PutPropertySlot&);\
     static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool);\
     static const JSC::ClassInfo s_info;\
 \
@@ -98,26 +98,26 @@ void JS##name##Array::finishCreation(JSGlobalData& globalData)\
     ASSERT(inherits(&s_info));\
 }\
 \
-bool JS##name##Array::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\
+bool JS##name##Array::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(cell);\
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
-    bool ok;\
-    unsigned index = propertyName.toUInt32(ok);\
-    if (ok && index < thisObject->m_storageLength) {\
+    unsigned index = propertyName.asIndex();\
+    if (index < thisObject->m_storageLength) {\
+        ASSERT(index != PropertyName::NotAnIndex);\
         slot.setValue(thisObject->getByIndex(exec, index));\
         return true;\
     }\
     return Base::getOwnPropertySlot(cell, exec, propertyName, slot);\
 }\
 \
-bool JS##name##Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)\
+bool JS##name##Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(object);\
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
-    bool ok;\
-    unsigned index = propertyName.toUInt32(ok);\
-    if (ok && index < thisObject->m_storageLength) {\
+    unsigned index = propertyName.asIndex();\
+    if (index < thisObject->m_storageLength) {\
+        ASSERT(index != PropertyName::NotAnIndex);\
         descriptor.setDescriptor(thisObject->getByIndex(exec, index), DontDelete);\
         return true;\
     }\
@@ -135,13 +135,12 @@ bool JS##name##Array::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, u
     return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);\
 }\
 \
-void JS##name##Array::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\
+void JS##name##Array::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(cell);\
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
-    bool ok;\
-    unsigned index = propertyName.toUInt32(ok);\
-    if (ok) {\
+    unsigned index = propertyName.asIndex();\
+    if (index != PropertyName::NotAnIndex) {\
         thisObject->indexSetter(exec, index, value);\
         return;\
     }\

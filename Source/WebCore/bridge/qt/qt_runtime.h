@@ -149,11 +149,11 @@ public:
     }
 
 protected:
-    void finishCreation(ExecState*, const Identifier&, PassRefPtr<QtInstance>);
+    void finishCreation(ExecState*, const UString&, PassRefPtr<QtInstance>);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InternalFunction::StructureFlags | OverridesVisitChildren;
 
     QtRuntimeMethodData *d_func() const {return d_ptr;}
-    QtRuntimeMethod(QtRuntimeMethodData *dd, ExecState *, Structure*, const Identifier &name);
+    QtRuntimeMethod(QtRuntimeMethodData *dd, ExecState *, Structure*, const UString& name);
     QtRuntimeMethodData *d_ptr;
 };
 
@@ -161,7 +161,7 @@ class QtRuntimeMetaMethod : public QtRuntimeMethod {
 public:
     typedef QtRuntimeMethod Base;
 
-    static QtRuntimeMetaMethod* create(ExecState* exec, const Identifier& name, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
+    static QtRuntimeMetaMethod* create(ExecState* exec, const UString& name, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
     {
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtRuntimeMetaMethod>(exec);
         QtRuntimeMetaMethod* method = new (allocateCell<QtRuntimeMetaMethod>(*exec->heap())) QtRuntimeMetaMethod(exec, domStructure, name);
@@ -169,8 +169,8 @@ public:
         return method;
     }
 
-    static bool getOwnPropertySlot(JSCell*, ExecState *, const Identifier&, PropertySlot&);
-    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+    static bool getOwnPropertySlot(JSCell*, ExecState *, PropertyName, PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -186,14 +186,14 @@ protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}
 
 private:
-    QtRuntimeMetaMethod(ExecState*, Structure*, const Identifier&);
-    void finishCreation(ExecState*, const Identifier&, PassRefPtr<QtInstance>, int index, const QByteArray& signature, bool allowPrivate);
+    QtRuntimeMetaMethod(ExecState*, Structure*, const UString&);
+    void finishCreation(ExecState*, const UString&, PassRefPtr<QtInstance>, int index, const QByteArray& signature, bool allowPrivate);
 
     static CallType getCallData(JSCell*, CallData&);
     static EncodedJSValue JSC_HOST_CALL call(ExecState* exec);
-    static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
-    static JSValue connectGetter(ExecState*, JSValue, const Identifier&);
-    static JSValue disconnectGetter(ExecState*, JSValue, const Identifier&);
+    static JSValue lengthGetter(ExecState*, JSValue, PropertyName);
+    static JSValue connectGetter(ExecState*, JSValue, PropertyName);
+    static JSValue disconnectGetter(ExecState*, JSValue, PropertyName);
 };
 
 class QtConnectionObject;
@@ -201,7 +201,7 @@ class QtRuntimeConnectionMethod : public QtRuntimeMethod {
 public:
     typedef QtRuntimeMethod Base;
 
-    static QtRuntimeConnectionMethod* create(ExecState* exec, const Identifier& name, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
+    static QtRuntimeConnectionMethod* create(ExecState* exec, const UString& name, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
     {
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtRuntimeConnectionMethod>(exec);
         QtRuntimeConnectionMethod* method = new (allocateCell<QtRuntimeConnectionMethod>(*exec->heap())) QtRuntimeConnectionMethod(exec, domStructure, name);
@@ -209,8 +209,8 @@ public:
         return method;
     }
 
-    static bool getOwnPropertySlot(JSCell*, ExecState *, const Identifier&, PropertySlot&);
-    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+    static bool getOwnPropertySlot(JSCell*, ExecState *, PropertyName, PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
  
     static const ClassInfo s_info;
@@ -224,12 +224,12 @@ protected:
     QtRuntimeConnectionMethodData* d_func() const {return reinterpret_cast<QtRuntimeConnectionMethodData*>(d_ptr);}
 
 private:
-    QtRuntimeConnectionMethod(ExecState*, Structure*, const Identifier&);
-    void finishCreation(ExecState*, const Identifier&, bool isConnect, PassRefPtr<QtInstance>, int index, const QByteArray& signature);
+    QtRuntimeConnectionMethod(ExecState*, Structure*, const UString&);
+    void finishCreation(ExecState*, const UString&, bool isConnect, PassRefPtr<QtInstance>, int index, const QByteArray& signature);
 
     static CallType getCallData(JSCell*, CallData&);
     static EncodedJSValue JSC_HOST_CALL call(ExecState* exec);
-    static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
+    static JSValue lengthGetter(ExecState*, JSValue, PropertyName);
     static QMultiMap<QObject *, QtConnectionObject *> connections;
     friend class QtConnectionObject;
 };

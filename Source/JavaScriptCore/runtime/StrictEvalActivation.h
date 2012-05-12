@@ -41,7 +41,7 @@ public:
         return activation;
     }
 
-    static bool deleteProperty(JSCell*, ExecState*, const Identifier&);
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static JSObject* toThisObject(JSCell*, ExecState*);
 
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)

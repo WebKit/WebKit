@@ -71,7 +71,7 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData&)
     return ConstructTypeNone;
 }
 
-bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& identifier, PropertySlot& slot)
+bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName identifier, PropertySlot& slot)
 {
     // This is not a general purpose implementation of getOwnPropertySlot.
     // It should only be called by JSValue::get.
@@ -95,7 +95,7 @@ bool JSCell::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i
     return true;
 }
 
-void JSCell::put(JSCell* cell, ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
+void JSCell::put(JSCell* cell, ExecState* exec, PropertyName identifier, JSValue value, PutPropertySlot& slot)
 {
     if (cell->isString()) {
         JSValue(cell).putToPrimitive(exec, identifier, value, slot);
@@ -116,7 +116,7 @@ void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSVa
     thisObject->methodTable()->putByIndex(thisObject, exec, identifier, value, shouldThrow);
 }
 
-bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& identifier)
+bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, PropertyName identifier)
 {
     JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
     return thisObject->methodTable()->deleteProperty(thisObject, exec, identifier);
@@ -195,18 +195,18 @@ bool JSCell::hasInstance(JSObject*, ExecState*, JSValue, JSValue)
     return false;
 }
 
-void JSCell::putDirectVirtual(JSObject*, ExecState*, const Identifier&, JSValue, unsigned)
+void JSCell::putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned)
 {
     ASSERT_NOT_REACHED();
 }
 
-bool JSCell::defineOwnProperty(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&, bool)
+bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool)
 {
     ASSERT_NOT_REACHED();
     return false;
 }
 
-bool JSCell::getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&)
+bool JSCell::getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&)
 {
     ASSERT_NOT_REACHED();
     return false;

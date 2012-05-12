@@ -47,7 +47,7 @@ JSValue JSNotAnObject::defaultValue(const JSObject*, ExecState* exec, PreferredP
 }
 
 // JSObject methods
-bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, const Identifier&, PropertySlot&)
+bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, PropertyName, PropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;
@@ -59,13 +59,13 @@ bool JSNotAnObject::getOwnPropertySlotByIndex(JSCell*, ExecState* exec, unsigned
     return false;
 }
 
-bool JSNotAnObject::getOwnPropertyDescriptor(JSObject*, ExecState* exec, const Identifier&, PropertyDescriptor&)
+bool JSNotAnObject::getOwnPropertyDescriptor(JSObject*, ExecState* exec, PropertyName, PropertyDescriptor&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;
 }
 
-void JSNotAnObject::put(JSCell*, ExecState* exec, const Identifier& , JSValue, PutPropertySlot&)
+void JSNotAnObject::put(JSCell*, ExecState* exec, PropertyName , JSValue, PutPropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
 }
@@ -75,7 +75,7 @@ void JSNotAnObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue, bool
     ASSERT_UNUSED(exec, exec->hadException());
 }
 
-bool JSNotAnObject::deleteProperty(JSCell*, ExecState* exec, const Identifier&)
+bool JSNotAnObject::deleteProperty(JSCell*, ExecState* exec, PropertyName)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;

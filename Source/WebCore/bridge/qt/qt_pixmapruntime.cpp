@@ -50,8 +50,8 @@ namespace Bindings {
 class QtPixmapClass : public Class {
 public:
     QtPixmapClass();
-    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
-    virtual Field* fieldNamed(const Identifier&, Instance*) const;
+    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Field* fieldNamed(PropertyName, Instance*) const;
 };
 
 
@@ -239,10 +239,10 @@ Class* QtPixmapInstance::getClass() const
     return &qt_pixmap_metaData.cls;
 }
 
-JSValue QtPixmapInstance::getMethod(ExecState* exec, const Identifier& propertyName)
+JSValue QtPixmapInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return RuntimeMethod::create(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeMethod>(exec), propertyName, methodList);
+    return RuntimeMethod::create(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeMethod>(exec), propertyName.ustring(), methodList);
 }
 
 JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
@@ -256,25 +256,25 @@ JSValue QtPixmapInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMe
     return jsUndefined();
 }
 
-MethodList QtPixmapClass::methodsNamed(const Identifier& identifier, Instance*) const
+MethodList QtPixmapClass::methodsNamed(PropertyName identifier, Instance*) const
 {
     MethodList methods;
-    if (identifier == QtPixmapToDataUrlMethod::name())
+    if (identifier.ustring() == QtPixmapToDataUrlMethod::name())
         methods.append(&qt_pixmap_metaData.toDataUrlMethod);
-    else if (identifier == QtPixmapToImageDataMethod::name())
+    else if (identifier.ustring() == QtPixmapToImageDataMethod::name())
         methods.append(&qt_pixmap_metaData.toImageDataMethod);
-    else if (identifier == QtPixmapAssignToElementMethod::name())
+    else if (identifier.ustring() == QtPixmapAssignToElementMethod::name())
         methods.append(&qt_pixmap_metaData.assignToElementMethod);
-    else if (identifier == QtPixmapToStringMethod::name())
+    else if (identifier.ustring() == QtPixmapToStringMethod::name())
         methods.append(&qt_pixmap_metaData.toStringMethod);
     return methods;
 }
 
-Field* QtPixmapClass::fieldNamed(const Identifier& identifier, Instance*) const
+Field* QtPixmapClass::fieldNamed(PropertyName identifier, Instance*) const
 {
-    if (identifier == QtPixmapWidthField::name())
+    if (identifier.ustring() == QtPixmapWidthField::name())
         return &qt_pixmap_metaData.widthField;
-    if (identifier == QtPixmapHeightField::name())
+    if (identifier.ustring() == QtPixmapHeightField::name())
         return &qt_pixmap_metaData.heightField;
     return 0;
 }

@@ -39,7 +39,7 @@ public:
 
     static void destroy(JSCell*);
 
-    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& methodList)
+    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& name, Bindings::MethodList& methodList)
     {
         RuntimeMethod* method = new (NotNull, allocateCell<RuntimeMethod>(*exec->heap())) RuntimeMethod(globalObject, structure, methodList);
         method->finishCreation(exec->globalData(), name);
@@ -62,15 +62,15 @@ public:
 
 protected:
     RuntimeMethod(JSGlobalObject*, Structure*, Bindings::MethodList&);
-    void finishCreation(JSGlobalData&, const Identifier&);
+    void finishCreation(JSGlobalData&, const UString&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
     static CallType getCallData(JSCell*, CallData&);
 
-    static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
-    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
+    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
 private:
-    static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
+    static JSValue lengthGetter(ExecState*, JSValue, PropertyName);
 
     OwnPtr<Bindings::MethodList> _methodList;
 };

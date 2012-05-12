@@ -142,7 +142,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     reset(prototype());
 }
 
-void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
@@ -152,7 +152,7 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& proper
     JSVariableObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, const Identifier& propertyName, JSValue value, unsigned attributes)
+void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
@@ -170,7 +170,7 @@ void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, const I
     }
 }
 
-bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     PropertySlot slot;
@@ -205,8 +205,8 @@ void JSGlobalObject::reset(JSValue prototype)
     m_applyFunction.set(exec->globalData(), this, applyFunction);
     m_objectPrototype.set(exec->globalData(), this, ObjectPrototype::create(exec, this, ObjectPrototype::createStructure(exec->globalData(), this, jsNull())));
     GetterSetter* protoAccessor = GetterSetter::create(exec);
-    protoAccessor->setGetter(exec->globalData(), JSFunction::create(exec, this, 0, Identifier(), globalFuncProtoGetter));
-    protoAccessor->setSetter(exec->globalData(), JSFunction::create(exec, this, 0, Identifier(), globalFuncProtoSetter));
+    protoAccessor->setGetter(exec->globalData(), JSFunction::create(exec, this, 0, "", globalFuncProtoGetter));
+    protoAccessor->setSetter(exec->globalData(), JSFunction::create(exec, this, 0, "", globalFuncProtoSetter));
     m_objectPrototype->putDirectAccessor(exec->globalData(), exec->propertyNames().underscoreProto, protoAccessor, Accessor | DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(exec->globalData(), m_objectPrototype.get());
 
@@ -293,7 +293,7 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "TypeError"), m_typeErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "URIError"), m_URIErrorConstructor.get(), DontEnum);
 
-    m_evalFunction.set(exec->globalData(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval, globalFuncEval));
+    m_evalFunction.set(exec->globalData(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval.ustring(), globalFuncEval));
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
 
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "JSON"), JSONObject::create(exec, this, JSONObject::createStructure(exec->globalData(), this, m_objectPrototype.get())), DontEnum);
@@ -311,7 +311,7 @@ void JSGlobalObject::reset(JSValue prototype)
 
 void JSGlobalObject::createThrowTypeError(ExecState* exec)
 {
-    JSFunction* thrower = JSFunction::create(exec, this, 0, Identifier(), globalFuncThrowTypeError);
+    JSFunction* thrower = JSFunction::create(exec, this, 0, "", globalFuncThrowTypeError);
     GetterSetter* getterSetter = GetterSetter::create(exec);
     getterSetter->setGetter(exec->globalData(), thrower);
     getterSetter->setSetter(exec->globalData(), thrower);
@@ -431,7 +431,7 @@ void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
     }
 }
 
-bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     if (getStaticFunctionSlot<JSVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, slot))
@@ -439,7 +439,7 @@ bool JSGlobalObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ide
     return thisObject->symbolTableGet(propertyName, slot);
 }
 
-bool JSGlobalObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSGlobalObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     if (getStaticFunctionDescriptor<JSVariableObject>(exec, ExecState::globalObjectTable(exec), thisObject, propertyName, descriptor))

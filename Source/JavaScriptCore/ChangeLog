@@ -1,3 +1,388 @@
+2012-05-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Introduce PropertyName class
+        https://bugs.webkit.org/show_bug.cgi?id=86241
+
+        Reviewed by Geoff Garen.
+
+        Replace 'const Identifier&' arguments to functions accessing object properties with a new 'PropertyName' type.
+        This change paves the way to allow for properties keyed by values that are not Identifiers.
+
+        This change is largely a mechanical find & replace.
+        It also changes JSFunction's constructor to take a UString& instead of an Identifier&
+        (since in some cases we can no longer guarantee that we'lll have an Identifier), and
+        unifies Identifier's methods to obtain array indices onto PropertyName.
+
+        The new PropertyName class retains the ability to support .impl() and .ustring(), but
+        in a future patch we may need to rework this, since not all PropertyNames should be
+        equal based on their string representation.
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::finishCreation):
+        * API/JSCallbackFunction.h:
+        (JSCallbackFunction):
+        (JSC::JSCallbackFunction::create):
+        * API/JSCallbackObject.h:
+        (JSCallbackObject):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        (JSC::::getOwnPropertyDescriptor):
+        (JSC::::put):
+        (JSC::::deleteProperty):
+        (JSC::::getStaticValue):
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunctionWithCallback):
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::getOwnPropertySlot):
+        (JSC::DebuggerActivation::put):
+        (JSC::DebuggerActivation::putDirectVirtual):
+        (JSC::DebuggerActivation::deleteProperty):
+        (JSC::DebuggerActivation::getOwnPropertyDescriptor):
+        (JSC::DebuggerActivation::defineOwnProperty):
+        * debugger/DebuggerActivation.h:
+        (DebuggerActivation):
+        * jsc.cpp:
+        (GlobalObject::addFunction):
+        (GlobalObject::addConstructableFunction):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deleteProperty):
+        (JSC::Arguments::defineOwnProperty):
+        * runtime/Arguments.h:
+        (Arguments):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        (JSC::ArrayConstructor::getOwnPropertySlot):
+        (JSC::ArrayConstructor::getOwnPropertyDescriptor):
+        * runtime/ArrayConstructor.h:
+        (ArrayConstructor):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertySlot):
+        (JSC::ArrayPrototype::getOwnPropertyDescriptor):
+        (JSC::putProperty):
+        * runtime/ArrayPrototype.h:
+        (ArrayPrototype):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::finishCreation):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::getOwnPropertySlot):
+        (JSC::BooleanPrototype::getOwnPropertyDescriptor):
+        * runtime/BooleanPrototype.h:
+        (BooleanPrototype):
+        * runtime/ClassInfo.h:
+        (MethodTable):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::finishCreation):
+        (JSC::DateConstructor::getOwnPropertySlot):
+        (JSC::DateConstructor::getOwnPropertyDescriptor):
+        * runtime/DateConstructor.h:
+        (DateConstructor):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::getOwnPropertySlot):
+        (JSC::DatePrototype::getOwnPropertyDescriptor):
+        * runtime/DatePrototype.h:
+        (DatePrototype):
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::create):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::getOwnPropertySlot):
+        (JSC::ErrorPrototype::getOwnPropertyDescriptor):
+        * runtime/ErrorPrototype.h:
+        (ErrorPrototype):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::finishCreation):
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::functionProtoFuncBind):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::create):
+        (FunctionPrototype):
+        * runtime/Identifier.cpp:
+        (JSC):
+        * runtime/Identifier.h:
+        (Identifier):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        * runtime/InternalFunction.h:
+        (InternalFunction):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        (JSC::JSActivation::getOwnPropertySlot):
+        (JSC::JSActivation::put):
+        (JSC::JSActivation::putDirectVirtual):
+        (JSC::JSActivation::deleteProperty):
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+        (JSActivation):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::getOwnPropertyDescriptor):
+        (JSC::JSArray::put):
+        (JSC::JSArray::deleteProperty):
+        * runtime/JSArray.h:
+        (JSArray):
+        (JSC):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        (JSC::JSBoundFunction::finishCreation):
+        * runtime/JSBoundFunction.h:
+        (JSBoundFunction):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnPropertySlot):
+        (JSC::JSCell::put):
+        (JSC::JSCell::deleteProperty):
+        (JSC::JSCell::putDirectVirtual):
+        (JSC::JSCell::defineOwnProperty):
+        (JSC::JSCell::getOwnPropertyDescriptor):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::lengthGetter):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::getCalculatedDisplayName):
+        * runtime/JSFunction.h:
+        (JSFunction):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        (JSC::JSGlobalObject::putDirectVirtual):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::createThrowTypeError):
+        (JSC::JSGlobalObject::getOwnPropertySlot):
+        (JSC::JSGlobalObject::getOwnPropertyDescriptor):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::hasOwnPropertyForWrite):
+        (JSC::JSGlobalObject::symbolTableHasProperty):
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::getOwnPropertySlot):
+        (JSC::JSNotAnObject::getOwnPropertyDescriptor):
+        (JSC::JSNotAnObject::put):
+        (JSC::JSNotAnObject::deleteProperty):
+        * runtime/JSNotAnObject.h:
+        (JSNotAnObject):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::getOwnPropertySlot):
+        (JSC::JSONObject::getOwnPropertyDescriptor):
+        * runtime/JSONObject.h:
+        (JSONObject):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putDirectVirtual):
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::hasProperty):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::hasOwnProperty):
+        (JSC::callDefaultValueFunction):
+        (JSC::JSObject::findPropertyHashEntry):
+        (JSC::JSObject::getPropertySpecificValue):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::JSObject::getPropertyDescriptor):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSCell::fastGetOwnPropertySlot):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::get):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putOwnDataProperty):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSValue::get):
+        (JSC::JSValue::put):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::put):
+        (JSC::JSStaticScopeObject::putDirectVirtual):
+        (JSC::JSStaticScopeObject::getOwnPropertySlot):
+        * runtime/JSStaticScopeObject.h:
+        (JSStaticScopeObject):
+        * runtime/JSString.cpp:
+        (JSC::JSString::getOwnPropertySlot):
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSString):
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSValue.h:
+        (JSC):
+        (JSValue):
+        * runtime/JSVariableObject.cpp:
+        (JSC::JSVariableObject::deleteProperty):
+        (JSC::JSVariableObject::symbolTableGet):
+        (JSC::JSVariableObject::putDirectVirtual):
+        * runtime/JSVariableObject.h:
+        (JSVariableObject):
+        (JSC::JSVariableObject::symbolTableGet):
+        (JSC::JSVariableObject::symbolTablePut):
+        (JSC::JSVariableObject::symbolTablePutWithAttributes):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::HashTable::entry):
+        (JSC):
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticPropertyDescriptor):
+        (JSC::getStaticFunctionSlot):
+        (JSC::getStaticFunctionDescriptor):
+        (JSC::getStaticValueSlot):
+        (JSC::getStaticValueDescriptor):
+        (JSC::lookupPut):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::getOwnPropertySlot):
+        (JSC::MathObject::getOwnPropertyDescriptor):
+        * runtime/MathObject.h:
+        (MathObject):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::finishCreation):
+        * runtime/NumberConstructor.cpp:
+        (JSC):
+        (JSC::NumberConstructor::finishCreation):
+        (JSC::NumberConstructor::getOwnPropertySlot):
+        (JSC::NumberConstructor::getOwnPropertyDescriptor):
+        (JSC::NumberConstructor::put):
+        (JSC::numberConstructorNaNValue):
+        (JSC::numberConstructorNegInfinity):
+        (JSC::numberConstructorPosInfinity):
+        (JSC::numberConstructorMaxValue):
+        (JSC::numberConstructorMinValue):
+        * runtime/NumberConstructor.h:
+        (NumberConstructor):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::getOwnPropertySlot):
+        (JSC::NumberPrototype::getOwnPropertyDescriptor):
+        * runtime/NumberPrototype.h:
+        (NumberPrototype):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        (JSC::ObjectConstructor::getOwnPropertySlot):
+        (JSC::ObjectConstructor::getOwnPropertyDescriptor):
+        * runtime/ObjectConstructor.h:
+        (ObjectConstructor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::put):
+        (JSC::ObjectPrototype::defineOwnProperty):
+        (JSC::ObjectPrototype::getOwnPropertySlot):
+        (JSC::ObjectPrototype::getOwnPropertyDescriptor):
+        * runtime/ObjectPrototype.h:
+        (ObjectPrototype):
+        * runtime/PropertySlot.h:
+        (PropertySlot):
+        (JSC::PropertySlot::getValue):
+        * runtime/RegExpConstructor.cpp:
+        (JSC):
+        (JSC::RegExpConstructor::finishCreation):
+        (JSC::RegExpConstructor::getOwnPropertySlot):
+        (JSC::RegExpConstructor::getOwnPropertyDescriptor):
+        (JSC::regExpConstructorDollar1):
+        (JSC::regExpConstructorDollar2):
+        (JSC::regExpConstructorDollar3):
+        (JSC::regExpConstructorDollar4):
+        (JSC::regExpConstructorDollar5):
+        (JSC::regExpConstructorDollar6):
+        (JSC::regExpConstructorDollar7):
+        (JSC::regExpConstructorDollar8):
+        (JSC::regExpConstructorDollar9):
+        (JSC::regExpConstructorInput):
+        (JSC::regExpConstructorMultiline):
+        (JSC::regExpConstructorLastMatch):
+        (JSC::regExpConstructorLastParen):
+        (JSC::regExpConstructorLeftContext):
+        (JSC::regExpConstructorRightContext):
+        (JSC::RegExpConstructor::put):
+        * runtime/RegExpConstructor.h:
+        (RegExpConstructor):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::getOwnPropertySlot):
+        (JSC::RegExpMatchesArray::getOwnPropertyDescriptor):
+        (JSC::RegExpMatchesArray::put):
+        (JSC::RegExpMatchesArray::deleteProperty):
+        (JSC::RegExpMatchesArray::defineOwnProperty):
+        * runtime/RegExpObject.cpp:
+        (JSC):
+        (JSC::RegExpObject::getOwnPropertySlot):
+        (JSC::RegExpObject::getOwnPropertyDescriptor):
+        (JSC::RegExpObject::deleteProperty):
+        (JSC::RegExpObject::defineOwnProperty):
+        (JSC::regExpObjectGlobal):
+        (JSC::regExpObjectIgnoreCase):
+        (JSC::regExpObjectMultiline):
+        (JSC::regExpObjectSource):
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        (RegExpObject):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::getOwnPropertySlot):
+        (JSC::RegExpPrototype::getOwnPropertyDescriptor):
+        * runtime/RegExpPrototype.h:
+        (RegExpPrototype):
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::deleteProperty):
+        * runtime/StrictEvalActivation.h:
+        (StrictEvalActivation):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        (JSC::StringConstructor::getOwnPropertySlot):
+        (JSC::StringConstructor::getOwnPropertyDescriptor):
+        * runtime/StringConstructor.h:
+        (StringConstructor):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertySlot):
+        (JSC::StringObject::getOwnPropertyDescriptor):
+        (JSC::StringObject::put):
+        (JSC::StringObject::defineOwnProperty):
+        (JSC::StringObject::deleteProperty):
+        * runtime/StringObject.h:
+        (StringObject):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::getOwnPropertySlot):
+        (JSC::StringPrototype::getOwnPropertyDescriptor):
+        * runtime/StringPrototype.h:
+        (StringPrototype):
+        * runtime/Structure.cpp:
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::remove):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::get):
+
 2012-05-11  Michael Saboff  <msaboff@apple.com>
 
         Rolling out r116659.

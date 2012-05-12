@@ -43,8 +43,8 @@ public:
     static CClass* classForIsA(NPClass*);
     virtual ~CClass();
 
-    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
-    virtual Field* fieldNamed(const Identifier&, Instance*) const;
+    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Field* fieldNamed(PropertyName, Instance*) const;
 
 private:
     NPClass* _isa;

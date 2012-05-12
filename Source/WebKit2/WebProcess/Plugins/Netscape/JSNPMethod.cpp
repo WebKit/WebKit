@@ -49,7 +49,7 @@ JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIde
 {
 }
 
-void JSNPMethod::finishCreation(JSGlobalData& globalData, const Identifier& name)
+void JSNPMethod::finishCreation(JSGlobalData& globalData, const UString& name)
 {
     Base::finishCreation(globalData, name);
     ASSERT(inherits(&s_info));

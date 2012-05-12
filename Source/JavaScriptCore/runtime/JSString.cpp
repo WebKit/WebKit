@@ -257,7 +257,7 @@ JSObject* JSString::toThisObject(JSCell* cell, ExecState* exec)
     return StringObject::create(exec, exec->lexicalGlobalObject(), jsCast<JSString*>(cell));
 }
 
-bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSString* thisObject = jsCast<JSString*>(cell);
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
@@ -275,16 +275,16 @@ bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifie
     return true;
 }
 
-bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     if (propertyName == exec->propertyNames().length) {
         descriptor.setDescriptor(jsNumber(m_length), DontEnum | DontDelete | ReadOnly);
         return true;
     }
     
-    bool isStrictUInt32;
-    unsigned i = propertyName.toUInt32(isStrictUInt32);
-    if (isStrictUInt32 && i < m_length) {
+    unsigned i = propertyName.asIndex();
+    if (i < m_length) {
+        ASSERT(i != PropertyName::NotAnIndex); // No need for an explicit check, the above test would always fail!
         descriptor.setDescriptor(getIndex(exec, i), DontDelete | ReadOnly);
         return true;
     }

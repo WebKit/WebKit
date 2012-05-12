@@ -32,17 +32,17 @@ class QtPixmapInstance : public Instance {
 public:
     QtPixmapInstance(PassRefPtr<RootObject> rootObj, const QVariant& newData);
     virtual Class* getClass() const;
-    virtual JSValue getMethod(ExecState* exec, const Identifier& propertyName);
+    virtual JSValue getMethod(ExecState*, PropertyName);
     virtual JSValue invokeMethod(ExecState*, RuntimeMethod*);
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
-    virtual JSValue valueOf(ExecState* exec) const;
+    virtual JSValue valueOf(ExecState*) const;
     int width() const;
     int height() const;
     QPixmap toPixmap();
     QImage toImage();
-    RuntimeObject* newRuntimeObject(ExecState* exec);
+    RuntimeObject* newRuntimeObject(ExecState*);
     static JSObject* createPixmapRuntimeObject(ExecState*, PassRefPtr<RootObject>, const QVariant&);
     static QVariant variantFromObject(JSObject*, QMetaType::Type hint);
     static bool canHandle(QMetaType::Type hint);

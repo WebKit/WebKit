@@ -43,7 +43,7 @@ void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
     setInternalValue(globalData, string);
 }
 
-bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (thisObject->internalValue()->getStringPropertySlot(exec, propertyName, slot))
@@ -59,7 +59,7 @@ bool StringObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsi
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
-bool StringObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool StringObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     StringObject* thisObject = jsCast<StringObject*>(object);
     if (thisObject->internalValue()->getStringPropertyDescriptor(exec, propertyName, descriptor))
@@ -67,7 +67,7 @@ bool StringObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, c
     return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
 }
 
-void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().length) {
         if (slot.isStrictMode())
@@ -77,7 +77,7 @@ void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& property
     JSObject::put(cell, exec, propertyName, value, slot);
 }
 
-bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
 {
     StringObject* thisObject = jsCast<StringObject*>(object);
 
@@ -119,15 +119,16 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, const Id
     return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 
-bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (propertyName == exec->propertyNames().length)
         return false;
-    bool isStrictUInt32;
-    unsigned i = propertyName.toUInt32(isStrictUInt32);
-    if (isStrictUInt32 && thisObject->internalValue()->canGetIndex(i))
+    unsigned i = propertyName.asIndex();
+    if (thisObject->internalValue()->canGetIndex(i)) {
+        ASSERT(i != PropertyName::NotAnIndex); // No need for an explicit check, the above test would always fail!
         return false;
+    }
     return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 

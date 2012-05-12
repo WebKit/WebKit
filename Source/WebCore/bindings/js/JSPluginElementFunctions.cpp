@@ -100,7 +100,7 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
     return instance->createRuntimeObject(exec);
 }
     
-JSValue runtimeObjectPropertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue runtimeObjectPropertyGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSHTMLElement* element = jsCast<JSHTMLElement*>(asObject(slotBase));
     JSObject* scriptObject = pluginScriptObject(exec, element);
@@ -110,7 +110,7 @@ JSValue runtimeObjectPropertyGetter(ExecState* exec, JSValue slotBase, const Ide
     return scriptObject->get(exec, propertyName);
 }
 
-bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, JSHTMLElement* element)
+bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, JSHTMLElement* element)
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
@@ -122,7 +122,7 @@ bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& pr
     return true;
 }
 
-bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, JSHTMLElement* element)
+bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, JSHTMLElement* element)
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
@@ -138,7 +138,7 @@ bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, const Identifi
     return true;
 }
 
-bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot)
+bool runtimeObjectCustomPut(ExecState* exec, PropertyName propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot)
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)

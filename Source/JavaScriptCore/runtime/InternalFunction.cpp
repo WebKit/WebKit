@@ -39,12 +39,12 @@ InternalFunction::InternalFunction(JSGlobalObject* globalObject, Structure* stru
 {
 }
 
-void InternalFunction::finishCreation(JSGlobalData& globalData, const Identifier& name)
+void InternalFunction::finishCreation(JSGlobalData& globalData, const UString& name)
 {
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     ASSERT(methodTable()->getCallData != InternalFunction::s_info.methodTable.getCallData);
-    putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name), DontDelete | ReadOnly | DontEnum);
 }
 
 const UString& InternalFunction::name(ExecState* exec)

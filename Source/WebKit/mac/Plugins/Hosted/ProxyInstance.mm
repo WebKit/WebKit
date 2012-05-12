@@ -50,16 +50,16 @@ namespace WebKit {
 
 class ProxyClass : public JSC::Bindings::Class {
 private:
-    virtual MethodList methodsNamed(const Identifier&, Instance*) const;
-    virtual Field* fieldNamed(const Identifier&, Instance*) const;
+    virtual MethodList methodsNamed(PropertyName, Instance*) const;
+    virtual Field* fieldNamed(PropertyName, Instance*) const;
 };
 
-MethodList ProxyClass::methodsNamed(const Identifier& identifier, Instance* instance) const
+MethodList ProxyClass::methodsNamed(PropertyName identifier, Instance* instance) const
 {
     return static_cast<ProxyInstance*>(instance)->methodsNamed(identifier);
 }
 
-Field* ProxyClass::fieldNamed(const Identifier& identifier, Instance* instance) const
+Field* ProxyClass::fieldNamed(PropertyName identifier, Instance* instance) const
 {
     return static_cast<ProxyInstance*>(instance)->fieldNamed(identifier);
 }
@@ -181,7 +181,7 @@ class ProxyRuntimeMethod : public RuntimeMethod {
 public:
     typedef RuntimeMethod Base;
 
-    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const UString& name, Bindings::MethodList& list)
     {
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // exec-globalData() is also likely wrong.
@@ -204,7 +204,7 @@ private:
     {
     }
 
-    void finishCreation(JSGlobalData& globalData, const Identifier& name)
+    void finishCreation(JSGlobalData& globalData, const UString& name)
     {
         Base::finishCreation(globalData, name);
         ASSERT(inherits(&s_info));
@@ -213,10 +213,10 @@ private:
 
 const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMethod::s_info, 0, 0, CREATE_METHOD_TABLE(ProxyRuntimeMethod) };
 
-JSValue ProxyInstance::getMethod(JSC::ExecState* exec, const JSC::Identifier& propertyName)
+JSValue ProxyInstance::getMethod(JSC::ExecState* exec, PropertyName propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.impl(), methodList);
 }
 
 JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
@@ -346,7 +346,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     }
 }
 
-MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
+MethodList ProxyInstance::methodsNamed(PropertyName identifier)
 {
     if (!m_instanceProxy)
         return MethodList();
@@ -360,7 +360,7 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
         return methodList;
     }
     
-    uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii().data()));
+    uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ustring().ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
@@ -386,7 +386,7 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
     return methodList;
 }
 
-Field* ProxyInstance::fieldNamed(const Identifier& identifier)
+Field* ProxyInstance::fieldNamed(PropertyName identifier)
 {
     if (!m_instanceProxy)
         return 0;
@@ -396,7 +396,7 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
     if (existingMapEntry != m_fields.end())
         return existingMapEntry->second;
     
-    uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ascii().data()));
+    uint64_t propertyName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(identifier.ustring().ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
     if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),

@@ -968,13 +968,13 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
 const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(QtRuntimeMethod) };
 
-QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const Identifier& identifier)
+QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const UString& identifier)
     : InternalFunction(exec->lexicalGlobalObject(), structure)
     , d_ptr(dd)
 {
 }
 
-void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance)
+void QtRuntimeMethod::finishCreation(ExecState* exec, const UString& identifier, PassRefPtr<QtInstance> instance)
 {
     Base::finishCreation(exec->globalData(), identifier);
     QW_D(QtRuntimeMethod);
@@ -1385,12 +1385,12 @@ static int findSignalIndex(const QMetaObject* meta, int initialIndex, QByteArray
 
 const ClassInfo QtRuntimeMetaMethod::s_info = { "QtRuntimeMethod", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(QtRuntimeMetaMethod) };
 
-QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, Structure* structure, const Identifier& identifier)
+QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, Structure* structure, const UString& identifier)
     : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, structure, identifier)
 {
 }
 
-void QtRuntimeMetaMethod::finishCreation(ExecState* exec, const Identifier& identifier, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
+void QtRuntimeMetaMethod::finishCreation(ExecState* exec, const UString& identifier, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature, bool allowPrivate)
 {
     Base::finishCreation(exec, identifier, instance);
     QW_D(QtRuntimeMetaMethod);
@@ -1452,16 +1452,18 @@ CallType QtRuntimeMetaMethod::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     QtRuntimeMetaMethod* thisObject = jsCast<QtRuntimeMetaMethod*>(cell);
-    if (propertyName == "connect") {
+    if (propertyName == Identifier(exec, "connect")) {
         slot.setCustom(thisObject, thisObject->connectGetter);
         return true;
-    } else if (propertyName == "disconnect") {
+    }
+    if (propertyName == Identifier(exec, "disconnect")) {
         slot.setCustom(thisObject, thisObject->disconnectGetter);
         return true;
-    } else if (propertyName == exec->propertyNames().length) {
+    }
+    if (propertyName == exec->propertyNames().length) {
         slot.setCustom(thisObject, thisObject->lengthGetter);
         return true;
     }
@@ -1469,17 +1471,17 @@ bool QtRuntimeMetaMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, cons
     return QtRuntimeMethod::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool QtRuntimeMetaMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     QtRuntimeMetaMethod* thisObject = jsCast<QtRuntimeMetaMethod*>(object);
-    if (propertyName == "connect") {
+    if (propertyName == Identifier(exec, "connect")) {
         PropertySlot slot;
         slot.setCustom(thisObject, connectGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
         return true;
     }
 
-    if (propertyName == "disconnect") {
+    if (propertyName == Identifier(exec, "disconnect")) {
         PropertySlot slot;
         slot.setCustom(thisObject, disconnectGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);
@@ -1507,29 +1509,29 @@ void QtRuntimeMetaMethod::getOwnPropertyNames(JSObject* object, ExecState* exec,
     QtRuntimeMethod::getOwnPropertyNames(object, exec, propertyNames, mode);
 }
 
-JSValue QtRuntimeMetaMethod::lengthGetter(ExecState*, JSValue, const Identifier&)
+JSValue QtRuntimeMetaMethod::lengthGetter(ExecState*, JSValue, PropertyName)
 {
     // QtScript always returns 0
     return jsNumber(0);
 }
 
-JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSValue slotBase, const Identifier& ident)
+JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSValue slotBase, PropertyName ident)
 {
     QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slotBase));
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_connect)
-        d->m_connect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident, true, d->m_instance, d->m_index, d->m_signature));
+        d->m_connect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident.impl(), true, d->m_instance, d->m_index, d->m_signature));
     return d->m_connect.get();
 }
 
-JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase, const Identifier& ident)
+JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase, PropertyName ident)
 {
     QtRuntimeMetaMethod* thisObj = static_cast<QtRuntimeMetaMethod*>(asObject(slotBase));
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_disconnect)
-        d->m_disconnect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident, false, d->m_instance, d->m_index, d->m_signature));
+        d->m_disconnect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident.impl(), false, d->m_instance, d->m_index, d->m_signature));
     return d->m_disconnect.get();
 }
 
@@ -1539,12 +1541,12 @@ QMultiMap<QObject*, QtConnectionObject*> QtRuntimeConnectionMethod::connections;
 
 const ClassInfo QtRuntimeConnectionMethod::s_info = { "QtRuntimeMethod", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(QtRuntimeConnectionMethod) };
 
-QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, Structure* structure, const Identifier& identifier)
+QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, Structure* structure, const UString& identifier)
     : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, structure, identifier)
 {
 }
 
-void QtRuntimeConnectionMethod::finishCreation(ExecState* exec, const Identifier& identifier, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
+void QtRuntimeConnectionMethod::finishCreation(ExecState* exec, const UString& identifier, bool isConnect, PassRefPtr<QtInstance> instance, int index, const QByteArray& signature)
 {
     Base::finishCreation(exec, identifier, instance);
     QW_D(QtRuntimeConnectionMethod);
@@ -1695,7 +1697,7 @@ CallType QtRuntimeConnectionMethod::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     QtRuntimeConnectionMethod* thisObject = jsCast<QtRuntimeConnectionMethod*>(cell);
     if (propertyName == exec->propertyNames().length) {
@@ -1706,7 +1708,7 @@ bool QtRuntimeConnectionMethod::getOwnPropertySlot(JSCell* cell, ExecState* exec
     return QtRuntimeMethod::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool QtRuntimeConnectionMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     QtRuntimeConnectionMethod* thisObject = jsCast<QtRuntimeConnectionMethod*>(object);
     if (propertyName == exec->propertyNames().length) {
@@ -1727,7 +1729,7 @@ void QtRuntimeConnectionMethod::getOwnPropertyNames(JSObject* object, ExecState*
     QtRuntimeMethod::getOwnPropertyNames(object, exec, propertyNames, mode);
 }
 
-JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState*, JSValue, const Identifier&)
+JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState*, JSValue, PropertyName)
 {
     // we have one formal argument, and one optional
     return jsNumber(1);

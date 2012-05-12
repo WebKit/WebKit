@@ -95,7 +95,7 @@ static inline void convertJSMethodNameToObjc(const CString& jsName, JSNameConver
     }
 }
 
-MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) const
+MethodList ObjcClass::methodsNamed(PropertyName identifier, Instance*) const
 {
     MethodList methodList;
     if (Method* method = m_methodCache.get(identifier.impl())) {
@@ -103,7 +103,7 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
         return methodList;
     }
 
-    CString jsName = identifier.ascii();
+    CString jsName = identifier.ustring().ascii();
     JSNameConversionBuffer buffer;
     convertJSMethodNameToObjc(jsName, buffer);
     RetainPtr<CFStringRef> methodName(AdoptCF, CFStringCreateWithCString(NULL, buffer.data(), kCFStringEncodingASCII));
@@ -143,7 +143,7 @@ MethodList ObjcClass::methodsNamed(const Identifier& identifier, Instance*) cons
     return methodList;
 }
 
-Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) const
+Field* ObjcClass::fieldNamed(PropertyName identifier, Instance* instance) const
 {
     Field* field = m_fieldCache.get(identifier.impl());
     if (field)
@@ -151,7 +151,7 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
 
     ClassStructPtr thisClass = _isa;
 
-    CString jsName = identifier.ascii();
+    CString jsName = identifier.ustring().ascii();
     RetainPtr<CFStringRef> fieldName(AdoptCF, CFStringCreateWithCString(NULL, jsName.data(), kCFStringEncodingASCII));
     id targetObject = (static_cast<ObjcInstance*>(instance))->getObject();
     id attributes = [targetObject attributeKeys];
@@ -221,14 +221,14 @@ Field* ObjcClass::fieldNamed(const Identifier& identifier, Instance* instance) c
     return field;
 }
 
-JSValue ObjcClass::fallbackObject(ExecState* exec, Instance* instance, const Identifier &propertyName)
+JSValue ObjcClass::fallbackObject(ExecState* exec, Instance* instance, PropertyName propertyName)
 {
     ObjcInstance* objcInstance = static_cast<ObjcInstance*>(instance);
     id targetObject = objcInstance->getObject();
     
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return jsUndefined();
-    return ObjcFallbackObjectImp::create(exec, exec->lexicalGlobalObject(), objcInstance, propertyName);
+    return ObjcFallbackObjectImp::create(exec, exec->lexicalGlobalObject(), objcInstance, propertyName.impl());
 }
 
 }

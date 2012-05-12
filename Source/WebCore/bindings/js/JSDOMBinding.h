@@ -252,13 +252,13 @@ enum ParameterDefaultPolicy {
     // object, to let the engine know that collecting the JSString wrapper is unlikely to save memory.
     JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const String&); 
 
-    String identifierToString(const JSC::Identifier&);
+    String propertyNameToString(JSC::PropertyName);
     String ustringToString(const JSC::UString&);
     JSC::UString stringToUString(const String&);
 
-    AtomicString identifierToAtomicString(const JSC::Identifier&);
+    AtomicString propertyNameToAtomicString(JSC::PropertyName);
     AtomicString ustringToAtomicString(const JSC::UString&);
-    AtomicStringImpl* findAtomicString(const JSC::Identifier&);
+    AtomicStringImpl* findAtomicString(JSC::PropertyName);
 
     String valueToStringWithNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null
     String valueToStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null or undefined
@@ -337,7 +337,7 @@ enum ParameterDefaultPolicy {
     DOMWindow* firstDOMWindow(JSC::ExecState*);
 
     void printErrorMessageForFrame(Frame*, const String& message);
-    JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier& propertyName);
+    JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 
     inline JSC::JSValue jsString(JSC::ExecState* exec, const String& s)
     {
@@ -371,9 +371,9 @@ enum ParameterDefaultPolicy {
         return JSC::UString(s.impl());
     }
 
-    inline String identifierToString(const JSC::Identifier& i)
+    inline String propertyNameToString(JSC::PropertyName propertyName)
     {
-        return i.impl();
+        return propertyName.impl();
     }
 
     inline AtomicString ustringToAtomicString(const JSC::UString& u)
@@ -381,9 +381,9 @@ enum ParameterDefaultPolicy {
         return AtomicString(u.impl());
     }
 
-    inline AtomicString identifierToAtomicString(const JSC::Identifier& identifier)
+    inline AtomicString propertyNameToAtomicString(JSC::PropertyName propertyName)
     {
-        return AtomicString(identifier.impl());
+        return AtomicString(propertyName.impl());
     }
 
     inline Vector<unsigned long> jsUnsignedLongArrayToVector(JSC::ExecState* exec, JSC::JSValue value)

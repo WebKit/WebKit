@@ -110,12 +110,12 @@ void JSTestInterfaceConstructor::finishCreation(ExecState* exec, JSDOMGlobalObje
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestInterfaceConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestInterfaceConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(cell), propertyName, slot);
 }
 
-bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticPropertyDescriptor<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, descriptor);
 }
@@ -179,13 +179,13 @@ JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* global
     return getDOMPrototype<JSTestInterface>(exec, globalObject);
 }
 
-bool JSTestInterfacePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestInterfacePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(cell);
     return getStaticPropertySlot<JSTestInterfacePrototype, JSObject>(exec, &JSTestInterfacePrototypeTable, thisObject, propertyName, slot);
 }
 
-bool JSTestInterfacePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestInterfacePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(object);
     return getStaticPropertyDescriptor<JSTestInterfacePrototype, JSObject>(exec, &JSTestInterfacePrototypeTable, thisObject, propertyName, descriptor);
@@ -221,14 +221,14 @@ JSTestInterface::~JSTestInterface()
     releaseImplIfNotNull();
 }
 
-bool JSTestInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSTestInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestInterface, Base>(exec, &JSTestInterfaceTable, thisObject, propertyName, slot);
 }
 
-bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestInterface* thisObject = jsCast<JSTestInterface*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
@@ -236,7 +236,7 @@ bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec
 }
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
@@ -248,7 +248,7 @@ JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, const
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
@@ -260,7 +260,7 @@ JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, const
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     return castedThis->supplementalStr3(exec);
@@ -269,7 +269,7 @@ JSValue jsTestInterfaceSupplementalStr3(ExecState* exec, JSValue slotBase, const
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
@@ -280,13 +280,13 @@ JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, const
 
 #endif
 
-JSValue jsTestInterfaceConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue jsTestInterfaceConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestInterface* domObject = jsCast<JSTestInterface*>(asObject(slotBase));
     return JSTestInterface::getConstructor(exec, domObject->globalObject());
 }
 
-void JSTestInterface::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
@@ -397,7 +397,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMetho
 // Constant getters
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState* exec, JSValue, const Identifier&)
+JSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState* exec, JSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return jsNumber(static_cast<int>(1));
@@ -405,7 +405,7 @@ JSValue jsTestInterfaceSUPPLEMENTALCONSTANT1(ExecState* exec, JSValue, const Ide
 
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(ExecState* exec, JSValue, const Identifier&)
+JSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(ExecState* exec, JSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
     return jsNumber(static_cast<int>(2));

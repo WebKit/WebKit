@@ -47,7 +47,7 @@ FunctionConstructor::FunctionConstructor(JSGlobalObject* globalObject, Structure
 
 void FunctionConstructor::finishCreation(ExecState* exec, FunctionPrototype* functionPrototype)
 {
-    Base::finishCreation(exec->globalData(), Identifier(exec, functionPrototype->classInfo()->className));
+    Base::finishCreation(exec->globalData(), functionPrototype->classInfo()->className);
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
     // Number of arguments for constructor

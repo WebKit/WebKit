@@ -139,9 +139,9 @@ namespace JSC {
         JSObject* toObject(ExecState*, JSGlobalObject*) const;
         double toNumber(ExecState*) const;
         
-        bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        bool getStringPropertySlot(ExecState*, PropertyName, PropertySlot&);
         bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
-        bool getStringPropertyDescriptor(ExecState*, const Identifier& propertyName, PropertyDescriptor&);
+        bool getStringPropertyDescriptor(ExecState*, PropertyName, PropertyDescriptor&);
 
         bool canGetIndex(unsigned i) { return i < m_length; }
         JSString* getIndex(ExecState*, unsigned);
@@ -173,7 +173,7 @@ namespace JSC {
         static JSObject* toThisObject(JSCell*, ExecState*);
 
         // Actually getPropertySlot, not getOwnPropertySlot (see JSCell).
-        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
 
         UString& string() { ASSERT(!isRope()); return m_value; }
@@ -439,16 +439,16 @@ namespace JSC {
     inline JSString* jsNontrivialString(ExecState* exec, const char* s) { return jsNontrivialString(&exec->globalData(), s); }
     inline JSString* jsOwnedString(ExecState* exec, const UString& s) { return jsOwnedString(&exec->globalData(), s); } 
 
-    ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+    ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
     {
         if (propertyName == exec->propertyNames().length) {
             slot.setValue(jsNumber(m_length));
             return true;
         }
 
-        bool isStrictUInt32;
-        unsigned i = propertyName.toUInt32(isStrictUInt32);
-        if (isStrictUInt32 && i < m_length) {
+        unsigned i = propertyName.asIndex();
+        if (i < m_length) {
+            ASSERT(i != PropertyName::NotAnIndex); // No need for an explicit check, the above test would always fail!
             slot.setValue(getIndex(exec, i));
             return true;
         }

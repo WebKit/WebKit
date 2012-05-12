@@ -21,8 +21,8 @@
 #ifndef PropertySlot_h
 #define PropertySlot_h
 
-#include "Identifier.h"
 #include "JSValue.h"
+#include "PropertyName.h"
 #include "Register.h"
 #include <wtf/Assertions.h>
 #include <wtf/NotFound.h>
@@ -61,10 +61,10 @@ namespace JSC {
             clearValue();
         }
 
-        typedef JSValue (*GetValueFunc)(ExecState*, JSValue slotBase, const Identifier&);
+        typedef JSValue (*GetValueFunc)(ExecState*, JSValue slotBase, PropertyName);
         typedef JSValue (*GetIndexValueFunc)(ExecState*, JSValue slotBase, unsigned);
 
-        JSValue getValue(ExecState* exec, const Identifier& propertyName) const
+        JSValue getValue(ExecState* exec, PropertyName propertyName) const
         {
             if (m_getValue == JSC_VALUE_MARKER)
                 return m_value;

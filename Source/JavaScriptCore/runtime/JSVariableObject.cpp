@@ -42,7 +42,7 @@ void JSVariableObject::destroy(JSCell* cell)
     jsCast<JSVariableObject*>(cell)->JSVariableObject::~JSVariableObject();
 }
 
-bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSVariableObject* thisObject = jsCast<JSVariableObject*>(cell);
     if (thisObject->symbolTable().contains(propertyName.impl()))
@@ -63,7 +63,7 @@ void JSVariableObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Pr
     JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool JSVariableObject::symbolTableGet(PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
     if (!entry.isNull()) {
@@ -73,7 +73,7 @@ bool JSVariableObject::symbolTableGet(const Identifier& propertyName, PropertyDe
     return false;
 }
 
-void JSVariableObject::putDirectVirtual(JSObject*, ExecState*, const Identifier&, JSValue, unsigned)
+void JSVariableObject::putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned)
 {
     ASSERT_NOT_REACHED();
 }

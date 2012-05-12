@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Structure.h"
 
-#include "Identifier.h"
 #include "JSObject.h"
 #include "JSPropertyNameIterator.h"
 #include "Lookup.h"
@@ -267,7 +266,7 @@ void Structure::growPropertyStorageCapacity()
         m_propertyStorageCapacity *= 2;
 }
 
-void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, const Identifier& propertyName)
+void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, PropertyName propertyName)
 {
     StringImpl* rep = propertyName.impl();
 
@@ -281,7 +280,7 @@ void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, const Iden
     entry->specificValue.clear();
 }
 
-Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
+Structure* Structure::addPropertyTransitionToExistingStructure(Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
@@ -298,7 +297,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
     return 0;
 }
 
-Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
+Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
     // If we have a specific function, we may have got to this point if there is
     // already a transition with the correct property name and attributes, but
@@ -355,7 +354,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
     return transition;
 }
 
-Structure* Structure::removePropertyTransition(JSGlobalData& globalData, Structure* structure, const Identifier& propertyName, size_t& offset)
+Structure* Structure::removePropertyTransition(JSGlobalData& globalData, Structure* structure, PropertyName propertyName, size_t& offset)
 {
     ASSERT(!structure->isUncacheableDictionary());
 
@@ -381,7 +380,7 @@ Structure* Structure::changePrototypeTransition(JSGlobalData& globalData, Struct
     return transition;
 }
 
-Structure* Structure::despecifyFunctionTransition(JSGlobalData& globalData, Structure* structure, const Identifier& replaceFunction)
+Structure* Structure::despecifyFunctionTransition(JSGlobalData& globalData, Structure* structure, PropertyName replaceFunction)
 {
     ASSERT(structure->m_specificFunctionThrashCount < maxSpecificFunctionThrashCount);
     Structure* transition = create(globalData, structure);
@@ -404,7 +403,7 @@ Structure* Structure::despecifyFunctionTransition(JSGlobalData& globalData, Stru
     return transition;
 }
 
-Structure* Structure::attributeChangeTransition(JSGlobalData& globalData, Structure* structure, const Identifier& propertyName, unsigned attributes)
+Structure* Structure::attributeChangeTransition(JSGlobalData& globalData, Structure* structure, PropertyName propertyName, unsigned attributes)
 {
     if (!structure->isUncacheableDictionary()) {
         Structure* transition = create(globalData, structure);
@@ -562,7 +561,7 @@ Structure* Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObj
     return this;
 }
 
-size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
+size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, PropertyName propertyName, unsigned attributes, JSCell* specificValue)
 {
     ASSERT(!m_enumerationCache);
 
@@ -579,7 +578,7 @@ size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, const I
     return offset;
 }
 
-size_t Structure::removePropertyWithoutTransition(JSGlobalData& globalData, const Identifier& propertyName)
+size_t Structure::removePropertyWithoutTransition(JSGlobalData& globalData, PropertyName propertyName)
 {
     ASSERT(isUncacheableDictionary());
     ASSERT(!m_enumerationCache);
@@ -636,13 +635,15 @@ PassOwnPtr<PropertyTable> Structure::copyPropertyTableForPinning(JSGlobalData& g
     return adoptPtr(m_propertyTable ? new PropertyTable(globalData, owner, *m_propertyTable) : new PropertyTable(m_offset == noOffset ? 0 : m_offset));
 }
 
-size_t Structure::get(JSGlobalData& globalData, StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue)
+size_t Structure::get(JSGlobalData& globalData, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
 {
+    ASSERT(structure()->classInfo() == &s_info);
+
     materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return WTF::notFound;
 
-    PropertyMapEntry* entry = m_propertyTable->find(propertyName).first;
+    PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
     if (!entry)
         return WTF::notFound;
 
@@ -651,13 +652,12 @@ size_t Structure::get(JSGlobalData& globalData, StringImpl* propertyName, unsign
     return entry->offset;
 }
 
-bool Structure::despecifyFunction(JSGlobalData& globalData, const Identifier& propertyName)
+bool Structure::despecifyFunction(JSGlobalData& globalData, PropertyName propertyName)
 {
     materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return false;
 
-    ASSERT(!propertyName.isNull());
     PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
     if (!entry)
         return false;
@@ -678,9 +678,8 @@ void Structure::despecifyAllFunctions(JSGlobalData& globalData)
         iter->specificValue.clear();
 }
 
-size_t Structure::putSpecificValue(JSGlobalData& globalData, const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
+size_t Structure::putSpecificValue(JSGlobalData& globalData, PropertyName propertyName, unsigned attributes, JSCell* specificValue)
 {
-    ASSERT(!propertyName.isNull());
     ASSERT(get(globalData, propertyName) == notFound);
 
     checkConsistency();
@@ -705,10 +704,8 @@ size_t Structure::putSpecificValue(JSGlobalData& globalData, const Identifier& p
     return newOffset;
 }
 
-size_t Structure::remove(const Identifier& propertyName)
+size_t Structure::remove(PropertyName propertyName)
 {
-    ASSERT(!propertyName.isNull());
-
     checkConsistency();
 
     StringImpl* rep = propertyName.impl();

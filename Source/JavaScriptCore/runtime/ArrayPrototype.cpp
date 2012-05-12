@@ -126,12 +126,12 @@ void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-bool ArrayPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool ArrayPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(cell), propertyName, slot);
 }
 
-bool ArrayPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool ArrayPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     return getStaticFunctionDescriptor<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(object), propertyName, descriptor);
 }
@@ -147,7 +147,7 @@ static JSValue getProperty(ExecState* exec, JSObject* obj, unsigned index)
     return slot.getValue(exec, index);
 }
 
-static void putProperty(ExecState* exec, JSObject* obj, const Identifier& propertyName, JSValue value)
+static void putProperty(ExecState* exec, JSObject* obj, PropertyName propertyName, JSValue value)
 {
     PutPropertySlot slot;
     obj->methodTable()->put(obj, exec, propertyName, value, slot);

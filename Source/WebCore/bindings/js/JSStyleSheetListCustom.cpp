@@ -35,15 +35,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSStyleSheetList::canGetItemsForName(ExecState*, StyleSheetList* styleSheetList, const Identifier& propertyName)
+bool JSStyleSheetList::canGetItemsForName(ExecState*, StyleSheetList* styleSheetList, PropertyName propertyName)
 {
-    return styleSheetList->getNamedItem(identifierToString(propertyName));
+    return styleSheetList->getNamedItem(propertyNameToString(propertyName));
 }
 
-JSValue JSStyleSheetList::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSStyleSheetList::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSStyleSheetList* thisObj = jsCast<JSStyleSheetList*>(asObject(slotBase));
-    HTMLStyleElement* element = thisObj->impl()->getNamedItem(identifierToString(propertyName));
+    HTMLStyleElement* element = thisObj->impl()->getNamedItem(propertyNameToString(propertyName));
     ASSERT(element);
     return toJS(exec, thisObj->globalObject(), element->sheet());
 }

@@ -124,12 +124,12 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
     methodTable()->defineOwnProperty(this, exec, exec->propertyNames().callee, descriptor, false);
 }
 
-bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+        ASSERT(i < PropertyName::NotAnIndex);
         slot.setValue(thisObject->argument(i).get());
         return true;
     }
@@ -153,12 +153,12 @@ bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifi
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     Arguments* thisObject = jsCast<Arguments*>(object);
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+        ASSERT(i < PropertyName::NotAnIndex);
         descriptor.setDescriptor(thisObject->argument(i).get(), None);
         return true;
     }
@@ -208,12 +208,12 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
     JSObject::put(thisObject, exec, Identifier(exec, UString::number(i)), value, slot);
 }
 
-void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void Arguments::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+        ASSERT(i < PropertyName::NotAnIndex);
         thisObject->argument(i).set(exec->globalData(), thisObject, value);
         return;
     }
@@ -259,15 +259,15 @@ bool Arguments::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     return JSObject::deleteProperty(thisObject, exec, Identifier(exec, UString::number(i)));
 }
 
-bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName) 
+bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName) 
 {
     if (exec->globalData().isInDefineOwnProperty())
         return Base::deleteProperty(cell, exec, propertyName);
 
     Arguments* thisObject = jsCast<Arguments*>(cell);
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < thisObject->d->numArguments) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->d->numArguments) {
+        ASSERT(i < PropertyName::NotAnIndex);
         if (!Base::deleteProperty(cell, exec, propertyName))
             return false;
 
@@ -300,12 +300,12 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
     return JSObject::deleteProperty(thisObject, exec, propertyName);
 }
 
-bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
 {
     Arguments* thisObject = jsCast<Arguments*>(object);
-    bool isArrayIndex;
-    unsigned i = propertyName.toArrayIndex(isArrayIndex);
-    if (isArrayIndex && i < thisObject->d->numArguments) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->d->numArguments) {
+        ASSERT(i < PropertyName::NotAnIndex);
         // If the property is not yet present on the object, and is not yet marked as deleted, then add it now.
         PropertySlot slot;
         if ((!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i]) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot))

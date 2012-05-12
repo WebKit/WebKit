@@ -59,13 +59,13 @@ namespace JSC {
 
         bool isDynamicScope(bool& requiresDynamicChecks) const;
 
-        static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
+        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-        static void put(JSCell*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
+        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-        static void putDirectVirtual(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
-        static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
+        static void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
+        static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
         static JSObject* toThisObject(JSCell*, ExecState*);
 
@@ -82,13 +82,13 @@ namespace JSC {
         static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
-        bool symbolTableGet(const Identifier&, PropertySlot&);
-        bool symbolTableGet(const Identifier&, PropertyDescriptor&);
-        bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
-        bool symbolTablePut(ExecState*, const Identifier&, JSValue, bool shouldThrow);
-        bool symbolTablePutWithAttributes(JSGlobalData&, const Identifier&, JSValue, unsigned attributes);
+        bool symbolTableGet(PropertyName, PropertySlot&);
+        bool symbolTableGet(PropertyName, PropertyDescriptor&);
+        bool symbolTableGet(PropertyName, PropertySlot&, bool& slotIsWriteable);
+        bool symbolTablePut(ExecState*, PropertyName, JSValue, bool shouldThrow);
+        bool symbolTablePutWithAttributes(JSGlobalData&, PropertyName, JSValue, unsigned attributes);
 
-        static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
+        static JSValue argumentsGetter(ExecState*, JSValue, PropertyName);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
         int m_numCapturedArgs;

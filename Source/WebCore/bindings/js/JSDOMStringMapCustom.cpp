@@ -35,15 +35,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDOMStringMap::canGetItemsForName(ExecState*, DOMStringMap* impl, const Identifier& propertyName)
+bool JSDOMStringMap::canGetItemsForName(ExecState*, DOMStringMap* impl, PropertyName propertyName)
 {
-    return impl->contains(identifierToAtomicString(propertyName));
+    return impl->contains(propertyNameToAtomicString(propertyName));
 }
 
-JSValue JSDOMStringMap::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSDOMStringMap::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSDOMStringMap* thisObj = jsCast<JSDOMStringMap*>(asObject(slotBase));
-    return jsString(exec, thisObj->impl()->item(identifierToAtomicString(propertyName)));
+    return jsString(exec, thisObj->impl()->item(propertyNameToAtomicString(propertyName)));
 }
 
 void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -58,10 +58,10 @@ void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* exec, Prop
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSDOMStringMap* thisObject = jsCast<JSDOMStringMap*>(cell);
-    AtomicString stringName = identifierToAtomicString(propertyName);
+    AtomicString stringName = propertyNameToAtomicString(propertyName);
     if (!thisObject->m_impl->contains(stringName))
         return false;
     ExceptionCode ec = 0;
@@ -70,13 +70,13 @@ bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* exec, const Identif
     return !ec;
 }
 
-bool JSDOMStringMap::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+bool JSDOMStringMap::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     String stringValue = ustringToString(value.toString(exec)->value(exec));
     if (exec->hadException())
         return false;
     ExceptionCode ec = 0;
-    impl()->setItem(identifierToString(propertyName), stringValue, ec);
+    impl()->setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);
     return !ec;
 }

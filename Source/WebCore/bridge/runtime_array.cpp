@@ -60,7 +60,7 @@ void RuntimeArray::destroy(JSCell* cell)
     jsCast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
 }
 
-JSValue RuntimeArray::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)
+JSValue RuntimeArray::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
 {
     RuntimeArray* thisObj = static_cast<RuntimeArray*>(asObject(slotBase));
     return jsNumber(thisObj->getLength());
@@ -85,7 +85,7 @@ void RuntimeArray::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
     JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
@@ -93,19 +93,17 @@ bool RuntimeArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
         return true;
     }
     
-    bool ok;
-    unsigned index = propertyName.toArrayIndex(ok);
-    if (ok) {
-        if (index < thisObject->getLength()) {
-            slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
-            return true;
-        }
+    unsigned index = propertyName.asIndex();
+    if (index < thisObject->getLength()) {
+        ASSERT(index != PropertyName::NotAnIndex);
+        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
+        return true;
     }
     
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (propertyName == exec->propertyNames().length) {
@@ -115,15 +113,13 @@ bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, c
         return true;
     }
     
-    bool ok;
-    unsigned index = propertyName.toArrayIndex(ok);
-    if (ok) {
-        if (index < thisObject->getLength()) {
-            PropertySlot slot;
-            slot.setCustomIndex(thisObject, index, indexGetter);
-            descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | DontEnum);
-            return true;
-        }
+    unsigned index = propertyName.asIndex();
+    if (index < thisObject->getLength()) {
+        ASSERT(index != PropertyName::NotAnIndex);
+        PropertySlot slot;
+        slot.setCustomIndex(thisObject, index, indexGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | DontEnum);
+        return true;
     }
     
     return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
@@ -140,7 +136,7 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState *exec, unsi
     return JSObject::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+void RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
@@ -148,9 +144,8 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& property
         return;
     }
     
-    bool ok;
-    unsigned index = propertyName.toArrayIndex(ok);
-    if (ok) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex) {
         thisObject->getConcreteArray()->setValueAt(exec, index, value);
         return;
     }
@@ -169,7 +164,7 @@ void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSV
     thisObject->getConcreteArray()->setValueAt(exec, index, value);
 }
 
-bool RuntimeArray::deleteProperty(JSCell*, ExecState*, const Identifier&)
+bool RuntimeArray::deleteProperty(JSCell*, ExecState*, PropertyName)
 {
     return false;
 }

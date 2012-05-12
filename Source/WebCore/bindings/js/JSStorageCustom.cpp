@@ -34,12 +34,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSStorage::canGetItemsForName(ExecState*, Storage* impl, const Identifier& propertyName)
+bool JSStorage::canGetItemsForName(ExecState*, Storage* impl, PropertyName propertyName)
 {
-    return impl->contains(identifierToString(propertyName));
+    return impl->contains(propertyNameToString(propertyName));
 }
 
-JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSStorage* thisObj = jsCast<JSStorage*>(asObject(slotBase));
         
@@ -47,10 +47,10 @@ JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, const Identifie
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return asObject(prototype)->get(exec, propertyName);
  
-    return jsStringOrNull(exec, thisObj->impl()->getItem(identifierToString(propertyName)));
+    return jsStringOrNull(exec, thisObj->impl()->getItem(propertyNameToString(propertyName)));
 }
 
-bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
+bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSStorage* thisObject = jsCast<JSStorage*>(cell);
     // Only perform the custom delete if the object doesn't have a native property by this name.
@@ -64,7 +64,7 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
 
-    thisObject->m_impl->removeItem(identifierToString(propertyName));
+    thisObject->m_impl->removeItem(propertyNameToString(propertyName));
     return true;
 }
 
@@ -78,7 +78,7 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-bool JSStorage::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     // Only perform the custom put if the object doesn't have a native property by this name.
     // Since hasProperty() would end up calling canGetItemsForName() and be fooled, we need to check
@@ -96,7 +96,7 @@ bool JSStorage::putDelegate(ExecState* exec, const Identifier& propertyName, JSV
         return true;
     
     ExceptionCode ec = 0;
-    impl()->setItem(identifierToString(propertyName), stringValue, ec);
+    impl()->setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);
 
     return true;
