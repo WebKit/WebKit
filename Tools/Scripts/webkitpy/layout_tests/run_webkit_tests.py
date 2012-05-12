@@ -252,7 +252,7 @@ def parse_args(args=None):
         optparse.make_option("-l", "--leaks", action="store_true", default=False,
             help="Enable leaks checking (Mac OS X only)"),
         optparse.make_option("-g", "--guard-malloc", action="store_true", default=False,
-            help="Enable malloc guard (Mac OS X only)"),
+            help="Enable Guard Malloc (Mac OS X only)"),
         optparse.make_option("--threaded", action="store_true", default=False,
             help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--webkit-test-runner", "-2", action="store_true",

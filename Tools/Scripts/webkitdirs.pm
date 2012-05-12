@@ -103,6 +103,7 @@ my $forceChromiumUpdate;
 my $isInspectorFrontend;
 my $isWK2;
 my $shouldTargetWebProcess;
+my $shouldUseGuardMalloc;
 my $xcodeVersion;
 
 # Variables for Win32 support
@@ -1383,6 +1384,32 @@ sub determineShouldTargetWebProcess
     $shouldTargetWebProcess = checkForArgumentAndRemoveFromARGV("--target-web-process");
 }
 
+sub appendToEnvironmentVariableList
+{
+    my ($environmentVariableName, $value) = @_;
+
+    if (defined($ENV{$environmentVariableName})) {
+        $ENV{$environmentVariableName} .= ":" . $value;
+    } else {
+        $ENV{$environmentVariableName} = $value;
+    }
+}
+
+sub setUpGuardMallocIfNeeded
+{
+    if (!isDarwin()) {
+        return;
+    }
+
+    if (!defined($shouldUseGuardMalloc)) {
+        $shouldUseGuardMalloc = checkForArgumentAndRemoveFromARGV("--guard-malloc");
+    }
+
+    if ($shouldUseGuardMalloc) {
+        appendToEnvironmentVariableList("DYLD_INSERT_LIBRARIES", "/usr/lib/libgmalloc.dylib");
+    }
+}
+
 sub relativeScriptsDir()
 {
     my $scriptDir = File::Spec->catpath("", File::Spec->abs2rel($FindBin::Bin, getcwd()), "");
@@ -2484,6 +2511,7 @@ sub printHelpAndExitForRunAndDebugWebKitAppIfNeeded()
 Usage: @{[basename($0)]} [options] [args ...]
   --help                Show this help message
   --no-saved-state      Disable application resume for the session on Mac OS 10.7
+  --guard-malloc        Enable Guard Malloc (Mac OS X only)
 EOF
     exit(1);
 }
@@ -2502,6 +2530,9 @@ sub runMacWebKitApp($;$)
     print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+
+    setUpGuardMallocIfNeeded();
+
     if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
         return system("open", "-W", "-a", $appPath, "--args", argumentsForRunAndDebugMacWebKitApp());
     }
@@ -2521,6 +2552,9 @@ sub execMacWebKitAppForDebugging($)
     my $productDir = productDir();
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+
+    setUpGuardMallocIfNeeded();
+
     my @architectureFlags = ("-arch", architecture());
     if (!shouldTargetWebProcess()) {
         print "Starting @{[basename($appPath)]} under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
@@ -2529,7 +2563,8 @@ sub execMacWebKitAppForDebugging($)
         my $webProcessShimPath = File::Spec->catfile($productDir, "WebProcessShim.dylib");
         my $webProcessPath = File::Spec->catdir($productDir, "WebProcess.app");
         my $webKit2ExecutablePath = File::Spec->catfile($productDir, "WebKit2.framework", "WebKit2");
-        $ENV{DYLD_INSERT_LIBRARIES} = $webProcessShimPath;
+
+        appendToEnvironmentVariableList("DYLD_INSERT_LIBRARIES", $webProcessShimPath);
 
         print "Starting WebProcess under gdb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
         exec { $gdbPath } $gdbPath, @architectureFlags, "--args", $webProcessPath, $webKit2ExecutablePath, "-type", "webprocess", "-client-executable", $appPath or die;

@@ -281,7 +281,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --complex-text                  Use the complex text code path for all text (Mac OS X and Windows only)
   -c|--configuration config       Set DumpRenderTree build configuration
   --gc-between-tests              Force garbage collection between each test
-  -g|--guard-malloc               Enable malloc guard
+  -g|--guard-malloc               Enable Guard Malloc
   --exit-after-n-failures N       Exit after the first N failures (includes crashes) instead of running all tests
   --exit-after-n-crashes-or-timeouts N
                                   Exit after the first N crashes instead of running all tests

@@ -1,3 +1,29 @@
+2012-05-12  Tim Horton  <timothy_horton@apple.com>
+
+        run-safari and co. should support --guard-malloc command line argument
+        https://bugs.webkit.org/show_bug.cgi?id=86287
+
+        Reviewed by Dan Bernstein.
+
+        Add setUpGuardMallocIfNeeded(), which consults the argument --guard-malloc on OS X,
+        setting DYLD_INSERT_LIBRARIES="/usr/lib/libgmalloc.dylib" if it's enabled.
+
+        Use setUpGuardMallocIfNeeded() before running a WebKit app (whether standalone or
+        in the debugger). This will cause gmalloc to be loaded for gdb as well, but this
+        tends to be harmless.
+
+        Change "malloc guard" to the more common "Guard Malloc" in run-webkit-tests.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+        (appendToEnvironmentVariableList):
+        (setUpGuardMallocIfNeeded):
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded):
+        (runMacWebKitApp):
+        (execMacWebKitAppForDebugging):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-05-11  Ojan Vafai  <ojan@chromium.org>
 
         Add previous/next buttons the garden-o-matics perf panel
