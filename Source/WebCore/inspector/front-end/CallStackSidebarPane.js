@@ -33,6 +33,8 @@ WebInspector.CallStackSidebarPane = function()
     this._model = WebInspector.debuggerModel;
 
     this.bodyElement.addEventListener("contextmenu", this._contextMenu.bind(this), true);
+    this.bodyElement.addEventListener("keydown", this._keyDown.bind(this), true);
+    this.bodyElement.tabIndex = 0;
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
@@ -149,6 +151,20 @@ WebInspector.CallStackSidebarPane.prototype = {
         else {
             this._statusMessageElement.removeChildren();
             this._statusMessageElement.appendChild(status);
+        }
+    },
+
+    _keyDown: function(event)
+    {
+        if (event.altKey || event.shiftKey || event.metaKey || event.ctrlKey)
+            return;
+
+        if (event.keyIdentifier === "Up") {
+            this._selectPreviousCallFrameOnStack();
+            event.consume();
+        } else if (event.keyIdentifier === "Down") {
+            this._selectNextCallFrameOnStack();
+            event.consume();
         }
     }
 }

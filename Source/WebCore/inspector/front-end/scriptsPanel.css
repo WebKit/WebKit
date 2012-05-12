@@ -53,6 +53,10 @@
     height: 24px;
 }
 
+#scripts-debug-toolbar img {
+    padding-top: 2px;
+}
+
 #scripts-debug-sidebar-contents {
     position: absolute;
     top: 22px;
