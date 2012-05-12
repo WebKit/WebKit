@@ -1,3 +1,13 @@
+2012-05-12  Philip Rogers  <pdr@google.com>
+
+        Cleanup before changing attributeName in SVG <animate>
+        https://bugs.webkit.org/show_bug.cgi?id=86100
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/animations/dynamic-modify-attributename-crash-expected.txt: Added.
+        * svg/animations/dynamic-modify-attributename-crash.svg: Added.
+
 2012-05-12  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Allow the platform media player to determine the media element's paused/playing status
