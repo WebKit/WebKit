@@ -47,6 +47,8 @@ private:
     UChar m_open;
     UChar m_close;
     RefPtr<StringImpl> m_separators;
+    
+    RenderObject* m_closeFenceRenderer;
 };
     
 }

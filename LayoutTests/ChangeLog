@@ -1,3 +1,15 @@
+2012-05-11  David Barton  <dbarton@mathscribe.com>
+
+        use after free in WebCore::RenderObject::document
+        https://bugs.webkit.org/show_bug.cgi?id=84891
+
+        Reviewed by Julien Chaffraix.
+
+        * mathml/presentation/mfenced-add-child1-expected.html: Added.
+        * mathml/presentation/mfenced-add-child1.html: Added.
+        * mathml/presentation/mfenced-add-child2-expected.html: Added.
+        * mathml/presentation/mfenced-add-child2.html: Added.
+
 2012-05-10  Timothy Hatcher  <timothy@apple.com>
 
         Instrument timer function calls so they show up in the Web Inspector Timeline.
