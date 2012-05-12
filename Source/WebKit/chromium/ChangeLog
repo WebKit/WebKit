@@ -1,3 +1,11 @@
+2012-05-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Do a DEPS roll per build failure caused by r116810.
+
+        See http://webkitmemes.tumblr.com/post/21734202168/the-solution-to-any-chromium-problem for the rationale.
+
+        * DEPS:
+
 2012-05-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116802.
