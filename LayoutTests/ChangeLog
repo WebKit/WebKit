@@ -1,3 +1,13 @@
+2012-05-12  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectations
+
+        * platform/chromium-linux-x86/fast/speech/input-appearance-searchandspeech-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/custom/inline-svg-in-xhtml-expected.txt: Removed.
+        * platform/chromium-linux/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-linux/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: allow showing arbitrary range of nodes in heap snapshot view

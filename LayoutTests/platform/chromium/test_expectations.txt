@@ -3780,12 +3780,9 @@ BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
 BUGWK85952 MAC WIN : http/tests/media/media-source/webm/video-media-source-play.html = PASS TIMEOUT
-//BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS TIMEOUT
-//BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TIMEOUT
-//BUGWK85952 MAC DEBUG : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TEXT
-// Need to revert Chromium r136679
-BUGTKENT : http/tests/media/media-source/webm/video-media-source-seek.html = CRASH TIMEOUT
-BUGTKENT : http/tests/media/media-source/webm/video-media-source-state-changes.html = CRASH TIMEOUT
+BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-seek.html = PASS TIMEOUT
+BUGWK85952 WIN : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TIMEOUT
+BUGWK85952 MAC DEBUG : http/tests/media/media-source/webm/video-media-source-state-changes.html = PASS TEXT
 
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/overflow-positioning.html = PASS TIMEOUT
 BUGWK85771 SNOWLEOPARD LION LINUX : compositing/overflow/scrollbar-painting.html = PASS TIMEOUT
