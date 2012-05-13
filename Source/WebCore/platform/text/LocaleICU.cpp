@@ -371,7 +371,7 @@ void LocaleICU::initializeLocalizedDateFormatText()
 {
     if (!m_localizedDateFormatText.isNull())
         return;
-    m_localizedDateFormatText = String("");
+    m_localizedDateFormatText = emptyString();
     if (!initializeShortDateFormat())
         return;
     UErrorCode status = U_ZERO_ERROR;

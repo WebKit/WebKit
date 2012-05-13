@@ -250,7 +250,7 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
     switch (m_type) {
     case NO_OPEN_QUOTE:
     case NO_CLOSE_QUOTE:
-        return String("").impl();
+        return emptyString().impl();
     case CLOSE_QUOTE:
         if (index)
             --index;

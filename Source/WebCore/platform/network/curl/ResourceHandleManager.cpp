@@ -426,7 +426,7 @@ void ResourceHandleManager::setProxyInfo(const String& host,
     m_proxyType = type;
 
     if (!host.length()) {
-        m_proxy = String("");
+        m_proxy = emptyString();
     } else {
         String userPass;
         if (username.length() || password.length())

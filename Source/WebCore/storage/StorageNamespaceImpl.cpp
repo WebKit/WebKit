@@ -47,7 +47,7 @@ static LocalStorageNamespaceMap& localStorageNamespaceMap()
 
 PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(const String& path, unsigned quota)
 {
-    const String lookupPath = path.isNull() ? String("") : path;
+    const String lookupPath = path.isNull() ? emptyString() : path;
     LocalStorageNamespaceMap::iterator it = localStorageNamespaceMap().find(lookupPath);
     if (it == localStorageNamespaceMap().end()) {
         RefPtr<StorageNamespace> storageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, lookupPath, quota));

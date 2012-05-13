@@ -991,7 +991,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // Workaround for bug where trailing \n is included in the result of textContent.
     // The assert macro above may also be simplified to: value == constrainValue(value)
     // http://bugs.webkit.org/show_bug.cgi?id=9661
-    m_valueIfDirty = value == "\n" ? String("") : value;
+    m_valueIfDirty = value == "\n" ? emptyString() : value;
 
     setFormControlValueMatchesRenderer(true);
     m_wasModifiedByUser = true;

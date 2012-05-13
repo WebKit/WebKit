@@ -282,7 +282,7 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
         GuidVersionMap::iterator entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
             // Map null string to empty string (see updateGuidVersionMap()).
-            currentVersion = entry->second.isNull() ? String("") : entry->second.isolatedCopy();
+            currentVersion = entry->second.isNull() ? emptyString() : entry->second.isolatedCopy();
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
 
 #if PLATFORM(CHROMIUM)

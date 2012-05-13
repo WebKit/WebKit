@@ -118,7 +118,7 @@ String SharedBufferChunkReader::nextChunkAsUTF8StringWithLatin1Fallback(bool inc
     if (!nextChunk(data, includeSeparator))
         return String();
 
-    return data.size() ? String::fromUTF8WithLatin1Fallback(data.data(), data.size()) : String("");
+    return data.size() ? String::fromUTF8WithLatin1Fallback(data.data(), data.size()) : emptyString();
 }
 
 size_t SharedBufferChunkReader::peek(Vector<char>& data, size_t requestedSize)

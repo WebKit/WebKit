@@ -42,7 +42,7 @@ void SVGStringList::reset(const String& string)
 
     // Add empty string, if list is empty.
     if (isEmpty())
-        append(String(""));
+        append(emptyString());
 }
 
 void SVGStringList::parse(const String& data, UChar delimiter)
