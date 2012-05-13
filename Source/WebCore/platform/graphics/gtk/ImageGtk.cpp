@@ -73,10 +73,6 @@ static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(CString name)
     return SharedBuffer::create(content.get(), length);
 }
 
-void BitmapImage::initPlatformData()
-{
-}
-
 void BitmapImage::invalidatePlatformData()
 {
 }

@@ -37,10 +37,6 @@
 
 namespace WebCore {
 
-void BitmapImage::initPlatformData()
-{
-}
-
 void BitmapImage::invalidatePlatformData()
 {
 }

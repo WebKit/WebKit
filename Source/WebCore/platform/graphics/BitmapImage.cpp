@@ -64,7 +64,6 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     , m_hasUniformFrameSize(true)
     , m_haveFrameCount(false)
 {
-    initPlatformData();
 }
 
 BitmapImage::~BitmapImage()

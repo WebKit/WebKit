@@ -202,8 +202,6 @@ BitmapImage::BitmapImage(QPixmap* pixmap, ImageObserver* observer)
     , m_sizeAvailable(true)
     , m_haveFrameCount(true)
 {
-    initPlatformData();
-
     int width = pixmap->width();
     int height = pixmap->height();
     m_decodedSize = width * height * 4;
@@ -214,10 +212,6 @@ BitmapImage::BitmapImage(QPixmap* pixmap, ImageObserver* observer)
     m_frames[0].m_hasAlpha = pixmap->hasAlpha();
     m_frames[0].m_haveMetadata = true;
     checkForSolidColor();
-}
-
-void BitmapImage::initPlatformData()
-{
 }
 
 void BitmapImage::invalidatePlatformData()

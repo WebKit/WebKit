@@ -70,8 +70,6 @@ BitmapImage::BitmapImage(TiledImageOpenVG* tiledImage, ImageObserver* observer)
     , m_hasUniformFrameSize(true)
     , m_haveFrameCount(true)
 {
-    initPlatformData();
-
     ASSERT(m_size.width() > 0);
     ASSERT(m_size.height() > 0);
 
@@ -101,10 +99,6 @@ void BitmapImage::checkForSolidColor()
         m_isSolidColor = false;
 
     m_checkedForSolidColor = true;
-}
-
-void BitmapImage::initPlatformData()
-{
 }
 
 void BitmapImage::invalidatePlatformData()

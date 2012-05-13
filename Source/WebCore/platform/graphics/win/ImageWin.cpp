@@ -34,10 +34,6 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char*);
 
 namespace WebCore {
 
-void BitmapImage::initPlatformData()
-{
-}
-
 void BitmapImage::invalidatePlatformData()
 {
 }

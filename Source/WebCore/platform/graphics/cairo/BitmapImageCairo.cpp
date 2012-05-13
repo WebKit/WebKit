@@ -58,8 +58,6 @@ BitmapImage::BitmapImage(NativeImageCairo* nativeImage, ImageObserver* observer)
     , m_sizeAvailable(true)
     , m_haveFrameCount(true)
 {
-    initPlatformData();
-
     cairo_surface_t* surface = nativeImage->surface();
     int width = cairo_image_surface_get_width(surface);
     int height = cairo_image_surface_get_height(surface);

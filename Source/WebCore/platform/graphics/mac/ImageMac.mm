@@ -39,10 +39,6 @@
 
 namespace WebCore {
 
-void BitmapImage::initPlatformData()
-{
-}
-
 void BitmapImage::invalidatePlatformData()
 {
     if (m_frames.size() != 1)

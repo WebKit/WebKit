@@ -254,7 +254,6 @@ protected:
     bool internalAdvanceAnimation(bool skippingFrames);
 
     // Handle platform-specific data
-    void initPlatformData();
     void invalidatePlatformData();
     
     // Checks to see if the image is a 1x1 solid color.  We optimize these images and just do a fill rect instead.

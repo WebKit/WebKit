@@ -80,11 +80,6 @@ PassRefPtr<Image> Image::loadPlatformResource(const char *name)
     return img.release();
 }
 
-void BitmapImage::initPlatformData()
-{
-    // FIXME: NYI
-}
-
 BitmapImage::BitmapImage(const wxBitmap& bitmap)
     : Image(0)
     , m_currentFrame(0)
@@ -103,8 +98,6 @@ BitmapImage::BitmapImage(const wxBitmap& bitmap)
     , m_haveFrameCount(true)
     , m_frameCount(1)
 {
-    initPlatformData();
-    
     m_decodedSize = bitmap.GetWidth() * bitmap.GetHeight() * 4;
     m_size = IntSize(bitmap.GetWidth(), bitmap.GetHeight());
 

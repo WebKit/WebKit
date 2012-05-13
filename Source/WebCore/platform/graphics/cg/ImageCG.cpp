@@ -86,8 +86,6 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
     , m_sizeAvailable(true)
     , m_haveFrameCount(true)
 {
-    initPlatformData();
-    
     CGFloat width = CGImageGetWidth(cgImage);
     CGFloat height = CGImageGetHeight(cgImage);
     m_decodedSize = width * height * 4;
