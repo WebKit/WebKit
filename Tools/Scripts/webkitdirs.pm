@@ -1823,7 +1823,7 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
 
 sub getJhbuildPath()
 {
-    return join(baseProductDir(), "Dependencies");
+    return join('/', baseProductDir(), "Dependencies");
 }
 
 sub jhbuildConfigurationChanged()
@@ -1966,7 +1966,7 @@ sub buildAutotoolsProject($@)
     # Save md5sum for jhbuild-related files.
     foreach my $file (qw(jhbuildrc jhbuild.modules)) {
         my $source = join('/', $sourceDir, "Tools", "gtk", $file);
-        my $destination = join(getJhbuildPath(), $file);
+        my $destination = join('/', getJhbuildPath(), $file);
         open(SUM, ">$destination" . ".md5sum");
         print SUM getMD5HashForFile($source);
         close(SUM);
