@@ -1,5 +1,13 @@
 2012-05-13  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening; skip tests after r116900.
+
+        The patch only updated the chromium and mac expectations...
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-13  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Gardening; skip test added in r116858.
 
         * platform/efl/test_expectations.txt:
