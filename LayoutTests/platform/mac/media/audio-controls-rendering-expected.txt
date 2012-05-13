@@ -29,7 +29,7 @@ layer at (8,42) size 200x25
 layer at (57,51) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
 layer at (185,48) size 14x12
-  RenderButton zI: 2 {INPUT} at (2,0) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12
 layer at (8,85) size 320x25
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x25
 layer at (8,85) size 320x25
@@ -55,7 +55,7 @@ layer at (258,92) size 45x11
 layer at (102,94) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
 layer at (305,91) size 14x12
-  RenderButton zI: 2 {INPUT} at (2,0) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12
 layer at (8,128) size 320x100
   RenderMedia {AUDIO} at (8,128) size 320x100 [bgcolor=#0000FF]
 layer at (8,128) size 320x100
@@ -83,4 +83,4 @@ layer at (258,210) size 45x11
 layer at (102,212) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
 layer at (305,209) size 14x12
-  RenderButton zI: 2 {INPUT} at (2,0) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12

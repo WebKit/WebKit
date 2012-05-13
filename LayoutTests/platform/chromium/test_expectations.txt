@@ -3047,6 +3047,12 @@ BUGWK73865 : media/track/text-track-is-reachable.html = TEXT CRASH
 BUGWK81402 WIN : media/track/track-active-cues.html = PASS TIMEOUT
 BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
 
+BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
+BUGWK85990 : media/video-controls-toggling.html = TIMEOUT
+
+// Needs rebaseline.
+BUGWK85990 : media/video-volume-slider.html = TEXT
+
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 

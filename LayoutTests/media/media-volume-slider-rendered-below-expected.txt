@@ -1,0 +1,10 @@
+** Test that the volume slider is rendered correctly if the controls are near the top of the page **
+
+** Move mouse on top of the mute button **
+
+** Ensure layout is done after mouse move **
+
+** The volume slider should not be positioned outside the page **
+EXPECTED (volumeSliderCoordinates[0] >= 0 && volumeSliderCoordinates[1] >= 0 == 'true') OK
+END OF TEST
+

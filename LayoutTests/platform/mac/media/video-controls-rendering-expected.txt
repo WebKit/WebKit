@@ -41,7 +41,7 @@ layer at (228,264) size 45x11
 layer at (102,266) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
 layer at (275,263) size 14x12
-  RenderButton zI: 2 {INPUT} at (2,0) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12
 layer at (8,282) size 320x240
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
 layer at (8,497) size 320x25
@@ -68,7 +68,7 @@ layer at (228,504) size 45x11
 layer at (102,506) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
 layer at (275,503) size 14x12
-  RenderButton zI: 2 {INPUT} at (2,0) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12
 layer at (8,522) size 320x240
   RenderVideo {VIDEO} at (8,522) size 320x240
 layer at (8,522) size 320x240
@@ -97,4 +97,4 @@ layer at (228,744) size 45x11
 layer at (102,746) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
 layer at (275,743) size 14x12
-  RenderButton zI: 2 {INPUT} at (2,0) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12

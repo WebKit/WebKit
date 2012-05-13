@@ -161,6 +161,7 @@ public:
 
 private:
     MediaControlVolumeSliderContainerElement(Document*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void defaultEventHandler(Event*);
     virtual MediaControlElementType displayType() const;
     virtual const AtomicString& shadowPseudoId() const;

@@ -186,6 +186,15 @@ PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(Document* do
         if (ec)
             return 0;
 
+        // This is a duplicate mute button, which is visible in some ports at the bottom of the volume bar.
+        // It's important only when the volume bar is displayed below the controls.
+        RefPtr<MediaControlVolumeSliderMuteButtonElement> volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(document);
+        controls->m_volumeSliderMuteButton = volumeSliderMuteButton.get();
+        volumeSliderContainer->appendChild(volumeSliderMuteButton.release(), ec, true);
+
+        if (ec)
+            return 0;
+
         controls->m_volumeSliderContainer = volumeSliderContainer.get();
         panelVolumeControlContainer->appendChild(volumeSliderContainer.release(), ec, true);
         if (ec)

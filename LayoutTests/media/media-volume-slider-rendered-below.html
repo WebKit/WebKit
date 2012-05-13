@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <title>Test that volume slider is rendered below. </title>
+
+    <head>
+
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+
+    <script>
+        var audio;
+
+        var muteButtonCoordinates;
+        var volumeSliderCoordinates;
+
+        function test()
+        {
+            consoleWrite("** Test that the volume slider is rendered correctly if the controls are near the top of the page **");
+
+            if (window.eventSender) {
+                consoleWrite("");
+                consoleWrite("** Move mouse on top of the mute button **");
+
+                try {
+                    muteButtonCoordinates = mediaControlsButtonCoordinates(audio, "mute-button");
+                } catch (exception) {
+                    consoleWrite("ERROR: unable to get controls coordinates.");
+
+                    failTest();
+                    return;
+                }
+
+                eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]);
+            }
+
+            consoleWrite("");
+            consoleWrite("** Ensure layout is done after mouse move **");
+            document.body.offsetTop;
+            volumeSliderCoordinates = mediaControlsButtonCoordinates(audio, "volume-slider-container");
+
+            consoleWrite("");
+            consoleWrite("** The volume slider should not be positioned outside the page **");
+            testExpected("volumeSliderCoordinates[0] >= 0 && volumeSliderCoordinates[1] >= 0", true);
+
+            endTest();
+        }
+
+        function initialize()
+        {
+            audio = document.getElementsByTagName("audio")[0];
+            audio.src = findMediaFile("audio", "content/test");
+        }
+    </script>
+    </head>
+
+    <body onload="initialize();">
+        <audio controls oncanplaythrough="test();"></audio>
+    </body>
+</html>

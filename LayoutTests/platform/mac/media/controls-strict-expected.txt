@@ -36,4 +36,4 @@ layer at (228,272) size 45x11
 layer at (102,274) size 10x8
   RenderBlock (relative positioned) {DIV} at (0,0) size 10x8
 layer at (275,271) size 14x12
-  RenderButton zI: 2 {INPUT} at (2,0) size 14x12
+  RenderButton zI: 1 {INPUT} at (2,0) size 14x12

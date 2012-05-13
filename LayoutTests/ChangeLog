@@ -1,3 +1,23 @@
+2012-05-13  Victor Carbune  <vcarbune@adobe.com>
+
+        Volume slider needs to be displayed below the mute button
+        https://bugs.webkit.org/show_bug.cgi?id=85990
+
+        Reviewed by Dimitri Glazkov.
+
+        Updated tests expectation and marked failing tests accordingly.
+
+        * media/media-volume-slider-rendered-below.html: Added.
+        * media/media-volume-slider-rendered-expected.txt: Added.
+        * platform/chromium/test_expectations.txt: Updated.
+        * platform/mac/media/audio-controls-rendering-expected.txt: Updated (z-index change).
+        * platform/mac/media/controls-after-reload-expected.txt: Same.
+        * platform/mac/media/controls-strict-expected.txt: Same.
+        * platform/mac/media/video-controls-rendering-expected.txt: Same.
+        * platform/mac/media/video-display-toggle-expected.txt: Same.
+        * platform/mac/media/video-playing-and-pause-expected.txt: Same.
+        * platform/mac/test_expectations.txt: Updated.
+
 2012-05-12  Abhishek Arya  <inferno@chromium.org>
 
         Crash in HTMLSelectElement::setOption
