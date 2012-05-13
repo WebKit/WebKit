@@ -91,7 +91,7 @@ def install_jhbuild():
     if 'MAKE' in env_without_make:
         del env_without_make['MAKE']
 
-    process = subprocess.Popen(['./autogen.sh', '--prefix=%s' % installation_prefix],
+    process = subprocess.Popen(['bash', './autogen.sh', '--prefix=%s' % installation_prefix],
                                cwd=jhbuild_source_path, env=env_without_make)
     process.wait()
     if process.returncode != 0:
