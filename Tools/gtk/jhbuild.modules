@@ -139,6 +139,7 @@
 
   <autotools id="glib-networking">
     <dependencies>
+      <dep package="glib"/>
       <dep package="gnutls"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/glib-networking/2.31/glib-networking-2.31.2.tar.xz" version="2.31.2"
