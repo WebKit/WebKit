@@ -66,7 +66,7 @@ class TextureMapperAnimations {
 public:
     TextureMapperAnimations() { }
 
-    void add(const String& name, const TextureMapperAnimation& animation) { m_animations.add(name, animation); }
+    void add(const String&, const TextureMapperAnimation&);
     void remove(const String& name) { m_animations.remove(name); }
     void pause(const String&, double);
     void apply(TextureMapperAnimationClient*);
@@ -76,7 +76,7 @@ public:
     bool hasActiveAnimationsOfType(AnimatedPropertyID type) const;
 
 private:
-    HashMap<String, TextureMapperAnimation> m_animations;
+    HashMap<String, Vector<TextureMapperAnimation> > m_animations;
 };
 
 }

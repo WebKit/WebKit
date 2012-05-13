@@ -180,22 +180,26 @@ bool TextureMapperAnimation::isActive() const
 
 bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
 {
-    HashMap<String, TextureMapperAnimation>::const_iterator end = m_animations.end();
-    for (HashMap<String, TextureMapperAnimation>::const_iterator it = m_animations.begin(); it != end; ++it) {
-        const TextureMapperAnimation& animation = it->second;
-        if (animation.isActive() && animation.property() == type)
-            return true;
+    HashMap<String, Vector<TextureMapperAnimation> >::const_iterator end = m_animations.end();
+    for (HashMap<String, Vector<TextureMapperAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it) {
+        const Vector<TextureMapperAnimation>& animations = it->second;
+        for (size_t i = 0; i < animations.size(); ++i) {
+            if (animations[i].isActive() && animations[i].property() == type)
+                return true;
+        }
     }
     return false;
 }
 
 bool TextureMapperAnimations::hasRunningAnimations() const
 {
-    HashMap<String, TextureMapperAnimation>::const_iterator end = m_animations.end();
-    for (HashMap<String, TextureMapperAnimation>::const_iterator it = m_animations.begin(); it != end; ++it) {
-        const TextureMapperAnimation& animation = it->second;
-        if (animation.state() == TextureMapperAnimation::PlayingState)
-            return true;
+    HashMap<String, Vector<TextureMapperAnimation> >::const_iterator end = m_animations.end();
+    for (HashMap<String, Vector<TextureMapperAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it) {
+        const Vector<TextureMapperAnimation>& animations = it->second;
+        for (size_t i = 0; i < animations.size(); ++i) {
+            if (animations[i].state() == TextureMapperAnimation::PlayingState)
+                return true;
+        }
     }
 
     return false;
@@ -247,19 +251,36 @@ void TextureMapperAnimation::pause(double offset)
     m_pauseTime = WTF::currentTime() - offset;
 }
 
+void TextureMapperAnimations::add(const String& name, const TextureMapperAnimation& animation)
+{
+    HashMap<String, Vector<TextureMapperAnimation> >::iterator it = m_animations.find(name);
+    if (it != m_animations.end()) {
+        it->second.append(animation);
+        return;
+    }
+
+    Vector<TextureMapperAnimation> animations;
+    animations.append(animation);
+    m_animations.add(name, animations);
+}
+
 void TextureMapperAnimations::pause(const String& name, double offset)
 {
-    HashMap<String, TextureMapperAnimation>::iterator it = m_animations.find(name);
+    HashMap<String, Vector<TextureMapperAnimation> >::iterator it = m_animations.find(name);
     if (it == m_animations.end())
         return;
-    it->second.pause(offset);
+
+    for (size_t i = 0; i < it->second.size(); i++) 
+        it->second[i].pause(offset);
 }
 
 void TextureMapperAnimations::apply(TextureMapperAnimationClient* client)
 {
-    HashMap<String, TextureMapperAnimation>::iterator end = m_animations.end();
-    for (HashMap<String, TextureMapperAnimation>::iterator it = m_animations.begin(); it != end; ++it)
-        it->second.apply(client);
+    HashMap<String, Vector<TextureMapperAnimation> >::iterator end = m_animations.end();
+    for (HashMap<String, Vector<TextureMapperAnimation> >::iterator it = m_animations.begin(); it != end; ++it) {
+        for (size_t i = 0; i < it->second.size(); ++i)
+            it->second[i].apply(client);
+    }
 }
 
 }
