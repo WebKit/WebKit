@@ -1,3 +1,15 @@
+2012-05-12  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Fix a bug with CanDecreaseTextSize and handling page breaks.
+        https://bugs.webkit.org/show_bug.cgi?id=86311
+
+        Reviewed by Kevin Ollivier.
+
+        * WebFrame.cpp:
+        (WebKit::wxWebFramePrintout::InitializeWithPageSize):
+        * WebView.cpp:
+        (WebKit::WebView::CanDecreaseTextSize):
+
 2012-05-11  Robin Dunn  <robin@alldunn.com>
 
         [wx] Fix backing bitmap creation under wxMSW.

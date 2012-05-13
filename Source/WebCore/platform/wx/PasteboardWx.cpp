@@ -74,7 +74,15 @@ bool Pasteboard::canSmartReplace()
 
 String Pasteboard::plainText(Frame* frame)
 {
-    notImplemented();
+    if (wxTheClipboard->Open()) {
+        if (wxTheClipboard->IsSupported(wxDF_TEXT)) {
+            wxTextDataObject data;
+            wxTheClipboard->GetData(data);
+            wxTheClipboard->Close();
+            return data.GetText();
+        }
+    }
+    
     return String();
 }
 

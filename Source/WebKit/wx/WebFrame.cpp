@@ -126,7 +126,7 @@ public:
             pageRect.height = pageRect.height * mmToPoints;
         }
         m_pageWidth = pageRect.width;
-        m_printContext.begin(m_pageWidth);
+        m_printContext.begin(m_pageWidth, pageRect.height);
         // isPrinting is from the perspective of the PrintContext, so we need this when we call begin.
         m_isPrinting = true;
 

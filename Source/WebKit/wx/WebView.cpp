@@ -645,7 +645,7 @@ void WebView::IncreaseTextSize()
 bool WebView::CanDecreaseTextSize() const
 {
     if (m_mainFrame)
-        m_mainFrame->CanDecreaseTextSize();
+        return m_mainFrame->CanDecreaseTextSize();
 
     return false;
 }
