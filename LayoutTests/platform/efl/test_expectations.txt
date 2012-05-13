@@ -452,4 +452,4 @@ BUGWK86322 : media/media-continues-playing-after-replace-source.html = TEXT
 
 // Seems to fail on mac as well
 BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
-BUGWK85990 : media/video-controls-toggling = TIMEOUT TEXT
+BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT

@@ -1,5 +1,11 @@
 2012-05-13  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Unreviewed, fix test skipped in the previous commit.
+
+        * platform/efl/test_expectations.txt:
+
+2012-05-13  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Gardening; skip tests after r116900.
 
         The patch only updated the chromium and mac expectations...
