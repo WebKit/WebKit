@@ -18,6 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import os
+import shlex
 import subprocess
 import sys
 
@@ -90,7 +91,11 @@ def install_jhbuild():
     if process.returncode != 0:
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
 
-    process = subprocess.Popen(['make', 'install'], cwd=jhbuild_source_path)
+    # This is a hackish approach to make the subprocess.Popen call even when people set
+    # MAKE to 'make -j3' instead of using the MAKEFLAGS environment variable.
+    make = shlex.split(os.environ.get('MAKE', 'make'))
+
+    process = subprocess.Popen(make + ['install'], cwd=jhbuild_source_path)
     process.wait()
     if process.returncode != 0:
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
