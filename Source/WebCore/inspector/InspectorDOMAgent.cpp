@@ -307,7 +307,6 @@ void InspectorDOMAgent::setDocument(Document* doc)
 
 void InspectorDOMAgent::releaseDanglingNodes()
 {
-    deleteAllValues(m_danglingNodeToIdMaps);
     m_danglingNodeToIdMaps.clear();
 }
 
@@ -532,8 +531,9 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
         Node* parent = innerParentNode(node);
         if (!parent) {
             // Node being pushed is detached -> push subtree root.
-            danglingMap = new NodeToIdMap();
-            m_danglingNodeToIdMaps.append(danglingMap);
+            OwnPtr<NodeToIdMap> newMap = adoptPtr(new NodeToIdMap);
+            danglingMap = newMap.get();
+            m_danglingNodeToIdMaps.append(newMap.release());
             RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > children = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
             children->addItem(buildObjectForNode(node, 0, danglingMap));
             m_frontend->setChildNodes(0, children);
