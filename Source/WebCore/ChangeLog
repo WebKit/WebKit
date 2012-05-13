@@ -1,3 +1,26 @@
+2012-03-13  Philip Rogers  <pdr@google.com>
+
+        Fix the use of stale text fragments
+        https://bugs.webkit.org/show_bug.cgi?id=80729
+
+        Reviewed by Nikolas Zimmermann.
+
+        Previously, we were allowing SVGTextFragments to get out of sync with the
+        actual text in RenderSVGInlineTextBox. This patch reuses the dirty line
+        box code in RenderText::setTextWithOffset to force
+        clearTextFragments() when setTextWithOffset is called, preventing the use
+        of stale SVGTextFragments.
+
+        Test: svg/custom/delete-text-crash.html
+
+        * rendering/InlineBox.h:
+        (InlineBox):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::dirtyLineBoxes):
+        (WebCore):
+        * rendering/svg/SVGInlineTextBox.h:
+        (SVGInlineTextBox):
+
 2012-03-27  Adam Klein  <adamk@chromium.org>
 
         Hold a reference to refChild in insertBefore before calling collectChildrenAndRemoveFromOldParent

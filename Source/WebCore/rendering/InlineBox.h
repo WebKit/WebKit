@@ -290,7 +290,7 @@ public:
     bool isDirty() const { return m_dirty; }
     void markDirty(bool dirty = true) { m_dirty = dirty; }
 
-    void dirtyLineBoxes();
+    virtual void dirtyLineBoxes();
     
     virtual RenderObject::SelectionState selectionState();
 

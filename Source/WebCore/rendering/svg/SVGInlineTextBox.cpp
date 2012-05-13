@@ -53,6 +53,14 @@ SVGInlineTextBox::SVGInlineTextBox(RenderObject* object)
 {
 }
 
+void SVGInlineTextBox::dirtyLineBoxes()
+{
+    InlineTextBox::dirtyLineBoxes();
+
+    // Clear the now stale text fragments
+    clearTextFragments();
+}
+
 int SVGInlineTextBox::offsetForPosition(float, bool) const
 {
     // SVG doesn't use the standard offset <-> position selection system, as it's not suitable for SVGs complex needs.
