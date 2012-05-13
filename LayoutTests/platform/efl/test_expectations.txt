@@ -446,3 +446,6 @@ BUGWK86091 : fast/events/context-no-deselect.html = MISSING
 BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
+
+// New test introduced in r116858 fails
+BUGWK86322 : media/media-continues-playing-after-replace-source.html = TEXT

@@ -1,3 +1,9 @@
+2012-05-13  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening; skip test added in r116858.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-13  Victor Carbune  <vcarbune@adobe.com>
 
         Volume slider needs to be displayed below the mute button
@@ -13271,4 +13277,3 @@
         Unreviewed. Split LayoutTests/ChangeLog.
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
-
