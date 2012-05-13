@@ -64,6 +64,7 @@ private:
     unsigned m_end;
     RefPtr<StringImpl> m_contentString;
     RenderObject* m_firstLetter;
+    bool m_allowFragmentReset;
 };
 
 inline RenderTextFragment* toRenderTextFragment(RenderObject* object)

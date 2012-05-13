@@ -1,3 +1,24 @@
+2012-03-09  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to inserting letter into div with first-letter
+        https://bugs.webkit.org/show_bug.cgi?id=78534
+
+        Reviewed by David Hyatt.
+
+        This fixes an issue in RenderTextFragment with setTextInternal
+        getting called with different intents. While most calls to it
+        are intended to change the underlying DOM node string, it can
+        also be called as a result of styleDidChange just for transforms
+        on the substring text fragment. This adds a mechanism for internal
+        callers to specify if the internal text is being updated without
+        a DOM node text change.
+
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::styleDidChange)
+        (WebCore::RenderTextFragment::setTextInternal)
+        * rendering/RenderTextFragment.h:
+        (WebCore::RenderTextFragment)
+
 2012-03-13  Philip Rogers  <pdr@google.com>
 
         Fix the use of stale text fragments
