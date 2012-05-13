@@ -1,3 +1,13 @@
+2012-05-12  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in HTMLSelectElement::setOption
+        https://bugs.webkit.org/show_bug.cgi?id=85420
+
+        Reviewed by Eric Seidel.
+
+        * fast/dom/HTMLSelectElement/option-add-crash-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/option-add-crash.html: Added.
+
 2012-05-12  Philip Rogers  <pdr@google.com>
 
         Cleanup before changing attributeName in SVG <animate>
