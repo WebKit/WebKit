@@ -74,11 +74,6 @@ extern "C" {
 using namespace std;
 
 namespace WebCore {
-
-static RetainPtr<CGImageRef> subimage(CGImageRef image, const FloatRect& rect)
-{
-    return adoptCF(CGImageCreateWithImageInRect(image, rect));
-}
     
 static CGColorSpaceRef createLinearSRGBColorSpace()
 {
@@ -217,7 +212,7 @@ void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& 
             subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
-            image = subimage(image.get(), subimageRect);
+            image.adoptCF(CGImageCreateWithImageInRect(image.get(), subimageRect));
             if (currHeight < srcRect.maxY()) {
                 ASSERT(CGImageGetHeight(image.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
                 adjustedDestRect.setHeight(CGImageGetHeight(image.get()) / yScale);
