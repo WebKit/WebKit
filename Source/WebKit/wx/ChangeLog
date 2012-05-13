@@ -1,3 +1,13 @@
+2012-05-11  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Fix backing bitmap creation under wxMSW.
+        https://bugs.webkit.org/show_bug.cgi?id=86304
+
+        Reviewed by Kevin Ollivier.
+
+        * WebView.cpp:
+        (WebKit::WebView::OnPaint):
+
 2012-05-04  Nate Chapin  <japhet@chromium.org>
 
         Don't require FrameLoaderClient to manufacture a commitData() call for empty documents.

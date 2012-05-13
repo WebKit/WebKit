@@ -690,8 +690,18 @@ void WebView::OnPaint(wxPaintEvent& event)
     WebCore::Frame* frame = m_mainFrame->GetFrame();
     if (!frame || !frame->view())
         return;
-    
-    wxAutoBufferedPaintDC dc(this);
+
+    // we can't use wxAutoBufferedPaintDC here because it will not create 
+    // a 32-bit bitmap for its buffer.
+#if __WXMSW__
+    wxPaintDC paintdc(this);
+    int width, height;
+    paintdc.GetSize(&width, &height);
+    wxBitmap bitmap(width, height, 32);
+    wxMemoryDC dc(bitmap);
+#else
+    wxPaintDC dc(this);
+#endif
 
     if (IsShown() && frame->document()) {
 #if USE(WXGC)
@@ -717,6 +727,10 @@ void WebView::OnPaint(wxPaintEvent& event)
             if (frame->contentRenderer()) {
                 frame->view()->updateLayoutAndStyleIfNeededRecursive();
                 frame->view()->paint(&gc, paintRect);
+#if __WXMSW__
+                dc.SelectObject(wxNullBitmap);
+                paintdc.DrawBitmap(bitmap, 0, 0);
+#endif
             }
         }
     }
