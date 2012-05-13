@@ -1,3 +1,19 @@
+2012-03-28  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] jhbuild wrongly tricked into clean-up
+        https://bugs.webkit.org/show_bug.cgi?id=82216
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Save jhbuild{rc,.modules}.md5sum in Dependencies instead of the
+        build tree. Also when checking if the jhbuild configuration
+        changed use absolute md5sum paths.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary):
+        (jhbuildConfigurationChanged):
+        (buildAutotoolsProject):
+
 2012-04-19  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [GTK] 3 fast/ layout tests failing after upgrading libsoup to 2.37.92
