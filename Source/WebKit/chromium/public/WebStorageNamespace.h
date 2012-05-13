@@ -28,4 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../../../Platform/chromium/public/WebStorageNamespace.h"
+#ifndef WebStorageNamespace_h
+#define WebStorageNamespace_h
+
+#include "platform/WebCommon.h"
+
+namespace WebKit {
+
+class WebStorageArea;
+class WebString;
+
+// WebStorageNamespace represents a collection of StorageAreas. Typically, you'll have
+// multiple StorageNamespaces to represent the SessionStorage for each tab and a single
+// StorageNamespace to represent LocalStorage for the entire browser.
+class WebStorageNamespace {
+public:
+    virtual ~WebStorageNamespace() { }
+
+    // Create a new WebStorageArea object. Two subsequent calls with the same origin
+    // will return two different WebStorageArea objects that share the same backing store.
+    // You should call delete on the returned object when you're finished.
+    virtual WebStorageArea* createStorageArea(const WebString& origin) = 0;
+
+    // Copy a StorageNamespace. This only makes sense in the case of SessionStorage.
+    virtual WebStorageNamespace* copy() = 0;
+
+    // Returns true of the two instances represent the same storage namespace.
+    virtual bool isSameNamespace(const WebStorageNamespace&) const { return false; }
+};
+
+} // namespace WebKit
+
+#endif // WebStorageNamespace_h

@@ -1,3 +1,33 @@
+2012-05-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116812.
+        http://trac.webkit.org/changeset/116812
+        https://bugs.webkit.org/show_bug.cgi?id=86313
+
+        Appears to be causing a top crash (Requested by abarth on
+        #webkit).
+
+        * WebKit.gyp:
+        * public/WebStorageArea.h:
+        (WebKit):
+        (WebStorageArea):
+        (WebKit::WebStorageArea::~WebStorageArea):
+        (WebKit::WebStorageArea::setItem):
+        (WebKit::WebStorageArea::removeItem):
+        (WebKit::WebStorageArea::clear):
+        * public/WebStorageNamespace.h:
+        (WebKit):
+        (WebStorageNamespace):
+        (WebKit::WebStorageNamespace::~WebStorageNamespace):
+        (WebKit::WebStorageNamespace::isSameNamespace):
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        (WebKitPlatformSupport):
+        (WebKit::WebKitPlatformSupport::createLocalStorageNamespace):
+        * src/StorageAreaProxy.cpp:
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespace::localStorageNamespace):
+
 2012-05-11  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call isLinkVisited directly

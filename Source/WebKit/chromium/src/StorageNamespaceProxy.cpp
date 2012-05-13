@@ -32,18 +32,17 @@
 #include "SecurityOrigin.h"
 #include "StorageAreaProxy.h"
 #include "WebKit.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebStorageNamespace.h"
 #include "platform/WebString.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 
-#include <public/Platform.h>
-
 namespace WebCore {
 
 PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(const String& path, unsigned quota)
 {
-    return adoptRef(new StorageNamespaceProxy(WebKit::Platform::current()->createLocalStorageNamespace(path, quota), LocalStorage));
+    return adoptRef(new StorageNamespaceProxy(WebKit::webKitPlatformSupport()->createLocalStorageNamespace(path, quota), LocalStorage));
 }
 
 PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace(Page* page, unsigned quota)

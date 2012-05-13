@@ -59,6 +59,7 @@ class WebMessagePortChannel; // FIXME: Does this belong in platform?
 class WebPluginListBuilder; // FIXME: Does this belong in platform?
 class WebSandboxSupport;
 class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
+class WebStorageNamespace; // FIXME: Does this belong in platform?
 class WebThemeEngine;
 class WebWorkerRunLoop;
 
@@ -81,6 +82,12 @@ public:
 
     // Must return non-null.
     virtual WebBlobRegistry* blobRegistry() { return 0; }
+
+    // DOM Storage --------------------------------------------------
+
+    // Return a LocalStorage namespace that corresponds to the following path.
+    virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) { return 0; }
+
 
     // HTML5 Database ------------------------------------------------------
 

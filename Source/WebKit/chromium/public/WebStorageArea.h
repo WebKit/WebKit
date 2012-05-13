@@ -28,4 +28,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../../../Platform/chromium/public/WebStorageArea.h"
+#ifndef WebStorageArea_h
+#define WebStorageArea_h
+
+#include "platform/WebCommon.h"
+#include "platform/WebString.h"
+
+namespace WebKit {
+
+class WebURL;
+
+class WebStorageArea {
+public:
+    virtual ~WebStorageArea() { }
+
+    enum Result {
+        ResultOK = 0,
+        ResultBlockedByQuota
+    };
+
+    // The number of key/value pairs in the storage area.
+    virtual unsigned length() = 0;
+
+    // Get a value for a specific key. Valid key indices are 0 through length() - 1.
+    // Indexes may change on any set/removeItem call. Will return null if the index
+    // provided is out of range.
+    virtual WebString key(unsigned index) = 0;
+
+    // Get the value that corresponds to a specific key. This returns null if there is
+    // no entry for that key.
+    virtual WebString getItem(const WebString& key) = 0;
+
+    // Set the value that corresponds to a specific key. Result will either be ResultOK
+    // or some particular error. The value is NOT set when there's an error. |pageUrl| is the
+    // url that should be used if a storage event fires.
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL& pageUrl, Result& result)
+    {
+        WebString unused;
+        setItem(key, newValue, pageUrl, result, unused);
+    }
+
+
+    // Remove the value associated with a particular key. |pageUrl| is the url that should be used
+    // if a storage event fires.
+    virtual void removeItem(const WebString& key, const WebURL& pageUrl)
+    {
+        WebString unused;
+        removeItem(key, pageUrl, unused);
+    }
+
+    // Clear all key/value pairs. |pageUrl| is the url that should be used if a storage event fires.
+    virtual void clear(const WebURL& pageUrl)
+    {
+        bool unused;
+        clear(pageUrl, unused);
+    }
+
+    // DEPRECATED - being replaced by the async variants above which do not return oldValues or block until completion.
+    virtual void setItem(const WebString& key, const WebString& newValue, const WebURL&, Result&, WebString& oldValue) = 0;
+    virtual void removeItem(const WebString& key, const WebURL& pageUrl, WebString& oldValue) = 0;
+    virtual void clear(const WebURL& pageUrl, bool& somethingCleared) = 0;
+};
+
+} // namespace WebKit
+
+#endif // WebStorageArea_h
