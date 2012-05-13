@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Copyright (C) 2011 Igalia S.L.
 # Copyright (C) 2012 Gustavo Noronha Silva <gns@gnome.org>
+# Copyright (C) 2012 Intel Corporation
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,106 +18,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import common
-import os
 import subprocess
 import sys
 
-
-jhbuild_revision = '1eedc423f75c605224b430579e4c303292199507'
-
-installation_prefix = os.path.abspath(common.top_level_path('WebKitBuild', 'Dependencies', 'Root'))
-source_path = os.path.abspath(common.top_level_path('WebKitBuild', 'Dependencies', 'Source'))
-jhbuild_source_path = os.path.join(source_path, 'jhbuild')
-jhbuild_path = common.top_level_path('WebKitBuild', 'Dependencies', 'Root', 'bin', 'jhbuild')
-
-
-def jhbuild_installed():
-    return os.path.exists(jhbuild_path)
-
-
-def jhbuild_cloned():
-    return os.path.exists(jhbuild_source_path)
-
-
-def jhbuild_at_expected_revision():
-    process = subprocess.Popen(['git', 'rev-list', 'HEAD^..'], cwd=jhbuild_source_path,
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, err = process.communicate()
-    if process.returncode != 0:
-        raise Exception('failed to find jhbuild revision: %s' % err)
-
-    return output.strip() == jhbuild_revision
-
-
-def update_jhbuild():
-    process = subprocess.Popen(['git', 'remote', 'update', 'origin'], cwd=jhbuild_source_path)
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('jhbuild remote update origin failed with return code: %i' % process.returncode)
-
-    process = subprocess.Popen(['git', 'checkout', '%s' % jhbuild_revision],
-                               cwd=jhbuild_source_path)
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('failed to checkout treeish %s: %i' % (jhbuild_revision, process.returncode))
-
-
-def clone_jhbuild():
-    if not os.path.exists(source_path):
-        os.makedirs(source_path)
-    if not os.path.exists(installation_prefix):
-        os.makedirs(installation_prefix)
-
-    process = subprocess.Popen(['git', 'clone', 'git://git.gnome.org/jhbuild'], cwd=source_path)
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('jhbuild git clone failed with return code: %i' % process.returncode)
-
-
-def install_jhbuild():
-    # jhbuild is really unhappy about having MAKE defined to something like 'make -j4'
-    # so we just undefine it here.
-    env_without_make = dict(os.environ)
-    if 'MAKE' in env_without_make:
-        del env_without_make['MAKE']
-
-    process = subprocess.Popen(['./autogen.sh', '--prefix=%s' % installation_prefix],
-                               cwd=jhbuild_source_path, env=env_without_make)
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
-
-    process = subprocess.Popen(['make', 'install'], cwd=jhbuild_source_path, env=env_without_make)
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
-
-
-def update_webkitgtk_libs():
-    process = subprocess.Popen(common.top_level_path('Tools', 'Scripts', 'update-webkitgtk-libs'))
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
-
-
-def ensure_jhbuild():
-    if not jhbuild_cloned():
-        clone_jhbuild()
-        update_jhbuild()
-        install_jhbuild()
-        update_webkitgtk_libs()
-    elif not jhbuild_installed() \
-            or not jhbuild_at_expected_revision():
-        update_jhbuild()
-        install_jhbuild()
-
-
-ensure_jhbuild()
-
-
-process = subprocess.Popen([jhbuild_path, '--no-interact', '-f', common.top_level_path('Tools', 'gtk', 'jhbuildrc'), 'run'] + sys.argv[1:])
+jhbuild_wrapper = common.top_level_path('Tools', 'jhbuild', 'jhbuild-wrapper')
+process = subprocess.Popen([jhbuild_wrapper, '--gtk'] + sys.argv[1:])
 process.wait()
 sys.exit(process.returncode)
-
-
-

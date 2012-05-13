@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 # Copyright (C) 2011 Igalia S.L.
+# Copyright (C) 2012 Intel Corporation
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,18 +20,5 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};
-
-chdir(relativeScriptsDir() . "/../gtk") or die $!;
-
-my @ensureJhbuildArgs = ("./run-with-jhbuild", "echo", "Ensured jhbuild setup.");
-if (system(@ensureJhbuildArgs) != 0) {
-    die "Failed to ensure jhbuild installed.\n";
-}
-
-print "Updating GTK+ port dependencies using jhbuild...\n";
-my @jhbuildArgs = ("../../WebKitBuild/Dependencies/Root/bin/jhbuild", "--no-interact", "-f", "jhbuildrc");
-push(@jhbuildArgs, @ARGV[1..-1]);
-if (system(@jhbuildArgs) != 0) {
-    die "Running jhbuild failed.\n"
-}
+my $scriptsDir = relativeScriptsDir();
+system("perl", "$scriptsDir/update-webkit-libs-jhbuild", "--gtk", sys.argv) == 0 or die $!;
