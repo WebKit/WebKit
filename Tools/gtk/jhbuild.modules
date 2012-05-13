@@ -68,10 +68,10 @@
 
   <autotools id="fonts"
              skip-autogen="true">
-    <branch module="downloads/mrobinson/webkitgtk-test-fonts/webkitgtk-test-fonts-0.0.1.tar.gz" version="0.0.1"
+    <branch module="downloads/mrobinson/webkitgtk-test-fonts/webkitgtk-test-fonts-0.0.2.tar.gz" version="0.0.2"
             repo="github.com"
-            hash="sha256:df40960ec98bd23de2f6ea8f5135ffc9485929aeddb4f08be5144881a1fd3887"
-            md5sum="2c752a694f41f3ff7aed6e3015250f69" size="6635293">
+            hash="sha256:e252dc1c0fe50e2b190b6caf5017930c05cae0cf8374bf92f0761fb4a4980e8b"
+            md5sum="249166fec4b3773c7255775642e4de52">
     </branch>
   </autotools>
 

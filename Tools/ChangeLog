@@ -1,5 +1,16 @@
 2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [GTK] fonts jhbuild module needs an empty clean target
+        https://bugs.webkit.org/show_bug.cgi?id=84085
+
+        Rubber-stamped by Martin Robinson.
+
+        * gtk/jhbuild.modules: update to webkitgtk-test-fonts 0.0.2, which
+        includes a phony clean target that should make warnings and errors go
+        away.
+
+2012-04-16  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] Bump dependency on GTK+ 3.x to match reality
         https://bugs.webkit.org/show_bug.cgi?id=84060
 
