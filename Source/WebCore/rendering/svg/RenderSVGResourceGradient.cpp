@@ -98,7 +98,7 @@ static inline AffineTransform clipToTextMask(GraphicsContext* context,
     SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(textRootBlock, absoluteTransform);
 
     targetRect = textRootBlock->repaintRectInLocalCoordinates();
-    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, targetRect, imageBuffer);
+    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, targetRect, imageBuffer, false);
 
     AffineTransform matrix;
     if (boundingBoxMode) {

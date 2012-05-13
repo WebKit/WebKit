@@ -1,3 +1,32 @@
+2012-03-13  Stephen Chenney  <schenney@chromium.org>
+
+        Crash in WebCore::GraphicsContext::paintingDisabled
+        https://bugs.webkit.org/show_bug.cgi?id=80669
+
+        Reviewed by Nikolas Zimmermann.
+
+        The SVGImageBufferTools::clipToImageBuffer method deletes the clip
+        image when it thinks it is not needed. However, there are cases when
+        it is in fact still needed, particularly when the clip buffer is
+        coming from higher up in the stack where it may be needed again.
+
+        So this patch adds a flag to only allow deletion of the image buffer
+        if it was created at the most recent call site.
+
+        Tests: svg/custom/circular-clip-path-references-crash-expected.svg
+               svg/custom/circular-clip-path-references-crash.svg
+
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::clipToTextMask):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::clipToImageBuffer):
+        * rendering/svg/SVGImageBufferTools.h:
+        (SVGImageBufferTools):
+
 2012-03-09  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to inserting letter into div with first-letter

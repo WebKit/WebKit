@@ -86,7 +86,8 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
-    if (!m_masker.contains(object))
+    bool missingMaskerData = !m_masker.contains(object);
+    if (missingMaskerData)
         m_masker.set(object, new MaskerData);
 
     MaskerData* maskerData = m_masker.get(object);
@@ -116,7 +117,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     if (!maskerData->maskImage)
         return false;
 
-    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, repaintRect, maskerData->maskImage);
+    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, repaintRect, maskerData->maskImage, missingMaskerData);
     return true;
 }
 

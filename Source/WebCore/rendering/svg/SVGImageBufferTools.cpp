@@ -121,7 +121,7 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
     contentTransformation = savedContentTransformation;
 }
 
-void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>& imageBuffer)
+void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>& imageBuffer, bool safeToClear)
 {
     ASSERT(context);
     ASSERT(imageBuffer);
@@ -136,7 +136,7 @@ void SVGImageBufferTools::clipToImageBuffer(GraphicsContext* context, const Affi
 
     // When nesting resources, with objectBoundingBox as content unit types, there's no use in caching the
     // resulting image buffer as the parent resource already caches the result.
-    if (!currentContentTransformation().isIdentity())
+    if (safeToClear && !currentContentTransformation().isIdentity())
         imageBuffer.clear();
 }
 
