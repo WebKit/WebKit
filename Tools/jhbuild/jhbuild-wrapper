@@ -129,6 +129,11 @@ def ensure_jhbuild():
         update_jhbuild()
         install_jhbuild()
 
+# Work-around the fact that we may get called from inside the jhbuild environment
+# which will cause problems if we just cleaned the jhbuild install root
+if os.environ.has_key('UNDER_JHBUILD'):
+    del os.environ['ACLOCAL_FLAGS']
+
 try:
     platform = determine_platform()
 except ValueError as e:
