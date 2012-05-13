@@ -70,63 +70,63 @@ public:
     // However due to compiler and platform differences adding those are non-trivial.
     // See https://bugs.webkit.org/show_bug.cgi?id=83848 for details.
     
-    inline FractionalLayoutUnit() : m_value(0) { }
+    FractionalLayoutUnit() : m_value(0) { }
 #if ENABLE(SUBPIXEL_LAYOUT)
-    inline FractionalLayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    inline FractionalLayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    inline FractionalLayoutUnit(unsigned int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    inline FractionalLayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
-    inline FractionalLayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    FractionalLayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    FractionalLayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    FractionalLayoutUnit(unsigned int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    FractionalLayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
+    FractionalLayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value * kFixedPointDenominator; }
 #else
-    inline FractionalLayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    inline FractionalLayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    inline FractionalLayoutUnit(unsigned int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    inline FractionalLayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
-    inline FractionalLayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    FractionalLayoutUnit(int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    FractionalLayoutUnit(unsigned short value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    FractionalLayoutUnit(unsigned int value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    FractionalLayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
+    FractionalLayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
 #endif
-    inline FractionalLayoutUnit(const FractionalLayoutUnit& value) { m_value = value.rawValue(); }
+    FractionalLayoutUnit(const FractionalLayoutUnit& value) { m_value = value.rawValue(); }
 
 #if ENABLE(SUBPIXEL_LAYOUT)
-    inline int toInt() const { return m_value / kFixedPointDenominator; }
-    inline float toFloat() const { return static_cast<float>(m_value) / kFixedPointDenominator; }
-    inline double toDouble() const { return static_cast<double>(m_value) / kFixedPointDenominator; }
+    int toInt() const { return m_value / kFixedPointDenominator; }
+    float toFloat() const { return static_cast<float>(m_value) / kFixedPointDenominator; }
+    double toDouble() const { return static_cast<double>(m_value) / kFixedPointDenominator; }
 #else
-    inline int toInt() const { return m_value; }
-    inline float toFloat() const { return static_cast<float>(m_value); }
-    inline double toDouble() const { return static_cast<double>(m_value); }
+    int toInt() const { return m_value; }
+    float toFloat() const { return static_cast<float>(m_value); }
+    double toDouble() const { return static_cast<double>(m_value); }
 #endif
-    inline unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
+    unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
 
-    inline operator int() const { return toInt(); }
-    inline operator unsigned() const { return toUnsigned(); }
-    inline operator float() const { return toFloat(); }
-    inline operator double() const { return toDouble(); }
-    inline operator bool() const { return m_value; }
+    operator int() const { return toInt(); }
+    operator unsigned() const { return toUnsigned(); }
+    operator float() const { return toFloat(); }
+    operator double() const { return toDouble(); }
+    operator bool() const { return m_value; }
 
-    inline FractionalLayoutUnit operator++(int)
+    FractionalLayoutUnit operator++(int)
     {
         m_value += kFixedPointDenominator;
         return *this;
     }
 
-    inline int rawValue() const { return m_value; }
-    inline void setRawValue(int value) { m_value = value; }
-    inline void setRawValue(long long value)
+    int rawValue() const { return m_value; }
+    void setRawValue(int value) { m_value = value; }
+    void setRawValue(long long value)
     {
         REPORT_OVERFLOW(value > std::numeric_limits<int>::min() && value < std::numeric_limits<int>::max());
         m_value = static_cast<int>(value);
     }
 
-    inline FractionalLayoutUnit abs() const
+    FractionalLayoutUnit abs() const
     {
         FractionalLayoutUnit returnValue;
         returnValue.setRawValue(::abs(m_value));
         return returnValue;
     }
 #if OS(DARWIN)
-    inline int wtf_ceil() const
+    int wtf_ceil() const
 #else
-    inline int ceil() const
+    int ceil() const
 #endif
     {
 #if ENABLE(SUBPIXEL_LAYOUT)
@@ -137,7 +137,7 @@ public:
         return m_value;
 #endif
     }
-    inline int round() const
+    int round() const
     {
 #if ENABLE(SUBPIXEL_LAYOUT)
         if (m_value > 0)
@@ -148,7 +148,7 @@ public:
 #endif
     }
 
-    inline int floor() const
+    int floor() const
     {
         return toInt();
     }
@@ -168,15 +168,15 @@ public:
     }
     
 private:
-    inline bool isInBounds(int value)
+    bool isInBounds(int value)
     {
         return ::abs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
     }
-    inline bool isInBounds(unsigned value)
+    bool isInBounds(unsigned value)
     {
         return value <= static_cast<unsigned>(std::numeric_limits<int>::max()) / kFixedPointDenominator;
     }
-    inline bool isInBounds(double value)
+    bool isInBounds(double value)
     {
         return ::fabs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
     }

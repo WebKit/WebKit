@@ -262,7 +262,7 @@ namespace WebCore {
         void applyFillPattern();
         void drawPath(const Path&);
 
-        void drawNativeImage(NativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, ImageOrientation = DefaultImageOrientation);
+        void drawNativeImage(CGImageRef, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, ImageOrientation = DefaultImageOrientation);
 
         // Allow font smoothing (LCD antialiasing). Not part of the graphics state.
         void setAllowsFontSmoothing(bool);
