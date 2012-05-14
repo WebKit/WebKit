@@ -1,3 +1,15 @@
+2012-05-13  Mike Lawther  <mikelawther@chromium.org>
+
+        Heap-use-after-free in WTF::HashMap<int, WTF::RefPtr<WebCore::CalculationValue>, WTF::IntHash<unsigned int>, WTF::HashTrait
+        https://bugs.webkit.org/show_bug.cgi?id=85195
+
+        Reviewed by Darin Adler.
+
+        * css3/calc/transition-crash-expected.txt: Added.
+        * css3/calc/transition-crash.html: Added.
+        * css3/calc/transition-crash2-expected.txt: Added.
+        * css3/calc/transition-crash2.html: Added.
+
 2012-05-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK test_expectations update.

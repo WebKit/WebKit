@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<style>
+.transition { 
+    height: -webkit-calc(100% - 10px); 
+    -webkit-transition: height 50ms; 
+}
+.flim + .sibling { 
+}
+</style>
+
+<body>
+    This test checks class changes affecting sibling selectors happening during transitions over calculated lengths.
+    The test passes if it does not crash.
+</body>
+
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText(true);        
+        layoutTestController.waitUntilDone(); 
+    }
+
+    div = document.createElement('div');
+    div.setAttribute('class', 'sibling');
+    document.body.appendChild(div);
+
+    th = document.createElement('th'); // td, tr also cause test to fail
+    th.setAttribute('class', 'transition');
+    document.body.appendChild(th);
+
+    function boom() {
+        div.setAttribute('class', 'stix'); 
+        if (window.layoutTestController) 
+            layoutTestController.notifyDone();
+    }
+    setTimeout(boom, 1);
+</script>
