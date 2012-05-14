@@ -89,9 +89,6 @@ layer at (0,0) size 785x669
             RenderTableCell {TD} at (2,2) size 101x28 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 99x26 [border: (2px solid #0000FF)]
                 RenderTextControl {INPUT} at (2,2) size 95x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-                  RenderBlock {DIV} at (2,3) size 91x16
-                    RenderText {#text} at (1,0) size 49x16
-                      text run at (1,0) width 49: "text field"
             RenderTableCell {TD} at (105,2) size 44x75 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 42x73 [border: (2px solid #0000FF)]
                 RenderListBox {SELECT} at (2,2) size 38x69 [bgcolor=#DDDDDD] [border: (1px inset #808080)]
@@ -173,9 +170,6 @@ layer at (0,0) size 785x669
         RenderText {#text} at (0,25) size 26x19
           text run at (0,25) width 26: "text "
         RenderTextControl {INPUT} at (28,24) size 95x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 91x16
-            RenderText {#text} at (1,0) size 49x16
-              text run at (1,0) width 49: "text field"
         RenderText {#text} at (125,25) size 4x19
           text run at (125,25) width 4: " "
         RenderFileUploadControl {INPUT} at (131,24) size 238x22 "No file chosen"
@@ -244,11 +238,19 @@ layer at (0,0) size 785x669
               RenderText at (4,1) size 56x16
                 text run at (4,1) width 56: "xxxxxxxx"
           RenderText {#text} at (0,0) size 0x0
+layer at (15,255) size 91x16
+  RenderBlock {DIV} at (2,3) size 91x16
+    RenderText {#text} at (1,0) size 49x16
+      text run at (1,0) width 49: "text field"
 layer at (410,254) size 179x36 clip at (411,255) size 177x34
   RenderTextControl {TEXTAREA} at (4,4) size 179x36 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x16
       RenderText {#text} at (0,0) size 64x16
         text run at (0,0) width 64: "textarea"
+layer at (38,499) size 91x16
+  RenderBlock {DIV} at (2,3) size 91x16
+    RenderText {#text} at (1,0) size 49x16
+      text run at (1,0) width 49: "text field"
 layer at (385,474) size 179x36 clip at (386,475) size 177x34
   RenderTextControl {TEXTAREA} at (377,2) size 179x36 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 175x16

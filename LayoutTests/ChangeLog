@@ -1,3 +1,22 @@
+2012-05-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        More gardening after r115846.
+
+        The rebaselining was partially done. Removed the expected TEXT failures from our Mac bots
+        and rebaselined more platforms.
+
+        * platform/chromium-linux-x86/fast/forms/form-element-geometry-expected.txt: Removed.
+        * platform/chromium-linux-x86/fast/forms/input-value-expected.txt: Removed.
+        * platform/chromium-linux-x86/fast/table/colspanMinWidth-vertical-expected.txt: Removed.
+        * platform/chromium-linux-x86/fast/text/textIteratorNilRenderer-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/form-element-geometry-expected.txt:
+        * platform/chromium-linux/fast/forms/input-value-expected.txt:
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.txt: Added.
+        * platform/chromium-linux/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium-mac-leopard/fast/text/textIteratorNilRenderer-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  David Barton  <dbarton@mathscribe.com>
 
         Unify RenderMathMLSquareRoot.cpp and RenderMathMLRoot.cpp
