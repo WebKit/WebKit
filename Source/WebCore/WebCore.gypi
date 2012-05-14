@@ -3056,6 +3056,8 @@
             'page/SpeechInputResultList.h',
             'page/SuspendableTimer.cpp',
             'page/SuspendableTimer.h',
+            'page/TouchAdjustment.cpp',
+            'page/TouchAdjustment.h',
             'page/UserContentURLPattern.cpp',
             'page/WebKitAnimation.cpp',
             'page/WebKitAnimation.h',

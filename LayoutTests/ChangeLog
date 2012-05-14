@@ -1,3 +1,13 @@
+2012-05-14  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Compute the best target node on a GestureTap event
+        https://bugs.webkit.org/show_bug.cgi?id=85101
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/test_expectations.txt:
+        The flaky tests in touchadjustment/ have been addressed in WK86218.
+
 2012-05-14  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Mark one test as failed on chromium.

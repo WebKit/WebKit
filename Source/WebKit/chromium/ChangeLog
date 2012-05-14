@@ -1,3 +1,17 @@
+2012-05-14  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Compute the best target node on a GestureTap event
+        https://bugs.webkit.org/show_bug.cgi?id=85101
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+        Enable the touch adjustment code by default.
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        In the case of a GestureTap, deltaX represents the horizontal padding of the touch
+        area and deltaY represents the vertical padding of the touch area.
+
 2012-05-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Add compositor debug asserts for blocked main thread
