@@ -84,16 +84,20 @@ void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& trajectoryVecto
 
 void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
 {
-    IntRect dirtyRect(intersection(mapFromContents(contentsDirtyRect), m_keepRect));
+    IntRect dirtyRect(mapFromContents(contentsDirtyRect));
 
-    Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
+    // Only iterate on the part of the rect that we know we might have tiles.
+    IntRect coveredDirtyRect = intersection(dirtyRect, m_keepRect);
+    Tile::Coordinate topLeft = tileCoordinateForPoint(coveredDirtyRect.location());
+    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coveredDirtyRect));
 
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
             RefPtr<Tile> currentTile = tileAt(Tile::Coordinate(xCoordinate, yCoordinate));
             if (!currentTile)
                 continue;
+            // Pass the full rect to each tile as coveredDirtyRect might not
+            // contain them completely and we don't want partial tile redraws.
             currentTile->invalidate(dirtyRect);
         }
     }
