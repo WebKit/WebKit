@@ -198,7 +198,9 @@ void CCSingleThreadProxy::doCommit(CCTextureUpdater& updater)
     ASSERT(CCProxy::isMainThread());
     // Commit immediately
     {
+        DebugScopedSetMainThreadBlocked mainThreadBlocked;
         DebugScopedSetImplThread impl;
+
         m_layerTreeHostImpl->beginCommit();
 
         m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
@@ -263,7 +265,9 @@ void CCSingleThreadProxy::stop()
     TRACE_EVENT("CCSingleThreadProxy::stop", this, 0);
     ASSERT(CCProxy::isMainThread());
     {
+        DebugScopedSetMainThreadBlocked mainThreadBlocked;
         DebugScopedSetImplThread impl;
+
         m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
         m_layerTreeHostImpl.clear();
     }

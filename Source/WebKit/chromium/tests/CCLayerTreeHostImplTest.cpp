@@ -113,6 +113,8 @@ protected:
     }
 
     DebugScopedSetImplThread m_alwaysImplThread;
+    DebugScopedSetMainThreadBlocked m_alwaysMainThreadBlocked;
+
     OwnPtr<CCLayerTreeHostImpl> m_hostImpl;
     bool m_didRequestCommit;
     bool m_didRequestRedraw;

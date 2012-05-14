@@ -397,9 +397,13 @@ void CCThreadProxy::stop()
     ASSERT(m_started);
 
     // Synchronously deletes the impl.
-    CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::layerTreeHostClosedOnImplThread, AllowCrossThreadAccess(&completion)));
-    completion.wait();
+    {
+        DebugScopedSetMainThreadBlocked mainThreadBlocked;
+
+        CCCompletionEvent completion;
+        CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::layerTreeHostClosedOnImplThread, AllowCrossThreadAccess(&completion)));
+        completion.wait();
+    }
 
     m_mainThreadProxy->shutdown(); // Stop running tasks posted to us.
 
@@ -529,6 +533,8 @@ void CCThreadProxy::beginFrame()
     // coordinated by the CCScheduler.
     {
         TRACE_EVENT("commit", this, 0);
+        DebugScopedSetMainThreadBlocked mainThreadBlocked;
+
         CCCompletionEvent completion;
         CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrameCompleteOnImplThread, AllowCrossThreadAccess(&completion)));
         completion.wait();

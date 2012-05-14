@@ -38,6 +38,7 @@ namespace WebCore {
 namespace {
 #ifndef NDEBUG
 bool implThreadIsOverridden = false;
+bool s_isMainThreadBlocked = false;
 ThreadIdentifier threadIDOverridenToBeImplThread;
 #endif
 CCThread* s_mainThread = 0;
@@ -101,6 +102,16 @@ void CCProxy::setCurrentThreadIsImplThread(bool isImplThread)
     implThreadIsOverridden = isImplThread;
     if (isImplThread)
         threadIDOverridenToBeImplThread = WTF::currentThread();
+}
+
+bool CCProxy::isMainThreadBlocked()
+{
+    return s_isMainThreadBlocked;
+}
+
+void CCProxy::setMainThreadBlocked(bool isMainThreadBlocked)
+{
+    s_isMainThreadBlocked = isMainThreadBlocked;
 }
 #endif
 

@@ -85,12 +85,14 @@ CCVideoLayerImpl::CCVideoLayerImpl(int id, WebKit::WebVideoFrameProvider* provid
     // thread is blocked. That makes this a thread-safe call to set the video
     // frame provider client that does not require a lock. The same is true of
     // the call in the destructor.
+    ASSERT(CCProxy::isMainThreadBlocked());
     m_provider->setVideoFrameProviderClient(this);
 }
 
 CCVideoLayerImpl::~CCVideoLayerImpl()
 {
     // See comment in constructor for why this doesn't need a lock.
+    ASSERT(CCProxy::isMainThreadBlocked());
     if (m_provider) {
         m_provider->setVideoFrameProviderClient(0);
         m_provider = 0;

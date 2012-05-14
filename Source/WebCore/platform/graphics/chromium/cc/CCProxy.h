@@ -106,6 +106,8 @@ public:
 #ifndef NDEBUG
     static bool isMainThread();
     static bool isImplThread();
+    static bool isMainThreadBlocked();
+    static void setMainThreadBlocked(bool);
 #endif
 
     // Temporary hack while render_widget still does scheduling for CCLayerTreeHostMainThreadI
@@ -121,6 +123,25 @@ public:
 protected:
     CCProxy();
     friend class DebugScopedSetImplThread;
+    friend class DebugScopedSetMainThreadBlocked;
+};
+
+class DebugScopedSetMainThreadBlocked {
+public:
+    DebugScopedSetMainThreadBlocked()
+    {
+#if !ASSERT_DISABLED
+        ASSERT(!CCProxy::isMainThreadBlocked());
+        CCProxy::setMainThreadBlocked(true);
+#endif
+    }
+    ~DebugScopedSetMainThreadBlocked()
+    {
+#if !ASSERT_DISABLED
+        ASSERT(CCProxy::isMainThreadBlocked());
+        CCProxy::setMainThreadBlocked(false);
+#endif
+    }
 };
 
 }
