@@ -3260,8 +3260,9 @@ BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/repaint/subtree-root-skipped.html = IMAGE
 BUGWK83954 LEOPARD SNOWLEOPARD : fast/replaced/replaced-breaking.html = IMAGE
-BUGWK83954 LEOPARD SNOWLEOPARD : fast/replaced/width100percent-searchfield.html = IMAGE+TEXT PASS
 BUGWK83954 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
+
+BUGWK86412 LEOPARD SNOWLEOPARD : fast/replaced/width100percent-searchfield.html = IMAGE
 
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT IMAGE
 

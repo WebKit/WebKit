@@ -1,3 +1,12 @@
+2012-05-14  Dirk Pranke  <dpranke@chromium.org>
+
+        fast/replaced/width100percent-searchfield is still failing on chromium leopard/snowleopard
+        https://bugs.webkit.org/show_bug.cgi?id=86412
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=86131.
