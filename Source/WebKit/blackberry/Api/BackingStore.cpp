@@ -2220,6 +2220,9 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Drawabl
 {
     if (!drawable || contentsRect.isEmpty())
         return;
+
+    requestLayoutIfNeeded();
+
     PlatformGraphicsContext* platformGraphicsContext = SurfacePool::globalSurfacePool()->createPlatformGraphicsContext(drawable);
     GraphicsContext graphicsContext(platformGraphicsContext);
 
