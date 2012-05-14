@@ -452,7 +452,7 @@ WebInspector.HeapSnapshotView.prototype = {
     _inspectedObjectChanged: function(event)
     {
         var selectedNode = event.target.selectedNode;
-        if (selectedNode instanceof WebInspector.HeapSnapshotGenericObjectNode)
+        if (!this.profile.fromFile() && selectedNode instanceof WebInspector.HeapSnapshotGenericObjectNode)
             ConsoleAgent.addInspectedHeapObject(selectedNode.snapshotNodeId);
     },
 
@@ -559,6 +559,8 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _resolveObjectForPopover: function(element, showCallback, objectGroupName)
     {
+        if (this.profile.fromFile())
+            return;
         element.node.queryObjectContent(showCallback, objectGroupName);
     },
 
@@ -688,7 +690,7 @@ WebInspector.HeapSnapshotView.prototype = {
             this.filterSelectElement.appendChild(filterOption);
         }
 
-        if (this.profile._fromFile)
+        if (this.profile.fromFile())
             return;
         for (var i = this.filterSelectElement.length - 1, n = list.length; i < n; ++i) {
             var profile = list[i];
@@ -793,7 +795,6 @@ WebInspector.HeapProfileHeader = function(title, uid, maxJSObjectId)
     WebInspector.ProfileHeader.call(this, WebInspector.HeapSnapshotProfileType.TypeId, title, uid);
     this.maxJSObjectId = maxJSObjectId;
     this._loaded = false;
-    this._fromFile = false;
     this._totalNumberOfChunks = 0;
 }
 
@@ -884,7 +885,7 @@ WebInspector.HeapProfileHeader.prototype = {
      */
     canSaveToFile: function()
     {
-        return !this._fromFile && this._loaded && !this._savedChunksCount && WebInspector.fileManager.canAppend();
+        return !this.fromFile() && this._loaded && !this._savedChunksCount && WebInspector.fileManager.canAppend();
     },
 
     /**
@@ -907,7 +908,7 @@ WebInspector.HeapProfileHeader.prototype = {
             ProfilerAgent.getProfile(this.typeId, this.uid);
         }
 
-        this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".json";
+        this._fileName = this._fileName || "Heap-" + new Date().toISO8601Compact() + ".heapsnapshot";
         WebInspector.fileManager.addEventListener(WebInspector.FileManager.EventTypes.SavedURL, startSavingSnapshot, this);
         WebInspector.fileManager.save(this._fileName, "", true);
     },
@@ -942,7 +943,6 @@ WebInspector.HeapProfileHeader.prototype = {
             }
         }
 
-        this._fromFile = true;
         this.title = file.name;
         this.sidebarElement.subtitle = WebInspector.UIString("Loading\u2026");
         this.sidebarElement.wait = true;

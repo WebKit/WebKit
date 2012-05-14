@@ -139,6 +139,7 @@ WebInspector.ProfileHeader = function(profileType, title, uid)
         this.uid = uid;
         this.isTemporary = false;
     }
+    this._fromFile = false;
 }
 
 WebInspector.ProfileHeader.prototype = {
@@ -162,7 +163,12 @@ WebInspector.ProfileHeader.prototype = {
     /**
      * @param {File} file
      */
-    loadFromFile: function(file) { throw new Error("Needs implemented"); }
+    loadFromFile: function(file) { throw new Error("Needs implemented"); },
+
+    /**
+     * @return {boolean}
+     */
+    fromFile: function() { return this._fromFile; }
 }
 
 /**
@@ -269,6 +275,7 @@ WebInspector.ProfilesPanel.prototype = {
         var temporaryProfile = profileType.createTemporaryProfile(UserInitiatedProfileName + "." + file.name);
         this.addProfileHeader(temporaryProfile);
 
+        temporaryProfile._fromFile = true;
         temporaryProfile.loadFromFile(file);
         this._createFileSelectorElement();
     },
