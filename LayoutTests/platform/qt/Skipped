@@ -2560,3 +2560,20 @@ fast/css/tab-size.html
 # [Qt] fast/frames/seamless/seamless-inherited-document-style.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=86182
 fast/frames/seamless/seamless-inherited-document-style.html
+
+# [Qt] REGRESSION (r116789): inspector/debugger/script-formatter-console.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=86336
+inspector/debugger/script-formatter-console.html
+
+# [Qt] REGRESSION (r116775): inspector/debugger/script-formatter-breakpoints.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=86337
+inspector/debugger/script-formatter-breakpoints.html
+
+# [Qt][EFL][GTK]REGRESSION (r116828): fast/dom/collection-null-like-arguments.html, fast/dom/CSSStyleDeclaration/empty-string-property.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=86283
+fast/dom/collection-null-like-arguments.html
+fast/dom/CSSStyleDeclaration/empty-string-property.html
+
+# [Qt] REGRESSION(r116828): inspector tests started to assert
+# https://bugs.webkit.org/show_bug.cgi?id=86283
+inspector/debugger

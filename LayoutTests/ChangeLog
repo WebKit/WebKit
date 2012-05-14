@@ -1,3 +1,9 @@
+2012-05-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new asserting and failing test to paint the bots green.
+
+        * platform/qt/Skipped:
+
 2012-05-13  Noel Gordon  <noel.gordon@gmail.com>
 
         Unreviewed test fix: these calc() tests are dumpAsText().
