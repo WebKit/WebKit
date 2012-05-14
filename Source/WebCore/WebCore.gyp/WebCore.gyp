@@ -120,7 +120,6 @@
       '../platform/image-decoders/jpeg',
       '../platform/image-decoders/png',
       '../platform/image-decoders/skia',
-      '../platform/image-decoders/xbm',
       '../platform/image-decoders/webp',
       '../platform/image-encoders/skia',
       '../platform/leveldb',
