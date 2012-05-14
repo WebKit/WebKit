@@ -919,28 +919,28 @@ static void webkit_settings_init(WebKitSettings* settings)
 
     priv->preferences = adoptWK(WKPreferencesCreate());
 
-    WKRetainPtr<WKStringRef> defaultFontFamilyRef = WKPreferencesCopyStandardFontFamily(priv->preferences.get());
+    WKRetainPtr<WKStringRef> defaultFontFamilyRef = adoptWK(WKPreferencesCopyStandardFontFamily(priv->preferences.get()));
     priv->defaultFontFamily =  WebKit::toImpl(defaultFontFamilyRef.get())->string().utf8();
 
-    WKRetainPtr<WKStringRef> monospaceFontFamilyRef = WKPreferencesCopyFixedFontFamily(priv->preferences.get());
+    WKRetainPtr<WKStringRef> monospaceFontFamilyRef = adoptWK(WKPreferencesCopyFixedFontFamily(priv->preferences.get()));
     priv->monospaceFontFamily = WebKit::toImpl(monospaceFontFamilyRef.get())->string().utf8();
 
-    WKRetainPtr<WKStringRef> serifFontFamilyRef = WKPreferencesCopySerifFontFamily(priv->preferences.get());
+    WKRetainPtr<WKStringRef> serifFontFamilyRef = adoptWK(WKPreferencesCopySerifFontFamily(priv->preferences.get()));
     priv->serifFontFamily = WebKit::toImpl(serifFontFamilyRef.get())->string().utf8();
 
-    WKRetainPtr<WKStringRef> sansSerifFontFamilyRef = WKPreferencesCopySansSerifFontFamily(priv->preferences.get());
+    WKRetainPtr<WKStringRef> sansSerifFontFamilyRef = adoptWK(WKPreferencesCopySansSerifFontFamily(priv->preferences.get()));
     priv->sansSerifFontFamily = WebKit::toImpl(sansSerifFontFamilyRef.get())->string().utf8();
 
-    WKRetainPtr<WKStringRef> cursiveFontFamilyRef = WKPreferencesCopyCursiveFontFamily(priv->preferences.get());
+    WKRetainPtr<WKStringRef> cursiveFontFamilyRef = adoptWK(WKPreferencesCopyCursiveFontFamily(priv->preferences.get()));
     priv->cursiveFontFamily = WebKit::toImpl(cursiveFontFamilyRef.get())->string().utf8();
 
-    WKRetainPtr<WKStringRef> fantasyFontFamilyRef = WKPreferencesCopyFantasyFontFamily(priv->preferences.get());
+    WKRetainPtr<WKStringRef> fantasyFontFamilyRef = adoptWK(WKPreferencesCopyFantasyFontFamily(priv->preferences.get()));
     priv->fantasyFontFamily = WebKit::toImpl(fantasyFontFamilyRef.get())->string().utf8();
 
-    WKRetainPtr<WKStringRef> pictographFontFamilyRef = WKPreferencesCopyPictographFontFamily(priv->preferences.get());
+    WKRetainPtr<WKStringRef> pictographFontFamilyRef = adoptWK(WKPreferencesCopyPictographFontFamily(priv->preferences.get()));
     priv->pictographFontFamily = WebKit::toImpl(pictographFontFamilyRef.get())->string().utf8();
 
-    WKRetainPtr<WKStringRef> defaultCharsetRef = WKPreferencesCopyDefaultTextEncodingName(priv->preferences.get());
+    WKRetainPtr<WKStringRef> defaultCharsetRef = adoptWK(WKPreferencesCopyDefaultTextEncodingName(priv->preferences.get()));
     priv->defaultCharset = WebKit::toImpl(defaultCharsetRef.get())->string().utf8();
 }
 
@@ -1511,7 +1511,7 @@ void webkit_settings_set_serif_font_family(WebKitSettings* settings, const gchar
     if (!g_strcmp0(priv->serifFontFamily.data(), serifFontFamily))
         return;
 
-    WKRetainPtr<WKStringRef> serifFontFamilyRef = WKStringCreateWithUTF8CString(serifFontFamily);
+    WKRetainPtr<WKStringRef> serifFontFamilyRef = adoptWK(WKStringCreateWithUTF8CString(serifFontFamily));
     WKPreferencesSetSerifFontFamily(priv->preferences.get(), serifFontFamilyRef.get());
     priv->serifFontFamily = WebKit::toImpl(serifFontFamilyRef.get())->string().utf8();
 

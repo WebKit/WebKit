@@ -1,3 +1,17 @@
+2012-05-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] [WK2] Memory leaks in WebKitWebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=86365
+
+        Reviewed by Martin Robinson.
+
+        Fix memory leaks in WebKitWebSettings by adopting allocations
+        using adoptWK.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_init):
+        (webkit_settings_set_serif_font_family):
+
 2012-05-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Doesn't build with ENABLE_INSPECTOR=0
