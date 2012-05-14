@@ -35,7 +35,7 @@ ALWAYS_INLINE uint32_t toUInt32FromCharacters(const CharType* characters, unsign
 {
     // An empty string is not a number.
     if (!length)
-        return 0;
+        return UINT_MAX;
 
     // Get the first character, turning it into a digit.
     uint32_t value = characters[0] - '0';
@@ -80,7 +80,6 @@ public:
     PropertyName(const Identifier& propertyName)
         : m_impl(propertyName.impl())
     {
-        ASSERT(!propertyName.isNull());
     }
 
     StringImpl* impl() const { return m_impl; }

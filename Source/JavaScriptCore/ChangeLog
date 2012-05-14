@@ -1,3 +1,18 @@
+2012-05-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Introduce PropertyName class
+        https://bugs.webkit.org/show_bug.cgi?id=86241
+
+        Reviewed by Darin Adler.
+
+        This patch introduced a couple of small bugs.
+
+        * runtime/PropertyName.h:
+        (JSC::toUInt32FromCharacters):
+            - Returning wrong value for "" - should not convert to 0.
+        (JSC::PropertyName::PropertyName):
+            - Remove the ASSERT, it was a little too aspirational.
+
 2012-05-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG performs incorrect constant folding on double-to-uint32 conversion in
