@@ -1,3 +1,9 @@
+2012-05-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed trivial buildfix after r116958.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro:
+
 2012-05-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Simplify OTHER_FILES for QML tests project files
