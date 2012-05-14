@@ -97,15 +97,15 @@ test("rebaseline", 6, function() {
         checkout.rebaseline([{
             'builderName': 'WebKit Linux',
             'testName': 'another/test.svg',
-            'failureInfoList': ['IMAGE'],
+            'failureTypeList': ['IMAGE'],
         }, {
             'builderName': 'WebKit Mac10.6',
             'testName': 'another/test.svg',
-            'failureInfoList': ['IMAGE', 'TEXT', 'IMAGE+TEXT'],
+            'failureTypeList': ['IMAGE', 'TEXT', 'IMAGE+TEXT'],
         }, {
             'builderName': 'Webkit Vista',
             'testName': 'fast/test.html',
-            'failureInfoList': ['IMAGE+TEXT'],
+            'failureTypeList': ['IMAGE+TEXT'],
         }], function() {
             ok(true);
         }, function(failureInfo) {

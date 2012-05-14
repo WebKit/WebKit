@@ -103,7 +103,7 @@ checkout.rebaseline = function(failureInfoList, callback, progressCallback, chec
 {
     callIfCheckoutAvailable(function() {
         base.callInSequence(function(failureInfo, callback) {
-            var suffixes = base.uniquifyArray(base.flattenArray(failureInfo.failureInfoList.map(results.failureTypeToExtensionList))).join(',');
+            var suffixes = base.uniquifyArray(base.flattenArray(failureInfo.failureTypeList.map(results.failureTypeToExtensionList))).join(',');
 
             net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
                 'builder': failureInfo.builderName,
@@ -118,7 +118,7 @@ checkout.rebaseline = function(failureInfoList, callback, progressCallback, chec
             var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
             var suffixes = base.uniquifyArray(base.flattenArray(
                 failureInfoList.map(function(failureInfo) {
-                    return base.flattenArray(failureInfo.failureInfoList.map(results.failureTypeToExtensionList))
+                    return base.flattenArray(failureInfo.failureTypeList.map(results.failureTypeToExtensionList))
                 }))).join(',');
             base.callInSequence(function(testName, callback) { checkout.optimizeBaselines(testName, suffixes, callback)}, testNameList, callback);
         });

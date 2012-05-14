@@ -1,5 +1,18 @@
 2012-05-14  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix regressions in garden-o-matic after r116988.
+
+        Unreviewed, build fix.
+
+        I had a typo in a field name in checkout.js, and unfortunately
+        the unittests had the same typo :(.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout_unittests.js:
+
+2012-05-14  Dirk Pranke  <dpranke@chromium.org>
+
         garden-o-matic should specify which types of baselines to rebaseline
         https://bugs.webkit.org/show_bug.cgi?id=86242
 
