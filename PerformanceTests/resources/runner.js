@@ -24,6 +24,10 @@ PerfTestRunner.random = Math.random = function() {
 };
 
 PerfTestRunner.log = function (text) {
+    if (this._logLines) {
+        this._logLines.push(text);
+        return;
+    }
     if (!document.getElementById("log")) {
         var pre = document.createElement('pre');
         pre.id = 'log';
@@ -118,6 +122,12 @@ PerfTestRunner._runLoop = function () {
         window.setTimeout(function () { PerfTestRunner._runner(); }, 0);
     } else {
         this.logStatistics(this._results);
+        if (this._logLines) {
+            var logLines = this._logLines;
+            this._logLines = null;
+            var self = this;
+            logLines.forEach(function(text) { self.log(text); });
+        }
         this._doneFunction();
         if (window.layoutTestController)
             layoutTestController.notifyDone();
@@ -160,6 +170,7 @@ PerfTestRunner.initAndStartLoop = function() {
     this._completedRuns = -1;
     this.customRunFunction = null;
     this._results = [];
+    this._logLines = window.layoutTestController ? [] : null;
     this.log("Running " + this._runCount + " times");
     this._runLoop();
 }
