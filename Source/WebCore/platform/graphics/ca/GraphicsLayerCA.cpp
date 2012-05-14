@@ -1412,9 +1412,10 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, floa
     updateTransform();
     updateChildrenTransform();
     updateBackfaceVisibility();
-    
 #if ENABLE(CSS_FILTERS)
-    updateFilters();
+    // Filters cause flattening, so we should never have a layer for preserve-3d.
+    if (purpose != StructuralLayerForPreserves3D)
+        updateFilters();
 #endif
     
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
