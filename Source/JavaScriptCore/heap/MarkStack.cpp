@@ -37,6 +37,7 @@
 #include "ScopeChain.h"
 #include "Structure.h"
 #include "WriteBarrier.h"
+#include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
 
 namespace JSC {
@@ -535,16 +536,29 @@ void SlotVisitor::finalizeUnconditionalFinalizers()
 #if ENABLE(GC_VALIDATION)
 void MarkStack::validate(JSCell* cell)
 {
-    if (!cell)
+    if (!cell) {
+        dataLog("cell is NULL\n");
         CRASH();
+    }
 
-    if (!cell->structure())
+    if (!cell->structure()) {
+        dataLog("cell at %p has a null structure\n" , cell);
         CRASH();
+    }
 
     // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
     // I hate this sentence.
-    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo())
+    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo()) {
+        const char* parentClassName = 0;
+        const char* ourClassName = 0;
+        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo())
+            parentClassName = cell->structure()->structure()->JSCell::classInfo()->className;
+        if (cell->structure()->JSCell::classInfo())
+            ourClassName = cell->structure()->JSCell::classInfo()->className;
+        dataLog("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
+                cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
         CRASH();
+    }
 }
 #else
 void MarkStack::validate(JSCell*)
