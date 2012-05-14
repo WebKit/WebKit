@@ -25,6 +25,11 @@
 
 #include <wtf/OwnPtr.h>
 
+// see http://trac.wxwidgets.org/ticket/11482
+#ifdef __WXMSW__
+#   include "wx/msw/winundef.h"
+#endif
+
 #include <wx/bitmap.h>
 #include <wx/dcmemory.h>
 
