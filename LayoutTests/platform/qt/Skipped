@@ -2561,10 +2561,3 @@ fast/css/tab-size.html
 # https://bugs.webkit.org/show_bug.cgi?id=86182
 fast/frames/seamless/seamless-inherited-document-style.html
 
-# [Qt] REGRESSION (r116789): inspector/debugger/script-formatter-console.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=86336
-inspector/debugger/script-formatter-console.html
-
-# [Qt] REGRESSION (r116775): inspector/debugger/script-formatter-breakpoints.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=86337
-inspector/debugger/script-formatter-breakpoints.html
