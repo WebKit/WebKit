@@ -1,3 +1,24 @@
+2012-05-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Convert CSS and Parser tests to runs/s tests
+        https://bugs.webkit.org/show_bug.cgi?id=86399
+
+        Reviewed by Ojan Vafai.
+
+        Use runPerSecond instead of run to measure results in function calls per second (run/s) instead of time (ms).
+        This allows us to continue measuring performance reliably even when WebKit's performance improves and results
+        become too small for Date.now()'s precision (around 15 ms).
+
+        It should also reduce perf. bots cycle time for slower tests because we limit the number of function calls by time.
+
+        * CSS/CSSPropertySetterGetter.html:
+        * CSS/CSSPropertyUpdateValue.html:
+        * Parser/css-parser-yui.html:
+        * Parser/simple-url.html:
+        * Parser/tiny-innerHTML.html:
+        * Parser/url-parser.html:
+        * Parser/xml-parser.html:
+
 2012-05-14  Dan Bernstein  <mitz@apple.com>
 
         Add a line layout performance test

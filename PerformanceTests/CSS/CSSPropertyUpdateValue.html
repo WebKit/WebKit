@@ -72,9 +72,9 @@ var properties = {
 'wordSpacing' : '40px',
 };
 // The first run will just add the properties but it's fine as the first run of the benchmark is always ignored.
-PerfTestRunner.run(function() {
+PerfTestRunner.runPerSecond({run:function() {
     for (key in properties)
         div.style[key] = properties[key];
-}, 10000);
+}});
 </script>
 </html>

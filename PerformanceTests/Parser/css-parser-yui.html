@@ -2619,11 +2619,11 @@ legend {
 var element = document.getElementById("styleElement");
 var cssText = element.textContent;
 var count = 0;
-PerfTestRunner.run(function() {
+PerfTestRunner.runPerSecond({run:function() {
     element.textContent = "";
     element.textContent = cssText + "#some" + count + "{color:black};";
     count++;
-}, 100);
+}});
 
 </script>
 </body>

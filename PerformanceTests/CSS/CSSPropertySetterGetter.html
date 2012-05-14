@@ -71,12 +71,12 @@ var properties = {
 'webkitTransform' : 'scale3d(0.5, 0.5, 0.5)',
 'wordSpacing' : '40px',
 };
-PerfTestRunner.run(function() {
+PerfTestRunner.runPerSecond({run:function() {
     for (key in properties) {
         var value = div.style[key];
         div.style[key] = "";
         div.style[key] = properties[key];
     }
-}, 5000);
+}});
 </script>
 </html>

@@ -3,10 +3,10 @@
 <script src="../resources/runner.js"></script>
 <script>
 var anchor = document.createElement("a");
-PerfTestRunner.run(function() {
+PerfTestRunner.runPerSecond({run:function() {
     for (var x = 0; x < 200000; x++) {
         anchor.href = "http://www.apple.com/"
     }
-});
+}});
 </script>
 </body>
