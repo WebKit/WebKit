@@ -1,3 +1,10 @@
+2012-05-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Don't adjust calls per iteration in the second run.
+
+        * resources/runner.js:
+        (PerfTestRunner._perSecondRunner):
+
 2012-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         performance tests should be able to measure runs/sec rather than time

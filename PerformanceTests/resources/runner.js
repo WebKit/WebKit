@@ -196,7 +196,7 @@ PerfTestRunner._perSecondRunner = function () {
     while (totalTime < timeToRun) {
         totalTime += this._perSecondRunnerIterator(callsPerIteration);
         i += callsPerIteration;
-        if (this._completedRuns <= 0 && totalTime < 100)
+        if (this._completedRuns < 0 && totalTime < 100)
             callsPerIteration = Math.max(10, 2 * callsPerIteration);
     }
     this._callsPerIteration = callsPerIteration;
