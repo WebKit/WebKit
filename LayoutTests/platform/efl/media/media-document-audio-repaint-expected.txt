@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 741x19
+          text run at (0,0) width 651: "This tests that in a standalone media document with audio content, the media element repaints correctly "
+          text run at (651,0) width 90: "while playing."
+      RenderBlock (anonymous) at (0,34) size 784x334
+        RenderPartObject {IFRAME} at (0,0) size 384x334 [border: (2px inset #000000)]
+          layer at (0,0) size 380x330
+            RenderView at (0,0) size 380x330
+          layer at (0,0) size 380x330
+            RenderBlock {HTML} at (0,0) size 380x330
+              RenderBody {BODY} at (8,8) size 364x314 [bgcolor=#262626]
+          layer at (40,164) size 300x1
+            RenderVideo {VIDEO} at (40,164) size 300x1
+          layer at (40,164) size 300x1
+            RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x1
+          layer at (40,164) size 300x20 scrollHeight 28
+            RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
+              RenderButton {INPUT} at (0,0) size 20x20
+              RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
+                RenderBlock (anonymous) at (0,0) size 63x28
+                  RenderDeprecatedFlexibleBox {DIV} at (0,0) size 63x28
+                    RenderBlock (anonymous) at (4,4) size 55x20
+                      RenderText {#text} at (0,0) size 55x12
+                        text run at (0,0) width 55: "00:00 / 00:01"
+                RenderSlider {INPUT} at (63,0) size 157x20
+                  RenderDeprecatedFlexibleBox {DIV} at (0,0) size 157x20
+                    RenderBlock {DIV} at (0,4) size 145x12
+                    RenderBlock {DIV} at (145,4) size 12x12
+              RenderButton {INPUT} at (240,0) size 20x20
+              RenderButton {INPUT} at (260,0) size 20x20
+              RenderBlock {DIV} at (280,0) size 20x20
+          layer at (194,168) size 12x12
+            RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+          layer at (320,164) size 20x20
+            RenderButton zI: 2 {INPUT} at (0,0) size 20x20
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

@@ -453,3 +453,13 @@ BUGWK86322 : media/media-continues-playing-after-replace-source.html = TEXT
 // Seems to fail on mac as well
 BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
 BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
+
+// Fullscreen API not enabled.
+BUGWK85870 : media/media-fullscreen-inline.html = TEXT
+BUGWK85870 : media/media-fullscreen-not-in-document.html = TEXT
+
+// This test is specific to QuickTime media engine.
+BUGWKEFL SKIP : media/video-does-not-loop.html = FAIL
+
+// This test assumes we cannot play RTSP, but we can.
+BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
