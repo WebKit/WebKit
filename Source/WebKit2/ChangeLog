@@ -1,3 +1,15 @@
+2012-05-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116969.
+        http://trac.webkit.org/changeset/116969
+        https://bugs.webkit.org/show_bug.cgi?id=86386
+
+        i accidentally the icondatabase (Requested by kling on
+        #webkit).
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::~WebContext):
+
 2012-05-14  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r116796): Assertion failure in API tests
