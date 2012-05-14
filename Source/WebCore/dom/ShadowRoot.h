@@ -38,8 +38,6 @@ namespace WebCore {
 
 class Document;
 class DOMSelection;
-class HTMLContentElement;
-class HTMLContentSelector;
 class InsertionPoint;
 class ElementShadow;
 
@@ -60,9 +58,9 @@ public:
 
     void recalcShadowTreeStyle(StyleChange);
 
-    void setNeedsReattachHostChildrenAndShadow();
-    void clearNeedsReattachHostChildrenAndShadow();
-    bool needsReattachHostChildrenAndShadow();
+    void setNeedsRedistributing();
+    void clearNeedsRedistributing();
+    bool needsRedistributing();
 
     InsertionPoint* insertionPointFor(Node*) const;
     void hostChildrenChanged();

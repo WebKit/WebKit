@@ -27,11 +27,10 @@
 #include "config.h"
 #include "ComposedShadowTreeWalker.h"
 
+#include "ContentDistributor.h"
 #include "Element.h"
 #include "ElementShadow.h"
-#include "HTMLContentSelector.h"
 #include "InsertionPoint.h"
-
 
 namespace WebCore {
 
@@ -114,9 +113,9 @@ Node* ComposedShadowTreeWalker::traverseNode(const Node* node, TraversalDirectio
 {
     ASSERT(node);
     if (isInsertionPoint(node)) {
-        const HTMLContentSelectionList* selectionList = toInsertionPoint(node)->selections();
-        if (HTMLContentSelection* selection = (direction == TraversalDirectionForward ? selectionList->first() : selectionList->last()))
-            return traverseNode(selection->node(), direction);
+        const ContentDistribution* distribution = toInsertionPoint(node)->distribution();
+        if (Node* next = (direction == TraversalDirectionForward ? distribution->firstNode() : distribution->lastNode()))
+            return traverseNode(next, direction);
         return traverseLightChildren(node, direction);
     }
     return const_cast<Node*>(node);
@@ -142,12 +141,12 @@ Node* ComposedShadowTreeWalker::traverseSiblingOrBackToInsertionPoint(const Node
     ElementShadow* shadow = shadowOfParent(node);
     if (!shadow)
         return traverseSiblingInCurrentTree(node, direction);
-    HTMLContentSelection* selection = shadow->selectionFor(node);
-    if (!selection)
+    ContentDistribution::Item* item = shadow->distributionItemFor(node);
+    if (!item)
         return traverseSiblingInCurrentTree(node, direction);
-    if (HTMLContentSelection* nextSelection = (direction == TraversalDirectionForward ? selection->next() : selection->previous()))
-        return traverseNode(nextSelection->node(), direction);
-    return traverseSiblingOrBackToInsertionPoint(selection->insertionPoint(), direction);
+    if (ContentDistribution::Item* nextItem = (direction == TraversalDirectionForward ? item->next() : item->previous()))
+        return traverseNode(nextItem->node(), direction);
+    return traverseSiblingOrBackToInsertionPoint(item->insertionPoint(), direction);
 }
 
 Node* ComposedShadowTreeWalker::traverseSiblingInCurrentTree(const Node* node, TraversalDirection direction)
@@ -204,8 +203,8 @@ Node* ComposedShadowTreeWalker::traverseParent(const Node* node) const
         return 0;
     }
     if (ElementShadow* shadow = shadowOfParent(node)) {
-        if (HTMLContentSelection* selection = shadow->selectionFor(node))
-            return traverseParent(selection->insertionPoint());
+        if (InsertionPoint* insertionPoint = shadow->insertionPointFor(node))
+            return traverseParent(insertionPoint);
     }
     return traverseParentInCurrentTree(node);
 }

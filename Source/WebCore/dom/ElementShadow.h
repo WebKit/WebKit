@@ -27,8 +27,8 @@
 #ifndef ElementShadow_h
 #define ElementShadow_h
 
+#include "ContentDistributor.h"
 #include "ExceptionCode.h"
-#include "HTMLContentSelector.h"
 #include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Noncopyable.h>
@@ -40,9 +40,7 @@ namespace WebCore {
 
 class Node;
 class Element;
-class InsertionPoint;
 class TreeScope;
-class HTMLContentSelection;
 
 class ElementShadow {
 public:
@@ -66,24 +64,24 @@ public:
     bool childNeedsStyleRecalc();
     bool needsStyleRecalc();
     void recalcStyle(Node::StyleChange);
-    void setNeedsReattachHostChildrenAndShadow();
-    void clearNeedsReattachHostChildrenAndShadow();
-    bool needsReattachHostChildrenAndShadow();
-    void reattachHostChildrenAndShadow();
+    void setNeedsRedistributing();
+    void clearNeedsRedistributing();
+    bool needsRedistributing();
     void hostChildrenChanged();
 
     InsertionPoint* insertionPointFor(const Node*) const;
-    HTMLContentSelection* selectionFor(const Node*) const;
+    ContentDistribution::Item* distributionItemFor(const Node*) const;
 
-    HTMLContentSelector& selector();
-    const HTMLContentSelector& selector() const;
+    ContentDistributor& distributor();
+    const ContentDistributor& distributor() const;
 
 private:
     void removeAllShadowRoots();
+    void reattachHostChildrenAndShadow();
 
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
-    HTMLContentSelector m_selector;
-    bool m_needsRecalculateContent : 1;
+    ContentDistributor m_distributor;
+    bool m_needsRedistributing : 1;
     WTF_MAKE_NONCOPYABLE(ElementShadow);
 };
 
@@ -97,19 +95,19 @@ inline ShadowRoot* ElementShadow::oldestShadowRoot() const
     return m_shadowRoots.tail();
 }
 
-inline HTMLContentSelector& ElementShadow::selector()
+inline ContentDistributor& ElementShadow::distributor()
 {
-    return m_selector;
+    return m_distributor;
 }
 
-inline const HTMLContentSelector& ElementShadow::selector() const
+inline const ContentDistributor& ElementShadow::distributor() const
 {
-    return m_selector;
+    return m_distributor;
 }
 
-inline void ElementShadow::clearNeedsReattachHostChildrenAndShadow()
+inline void ElementShadow::clearNeedsRedistributing()
 {
-    m_needsRecalculateContent = false;
+    m_needsRedistributing = false;
 }
 
 inline Element* ElementShadow::host() const

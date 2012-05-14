@@ -27,10 +27,10 @@
 #include "NodeRenderingContext.h"
 
 #include "ContainerNode.h"
+#include "ContentDistributor.h"
 #include "ElementShadow.h"
 #include "FlowThreadController.h"
 #include "HTMLContentElement.h"
-#include "HTMLContentSelector.h"
 #include "HTMLNames.h"
 #include "HTMLShadowElement.h"
 #include "Node.h"
@@ -97,7 +97,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
                 return;
             }
 
-            if (toInsertionPoint(parent)->hasSelection())
+            if (toInsertionPoint(parent)->hasDistribution())
                 m_phase = AttachingNotFallbacked;
             else
                 m_phase = AttachingFallbacked;
@@ -142,12 +142,12 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
 
 static inline RenderObject* nextRendererOfInsertionPoint(InsertionPoint* parent, Node* current)
 {
-    HTMLContentSelection* currentSelection = parent->selections()->find(current);
-    if (!currentSelection)
+    ContentDistribution::Item* currentItem = parent->distribution()->find(current);
+    if (!currentItem)
         return 0;
 
-    for (HTMLContentSelection* selection = currentSelection->next(); selection; selection = selection->next()) {
-        if (RenderObject* renderer = selection->node()->renderer())
+    for (ContentDistribution::Item* item = currentItem->next(); item; item = item->next()) {
+        if (RenderObject* renderer = item->node()->renderer())
             return renderer;
     }
 
@@ -158,10 +158,10 @@ static inline RenderObject* previousRendererOfInsertionPoint(InsertionPoint* par
 {
     RenderObject* lastRenderer = 0;
 
-    for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
-        if (selection->node() == current)
+    for (ContentDistribution::Item* item = parent->distribution()->first(); item; item = item->next()) {
+        if (item->node() == current)
             break;
-        if (RenderObject* renderer = selection->node()->renderer())
+        if (RenderObject* renderer = item->node()->renderer())
             lastRenderer = renderer;
     }
 
@@ -170,9 +170,9 @@ static inline RenderObject* previousRendererOfInsertionPoint(InsertionPoint* par
 
 static inline RenderObject* firstRendererOfInsertionPoint(InsertionPoint* parent)
 {
-    if (parent->hasSelection()) {
-        for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
-            if (RenderObject* renderer = selection->node()->renderer())
+    if (parent->hasDistribution()) {
+        for (ContentDistribution::Item* item = parent->distribution()->first(); item; item = item->next()) {
+            if (RenderObject* renderer = item->node()->renderer())
                 return renderer;
         }
 
@@ -184,9 +184,9 @@ static inline RenderObject* firstRendererOfInsertionPoint(InsertionPoint* parent
 
 static inline RenderObject* lastRendererOfInsertionPoint(InsertionPoint* parent)
 {
-    if (parent->hasSelection()) {
-        for (HTMLContentSelection* selection = parent->selections()->last(); selection; selection = selection->previous()) {
-            if (RenderObject* renderer = selection->node()->renderer())
+    if (parent->hasDistribution()) {
+        for (ContentDistribution::Item* item = parent->distribution()->last(); item; item = item->previous()) {
+            if (RenderObject* renderer = item->node()->renderer())
                 return renderer;
         }
 

@@ -901,10 +901,10 @@ SET(WebCore_SOURCES
     html/parser/TextViewSourceParser.cpp
     html/parser/XSSAuditor.cpp
 
+    html/shadow/ContentDistributor.cpp
     html/shadow/ContentSelectorQuery.cpp
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/HTMLContentElement.cpp
-    html/shadow/HTMLContentSelector.cpp
     html/shadow/HTMLShadowElement.cpp
     html/shadow/InsertionPoint.cpp
     html/shadow/MediaControls.cpp

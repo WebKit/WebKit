@@ -2502,14 +2502,14 @@ webcore_sources += \
 	Source/WebCore/html/parser/XSSAuditor.h \
 	Source/WebCore/html/shadow/CalendarPickerElement.cpp \
 	Source/WebCore/html/shadow/CalendarPickerElement.h \
+	Source/WebCore/html/shadow/ContentDistributor.cpp \
+	Source/WebCore/html/shadow/ContentDistributor.h \
 	Source/WebCore/html/shadow/ContentSelectorQuery.cpp \
 	Source/WebCore/html/shadow/ContentSelectorQuery.h \
 	Source/WebCore/html/shadow/DetailsMarkerControl.cpp \
 	Source/WebCore/html/shadow/DetailsMarkerControl.h \
 	Source/WebCore/html/shadow/HTMLContentElement.cpp \
 	Source/WebCore/html/shadow/HTMLContentElement.h \
-	Source/WebCore/html/shadow/HTMLContentSelector.cpp \
-	Source/WebCore/html/shadow/HTMLContentSelector.h \
 	Source/WebCore/html/shadow/InsertionPoint.cpp \
 	Source/WebCore/html/shadow/InsertionPoint.h \
 	Source/WebCore/html/shadow/MediaControls.cpp \

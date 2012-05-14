@@ -31,7 +31,7 @@
 #ifndef InsertionPoint_h
 #define InsertionPoint_h
 
-#include "HTMLContentSelector.h"
+#include "ContentDistributor.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include <wtf/Forward.h>
@@ -42,8 +42,8 @@ class InsertionPoint : public HTMLElement {
 public:
     virtual ~InsertionPoint();
 
-    const HTMLContentSelectionList* selections() const { return &m_selections; }
-    bool hasSelection() const { return m_selections.first(); }
+    const ContentDistribution* distribution() const { return &m_distribution; }
+    bool hasDistribution() const { return m_distribution.first(); }
     bool isShadowBoundary() const;
     bool isActive() const;
 
@@ -69,7 +69,7 @@ private:
     void assignShadowRoot(ShadowRoot*);
     void clearAssignment(ShadowRoot*);
 
-    HTMLContentSelectionList m_selections;
+    ContentDistribution m_distribution;
 };
 
 inline bool isInsertionPoint(const Node* node)

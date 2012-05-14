@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
+#include "ContentDistributor.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -34,7 +35,6 @@
 #include "Element.h"
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"
-#include "HTMLContentSelector.h"
 #include "HTMLNames.h"
 #include "InsertionPoint.h"
 #include "NodeRareData.h"

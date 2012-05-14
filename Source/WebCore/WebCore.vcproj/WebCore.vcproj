@@ -62741,14 +62741,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\HTMLContentSelector.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\shadow\HTMLContentSelector.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\shadow\HTMLShadowElement.cpp"
 					>
 					<FileConfiguration
@@ -62799,6 +62791,14 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ContentDistributor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ContentDistributor.h"
+					>
 				</File>
 				<File
 					RelativePath="..\html\shadow\HTMLShadowElement.h"

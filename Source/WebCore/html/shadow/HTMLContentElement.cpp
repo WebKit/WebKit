@@ -27,9 +27,9 @@
 #include "config.h"
 #include "HTMLContentElement.h"
 
+#include "ContentDistributor.h"
 #include "ContentSelectorQuery.h"
 #include "ElementShadow.h"
-#include "HTMLContentSelector.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 #include "RuntimeEnabledFeatures.h"
@@ -90,7 +90,7 @@ void HTMLContentElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == selectAttr) {
         if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode()))
-            root->owner()->setNeedsReattachHostChildrenAndShadow();
+            root->owner()->setNeedsRedistributing();
     } else
         InsertionPoint::parseAttribute(attr);
 }
