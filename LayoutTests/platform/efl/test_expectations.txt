@@ -447,6 +447,10 @@ BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
+// Regression introduced in r116828
+BUGWK86283 : fast/dom/CSSStyleDeclaration/empty-string-property.html = TEXT
+BUGWK86283 : fast/dom/collection-null-like-arguments.html = TEXT
+
 // New test introduced in r116858 fails
 BUGWK86322 : media/media-continues-playing-after-replace-source.html = TEXT
 
