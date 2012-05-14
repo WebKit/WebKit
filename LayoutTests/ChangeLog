@@ -1,3 +1,81 @@
+2012-05-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed rebaseline after r115846.
+
+        Those are layers additions & baselines churns due to sharing or splitting
+        between ports.
+
+        * fast/layers/remove-layer-with-nested-stacking-expected.txt: Added.
+        * fast/repaint/lines-with-layout-delta-expected.txt: Added.
+        * fast/repaint/overflow-clip-subtree-layout-expected.png: Added.
+        * fast/repaint/repaint-resized-overflow-expected.txt: Added.
+        * fast/repaint/subtree-layoutstate-transform-expected.txt: Added.
+        * fast/repaint/subtree-root-clip-2-expected.png: Added.
+        * fast/repaint/subtree-root-clip-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/form-element-geometry-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/forms/input-value-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/layers: Removed.
+        * platform/chromium-linux-x86/fast/repaint/inline-relative-positioned-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/replaced/replaced-breaking-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/table/colspanMinWidth-vertical-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/text/textIteratorNilRenderer-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/layers/add-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/layers/add-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/chromium-mac/fast/layers/add-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/inline-relative-positioned-expected.txt:
+        * platform/chromium-mac/fast/repaint/lines-with-layout-delta-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/repaint-resized-overflow-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/subtree-layoutstate-transform-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/subtree-root-skipped-expected.txt: Removed.
+        * platform/chromium-mac/fast/replaced/replaced-breaking-expected.txt: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-searchfield-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.txt: Removed.
+        * platform/chromium-win-vista/fast/layers: Removed.
+        * platform/chromium-win-vista/fast/repaint/inline-relative-positioned-expected.txt: Added.
+        * platform/chromium-win-xp/fast/layers: Removed.
+        * platform/chromium-win-xp/fast/repaint/inline-relative-positioned-expected.txt: Added.
+        * platform/chromium-win/editing/spelling/inline_spelling_markers-expected.txt:
+        * platform/chromium-win/fast/forms/form-element-geometry-expected.txt:
+        * platform/chromium-win/fast/forms/input-value-expected.txt:
+        * platform/chromium-win/fast/layers/remove-layer-with-nested-stacking-expected.txt:
+        * platform/chromium-win/fast/repaint/inline-relative-positioned-expected.txt:
+        * platform/chromium-win/fast/repaint/lines-with-layout-delta-expected.txt:
+        * platform/chromium-win/fast/repaint/repaint-resized-overflow-expected.txt:
+        * platform/chromium-win/fast/repaint/subtree-layoutstate-transform-expected.txt:
+        * platform/chromium-win/fast/repaint/subtree-root-skipped-expected.txt:
+        * platform/chromium-win/fast/replaced/replaced-breaking-expected.txt:
+        * platform/chromium-win/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/chromium-win/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/chromium/fast/layers: Removed.
+        * platform/chromium/fast/layers/add-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/chromium/fast/repaint/overflow-clip-subtree-layout-expected.txt: Removed.
+        * platform/chromium/fast/repaint/subtree-root-clip-2-expected.txt: Removed.
+        * platform/chromium/fast/repaint/subtree-root-clip-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/fast/layers/remove-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/efl/fast/repaint/lines-with-layout-delta-expected.txt: Removed.
+        * platform/efl/fast/repaint/overflow-clip-subtree-layout-expected.png: Removed.
+        * platform/efl/fast/repaint/repaint-resized-overflow-expected.txt: Removed.
+        * platform/efl/fast/repaint/subtree-layoutstate-transform-expected.txt: Removed.
+        * platform/efl/fast/repaint/subtree-root-clip-2-expected.png: Removed.
+        * platform/efl/fast/repaint/subtree-root-clip-expected.png: Removed.
+        * platform/gtk/fast/layers/add-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/gtk/fast/layers/remove-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/gtk/fast/repaint/lines-with-layout-delta-expected.txt: Removed.
+        * platform/gtk/fast/repaint/overflow-clip-subtree-layout-expected.png: Removed.
+        * platform/gtk/fast/repaint/overflow-clip-subtree-layout-expected.txt: Removed.
+        * platform/gtk/fast/repaint/repaint-resized-overflow-expected.txt: Removed.
+        * platform/gtk/fast/repaint/subtree-layoutstate-transform-expected.txt: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-2-expected.png: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-2-expected.txt: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-expected.png: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-expected.txt: Removed.
+        * platform/qt/fast/layers/add-layer-with-nested-stacking-expected.txt: Removed.
+        * platform/qt/fast/repaint/overflow-clip-subtree-layout-expected.txt: Removed.
+        * platform/qt/fast/repaint/subtree-root-clip-2-expected.txt: Removed.
+        * platform/qt/fast/repaint/subtree-root-clip-expected.txt: Removed.
+
 2012-05-14  Eric Carlson  <eric.carlson@apple.com>
 
         <video> won't load when URL ends with .php

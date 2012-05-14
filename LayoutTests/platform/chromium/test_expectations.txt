@@ -3705,30 +3705,7 @@ BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
 
-// Need text rebaseline after lazily allocating layers.
-// The difference should be only layer removal, no size or position should change.
 
-// Those tests have other entries in our expectations filed and may not totally covers
-BUGWK83954 WIN LINUX : editing/spelling/inline_spelling_markers.html = TEXT
-BUGWK83954 WIN LINUX : fast/forms/form-element-geometry.html = TEXT
-BUGWK83954 WIN LINUX : fast/forms/input-value.html = TEXT
-BUGWK83954 WIN LINUX : fast/layers/add-layer-with-nested-stacking.html = TEXT
-BUGWK83954 WIN LINUX : fast/layers/remove-layer-with-nested-stacking.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/inline-relative-positioned.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/lines-with-layout-delta.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/overflow-clip-subtree-layout.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/repaint-resized-overflow.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/subtree-layoutstate-transform.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/subtree-root-clip-2.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/subtree-root-clip.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/repaint/subtree-root-skipped.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/replaced/replaced-breaking.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/replaced/width100percent-searchfield.html = TEXT
-BUGWK83954 WIN LINUX LION : fast/text/textIteratorNilRenderer.html = TEXT
-
-// Those tests need a text baseline after allocating more layers.
-// The change should only be layer addition.
-BUGWK83954 LINUX : fast/table/colspanMinWidth-vertical.html = TEXT
 
 // Skip until SUBPIXEL_LAYOUT is enabled
 BUGWK85532 SKIP : fast/sub-pixel/client-width-height-snapping.html = FAIL

@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 46x179
+        RenderTableSection {TBODY} at (0,0) size 46x179
+          RenderTableRow {TR} at (0,2) size 2x179
+            RenderTableCell {TD} at (2,2) size 2x3 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,6) size 0x179
+            RenderTableCell {TD} at (6,2) size 2x171 [bgcolor=#008000] [r=1 c=0 rs=2 cs=2]
+          RenderTableRow {TR} at (0,8) size 0x179
+            RenderTableCell {TD} at (8,192) size 36x-32 [bgcolor=#FF0000] [r=2 c=2 rs=2 cs=1]
+          RenderTableRow {TR} at (0,10) size 34x179
+            RenderTableCell {TD} at (10,2) size 34x171 [bgcolor=#00FFFF] [r=3 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 32x169
+                RenderTableSection {TBODY} at (0,0) size 32x169
+                  RenderTableRow {TR} at (0,2) size 28x169
+                    RenderTableCell {TD} at (2,15) size 28x-24 [bgcolor=#FF00FF] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (2,6) size 28x161 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+                      RenderTextControl {INPUT} at (3,3) size 22x155 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderText {#text} at (0,0) size 0x0
+layer at (18,90) size 18x16
+  RenderBlock {DIV} at (2,70) size 18x16

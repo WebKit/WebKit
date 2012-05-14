@@ -8,5 +8,6 @@ layer at (0,0) size 800x600
           text run at (0,0) width 673: "Tests repaint after layout of a subtree, inside a transformed element. You should see a large green square below."
 layer at (28,48) size 100x100
   RenderBlock {DIV} at (20,40) size 100x100
-    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
-      RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+layer at (28,48) size 100x100
+  RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

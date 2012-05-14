@@ -5,16 +5,18 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 300x300
   RenderBlock (relative positioned) {DIV} at (0,0) size 300x300 [bgcolor=#F0F8FF]
-    RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#C0C0C0]
-      RenderBlock (anonymous) at (0,0) size 200x26
-        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderBlock {DIV} at (2,3) size 151x16
-            RenderText {#text} at (1,0) size 36x16
-              text run at (1,0) width 36: "PASS"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,26) size 200x20
-        RenderText {#text} at (0,0) size 98x19
-          text run at (0,0) width 98: "Selection is here"
+layer at (8,8) size 200x200
+  RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#C0C0C0]
+    RenderBlock (anonymous) at (0,0) size 200x26
+      RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderText {#text} at (0,0) size 0x0
+    RenderBlock {DIV} at (0,26) size 200x20
+      RenderText {#text} at (0,0) size 98x19
+        text run at (0,0) width 98: "Selection is here"
+layer at (12,13) size 151x16
+  RenderBlock {DIV} at (2,3) size 151x16
+    RenderText {#text} at (1,0) size 36x16
+      text run at (1,0) width 36: "PASS"
 layer at (8,288) size 10x20
   RenderBlock (positioned) {DIV} at (0,280) size 10x20 [bgcolor=#ADD8E6]
 caret: position 0 of child 0 {#text} of child 3 {DIV} of child 1 {DIV} of child 1 {DIV} of body
