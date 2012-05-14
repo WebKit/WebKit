@@ -67,9 +67,9 @@
             ],
             'conditions': [
                 ['OS=="android"', {
-                    # FIXME: Re-enable building ImageDiff after the dependencies
-                    # for host have been fixed, as this broke per the WTF move.
-                    'type': 'none',
+                    # The Chromium Android port will compare images on host rather
+                    # than target (a device or emulator) for performance reasons.
+                    'toolsets': ['host'],
                 }],
             ],
         },
@@ -232,9 +232,7 @@
                 }],
                 ['OS=="android"', {
                     'dependencies': [
-                        # FIXME: Re-enable building ImageDiff on Android.
-                        # https://bugs.webkit.org/show_bug.cgi?id=82039
-                        #'ImageDiff#host',
+                        'ImageDiff#host',
                     ],
                     'sources/': [
                         ['include', 'chromium/TestShellLinux\\.cpp$'],
