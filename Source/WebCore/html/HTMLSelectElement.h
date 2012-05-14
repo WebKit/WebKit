@@ -46,7 +46,8 @@ public:
     void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
 
     // For ValidityState
-    bool valueMissing() const;
+    virtual String validationMessage() const OVERRIDE;
+    virtual bool valueMissing() const OVERRIDE;
 
     unsigned length() const;
 

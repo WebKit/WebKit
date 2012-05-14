@@ -191,27 +191,32 @@ bool HTMLInputElement::isValidValue(const String& value) const
         return false;
     }
     return !m_inputType->typeMismatchFor(value)
-        && !stepMismatch(value)
-        && !rangeUnderflow(value)
-        && !rangeOverflow(value)
+        && !m_inputType->stepMismatch(value)
+        && !m_inputType->rangeUnderflow(value)
+        && !m_inputType->rangeOverflow(value)
         && !tooLong(value, IgnoreDirtyFlag)
-        && !patternMismatch(value)
-        && !valueMissing(value);
+        && !m_inputType->patternMismatch(value)
+        && !m_inputType->valueMissing(value);
+}
+
+bool HTMLInputElement::tooLong() const
+{
+    return willValidate() && tooLong(value(), CheckDirtyFlag);
 }
 
 bool HTMLInputElement::typeMismatch() const
 {
-    return m_inputType->typeMismatch();
+    return willValidate() && m_inputType->typeMismatch();
 }
 
-bool HTMLInputElement::valueMissing(const String& value) const
+bool HTMLInputElement::valueMissing() const
 {
-    return m_inputType->valueMissing(value);
+    return willValidate() && m_inputType->valueMissing(value());
 }
 
-bool HTMLInputElement::patternMismatch(const String& value) const
+bool HTMLInputElement::patternMismatch() const
 {
-    return m_inputType->patternMismatch(value);
+    return willValidate() && m_inputType->patternMismatch(value());
 }
 
 bool HTMLInputElement::tooLong(const String& value, NeedsToCheckDirtyFlag check) const
@@ -232,14 +237,25 @@ bool HTMLInputElement::tooLong(const String& value, NeedsToCheckDirtyFlag check)
     return numGraphemeClusters(value) > static_cast<unsigned>(max);
 }
 
-bool HTMLInputElement::rangeUnderflow(const String& value) const
+bool HTMLInputElement::rangeUnderflow() const
 {
-    return m_inputType->rangeUnderflow(value);
+    return willValidate() && m_inputType->rangeUnderflow(value());
 }
 
-bool HTMLInputElement::rangeOverflow(const String& value) const
+bool HTMLInputElement::rangeOverflow() const
 {
-    return m_inputType->rangeOverflow(value);
+    return willValidate() && m_inputType->rangeOverflow(value());
+}
+
+String HTMLInputElement::validationMessage() const
+{
+    if (!willValidate())
+        return String();
+
+    if (customError())
+        return customValidationMessage();
+
+    return m_inputType->validationMessage();
 }
 
 double HTMLInputElement::minimum() const
@@ -252,48 +268,9 @@ double HTMLInputElement::maximum() const
     return m_inputType->maximum();
 }
 
-bool HTMLInputElement::stepMismatch(const String& value) const
+bool HTMLInputElement::stepMismatch() const
 {
-    double step;
-    if (!getAllowedValueStep(&step))
-        return false;
-    return m_inputType->stepMismatch(value, step);
-}
-
-String HTMLInputElement::minimumString() const
-{
-    return m_inputType->serialize(minimum());
-}
-
-String HTMLInputElement::maximumString() const
-{
-    return m_inputType->serialize(maximum());
-}
-
-String HTMLInputElement::stepBaseString() const
-{
-    return m_inputType->serialize(m_inputType->stepBase());
-}
-
-String HTMLInputElement::stepString() const
-{
-    double step;
-    if (!getAllowedValueStep(&step)) {
-        // stepString() should be called only if stepMismatch() can be true.
-        ASSERT_NOT_REACHED();
-        return String();
-    }
-    return serializeForNumberType(step / m_inputType->stepScaleFactor());
-}
-
-String HTMLInputElement::typeMismatchText() const
-{
-    return m_inputType->typeMismatchText();
-}
-
-String HTMLInputElement::valueMissingText() const
-{
-    return m_inputType->valueMissingText();
+    return willValidate() && m_inputType->stepMismatch(value());
 }
 
 bool HTMLInputElement::getAllowedValueStep(double* step) const
@@ -1275,12 +1252,12 @@ bool HTMLInputElement::hasUnacceptableValue() const
 
 bool HTMLInputElement::isInRange() const
 {
-    return m_inputType->supportsRangeLimitation() && !rangeUnderflow(value()) && !rangeOverflow(value());
+    return m_inputType->supportsRangeLimitation() && !m_inputType->rangeUnderflow(value()) && !m_inputType->rangeOverflow(value());
 }
 
 bool HTMLInputElement::isOutOfRange() const
 {
-    return m_inputType->supportsRangeLimitation() && (rangeUnderflow(value()) || rangeOverflow(value()));
+    return m_inputType->supportsRangeLimitation() && (m_inputType->rangeUnderflow(value()) || m_inputType->rangeOverflow(value()));
 }
 
 bool HTMLInputElement::needsSuspensionCallback()

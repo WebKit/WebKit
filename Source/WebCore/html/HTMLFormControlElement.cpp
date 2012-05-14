@@ -397,11 +397,6 @@ void HTMLFormControlElement::setNeedsWillValidateCheck()
         hideVisibleValidationMessage();
 }
 
-String HTMLFormControlElement::validationMessage()
-{
-    return validity()->validationMessage();
-}
-
 void HTMLFormControlElement::updateVisibleValidationMessage()
 {
     Page* page = document()->page();
@@ -484,7 +479,8 @@ void HTMLFormControlElement::setNeedsValidityCheck()
 
 void HTMLFormControlElement::setCustomValidity(const String& error)
 {
-    validity()->setCustomErrorMessage(error);
+    FormAssociatedElement::setCustomValidity(error);
+    setNeedsValidityCheck();
 }
 
 void HTMLFormControlElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)

@@ -48,13 +48,15 @@ public:
     virtual bool shouldAutocomplete() const;
 
     // For ValidityState
-    bool typeMismatch() const;
-    // valueMissing() ignores the specified string value for CHECKBOX and RADIO.
-    bool valueMissing(const String&) const;
-    bool patternMismatch(const String&) const;
-    bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
-    bool rangeUnderflow(const String&) const;
-    bool rangeOverflow(const String&) const;
+    virtual bool patternMismatch() const OVERRIDE;
+    virtual bool rangeUnderflow() const OVERRIDE;
+    virtual bool rangeOverflow() const;
+    virtual bool stepMismatch() const OVERRIDE;
+    virtual bool tooLong() const OVERRIDE;
+    virtual bool typeMismatch() const OVERRIDE;
+    virtual bool valueMissing() const OVERRIDE;
+    virtual String validationMessage() const OVERRIDE;
+
     // Returns the minimum value for type=date, number, or range.  Don't call this for other types.
     double minimum() const;
     // Returns the maximum value for type=date, number, or range.  Don't call this for other types.
@@ -63,15 +65,6 @@ public:
     // Sets the "allowed value step" defined in the HTML spec to the specified double pointer.
     // Returns false if there is no "allowed value step."
     bool getAllowedValueStep(double*) const;
-
-    // For ValidityState.
-    bool stepMismatch(const String&) const;
-    String minimumString() const;
-    String maximumString() const;
-    String stepBaseString() const;
-    String stepString() const;
-    String typeMismatchText() const;
-    String valueMissingText() const;
 
     // Implementations of HTMLInputElement::stepUp() and stepDown().
     void stepUp(int, ExceptionCode&);
@@ -325,6 +318,7 @@ private:
 
     bool supportsMaxLength() const { return isTextType(); }
     bool isTextType() const;
+    bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
 
     virtual bool supportsPlaceholder() const;
     virtual bool isPlaceholderEmpty() const OVERRIDE;
