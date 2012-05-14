@@ -1,3 +1,17 @@
+2012-05-14  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Add "stack" property to DOMException
+        https://bugs.webkit.org/show_bug.cgi?id=85057
+
+        Reviewed by Kentaro Hara.
+
+        When we create a DOM exception we define a V8 accessor for the stack property. This
+        accessor uses a new Error object to get the underlying stack string.
+
+        * fast/dom/DOMException/stack-trace-expected.txt: Added.
+        * fast/dom/DOMException/stack-trace.html: Added.
+        * platform/chromium/fast/dom/DOMException/stack-trace-expected.txt: Added.
+
 2012-05-14  Dirk Pranke  <dpranke@chromium.org>
 
         fast/replaced/width100percent-searchfield is still failing on chromium leopard/snowleopard

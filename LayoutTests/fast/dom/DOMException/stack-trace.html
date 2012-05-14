@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+
+if (typeof layoutTestController !== 'undefined')
+    layoutTestController.dumpAsText();
+
+// ES6 polyfill
+if (!String.prototype.contains) {
+    String.prototype.contains = function(substring) {
+        var startIndex = arguments[1] || 0;
+        return this.indexOf(substring, startIndex) >= startIndex;
+    };
+}
+
+function innerFunction() {
+    document.appendChild(document);
+}
+
+function outerFunction() {
+    innerFunction();
+}
+
+var e;
+
+try {
+    outerFunction();
+} catch (ex) {
+    e = ex;
+}
+
+shouldBeTrue('"stack" in e');
+shouldBeEqualToString('typeof e.stack', 'string');
+shouldBeTrue('e.stack.contains("innerFunction")');
+shouldBeTrue('e.stack.contains("outerFunction")');
+
+shouldBeEqualToString('Object.prototype.toString.call(e)', '[object DOMException]');
+shouldBeEqualToString('e.name', 'HIERARCHY_REQUEST_ERR');
+shouldBeEqualToString('e.message', 'HIERARCHY_REQUEST_ERR: DOM Exception 3');
+shouldBe('e.code', '3');
+
+e.stack = 42;
+shouldBe('e.stack', '42');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>

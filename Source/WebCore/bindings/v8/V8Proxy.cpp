@@ -547,6 +547,18 @@ void V8Proxy::clearForNavigation()
     windowShell()->clearForNavigation();
 }
 
+static v8::Handle<v8::Value> DOMExceptionStackGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    ASSERT(info.Data()->IsObject());
+    return info.Data()->ToObject()->Get(v8String("stack", info.GetIsolate()));
+}
+
+static void DOMExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    ASSERT(info.Data()->IsObject());
+    info.Data()->ToObject()->Set(v8String("stack", info.GetIsolate()), value);
+}
+
 #define TRY_TO_CREATE_EXCEPTION(interfaceName) \
     case interfaceName##Type: \
         exception = toV8(interfaceName::create(description), isolate); \
@@ -564,8 +576,16 @@ void V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
         DOM_EXCEPTION_INTERFACES_FOR_EACH(TRY_TO_CREATE_EXCEPTION)
     }
 
-    if (!exception.IsEmpty())
-        v8::ThrowException(exception);
+    if (exception.IsEmpty())
+        return;
+
+    // Attach an Error object to the DOMException. This is then lazily used to get the stack value.
+    v8::Handle<v8::Value> error = v8::Exception::Error(v8String(description.description, isolate));
+    ASSERT(!error.IsEmpty());
+    ASSERT(exception->IsObject());
+    exception->ToObject()->SetAccessor(v8String("stack", isolate), DOMExceptionStackGetter, DOMExceptionStackSetter, error);
+
+    v8::ThrowException(exception);
 }
 
 #undef TRY_TO_CREATE_EXCEPTION

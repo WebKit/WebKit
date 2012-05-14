@@ -1,0 +1,13 @@
+PASS "stack" in e is true
+PASS typeof e.stack is "string"
+PASS e.stack.contains("innerFunction") is true
+PASS e.stack.contains("outerFunction") is true
+PASS Object.prototype.toString.call(e) is "[object DOMException]"
+PASS e.name is "HIERARCHY_REQUEST_ERR"
+PASS e.message is "HIERARCHY_REQUEST_ERR: DOM Exception 3"
+PASS e.code is 3
+PASS e.stack is 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
