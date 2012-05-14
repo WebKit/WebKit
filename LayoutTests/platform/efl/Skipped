@@ -408,10 +408,6 @@ fast/forms/mailto/post-text-plain.html
 # Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT.
 fast/forms/validation-message-appearance.html
 
-# These tests needs enhanced frameloader delegate logging in DRT
-fast/loader/recursive-before-unload-crash.html
-fast/loader/null-request-after-willSendRequest.html
-
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
 

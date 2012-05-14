@@ -1,3 +1,17 @@
+2012-05-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] fast/loader/null-request-after-willSendRequest.html and fast/loader/recursive-before-unload-crash.html can be unskipped
+        https://bugs.webkit.org/show_bug.cgi?id=86368
+
+        Unreviewed EFL gardening.
+
+        Remove fast/loader/null-request-after-willSendRequest.html and
+        fast/loader/recursive-before-unload-crash.html from skip list now that
+        EFL port has proper support for LayoutTestController's
+        dumpFrameLoadCallbacks.
+
+        * platform/efl/Skipped:
+
 2012-05-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed gardening, unskip now passing tests.
