@@ -1,3 +1,22 @@
+2012-05-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116935.
+        http://trac.webkit.org/changeset/116935
+        https://bugs.webkit.org/show_bug.cgi?id=86373
+
+        Something is still broken (Requested by Ossy on #webkit).
+
+        * Scripts/webkitpy/common/checksvnconfigfile.py: Removed.
+        * Scripts/webkitpy/style/checkers/png.py:
+        (PNGChecker.check):
+        (PNGChecker):
+        (PNGChecker._config_file_path):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (Land):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng.py: Removed.
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng_unittest.py: Removed.
+
 2012-05-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Doesn't build with ENABLE_INSPECTOR=0
