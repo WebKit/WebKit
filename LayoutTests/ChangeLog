@@ -1,3 +1,9 @@
+2012-05-14  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Gardening; unskip tests fixed in r116929.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-14  Pavel Feldman  <pfeldman@chromium.org>
 
         [Qt] REGRESSION (r116789): inspector/debugger/script-formatter-console.html fails
