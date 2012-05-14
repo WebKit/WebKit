@@ -1,3 +1,11 @@
+2012-05-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix typo in expectations file causing lint to fail.
+
+        Unreviewed, build fix.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Dan Bernstein  <mitz@apple.com>
 
         Pagination splits lines that could fit on a single page if it were not for their top leading
