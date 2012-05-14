@@ -628,8 +628,11 @@ WebInspector.TabbedPaneTab.prototype = {
         else {
             this._tabElement = tabElement;
             tabElement.addEventListener("click", this._tabClicked.bind(this), false);
-            if (this._closeable)
+            if (this._closeable) {
                 tabElement.addEventListener("contextmenu", this._tabContextMenu.bind(this), false);
+                tabElement.addEventListener("mousedown", this._tabMouseDown.bind(this), false);
+                tabElement.addEventListener("mousemove", this._tabMouseMove.bind(this), false);
+            }
         }
         
         return tabElement;
@@ -650,9 +653,16 @@ WebInspector.TabbedPaneTab.prototype = {
     {
         if (this._closeable && (event.button === 1 || event.target.hasStyleClass("tabbed-pane-header-tab-close-button")))
             this._tabbedPane.closeTab(this.id, true);
-        else
-            this._tabbedPane.selectTab(this.id, true);
-        this._tabbedPane.focus();
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _tabMouseDown: function(event)
+    {
+        if (event.target.hasStyleClass("tabbed-pane-header-tab-close-button") || event.button === 1)
+            return;
+        this._tabbedPane.selectTab(this.id, true);
     },
 
     _tabContextMenu: function(event)
@@ -677,5 +687,58 @@ WebInspector.TabbedPaneTab.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Close Others"), closeOthers.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Close All"), closeAll.bind(this));
         contextMenu.show(event);
+    },
+
+    _tabMouseMove: function(event)
+    {
+        if (event.which !== 1)
+            return;
+        this._tabbedPane.selectTab(this.id, true);
+        WebInspector.elementDragStart(this._tabElement, this._tabDragging.bind(this), this._endTabDragging.bind(this), event, "pointer");
+        this._dragStartX = event.pageX;
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _tabDragging: function(event)
+    {
+        var tabElements = this._tabbedPane._tabsElement.childNodes;
+        for (var i = 0; i < tabElements.length; ++i) {
+            var tabElement = tabElements[i];
+            if (tabElement === this._tabElement)
+                continue;
+            var offset = tabElement.totalOffsetLeft();
+            if (event.offsetX < offset || event.offsetX > offset + tabElement.clientWidth)
+                continue;
+  
+            if (tabElement.offsetLeft > this._tabElement.offsetLeft)
+                tabElement = tabElement.nextSibling;
+            var oldOffsetLeft = this._tabElement.offsetLeft;
+            this._tabElement.parentElement.insertBefore(this._tabElement, tabElement);
+            this._dragStartX += this._tabElement.offsetLeft - oldOffsetLeft;
+        }
+
+        if (!this._tabElement.previousSibling && event.pageX - this._dragStartX < 0) {
+            this._tabElement.style.setProperty("left", "0px");
+            return;
+        }
+        if (!this._tabElement.nextSibling && event.pageX - this._dragStartX > 0) {
+            this._tabElement.style.setProperty("left", "0px");
+            return;
+        }
+
+        this._tabElement.style.setProperty("position", "relative");
+        this._tabElement.style.setProperty("left", (event.pageX - this._dragStartX) + "px");
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _endTabDragging: function(event)
+    {
+        this._tabElement.style.removeProperty("position");
+        this._tabElement.style.removeProperty("left");
+        WebInspector.elementDragEnd(event);
     }
 }

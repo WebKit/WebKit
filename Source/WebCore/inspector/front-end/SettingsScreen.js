@@ -613,7 +613,7 @@ WebInspector.SettingsScreen.prototype.__proto__ = WebInspector.HelpScreen.protot
 WebInspector.SettingsController = function()
 {
     this._statusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Settings"), "settings-status-bar-item");;
-    this._statusBarButton.addEventListener("click", this._buttonClicked.bind(this), false);
+    this._statusBarButton.addEventListener("click", this._buttonClicked, this);
 
     /** @type {?WebInspector.SettingsScreen} */
     this._settingsScreen;
