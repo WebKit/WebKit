@@ -56,6 +56,7 @@ QT_END_NAMESPACE
 
 class QQuickWebViewPrivate {
     Q_DECLARE_PUBLIC(QQuickWebView)
+    friend class WebKit::QtDialogRunner;
     friend class QQuickWebViewExperimental;
     friend class QQuickWebPage;
     friend class QWebPreferencesPrivate;
@@ -116,11 +117,9 @@ public:
     bool handleCertificateVerificationRequest(const QString& hostname);
     void handleProxyAuthenticationRequiredRequest(const QString& hostname, uint16_t port, const QString& prefilledUsername, QString& username, QString& password);
 
-    void execDialogRunner(WebKit::QtDialogRunner&);
-
     void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
     void setTransparentBackground(bool);
-    void setViewInAttachedProperties(QObject*);
+    void addAttachedPropertyTo(QObject*);
     void setIcon(const QUrl&);
 
     bool navigatorQtObjectEnabled() const;

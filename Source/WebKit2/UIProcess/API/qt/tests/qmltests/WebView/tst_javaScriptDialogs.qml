@@ -12,39 +12,29 @@ TestWebView {
     property int confirmCount: 0
     property int promptCount: 0
 
-    experimental.alertDialog: Item {
-        Timer {
-            running: true
-            interval: 1
-            onTriggered: {
+    experimental {
+        alertDialog: Item {
+            Component.onCompleted: {
                 // Testing both attached property and id defined in the Component context.
-                parent.WebView.view.messageFromAlertDialog = message
-                webView.modelMessageEqualsMessage = Boolean(model.message == message)
+                WebView.view.messageFromAlertDialog = message
+                parent.modelMessageEqualsMessage = Boolean(model.message == message)
                 model.dismiss()
             }
         }
-    }
 
-    experimental.confirmDialog: Item {
-        Timer {
-            running: true
-            interval: 1
-            onTriggered: {
-                parent.WebView.view.confirmCount += 1
+        confirmDialog: Item {
+            Component.onCompleted: {
+                WebView.view.confirmCount += 1
                 if (message == "ACCEPT")
                     model.accept()
                 else
                     model.reject()
             }
         }
-    }
 
-    experimental.promptDialog: Item {
-        Timer {
-            running: true
-            interval: 1
-            onTriggered: {
-                parent.WebView.view.promptCount += 1
+        promptDialog: Item {
+            Component.onCompleted: {
+                WebView.view.promptCount += 1
                 if (message == "REJECT")
                     model.reject()
                 else {

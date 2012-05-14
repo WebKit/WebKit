@@ -31,6 +31,7 @@ import QtWebKit 3.0
 import QtWebKit.experimental 1.0
 
 Rectangle {
+    id: root
     // Do not define anchors or an initial size here! This would mess up with QSGView::SizeRootObjectToView.
 
     property alias webview: webView
@@ -56,6 +57,7 @@ Rectangle {
         id: navigationBar
         color: "#efefef"
         height: 38
+        z: webView.z + 1
         anchors {
             top: parent.top
             left: parent.left
@@ -292,6 +294,8 @@ Rectangle {
 
     WebView {
         id: webView
+        clip: false
+
         anchors {
             top: navigationBar.bottom
             left: parent.left

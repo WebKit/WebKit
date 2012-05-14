@@ -27,58 +27,84 @@
 
 import QtQuick 2.0
 
-Rectangle {
+Item {
     id: dialog
+
+    anchors.fill: parent
+    z: 1000
+
+    // We want to be a child of the root item so that we can cover
+    // the whole scene with our "dim" overlay.
+    parent: root
 
     property alias title: titleText.text
     property alias message: messageText.text
 
     default property alias __children: dynamicColumn.children
 
-    color: "#efefef"
+    MouseArea {
+        id: mouseBlocker
+        anchors.fill: parent
+        onPressed: mouse.accepted = true
 
-    width: 300
-    height: 150
-
-    border {
-        width: 1
-        color: "#bfbfbf"
+        // FIXME: This does not block touch events :(
     }
 
-    smooth: true
-    radius: 5
-
-    anchors.centerIn: parent
-
-    Item {
-        id: staticContent
-        anchors.centerIn: parent
+    Rectangle {
+        id: dimBackground
         anchors.fill: parent
-        anchors.margins: 10
+        color: "black"
+        opacity: 0.4
+    }
 
-        Text {
-            id: titleText
-            width: parent.width
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 16
-            font.weight: Font.Bold
-            elide: Text.ElideRight
+    Rectangle {
+        id: dialogWindow
+
+        color: "#efefef"
+
+        width: 300
+        height: 150
+
+        border {
+            width: 1
+            color: "#bfbfbf"
         }
 
-        Text {
-            id: messageText
-            width: parent.width
-            wrapMode: Text.WordWrap
+        smooth: true
+        radius: 5
+
+        anchors.centerIn: parent
+
+        Item {
+            id: staticContent
             anchors.centerIn: parent
-        }
+            anchors.fill: parent
+            anchors.margins: 10
 
-        Column {
-            id: dynamicColumn
-            spacing: 5
-            anchors {
-                margins: 10
-                bottom: staticContent.bottom
-                horizontalCenter: staticContent.horizontalCenter
+            Text {
+                id: titleText
+                width: parent.width
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 16
+                font.weight: Font.Bold
+                elide: Text.ElideRight
+            }
+
+            Text {
+                id: messageText
+                width: parent.width
+                wrapMode: Text.WordWrap
+                anchors.centerIn: parent
+            }
+
+            Column {
+                id: dynamicColumn
+                spacing: 5
+                anchors {
+                    margins: 10
+                    bottom: staticContent.bottom
+                    horizontalCenter: staticContent.horizontalCenter
+                }
             }
         }
     }

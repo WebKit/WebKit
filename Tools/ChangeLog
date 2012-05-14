@@ -1,3 +1,28 @@
+2012-05-11  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make sure dialogs have their parent and attached properties set before Component.onCompleted
+        https://bugs.webkit.org/show_bug.cgi?id=86222
+
+        The WebView QML api for dialogs is based on delegates for each dialog, which
+        are implemented as components. Since there's no explicit API to show the dialog,
+        the natural place to allow the dialog to choose how to display itself is in
+        Component.onCompleted.
+
+        The issue was that we were using QQmlComponent::create() when instantiating the
+        component, at which point the component did not have a parent or it's attached
+        WebView property set. That meant that we had to do some ugly workaround in our
+        test, using a 1ms timer, to get a callback once the parent was there.
+
+        We now use the QQmlComponent::beginCreate() -> QQmlComponent::completeCreate()
+        pair, which allows us to set the relevant properties before triggering the
+        Component.onCompleted callback. We were already doing this for the context
+        menus (except for setting the parent, which we did afterwards).
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/Dialog.qml:
+
 2012-05-14  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         webkit-patch land should automatically add svn:mime-type for .png files

@@ -283,10 +283,13 @@ void WebPopupMenuProxyQt::createItem(QObject* contextObject)
     connect(contextObject, SIGNAL(acceptedWithOriginalIndex(int)), SLOT(hidePopupMenu()), Qt::QueuedConnection);
     connect(contextObject, SIGNAL(rejected()), SLOT(hidePopupMenu()), Qt::QueuedConnection);
 
-    QQuickWebViewPrivate::get(m_webView)->setViewInAttachedProperties(m_itemSelector.get());
-    component->completeCreate();
-
+    QQuickWebViewPrivate::get(m_webView)->addAttachedPropertyTo(m_itemSelector.get());
     m_itemSelector->setParentItem(m_webView);
+
+    // Only fully create the component once we've set both a parent
+    // and the needed context and attached properties, so that the
+    // dialog can do useful stuff in Component.onCompleted().
+    component->completeCreate();
 }
 
 void WebPopupMenuProxyQt::createContext(QQmlComponent* component, QObject* contextObject)
