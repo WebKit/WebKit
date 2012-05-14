@@ -1,3 +1,12 @@
+2012-05-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Simplify OTHER_FILES for QML tests project files
+
+        Reviewed by Jocelyn Turcotte.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro:
+        * UIProcess/API/qt/tests/qmltests/WebView.pro:
+
 2012-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

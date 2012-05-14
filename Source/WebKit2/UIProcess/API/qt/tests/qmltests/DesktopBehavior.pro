@@ -15,10 +15,5 @@ DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"$$PWD$${QMAKE_DIR_SEP}DesktopBehavior\\\"
 DEFINES += IMPORT_DIR=\"\\\"$${ROOT_BUILD_DIR}$${QMAKE_DIR_SEP}imports\\\"\"
 
 OTHER_FILES += \
-    DesktopBehavior/DesktopWebView.qml \
-    DesktopBehavior/tst_linkHovered.qml \
-    DesktopBehavior/tst_loadHtml.qml \
-    DesktopBehavior/tst_messaging.qml \
-    DesktopBehavior/tst_navigationRequested.qml \
-    DesktopBehavior/tst_singleFileupload.qml \
-    DesktopBehavior/tst_multiFileupload.qml
+    DesktopBehavior/*
+    common/*
