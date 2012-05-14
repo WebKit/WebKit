@@ -94,7 +94,7 @@ WebInspector.Spectrum = function()
         this._onchange();
     }
 
-    this._hideProxy = this.hide.bind(this);
+    this._hideProxy = this.hide.bind(this, true);
 };
 
 WebInspector.Spectrum.Events = {
@@ -364,7 +364,7 @@ WebInspector.Spectrum.prototype = {
     toggle: function(element, color, format)
     {
         if (this.visible)
-            this.hide();
+            this.hide(true);
         else
             this.show(element, color, format);
 
@@ -378,7 +378,7 @@ WebInspector.Spectrum.prototype = {
                 return false;
 
             // Reopen the picker for another anchor element.
-            this.hide();
+            this.hide(true);
         }
 
         this.reposition(element);
@@ -409,14 +409,17 @@ WebInspector.Spectrum.prototype = {
         WebInspector.setCurrentFocusElement(this._containerElement);
     },
 
-    hide: function()
+    /**
+     * @param {boolean} commitEdit
+     */
+    hide: function(commitEdit)
     {
         this._popover.hide();
 
         document.removeEventListener("mousedown", this._hideProxy, false);
         window.removeEventListener("blur", this._hideProxy, false);
 
-        this.dispatchEventToListeners(WebInspector.Spectrum.Events.Hidden);
+        this.dispatchEventToListeners(WebInspector.Spectrum.Events.Hidden, !!commitEdit);
 
         WebInspector.setCurrentFocusElement(this._previousFocusElement);
         delete this._previousFocusElement;
@@ -426,8 +429,13 @@ WebInspector.Spectrum.prototype = {
 
     _onKeyDown: function(event)
     {
-        if (event.keyIdentifier === "Enter" || event.keyIdentifier === "U+001B") { // Escape key
-            this.hide();
+        if (event.keyIdentifier === "Enter") {
+            this.hide(true);
+            event.consume(true);
+            return;
+        }
+        if (event.keyIdentifier === "U+001B") { // Escape key
+            this.hide(false);
             event.consume(true);
         }
     }

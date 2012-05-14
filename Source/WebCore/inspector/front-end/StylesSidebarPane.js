@@ -217,7 +217,7 @@ WebInspector.StylesSidebarPane.prototype = {
     update: function(node, forceUpdate)
     {
         if (this._spectrum.visible)
-            this._spectrum.hide();
+            this._spectrum.hide(false);
 
         var refresh = false;
 
@@ -879,7 +879,7 @@ WebInspector.StylesSidebarPane.prototype = {
     willHide: function()
     {
         if (this._spectrum.visible)
-            this._spectrum.hide();
+            this._spectrum.hide(false);
     }
 }
 
@@ -1774,14 +1774,17 @@ WebInspector.StylePropertyTreeElement.prototype = {
                     self.applyStyleText(nameElement.textContent + ": " + valueElement.textContent, false, false, false);
                 }
 
-                function spectrumHidden()
+                function spectrumHidden(event)
                 {
                     scrollerElement.removeEventListener("scroll", repositionSpectrum, false);
-                    self.applyStyleText(nameElement.textContent + ": " + valueElement.textContent, true, true, false);
+                    var commitEdit = event.data;
+                    var propertyText = !commitEdit && self.originalPropertyText ? self.originalPropertyText : (nameElement.textContent + ": " + valueElement.textContent);
+                    self.applyStyleText(propertyText, true, true, false);
                     spectrum.removeEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChanged);
                     spectrum.removeEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHidden);
 
                     delete self._parentPane._isEditingStyle;
+                    delete self.originalPropertyText;
                 }
 
                 function repositionSpectrum()
@@ -1800,6 +1803,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
                         if (visible) {
                             spectrum.displayText = color.toString(format);
+                            self.originalPropertyText = self.property.propertyText;
                             self._parentPane._isEditingStyle = true;
                             spectrum.addEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChanged);
                             spectrum.addEventListener(WebInspector.Spectrum.Events.Hidden, spectrumHidden);
