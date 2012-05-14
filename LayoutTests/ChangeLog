@@ -1,3 +1,20 @@
+2012-05-14  Nate Chapin  <japhet@chromium.org>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=86131.
+
+        Reviewed by Adam Barth.
+
+        * plugins/npruntime/delete-plugin-within-getProperty-expected.txt: Added.
+        * plugins/npruntime/delete-plugin-within-getProperty.html: Added.
+        * plugins/npruntime/delete-plugin-within-hasProperty-return-false-expected.txt: Added.
+        * plugins/npruntime/delete-plugin-within-hasProperty-return-false.html: Added.
+        * plugins/npruntime/delete-plugin-within-hasProperty-return-true-expected.txt: Added.
+        * plugins/npruntime/delete-plugin-within-hasProperty-return-true.html: Added.
+        * plugins/npruntime/delete-plugin-within-invoke-expected.txt: Added.
+        * plugins/npruntime/delete-plugin-within-invoke.html: Added.
+        * plugins/npruntime/delete-plugin-within-setProperty-expected.txt: Added.
+        * plugins/npruntime/delete-plugin-within-setProperty.html: Added.
+
 2012-05-14  Dirk Pranke  <dpranke@chromium.org>
 
         Rebaseline http/tests/misc/will-send-request-returns-null-on-redirect on chromium.

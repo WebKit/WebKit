@@ -139,7 +139,9 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
         _NPN_ReleaseVariantValue(&npArgs[i]);
 
     // Unwrap return values.
-    v8::Handle<v8::Value> returnValue = convertNPVariantToV8Object(&result, npObject);
+    v8::Handle<v8::Value> returnValue;
+    if (_NPN_IsAlive(npObject))
+        returnValue = convertNPVariantToV8Object(&result, npObject);
     _NPN_ReleaseVariantValue(&result);
 
     return returnValue;
@@ -191,21 +193,30 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
         return throwError("NPObject deleted", V8Proxy::ReferenceError);
 
 
-    if (npObject->_class->hasProperty && npObject->_class->hasProperty(npObject, identifier)
-        && npObject->_class->getProperty) {
+    if (npObject->_class->hasProperty && npObject->_class->getProperty && npObject->_class->hasProperty(npObject, identifier)) {
+        if (!_NPN_IsAlive(npObject))
+            return throwError("NPObject deleted", V8Proxy::ReferenceError);
 
         NPVariant result;
         VOID_TO_NPVARIANT(result);
         if (!npObject->_class->getProperty(npObject, identifier, &result))
             return v8::Handle<v8::Value>();
 
-        v8::Handle<v8::Value> returnValue = convertNPVariantToV8Object(&result, npObject);
+        v8::Handle<v8::Value> returnValue;
+        if (_NPN_IsAlive(npObject))
+            returnValue = convertNPVariantToV8Object(&result, npObject);
         _NPN_ReleaseVariantValue(&result);
         return returnValue;
 
     }
 
+    if (!_NPN_IsAlive(npObject))
+        return throwError("NPObject deleted", V8Proxy::ReferenceError);
+
     if (key->IsString() && npObject->_class->hasMethod && npObject->_class->hasMethod(npObject, identifier)) {
+        if (!_NPN_IsAlive(npObject))
+            return throwError("NPObject deleted", V8Proxy::ReferenceError);
+
         PrivateIdentifier* id = static_cast<PrivateIdentifier*>(identifier);
         v8::Persistent<v8::FunctionTemplate> functionTemplate = staticTemplateMap().get(id);
         // Cache templates using identifier as the key.
@@ -266,8 +277,9 @@ static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPI
         return value;  // Intercepted, but an exception was thrown.
     }
 
-    if (npObject->_class->hasProperty && npObject->_class->hasProperty(npObject, identifier)
-        && npObject->_class->setProperty) {
+    if (npObject->_class->hasProperty && npObject->_class->setProperty && npObject->_class->hasProperty(npObject, identifier)) {
+        if (!_NPN_IsAlive(npObject))
+            return throwError("NPObject deleted", V8Proxy::ReferenceError);
 
         NPVariant npValue;
         VOID_TO_NPVARIANT(npValue);

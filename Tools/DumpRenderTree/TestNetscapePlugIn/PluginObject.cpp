@@ -145,6 +145,7 @@ enum {
     ID_LAST_SET_WINDOW_ARGUMENTS,
     ID_PROPERTY_WINDOWED_PLUGIN,
     ID_PROPERTY_TEST_OBJECT_COUNT,
+    ID_PROPERTY_DELETE_IN_GET_PROPERTY,
     NUM_PROPERTY_IDENTIFIERS
 };
 
@@ -161,6 +162,7 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
     "lastSetWindowArguments",
     "windowedPlugin",
     "testObjectCount",
+    "deletePluginInGetProperty"
 };
 
 enum {
@@ -202,6 +204,7 @@ enum {
     ID_NORMALIZE,
     ID_INVALIDATE_RECT,
     ID_OBJECTS_ARE_SAME,
+    ID_TEST_DELETE_WITHIN_INVOKE,
     NUM_METHOD_IDENTIFIERS
 };
 
@@ -244,7 +247,8 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "resizeTo",
     "normalize",
     "invalidateRect",
-    "objectsAreSame"
+    "objectsAreSame",
+    "testDeleteWithinInvoke"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant* variant)
@@ -262,8 +266,30 @@ static void initializeIdentifiers(void)
     browser->getstringidentifiers(pluginMethodIdentifierNames, NUM_METHOD_IDENTIFIERS, pluginMethodIdentifiers);
 }
 
+static bool callDeletePlugin(NPObject* obj, NPIdentifier name, NPIdentifier identifierToMatch)
+{
+    if (name != identifierToMatch)
+        return false;
+
+    PluginObject* plugin = reinterpret_cast<PluginObject*>(obj);
+    NPObject* windowScriptObject;
+    browser->getvalue(plugin->npp, NPNVWindowNPObject, &windowScriptObject);
+
+    NPIdentifier callbackIdentifier = browser->getstringidentifier("deletePlugin");
+    NPVariant browserResult;
+    if (browser->invoke(plugin->npp, windowScriptObject, callbackIdentifier, 0, 0, &browserResult))
+        browser->releasevariantvalue(&browserResult);
+    return true;
+}
+
 static bool pluginHasProperty(NPObject *obj, NPIdentifier name)
 {
+    if (callDeletePlugin(obj, name, browser->getstringidentifier("deletePluginReturnTrue")))
+        return true;
+
+    if (callDeletePlugin(obj, name, browser->getstringidentifier("deletePluginReturnFalse")))
+        return false;
+
     for (int i = 0; i < NUM_PROPERTY_IDENTIFIERS; i++)
         if (name == pluginPropertyIdentifiers[i])
             return true;
@@ -272,6 +298,9 @@ static bool pluginHasProperty(NPObject *obj, NPIdentifier name)
 
 static bool pluginHasMethod(NPObject *obj, NPIdentifier name)
 {
+    if (callDeletePlugin(obj, name, browser->getstringidentifier("deletePluginInHasMethod")))
+        return true;
+
     for (int i = 0; i < NUM_METHOD_IDENTIFIERS; i++)
         if (name == pluginMethodIdentifiers[i])
             return true;
@@ -331,12 +360,25 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
         return true;
     }
 
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_DELETE_IN_GET_PROPERTY]) {
+        browser->retainobject(obj);
+        callDeletePlugin(obj, name, pluginPropertyIdentifiers[ID_PROPERTY_DELETE_IN_GET_PROPERTY]);
+        NPObject* testObject = plugin->testObject;
+        browser->retainobject(testObject);
+        OBJECT_TO_NPVARIANT(testObject, *result);
+        browser->releaseobject(obj);
+        return true;
+    }
+
     return false;
 }
 
 static bool pluginSetProperty(NPObject* obj, NPIdentifier name, const NPVariant* variant)
 {
     PluginObject* plugin = reinterpret_cast<PluginObject*>(obj);
+    if (callDeletePlugin(obj, name, browser->getstringidentifier("deletePluginReturnTrue")))
+        return true;
+
     if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
         plugin->eventLogging = NPVARIANT_TO_BOOLEAN(*variant);
         return true;
@@ -1123,7 +1165,12 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return invalidateRect(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_OBJECTS_ARE_SAME])
         return objectsAreSame(plugin, args, argCount, result);
-
+    if (name == pluginMethodIdentifiers[ID_TEST_DELETE_WITHIN_INVOKE]) {
+        NPObject* newObject = browser->createobject(plugin->npp, &pluginClass);
+        OBJECT_TO_NPVARIANT(newObject, *result);
+        callDeletePlugin(header, name, pluginMethodIdentifiers[ID_TEST_DELETE_WITHIN_INVOKE]);
+        return true;
+    }
     return false;
 }
 

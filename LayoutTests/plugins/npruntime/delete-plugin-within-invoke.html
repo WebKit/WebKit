@@ -1,0 +1,16 @@
+<html>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<script>
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    
+    function deletePlugin() {
+        document.body.innerHTML = ""
+    }
+
+    plg.testDeleteWithinInvoke();
+</script>
+</body>
+</html>
