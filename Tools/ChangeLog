@@ -1,3 +1,15 @@
+2012-05-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116981.
+        http://trac.webkit.org/changeset/116981
+        https://bugs.webkit.org/show_bug.cgi?id=86402
+
+        Caused compositing and mathml tests to fail. (Requested by
+        rakuco on #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._path_to_webcore_library):
+
 2012-05-14  Dirk Pranke  <dpranke@chromium.org>
 
         Fix regressions in garden-o-matic after r116988.

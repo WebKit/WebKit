@@ -68,8 +68,8 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
         return [self._jhbuild_wrapper_path] + super(EflPort, self)._image_diff_command(*args, **kwargs)
 
     def _path_to_webcore_library(self):
-        static_path = self._build_path('lib', 'libwebcore_efl.a')
-        dyn_path = self._build_path('lib', 'libwebcore_efl.so')
+        static_path = self._build_path('WebCore', 'libwebcore_efl.a')
+        dyn_path = self._build_path('WebCore', 'libwebcore_efl.so')
         return static_path if self._filesystem.exists(static_path) else dyn_path
 
     def show_results_html_file(self, results_filename):
