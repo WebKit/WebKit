@@ -1,3 +1,10 @@
+2012-05-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, removing test expectations for two tests that were
+        fixed in r116926.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG performs incorrect constant folding on double-to-uint32 conversion in

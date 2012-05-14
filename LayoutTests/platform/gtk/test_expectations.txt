@@ -1305,14 +1305,10 @@ BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
-BUGWK86283 : fast/dom/CSSStyleDeclaration/empty-string-property.html = FAIL
-BUGWK86283 : fast/dom/collection-null-like-arguments.html = FAIL
-
 // Web view needs to be redrawn once more and completely before dumping pixel results
 // otherwise pixel results are incomplete/incorrect
 BUGWK86284 : fast/css/tab-size.html = IMAGE
 BUGWK86284 : fast/images/png-suite/test.html = MISSING
-
 
 BUGWK86310 : media/media-continues-playing-after-replace-source.html = FAIL
 
