@@ -1,3 +1,18 @@
+2012-05-14  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] android/WebInputEventFactory should handle wheel events and gesture events
+        https://bugs.webkit.org/show_bug.cgi?id=86270
+
+        Reviewed by Eric Seidel.
+
+        * public/android/WebInputEventFactory.h:
+        * src/android/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+        (WebKit::WebInputEventFactory::mouseEvent):
+        (WebKit):
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+        (WebKit::WebInputEventFactory::gestureEvent):
+
 2012-05-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116983.

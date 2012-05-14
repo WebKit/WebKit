@@ -66,23 +66,20 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(WebInputEvent::Type type,
     return result;
 }
 
-WebMouseEvent WebInputEventFactory::mouseEvent(int x, int y,
-                                               int windowX, int windowY,
-                                               MouseEventType type,
+WebMouseEvent WebInputEventFactory::mouseEvent(MouseEventType type,
+                                               WebMouseEvent::Button button,
                                                double timeStampSeconds,
+                                               int windowX,
+                                               int windowY,
                                                int modifiers,
-                                               int clickCount,
-                                               WebMouseEvent::Button button)
+                                               int clickCount)
 {
     WebMouseEvent result;
 
-    result.x = x;
-    result.y = y;
+    result.x = windowX;
+    result.y = windowY;
     result.windowX = windowX;
     result.windowY = windowY;
-    // FIXME: We need to decide what to use for the globalX/Y.
-    result.globalX = windowX;
-    result.globalY = windowY;
     result.timeStampSeconds = timeStampSeconds;
     result.clickCount = clickCount;
     result.modifiers = modifiers;
@@ -101,6 +98,71 @@ WebMouseEvent WebInputEventFactory::mouseEvent(int x, int y,
         result.button = WebMouseEvent::ButtonNone;
         break;
     };
+
+    return result;
+}
+
+// WebMouseWheelEvent ------------------------------------------------------------
+
+WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(MouseWheelDirectionType direction,
+                                                         double timeStampSeconds,
+                                                         int windowX,
+                                                         int windowY)
+{
+    WebMouseWheelEvent result;
+
+    result.type = WebInputEvent::MouseWheel;
+    result.x = windowX;
+    result.y = windowY;
+    result.windowX = windowX;
+    result.windowY = windowY;
+    result.timeStampSeconds = timeStampSeconds;
+    result.button = WebMouseEvent::ButtonNone;
+
+    // The below choices are matched from GTK.
+    static const float scrollbarPixelsPerTick = 160.0f / 3.0f;
+
+    switch (direction) {
+    case MouseWheelDirectionTypeUp:
+        result.deltaY = scrollbarPixelsPerTick;
+        result.wheelTicksY = 1;
+        break;
+    case MouseWheelDirectionTypeDown:
+        result.deltaY = -scrollbarPixelsPerTick;
+        result.wheelTicksY = -1;
+        break;
+    case MouseWheelDirectionTypeLeft:
+        result.deltaX = scrollbarPixelsPerTick;
+        result.wheelTicksX = 1;
+        break;
+    case MouseWheelDirectionTypeRight:
+        result.deltaX = -scrollbarPixelsPerTick;
+        result.wheelTicksX = -1;
+        break;
+    }
+
+    return result;
+}
+
+// WebGestureEvent ------------------------------------------------------------
+
+WebGestureEvent WebInputEventFactory::gestureEvent(WebInputEvent::Type type,
+                                                   double timeStampSeconds,
+                                                   int x,
+                                                   int y,
+                                                   float deltaX,
+                                                   float deltaY,
+                                                   int modifiers)
+{
+    WebGestureEvent result;
+
+    result.type = type;
+    result.x = x;
+    result.y = y;
+    result.deltaX = deltaX;
+    result.deltaY = deltaY;
+    result.timeStampSeconds = timeStampSeconds;
+    result.modifiers = modifiers;
 
     return result;
 }

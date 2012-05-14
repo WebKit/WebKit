@@ -46,6 +46,13 @@ public:
         MouseEventTypeMove,
     };
 
+    enum MouseWheelDirectionType {
+        MouseWheelDirectionTypeUp = 0,
+        MouseWheelDirectionTypeDown,
+        MouseWheelDirectionTypeLeft,
+        MouseWheelDirectionTypeRight,
+    };
+
     WEBKIT_EXPORT static WebKeyboardEvent keyboardEvent(WebInputEvent::Type,
                                                         int modifiers,
                                                         double timeStampSeconds,
@@ -53,15 +60,27 @@ public:
                                                         WebUChar unicodeCharacter,
                                                         bool isSystemKey);
 
-    WEBKIT_EXPORT static WebMouseEvent mouseEvent(int x,
-                                                  int y,
+    WEBKIT_EXPORT static WebMouseEvent mouseEvent(MouseEventType,
+                                                  WebMouseEvent::Button,
+                                                  double timeStampSeconds,
                                                   int windowX,
                                                   int windowY,
-                                                  MouseEventType,
-                                                  double timeStampSeconds,
                                                   int modifiers,
-                                                  int clickCount,
-                                                  WebMouseEvent::Button = WebMouseEvent::ButtonLeft);
+                                                  int clickCount);
+
+    WEBKIT_EXPORT static WebMouseWheelEvent mouseWheelEvent(MouseWheelDirectionType,
+                                                            double timeStampSeconds,
+                                                            int windowX,
+                                                            int windowY);
+
+    WEBKIT_EXPORT static WebGestureEvent gestureEvent(WebInputEvent::Type,
+                                                      double timeStampSeconds,
+                                                      int x,
+                                                      int y,
+                                                      float deltaX,
+                                                      float deltaY,
+                                                      int modifiers);
+
 };
 
 } // namespace WebKit
