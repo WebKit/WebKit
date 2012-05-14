@@ -222,6 +222,9 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
         return 0;
 
     MutexLocker locker(m_urlAndIconLock);
+
+    if (m_retainOrReleaseIconRequested)
+        performPendingRetainAndReleaseOperations();
     
     String pageURLCopy; // Creates a null string for easy testing
     
@@ -389,18 +392,20 @@ Image* IconDatabase::defaultIcon(const IntSize& size)
     return m_defaultIconRecord->image(size);
 }
 
-
-void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
-{    
+void IconDatabase::retainIconForPageURL(const String& pageURL)
+{
     ASSERT_NOT_SYNC_THREAD();
-    
-    // Cannot do anything with pageURLOriginal that would end up storing it without deep copying first
-    
-    if (!isEnabled() || !documentCanHaveIcon(pageURLOriginal))
+
+    if (!isEnabled() || !documentCanHaveIcon(pageURL))
         return;
        
-    MutexLocker locker(m_urlAndIconLock);
+    MutexLocker locker(m_urlsToRetainOrReleaseLock);
+    m_urlsToRetain.append(pageURL);
+    scheduleOrDeferSyncTimer();
+}
 
+void IconDatabase::performRetainIconForPageURL(const String& pageURLOriginal)
+{
     PageURLRecord* record = m_pageURLToRecordMap.get(pageURLOriginal);
     
     String pageURL;
@@ -434,17 +439,23 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
     }
 }
 
-void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
+void IconDatabase::releaseIconForPageURL(const String& pageURL)
 {
     ASSERT_NOT_SYNC_THREAD();
         
     // Cannot do anything with pageURLOriginal that would end up storing it without deep copying first
     
-    if (!isEnabled() || !documentCanHaveIcon(pageURLOriginal))
+    if (!isEnabled() || !documentCanHaveIcon(pageURL))
         return;
-    
-    MutexLocker locker(m_urlAndIconLock);
 
+    MutexLocker locker(m_urlsToRetainOrReleaseLock);
+    m_urlsToRelease.append(pageURL);
+    m_retainOrReleaseIconRequested = true;
+    scheduleOrDeferSyncTimer();
+}
+
+void IconDatabase::performReleaseIconForPageURL(const String& pageURLOriginal)
+{
     // Check if this pageURL is actually retained
     if (!m_retainedPageURLs.contains(pageURLOriginal)) {
         LOG_ERROR("Attempting to release icon for URL %s which is not retained", urlForLogging(pageURLOriginal).ascii().data());
@@ -498,9 +509,6 @@ void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
     }
     
     delete pageRecord;
-
-    if (isOpen())
-        scheduleOrDeferSyncTimer();
 }
 
 void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, const String& iconURLOriginal)
@@ -736,6 +744,10 @@ size_t IconDatabase::pageURLMappingCount()
 size_t IconDatabase::retainedPageURLCount()
 {
     MutexLocker locker(m_urlAndIconLock);
+
+    if (m_retainOrReleaseIconRequested)
+        performPendingRetainAndReleaseOperations();
+
     return m_retainedPageURLs.size();
 }
 
@@ -1306,7 +1318,10 @@ void IconDatabase::performURLImport()
     // Keep a set of ones that are retained and pending notification
     {
         MutexLocker locker(m_urlAndIconLock);
-        
+
+        if (m_retainOrReleaseIconRequested)
+            performPendingRetainAndReleaseOperations();
+
         for (unsigned i = 0; i < urls.size(); ++i) {
             if (!m_retainedPageURLs.contains(urls[i])) {
                 PageURLRecord* record = m_pageURLToRecordMap.get(urls[i]);
@@ -1387,6 +1402,11 @@ void IconDatabase::syncThreadMainLoop()
         // Then, if the thread should be quitting, quit now!
         if (m_threadTerminationRequested)
             break;
+
+        if (m_retainOrReleaseIconRequested) {
+            MutexLocker locker(m_urlAndIconLock);
+            performPendingRetainAndReleaseOperations();
+        }
         
         bool didAnyWork = true;
         while (didAnyWork) {
@@ -1469,6 +1489,25 @@ void IconDatabase::syncThreadMainLoop()
         MutexLocker locker(m_syncLock);
         m_disabledSuddenTerminationForSyncThread = false;
     }
+}
+
+void IconDatabase::performPendingRetainAndReleaseOperations()
+{
+    ASSERT(m_retainOrReleaseIconRequested);
+
+    // NOTE: The caller is assumed to hold m_urlAndIconLock.
+
+    MutexLocker vectorLocker(m_urlsToRetainOrReleaseLock);
+
+    for (unsigned i = 0; i < m_urlsToRetain.size(); ++i)
+        performRetainIconForPageURL(m_urlsToRetain[i]);
+    for (unsigned i = 0; i < m_urlsToRelease.size(); ++i)
+        performReleaseIconForPageURL(m_urlsToRelease[i]);
+    printf("Retained %lu, released %lu\n", m_urlsToRetain.size(), m_urlsToRelease.size());
+
+    m_urlsToRetain.clear();
+    m_urlsToRelease.clear();
+    m_retainOrReleaseIconRequested = false;
 }
 
 bool IconDatabase::readFromDatabase()

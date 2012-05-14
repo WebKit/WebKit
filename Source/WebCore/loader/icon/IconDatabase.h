@@ -159,6 +159,7 @@ private:
     bool m_iconURLImportComplete;
     bool m_syncThreadHasWorkToDo;
     bool m_disabledSuddenTerminationForSyncThread;
+    bool m_retainOrReleaseIconRequested;
 
     Mutex m_urlAndIconLock;
     // Holding m_urlAndIconLock is required when accessing any of the following data structures or the objects they contain
@@ -176,6 +177,11 @@ private:
     HashSet<String> m_pageURLsPendingImport;
     HashSet<String> m_pageURLsInterestedInIcons;
     HashSet<IconRecord*> m_iconsPendingReading;
+
+    Mutex m_urlsToRetainOrReleaseLock;
+    // Holding m_urlsToRetainOrReleaseLock is required when accessing any of the following data structures.
+    Vector<String> m_urlsToRetain;
+    Vector<String> m_urlsToRelease;
 
 // *** Sync Thread Only ***
 public:
@@ -202,6 +208,8 @@ private:
     void removeAllIconsOnThread();
     void deleteAllPreparedStatements();
     void* cleanupSyncThread();
+    void performRetainIconForPageURL(const String&);
+    void performReleaseIconForPageURL(const String&);
 
     // Record (on disk) whether or not Safari 2-style icons were imported (once per dataabse)
     bool imported();
@@ -220,7 +228,9 @@ private:
     PassRefPtr<SharedBuffer> getImageDataForIconURLFromSQLDatabase(const String& iconURL);
     void removeIconFromSQLDatabase(const String& iconURL);
     void writeIconSnapshotToSQLDatabase(const IconSnapshot&);    
-    
+
+    void performPendingRetainAndReleaseOperations();
+
     // Methods to dispatch client callbacks on the main thread
     void dispatchDidImportIconURLForPageURLOnMainThread(const String&);
     void dispatchDidImportIconDataForPageURLOnMainThread(const String&);
