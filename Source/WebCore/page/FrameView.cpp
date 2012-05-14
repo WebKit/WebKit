@@ -2565,7 +2565,8 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
     // Take our owner element and get its clip rect.
     HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement();
     FrameView* parentView = ownerElement->document()->view();
-    clipRect.intersect(parentView->windowClipRectForFrameOwner(ownerElement, true));
+    if (parentView)
+        clipRect.intersect(parentView->windowClipRectForFrameOwner(ownerElement, true));
     return clipRect;
 }
 
