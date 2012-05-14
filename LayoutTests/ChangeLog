@@ -1,3 +1,9 @@
+2012-05-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-14  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][DRT] Unskipping a set of remaining media failures
