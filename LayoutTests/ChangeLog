@@ -1,3 +1,17 @@
+2012-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        performance tests should be able to measure runs/sec rather than time
+        https://bugs.webkit.org/show_bug.cgi?id=86021
+
+        Reviewed by Ojan Vafai.
+
+        Add tests for PerfTestRunner.runPerSecond.
+
+        * fast/harness/perftests/runs-per-second-iterations-expected.txt: Added.
+        * fast/harness/perftests/runs-per-second-iterations.html: Added.
+        * fast/harness/perftests/runs-per-second-log-expected.txt: Added.
+        * fast/harness/perftests/runs-per-second-log.html: Added.
+
 2012-05-13  Mike Lawther  <mikelawther@chromium.org>
 
         Heap-use-after-free in WTF::HashMap<int, WTF::RefPtr<WebCore::CalculationValue>, WTF::IntHash<unsigned int>, WTF::HashTrait

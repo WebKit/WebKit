@@ -28,8 +28,8 @@ function runTest()
     document.body.clientHeight;
 }
 
-PerfTestRunner.run(runTest, 180, 20, function() {
+PerfTestRunner.runPerSecond({run: runTest, done: function() {
     document.getElementById("flexbox").style.display = 'none';
-});
+}});
 </script>
 </html>

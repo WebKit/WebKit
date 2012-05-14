@@ -1,3 +1,37 @@
+2012-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        performance tests should be able to measure runs/sec rather than time
+        https://bugs.webkit.org/show_bug.cgi?id=86021
+
+        Reviewed by Ojan Vafai.
+
+        Add PerfTestRunner.runPerSecond. It uses _runLoop but replaces _runner by _perSecondRunner
+        to compute runs/s of runFunction.
+
+        When _perSecondRunner is called for the first time, i.e. _completedRuns is 0 (notice this is -1
+        in regular run/_runner), it slowly increases the number of function calls to runFunction between
+        time measurements in order to discount the time used by new Date() calls themselves until the
+        total time spent reaches 100 milliseconds.
+
+        By default, runPerSecond runs the test for at least 750 milliseconds in each run, and executes
+        21 runs, yielding the total run time of roughly 18 seconds. This is significantly faster than
+        most of existing performance tests. Also see http://ejohn.org/blog/accuracy-of-javascript-time/.
+
+        Finally, refactored the existing methods of PerfTestRunner to allow "runs/s" unit and share code.
+
+        * Layout/flexbox-column-nowrap.html:
+        * Layout/flexbox-column-wrap.html:
+        * Layout/flexbox-row-nowrap.html:
+        * Layout/flexbox-row-wrap.html:
+        * resources/runner.js:
+        (PerfTestRunner.computeStatistics): Takes unit.
+        (PerfTestRunner.logStatistics): Ditto.
+        (PerfTestRunner._runLoop):
+        (PerfTestRunner._runner):
+        (PerfTestRunner.runPerSecond): Added.
+        (PerfTestRunner._perSecondRunner): Added. Called by _runLoop.
+        (PerfTestRunner._perSecondRunnerIterator): Added.
+
 2012-05-09  Tony Chang  <tony@chromium.org>
 
         add some basic perf-o-matic tests for flexbox

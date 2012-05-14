@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This test verifies PerfTestRunner.runPerSecond() outputs log as expected.</p>
+<div id="console"></div>
+<script src="../../../../PerformanceTests/resources/runner.js"></script>
+<script type="text/javascript">
+
+var logLines = [];
+var initial = true;
+var runs = 0;
+
+PerfTestRunner._perSecondRunnerIterator = function (callsPerIteration) {
+    return 1000 / runs;
+}
+
+var printStatistics = PerfTestRunner.printStatistics;
+PerfTestRunner.printStatistics = function (statistics) {
+    statistics.stdev = statistics.stdev.toPrecision(3);
+    return printStatistics.call(PerfTestRunner, statistics);
+}
+
+PerfTestRunner.runPerSecond({
+    setup: function () {
+        if (initial)
+            initial = false;
+        else
+            runs++;
+    },
+    run: function () { },
+    runCount: 5,
+    timeToRun: 500,
+});
+
+</script>
+</body>
+</html>

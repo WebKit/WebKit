@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../PerformanceTests/resources/runner.js"></script>
+<script type="text/javascript">
+
+description("This test verifies PerfTestRunner.runPerSecond() calls runFunction as many times as expected.");
+
+var iteration = 0;
+
+var callsInIterations = [];
+var timesInIterations = [0, 10, 30, 60, 100, 100, 100, 100, 500];
+var logLines = [];
+
+PerfTestRunner.log = function (line) { logLines.push(line); }
+PerfTestRunner._perSecondRunnerIterator = function (callsPerIteration) {
+    callsInIterations[iteration] = callsPerIteration;
+    return timesInIterations[iteration++];
+}
+
+PerfTestRunner.runPerSecond({
+    run: function () { },
+    runCount: 1,
+    timeToRun: 500,
+    done: function () {
+        debug("Returning times: [" + timesInIterations.join(", ") + "]");
+        shouldEvaluateTo("callsInIterations[0]", 1);
+        shouldEvaluateTo("callsInIterations[1]", 10);
+        shouldBeTrue("callsInIterations[1] + 5 < callsInIterations[2]");
+        shouldBeTrue("callsInIterations[2] + 10 < callsInIterations[3]");
+        shouldBe("callsInIterations[3]", "callsInIterations[4]");
+        shouldBe("callsInIterations[4]", "callsInIterations[5]");
+        shouldBe("callsInIterations[5]", "callsInIterations[6]");
+        shouldBe("callsInIterations[6]", "callsInIterations[7]");
+        shouldBe("callsInIterations[7]", "callsInIterations[8]");
+        shouldBeUndefined("callsInIterations[9]");
+    }});
+
+var jsTestIsAsync = true;
+
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+This test verifies PerfTestRunner.runPerSecond() outputs log as expected.
+
+Running 5 times
+Ignoring warm-up run (0 runs/s)
+1 runs/s
+2 runs/s
+3 runs/s
+4 runs/s
+5 runs/s
+
+
+avg 3 runs/s
+median 3 runs/s
+stdev 1.41 runs/s
+min 1 runs/s
+max 5 runs/s
+

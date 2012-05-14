@@ -1,3 +1,15 @@
+2012-05-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        performance tests should be able to measure runs/sec rather than time
+        https://bugs.webkit.org/show_bug.cgi?id=86021
+
+        Reviewed by Ojan Vafai.
+
+        Allow " runs/s" or " ms" to appear after numerical values in tests.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+
 2012-05-12  Tim Horton  <timothy_horton@apple.com>
 
         run-safari and co. should support --guard-malloc command line argument
