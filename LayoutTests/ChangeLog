@@ -1,3 +1,9 @@
+2012-05-14  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Added more detail to marked test failure for chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typo in expectations file causing lint to fail.
