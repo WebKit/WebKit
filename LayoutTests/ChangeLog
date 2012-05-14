@@ -1,3 +1,21 @@
+2012-05-14  Stephen Chenney  <schenney@chromium.org>
+
+        [chromium] Layout Test svg/carto.net/window.svg is failing
+        https://bugs.webkit.org/show_bug.cgi?id=84810
+
+        Unreviewed Chromium test expectations update.
+
+        * platform/chromium-linux/svg/carto.net/window-expected.png:
+        * platform/chromium-mac-leopard/svg/carto.net/window-expected.png:
+        * platform/chromium-mac-snowleopard/svg/carto.net/window-expected.png:
+        * platform/chromium-mac/svg/carto.net/window-expected.png:
+        * platform/chromium-win/svg/carto.net/window-expected.png:
+        * platform/chromium-win/svg/carto.net/window-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/efl/svg/carto.net/window-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/window-expected.txt: Removed.
+        * svg/carto.net/window-expected.txt: Added.
+
 2012-05-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116983.

@@ -1288,6 +1288,9 @@ BUGWK84230 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
 BUGWK84719 WIN : svg/text/select-text-svgfont.html = TEXT PASS
 
+BUGWK84854 LINUX X86 : svg/batik/text/textOnPath.svg = IMAGE PASS
+BUGWK84854 LINUX X86 : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
+
 // This appears to be sensitive to --test-shell vs "drt mode" in DRT for some reason
 BUGWK85085 : svg/custom/clip-path-referencing-use2.svg = TEXT
 
@@ -3663,8 +3666,6 @@ BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 BUGWK83978 WIN MAC : tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html = IMAGE+TEXT
 
 BUGWK84802 DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
-BUGWK84810 LINUX WIN : svg/carto.net/window.svg = IMAGE+TEXT
-BUGWK84810 MAC : svg/carto.net/window.svg = IMAGE
 
 // Suppress the errors at the moment, rebaseline coming soon.
 BUGWK84813 MAC WIN : css3/filters/custom/custom-filter-shader-cache.html = IMAGE
@@ -3673,9 +3674,6 @@ BUGWK84813 : css3/filters/custom/effect-custom-parameters.html = IMAGE
 BUGWK84813 MAC WIN : css3/filters/custom/effect-custom.html = IMAGE
 
 BUGWK84847 WIN : inspector/timeline/timeline-start-time.html = TEXT PASS
-
-BUGWK84854 LINUX X86 : svg/batik/text/textOnPath.svg = IMAGE PASS
-BUGWK84854 LINUX X86 : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
 
 // Requires rebaseline after bug 83978
 
