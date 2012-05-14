@@ -1,5 +1,26 @@
 2012-05-14  Michael Saboff  <msaboff@apple.com>
 
+        Enh: Add the Ability to Disable / Enable JavaScript GC Timer
+        https://bugs.webkit.org/show_bug.cgi?id=86382
+
+        Reviewed by Darin Adler.
+
+        Add flag to GCActivityCallback to enable / disable activity timer.
+        Add api via Heap to set the flag's value.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Windows export
+        * heap/Heap.cpp:
+        (JSC::Heap::setGarbageCollectionTimerEnabled):
+        * heap/Heap.h:
+        * runtime/GCActivityCallback.h:
+        (JSC::GCActivityCallback::isEnabled):
+        (JSC::GCActivityCallback::setEnabled):
+        (JSC::GCActivityCallback::GCActivityCallback):
+        * runtime/GCActivityCallbackCF.cpp:
+        (JSC::DefaultGCActivityCallbackPlatformData::timerDidFire):
+
+2012-05-14  Michael Saboff  <msaboff@apple.com>
+
         Increase Debug Logging in MarkStack::validate()
         https://bugs.webkit.org/show_bug.cgi?id=86408
 

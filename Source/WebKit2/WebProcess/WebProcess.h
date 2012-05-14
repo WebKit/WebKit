@@ -216,6 +216,7 @@ private:
     
     void getWebCoreStatistics(uint64_t callbackID);
     void garbageCollectJavaScriptObjects();
+    void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
 #if PLATFORM(MAC)
     void secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData&);

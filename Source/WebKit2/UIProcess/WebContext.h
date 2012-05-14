@@ -194,6 +194,7 @@ public:
     
     void getWebCoreStatistics(PassRefPtr<DictionaryCallback>);
     void garbageCollectJavaScriptObjects();
+    void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
 #if PLATFORM(MAC)
     static bool omitPDFSupport();

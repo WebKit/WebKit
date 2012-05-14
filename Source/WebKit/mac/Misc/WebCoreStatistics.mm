@@ -120,6 +120,11 @@ using namespace WebCore;
     gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }
 
++ (void)setJavaScriptGarbageCollectorTimerEnabled:(BOOL)enable
+{
+    gcController().setJavaScriptGarbageCollectorTimerEnabled(enable);
+}
+
 + (size_t)iconPageURLMappingCount
 {
     return iconDatabase().pageURLMappingCount();

@@ -832,6 +832,11 @@ GCActivityCallback* Heap::activityCallback()
     return m_activityCallback.get();
 }
 
+void Heap::setGarbageCollectionTimerEnabled(bool enable)
+{
+    activityCallback()->setEnabled(enable);
+}
+
 void Heap::didAllocate(size_t bytes)
 {
     m_activityCallback->didAllocate(m_bytesAllocated + m_bytesAbandoned);

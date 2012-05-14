@@ -63,6 +63,9 @@ const CFTimeInterval hour = 60 * 60;
 void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void *info)
 {
     Heap* heap = static_cast<Heap*>(info);
+    if (!heap->activityCallback()->isEnabled())
+        return;
+
     APIEntryShim shim(heap->globalData());
 #if !PLATFORM(IOS)
     double startTime = WTF::monotonicallyIncreasingTime();

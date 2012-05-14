@@ -97,6 +97,11 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
     detachThread(threadID);
 }
 
+void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
+{
+    JSDOMWindow::commonJSGlobalData()->heap.setGarbageCollectionTimerEnabled(enable);
+}
+
 void GCController::discardAllCompiledCode()
 {
     JSLock lock(SilenceAssertionsOnly);

@@ -47,9 +47,16 @@ public:
     virtual void willCollect() { }
     virtual void synchronize() { }
     virtual void cancel() { }
+    bool isEnabled() const { return m_enabled; }
+    void setEnabled(bool enabled) { m_enabled = enabled; }
 
 protected:
-    GCActivityCallback() {}
+    GCActivityCallback()
+        : m_enabled(true)
+    {
+    }
+
+    bool m_enabled;
 };
 
 struct DefaultGCActivityCallbackPlatformData;

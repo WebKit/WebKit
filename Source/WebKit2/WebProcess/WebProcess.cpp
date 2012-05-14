@@ -962,6 +962,11 @@ void WebProcess::garbageCollectJavaScriptObjects()
     gcController().garbageCollectNow();
 }
 
+void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
+{
+    gcController().setJavaScriptGarbageCollectorTimerEnabled(flag);
+}
+
 #if ENABLE(PLUGIN_PROCESS)
 void WebProcess::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath)
 {

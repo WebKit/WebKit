@@ -956,6 +956,11 @@ void WebContext::garbageCollectJavaScriptObjects()
     sendToAllProcesses(Messages::WebProcess::GarbageCollectJavaScriptObjects());
 }
 
+void WebContext::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
+{
+    sendToAllProcesses(Messages::WebProcess::SetJavaScriptGarbageCollectorTimerEnabled(flag));
+}
+
 void WebContext::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
 {
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {

@@ -265,6 +265,10 @@ void WKContextGarbageCollectJavaScriptObjects(WKContextRef contextRef)
     toImpl(contextRef)->garbageCollectJavaScriptObjects();
 }
 
+void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef contextRef, bool enable)
+{
+    toImpl(contextRef)->setJavaScriptGarbageCollectorTimerEnabled(enable);
+}
 // Deprecated functions.
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory)
 {

@@ -47,6 +47,7 @@
 
 + (void)garbageCollectJavaScriptObjects;
 + (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone;
++ (void)setJavaScriptGarbageCollectorTimerEnabled:(BOOL)enabled;
 
 + (size_t)iconPageURLMappingCount;
 + (size_t)iconRetainedPageURLCount;

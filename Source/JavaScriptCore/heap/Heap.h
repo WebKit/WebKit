@@ -100,6 +100,7 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
         JS_EXPORT_PRIVATE void setActivityCallback(PassOwnPtr<GCActivityCallback>);
+        JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
 
         // true if an allocation or collection is in progress
         inline bool isBusy();

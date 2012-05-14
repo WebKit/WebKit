@@ -1,3 +1,23 @@
+2012-05-14  Michael Saboff  <msaboff@apple.com>
+
+        Enh: Add the Ability to Disable / Enable JavaScript GC Timer
+        https://bugs.webkit.org/show_bug.cgi?id=86382
+
+        Reviewed by Darin Adler.
+
+        Plumbing to set / clear JS GC activity timer enable flag.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetJavaScriptGarbageCollectorTimerEnabled):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setJavaScriptGarbageCollectorTimerEnabled):
+        * UIProcess/WebContext.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setJavaScriptGarbageCollectorTimerEnabled):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2012-05-14  Anders Carlsson  <andersca@apple.com>
 
         The "plug-in was blocked" callback needs to include enough info to uniquely identify the plug-in + version
