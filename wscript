@@ -53,7 +53,7 @@ def generate_webcore_derived_sources(conf):
     os.system('make -f %s/DerivedSources.make WebCore=%s SOURCE_ROOT=%s all FEATURE_DEFINES="%s"' % (wc_dir, wc_dir, wc_dir, conf.env["FEATURE_DEFINES"]))
     if building_on_win32:
         os.environ["PATH"] = oldpath
-    os.system('perl %s/Source/WebKit/scripts/generate-webkitversion.pl --outputDir=%s --config %s/Source/WebKit/mac/Configurations/Version.xcconfig' % (wk_root, derived_sources_dir, wk_root))
+    
     os.chdir(olddir)
 
 def generate_jscore_derived_sources(conf):
@@ -87,11 +87,13 @@ def configure(conf):
     generate_webcore_derived_sources(conf)
     if Options.options.port == "wx" and sys.platform.startswith('win'):
         graphics_dir = os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'graphics')
-        # HACK ALERT: MSVC automatically adds the source file's directory as the first entry in the
-        # path. Unfortunately, that means when compiling these files we will end up including
-        # win/FontPlatformData.h, which breaks wx compilation. So we copy the files to the wx dir.
+        # we used to copy these files into the graphics/wx directory due to 
+        # both wx and win directories having FontPlatformData.h. That is no 
+        # longer the case, so we remove the old files if they exist.
         for afile in ['UniscribeController.h', 'UniscribeController.cpp', 'GlyphPageTreeNodeCairoWin.cpp']:
-            shutil.copy(os.path.join(graphics_dir, 'win', afile), os.path.join(graphics_dir, 'wx'))
+            wx_copy = os.path.join(graphics_dir, 'wx', afile)
+            if os.path.exists(wx_copy):
+                os.remove(wx_copy)
 
     webcore_out_dir = os.path.join(output_dir, 'WebCore')
     if not os.path.exists(webcore_out_dir):
@@ -111,6 +113,16 @@ def configure(conf):
 def build(bld):
 
     webcore_dirs = list(webcore_dirs_common)
+
+    # auto-generate WebKitVersion.h if needed before we start the build.
+    # Also, remove the file from the old location where we generated it before running
+    wk_version_h = 'Source/WebCore/DerivedSources/WebKitVersion.h'
+    if os.path.exists(wk_version_h):
+        os.remove(wk_version_h)
+    bld.new_task_gen(source = "Source/WebKit/mac/Configurations/Version.xcconfig",
+                     target = wk_version_h,
+                     rule = 'perl %s/Source/WebKit/scripts/generate-webkitversion.pl --outputDir=${TGT[0].dir(env)} --config ${SRC}' % wk_root)
+    bld.add_group()
 
     if Options.options.port == "wx":
         webcore_dirs.extend(['Source/WebKit/wx', 'Source/WebKit/wx/WebKitSupport'])
@@ -160,6 +172,7 @@ def build(bld):
             webcore_sources['wx-win'] = [
                    'Source/WebCore/platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp',
                    'Source/WebCore/platform/graphics/win/TransformationMatrixWin.cpp',
+                   'Source/WebCore/platform/graphics/win/UniscribeController.cpp',
                    'Source/WebCore/platform/ScrollAnimatorNone.cpp',
                    # wxTimer on Windows has a bug that causes it to eat crashes in callbacks
                    # so we need to use the Win port's implementation until the wx bug fix is
@@ -257,6 +270,7 @@ def build(bld):
         # we have to make sure <unicode/utf8.h> picks up the ICU one first.
         global msvclibs_dir
         wk_includes.append(os.path.join(msvclibs_dir, 'include'))
+        wk_includes.append('Source/WebCore/platform/graphics/win')
     else:
         cxxflags.extend(['-include', 'WebCorePrefix.h'])
 

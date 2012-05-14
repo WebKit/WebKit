@@ -1,3 +1,9 @@
+2012-05-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add a couple missing headers.
+
+        * WebFrame.cpp:
+
 2012-05-12  Robin Dunn  <robin@alldunn.com>
 
         [wx] Fix a bug with CanDecreaseTextSize and handling page breaks.

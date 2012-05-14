@@ -1,3 +1,11 @@
+2012-05-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Fix wxMSW build, and make sure we properly
+        define WebKitVersion.h as a build target for all platforms to avoid
+        unnecessary rebuilds.
+        
+        * wscript:
+
 2012-05-11  Jeffrey Pfau  <jpfau@apple.com>
 
         REGRESSION (r114170): Scroll areas in nested frames improperly placed when tiled drawing is enabled
