@@ -139,7 +139,7 @@ WebInspector.TabbedPane.prototype = {
 
         this._tabsHistory.splice(this._tabsHistory.indexOf(tab), 1);
         this._tabs.splice(this._tabs.indexOf(tab), 1);
-        if (tab.shown)
+        if (tab._shown)
             this._hideTabElement(tab);
 
         var eventData = { tabId: id, view: tab.view, isUserGesture: userGesture };
@@ -281,7 +281,7 @@ WebInspector.TabbedPane.prototype = {
             this._tabsElement.appendChild(tab.tabElement);
         else
             this._tabsElement.insertBefore(tab.tabElement, this._tabsElement.children[index]);
-        tab.shown = true;
+        tab._shown = true;
     },
 
     /**
@@ -290,7 +290,7 @@ WebInspector.TabbedPane.prototype = {
     _hideTabElement: function(tab)
     {
         this._tabsElement.removeChild(tab.tabElement);
-        tab.shown = false;
+        tab._shown = false;
     },
 
     _createDropDownButton: function()
@@ -309,12 +309,12 @@ WebInspector.TabbedPane.prototype = {
         var tabsToShowIndexes = this._tabsToShowIndexes(this._tabs, this._tabsHistory, this._headerContentsElement.offsetWidth, this._measuredDropDownButtonWidth);
 
         for (var i = 0; i < this._tabs.length; ++i) {
-            if (this._tabs[i].shown && tabsToShowIndexes.indexOf(i) === -1)
+            if (this._tabs[i]._shown && tabsToShowIndexes.indexOf(i) === -1)
                 this._hideTabElement(this._tabs[i]);
         }
         for (var i = 0; i < tabsToShowIndexes.length; ++i) {
             var tab = this._tabs[tabsToShowIndexes[i]];
-            if (!tab.shown)
+            if (!tab._shown)
                 this._showTabElement(i, tab);
         }
         
@@ -329,7 +329,7 @@ WebInspector.TabbedPane.prototype = {
         this._tabsSelect.removeChildren();
         var tabsToShow = [];
         for (var i = 0; i < this._tabs.length; ++i) {
-            if (!this._tabs[i].shown)
+            if (!this._tabs[i]._shown)
                 tabsToShow.push(this._tabs[i]);
                 continue;
         }
@@ -482,6 +482,20 @@ WebInspector.TabbedPane.prototype = {
     elementsToRestoreScrollPositionsFor: function()
     {
         return [ this._contentElement ];
+    },
+
+    /**
+     * @param {WebInspector.TabbedPaneTab} tab
+     * @param {number} index
+     */
+    _insertBefore: function(tab, index)
+    {
+        this._tabsElement.insertBefore(tab._tabElement, this._tabsElement.childNodes[index]);
+        var oldIndex = this._tabs.indexOf(tab);
+        this._tabs.splice(oldIndex, 1);
+        if (oldIndex < index)
+            --index;
+        this._tabs.splice(index, 0, tab);
     }
 }
 
@@ -507,7 +521,7 @@ WebInspector.TabbedPaneTab = function(tabbedPane, measureElement, id, title, clo
     this._title = title;
     this._tooltip = tooltip;
     this._view = view;
-    this.shown = false;
+    this._shown = false;
     /** @type {number} */ this._measuredWidth;
     /** @type {Element} */ this._tabElement;
 }
@@ -628,9 +642,9 @@ WebInspector.TabbedPaneTab.prototype = {
         else {
             this._tabElement = tabElement;
             tabElement.addEventListener("click", this._tabClicked.bind(this), false);
+            tabElement.addEventListener("mousedown", this._tabMouseDown.bind(this), false);
             if (this._closeable) {
                 tabElement.addEventListener("contextmenu", this._tabContextMenu.bind(this), false);
-                tabElement.addEventListener("mousedown", this._tabMouseDown.bind(this), false);
                 tabElement.addEventListener("mousemove", this._tabMouseMove.bind(this), false);
             }
         }
@@ -663,6 +677,7 @@ WebInspector.TabbedPaneTab.prototype = {
         if (event.target.hasStyleClass("tabbed-pane-header-tab-close-button") || event.button === 1)
             return;
         this._tabbedPane.selectTab(this.id, true);
+        this._dragStartX = event.pageX;
     },
 
     _tabContextMenu: function(event)
@@ -691,11 +706,12 @@ WebInspector.TabbedPaneTab.prototype = {
 
     _tabMouseMove: function(event)
     {
+        if (isNaN(this._dragStartX))
+            return;
         if (event.which !== 1)
             return;
         this._tabbedPane.selectTab(this.id, true);
         WebInspector.elementDragStart(this._tabElement, this._tabDragging.bind(this), this._endTabDragging.bind(this), event, "pointer");
-        this._dragStartX = event.pageX;
     },
 
     /**
@@ -708,15 +724,24 @@ WebInspector.TabbedPaneTab.prototype = {
             var tabElement = tabElements[i];
             if (tabElement === this._tabElement)
                 continue;
-            var offset = tabElement.totalOffsetLeft();
-            if (event.offsetX < offset || event.offsetX > offset + tabElement.clientWidth)
+
+            var intersects = tabElement.offsetLeft + tabElement.clientWidth > this._tabElement.offsetLeft &&
+                this._tabElement.offsetLeft + this._tabElement.clientWidth > tabElement.offsetLeft;
+            if (!intersects)
                 continue;
-  
-            if (tabElement.offsetLeft > this._tabElement.offsetLeft)
+
+            if (Math.abs(event.pageX - this._dragStartX) < tabElement.clientWidth / 2 + 5)
+                break;
+
+            if (event.pageX - this._dragStartX > 0) {
                 tabElement = tabElement.nextSibling;
+                ++i;
+            }
+
             var oldOffsetLeft = this._tabElement.offsetLeft;
-            this._tabElement.parentElement.insertBefore(this._tabElement, tabElement);
+            this._tabbedPane._insertBefore(this, i);
             this._dragStartX += this._tabElement.offsetLeft - oldOffsetLeft;
+            break;
         }
 
         if (!this._tabElement.previousSibling && event.pageX - this._dragStartX < 0) {
@@ -739,6 +764,7 @@ WebInspector.TabbedPaneTab.prototype = {
     {
         this._tabElement.style.removeProperty("position");
         this._tabElement.style.removeProperty("left");
+        delete this._dragStartX;
         WebInspector.elementDragEnd(event);
     }
 }
