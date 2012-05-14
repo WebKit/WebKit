@@ -1,3 +1,15 @@
+2012-05-14  Takashi Sakamoto  <tasak@google.com>
+
+        Crash in WebCore::RenderObject::repaint
+        https://bugs.webkit.org/show_bug.cgi?id=86162
+
+        Reviewed by Abhishek Arya.
+
+        * scrollbars/scrollbar-scrollbarparts-repaint-crash-expected.txt: Added.
+        * scrollbars/scrollbar-scrollbarparts-repaint-crash.html: Added.
+        * scrollbars/scrollbar-percent-padding-crash-expected.txt: Added.
+        * scrollbars/scrollbar-percent-padding-crash.html: Added.
+
 2012-05-14  Mike West  <mike@mikewest.org>
 
         Content Security Policy console errors include violated directive.
