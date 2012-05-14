@@ -201,7 +201,10 @@ for(feature, FEATURE_DEFAULTS) {
 contains(DEFINES, ENABLE_SVG=0)|!contains(DEFINES, HAVE_QRAWFONT=1): DEFINES += ENABLE_SVG_FONTS=0
 
 # JavaScript debugger requires the inspector
-contains(DEFINES, ENABLE_INSPECTOR=0): DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=0
+contains(DEFINES, ENABLE_INSPECTOR=0) {
+    DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=0
+    DEFINES += ENABLE_INSPECTOR_SERVER=0
+}
 
 # Remove conflicting defines. The preprocessor would take care of this
 # anyways, but doing it here makes for nicer command lines when building.

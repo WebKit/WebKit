@@ -47,6 +47,7 @@ QtWebContext* QtWebContext::s_defaultContext = 0;
 
 static void initInspectorServer()
 {
+#if ENABLE(INSPECTOR_SERVER)
     QString inspectorEnv = QString::fromUtf8(qgetenv("QTWEBKIT_INSPECTOR_SERVER"));
     if (!inspectorEnv.isEmpty()) {
         QString bindAddress = QLatin1String("127.0.0.1");
@@ -73,6 +74,7 @@ static void initInspectorServer()
         } else
             qWarning("Couldn't start the inspector server on bind address \"%s\" and port \"%d\". In case of invalid input, try something like: \"12345\" or \"192.168.2.14:12345\" (with the address of one of this host's interface).", qPrintable(bindAddress), port);
     }
+#endif
 }
 
 static void globalInitialization()

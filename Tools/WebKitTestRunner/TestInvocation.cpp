@@ -132,10 +132,12 @@ static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
     return strstr(pathOrURL, "loading/");
 }
 
+#if ENABLE(INSPECTOR)
 static bool shouldOpenWebInspector(const char* pathOrURL)
 {
     return strstr(pathOrURL, "inspector/") || strstr(pathOrURL, "inspector\\");
 }
+#endif
 
 void TestInvocation::invoke()
 {
