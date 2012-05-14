@@ -34,7 +34,6 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
-#include <math.h>
 
 namespace WebCore {
 
