@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+<html>
+    <head>
+        <script>
+            function log(frame, success, isWidth, size) {
+                if (window.layoutTestController) {
+                    document.getElementById("results").contentDocument.getElementById("console").appendChild(document.createTextNode((success ? "PASS: " : "FAIL: ") + frame.name + " resized correctly\n"));
+                } else {
+                    frame.document.close();
+                    if (success)
+                        frame.document.write('<p>Success!</p>');
+                    else {
+                        frame.document.write('<p>Resize until ');
+                        frame.document.write(isWidth ? 'width:' : 'height:');
+                        frame.document.write(isWidth ? frame.frameElement.width : frame.frameElement.height);
+                        frame.document.write(' = ' + size + '</p>');
+                    }
+                }
+            }
+
+            function checkProgress() {
+                if (!window.layoutTestController) {
+                    checkSuccess();
+                }
+            }
+
+            function run() {
+                if (window.layoutTestController) {
+                    layoutTestController.dumpAsText();
+                    layoutTestController.dumpChildFramesAsText();
+
+                    document.getElementById("results").contentDocument.getElementById("description").innerText = "\nThis tests that frames with frameborder=0 can be resized. See WebKit Bug 23750. On success, two 'PASS' messages will be shown below.";
+
+                    // Move the One/* vertical resizer ten pixels west.
+                    eventSender.mouseMoveTo(90, 400);
+                    eventSender.mouseDown();
+                    eventSender.mouseMoveTo(100, 400);
+                    eventSender.mouseUp();
+
+                    // Move the Two/Three horizontal resizer ten pixels south.
+                    eventSender.mouseMoveTo(400, 70);
+                    eventSender.mouseDown();
+                    eventSender.mouseMoveTo(400, 80);
+                    eventSender.mouseUp();
+
+                    checkSuccess();
+                } else {
+                    checkProgress();
+                }
+            }
+
+            function checkSuccess() {
+                log(One, One.frameElement.width == 100, true, 100)
+                log(Two, Two.frameElement.height == 80, false, 80)
+            }
+
+            window.onload = run;
+        </script>
+    </head>
+        <frameset cols="90,*" onmousemove="checkProgress()" onmouseup="checkProgress()" onmousedown="checkProgress()">
+            <frame frameborder=0 name="One" style="border-right: 2px solid green;"></frame>
+            <frameset rows="70,*" onmousemove="checkProgress()" onmouseup="checkProgress()" onmousedown="checkProgress()">
+                <frame frameborder=0 name="Two" style="border-bottom: 2px solid green;"></frame>
+                <frame id="results" frameborder=0 name="Three" src="data:text/html,<body bgcolor='gray'> <p id='description'>To resize frames drag the top or left of this frame </p><pre id='console'></pre></body>"></frame>
+            </frameset>
+        </frameset>
+</html>

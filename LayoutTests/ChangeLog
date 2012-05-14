@@ -1,3 +1,15 @@
+2012-05-14  Swapna P  <spottabathini@innominds.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug: Cannot resize frames because frameborder=0
+        https://bugs.webkit.org/show_bug.cgi?id=23750
+
+        Added test case to test whether the frame can be resized when frameborder=0.
+
+        * fast/frames/frames-with-frameborder-zero-can-be-resized-expected.txt: Added.
+        * fast/frames/frames-with-frameborder-zero-can-be-resized.html: Added.
+
 2012-05-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         More gardening after r115846.

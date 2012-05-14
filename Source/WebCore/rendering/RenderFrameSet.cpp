@@ -667,7 +667,7 @@ bool RenderFrameSet::flattenFrameSet() const
 void RenderFrameSet::startResizing(GridAxis& axis, int position)
 {
     int split = hitTestSplit(axis, position);
-    if (split == noSplit || !axis.m_allowBorder[split] || axis.m_preventResize[split]) {
+    if (split == noSplit || axis.m_preventResize[split]) {
         axis.m_splitBeingResized = noSplit;
         return;
     }
@@ -746,13 +746,13 @@ bool RenderFrameSet::isResizingColumn() const
 bool RenderFrameSet::canResizeRow(const IntPoint& p) const
 {
     int r = hitTestSplit(m_rows, p.y());
-    return r != noSplit && m_rows.m_allowBorder[r] && !m_rows.m_preventResize[r];
+    return r != noSplit && !m_rows.m_preventResize[r];
 }
 
 bool RenderFrameSet::canResizeColumn(const IntPoint& p) const
 {
     int c = hitTestSplit(m_cols, p.x());
-    return c != noSplit && m_cols.m_allowBorder[c] && !m_cols.m_preventResize[c];
+    return c != noSplit && !m_cols.m_preventResize[c];
 }
 
 int RenderFrameSet::splitPosition(const GridAxis& axis, int split) const
