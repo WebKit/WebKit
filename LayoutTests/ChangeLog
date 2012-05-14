@@ -1,3 +1,14 @@
+2012-05-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116932.
+        http://trac.webkit.org/changeset/116932
+        https://bugs.webkit.org/show_bug.cgi?id=86364
+
+        It still fails on 32 bit platforms (Requested by Ossy on
+        #webkit).
+
+        * platform/qt/Skipped:
+
 2012-05-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][DRT] fast/viewport testcases are skipped
