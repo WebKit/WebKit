@@ -3515,13 +3515,6 @@ void ewk_view_scroll(Evas_Object* ewkView, Evas_Coord deltaX, Evas_Coord deltaY,
     _ewk_view_smart_changed(smartData);
 }
 
-WebCore::Page* ewk_view_core_page_get(const Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    return priv->page.get();
-}
-
 /**
  * Creates a new frame for given url and owner element.
  *
@@ -4283,7 +4276,7 @@ Eina_Bool ewk_view_setting_web_audio_set(Evas_Object* ewkView, Eina_Bool enable)
 
 namespace EWKPrivate {
 
-WebCore::Page *corePage(const Evas_Object *ewkView)
+WebCore::Page* corePage(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);

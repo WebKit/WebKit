@@ -29,6 +29,7 @@
 #include "PageClientEfl.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"
+#include "ewk_private.h"
 
 namespace WebCore {
 
@@ -69,7 +70,7 @@ void AcceleratedCompositingContext::syncLayersNow()
     if (m_rootGraphicsLayer)
         m_rootGraphicsLayer->syncCompositingStateForThisLayerOnly();
 
-    ewk_view_core_page_get(m_view)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    EWKPrivate::corePage(m_view)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
 void AcceleratedCompositingContext::renderLayers()
