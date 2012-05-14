@@ -1,3 +1,17 @@
+2012-05-14  Stephen Chenney  <schenney@chromium.org>
+
+        [SVG] Nothing should be stroked when the stroke-width is 0
+        https://bugs.webkit.org/show_bug.cgi?id=83568
+
+        Unreviewed Chromium test expectations update.
+
+        * platform/chromium-linux/svg/custom/path-zero-strokewidth-expected.png:
+        * platform/chromium-mac/svg/custom/js-update-style-expected.png:
+        * platform/chromium-mac/svg/custom/path-zero-strokewidth-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win/svg/custom/js-update-style-expected.png:
+        * platform/chromium-win/svg/custom/path-zero-strokewidth-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Added more detail to marked test failure for chromium.

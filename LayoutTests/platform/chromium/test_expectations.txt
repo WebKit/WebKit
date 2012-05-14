@@ -1283,7 +1283,12 @@ BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
 BUGWK84230 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE PASS
 BUGWK84230 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
+BUGWK84719 WIN : svg/text/select-text-svgfont.html = TEXT PASS
 
+// This appears to be sensitive to --test-shell vs "drt mode" in DRT for some reason
+BUGWK85085 : svg/custom/clip-path-referencing-use2.svg = TEXT
+
+BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
 
 // -----------------------------------------------------------------
 // End SVG TESTS
@@ -3643,8 +3648,6 @@ BUGWK84712 VISTA : http/tests/inspector/network/x-frame-options-deny.html = TIME
 
 BUGWK84714 SNOWLEOPARD : compositing/geometry/empty-embed-rects.html = TIMEOUT PASS
 
-BUGWK84719 WIN : svg/text/select-text-svgfont.html = TEXT PASS
-
 BUGWK84720 DEBUG : fast/repaint/fixed-right-in-page-scale.html = IMAGE PASS
 
 BUGWK84724 SNOWLEOPARD : platform/chromium/media/video-frame-size-change.html = IMAGE PASS
@@ -3672,8 +3675,6 @@ BUGWK84854 LINUX X86 : svg/batik/text/textOnPath.svg = IMAGE PASS
 BUGWK84854 LINUX X86 : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
 
 // Requires rebaseline after bug 83978
-BUGWK83568 : svg/custom/path-zero-strokewidth.svg = IMAGE
-BUGWK83568 : svg/custom/js-update-style.svg = IMAGE
 
 BUGWK84972 MAC WIN DEBUG : webaudio/audioparam-exponentialRampToValueAtTime.html = PASS CRASH
 BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
@@ -3681,15 +3682,11 @@ BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
 BUGWK85038 : http/tests/inspector/network/network-initiator.html = TEXT TIMEOUT
 BUGWK85082 XP DEBUG : platform/chromium/media/video-capture-preview.html = CRASH PASS
 
-// This appears to be sensitive to --test-shell vs "drt mode" in DRT for some reason
-BUGWK85085 : svg/custom/clip-path-referencing-use2.svg = TEXT
-
 BUGWK85090 : fast/js/dfg-float64array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint32array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint16array.html = PASS TIMEOUT
 BUGWK85090 : fast/js/dfg-uint8array.html = PASS TIMEOUT
 BUGWK85106 SLOW : tables/mozilla/other/slashlogo.html = PASS
-BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
 
 BUGWK85174 : fast/files/blob-constructor.html = CRASH
 BUGWK85174 : fast/dom/HTMLAnchorElement/anchor-download-unset.html = TIMEOUT
