@@ -1,3 +1,14 @@
+2012-05-14  Eric Carlson  <eric.carlson@apple.com>
+
+        <video> won't load when URL ends with .php
+        https://bugs.webkit.org/show_bug.cgi?id=86308
+
+        Reviewed by Darin Adler.
+
+        * http/tests/media/resources/load-video.php: Added.
+        * http/tests/media/video-query-url-expected.txt: Added.
+        * http/tests/media/video-query-url.html: Added.
+
 2012-05-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] allow extensions to evaluate in the context of their content scripts

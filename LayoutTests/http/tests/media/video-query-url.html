@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-file.js></script>
+        <script>
+            function loadMediaFrame() 
+            {
+                findMediaElement();
+
+                var movie = findMediaFile('video', 'test');
+                var type = mimeTypeForExtension(movie.split('.').pop());
+                var frame = document.createElement('iframe');
+
+                frame.width = 0;
+                frame.height = 0;
+                frame.addEventListener('load', function () {
+                    video.src = 'http://127.0.0.1:8000/media/resources/load-video.php?name=' + movie + '&type=' + type;
+    
+                    waitForEventAndFail('error');
+                    waitForEventAndEnd('canplay');
+                });
+        
+                frame.src = "data:text/html,<b>test</b>";
+                document.body.appendChild(frame);
+            }
+        </script>
+    </head>
+
+    <body onload="loadMediaFrame()">
+        <video controls></video>
+        <br>
+        Tests that WebKit is able to open a media file specified with a query url.
+    </body>
+</html>

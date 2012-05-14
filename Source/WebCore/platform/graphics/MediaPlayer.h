@@ -399,6 +399,7 @@ private:
     bool m_preservesPitch;
     bool m_privateBrowsing;
     bool m_shouldPrepareToRender;
+    bool m_contentMIMETypeWasInferredFromExtension;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     WebMediaPlayerProxy* m_playerProxy;    // not owned or used, passed to m_private
 #endif
