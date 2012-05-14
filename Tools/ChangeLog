@@ -1,3 +1,17 @@
+2012-05-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Re-enable "drt mode" on chromium-mac-leopard
+        https://bugs.webkit.org/show_bug.cgi?id=83076
+
+        Unreviewed, build fix (change?).
+
+        This change is another attempt to gather data on
+        the flakiness and timeouts we're seeing on Mac SL
+        now that we have another bot.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.__init__):
+
 2012-05-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116981.
