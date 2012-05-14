@@ -1,3 +1,21 @@
+2012-05-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG performs incorrect constant folding on double-to-uint32 conversion in
+        Uint32Array PutByVal
+        https://bugs.webkit.org/show_bug.cgi?id=86330
+
+        Reviewed by Darin Adler.
+        
+        static_cast<int>(d) is wrong, since JS semantics require us to use toInt32(d).
+        In particular, C++ casts on typical hardware (like x86 and similar) will
+        return 0x80000000 for double values that are out of range of the int32 domain
+        (i.e. less than -2^31 or greater than or equal to 2^31). But JS semantics call
+        for wrap-around; for example the double value 4294967297 ought to become the
+        int32 value 1, not 0x80000000.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+
 2012-05-11  Gavin Barraclough  <barraclough@apple.com>
 
         Introduce PropertyName class

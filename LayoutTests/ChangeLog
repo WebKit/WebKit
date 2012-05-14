@@ -1,3 +1,16 @@
+2012-05-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG performs incorrect constant folding on double-to-uint32 conversion in
+        Uint32Array PutByVal
+        https://bugs.webkit.org/show_bug.cgi?id=86330
+
+        Rubber stamped by Darin Adler.
+
+        * fast/js/dfg-uint32array-overflow-constant-expected.txt: Added.
+        * fast/js/dfg-uint32array-overflow-constant.html: Added.
+        * fast/js/script-tests/dfg-uint32array-overflow-constant.js: Added.
+        (foo):
+
 2012-05-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new asserting and failing test to paint the bots green.
