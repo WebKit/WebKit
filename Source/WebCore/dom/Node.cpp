@@ -1339,8 +1339,22 @@ void Node::attach()
     clearNeedsStyleRecalc();
 }
 
+#ifndef NDEBUG
+static Node* detachingNode;
+
+bool Node::inDetach() const
+{
+    return detachingNode == this;
+}
+#endif
+
 void Node::detach()
 {
+#ifndef NDEBUG
+    ASSERT(!detachingNode);
+    detachingNode = this;
+#endif
+
     if (renderer())
         renderer()->destroyAndCleanupAnonymousWrappers();
     setRenderer(0);
@@ -1355,6 +1369,10 @@ void Node::detach()
     clearFlag(IsHoveredFlag);
     clearFlag(InActiveChainFlag);
     clearFlag(IsAttachedFlag);
+
+#ifndef NDEBUG
+    detachingNode = 0;
+#endif
 }
 
 // FIXME: This code is used by editing.  Seems like it could move over there and not pollute Node.

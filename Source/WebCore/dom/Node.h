@@ -496,6 +496,10 @@ public:
     // the node's rendering object from the rendering tree and delete it.
     virtual void detach();
 
+#ifndef NDEBUG
+    bool inDetach() const;
+#endif
+
     void reattach();
     void reattachIfAttached();
     void createRendererIfNeeded();
