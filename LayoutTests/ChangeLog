@@ -1,3 +1,18 @@
+2012-05-14  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Update expectations after fix for 84846
+        https://bugs.webkit.org/show_bug.cgi?id=86374
+
+        Unreviewed Chromium test expectations update.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-31-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Request / response headers should be stored in name-value pairs array, not a map on front-end.

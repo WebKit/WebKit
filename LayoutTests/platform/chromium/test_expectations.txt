@@ -1163,12 +1163,6 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
-// Needs a rebaseline, should still be green.
-BUGWK85627 : svg/custom/animate-target-id-changed.svg = IMAGE+TEXT IMAGE TEXT PASS
-
-// Needs a rebaseline, only two circles should be visible now.
-BUGWK84846 : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT IMAGE TEXT PASS
-
 // New in WebKit r52559
 BUGCR18116 : svg/custom/global-constructors.html = TEXT
 

@@ -19,8 +19,7 @@ layer at (0,0) size 480x360
         RenderSVGHiddenContainer {g} at (0,0) size 0x0
           RenderSVGEllipse {circle} at (236,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=30.00] [r=20.00]
       RenderSVGEllipse {circle} at (236,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=180.00] [cy=100.00] [r=20.00]
-      RenderSVGContainer {g} at (311,11) size 68x68
-        RenderSVGEllipse {circle} at (311,11) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=30.00] [r=20.00]
+      RenderSVGContainer {g} at (0,0) size 0x0
       RenderSVGContainer {g} at (311,116) size 68x68
         RenderSVGEllipse {circle} at (311,116) size 68x68 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [cx=230.00] [cy=100.00] [r=20.00]
     RenderSVGText {text} at (385,25) size 42x19 contains 1 chunk(s)
