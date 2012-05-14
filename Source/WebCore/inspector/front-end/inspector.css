@@ -1493,7 +1493,8 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 .swatch-inner {
     width: 100%;
     height: 100%;
-    display: block;
+    display: inline-block;
+    margin-bottom: 1px;
 }
 
 .swatch:hover {
