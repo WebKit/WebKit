@@ -2211,16 +2211,19 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
 void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_hBar : m_vBar;
-    if (scrollbar) {
+    if (!scrollbar)
+        return;
+
+    if (!scrollbar->isCustomScrollbar()) {
         if (orientation == HorizontalScrollbar)
             willRemoveHorizontalScrollbar(scrollbar.get());
         else
             willRemoveVerticalScrollbar(scrollbar.get());
-
-        scrollbar->removeFromParent();
-        scrollbar->disconnectFromScrollableArea();
-        scrollbar = 0;
     }
+
+    scrollbar->removeFromParent();
+    scrollbar->disconnectFromScrollableArea();
+    scrollbar = 0;
 }
 
 bool RenderLayer::scrollsOverflow() const
