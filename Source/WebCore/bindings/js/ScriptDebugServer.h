@@ -133,11 +133,9 @@ protected:
     virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
     virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
 
-    typedef HashMap<Page*, ListenerSet*> PageListenersMap;
     typedef HashMap<long, ScriptBreakpoint> LineToBreakpointMap;
     typedef HashMap<intptr_t, LineToBreakpointMap> SourceIdToBreakpointsMap;
 
-    PageListenersMap m_pageListenersMap;
     bool m_callingListeners;
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseOnNextStatement;

@@ -54,7 +54,7 @@ public:
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>*);
 
 private:
-    typedef HashMap<Page*, ListenerSet*> PageListenersMap;
+    typedef HashMap<Page*, OwnPtr<ListenerSet> > PageListenersMap;
 
     PageScriptDebugServer();
     virtual ~PageScriptDebugServer();

@@ -65,7 +65,6 @@ ScriptDebugServer::ScriptDebugServer()
 
 ScriptDebugServer::~ScriptDebugServer()
 {
-    deleteAllValues(m_pageListenersMap);
 }
 
 String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBreakpoint& scriptBreakpoint, int* actualLineNumber, int* actualColumnNumber)
