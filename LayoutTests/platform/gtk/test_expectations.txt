@@ -301,6 +301,9 @@ BUGWK60318 : fast/sub-pixel = FAIL
 
 BUGWK86310 : media/media-continues-playing-after-replace-source.html = FAIL
 
+BUGWK86328 : media/video-controls-toggling.html = TIMEOUT
+BUGWK86328 : media/video-controls-rendering-toggle-display-none.html = FAIL
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

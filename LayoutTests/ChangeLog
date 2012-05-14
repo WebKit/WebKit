@@ -2,6 +2,12 @@
 
         Unreviewed GTK test_expectations update.
 
+        * platform/gtk/test_expectations.txt: Flag another 2 media failures.
+
+2012-05-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK test_expectations update.
+
         * platform/gtk/test_expectations.txt: Flag failing media test.
 
 2012-05-13  Raphael Kubo da Costa  <rakuco@webkit.org>
