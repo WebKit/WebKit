@@ -1,3 +1,13 @@
+2012-05-14  Dan Bernstein  <mitz@apple.com>
+
+        Pagination splits lines that could fit on a single page if it were not for their top leading
+        https://bugs.webkit.org/show_bug.cgi?id=86388
+
+        Reviewed by Darin Adler.
+
+        * fast/multicol/split-in-top-margin-expected.html: Added.
+        * fast/multicol/split-in-top-margin.html: Added.
+
 2012-05-14  Joshua Bell  <jsbell@chromium.org>
 
         Unreviewed - remove a Chromium test expectation. Regressed (with others) by r115582,

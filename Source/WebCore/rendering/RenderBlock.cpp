@@ -6773,7 +6773,9 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
     lineBox->setPaginationStrut(0);
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     bool hasUniformPageLogicalHeight = !inRenderFlowThread() || enclosingRenderFlowThread()->regionsHaveUniformLogicalHeight();
-    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && lineHeight > pageLogicalHeight)
+    // If lineHeight is greater than pageLogicalHeight, but logicalVisualOverflow.height() still fits, we are
+    // still going to add a strut, so that the visible overflow fits on a single page.
+    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && logicalVisualOverflow.height() > pageLogicalHeight)
         || !hasNextPage(logicalOffset))
         return;
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
@@ -6781,6 +6783,10 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         // If we have a non-uniform page height, then we have to shift further possibly.
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, lineHeight))
             return;
+        if (lineHeight > pageLogicalHeight) {
+            // Split the top margin in order to avoid splitting the visible part of the line.
+            remainingLogicalHeight -= min(lineHeight - pageLogicalHeight, max(ZERO_LAYOUT_UNIT, logicalVisualOverflow.y() - lineBox->lineTopWithLeading()));
+        }
         LayoutUnit totalLogicalHeight = lineHeight + max(ZERO_LAYOUT_UNIT, logicalOffset);
         LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
         if (lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset && !isPositioned() && !isTableCell())
