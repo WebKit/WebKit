@@ -1,3 +1,16 @@
+2012-05-14  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Fix WebCore library path
+        https://bugs.webkit.org/show_bug.cgi?id=86355
+
+        Reviewed by Dirk Pranke.
+
+        Currently EFL DRT uses wrong WebCore library path when running DRT.
+        This patch simply adjusted it.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._path_to_webcore_library):
+
 2012-05-14  Wei James  <james.wei@intel.com>
 
         [Chromium] ImageDiff should be build for host on Android
