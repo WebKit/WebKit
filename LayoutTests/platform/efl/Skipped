@@ -347,41 +347,8 @@ editing/spelling/spelling-linebreak.html
 # EFL's LayoutTestController does not implement hasGrammarMarker
 editing/spelling/grammar.html
 
-# viewport meta tag tests that differ from the Opera results
-fast/viewport/viewport-65.html
-fast/viewport/viewport-82.html
-fast/viewport/viewport-84.html
-fast/viewport/viewport-87.html
-fast/viewport/viewport-126.html
-fast/viewport/viewport-127.html
-
 # viewport meta tag tests that fail on the bot for yet unknown reasons
-fast/viewport/viewport-6.html
-fast/viewport/viewport-58.html
-
-# REGRESSION(r99195)
-# https://bugs.webkit.org/show_bug.cgi?id=70609
-fast/viewport/viewport-18.html
-fast/viewport/viewport-36.html
-fast/viewport/viewport-37.html
-fast/viewport/viewport-43.html
-fast/viewport/viewport-46.html
-fast/viewport/viewport-52.html
-fast/viewport/viewport-53.html
-fast/viewport/viewport-54.html
-fast/viewport/viewport-55.html
-fast/viewport/viewport-60.html
-fast/viewport/viewport-75.html
-fast/viewport/viewport-76.html
-fast/viewport/viewport-83.html
-fast/viewport/viewport-86.html
-fast/viewport/viewport-121.html
-fast/viewport/viewport-122.html
 fast/viewport/viewport-125.html
-fast/viewport/viewport-129.html
-fast/viewport/viewport-warnings-3.html
-fast/viewport/viewport-warnings-4.html
-fast/viewport/viewport-warnings-6.html
 
 # Feature disabled on EFL build
 # See https://bugs.webkit.org/show_bug.cgi?id=85425
@@ -1877,6 +1844,12 @@ fast/multicol/pagination-v-horizontal-tb.html
 fast/multicol/pagination-v-vertical-lr.html
 fast/multicol/pagination-v-vertical-rl.html
 fast/text/unicode-variation-selector.html
+fast/viewport/viewport-126.html
+fast/viewport/viewport-127.html
+fast/viewport/viewport-65.html
+fast/viewport/viewport-82.html
+fast/viewport/viewport-84.html
+fast/viewport/viewport-87.html
 http/tests/cache/history-only-cached-subresource-loads.html
 http/tests/cache/cancel-during-revalidation-succeeded.html
 http/tests/cache/post-redirect-get.php

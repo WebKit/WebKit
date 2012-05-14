@@ -1,3 +1,13 @@
+2012-05-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][DRT] fast/viewport testcases are skipped
+        https://bugs.webkit.org/show_bug.cgi?id=86360
+
+        Unreviewed, unskipping now passing fast/viewport tests after
+        bug https://bugs.webkit.org/show_bug.cgi?id=70609 got fixed. 
+
+        * platform/efl/Skipped:
+
 2012-05-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip a now passing test.
