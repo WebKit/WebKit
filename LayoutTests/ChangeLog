@@ -2,6 +2,14 @@
 
         Unreviewed GTK test_expectations update.
 
+        * platform/gtk/test_expectations.txt: Mark
+        media/video-controls-toggling.html as failing and move 2 other
+        media failures to the correct section.
+
+2012-05-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GTK test_expectations update.
+
         * platform/gtk/test_expectations.txt: Flag another 2 media failures.
 
 2012-05-13  Philippe Normand  <pnormand@igalia.com>
