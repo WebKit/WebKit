@@ -1,3 +1,24 @@
+2012-05-14  Anders Carlsson  <andersca@apple.com>
+
+        The "plug-in was blocked" callback needs to include enough info to uniquely identify the plug-in + version
+        https://bugs.webkit.org/show_bug.cgi?id=86395
+        <rdar://problem/11447652>
+
+        Reviewed by John Sullivan.
+
+        Add the plug-in identifier and version string to the didFail client callback.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFailToInitializePlugin):
+        Pass a null plug-in identifier and version here since we don't have the plug-in information here.
+
+        (WebKit::WebLoaderClient::didBlockInsecurePluginVersion):
+        * UIProcess/WebLoaderClient.h:
+        (WebLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+
 2012-05-14  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r116796): Assertion failure in API tests

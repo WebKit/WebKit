@@ -272,15 +272,15 @@ void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, const String
     if (!m_client.pluginDidFail)
         return;
 
-    m_client.pluginDidFail(toAPI(page), kWKErrorCodeCannotLoadPlugIn, toAPI(mimeType.impl()), m_client.clientInfo);
+    m_client.pluginDidFail(toAPI(page), kWKErrorCodeCannotLoadPlugIn, toAPI(mimeType.impl()), 0, 0, m_client.clientInfo);
 }
 
-void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, const String& mimeType)
+void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, const String& mimeType, const String& pluginIdentifier, const String& pluginVersion)
 {
     if (!m_client.pluginDidFail)
         return;
 
-    m_client.pluginDidFail(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(mimeType.impl()), m_client.clientInfo);
+    m_client.pluginDidFail(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(mimeType.impl()), toAPI(pluginIdentifier.impl()), toAPI(pluginVersion.impl()), m_client.clientInfo);
 }
 
 } // namespace WebKit
