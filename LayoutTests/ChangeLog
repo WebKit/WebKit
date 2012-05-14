@@ -1,3 +1,13 @@
+2012-05-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=85591
+
+        Unreviewed, remove test expectations for another test which
+        consistently passess on all the Gtk builders.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         performance tests should be able to measure runs/sec rather than time

@@ -1281,8 +1281,6 @@ BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
 BUGWK82628 : svg/hittest/svg-ellipse-non-scale-stroke.xhtml = FAIL
 
-BUGWK84378 : media/track/track-cue-rendering-snap-to-lines-not-set.html = FAIL
-
 BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TEXT
