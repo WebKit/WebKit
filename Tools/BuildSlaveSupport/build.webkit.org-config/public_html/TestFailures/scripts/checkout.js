@@ -75,11 +75,12 @@ checkout.updateExpectations = function(failureInfoList, callback, checkoutUnavai
     }, checkoutUnavailable);
 };
 
-checkout.optimizeBaselines = function(testName, callback, checkoutUnavailable)
+checkout.optimizeBaselines = function(testName, suffixes, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
         net.post(config.kLocalServerURL + '/optimizebaselines?' + $.param({
             'test': testName,
+            'suffixes': suffixes,
         }), function() {
             callback();
         });
@@ -102,9 +103,12 @@ checkout.rebaseline = function(failureInfoList, callback, progressCallback, chec
 {
     callIfCheckoutAvailable(function() {
         base.callInSequence(function(failureInfo, callback) {
+            var suffixes = base.uniquifyArray(base.flattenArray(failureInfo.failureInfoList.map(results.failureTypeToExtensionList))).join(',');
+
             net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
                 'builder': failureInfo.builderName,
                 'test': failureInfo.testName,
+                'suffixes': suffixes,
             }), function() {
                 if (progressCallback)
                     progressCallback(failureInfo);
@@ -112,7 +116,11 @@ checkout.rebaseline = function(failureInfoList, callback, progressCallback, chec
             });
         }, failureInfoList, function() {
             var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
-            base.callInSequence(checkout.optimizeBaselines, testNameList, callback);
+            var suffixes = base.uniquifyArray(base.flattenArray(
+                failureInfoList.map(function(failureInfo) {
+                    return base.flattenArray(failureInfo.failureInfoList.map(results.failureTypeToExtensionList))
+                }))).join(',');
+            base.callInSequence(function(testName, callback) { checkout.optimizeBaselines(testName, suffixes, callback)}, testNameList, callback);
         });
     }, checkoutUnavailable);
 };

@@ -139,8 +139,10 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         builder = self.query['builder'][0]
         command = [
             'rebaseline-test',
+            '--suffixes', self.query['suffixes'][0],
             builder,
             self.query['test'][0],
+
         ]
         command.extend(builders.fallback_port_names_for_new_port(builder))
         self._run_webkit_patch(command)
@@ -150,6 +152,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         test = self.query['test'][0]
         self._run_webkit_patch([
             'optimize-baselines',
+            '--suffixes', self.query['suffixes'][0],
             test,
         ])
         self._serve_text('success')

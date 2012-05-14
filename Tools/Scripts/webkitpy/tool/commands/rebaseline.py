@@ -47,6 +47,7 @@ from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
 
+# FIXME: Pull this from Port.baseline_extensions().
 _baseline_suffix_list = ['png', 'wav', 'txt']
 
 
@@ -55,7 +56,16 @@ def _baseline_name(fs, test_name, suffix):
     return fs.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + "." + suffix
 
 
-class RebaselineTest(AbstractDeclarativeCommand):
+class AbstractRebaseliningCommand(AbstractDeclarativeCommand):
+    def __init__(self):
+        options = [
+            optparse.make_option('--suffixes', default=','.join(_baseline_suffix_list), action='store',
+                                 help='file types to rebaseline')]
+        AbstractDeclarativeCommand.__init__(self, options=options)
+        self._baseline_suffix_list = _baseline_suffix_list
+
+
+class RebaselineTest(AbstractRebaseliningCommand):
     name = "rebaseline-test"
     help_text = "Rebaseline a single test from a buildbot.  (Currently works only with build.chromium.org buildbots.)"
     argument_names = "BUILDER_NAME TEST_NAME [PLATFORMS_TO_MOVE_EXISTING_BASELINES_TO]"
@@ -143,11 +153,13 @@ class RebaselineTest(AbstractDeclarativeCommand):
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
     def _rebaseline_test_and_update_expectations(self, builder_name, test_name, platforms_to_move_existing_baselines_to):
-        for suffix in _baseline_suffix_list:
+        for suffix in self._baseline_suffix_list:
             self._rebaseline_test(builder_name, test_name, platforms_to_move_existing_baselines_to, suffix)
         self._update_expectations_file(builder_name, test_name)
 
     def execute(self, options, args, tool):
+        self._baseline_suffix_list = options.suffixes.split(',')
+
         if len(args) > 2:
             platforms_to_move_existing_baselines_to = args[2:]
         else:
@@ -155,18 +167,19 @@ class RebaselineTest(AbstractDeclarativeCommand):
         self._rebaseline_test_and_update_expectations(args[0], args[1], platforms_to_move_existing_baselines_to)
 
 
-class OptimizeBaselines(AbstractDeclarativeCommand):
+class OptimizeBaselines(AbstractRebaseliningCommand):
     name = "optimize-baselines"
     help_text = "Reshuffles the baselines for the given tests to use as litte space on disk as possible."
     argument_names = "TEST_NAMES"
 
     def _optimize_baseline(self, test_name):
-        for suffix in _baseline_suffix_list:
+        for suffix in self._baseline_suffix_list:
             baseline_name = _baseline_name(self._tool.filesystem, test_name, suffix)
             if not self._baseline_optimizer.optimize(baseline_name):
                 print "Hueristics failed to optimize %s" % baseline_name
 
     def execute(self, options, args, tool):
+        self._baseline_suffix_list = options.suffixes.split(',')
         self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
@@ -175,7 +188,7 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
             self._optimize_baseline(test_name)
 
 
-class AnalyzeBaselines(AbstractDeclarativeCommand):
+class AnalyzeBaselines(AbstractRebaseliningCommand):
     name = "analyze-baselines"
     help_text = "Analyzes the baselines for the given tests and prints results that are identical."
     argument_names = "TEST_NAMES"
@@ -188,12 +201,13 @@ class AnalyzeBaselines(AbstractDeclarativeCommand):
             print ' '.join(results_names)
 
     def _analyze_baseline(self, test_name):
-        for suffix in _baseline_suffix_list:
+        for suffix in self._baseline_suffix_list:
             baseline_name = _baseline_name(self._tool.filesystem, test_name, suffix)
             directories_by_result = self._baseline_optimizer.directories_by_result(baseline_name)
             self._print(baseline_name, directories_by_result)
 
     def execute(self, options, args, tool):
+        self._baseline_suffix_list = options.suffixes.split(',')
         self._baseline_optimizer = BaselineOptimizer(tool)
         self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
@@ -248,6 +262,7 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         for test_name in self._tests_to_rebaseline(self._tool.port_factory.get(port_name)):
             self._touched_test_names.add(test_name)
             print "    %s" % test_name
+            # FIXME: need to extract the correct list of suffixes here.
             self._run_webkit_patch(['rebaseline-test', builder_name, test_name])
 
     def execute(self, options, args, tool):

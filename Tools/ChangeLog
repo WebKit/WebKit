@@ -1,3 +1,40 @@
+2012-05-14  Dirk Pranke  <dpranke@chromium.org>
+
+        garden-o-matic should specify which types of baselines to rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=86242
+
+        Reviewed by Adam Barth.
+
+        This change modifies garden-o-matic so that we are explicit
+        about whether to rebaseline the text file, the image file, or
+        both. This should prevent us from pulling incorrect or
+        unexpected baselines off the bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout_unittests.js:
+        (.):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        (AbstractRebaseliningCommand.__init__):
+        (RebaselineTest):
+        (RebaselineTest._rebaseline_test_and_update_expectations):
+        (RebaselineTest.execute):
+        (OptimizeBaselines):
+        (OptimizeBaselines._optimize_baseline):
+        (OptimizeBaselines.execute):
+        (AnalyzeBaselines):
+        (AnalyzeBaselines._analyze_baseline):
+        (AnalyzeBaselines.execute):
+        (RebaselineExpectations._rebaseline_port):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaseline):
+        (GardeningHTTPRequestHandler.optimizebaselines):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaseline):
+        (GardeningServerTest.test_rebaseline_new_port):
+        (GardeningServerTest.test_optimizebaselines):
+
 2012-05-14  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Fix WebCore library path
