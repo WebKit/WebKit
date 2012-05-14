@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load object from 'data:application/x-webkit-test-netscape,alertwhenloaded' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load the object 'data:application/x-webkit-test-netscape,alertwhenloaded' because it violates the following Content Security Policy directive: "object-src 'none'".
 
 
 

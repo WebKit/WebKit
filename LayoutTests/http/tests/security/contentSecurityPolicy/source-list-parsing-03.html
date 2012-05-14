@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/source-list-parsing-base.js'></script>
+<script>
+var tests = [
+    ['yes', 'script-src http:'],
+    ['no',  'script-src https:'],
+    ['no',  'script-src    https:  '],
+    ['no',  'script-src    https://']
+];
+</script>
+</head>
+<body onload="test()">
+  <p>
+    None of these scripts should execute even though there are parse errors in the policy.
+  </p>
+

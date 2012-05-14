@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
 
-CONSOLE MESSAGE: Refused to load script from 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'none'".
 
 Loads an iframe which in turns tries to load an external script. The iframe has a content security policy disabling external scripts. So the script should not get executed.
 

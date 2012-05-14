@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load script from 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.js' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load the script 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.js' because it violates the following Content Security Policy directive: "script-src 'unsafe-inline'".
 
 ALERT: Error: SECURITY_ERR: DOM Exception 18
 

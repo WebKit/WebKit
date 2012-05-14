@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load script from 'https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load the script 'https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "script-src 'self'".
 
 
 

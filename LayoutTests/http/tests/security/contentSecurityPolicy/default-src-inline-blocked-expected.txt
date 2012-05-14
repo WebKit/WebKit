@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: Refused to execute inline script because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to execute inline script because it violates the following Content Security Policy directive: "default-src 'self'".
 
-CONSOLE MESSAGE: Refused to execute inline script because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to execute inline script because it violates the following Content Security Policy directive: "default-src 'self'".
 
 This test passes if it doesn't alert fail.

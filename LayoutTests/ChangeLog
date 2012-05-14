@@ -1,3 +1,67 @@
+2012-05-14  Mike West  <mike@mikewest.org>
+
+        Content Security Policy console errors include violated directive.
+        https://bugs.webkit.org/show_bug.cgi?id=86323
+
+        Sharded http/tests/security/contentSecurityPolicy/source-list-parsing.html
+        into four tests, and reworked it to have a well-defined order.
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning-expected.txt:
+        * http/tests/security/contentSecurityPolicy/combine-multiple-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/default-src-inline-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-01-expected.txt:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-02-expected.txt:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-03-expected.txt:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/frame-src-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/image-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-style-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-src-no-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/object-src-none-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-none-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-none-inline-event-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-self-blocked-01-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-self-blocked-02-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-self-blocked-03-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-expected.txt: Removed
+        * http/tests/security/contentSecurityPolicy/source-list-parsing.html: Removed
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-01-expected.txt: Added
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-01.html: Added
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-02-expected.txt: Added
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-02.html: Added
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-03-expected.txt: Added
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-03.html: Added
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-04-expected.txt: Added
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-04.html: Added
+        * http/tests/security/contentSecurityPolicy/srcdoc-doesnt-bypass-script-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/style-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-connect-src-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-script-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/xsl-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/xsl-img-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1-expected.txt:
+        * media/csp-blocks-video-expected.txt:
+        * platform/chromium/http/tests/security/contentSecurityPolicy/media-src-blocked-expected.txt:
+
 2012-05-14  Stephen Chenney  <schenney@chromium.org>
 
         [chromium] Layout Test svg/carto.net/window.svg is failing

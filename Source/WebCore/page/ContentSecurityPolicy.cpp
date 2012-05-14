@@ -642,7 +642,7 @@ bool CSPDirectiveList::checkInlineAndReportViolation(CSPDirective* directive, co
 {
     if (!directive || directive->allowInline())
         return true;
-    reportViolation(directive->text(), consoleMessage);
+    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\".\n");
     return denyIfEnforcingPolicy();
 }
 
@@ -650,7 +650,7 @@ bool CSPDirectiveList::checkEvalAndReportViolation(CSPDirective* directive, cons
 {
     if (checkEval(directive))
         return true;
-    reportViolation(directive->text(), consoleMessage);
+    reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\".\n");
     return denyIfEnforcingPolicy();
 }
 
@@ -658,37 +658,38 @@ bool CSPDirectiveList::checkSourceAndReportViolation(CSPDirective* directive, co
 {
     if (!directive || directive->allows(url))
         return true;
-    reportViolation(directive->text(), "Refused to load " + type + " from '" + url.string() + "' because of Content-Security-Policy.\n", url);
+    String verb = type == "connect" ? "connect to" : "load the";
+    reportViolation(directive->text(), "Refused to " + verb + " " + type + " '" + url.string() + "' because it violates the following Content Security Policy directive: \"" + directive->text() + "\".\n", url);
     return denyIfEnforcingPolicy();
 }
 
 bool CSPDirectiveList::allowJavaScriptURLs() const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because of Content-Security-Policy.\n"));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "));
     return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
 bool CSPDirectiveList::allowInlineEventHandlers() const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because of Content-Security-Policy.\n"));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because it violates the following Content Security Policy directive: "));
     return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
 bool CSPDirectiveList::allowInlineScript() const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline script because of Content-Security-Policy.\n"));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline script because it violates the following Content Security Policy directive: "));
     return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
 bool CSPDirectiveList::allowInlineStyle() const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to apply inline style because of Content-Security-Policy.\n"));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to apply inline style because it violates the following Content Security Policy directive: "));
     return checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage);
 }
 
 bool CSPDirectiveList::allowEval() const
 {
-    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because of Content-Security-Policy.\n"));
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because it violates the following Content Security Policy directive: "));
     return checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 

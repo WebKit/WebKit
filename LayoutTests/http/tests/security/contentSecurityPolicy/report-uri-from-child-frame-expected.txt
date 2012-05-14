@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to execute inline script because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
 
 
 

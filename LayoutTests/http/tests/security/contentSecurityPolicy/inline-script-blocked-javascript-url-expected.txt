@@ -4,6 +4,6 @@ CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'options'.
 
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'options'.
 
-CONSOLE MESSAGE: Refused to execute JavaScript URL because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "script-src http://127.0.0.1:*".
 
 This test passes if it doesn't alert fail. 
