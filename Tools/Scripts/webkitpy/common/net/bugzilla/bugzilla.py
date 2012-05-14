@@ -308,7 +308,7 @@ class Bugzilla(object):
     def bug_url_for_bug_id(self, bug_id, xml=False):
         if not bug_id:
             return None
-        content_type = "&ctype=xml" if xml else ""
+        content_type = "&ctype=xml&excludefield=attachmentdata" if xml else ""
         return "%sshow_bug.cgi?id=%s%s" % (config_urls.bug_server_url, bug_id, content_type)
 
     def short_bug_url_for_bug_id(self, bug_id):

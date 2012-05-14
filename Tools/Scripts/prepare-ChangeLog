@@ -345,7 +345,7 @@ sub fetchBugDescriptionFromURL($$)
 {
     my ($bugURL, $bugNumber) = @_;
 
-    my $bugXMLURL = "$bugURL&ctype=xml";
+    my $bugXMLURL = "$bugURL&ctype=xml&excludefield=attachmentdata";
     # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
     # Pass --insecure because some cygwin installs have no certs we don't
     # care about validating that bugs.webkit.org is who it says it is here.
