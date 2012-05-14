@@ -299,6 +299,8 @@ BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm 
 // These tests require subpixel layout to be enabled
 BUGWK60318 : fast/sub-pixel = FAIL
 
+BUGWK86310 : media/media-continues-playing-after-replace-source.html = FAIL
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////
