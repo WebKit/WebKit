@@ -1,3 +1,10 @@
+2012-05-13  Noel Gordon  <noel.gordon@gmail.com>
+
+        Unreviewed test fix: these calc() tests are dumpAsText().
+
+        * css3/calc/transition-crash.html:
+        * css3/calc/transition-crash2.html:
+
 2012-05-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Several dom tests are failing after r116828
