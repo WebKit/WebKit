@@ -2,16 +2,22 @@ Tests the nondeterministic bits of HAR conversion via the magic of hard-coded va
 
 Resource:{
     request : {
-        headers : {
-            Request : "request-value"
-        }
+        headers : [
+            {
+                name : "Request"
+                value : "request-value"
+            }
+        ]
         headersText : "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text"
         headersSize : 72
     }
     response : {
-        headers : {
-            Response : "response-value"
-        }
+        headers : [
+            {
+                name : "Response"
+                value : "response-value"
+            }
+        ]
         headersText : "HTTP/1.1 200 OK\r\nResponse: headers-text"
         headersSize : 39
         resourceSize : 1000

@@ -14,14 +14,14 @@ var test = function()
 
     function setRequestValues(request)
     {
-        request.requestHeaders = {
-            "Request": "request-value"
-        };
+        request.requestHeaders = [
+            { name: "Request", value: "request-value" }
+        ];
         request.requestHeadersText = "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text";
 
-        request.responseHeaders = {
-            "Response": "response-value"
-        };
+        request.responseHeaders = [
+            { name: "Response", value: "response-value" }
+        ];
         request.responseHeadersText = "HTTP/1.1 200 OK\r\nResponse: headers-text";
 
         request.documentURL = "http://example.com/inspector-test.js";

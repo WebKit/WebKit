@@ -36,13 +36,13 @@ var test = function()
 
         function addCookieHeadersToRequest(request)
         {
-            request.requestHeaders = {
-                "Cookie": "a=b; $Path=/path; $Domain=example.com; a1=b1\nc1=d1"
-            };
+            request.requestHeaders = [
+                { name: "Cookie", value: "a=b; $Path=/path; $Domain=example.com; a1=b1\nc1=d1" }
+            ];
 
-            request.responseHeaders = {
-                "Set-Cookie": "x=y; Path=/path; Domain=example.com; Discard; httpOnly; Secure; Version=1\nx1=y1\nz2=y2"
-            };
+            request.responseHeaders = [
+                { name: "Set-Cookie", value: "x=y; Path=/path; Domain=example.com; Discard; httpOnly; Secure; Version=1\nx1=y1\nz2=y2" }
+            ];
         }
 
         addCookieHeadersToRequest(findRequestByURL(/inspector-test\.js$/));

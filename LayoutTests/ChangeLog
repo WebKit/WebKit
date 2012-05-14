@@ -1,3 +1,14 @@
+2012-05-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Request / response headers should be stored in name-value pairs array, not a map on front-end.
+        https://bugs.webkit.org/show_bug.cgi?id=86357
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-har-headers-expected.txt:
+        * http/tests/inspector/resource-har-headers.html:
+
 2012-05-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] fast/loader/null-request-after-willSendRequest.html and fast/loader/recursive-before-unload-crash.html can be unskipped

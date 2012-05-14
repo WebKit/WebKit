@@ -269,7 +269,7 @@ WebInspector.RequestHeadersView.prototype = {
     {
         var additionalRow = null;
         if (typeof this._request.webSocketRequestKey3 !== "undefined")
-            additionalRow = {header: "(Key3)", value: this._request.webSocketRequestKey3};
+            additionalRow = {name: "(Key3)", value: this._request.webSocketRequestKey3};
         if (this._showRequestHeadersText)
             this._refreshHeadersText(WebInspector.UIString("Request Headers"), this._request.sortedRequestHeaders, this._request.requestHeadersText, this._requestHeadersTreeElement);
         else
@@ -288,7 +288,7 @@ WebInspector.RequestHeadersView.prototype = {
     {
         var additionalRow = null;
         if (typeof this._request.webSocketChallengeResponse !== "undefined")
-            additionalRow = {header: "(Challenge Response)", value: this._request.webSocketChallengeResponse};
+            additionalRow = {name: "(Challenge Response)", value: this._request.webSocketChallengeResponse};
         if (this._showResponseHeadersText)
             this._refreshHeadersText(WebInspector.UIString("Response Headers"), this._request.sortedResponseHeaders, this._request.responseHeadersText, this._responseHeadersTreeElement);
         else
@@ -354,14 +354,14 @@ WebInspector.RequestHeadersView.prototype = {
         headersTreeElement.hidden = !length;
         for (var i = 0; i < length; ++i) {
             var headerTreeElement = new TreeElement(null, null, false);
-            headerTreeElement.title = this._formatHeader(headers[i].header, headers[i].value);
+            headerTreeElement.title = this._formatHeader(headers[i].name, headers[i].value);
             headerTreeElement.selectable = false;
             headersTreeElement.appendChild(headerTreeElement);
         }
 
         if (additionalRow) {
             var headerTreeElement = new TreeElement(null, null, false);
-            headerTreeElement.title = this._formatHeader(additionalRow.header, additionalRow.value);
+            headerTreeElement.title = this._formatHeader(additionalRow.name, additionalRow.value);
             headerTreeElement.selectable = false;
             headersTreeElement.appendChild(headerTreeElement);
         }

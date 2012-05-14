@@ -72,7 +72,7 @@ WebInspector.HAREntry.prototype = {
             method: this._request.requestMethod,
             url: this._buildRequestURL(this._request.url),
             httpVersion: this._request.requestHttpVersion,
-            headers: this._buildHeaders(this._request.requestHeaders),
+            headers: this._request.requestHeaders,
             queryString: this._buildParameters(this._request.queryParameters || []),
             cookies: this._buildCookies(this._request.requestCookies || []),
             headersSize: this._request.requestHeadersSize,
@@ -93,7 +93,7 @@ WebInspector.HAREntry.prototype = {
             status: this._request.statusCode,
             statusText: this._request.statusText,
             httpVersion: this._request.responseHttpVersion,
-            headers: this._buildHeaders(this._request.responseHeaders),
+            headers: this._request.responseHeaders,
             cookies: this._buildCookies(this._request.responseCookies || []),
             content: this._buildContent(),
             redirectURL: this._request.responseHeaderValue("Location") || "",
@@ -152,17 +152,6 @@ WebInspector.HAREntry.prototype = {
             receive: WebInspector.HAREntry._toMilliseconds(this._request.receiveDuration),
             ssl: ssl
         };
-    },
-
-    /**
-     * @return {Object}
-     */
-    _buildHeaders: function(headers)
-    {
-        var result = [];
-        for (var name in headers)
-            result.push({ name: name, value: headers[name] });
-        return result;
     },
 
     /**
