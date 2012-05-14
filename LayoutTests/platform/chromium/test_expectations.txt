@@ -3697,7 +3697,6 @@ BUGWK85174 : fast/filesystem/file-writer-gc-blob.html = TIMEOUT
 BUGWK85174 : fast/filesystem/workers/file-writer-gc-blob.html = TEXT
 BUGWK85174 MAC LINUX : fast/filesystem/workers/file-writer-sync-truncate-extend.html = TEXT
 BUGWK85174 : http/tests/security/filesystem-iframe-from-remote.html = TEXT
-BUGWK85174 : storage/indexeddb/noblobs.html = TEXT
 
 BUGWK85120 : fast/js/toString-number.html = TEXT
 

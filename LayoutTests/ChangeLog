@@ -1,3 +1,10 @@
+2012-05-14  Joshua Bell  <jsbell@chromium.org>
+
+        Unreviewed - remove a Chromium test expectation. Regressed (with others) by r115582,
+        the specific test (storage/indexeddb/noblobs.html) was fixed in r116337.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Compute the best target node on a GestureTap event
