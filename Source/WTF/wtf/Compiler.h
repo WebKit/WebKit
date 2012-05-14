@@ -252,4 +252,9 @@
 #endif
 #endif
 
+/* ABI */
+#if defined(__ARM_EABI__) || defined(__EABI__)
+#define WTF_COMPILER_SUPPORTS_EABI 1
+#endif
+
 #endif /* WTF_Compiler_h */

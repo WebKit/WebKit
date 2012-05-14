@@ -1,3 +1,21 @@
+2012-05-14  Yong Li  <yoli@rim.com>
+
+        DFG JIT didn't work with ARM EABI.
+        https://bugs.webkit.org/show_bug.cgi?id=84449
+
+        Reviewed by Filip Pizlo.
+
+        Add a 32-bit dummy argument for some callOperation()
+        methods to make it work for ARM EABI.
+
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+
 2012-05-13  Gavin Barraclough  <barraclough@apple.com>
 
         Introduce PropertyName class

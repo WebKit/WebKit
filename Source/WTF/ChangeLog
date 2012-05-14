@@ -1,3 +1,15 @@
+2012-05-14  Yong Li  <yoli@rim.com>
+
+        DFG JIT is not ARM EABI compatible
+        https://bugs.webkit.org/show_bug.cgi?id=84449
+
+        Reviewed by Filip Pizlo.
+
+        Add COMPILER_SUPPORTS(EABI) when __ARM_EABI__
+        or __EABI__ is defined.
+
+        * wtf/Compiler.h:
+
 2012-05-10  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Add OwnPtr specialization for Eina_Hash.
