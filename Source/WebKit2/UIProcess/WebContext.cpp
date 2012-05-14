@@ -166,6 +166,8 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 
 WebContext::~WebContext()
 {
+    m_pluginWorkQueue.invalidate();
+
     if (m_process && m_process->isValid())
         m_process->connection()->removeQueueClient(this);
 
