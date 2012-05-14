@@ -3777,3 +3777,5 @@ BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
+// Caused by V8 roll to 
+BUG86389 : fast/dom/Window/window-property-shadowing-name.html = TIMEOUT

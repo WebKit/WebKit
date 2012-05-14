@@ -1,3 +1,9 @@
+2012-05-14  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Mark one test as failed on chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Swapna P  <spottabathini@innominds.com>
 
         Reviewed by Eric Seidel.
