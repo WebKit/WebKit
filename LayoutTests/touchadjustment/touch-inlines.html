@@ -1,16 +1,21 @@
 <html>
 <head>
     <script src="../fast/js/resources/js-test-pre.js"></script>
+    <style>
+        .testcontainer { position: absolute; top: 0px; left: 0px; font: 16px Ahem; line-height: 20px }
+    </style>
 </head>
 <body onload="runTests()">
 
-<p style="width: 10em;">
+<div class=testcontainer>
+<p style="width: 22em;">
 <a id="1" href="#1">some link</a><br>
 <a id="2" href="#2">some link breaking lines</a> and <a id="3" href="#3">link</a><br>
 hola mundo! <a id="4" href="#4">a split up link</a><br>
 hello world <a id="5" href="#5">some link also breaking</a><br>
 hi there <a id="6" href="#6">some link that is breaking multiple lines just for the very fun of it</a><br><br>
 </p>
+</div>
 
 
 <p id='description'></p>
@@ -35,16 +40,16 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
     {
         debug('Test some direct hits.');
 
-        adjustedNode = testRoundTouch(30, 20, 8)
+        adjustedNode = testRoundTouch(30, 25, 10)
         shouldBeEqualToString('adjustedNode.id', '1');
 
-        adjustedNode = testRoundTouch(30, 60, 8)
+        adjustedNode = testRoundTouch(20, 65, 10)
         shouldBeEqualToString('adjustedNode.id', '2');
 
-        adjustedNode = testRoundTouch(120, 80, 8)
+        adjustedNode = testRoundTouch(220, 85, 10)
         shouldBeEqualToString('adjustedNode.id', '4');
 
-        adjustedNode = testRoundTouch(80, 180, 8)
+        adjustedNode = testRoundTouch(80, 195, 10)
         shouldBeEqualToString('adjustedNode.id', '6');
     }
 
@@ -52,10 +57,12 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
     {
         debug('Test a few direct misses.');
 
-        adjustedNode = testRoundTouch(56, 60, 8)
+        // Hit 'and' betwen link 2 and 3
+        adjustedNode = testRoundTouch(120, 75, 6)
         shouldBeNull('adjustedNode');
 
-        adjustedNode = testRoundTouch(20, 166, 4)
+        // Hit 'hi there' above and to the left of link 6.
+        adjustedNode = testRoundTouch(72, 166, 6)
         shouldBeNull('adjustedNode');
 
     }
@@ -64,19 +71,19 @@ hi there <a id="6" href="#6">some link that is breaking multiple lines just for 
     {
         debug('Test some in-direct hits.');
 
-        adjustedNode = testRoundTouch(56, 60, 20)
+        adjustedNode = testRoundTouch(50, 60, 20)
         shouldBeEqualToString('adjustedNode.id', '2');
 
-        adjustedNode = testRoundTouch(85, 80, 20)
+        adjustedNode = testRoundTouch(172, 82, 20)
         shouldBeEqualToString('adjustedNode.id', '3');
 
-        adjustedNode = testRoundTouch(120, 66, 30)
+        adjustedNode = testRoundTouch(230, 74, 20)
         shouldBeEqualToString('adjustedNode.id', '4');
 
-        adjustedNode = testRoundTouch(40, 100, 20)
+        adjustedNode = testRoundTouch(30, 100, 20)
         shouldBeEqualToString('adjustedNode.id', '4');
 
-        adjustedNode = testRoundTouch(20, 174, 30)
+        adjustedNode = testRoundTouch(24, 170, 20)
         shouldBeEqualToString('adjustedNode.id', '6');
 
     }

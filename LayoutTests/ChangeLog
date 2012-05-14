@@ -1,3 +1,15 @@
+2012-05-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Fixup: Two of the touch-adjustment tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=86218
+
+        Reviewed by Darin Adler.
+
+        One test cases was still not working all platforms.
+        Change used font to Ahem to have stable layout across platforms.
+
+        * touchadjustment/touch-inlines.html:
+
 2012-05-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Unreviewed rebaseline after r115846.
