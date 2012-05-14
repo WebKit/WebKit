@@ -392,7 +392,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.resourceTreeModel = new WebInspector.ResourceTreeModel(this.networkManager);
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
-    new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);
+    this.javaScriptContextManager = new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);
 
     InspectorBackend.registerInspectorDispatcher(this);
 

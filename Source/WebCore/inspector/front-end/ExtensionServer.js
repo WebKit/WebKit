@@ -260,9 +260,8 @@ WebInspector.ExtensionServer.prototype = {
             this._dispatchCallback(message.requestId, port, result);
         }
         if (message.evaluateOnPage)
-            sidebar.setExpression(message.expression, message.rootTitle, callback.bind(this));
-        else
-            sidebar.setObject(message.expression, message.rootTitle, callback.bind(this));
+            return sidebar.setExpression(message.expression, message.rootTitle, message.evaluateOptions, port._extensionOrigin, callback.bind(this));
+        sidebar.setObject(message.expression, message.rootTitle, callback.bind(this));
     },
 
     _onSetSidebarPage: function(message, port)
@@ -338,7 +337,7 @@ WebInspector.ExtensionServer.prototype = {
       
             this._dispatchCallback(message.requestId, port, result);
         }
-        RuntimeAgent.evaluate(message.expression, "", true, undefined, undefined, true, callback.bind(this));
+        return this.evaluate(message.expression, true, true, message.evaluateOptions, port._extensionOrigin, callback.bind(this));
     },
 
     _onGetConsoleMessages: function()
@@ -723,6 +722,29 @@ WebInspector.ExtensionServer.prototype = {
                 result.push(source[i]);
         }
         return "/" + result.join("/");
+    },
+
+    /**
+     * @param {string} expression
+     * @param {boolean} exposeCommandLineAPI
+     * @param {boolean} returnByValue
+     * @param {Object} options
+     * @param {string} securityOrigin
+     * @param {function(?string, ?RuntimeAgent.RemoteObject, boolean=)} callback
+     */
+    evaluate: function(expression, exposeCommandLineAPI, returnByValue, options, securityOrigin, callback) 
+    {
+        var contextId;
+        if (typeof options === "object" && options["useContentScriptContext"]) {
+            var mainFrame = WebInspector.resourceTreeModel.mainFrame;
+            if (!mainFrame)
+                return this._status.E_FAILED("main frame not available yet");
+            var context = WebInspector.javaScriptContextManager.contextByFrameAndSecurityOrigin(mainFrame, securityOrigin);
+            if (!context)
+                return this._status.E_NOTFOUND(securityOrigin);
+            contextId = context.id;
+        }
+        RuntimeAgent.evaluate(expression, "extension", exposeCommandLineAPI, true, contextId, returnByValue, callback);
     }
 }
 

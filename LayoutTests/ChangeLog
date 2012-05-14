@@ -1,3 +1,18 @@
+2012-05-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] allow extensions to evaluate in the context of their content scripts
+        https://bugs.webkit.org/show_bug.cgi?id=86361
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/extensions/extensions-eval-content-script-expected.txt: Added.
+        * inspector/extensions/extensions-eval-content-script.html: Added.
+        * platform/gtk/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wk2/Skipped:
+
 2012-05-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Convert render-region-custom-style-mark to ref test

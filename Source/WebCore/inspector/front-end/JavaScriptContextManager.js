@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -43,6 +43,16 @@ WebInspector.JavaScriptContextManager = function(resourceTreeModel, consoleView)
 }
 
 WebInspector.JavaScriptContextManager.prototype = {
+    /**
+     * @param {WebInspector.ResourceTreeFrame} frame
+     * @param {string} securityOrigin
+     */
+    contextByFrameAndSecurityOrigin: function(frame, securityOrigin)
+    {
+        var frameContext = this._frameIdToContext[frame.id];
+        return frameContext && frameContext.contextBySecurityOrigin(securityOrigin);
+    },
+
     _frameAdded: function(event)
     {
         var frame = event.data;
@@ -87,6 +97,10 @@ WebInspector.JavaScriptContextManager.prototype = {
 
 WebInspector.JavaScriptContextManager.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @type {WebInspector.JavaScriptContextManager}
+ */
+WebInspector.javaScriptContextManager = null;
 
 /**
  * @constructor
@@ -117,8 +131,9 @@ WebInspector.ExecutionContext = function(id, name, isPageContext)
 }
 
 /**
- * @param {WebInspector.ExecutionContext} a
- * @param {WebInspector.ExecutionContext} b
+ * @param {*} a
+ * @param {*} b
+ * @return {number}
  */
 WebInspector.ExecutionContext.comparator = function(a, b)
 {
@@ -163,8 +178,10 @@ WebInspector.FrameEvaluationContext.prototype =
     {
         if (context.isMainWorldContext)
             this._mainWorldContext = context;
-        else
-            this._isolatedContexts.push(context);
+        else {
+            var insertAt = insertionIndexForObjectInListSortedByFunction(context, this._isolatedContexts, WebInspector.ExecutionContext.comparator);
+            this._isolatedContexts.splice(insertAt, 0, context);
+        }
         this.dispatchEventToListeners(WebInspector.FrameEvaluationContext.EventTypes.AddedExecutionContext, this);
     },
 
@@ -175,9 +192,19 @@ WebInspector.FrameEvaluationContext.prototype =
 
     isolatedContexts: function()
     {
-        if (this._isolatedContexts.length)
-            this._isolatedContexts.sort(WebInspector.ExecutionContext.comparator);
         return this._isolatedContexts;
+    },
+
+    /**
+     * @param {string} securityOrigin
+     */
+    contextBySecurityOrigin: function(securityOrigin)
+    {
+        for (var i = 0; i < this._isolatedContexts.length; ++i) {
+            var context = this._isolatedContexts[i];
+            if (!context.isMainWorldContext && context.name === securityOrigin)
+                return context; 
+        }
     },
 
     get frameId()

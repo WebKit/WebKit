@@ -783,6 +783,7 @@ BUGWK43332 SKIP : inspector/debugger/xhr-breakpoints.html = FAIL
 BUGWK40300 SKIP : inspector/debugger/live-edit.html = FAIL
 BUGWK50868 SKIP : inspector/debugger/debugger-step-out.html = FAIL
 BUGWK50868 SKIP : inspector/styles/styles-source-lines-inline.html = FAIL
+BUGWK85709 SKIP : inspector/extensions/extensions-eval-content-script.html = FAIL
 
 // These inspector tests fell out of the radar after the transition to NRWT
 // Some time out and some are flaky or present different baselines.
