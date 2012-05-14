@@ -2654,9 +2654,6 @@ BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
 
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
 
-// broke in r84742 - just needs a new baseline?
-BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
-
 BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
 BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS CRASH TEXT
 
