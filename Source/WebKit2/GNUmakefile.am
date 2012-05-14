@@ -342,6 +342,7 @@ Programs_WebKitWebProcess_SOURCES = \
 	Source/WebKit2/gtk/MainGtk.cpp
 
 Programs_WebKitWebProcess_LDADD = \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \

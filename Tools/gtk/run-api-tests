@@ -120,6 +120,8 @@ class TestRunner:
 
     def _lookup_atspi2_binary(self, filename):
         exec_prefix = common.pkg_config_file_variable('atspi-2', 'exec_prefix')
+        if not exec_prefix:
+            return None
         for path in ['libexec', 'lib/at-spi2-core', 'lib32/at-spi2-core', 'lib64/at-spi2-core']:
             filepath = os.path.join(exec_prefix, path, filename)
             if os.path.isfile(filepath):

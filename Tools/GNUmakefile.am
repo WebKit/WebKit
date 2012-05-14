@@ -250,6 +250,7 @@ EXTRA_DIST += \
 	Tools/gtk/common.py \
 	Tools/gtk/generate-gtkdoc \
 	Tools/gtk/gtkdoc.py \
+	Tools/gtk/run-api-tests \
 	Tools/Scripts/VCSUtils.pm \
 	Tools/Scripts/run-gtk-tests \
 	Tools/Scripts/webkit-build-directory \

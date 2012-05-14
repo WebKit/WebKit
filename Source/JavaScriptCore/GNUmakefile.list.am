@@ -521,6 +521,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/PropertyDescriptor.cpp \
 	Source/JavaScriptCore/runtime/PropertyDescriptor.h \
 	Source/JavaScriptCore/runtime/PropertyMapHashTable.h \
+	Source/JavaScriptCore/runtime/PropertyName.h \
 	Source/JavaScriptCore/runtime/PropertyNameArray.cpp \
 	Source/JavaScriptCore/runtime/PropertyNameArray.h \
 	Source/JavaScriptCore/runtime/PropertySlot.cpp \

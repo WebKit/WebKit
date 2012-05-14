@@ -1,3 +1,9 @@
+2012-05-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2012-05-14  Yong Li  <yoli@rim.com>
 
         DFG JIT didn't work with ARM EABI.

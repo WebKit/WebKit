@@ -320,6 +320,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKUserContentURLPattern.h \
 	Source/WebKit2/Shared/APIObject.cpp \
 	Source/WebKit2/Shared/APIObject.h \
+	Source/WebKit2/Shared/BlockingResponseMap.h \
 	Source/WebKit2/Shared/ShareableBitmap.cpp \
 	Source/WebKit2/Shared/ShareableBitmap.h \
 	Source/WebKit2/Shared/CacheModel.h \
