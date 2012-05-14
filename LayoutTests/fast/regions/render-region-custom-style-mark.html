@@ -2,36 +2,60 @@
 <html>
     <!--
     Tests that regions with region styling rules associated are identified and flagged correctly.
+    When an element is no longer a region, the region styling should not apply anymore.
+    When an element becomes a region, region styling should be applied.
+    You should not see any red background below.
     -->
     <head>
         <style>
-            @-webkit-region #region1 { p { margin-top: 10px; } }
-            @-webkit-region #region2 { p { margin-left: 5px; } }
+            @font-face {
+                font-family: webkit-ahem;
+                font-style: normal;
+                src: url(../../resources/Ahem.ttf);
+            }
 
-            #article { -webkit-flow-into: flow1; }
-            #region1, #region2, #region3 { width: 200px; height: 50px; }
-            .region {  -webkit-flow-from: flow1; }
+            p { font-family: webkit-ahem; }
 
-            @-webkit-region #region3 { p { color: red; } }
+            #p1 { -webkit-flow-into: flow1; background-color: red; }
+            .region1 { -webkit-flow-from: flow1; }
+            #region1 { position: absolute; top: 10px; width: 300px; height: 50px; }
+            @-webkit-region #region1 { #p1 { background-color: green; } }
+
+            #p2 { -webkit-flow-into: flow2; background-color: red; }
+            .region2 { -webkit-flow-from: flow2; }
+            #region2 { position: absolute; top: 70px; width: 300px; height: 50px; }
+            @-webkit-region #region2 { #p2 { background-color: green; } }
+
+            #containerP3 { position: absolute; top: 130px; width: 300px; height: 50px; }
+
+            #p3 { -webkit-flow-into: flow3; background-color: green; }
+            .region3 { -webkit-flow-from: flow3; }
+            #region3 { position: absolute; top: 130px; width: 300px; height: 50px; }
+            @-webkit-region #region3 { #p3 { background-color: red; } }
+
+            #region4 { position: absolute; top: 190px; width: 300px; height: 50px; }
         </style>
     </head>
     <body>
-        <div id="article">
-            <p>First para goes into region.</p>
-            Text goes into region
-            <p>Second para goes into region.</p>
-            <p>Third para goes into region.</p>
-            Text goes into region
-            <p>Fourth para goes into region.</p>
-        </div>
-        <div id="region1" class="region"></div>
-        <div id="region2" class="region"></div>
-        <div id="region3"></div>
+        <!-- Paragraph flown into a region with region styling, background should be green. -->
+        <p id="p1">R: 00 G: 80 B: 00</p>
+        <!-- Paragraph collected into a named flow. When we dynamically add a region to collect the flow,
+        region styling rule is applied. -->
+        <p id="p2">R: 00 G: 80 B: 00</p>
+         <!-- Paragraph flown into a region with region styling. The region element is transformed
+        so that the element is not a region, region styling rule should not apply. -->
+        <p id="p3" class="p3">R: 00 G: 80 B: 00</p>
+
+        <div id="region1" class="region1"></div>
+        <div id="region2"></div>
+        <div id="region3" class="region3"></div>
+        <div id="region4" class="region3"</div>
+
         <script>
-            // When the element is no longer a region, the region styling should not apply anymore.
-            document.getElementById("region2").className = "";
             // When the element becomes a region, the region styling should be applied.
-            document.getElementById("region3").className = "region";
+            document.getElementById("region2").className = "region2";
+            // When the element is no longer a region, the region styling should not apply anymore.
+            document.getElementById("region3").className = "";
         </script>
     </body>
 </html>

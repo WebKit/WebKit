@@ -1,3 +1,31 @@
+2012-05-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Convert render-region-custom-style-mark to ref test
+        https://bugs.webkit.org/show_bug.cgi?id=86289
+
+        Reviewed by Andreas Kling.
+
+        This test verifies that:
+        - If an element is displayed in a region with a region styling rule, that rule is applied.
+        - If an element is collected into a named flow and we add a region (with a region style rule) to display the named flow,
+        that region styling rule is applied.
+        - If an element is displayed in a region with a region styling rule, and the region element is changed into a non-region,
+        the region styling rule is not applied.
+
+        * fast/regions/render-region-custom-style-mark-expected.html: Added.
+        * fast/regions/render-region-custom-style-mark.html:
+        * platform/chromium-linux/fast/regions/render-region-custom-style-mark-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/regions/render-region-custom-style-mark-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/regions/render-region-custom-style-mark-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/regions/render-region-custom-style-mark-expected.txt: Removed.
+        * platform/chromium-mac/fast/regions/render-region-custom-style-mark-expected.png: Removed.
+        * platform/chromium-win/fast/regions/render-region-custom-style-mark-expected.png: Removed.
+        * platform/chromium-win/fast/regions/render-region-custom-style-mark-expected.txt: Removed.
+        * platform/gtk/fast/regions/render-region-custom-style-mark-expected.txt: Removed.
+        * platform/mac-snowleopard/fast/regions/render-region-custom-style-mark-expected.png: Removed.
+        * platform/mac-snowleopard/fast/regions/render-region-custom-style-mark-expected.txt: Removed.
+        * platform/mac/fast/regions/render-region-custom-style-mark-expected.txt: Removed.
+
 2012-05-14  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Update expectations after fix for 84846
