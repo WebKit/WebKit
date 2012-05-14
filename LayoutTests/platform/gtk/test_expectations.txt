@@ -495,8 +495,6 @@ BUGWKGTK SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIMEOU
 
 BUGWKGTK SKIP : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT
 
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T2.html = TIMEOUT
-
 BUGWKGTK : fast/css/user-drag-none.html = TIMEOUT
 
 BUGWK54119 : http/tests/misc/acid2.html = TIMEOUT
@@ -997,35 +995,6 @@ BUGWKGTK : fast/events/ondragenter.html = FAIL
 BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html = FAIL
 BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html = FAIL
 BUGWK43568 : sputnik/Unicode/Unicode_510/S7.6_A3.1.html = FAIL
-
-// The following Sputnik tests fail on debug builds.
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_320/S7.6_A3.1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_320/S7.6_A3.2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_320/S7.6_A5.3_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A3.1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A3.2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_410/S7.6_A5.3_T2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A3.1.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A3.2.html = FAIL
-BUGWKGTK DEBUG : sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html = FAIL
 
 // The following Sputnik tests fail on the 32bit release bot
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html = FAIL

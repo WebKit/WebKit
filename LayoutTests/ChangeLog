@@ -3,6 +3,19 @@
         [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
         https://bugs.webkit.org/show_bug.cgi?id=85591
 
+        Unreviewed, remove test expectations for plenty of sputnik tests that
+        were specific for debug builds. These tests are now consistently
+        passing on all the builders but that was only noticed when migration to
+        using test_expectations.txt was complete, meaning their test expectations
+        were out of date and moreover erroneous.
+
+        * platform/gtk/test_expectations.txt:
+
+2012-05-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=85591
+
         Unreviewed, remove test expectations for another test which
         consistently passess on all the Gtk builders.
 
