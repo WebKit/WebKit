@@ -125,8 +125,10 @@ static void webkit_dom_test_serialized_script_value_interface_set_property(GObje
 static void webkit_dom_test_serialized_script_value_interface_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestSerializedScriptValueInterface* self = WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(object);
     WebCore::TestSerializedScriptValueInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (propertyId) {
     case PROP_VALUE: {
 #if ENABLE(Condition1) || ENABLE(Condition2)

@@ -111,8 +111,10 @@ static void webkit_dom_test_interface_finalize(GObject* object)
 static void webkit_dom_test_interface_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (propertyId) {
     case PROP_SUPPLEMENTAL_STR2: {
 #if ENABLE(Condition1) || ENABLE(Condition2)
@@ -138,8 +140,10 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint proper
 static void webkit_dom_test_interface_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (propertyId) {
     case PROP_SUPPLEMENTAL_STR1: {
 #if ENABLE(Condition1) || ENABLE(Condition2)

@@ -167,8 +167,10 @@ static void webkit_dom_test_obj_finalize(GObject* object)
 static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+
     WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
     WebCore::TestObj* coreSelf = WebKit::core(self);
+
     switch (propertyId) {
     case PROP_UNSIGNED_SHORT_ATTR: {
         coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
@@ -298,8 +300,10 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
 static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+
     WebKitDOMTestObj* self = WEBKIT_DOM_TEST_OBJ(object);
     WebCore::TestObj* coreSelf = WebKit::core(self);
+
     switch (propertyId) {
     case PROP_READ_ONLY_INT_ATTR: {
         g_value_set_long(value, coreSelf->readOnlyIntAttr());
