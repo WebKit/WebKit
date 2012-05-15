@@ -3774,5 +3774,8 @@ BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
-// Caused by V8 roll to 3.11.0
-BUGWK86389 : fast/dom/Window/window-property-shadowing-name.html = TIMEOUT
+// Caused by r117050
+BUGWK86495 WIN : inspector/profiler/heap-snapshot-containment-expansion-preserved-when-sorting.html = PASS TIMEOUT
+BUGWK86495 WIN : inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html = PASS TIMEOUT
+BUGWK86495 WIN : inspector/profiler/heap-snapshot-dominators-expansion-preserved-when-sorting.html = PASS TIMEOUT
+BUGWK86495 WIN : inspector/profiler/heap-snapshot-summary-expansion-preserved-when-sorting.html = PASS TIMEOUT

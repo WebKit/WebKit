@@ -1,3 +1,9 @@
+2012-05-15  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Updated chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-15  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed. Rebaseline svg/repaint/mask-clip-target-transform-expected.png.
