@@ -344,11 +344,6 @@ if USE_GSTREAMER
 if ENABLE_DEBUG
 webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
-webcore_libadd += \
-	-lgstinterfaces-0.10 \
-	-lgstvideo-0.10 \
-	-lgstpbutils-0.10 \
-	-lgstapp-0.10
 endif # END USE_GSTREAMER
 endif # END ENABLE_VIDEO
 
