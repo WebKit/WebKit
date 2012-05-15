@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
 #include "Path.h"
 #include "Pattern.h"
 #include "ShadowBlur.h"
-
+#include "Timer.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
@@ -73,8 +73,142 @@ extern "C" {
 
 using namespace std;
 
+// FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
+using WTF::intHash;
+
+// FIXME: The following using declaration should be in <wtf/HashTraits.h>.
+using WTF::GenericHashTraits;
+
+#define CACHE_SUBIMAGES 1
+
 namespace WebCore {
-    
+
+#if !CACHE_SUBIMAGES
+
+static inline RetainPtr<CGImageRef> subimage(CGImageRef image, const FloatRect& rect)
+{
+    return adoptCF(CGImageCreateWithImageInRect(image, rect));
+}
+
+#else // CACHE_SUBIMAGES
+
+static const double subimageCacheClearDelay = 1;
+static const int maxSubimageCacheSize = 300;
+
+struct SubimageCacheEntry {
+    RetainPtr<CGImageRef> image;
+    FloatRect rect;
+    RetainPtr<CGImageRef> subimage;
+};
+
+struct SubimageCacheEntryTraits : GenericHashTraits<SubimageCacheEntry> {
+    typedef HashTraits<RetainPtr<CGImageRef> > ImageTraits;
+
+    static const bool emptyValueIsZero = true;
+
+    static const bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const SubimageCacheEntry& value) { return !value.image; }
+
+    static void constructDeletedValue(SubimageCacheEntry& slot) { ImageTraits::constructDeletedValue(slot.image); }
+    static bool isDeletedValue(const SubimageCacheEntry& value) { return ImageTraits::isDeletedValue(value.image); }
+};
+
+struct SubimageCacheHash {
+    static unsigned hash(CGImageRef image, const FloatRect& rect)
+    {
+        return intHash((static_cast<uint64_t>(PtrHash<CGImageRef>::hash(image)) << 32)
+            | (static_cast<unsigned>(rect.x()) << 16) | static_cast<unsigned>(rect.y()));
+    }
+    static unsigned hash(const SubimageCacheEntry& key)
+    {
+        return hash(key.image.get(), key.rect);
+    }
+    static bool equal(const SubimageCacheEntry& a, const SubimageCacheEntry& b)
+    {
+        return a.image == b.image && a.rect == b.rect;
+    }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+typedef HashSet<SubimageCacheEntry, SubimageCacheHash, SubimageCacheEntryTraits> SubimageCache;
+
+class SubimageCacheTimer : private TimerBase {
+public:
+    SubimageCacheTimer() : m_shouldRestartWhenTimerFires(false) { }
+    void restart();
+private:
+    virtual void fired() OVERRIDE;
+    bool m_shouldRestartWhenTimerFires;
+};
+
+struct SubimageCacheWithTimer {
+    SubimageCache cache;
+    SubimageCacheTimer timer;
+};
+
+static SubimageCacheWithTimer& subimageCache()
+{
+    static SubimageCacheWithTimer& cache = *new SubimageCacheWithTimer;
+    return cache;
+}
+
+inline void SubimageCacheTimer::restart()
+{
+    // Setting this boolean is much more efficient than calling startOneShot
+    // again, which might result in rescheduling the system timer and that
+    // can be quite expensive.
+    if (isActive()) {
+        m_shouldRestartWhenTimerFires = true;
+        return;
+    }
+    startOneShot(subimageCacheClearDelay);
+}
+
+void SubimageCacheTimer::fired()
+{
+    if (m_shouldRestartWhenTimerFires) {
+        m_shouldRestartWhenTimerFires = false;
+        startOneShot(subimageCacheClearDelay);
+        return;
+    }
+    subimageCache().cache.clear();
+}
+
+struct SubimageRequest {
+    CGImageRef image;
+    const FloatRect& rect;
+    SubimageRequest(CGImageRef image, const FloatRect& rect) : image(image), rect(rect) { }
+};
+
+struct SubimageCacheAdder {
+    static unsigned hash(const SubimageRequest& value)
+    {
+        return SubimageCacheHash::hash(value.image, value.rect);
+    }
+    static bool equal(const SubimageCacheEntry& a, const SubimageRequest& b)
+    {
+        return a.image == b.image && a.rect == b.rect;
+    }
+    static void translate(SubimageCacheEntry& entry, const SubimageRequest& request, unsigned /*hashCode*/)
+    {
+        entry.image = request.image;
+        entry.rect = request.rect;
+        entry.subimage = adoptCF(CGImageCreateWithImageInRect(request.image, request.rect));
+    }
+};
+
+static RetainPtr<CGImageRef> subimage(CGImageRef image, const FloatRect& rect)
+{
+    SubimageCacheWithTimer& cache = subimageCache();
+    cache.timer.restart();
+    if (cache.cache.size() == maxSubimageCacheSize)
+        cache.cache.remove(cache.cache.begin());
+    ASSERT(cache.cache.size() < maxSubimageCacheSize);
+    return cache.cache.add<SubimageRequest, SubimageCacheAdder>(SubimageRequest(image, rect)).iterator->subimage;
+}
+
+#endif // CACHE_SUBIMAGES
+
 static CGColorSpaceRef createLinearSRGBColorSpace()
 {
     // If we fail to load the linearized sRGB ICC profile, fall back to DeviceRGB.
@@ -212,7 +346,7 @@ void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& 
             subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
-            image.adoptCF(CGImageCreateWithImageInRect(image.get(), subimageRect));
+            image = subimage(image.get(), subimageRect);
             if (currHeight < srcRect.maxY()) {
                 ASSERT(CGImageGetHeight(image.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
                 adjustedDestRect.setHeight(CGImageGetHeight(image.get()) / yScale);
