@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,9 +66,6 @@ public:
     }
     virtual ~CanvasRenderingContext2D();
 
-    virtual bool is2d() const { return true; }
-    virtual bool isAccelerated() const;
-
     CanvasStyle* strokeStyle() const;
     void setStrokeStyle(PassRefPtr<CanvasStyle>);
 
@@ -111,9 +108,8 @@ public:
     String globalCompositeOperation() const;
     void setGlobalCompositeOperation(const String&);
 
-    void save();
+    void save() { ++m_unrealizedSaveCount; }
     void restore();
-    void setAllAttributesToDefault();
 
     void scale(float sx, float sy);
     void rotate(float angleInRadians);
@@ -226,10 +222,6 @@ public:
     LineCap getLineCap() const { return state().m_lineCap; }
     LineJoin getLineJoin() const { return state().m_lineJoin; }
 
-#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
-    virtual PlatformLayer* platformLayer() const;
-#endif
-
 private:
     struct State : FontSelectorClient {
         State();
@@ -238,7 +230,7 @@ private:
         State(const State&);
         State& operator=(const State&);
 
-        virtual void fontsNeedUpdate(FontSelector*);
+        virtual void fontsNeedUpdate(FontSelector*) OVERRIDE;
 
         String m_unparsedStrokeColor;
         String m_unparsedFillColor;
@@ -277,11 +269,10 @@ private:
 
     CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
 
-    Path m_path;
-
-    State& state() { return m_stateStack.last(); }
+    State& modifiableState() { ASSERT(!m_unrealizedSaveCount); return m_stateStack.last(); }
     const State& state() const { return m_stateStack.last(); }
 
+    void setShadow(const FloatSize& offset, float blur, RGBA32 color);
     void applyShadow();
     bool shouldDrawShadows() const;
 
@@ -291,6 +282,12 @@ private:
     GraphicsContext* drawingContext() const;
 
     void unwindStateStack();
+    void realizeSaves()
+    {
+        if (m_unrealizedSaveCount)
+            realizeSavesLoop();
+    }
+    void realizeSavesLoop();
 
     void applyStrokePattern();
     void applyFillPattern();
@@ -322,7 +319,16 @@ private:
     PassRefPtr<ImageData> getImageData(ImageBuffer::CoordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode&) const;
     void putImageData(ImageData*, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
 
+    virtual bool is2d() const OVERRIDE { return true; }
+    virtual bool isAccelerated() const OVERRIDE;
+
+#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
+    virtual PlatformLayer* platformLayer() const OVERRIDE;
+#endif
+
+    Path m_path;    
     Vector<State, 1> m_stateStack;
+    unsigned m_unrealizedSaveCount;
     bool m_usesCSSCompatibilityParseMode;
 #if ENABLE(DASHBOARD_SUPPORT)
     bool m_usesDashboardCompatibilityMode;
