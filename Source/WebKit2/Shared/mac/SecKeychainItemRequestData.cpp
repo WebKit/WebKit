@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SecKeychainItemRequestData.h"
 
+#if USE(SECURITY_FRAMEWORK)
+
 #include "ArgumentCoders.h"
 #include "ArgumentCodersCF.h"
 
@@ -176,3 +178,5 @@ bool SecKeychainItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecKe
 }
 
 } // namespace WebKit
+
+#endif // USE(SECURITY_FRAMEWORK)

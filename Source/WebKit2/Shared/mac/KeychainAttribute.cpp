@@ -26,6 +26,8 @@
 #include "config.h"
 #include "KeychainAttribute.h"
 
+#if USE(SECURITY_FRAMEWORK)
+
 #include "ArgumentCoders.h"
 #include "ArgumentCodersCF.h"
 
@@ -76,3 +78,5 @@ bool decode(CoreIPC::ArgumentDecoder* decoder, WebKit::KeychainAttribute& attrib
 }
 
 } // namespace CoreIPC
+
+#endif // USE(SECURITY_FRAMEWORK)

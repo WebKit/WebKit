@@ -26,6 +26,8 @@
 #ifndef KeychainAttribute_h
 #define KeychainAttribute_h
 
+#if USE(SECURITY_FRAMEWORK)
+
 #include <wtf/RetainPtr.h>
 #include <Security/Security.h>
 
@@ -49,5 +51,7 @@ void encode(ArgumentEncoder*, const WebKit::KeychainAttribute&);
 bool decode(ArgumentDecoder*, WebKit::KeychainAttribute&);
 
 } // namespace CoreIPC
+
+#endif // USE(SECURITY_FRAMEWORK)
 
 #endif // KeychainAttribute_h

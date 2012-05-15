@@ -28,7 +28,7 @@
 
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(MAC)
+#if USE(SECURITY_FRAMEWORK)
 #include <Security/SecCertificate.h>
 #include <Security/SecKeychainItem.h>
 #endif
@@ -74,7 +74,7 @@ bool decode(ArgumentDecoder*, RetainPtr<CFTypeRef>& result);
 void encode(ArgumentEncoder*, CFURLRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFURLRef>& result);
 
-#if PLATFORM(MAC)
+#if USE(SECURITY_FRAMEWORK)
 // SecCertificateRef
 void encode(ArgumentEncoder*, SecCertificateRef);
 bool decode(ArgumentDecoder*, RetainPtr<SecCertificateRef>& result);

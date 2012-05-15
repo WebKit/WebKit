@@ -1,3 +1,28 @@
+2012-05-15  Andy Estes  <aestes@apple.com>
+
+        Add WTF_USE_SECURITY_FRAMEWORK and use it in place of the less specific PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=86508
+
+        Reviewed by Sam Weinig.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::typeFromCFTypeRef):
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        (CoreIPC):
+        * Shared/cf/ArgumentCodersCF.h:
+        (CoreIPC):
+        * Shared/mac/KeychainAttribute.cpp:
+        * Shared/mac/KeychainAttribute.h:
+        * Shared/mac/SecKeychainItemRequestData.cpp:
+        * Shared/mac/SecKeychainItemRequestData.h:
+        * Shared/mac/SecKeychainItemResponseData.cpp:
+        * Shared/mac/SecKeychainItemResponseData.h:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit):
+        (WebProcessProxy):
+        * WebProcess/mac/WebProcessMac.mm:
+
 2012-05-15  Andreas Kling  <kling@webkit.org>
 
         Deep copy PluginModuleInfo before passing across thread boundary.

@@ -47,7 +47,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-#if PLATFORM(MAC)
+#if USE(SECURITY_FRAMEWORK)
 class SecItemRequestData;
 class SecItemResponseData;
 #endif
@@ -138,7 +138,7 @@ private:
     void getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
     void pluginSyncMessageSendTimedOut(const String& pluginPath);
 #endif
-#if PLATFORM(MAC)
+#if USE(SECURITY_FRAMEWORK)
     void secItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecItemRequestData&);
     void secKeychainItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecKeychainItemRequestData&);
 #endif

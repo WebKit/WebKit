@@ -1,3 +1,12 @@
+2012-05-15  Andy Estes  <aestes@apple.com>
+
+        Add WTF_USE_SECURITY_FRAMEWORK and use it in place of the less specific PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=86508
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Platform.h:
+
 2012-05-15  Zoltan Herczeg  <zherczeg@webkit.org>
 
         NEONizing forceValidPreMultipliedPixels

@@ -26,6 +26,8 @@
 #ifndef SecKeychainItemRequestData_h
 #define SecKeychainItemRequestData_h
 
+#if USE(SECURITY_FRAMEWORK)
+
 #include "DataReference.h"
 #include "KeychainAttribute.h"
 #include <Security/Security.h>
@@ -86,5 +88,7 @@ private:
 };
     
 } // namespace WebKit
+
+#endif // USE(SECURITY_FRAMEWORK)
 
 #endif // SecKeychainItemRequestData_h

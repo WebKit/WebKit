@@ -26,6 +26,8 @@
 #ifndef SecKeychainItemResponseData_h
 #define SecKeychainItemResponseData_h
 
+#if USE(SECURITY_FRAMEWORK)
+
 #include "KeychainAttribute.h"
 #include <Security/Security.h>
 #include <wtf/RetainPtr.h>
@@ -63,5 +65,7 @@ private:
 };
     
 } // namespace WebKit
+
+#endif // USE(SECURITY_FRAMEWORK)
 
 #endif // SecKeychainItemResponseData_h

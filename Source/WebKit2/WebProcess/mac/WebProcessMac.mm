@@ -45,10 +45,12 @@
 #import <objc/runtime.h>
 #import <stdio.h>
 
+#if USE(SECURITY_FRAMEWORK)
 #if defined(BUILDING_ON_SNOW_LEOPARD)
 #import "KeychainItemShimMethods.h"
 #else
 #import "SecItemShimMethods.h"
+#endif
 #endif
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
