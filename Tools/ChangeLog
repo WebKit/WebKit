@@ -1,3 +1,13 @@
+2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Introduce ENABLE_CSS_VARIABLES compile flag.
+        https://bugs.webkit.org/show_bug.cgi?id=86338
+
+        Reviewed by Hajime Morita.
+
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Unittest fix after r117028.
+        (WebKitPortTest.test_skipped_directories_for_symbols):
+
 2012-05-15  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Teach webkit-patch to gracefully handle writes of raw utf-8 encoded strings to sys.stdout
