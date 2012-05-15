@@ -1,5 +1,14 @@
 2012-05-15  Sam Weinig  <sam@webkit.org>
 
+        <rdar://problem/11401642> ENABLE_IFRAME_SEAMLESS should be turned off on the branch
+
+        Reviewed by Andy Estes.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Disable ENABLE_IFRAME_SEAMLESS.
+
+2012-05-15  Sam Weinig  <sam@webkit.org>
+
         Disable CSS regions
         <rdar://problem/10887709>
 
