@@ -1,5 +1,20 @@
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116449
+
+    2012-05-08  Timothy Hatcher  <timothy@apple.com>
+
+            Fix the SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL macro so it passes the full path to dlopen.
+
+            <rdar://problem/11406517>
+
+            Reviewed by Mark Rowe.
+
+            * UIProcess/mac/WebInspectorProxyMac.mm: Pass A to SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL for the version.
+            * WebProcess/WebPage/mac/WebInspectorMac.mm: Ditto.
+
+2012-05-15  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116367
 
     2012-05-07  Andy Estes  <aestes@apple.com>

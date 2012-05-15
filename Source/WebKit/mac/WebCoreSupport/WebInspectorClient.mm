@@ -47,7 +47,7 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/PassOwnPtr.h>
 
-SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks)
+SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks, A)
 
 using namespace WebCore;
 
