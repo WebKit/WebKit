@@ -1,3 +1,35 @@
+2012-05-15  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Making layout testcase: fast/table/empty-section-crash.html result platform independent
+        https://bugs.webkit.org/show_bug.cgi?id=86352
+        
+        After modifying the current handling of collapsed borders for
+        table (https://bugs.webkit.org/show_bug.cgi?id=67877), the expected output for this testcase
+        changes. Hence, instead of generating new png images and dumprendertext platform specific
+        output files, have made the output platform independant by making it dumpAsText() only.
+        Shall be adding a reftest for this along with https://bugs.webkit.org/show_bug.cgi?id=67877.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/table/empty-section-crash-expected.txt: Added.
+        Added new expected file.
+        * fast/table/empty-section-crash.html:
+        Modified testcase to make it dumpAsText().
+
+        * platform/chromium-linux/fast/table/empty-section-crash-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/table/empty-section-crash-expected.png: Removed.
+        * platform/chromium-win/fast/table/empty-section-crash-expected.png: Removed.
+        * platform/chromium-win/fast/table/empty-section-crash-expected.txt: Removed.
+        * platform/efl/fast/table/empty-section-crash-expected.png: Removed.
+        * platform/efl/fast/table/empty-section-crash-expected.txt: Removed.
+        * platform/gtk/fast/table/empty-section-crash-expected.png: Removed.
+        * platform/gtk/fast/table/empty-section-crash-expected.txt: Removed.
+        * platform/mac/fast/table/empty-section-crash-expected.png: Removed.
+        * platform/mac/fast/table/empty-section-crash-expected.txt: Removed.
+        * platform/qt/fast/table/empty-section-crash-expected.png: Removed.
+        * platform/qt/fast/table/empty-section-crash-expected.txt: Removed.
+        Removed the platform specific expected output files for empty-section-crash.html
+
 2012-05-15  Antti Koivisto  <antti@apple.com>
 
         Tests added in r117012 (plugins/npruntime/delete-plugin-within-*) failing on Mac bots

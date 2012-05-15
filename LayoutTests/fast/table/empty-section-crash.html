@@ -15,6 +15,7 @@
             if (window.layoutTestController) {
                 layoutTestController.waitUntilDone();
                 setTimeout(finish, 0);
+                layoutTestController.dumpAsText();
             }
         }
     </script>
