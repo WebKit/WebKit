@@ -1,3 +1,9 @@
+2012-05-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, GTK gardening after r116986, r117012 and r117016.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         document.execCommand('Indent') in the direct child of ShadowRoot causes a crash.
