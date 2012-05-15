@@ -231,7 +231,7 @@ float zoomableIntersectionQuotient(const IntPoint& touchHotspot, const IntRect& 
 
     // Check the rectangle is meaningful zoom target. It should at least contain the hotspot.
     if (!rect.contains(touchHotspot))
-        return INFINITY;
+        return std::numeric_limits<float>::infinity();
     IntRect intersection = rect;
     intersection.intersect(touchArea);
 
@@ -246,7 +246,7 @@ float zoomableIntersectionQuotient(const IntPoint& touchHotspot, const IntRect& 
 bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, SubtargetGeometryList& subtargets, DistanceFunction distanceFunction)
 {
     targetNode = 0;
-    float bestDistanceMetric = INFINITY;
+    float bestDistanceMetric = std::numeric_limits<float>::infinity();
     SubtargetGeometryList::const_iterator it = subtargets.begin();
     const SubtargetGeometryList::const_iterator end = subtargets.end();
     for (; it != end; ++it) {
