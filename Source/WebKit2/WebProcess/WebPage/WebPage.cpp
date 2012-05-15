@@ -2198,8 +2198,10 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
         ASSERT(!m_pendingDropSandboxExtension);
 
         m_pendingDropSandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
-        for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++)
-            m_pendingDropExtensionsForFileUpload.append(SandboxExtension::create(sandboxExtensionsHandleArray[i]));
+        for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++) {
+            if (RefPtr<SandboxExtension> extension = SandboxExtension::create(sandboxExtensionsHandleArray[i]))
+                m_pendingDropExtensionsForFileUpload.append(extension);
+        }
 
         m_page->dragController()->performDrag(&dragData);
 

@@ -1,3 +1,15 @@
+2012-05-15  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Crash when dropping a reference to a non-existing file
+        https://bugs.webkit.org/show_bug.cgi?id=86505
+        <rdar://problem/11402084>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::performDragControllerAction): Check that
+        extension handle actually has a non-null extension. Extensions for non-existent files can not
+        exist, so they are passed as null ones.
+
 2012-05-15  Andy Estes  <aestes@apple.com>
 
         Add WTF_USE_SECURITY_FRAMEWORK and use it in place of the less specific PLATFORM(MAC)
