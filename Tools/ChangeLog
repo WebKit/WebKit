@@ -1,3 +1,16 @@
+2012-05-15  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move createOffscreenGraphicsContext3D() from WebKitPlatformSupport to Platform
+        https://bugs.webkit.org/show_bug.cgi?id=86524
+
+        Reviewed by Adam Barth.
+
+        Updates TestWebPlugin to use the Platform headers and updates the build dependencies so it can.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::initialize):
+
 2012-05-15  Jessie Berlin  <jberlin@apple.com>
 
         WKContextSetCacheModel(contextref, kWKCacheModelDocumentViewer) doesn't prevent pages from

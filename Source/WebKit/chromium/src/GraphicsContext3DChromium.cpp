@@ -45,11 +45,8 @@
 #include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "WebKit.h"
-#include "WebViewClient.h"
-#include "WebViewImpl.h"
-#include "platform/WebGraphicsContext3D.h"
-#include "platform/WebKitPlatformSupport.h"
+#include <public/Platform.h>
+#include <public/WebGraphicsContext3D.h>
 
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
@@ -1043,7 +1040,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     webAttributes.shareResources = attrs.shareResources;
     webAttributes.preferDiscreteGPU = attrs.preferDiscreteGPU;
 
-    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitPlatformSupport()->createOffscreenGraphicsContext3D(webAttributes));
+    OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::Platform::current()->createOffscreenGraphicsContext3D(webAttributes));
     if (!webContext)
         return 0;
 

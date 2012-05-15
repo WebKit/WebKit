@@ -35,6 +35,7 @@
 #include "WebCommon.h"
 #include "WebData.h"
 #include "WebGamepads.h"
+#include "WebGraphicsContext3D.h"
 #include "WebString.h"
 
 namespace WebKit {
@@ -292,6 +293,13 @@ public:
     virtual void histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount) { }
     // Enumeration histogram buckets are linear, boundaryValue should be larger than any possible sample value.
     virtual void histogramEnumeration(const char* name, int sample, int boundaryValue) { }
+
+
+    // GPU ----------------------------------------------------------------
+    //
+    // May return null if GPU is not supported.
+    // Returns newly allocated and initialized offscreen WebGraphicsContext3D instance.
+    virtual WebGraphicsContext3D* createOffscreenGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
 
 
     // WebRTC ----------------------------------------------------------

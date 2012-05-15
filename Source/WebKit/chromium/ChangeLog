@@ -1,3 +1,18 @@
+2012-05-15  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move createOffscreenGraphicsContext3D() from WebKitPlatformSupport to Platform
+        https://bugs.webkit.org/show_bug.cgi?id=86524
+
+        Reviewed by Adam Barth.
+
+        Moves createOffscreenGraphicsContext3D() out (to WebKit::Platform) and updates GraphicsContext3DChromium to use
+        the new location. Also removes a few unnecessary includes from GraphicsContext3DChromium.cpp.
+
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKitPlatformSupport):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::create):
+
 2012-05-15  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Compute the best target node on a GestureTap event
