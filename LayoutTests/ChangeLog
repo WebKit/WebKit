@@ -1,8 +1,17 @@
+2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        # [Qt] REGRESSION(r113138 ): It made fast/workers/worker-multi-startup.html crash on 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=83133
+
+        Unreviewed gardening, unskip the now passing test.
+
+        * platform/qt/Skipped:
+
 2012-05-15  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Making layout testcase: fast/table/empty-section-crash.html result platform independent
         https://bugs.webkit.org/show_bug.cgi?id=86352
-        
+
         After modifying the current handling of collapsed borders for
         table (https://bugs.webkit.org/show_bug.cgi?id=67877), the expected output for this testcase
         changes. Hence, instead of generating new png images and dumprendertext platform specific
