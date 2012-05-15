@@ -184,6 +184,10 @@ void InitWebCoreSystemInterface(void)
     INIT(CGPathAddRoundedRect);
 #endif
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    INIT(CFURLRequestAllowAllPostCaching);
+#endif
+
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
     INIT(FilterIsManagedSession);
     INIT(FilterCreateInstance);

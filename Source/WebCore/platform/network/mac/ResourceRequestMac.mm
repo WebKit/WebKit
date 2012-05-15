@@ -135,6 +135,9 @@ void ResourceRequest::doUpdatePlatformRequest()
 #endif
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    wkCFURLRequestAllowAllPostCaching([nsRequest _CFURLRequest]);
+#endif
 
     double timeoutInterval = ResourceRequestBase::timeoutInterval();
     if (timeoutInterval)

@@ -488,6 +488,21 @@ bool WKExecutableWasLinkedOnOrBeforeLion(void);
 void WKCGPathAddRoundedRect(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+void WKCFURLRequestAllowAllPostCaching(CFURLRequestRef);
+#endif
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+@class WebFilterEvaluator;
+
+BOOL WKFilterIsManagedSession(void);
+WebFilterEvaluator *WKFilterCreateInstance(NSURLResponse *);
+void WKFilterRelease(WebFilterEvaluator *);
+BOOL WKFilterWasBlocked(WebFilterEvaluator *);
+const char* WKFilterAddData(WebFilterEvaluator *, const char* data, int* length);
+const char* WKFilterDataComplete(WebFilterEvaluator *, int* length);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

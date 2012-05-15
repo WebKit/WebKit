@@ -151,6 +151,9 @@ void ResourceRequest::doUpdatePlatformRequest()
 
     if (httpPipeliningEnabled())
         wkSetHTTPPipeliningPriority(cfRequest, toHTTPPipeliningPriority(m_priority));
+#if !PLATFORM(WIN)
+    wkCFURLRequestAllowAllPostCaching(cfRequest);
+#endif
 
     setHeaderFields(cfRequest, httpHeaderFields());
     RefPtr<FormData> formData = httpBody();

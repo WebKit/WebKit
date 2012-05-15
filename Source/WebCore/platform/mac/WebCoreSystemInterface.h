@@ -323,4 +323,8 @@ extern const char* (*wkFilterDataComplete)(WebFilterEvaluator *, int* length);
 
 }
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+extern void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
+#endif
+
 #endif

@@ -1,0 +1,44 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didReceiveTitle: Resending form on back navigation from POST submissions
+frame "frame" - didStartProvisionalLoadForFrame
+frame "frame" - didCommitLoadForFrame
+frame "frame" - didFinishDocumentLoadForFrame
+frame "frame" - didHandleOnloadEventsForFrame
+frame "frame" - didFinishLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/post-in-iframe-with-back-navigation-page-2.php 
+frame "frame" - didStartProvisionalLoadForFrame
+frame "frame" - didCancelClientRedirectForFrame
+frame "frame" - didCommitLoadForFrame
+frame "frame" - didFinishDocumentLoadForFrame
+frame "frame" - didHandleOnloadEventsForFrame
+frame "frame" - didFinishLoadForFrame
+frame "frame" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/post-in-iframe-with-back-navigation-page-3.php 
+frame "frame" - didStartProvisionalLoadForFrame
+frame "frame" - didCancelClientRedirectForFrame
+frame "frame" - didCommitLoadForFrame
+frame "frame" - didFinishDocumentLoadForFrame
+frame "frame" - didHandleOnloadEventsForFrame
+frame "frame" - didFinishLoadForFrame
+frame "frame" - didStartProvisionalLoadForFrame
+frame "frame" - didCommitLoadForFrame
+frame "frame" - didFinishDocumentLoadForFrame
+frame "frame" - didHandleOnloadEventsForFrame
+frame "frame" - didFinishLoadForFrame
+
+Resending form on back navigation from POST submissions
+
+To test manually, click on the navigation links in the iframe. When going back from page 3, it should navigate to page 2 without requesting to resend the form.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS getTitle() is "Page 1"
+PASS getTitle() is "Page 2"
+PASS getTitle() is "Page 3"
+PASS getTitle() is "Page 2"
+PASS window.frames[0].document.getElementById('submissionTime').innerText is step2output
+
