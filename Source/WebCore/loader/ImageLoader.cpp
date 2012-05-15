@@ -199,7 +199,7 @@ void ImageLoader::updateFromElement()
         m_imageComplete = !newImage;
 
         if (newImage) {
-            if (!m_element->document()->hasListenerType(Document::BEFORELOAD_LISTENER))
+            if (!m_element->document()->hasListenerType(Document::BEFORELOAD_LISTENER) || m_element->document()->isImageDocument())
                 dispatchPendingBeforeLoadEvent();
             else
                 beforeLoadEventSender().dispatchEventSoon(this);
