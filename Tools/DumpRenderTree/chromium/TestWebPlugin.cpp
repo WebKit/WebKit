@@ -27,10 +27,11 @@
 #include "TestWebPlugin.h"
 
 #include "WebFrame.h"
+#include "platform/WebGraphicsContext3D.h"
+#include "WebKit.h"
+#include "platform/WebKitPlatformSupport.h"
 #include "WebPluginContainer.h"
 #include "WebPluginParams.h"
-#include <public/Platform.h>
-#include <public/WebGraphicsContext3D.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 
@@ -115,7 +116,7 @@ const WebString& TestWebPlugin::mimeType()
 bool TestWebPlugin::initialize(WebPluginContainer* container)
 {
     WebGraphicsContext3D::Attributes attrs;
-    m_context = WebKit::Platform::current()->createOffscreenGraphicsContext3D(attrs);
+    m_context = webKitPlatformSupport()->createOffscreenGraphicsContext3D(attrs);
     if (!m_context)
         return false;
 

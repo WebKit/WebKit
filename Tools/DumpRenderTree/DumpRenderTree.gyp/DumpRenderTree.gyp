@@ -78,7 +78,6 @@
             'type': 'executable',
             'mac_bundle': 1,
             'dependencies': [
-                '<(source_dir)/Platform/Platform.gyp/Platform.gyp:webkit_platform',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',

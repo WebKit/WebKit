@@ -1,3 +1,14 @@
+2012-05-15  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Unreviewed build fix.
+
+        Partial revert of r117166 - it appears making DumpRenderTree depend on webkit_platform causes crashes in the
+        component build, at least on linux.  This restores Tools/DumpRenderTree to its pre-r117166 state.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::initialize):
+
 2012-05-15  Elliot Poger  <epoger@google.com>
 
         add unit test for NRWT's --additional-expectations option
