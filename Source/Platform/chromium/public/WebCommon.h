@@ -38,22 +38,6 @@
     #define WEBKIT_IMPLEMENTATION 0
 #endif
 
-#if !defined(WEBKIT_USING_SKIA)
-    #if !defined(__APPLE__) || defined(USE_SKIA)
-        #define WEBKIT_USING_SKIA 1
-    #else
-        #define WEBKIT_USING_SKIA 0
-    #endif
-#endif
-
-#if !defined(WEBKIT_USING_CG)
-    #if defined(__APPLE__) && !WEBKIT_USING_SKIA
-        #define WEBKIT_USING_CG 1
-    #else
-        #define WEBKIT_USING_CG 0
-    #endif
-#endif
-
 #if !defined(WEBKIT_USING_V8)
     #define WEBKIT_USING_V8 1
 #endif

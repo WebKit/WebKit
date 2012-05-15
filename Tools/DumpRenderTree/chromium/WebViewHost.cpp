@@ -1799,21 +1799,7 @@ void WebViewHost::paintPagesWithBoundaries()
         return;
     }
 
-#if WEBKIT_USING_SKIA
-    WebCanvas* webCanvas = canvas();
-#elif WEBKIT_USING_CG
-    const SkBitmap& canvasBitmap = canvas()->getDevice()->accessBitmap(false);
-    WebCanvas* webCanvas = CGBitmapContextCreate(canvasBitmap.getPixels(),
-                                                 pageSizeInPixels.width, totalHeight,
-                                                 8, pageSizeInPixels.width * 4,
-                                                 CGColorSpaceCreateDeviceRGB(),
-                                                 kCGImageAlphaPremultipliedFirst |
-                                                 kCGBitmapByteOrder32Host);
-    CGContextTranslateCTM(webCanvas, 0.0, totalHeight);
-    CGContextScaleCTM(webCanvas, 1.0, -1.0f);
-#endif
-
-    webFrame->printPagesWithBoundaries(webCanvas, pageSizeInPixels);
+    webFrame->printPagesWithBoundaries(canvas(), pageSizeInPixels);
     webFrame->printEnd();
 
     m_isPainting = false;

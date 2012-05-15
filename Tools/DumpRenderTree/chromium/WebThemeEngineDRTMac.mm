@@ -30,6 +30,7 @@
 
 #include "WebThemeEngineDRTMac.h"
 
+#include "skia/ext/skia_utils_mac.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebCanvas.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebRect.h"
 #import <AppKit/NSAffineTransform.h>
@@ -37,10 +38,6 @@
 #import <AppKit/NSScroller.h>
 #import <AppKit/NSWindow.h>
 #include <Carbon/Carbon.h>
-
-#if WEBKIT_USING_SKIA
-#include "skia/ext/skia_utils_mac.h"
-#endif
 
 using WebKit::WebCanvas;
 using WebKit::WebRect;
@@ -144,12 +141,8 @@ void WebThemeEngineDRTMac::paintHIThemeScrollbarThumb(
     trackInfo.trackInfo.scrollbar.pressState =
         state == WebThemeEngine::StatePressed ? kThemeThumbPressed : 0;
     trackInfo.attributes |= (kThemeTrackShowThumb | kThemeTrackHideTrack);
-#if WEBKIT_USING_SKIA
     gfx::SkiaBitLocker bitLocker(canvas);
     CGContextRef cgContext = bitLocker.cgContext();
-#else
-    CGContextRef cgContext = canvas;
-#endif
     HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
 }
 
@@ -176,12 +169,8 @@ void WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb(
     float knobProportion = float(scrollbarInfo.visibleSize) / float(scrollbarInfo.totalSize);
     [scroller setKnobProportion: knobProportion];
 
-#if WEBKIT_USING_SKIA
     gfx::SkiaBitLocker bitLocker(canvas);
     CGContextRef cgContext = bitLocker.cgContext();
-#else
-    CGContextRef cgContext = canvas;
-#endif
     NSGraphicsContext* nsGraphicsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
     [NSGraphicsContext setCurrentContext:nsGraphicsContext];
 
