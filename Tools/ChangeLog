@@ -1,3 +1,28 @@
+2012-05-15  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Teach webkit-patch to gracefully handle writes of raw utf-8 encoded strings to sys.stdout
+
+        https://bugs.webkit.org/show_bug.cgi?id=85809
+
+        webkit-patch overrides sys.stdout with a StreamWriter that ensures we write utf8
+        output to stdout, but StreamWriter will by default always encode the object that's
+        passed to write(). This blows up when the object is a raw string, already encoded
+        as utf8, and does not match the default behavior of sys.stdout.
+
+        To solve this in one place, instead of every single call-site that might write
+        raw strings, we extend the stdout-wrapper to assume raw strings are utf8 before
+        passing them on to StreamWriter.write(). This has the benefit of also making the
+        stacktrace easy to read in the case where this assumption does not hold.
+
+        The source of this particular bug was that Executive.run_and_throw_if_fail() will
+        tee the output of the subprocess, and in the case of running prepare-ChangeLog this
+        might produce non-ascii output, which gets written directly to sys.stdout as raw
+        utf8-encoded strings.
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkit-patch:
+
 2012-05-15  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL][DRT] Split ewk_private.h file to multiple private files.
