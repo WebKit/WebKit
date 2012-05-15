@@ -38,7 +38,6 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TreeScopeAdopter.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
