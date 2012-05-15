@@ -56,6 +56,7 @@ private:
 
     DoublyLinkedList<HeapBlock> m_freeBlocks;
     size_t m_numberOfFreeBlocks;
+    bool m_isCurrentlyAllocating;
     bool m_blockFreeingThreadShouldQuit;
     Mutex m_freeBlockLock;
     ThreadCondition m_freeBlockCondition;
@@ -64,6 +65,7 @@ private:
 
 inline HeapBlock* BlockAllocator::allocate()
 {
+    m_isCurrentlyAllocating = true;
     MutexLocker locker(m_freeBlockLock);
     if (!m_numberOfFreeBlocks) {
         ASSERT(m_freeBlocks.isEmpty());

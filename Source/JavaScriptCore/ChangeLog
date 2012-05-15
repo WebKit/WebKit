@@ -1,3 +1,34 @@
+2012-05-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Block freeing thread should not free blocks when we are actively requesting them
+        https://bugs.webkit.org/show_bug.cgi?id=86519
+
+        Reviewed by Geoffrey Garen.
+
+        The block freeing thread shoots us in the foot if it decides to run while we're actively 
+        requesting blocks and returning them. This situation can arise when there is a lot of copying 
+        collection going on in steady state. We allocate a large swath of pages to copy into, then we 
+        return all the newly free old pages to the BlockAllocator. In this state, if the block freeing 
+        thread wakes up in between collections (which is more likely than it waking up during a 
+        collection) and frees half of these pages, they will be needed almost immediately during the 
+        next collection, causing a storm of VM allocations which we know are going to be very slow.
+
+        What we'd like is for when things have quieted down the block freeing thread can then return 
+        memory to the OS. Usually this will be when a page has fully loaded and has a low allocation 
+        rate. In this situation, our opportunistic collections will only be running at least every few 
+        seconds, thus the extra time spent doing VM allocations won't matter nearly as much as, say, 
+        while a page is loading.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator): Initialize our new field.
+        (JSC::BlockAllocator::blockFreeingThreadMain): We check if we've seen any block requests recently.
+        If so, reset our flag and go back to sleep. We also don't bother with locking here. If we miss out 
+        on an update, we'll see it when we wake up again.
+        * heap/BlockAllocator.h: Add new field to track whether or not we've received recent block requests.
+        (BlockAllocator):
+        (JSC::BlockAllocator::allocate): If we receive a request for a block, set our field that tracks 
+        that to true. We don't bother locking since we assume that writing to a bool is atomic.
+
 2012-05-14  Luke Macpherson  <macpherson@chromium.org>
 
         Introduce ENABLE_CSS_VARIABLES compile flag.

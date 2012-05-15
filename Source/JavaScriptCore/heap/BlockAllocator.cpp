@@ -33,6 +33,7 @@ namespace JSC {
 
 BlockAllocator::BlockAllocator()
     : m_numberOfFreeBlocks(0)
+    , m_isCurrentlyAllocating(false)
     , m_blockFreeingThreadShouldQuit(false)
     , m_blockFreeingThread(createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree"))
 {
@@ -104,6 +105,11 @@ void BlockAllocator::blockFreeingThreadMain()
         if (m_blockFreeingThreadShouldQuit)
             break;
         
+        if (m_isCurrentlyAllocating) {
+            m_isCurrentlyAllocating = false;
+            continue;
+        }
+
         // Now process the list of free blocks. Keep freeing until half of the
         // blocks that are currently on the list are gone. Assume that a size_t
         // field can be accessed atomically.
