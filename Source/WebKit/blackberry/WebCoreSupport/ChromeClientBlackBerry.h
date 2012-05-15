@@ -126,6 +126,11 @@ public:
     virtual bool supportsFullscreenForNode(const Node*);
     virtual void enterFullscreenForNode(Node*);
     virtual void exitFullscreenForNode(Node*);
+#if ENABLE(FULLSCREEN_API)
+    virtual bool supportsFullScreenForElement(const Element*, bool withKeyboard);
+    virtual void enterFullScreenForElement(Element*);
+    virtual void exitFullScreenForElement(Element*);
+#endif
 #if ENABLE(WEBGL)
     virtual void requestWebGLPermission(Frame*);
 #endif

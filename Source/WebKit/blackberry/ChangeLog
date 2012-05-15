@@ -1,3 +1,36 @@
+2012-05-15  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Enable the Fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=86129
+
+        Reviewed by Antonio Gomes.
+
+        This patch enables the new document-based Fullscreen API.
+        The ENABLE(FULLSCREEN_API) is already enabled in the
+        BlackBerry WebKit build. My patch turns fullscreen on
+        in the page settings by default and implements the missing
+        ChromeClientBlackBerry::{supports,enter,exit}FullScreenForElement()
+        member functions. I am also plumbing through the existing
+        "fullScreenVideoCapable" that QNXStageWebView has always been
+        sending to allow the presence of a native fullscreen video player
+        to be checked.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::fullScreenVideoCapable):
+        (BlackBerry::WebKit::WebSettings::setFullScreenVideoCapable):
+        * Api/WebSettings.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore):
+        (WebCore::ChromeClientBlackBerry::supportsFullScreenForElement):
+        (WebCore::ChromeClientBlackBerry::enterFullScreenForElement):
+        (WebCore::ChromeClientBlackBerry::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+
 2012-05-15  Hanna Ma  <Hanma@rim.com>
 
         [BlackBerry] adding a functionality for web inspector to inspect current selected element

@@ -220,6 +220,9 @@ public:
     bool isSpatialNavigationEnabled() const;
     void setSpatialNavigationEnabled(bool);
 
+    bool fullScreenVideoCapable() const;
+    void setFullScreenVideoCapable(bool);
+
 private:
     WebSettingsPrivate* m_private;
     WebSettings();

@@ -717,6 +717,45 @@ void ChromeClientBlackBerry::exitFullscreenForNode(Node* node)
     m_webPagePrivate->exitFullscreenForNode(node);
 }
 
+#if ENABLE(FULLSCREEN_API)
+bool ChromeClientBlackBerry::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
+{
+    return !withKeyboard;
+}
+
+void ChromeClientBlackBerry::enterFullScreenForElement(WebCore::Element* element)
+{
+    element->document()->webkitWillEnterFullScreenForElement(element);
+    if (supportsFullscreenForNode(element) && m_webPagePrivate->m_webSettings->fullScreenVideoCapable()) {
+        // The Browser chrome has its own fullscreen video widget it wants to
+        // use, and this is a video element. The only reason that
+        // webkitWillEnterFullScreenForElement() and
+        // webkitDidEnterFullScreenForElement() are still called in this case
+        // is so that exitFullScreenForElement() gets called later.
+        enterFullscreenForNode(element);
+    } else {
+        // No fullscreen video widget has been made available by the Browser
+        // chrome, or this is not a video element. The webkitRequestFullScreen
+        // Javascript call is often made on a div element.
+        // This is where we would hide the browser's chrome if we wanted to.
+    }
+    element->document()->webkitDidEnterFullScreenForElement(element);
+}
+
+void ChromeClientBlackBerry::exitFullScreenForElement(WebCore::Element* element)
+{
+    element->document()->webkitWillExitFullScreenForElement(element);
+    if (supportsFullscreenForNode(element) && m_webPagePrivate->m_webSettings->fullScreenVideoCapable()) {
+        // The Browser chrome has its own fullscreen video widget.
+        exitFullscreenForNode(element);
+    } else {
+        // This is where we would restore the browser's chrome
+        // if hidden above.
+    }
+    element->document()->webkitDidExitFullScreenForElement(element);
+}
+#endif
+
 #if ENABLE(WEBGL)
 void ChromeClientBlackBerry::requestWebGLPermission(Frame* frame)
 {

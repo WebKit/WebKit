@@ -123,7 +123,6 @@
 #include "runtime_root.h"
 
 #if ENABLE(VIDEO)
-#include "HTMLMediaElement.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivateBlackBerry.h"
 #endif
@@ -6017,6 +6016,11 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
 
 #if ENABLE(WEB_SOCKETS)
     WebSocket::setIsAvailable(webSettings->areWebSocketsEnabled());
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    // This allows Javascript to call webkitRequestFullScreen() on an element.
+    coreSettings->setFullScreenEnabled(true);
 #endif
 
 #if ENABLE(VIEWPORT_REFLOW)
