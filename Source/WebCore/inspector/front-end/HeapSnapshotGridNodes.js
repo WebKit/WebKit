@@ -270,7 +270,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             // TODO: fix this.
             this._instanceCount += items.length;
             if (firstNotSerializedPosition < toPosition) {
-                setTimeout(serializeNextChunk.bind(this), 0);
+                serializeNextChunk.call(this);
                 return;
             }
 
@@ -278,7 +278,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 afterPopulate();
             this.dispatchEventToListeners("populate complete");
         }
-        setTimeout(serializeNextChunk.bind(this), 0);
+        serializeNextChunk.call(this);
     },
 
     _saveChildren: function()
