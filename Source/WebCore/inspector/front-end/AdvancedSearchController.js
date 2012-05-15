@@ -356,7 +356,7 @@ WebInspector.SearchView.prototype = {
         this.focus();
     },
 
-    wasHidden: function()
+    willHide: function()
     {
         this._controller.stopSearch();
     },
