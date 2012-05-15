@@ -29,7 +29,7 @@
 
 #include <wtf/Platform.h>
 
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
 
 #include "FELighting.h"
 #include <wtf/Alignment.h>

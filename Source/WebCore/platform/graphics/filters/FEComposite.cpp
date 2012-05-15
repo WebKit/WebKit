@@ -185,7 +185,7 @@ inline void FEComposite::platformArithmeticSoftware(Uint8ClampedArray* source, U
     int length = source->length();
     ASSERT(length == static_cast<int>(destination->length()));
     // The selection here eventually should happen dynamically.
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
     ASSERT(!(length & 0x3));
     float coefficients[4]  = { k1, k2, k3, k4 };
     platformArithmeticNeon(source->data(), destination->data(), length, coefficients);

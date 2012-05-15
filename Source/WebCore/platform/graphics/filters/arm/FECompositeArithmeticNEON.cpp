@@ -29,7 +29,7 @@
 #if ENABLE(FILTERS)
 #include "FECompositeArithmeticNEON.h"
 
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
 
 namespace WebCore {
 

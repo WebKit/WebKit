@@ -142,7 +142,7 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
 void FEGaussianBlur::platformApplyWorker(PlatformApplyParameters* parameters)
 {
     IntSize paintSize(parameters->width, parameters->height);
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
     parameters->filter->platformApplyNeon(parameters->srcPixelArray.get(), parameters->dstPixelArray.get(),
         parameters->kernelSizeX, parameters->kernelSizeY, paintSize);
 #else
@@ -221,7 +221,7 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
     }
 
     // The selection here eventually should happen dynamically on some platforms.
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
     platformApplyNeon(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);
 #else
     platformApplyGeneric(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);

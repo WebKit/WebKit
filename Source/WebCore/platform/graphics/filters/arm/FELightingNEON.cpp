@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FELightingNEON.h"
 
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
 
 #include <wtf/Alignment.h>
 
