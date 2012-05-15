@@ -44,13 +44,14 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
 #if PLATFORM(MAC)
     , m_phase(PhaseNone)
     , m_hasPreciseScrollingDeltas(false)
+    , m_scrollCount(0)
 #endif
 {
     ASSERT(isWheelEventType(type));
 }
 
 #if PLATFORM(MAC)
-WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, Modifiers modifiers, double timestamp, bool directionInvertedFromDevice)
+WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
     , m_position(position)
     , m_globalPosition(globalPosition)
@@ -61,6 +62,8 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_phase(phase)
     , m_momentumPhase(momentumPhase)
     , m_hasPreciseScrollingDeltas(hasPreciseScrollingDeltas)
+    , m_scrollCount(scrollCount)
+    , m_unacceleratedScrollingDelta(unacceleratedScrollingDelta)
 {
     ASSERT(isWheelEventType(type));
 }
@@ -80,6 +83,8 @@ void WebWheelEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(m_phase);
     encoder->encode(m_momentumPhase);
     encoder->encode(m_hasPreciseScrollingDeltas);
+    encoder->encode(m_scrollCount);
+    encoder->encode(m_unacceleratedScrollingDelta);
 #endif
 }
 
@@ -105,6 +110,10 @@ bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebWheelEvent& t)
     if (!decoder->decode(t.m_momentumPhase))
         return false;
     if (!decoder->decode(t.m_hasPreciseScrollingDeltas))
+        return false;
+    if (!decoder->decode(t.m_scrollCount))
+        return false;
+    if (!decoder->decode(t.m_unacceleratedScrollingDelta))
         return false;
 #endif
     return true;

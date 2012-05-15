@@ -27,6 +27,7 @@
 #include "ScrollElasticityController.h"
 
 #include "PlatformWheelEvent.h"
+#include "WebCoreSystemInterface.h"
 #include <sys/time.h>
 #include <sys/sysctl.h>
 
@@ -67,9 +68,11 @@ static NSTimeInterval systemUptime()
 namespace WebCore {
 
 static const float scrollVelocityZeroingTimeout = 0.10f;
-static const float rubberbandStiffness = 20;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
+
+#if defined(BUILDING_ON_LEOPARD) || defined(BULDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION)
+static const float rubberbandStiffness = 20;
 static const float rubberbandAmplitude = 0.31f;
 static const float rubberbandPeriod = 1.6f;
 
@@ -92,6 +95,22 @@ static float reboundDeltaForElasticDelta(float delta)
 {
     return delta * rubberbandStiffness;
 }
+#else
+static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, float elapsedTime)
+{
+    return wkNSElasticDeltaForTimeDelta(initialPosition, initialVelocity, elapsedTime);
+}
+
+static float elasticDeltaForReboundDelta(float delta)
+{
+    return wkNSElasticDeltaForReboundDelta(delta);
+}
+
+static float reboundDeltaForElasticDelta(float delta)
+{
+    return wkNSReboundDeltaForElasticDelta(delta);
+}
+#endif
 
 static float scrollWheelMultiplier()
 {
@@ -159,8 +178,20 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
     // Reset overflow values because we may decide to remove delta at various points and put it into overflow.
     m_overflowScrollDelta = FloatSize();
 
-    float eventCoalescedDeltaX = -wheelEvent.deltaX();
-    float eventCoalescedDeltaY = -wheelEvent.deltaY();
+    IntSize stretchAmount = m_client->stretchAmount();
+    bool isVerticallyStretched = stretchAmount.height();
+    bool isHorizontallyStretched = stretchAmount.width();
+
+    float eventCoalescedDeltaX;
+    float eventCoalescedDeltaY;
+
+    if (isVerticallyStretched || isHorizontallyStretched) {
+        eventCoalescedDeltaX = -wheelEvent.unacceleratedScrollingDeltaX();
+        eventCoalescedDeltaY = -wheelEvent.unacceleratedScrollingDeltaY();
+    } else {
+        eventCoalescedDeltaX = -wheelEvent.deltaX();
+        eventCoalescedDeltaY = -wheelEvent.deltaY();
+    }
 
     deltaX += eventCoalescedDeltaX;
     deltaY += eventCoalescedDeltaY;
@@ -171,14 +202,7 @@ bool ScrollElasticityController::handleWheelEvent(const PlatformWheelEvent& whee
     else
         deltaY = 0;
 
-    bool isVerticallyStretched = false;
-    bool isHorizontallyStretched = false;
     bool shouldStretch = false;
-
-    IntSize stretchAmount = m_client->stretchAmount();
-
-    isHorizontallyStretched = stretchAmount.width();
-    isVerticallyStretched = stretchAmount.height();
 
     PlatformWheelEventPhase momentumPhase = wheelEvent.momentumPhase();
 

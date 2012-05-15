@@ -323,6 +323,10 @@ extern void (*wkFilterRelease)(WebFilterEvaluator *);
 extern BOOL (*wkFilterWasBlocked)(WebFilterEvaluator *);
 extern const char* (*wkFilterAddData)(WebFilterEvaluator *, const char* data, int* length);
 extern const char* (*wkFilterDataComplete)(WebFilterEvaluator *, int* length);
+
+extern CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
+extern CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
+extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
 
 }

@@ -1,3 +1,41 @@
+2012-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Use unaccelerated scrolling deltas when rubber-banding
+        https://bugs.webkit.org/show_bug.cgi?id=86503
+        <rdar://problem/11378742>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebEvent.h:
+        (WebWheelEvent):
+        (WebKit::WebWheelEvent::scrollCount):
+        (WebKit::WebWheelEvent::unacceleratedScrollingDelta):
+        Add scroll count and unaccelerated scrolling delta.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        Initialize scroll count and unaccelerated scrolling deltas.
+
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        Initialize scroll count and unaccelerated scrolling deltas.
+
+        (WebKit::WebWheelEvent::encode):
+        (WebKit::WebWheelEvent::decode):
+        Encode and decode scroll count and unaccelerated scrolling deltas.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        Initialize the scroll count and unaccelerated scrolling deltas from the underlying NSEvent.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::coalesce):
+        Coalesce unaccelerated scrolling deltas as well.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Init new WKSI functions.
+
 2012-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r117095.

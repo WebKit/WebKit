@@ -94,6 +94,9 @@ namespace WebCore {
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
             , m_momentumPhase(PlatformWheelEventPhaseNone)
+            , m_scrollCount(0)
+            , m_unacceleratedScrollingDeltaX(0)
+            , m_unacceleratedScrollingDeltaY(0)
 #endif
         {
         }
@@ -112,6 +115,9 @@ namespace WebCore {
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
             , m_momentumPhase(PlatformWheelEventPhaseNone)
+            , m_scrollCount(0)
+            , m_unacceleratedScrollingDeltaX(0)
+            , m_unacceleratedScrollingDeltaY(0)
 #endif
         {
         }
@@ -153,6 +159,10 @@ namespace WebCore {
         PlatformWheelEventPhase phase() const { return m_phase; }
         PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
         bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
+
+        unsigned scrollCount() const { return m_scrollCount; }
+        float unacceleratedScrollingDeltaX() const { return m_unacceleratedScrollingDeltaX; }
+        float unacceleratedScrollingDeltaY() const { return m_unacceleratedScrollingDeltaY; }
 #endif
 
 #if PLATFORM(WIN)
@@ -181,6 +191,9 @@ namespace WebCore {
         bool m_hasPreciseScrollingDeltas;
         PlatformWheelEventPhase m_phase;
         PlatformWheelEventPhase m_momentumPhase;
+        unsigned m_scrollCount;
+        float m_unacceleratedScrollingDeltaX;
+        float m_unacceleratedScrollingDeltaY;
 #endif
     };
 

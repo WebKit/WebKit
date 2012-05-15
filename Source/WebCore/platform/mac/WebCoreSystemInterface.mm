@@ -202,4 +202,9 @@ void (*wkFilterRelease)(WebFilterEvaluator *);
 BOOL (*wkFilterWasBlocked)(WebFilterEvaluator *);
 const char* (*wkFilterAddData)(WebFilterEvaluator *, const char* data, int* length);
 const char* (*wkFilterDataComplete)(WebFilterEvaluator *, int* length);
+
+CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
+CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
+CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
+

@@ -1,3 +1,15 @@
+2012-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Use unaccelerated scrolling deltas when rubber-banding
+        https://bugs.webkit.org/show_bug.cgi?id=86503
+        <rdar://problem/11378742>
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Init new WKSI functions.
+
 2012-05-14  Luke Macpherson  <macpherson@chromium.org>
 
         Introduce ENABLE_CSS_VARIABLES compile flag.

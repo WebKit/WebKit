@@ -1693,6 +1693,9 @@ _wkFilterRelease
 _wkFilterWasBlocked
 _wkFilterAddData
 _wkFilterDataComplete
+_wkNSElasticDeltaForTimeDelta
+_wkNSElasticDeltaForReboundDelta
+_wkNSReboundDeltaForElasticDelta
 #endif
 
 #if ENABLE(SVG)
