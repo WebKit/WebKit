@@ -1,3 +1,14 @@
+2012-05-14  Luke Macpherson  <macpherson@chromium.org>
+
+        Introduce ENABLE_CSS_VARIABLES compile flag.
+        https://bugs.webkit.org/show_bug.cgi?id=86338
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a configuration option for CSS Variables support, disabling it by default.
+
+        * features.gypi:
+
 2012-05-14  Gavin Peters  <gavinp@chromium.org>
 
         [Chromium] remove skia/third_party/glu from DEPS

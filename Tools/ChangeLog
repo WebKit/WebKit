@@ -1,3 +1,17 @@
+2012-05-14  Luke Macpherson  <macpherson@chromium.org>
+
+        Introduce ENABLE_CSS_VARIABLES compile flag.
+        https://bugs.webkit.org/show_bug.cgi?id=86338
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a configuration option for CSS Variables support, disabling it by default.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._missing_symbol_to_skipped_tests):
+        * qmake/mkspecs/features/features.pri:
+
 2012-05-14  Nate Chapin  <japhet@chromium.org>
 
         Add end-of-life test cases for https://bugs.webkit.org/show_bug.cgi?id=86131.
