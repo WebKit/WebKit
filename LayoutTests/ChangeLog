@@ -1,3 +1,14 @@
+2012-05-15  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] http/tests/navigation/https-in-page-cache.html fails with timeout
+        https://bugs.webkit.org/show_bug.cgi?id=83576
+
+        Reviewed by Simon Hausmann.
+
+        Unskipped http/tests/navgiation/https-in-page-cache.html
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, GTK gardening after r116986, r117012 and r117016.

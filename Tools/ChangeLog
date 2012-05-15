@@ -1,3 +1,15 @@
+2012-05-15  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] http/tests/navigation/https-in-page-cache.html fails with timeout
+        https://bugs.webkit.org/show_bug.cgi?id=83576
+
+        Reviewed by Simon Hausmann.
+
+        Set the PlatformWebView for the Qt port to accept all SSL certificates.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2012-05-14  Luke Macpherson  <macpherson@chromium.org>
 
         Introduce ENABLE_CSS_VARIABLES compile flag.

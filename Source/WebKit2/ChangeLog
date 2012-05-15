@@ -1,3 +1,19 @@
+2012-05-15  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] http/tests/navigation/https-in-page-cache.html fails with timeout
+        https://bugs.webkit.org/show_bug.cgi?id=83576
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::handleCertificateVerificationRequest):
+        (QQuickWebView::allowAnyHTTPSCertificateForLocalHost): Added.
+        (QQuickWebView::setAllowAnyHTTPSCertificateForLocalHost): Added.
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):  Added bool m_allowAnyHTTPSCertificateForLocalHost.
+
 2012-05-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         document.execCommand('Indent') in the direct child of ShadowRoot causes a crash.

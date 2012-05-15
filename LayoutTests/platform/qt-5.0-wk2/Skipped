@@ -324,8 +324,8 @@ css3/unicode-bidi-isolate-aharon-failing.html
 # https://bugs.webkit.org/show_bug.cgi?id=74504
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 
-#[Qt][WK2]REGRESSION(r110699): It made fast/animation/request-animation-frame-during-modal.html timeout
-#https://bugs.webkit.org/show_bug.cgi?id=81671
+# [Qt][WK2]REGRESSION(r110699): It made fast/animation/request-animation-frame-during-modal.html timeout
+# https://bugs.webkit.org/show_bug.cgi?id=81671
 fast/animation/request-animation-frame-during-modal.html
 
 # flakey svg tests
@@ -573,10 +573,6 @@ plugins
 # [Qt][WK2] fast/frames/iframe-window-focus.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=83575
 fast/frames/iframe-window-focus.html
-
-# [Qt][WK2] http/tests/navigation/https-in-page-cache.html fails with timeout
-# https://bugs.webkit.org/show_bug.cgi?id=83576
-http/tests/navigation/https-in-page-cache.html
 
 # [Qt][WK2] fast/loader/create-frame-in-DOMContentLoaded.html crashes
 # https://bugs.webkit.org/show_bug.cgi?id=83578

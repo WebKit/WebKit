@@ -149,6 +149,9 @@ public:
     qreal zoomFactor() const;
     void setZoomFactor(qreal);
     void runJavaScriptInMainFrame(const QString& script, QObject* receiver, const char* method);
+    // Used to automatically accept the HTTPS certificate in WTR. No other use intended.
+    bool allowAnyHTTPSCertificateForLocalHost() const;
+    void setAllowAnyHTTPSCertificateForLocalHost(bool allow);
 
 public Q_SLOTS:
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());

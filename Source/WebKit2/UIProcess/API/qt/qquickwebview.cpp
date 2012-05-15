@@ -266,6 +266,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
     , m_dialogActive(false)
+    , m_allowAnyHTTPSCertificateForLocalHost(false)
     , m_loadProgress(0)
 {
     viewport->setClip(true);
@@ -559,6 +560,11 @@ void QQuickWebViewPrivate::handleProxyAuthenticationRequiredRequest(const QStrin
 bool QQuickWebViewPrivate::handleCertificateVerificationRequest(const QString& hostname)
 {
     Q_Q(QQuickWebView);
+
+    if (m_allowAnyHTTPSCertificateForLocalHost
+        && (hostname == QStringLiteral("127.0.0.1") || hostname == QStringLiteral("localhost")))
+        return true;
+
     QtDialogRunner dialogRunner(q);
     if (!dialogRunner.initForCertificateVerification(hostname))
         return false;
@@ -1858,5 +1864,18 @@ void QQuickWebView::runJavaScriptInMainFrame(const QString &script, QObject *rec
 
     d->webPageProxy.get()->runJavaScriptInMainFrame(script, ScriptValueCallback::create(closure, javaScriptCallback));
 }
+
+bool QQuickWebView::allowAnyHTTPSCertificateForLocalHost() const
+{
+    Q_D(const QQuickWebView);
+    return d->m_allowAnyHTTPSCertificateForLocalHost;
+}
+
+void QQuickWebView::setAllowAnyHTTPSCertificateForLocalHost(bool allow)
+{
+    Q_D(QQuickWebView);
+    d->m_allowAnyHTTPSCertificateForLocalHost = allow;
+}
+
 
 #include "moc_qquickwebview_p.cpp"

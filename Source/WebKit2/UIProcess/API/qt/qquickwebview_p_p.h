@@ -198,6 +198,7 @@ protected:
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     bool m_dialogActive;
+    bool m_allowAnyHTTPSCertificateForLocalHost;
     QUrl m_iconURL;
     int m_loadProgress;
 };

@@ -76,6 +76,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
 {
     QQuickWebViewExperimental experimental(m_view);
     experimental.setRenderToOffscreenBuffer(true);
+    m_view->setAllowAnyHTTPSCertificateForLocalHost(true);
 }
 
 PlatformWebView::~PlatformWebView()
