@@ -1,0 +1,45 @@
+<html>
+<head>
+  <script src="../../http/tests/inspector/inspector-test.js"></script>
+  <script src="heap-snapshot-test.js"></script>
+<script>
+
+function test()
+{
+    var instanceCount = 25;
+    function createHeapSnapshot()
+    {
+        return InspectorTest.createHeapSnapshot(instanceCount);
+    }
+
+    InspectorTest.runHeapSnapshotTestSuite([
+        function testShowAll(next)
+        {
+            InspectorTest.takeAndOpenSnapshot(createHeapSnapshot, step1);
+            var nodeAHeapSnapshotObjectId = 5 + 2*15 ; // Id of the 16th A node.
+
+            function step1()
+            {
+                InspectorTest.addSniffer(WebInspector.HeapSnapshotDominatorsDataGrid.prototype, "highlightNode", didHighlightNode);
+                WebInspector.panels.profiles.showObject(nodeAHeapSnapshotObjectId, "Dominators");
+                InspectorTest.addResult("Revealing node...");
+            }
+
+            function didHighlightNode(node)
+            {
+                InspectorTest.assertEquals(nodeAHeapSnapshotObjectId, node.snapshotNodeId, "Unxpected node highlighted.");
+                InspectorTest.addResult("Node revealed.");
+                next();
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that an object can be revealed in the Dominators view of detailed heap snapshots.
+</p>
+</body>
+</html>

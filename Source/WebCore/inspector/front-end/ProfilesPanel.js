@@ -585,8 +585,9 @@ WebInspector.ProfilesPanel.prototype = {
 
     /**
      * @param {ProfilerAgent.HeapSnapshotObjectId} snapshotObjectId
+     * @param {string} viewName
      */
-    showObject: function(snapshotObjectId)
+    showObject: function(snapshotObjectId, viewName)
     {
         var heapProfiles = this.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
         for (var i = 0; i < heapProfiles.length; i++) {
@@ -594,9 +595,7 @@ WebInspector.ProfilesPanel.prototype = {
             // TODO: allow to choose snapshot if there are several options.
             if (profile.maxJSObjectId >= snapshotObjectId) {
                 this.showProfile(profile);
-                profile._profileView.changeView("Summary", function() {
-                    if (profile._profileView.dataGrid !==  profile._profileView.constructorsDataGrid)
-                        return;
+                profile._profileView.changeView(viewName, function() {
                     profile._profileView.dataGrid.highlightObjectByHeapSnapshotId(snapshotObjectId);
                 });
                 break;
@@ -1098,20 +1097,21 @@ WebInspector.RevealInHeapSnapshotContextMenuProvider.prototype = {
         if (!heapProfiles.length)
             return;
 
-        function revealInSummaryView()
+        function revealInView(viewName)
         {
-            ProfilerAgent.getHeapObjectId(objectId, didReceiveHeapObjectId.bind(this));
+            ProfilerAgent.getHeapObjectId(objectId, didReceiveHeapObjectId.bind(this, viewName));
         }
 
-        function didReceiveHeapObjectId(error, result)
+        function didReceiveHeapObjectId(viewName, error, result)
         {
             if (WebInspector.inspectorView.currentPanel() !== WebInspector.panels.profiles)
                 return;
             if (!error)
-                WebInspector.panels.profiles.showObject(result);
+                WebInspector.panels.profiles.showObject(result, viewName);
         }
 
-        contextMenu.appendItem(WebInspector.UIString("Reveal in Summary View"), revealInSummaryView.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Reveal in Dominators View"), revealInView.bind(this, "Dominators"));
+        contextMenu.appendItem(WebInspector.UIString("Reveal in Summary View"), revealInView.bind(this, "Summary"));
     }
 }
 

@@ -427,6 +427,11 @@ WebInspector.HeapSnapshotProxy.prototype = {
         this.callMethod(callback, "nodeClassName", snapshotObjectId);
     },
 
+    dominatorIdsForNode: function(nodeIndex, callback)
+    {
+        this.callMethod(callback, "dominatorIdsForNode", nodeIndex);
+    },
+
     createEdgesProvider: function(nodeIndex, filter)
     {
         return this.callFactoryMethod(null, "createEdgesProvider", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, filter);

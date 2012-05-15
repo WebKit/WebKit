@@ -425,7 +425,8 @@ InspectorTest.createHeapSnapshot = function(instanceCount, firstId)
         },
         "nodes": nodes,
         "edges": edges,
-        "strings": ["", "A", "B", "a", "(GC roots)"]
+        "strings": ["", "A", "B", "a", "(GC roots)"],
+        maxJSObjectId: nextId - 1
     };
     result.snapshot.node_count = result.nodes.length / result.snapshot.meta.node_fields.length;
     result.snapshot.edge_count = result.edges.length / result.snapshot.meta.edge_fields.length;
@@ -511,10 +512,11 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
 {
     callback = InspectorTest.safeWrap(callback);
     var uid = InspectorTest._nextUid++;
-    var profile = { typeId: WebInspector.HeapSnapshotProfileType.TypeId, uid: uid, title: UserInitiatedProfileName + "." + uid };
+    var snapshot = generator();
+    var profile = new WebInspector.HeapProfileHeader(UserInitiatedProfileName + "." + uid, uid, snapshot.maxJSObjectId);
+    delete snapshot.maxJSObjectId;
     function pushGeneratedSnapshot(typeId, uid)
     {
-        var snapshot = generator();
         snapshot.snapshot.typeId = profile.typeId;
         snapshot.snapshot.title = profile.title;
         snapshot.snapshot.uid = profile.uid;

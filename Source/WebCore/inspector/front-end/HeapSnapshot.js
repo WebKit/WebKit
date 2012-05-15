@@ -1286,13 +1286,34 @@ WebInspector.HeapSnapshot.prototype = {
         return diff;
     },
 
-    nodeClassName: function(snapshotObjectId)
+    _nodeForSnapshotObjectId: function(snapshotObjectId)
     {
         for (var it = this._allNodes; it.hasNext(); it.next()) {
             if (it.node.id === snapshotObjectId)
-                return it.node.className;
+                return it.node;
         }
         return null;
+    },
+
+    nodeClassName: function(snapshotObjectId)
+    {
+        var node = this._nodeForSnapshotObjectId(snapshotObjectId);
+        if (node)
+            return node.className;
+        return null;
+    },
+
+    dominatorIdsForNode: function(snapshotObjectId)
+    {
+        var node = this._nodeForSnapshotObjectId(snapshotObjectId);
+        if (!node)
+            return null;
+        var result = [];
+        while (!node.isRoot) {
+            result.push(node.id);
+            node.nodeIndex = node.dominatorIndex;
+        }
+        return result;
     },
 
     _parseFilter: function(filter)

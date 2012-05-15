@@ -97,6 +97,23 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         return num.toFixed(0) + "\u2009%"; // \u2009 is a thin space.
     },
 
+    /**
+     * @param {number} nodePosition
+     */
+    childForPosition: function(nodePosition)
+    {
+        var indexOfFirsChildInRange = 0;
+        for (var i = 0; i < this._retrievedChildrenRanges.length; i++) {
+           var range = this._retrievedChildrenRanges[i];
+           if (range.from <= nodePosition && nodePosition < range.to) {
+               var childIndex = indexOfFirsChildInRange + nodePosition - range.from;
+               return this.children[childIndex];
+           }
+           indexOfFirsChildInRange += range.to - range.from + 1;
+        }
+        return null;
+    },
+
     _createValueCell: function(columnIdentifier)
     {
         var cell = document.createElement("td");
@@ -126,6 +143,14 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             this._populateChildren();
         }
         this._provider.sortAndRewind(this.comparator(), sorted.bind(this));
+    },
+
+    expandWithoutPopulate: function(callback)
+    {
+        // Make sure default _populate won't be invoked.
+        this.removeEventListener("populate", this._populate, this);
+        this.expand();
+        this._provider.sortAndRewind(this.comparator(), callback);
     },
 
     /**
@@ -170,7 +195,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             if (!this._retrievedChildrenRanges.length) {
                 if (items.startPosition > 0) {
                     this._retrievedChildrenRanges.push({from: 0, to: 0});
-                    insertShowMoreButton.call(this, 0, items.startPosition, insertionIndex);
+                    insertShowMoreButton.call(this, 0, items.startPosition, insertionIndex++);
                 }
                 this._retrievedChildrenRanges.push({from: items.startPosition, to: items.endPosition});
                 for (var i = 0, l = items.length; i < l; ++i)
@@ -291,6 +316,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
             this._instanceCount = 0;
             this._populateChildren(0, instanceCount, afterPopulate.bind(this));
         }
+
         this._provider.sortAndRewind(this.comparator(), afterSort.bind(this));
     }
 };
@@ -970,6 +996,35 @@ WebInspector.HeapSnapshotDominatorObjectNode = function(tree, node)
 };
 
 WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
+    /**
+     * @param {number} snapshotObjectId
+     * @param {function(?WebInspector.HeapSnapshotDominatorObjectNode)} callback
+     */
+    retrieveChildBySnapshotObjectId: function(snapshotObjectId, callback)
+    {
+        function didExpand()
+        {
+            this._provider.nodePosition(snapshotObjectId, didGetNodePosition.bind(this));
+        }
+
+        function didGetNodePosition(nodePosition)
+        {
+            if (nodePosition === -1) {
+                this.collapse();
+                callback(null);
+            } else
+                this._populateChildren(nodePosition, null, didPopulateChildren.bind(this, nodePosition));
+        }
+
+        function didPopulateChildren(nodePosition)
+        {
+            var child = this.childForPosition(nodePosition);
+            callback(child);
+        }
+
+        this.expandWithoutPopulate(didExpand.bind(this));
+    },
+
     _createChildNode: function(item)
     {
         return new WebInspector.HeapSnapshotDominatorObjectNode(this._dataGrid, item);

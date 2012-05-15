@@ -615,6 +615,7 @@ WebInspector.HeapSnapshotDominatorsDataGrid = function()
         retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true }
     };
     WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
+    this._objectIdToSelect = null;
 }
 
 WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
@@ -635,11 +636,55 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
         var fakeNode = { nodeIndex: this.snapshot.rootNodeIndex };
         this.setRootNode(new WebInspector.HeapSnapshotDominatorObjectNode(this, fakeNode));
         this.rootNode().sort();
+
+        if (this._objectIdToSelect) {
+            this.highlightObjectByHeapSnapshotId(this._objectIdToSelect);
+            this._objectIdToSelect = null;
+        }
     },
 
     sortingChanged: function()
     {
         this.rootNode().sort();
+    },
+
+    /**
+     * @override
+     * @param {ProfilerAgent.HeapSnapshotObjectId} id
+     */
+    highlightObjectByHeapSnapshotId: function(id)
+    {
+        if (!this.snapshot) {
+            this._objectIdToSelect = id;
+            return;
+        }
+
+        function didGetDominators(dominatorIds)
+        {
+            if (!dominatorIds) {
+                WebInspector.log(WebInspector.UIString("Cannot find corresponding heap snapshot node"));
+                return;
+            }
+            var dominatorNode = this.rootNode();
+            expandNextDominator.call(this, dominatorIds, dominatorNode);
+        }
+
+        function expandNextDominator(dominatorIds, dominatorNode)
+        {
+            if (!dominatorNode) {
+                console.error("Cannot find dominator node");
+                return;
+            }
+            if (!dominatorIds.length) {
+                this.highlightNode(dominatorNode);
+                dominatorNode.element.scrollIntoViewIfNeeded(true);
+                return;
+            }
+            var snapshotObjectId = dominatorIds.pop();
+            dominatorNode.retrieveChildBySnapshotObjectId(snapshotObjectId, expandNextDominator.bind(this, dominatorIds));
+        }
+
+        this.snapshot.dominatorIdsForNode(parseInt(id, 10), didGetDominators.bind(this));
     }
 };
 

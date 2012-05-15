@@ -1,3 +1,23 @@
+2012-05-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: implement "Reveal in Dominators view" context menu action
+        https://bugs.webkit.org/show_bug.cgi?id=86455
+
+        Reviewed by Pavel Feldman.
+
+        Test that an object can be revealed in the heap snapshot dominators view
+        by its heap snapshot object id.
+
+        * inspector/profiler/heap-snapshot-reveal-in-dominators-view-expected.txt: Added.
+        * inspector/profiler/heap-snapshot-reveal-in-dominators-view.html: Added.
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest):
+        (initialize_HeapSnapshotTest.):
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-05-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, marking plugins/npruntime/delete-plugin-within-getProperty.html
