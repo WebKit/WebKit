@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+    <link rel="stylesheet" href="../js/resources/js-test-style.css">
+    <script src="../js/resources/js-test-pre.js"></script>
+ </head>
+ <body>
+    <div id="description"></div>
+    <div id="console"></div>
+<script>
+description("Test URL methods with null arguments.");
+
+shouldBe("webkitURL.createObjectURL(null)", "null");
+evalAndLog("webkitURL.revokeObjectURL(null)");
+var successfullyParsed = true;
+
+</script>
+    <script src="../js/resources/js-test-post.js"></script>
+ </body>
+</html>

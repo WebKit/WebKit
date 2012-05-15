@@ -15,7 +15,7 @@ var t = setInterval(function(){
     if (!location.hash)
         return;
     var blobURL = location.hash.substr(1);
-    if (blobURL == "undefined")
+    if (blobURL == "null")
         log("PASS: no blob URL is created");
     else
         log("FAIL: created " + blobURL);

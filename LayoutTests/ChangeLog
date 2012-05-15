@@ -1,3 +1,19 @@
+2012-05-15  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [File API] URL methods handling null arguments
+        https://bugs.webkit.org/show_bug.cgi?id=69693
+
+        Reviewed by Adam Barth.
+
+        URL.createObjectURL must return null instead of undefined
+        when a null blob is given as argument. Updated old test that
+        used undefined explicitly. New test by Mark Pilgrim (rebaselined
+        after fix).
+
+        * fast/files/url-null-expected.txt: Added.
+        * fast/files/url-null.html: Added.
+        * http/tests/fileapi/create-blob-url-from-data-url.html:
+
 2012-05-15  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Compute the best target node on a GestureTap event

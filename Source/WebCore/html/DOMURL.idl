@@ -34,9 +34,9 @@ module html {
         InterfaceName=URL
     ] DOMURL {
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
-        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Undefined] static DOMString createObjectURL(in MediaStream stream);
+        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaStream stream);
 #endif
-        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Undefined] static DOMString createObjectURL(in Blob blob);
+        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in Blob blob);
         [CallWith=ScriptExecutionContext] static void revokeObjectURL(in DOMString url);
     };
 }
