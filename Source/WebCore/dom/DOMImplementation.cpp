@@ -405,7 +405,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
 #if ENABLE(VIDEO)
      // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
     // Key system is not applicable here.
-    DOMImplementationSupportsTypeClient client(frame->settings() && frame->settings()->needsSiteSpecificQuirks(), url.host());
+    DOMImplementationSupportsTypeClient client(frame && frame->settings() && frame->settings()->needsSiteSpecificQuirks(), url.host());
     if (MediaPlayer::supportsType(ContentType(type), String(), &client))
          return MediaDocument::create(frame, url);
 #endif
