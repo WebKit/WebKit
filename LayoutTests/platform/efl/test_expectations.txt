@@ -399,7 +399,7 @@ WONTFIX DEBUG : perf/array-binary-search.html = FAIL PASS
 WONTFIX DEBUG : perf/mouse-event.html = FAIL PASS
 
 // Flaky tests.
-BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT PASS
+BUGWK85603 : fast/forms/textarea-placeholder-set-attribute.html = TEXT IMAGE PASS
 BUGWK59801 : fast/workers/storage/use-same-database-in-page-and-workers.html = FAIL PASS
 BUGWK83878 : media/track/track-mode.html = TEXT PASS
 BUGWK85180 : media/audio-delete-while-step-button-clicked.html = TEXT PASS
@@ -413,6 +413,7 @@ BUGWK86079 : http/tests/misc/link-rel-icon-beforeload.html = TEXT PASS
 BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS
 BUGWK86082 : security/block-test.html = TEXT PASS
 BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
+BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
 
 // Tests imported in r116658
 BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
