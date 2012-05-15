@@ -420,6 +420,10 @@ QNetworkReply* QNetworkReplyHandler::release()
 
 static bool shouldIgnoreHttpError(QNetworkReply* reply, bool receivedData)
 {
+    // An HEAD XmlHTTPRequest shouldn't be marked as failure for HTTP errors.
+    if (reply->operation() == QNetworkAccessManager::HeadOperation)
+        return true;
+
     int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
     if (httpStatusCode == 401 || httpStatusCode == 407)
