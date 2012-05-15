@@ -43,7 +43,7 @@ namespace WebCore {
     public:
         friend PageCache* pageCache();
         
-        static bool canCache(Page*);
+        bool canCache(Page*) const;
 
         void setCapacity(int); // number of pages to cache
         int capacity() { return m_capacity; }

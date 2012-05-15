@@ -1,3 +1,25 @@
+2012-05-15  Jessie Berlin  <jberlin@apple.com>
+
+        WKContextSetCacheModel(contextref, kWKCacheModelDocumentViewer) doesn't prevent pages from
+        going into the PageCache.
+        https://bugs.webkit.org/show_bug.cgi?id=85891
+
+        Reviewed by Brady Eidson.
+
+        Set the cache model in DOMWindowExtensionNoCache so that the page cache is not used. This is
+        better than using pages with unload handlers because we may find a way to make pages with
+        unload handlers cacheable in the future.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Remove simple-iframe-unload.html and simple-unload.html, since they are no longer used.
+
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache.cpp:
+        (TestWebKitAPI::TEST):
+        Set the cache model to kWKCacheModelDocumentViewer.
+
+        * TestWebKitAPI/Tests/WebKit2/simple-iframe-unload.html: Removed.
+        * TestWebKitAPI/Tests/WebKit2/simple-unload.html: Removed.
+
 2012-05-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add infra for testing double-tap to zoom functionality etc

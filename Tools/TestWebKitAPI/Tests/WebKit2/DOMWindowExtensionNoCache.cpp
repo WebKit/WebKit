@@ -91,20 +91,20 @@ TEST(WebKit2, DOMWindowExtensionNoCache)
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
     WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient);
 
-    // FIXME 85891: Instead of using unload handlers to prevent use of the page cache, set the
-    // cache model to kWKCacheModelDocumentView, which sets page cache capacity to 0.
+    // Disable the page cache.
+    WKContextSetCacheModel(context.get(), kWKCacheModelDocumentViewer);
 
     PlatformWebView webView(context.get(), pageGroup.get());
 
     // Make sure the extensions for each frame are installed in each world.
-    WKRetainPtr<WKURLRef> url1(AdoptWK, Util::createURLForResource("simple-iframe-unload", "html"));
+    WKRetainPtr<WKURLRef> url1(AdoptWK, Util::createURLForResource("simple-iframe", "html"));
     WKPageLoadURL(webView.page(), url1.get());
 
     Util::run(&finished);
     finished = false;
 
     // Make sure those first 4 extensions are destroyed, and 2 new ones are installed.
-    WKRetainPtr<WKURLRef> url2(AdoptWK, Util::createURLForResource("simple-unload", "html"));
+    WKRetainPtr<WKURLRef> url2(AdoptWK, Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url2.get());
 
     Util::run(&finished);
