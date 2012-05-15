@@ -1,3 +1,12 @@
+2012-05-15  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [DRT] Unskip passing tests related to computedStyleIncludingVisitedInfo and display
+        https://bugs.webkit.org/show_bug.cgi?id=86473
+
+        Unreviewed gardening, unskip now passing tests.
+
+        * platform/efl/Skipped:
+
 2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] css1/box_properties/acid_test.html fails in release mode on 32 bit Linux
