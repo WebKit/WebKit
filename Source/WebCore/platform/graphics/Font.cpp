@@ -93,7 +93,7 @@ Font::Font(const Font& other)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
     , m_isPlatformFont(other.m_isPlatformFont)
-    , m_needsTranscoding(fontTranscoder().needsTranscoding(other.m_fontDescription))
+    , m_needsTranscoding(other.m_needsTranscoding)
 {
 }
 
