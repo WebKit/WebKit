@@ -63,6 +63,7 @@
 #include "PlatformCursor.h"
 #include "ReferrerPolicy.h"
 #include "Settings.h"
+#include "SpeechRecognitionError.h"
 #include "StorageInfo.h"
 #include "TextAffinity.h"
 #include "TextChecking.h"
@@ -92,6 +93,7 @@
 #include "WebPageVisibilityState.h"
 #include "WebScrollbar.h"
 #include "WebSettings.h"
+#include "WebSpeechRecognizerClient.h"
 #include "WebStorageQuotaError.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextAffinity.h"
@@ -561,6 +563,18 @@ COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateConnected
 COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateCompleted, PeerConnection00::ICE_COMPLETED);
 COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateFailed, PeerConnection00::ICE_FAILED);
 COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateClosed, PeerConnection00::ICE_CLOSED);
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::OtherError, SpeechRecognitionError::OTHER);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::NoSpeechError, SpeechRecognitionError::NO_SPEECH);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::AbortedError, SpeechRecognitionError::ABORTED);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::AudioCaptureError, SpeechRecognitionError::AUDIO_CAPTURE);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::NetworkError, SpeechRecognitionError::NETWORK);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::NotAllowedError, SpeechRecognitionError::NOT_ALLOWED);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::ServiceNotAllowedError, SpeechRecognitionError::SERVICE_NOT_ALLOWED);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::BadGrammarError, SpeechRecognitionError::BAD_GRAMMAR);
+COMPILE_ASSERT_MATCHING_ENUM(WebSpeechRecognizerClient::LanguageNotSupportedError, SpeechRecognitionError::LANGUAGE_NOT_SUPPORTED);
 #endif
 
 COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyAlways, ReferrerPolicyAlways);

@@ -37,6 +37,18 @@ class WebString;
 // A client for reporting progress on speech recognition for a specific handle.
 class WebSpeechRecognizerClient {
 public:
+    enum ErrorCode {
+        OtherError = 0,
+        NoSpeechError = 1,
+        AbortedError = 2,
+        AudioCaptureError = 3,
+        NetworkError = 4,
+        NotAllowedError = 5,
+        ServiceNotAllowedError = 6,
+        BadGrammarError = 7,
+        LanguageNotSupportedError = 8
+    };
+
     // These methods correspond to the events described in the spec:
     // http://speech-javascript-api-spec.googlecode.com/git/speechapi.html#speechreco-events
 
@@ -74,8 +86,7 @@ public:
     virtual void didDeleteResult(const WebSpeechRecognitionHandle&, unsigned resultIndex, const WebVector<WebSpeechRecognitionResult>& resultHistory) = 0;
 
     // To be called when a speech recognition error occurs.
-    // FIXME: Introduce an enum for the error code.
-    virtual void didReceiveError(const WebSpeechRecognitionHandle&, const WebString& message, unsigned short code) = 0;
+    virtual void didReceiveError(const WebSpeechRecognitionHandle&, const WebString& message, ErrorCode) = 0;
 
     // To be called when the recognizer has begun to listen to the audio with
     // the intention of recognizing.

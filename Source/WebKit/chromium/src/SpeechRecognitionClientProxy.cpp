@@ -136,7 +136,7 @@ void SpeechRecognitionClientProxy::didDeleteResult(const WebSpeechRecognitionHan
     recognition->didDeleteResult(resultIndex, SpeechRecognitionResultList::create(resultHistoryVector));
 }
 
-void SpeechRecognitionClientProxy::didReceiveError(const WebSpeechRecognitionHandle& handle, const WebString& message, unsigned short code)
+void SpeechRecognitionClientProxy::didReceiveError(const WebSpeechRecognitionHandle& handle, const WebString& message, WebSpeechRecognizerClient::ErrorCode code)
 {
     RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
     SpeechRecognitionError::Code errorCode = static_cast<SpeechRecognitionError::Code>(code);
