@@ -569,12 +569,6 @@ canvas/philip/tests/2d.drawImage.outsidesource.html
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
 fast/harness/sample-fail-mismatch-reftest.html
 
-# USE(ZLIB) is disabled
-http/tests/websocket/tests/hybi/compressed-control-frame.html
-http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html
-http/tests/websocket/tests/hybi/deflate-frame-parameter.html
-http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
-
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------

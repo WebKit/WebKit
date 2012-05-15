@@ -1,3 +1,12 @@
+2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip test which require USE(ZLIB). It has been enabled for EFL port
+        since r110896).
+
+        * platform/efl/Skipped:
+
 2012-05-15  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [DRT] Unskip passing tests related to computedStyleIncludingVisitedInfo and display
