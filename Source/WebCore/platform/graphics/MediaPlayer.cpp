@@ -712,7 +712,7 @@ void MediaPlayer::paintCurrentFrameInContext(GraphicsContext* p, const IntRect& 
     m_private->paintCurrentFrameInContext(p, r);
 }
 
-MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentType, const String& keySystem)
+MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentType, const String& keySystem, const MediaPlayerSupportsTypeClient* client)
 {
     String type = contentType.type().lower();
     // The codecs string is not lower-cased because MP4 values are case sensitive
@@ -728,6 +728,21 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentTy
     MediaPlayerFactory* engine = bestMediaEngineForTypeAndCodecs(type, typeCodecs, system);
     if (!engine)
         return IsNotSupported;
+
+#if PLATFORM(MAC)
+    // YouTube will ask if the HTMLMediaElement canPlayType video/webm, then
+    // video/x-flv, then finally video/mp4, and will then load a URL of the first type
+    // in that list which returns "probably". When Perian is installed,
+    // MediaPlayerPrivateQTKit claims to support both video/webm and video/x-flv, but
+    // due to a bug in Perian, loading media in these formats will sometimes fail on
+    // slow connections. <https://bugs.webkit.org/show_bug.cgi?id=86409>
+    if (client && client->mediaPlayerNeedsSiteSpecificHacks()) {
+        String host = client->mediaPlayerDocumentHost();
+        if ((host.endsWith(".youtube.com", false) || equalIgnoringCase("youtube.com", host))
+            && (contentType.type().startsWith("video/webm", false) || contentType.type().startsWith("video/x-flv", false)))
+            return IsNotSupported;
+    }
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     return engine->supportsTypeAndCodecs(type, typeCodecs, system);
