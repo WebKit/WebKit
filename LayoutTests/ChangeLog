@@ -1,3 +1,13 @@
+2012-05-15  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due shadow tree parent confusion in SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=84248
+ 
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/foreignObject/viewport-foreignobject-crash-expected.html: Added.
+        * svg/foreignObject/viewport-foreignobject-crash.html: Added.
+
 2012-05-15  Lauro Neto  <lauro.neto@openbossa.org>
 
         [File API] URL methods handling null arguments
