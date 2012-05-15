@@ -1206,6 +1206,9 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase, renderer());
 
+        if (m_usingTiledCacheLayer)
+            m_owningLayer->renderer()->frame()->view()->setLastPaintTime(currentTime());
+
         InspectorInstrumentation::didPaint(cookie);
     } else if (graphicsLayer == layerForHorizontalScrollbar()) {
         paintScrollbar(m_owningLayer->horizontalScrollbar(), context, clip);
