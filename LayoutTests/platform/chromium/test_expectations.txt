@@ -3768,6 +3768,10 @@ BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-ove
 
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
+BUGWK86433 : http/tests/security/contentSecurityPolicy/script-src-redirect.html = TEXT PASS
+BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-events.html = TIMEOUT
+BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
+
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
 // Caused by V8 roll to 3.11.0
