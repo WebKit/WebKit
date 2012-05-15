@@ -1,3 +1,23 @@
+2012-05-15  Andreas Kling  <kling@webkit.org>
+
+        Deep copy PluginModuleInfo before passing across thread boundary.
+        <http://webkit.org/b/86491>
+        <rdar://problem/11451178>
+
+        Reviewed by Anders Carlsson.
+
+        Since the vector of PluginModuleInfo objects returned by PluginInfoStore::plugins()
+        can end up being passed to another thread, we should clone it to make sure it's
+        safe to do so.
+
+        No new tests, speculative use-after-free fix.
+
+        * Shared/Plugins/PluginModuleInfo.h:
+        (PluginModuleInfo):
+        (WebKit::PluginModuleInfo::isolatedCopy):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::plugins):
+
 2012-05-15  Andy Estes  <aestes@apple.com>
 
         Guard Netscape plug-in code with ENABLE(NETSCAPE_PLUGIN_API)

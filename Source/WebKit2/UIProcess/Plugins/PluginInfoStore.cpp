@@ -115,7 +115,13 @@ Vector<PluginModuleInfo> PluginInfoStore::plugins()
 {
     MutexLocker locker(m_pluginsLock);
     loadPluginsIfNecessary();
-    return m_plugins;
+
+    // Let the copy begin!
+    Vector<PluginModuleInfo> infos;
+    for (unsigned i = 0; i < m_plugins.size(); ++i)
+        infos.append(m_plugins[i].isolatedCopy());
+
+    return infos;
 }
 
 PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) const

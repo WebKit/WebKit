@@ -33,6 +33,16 @@ struct MimeClassInfo {
     String type;
     String desc;
     Vector<String> extensions;
+
+    MimeClassInfo isolatedCopy()
+    {
+        MimeClassInfo clone;
+        clone.type = type.isolatedCopy();
+        clone.desc = desc.isolatedCopy();
+        for (unsigned i = 0; i < extensions.size(); ++i)
+            clone.extensions.append(extensions[i].isolatedCopy());
+        return clone;
+    }
 };
 
 inline bool operator==(const MimeClassInfo& a, const MimeClassInfo& b)
@@ -45,6 +55,17 @@ struct PluginInfo {
     String file;
     String desc;
     Vector<MimeClassInfo> mimes;
+
+    PluginInfo isolatedCopy()
+    {
+        PluginInfo clone;
+        clone.name = name.isolatedCopy();
+        clone.file = file.isolatedCopy();
+        clone.desc = desc.isolatedCopy();
+        for (unsigned i = 0; i < mimes.size(); ++i)
+            clone.mimes.append(mimes[i].isolatedCopy());
+        return clone;
+    }
 };
 
 // FIXME: merge with PluginDatabase in the future
