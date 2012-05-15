@@ -29,6 +29,10 @@
 #include "TextStream.h"
 #include <wtf/Uint8ClampedArray.h>
 
+#if HAVE(ARM_NEON_INTRINSICS)
+#include <arm_neon.h>
+#endif
+
 namespace WebCore {
 
 FilterEffect::FilterEffect(Filter* filter)
@@ -131,6 +135,26 @@ void FilterEffect::forceValidPreMultipliedPixels()
 
     // We must have four bytes per pixel, and complete pixels
     ASSERT(!(pixelArrayLength % 4));
+
+#if HAVE(ARM_NEON_INTRINSICS)
+    if (pixelArrayLength >= 64) {
+        unsigned char* lastPixel = pixelData + (pixelArrayLength & ~0x3f);
+        do {
+            // Increments pixelData by 64.
+            uint8x16x4_t sixteenPixels = vld4q_u8(pixelData);
+            sixteenPixels.val[0] = vminq_u8(sixteenPixels.val[0], sixteenPixels.val[3]);
+            sixteenPixels.val[1] = vminq_u8(sixteenPixels.val[1], sixteenPixels.val[3]);
+            sixteenPixels.val[2] = vminq_u8(sixteenPixels.val[2], sixteenPixels.val[3]);
+            vst4q_u8(pixelData, sixteenPixels);
+            pixelData += 64;
+        } while (pixelData < lastPixel);
+
+        pixelArrayLength &= 0x3f;
+        if (!pixelArrayLength)
+            return;
+    }
+#endif
+
     int numPixels = pixelArrayLength / 4;
 
     // Iterate over each pixel, checking alpha and adjusting color components if necessary

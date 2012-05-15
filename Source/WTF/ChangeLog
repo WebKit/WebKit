@@ -1,3 +1,14 @@
+2012-05-15  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        NEONizing forceValidPreMultipliedPixels
+        https://bugs.webkit.org/show_bug.cgi?id=86468
+
+        Reviewed by Nikolas Zimmermann.
+
+        Allow to disable all intrinsics with a single macro.
+
+        * wtf/Platform.h:
+
 2012-05-14  Andy Estes  <aestes@apple.com>
 
         Add WTF_USE_APPKIT to differentiate platforms that use AppKit.framework from other Darwin platforms
