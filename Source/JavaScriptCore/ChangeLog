@@ -1,5 +1,25 @@
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116361
+
+    2012-05-07  Oliver Hunt  <oliver@apple.com>
+
+            LLInt doesn't check for Ropes when performing a character switch
+            https://bugs.webkit.org/show_bug.cgi?id=85837
+
+            Reviewed by Filip Pizlo.
+
+            Make LLint check if the scrutinee of a char switch is a rope, and if
+            so fall back to a slow case.
+
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            (LLInt):
+            * llint/LowLevelInterpreter32_64.asm:
+            * llint/LowLevelInterpreter64.asm:
+
+2012-05-15  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116367
 
     2012-05-07  Andy Estes  <aestes@apple.com>
