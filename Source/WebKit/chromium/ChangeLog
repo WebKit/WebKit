@@ -1,3 +1,13 @@
+2012-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Set the new PlatformWheelEvent member variables to sane defaults
+        https://bugs.webkit.org/show_bug.cgi?id=86542
+
+        Reviewed by Andreas Kling.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+
 2012-05-15  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Ensure animations get ticked at least once when added.
