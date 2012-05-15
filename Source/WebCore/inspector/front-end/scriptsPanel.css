@@ -174,7 +174,6 @@ button.status-bar-item.scripts-navigator-show-hide-button {
     margin: 3px 2px 2px 2px;
 }
 
-button.status-bar-item.scripts-navigator-show-hide-button.toggled-pinned,
 button.status-bar-item.scripts-navigator-show-hide-button.toggled-overlay
 {
     left: auto;
@@ -222,12 +221,8 @@ button.status-bar-item.scripts-navigator-show-hide-button.toggled-overlay
 }
 
 #scripts-editor-container-tabbed-pane .tabbed-pane-header-contents {
-    margin-left: 1px;
-    margin-right: 16px;
-}
-
-#scripts-editor-container-tabbed-pane.navigator-hidden .tabbed-pane-header-contents {
     margin-left: 20px;
+    margin-right: 36px;
 }
 
 #scripts-editor-container-tabbed-pane .tabbed-pane-header-tab {
@@ -247,4 +242,28 @@ button.status-bar-item.scripts-navigator-show-hide-button.toggled-overlay
 
 .function-popover-title .function-name {
     font-weight: bold;
+}
+
+button.status-bar-item.scripts-debugger-show-hide-button {
+    position: absolute;
+    top: 0;
+    right: 16px;
+    background-image: none;
+    height: 16px;
+    width: 16px;
+    margin: 3px 2px 2px 2px;
+}
+
+.status-bar-item.scripts-debugger-show-hide-button > .glyph {
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-mask-position: 0 0;
+    -webkit-mask-image: url(Images/navigatorShowHideButton.png);
+}
+
+.status-bar-item.scripts-debugger-show-hide-button.toggled-shown > .glyph {
+    -webkit-mask-position: 0 -16px;
+}
+
+.status-bar-item.scripts-debugger-show-hide-button.toggled-hidden > .glyph {
+    -webkit-mask-position: -16px -16px;
 }

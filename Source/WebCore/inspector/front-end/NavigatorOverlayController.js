@@ -48,7 +48,7 @@ WebInspector.NavigatorOverlayController = function(panel, parentSplitView, navig
     this._navigatorShowHideButton = new WebInspector.StatusBarButton(WebInspector.UIString("Hide navigator"), "scripts-navigator-show-hide-button", 3);
     this._navigatorShowHideButton.state = "pinned";
     this._navigatorShowHideButton.addEventListener("click", this._toggleNavigator, this);
-    this._navigatorView.element.appendChild(this._navigatorShowHideButton.element);
+    this._editorView.element.appendChild(this._navigatorShowHideButton.element);
 
     WebInspector.settings.navigatorHidden = WebInspector.settings.createSetting("navigatorHidden", true);
     if (WebInspector.settings.navigatorHidden.get())
@@ -106,6 +106,7 @@ WebInspector.NavigatorOverlayController.prototype = {
 
         this._editorView.element.removeStyleClass("navigator-hidden");
         this._navigatorSidebarResizeWidgetElement.removeStyleClass("hidden");
+        this._editorView.element.appendChild(this._navigatorShowHideButton.element);
 
         this._innerHideNavigatorOverlay();
         this._parentSplitView.showSidebarElement();

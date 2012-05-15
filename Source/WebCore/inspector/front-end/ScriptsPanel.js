@@ -36,7 +36,8 @@ WebInspector.ScriptsPanel = function(presentationModel)
 
     WebInspector.settings.pauseOnExceptionStateString = WebInspector.settings.createSetting("pauseOnExceptionStateString", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
     WebInspector.settings.navigatorWasOnceHidden = WebInspector.settings.createSetting("navigatorWasOnceHidden", false);
-
+    WebInspector.settings.debuggerSidebarHidden = WebInspector.settings.createSetting("debuggerSidebarHidden", false);
+    
     this._presentationModel = presentationModel;
     new WebInspector.PresentationConsoleMessageHelper();
 
@@ -151,6 +152,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
 
     this._debuggerEnabled = !Capabilities.debuggerCausesRecompilation;
+    this._installDebuggerSidebarController();
 
     this._sourceFramesByUISourceCode = new Map();
     this._reset(false);
@@ -317,6 +319,8 @@ WebInspector.ScriptsPanel.prototype = {
             details.callFrames[0].createLiveLocation(didGetUILocation.bind(this));
         }
 
+        this._showDebuggerSidebar();
+        this._toggleDebuggerSidebarButton.disabled = true;
         window.focus();
         InspectorFrontendHost.bringToFront();
     },
@@ -328,6 +332,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._stepping = false;
 
         this._clearInterface();
+        this._toggleDebuggerSidebarButton.disabled = false;
     },
 
     _debuggerWasEnabled: function()
@@ -927,6 +932,46 @@ WebInspector.ScriptsPanel.prototype = {
     _showJavaScriptOutlineDialog: function()
     {
          WebInspector.JavaScriptOutlineDialog.show(this.visibleView, this.visibleView);
+    },
+
+    _installDebuggerSidebarController: function()
+    {
+        this._toggleDebuggerSidebarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Hide debugger"), "scripts-debugger-show-hide-button", 3);
+        this._toggleDebuggerSidebarButton.state = "shown";
+        this._toggleDebuggerSidebarButton.addEventListener("click", clickHandler, this);
+
+        function clickHandler()
+        {
+            if (this._toggleDebuggerSidebarButton.state === "shown")
+                this._hideDebuggerSidebar();
+            else
+                this._showDebuggerSidebar();
+        }
+        this.editorView.element.appendChild(this._toggleDebuggerSidebarButton.element);
+
+        if (WebInspector.settings.debuggerSidebarHidden.get())
+            this._hideDebuggerSidebar();
+
+    },
+
+    _showDebuggerSidebar: function()
+    {
+        if (this._toggleDebuggerSidebarButton.state === "shown")
+            return;
+        this._toggleDebuggerSidebarButton.state = "shown";
+        this._toggleDebuggerSidebarButton.title = WebInspector.UIString("Hide debugger");
+        this.splitView.showSidebarElement();
+        WebInspector.settings.debuggerSidebarHidden.set(false);
+    },
+
+    _hideDebuggerSidebar: function()
+    {
+        if (this._toggleDebuggerSidebarButton.state === "hidden")
+            return;
+        this._toggleDebuggerSidebarButton.state = "hidden";
+        this._toggleDebuggerSidebarButton.title = WebInspector.UIString("Show debugger");
+        this.splitView.hideSidebarElement();
+        WebInspector.settings.debuggerSidebarHidden.set(true);
     }
 }
 
