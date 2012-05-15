@@ -1,3 +1,11 @@
+2012-05-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt][Wk2] Unskip passing svg/dynamic-updates tests after r95878.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] css1/box_properties/acid_test.html fails in release mode on 32 bit Linux

@@ -174,9 +174,6 @@ fast/text/zero-width-characters.html
 fast/url/anchor.html
 http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii.html
 
-# EventSender.mouseMoveTo is not yet supported
-svg/dynamic-updates
-
 # layoutTestController.ignoreDesktopNotificationPermissionRequests is unimplemented
 fast/notifications
 
