@@ -1,3 +1,11 @@
+2012-05-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Renegerate three pixel test results on Lion, so that the svg/ pixel tests pass with tolerance 0 again.
+
+        * platform/mac/svg/as-image/image-respects-pageScaleFactor-expected.png:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/mac/svg/hixie/mixed/003-expected.png:
+
 2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         Content Security Policy console error messages should include the violated directive.
