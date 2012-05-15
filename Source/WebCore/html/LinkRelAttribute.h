@@ -44,8 +44,10 @@ public:
     bool m_isDNSPrefetch;
 #if ENABLE(LINK_PREFETCH)
     bool m_isLinkPrefetch;
-    bool m_isLinkPrerender;
     bool m_isLinkSubresource;
+#endif
+#if ENABLE(LINK_PRERENDER)
+    bool m_isLinkPrerender;
 #endif
 
     LinkRelAttribute();

@@ -3607,6 +3607,11 @@
 		97F8E666151D4A4E00D2D181 /* WorkerContextNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */; };
 		9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9831AE49154225A200FE2644 /* ReferrerPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		984264F112D5280A000D88A4 /* LinkLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 984264EF12D5280A000D88A4 /* LinkLoaderClient.h */; };
+		9856F8CC1549E82400B04F3A /* Prerenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9856F8C81549E82400B04F3A /* Prerenderer.cpp */; };
+		9856F8CD1549E82400B04F3A /* Prerenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9856F8C91549E82400B04F3A /* Prerenderer.h */; };
+		9856F8CE1549E82400B04F3A /* PrerendererClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9856F8CA1549E82400B04F3A /* PrerendererClient.cpp */; };
+		9856F8CF1549E82400B04F3A /* PrerendererClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9856F8CB1549E82400B04F3A /* PrerendererClient.h */; };
+		9856F8D11549E84F00B04F3A /* PrerenderHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9856F8D01549E84F00B04F3A /* PrerenderHandle.h */; };
 		985BB96D13A94058007A0B69 /* LinkRelAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */; };
 		985BB96E13A94058007A0B69 /* LinkRelAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 985BB96C13A94058007A0B69 /* LinkRelAttribute.h */; };
 		98CE4326129E00BD005821DC /* LinkLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 98CE4325129E00BD005821DC /* LinkLoader.cpp */; };
@@ -10659,6 +10664,11 @@
 		97F8E663151D4A3F00D2D181 /* WorkerContextNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextNotifications.idl; path = notifications/WorkerContextNotifications.idl; sourceTree = "<group>"; };
 		9831AE49154225A200FE2644 /* ReferrerPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferrerPolicy.h; sourceTree = "<group>"; };
 		984264EF12D5280A000D88A4 /* LinkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoaderClient.h; sourceTree = "<group>"; };
+		9856F8C81549E82400B04F3A /* Prerenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Prerenderer.cpp; path = loader/Prerenderer.cpp; sourceTree = SOURCE_ROOT; };
+		9856F8C91549E82400B04F3A /* Prerenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prerenderer.h; path = loader/Prerenderer.h; sourceTree = SOURCE_ROOT; };
+		9856F8CA1549E82400B04F3A /* PrerendererClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PrerendererClient.cpp; path = loader/PrerendererClient.cpp; sourceTree = SOURCE_ROOT; };
+		9856F8CB1549E82400B04F3A /* PrerendererClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrerendererClient.h; path = loader/PrerendererClient.h; sourceTree = SOURCE_ROOT; };
+		9856F8D01549E84F00B04F3A /* PrerenderHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrerenderHandle.h; sourceTree = "<group>"; };
 		985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkRelAttribute.cpp; sourceTree = "<group>"; };
 		985BB96C13A94058007A0B69 /* LinkRelAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkRelAttribute.h; sourceTree = "<group>"; };
 		98CE4325129E00BD005821DC /* LinkLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkLoader.cpp; sourceTree = "<group>"; };
@@ -14142,6 +14152,10 @@
 				1A8F6BB40DB55CDC001DB794 /* ApplicationCacheGroup.h */,
 				24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */,
 				24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */,
+				9856F8C81549E82400B04F3A /* Prerenderer.cpp */,
+				9856F8C91549E82400B04F3A /* Prerenderer.h */,
+				9856F8CA1549E82400B04F3A /* PrerendererClient.cpp */,
+				9856F8CB1549E82400B04F3A /* PrerendererClient.h */,
 				1A8F6BB50DB55CDC001DB794 /* ApplicationCacheResource.cpp */,
 				1A8F6BB60DB55CDC001DB794 /* ApplicationCacheResource.h */,
 				1A2AAC560DC2A3B100A20D9A /* ApplicationCacheStorage.cpp */,
@@ -14933,6 +14947,7 @@
 				49E912A50EFAC906009D0CAF /* Animation.cpp */,
 				49E912A60EFAC906009D0CAF /* Animation.h */,
 				49E912A70EFAC906009D0CAF /* AnimationList.cpp */,
+				9856F8D01549E84F00B04F3A /* PrerenderHandle.h */,
 				49E912A80EFAC906009D0CAF /* AnimationList.h */,
 				0F580FAE149800D400FB5BD8 /* AnimationUtilities.h */,
 				49E912A90EFAC906009D0CAF /* TimingFunction.h */,
@@ -24885,6 +24900,9 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				9856F8CD1549E82400B04F3A /* Prerenderer.h in Headers */,
+				9856F8CF1549E82400B04F3A /* PrerendererClient.h in Headers */,
+				9856F8D11549E84F00B04F3A /* PrerenderHandle.h in Headers */,
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
 				71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */,
 				78D02BC6154A18DF00B62D05 /* CSSPropertyAnimation.h in Headers */,
@@ -27907,6 +27925,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				9856F8CC1549E82400B04F3A /* Prerenderer.cpp in Sources */,
+				9856F8CE1549E82400B04F3A /* PrerendererClient.cpp in Sources */,
 				FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */,
 				71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,

@@ -836,7 +836,6 @@ BUGWKGTK : fast/dom/HTMLLinkElement/prefetch.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-beforeload.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
-BUGWKGTK : fast/dom/HTMLLinkElement/prerender.html = FAIL
 BUGWKGTK : fast/dom/HTMLLinkElement/subresource.html = FAIL
 
 // Tests failing because the context menu is grabbing mouse events.

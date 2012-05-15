@@ -27062,6 +27062,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\Prerenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\Prerenderer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\PrerendererClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\PrerendererClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\ProgressTracker.cpp"
 				>
 			</File>
@@ -27943,6 +27959,10 @@
 			</File>
 			<File
 				RelativePath="..\platform\PopupMenuStyle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\PrerenderHandle.h"
 				>
 			</File>
 			<File

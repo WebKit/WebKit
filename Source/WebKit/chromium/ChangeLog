@@ -1,3 +1,35 @@
+2012-05-14  Gavin Peters  <gavinp@chromium.org>
+
+        Add Prerenderer, PrerenderHandle and a chromium interface for Prerendering.
+        https://bugs.webkit.org/show_bug.cgi?id=85005
+
+        Reviewed by Adam Barth.
+
+        The prerender case isn't quite a resource load, and using resource loading to
+        retrieve them has constrained the API, and unnecessarily complicated the loader.
+
+        The new Prerenderer and PrerenderHandle let <link rel=prerender...> elements signal
+        removal and unload to their platform.
+
+        * WebKit.gyp:
+        * public/WebView.h:
+        * src/PrerendererClientImpl.cpp: Copied from Source/WebCore/html/LinkRelAttribute.h.
+        (WebKit):
+        (WebKit::PrerendererClientImpl::PrerendererClientImpl):
+        (WebKit::PrerendererClientImpl::willAddPrerender):
+        * src/PrerendererClientImpl.h: Copied from Source/WebCore/html/LinkRelAttribute.h.
+        (WebCore):
+        (WebKit):
+        (PrerendererClientImpl):
+        * src/WebKit.cpp:
+        (WebKit::shutdown):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setPrerendererClient):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebKit):
+        (WebViewImpl):
+
 2012-05-14  Luke Macpherson  <macpherson@chromium.org>
 
         Introduce ENABLE_CSS_VARIABLES compile flag.

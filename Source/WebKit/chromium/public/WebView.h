@@ -107,9 +107,7 @@ public:
     virtual void setAutofillClient(WebAutofillClient*) = 0;
     virtual void setDevToolsAgentClient(WebDevToolsAgentClient*) = 0;
     virtual void setPermissionClient(WebPermissionClient*) = 0;
-    // FIXME: After the Prerendering API lands in chrome, remove this staging thunk
-    // for setPrerendererClient().
-    virtual void setPrerendererClient(WebPrerendererClient*) { }
+    virtual void setPrerendererClient(WebPrerendererClient*) = 0;
     virtual void setSpellCheckClient(WebSpellCheckClient*) = 0;
     virtual void addTextFieldDecoratorClient(WebTextFieldDecoratorClient*) = 0;
 

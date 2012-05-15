@@ -265,6 +265,8 @@ void HTMLLinkElement::removedFrom(Node* insertionPoint)
     if (!insertionPoint->inDocument())
         return;
 
+    m_linkLoader.released();
+
     if (m_isInShadowTree) {
         ASSERT(!m_sheet);
         return;

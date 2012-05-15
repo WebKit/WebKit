@@ -74,7 +74,6 @@ public:
 #endif
 #if ENABLE(LINK_PREFETCH)
         , LinkPrefetch
-        , LinkPrerender
         , LinkSubresource
 #endif
 #if ENABLE(VIDEO_TRACK)
@@ -150,7 +149,6 @@ public:
         return false
 #if ENABLE(LINK_PREFETCH)
             || type() == LinkPrefetch
-            || type() == LinkPrerender
             || type() == LinkSubresource
 #endif
             || type() == RawResource;

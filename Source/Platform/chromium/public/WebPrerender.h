@@ -41,29 +41,35 @@
 #include <wtf/PassRefPtr.h>
 #endif
 
+namespace WebCore {
+class Prerender;
+}
+
 namespace WebKit {
 
-// This thunk implementation of WebPrerender exists only for staging; this will allow
-// the Chromium side of the Prerendering API to land, and then later we can atomicly
-// switch WebKit to prerender, and finally remove the old phantom-request prerender
-// implementation from Chromium.
-// FIXME: Put the actual implementation here after the Chromium side of this API
-// lands.
 class WebPrerender {
 public:
     class ExtraData {
     public:
         virtual ~ExtraData() { }
     };
-    WebURL url() const { return WebURL(); }
-    WebString referrer() const { return WebString(); }
-    WebReferrerPolicy referrerPolicy() const { return WebReferrerPolicy(); }
-    void setExtraData(ExtraData*) { }
-    const ExtraData* extraData() const { return 0; }
+
+#if WEBKIT_IMPLEMENTATION
+    explicit WebPrerender(PassRefPtr<WebCore::Prerender>);
+    ~WebPrerender();
+#endif
+
+    WEBKIT_EXPORT WebURL url() const;
+    WEBKIT_EXPORT WebString referrer() const;
+    WEBKIT_EXPORT WebReferrerPolicy referrerPolicy() const;
+
+    WEBKIT_EXPORT void setExtraData(ExtraData*);
+    WEBKIT_EXPORT const ExtraData* extraData() const;
 
 private:
-    WebPrerender() { }
-    ~WebPrerender() { }
+    WebPrerender();
+
+    WebPrivatePtr<WebCore::Prerender> m_private;
 };
 
 } // namespace WebKit

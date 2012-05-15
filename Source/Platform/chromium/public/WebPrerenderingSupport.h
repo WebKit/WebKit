@@ -37,25 +37,29 @@ namespace WebKit {
 
 class WebPrerender;
 
-// This thunk implementation of WebPrerenderingSupport exists only for staging; this will
-// allow the Chromium side of the Prerendering API to land, and then later we can atomicly
-// switch WebKit to prerender, and finally remove the old phantom-request prerender
-// implementation from Chromium.
-// FIXME: Put the actual implementation here after the Chromium side of this API
-// lands.
 class WebPrerenderingSupport {
 public:
-    static void initialize(WebPrerenderingSupport*) { }
-    static void shutdown() { }
-    static WebPrerenderingSupport* current() { return 0; }
+    WEBKIT_EXPORT static void initialize(WebPrerenderingSupport*);
+    WEBKIT_EXPORT static void shutdown();
+    WEBKIT_EXPORT static WebPrerenderingSupport* current();
 
-    virtual void add(const WebPrerender&) { }
-    virtual void cancel(const WebPrerender&) { }
-    virtual void abandon(const WebPrerender&) { }
+    // A prerender link element is added when it is inserted into a document.
+    virtual void add(const WebPrerender&) = 0;
+
+    // A prerender is canceled when it is removed from a document.
+    virtual void cancel(const WebPrerender&) = 0;
+
+    // A prerender is abandoned when it's navigated away from or suspended in the page cache. This
+    // is a weaker signal than cancel(), since the launcher hasn't indicated that the prerender isn't
+    // wanted, and we may end up using it after, for instance, a short redirect chain.
+    virtual void abandon(const WebPrerender&) = 0;
 
 protected:
     WebPrerenderingSupport() { }
     virtual ~WebPrerenderingSupport() { }
+
+private:
+    static WebPrerenderingSupport* s_platform;
 };
 
 } // namespace WebKit

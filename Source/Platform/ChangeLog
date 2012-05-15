@@ -1,3 +1,25 @@
+2012-05-14  Gavin Peters  <gavinp@chromium.org>
+
+        Add Prerenderer, PrerenderHandle and a chromium interface for Prerendering.
+        https://bugs.webkit.org/show_bug.cgi?id=85005
+
+        Reviewed by Adam Barth.
+
+        * Platform.gypi:
+        * chromium/public/WebPrerender.h:
+        (WebKit::WebPrerender::referrer):
+        (WebCore):
+        (WebPrerender):
+        * chromium/public/WebPrerenderingSupport.h:
+        (WebKit):
+        (WebPrerenderingSupport):
+        * chromium/public/WebURLRequest.h:
+        * chromium/src/WebPrerenderingSupport.cpp: Added.
+        (WebKit):
+        (WebKit::WebPrerenderingSupport::initialize):
+        (WebKit::WebPrerenderingSupport::shutdown):
+        (WebKit::WebPrerenderingSupport::current):
+
 2012-05-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r116812.

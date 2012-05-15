@@ -45,7 +45,6 @@ public:
         TargetIsWorker,
         TargetIsSharedWorker,
         TargetIsPrefetch,
-        TargetIsPrerender,
         TargetIsFavicon,
         TargetIsXHR,
         TargetIsTextTrack,

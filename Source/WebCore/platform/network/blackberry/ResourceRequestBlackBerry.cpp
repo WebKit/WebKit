@@ -86,8 +86,6 @@ static inline NetworkRequest::TargetType platformTargetTypeForRequest(const Reso
         return NetworkRequest::TargetIsImage;
     case ResourceRequest::TargetIsPrefetch:
         return NetworkRequest::TargetIsSubresource;
-    case ResourceRequest::TargetIsPrerender:
-        return NetworkRequest::TargetIsSubresource;
     case ResourceRequest::TargetIsXHR:
         return NetworkRequest::TargetIsSubresource;
     case ResourceRequest::TargetIsTextTrack:

@@ -93,6 +93,7 @@
             'chromium/public/WebThread.h',
             'chromium/public/WebThreadSafeData.h',
             'chromium/public/WebTransformationMatrix.h',
+            'chromium/public/WebPrerender.h',
             'chromium/public/WebURL.h',
             'chromium/public/WebURLError.h',
             'chromium/public/WebURLLoadTiming.h',
@@ -106,6 +107,7 @@
             'chromium/src/Platform.cpp',
             'chromium/src/WebCString.cpp',
             'chromium/src/WebFloatQuad.cpp',
+            'chromium/src/WebPrerenderingSupport.cpp',
             'chromium/src/WebString.cpp',
             'chromium/src/WebVideoFrame.cpp',
         ]

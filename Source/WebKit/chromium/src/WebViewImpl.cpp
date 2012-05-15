@@ -99,6 +99,7 @@
 #include "PointerLockController.h"
 #include "PopupContainer.h"
 #include "PopupMenuClient.h"
+#include "PrerendererClientImpl.h"
 #include "ProgressTracker.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
@@ -319,6 +320,11 @@ void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient)
 void WebViewImpl::setPermissionClient(WebPermissionClient* permissionClient)
 {
     m_permissionClient = permissionClient;
+}
+
+void WebViewImpl::setPrerendererClient(WebPrerendererClient* prerendererClient)
+{
+    providePrerendererClientTo(m_page.get(), new PrerendererClientImpl(prerendererClient));
 }
 
 void WebViewImpl::setSpellCheckClient(WebSpellCheckClient* spellCheckClient)

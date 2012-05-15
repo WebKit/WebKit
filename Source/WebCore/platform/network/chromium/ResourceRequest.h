@@ -53,7 +53,6 @@ namespace WebCore {
             TargetIsWorker,
             TargetIsSharedWorker,
             TargetIsPrefetch,
-            TargetIsPrerender,
             TargetIsFavicon,
             TargetIsXHR,
             TargetIsTextTrack,

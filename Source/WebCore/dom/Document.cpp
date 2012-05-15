@@ -207,6 +207,10 @@
 #include "NodeRareData.h"
 #endif
 
+#if ENABLE(LINK_PRERENDER)
+#include "Prerenderer.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -510,7 +514,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_markers = adoptPtr(new DocumentMarkerController);
 
     m_cachedResourceLoader = adoptPtr(new CachedResourceLoader(this));
-
+#if ENABLE(LINK_PRERENDER)
+    m_prerenderer = Prerenderer::create(this);
+#endif
     m_visuallyOrdered = false;
     m_bParsing = false;
     m_wellFormed = false;

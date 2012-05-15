@@ -73,8 +73,6 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
 #if ENABLE(LINK_PREFETCH)
         case CachedResource::LinkPrefetch:
             return ResourceLoadPriorityVeryLow;
-        case CachedResource::LinkPrerender:
-            return ResourceLoadPriorityVeryLow;
         case CachedResource::LinkSubresource:
             return ResourceLoadPriorityVeryLow;
 #endif
@@ -114,8 +112,6 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return ResourceRequest::TargetIsPrefetch;
-    case CachedResource::LinkPrerender:
-        return ResourceRequest::TargetIsPrerender;
     case CachedResource::LinkSubresource:
         return ResourceRequest::TargetIsSubresource;
 #endif
@@ -220,7 +216,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     }
 
 #if ENABLE(LINK_PREFETCH)
-    if (type() == CachedResource::LinkPrefetch || type() == CachedResource::LinkPrerender || type() == CachedResource::LinkSubresource)
+    if (type() == CachedResource::LinkPrefetch || type() == CachedResource::LinkSubresource)
         m_resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
     m_resourceRequest.setPriority(loadPriority());

@@ -88,8 +88,6 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return new CachedResource(request, CachedResource::LinkPrefetch);
-    case CachedResource::LinkPrerender:
-        return new CachedResource(request, CachedResource::LinkPrerender);
     case CachedResource::LinkSubresource:
         return new CachedResource(request, CachedResource::LinkSubresource);
 #endif
@@ -236,7 +234,7 @@ CachedResourceHandle<CachedSVGDocument> CachedResourceLoader::requestSVGDocument
 CachedResourceHandle<CachedResource> CachedResourceLoader::requestLinkResource(CachedResource::Type type, ResourceRequest& request, ResourceLoadPriority priority)
 {
     ASSERT(frame());
-    ASSERT(type == CachedResource::LinkPrefetch || type == CachedResource::LinkPrerender || type == CachedResource::LinkSubresource);
+    ASSERT(type == CachedResource::LinkPrefetch || type == CachedResource::LinkSubresource);
     return requestResource(type, request, String(), defaultCachedResourceOptions(), priority);
 }
 #endif
@@ -282,7 +280,6 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkPrerender:
     case CachedResource::LinkSubresource:
         // Prefetch cannot affect the current document.
 #endif
@@ -311,7 +308,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkPrerender:
     case CachedResource::LinkSubresource:
 #endif
 #if ENABLE(VIDEO_TRACK)
@@ -381,7 +377,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::RawResource:
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
-    case CachedResource::LinkPrerender:
     case CachedResource::LinkSubresource:
 #endif
         break;
