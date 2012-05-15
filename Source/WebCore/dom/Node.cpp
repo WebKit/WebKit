@@ -112,11 +112,6 @@
 #include "InspectorController.h"
 #endif
 
-#if ENABLE(SVG)
-#include "SVGElementInstance.h"
-#include "SVGUseElement.h"
-#endif
-
 #if USE(JSC)
 #include <runtime/JSGlobalData.h>
 #endif
@@ -2443,26 +2438,6 @@ void Node::didMoveToNewDocument(Document* oldDocument)
 #endif
 }
 
-#if ENABLE(SVG)
-static inline HashSet<SVGElementInstance*> instancesForSVGElement(Node* node)
-{
-    HashSet<SVGElementInstance*> instances;
- 
-    ASSERT(node);
-    if (!node->isSVGElement() || node->shadowTreeRootNode())
-        return HashSet<SVGElementInstance*>();
-
-    SVGElement* element = static_cast<SVGElement*>(node);
-    if (!element->isStyled())
-        return HashSet<SVGElementInstance*>();
-
-    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element);
-    ASSERT(!styledElement->instanceUpdatesBlocked());
-
-    return styledElement->instancesForElement();
-}
-#endif
-
 static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     if (!targetNode->EventTarget::addEventListener(eventType, listener, useCapture))
@@ -2475,42 +2450,13 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
         else if (eventNames().isTouchEventType(eventType))
             document->didAddTouchEventHandler();
     }
-        
+
     return true;
 }
 
 bool Node::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-#if !ENABLE(SVG)
     return tryAddEventListener(this, eventType, listener, useCapture);
-#else
-    if (!isSVGElement())
-        return tryAddEventListener(this, eventType, listener, useCapture);
-
-    HashSet<SVGElementInstance*> instances = instancesForSVGElement(this);
-    if (instances.isEmpty())
-        return tryAddEventListener(this, eventType, listener, useCapture);
-
-    RefPtr<EventListener> listenerForRegularTree = listener;
-    RefPtr<EventListener> listenerForShadowTree = listenerForRegularTree;
-
-    // Add event listener to regular DOM element
-    if (!tryAddEventListener(this, eventType, listenerForRegularTree.release(), useCapture))
-        return false;
-
-    // Add event listener to all shadow tree DOM element instances
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        ASSERT((*it)->shadowTreeElement());
-        ASSERT((*it)->correspondingElement() == this);
-
-        RefPtr<EventListener> listenerForCurrentShadowTreeElement = listenerForShadowTree;
-        bool result = tryAddEventListener((*it)->shadowTreeElement(), eventType, listenerForCurrentShadowTreeElement.release(), useCapture);
-        ASSERT_UNUSED(result, result);
-    }
-
-    return true;
-#endif
 }
 
 static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& eventType, EventListener* listener, bool useCapture)
@@ -2526,61 +2472,13 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
         else if (eventNames().isTouchEventType(eventType))
             document->didRemoveTouchEventHandler();
     }
-    
+
     return true;
 }
 
 bool Node::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-#if !ENABLE(SVG)
     return tryRemoveEventListener(this, eventType, listener, useCapture);
-#else
-    if (!isSVGElement())
-        return tryRemoveEventListener(this, eventType, listener, useCapture);
-
-    HashSet<SVGElementInstance*> instances = instancesForSVGElement(this);
-    if (instances.isEmpty())
-        return tryRemoveEventListener(this, eventType, listener, useCapture);
-
-    // EventTarget::removeEventListener creates a PassRefPtr around the given EventListener
-    // object when creating a temporary RegisteredEventListener object used to look up the
-    // event listener in a cache. If we want to be able to call removeEventListener() multiple
-    // times on different nodes, we have to delay its immediate destruction, which would happen
-    // after the first call below.
-    RefPtr<EventListener> protector(listener);
-
-    // Remove event listener from regular DOM element
-    if (!tryRemoveEventListener(this, eventType, listener, useCapture))
-        return false;
-
-    // Remove event listener from all shadow tree DOM element instances
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        ASSERT((*it)->correspondingElement() == this);
-
-        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
-        ASSERT(shadowTreeElement);
-
-        if (tryRemoveEventListener(shadowTreeElement, eventType, listener, useCapture))
-            continue;
-
-        // This case can only be hit for event listeners created from markup
-        ASSERT(listener->wasCreatedFromMarkup());
-
-        // If the event listener 'listener' has been created from markup and has been fired before
-        // then JSLazyEventListener::parseCode() has been called and m_jsFunction of that listener
-        // has been created (read: it's not 0 anymore). During shadow tree creation, the event
-        // listener DOM attribute has been cloned, and another event listener has been setup in
-        // the shadow tree. If that event listener has not been used yet, m_jsFunction is still 0,
-        // and tryRemoveEventListener() above will fail. Work around that very seldom problem.
-        EventTargetData* data = shadowTreeElement->eventTargetData();
-        ASSERT(data);
-
-        data->eventListenerMap.removeFirstEventListenerCreatedFromMarkup(eventType);
-    }
-
-    return true;
-#endif
 }
 
 EventTargetData* Node::eventTargetData()

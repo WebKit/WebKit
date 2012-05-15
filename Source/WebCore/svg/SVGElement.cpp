@@ -348,6 +348,96 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
+static inline void collectInstancesForSVGElement(SVGElement* element, HashSet<SVGElementInstance*>& instances)
+{
+    ASSERT(element);
+    if (element->shadowTreeRootNode())
+        return;
+
+    if (!element->isStyled())
+        return;
+
+    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element);
+    ASSERT(!styledElement->instanceUpdatesBlocked());
+
+    instances = styledElement->instancesForElement();
+}
+
+bool SVGElement::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+{
+    HashSet<SVGElementInstance*> instances;
+    collectInstancesForSVGElement(this, instances);
+    if (instances.isEmpty())
+        return Node::addEventListener(eventType, listener, useCapture);
+
+    RefPtr<EventListener> listenerForRegularTree = listener;
+    RefPtr<EventListener> listenerForShadowTree = listenerForRegularTree;
+
+    // Add event listener to regular DOM element
+    if (!Node::addEventListener(eventType, listenerForRegularTree.release(), useCapture))
+        return false;
+
+    // Add event listener to all shadow tree DOM element instances
+    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+        ASSERT((*it)->shadowTreeElement());
+        ASSERT((*it)->correspondingElement() == this);
+
+        RefPtr<EventListener> listenerForCurrentShadowTreeElement = listenerForShadowTree;
+        bool result = (*it)->shadowTreeElement()->Node::addEventListener(eventType, listenerForCurrentShadowTreeElement.release(), useCapture);
+        ASSERT_UNUSED(result, result);
+    }
+
+    return true;
+}
+
+bool SVGElement::removeEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
+{
+    HashSet<SVGElementInstance*> instances;
+    collectInstancesForSVGElement(this, instances);
+    if (instances.isEmpty())
+        return Node::removeEventListener(eventType, listener, useCapture);
+
+    // EventTarget::removeEventListener creates a PassRefPtr around the given EventListener
+    // object when creating a temporary RegisteredEventListener object used to look up the
+    // event listener in a cache. If we want to be able to call removeEventListener() multiple
+    // times on different nodes, we have to delay its immediate destruction, which would happen
+    // after the first call below.
+    RefPtr<EventListener> protector(listener);
+
+    // Remove event listener from regular DOM element
+    if (!Node::removeEventListener(eventType, listener, useCapture))
+        return false;
+
+    // Remove event listener from all shadow tree DOM element instances
+    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+        ASSERT((*it)->correspondingElement() == this);
+
+        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
+        ASSERT(shadowTreeElement);
+
+        if (shadowTreeElement->Node::removeEventListener(eventType, listener, useCapture))
+            continue;
+
+        // This case can only be hit for event listeners created from markup
+        ASSERT(listener->wasCreatedFromMarkup());
+
+        // If the event listener 'listener' has been created from markup and has been fired before
+        // then JSLazyEventListener::parseCode() has been called and m_jsFunction of that listener
+        // has been created (read: it's not 0 anymore). During shadow tree creation, the event
+        // listener DOM attribute has been cloned, and another event listener has been setup in
+        // the shadow tree. If that event listener has not been used yet, m_jsFunction is still 0,
+        // and tryRemoveEventListener() above will fail. Work around that very seldom problem.
+        EventTargetData* data = shadowTreeElement->eventTargetData();
+        ASSERT(data);
+
+        data->eventListenerMap.removeFirstEventListenerCreatedFromMarkup(eventType);
+    }
+
+    return true;
+}
+
 static bool hasLoadListener(Element* element)
 {
     if (element->hasEventListeners(eventNames().loadEvent))
