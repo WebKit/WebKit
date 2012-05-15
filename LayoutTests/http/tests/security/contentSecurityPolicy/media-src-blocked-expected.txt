@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load media from 'http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&mimeType=video/mp4&stallAt=100000' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to load the media 'http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&mimeType=video/mp4&stallAt=100000' because it violates the following Content Security Policy directive: "media-src 'none'".
 
 END OF TEST
 This test passes if it doesn't alert failure.

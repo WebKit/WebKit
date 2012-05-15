@@ -1,3 +1,14 @@
+2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Content Security Policy console error messages should include the violated directive.
+        https://bugs.webkit.org/show_bug.cgi?id=86323
+
+        Reviewed by Adam Barth.
+
+        Update global expectations for 1 Content Security Policy test after r117006.
+
+        * http/tests/security/contentSecurityPolicy/media-src-blocked-expected.txt:
+
 2012-05-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardening to paint the Qt bots green.
