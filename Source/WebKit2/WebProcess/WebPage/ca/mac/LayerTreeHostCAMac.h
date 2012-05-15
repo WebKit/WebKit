@@ -54,7 +54,7 @@ private:
     virtual void setLayerHostingMode(LayerHostingMode) OVERRIDE;
 
     // LayerTreeHostCA
-    virtual void platformInitialize(LayerTreeContext&);
+    virtual void platformInitialize();
     virtual void didPerformScheduledLayerFlush();
 
     virtual bool flushPendingLayerChanges();

@@ -89,7 +89,7 @@ LayerTreeHostCAWin::~LayerTreeHostCAWin()
 {
 }
 
-void LayerTreeHostCAWin::platformInitialize(LayerTreeContext& context)
+void LayerTreeHostCAWin::platformInitialize()
 {
     m_view.adoptCF(WKCACFViewCreate(kWKCACFViewDrawingDestinationWindow));
     WKCACFViewSetContextUserData(m_view.get(), static_cast<AbstractCACFLayerTreeHost*>(this));
@@ -106,7 +106,7 @@ void LayerTreeHostCAWin::platformInitialize(LayerTreeContext& context)
     CGRect bounds = m_webPage->bounds();
     WKCACFViewUpdate(m_view.get(), m_window->window(), &bounds);
 
-    context.window = m_window->window();
+    m_layerTreeContext.window = m_window->window();
 }
 
 void LayerTreeHostCAWin::invalidate()

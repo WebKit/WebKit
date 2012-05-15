@@ -58,6 +58,8 @@ protected:
 
     bool m_layerFlushSchedulingEnabled;
 
+    LayerTreeContext m_layerTreeContext;
+
 private:
     // LayerTreeHost.
     virtual const LayerTreeContext& layerTreeContext();
@@ -80,13 +82,10 @@ private:
     virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const { }
 
     // LayerTreeHostCA
-    virtual void platformInitialize(LayerTreeContext&) = 0;
+    virtual void platformInitialize() = 0;
 
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
-
-    // The context for this layer tree.
-    LayerTreeContext m_layerTreeContext;
 
     // Whether the layer tree host is valid or not.
     bool m_isValid;    

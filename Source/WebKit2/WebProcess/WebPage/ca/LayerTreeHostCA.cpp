@@ -75,7 +75,7 @@ void LayerTreeHostCA::initialize()
     if (m_webPage->hasPageOverlay())
         createPageOverlayLayer();
 
-    platformInitialize(m_layerTreeContext);
+    platformInitialize();
 
     setLayerFlushSchedulingEnabled(!m_webPage->drawingArea() || !m_webPage->drawingArea()->layerTreeStateIsFrozen());
     scheduleLayerFlush();

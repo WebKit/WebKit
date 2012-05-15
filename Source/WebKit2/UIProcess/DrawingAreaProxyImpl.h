@@ -65,6 +65,7 @@ private:
     virtual void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&);
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&);
+    virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&);
 
     void incorporateUpdate(const UpdateInfo&);
 
@@ -76,6 +77,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
+    void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
 
