@@ -1,3 +1,13 @@
+2012-05-15  Dan Bernstein  <mitz@apple.com>
+
+        Ruby annotation is incorrectly identified as a paragraph boundary
+        https://bugs.webkit.org/show_bug.cgi?id=86507
+
+        Reviewed by Darin Adler.
+
+        * editing/selection/paragraph-with-ruby-expected.txt: Added.
+        * editing/selection/paragraph-with-ruby.html: Added.
+
 2012-05-15  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Setting onended on a LocalMediaStream triggers an assertion in V8

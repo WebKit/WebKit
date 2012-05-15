@@ -299,7 +299,7 @@ VisiblePosition lastEditablePositionBeforePositionInRoot(const Position& positio
 // Whether or not content before and after this node will collapse onto the same line as it.
 bool isBlock(const Node* node)
 {
-    return node && node->renderer() && !node->renderer()->isInline();
+    return node && node->renderer() && !node->renderer()->isInline() && !node->renderer()->isRubyText();
 }
 
 bool isInline(const Node* node)
