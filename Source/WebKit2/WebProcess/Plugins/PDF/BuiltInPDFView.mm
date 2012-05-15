@@ -196,6 +196,8 @@ const PluginView* BuiltInPDFView::pluginView() const
 
 void BuiltInPDFView::updateScrollbars()
 {
+    bool hadScrollbars = m_horizontalScrollbar || m_verticalScrollbar;
+
     if (m_horizontalScrollbar) {
         if (m_pluginSize.width() >= m_pdfDocumentSize.width())
             destroyScrollbar(HorizontalScrollbar);
@@ -234,10 +236,15 @@ void BuiltInPDFView::updateScrollbars()
     if (!frameView)
         return;
 
-    if (m_verticalScrollbar || m_horizontalScrollbar)
-        frameView->addScrollableArea(this);
-    else
-        frameView->removeScrollableArea(this);
+    bool hasScrollbars = m_horizontalScrollbar || m_verticalScrollbar;
+    if (hadScrollbars != hasScrollbars) {
+        if (hasScrollbars)
+            frameView->addScrollableArea(this);
+        else
+            frameView->removeScrollableArea(this);
+
+        frameView->setNeedsLayout();
+    }
 }
 
 PassRefPtr<Scrollbar> BuiltInPDFView::createScrollbar(ScrollbarOrientation orientation)
@@ -686,6 +693,11 @@ ScrollableArea* BuiltInPDFView::enclosingScrollableArea() const
 {
     // FIXME: Walk up the frame tree and look for a scrollable parent frame or RenderLayer.
     return 0;
+}
+
+IntRect BuiltInPDFView::scrollableAreaBoundingBox() const
+{
+    return pluginView()->frameRect();
 }
 
 void BuiltInPDFView::setScrollOffset(const IntPoint& offset)
