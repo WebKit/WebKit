@@ -146,13 +146,30 @@ static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext
         return RESAMPLE_LINEAR;
 
     // Everything else gets resampled.
-    // If the platform context permits high quality interpolation, use it.
     // High quality interpolation only enabled for scaling and translation.
-    if (platformContext->interpolationQuality() == InterpolationHigh
-        && !(platformContext->canvas()->getTotalMatrix().getType() & (SkMatrix::kAffine_Mask | SkMatrix::kPerspective_Mask)))
+    if (!(platformContext->canvas()->getTotalMatrix().getType() & (SkMatrix::kAffine_Mask | SkMatrix::kPerspective_Mask)))
         return RESAMPLE_AWESOME;
     
     return RESAMPLE_LINEAR;
+}
+
+static ResamplingMode limitResamplingMode(PlatformContextSkia* platformContext, ResamplingMode resampling)
+{
+    switch (platformContext->interpolationQuality()) {
+    case InterpolationNone:
+        return RESAMPLE_NONE;
+    case InterpolationMedium:
+        // For now we treat InterpolationMedium and InterpolationLow the same.
+    case InterpolationLow:
+        if (resampling == RESAMPLE_AWESOME)
+            return RESAMPLE_LINEAR;
+        break;
+    case InterpolationHigh:
+    case InterpolationDefault:
+        break;
+    }
+
+    return resampling;
 }
 
 // Draws the given bitmap to the given canvas. The subset of the source bitmap
@@ -224,7 +241,6 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
 #endif
     SkPaint paint;
     paint.setXfermodeMode(compOp);
-    paint.setFilterBitmap(true);
     paint.setAlpha(platformContext->getNormalizedAlpha());
     paint.setLooper(platformContext->getDrawLooper());
     // only antialias if we're rotated or skewed
@@ -238,9 +254,17 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     else
         resampling = platformContext->printing() ? RESAMPLE_NONE :
             computeResamplingMode(platformContext, bitmap, srcRect.width(), srcRect.height(), SkScalarToFloat(destRect.width()), SkScalarToFloat(destRect.height()));
-    if (resampling == RESAMPLE_AWESOME) {
+    if (resampling == RESAMPLE_NONE) {
+      // FIXME: This is to not break tests (it results in the filter bitmap flag
+      // being set to true). We need to decide if we respect RESAMPLE_NONE
+      // being returned from computeResamplingMode.
+        resampling = RESAMPLE_LINEAR;
+    }
+    resampling = limitResamplingMode(platformContext, resampling);
+    paint.setFilterBitmap(resampling == RESAMPLE_LINEAR);
+    if (resampling == RESAMPLE_AWESOME)
         drawResampledBitmap(*canvas, paint, bitmap, srcRect, destRect);
-    } else {
+    else {
         // No resampling necessary, we can just draw the bitmap. We want to
         // filter it if we decided to do linear interpolation above, or if there
         // is something interesting going on with the matrix (like a rotation).
@@ -334,6 +358,7 @@ void Image::drawPattern(GraphicsContext* context,
         resampling = RESAMPLE_LINEAR;
     else
         resampling = computeResamplingMode(context->platformContext(), *bitmap, srcRect.width(), srcRect.height(), destBitmapWidth, destBitmapHeight);
+    resampling = limitResamplingMode(context->platformContext(), resampling);
 
     // Load the transform WebKit requested.
     SkMatrix matrix(patternTransform);

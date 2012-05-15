@@ -482,8 +482,12 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
 
     if (useLowQualityScale) {
         previousInterpolationQuality = imageInterpolationQuality();
+#if PLATFORM(CHROMIUM)
+        setImageInterpolationQuality(InterpolationLow);
+#else
         // FIXME (49002): Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
+#endif
     }
 
     if (image->isBitmapImage())
@@ -572,8 +576,12 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
 
     if (useLowQualityScale) {
         InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
+#if PLATFORM(CHROMIUM)
+        setImageInterpolationQuality(InterpolationLow);
+#else
         // FIXME (49002): Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
+#endif
         image->draw(this, styleColorSpace, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), op, useLowQualityScale);
         setImageInterpolationQuality(previousInterpolationQuality);
     } else

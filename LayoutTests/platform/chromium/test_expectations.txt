@@ -1293,6 +1293,12 @@ BUGWK85085 : svg/custom/clip-path-referencing-use2.svg = TEXT
 
 BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
 
+// Tests need rebaseling.
+// Failed due to changes used to fix bug 82804 while maintaining test
+// consistency.
+BUGWK86486 : svg/custom/pointer-events-image-css-transform.svg = IMAGE
+BUGWK86486 : svg/custom/pointer-events-image.svg = IMAGE
+
 // -----------------------------------------------------------------
 // End SVG TESTS
 // -----------------------------------------------------------------

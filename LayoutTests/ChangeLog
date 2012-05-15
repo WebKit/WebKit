@@ -1,3 +1,15 @@
+2012-05-15  Keyar Hood  <keyar@chromium.org>
+
+        Skia does not respect a specified InterpolationQuality
+        https://bugs.webkit.org/show_bug.cgi?id=86249
+
+        Reviewed by Stephen White.
+
+        Now expecting the following to tests to have an IMAGE failure:
+        svg/custom/pointer-events-image-css-transform.svg
+        svg/custom/pointer-events-image.svg
+        * platform/chromium/test_expectations.txt:
+
 2012-05-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK gardening.
