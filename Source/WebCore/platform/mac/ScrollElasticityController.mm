@@ -71,7 +71,8 @@ static const float scrollVelocityZeroingTimeout = 0.10f;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BULDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION)
+#if defined(BUILDING_ON_LEOPARD) || defined(BULDING_ON_SNOW_LEOPARD) || \
+    defined(BUILDING_ON_LION) || PLATFORM(CHROMIUM)
 static const float rubberbandStiffness = 20;
 static const float rubberbandAmplitude = 0.31f;
 static const float rubberbandPeriod = 1.6f;
