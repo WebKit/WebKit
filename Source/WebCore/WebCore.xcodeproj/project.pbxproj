@@ -723,6 +723,9 @@
 		293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		293EAE211356B32E0067ACF9 /* RuntimeApplicationChecks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */; };
 		29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */; };
+		29A309AC1561C99B00BBD8E5 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A309AB1561C99B00BBD8E5 /* RunLoopCF.cpp */; };
+		29A309B01561CAC400BBD8E5 /* VisitedLinks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A309AE1561CAC400BBD8E5 /* VisitedLinks.cpp */; };
+		29A309B11561CAC400BBD8E5 /* VisitedLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A309AF1561CAC400BBD8E5 /* VisitedLinks.h */; };
 		29A8122B0FBB9C1D00510293 /* AccessibilityTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */; };
 		29A8122C0FBB9C1D00510293 /* AccessibilityList.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8120E0FBB9C1D00510293 /* AccessibilityList.h */; };
 		29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812100FBB9C1D00510293 /* AccessibilityARIAGridCell.h */; };
@@ -7650,6 +7653,9 @@
 		2981CAAD131822EC00D12F2A /* AccessibilityTableHeaderContainer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableHeaderContainer.cpp; sourceTree = "<group>"; };
 		2981CAAE131822EC00D12F2A /* AccessibilityTableRow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableRow.cpp; sourceTree = "<group>"; };
 		2981CAAF131822EC00D12F2A /* AXObjectCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXObjectCache.cpp; sourceTree = "<group>"; };
+		29A309AB1561C99B00BBD8E5 /* RunLoopCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopCF.cpp; sourceTree = "<group>"; };
+		29A309AE1561CAC400BBD8E5 /* VisitedLinks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinks.cpp; sourceTree = "<group>"; };
+		29A309AF1561CAC400BBD8E5 /* VisitedLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinks.h; sourceTree = "<group>"; };
 		29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTable.h; sourceTree = "<group>"; };
 		29A8120E0FBB9C1D00510293 /* AccessibilityList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityList.h; sourceTree = "<group>"; };
 		29A812100FBB9C1D00510293 /* AccessibilityARIAGridCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityARIAGridCell.h; sourceTree = "<group>"; };
@@ -14165,6 +14171,7 @@
 				938192040F87E1EC00D5352A /* BinaryPropertyList.h */,
 				5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */,
 				1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */,
+				29A309AB1561C99B00BBD8E5 /* RunLoopCF.cpp */,
 				1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */,
 				1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */,
 				1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */,
@@ -20395,8 +20402,8 @@
 				2E3BBF051162DA1100B9409A /* UUID.cpp */,
 				2E3BBF061162DA1100B9409A /* UUID.h */,
 				515788C01207852C00A37C4A /* VisitedLinkStrategy.h */,
-				D6FDAEF2149C06190037B1E5 /* VisitedLinks.cpp */,
-				D630E2AB149BF344005B2F97 /* VisitedLinks.h */,
+				29A309AE1561CAC400BBD8E5 /* VisitedLinks.cpp */,
+				29A309AF1561CAC400BBD8E5 /* VisitedLinks.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */,
@@ -24721,7 +24728,6 @@
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
 				515788C11207852C00A37C4A /* VisitedLinkStrategy.h in Headers */,
-				D630E2AC149BF344005B2F97 /* VisitedLinks.h in Headers */,
 				E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */,
 				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
 				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,
@@ -24887,6 +24893,7 @@
 				31FE6DFA15004C2A0004EBC4 /* NotificationPermissionCallback.h in Headers */,
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
 				B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */,
+				29A309B11561CAC400BBD8E5 /* VisitedLinks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27760,7 +27767,6 @@
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
 				A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */,
-				D6FDAEF3149C06190037B1E5 /* VisitedLinks.cpp in Sources */,
 				FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */,
 				FD7F299313D4C0CB00AD9535 /* WaveShaperNode.cpp in Sources */,
 				FD7F299613D4C0CB00AD9535 /* WaveShaperProcessor.cpp in Sources */,
@@ -27909,6 +27915,8 @@
 				31FE6E6D1501A3BF0004EBC4 /* JSNotificationCustom.cpp in Sources */,
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				B658FFA51522EFAA00DD5595 /* RadioNodeList.cpp in Sources */,
+				29A309AC1561C99B00BBD8E5 /* RunLoopCF.cpp in Sources */,
+				29A309B01561CAC400BBD8E5 /* VisitedLinks.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

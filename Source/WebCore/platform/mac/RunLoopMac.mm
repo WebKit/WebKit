@@ -26,71 +26,7 @@
 #import "config.h"
 #import "RunLoop.h"
 
-#import <dispatch/dispatch.h>
-
 namespace WebCore {
-
-static RunLoop* s_mainRunLoop;
-
-void RunLoop::initializeMainRunLoop()
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        s_mainRunLoop = new RunLoop(CFRunLoopGetMain());
-    });
-}
-
-RunLoop* RunLoop::current()
-{
-    if (pthread_main_np())
-        return RunLoop::main();
-
-    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<RunLoop>, runLoopData, ());
-    return &*runLoopData;
-}
-
-RunLoop* RunLoop::main()
-{
-    ASSERT(s_mainRunLoop);
-    return s_mainRunLoop;
-}
-
-void RunLoop::performWork(void* context)
-{
-    // Wrap main thread in an Autorelease pool.  Sending messages can call 
-    // into objc code and accumulate memory.  
-    if (current() == main()) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        static_cast<RunLoop*>(context)->performWork();
-        [pool drain];
-    } else
-        static_cast<RunLoop*>(context)->performWork();
-}
-
-RunLoop::RunLoop()
-    : m_runLoop(CFRunLoopGetCurrent())
-    , m_nestingLevel(0)
-{
-    CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
-    m_runLoopSource = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
-    CFRunLoopAddSource(m_runLoop, m_runLoopSource, kCFRunLoopCommonModes);
-}
-
-RunLoop::RunLoop(CFRunLoopRef runLoop)
-    : m_runLoop(runLoop)
-    , m_nestingLevel(0)
-{
-    CFRunLoopSourceContext context = { 0, this, 0, 0, 0, 0, 0, 0, 0, performWork };
-    m_runLoopSource = CFRunLoopSourceCreate(kCFAllocatorDefault, 0, &context);
-    CFRunLoopAddSource(m_runLoop, m_runLoopSource, kCFRunLoopCommonModes);
-}
-
-RunLoop::~RunLoop()
-{
-    // FIXME: Tear down the work item queue here.
-    CFRunLoopSourceInvalidate(m_runLoopSource);
-    CFRelease(m_runLoopSource);
-}
 
 void RunLoop::run()
 {
@@ -104,11 +40,6 @@ void RunLoop::run()
         [pool drain];
     }
     current()->m_nestingLevel--;
-}
-
-void RunLoop::runForDuration(double duration)
-{
-    CFRunLoopRunInMode(kCFRunLoopDefaultMode, duration, true);
 }
 
 void RunLoop::stop()
@@ -129,65 +60,6 @@ void RunLoop::stop()
         [NSApp postEvent:event atStart:true];
     } else
         CFRunLoopStop(m_runLoop);
-}
-
-void RunLoop::wakeUp()
-{
-    CFRunLoopSourceSignal(m_runLoopSource);
-    CFRunLoopWakeUp(m_runLoop);
-}
-
-// RunLoop::Timer
-
-void RunLoop::TimerBase::timerFired(CFRunLoopTimerRef, void* context)
-{
-    TimerBase* timer = static_cast<TimerBase*>(context);
-    
-    // Wrap main thread in an Autorelease pool.  The timer can call 
-    // into objc code and accumulate memory outside of the main event loop.
-    if (current() == main()) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
-        timer->fired();
-        [pool drain];
-    } else
-        timer->fired();
-}
-
-RunLoop::TimerBase::TimerBase(RunLoop* runLoop)
-    : m_runLoop(runLoop)
-    , m_timer(0)
-{
-}
-
-RunLoop::TimerBase::~TimerBase()
-{
-    stop();
-}
-
-void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
-{
-    if (m_timer)
-        stop();
-
-    CFRunLoopTimerContext context = { 0, this, 0, 0, 0 };
-    CFTimeInterval repeatInterval = repeat ? nextFireInterval : 0;
-    m_timer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + nextFireInterval, repeatInterval, 0, 0, timerFired, &context);
-    CFRunLoopAddTimer(m_runLoop->m_runLoop, m_timer, kCFRunLoopCommonModes);
-}
-
-void RunLoop::TimerBase::stop()
-{
-    if (!m_timer)
-        return;
-
-    CFRunLoopTimerInvalidate(m_timer);
-    CFRelease(m_timer);
-    m_timer = 0;
-}
-
-bool RunLoop::TimerBase::isActive() const
-{
-    return m_timer && CFRunLoopTimerIsValid(m_timer);
 }
 
 } // namespace WebCore
