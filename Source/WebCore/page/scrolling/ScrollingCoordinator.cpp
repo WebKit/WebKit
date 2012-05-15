@@ -105,33 +105,39 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
 #endif
 }
 
-static Region computeNonFastScrollableRegion(Frame* mainFrame)
+static Region computeNonFastScrollableRegion(Frame* frame, const IntPoint& frameLocation)
 {
     Region nonFastScrollableRegion;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return nonFastScrollableRegion;
 
-    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
-        FrameView* frameView = frame->view();
-        if (!frameView)
-            continue;
+    IntPoint offset = frameLocation;
+    offset.moveBy(frameView->frameRect().location());
 
-        if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
-            for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
-                ScrollableArea* scrollableArea = *it;
-                nonFastScrollableRegion.unite(scrollableArea->scrollableAreaBoundingBox());
-            }
-        }
-
-        if (const HashSet<RefPtr<Widget> >* children = frameView->children()) {
-            for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(), end = children->end(); it != end; ++it) {
-                if (!(*it)->isPluginViewBase())
-                    continue;
-                
-                PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>((*it).get());
-                if (pluginViewBase->wantsWheelEvents())
-                    nonFastScrollableRegion.unite(pluginViewBase->frameRect());
-            }
+    if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
+        for (FrameView::ScrollableAreaSet::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
+            ScrollableArea* scrollableArea = *it;
+            IntRect box = scrollableArea->scrollableAreaBoundingBox();
+            box.moveBy(offset);
+            nonFastScrollableRegion.unite(box);
         }
     }
+
+    if (const HashSet<RefPtr<Widget> >* children = frameView->children()) {
+        for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(), end = children->end(); it != end; ++it) {
+            if (!(*it)->isPluginViewBase())
+                continue;
+
+            PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>((*it).get());
+            if (pluginViewBase->wantsWheelEvents())
+                nonFastScrollableRegion.unite(pluginViewBase->frameRect());
+        }
+    }
+
+    FrameTree* tree = frame->tree();
+    for (Frame* subFrame = tree->firstChild(); subFrame; subFrame = subFrame->tree()->nextSibling())
+        nonFastScrollableRegion.unite(computeNonFastScrollableRegion(subFrame, offset));
 
     return nonFastScrollableRegion;
 }
@@ -144,7 +150,7 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     // Compute the region of the page that we can't do fast scrolling for. This currently includes
     // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
     // frame view whose layout was updated is not the main frame.
-    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame());
+    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint());
     setNonFastScrollableRegion(nonFastScrollableRegion);
 
     if (!coordinatesScrollingForFrameView(frameView))
