@@ -1,3 +1,10 @@
+2012-05-15  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/test_expectations.txt: Skip the mediastream tests
+        because the GTK+ implementation is incomplete.
+
 2012-05-15  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt]3 fast/borders tests assert intermittently

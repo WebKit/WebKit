@@ -299,6 +299,9 @@ BUGWK85213 BUGWK85832 : ietestcenter/css3/flexbox/flexbox-ordinal-group-001.htm 
 // These tests require subpixel layout to be enabled
 BUGWK60318 : fast/sub-pixel = FAIL
 
+// Mediastream implementation is not complete yet.
+BUGWK79203 SKIP : fast/mediastream = FAIL
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -354,6 +357,7 @@ BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
@@ -1221,13 +1225,6 @@ BUGWKGTK : fast/css/apple-prefix.html = FAIL
 BUGWK76564 : fast/workers/worker-crash-with-invalid-location.html = FAIL
 
 BUGWK78819 : fast/workers/shared-worker-load-error.html = FAIL
-
-BUGWK79203 : fast/mediastream/argument-types.html = FAIL
-BUGWK79203 : fast/mediastream/constructors.html = FAIL
-BUGWK79203 : fast/mediastream/MediaStreamConstructor.html = FAIL
-BUGWK79203 : fast/mediastream/peerconnection-argument-types.html = FAIL
-BUGWK79203 : fast/mediastream/peerconnection-iceoptions.html = FAIL
-BUGWK79203 : fast/mediastream/getusermedia.html = FAIL
 
 BUGWK80210 : security/block-test.html = FAIL
 
