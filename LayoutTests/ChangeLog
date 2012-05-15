@@ -1,3 +1,14 @@
+2012-05-15  Mike West  <mkwst@chromium.org>
+
+        Fixing the flaky 'script-src-redirect.html' test.
+        https://bugs.webkit.org/show_bug.cgi?id=86433
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/resources/source-list-parsing-base.js:
+        (test):
+        * http/tests/security/contentSecurityPolicy/script-src-redirect.html:
+
 2012-05-15  Dan Bernstein  <mitz@apple.com>
 
         Ruby annotation is incorrectly identified as a paragraph boundary
