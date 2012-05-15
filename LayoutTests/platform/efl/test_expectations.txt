@@ -194,6 +194,7 @@ BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 BUGWK85363 : fast/dom/DOMURL/check-instanceof-domurl-functions.html = TEXT
 BUGWK85363 : fast/dom/call-a-constructor-as-a-function.html = TEXT
 BUGWK85363 : fast/dom/constructed-objects-prototypes.html = TEXT
+BUGWK85363 : fast/files/url-null.html = TEXT
 
 // Expose title direction in WebKit API
 BUGWK58845 : fast/dom/title-directionality.html = FAIL
