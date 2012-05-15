@@ -20,10 +20,10 @@
 
 #define __STDC_FORMAT_MACROS
 #include "config.h"
-#include "ewk_tiled_model.h"
 
-#include "ewk_tiled_backing_store.h"
-#include "ewk_tiled_private.h"
+#include "ewk_private.h"
+#include "ewk_tiled_backing_store_private.h"
+#include "ewk_tiled_model_private.h"
 #include <Ecore_Evas.h>
 #include <Eina.h>
 #include <eina_safety_checks.h>

@@ -22,7 +22,10 @@
 #include "DumpRenderTreeSupportEfl.h"
 
 #include "FrameLoaderClientEfl.h"
+#include "ewk_frame_private.h"
+#include "ewk_history_private.h"
 #include "ewk_private.h"
+#include "ewk_view_private.h"
 
 #include <AnimationController.h>
 #include <CSSComputedStyleDeclaration.h>

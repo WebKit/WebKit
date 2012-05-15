@@ -18,16 +18,12 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_auth_soup_h
-#define ewk_auth_soup_h
+#ifndef ewk_auth_soup_private_h
+#define ewk_auth_soup_private_h
 
 #include "ewk_auth.h"
 #include <glib-object.h>
 #include <glib.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #define EWK_TYPE_SOUP_AUTH_DIALOG            (ewk_auth_soup_dialog_get_type())
 #define EWK_SOUP_AUTH_DIALOG(object)         (G_TYPE_CHECK_INSTANCE_CAST((object), EWK_TYPE_SOUP_AUTH_DIALOG, Ewk_Soup_Auth_Dialog))
@@ -51,17 +47,6 @@ GType ewk_auth_soup_dialog_get_type(void);
  */
 void ewk_auth_soup_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callback);
 
-/**
- *  Method for setting credentials
- *
- *  @param username username
- *  @param password password
- *  @param data soup authentication data
- */
 void ewk_auth_soup_credentials_set(const char *username, const char *password, void *data);
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif // ewk_auth_soup_h
+#endif // ewk_auth_soup_private_h

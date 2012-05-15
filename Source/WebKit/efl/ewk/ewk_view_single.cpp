@@ -22,8 +22,8 @@
 #include "ewk_view.h"
 
 #include "ewk_frame.h"
-#include "ewk_logging.h"
 #include "ewk_private.h"
+#include "ewk_view_private.h"
 
 #include <Ecore_Evas.h>
 #include <Evas.h>

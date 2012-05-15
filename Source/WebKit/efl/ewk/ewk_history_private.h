@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
-    Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2009-2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,19 +18,22 @@
     Boston, MA 02110-1301, USA.
 */
 
-/**
- * @file    ewk_logging.h
- * @brief   Provides macros for logging.
- */
+#ifndef ewk_history_private_h
+#define ewk_history_private_h
 
-#ifndef ewk_logging_h
-#define ewk_logging_h
+#include "BackForwardListImpl.h"
 
-extern int _ewk_log_dom;
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_ewk_log_dom, __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(_ewk_log_dom, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(_ewk_log_dom, __VA_ARGS__)
-#define INF(...) EINA_LOG_DOM_INFO(_ewk_log_dom, __VA_ARGS__)
-#define DBG(...) EINA_LOG_DOM_DBG(_ewk_log_dom, __VA_ARGS__)
+namespace WebCore {
+class HistoryItem;
+class BackForwardListImpl;
+}
 
-#endif // ewk_logging_h
+Ewk_History_Item *ewk_history_item_new_from_core(WebCore::HistoryItem *core);
+Ewk_History* ewk_history_new(WebCore::BackForwardListImpl* history);
+void ewk_history_free(Ewk_History* history);
+
+namespace EWKPrivate {
+WebCore::HistoryItem *coreHistoryItem(const Ewk_History_Item *ewkHistoryItem);
+} // namespace EWKPrivate
+
+#endif // ewk_history_private_h

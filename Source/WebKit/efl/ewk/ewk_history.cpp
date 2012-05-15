@@ -28,9 +28,9 @@
 #include "IntSize.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "ewk_logging.h"
+#include "ewk_history_private.h"
 #include "ewk_private.h"
-#include "ewk_util.h"
+#include "ewk_util_private.h"
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <wtf/text/CString.h>

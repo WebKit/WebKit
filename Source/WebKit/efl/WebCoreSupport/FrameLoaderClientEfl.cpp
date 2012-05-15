@@ -53,8 +53,10 @@
 #include "ResourceResponse.h"
 #include "Settings.h"
 #include "WebKitVersion.h"
-#include "ewk_logging.h"
+#include "ewk_frame_private.h"
 #include "ewk_private.h"
+#include "ewk_settings_private.h"
+#include "ewk_view_private.h"
 #include <Ecore_Evas.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>

@@ -19,11 +19,11 @@
 */
 
 #include "config.h"
-#include "ewk_tiled_backing_store.h"
 
 #include "ewk_private.h"
-#include "ewk_tiled_matrix.h"
-#include "ewk_tiled_private.h"
+#include "ewk_tiled_backing_store_private.h"
+#include "ewk_tiled_matrix_private.h"
+#include "ewk_tiled_model_private.h"
 #include <Ecore.h>
 #include <Eina.h>
 #include <algorithm>
@@ -116,7 +116,6 @@ struct _Ewk_Tiled_Backing_Store_Data {
 };
 
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
-int _ewk_tiled_log_dom = -1;
 
 #define PRIV_DATA_GET_OR_RETURN(obj, ptr, ...) \
     Ewk_Tiled_Backing_Store_Data* ptr = static_cast<Ewk_Tiled_Backing_Store_Data*>(evas_object_smart_data_get(obj)); \
@@ -1386,9 +1385,6 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object* ewkBackingStor
 Evas_Object* ewk_tiled_backing_store_add(Evas* canvas)
 {
     static Evas_Smart* smart = 0;
-
-    if (_ewk_tiled_log_dom < 0)
-        _ewk_tiled_log_dom = eina_log_domain_register("Ewk_Tiled_Backing_Store", 0);
 
     if (!smart) {
         static Evas_Smart_Class sc =

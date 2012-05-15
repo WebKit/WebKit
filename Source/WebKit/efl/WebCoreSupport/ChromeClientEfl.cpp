@@ -37,6 +37,7 @@
 #include "FileChooser.h"
 #include "FileIconLoader.h"
 #include "FloatRect.h"
+#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientEfl.h"
 #include "HitTestResult.h"
@@ -50,7 +51,9 @@
 #include "SecurityOrigin.h"
 #include "ViewportArguments.h"
 #include "WindowFeatures.h"
+#include "ewk_frame_private.h"
 #include "ewk_private.h"
+#include "ewk_view_private.h"
 #include <Ecore_Evas.h>
 #include <Evas.h>
 #include <wtf/text/CString.h>

@@ -1,6 +1,6 @@
 /*
-    Copyright (C) 2009-2010 Samsung Electronics
     Copyright (C) 2009-2010 ProFUSION embedded systems
+    Copyright (C) 2009-2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,15 +18,25 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_tiled_private_h
-#define ewk_tiled_private_h
+#ifndef ewk_js_private_h
+#define ewk_js_private_h
 
-/* logging */
-extern int _ewk_tiled_log_dom;
+#include "NP_jsobject.h"
+#include "ewk_js.h"
 
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_ewk_tiled_log_dom, __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(_ewk_tiled_log_dom, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(_ewk_tiled_log_dom, __VA_ARGS__)
-#define INF(...) EINA_LOG_DOM_INFO(_ewk_tiled_log_dom, __VA_ARGS__)
-#define DBG(...) EINA_LOG_DOM_DBG(_ewk_tiled_log_dom, __VA_ARGS__)
-#endif // ewk_tiled_private_h
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#define EWK_JS_OBJECT_MAGIC 0x696969
+
+typedef struct _Ewk_JS_Class Ewk_JS_Class;
+struct _Ewk_JS_Object {
+    JavaScriptObject base;
+    const char* name;
+    const Ewk_JS_Class* cls;
+    Eina_Hash* properties;
+    Evas_Object* view; // ewk_view: check if this object has already been added to another ewk_view
+    Ewk_JS_Object_Type type;
+    EINA_MAGIC;
+};
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
+#endif // ewk_js_private_h

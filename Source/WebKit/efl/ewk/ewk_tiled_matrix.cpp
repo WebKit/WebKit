@@ -20,10 +20,11 @@
 
 #define __STDC_FORMAT_MACROS
 #include "config.h"
-#include "ewk_tiled_matrix.h"
 
-#include "ewk_tiled_backing_store.h"
-#include "ewk_tiled_private.h"
+#include "ewk_private.h"
+#include "ewk_tiled_backing_store_private.h"
+#include "ewk_tiled_matrix_private.h"
+#include "ewk_tiled_model_private.h"
 #include <Eina.h>
 #include <errno.h>
 #include <inttypes.h>

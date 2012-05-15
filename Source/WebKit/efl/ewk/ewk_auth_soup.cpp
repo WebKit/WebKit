@@ -19,17 +19,12 @@
 */
 
 #include "config.h"
-#include "ewk_auth_soup.h"
+#include "ewk_auth_soup_private.h"
 
 #include "ewk_auth.h"
-#include "ewk_logging.h"
 #include <glib-object.h>
 #include <glib.h>
 #include <libsoup/soup.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * #Ewk_Soup_Auth_Dialog is a #SoupSessionFeature that you can attach to your
@@ -68,11 +63,23 @@ static void ewk_auth_soup_dialog_session_feature_init(SoupSessionFeatureInterfac
     featureInterface->detach = detach;
 }
 
+/**
+ * @internal
+ *  Sets callback to be called when authentication is required.
+ */
 void ewk_auth_soup_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callback)
 {
     ewk_auth_show_dialog_callback = callback;
 }
 
+/**
+ * @internal
+ *  Method for setting credentials
+ *
+ *  @param username username
+ *  @param password password
+ *  @param data soup authentication data
+ */
 void ewk_auth_soup_credentials_set(const char* username, const char* password, void* data)
 {
     if (!data)
@@ -128,7 +135,3 @@ static void detach(SoupSessionFeature* manager, SoupSession* session)
 {
     g_signal_handlers_disconnect_by_func(session, (void*)session_authenticate, manager);
 }
-
-#ifdef __cplusplus
-}
-#endif

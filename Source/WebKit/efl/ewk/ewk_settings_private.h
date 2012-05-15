@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2011 Samsung Electronics
+    Copyright (C) 2009-2010 ProFUSION embedded systems
+    Copyright (C) 2009-2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,17 +18,9 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "config.h"
-#include "ewk_auth.h"
+#ifndef ewk_settings_private_h
+#define ewk_settings_private_h
 
-#include "ewk_auth_soup_private.h"
+const char* ewk_settings_default_user_agent_get();
 
-void ewk_auth_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callback)
-{
-    ewk_auth_soup_show_dialog_callback_set(callback);
-}
-
-void ewk_auth_credentials_set(char* username, char* password, void* data)
-{
-    ewk_auth_soup_credentials_set(username, password, data);
-}
+#endif // ewk_settings_private_h

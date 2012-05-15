@@ -18,10 +18,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_tiled_model_h
-#define ewk_tiled_model_h
+#ifndef ewk_tiled_model_private_h
+#define ewk_tiled_model_private_h
 
-#include "ewk_tiled_backing_store.h"
+#include "ewk_tiled_backing_store_private.h"
 
 #include <Evas.h>
 
@@ -53,4 +53,4 @@ void ewk_tile_unused_cache_thaw(Ewk_Tile_Unused_Cache *tuc);
 Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t);
 Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t, void (* tile_free_cb)(void *data, Ewk_Tile *t), const void *data);
 
-#endif // ewk_tiled_model_h
+#endif // ewk_tiled_model_private_h

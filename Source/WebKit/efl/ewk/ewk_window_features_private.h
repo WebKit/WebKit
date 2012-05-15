@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2009-2010 ProFUSION embedded systems
-    Copyright (C) 2009-2010 Samsung Electronics
+    Copyright (C) 2009-2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,17 +18,9 @@
     Boston, MA 02110-1301, USA.
 */
 
-/**
- * @file    ewk_util.h
- * @brief   Helpfull methods for WebKit-EFL.
- */
+#ifndef ewk_window_features_private_h
+#define ewk_window_features_private_h
 
-#ifndef ewk_util_h
-#define ewk_util_h
+Ewk_Window_Features* ewk_window_features_new_from_core(const WebCore::WindowFeatures* core);
 
-#include <Evas.h>
-#include <cairo.h>
-
-Evas_Object *ewk_util_image_from_cairo_surface_add(Evas *canvas, cairo_surface_t *surface);
-
-#endif // ewk_util_h
+#endif // ewk_window_features_private_h

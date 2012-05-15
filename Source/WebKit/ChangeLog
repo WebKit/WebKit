@@ -1,3 +1,12 @@
+2012-05-15  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Split ewk_private.h file to multiple private files.
+        https://bugs.webkit.org/show_bug.cgi?id=84572
+
+        Reviewed by Antonio Gomes.
+
+        * PlatformEfl.cmake: Removed ewk_logging.h file from EWebKit_HEADERS.
+
 2012-05-10  Sam D  <dsam2912@gmail.com>
 
         Web Inspector: rename InspectorBackendStub.js to InspectorBackendCommands.js

@@ -23,7 +23,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NP_jsobject.h"
-#include "ewk_logging.h"
+#include "ewk_js_private.h"
 #include "ewk_private.h"
 #include "npruntime.h"
 #include "npruntime_impl.h"

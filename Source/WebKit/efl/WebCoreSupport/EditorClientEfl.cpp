@@ -35,7 +35,9 @@
 #include "Settings.h"
 #include "UndoStep.h"
 #include "WindowsKeyboardCodes.h"
+#include "ewk_frame_private.h"
 #include "ewk_private.h"
+#include "ewk_view_private.h"
 
 using namespace WebCore;
 

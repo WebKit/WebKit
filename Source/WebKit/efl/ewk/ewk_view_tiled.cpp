@@ -21,13 +21,12 @@
 #include "config.h"
 #include "ewk_view.h"
 
-#include "ewk_logging.h"
 #include "ewk_private.h"
-
+#include "ewk_tiled_backing_store_private.h"
+#include "ewk_view_private.h"
 #include <Evas.h>
 #include <RefPtrCairo.h>
 #include <eina_safety_checks.h>
-#include <ewk_tiled_backing_store.h>
 
 static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 

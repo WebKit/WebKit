@@ -22,7 +22,7 @@
 
 #include "NetworkStateNotifier.h"
 #include "ResourceHandle.h"
-#include "ewk_logging.h"
+#include "ewk_private.h"
 #include <Eina.h>
 #include <libsoup/soup.h>
 #include <wtf/text/CString.h>

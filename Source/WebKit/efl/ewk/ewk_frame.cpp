@@ -50,13 +50,17 @@
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
 #include "WindowsKeyboardCodes.h"
-#include "ewk_logging.h"
+#include "ewk_frame_private.h"
 #include "ewk_private.h"
+#include "ewk_security_origin_private.h"
+#include "ewk_view_private.h"
 #include <Eina.h>
 #include <Evas.h>
 #include <eina_safety_checks.h>
 #include <wtf/Assertions.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
 static const char EWK_FRAME_TYPE_STR[] = "EWK_Frame";

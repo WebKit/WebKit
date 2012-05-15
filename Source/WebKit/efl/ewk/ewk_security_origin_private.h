@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2011 Samsung Electronics
+    Copyright (C) 2009-2010 ProFUSION embedded systems
+    Copyright (C) 2009-2012 Samsung Electronics
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,17 +18,14 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "config.h"
-#include "ewk_auth.h"
+#ifndef ewk_security_origin_private_h
+#define ewk_security_origin_private_h
 
-#include "ewk_auth_soup_private.h"
-
-void ewk_auth_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callback)
-{
-    ewk_auth_soup_show_dialog_callback_set(callback);
+// forward declarations
+namespace WebCore {
+class SecurityOrigin;
 }
 
-void ewk_auth_credentials_set(char* username, char* password, void* data)
-{
-    ewk_auth_soup_credentials_set(username, password, data);
-}
+Ewk_Security_Origin* ewk_security_origin_new(WebCore::SecurityOrigin* origin);
+
+#endif // ewk_security_origin_private_h

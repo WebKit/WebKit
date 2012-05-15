@@ -18,10 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_tiled_matrix_h
-#define ewk_tiled_matrix_h
+#ifndef ewk_tiled_matrix_private_h
+#define ewk_tiled_matrix_private_h
 
-#include "ewk_tiled_backing_store.h"
+#include "ewk_tiled_backing_store_private.h"
+#include "ewk_tiled_matrix_private.h"
 
 #include <Evas.h>
 
@@ -58,4 +59,4 @@ void ewk_tile_matrix_dbg(const Ewk_Tile_Matrix *tm);
 void ewk_tile_unused_cache_dbg(const Ewk_Tile_Unused_Cache *tuc);
 void ewk_tile_accounting_dbg();
 
-#endif // ewk_tiled_matrix_h
+#endif // ewk_tiled_matrix_private_h

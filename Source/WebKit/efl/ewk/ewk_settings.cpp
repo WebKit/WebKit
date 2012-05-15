@@ -34,9 +34,8 @@
 #include "MemoryCache.h"
 #include "PageCache.h"
 #include "Settings.h"
-#include "ewk_logging.h"
 #include "ewk_private.h"
-#include "ewk_util.h"
+#include "ewk_util_private.h"
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <errno.h>

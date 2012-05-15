@@ -18,14 +18,15 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_tiled_backing_store_h
-#define ewk_tiled_backing_store_h
+#ifndef ewk_tiled_backing_store_private_h
+#define ewk_tiled_backing_store_private_h
 
 #include "EWebKit.h"
+#include <Evas.h>
+#include <cairo.h>
 
 /* Enable accounting of render time in tile statistics */
 // #define TILE_STATS_ACCOUNT_RENDER_TIME
-
 
 /* If define ewk will do more accounting to check for memory leaks
  * try "kill -USR1 $PID" to get instantaneous debug
@@ -41,9 +42,6 @@ const float zoomStepMinimum = 0.01;
 #define TILE_SIZE_AT_ZOOM(SIZE, ZOOM) ((int)roundf((SIZE) * (ZOOM)))
 #define TILE_ZOOM_AT_SIZE(SIZE, ORIG_TILE) ((float)(SIZE) / (float)(ORIG_TILE))
 #define ROUNDED_ZOOM(SIZE, ZOOM) ((float)(SIZE) / (float)(((int)roundf((SIZE) / (ZOOM)))))
-
-#include <Evas.h>
-#include <cairo.h>
 
 typedef struct _Ewk_Tile                     Ewk_Tile;
 typedef struct _Ewk_Tile_Stats               Ewk_Tile_Stats;
@@ -79,9 +77,6 @@ struct _Ewk_Tile {
     Evas_Object *image;           /**< Evas Image, the tile to be rendered */
 };
 
-#include "ewk_tiled_matrix.h"
-#include "ewk_tiled_model.h"
-
 /* view */
 Evas_Object *ewk_tiled_backing_store_add(Evas *e);
 
@@ -116,4 +111,5 @@ void ewk_tiled_backing_store_pre_render_cancel(Evas_Object *o);
 
 Eina_Bool ewk_tiled_backing_store_disable_render(Evas_Object *o);
 Eina_Bool ewk_tiled_backing_store_enable_render(Evas_Object *o);
+
 #endif // ewk_tiled_backing_store_h

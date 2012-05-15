@@ -31,6 +31,7 @@
 #include "DumpRenderTreeView.h"
 #include "EventSender.h"
 #include "GCController.h"
+#include "KURL.h"
 #include "LayoutTestController.h"
 #include "NotImplemented.h"
 #include "TextInputController.h"

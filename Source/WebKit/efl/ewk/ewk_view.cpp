@@ -55,8 +55,14 @@
 #include "ResourceHandle.h"
 #include "Settings.h"
 #include "c_instance.h"
-#include "ewk_logging.h"
+#include "ewk_frame.h"
+#include "ewk_frame_private.h"
+#include "ewk_history_private.h"
+#include "ewk_js_private.h"
 #include "ewk_private.h"
+#include "ewk_settings_private.h"
+#include "ewk_view_private.h"
+#include "ewk_window_features_private.h"
 #include <Ecore.h>
 #include <Eina.h>
 #include <Evas.h>
