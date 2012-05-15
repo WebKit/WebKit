@@ -1,3 +1,7 @@
+2012-05-14  Dirk Pranke <dpranke@chromium.org>
+
+        Unreviewed, roll Chromium DEPS to r136942.
+
 2012-05-14  Adam Barth  <abarth@webkit.org>
 
         [Chromium] android/WebInputEventFactory should handle wheel events and gesture events

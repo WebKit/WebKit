@@ -3052,7 +3052,6 @@ BUGWK85990 : media/video-controls-toggling.html = TIMEOUT
 // Needs rebaseline.
 BUGWK85990 : media/video-volume-slider.html = TEXT
 
-BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
@@ -3729,7 +3728,9 @@ BUGWK83076 SNOWLEOPARD RELEASE : platform/chromium/virtual/gpu/fast/canvas/2d.te
 BUGWK83076 SNOWLEOPARD RELEASE : storage/read-and-write-transactions-dont-run-together.html = TIMEOUT PASS
 BUGWK83076 SNOWLEOPARD RELEASE : storage/read-transactions-running-concurrently.html = TIMEOUT PASS
 
-BUGDPRANKE MAC LINUX RELEASE : fast/loader/javascript-url-in-embed.html = TEXT PASS
+// broken in/after r115646
+BUGWK86414 : fast/loader/javascript-url-in-embed.html = TEXT
+
 BUGDPRANKE MAC LINUX : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
 BUGDPRANKE MAC LINUX : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
 BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS

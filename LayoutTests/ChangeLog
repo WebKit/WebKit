@@ -1,3 +1,12 @@
+2012-05-14  Dirk Pranke  <dpranke@chromium.org>
+
+        fast/loader/javascript-url-in-embed.html is failing after r115646
+        https://bugs.webkit.org/show_bug.cgi?id=86414
+
+        Unreviewed, expectations change.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-14  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Add "stack" property to DOMException
