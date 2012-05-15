@@ -376,7 +376,8 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
         pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     if (!widget) {
-        renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
+        if (!renderer->showsUnavailablePluginIndicator())
+            renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
         return false;
     }
 

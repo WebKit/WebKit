@@ -92,6 +92,7 @@ void WKAccessibilityHandleFocusChanged(void);
 AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
+BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionString);
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 // Remote Accessibility API.

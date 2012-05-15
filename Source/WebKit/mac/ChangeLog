@@ -1,5 +1,30 @@
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116695
+
+    2012-05-10  Anders Carlsson  <andersca@apple.com>
+
+            WebKit1: Add a way to blacklist specific plug-ins/plug-in versions
+            https://bugs.webkit.org/show_bug.cgi?id=86150
+            <rdar://problem/9551196>
+
+            Reviewed by Sam Weinig.
+
+            * Misc/WebKitErrors.h:
+            Add WebKitErrorInsecurePlugInVersion enum.
+
+            * Plugins/WebBasePluginPackage.h:
+            * Plugins/WebBasePluginPackage.mm:
+            (-[WebBasePluginPackage bundleIdentifier]):
+            (-[WebBasePluginPackage bundleVersion]):
+            Add bundleIdentifier and bundleVersion getters.
+
+            * WebCoreSupport/WebFrameLoaderClient.mm:
+            (WebFrameLoaderClient::createPlugin):
+            Check if the plug-in is blocked. If it is, set the unavailability reason and the error code.
+
+2012-05-15  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116687
 
     2012-05-10  Anders Carlsson  <andersca@apple.com>

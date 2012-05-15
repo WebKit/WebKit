@@ -463,9 +463,22 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
     [pluginDatabases removeObject:database];
 }
 
-- (WTF::String)bundleIdentifier
+- (String)bundleIdentifier
 {
     return CFBundleGetIdentifier(cfBundle.get());
+}
+
+- (String)bundleVersion
+{
+    CFDictionaryRef infoDictionary = CFBundleGetInfoDictionary(cfBundle.get());
+    if (!infoDictionary)
+        return String();
+
+    CFTypeRef bundleVersionString = CFDictionaryGetValue(infoDictionary, kCFBundleVersionKey);
+    if (!bundleVersionString || CFGetTypeID(bundleVersionString) != CFStringGetTypeID())
+        return String();
+
+    return reinterpret_cast<CFStringRef>(bundleVersionString);
 }
 
 @end

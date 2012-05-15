@@ -77,7 +77,8 @@ typedef void (*BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 
 - (const WebCore::PluginInfo&)pluginInfo;
 
-- (WTF::String)bundleIdentifier;
+- (String)bundleIdentifier;
+- (String)bundleVersion;
 
 - (BOOL)supportsExtension:(const WTF::String&)extension;
 - (BOOL)supportsMIMEType:(const WTF::String&)MIMEType;
