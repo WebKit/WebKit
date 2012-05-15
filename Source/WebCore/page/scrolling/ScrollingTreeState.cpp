@@ -157,6 +157,15 @@ void ScrollingTreeState::setRequestedScrollPosition(const IntPoint& requestedScr
     m_changedProperties |= RequestedScrollPosition;
 }
 
+void ScrollingTreeState::setScrollOrigin(const IntPoint& scrollOrigin)
+{
+    if (m_scrollOrigin == scrollOrigin)
+        return;
+
+    m_scrollOrigin = scrollOrigin;
+    m_changedProperties |= ScrollOrigin;
+}
+
 PassOwnPtr<ScrollingTreeState> ScrollingTreeState::commit()
 {
     OwnPtr<ScrollingTreeState> treeState = adoptPtr(new ScrollingTreeState(*this));

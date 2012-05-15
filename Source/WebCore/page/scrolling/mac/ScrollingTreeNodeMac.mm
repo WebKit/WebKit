@@ -237,24 +237,22 @@ IntPoint ScrollingTreeNodeMac::scrollPosition() const
         return m_probableMainThreadScrollPosition;
 
     CGPoint scrollLayerPosition = m_scrollLayer.get().position;
-    return IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+    return IntPoint(-scrollLayerPosition.x + scrollOrigin().x(), -scrollLayerPosition.y + scrollOrigin().y());
 }
 
 void ScrollingTreeNodeMac::setScrollLayerPosition(const IntPoint& position)
 {
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
-    m_scrollLayer.get().position = CGPointMake(-position.x(), -position.y());
+    m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 }
 
 IntPoint ScrollingTreeNodeMac::minimumScrollPosition() const
 {
-    // FIXME: This should take the scroll origin into account.
     return IntPoint(0, 0);
 }
 
 IntPoint ScrollingTreeNodeMac::maximumScrollPosition() const
 {
-    // FIXME: This should take the scroll origin into account.
     IntPoint position(contentsSize().width() - viewportRect().width(),
                       contentsSize().height() - viewportRect().height());
 

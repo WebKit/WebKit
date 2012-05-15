@@ -149,6 +149,7 @@ void ScrollingCoordinator::frameViewLayoutUpdated(FrameView* frameView)
     scrollParameters.horizontalScrollbarMode = frameView->horizontalScrollbarMode();
     scrollParameters.verticalScrollbarMode = frameView->verticalScrollbarMode();
 
+    scrollParameters.scrollOrigin = frameView->scrollOrigin();
     scrollParameters.viewportRect = IntRect(IntPoint(), frameView->visibleContentRect().size());
     scrollParameters.contentsSize = frameView->contentsSize();
 
@@ -360,6 +361,7 @@ void ScrollingCoordinator::setScrollParameters(const ScrollParameters& scrollPar
     m_scrollingTreeState->setHorizontalScrollbarMode(scrollParameters.horizontalScrollbarMode);
     m_scrollingTreeState->setVerticalScrollbarMode(scrollParameters.verticalScrollbarMode);
 
+    m_scrollingTreeState->setScrollOrigin(scrollParameters.scrollOrigin);
     m_scrollingTreeState->setViewportRect(scrollParameters.viewportRect);
     m_scrollingTreeState->setContentsSize(scrollParameters.contentsSize);
     scheduleTreeStateCommit();
