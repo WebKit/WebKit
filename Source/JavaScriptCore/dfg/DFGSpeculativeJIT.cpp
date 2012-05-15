@@ -1974,7 +1974,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
         }
         GPRTemporary scratch(this);
         GPRReg scratchReg = scratch.gpr();
-        m_jit.move(Imm32(static_cast<int>(d)), scratchReg);
+        m_jit.move(Imm32(toInt32(d)), scratchReg);
         value.adopt(scratch);
         valueGPR = scratchReg;
     } else if (at(valueUse).shouldSpeculateInteger()) {
