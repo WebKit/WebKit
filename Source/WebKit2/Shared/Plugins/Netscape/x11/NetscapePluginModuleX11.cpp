@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#if PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#if PLUGIN_ARCHITECTURE(X11)
 
 #include "NetscapePluginModule.h"
 
@@ -225,4 +225,4 @@ bool NetscapePluginModule::scanPlugin(const String& pluginPath)
 
 } // namespace WebKit
 
-#endif // PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#endif // PLUGIN_ARCHITECTURE(X11)

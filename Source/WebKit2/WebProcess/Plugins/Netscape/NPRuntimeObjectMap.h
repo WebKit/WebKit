@@ -26,8 +26,6 @@
 #ifndef NPJSObjectWrapperMap_h
 #define NPJSObjectWrapperMap_h
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include <WebCore/RunLoop.h>
 #include <heap/Weak.h>
 #include <wtf/Forward.h>
@@ -102,7 +100,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NPJSObjectWrapperMap_h

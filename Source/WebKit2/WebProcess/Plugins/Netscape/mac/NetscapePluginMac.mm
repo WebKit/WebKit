@@ -26,8 +26,6 @@
 #import "config.h"
 #import "NetscapePlugin.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #import "NetscapeBrowserFuncs.h"
 #import "PluginController.h"
 #import "WebEvent.h"
@@ -1108,5 +1106,3 @@ void NetscapePlugin::nullEventTimerFired()
 #endif
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)

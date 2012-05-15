@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetscapePlugin.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include "NetscapePluginStream.h"
@@ -972,5 +970,3 @@ bool NetscapePlugin::convertFromRootView(const IntPoint& pointInRootViewCoordina
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)

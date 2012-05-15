@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetscapeBrowserFuncs.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include "NPRuntimeUtilities.h"
 #include "NetscapePlugin.h"
 #include "PluginController.h"
@@ -1062,5 +1060,3 @@ NPNetscapeFuncs* netscapeBrowserFuncs()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)

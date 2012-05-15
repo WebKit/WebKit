@@ -26,8 +26,6 @@
 #ifndef NetscapePluginStream_h
 #define NetscapePluginStream_h
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include <WebCore/FileSystem.h>
 #include <WebCore/RunLoop.h>
 #include <WebCore/npruntime_internal.h>
@@ -111,7 +109,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NetscapePluginStream_h

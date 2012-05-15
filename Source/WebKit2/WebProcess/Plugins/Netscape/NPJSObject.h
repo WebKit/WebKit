@@ -26,8 +26,6 @@
 #ifndef NPJSObject_h
 #define NPJSObject_h
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include <JavaScriptCore/Strong.h>
 #include <WebCore/npruntime_internal.h>
 #include <wtf/Noncopyable.h>
@@ -96,7 +94,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NPJSObject_h

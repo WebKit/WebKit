@@ -26,8 +26,6 @@
 #ifndef JSNPObject_h
 #define JSNPObject_h
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/ObjectPrototype.h>
@@ -105,7 +103,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // JSNPObject_h

@@ -26,8 +26,6 @@
 #ifndef NetscapePluginModule_h
 #define NetscapePluginModule_h
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include "Module.h"
 #include "PluginModuleInfo.h"
 #include "PluginQuirks.h"
@@ -100,7 +98,5 @@ private:
 };
     
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NetscapePluginModule_h

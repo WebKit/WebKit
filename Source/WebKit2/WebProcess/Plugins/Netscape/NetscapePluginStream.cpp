@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetscapePluginStream.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include "NetscapePlugin.h"
 #include <utility>
 #include <wtf/PassOwnPtr.h>
@@ -363,5 +361,3 @@ void NetscapePluginStream::notifyAndDestroyStream(NPReason reason)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)

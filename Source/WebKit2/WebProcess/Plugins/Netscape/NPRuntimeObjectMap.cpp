@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NPRuntimeObjectMap.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include "JSNPObject.h"
 #include "NPJSObject.h"
 #include "NPRuntimeUtilities.h"
@@ -303,5 +301,3 @@ void NPRuntimeObjectMap::finalize(JSC::Handle<JSC::Unknown> handle, void* contex
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
