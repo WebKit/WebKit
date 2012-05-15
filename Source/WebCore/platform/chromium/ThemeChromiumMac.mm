@@ -33,13 +33,10 @@
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
-#include <wtf/StdLibExtras.h>
 #import <objc/runtime.h>
-
-#if USE(SKIA)
 #include "PlatformContextSkia.h"
 #include "skia/ext/skia_utils_mac.h"
-#endif
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -641,12 +638,8 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
         int heightDiff = clampToInteger(bounds.size.height - backgroundBounds.size.height);
         backgroundBounds.origin.y = bounds.origin.y + (heightDiff / 2) + 1;
     }
-#if USE(SKIA)
     gfx::SkiaBitLocker bitLocker(context->platformContext()->canvas());
     CGContextRef cgContext = bitLocker.cgContext();
-#else
-    CGContextRef cgContext = context->platformContext();
-#endif
     HIThemeDrawButton(&backgroundBounds, &drawInfo, cgContext, kHIThemeOrientationNormal, 0);
     context->restore();
 }

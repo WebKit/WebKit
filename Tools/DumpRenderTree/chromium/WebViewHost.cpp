@@ -1735,12 +1735,7 @@ void WebViewHost::paintRect(const WebRect& rect)
     ASSERT(!m_isPainting);
     ASSERT(canvas());
     m_isPainting = true;
-#if USE(CG)
-    webWidget()->paint(skia::BeginPlatformPaint(canvas()), rect);
-    skia::EndPlatformPaint(canvas());
-#else
     webWidget()->paint(canvas(), rect);
-#endif
     m_isPainting = false;
 }
 

@@ -165,11 +165,6 @@
 #include "PlatformGestureEvent.h"
 #endif
 
-#if USE(CG)
-#include <CoreGraphics/CGBitmapContext.h>
-#include <CoreGraphics/CGContext.h>
-#endif
-
 #if OS(WINDOWS)
 #include "RenderThemeChromiumWin.h"
 #else
@@ -1484,18 +1479,13 @@ void WebViewImpl::layout()
 void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect)
 {
     ASSERT(!m_layerTreeView.isNull());
-#if USE(SKIA)
+
     PlatformContextSkia context(canvas);
 
     // PlatformGraphicsContext is actually a pointer to PlatformContextSkia
     GraphicsContext gc(reinterpret_cast<PlatformGraphicsContext*>(&context));
     int bitmapHeight = canvas->getDevice()->accessBitmap(false).height();
-#elif USE(CG)
-    GraphicsContext gc(canvas);
-    int bitmapHeight = CGBitmapContextGetHeight(reinterpret_cast<CGContextRef>(canvas));
-#else
-    notImplemented();
-#endif
+
     // Compute rect to sample from inverted GPU buffer.
     IntRect invertRect(rect.x(), bitmapHeight - rect.maxY(), rect.width(), rect.height());
 

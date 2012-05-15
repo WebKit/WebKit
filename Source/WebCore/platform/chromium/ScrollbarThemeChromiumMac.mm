@@ -32,15 +32,12 @@
 #include "ImageBuffer.h"
 #include "LocalCurrentGraphicsContext.h"
 #include "NSScrollerImpDetails.h"
+#include "PlatformContextSkia.h"
 #include "PlatformSupport.h"
 #include "ScrollAnimatorMac.h"
 #include "ScrollView.h"
-#include <Carbon/Carbon.h>
-
-#if USE(SKIA)
-#include "PlatformContextSkia.h"
 #include "skia/ext/skia_utils_mac.h"
-#endif
+#include <Carbon/Carbon.h>
 
 namespace WebCore {
 
@@ -121,11 +118,7 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
                 value = 0;
         }
 
-#if !USE(SKIA)
-        setIsCurrentlyDrawingIntoLayer(context->isCALayerContext());
-#else
         setIsCurrentlyDrawingIntoLayer(false);
-#endif
 
         CGFloat oldKnobAlpha = 0;
         CGFloat oldTrackAlpha = 0;
@@ -201,12 +194,8 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
         trackInfo.enableState = kThemeTrackNothingToScroll;
     trackInfo.trackInfo.scrollbar.pressState = scrollbarPartToHIPressedState(scrollbar->pressedPart());
 
-#if USE(SKIA)
     SkCanvas* canvas = context->platformContext()->canvas();
     CGAffineTransform currentCTM = gfx::SkMatrixToCGAffineTransform(canvas->getTotalMatrix());
-#else
-    CGAffineTransform currentCTM = CGContextGetCTM(context->platformContext());
-#endif
 
     // The Aqua scrollbar is buggy when rotated and scaled.  We will just draw into a bitmap if we detect a scale or rotation.
     bool canDrawDirectly = currentCTM.a == 1.0f && currentCTM.b == 0.0f && currentCTM.c == 0.0f && (currentCTM.d == 1.0f || currentCTM.d == -1.0f);
@@ -227,12 +216,8 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
     }
 
     // Draw thumbless.
-#if USE(SKIA)
     gfx::SkiaBitLocker bitLocker(drawingContext->platformContext()->canvas());
     CGContextRef cgContext = bitLocker.cgContext();
-#else
-    CGContextRef cgContext = drawingContext->platformContext();
-#endif
     HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
 
     IntRect tickmarkTrackRect = trackRect(scrollbar, false);

@@ -61,10 +61,6 @@
 #include "platform/WebURL.h"
 #include "platform/WebVector.h"
 
-#if USE(CG)
-#include <CoreGraphics/CGContext.h>
-#endif
-
 #if OS(WINDOWS)
 #include "platform/WebRect.h"
 #include "platform/win/WebThemeEngine.h"

@@ -1,5 +1,17 @@
 2012-05-15  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Chromium port never sets USE(CG) so code behind it is dead
+        https://bugs.webkit.org/show_bug.cgi?id=86537
+
+        Reviewed by Adrienne Walker.
+
+        Deletes code behind USE(CG) in chromium-specific code and removes unneeded USE(SKIA) guards.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintRect):
+
+2012-05-15  James Robinson  <jamesr@chromium.org>
+
         [chromium] Remove WEBKIT_USING_(SKIA|CG) #defines
         https://bugs.webkit.org/show_bug.cgi?id=86536
 

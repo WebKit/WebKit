@@ -28,16 +28,12 @@
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
+#include "SkBitmap.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
-#if USE(SKIA)
-#include "SkBitmap.h"
-#endif
 
-#if USE(SKIA)
 class GrContext;
-#endif
 
 namespace WebKit {
 class WebGraphicsContext3D;
@@ -68,9 +64,7 @@ public:
 
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     Platform3DObject platformTexture() const;
-#if USE(SKIA)
     GrContext* grContext();
-#endif
 
     bool makeContextCurrent();
 
@@ -324,6 +318,8 @@ public:
 private:
     GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphicsContext3D>, bool preserveDrawingBuffer);
 
+    void initializeExtensions();
+
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
     OwnPtr<GraphicsContextLostCallbackAdapter> m_contextLostCallbackAdapter;
@@ -343,7 +339,6 @@ private:
     };
     ResourceSafety m_resourceSafety;
 
-#if USE(SKIA)
     // If the width and height of the Canvas's backing store don't
     // match those that we were given in the most recent call to
     // reshape(), then we need an intermediate bitmap to read back the
@@ -352,14 +347,6 @@ private:
     SkBitmap m_resizingBitmap;
 
     GrContext* m_grContext;
-#endif
-
-#if USE(CG)
-    OwnArrayPtr<unsigned char> m_renderOutput;
-    size_t m_renderOutputSize;
-#endif
-
-    void initializeExtensions();
 };
 
 } // namespace WebCore
