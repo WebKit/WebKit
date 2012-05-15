@@ -352,6 +352,7 @@ BUGWK84073 DEBUG : plugins/npruntime/object-from-destroyed-plugin-in-subframe.ht
 
 BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
 
+BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
 BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1321,7 +1322,6 @@ BUGWK86442 : fast/dom/DOMException/stack-trace.html = FAIL
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-false.html = FAIL
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-true.html = FAIL
-BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = FAIL
 BUGWK86443 : plugins/npruntime/delete-plugin-within-setProperty.html = FAIL
 
 BUGWK86445 : fast/multicol/split-in-top-margin.html = IMAGE

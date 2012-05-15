@@ -1,3 +1,10 @@
+2012-05-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, marking plugins/npruntime/delete-plugin-within-getProperty.html
+        as crashing for GTK.
+
+        * platform/gtk/test_expectations.txt:
+
 2012-05-15  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] http/tests/navigation/https-in-page-cache.html fails with timeout
