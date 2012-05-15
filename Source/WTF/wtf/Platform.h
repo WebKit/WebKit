@@ -552,6 +552,7 @@
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
 #define HAVE_LAYER_HOSTING_IN_WINDOW_SERVER 1
 #endif
+#define WTF_USE_APPKIT 1
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
@@ -603,6 +604,7 @@
     #define ENABLE_YARR_JIT 1
 #endif
 
+#define WTF_USE_APPKIT 0
 #endif
 
 #if PLATFORM(WIN) && !OS(WINCE)
