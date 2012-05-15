@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load connect from 'http://127.0.0.1:8000/xmlhttprequest/resources/get.txt' because of Content-Security-Policy.
+CONSOLE MESSAGE: Refused to connect to connect 'http://127.0.0.1:8000/xmlhttprequest/resources/get.txt' because it violates the following Content Security Policy directive: "connect-src 'none'".
 
 ALERT: xhr blocked
 

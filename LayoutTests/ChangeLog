@@ -1,3 +1,11 @@
+2012-05-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed morning gardening to paint the Qt bots green.
+
+        * http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked-expected.txt: Updated after r117006.
+        * platform/qt/Skipped: Skip new failing/crashing tests.
+        * platform/qt/http/tests/security/contentSecurityPolicy/xsl-img-blocked-expected.txt: Updated after r117006.
+
 2012-05-14  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectations.
