@@ -277,7 +277,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
     // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
     // for consistency with old results.
-    ts << " " << enclosingIntRect(r);
+    r = enclosingIntRect(r);
+
+
+    ts << " " << r;
 
     if (!(o.isText() && !o.isBR())) {
         if (o.isFileUploadControl())
