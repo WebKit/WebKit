@@ -62,6 +62,8 @@ public:
     void didReceivePluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncPluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
+    bool wantsWheelEvents() const;
+
 #if PLATFORM(MAC)
     uint32_t remoteLayerClientID() const;
 #endif

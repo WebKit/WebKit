@@ -121,6 +121,9 @@ public:
     // Returns whether the plug-in is transparent or not.
     virtual bool isTransparent() = 0;
 
+    // Returns whether we should send wheel events to this plug-in.
+    virtual bool wantsWheelEvents() = 0;
+
     // Tells the plug-in that its geometry has changed. The clip rect is in plug-in coordinates, and the affine transform can be used
     // to convert from root view coordinates to plug-in coordinates.
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) = 0;

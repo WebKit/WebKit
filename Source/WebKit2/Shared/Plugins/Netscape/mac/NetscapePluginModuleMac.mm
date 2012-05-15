@@ -518,6 +518,11 @@ void NetscapePluginModule::determineQuirks()
         m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
     }
 #endif
+
+    if (plugin.bundleIdentifier == "com.adobe.acrobat.pdfviewerNPAPI") {
+        // The Adobe Reader plug-in wants wheel events.
+        m_pluginQuirks.add(PluginQuirks::WantsWheelEvents);
+    }
 }
 
 } // namespace WebKit
