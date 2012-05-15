@@ -30,15 +30,12 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
  * @param {WebInspector.View} view
  * @param {string} widthSettingName
  * @param {number} minimalWidth
  */
 WebInspector.SidebarOverlay = function(view, widthSettingName, minimalWidth)
 {
-    WebInspector.Object.call(this);
-    
     this.element = document.createElement("div");
     this.element.className = "sidebar-overlay";
 
@@ -55,11 +52,6 @@ WebInspector.SidebarOverlay = function(view, widthSettingName, minimalWidth)
     this._installResizer(this._resizerElement);
 }
 
-WebInspector.SidebarOverlay.EventTypes = {
-    WasShown: "WasShown",
-    WillHide: "WillHide"
-}
-
 WebInspector.SidebarOverlay.prototype = {
     /**
      * @param {Element} relativeToElement
@@ -73,16 +65,6 @@ WebInspector.SidebarOverlay.prototype = {
         if (this._resizerWidgetElement)
             this.element.appendChild(this._resizerWidgetElement);
         this.position(relativeToElement);
-        this._boundContainingElementFocused = this._containingElementFocused.bind(this);
-        relativeToElement.addEventListener("mousedown", this._boundContainingElementFocused, false);
-
-        this.dispatchEventToListeners(WebInspector.SidebarOverlay.EventTypes.WasShown, null);
-    },
-
-    _containingElementFocused: function(event)
-    {
-        if (!event.target.isSelfOrDescendant(this.element))
-            this.hide();
     },
 
     /**
@@ -105,15 +87,12 @@ WebInspector.SidebarOverlay.prototype = {
         if (!element)
             return;
 
-        this.dispatchEventToListeners(WebInspector.SidebarOverlay.EventTypes.WillHide, null);
-        
         this._view.detach();
         element.removeChild(this.element);
         element.removeStyleClass("sidebar-overlay-shown");
         this.element.removeChild(this._resizerElement);
         if (this._resizerWidgetElement)
             this.element.removeChild(this._resizerWidgetElement);
-        element.removeEventListener("mousedown", this._boundContainingElementFocused, false);
     },
     
     /**
@@ -199,5 +178,3 @@ WebInspector.SidebarOverlay.prototype = {
         this._installResizer(resizerWidgetElement);
     }
 }
-
-WebInspector.SidebarOverlay.prototype.__proto__ = WebInspector.Object.prototype;

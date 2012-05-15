@@ -6591,7 +6591,6 @@
             'inspector/front-end/Images/indexedDBIndex.png',
             'inspector/front-end/Images/localStorage.png',
             'inspector/front-end/Images/navigatorShowHideButton.png',
-            'inspector/front-end/Images/navigatorPinButton.png',
             'inspector/front-end/Images/paneAddButtons.png',
             'inspector/front-end/Images/paneBottomGrow.png',
             'inspector/front-end/Images/paneBottomGrowActive.png',

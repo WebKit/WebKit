@@ -150,48 +150,35 @@
     background-position: center;
 }
 
-.scripts-navigator-control-button {
-    position: absolute;
-    padding: 0;
-    margin: 0;
-    border: 0 transparent none;
-    background-color: transparent;
-}
-
-#scripts-navigator-show-hide-button {
-    top: 3px;
-    height: 16px;
-    left: 2px;
-    width: 16px;
-}
-
-#scripts-navigator-show-hide-button .glyph {
+.status-bar-item.scripts-navigator-show-hide-button > .glyph {
+    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-mask-position: 0 0;
     -webkit-mask-image: url(Images/navigatorShowHideButton.png);
 }
 
-#scripts-navigator-show-hide-button:active .glyph {
-    top: 1px;
-    bottom: -1px;
+.status-bar-item.scripts-navigator-show-hide-button.toggled-pinned > .glyph {
+    -webkit-mask-position: -16px 0;
 }
 
-#scripts-navigator-show-hide-button.toggled-on .glyph {
-    background-color: #4281EB;
+.status-bar-item.scripts-navigator-show-hide-button.toggled-overlay > .glyph {
+    -webkit-mask-position: -32px 0;
 }
 
-#scripts-navigator-pin-button {
-    top: 6px;
-    height: 10px;
-    right: 16px;
-    width: 10px;
+button.status-bar-item.scripts-navigator-show-hide-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: none;
+    height: 16px;
+    width: 16px;
+    margin: 3px 2px 2px 2px;
 }
 
-#scripts-navigator-pin-button .glyph {
-    -webkit-mask-image: url(Images/navigatorPinButton.png);
-}
-
-#scripts-navigator-pin-button:active .glyph {
-    top: 1px;
-    bottom: -1px;
+button.status-bar-item.scripts-navigator-show-hide-button.toggled-pinned,
+button.status-bar-item.scripts-navigator-show-hide-button.toggled-overlay
+{
+    left: auto;
+    right: 15px;
 }
 
 .scripts-views-container {
