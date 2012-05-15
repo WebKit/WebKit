@@ -325,6 +325,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     RenderLayerCompositor* compositor = this->compositor();
     RenderObject* renderer = this->renderer();
 
+    m_owningLayer->updateZOrderLists();
+
     bool layerConfigChanged = false;
     if (updateForegroundLayer(compositor->needsContentsCompositingLayer(m_owningLayer)))
         layerConfigChanged = true;

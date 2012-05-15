@@ -394,6 +394,8 @@ public:
         return m_posZOrderList;
     }
 
+    bool hasNegativeZOrderList() const { return negZOrderList() && negZOrderList()->size(); }
+
     Vector<RenderLayer*>* negZOrderList() const
     {
         ASSERT(!m_zOrderListsDirty);
