@@ -64,7 +64,7 @@ void InsertionPoint::attach()
 
 void InsertionPoint::detach()
 {
-    ShadowRoot* root = toShadowRoot(shadowTreeRootNode());
+    ShadowRoot* root = shadowTreeRootNode();
     if (root && isActive()) {
         ElementShadow* shadow = root->owner();
 

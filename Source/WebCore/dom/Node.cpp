@@ -1500,18 +1500,18 @@ Node* Node::shadowAncestorNode() const
         return const_cast<Node*>(this);
 #endif
 
-    Node* root = shadowTreeRootNode();
-    if (root)
-        return root->shadowHost();
+    if (ShadowRoot* root = shadowTreeRootNode())
+        return root->host();
+
     return const_cast<Node*>(this);
 }
 
-Node* Node::shadowTreeRootNode() const
+ShadowRoot* Node::shadowTreeRootNode() const
 {
     Node* root = const_cast<Node*>(this);
     while (root) {
         if (root->isShadowRoot())
-            return root;
+            return toShadowRoot(root);
         root = root->parentNodeGuaranteedHostFree();
     }
     return 0;

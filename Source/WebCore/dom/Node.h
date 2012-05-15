@@ -82,6 +82,7 @@ class RenderBox;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
+class ShadowRoot;
 class TagNodeList;
 class TreeScope;
 
@@ -221,7 +222,7 @@ public:
 
     Node* shadowAncestorNode() const;
     // Returns 0, a ShadowRoot, or a legacy shadow root.
-    Node* shadowTreeRootNode() const;
+    ShadowRoot* shadowTreeRootNode() const;
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
     bool isInShadowTree() const;

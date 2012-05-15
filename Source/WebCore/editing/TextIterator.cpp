@@ -39,6 +39,7 @@
 #include "RenderTableRow.h"
 #include "RenderTextControl.h"
 #include "RenderTextFragment.h"
+#include "ShadowRoot.h"
 #include "TextBoundaries.h"
 #include "TextBreakIterator.h"
 #include "VisiblePosition.h"

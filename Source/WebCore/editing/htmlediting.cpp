@@ -45,10 +45,11 @@
 #include "PositionIterator.h"
 #include "RenderObject.h"
 #include "Range.h"
-#include "VisibleSelection.h"
+#include "ShadowRoot.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
+#include "VisibleSelection.h"
 #include "visible_units.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>

@@ -72,6 +72,7 @@
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "SpatialNavigation.h"
 #include "StaticHashSetNodeList.h"
 #include "StyleCachedImage.h"

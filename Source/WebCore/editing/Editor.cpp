@@ -74,6 +74,7 @@
 #include "RenderedPosition.h"
 #include "ReplaceSelectionCommand.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "SimplifyMarkupCommand.h"
 #include "Sound.h"
 #include "SpellChecker.h"

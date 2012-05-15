@@ -78,7 +78,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
 
         if (m_visualParentShadow) {
             if ((m_insertionPoint = m_visualParentShadow->insertionPointFor(m_node))) {
-                if (toShadowRoot(m_insertionPoint->shadowTreeRootNode())->isUsedForRendering()) {
+                if (m_insertionPoint->shadowTreeRootNode()->isUsedForRendering()) {
                     m_phase = AttachingDistributed;
                     m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
                     return;
@@ -91,7 +91,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         }
 
         if (isShadowBoundary(parent)) {
-            if (!toShadowRoot(parent->shadowTreeRootNode())->isUsedForRendering()) {
+            if (!parent->shadowTreeRootNode()->isUsedForRendering()) {
                 m_phase = AttachingNotDistributed;
                 m_parentNodeForRenderingAndStyle = parent;
                 return;

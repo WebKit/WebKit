@@ -30,6 +30,7 @@
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "InsertionPoint.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 

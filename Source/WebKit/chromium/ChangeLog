@@ -1,3 +1,14 @@
+2012-05-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Node::shadowTreeRootNode() should return ShadowRoot instead of Node.
+        https://bugs.webkit.org/show_bug.cgi?id=86428
+
+        Reviewed by Hajime Morita.
+
+        Adds include directive to build.
+
+        * src/WebFrameImpl.cpp:
+
 2012-05-14  Gavin Peters  <gavinp@chromium.org>
 
         Add Prerenderer, PrerenderHandle and a chromium interface for Prerendering.

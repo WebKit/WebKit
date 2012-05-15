@@ -130,6 +130,7 @@
 #include "ScrollbarTheme.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "SkiaUtils.h"
 #include "SpellChecker.h"
 #include "SubstituteData.h"

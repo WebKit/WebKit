@@ -111,7 +111,7 @@ public:
     Node* firstNode() const;
     Node* pastLastNode() const;
 
-    Node* shadowTreeRootNode() const;
+    ShadowRoot* shadowTreeRootNode() const;
 
     IntRect boundingBox();
     
