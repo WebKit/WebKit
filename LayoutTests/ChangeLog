@@ -1,3 +1,11 @@
+2012-05-15  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed. Rebaseline svg/repaint/mask-clip-target-transform-expected.png.
+
+        * platform/chromium-mac/svg/repaint/mask-clip-target-transform-expected.png: Added.
+        * platform/chromium-win/svg/repaint/mask-clip-target-transform-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         Unreviewed EFL gardening.

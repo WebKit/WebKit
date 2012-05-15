@@ -1218,9 +1218,6 @@ BUGWK81217 : svg/custom/use-detach.svg = PASS FAIL
 BUGWK81217 : svg/carto.net/tabgroup.svg = PASS FAIL
 BUGWK81217 : svg/hixie/perf/003.xml = PASS FAIL
 
-// Needs rebaselining after landing 76527
-BUGWK76527 WIN MAC : svg/repaint/mask-clip-target-transform.svg = IMAGE+TEXT IMAGE TEXT PASS
-
 BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
 
 BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE
