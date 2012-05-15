@@ -52,9 +52,11 @@
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 #endif
 
+#if USE(APPKIT)
 @interface NSApplication (WebNSApplicationDetails)
 -(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
 @end
+#endif
 
 #define SHOW_CRASH_REPORTER 1
 
@@ -168,12 +170,14 @@ int WebProcessMain(const CommandLine& commandLine)
 
     [pool drain];
 
+#if USE(APPKIT)
      // Initialize AppKit.
     [NSApplication sharedApplication];
 
     // Installs autorelease pools on the current CFRunLoop which prevents memory from accumulating between user events.
     // FIXME: Remove when <rdar://problem/8929426> is fixed.
     [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
+#endif
 
     WKAXRegisterRemoteApp();
     

@@ -39,9 +39,13 @@ namespace CoreIPC {
 
 enum NSType {
     NSAttributedStringType,
+#if USE(APPKIT)
     NSColorType,
+#endif
     NSDictionaryType,
+#if USE(APPKIT)
     NSFontType,
+#endif
     NSNumberType,
     NSStringType,
     Unknown,
@@ -53,12 +57,16 @@ static NSType typeFromObject(id object)
 
     if ([object isKindOfClass:[NSAttributedString class]])
         return NSAttributedStringType;
+#if USE(APPKIT)
     if ([object isKindOfClass:[NSColor class]])
         return NSColorType;
+#endif
     if ([object isKindOfClass:[NSDictionary class]])
         return NSDictionaryType;
+#if USE(APPKIT)
     if ([object isKindOfClass:[NSFont class]])
         return NSFontType;
+#endif
     if ([object isKindOfClass:[NSNumber class]])
         return NSNumberType;
     if ([object isKindOfClass:[NSString class]])
@@ -77,15 +85,19 @@ static void encode(ArgumentEncoder* encoder, id object)
     case NSAttributedStringType:
         encode(encoder, static_cast<NSAttributedString *>(object));
         return;
+#if USE(APPKIT)
     case NSColorType:
         encode(encoder, static_cast<NSColor *>(object));
         return;
+#endif
     case NSDictionaryType:
         encode(encoder, static_cast<NSDictionary *>(object));
         return;
+#if USE(APPKIT)
     case NSFontType:
         encode(encoder, static_cast<NSFont *>(object));
         return;
+#endif
     case NSNumberType:
         encode(encoder, static_cast<NSNumber *>(object));
         return;
@@ -113,6 +125,7 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
         result = string;
         return true;
     }
+#if USE(APPKIT)
     case NSColorType: {
         RetainPtr<NSColor> color;
         if (!decode(decoder, color))
@@ -120,6 +133,7 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
         result = color;
         return true;
     }
+#endif
     case NSDictionaryType: {
         RetainPtr<NSDictionary> dictionary;
         if (!decode(decoder, dictionary))
@@ -127,6 +141,7 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
         result = dictionary;
         return true;
     }
+#if USE(APPKIT)
     case NSFontType: {
         RetainPtr<NSFont> font;
         if (!decode(decoder, font))
@@ -134,6 +149,7 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
         result = font;
         return true;
     }
+#endif
     case NSNumberType: {
         RetainPtr<NSNumber> number;
         if (!decode(decoder, number))
@@ -226,6 +242,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSAttributedString>& result)
     return true;
 }
 
+#if USE(APPKIT)
 void encode(ArgumentEncoder* encoder, NSColor *color)
 {
     encoder->encode(colorFromNSColor(color));
@@ -240,6 +257,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSColor>& result)
     result = nsColor(color);
     return true;
 }
+#endif
 
 void encode(ArgumentEncoder* encoder, NSDictionary *dictionary)
 {
@@ -291,7 +309,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSDictionary>& result)
     return true;
 }
 
-
+#if USE(APPKIT)
 void encode(ArgumentEncoder* encoder, NSFont *font)
 {
     // NSFont could use CTFontRef code if we had it in ArgumentCodersCF.
@@ -309,6 +327,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSFont>& result)
 
     return true;
 }
+#endif
 
 void encode(ArgumentEncoder* encoder, NSNumber *number)
 {

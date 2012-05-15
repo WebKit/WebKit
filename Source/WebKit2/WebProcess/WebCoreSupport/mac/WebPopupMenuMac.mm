@@ -37,6 +37,7 @@ namespace WebKit {
 
 void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data)
 {
+#if USE(APPKIT)
     // FIXME: font will be nil here for custom fonts, we should fix that.
     NSFont *font = m_popupClient->menuStyle().font().primaryFont()->getNSFont();
     if (!font)
@@ -48,6 +49,9 @@ void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data
     
     data.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
     data.shouldPopOver = m_popupClient->shouldPopOver();
+#else
+    UNUSED_PARAM(data);
+#endif
 }
 
 } // namespace WebKit

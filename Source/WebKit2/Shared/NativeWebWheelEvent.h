@@ -44,7 +44,7 @@ namespace WebKit {
 
 class NativeWebWheelEvent : public WebWheelEvent {
 public:
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     NativeWebWheelEvent(NSEvent *, NSView *);
 #elif PLATFORM(WIN)
     NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
@@ -57,7 +57,7 @@ public:
     NativeWebWheelEvent(const Evas_Event_Mouse_Wheel*, const Evas_Point*);
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
     const MSG* nativeEvent() const { return &m_nativeEvent; }
@@ -70,7 +70,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     MSG m_nativeEvent;

@@ -37,17 +37,21 @@ class ArgumentDecoder;
 void encode(ArgumentEncoder*, NSAttributedString *);
 bool decode(ArgumentDecoder*, RetainPtr<NSAttributedString>&);
 
+#if USE(APPKIT)
 // NSColor
 void encode(ArgumentEncoder*, NSColor *);
 bool decode(ArgumentDecoder*, RetainPtr<NSColor>&);
+#endif
 
 // NSDictionary
 void encode(ArgumentEncoder*, NSDictionary *);
 bool decode(ArgumentDecoder*, RetainPtr<NSDictionary>&);
 
+#if USE(APPKIT)
 // NSFont
 void encode(ArgumentEncoder*, NSFont *);
 bool decode(ArgumentDecoder*, RetainPtr<NSFont>&);
+#endif
 
 // NSNumber
 void encode(ArgumentEncoder*, NSNumber *);

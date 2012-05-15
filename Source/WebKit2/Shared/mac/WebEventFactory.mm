@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebEventFactory.h"
 
+#if USE(APPKIT)
+
 #import "WebKitSystemInterface.h"
 #import <wtf/ASCIICType.h>
 #import <WebCore/PlatformEventFactoryMac.h>
@@ -470,3 +472,5 @@ WebGestureEvent WebEventFactory::createWebGestureEvent(NSEvent *event, NSView *w
 #endif
 
 } // namespace WebKit
+
+#endif // USE(APPKIT)

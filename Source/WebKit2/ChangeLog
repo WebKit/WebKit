@@ -1,3 +1,31 @@
+2012-05-14  Andy Estes  <aestes@apple.com>
+
+        Guard some AppKit-specific code in WebKit2 with USE(APPKIT)
+        https://bugs.webkit.org/show_bug.cgi?id=86444
+
+        Reviewed by Sam Weinig.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        (NativeWebKeyboardEvent):
+        (WebKit::NativeWebKeyboardEvent::nativeEvent):
+        * Shared/NativeWebMouseEvent.h:
+        (NativeWebMouseEvent):
+        (WebKit::NativeWebMouseEvent::nativeEvent):
+        * Shared/NativeWebWheelEvent.h:
+        (NativeWebWheelEvent):
+        (WebKit::NativeWebWheelEvent::nativeEvent):
+        * Shared/mac/ArgumentCodersMac.h:
+        (CoreIPC):
+        * Shared/mac/ArgumentCodersMac.mm:
+        (CoreIPC::typeFromObject):
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        * Shared/mac/WebEventFactory.mm:
+        * WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
 2012-05-15  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] fast/loader/create-frame-in-DOMContentLoaded.html crashes

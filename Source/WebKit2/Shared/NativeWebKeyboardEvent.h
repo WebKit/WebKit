@@ -46,7 +46,7 @@ namespace WebKit {
 
 class NativeWebKeyboardEvent : public WebKeyboardEvent {
 public:
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     NativeWebKeyboardEvent(NSEvent *, NSView *);
 #elif PLATFORM(WIN)
     NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
@@ -60,7 +60,7 @@ public:
     NativeWebKeyboardEvent(const Evas_Event_Key_Up*);
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
     const MSG* nativeEvent() const { return &m_nativeEvent; }
@@ -73,7 +73,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     MSG m_nativeEvent;

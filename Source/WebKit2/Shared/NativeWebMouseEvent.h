@@ -44,7 +44,7 @@ namespace WebKit {
 
 class NativeWebMouseEvent : public WebMouseEvent {
 public:
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     NativeWebMouseEvent(NSEvent *, NSView *);
 #elif PLATFORM(WIN)
     NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
@@ -59,7 +59,7 @@ public:
     NativeWebMouseEvent(const Evas_Event_Mouse_Move*, const Evas_Point*);
 #endif
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
     const MSG* nativeEvent() const { return &m_nativeEvent; }
@@ -72,7 +72,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     RetainPtr<NSEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     MSG m_nativeEvent;
