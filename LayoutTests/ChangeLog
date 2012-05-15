@@ -1,3 +1,15 @@
+2012-05-14  Eric Seidel  <eric@webkit.org>
+
+        Styles are not recalculated when the seamless attribute is dynamically added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=86315
+
+        Reviewed by Andreas Kling.
+
+        Add a subtest to cover this case.
+
+        * fast/frames/seamless/seamless-css-cascade-expected.txt:
+        * fast/frames/seamless/seamless-css-cascade.html:
+
 2012-05-14  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update text expectations.

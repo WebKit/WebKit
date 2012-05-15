@@ -42,5 +42,11 @@ window.onload = function () {
     document.head.appendChild(styleSheet);
     // #one's style is only specified by this parent, so adding a later sheet should override the color and update the child frame.
     shouldBeEqualToString("window.getComputedStyle(one).color", "rgb(3, 2, 1)");
+
+    // Test that removing the seamless attribute recalculates the child's style.
+    window.iframe.removeAttribute("seamless");
+    shouldBeEqualToString("window.getComputedStyle(one).color", "rgb(0, 0, 0)"); // black, default.
+    shouldBeEqualToString("window.getComputedStyle(two).color", "rgb(128, 0, 128)"); // purple, selector in child.
+    shouldBeEqualToString("window.getComputedStyle(three).color", "rgb(0, 0, 0)"); // black, default.
 }
 </script>

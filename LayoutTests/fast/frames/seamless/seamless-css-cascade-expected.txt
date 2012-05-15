@@ -5,4 +5,7 @@ PASS window.getComputedStyle(three).color is "rgb(255, 255, 255)"
 PASS window.getComputedStyle(rootElement).color is "rgb(255, 165, 0)"
 PASS window.getComputedStyle(rootElement).color is "rgb(1, 2, 3)"
 PASS window.getComputedStyle(one).color is "rgb(3, 2, 1)"
+PASS window.getComputedStyle(one).color is "rgb(0, 0, 0)"
+PASS window.getComputedStyle(two).color is "rgb(128, 0, 128)"
+PASS window.getComputedStyle(three).color is "rgb(0, 0, 0)"
 

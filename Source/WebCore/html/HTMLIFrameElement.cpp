@@ -51,7 +51,7 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
 
 bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == alignAttr || name == frameborderAttr)
+    if (name == widthAttr || name == heightAttr || name == alignAttr || name == frameborderAttr || name == seamlessAttr)
         return true;
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }
@@ -87,7 +87,11 @@ void HTMLIFrameElement::parseAttribute(Attribute* attr)
         m_name = newName;
     } else if (attr->name() == sandboxAttr)
         setSandboxFlags(attr->isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attr->value()));
-    else
+    else if (attr->name() == seamlessAttr) {
+        // If we're adding or removing the seamless attribute, we need to force the content document to recalculate its StyleResolver.
+        if (contentDocument())
+            contentDocument()->styleResolverChanged(DeferRecalcStyle);
+    } else
         HTMLFrameElementBase::parseAttribute(attr);
 }
 
