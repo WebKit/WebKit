@@ -2453,6 +2453,7 @@ IF (ENABLE_WEB_AUDIO)
         Modules/webaudio/AudioParamTimeline.cpp
         Modules/webaudio/AudioProcessingEvent.cpp
         Modules/webaudio/AudioScheduledSourceNode.cpp
+        Modules/webaudio/AudioSummingJunction.cpp
         Modules/webaudio/BiquadDSPKernel.cpp
         Modules/webaudio/BiquadFilterNode.cpp
         Modules/webaudio/BiquadProcessor.cpp

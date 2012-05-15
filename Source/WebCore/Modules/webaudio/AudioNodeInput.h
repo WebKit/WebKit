@@ -27,6 +27,7 @@
 
 #include "AudioBus.h"
 #include "AudioNode.h"
+#include "AudioSummingJunction.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -39,13 +40,16 @@ class AudioNodeOutput;
 // In the case of multiple connections, the input will act as a unity-gain summing junction, mixing all the outputs.
 // The number of channels of the input's bus is the maximum of the number of channels of all its connections.
 
-class AudioNodeInput {
+class AudioNodeInput : public AudioSummingJunction {
 public:
     AudioNodeInput(AudioNode*);
 
+    // AudioSummingJunction
+    virtual bool canUpdateState() OVERRIDE { return !node()->isMarkedForDeletion(); }
+    virtual void didUpdate() OVERRIDE;
+
     // Can be called from any thread.
     AudioNode* node() const { return m_node; }
-    AudioContext* context() { return m_node->context(); }
 
     // Must be called with the context's graph lock.
     void connect(AudioNodeOutput*);
@@ -68,45 +72,15 @@ public:
     // Called from context's audio thread.
     AudioBus* bus();
     
-    // This copies m_outputs to m_renderingOutputs.  Please see comments for these lists below.
-    // This must be called when we own the context's graph lock in the audio thread at the very start or end of the render quantum.
-    void updateRenderingState();
-
     // updateInternalBus() updates m_internalSummingBus appropriately for the number of channels.
     // This must be called when we own the context's graph lock in the audio thread at the very start or end of the render quantum.
     void updateInternalBus();
-
-    // Rendering code accesses its version of the current connections here.
-    unsigned numberOfRenderingConnections() const { return m_renderingOutputs.size(); }
-    AudioNodeOutput* renderingOutput(unsigned i) { return m_renderingOutputs[i]; }
-    const AudioNodeOutput* renderingOutput(unsigned i) const { return m_renderingOutputs[i]; }
-    bool isConnected() const { return numberOfRenderingConnections() > 0; }
 
     // The number of channels of the connection with the largest number of channels.
     unsigned numberOfChannels() const;        
     
 private:
     AudioNode* m_node;
-
-    // m_outputs contains the AudioNodeOutputs representing current connections which are not disabled.
-    // The rendering code should never use this directly, but instead uses m_renderingOutputs.
-    HashSet<AudioNodeOutput*> m_outputs;
-
-    // numberOfConnections() should never be called from the audio rendering thread.
-    // Instead numberOfRenderingConnections() and renderingOutput() should be used.
-    unsigned numberOfConnections() const { return m_outputs.size(); }
-
-    // This must be called whenever we modify m_outputs.
-    void changedOutputs();
-    
-    // m_renderingOutputs is a copy of m_outputs which will never be modified during the graph rendering on the audio thread.
-    // This is the list which is used by the rendering code.
-    // Whenever m_outputs is modified, the context is told so it can later update m_renderingOutputs from m_outputs at a safe time.
-    // Most of the time, m_renderingOutputs is identical to m_outputs.
-    Vector<AudioNodeOutput*> m_renderingOutputs;
-
-    // m_renderingStateNeedUpdating keeps track if m_outputs is modified.
-    bool m_renderingStateNeedUpdating;
 
     // The number of channels of the rendering connection with the largest number of channels.
     unsigned numberOfRenderingChannels();

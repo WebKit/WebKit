@@ -55,6 +55,7 @@ class AudioChannelSplitter;
 class AudioGainNode;
 class AudioPannerNode;
 class AudioListener;
+class AudioSummingJunction;
 class BiquadFilterNode;
 class DelayNode;
 class Document;
@@ -218,8 +219,11 @@ public:
     void handleDeferredFinishDerefs();
 
     // Only accessed when the graph lock is held.
-    void markAudioNodeInputDirty(AudioNodeInput*);
+    void markSummingJunctionDirty(AudioSummingJunction*);
     void markAudioNodeOutputDirty(AudioNodeOutput*);
+
+    // Must be called on main thread.
+    void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;
@@ -284,9 +288,9 @@ private:
     bool m_isDeletionScheduled;
 
     // Only accessed when the graph lock is held.
-    HashSet<AudioNodeInput*> m_dirtyAudioNodeInputs;
+    HashSet<AudioSummingJunction*> m_dirtySummingJunctions;
     HashSet<AudioNodeOutput*> m_dirtyAudioNodeOutputs;
-    void handleDirtyAudioNodeInputs();
+    void handleDirtyAudioSummingJunctions();
     void handleDirtyAudioNodeOutputs();
 
     // For the sake of thread safety, we maintain a seperate Vector of automatic pull nodes for rendering in m_renderingAutomaticPullNodes.

@@ -38,8 +38,8 @@ using namespace std;
 namespace WebCore {
 
 AudioNodeInput::AudioNodeInput(AudioNode* node)
-    : m_node(node)
-    , m_renderingStateNeedUpdating(false)
+    : AudioSummingJunction(node->context())
+    , m_node(node)
 {
     // Set to mono by default.
     m_internalSummingBus = adoptPtr(new AudioBus(1, AudioNode::ProcessingSizeInFrames));
@@ -130,33 +130,9 @@ void AudioNodeInput::enable(AudioNodeOutput* output)
     node()->deref(AudioNode::RefTypeDisabled); // Note: it's important to return immediately after all deref() calls since the node may be deleted.
 }
 
-void AudioNodeInput::changedOutputs()
+void AudioNodeInput::didUpdate()
 {
-    ASSERT(context()->isGraphOwner());
-    if (!m_renderingStateNeedUpdating && !node()->isMarkedForDeletion()) {    
-        context()->markAudioNodeInputDirty(this);
-        m_renderingStateNeedUpdating = true;
-    }
-}
-
-void AudioNodeInput::updateRenderingState()
-{
-    ASSERT(context()->isAudioThread() && context()->isGraphOwner());
-    
-    if (m_renderingStateNeedUpdating && !node()->isMarkedForDeletion()) {
-        // Copy from m_outputs to m_renderingOutputs.
-        m_renderingOutputs.resize(m_outputs.size());
-        unsigned j = 0;
-        for (HashSet<AudioNodeOutput*>::iterator i = m_outputs.begin(); i != m_outputs.end(); ++i, ++j) {
-            AudioNodeOutput* output = *i;
-            m_renderingOutputs[j] = output;
-            output->updateRenderingState();
-        }
-
-        node()->checkNumberOfChannelsForInput(this);
-        
-        m_renderingStateNeedUpdating = false;
-    }
+    node()->checkNumberOfChannelsForInput(this);
 }
 
 void AudioNodeInput::updateInternalBus()

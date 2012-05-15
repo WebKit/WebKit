@@ -1605,6 +1605,8 @@
             'Modules/webaudio/AudioScheduledSourceNode.cpp',
             'Modules/webaudio/AudioScheduledSourceNode.h',
             'Modules/webaudio/AudioSourceNode.h',
+            'Modules/webaudio/AudioSummingJunction.cpp',
+            'Modules/webaudio/AudioSummingJunction.h',
             'Modules/webaudio/AsyncAudioDecoder.cpp',
             'Modules/webaudio/AsyncAudioDecoder.h',
             'Modules/webaudio/BiquadDSPKernel.cpp',

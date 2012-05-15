@@ -5533,6 +5533,8 @@ webcore_sources += \
 	Source/WebCore/Modules/webaudio/AudioProcessingEvent.h \
 	Source/WebCore/Modules/webaudio/AudioScheduledSourceNode.cpp \
 	Source/WebCore/Modules/webaudio/AudioScheduledSourceNode.h \
+	Source/WebCore/Modules/webaudio/AudioSummingJunction.cpp \
+	Source/WebCore/Modules/webaudio/AudioSummingJunction.h \
 	Source/WebCore/Modules/webaudio/AudioSourceNode.h \
 	Source/WebCore/Modules/webaudio/BiquadDSPKernel.cpp \
 	Source/WebCore/Modules/webaudio/BiquadDSPKernel.h \

@@ -673,8 +673,8 @@ void AudioContext::handlePreRenderTasks()
     // It's OK if the tryLock() fails, we'll just take slightly longer to pick up the changes.
     bool mustReleaseLock;
     if (tryLock(mustReleaseLock)) {
-        // Fixup the state of any dirty AudioNodeInputs and AudioNodeOutputs.
-        handleDirtyAudioNodeInputs();
+        // Fixup the state of any dirty AudioSummingJunctions and AudioNodeOutputs.
+        handleDirtyAudioSummingJunctions();
         handleDirtyAudioNodeOutputs();
 
         updateAutomaticPullNodes();
@@ -703,8 +703,8 @@ void AudioContext::handlePostRenderTasks()
         // Ref-counted objects held by certain AudioNodes may not be thread-safe.
         scheduleNodeDeletion();
 
-        // Fixup the state of any dirty AudioNodeInputs and AudioNodeOutputs.
-        handleDirtyAudioNodeInputs();
+        // Fixup the state of any dirty AudioSummingJunctions and AudioNodeOutputs.
+        handleDirtyAudioSummingJunctions();
         handleDirtyAudioNodeOutputs();
 
         updateAutomaticPullNodes();
@@ -778,10 +778,10 @@ void AudioContext::deleteMarkedNodes()
         AudioNode* node = m_nodesToDelete[n - 1];
         m_nodesToDelete.removeLast();
 
-        // Before deleting the node, clear out any AudioNodeInputs from m_dirtyAudioNodeInputs.
+        // Before deleting the node, clear out any AudioNodeInputs from m_dirtySummingJunctions.
         unsigned numberOfInputs = node->numberOfInputs();
         for (unsigned i = 0; i < numberOfInputs; ++i)
-            m_dirtyAudioNodeInputs.remove(node->input(i));
+            m_dirtySummingJunctions.remove(node->input(i));
 
         // Before deleting the node, clear out any AudioNodeOutputs from m_dirtyAudioNodeOutputs.
         unsigned numberOfOutputs = node->numberOfOutputs();
@@ -795,10 +795,17 @@ void AudioContext::deleteMarkedNodes()
     m_isDeletionScheduled = false;
 }
 
-void AudioContext::markAudioNodeInputDirty(AudioNodeInput* input)
+void AudioContext::markSummingJunctionDirty(AudioSummingJunction* summingJunction)
 {
     ASSERT(isGraphOwner());    
-    m_dirtyAudioNodeInputs.add(input);
+    m_dirtySummingJunctions.add(summingJunction);
+}
+
+void AudioContext::removeMarkedSummingJunction(AudioSummingJunction* summingJunction)
+{
+    ASSERT(isMainThread());
+    AutoLocker locker(this);
+    m_dirtySummingJunctions.remove(summingJunction);
 }
 
 void AudioContext::markAudioNodeOutputDirty(AudioNodeOutput* output)
@@ -807,14 +814,14 @@ void AudioContext::markAudioNodeOutputDirty(AudioNodeOutput* output)
     m_dirtyAudioNodeOutputs.add(output);
 }
 
-void AudioContext::handleDirtyAudioNodeInputs()
+void AudioContext::handleDirtyAudioSummingJunctions()
 {
     ASSERT(isGraphOwner());    
 
-    for (HashSet<AudioNodeInput*>::iterator i = m_dirtyAudioNodeInputs.begin(); i != m_dirtyAudioNodeInputs.end(); ++i)
+    for (HashSet<AudioSummingJunction*>::iterator i = m_dirtySummingJunctions.begin(); i != m_dirtySummingJunctions.end(); ++i)
         (*i)->updateRenderingState();
 
-    m_dirtyAudioNodeInputs.clear();
+    m_dirtySummingJunctions.clear();
 }
 
 void AudioContext::handleDirtyAudioNodeOutputs()
