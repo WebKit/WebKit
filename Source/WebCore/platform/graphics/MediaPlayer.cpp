@@ -325,6 +325,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_preservesPitch(true)
     , m_privateBrowsing(false)
     , m_shouldPrepareToRender(false)
+    , m_contentMIMETypeWasInferredFromExtension(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_playerProxy(0)
 #endif
@@ -347,43 +348,44 @@ MediaPlayer::~MediaPlayer()
 
 bool MediaPlayer::load(const KURL& url, const ContentType& contentType, const String& keySystem)
 {
-    String type = contentType.type().lower();
-    String typeCodecs = contentType.parameter(codecs());
-    String urlString = url.string();
+    m_contentMIMEType = contentType.type().lower();
+    m_contentTypeCodecs = contentType.parameter(codecs());
+    m_url = url.string();
+    m_keySystem = keySystem.lower();
+    m_contentMIMETypeWasInferredFromExtension = false;
 
     // If the MIME type is missing or is not meaningful, try to figure it out from the URL.
-    if (type.isEmpty() || type == applicationOctetStream() || type == textPlain()) {
-        if (protocolIs(urlString, "data"))
-            type = mimeTypeFromDataURL(urlString);
+    if (m_contentMIMEType.isEmpty() || m_contentMIMEType == applicationOctetStream() || m_contentMIMEType == textPlain()) {
+        if (protocolIs(m_url, "data"))
+            m_contentMIMEType = mimeTypeFromDataURL(m_url);
         else {
             String lastPathComponent = url.lastPathComponent();
             size_t pos = lastPathComponent.reverseFind('.');
             if (pos != notFound) {
                 String extension = lastPathComponent.substring(pos + 1);
                 String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
-                if (!mediaType.isEmpty())
-                    type = mediaType;
+                if (!mediaType.isEmpty()) {
+                    m_contentMIMEType = mediaType;
+                    m_contentMIMETypeWasInferredFromExtension = true;
+                }
             }
         }
     }
 
-    m_url = urlString;
-    m_contentMIMEType = type;
-    m_contentTypeCodecs = typeCodecs;
-    m_keySystem = keySystem.lower();
     loadWithNextMediaEngine(0);
     return m_currentMediaEngine;
 }
 
 void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
 {
-    MediaPlayerFactory* engine;
+    MediaPlayerFactory* engine = 0;
 
-    // If no MIME type is specified, just use the next engine.
-    if (m_contentMIMEType.isEmpty())
-        engine = nextMediaEngine(current);
-    else
+    if (!m_contentMIMEType.isEmpty())
         engine = bestMediaEngineForTypeAndCodecs(m_contentMIMEType, m_contentTypeCodecs, m_keySystem, current);
+
+    // If no MIME type is specified or the type was inferred from the file extension, just use the next engine.
+    if (!engine && (m_contentMIMEType.isEmpty() || m_contentMIMETypeWasInferredFromExtension))
+        engine = nextMediaEngine(current);
 
     // Don't delete and recreate the player unless it comes from a different engine.
     if (!engine) {
