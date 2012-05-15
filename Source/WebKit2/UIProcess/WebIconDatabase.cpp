@@ -62,7 +62,7 @@ void WebIconDatabase::invalidate()
 
 void WebIconDatabase::setDatabasePath(const String& path)
 {
-    if (m_iconDatabaseImpl && m_iconDatabaseImpl->isOpen()) {
+    if (isOpen()) {
         LOG_ERROR("Icon database already has a path and is already open. We don't currently support changing its path and reopening.");
         return;
     }
@@ -188,6 +188,11 @@ Image* WebIconDatabase::imageForPageURL(const String& pageURL, const WebCore::In
     // The WebCore IconDatabase ignores the passed in size parameter.
     // If that changes we'll need to rethink how this API is exposed.
     return m_iconDatabaseImpl->synchronousIconForPageURL(pageURL, iconSize);
+}
+
+bool WebIconDatabase::isOpen()
+{
+    return m_iconDatabaseImpl && m_iconDatabaseImpl->isOpen();
 }
 
 void WebIconDatabase::removeAllIcons()

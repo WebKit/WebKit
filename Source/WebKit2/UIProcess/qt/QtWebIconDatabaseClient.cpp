@@ -45,7 +45,8 @@ QtWebIconDatabaseClient::QtWebIconDatabaseClient(QtWebContext *qtWebContext)
     m_contextId = qtWebContext->contextID();
     // The setter calls the getter here as it triggers the startup of the icon database.
     WebContext* context = qtWebContext->context();
-    context->setIconDatabasePath(context->iconDatabasePath());
+    if (!context->iconDatabase()->isOpen())
+        context->setIconDatabasePath(context->iconDatabasePath());
     m_iconDatabase = context->iconDatabase();
 
     WKIconDatabaseClient iconDatabaseClient;

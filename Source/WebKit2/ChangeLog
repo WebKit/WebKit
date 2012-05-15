@@ -1,3 +1,25 @@
+2012-05-15  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml crashes
+        https://bugs.webkit.org/show_bug.cgi?id=80209
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch adds a method isOpen to WebIconDatabase to
+        be able to check whether the database has already been opened.
+        This helps preventing problems when reusing a WebContext
+        to create another view, as e.g. WebKitTestRunner does it in the
+        Qt port.
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::setDatabasePath):
+        (WebKit::WebIconDatabase::isOpen): Added.
+        (WebKit):
+        * UIProcess/WebIconDatabase.h:
+        (WebIconDatabase):
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp:
+        (WebKit::QtWebIconDatabaseClient::QtWebIconDatabaseClient):
+
 2012-05-15  Anders Carlsson  <andersca@apple.com>
 
         Use unaccelerated scrolling deltas when rubber-banding
