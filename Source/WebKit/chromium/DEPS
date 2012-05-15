@@ -58,8 +58,6 @@ deps = {
     From('chromium_deps', 'src/third_party/skia/src'),
   'third_party/skia/include':
     From('chromium_deps', 'src/third_party/skia/include'),
-  'third_party/skia/third_party/glu':
-    From('chromium_deps', 'src/third_party/skia/third_party/glu'),
 
   # testing
   'testing':

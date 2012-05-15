@@ -1,3 +1,15 @@
+2012-05-14  Gavin Peters  <gavinp@chromium.org>
+
+        [Chromium] remove skia/third_party/glu from DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=86431
+
+        Chromium rev 136872 removed skia/third_party/glu, but nobody updated it in WebKit.  This
+        patch fixes that.
+
+        Unreviewed, remove bad Chromium repo.
+
+        * DEPS:
+
 2012-05-14  Dirk Pranke <dpranke@chromium.org>
 
         Unreviewed, roll Chromium DEPS to r136942.
