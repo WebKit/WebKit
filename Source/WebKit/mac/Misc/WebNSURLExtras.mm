@@ -276,12 +276,12 @@ using namespace WTF;
     return suggestedFilenameWithMIMEType(self, MIMEType);
 }
 
-- (NSURL *)_webkit_URLFromURLOrPath
+- (NSURL *)_webkit_URLFromURLOrSchemelessFileURL
 {
     if ([self scheme])
         return self;
 
-    return [NSURL fileURLWithPath:[self absoluteString]];
+    return [NSURL URLWithString:[@"file:" stringByAppendingString:[self absoluteString]]];
 }
 
 @end

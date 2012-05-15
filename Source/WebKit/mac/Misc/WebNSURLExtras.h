@@ -69,7 +69,7 @@
 
 - (NSString *)_webkit_suggestedFilenameWithMIMEType:(NSString *)MIMEType;
 
-- (NSURL *)_webkit_URLFromURLOrPath;
+- (NSURL *)_webkit_URLFromURLOrSchemelessFileURL;
 
 @end
 
