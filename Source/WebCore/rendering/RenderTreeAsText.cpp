@@ -77,7 +77,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const LayoutRect& paintDirtyRect, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const IntRect& paintDirtyRect, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal);
 
 static inline bool hasFractions(double val)
 {
@@ -102,12 +102,6 @@ TextStream& operator<<(TextStream& ts, const IntRect& r)
 TextStream& operator<<(TextStream& ts, const IntPoint& p)
 {
     return ts << "(" << p.x() << "," << p.y() << ")";
-}
-
-TextStream& operator<<(TextStream& ts, const FractionalLayoutPoint& p)
-{
-    // FIXME: These should be printed as floats. Keeping them ints for consistency with pervious test expectations.
-    return ts << "(" << p.x().toInt() << "," << p.y().toInt() << ")";
 }
 
 TextStream& operator<<(TextStream& ts, const FloatPoint& p)
@@ -248,7 +242,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     RenderBlock* cb = o.containingBlock();
     bool adjustForTableCells = cb ? cb->isTableCell() : false;
 
-    LayoutRect r;
+    IntRect r;
     if (o.isText()) {
         // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
         // many test results.
@@ -267,18 +261,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are
         // captured by the results.
         const RenderTableCell& cell = *toRenderTableCell(&o);
-        r = LayoutRect(cell.x(), cell.y() + cell.intrinsicPaddingBefore(), cell.width(), cell.height() - cell.intrinsicPaddingBefore() - cell.intrinsicPaddingAfter());
+        r = IntRect(cell.x(), cell.y() + cell.intrinsicPaddingBefore(), cell.width(), cell.height() - cell.intrinsicPaddingBefore() - cell.intrinsicPaddingAfter());
     } else if (o.isBox())
         r = toRenderBox(&o)->frameRect();
 
     // FIXME: Temporary in order to ensure compatibility with existing layout test results.
     if (adjustForTableCells)
         r.move(0, -toRenderTableCell(o.containingBlock())->intrinsicPaddingBefore());
-
-    // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
-    // for consistency with old results.
-    r = enclosingIntRect(r);
-
 
     ts << " " << r;
 
@@ -602,14 +591,9 @@ enum LayerPaintPhase {
 };
 
 static void write(TextStream& ts, RenderLayer& l,
-                  const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect, const LayoutRect& outlineClipRect,
+                  const IntRect& layerBounds, const IntRect& backgroundClipRect, const IntRect& clipRect, const IntRect& outlineClipRect,
                   LayerPaintPhase paintPhase = LayerPaintPhaseAll, int indent = 0, RenderAsTextBehavior behavior = RenderAsTextBehaviorNormal)
 {
-    IntRect adjustedLayoutBounds = pixelSnappedIntRect(layerBounds);
-    IntRect adjustedBackgroundClipRect = pixelSnappedIntRect(backgroundClipRect);
-    IntRect adjustedClipRect = pixelSnappedIntRect(clipRect);
-    IntRect adjustedOutlineClipRect = pixelSnappedIntRect(outlineClipRect);
-
     writeIndent(ts, indent);
 
     ts << "layer ";
@@ -617,15 +601,15 @@ static void write(TextStream& ts, RenderLayer& l,
     if (behavior & RenderAsTextShowAddresses)
         ts << static_cast<const void*>(&l) << " ";
       
-    ts << adjustedLayoutBounds;
+    ts << layerBounds;
 
-    if (!adjustedLayoutBounds.isEmpty()) {
-        if (!adjustedBackgroundClipRect.contains(adjustedLayoutBounds))
-            ts << " backgroundClip " << adjustedBackgroundClipRect;
-        if (!adjustedClipRect.contains(adjustedLayoutBounds))
-            ts << " clip " << adjustedClipRect;
-        if (!adjustedOutlineClipRect.contains(adjustedLayoutBounds))
-            ts << " outlineClip " << adjustedOutlineClipRect;
+    if (!layerBounds.isEmpty()) {
+        if (!backgroundClipRect.contains(layerBounds))
+            ts << " backgroundClip " << backgroundClipRect;
+        if (!clipRect.contains(layerBounds))
+            ts << " clip " << clipRect;
+        if (!outlineClipRect.contains(layerBounds))
+            ts << " outlineClip " << outlineClipRect;
     }
 
     if (l.renderer()->hasOverflowClip()) {
@@ -660,7 +644,7 @@ static void write(TextStream& ts, RenderLayer& l,
 }
 
 static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, const RenderLayer* rootLayer,
-                        const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
+                        const IntRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
     if (!renderView->hasRenderNamedFlowThreads())
         return;
@@ -708,18 +692,18 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, 
 }
 
 static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLayer* l,
-                        const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
+                        const IntRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
     // FIXME: Apply overflow to the root layer to not break every test.  Complete hack.  Sigh.
-    LayoutRect paintDirtyRect(paintRect);
+    IntRect paintDirtyRect(paintRect);
     if (rootLayer == l) {
-        paintDirtyRect.setWidth(max<LayoutUnit>(paintDirtyRect.width(), rootLayer->renderBox()->maxXLayoutOverflow()));
-        paintDirtyRect.setHeight(max<LayoutUnit>(paintDirtyRect.height(), rootLayer->renderBox()->maxYLayoutOverflow()));
-        l->setSize(l->size().expandedTo(pixelSnappedIntSize(l->renderBox()->maxLayoutOverflow(), LayoutPoint(0, 0))));
+        paintDirtyRect.setWidth(max(paintDirtyRect.width(), rootLayer->renderBox()->maxXLayoutOverflow()));
+        paintDirtyRect.setHeight(max(paintDirtyRect.height(), rootLayer->renderBox()->maxYLayoutOverflow()));
+        l->setSize(l->size().expandedTo(l->renderBox()->maxLayoutOverflow()));
     }
     
     // Calculate the clip rects we should use.
-    LayoutRect layerBounds;
+    IntRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
     l->calculateRects(rootLayer, 0, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, true);
 
