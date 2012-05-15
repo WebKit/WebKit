@@ -29,19 +29,18 @@
  */
 
 #include "config.h"
-#include "WebStorageEventDispatcher.h"
+#include "WebStorageEventDispatcherImpl.h"
 
 #include "KURL.h"
 #include "SecurityOrigin.h"
 #include "StorageAreaProxy.h"
-#include "WebViewImpl.h"
 
 #include "platform/WebURL.h"
 #include <wtf/PassOwnPtr.h>
 
-// FIXME: move this file to WebStorageEventDispatcher.cpp
-
 namespace WebKit {
+
+extern const char* pageGroupName;
 
 void WebStorageEventDispatcher::dispatchLocalStorageEvent(
         const WebString& key, const WebString& oldValue,
@@ -51,7 +50,7 @@ void WebStorageEventDispatcher::dispatchLocalStorageEvent(
 {
     RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::create(origin);
     WebCore::StorageAreaProxy::dispatchLocalStorageEvent(
-            WebViewImpl::defaultPageGroup(), key, oldValue, newValue, securityOrigin.get(), pageURL,
+            pageGroupName, key, oldValue, newValue, securityOrigin.get(), pageURL,
             sourceAreaInstance, originatedInProcess);
 }
 
@@ -63,8 +62,31 @@ void WebStorageEventDispatcher::dispatchSessionStorageEvent(
 {
     RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::create(origin);
     WebCore::StorageAreaProxy::dispatchSessionStorageEvent(
-            WebViewImpl::defaultPageGroup(), key, oldValue, newValue, securityOrigin.get(), pageURL,
+            pageGroupName, key, oldValue, newValue, securityOrigin.get(), pageURL,
             sessionNamespace, sourceAreaInstance, originatedInProcess);
+}
+
+
+// FIXME: remove the WebStorageEventDispatcherImpl class soon.
+
+WebStorageEventDispatcher* WebStorageEventDispatcher::create()
+{
+    return new WebStorageEventDispatcherImpl();
+}
+
+WebStorageEventDispatcherImpl::WebStorageEventDispatcherImpl()
+    : m_eventDispatcher(adoptPtr(new WebCore::StorageEventDispatcherImpl(pageGroupName)))
+{
+    ASSERT(m_eventDispatcher);
+}
+
+void WebStorageEventDispatcherImpl::dispatchStorageEvent(const WebString& key, const WebString& oldValue,
+                                                         const WebString& newValue, const WebString& origin,
+                                                         const WebURL& pageURL, bool isLocalStorage)
+{
+    WebCore::StorageType storageType = isLocalStorage ? WebCore::LocalStorage : WebCore::SessionStorage;
+    RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::createFromString(origin);
+    m_eventDispatcher->dispatchStorageEvent(key, oldValue, newValue, securityOrigin.get(), pageURL, storageType);
 }
 
 } // namespace WebKit

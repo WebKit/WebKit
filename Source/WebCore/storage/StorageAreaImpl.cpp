@@ -102,6 +102,13 @@ StorageAreaImpl::StorageAreaImpl(StorageAreaImpl* area)
 
 bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* frame) const
 {
+#if PLATFORM(CHROMIUM)
+    // The frame pointer can be NULL in Chromium since this call is made in a different
+    // process from where the Frame object exists.  Luckily, private browseing is
+    // implemented differently in Chromium, so it'd never return true anyway.
+    ASSERT(!frame);
+    return false;
+#else
     if (!frame->page())
         return true;
     if (!frame->page()->settings()->privateBrowsingEnabled())
@@ -109,6 +116,7 @@ bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* frame) const
     if (m_storageType != LocalStorage)
         return true;
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(frame->document()->securityOrigin()->protocol());
+#endif
 }
 
 unsigned StorageAreaImpl::length(Frame*) const
@@ -135,7 +143,7 @@ String StorageAreaImpl::getItem(const String& key, Frame*) const
     return m_storageMap->getItem(key);
 }
 
-void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
+String StorageAreaImpl::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
     ASSERT(!m_isShutdown);
     ASSERT(!value.isNull());
@@ -143,7 +151,7 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
 
     if (disabledByPrivateBrowsingInFrame(frame)) {
         ec = QUOTA_EXCEEDED_ERR;
-        return;
+        return String();
     }
 
     String oldValue;
@@ -154,24 +162,25 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
 
     if (quotaException) {
         ec = QUOTA_EXCEEDED_ERR;
-        return;
+        return oldValue;
     }
 
     if (oldValue == value)
-        return;
+        return oldValue;
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleItemForSync(key, value);
     StorageEventDispatcher::dispatch(key, oldValue, value, m_storageType, m_securityOrigin.get(), frame);
+    return oldValue;
 }
 
-void StorageAreaImpl::removeItem(const String& key, Frame* frame)
+String StorageAreaImpl::removeItem(const String& key, Frame* frame)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
     if (disabledByPrivateBrowsingInFrame(frame))
-        return;
+        return String();
 
     String oldValue;
     RefPtr<StorageMap> newMap = m_storageMap->removeItem(key, oldValue);
@@ -179,23 +188,24 @@ void StorageAreaImpl::removeItem(const String& key, Frame* frame)
         m_storageMap = newMap.release();
 
     if (oldValue.isNull())
-        return;
+        return oldValue;
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleItemForSync(key, String());
     StorageEventDispatcher::dispatch(key, oldValue, String(), m_storageType, m_securityOrigin.get(), frame);
+    return oldValue;
 }
 
-void StorageAreaImpl::clear(Frame* frame)
+bool StorageAreaImpl::clear(Frame* frame)
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
 
     if (disabledByPrivateBrowsingInFrame(frame))
-        return;
+        return false;
 
     if (!m_storageMap->length())
-        return;
+        return false;
 
     unsigned quota = m_storageMap->quota();
     m_storageMap = StorageMap::create(quota);
@@ -203,6 +213,7 @@ void StorageAreaImpl::clear(Frame* frame)
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleClear();
     StorageEventDispatcher::dispatch(String(), String(), String(), m_storageType, m_securityOrigin.get(), frame);
+    return true;
 }
 
 bool StorageAreaImpl::contains(const String& key, Frame*) const

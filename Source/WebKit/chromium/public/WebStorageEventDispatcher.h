@@ -55,8 +55,13 @@ public:
             const WebURL& pageUrl, const WebStorageNamespace&,
             WebStorageArea* sourceAreaInstance, bool originatedInProcess);
 
- private:
-    WebStorageEventDispatcher() { }
+    // DEPRECATED - The instance methods are going away soon in favor
+    // of the two static dispatch methods above.
+    WEBKIT_EXPORT static WebStorageEventDispatcher* create();
+    virtual ~WebStorageEventDispatcher() { }
+    virtual void dispatchStorageEvent(const WebString& key, const WebString& oldValue,
+                                      const WebString& newValue, const WebString& origin,
+                                      const WebURL& url, bool isLocalStorage) = 0;
 };
 
 } // namespace WebKit

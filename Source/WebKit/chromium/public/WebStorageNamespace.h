@@ -55,6 +55,9 @@ public:
 
     // Returns true of the two instances represent the same storage namespace.
     virtual bool isSameNamespace(const WebStorageNamespace&) const { return false; }
+
+    // DEPRECATED
+    virtual void close() { }
 };
 
 } // namespace WebKit

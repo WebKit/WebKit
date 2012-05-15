@@ -88,6 +88,11 @@ public:
     // Return a LocalStorage namespace that corresponds to the following path.
     virtual WebStorageNamespace* createLocalStorageNamespace(const WebString& path, unsigned quota) { return 0; }
 
+    // DEPRECATED
+    virtual void dispatchStorageEvent(const WebString& key, const WebString& oldValue,
+                                      const WebString& newValue, const WebString& origin,
+                                      const WebURL& url, bool isLocalStorage) { }
+
 
     // HTML5 Database ------------------------------------------------------
 

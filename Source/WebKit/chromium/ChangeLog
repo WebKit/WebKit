@@ -1,3 +1,58 @@
+2012-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r116712.
+        http://trac.webkit.org/changeset/116712
+        https://bugs.webkit.org/show_bug.cgi?id=86484
+
+        This patch is causing crashes in Chromium Canary builds
+        (Requested by pilgrim_google__ on #webkit).
+
+        * WebKit.gyp:
+        * public/WebStorageArea.h:
+        (WebKit):
+        * public/WebStorageEventDispatcher.h:
+        (WebStorageEventDispatcher):
+        (WebKit::WebStorageEventDispatcher::~WebStorageEventDispatcher):
+        * public/WebStorageNamespace.h:
+        (WebStorageNamespace):
+        (WebKit::WebStorageNamespace::close):
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKitPlatformSupport):
+        (WebKit::WebKitPlatformSupport::dispatchStorageEvent):
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::setItem):
+        (WebCore::StorageAreaProxy::removeItem):
+        (WebCore::StorageAreaProxy::clear):
+        (WebCore):
+        (WebCore::StorageAreaProxy::storageEvent):
+        (WebCore::StorageAreaProxy::dispatchLocalStorageEvent):
+        (WebCore::findPageWithSessionStorageNamespace):
+        (WebCore::StorageAreaProxy::dispatchSessionStorageEvent):
+        * src/StorageAreaProxy.h:
+        (WebCore):
+        (StorageAreaProxy):
+        * src/StorageEventDispatcherImpl.cpp: Added.
+        (WebCore):
+        (WebCore::StorageEventDispatcherImpl::StorageEventDispatcherImpl):
+        (WebCore::StorageEventDispatcherImpl::dispatchStorageEvent):
+        * src/StorageEventDispatcherImpl.h: Copied from Source/WebKit/chromium/public/WebStorageEventDispatcher.h.
+        (WebCore):
+        (StorageEventDispatcherImpl):
+        * src/WebStorageEventDispatcherImpl.cpp:
+        (WebKit):
+        (WebKit::WebStorageEventDispatcher::dispatchLocalStorageEvent):
+        (WebKit::WebStorageEventDispatcher::dispatchSessionStorageEvent):
+        (WebKit::WebStorageEventDispatcher::create):
+        (WebKit::WebStorageEventDispatcherImpl::WebStorageEventDispatcherImpl):
+        (WebKit::WebStorageEventDispatcherImpl::dispatchStorageEvent):
+        * src/WebStorageEventDispatcherImpl.h: Copied from Source/WebKit/chromium/public/WebStorageEventDispatcher.h.
+        (WebKit):
+        (WebStorageEventDispatcherImpl):
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        (WebCore):
+        (WebViewImpl):
+
 2012-05-15  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Remove unused code for tap target fuzzing

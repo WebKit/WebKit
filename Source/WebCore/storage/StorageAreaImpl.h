@@ -46,9 +46,9 @@ namespace WebCore {
         virtual unsigned length(Frame* sourceFrame) const;
         virtual String key(unsigned index, Frame* sourceFrame) const;
         virtual String getItem(const String& key, Frame* sourceFrame) const;
-        virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
-        virtual void removeItem(const String& key, Frame* sourceFrame);
-        virtual void clear(Frame* sourceFrame);
+        virtual String setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
+        virtual String removeItem(const String& key, Frame* sourceFrame);
+        virtual bool clear(Frame* sourceFrame);
         virtual bool contains(const String& key, Frame* sourceFrame) const;
 
         virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
