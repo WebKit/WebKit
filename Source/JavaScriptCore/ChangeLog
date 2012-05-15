@@ -1,5 +1,16 @@
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116363
+
+    2012-05-07  Oliver Hunt  <oliver@apple.com>
+
+            Fix release build.
+
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
+2012-05-15  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116361
 
     2012-05-07  Oliver Hunt  <oliver@apple.com>
