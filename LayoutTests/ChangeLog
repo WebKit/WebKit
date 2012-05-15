@@ -1,3 +1,18 @@
+2012-05-15  Erik Arvidsson  <arv@chromium.org>
+
+        Result of fast/dom/DOMException/stack-trace.html depends on path (test introduced in r117016)
+        https://bugs.webkit.org/show_bug.cgi?id=86442
+
+        Reviewed by Darin Adler.
+
+        This fixes the test to not print the invalid value (which includes file paths) for the JSC fail case.
+
+        * fast/dom/DOMException/stack-trace-expected.txt:
+        * fast/dom/DOMException/stack-trace.html:
+        * platform/chromium/fast/dom/DOMException/stack-trace-expected.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/qt/Skipped:
+
 2012-05-15  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=86527

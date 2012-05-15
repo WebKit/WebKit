@@ -6,10 +6,7 @@ PASS Object.prototype.toString.call(e) is "[object DOMException]"
 PASS e.name is "HIERARCHY_REQUEST_ERR"
 PASS e.message is "HIERARCHY_REQUEST_ERR: DOM Exception 3"
 PASS e.code is 3
-FAIL e.stack should be 42 (of type number). Was appendChild@[native code]
-innerFunction@file:///src/WebKit/LayoutTests/fast/dom/DOMException/stack-trace.html:17
-outerFunction@file:///src/WebKit/LayoutTests/fast/dom/DOMException/stack-trace.html:21
-global code@file:///src/WebKit/LayoutTests/fast/dom/DOMException/stack-trace.html:27 (of type string).
+FAIL e.stack === 42 should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE
