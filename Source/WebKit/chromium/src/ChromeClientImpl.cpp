@@ -586,15 +586,6 @@ void ChromeClientImpl::contentsSizeChanged(Frame* frame, const IntSize& size) co
 
 void ChromeClientImpl::layoutUpdated(Frame* frame) const
 {
-#if ENABLE(VIEWPORT)
-    if (!m_webView->isPageScaleFactorSet() && frame == frame->page()->mainFrame()) {
-        // If the page does not have a viewport tag, then compute a scale
-        // factor to make the page width fit the device width based on the
-        // default viewport parameters.
-        ViewportArguments viewport = frame->document()->viewportArguments();
-        dispatchViewportPropertiesDidChange(viewport);
-    }
-#endif
     m_webView->layoutUpdated(WebFrameImpl::fromFrame(frame));
 }
 

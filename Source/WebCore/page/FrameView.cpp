@@ -395,16 +395,6 @@ void FrameView::setFrameRect(const IntRect& newRect)
     if (newRect == oldRect)
         return;
 
-#if ENABLE(VIEWPORT)
-    if (useFixedLayout()) {
-        Document* document = m_frame->document();
-        ViewportArguments viewport = document->viewportArguments();
-        Page* page = frame() ? frame()->page() : 0;
-        if (page)
-            page->chrome()->client()->dispatchViewportPropertiesDidChange(viewport);
-    }
-#endif
-
     ScrollView::setFrameRect(newRect);
 
     updateScrollableAreaSet();

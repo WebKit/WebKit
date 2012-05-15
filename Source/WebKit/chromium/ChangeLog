@@ -1,3 +1,34 @@
+2012-05-15  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Fix unsafe viewport tag dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=80554
+
+        Reviewed by Adam Barth.
+
+        In some uncommon situations (such as window.open() new tab on
+        Android), dispatchViewportPropertiesDidChange may early-return without
+        setting the page scale because the window size is not yet
+        available from the embedder.  At that point, the previous behavior was
+        to call it again in layoutUpdated(), but this is unsafe since it
+        leaves a pending needsLayout.
+
+        I moved the dispatch call into WebViewImpl::didChangeContentsSize and
+        WebViewImpl::resize() instead -- these represent more explicitly the
+        situations where the inputs to the viewport tag calculation change.  I
+        removed the other dispatch call from setFrameRect as it's now
+        redundant.
+
+        Covered by FixedLayoutInitializeAtMinimumPageScale test introduced
+        in http://webk.it/82949 (an assertion will fire there without
+        this fix).
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::layoutUpdated):
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::didChangeContentsSize):
+
 2012-05-15  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move createOffscreenGraphicsContext3D() from WebKitPlatformSupport to Platform

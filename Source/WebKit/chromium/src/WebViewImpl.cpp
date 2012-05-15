@@ -1311,6 +1311,13 @@ void WebViewImpl::resize(const WebSize& newSize)
         return;
     m_size = newSize;
 
+#if ENABLE(VIEWPORT)
+    if (settings()->viewportEnabled()) {
+        ViewportArguments viewportArguments = mainFrameImpl()->frame()->document()->viewportArguments();
+        m_page->chrome()->client()->dispatchViewportPropertiesDidChange(viewportArguments);
+    }
+#endif
+
     WebDevToolsAgentPrivate* agentPrivate = devToolsAgentPrivate();
     if (agentPrivate && agentPrivate->metricsOverridden())
         agentPrivate->webViewResized();
@@ -3001,9 +3008,21 @@ void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)
 
 void WebViewImpl::didChangeContentsSize()
 {
-    bool didClampScale = computePageScaleFactorLimits();
+#if ENABLE(VIEWPORT)
+    if (!settings()->viewportEnabled())
+        return;
 
-    if (!didClampScale)
+    bool didChangeScale = false;
+    if (!isPageScaleFactorSet()) {
+        // If the viewport tag failed to be processed earlier, we need
+        // to recompute it now.
+        ViewportArguments viewportArguments = mainFrameImpl()->frame()->document()->viewportArguments();
+        m_page->chrome()->client()->dispatchViewportPropertiesDidChange(viewportArguments);
+        didChangeScale = true;
+    } else
+        didChangeScale = computePageScaleFactorLimits();
+
+    if (!didChangeScale)
         return;
 
     if (!mainFrameImpl())
@@ -3012,6 +3031,7 @@ void WebViewImpl::didChangeContentsSize()
     FrameView* view = mainFrameImpl()->frameView();
     if (view && view->needsLayout())
         view->layout();
+#endif
 }
 
 bool WebViewImpl::useExternalPopupMenus()

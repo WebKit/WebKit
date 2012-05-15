@@ -226,10 +226,10 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
 
     WebView* webView = static_cast<WebView*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "no_viewport_tag.html", true, 0, &client));
 
-    webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->settings()->setViewportEnabled(true);
     webView->settings()->setDefaultDeviceScaleFactor(2);
     webView->enableFixedLayoutMode(true);
+    webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->layout();
 
     EXPECT_EQ(2, webView->deviceScaleFactor());
