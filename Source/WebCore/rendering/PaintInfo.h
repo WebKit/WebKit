@@ -32,9 +32,7 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "LayoutTypes.h"
 #include "PaintPhase.h"
-#include <limits>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 
@@ -98,7 +96,7 @@ struct PaintInfo {
     }
 #endif
 
-    static IntRect infiniteRect() { return IntRect(LayoutRect::infiniteRect()); }
+    static IntRect infiniteRect() { return IntRect(INT_MIN / 2, INT_MIN / 2, INT_MAX, INT_MAX); }
 
     // FIXME: Introduce setters/getters at some point. Requires a lot of changes throughout rendering/.
     GraphicsContext* context;
