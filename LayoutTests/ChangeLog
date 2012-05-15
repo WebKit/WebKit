@@ -1,5 +1,11 @@
 2012-05-15  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Gardening after r117169.
+
+        * platform/efl/test_expectations.txt: Unskip test that now passes.
+
+2012-05-15  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Gardening after r117160.
 
         * platform/efl/test_expectations.txt: Skip test that depends on blob

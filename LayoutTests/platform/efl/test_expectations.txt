@@ -470,6 +470,3 @@ BUGWK83704 : media/event-attributes.html = TEXT
 
 // Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
-
-// Test fails because of absolute path in expected output
-BUGWK85057 : fast/dom/DOMException/stack-trace.html = TEXT
