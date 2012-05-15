@@ -5136,6 +5136,7 @@
 		B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */; };
 		B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */; };
 		B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */; };
+		BAB1C06A14FC3679004233FC /* FractionalLayoutPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 144FCE5414EC79E7000D17A3 /* FractionalLayoutPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BACF290113B2A0D500781F90 /* LayoutTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BACF290013B2A0D500781F90 /* LayoutTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC00F0040E0A185500FD04E3 /* DOMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00EFFE0E0A185500FD04E3 /* DOMFile.h */; };
 		BC00F0050E0A185500FD04E3 /* DOMFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */; };
@@ -22834,6 +22835,7 @@
 				656D373A0ADBA5DE00A4554D /* FormState.h in Headers */,
 				41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */,
 				935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */,
+				BAB1C06A14FC3679004233FC /* FractionalLayoutPoint.h in Headers */,
 				144FCFE114EF2509000D17A3 /* FractionalLayoutRect.h in Headers */,
 				144FCE5D14EC79E7000D17A3 /* FractionalLayoutSize.h in Headers */,
 				144FCE5214EC79BC000D17A3 /* FractionalLayoutUnit.h in Headers */,

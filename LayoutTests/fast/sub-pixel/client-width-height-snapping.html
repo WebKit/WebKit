@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="TestDiv" style="position: absolute; left: 10.4px; top: 10.4px; width: 10.4px; height: 10.4px;"></div>
+<script>
+
+var div = document.getElementById("TestDiv");
+
+shouldBe('div.clientWidth', '11');
+shouldBe('div.clientHeight', '11');
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
+</script>
+</body>
+</html>

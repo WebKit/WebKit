@@ -207,6 +207,12 @@ editing/spelling/spellcheck-queue.html
 editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-marker-description.html
 
+# Fail until SUBPIXEL_LAYOUT is enabled
+# https://bugs.webkit.org/show_bug.cgi?id=85532
+fast/sub-pixel/client-width-height-snapping.html
+fast/sub-pixel/layout-boxes-with-zoom.html
+fast/sub-pixel/size-of-box-with-zoom.html
+
 # fast/events/pagehide-timeout.html, pageshow-pagehide-on-back-cached-with-frames.html, and
 # pageshow-pagehide-on-back-cached.html flakey on Lion Intel Debug WebKit testers.
 # https://bugs.webkit.org/show_bug.cgi?id=81291

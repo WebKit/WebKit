@@ -101,6 +101,7 @@ public:
 
     bool operator==(const ClipRect& other) const { return rect() == other.rect() && hasRadius() == other.hasRadius(); }
     bool operator!=(const ClipRect& other) const { return rect() != other.rect() || hasRadius() != other.hasRadius(); }
+    bool operator!=(const LayoutRect& otherRect) const { return rect() != otherRect; }
 
     void intersect(const LayoutRect& other) { m_rect.intersect(other); }
     void intersect(const ClipRect& other)

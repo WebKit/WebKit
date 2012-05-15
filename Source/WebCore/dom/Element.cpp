@@ -353,10 +353,14 @@ static int adjustForLocalZoom(LayoutUnit value, RenderObject* renderer)
     float zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
         return value;
+#if ENABLE(SUBPIXEL_LAYOUT)
+    return lroundf(value / zoomFactor);
+#else
     // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
     if (zoomFactor > 1)
         value++;
     return static_cast<int>(value / zoomFactor);
+#endif
 }
 
 int Element::offsetLeft()

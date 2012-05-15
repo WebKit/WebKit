@@ -326,7 +326,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
 
 static TextStream& writePositionAndStyle(TextStream& ts, const RenderObject& object)
 {
-    ts << " " << const_cast<RenderObject&>(object).absoluteClippedOverflowRect();
+    ts << " " << enclosingIntRect(const_cast<RenderObject&>(object).absoluteClippedOverflowRect());
     writeStyle(ts, object);
     return ts;
 }

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Element;
+class FractionalLayoutPoint;
 class FloatPoint;
 class FloatSize;
 class Frame;
@@ -70,6 +71,7 @@ static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTex
 
 TextStream& operator<<(TextStream&, const IntPoint&);
 TextStream& operator<<(TextStream&, const IntRect&);
+TextStream& operator<<(TextStream&, const FractionalLayoutPoint&);
 TextStream& operator<<(TextStream&, const FloatPoint&);
 TextStream& operator<<(TextStream&, const FloatSize&);
 
