@@ -74705,6 +74705,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ScriptSnippetModel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\scriptsPanel.css"
 					>
 				</File>
@@ -74753,7 +74757,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\SnippetsModel.js"
+					RelativePath="..\inspector\front-end\SnippetStorage.js"
 					>
 				</File>
 				<File

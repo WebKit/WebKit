@@ -380,7 +380,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.debuggerModel = new WebInspector.DebuggerModel();
-    this.snippetsModel = new WebInspector.SnippetsModel();
+    this.scriptSnippetModel = new WebInspector.ScriptSnippetModel();
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel);
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
     new WebInspector.DebuggerResourceBinding();

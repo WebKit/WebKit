@@ -132,6 +132,7 @@
     <file>ScriptFormatter.js</file>
     <file>ScriptFormatterWorker.js</file>
     <file>ScriptMapping.js</file>
+    <file>ScriptSnippetModel.js</file>
     <file>ScriptsPanel.js</file>
     <file>ScriptsNavigator.js</file>
     <file>ScriptsSearchScope.js</file>
@@ -144,7 +145,7 @@
     <file>SidebarOverlay.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
-    <file>SnippetsModel.js</file>
+    <file>SnippetStorage.js</file>
     <file>SoftContextMenu.js</file>
     <file>SourceCSSTokenizer.js</file>
     <file>SourceFrame.js</file>

@@ -40,8 +40,8 @@ WebInspector.DebuggerPresentationModel = function()
     this._mappings.push(this._resourceMapping);
     this._compilerMapping = new WebInspector.CompilerScriptMapping();
     this._mappings.push(this._compilerMapping);
-    this._snippetsMapping = new WebInspector.SnippetsScriptMapping();
-    this._mappings.push(this._snippetsMapping);
+    this._snippetMapping = WebInspector.scriptSnippetModel.scriptMapping;
+    this._mappings.push(this._snippetMapping);
   
     for (var i = 0; i < this._mappings.length; ++i)
         this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
@@ -109,8 +109,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _mappingForScript: function(script)
     {
         if (WebInspector.experimentsSettings.snippetsSupport.isEnabled()) {
-            if (WebInspector.snippetsModel.snippetIdForSourceURL(script.sourceURL))
-                return this._snippetsMapping;
+            if (this._snippetMapping && this._snippetMapping.snippetIdForSourceURL(script.sourceURL))
+                return this._snippetMapping;
         }
 
         if (WebInspector.settings.sourceMapsEnabled.get() && script.sourceMapURL) {

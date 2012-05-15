@@ -1,0 +1,29 @@
+Tests snippet storage.
+
+Dumping saved snippets:
+Dumping storage snippets:
+Snippet created.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'Test snippet #1', content = ''.
+Dumping storage snippets:
+Snippet renamed.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'New snippet name', content = ''.
+Dumping storage snippets:
+Snippet content changed.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'New snippet name', content = 'New snippet content'.
+Dumping storage snippets:
+Another snippet created.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'New snippet name', content = 'New snippet content'.
+    Snippet: id = 2, name = 'Test snippet #2', content = ''.
+Dumping storage snippets:
+Snippet deleted.
+Dumping saved snippets:
+    Snippet: id = 2, name = 'Test snippet #2', content = ''.
+Dumping storage snippets:
+Another snippet deleted.
+Dumping saved snippets:
+Dumping storage snippets:
+

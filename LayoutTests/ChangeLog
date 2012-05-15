@@ -1,3 +1,17 @@
+2012-05-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Refactor SnippetsModel: extract SnippetStorage, make SnippetScriptMapping delegate calls to ScriptSnippetModel and provide public interface on ScriptSnippetModel in terms of uiSourceCodes
+        https://bugs.webkit.org/show_bug.cgi?id=86477
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/script-snippet-model-expected.txt: Added.
+        * inspector/debugger/script-snippet-model.html: Added.
+        * inspector/debugger/snippets-model-expected.txt: Removed.
+        * inspector/debugger/snippets-model.html: Removed.
+        * inspector/snippet-storage-expected.txt: Added.
+        * inspector/snippet-storage.html: Added.
+
 2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         # [Qt] REGRESSION(r113138 ): It made fast/workers/worker-multi-startup.html crash on 32 bit
