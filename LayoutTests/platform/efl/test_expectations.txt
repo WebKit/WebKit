@@ -169,7 +169,6 @@ BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onerror.html = FAIL
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-onload.html = FAIL
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch-too-many-clients.html = FAIL
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prefetch.html = FAIL
-BUGWKEFL SKIP : fast/dom/HTMLLinkElement/prerender.html = FAIL
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/subresource.html = FAIL
 BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = FAIL
 BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = FAIL
@@ -463,3 +462,9 @@ BUGWKEFL SKIP : media/video-does-not-loop.html = FAIL
 
 // This test assumes we cannot play RTSP, but we can.
 BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
+
+// This test fails if mixer is not at 100%
+BUGWK83704 : media/event-attributes.html = TEXT
+
+// Test fails because of absolute path in expected output
+BUGWK85057 : fast/dom/DOMException/stack-trace.html = TEXT

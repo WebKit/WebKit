@@ -1,3 +1,12 @@
+2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Update test expectations.
+
+        Unreviewed EFL gardening, add 2 failing tests to
+        test_expectations.txt and remove 1 test that no longer exists.
+
+        * platform/efl/test_expectations.txt:
+
 2012-05-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Renegerate three pixel test results on Lion, so that the svg/ pixel tests pass with tolerance 0 again.
