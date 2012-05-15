@@ -33,12 +33,6 @@ fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
 
-# Fail until SUBPIXEL_LAYOUT is enabled
-# https://bugs.webkit.org/show_bug.cgi?id=85532
-fast/sub-pixel/client-width-height-snapping.html
-fast/sub-pixel/layout-boxes-with-zoom.html
-fast/sub-pixel/size-of-box-with-zoom.html
-
 # [Qt] REGRESSION: 360 tests started to fail with newer Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=85631
 css1/basic/class_as_selector.html

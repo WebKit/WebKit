@@ -1,3 +1,14 @@
+2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Remove duplicated entries because of disabled SUBPIXEL_LAYOUT.
+
+        * platform/qt-4.8/Skipped:
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-arm/Skipped:
+        * platform/qt-mac/Skipped:
+
 2012-05-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Gardening of flaky tests
