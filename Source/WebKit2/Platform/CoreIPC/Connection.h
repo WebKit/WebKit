@@ -238,7 +238,7 @@ private:
     // Called on the listener thread.
     void dispatchConnectionDidClose();
     void dispatchMessage(IncomingMessage&);
-    void dispatchMessages();
+    void dispatchOneMessage();
     void dispatchSyncMessage(MessageID, ArgumentDecoder*);
     void didFailToSendSyncMessage();
 
