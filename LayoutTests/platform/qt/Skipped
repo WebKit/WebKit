@@ -870,6 +870,7 @@ plugins/npruntime/delete-plugin-within-hasProperty-return-false.html
 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html
 plugins/npruntime/delete-plugin-within-setProperty.html
 plugins/npruntime/delete-plugin-within-getProperty.html
+plugins/npruntime/delete-plugin-within-invoke.html
 
 # =========================================================================== #
 # Failing Sputnik tests                                                       #

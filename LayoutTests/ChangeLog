@@ -1,3 +1,9 @@
+2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip one more crashing/asserting test.
+
+        * platform/qt/Skipped:
+
 2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Update test expectations.
