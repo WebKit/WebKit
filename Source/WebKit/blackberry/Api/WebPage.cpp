@@ -5490,6 +5490,12 @@ void WebPage::dispatchInspectorMessage(const std::string& message)
     d->m_page->inspectorController()->dispatchMessageFromFrontend(stringMessage);
 }
 
+void WebPage::inspectCurrentContextElement()
+{
+    if (isWebInspectorEnabled() && d->m_currentContextNode.get())
+        d->m_page->inspectorController()->inspect(d->m_currentContextNode.get());
+}
+
 bool WebPagePrivate::compositorDrawsRootLayer() const
 {
 #if USE(ACCELERATED_COMPOSITING)

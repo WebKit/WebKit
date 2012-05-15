@@ -1,3 +1,17 @@
+2012-05-15  Hanna Ma  <Hanma@rim.com>
+
+        [BlackBerry] adding a functionality for web inspector to inspect current selected element
+        https://bugs.webkit.org/show_bug.cgi?id=86394
+
+        Reviewed by Rob Buis.
+
+        Add a way to trigger the remote web inspector on selected element.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::inspectCurrentContextElement):
+        (WebKit):
+        * Api/WebPage.h:
+
 2012-05-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] ASSERT failure in FrameView::paintContents when refleshing www.thestar.com/iphone

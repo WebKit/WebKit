@@ -311,6 +311,7 @@ public:
     void enablePasswordEcho();
     void disablePasswordEcho();
     void dispatchInspectorMessage(const std::string& message);
+    void inspectCurrentContextElement();
 
     // FIXME: Needs API review on this header. See PR #120402.
     void notifyPagePause();
