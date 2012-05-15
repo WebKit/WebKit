@@ -14,10 +14,10 @@ layer at (0,0) size 800x484
               RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
               RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
             RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
-              RenderSVGPath {circle} at (9,75) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
-              RenderSVGPath {circle} at (9,275) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
-              RenderSVGPath {circle} at (242,75) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
-              RenderSVGPath {circle} at (242,275) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+              RenderSVGEllipse {circle} at (9,75) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+              RenderSVGEllipse {circle} at (9,275) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+              RenderSVGEllipse {circle} at (242,75) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+              RenderSVGEllipse {circle} at (242,275) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
           RenderSVGContainer {g} at (42,141) size 334x268
             RenderSVGRect {rect} at (42,141) size 334x268 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
               [masker="mask"] RenderSVGResourceMasker {mask} at (25,20) size 50x40

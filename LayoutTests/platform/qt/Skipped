@@ -1419,15 +1419,6 @@ svg/hittest/zero-length-square-cap-path.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=78128
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 
-# [Qt] 3 SVG tests assert after r107207
-# https://bugs.webkit.org/show_bug.cgi?id=78332
-svg/custom/mask-child-changes.svg
-svg/custom/mask-invalidation.svg
-svg/custom/absolute-sized-content-with-resources.xhtml
-svg/dynamic-updates/SVGPathElement-dom-requiredFeatures.html
-svg/dynamic-updates/SVGMaskElement-dom-x-attr.html
-svg/dynamic-updates/SVGMaskElement-svgdom-width-prop.html
-
 # Crashes due to debug assert until we fix issues with style elements in SVG
 svg/custom/use-referencing-style-crash.svg
 

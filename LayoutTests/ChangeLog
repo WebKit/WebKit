@@ -1,3 +1,15 @@
+2012-05-15  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] 6 SVG tests assert after r107207
+        https://bugs.webkit.org/show_bug.cgi?id=78332
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskip these tests because they don't assert now.
+
+        * platform/qt/Skipped:
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.txt:
+
 2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip one more crashing/asserting test.
