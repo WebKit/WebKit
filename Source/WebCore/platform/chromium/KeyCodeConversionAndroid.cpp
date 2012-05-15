@@ -33,6 +33,8 @@
 
 #include <android/keycodes.h>
 
+namespace WebCore {
+
 // The Android NDK does not provide values for these yet:
 enum {
     AKEYCODE_ESCAPE          = 111,
@@ -79,8 +81,6 @@ enum {
     AKEYCODE_CHANNEL_UP      = 166,
     AKEYCODE_CHANNEL_DOWN    = 167,
 };
-
-namespace WebCore {
 
 int windowsKeyCodeForKeyEvent(unsigned int keyCode)
 {
