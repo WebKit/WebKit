@@ -1,3 +1,20 @@
+2012-05-15  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Remove unused code for tap target fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=86252
+
+        Reviewed by Adam Barth.
+
+        * public/WebInputEvent.h:
+        (WebGestureEvent):
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * src/WebInputEvent.cpp:
+        (SameSizeAsWebGestureEvent):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        A rectangular touch region is defined by the touch center and the
+        delta values only, so gammaX and gammaY are not needed.
+
 2012-05-15  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Introduce error code enum in Chromium plumbing

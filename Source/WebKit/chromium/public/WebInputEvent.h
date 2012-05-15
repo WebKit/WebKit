@@ -359,11 +359,9 @@ public:
     int globalX;
     int globalY;
 
-    // NOTE: |deltaX| and |deltaY| represents the amount to scroll for Scroll gesture events. For Pinch gesture events, |deltaX| represents the scaling/magnification factor. For Tap and Press events, |deltaX|,|deltaY| and |gammaX|,|gammaY| correspond to the top left and bottom right corners of the ellipse's enlosing rectangle for tap target fuzzing.
+    // NOTE: |deltaX| and |deltaY| represents the amount to scroll for Scroll gesture events. For Pinch gesture events, |deltaX| represents the scaling/magnification factor. For a GestureTap event, |deltaX| and |deltaY| represent the horizontal and vertical radii of the touch region.
     float deltaX;
     float deltaY;
-    float gammaX;
-    float gammaY;
 
     WebGestureEvent(unsigned sizeParam = sizeof(WebGestureEvent))
         : WebInputEvent(sizeParam)
@@ -373,8 +371,6 @@ public:
         , globalY(0)
         , deltaX(0.0f)
         , deltaY(0.0f)
-        , gammaX(0.0f)
-        , gammaY(0.0f)
     {
     }
 };

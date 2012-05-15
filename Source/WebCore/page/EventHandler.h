@@ -163,7 +163,7 @@ public:
 
 #if ENABLE(GESTURE_EVENTS)
     bool handleGestureEvent(const PlatformGestureEvent&);
-    bool handleGestureTap(const PlatformGestureEvent&, Node* preTargetedNode = 0);
+    bool handleGestureTap(const PlatformGestureEvent&);
     bool handleGestureScrollUpdate(const PlatformGestureEvent&);
 #endif
 

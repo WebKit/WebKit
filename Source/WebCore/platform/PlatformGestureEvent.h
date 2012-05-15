@@ -41,31 +41,25 @@ public:
         : PlatformEvent(PlatformEvent::GestureScrollBegin)
         , m_deltaX(0)
         , m_deltaY(0)
-        , m_gammaX(0)
-        , m_gammaY(0)
     {
     }
 
-    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, double timestamp, float deltaX, float deltaY, float gammaX, float gammaY, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
+    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, double timestamp, float deltaX, float deltaY, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
         : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
         , m_position(position)
         , m_globalPosition(globalPosition)
         , m_deltaX(deltaX)
         , m_deltaY(deltaY)
-        , m_gammaX(gammaX)
-        , m_gammaY(gammaY)
     {
     }
 
-    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, double timestamp, const IntSize& area, const FloatPoint& delta, const FloatPoint& gamma, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
+    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, double timestamp, const IntSize& area, const FloatPoint& delta, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
         : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
         , m_position(position)
         , m_globalPosition(globalPosition)
         , m_area(area)
         , m_deltaX(delta.x())
         , m_deltaY(delta.y())
-        , m_gammaX(gamma.x())
-        , m_gammaY(gamma.y())
     {
     }
 
@@ -76,9 +70,6 @@ public:
 
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
-
-    float gammaX() const { return m_gammaX; }
-    float gammaY() const { return m_gammaY; }
     
 protected:
     IntPoint m_position;
@@ -86,8 +77,6 @@ protected:
     IntSize m_area;
     float m_deltaX;
     float m_deltaY;
-    float m_gammaX;
-    float m_gammaY;
 };
 
 } // namespace WebCore

@@ -174,8 +174,6 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
     m_globalPosition = IntPoint(e.globalX, e.globalY);
     m_deltaX = e.deltaX;
     m_deltaY = e.deltaY;
-    m_gammaX = e.gammaX;
-    m_gammaY = e.gammaY;
     m_timestamp = e.timeStampSeconds;
 
     m_modifiers = 0;
