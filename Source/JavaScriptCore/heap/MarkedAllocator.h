@@ -41,7 +41,7 @@ private:
     JS_EXPORT_PRIVATE void* allocateSlowCase();
     void* tryAllocate();
     void* tryAllocateHelper();
-    MarkedBlock* allocateBlock(AllocationEffort);
+    MarkedBlock* allocateBlock();
     
     MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;

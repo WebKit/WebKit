@@ -68,44 +68,30 @@ void* MarkedAllocator::allocateSlowCase()
     if (LIKELY(result != 0))
         return result;
     
-    AllocationEffort allocationEffort;
-    
-    if (m_heap->shouldCollect())
-        allocationEffort = AllocationCanFail;
-    else
-        allocationEffort = AllocationMustSucceed;
-    
-    MarkedBlock* block = allocateBlock(allocationEffort);
-    if (block) {
-        addBlock(block);
-        void* result = tryAllocate();
-        ASSERT(result);
-        return result;
+    if (m_heap->shouldCollect()) {
+        m_heap->collect(Heap::DoNotSweep);
+
+        result = tryAllocate();
+        if (result)
+            return result;
     }
-    
-    m_heap->collect(Heap::DoNotSweep);
-    
-    result = tryAllocate();
-    
-    if (result)
-        return result;
-    
+
     ASSERT(!m_heap->shouldCollect());
     
-    addBlock(allocateBlock(AllocationMustSucceed));
-    
+    MarkedBlock* block = allocateBlock();
+    ASSERT(block);
+    addBlock(block);
+        
     result = tryAllocate();
     ASSERT(result);
     return result;
 }
     
-MarkedBlock* MarkedAllocator::allocateBlock(AllocationEffort allocationEffort)
+MarkedBlock* MarkedAllocator::allocateBlock()
 {
     MarkedBlock* block = static_cast<MarkedBlock*>(m_heap->blockAllocator().allocate());
     if (block)
         block = MarkedBlock::recycle(block, m_heap, m_cellSize, m_cellsNeedDestruction);
-    else if (allocationEffort == AllocationCanFail)
-        return 0;
     else
         block = MarkedBlock::create(m_heap, m_cellSize, m_cellsNeedDestruction);
     

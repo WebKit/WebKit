@@ -212,10 +212,10 @@ void CopiedSpace::doneCopying()
 CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, CopiedBlock** outBlock)
 {
     CopiedBlock* block = 0;
-    if (HeapBlock* heapBlock = m_heap->blockAllocator().allocate())
-        block = new (NotNull, heapBlock) CopiedBlock(heapBlock->m_allocation);
-    else if (allocationEffort == AllocationMustSucceed) {
-        if (!allocateNewBlock(&block)) {
+    if (allocationEffort == AllocationMustSucceed) {
+        if (HeapBlock* heapBlock = m_heap->blockAllocator().allocate())
+            block = new (NotNull, heapBlock) CopiedBlock(heapBlock->m_allocation);
+        else if (!allocateNewBlock(&block)) {
             *outBlock = 0;
             ASSERT_NOT_REACHED();
             return false;
