@@ -1,3 +1,13 @@
+2012-05-15  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Setting onended on a LocalMediaStream triggers an assertion in V8
+        https://bugs.webkit.org/show_bug.cgi?id=86459
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/LocalMediaStream-onended-expected.txt: Added.
+        * fast/mediastream/LocalMediaStream-onended.html: Added.
+
 2012-05-15  Brady Eidson  <beidson@apple.com>
 
         Skip a webarchive test I added that fails on WK2.
