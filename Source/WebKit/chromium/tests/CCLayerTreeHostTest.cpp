@@ -1140,9 +1140,11 @@ public:
 
     virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
     {
-        if (!m_numAnimates) {
-            // We have a long animation running. It should continue to tick even if we are not visible.
-            postSetVisibleToMainThread(false);
+        if (m_numAnimates < 2) {
+            if (!m_numAnimates) {
+                // We have a long animation running. It should continue to tick even if we are not visible.
+                postSetVisibleToMainThread(false);
+            }
             m_numAnimates++;
             return;
         }
@@ -1157,15 +1159,7 @@ private:
     int m_numAnimates;
 };
 
-#if OS(WINDOWS)
-// http://webkit.org/b/74623
-TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded, FLAKY_runMultiThread)
-#else
-TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded, runMultiThread)
-#endif
-{
-    runTestThreaded();
-}
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded)
 
 // Ensures that animations continue to be ticked when we are backgrounded.
 class CCLayerTreeHostTestAddAnimationWithTimingFunction : public CCLayerTreeHostTestThreadOnly {
@@ -1200,15 +1194,7 @@ public:
 private:
 };
 
-#if OS(WINDOWS)
-// http://webkit.org/b/74623
-TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, FLAKY_runMultiThread)
-#else
-TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, runMultiThread)
-#endif
-{
-    runTestThreaded();
-}
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction)
 
 // Ensures that when opacity is being animated, this value does not cause the subtree to be skipped.
 class CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity : public CCLayerTreeHostTestThreadOnly {
@@ -1290,10 +1276,7 @@ private:
     CCLayerTreeHostImpl* m_layerTreeHostImpl;
 };
 
-TEST_F(CCLayerTreeHostTestSynchronizeAnimationStartTimes, runMultiThread)
-{
-    runTestThreaded();
-}
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestSynchronizeAnimationStartTimes)
 
 // Ensures that main thread animations have their start times synchronized with impl thread animations.
 class CCLayerTreeHostTestAnimationFinishedEvents : public CCLayerTreeHostTestThreadOnly {
@@ -1319,10 +1302,7 @@ public:
 private:
 };
 
-TEST_F(CCLayerTreeHostTestAnimationFinishedEvents, runMultiThread)
-{
-    runTestThreaded();
-}
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestAnimationFinishedEvents)
 
 class CCLayerTreeHostTestScrollSimple : public CCLayerTreeHostTestThreadOnly {
 public:

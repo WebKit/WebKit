@@ -68,6 +68,7 @@ public:
     virtual void setNeedsRedraw() OVERRIDE;
     virtual bool commitRequested() const OVERRIDE;
     virtual void setVisible(bool) OVERRIDE;
+    virtual void didAddAnimation() OVERRIDE { }
     virtual void start() OVERRIDE;
     virtual void stop() OVERRIDE;
     virtual size_t maxPartialTextureUpdates() const OVERRIDE;

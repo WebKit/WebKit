@@ -198,6 +198,7 @@ public:
     bool commitRequested() const;
 
     void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
+    void didAddAnimation();
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
     const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
