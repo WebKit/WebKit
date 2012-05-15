@@ -1446,10 +1446,6 @@ svg/transforms/transform-origin-css-property.xhtml
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
-# REGRESSION (r53450) - skipped until fix
-# https://bugs.webkit.org/show_bug.cgi?id=33834
-css1/box_properties/acid_test.html
-
 css2.1/t051201-c23-first-line-00-b.html
 css2.1/t1004-c43-rpl-ibx-00-d-ag.html
 css2.1/t100801-c544-valgn-01-d-ag.html

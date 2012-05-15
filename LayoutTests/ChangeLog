@@ -1,3 +1,12 @@
+2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] css1/box_properties/acid_test.html fails in release mode on 32 bit Linux
+        https://bugs.webkit.org/show_bug.cgi?id=36954
+
+        Unreviewed gardening, unskip it, because it passes on 32/64 bit too now. (Maybe after r112397)
+
+        * platform/qt/Skipped: Try to unskip really. :)
+
 2012-05-15  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt][WK2] fast/repaint/scroll-in-clipped-layer.html crashes
