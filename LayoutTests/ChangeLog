@@ -1,3 +1,11 @@
+2012-05-15  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt][Wk1] Unskip now passig tests.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-4.8/Skipped:
+
 2012-05-15  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: implement "Reveal in Dominators view" context menu action
