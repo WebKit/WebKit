@@ -68,7 +68,7 @@ static bool isTableRowEmpty(Node* row)
     return true;
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements)
+DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup)
     : CompositeEditCommand(document)
     , m_hasSelectionToDelete(false)
     , m_smartDelete(smartDelete)
@@ -78,6 +78,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDel
     , m_expandForSpecialElements(expandForSpecialElements)
     , m_pruneStartBlockIfNecessary(false)
     , m_startsAtEmptyLine(false)
+    , m_sanitizeMarkup(sanitizeMarkup)
     , m_startBlock(0)
     , m_endBlock(0)
     , m_typingStyle(0)
@@ -85,7 +86,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document *document, bool smartDel
 {
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements)
+DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup)
     : CompositeEditCommand(selection.start().anchorNode()->document())
     , m_hasSelectionToDelete(true)
     , m_smartDelete(smartDelete)
@@ -95,6 +96,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection
     , m_expandForSpecialElements(expandForSpecialElements)
     , m_pruneStartBlockIfNecessary(false)
     , m_startsAtEmptyLine(false)
+    , m_sanitizeMarkup(sanitizeMarkup)
     , m_selectionToDelete(selection)
     , m_startBlock(0)
     , m_endBlock(0)
@@ -814,7 +816,8 @@ void DeleteSelectionCommand::doApply()
     RefPtr<Node> placeholder = m_needPlaceholder ? createBreakElement(document()).get() : 0;
     
     if (placeholder) {
-        removeRedundantBlocks();
+        if (m_sanitizeMarkup)
+            removeRedundantBlocks();
         insertNodeAt(placeholder.get(), m_endingPosition);
     }
 
