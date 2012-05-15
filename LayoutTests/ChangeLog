@@ -1,3 +1,14 @@
+2012-05-15  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt]3 fast/borders tests assert intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=67994
+
+        Reviewed by Darin Adler.
+
+        These tests are now passing even with --iteration 1000.
+
+        * platform/qt/Skipped:
+
 2012-05-15  Erik Arvidsson  <arv@chromium.org>
 
         Result of fast/dom/DOMException/stack-trace.html depends on path (test introduced in r117016)

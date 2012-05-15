@@ -2371,11 +2371,6 @@ fast/multicol/overflow-across-columns.html
 # https://bugs.webkit.org/show_bug.cgi?id=69719
 fast/text/line-initial-and-final-swashes.html
 
-# [Qt] Assertion fail in CSSPrimitiveValue ctor
-# https://bugs.webkit.org/show_bug.cgi?id=69933
-fast/borders/inline-mask-overlay-image-outset-vertical-rl.html
-fast/borders/inline-mask-overlay-image-outset.html
-
 # fast/events/touch/page-scaled-touch-gesture-click.html is failing
 # Introduced in r97988. Failure: "Gesture manager is not implemented."
 # https://bugs.webkit.org/show_bug.cgi?id=70593
