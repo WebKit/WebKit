@@ -353,9 +353,13 @@ private:
     bool checkSelector(const RuleData&, const ContainerNode* scope = 0);
     bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
     void applyMatchedProperties(const MatchResult&);
-    template <bool firstPass>
+    enum StyleApplicationPass {
+        HighPriorityProperties,
+        LowPriorityProperties
+    };
+    template <StyleApplicationPass pass>
     void applyMatchedProperties(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
-    template <bool firstPass>
+    template <StyleApplicationPass pass>
     void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly, bool filterRegionProperties);
 
     static bool isValidRegionStyleProperty(CSSPropertyID);
