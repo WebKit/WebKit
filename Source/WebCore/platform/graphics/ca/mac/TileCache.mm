@@ -275,7 +275,10 @@ IntRect TileCache::tileCoverageRect() const
 {
     IntRect tileCoverageRect = m_visibleRect;
 
-    if (m_isInWindow) {
+    // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
+    // Furthermore, if the page can't have scrollbars (for example if its body element has overflow:hidden) it's very unlikely that the
+    // page will ever be scrolled so we limit the tile coverage rect as well.
+    if (m_isInWindow && m_canHaveScrollbars) {
         // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
         // These values were chosen because it's more common to have tall pages and to scroll vertically,
         // so we keep more tiles above and below the current area.
@@ -351,7 +354,8 @@ void TileCache::revalidateTiles()
                 [m_tileContainerLayer.get() addSublayer:tileLayer.get()];
             } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
-                if (CGSizeEqualToSize([tileLayer.get() frame].size, tileRect.size()))
+                CGSize tileLayerSize = [tileLayer.get() frame].size;
+                if (tileLayerSize.width >= tileRect.width() && tileLayerSize.height >= tileRect.height())
                     continue;
                 [tileLayer.get() setFrame:tileRect];
             }
@@ -369,6 +373,8 @@ void TileCache::revalidateTiles()
         m_tileCoverageRect.unite(rectForTileIndex(tileIndex));
     }
 
+    if (dirtyRects.isEmpty())
+        return;
     platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 }
 
