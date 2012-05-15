@@ -26,6 +26,8 @@
 #ifndef NPRuntimeUtilities_h
 #define NPRuntimeUtilities_h
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include <WebCore/npruntime_internal.h>
 #include <wtf/Forward.h>
 
@@ -66,5 +68,7 @@ bool trySafeReleaseNPObject(NPObject*);
 void releaseNPVariantValue(NPVariant*);
 
 }
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NPRuntimeUtilities_h

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetscapePlugin.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "PluginController.h"
 #include "WebEvent.h"
 #include "WindowGeometry.h"
@@ -396,3 +398,5 @@ BOOL NetscapePlugin::hookedTrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

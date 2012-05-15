@@ -26,6 +26,8 @@
 #ifndef NetscapeSandboxFunctions_h
 #define NetscapeSandboxFunctions_h
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include <WebCore/npapi.h>
 
 #ifdef __cplusplus
@@ -54,5 +56,7 @@ WKNSandboxFunctions* netscapeSandboxFunctions();
 #ifdef __cplusplus
 }
 #endif
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif

@@ -26,6 +26,8 @@
 #ifndef NetscapeBrowserFuncs_h
 #define NetscapeBrowserFuncs_h
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include <WebCore/npfunctions.h>
 
 namespace WebKit {
@@ -37,5 +39,6 @@ NPNetscapeFuncs* netscapeBrowserFuncs();
 
 } // namespace WebKit
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NetscapeBrowserFuncs_h

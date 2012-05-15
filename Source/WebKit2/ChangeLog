@@ -1,3 +1,42 @@
+2012-05-15  Andy Estes  <aestes@apple.com>
+
+        Guard Netscape plug-in code with ENABLE(NETSCAPE_PLUGIN_API)
+        https://bugs.webkit.org/show_bug.cgi?id=86496
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        * Shared/Plugins/Netscape/win/NetscapePluginModuleWin.cpp:
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::individualPluginPaths):
+        (WebKit::PluginInfoStore::getPluginInfo):
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        * WebProcess/Plugins/Netscape/NPJSObject.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp:
+        * WebProcess/Plugins/Netscape/NPRuntimeUtilities.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginNone.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.h:
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        * WebProcess/Plugins/Netscape/qt/PluginProxyQt.cpp:
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+
 2012-05-14  Andy Estes  <aestes@apple.com>
 
         Guard some AppKit-specific code in WebKit2 with USE(APPKIT)

@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#if PLUGIN_ARCHITECTURE(UNSUPPORTED)
+#if PLUGIN_ARCHITECTURE(UNSUPPORTED) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NetscapePlugin.h"
 
@@ -95,4 +95,4 @@ bool NetscapePlugin::wantsPluginRelativeNPWindowCoordinates()
 
 } // namespace WebKit
 
-#endif // PLUGIN_ARCHITECTURE(UNSUPPORTED)
+#endif // PLUGIN_ARCHITECTURE(UNSUPPORTED) && ENABLE(NETSCAPE_PLUGIN_API)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSNPObject.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "JSNPMethod.h"
 #include "NPJSObject.h"
 #include "NPRuntimeObjectMap.h"
@@ -490,3 +492,5 @@ JSObject* JSNPObject::throwInvalidAccessError(ExecState* exec)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

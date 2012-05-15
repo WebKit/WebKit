@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NPJSObject.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "JSNPObject.h"
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
@@ -381,3 +383,5 @@ bool NPJSObject::NP_Construct(NPObject* npObject, const NPVariant* arguments, ui
 }
     
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

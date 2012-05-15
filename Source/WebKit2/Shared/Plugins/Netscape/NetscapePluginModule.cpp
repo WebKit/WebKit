@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetscapePluginModule.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "Module.h"
 #include "NPRuntimeUtilities.h"
 #include "NetscapeBrowserFuncs.h"
@@ -269,3 +271,4 @@ void NetscapePluginModule::unload()
 
 } // namespace WebKit
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

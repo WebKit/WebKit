@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetscapePluginModule.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include <WebCore/FileSystem.h>
 #include <wtf/OwnArrayPtr.h>
 
@@ -139,3 +141,4 @@ void NetscapePluginModule::determineQuirks()
 
 } // namespace WebKit
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

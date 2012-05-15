@@ -26,11 +26,14 @@
 #import "config.h"
 #import "PluginInfoStore.h"
 
-#import "NetscapePluginModule.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#import "NetscapePluginModule.h"
+#endif
 
 using namespace WebCore;
 
@@ -73,7 +76,13 @@ Vector<String> PluginInfoStore::individualPluginPaths()
 
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
+#else
+    UNUSED_PARAM(pluginPath);
+    UNUSED_PARAM(plugin);
+    return false;
+#endif
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)

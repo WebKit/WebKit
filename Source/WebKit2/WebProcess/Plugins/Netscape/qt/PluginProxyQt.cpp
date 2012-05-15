@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginProxy.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(PLUGIN_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #include <WebCore/NotImplemented.h>
 
@@ -40,4 +40,4 @@ bool PluginProxy::needsBackingStore() const
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(PLUGIN_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
