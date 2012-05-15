@@ -19,30 +19,55 @@
  */
 
 #include "config.h"
-#include "QtViewportInteractionEngine.h"
-#include "qwebviewportinfo_p.h"
+#include "qwebkittest_p.h"
 
+#include "QtViewportInteractionEngine.h"
+#include "QtWebPageEventHandler.h"
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 
 using namespace WebKit;
 
-QWebViewportInfo::QWebViewportInfo(QQuickWebViewPrivate* webViewPrivate, QObject* parent)
+QWebKitTest::QWebKitTest(QQuickWebViewPrivate* webViewPrivate, QObject* parent)
     : QObject(parent)
     , m_webViewPrivate(webViewPrivate)
 {
 }
 
-QWebViewportInfo::~QWebViewportInfo()
+QWebKitTest::~QWebKitTest()
 {
 }
 
-QSize QWebViewportInfo::contentsSize() const
+bool QWebKitTest::touchDoubleTap(QObject* item, qreal x, qreal y, int delay)
+{
+    if (!qobject_cast<QQuickWebView*>(item)) {
+        // FIXME: We only support the actual web view for now.
+        qWarning("Touch event \"DoubleTap\" not accepted by receiving item");
+        return false;
+    }
+
+    // FIXME: implement delay using QTest::qWait() or similar.
+    Q_UNUSED(delay);
+
+    QPointF localPos(x, y);
+
+    QTouchEvent::TouchPoint point;
+    point.setLastPos(localPos);
+    QRectF touchRect(0, 0, 40, 40);
+    touchRect.moveCenter(localPos);
+    point.setRect(touchRect);
+
+    m_webViewPrivate->pageView->eventHandler()->handleDoubleTapEvent(point);
+
+    return true;
+}
+
+QSize QWebKitTest::contentsSize() const
 {
     return QSize(m_webViewPrivate->pageView->contentsSize().toSize());
 }
 
-QVariant QWebViewportInfo::currentScale() const
+QVariant QWebKitTest::contentsScale() const
 {
     if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
         return interactionEngine->currentCSSScale();
@@ -50,17 +75,17 @@ QVariant QWebViewportInfo::currentScale() const
     return m_webViewPrivate->attributes.initialScale;
 }
 
-QVariant QWebViewportInfo::devicePixelRatio() const
+QVariant QWebKitTest::devicePixelRatio() const
 {
     return m_webViewPrivate->attributes.devicePixelRatio;
 }
 
-QVariant QWebViewportInfo::initialScale() const
+QVariant QWebKitTest::initialScale() const
 {
     return m_webViewPrivate->attributes.initialScale;
 }
 
-QVariant QWebViewportInfo::minimumScale() const
+QVariant QWebKitTest::minimumScale() const
 {
     if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
         return interactionEngine->m_minimumScale;
@@ -68,7 +93,7 @@ QVariant QWebViewportInfo::minimumScale() const
     return m_webViewPrivate->attributes.minimumScale;
 }
 
-QVariant QWebViewportInfo::maximumScale() const
+QVariant QWebKitTest::maximumScale() const
 {
     if (QtViewportInteractionEngine* interactionEngine = m_webViewPrivate->viewportInteractionEngine())
         return interactionEngine->m_maximumScale;
@@ -76,28 +101,12 @@ QVariant QWebViewportInfo::maximumScale() const
     return m_webViewPrivate->attributes.maximumScale;
 }
 
-QVariant QWebViewportInfo::isScalable() const
+QVariant QWebKitTest::isScalable() const
 {
     return !!m_webViewPrivate->attributes.userScalable;
 }
 
-QVariant QWebViewportInfo::layoutSize() const
+QVariant QWebKitTest::layoutSize() const
 {
     return QSizeF(m_webViewPrivate->attributes.layoutSize.width(), m_webViewPrivate->attributes.layoutSize.height());
-}
-
-void QWebViewportInfo::didUpdateContentsSize()
-{
-    emit contentsSizeUpdated();
-}
-
-void QWebViewportInfo::didUpdateCurrentScale()
-{
-    emit currentScaleUpdated();
-}
-
-void QWebViewportInfo::didUpdateViewportConstraints()
-{
-    emit viewportConstraintsUpdated();
-    emit currentScaleUpdated();
 }

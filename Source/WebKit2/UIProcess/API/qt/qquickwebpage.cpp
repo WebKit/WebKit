@@ -29,6 +29,7 @@
 #include "WebPageProxy.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
+#include "qwebkittest_p.h"
 #include <QtQuick/QQuickCanvas>
 
 using namespace WebKit;
@@ -110,6 +111,7 @@ void QQuickWebPage::setContentsSize(const QSizeF& size)
 
     d->contentsSize = size;
     d->updateSize();
+    emit d->viewportItem->experimental()->test()->contentsSizeChanged();
 }
 
 const QSizeF& QQuickWebPage::contentsSize() const
@@ -122,6 +124,7 @@ void QQuickWebPage::setContentsScale(qreal scale)
     ASSERT(scale > 0);
     d->contentsScale = scale;
     d->updateSize();
+    emit d->viewportItem->experimental()->test()->contentsScaleCommitted();
 }
 
 qreal QQuickWebPage::contentsScale() const

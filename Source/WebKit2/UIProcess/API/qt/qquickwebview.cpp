@@ -39,19 +39,17 @@
 #endif
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
-
 #include "qquicknetworkreply_p.h"
 #include "qquicknetworkrequest_p.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p_p.h"
 #include "qwebdownloaditem_p_p.h"
+#include "qwebkittest_p.h"
 #include "qwebloadrequest_p.h"
 #include "qwebnavigationhistory_p.h"
 #include "qwebnavigationhistory_p_p.h"
 #include "qwebpreferences_p.h"
 #include "qwebpreferences_p_p.h"
-#include "qwebviewportinfo_p.h"
-
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -866,7 +864,7 @@ void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::V
         interactionEngine->setCSSScale(attr.initialScale);
 
     this->attributes = attr;
-    q->experimental()->viewportInfo()->didUpdateViewportConstraints();
+    emit q->experimental()->test()->viewportChanged();
 
     // If the web app successively changes the viewport on purpose
     // it wants to be in control and we should disable animations.
@@ -895,8 +893,6 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
 void QQuickWebViewFlickablePrivate::_q_contentViewportChanged(const QPointF& trajectoryVector)
 {
     Q_Q(QQuickWebView);
-    // This is only for our QML ViewportInfo debugging API.
-    q->experimental()->viewportInfo()->didUpdateCurrentScale();
 
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (!drawingArea)
@@ -904,6 +900,8 @@ void QQuickWebViewFlickablePrivate::_q_contentViewportChanged(const QPointF& tra
 
     const QRect visibleRect(visibleContentsRect());
     float scale = pageView->contentsScale();
+
+    emit q->experimental()->test()->contentsScaleChanged();
 
     QRectF accurateVisibleRect(q->boundingRect());
     accurateVisibleRect.translate(contentPos());
@@ -940,14 +938,13 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
     Q_Q(QQuickWebView);
     QSize viewportSize = q->boundingRect().size().toSize();
 
-    pageView->setContentsSize(newSize);
-    q->experimental()->viewportInfo()->didUpdateContentsSize();
+    pageView->setContentsSize(newSize); // emits contentsSizeChanged()
 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(attributes, viewportSize, newSize);
 
     if (!qFuzzyCompare(minimumScale, attributes.minimumScale)) {
         interactionEngine->setCSSScaleBounds(minimumScale, attributes.maximumScale);
-        q->experimental()->viewportInfo()->didUpdateViewportConstraints();
+        emit q->experimental()->test()->viewportChanged();
 
         if (!interactionEngine->hadUserInteraction() && !pageIsSuspended)
             interactionEngine->setCSSScale(minimumScale);
@@ -975,7 +972,7 @@ QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
     , q_ptr(webView)
     , d_ptr(webView->d_ptr.data())
     , schemeParent(new QObject(this))
-    , m_viewportInfo(new QWebViewportInfo(webView->d_ptr.data(), this))
+    , m_test(new QWebKitTest(webView->d_ptr.data(), this))
 {
 }
 
@@ -1386,9 +1383,9 @@ void QQuickWebViewExperimental::goBackTo(int index)
     d_ptr->navigationHistory->d->goBackTo(index);
 }
 
-QWebViewportInfo* QQuickWebViewExperimental::viewportInfo()
+QWebKitTest* QQuickWebViewExperimental::test()
 {
-    return m_viewportInfo;
+    return m_test;
 }
 
 QQuickWebPage* QQuickWebViewExperimental::page()
@@ -1710,6 +1707,7 @@ void QQuickWebView::mouseReleaseEvent(QMouseEvent* event)
 void QQuickWebView::mouseDoubleClickEvent(QMouseEvent* event)
 {
     Q_D(QQuickWebView);
+
     // If a MouseButtonDblClick was received then we got a MouseButtonPress before
     // handleMousePressEvent will take care of double clicks.
     d->pageView->eventHandler()->handleMousePressEvent(event);

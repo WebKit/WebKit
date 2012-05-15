@@ -48,7 +48,7 @@ class WebPageProxy;
 }
 
 class QWebNavigationHistory;
-class QWebViewportInfo;
+class QWebKitTest;
 
 QT_BEGIN_NAMESPACE
 class QQmlComponent;
@@ -60,7 +60,7 @@ class QQuickWebViewPrivate {
     friend class QQuickWebViewExperimental;
     friend class QQuickWebPage;
     friend class QWebPreferencesPrivate;
-    friend class QWebViewportInfo;
+    friend class QWebKitTest;
 
 public:
     static QQuickWebViewPrivate* get(QQuickWebView* q) { return q->d_ptr.data(); }

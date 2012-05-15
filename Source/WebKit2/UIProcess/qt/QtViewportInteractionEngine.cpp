@@ -192,6 +192,13 @@ bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
     if (itemRect == currentItemRectVisible)
         return false;
 
+    // FIXME: Investigate why that animation doesn't run when we are unfocused.
+    if (!m_viewport->isVisible() || !m_viewport->hasFocus()) {
+        // Apply the end result immediately when we are non-visible.
+        setItemRectVisible(itemRect);
+        return true;
+    }
+
     m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
     m_scaleAnimation->setEasingCurve(QEasingCurve::OutCubic);
 

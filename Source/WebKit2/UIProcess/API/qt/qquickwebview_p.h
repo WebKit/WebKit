@@ -38,7 +38,7 @@ class QWebDownloadItem;
 class QWebNavigationHistory;
 class QWebPreferences;
 class QWebPermissionRequest;
-class QWebViewportInfo;
+class QWebKitTest;
 class QQuickNetworkReply;
 
 namespace WTR {
@@ -266,7 +266,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QQmlComponent* filePicker READ filePicker WRITE setFilePicker NOTIFY filePickerChanged)
     Q_PROPERTY(QQmlComponent* databaseQuotaDialog READ databaseQuotaDialog WRITE setDatabaseQuotaDialog NOTIFY databaseQuotaDialogChanged)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
-    Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
+    Q_PROPERTY(QWebKitTest* test READ test CONSTANT FINAL)
     Q_PROPERTY(QQmlListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
     Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged)
     Q_PROPERTY(double devicePixelRatio READ devicePixelRatio WRITE setDevicePixelRatio NOTIFY devicePixelRatioChanged)
@@ -303,7 +303,7 @@ public:
     double devicePixelRatio() const;
     void setDevicePixelRatio(double);
 
-    QWebViewportInfo* viewportInfo();
+    QWebKitTest* test();
 
     QWebPreferences* preferences() const;
     QWebNavigationHistory* navigationHistory() const;
@@ -360,7 +360,7 @@ private:
     QQuickWebView* q_ptr;
     QQuickWebViewPrivate* d_ptr;
     QObject* schemeParent;
-    QWebViewportInfo* m_viewportInfo;
+    QWebKitTest* m_test;
 
     friend class WebKit::QtWebPageUIClient;
 

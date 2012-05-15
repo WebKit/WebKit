@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef qwebviewportinfo_p_h
-#define qwebviewportinfo_p_h
+#ifndef qwebkittest_p_h
+#define qwebkittest_p_h
 
 #include "qwebkitglobal.h"
 
@@ -28,31 +28,40 @@
 #include <QtCore/QSize>
 #include <QtCore/QVariant>
 #include <QtQml/QtQml>
+#include <QtQuick/qquickitem.h>
 
 class QQuickWebViewPrivate;
 
-class QWEBKIT_EXPORT QWebViewportInfo : public QObject {
+class QWEBKIT_EXPORT QWebKitTest : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QSize contentsSize READ contentsSize NOTIFY contentsSizeUpdated)
-    Q_PROPERTY(QVariant currentScale READ currentScale NOTIFY currentScaleUpdated)
-    Q_PROPERTY(QVariant devicePixelRatio READ devicePixelRatio NOTIFY viewportConstraintsUpdated)
-    Q_PROPERTY(QVariant initialScale READ initialScale NOTIFY viewportConstraintsUpdated)
-    Q_PROPERTY(QVariant isScalable READ isScalable NOTIFY viewportConstraintsUpdated)
-    Q_PROPERTY(QVariant maximumScale READ maximumScale NOTIFY viewportConstraintsUpdated)
-    Q_PROPERTY(QVariant minimumScale READ minimumScale NOTIFY viewportConstraintsUpdated)
-    Q_PROPERTY(QVariant layoutSize READ layoutSize NOTIFY viewportConstraintsUpdated)
+
+    Q_PROPERTY(QSize contentsSize READ contentsSize NOTIFY contentsSizeChanged)
+
+    Q_PROPERTY(QVariant contentsScale READ contentsScale NOTIFY contentsScaleChanged)
+
+    Q_PROPERTY(QVariant devicePixelRatio READ devicePixelRatio NOTIFY viewportChanged)
+    Q_PROPERTY(QVariant initialScale READ initialScale NOTIFY viewportChanged)
+    Q_PROPERTY(QVariant isScalable READ isScalable NOTIFY viewportChanged)
+    Q_PROPERTY(QVariant maximumScale READ maximumScale NOTIFY viewportChanged)
+    Q_PROPERTY(QVariant minimumScale READ minimumScale NOTIFY viewportChanged)
+    Q_PROPERTY(QVariant layoutSize READ layoutSize NOTIFY viewportChanged)
 
 signals:
-    void contentsSizeUpdated();
-    void currentScaleUpdated();
-    void viewportConstraintsUpdated();
+    void contentsSizeChanged();
+    void contentsScaleChanged();
+    void contentsScaleCommitted();
+    void viewportChanged();
+
+public slots:
+    bool touchDoubleTap(QObject* item, qreal x, qreal y, int delay = -1);
 
 public:
-    QWebViewportInfo(QQuickWebViewPrivate* webviewPrivate, QObject* parent = 0);
-    virtual ~QWebViewportInfo();
+    QWebKitTest(QQuickWebViewPrivate* webviewPrivate, QObject* parent = 0);
+    virtual ~QWebKitTest();
 
     QSize contentsSize() const;
-    QVariant currentScale() const;
+    QVariant contentsScale() const;
+
     QVariant devicePixelRatio() const;
     QVariant initialScale() const;
     QVariant isScalable() const;
@@ -60,12 +69,8 @@ public:
     QVariant maximumScale() const;
     QVariant minimumScale() const;
 
-    void didUpdateContentsSize();
-    void didUpdateCurrentScale();
-    void didUpdateViewportConstraints();
-
 private:
     QQuickWebViewPrivate* m_webViewPrivate;
 };
 
-#endif // qwebviewportinfo_p
+#endif // qwebkittest_p

@@ -356,6 +356,6 @@ Rectangle {
             bottom: parent.bottom
         }
         visible: false
-        viewportInfo : webView.experimental.viewportInfo
+        test : webView.experimental.test
     }
 }

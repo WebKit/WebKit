@@ -1,3 +1,15 @@
+2012-05-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Add infra for testing double-tap to zoom functionality etc
+        https://bugs.webkit.org/show_bug.cgi?id=86474
+
+        Reviewed by Simon Hausmann.
+
+        The WebViewportInfo class was renamed to QWebKitTest in preparation
+        of becoming a separate module. Adapt the use API.
+
+        * declarative/experimental/plugin.cpp:
+
 2012-05-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move resumeAnimations to use Internals interface
