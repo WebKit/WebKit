@@ -452,11 +452,16 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
         *offsetFromRoot = oldOffsetFromRoot;
 }
 
-LayoutRect RenderLayer::repaintRectIncludingDescendants() const
+LayoutRect RenderLayer::repaintRectIncludingNonCompositingDescendants() const
 {
     LayoutRect repaintRect = m_repaintRect;
-    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        repaintRect.unite(child->repaintRectIncludingDescendants());
+    for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
+        // Don't include repaint rects for composited child layers; they will paint themselves and have a different origin.
+        if (child->isComposited())
+            continue;
+
+        repaintRect.unite(child->repaintRectIncludingNonCompositingDescendants());
+    }
     return repaintRect;
 }
 

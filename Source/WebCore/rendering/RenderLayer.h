@@ -511,7 +511,7 @@ public:
 
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     LayoutRect repaintRect() const { return m_repaintRect; }
-    LayoutRect repaintRectIncludingDescendants() const;
+    LayoutRect repaintRectIncludingNonCompositingDescendants() const;
 
     enum UpdateLayerPositionsAfterScrollFlag {
         NoFlag = 0,
