@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,53 +48,109 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HitTestResult::HitTestResult()
-    : m_isOverWidget(false)
+HitTestPoint::HitTestPoint()
+    : m_topPadding(0)
+    , m_rightPadding(0)
+    , m_bottomPadding(0)
+    , m_leftPadding(0)
     , m_isRectBased(false)
+{
+}
+
+HitTestPoint::HitTestPoint(const LayoutPoint& point)
+    : m_point(point)
     , m_topPadding(0)
     , m_rightPadding(0)
     , m_bottomPadding(0)
     , m_leftPadding(0)
+    , m_isRectBased(false)
+{
+}
+
+HitTestPoint::HitTestPoint(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+    : m_point(centerPoint)
+    , m_topPadding(topPadding)
+    , m_rightPadding(rightPadding)
+    , m_bottomPadding(bottomPadding)
+    , m_leftPadding(leftPadding)
+{
+    // If all padding values passed in are zero then it is not a rect based hit test.
+    m_isRectBased = topPadding || rightPadding || bottomPadding || leftPadding;
+}
+
+HitTestPoint::HitTestPoint(const HitTestPoint& other)
+    : m_point(other.m_point)
+    , m_topPadding(other.m_topPadding)
+    , m_rightPadding(other.m_rightPadding)
+    , m_bottomPadding(other.m_bottomPadding)
+    , m_leftPadding(other.m_leftPadding)
+    , m_isRectBased(other.m_isRectBased)
+{
+}
+
+HitTestPoint::~HitTestPoint()
+{
+}
+
+HitTestPoint& HitTestPoint::operator=(const HitTestPoint& other)
+{
+    m_point = other.m_point;
+    m_topPadding = other.m_topPadding;
+    m_rightPadding = other.m_rightPadding;
+    m_bottomPadding = other.m_bottomPadding;
+    m_leftPadding = other.m_leftPadding;
+    m_isRectBased = other.m_isRectBased;
+
+    return *this;
+}
+
+IntRect HitTestPoint::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+{
+    IntPoint actualPoint(roundedIntPoint(point));
+    actualPoint -= IntSize(leftPadding, topPadding);
+
+    IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);
+    // As IntRect is left inclusive and right exclusive (seeing IntRect::contains(x, y)), adding "1".
+    // FIXME: Remove this once non-rect based hit-detection stops using IntRect:intersects.
+    actualPadding += IntSize(1, 1);
+
+    return IntRect(actualPoint, actualPadding);
+}
+
+HitTestResult::HitTestResult() : HitTestPoint()
+    , m_isOverWidget(false)
     , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
     , m_region(0)
 {
 }
 
-HitTestResult::HitTestResult(const LayoutPoint& point)
-    : m_point(point)
+HitTestResult::HitTestResult(const LayoutPoint& point) : HitTestPoint(point)
     , m_isOverWidget(false)
-    , m_isRectBased(false)
-    , m_topPadding(0)
-    , m_rightPadding(0)
-    , m_bottomPadding(0)
-    , m_leftPadding(0)
     , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
     , m_region(0)
 {
 }
 
 HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding, ShadowContentFilterPolicy allowShadowContent)
-    : m_point(centerPoint)
+    : HitTestPoint(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
     , m_isOverWidget(false)
-    , m_topPadding(topPadding)
-    , m_rightPadding(rightPadding)
-    , m_bottomPadding(bottomPadding)
-    , m_leftPadding(leftPadding)
     , m_shadowContentFilterPolicy(allowShadowContent)
     , m_region(0)
 {
-    // If all padding values passed in are zero then it is not a rect based hit test.
-    m_isRectBased = topPadding || rightPadding || bottomPadding || leftPadding;
+}
 
-    // Make sure all padding values are clamped to zero if it is not a rect hit test.
-    if (!m_isRectBased)
-        m_topPadding = m_rightPadding = m_bottomPadding = m_leftPadding = 0;
+HitTestResult::HitTestResult(const HitTestPoint& other, ShadowContentFilterPolicy allowShadowContent)
+    : HitTestPoint(other)
+    , m_isOverWidget(false)
+    , m_shadowContentFilterPolicy(allowShadowContent)
+    , m_region(0)
+{
 }
 
 HitTestResult::HitTestResult(const HitTestResult& other)
-    : m_innerNode(other.innerNode())
+    : HitTestPoint(other)
+    , m_innerNode(other.innerNode())
     , m_innerNonSharedNode(other.innerNonSharedNode())
-    , m_point(other.point())
     , m_localPoint(other.localPoint())
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
@@ -101,16 +158,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_shadowContentFilterPolicy(other.shadowContentFilterPolicy())
     , m_region(other.region())
 {
-    // Only copy the padding and NodeSet in case of rect hit test.
-    // Copying the later is rather expensive.
-    if ((m_isRectBased = other.isRectBasedTest())) {
-        m_topPadding = other.m_topPadding;
-        m_rightPadding = other.m_rightPadding;
-        m_bottomPadding = other.m_bottomPadding;
-        m_leftPadding = other.m_leftPadding;
-    } else
-        m_topPadding = m_rightPadding = m_bottomPadding = m_leftPadding = 0;
-
+    // Only copy the NodeSet in case of rect hit test.
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
 }
 
@@ -120,25 +168,17 @@ HitTestResult::~HitTestResult()
 
 HitTestResult& HitTestResult::operator=(const HitTestResult& other)
 {
+    HitTestPoint::operator=(other);
     m_innerNode = other.innerNode();
     m_innerNonSharedNode = other.innerNonSharedNode();
-    m_point = other.point();
     m_localPoint = other.localPoint();
     m_innerURLElement = other.URLElement();
     m_scrollbar = other.scrollbar();
     m_isOverWidget = other.isOverWidget();
-    // Only copy the padding and NodeSet in case of rect hit test.
-    // Copying the later is rather expensive.
-    if ((m_isRectBased = other.isRectBasedTest())) {
-        m_topPadding = other.m_topPadding;
-        m_rightPadding = other.m_rightPadding;
-        m_bottomPadding = other.m_bottomPadding;
-        m_leftPadding = other.m_leftPadding;
-    } else
-        m_topPadding = m_rightPadding = m_bottomPadding = m_leftPadding = 0;
 
+    // Only copy the NodeSet in case of rect hit test.
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
-    m_shadowContentFilterPolicy = other.shadowContentFilterPolicy();
+    m_shadowContentFilterPolicy  = other.shadowContentFilterPolicy();
 
     m_region = other.m_region;
 
@@ -198,7 +238,7 @@ bool HitTestResult::isSelected() const
     if (!frame)
         return false;
 
-    return frame->selection()->contains(m_point);
+    return frame->selection()->contains(point());
 }
 
 String HitTestResult::spellingToolTip(TextDirection& dir) const
@@ -209,7 +249,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(m_point, DocumentMarker::Grammar);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(point(), DocumentMarker::Grammar);
     if (!marker)
         return String();
 
@@ -225,7 +265,7 @@ String HitTestResult::replacedString() const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(m_point, DocumentMarker::Replacement);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(point(), DocumentMarker::Replacement);
     if (!marker)
         return String();
     
@@ -650,18 +690,6 @@ void HitTestResult::append(const HitTestResult& other)
         for (NodeSet::const_iterator it = other.m_rectBasedTestResult->begin(), last = other.m_rectBasedTestResult->end(); it != last; ++it)
             set.add(it->get());
     }
-}
-
-IntRect HitTestResult::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
-{
-    IntPoint actualPoint(roundedIntPoint(point));
-    actualPoint -= IntSize(leftPadding, topPadding);
-
-    IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);
-    // As IntRect is left inclusive and right exclusive (seeing IntRect::contains(x, y)), adding "1".
-    actualPadding += IntSize(1, 1);
-
-    return IntRect(actualPoint, actualPadding);
 }
 
 const HitTestResult::NodeSet& HitTestResult::rectBasedTestResult() const
