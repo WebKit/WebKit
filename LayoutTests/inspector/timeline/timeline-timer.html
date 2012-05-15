@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var timerOne = setTimeout("1 + 1", 10);
+    var timerTwo = setInterval(intervalTimerWork, 20);
+    var iteration = 0;
+
+    function intervalTimerWork()
+    {
+        if (++iteration < 2)
+            return;
+        clearInterval(timerTwo);
+    }
+}
+
+function test()
+{
+    InspectorTest.startTimeline(function() {
+        InspectorTest.evaluateInPage("performActions()");
+    });
+
+    InspectorTest.waitForRecordType("TimerRemove", finish);
+
+    function finish()
+    {
+        InspectorTest.printTimelineRecords("TimerInstall");
+        InspectorTest.printTimelineRecords("TimerFire");
+        InspectorTest.printTimelineRecords("TimerRemove");
+        InspectorTest.printTimelineRecords("FunctionCall");
+        InspectorTest.printTimelineRecords("EvaluateScript");
+        InspectorTest.completeTest();
+    }
+}
+
+if (!window.layoutTestController)
+    setTimeout(performActions, 2000);
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline events for Timers
+</p>
+</body>
+</html>

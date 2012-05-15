@@ -11,7 +11,7 @@ EvaluateScript Properties:
     startTime : <number>
     data : {
         url : <string>
-        lineNumber : 3
+        lineNumber : <number>
     }
     children : <object>
     endTime : <number>

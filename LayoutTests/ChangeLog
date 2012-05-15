@@ -1,5 +1,25 @@
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116821
+
+    2012-05-10  Timothy Hatcher  <timothy@apple.com>
+
+            Instrument timer function calls so they show up in the Web Inspector Timeline.
+
+            https://webkit.org/b/86173
+
+            Reviewed by Pavel Feldman.
+
+            * inspector/timeline/timeline-injected-script-eval-expected.txt: Updated for the blocked scriptName and scriptLine.
+            * inspector/timeline/timeline-script-tag-1-expected.txt: Updated for the blocked lineNumber.
+            * inspector/timeline/timeline-script-tag-2-expected.txt: Ditto.
+            * inspector/timeline/timeline-test.js: Block scriptName, scriptLine, lineNumber and timerId.
+            * inspector/timeline/timeline-timer-expected.txt: Added.
+            * inspector/timeline/timeline-timer.html: Added.
+            * platform/chromium/inspector/timeline/timeline-timer-expected.txt: Added.
+
+2012-05-15  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116685
 
     2012-05-10  Brady Eidson  <beidson@apple.com>
