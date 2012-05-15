@@ -1,3 +1,14 @@
+2012-05-15  Sam Weinig  <sam@webkit.org>
+
+        Disable CSS regions
+        <rdar://problem/10887709>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        Disable regions by default
+
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
     Merge 116820
