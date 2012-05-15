@@ -278,6 +278,28 @@ class PortTest(unittest.TestCase):
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), '/foo')
 
+    def test_additional_expectations(self):
+        port = self.make_port(port_name='foo')
+
+        port._filesystem.write_text_file(
+            '/tmp/additional-expectations-1.txt', 'content1\n')
+        port._filesystem.write_text_file(
+            '/tmp/additional-expectations-2.txt', 'content2\n')
+
+        self.assertEquals(None, port.test_expectations_overrides())
+
+        port._options.additional_expectations = [
+            '/tmp/additional-expectations-1.txt']
+        self.assertEquals('content1\n', port.test_expectations_overrides())
+
+        port._options.additional_expectations = [
+            '/tmp/nonexistent-file', '/tmp/additional-expectations-1.txt']
+        self.assertEquals('content1\n', port.test_expectations_overrides())
+
+        port._options.additional_expectations = [
+            '/tmp/additional-expectations-1.txt', '/tmp/additional-expectations-2.txt']
+        self.assertEquals('content1\ncontent2\n', port.test_expectations_overrides())
+
     def test_uses_test_expectations_file(self):
         port = self.make_port(port_name='foo')
         port.path_to_test_expectations_file = lambda: '/mock-results/test_expectations.txt'

@@ -1,3 +1,13 @@
+2012-05-15  Elliot Poger  <epoger@google.com>
+
+        add unit test for NRWT's --additional-expectations option
+        https://bugs.webkit.org/show_bug.cgi?id=86501
+
+        Reviewed by Ojan Vafai.
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_additional_expectations):
+
 2012-05-15  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move createOffscreenGraphicsContext3D() from WebKitPlatformSupport to Platform
