@@ -1,3 +1,14 @@
+2012-05-15  Antti Koivisto  <antti@apple.com>
+
+        Tests added in r117012 (plugins/npruntime/delete-plugin-within-*) failing on Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=86480
+
+        Not reviewed.
+        
+        Skipping.
+
+        * platform/mac/Skipped:
+
 2012-05-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Rebaseline svg/repaint/mask-clip-target-transform-expected.png on Lion.
