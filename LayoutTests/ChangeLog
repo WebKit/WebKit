@@ -1,3 +1,14 @@
+2012-05-15  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] fast/loader/create-frame-in-DOMContentLoaded.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=83578
+
+        Unskip passing test.
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Refactor SnippetsModel: extract SnippetStorage, make SnippetScriptMapping delegate calls to ScriptSnippetModel and provide public interface on ScriptSnippetModel in terms of uiSourceCodes

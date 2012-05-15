@@ -1,3 +1,16 @@
+2012-05-15  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] fast/loader/create-frame-in-DOMContentLoaded.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=83578
+
+        Retrieve and save page ID only for a valid page in WebFrameNetworkingContext.
+        The page will be null if the frame was detached from the page.
+
+        Reviewed by Simon Hausmann.
+
+        * WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp:
+        (WebCore::WebFrameNetworkingContext::WebFrameNetworkingContext):
+
 2012-05-15  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt][WK2] Fix scrolling in touch mode
