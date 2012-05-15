@@ -152,7 +152,7 @@ void InsertListCommand::doApply()
                 // FIXME: This is an inefficient way to keep selection alive because indexForVisiblePosition walks from
                 // the beginning of the document to the endOfSelection everytime this code is executed.
                 // But not using index is hard because there are so many ways we can lose selection inside doApplyForSingleParagraph.
-                RefPtr<Element> scope;
+                RefPtr<ContainerNode> scope;
                 int indexForEndOfSelection = indexForVisiblePosition(endOfSelection, scope);
                 doApplyForSingleParagraph(forceCreateList, listTag, currentSelection.get());
                 if (endOfSelection.isNull() || endOfSelection.isOrphan() || startOfLastParagraph.isNull() || startOfLastParagraph.isOrphan()) {

@@ -1,3 +1,14 @@
+2012-05-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        document.execCommand('Indent') in the direct child of ShadowRoot causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=86341
+
+        Reviewed by Ryosuke Niwa.
+
+        Exports necessary symbols.
+
+        * Source/autotools/symbols.filter:
+
 2012-05-14  Luke Macpherson  <macpherson@chromium.org>
 
         Introduce ENABLE_CSS_VARIABLES compile flag.

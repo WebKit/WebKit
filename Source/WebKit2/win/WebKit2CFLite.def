@@ -192,7 +192,7 @@ EXPORTS
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?placeholderShouldBeVisible@HTMLTextFormControlElement@WebCore@@QBE_NXZ
-        ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z
+        ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z
         ?remove@String@WTF@@QAEXIH@Z
         ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA

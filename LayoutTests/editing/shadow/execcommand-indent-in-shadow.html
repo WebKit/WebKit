@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/dom/resources/event-sender-util.js"></script>
+<script src="../../fast/dom/shadow/resources/polyfill.js"></script>
+</head>
+<body>
+
+<p>In this test, we do execCommand('Indent') in the direct child of ShadowRoot
+to confirm a crash doesn't happen.</p>
+
+<div id="container" contenteditable></div>
+<pre id="console"></div>
+
+<script>
+var shadowRoot = new WebKitShadowRoot(container);
+shadowRoot.innerHTML = "<span contenteditable>Kotori Otonashi</span>"
+var span = shadowRoot.firstChild;
+
+mouseMoveToElem(span);
+eventSender.mouseDown();
+eventSender.mouseUp();
+
+document.execCommand('Indent');
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+
+</html>

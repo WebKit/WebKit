@@ -32,9 +32,11 @@
 #include "WebRange.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "Range.h"
+#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "WebFrameImpl.h"
 #include "WebNode.h"
@@ -97,7 +99,7 @@ WebRange WebRange::fromDocumentRange(WebFrame* frame, int start, int length)
 {
     WebCore::Frame* webFrame = static_cast<WebFrameImpl*>(frame)->frame();
     Element* selectionRoot = webFrame->selection()->rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : webFrame->document()->documentElement();
+    ContainerNode* scope = selectionRoot ? selectionRoot : webFrame->document()->documentElement();
     return TextIterator::rangeFromLocationAndLength(scope, start, length);
 }
 

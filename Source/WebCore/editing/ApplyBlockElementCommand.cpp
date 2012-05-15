@@ -80,9 +80,9 @@ void ApplyBlockElementCommand::doApply()
     VisiblePosition endOfSelection = selection.visibleEnd();
     ASSERT(!startOfSelection.isNull());
     ASSERT(!endOfSelection.isNull());
-    RefPtr<Element> startScope;
+    RefPtr<ContainerNode> startScope;
     int startIndex = indexForVisiblePosition(startOfSelection, startScope);
-    RefPtr<Element> endScope;
+    RefPtr<ContainerNode> endScope;
     int endIndex = indexForVisiblePosition(endOfSelection, endScope);
 
     formatSelection(startOfSelection, endOfSelection);
