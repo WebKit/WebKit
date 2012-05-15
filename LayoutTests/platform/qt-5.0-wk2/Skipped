@@ -544,12 +544,6 @@ fullscreen/full-screen-iframe-legacy.html
 # https://bugs.webkit.org/show_bug.cgi?id=80209
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
 
-# [Qt][WK2] fast/repaint/scroll-in-clipped-layer.html crashes
-# https://bugs.webkit.org/show_bug.cgi?id=80387
-fast/repaint/scroll-fixed-reflected-layer.html
-fast/repaint/scroll-in-clipped-layer.html
-fast/repaint/scroll-in-fixed-layer.html
-
 # [Qt][WK2]REGRESSION(r105461): It made 8 tests fail and 30 tests flakey
 # https://bugs.webkit.org/show_bug.cgi?id=76699
 tables/mozilla/marvin/backgr_simple-table-cell.html

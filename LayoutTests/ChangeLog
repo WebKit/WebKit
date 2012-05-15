@@ -1,3 +1,14 @@
+2012-05-15  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt][WK2] fast/repaint/scroll-in-clipped-layer.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=80387
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskip tests for bug 80387. They do not crash now.
+
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         Unreviewed EFL gardening.
