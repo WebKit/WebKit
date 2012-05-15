@@ -93,10 +93,12 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
 
     unsigned fromNumberListSize = fromNumberList.size();
     unsigned toNumberListSize = toNumberList.size();
+    unsigned toAtEndOfDurationSize = toAtEndOfDurationNumberList.size();
 
     for (unsigned i = 0; i < toNumberListSize; ++i) {
         float effectiveFrom = fromNumberListSize ? fromNumberList[i] : 0;
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toNumberList[i], toAtEndOfDurationNumberList[i], animatedNumberList[i]);
+        float effectiveToAtEnd = i < toAtEndOfDurationSize ? toAtEndOfDurationNumberList[i] : 0;
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toNumberList[i], effectiveToAtEnd, animatedNumberList[i]);
     }
 }
 

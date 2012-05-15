@@ -111,6 +111,7 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
 
     unsigned fromLengthListSize = fromLengthList.size();
     unsigned toLengthListSize = toLengthList.size();
+    unsigned toAtEndOfDurationListSize = toAtEndOfDurationLengthList.size();
 
     SVGLengthContext lengthContext(m_contextElement);
     ExceptionCode ec = 0;
@@ -123,8 +124,9 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
                 unitType = fromLengthList[i].unitType();
             effectiveFrom = fromLengthList[i].value(lengthContext);
         }
+        float effectiveToAtEnd = i < toAtEndOfDurationListSize ? toAtEndOfDurationLengthList[i].value(lengthContext) : 0;
 
-        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toLengthList[i].value(lengthContext), toAtEndOfDurationLengthList[i].value(lengthContext), animatedNumber);
+        m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toLengthList[i].value(lengthContext), effectiveToAtEnd, animatedNumber);
         animatedLengthList[i].setValue(lengthContext, animatedNumber, m_lengthMode, unitType, ec);
         ASSERT(!ec);
     }
