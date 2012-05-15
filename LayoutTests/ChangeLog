@@ -1,3 +1,15 @@
+2012-05-14  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update text expectations.
+
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt.
+        * platform/chromium-linux-x86/fast/replaced/replaced-breaking-expected.txt: Removed.
+        * platform/chromium-linux/fast/replaced/replaced-breaking-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+
 2012-05-14  Dirk Pranke  <dpranke@chromium.org>
 
         fast/loader/javascript-url-in-embed.html is failing after r115646
