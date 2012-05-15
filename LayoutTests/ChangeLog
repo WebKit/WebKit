@@ -1,3 +1,9 @@
+2012-05-15  Brady Eidson  <beidson@apple.com>
+
+        Skip a webarchive test I added that fails on WK2.
+
+        * platform/wk2/Skipped:
+
 2012-05-15  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Updated chromium test expectations.
