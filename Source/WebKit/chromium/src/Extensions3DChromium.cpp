@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(WEBGL)
+
 #include "Extensions3DChromium.h"
 
 #include "GraphicsContext3D.h"
@@ -204,3 +206,5 @@ void Extensions3DChromium::getQueryObjectuivEXT(Platform3DObject query, GC3Denum
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEBGL)
