@@ -207,9 +207,6 @@ BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 BUGWK85990 : media/video-controls-rendering-toggle-display-none.html = TEXT
 BUGWK85990 : media/video-controls-toggling.html = TIMEOUT TEXT
 
-// Requires rebaseline after bug 76527
-BUGWK76527 : svg/repaint/mask-clip-target-transform.svg = IMAGE+TEXT IMAGE TEXT PASS
-
 BUGWK85308 : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 
