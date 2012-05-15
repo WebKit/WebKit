@@ -42,8 +42,7 @@ class InsertionPoint : public HTMLElement {
 public:
     virtual ~InsertionPoint();
 
-    const ContentDistribution* distribution() const { return &m_distribution; }
-    bool hasDistribution() const { return m_distribution.first(); }
+    bool hasDistribution() const { return !m_distribution.isEmpty(); }
     bool isShadowBoundary() const;
     bool isActive() const;
 
@@ -56,6 +55,14 @@ public:
 
     virtual bool isInsertionPoint() const OVERRIDE { return true; }
     ShadowRoot* assignedFrom() const;
+
+    size_t indexOf(Node* node) const { return m_distribution.find(node); }
+    size_t size() const { return m_distribution.size(); }
+    Node* at(size_t index)  const { return m_distribution.at(index).get(); }
+    Node* first() const { return m_distribution.isEmpty() ? 0 : m_distribution.first().get(); }
+    Node* last() const { return m_distribution.isEmpty() ? 0 : m_distribution.last().get(); }
+    Node* nextTo(const Node*) const;
+    Node* previousTo(const Node*) const;
 
 protected:
     InsertionPoint(const QualifiedName&, Document*);

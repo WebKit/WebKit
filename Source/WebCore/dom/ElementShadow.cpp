@@ -167,11 +167,6 @@ InsertionPoint* ElementShadow::insertionPointFor(const Node* node) const
     return distributor().findInsertionPointFor(node);
 }
 
-ContentDistribution::Item* ElementShadow::distributionItemFor(const Node* node) const
-{
-    return m_distributor.findFor(node);
-}
-
 void ElementShadow::reattach()
 {
     detach();

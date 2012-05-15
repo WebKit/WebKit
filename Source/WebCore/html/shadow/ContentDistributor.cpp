@@ -34,63 +34,6 @@
 
 namespace WebCore {
 
-ContentDistribution::ContentDistribution()
-{
-}
-
-ContentDistribution::~ContentDistribution()
-{
-    ASSERT(isEmpty());
-}
-
-ContentDistribution::Item* ContentDistribution::find(Node* node) const
-{
-    for (ContentDistribution::Item* item = first(); item; item = item->next()) {
-        if (node == item->node())
-            return item;
-    }
-    
-    return 0;
-}
-
-void ContentDistribution::clear()
-{
-    if (isEmpty()) {
-        ASSERT(!m_last);
-        return;
-    }
-
-    RefPtr<ContentDistribution::Item> item = m_first;
-    while (item) {
-        ASSERT(!item->previous());
-        RefPtr<ContentDistribution::Item> nextItem = item->m_next;
-        item->m_next.clear();
-        if (nextItem)
-            nextItem->m_previous.clear();
-        item = nextItem;
-    }
-
-    m_first.clear();
-    m_last.clear();
-}
-
-void ContentDistribution::append(InsertionPoint* insertionPoint, Node* node)
-{
-    RefPtr<Item> child = Item::create(insertionPoint, node);
-
-    if (isEmpty()) {
-        ASSERT(!m_last);
-        m_first = m_last = child;
-        return;
-    }
-
-    ASSERT(!m_last->next());
-    ASSERT(!child->previous());
-    m_last->m_next = child;
-    child->m_previous = m_last;
-    m_last = m_last->next();
-}
-
 ContentDistributor::ContentDistributor()
     : m_phase(Prevented)
 {
@@ -115,30 +58,22 @@ void ContentDistributor::distribute(InsertionPoint* insertionPoint, ContentDistr
         if (!query.matches(child))
             continue;
 
-        distribution->append(insertionPoint, child);
-        m_nodeToInsertionPoint.add(distribution->last());
+        distribution->append(child);
+        m_nodeToInsertionPoint.add(child, insertionPoint);
         m_pool[i] = 0;
     }
 }
 
 void ContentDistributor::clearDistribution(ContentDistribution* list)
 {
-    for (ContentDistribution::Item* item = list->first(); item; item = item->next())
-        m_nodeToInsertionPoint.remove(item);
-
+    for (size_t i = 0; i < list->size(); ++i)
+        m_nodeToInsertionPoint.remove(list->at(i).get());
     list->clear();
-}
-
-ContentDistribution::Item* ContentDistributor::findFor(const Node* key) const
-{
-    InvertedTable::iterator found = m_nodeToInsertionPoint.find<const Node*, Translator>(key);
-    return found != m_nodeToInsertionPoint.end() ? *found : 0;
 }
 
 InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
 {
-    InvertedTable::iterator found = m_nodeToInsertionPoint.find<const Node*, Translator>(key);
-    return found != m_nodeToInsertionPoint.end() ? (*found)->insertionPoint() : 0;
+    return m_nodeToInsertionPoint.get(key);
 }
 
 void ContentDistributor::willDistribute()

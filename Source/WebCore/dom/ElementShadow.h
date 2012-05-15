@@ -70,7 +70,6 @@ public:
     void hostChildrenChanged();
 
     InsertionPoint* insertionPointFor(const Node*) const;
-    ContentDistribution::Item* distributionItemFor(const Node*) const;
 
     ContentDistributor& distributor();
     const ContentDistributor& distributor() const;

@@ -113,8 +113,8 @@ Node* ComposedShadowTreeWalker::traverseNode(const Node* node, TraversalDirectio
 {
     ASSERT(node);
     if (isInsertionPoint(node)) {
-        const ContentDistribution* distribution = toInsertionPoint(node)->distribution();
-        if (Node* next = (direction == TraversalDirectionForward ? distribution->firstNode() : distribution->lastNode()))
+        const InsertionPoint* insertionPoint = toInsertionPoint(node);
+        if (Node* next = (direction == TraversalDirectionForward ? insertionPoint->first() : insertionPoint->last()))
             return traverseNode(next, direction);
         return traverseLightChildren(node, direction);
     }
@@ -141,12 +141,12 @@ Node* ComposedShadowTreeWalker::traverseSiblingOrBackToInsertionPoint(const Node
     ElementShadow* shadow = shadowOfParent(node);
     if (!shadow)
         return traverseSiblingInCurrentTree(node, direction);
-    ContentDistribution::Item* item = shadow->distributionItemFor(node);
-    if (!item)
+    InsertionPoint* insertionPoint = shadow->insertionPointFor(node);
+    if (!insertionPoint)
         return traverseSiblingInCurrentTree(node, direction);
-    if (ContentDistribution::Item* nextItem = (direction == TraversalDirectionForward ? item->next() : item->previous()))
-        return traverseNode(nextItem->node(), direction);
-    return traverseSiblingOrBackToInsertionPoint(item->insertionPoint(), direction);
+    if (Node* next = (direction == TraversalDirectionForward ? insertionPoint->nextTo(node) : insertionPoint->previousTo(node)))
+        return traverseNode(next, direction);
+    return traverseSiblingOrBackToInsertionPoint(insertionPoint, direction);
 }
 
 Node* ComposedShadowTreeWalker::traverseSiblingInCurrentTree(const Node* node, TraversalDirection direction)

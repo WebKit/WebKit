@@ -38,7 +38,6 @@ namespace WebCore {
 
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_distribution()
 {
 }
 
@@ -138,8 +137,8 @@ inline void InsertionPoint::clearDistribution(ElementShadow* shadow)
 
 inline void InsertionPoint::attachDistributedNode()
 {
-    for (ContentDistribution::Item* item = m_distribution.first(); item; item = item->next())
-        item->node()->attach();
+    for (size_t i = 0; i < m_distribution.size(); ++i)
+        m_distribution.at(i)->attach();
 }
 
 inline void InsertionPoint::assignShadowRoot(ShadowRoot* shadowRoot)
@@ -147,7 +146,7 @@ inline void InsertionPoint::assignShadowRoot(ShadowRoot* shadowRoot)
     shadowRoot->setAssignedTo(this);
     m_distribution.clear();
     for (Node* node = shadowRoot->firstChild(); node; node = node->nextSibling())
-        m_distribution.append(this, node);
+        m_distribution.append(node);
 }
 
 inline void InsertionPoint::clearAssignment(ShadowRoot* shadowRoot)
@@ -155,5 +154,22 @@ inline void InsertionPoint::clearAssignment(ShadowRoot* shadowRoot)
     shadowRoot->setAssignedTo(0);
     m_distribution.clear();
 }
+
+Node* InsertionPoint::nextTo(const Node* node) const
+{
+    size_t index = m_distribution.find(node);
+    if (index == notFound || index + 1 == m_distribution.size())
+        return 0;
+    return m_distribution.at(index + 1).get();
+}
+
+Node* InsertionPoint::previousTo(const Node* node) const
+{
+    size_t index = m_distribution.find(node);
+    if (index == notFound || !index)
+        return 0;
+    return m_distribution.at(index - 1).get();
+}
+
 
 } // namespace WebCore

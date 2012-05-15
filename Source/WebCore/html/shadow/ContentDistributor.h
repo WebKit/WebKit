@@ -32,7 +32,7 @@
 #define ContentDistributor_h
 
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -43,51 +43,7 @@ class InsertionPoint;
 class Node;
 class ShadowRoot;
 
-class ContentDistribution {
-public:
-    // TODO: The class should be reduced into simple Node* which is kept in a vector: https://bugs.webkit.org/show_bug.cgi?id=86350
-    class Item : public RefCounted<Item> {
-    public:
-        friend class ContentDistribution;
-
-        InsertionPoint* insertionPoint() const { return m_insertionPoint; }
-        Node* node() const { return m_node.get(); }
-        Item* next() const { return m_next.get(); }
-        Item* previous() const { return m_previous.get(); }
-
-    private:
-        static PassRefPtr<Item> create(InsertionPoint* insertionPoint, Node* node) {  return adoptRef(new Item(insertionPoint, node)); }
-
-        Item(InsertionPoint* insertionPoint, Node* node)
-            : m_insertionPoint(insertionPoint)
-            , m_node(node)
-        { }
-
-        InsertionPoint* m_insertionPoint;
-        RefPtr<Node> m_node;
-        RefPtr<Item> m_next;
-        RefPtr<Item> m_previous;
-    };
-    
-    ContentDistribution();
-    ~ContentDistribution();
-
-    Item* first() const { return m_first.get(); }
-    Item* last() const { return m_last.get(); }
-    Node* firstNode() const { return m_first ? m_first->node() : 0; }
-    Node* lastNode() const { return m_first ? m_last->node() : 0; }
-    
-    Item* find(Node*) const;
-    bool isEmpty() const { return !m_first; }
-
-    void clear();
-    void append(InsertionPoint*, Node*);
-
-private:
-
-    RefPtr<Item> m_first;
-    RefPtr<Item> m_last;
-};
+typedef Vector<RefPtr<Node> > ContentDistribution;
 
 class ContentDistributor {
     WTF_MAKE_NONCOPYABLE(ContentDistributor);
@@ -97,7 +53,6 @@ public:
 
     void distribute(InsertionPoint*, ContentDistribution*);
     void clearDistribution(ContentDistribution*);
-    ContentDistribution::Item* findFor(const Node* key) const;
     InsertionPoint* findInsertionPointFor(const Node* key) const;
 
     void willDistribute();
@@ -108,21 +63,6 @@ public:
     bool poolIsReady() const;
 
 private:
-    struct Translator {
-    public:
-        static unsigned hash(const Node* key) { return PtrHash<const Node*>::hash(key); }
-        static bool equal(const ContentDistribution::Item* item, const Node* node) { return item->node() == node; }
-    };
-
-    struct Hash {
-        static unsigned hash(ContentDistribution::Item* key) { return PtrHash<const Node*>::hash(key->node()); }
-        static bool equal(ContentDistribution::Item* a, ContentDistribution::Item* b) { return a->node() == b->node(); }
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
-
-    // Used as a table from Node to InseretionPoint
-    typedef HashSet<ContentDistribution::Item*, Hash> InvertedTable;
-
     enum DistributionPhase {
         Prevented,
         Started,
@@ -131,7 +71,7 @@ private:
 
     Vector<RefPtr<Node> > m_pool;
     DistributionPhase m_phase;
-    InvertedTable m_nodeToInsertionPoint;
+    HashMap<const Node*, InsertionPoint*> m_nodeToInsertionPoint;
 };
 
 inline bool ContentDistributor::inDistribution() const

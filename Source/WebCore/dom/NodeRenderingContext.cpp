@@ -142,12 +142,12 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
 
 static inline RenderObject* nextRendererOfInsertionPoint(InsertionPoint* parent, Node* current)
 {
-    ContentDistribution::Item* currentItem = parent->distribution()->find(current);
-    if (!currentItem)
+    size_t start = parent->indexOf(current);
+    if (notFound == start)
         return 0;
 
-    for (ContentDistribution::Item* item = currentItem->next(); item; item = item->next()) {
-        if (RenderObject* renderer = item->node()->renderer())
+    for (size_t i = start + 1; i < parent->size(); ++i) {
+        if (RenderObject* renderer = parent->at(i)->renderer())
             return renderer;
     }
 
@@ -158,10 +158,10 @@ static inline RenderObject* previousRendererOfInsertionPoint(InsertionPoint* par
 {
     RenderObject* lastRenderer = 0;
 
-    for (ContentDistribution::Item* item = parent->distribution()->first(); item; item = item->next()) {
-        if (item->node() == current)
+    for (size_t i = 0; i < parent->size(); ++i) {
+        if (parent->at(i) == current)
             break;
-        if (RenderObject* renderer = item->node()->renderer())
+        if (RenderObject* renderer = parent->at(i)->renderer())
             lastRenderer = renderer;
     }
 
@@ -170,13 +170,10 @@ static inline RenderObject* previousRendererOfInsertionPoint(InsertionPoint* par
 
 static inline RenderObject* firstRendererOfInsertionPoint(InsertionPoint* parent)
 {
-    if (parent->hasDistribution()) {
-        for (ContentDistribution::Item* item = parent->distribution()->first(); item; item = item->next()) {
-            if (RenderObject* renderer = item->node()->renderer())
-                return renderer;
-        }
-
-        return 0;
+    size_t size = parent->size();
+    for (size_t i = 0; i < size; ++i) {
+        if (RenderObject* renderer = parent->at(i)->renderer())
+            return renderer;
     }
 
     return firstRendererOf(parent->firstChild());
@@ -184,13 +181,10 @@ static inline RenderObject* firstRendererOfInsertionPoint(InsertionPoint* parent
 
 static inline RenderObject* lastRendererOfInsertionPoint(InsertionPoint* parent)
 {
-    if (parent->hasDistribution()) {
-        for (ContentDistribution::Item* item = parent->distribution()->last(); item; item = item->previous()) {
-            if (RenderObject* renderer = item->node()->renderer())
-                return renderer;
-        }
-
-        return 0;
+    size_t size = parent->size();
+    for (size_t i = 0; i < size; ++i) {
+        if (RenderObject* renderer = parent->at(size - 1 - i)->renderer())
+            return renderer;
     }
 
     return lastRendererOf(parent->lastChild());
