@@ -1,3 +1,14 @@
+2012-05-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Move http/tests/cookies/third-party-cookie-relaxing.html from Skipped
+        list to test_expectations.txt. This test is expected to fail on EFL
+        port and won't be fixed.
+
+        * platform/efl/Skipped:
+        * platform/efl/test_expectations.txt:
+
 2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Remove duplicated entries because of disabled SUBPIXEL_LAYOUT.

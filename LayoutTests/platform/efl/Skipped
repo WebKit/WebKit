@@ -546,10 +546,6 @@ fast/images/exif-orientation-css.html
 # Tests which are expected to fail
 # --------------------------------
 
-# Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
-# https://bugs.webkit.org/show_bug.cgi?id=35824
-http/tests/cookies/third-party-cookie-relaxing.html
-
 # Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
 editing/deleting/deletionUI-single-instance.html
 fast/dom/Element/id-in-deletebutton.html
