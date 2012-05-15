@@ -62,12 +62,11 @@ Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, Fu
     m_lexer->setCode(source, m_arena);
 
     m_functionCache = source.provider()->cache();
-    ScopeFlags scopeFlags = NoScopeFlags;
-    if (strictness == JSParseStrict)
-        scopeFlags |= StrictModeFlag;
+    ScopeRef scope = pushScope();
     if (parserMode == JSParseFunctionCode)
-        scopeFlags |= FunctionModeFlag;
-    ScopeRef scope = pushScope(scopeFlags);
+        scope->setIsFunction();
+    if (strictness == JSParseStrict)
+        scope->setStrictMode();
     if (parameters) {
         for (unsigned i = 0; i < parameters->size(); i++)
             scope->declareParameter(&parameters->at(i));
@@ -97,12 +96,16 @@ UString Parser<LexerType>::parseInner()
 
     IdentifierSet capturedVariables;
     scope->getCapturedVariables(capturedVariables);
-    ScopeFlags scopeFlags = scope->modeFlags() | scope->usesFlags();
+    CodeFeatures features = context.features();
+    if (scope->strictMode())
+        features |= StrictModeFeature;
+    if (scope->shadowsArguments())
+        features |= ShadowsArgumentsFeature;
     unsigned functionCacheSize = m_functionCache ? m_functionCache->byteSize() : 0;
     if (functionCacheSize != oldFunctionCacheSize)
         m_lexer->sourceProvider()->notifyCacheSizeChanged(functionCacheSize - oldFunctionCacheSize);
 
-    didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), scopeFlags,
+    didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
                      m_lastLine, context.numConstants(), capturedVariables);
 
     return parseError;
@@ -110,13 +113,13 @@ UString Parser<LexerType>::parseInner()
 
 template <typename LexerType>
 void Parser<LexerType>::didFinishParsing(SourceElements* sourceElements, ParserArenaData<DeclarationStacks::VarStack>* varStack, 
-                              ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, ScopeFlags scopeFlags, int lastLine, int numConstants, IdentifierSet& capturedVars)
+                              ParserArenaData<DeclarationStacks::FunctionStack>* funcStack, CodeFeatures features, int lastLine, int numConstants, IdentifierSet& capturedVars)
 {
     m_sourceElements = sourceElements;
     m_varDeclarations = varStack;
     m_funcDeclarations = funcStack;
     m_capturedVariables.swap(capturedVars);
-    m_scopeFlags = scopeFlags;
+    m_features = features;
     m_lastLine = lastLine;
     m_numConstants = numConstants;
 }
@@ -144,7 +147,7 @@ template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser<
             if (directive) {
                 // "use strict" must be the exact literal without escape sequences or line continuation.
                 if (!hasSetStrict && directiveLiteralLength == lengthOfUseStrictLiteral && m_globalData->propertyNames->useStrictIdentifier == *directive) {
-                    currentScope()->setFlags(StrictModeFlag);
+                    setStrictMode();
                     hasSetStrict = true;
                     failIfFalse(isValidStrictMode());
                     m_lexer->setOffset(startOffset);
@@ -252,8 +255,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
         next();
         bool hasInitializer = match(EQUAL);
         failIfFalseIfStrictWithNameAndMessage(declareVariable(name), "Cannot declare a variable named", name->impl(), "in strict mode.");
-        if (m_globalData->propertyNames->arguments == *name)
-            currentScope()->setFlags(UsesArgumentsFlag);
         context.addVar(name, (hasInitializer || (!m_allowsIn && match(INTOKEN))) ? DeclarationStacks::HasInitializer : 0);
         if (hasInitializer) {
             int varDivot = tokenStart() + 1;
@@ -288,8 +289,6 @@ template <class TreeBuilder> TreeConstDeclList Parser<LexerType>::parseConstDecl
         next();
         bool hasInitializer = match(EQUAL);
         declareVariable(name);
-        if (m_globalData->propertyNames->arguments == *name)
-            currentScope()->setFlags(UsesArgumentsFlag);
         context.addVar(name, DeclarationStacks::IsConstant | (hasInitializer ? DeclarationStacks::HasInitializer : 0));
         TreeExpression initializer = 0;
         if (hasInitializer) {
@@ -512,7 +511,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement
 {
     ASSERT(match(WITH));
     failIfTrueWithMessage(strictMode(), "'with' statements are not valid in strict mode");
-    currentScope()->setFlags(UsesWithFlag);
+    currentScope()->setNeedsFullActivation();
     int startLine = tokenLine();
     next();
     consumeOrFail(OPENPAREN);
@@ -527,7 +526,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement
     TreeStatement statement = parseStatement(context, unused);
     failIfFalse(statement);
     
-    currentScope()->setFlags(UsesWithFlag);
     return context.createWithStatement(m_lexer->lastLineNumber(), expr, statement, start, end, startLine, endLine);
 }
 
@@ -616,15 +614,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     int lastLine = m_lastLine;
     
     if (match(CATCH)) {
-        currentScope()->setFlags(UsesCatchFlag);
+        currentScope()->setNeedsFullActivation();
         next();
         consumeOrFail(OPENPAREN);
         matchOrFail(IDENT);
         ident = m_token.m_data.ident;
         next();
-        AutoPopScopeRef catchScope(this, pushScope(currentScope()->modeFlags()));
+        AutoPopScopeRef catchScope(this, pushScope());
         failIfFalseIfStrictWithNameAndMessage(declareVariable(ident), "Cannot declare a variable named", ident->impl(), "in strict mode");
-        currentScope()->setFlags(BlockScopeFlag | UsesCatchFlag);
+        catchScope->preventNewDecls();
         consumeOrFail(CLOSEPAREN);
         matchOrFail(OPENBRACE);
         catchBlock = parseBlockStatement(context);
@@ -761,7 +759,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBody(TreeBuilder& context)
 {
     if (match(CLOSEBRACE))
-        return context.createFunctionBody(m_lexer->lastLineNumber(), currentScope()->modeFlags());
+        return context.createFunctionBody(m_lexer->lastLineNumber(), strictMode());
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth = 0;
     typename TreeBuilder::FunctionBodyBuilder bodyBuilder(const_cast<JSGlobalData*>(m_globalData), m_lexer.get());
@@ -772,7 +770,8 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
 template <typename LexerType>
 template <FunctionRequirements requirements, bool nameIsInContainingScope, class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, int& openBracePos, int& closeBracePos, int& bodyStartLine)
 {
-    AutoPopScopeRef functionScope(this, pushScope(currentScope()->modeFlags() | FunctionModeFlag));
+    AutoPopScopeRef functionScope(this, pushScope());
+    functionScope->setIsFunction();
     if (match(IDENT)) {
         name = m_token.m_data.ident;
         next();
@@ -794,8 +793,8 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     // If we know about this function already, we can use the cached info and skip the parser to the end of the function.
     if (const SourceProviderCacheItem* cachedInfo = TreeBuilder::CanUseFunctionCache ? findCachedFunctionInfo(openBracePos) : 0) {
         // If we're in a strict context, the cached function info must say it was strict too.
-        ASSERT(!strictMode() || (cachedInfo->scopeFlags & StrictModeFlag));
-        body = context.createFunctionBody(m_lexer->lastLineNumber(), cachedInfo->scopeFlags);
+        ASSERT(!strictMode() || cachedInfo->strictMode);
+        body = context.createFunctionBody(m_lexer->lastLineNumber(), cachedInfo->strictMode);
         
         functionScope->restoreFunctionInfo(cachedInfo);
         failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
@@ -855,8 +854,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     failIfFalse((parseFunctionInfo<FunctionNeedsName, true>(context, name, parameters, body, openBracePos, closeBracePos, bodyStartLine)));
     failIfFalse(name);
     failIfFalseIfStrict(declareVariable(name));
-    if (*name == m_globalData->propertyNames->arguments)
-        currentScope()->setFlags(UsesArgumentsFlag);
     return context.createFuncDeclStatement(m_lexer->lastLineNumber(), name, body, parameters, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
 }
 
@@ -1416,18 +1413,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     }
     case THISTOKEN: {
         next();
-        currentScope()->setFlags(UsesThisFlag);
         return context.thisExpr(m_lexer->lastLineNumber());
     }
     case IDENT: {
         int start = tokenStart();
         const Identifier* ident = m_token.m_data.ident;
         next();
-        if (m_globalData->propertyNames->eval == *ident)
-            currentScope()->setFlags(UsesEvalFlag);
-        else if (m_globalData->propertyNames->arguments == *ident)
-            currentScope()->setFlags(UsesArgumentsFlag);
-        currentScope()->useVariable(ident);
+        currentScope()->useVariable(ident, m_globalData->propertyNames->eval == *ident);
         m_lastIdentifier = ident;
         return context.createResolve(m_lexer->lastLineNumber(), ident, start);
     }

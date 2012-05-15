@@ -26,7 +26,7 @@ namespace JSC {
 
     template <typename T> struct NodeInfo {
         T m_node;
-        ScopeFlags m_scopeFlags;
+        CodeFeatures m_features;
         int m_numConstants;
     };
 
@@ -44,7 +44,7 @@ namespace JSC {
         T m_node;
         ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
         ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
-        ScopeFlags m_scopeFlags;
+        CodeFeatures m_features;
         int m_numConstants;
     };
     

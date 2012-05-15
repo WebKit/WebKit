@@ -1,5 +1,18 @@
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116372
+
+    2012-05-07  Oliver Hunt  <oliver@apple.com>
+
+            Rolling out r110287
+
+            RS=Filip Pizlo
+
+            r110287 was meant to be refactoring only, but changed behavior
+            enough to break some websites, including qq.com.
+
+2012-05-15  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116363
 
     2012-05-07  Oliver Hunt  <oliver@apple.com>

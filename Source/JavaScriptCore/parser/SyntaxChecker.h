@@ -220,6 +220,7 @@ public:
     void appendStatement(int, int) { }
     void addVar(const Identifier*, bool) { }
     int combineCommaNodes(int, int, int) { return 1; }
+    int evalCount() const { return 0; }
     void appendBinaryExpressionInfo(int& operandStackDepth, int expr, int, int, int, bool)
     {
         if (!m_topBinaryExpr)
