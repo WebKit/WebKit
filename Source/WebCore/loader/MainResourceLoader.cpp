@@ -651,9 +651,13 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     return false;
 }
 
-bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& substituteData)
+void MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& substituteData)
 {
     ASSERT(!m_handle);
+
+    // It appears that it is possible for this load to be cancelled and derefenced by the DocumentLoader
+    // in willSendRequest() if loadNow() is called.
+    RefPtr<MainResourceLoader> protect(this);
 
     m_substituteData = substituteData;
 
@@ -679,8 +683,6 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
     }
     if (defer)
         m_initialRequest = request;
-
-    return true;
 }
 
 void MainResourceLoader::setDefersLoading(bool defers)
