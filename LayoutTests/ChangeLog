@@ -1,3 +1,13 @@
+2012-05-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] css1/box_properties/acid_test.html fails in release mode on 32 bit Linux
+        https://bugs.webkit.org/show_bug.cgi?id=36954
+
+        Unreviewed gardening, unskip it, because it passes on 32/64 bit too now. (Maybe after r112397)
+
+        * platform/qt/css1/box_properties/acid_test-expected.png: Added.
+        * platform/qt/css1/box_properties/acid_test-expected.txt:
+
 2012-05-15  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] http/tests/xmlhttprequest/xmlhttprequest-check-head-readystate-for-404.html times out
