@@ -154,9 +154,6 @@ void QtWebPageEventHandler::handleWheelEvent(QWheelEvent* ev)
 {
     QTransform fromItemTransform = m_webPage->transformFromItem();
     m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev, fromItemTransform));
-    // FIXME: Handle whether the page used the wheel event or not.
-    if (m_interactionEngine)
-        m_interactionEngine->wheelEvent(ev);
 }
 
 void QtWebPageEventHandler::handleHoverLeaveEvent(QHoverEvent* ev)

@@ -261,36 +261,6 @@ static inline QPointF boundPosition(const QPointF minPosition, const QPointF& po
                    qBound(minPosition.y(), position.y(), maxPosition.y()));
 }
 
-void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
-{
-    if (scrollAnimationActive() || scaleAnimationActive() || pinchGestureActive())
-        return; // Ignore.
-
-
-    // A normal scroll-tick should have a delta of 120 (1/8) degrees. Convert this to
-    // local standard scroll step of 3 lines of 20 pixels.
-    static const int cDefaultQtScrollStep = 20;
-    static const int wheelScrollLines = 3;
-    const int wheelTick = wheelScrollLines * cDefaultQtScrollStep;
-
-    int pixelDelta = ev->delta() * (wheelTick / 120.f);
-
-    QPointF newPosition = m_viewport->contentPos();
-
-    if (ev->orientation() == Qt::Horizontal)
-        newPosition.rx() -= pixelDelta;
-    else
-        newPosition.ry() -= pixelDelta;
-
-    QRectF endPosRange = computePosRangeForItemAtScale(m_content->contentsScale());
-
-    QPointF currentPosition = m_viewport->contentPos();
-    newPosition = boundPosition(endPosRange.topLeft(), newPosition, endPosRange.bottomRight());
-    m_viewport->setContentPos(newPosition);
-
-    emit contentViewportChanged(currentPosition - newPosition);
-}
-
 void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)
 {
     // Ignore the request if suspended. Can only happen due to delay in event delivery.

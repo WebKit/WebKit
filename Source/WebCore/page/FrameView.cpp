@@ -1722,11 +1722,13 @@ void FrameView::delegatesScrollingDidChange()
 
 void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
 {
+    bool visibleContentSizeDidChange = false;
     if (visibleContentRect.size() != this->fixedVisibleContentRect().size()) {
         // When the viewport size changes or the content is scaled, we need to
         // reposition the fixed positioned elements.
         if (RenderView* root = rootRenderer(this))
             root->setFixedPositionedObjectsNeedLayout();
+        visibleContentSizeDidChange = true;
     }
 
     IntSize offset = scrollOffset();
@@ -1734,7 +1736,12 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
     if (offset != scrollOffset()) {
         if (m_frame->page()->settings()->acceleratedCompositingForFixedPositionEnabled())
             updateFixedElementsAfterScrolling();
+        scrollAnimator()->setCurrentPosition(scrollPosition());
         scrollPositionChanged();
+    }
+    if (visibleContentSizeDidChange) {
+        // Update the scroll-bars to calculate new page-step size.
+        updateScrollbars(scrollOffset());
     }
     frame()->loader()->client()->didChangeScrollOffset();
 }

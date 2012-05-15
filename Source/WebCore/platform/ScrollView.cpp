@@ -371,6 +371,12 @@ void ScrollView::scrollTo(const IntSize& newOffset)
         return;
 
     repaintFixedElementsAfterScrolling();
+#if USE(TILED_BACKING_STORE)
+    if (delegatesScrolling()) {
+        hostWindow()->delegatedScrollRequested(IntPoint(newOffset));
+        return;
+    }
+#endif
     scrollContents(scrollDelta);
     updateFixedElementsAfterScrolling();
 }
@@ -453,7 +459,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 {
-    if (m_inUpdateScrollbars || prohibitsScrolling() || delegatesScrolling() || platformWidget())
+    if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget())
         return;
 
     // If we came in here with the view already needing a layout, then go ahead and do that

@@ -1,3 +1,21 @@
+2012-05-15  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt][WK2] Fix scrolling in touch mode
+        https://bugs.webkit.org/show_bug.cgi?id=75006
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Only handle mouse-wheel events in WebCore to avoid double scrolling, and
+        scale pixels scrolled by wheel events according to viewport transformation.
+
+        * Shared/qt/WebEventFactoryQt.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleWheelEvent):
+
 2012-05-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Add infra for testing double-tap to zoom functionality etc

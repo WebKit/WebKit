@@ -65,7 +65,6 @@ public:
     void setItemRectVisible(const QRectF&);
     bool animateItemRectVisible(const QRectF&);
 
-    void wheelEvent(QWheelEvent*);
     void pagePositionRequest(const QPoint& pos);
     void touchBegin();
     void touchEnd();

@@ -27,9 +27,11 @@
 #include "config.h"
 #include "WebEventFactoryQt.h"
 #include <QKeyEvent>
+#include <QLineF>
 #include <QTransform>
-#include <WebCore/IntPoint.h>
 #include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>
@@ -149,7 +151,13 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(QWheelEvent* e, const QTransf
     deltaX = wheelTicksX * wheelScrollLines * cDefaultQtScrollStep;
     deltaY = wheelTicksY * wheelScrollLines * cDefaultQtScrollStep;
 
-    return WebWheelEvent(WebEvent::Wheel, fromItemTransform.map(e->posF()).toPoint(), e->globalPosF().toPoint(), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
+    // Transform the position and the pixel scrolling distance.
+    QLineF transformedScroll = fromItemTransform.map(QLineF(e->posF(), e->posF() + QPointF(deltaX, deltaY)));
+    IntPoint transformedPoint = transformedScroll.p1().toPoint();
+    IntPoint globalPoint = e->globalPosF().toPoint();
+    FloatSize transformedDelta(transformedScroll.dx(), transformedScroll.dy());
+    FloatSize wheelTicks(wheelTicksX, wheelTicksY);
+    return WebWheelEvent(WebEvent::Wheel, transformedPoint, globalPoint, transformedDelta, wheelTicks, granularity, modifiers, timestamp);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(QKeyEvent* event)

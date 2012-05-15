@@ -313,6 +313,9 @@ protected:
     virtual bool isVerticalDocument() const { return true; }
     virtual bool isFlippedDocument() const { return false; }
 
+    // Called to update the scrollbars to accurately reflect the state of the view.
+    void updateScrollbars(const IntSize& desiredOffset);
+
 private:
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;
@@ -355,8 +358,6 @@ private:
     void init();
     void destroy();
 
-    // Called to update the scrollbars to accurately reflect the state of the view.
-    void updateScrollbars(const IntSize& desiredOffset);
     IntRect rectToCopyOnScroll() const;
 
     // Called when the scroll position within this view changes.  FrameView overrides this to generate repaint invalidations.
