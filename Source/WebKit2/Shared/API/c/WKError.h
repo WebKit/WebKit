@@ -42,6 +42,7 @@ enum {
     kWKErrorCodeJavaUnavailable =                                202,
     kWKErrorCodePlugInCancelledConnection =                      203,
     kWKErrorCodePlugInWillHandleLoad =                           204,
+    kWKErrorCodeInsecurePlugInVersion =                          205,
 };
 typedef uint32_t WKErrorCode;
 

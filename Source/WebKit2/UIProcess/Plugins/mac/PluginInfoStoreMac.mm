@@ -89,6 +89,11 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     return true;
 }
 
+bool PluginInfoStore::shouldBlockPlugin(const PluginModuleInfo& plugin) const
+{
+    return WKShouldBlockPlugin(plugin.bundleIdentifier, plugin.versionString);
+}
+
 String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 {
     // FIXME: This should just call MIMETypeRegistry::getMIMETypeForExtension and be

@@ -87,6 +87,7 @@ public:
     void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, APIObject*);
 
     void didFailToInitializePlugin(WebPageProxy*, const String& mimeType);
+    void didBlockInsecurePluginVersion(WebPageProxy*, const String& mimeType);
 };
 
 } // namespace WebKit

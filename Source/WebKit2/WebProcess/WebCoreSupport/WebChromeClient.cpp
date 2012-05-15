@@ -470,7 +470,7 @@ void WebChromeClient::scrollRectIntoView(const IntRect&) const
 
 bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
-    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing) {
+    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::InsecurePluginVersion) {
         // FIXME: <rdar://problem/8794397> We should only return true when there is a
         // missingPluginButtonClicked callback defined on the Page UI client.
         return true;
@@ -482,12 +482,11 @@ bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObjec
 void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
     ASSERT(element->hasTagName(objectTag) || element->hasTagName(embedTag));
-    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing);
+    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::InsecurePluginVersion);
 
     HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
 
-    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing)
-        m_page->send(Messages::WebPageProxy::MissingPluginButtonClicked(pluginElement->serviceType(), pluginElement->url(), pluginElement->getAttribute(pluginspageAttr)));
+    m_page->send(Messages::WebPageProxy::UnavailablePluginButtonClicked(pluginUnavailabilityReason, pluginElement->serviceType(), pluginElement->url(), pluginElement->getAttribute(pluginspageAttr)));
 }
 
 void WebChromeClient::scrollbarsModeDidChange() const
