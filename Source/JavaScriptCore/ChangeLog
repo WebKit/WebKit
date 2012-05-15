@@ -1,3 +1,17 @@
+2012-05-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Cannot login to iCloud
+        https://bugs.webkit.org/show_bug.cgi?id=86321
+
+        Reviewed by Filip Pizlo.
+
+        This is a bug introduced by bug#85853, we shouldn't allow assignment to
+        the prototype property of functions to be cached, since we need to clear
+        the cached inheritorID.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+
 2012-05-14  Michael Saboff  <msaboff@apple.com>
 
         Enh: Add the Ability to Disable / Enable JavaScript GC Timer

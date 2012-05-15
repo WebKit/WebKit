@@ -343,6 +343,10 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         PropertySlot slot;
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_cachedInheritorID.clear();
+        // Don't allow this to be cached, since a [[Put]] must clear m_cachedInheritorID.
+        PutPropertySlot dontCache;
+        Base::put(thisObject, exec, propertyName, value, dontCache);
+        return;
     }
     if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
         // This will trigger the property to be reified, if this is not already the case!
