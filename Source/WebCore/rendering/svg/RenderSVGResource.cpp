@@ -27,8 +27,10 @@
 
 #include "Frame.h"
 #include "FrameView.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
+#include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -161,15 +163,21 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
     return s_sharedSolidPaintingResource;
 }
 
-static inline void removeFromFilterCacheAndInvalidateDependencies(RenderObject* object, bool needsLayout)
+static inline void removeFromCacheAndInvalidateDependencies(RenderObject* object, bool needsLayout)
 {
     ASSERT(object);
-#if ENABLE(FILTERS)
     if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object)) {
+#if ENABLE(FILTERS)
         if (RenderSVGResourceFilter* filter = resources->filter())
             filter->removeClientFromCache(object);
-    }
 #endif
+        if (RenderSVGResourceMasker* masker = resources->masker())
+            masker->removeClientFromCache(object);
+
+        if (RenderSVGResourceClipper* clipper = resources->clipper())
+            clipper->removeClientFromCache(object);
+    }
+
     if (!object->node() || !object->node()->isSVGElement())
         return;
     HashSet<SVGElement*>* dependencies = object->document()->accessSVGExtensions()->setOfElementsReferencingTarget(static_cast<SVGElement*>(object->node()));
@@ -191,12 +199,12 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject*
     if (needsLayout)
         object->setNeedsLayout(true);
 
-    removeFromFilterCacheAndInvalidateDependencies(object, needsLayout);
+    removeFromCacheAndInvalidateDependencies(object, needsLayout);
 
     // Invalidate resources in ancestor chain, if needed.
     RenderObject* current = object->parent();
     while (current) {
-        removeFromFilterCacheAndInvalidateDependencies(current, needsLayout);
+        removeFromCacheAndInvalidateDependencies(current, needsLayout);
 
         if (current->isSVGResourceContainer()) {
             // This will process the rest of the ancestors.
