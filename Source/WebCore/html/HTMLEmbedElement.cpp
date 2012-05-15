@@ -132,7 +132,7 @@ void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<St
 // moved down into HTMLPluginImageElement.cpp
 void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
 {
-    ASSERT(!renderEmbeddedObject()->pluginCrashedOrWasMissing());
+    ASSERT(!renderEmbeddedObject()->showsUnavailablePluginIndicator());
     ASSERT(needsWidgetUpdate());
     setNeedsWidgetUpdate(false);
 

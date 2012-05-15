@@ -169,8 +169,8 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
     // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
 
     RenderObject* r = renderer();
-    if (r && r->isEmbeddedObject() && toRenderEmbeddedObject(r)->showsMissingPluginIndicator()) {
-        toRenderEmbeddedObject(r)->handleMissingPluginIndicatorEvent(event);
+    if (r && r->isEmbeddedObject() && toRenderEmbeddedObject(r)->showsUnavailablePluginIndicator()) {
+        toRenderEmbeddedObject(r)->handleUnavailablePluginIndicatorEvent(event);
         return;
     }
 

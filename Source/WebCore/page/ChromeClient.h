@@ -30,6 +30,7 @@
 #include "HostWindow.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
+#include "RenderEmbeddedObject.h"
 #include "ScrollTypes.h"
 #include "SearchPopupMenu.h"
 #include "WebCoreKeyboardUIMode.h"
@@ -170,8 +171,8 @@ namespace WebCore {
         virtual void layoutUpdated(Frame*) const { }
         virtual void scrollRectIntoView(const IntRect&) const { }; // Currently only Mac has a non empty implementation.
        
-        virtual bool shouldMissingPluginMessageBeButton() const { return false; }
-        virtual void missingPluginButtonClicked(Element*) const { }
+        virtual bool shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason) const { return false; }
+        virtual void unavailablePluginButtonClicked(Element*, RenderEmbeddedObject::PluginUnavailabilityReason) const { }
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
         virtual void setToolTip(const String&, TextDirection) = 0;
