@@ -67,6 +67,7 @@ static void addString(FeatureSet& set, const char* string)
     set.add(string);
 }
 
+#if ENABLE(VIDEO)
 class DOMImplementationSupportsTypeClient : public MediaPlayerSupportsTypeClient {
 public:
     DOMImplementationSupportsTypeClient(bool needsHacks, const String& host)
@@ -82,6 +83,7 @@ private:
     bool m_needsHacks;
     String m_host;
 };
+#endif
 
 #if ENABLE(SVG)
 
