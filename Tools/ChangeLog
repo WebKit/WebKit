@@ -1,3 +1,14 @@
+2012-05-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Web process hangs while waiting for plugin process connection during layouttests
+        https://bugs.webkit.org/show_bug.cgi?id=86620
+
+        Reviewed by Csaba Osztrogonác.
+
+        Temporary workaround not to fail layout tests.
+
+        * Tools.pro: Disable TestNetscapePlugin.
+
 2012-05-16  Dinu Jacob  <dinu.jacob@nokia.com>
 
         Add didFinishProgress BundleUIClient callback
