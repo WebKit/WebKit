@@ -1,3 +1,19 @@
+2012-05-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r116069 and r117339.
+
+        * platform/gtk/editing/pasteboard/innerText-inline-table-expected.txt:
+        * platform/gtk/editing/selection/iframe-expected.txt:
+        * platform/gtk/editing/selection/inline-table-expected.txt:
+        * platform/gtk/editing/selection/table-caret-3-expected.txt:
+        * platform/gtk/fast/css-generated-content/inline-display-types-expected.txt:
+        * platform/gtk/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt:
+        * platform/gtk/fast/forms/input-align-image-expected.txt:
+        * platform/gtk/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/gtk/fast/inline-block/001-expected.txt:
+        * platform/gtk/media/media-document-audio-repaint-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug2479-2-expected.txt:
+
 2012-05-16  Peter Kasting  <pkasting@google.com>
 
         [chromium] Mark a test as failing.

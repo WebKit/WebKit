@@ -197,24 +197,24 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,187) size 48x19
             text run at (0,187) width 48: "iframe: "
           RenderPartObject {IFRAME} at (48,0) size 402x202 [border: (1px solid #000000)]
-            layer at (0,0) size 385x201
-              RenderView at (0,0) size 385x200
-            layer at (0,0) size 385x201
-              RenderBlock {HTML} at (0,0) size 385x201
-                RenderBody {BODY} at (8,8) size 369x185
-                  RenderBlock {P} at (0,0) size 369x90
-                    RenderText {#text} at (0,0) size 365x91
+            layer at (0,0) size 400x200
+              RenderView at (0,0) size 400x200
+            layer at (0,0) size 400x200
+              RenderBlock {HTML} at (0,0) size 400x200
+                RenderBody {BODY} at (8,8) size 384x184
+                  RenderBlock {P} at (0,0) size 384x90
+                    RenderText {#text} at (0,0) size 382x91
                       text run at (0,0) width 316: "This tests caret movement through an inline table. "
                       text run at (316,0) width 37: "There"
-                      text run at (0,18) width 365: "should be visual positions before and after the inline table,"
-                      text run at (0,36) width 142: "as if it were an image. "
-                      text run at (142,36) width 216: "The caret shouldn't skip across the"
-                      text run at (0,54) width 348: "table, but should enter it (unless we later decide that we"
-                      text run at (0,72) width 160: "don't want this behavior)."
-                  RenderBlock {DIV} at (0,106) size 369x79
-                    RenderBlock {DIV} at (0,0) size 369x79
-                      RenderText {#text} at (0,61) size 80x19
-                        text run at (0,61) width 80: "Inline Table:"
+                      text run at (0,18) width 382: "should be visual positions before and after the inline table, as"
+                      text run at (0,36) width 125: "if it were an image. "
+                      text run at (125,36) width 254: "The caret shouldn't skip across the table,"
+                      text run at (0,54) width 380: "but should enter it (unless we later decide that we don't want"
+                      text run at (0,72) width 90: "this behavior)."
+                  RenderBlock {DIV} at (0,106) size 384x76
+                    RenderBlock {DIV} at (0,0) size 384x76
+                      RenderText {#text} at (0,8) size 80x19
+                        text run at (0,8) width 80: "Inline Table:"
                       RenderTable {TABLE} at (80,0) size 132x76 [border: (1px outset #808080)]
                         RenderTableSection {TBODY} at (1,1) size 130x74
                           RenderTableRow {TR} at (0,2) size 130x22
@@ -247,8 +247,8 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (87,50) size 41x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 31x19
                                 text run at (2,2) width 31: "Nine"
-                      RenderText {#text} at (212,61) size 67x19
-                        text run at (212,61) width 67: "The End..."
+                      RenderText {#text} at (212,8) size 67x19
+                        text run at (212,8) width 67: "The End..."
           RenderText {#text} at (450,187) size 66x19
             text run at (450,187) width 66: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
