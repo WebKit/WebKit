@@ -69,20 +69,6 @@ static Node* enclosingNodeWithNonInlineRenderer(Node* node)
     return 0;
 }
 
-static Node* nextLeafWithSameEditability(Node* node, int offset)
-{
-    bool editable = node->rendererIsEditable();
-    ASSERT(offset >= 0);
-    Node* child = node->childNode(offset);
-    node = child ? child->nextLeafNode() : node->lastDescendant()->nextLeafNode();
-    while (node) {
-        if (editable == node->rendererIsEditable())
-            return node;
-        node = node->nextLeafNode();
-    }
-    return 0;
-}
-
 static Node* nextLeafWithSameEditability(Node* node, EditableType editableType = ContentIsEditable)
 {
     if (!node)
@@ -99,69 +85,51 @@ static Node* nextLeafWithSameEditability(Node* node, EditableType editableType =
 }
 
 // FIXME: consolidate with code in previousLinePosition.
-static const RootInlineBox* previousRootInlineBox(const InlineBox* box, const VisiblePosition& visiblePosition)
+static Position previousRootInlineBoxCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
 {
-    Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), ContentIsEditable);
-
-    if (!box->renderer() || !box->renderer()->node())
-        return 0;
-
-    Node* node = box->renderer()->node();
+    Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
     Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
-    Node* previousNode = previousLeafWithSameEditability(node, ContentIsEditable);
+    Node* previousNode = previousLeafWithSameEditability(node, editableType);
 
     while (previousNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(previousNode))
-        previousNode = previousLeafWithSameEditability(previousNode, ContentIsEditable);
+        previousNode = previousLeafWithSameEditability(previousNode, editableType);
   
     while (previousNode && !previousNode->isShadowRoot()) {
-        if (highestEditableRoot(firstPositionInOrBeforeNode(previousNode), ContentIsEditable) != highestRoot)
+        if (highestEditableRoot(firstPositionInOrBeforeNode(previousNode), editableType) != highestRoot)
             break;
 
         Position pos = previousNode->hasTagName(brTag) ? positionBeforeNode(previousNode) :
             createLegacyEditingPosition(previousNode, caretMaxOffset(previousNode));
         
-        if (pos.isCandidate()) {
-            RenderedPosition renderedPos(pos, DOWNSTREAM);
-            RootInlineBox* root = renderedPos.rootBox();
-            if (root)
-                return root;
-        }
+        if (pos.isCandidate())
+            return pos;
 
-        previousNode = previousLeafWithSameEditability(previousNode, ContentIsEditable);
+        previousNode = previousLeafWithSameEditability(previousNode, editableType);
     }
-    return 0;
+    return Position();
 }
 
-static const RootInlineBox* nextRootInlineBox(const InlineBox* box, const VisiblePosition& visiblePosition)
+static Position nextRootInlineBoxCandidatePosition(Node* node, const VisiblePosition& visiblePosition, EditableType editableType)
 {
-    Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), ContentIsEditable);
-
-    if (!box->renderer() || !box->renderer()->node())
-        return 0;
-
-    Node* node = box->renderer()->node();
+    Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), editableType);
     Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
-    Node* nextNode = nextLeafWithSameEditability(node, ContentIsEditable);
+    Node* nextNode = nextLeafWithSameEditability(node, editableType);
     while (nextNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(nextNode))
         nextNode = nextLeafWithSameEditability(nextNode, ContentIsEditable);
   
     while (nextNode && !nextNode->isShadowRoot()) {
-        if (highestEditableRoot(firstPositionInOrBeforeNode(nextNode), ContentIsEditable) != highestRoot)
+        if (highestEditableRoot(firstPositionInOrBeforeNode(nextNode), editableType) != highestRoot)
             break;
 
         Position pos;
         pos = createLegacyEditingPosition(nextNode, caretMinOffset(nextNode));
         
-        if (pos.isCandidate()) {
-            RenderedPosition renderedPos(pos, DOWNSTREAM);
-            RootInlineBox* root = renderedPos.rootBox();
-            if (root)
-                return root;
-        }
+        if (pos.isCandidate())
+            return pos;
 
-        nextNode = nextLeafWithSameEditability(nextNode, ContentIsEditable);
+        nextNode = nextLeafWithSameEditability(nextNode, editableType);
     }
-    return 0;
+    return Position();
 }
 
 class CachedLogicallyOrderedLeafBoxes {
@@ -257,8 +225,17 @@ static const InlineTextBox* logicallyPreviousBox(const VisiblePosition& visibleP
     if (previousBox)
         return previousBox;
 
-    while (1) { 
-        const RootInlineBox* previousRoot = previousRootInlineBox(startBox, visiblePosition);
+    while (1) {
+        Node* startNode = startBox->renderer() ? startBox->renderer()->node() : 0;
+        if (!startNode)
+            break;
+
+        Position position = previousRootInlineBoxCandidatePosition(startNode, visiblePosition, ContentIsEditable);
+        if (position.isNull())
+            break;
+
+        RenderedPosition renderedPosition(position, DOWNSTREAM);
+        RootInlineBox* previousRoot = renderedPosition.rootBox();
         if (!previousRoot)
             break;
 
@@ -289,8 +266,17 @@ static const InlineTextBox* logicallyNextBox(const VisiblePosition& visiblePosit
     if (nextBox)
         return nextBox;
 
-    while (1) { 
-        const RootInlineBox* nextRoot = nextRootInlineBox(startBox, visiblePosition);
+    while (1) {
+        Node* startNode = startBox->renderer() ? startBox->renderer()->node() : 0;
+        if (!startNode)
+            break;
+
+        Position position = nextRootInlineBoxCandidatePosition(startNode, visiblePosition, ContentIsEditable);
+        if (position.isNull())
+            break;
+
+        RenderedPosition renderedPosition(position, DOWNSTREAM);
+        RootInlineBox* nextRoot = renderedPosition.rootBox();
         if (!nextRoot)
             break;
 
@@ -951,7 +937,6 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
 {
     Position p = visiblePosition.deepEquivalent();
     Node* node = p.deprecatedNode();
-    Node* highestRoot = highestEditableRoot(p, editableType);
 
     if (!node)
         return VisiblePosition();
@@ -975,28 +960,12 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     }
 
     if (!root) {
-        // This containing editable block does not have a previous line.
-        // Need to move back to previous containing editable block in this root editable
-        // block and find the last root line box in that block.
-        Node* startBlock = enclosingNodeWithNonInlineRenderer(node);
-        Node* n = previousLeafWithSameEditability(node, editableType);
-        while (n && startBlock == enclosingNodeWithNonInlineRenderer(n))
-            n = previousLeafWithSameEditability(n, editableType);
-        while (n) {
-            if (highestEditableRoot(firstPositionInOrBeforeNode(n), editableType) != highestRoot)
-                break;
-            Position pos = n->hasTagName(brTag) ? positionBeforeNode(n) : createLegacyEditingPosition(n, caretMaxOffset(n));
-            if (pos.isCandidate()) {
-                pos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
-                if (box) {
-                    // previous root line box found
-                    root = box->root();
-                    break;
-                }
-
-                return VisiblePosition(pos, DOWNSTREAM);
-            }
-            n = previousLeafWithSameEditability(n, editableType);
+        Position position = previousRootInlineBoxCandidatePosition(node, visiblePosition, editableType);
+        if (position.isNotNull()) {
+            RenderedPosition renderedPosition(position);
+            root = renderedPosition.rootBox();
+            if (!root)
+                return position;
         }
     }
     
@@ -1019,12 +988,10 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     return VisiblePosition(firstPositionInNode(rootElement), DOWNSTREAM);
 }
 
-
 VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int lineDirectionPoint, EditableType editableType)
 {
     Position p = visiblePosition.deepEquivalent();
     Node* node = p.deprecatedNode();
-    Node* highestRoot = highestEditableRoot(p, editableType);
 
     if (!node)
         return VisiblePosition();
@@ -1048,29 +1015,15 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int lin
     }
 
     if (!root) {
-        // This containing editable block does not have a next line.
-        // Need to move forward to next containing editable block in this root editable
-        // block and find the first root line box in that block.
-        Node* startBlock = enclosingNodeWithNonInlineRenderer(node);
-        Node* n = nextLeafWithSameEditability(node, p.deprecatedEditingOffset());
-        while (n && startBlock == enclosingNodeWithNonInlineRenderer(n))
-            n = nextLeafWithSameEditability(n, editableType);
-        while (n) {
-            if (highestEditableRoot(firstPositionInOrBeforeNode(n), editableType) != highestRoot)
-                break;
-            Position pos = createLegacyEditingPosition(n, caretMinOffset(n));
-            if (pos.isCandidate()) {
-                ASSERT(n->renderer());
-                pos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
-                if (box) {
-                    // next root line box found
-                    root = box->root();
-                    break;
-                }
-
-                return VisiblePosition(pos, DOWNSTREAM);
-            }
-            n = nextLeafWithSameEditability(n, editableType);
+        // FIXME: We need do the same in previousLinePosition.
+        Node* child = node->childNode(p.deprecatedEditingOffset());
+        node = child ? child : node->lastDescendant();
+        Position position = nextRootInlineBoxCandidatePosition(node, visiblePosition, editableType);
+        if (position.isNotNull()) {
+            RenderedPosition renderedPosition(position);
+            root = renderedPosition.rootBox();
+            if (!root)
+                return position;
         }
     }
     
