@@ -276,7 +276,7 @@ void RenderThemeEfl::cacheThemePartFlush()
     end = m_partCache.end();
     for (; itr != end; itr++) {
         struct ThemePartCacheEntry *entry = *itr;
-        cairo_surface_finish(entry->surface);
+        cairo_surface_destroy(entry->surface);
         evas_object_del(entry->o);
         ecore_evas_free(entry->ee);
         delete entry;
