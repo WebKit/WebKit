@@ -1,6 +1,19 @@
+2012-05-16  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=86638
+        Bump the version number on the WKBundlePageLoaderClient
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: s/1/2/
+        * Shared/APIClientTraits.cpp: Update client traits for the BundlePageLoaderClient
+        * Shared/APIClientTraits.h: Update client traits for the BundlePageLoaderClient
+
+        * ChangeLog: Change a confusing ChangeLog entry to reflect the actual client that was changed.
+
 2012-05-16  Dinu Jacob  <dinu.jacob@nokia.com>
 
-        Add didFinishProgress BundleUIClient callback
+        Add didFinishProgress BundlePageLoaderClient callback
         https://bugs.webkit.org/show_bug.cgi?id=86541
 
         Reviewed by Kenneth Rohde Christiansen.

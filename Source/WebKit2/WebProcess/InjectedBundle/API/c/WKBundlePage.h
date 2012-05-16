@@ -142,11 +142,13 @@ struct WKBundlePageLoaderClient {
     WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallback    willDisconnectDOMWindowExtensionFromGlobalObject;
     WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback        didReconnectDOMWindowExtensionToGlobalObject;
     WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback        willDestroyGlobalObjectForDOMWindowExtension;
+    
+    // Version 2
     WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 1 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 2 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,
