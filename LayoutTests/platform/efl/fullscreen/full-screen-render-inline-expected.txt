@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {SUMMARY} at (0,0) size 784x48
+        RenderBlock (anonymous) at (0,0) size 784x0
+        RenderBlock (anonymous) at (0,0) size 784x0
+        RenderBlock (anonymous) at (0,0) size 784x16
+          RenderText {#text} at (0,0) size 16x17
+            text run at (0,0) width 16: "a"
+          RenderInline {SPAN} at (0,0) size 16x17
+            RenderText {#text} at (16,0) size 16x17
+              text run at (16,0) width 16: "b"
+        RenderBlock (anonymous) at (0,16) size 784x16
+          RenderBlock {DIV} at (0,0) size 784x16
+            RenderText {#text} at (0,0) size 16x17
+              text run at (0,0) width 16: "c"
+        RenderBlock (anonymous) at (0,32) size 784x16
+          RenderInline {SPAN} at (0,0) size 16x17
+            RenderText {#text} at (0,0) size 16x17
+              text run at (0,0) width 16: "d"
+          RenderText {#text} at (16,0) size 16x17
+            text run at (16,0) width 16: "e"

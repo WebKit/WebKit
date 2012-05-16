@@ -1,3 +1,18 @@
+2012-05-15  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Enable Fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=85870
+
+        Reviewed by Antonio Gomes.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::supportsFullScreenForElement):
+        Add check routine if the full screen is enabled by page setting.
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        Add full screen setting to be true.
+
 2012-05-15  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Split ewk_private.h file to multiple private files.

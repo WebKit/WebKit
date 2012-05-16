@@ -71,6 +71,10 @@
 #include "ColorChooserEfl.h"
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+#include "Settings.h"
+#endif
+
 using namespace WebCore;
 
 static inline Evas_Object* kit(Frame* frame)
@@ -600,10 +604,11 @@ ChromeClient::CompositingTriggerFlags ChromeClientEfl::allowedCompositingTrigger
 #if ENABLE(FULLSCREEN_API)
 bool ChromeClientEfl::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
 {
-    if (withKeyboard)
-        return false;
+    UNUSED_PARAM(withKeyboard);
 
-    return true;
+    if (!element->document()->page())
+        return false;
+    return element->document()->page()->settings()->fullScreenEnabled();
 }
 
 void ChromeClientEfl::enterFullScreenForElement(WebCore::Element* element)

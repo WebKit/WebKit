@@ -1,3 +1,23 @@
+2012-05-15  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Enable Fullscreen API
+        https://bugs.webkit.org/show_bug.cgi?id=85870
+
+        Reviewed by Antonio Gomes.
+
+        * platform/efl/Skipped: Remove fullscreen/video-controls-override.html.
+        * platform/efl/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/efl/fullscreen/full-screen-placeholder-expected.txt: Added.
+        * platform/efl/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+        * platform/efl/fullscreen/full-screen-render-inline-expected.txt: Added.
+        * platform/efl/fullscreen/full-screen-stacking-context-expected.png: Added.
+        * platform/efl/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/efl/fullscreen/full-screen-zIndex-expected.png: Added.
+        * platform/efl/fullscreen/parent-flow-inline-with-block-child-expected.png: Added.
+        * platform/efl/fullscreen/parent-flow-inline-with-block-child-expected.txt: Added.
+        * platform/efl/test_expectations.txt: Remove fullscreen and media/video-play-require-user-gesture.html
+          - Add full-screen-keyboard-disabled.html and video-controls-drag.html to the efl's test_expectation.txt
+
 2012-05-15  Robert Hogan  <robert@webkit.org>
 
         Heap-use-after-free in WebCore::RenderBlock::layoutRunsAndFloats

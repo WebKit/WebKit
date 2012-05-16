@@ -700,6 +700,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
     priv->pageSettings->setWebGLEnabled(true);
     priv->pageSettings->setXSSAuditorEnabled(true);
+#if ENABLE(FULLSCREEN_API)
+    priv->pageSettings->setFullScreenEnabled(true);
+#endif
 
     url = priv->pageSettings->userStyleSheetLocation();
     priv->settings.userStylesheet = eina_stringshare_add(url.string().utf8().data());

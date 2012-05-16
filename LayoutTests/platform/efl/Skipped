@@ -321,7 +321,6 @@ editing/spelling/spellcheck-paste-disabled.html
 http/tests/globalhistory/history-delegate-basic-visited-links.html
 
 # EFL's LayoutTestController does not implement shadowPseudoId
-fullscreen/video-controls-override.html
 media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
 media/video-controls-zoomed.html

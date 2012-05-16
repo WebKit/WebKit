@@ -367,9 +367,9 @@ BUGWK84839 : editing/execCommand/selectAll.html = MISSING
 // EFL's DRT does not print didFailProvisionalLoadWithError messages
 BUGWK85956 : http/tests/loading/pdf-commit-load-callbacks.html = TEXT
 
-// The EFL port has no support for the Fullscreen API
-BUGWK85870 SKIP : fullscreen = FAIL
-BUGWK85870 : media/video-play-require-user-gesture.html = TEXT
+// There are not proper result with FULLSCREN_API enabling.
+BUGWK85870 : fullscreen/full-screen-keyboard-disabled.html = TEXT
+BUGWK85870 : fullscreen/video-controls-drag.html = TEXT
 
 BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
