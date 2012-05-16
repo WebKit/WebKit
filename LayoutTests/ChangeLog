@@ -1,3 +1,13 @@
+2012-05-15  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in Document::nodeChildrenWillBeRemoved.
+        https://bugs.webkit.org/show_bug.cgi?id=85247
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/HTMLObjectElement/beforeload-set-text-crash-expected.txt: Added.
+        * fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml: Added.
+
 2012-05-15  Li Yin  <li.yin@intel.com>
 
         [Worker] Web Worker lacks test for posting structured data message.
