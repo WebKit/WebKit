@@ -1,3 +1,12 @@
+2012-05-16  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed chromium test expectations update
+
+        Removes unnecessary entries and added suppressions
+        for some flaky tests on cr-linux ews.
+
+        * platform/chromium/test_expectations.txt:
+
 2012-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         SVG TRef/Use NULL ptr

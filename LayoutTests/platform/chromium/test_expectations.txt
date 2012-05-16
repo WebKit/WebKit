@@ -1285,8 +1285,8 @@ BUGWK84230 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE PASS
 
 BUGWK84719 WIN : svg/text/select-text-svgfont.html = TEXT PASS
 
-BUGWK84854 LINUX X86 : svg/batik/text/textOnPath.svg = IMAGE PASS
-BUGWK84854 LINUX X86 : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
+BUGWK84854 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS
+BUGWK84854 LINUX : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
 
 // This appears to be sensitive to --test-shell vs "drt mode" in DRT for some reason
 BUGWK85085 : svg/custom/clip-path-referencing-use2.svg = TEXT
@@ -2047,7 +2047,7 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
 BUGCR46603 SLOW RELEASE : fast/frames/lots-of-iframes.html = PASS
-BUGCR46603 SLOW RELEASE : fast/frames/lots-of-objects.html = PASS
+BUGCR46603 RELEASE : fast/frames/lots-of-objects.html = TIMEOUT PASS
 // These tests are really slow in debug.
 BUGCR46603 SKIP DEBUG : fast/frames/lots-of-iframes.html = TIMEOUT
 BUGCR46603 SKIP DEBUG : fast/frames/lots-of-objects.html = TIMEOUT
@@ -3783,13 +3783,11 @@ BUGWK86495 WIN : inspector/profiler/heap-snapshot-comparison-expansion-preserved
 BUGWK86495 WIN : inspector/profiler/heap-snapshot-dominators-expansion-preserved-when-sorting.html = PASS TIMEOUT
 BUGWK86495 WIN : inspector/profiler/heap-snapshot-summary-expansion-preserved-when-sorting.html = PASS TIMEOUT
 
-BUGWK86572 : mhtml/check_domain.mht = MISSING
-BUGWK86572 : mhtml/multi_frames_binary.mht = MISSING
-BUGWK86572 : mhtml/multi_frames_ie.mht = MISSING
-BUGWK86572 : mhtml/multi_frames_unmht.mht = MISSING
-BUGWK86572 : mhtml/page_with_css_and_js_ie.mht = MISSING
-BUGWK86572 : mhtml/page_with_css_and_js_unmht.mht = MISSING
-BUGWK86572 : mhtml/page_with_image_ie.mht = MISSING
-BUGWK86572 : mhtml/page_with_image_unmht.mht = MISSING
-BUGWK86572 : mhtml/simple_page_ie.mht = MISSING
-BUGWK86572 : mhtml/simple_page_unmht.mht = MISSING
+BUGWK86592 LINUX : fast/canvas/webgl/shader-precision-format.html = TEXT PASS
+BUGWK86592 LINUX : fast/loader/javascript-url-in-object.html = TEXT PASS
+BUGWK86592 LINUX : http/tests/inspector/resource-har-pages.html = TEXT PASS
+BUGWK86592 LINUX : http/tests/security/sandboxed-iframe-origin-add.html = TEXT PASS
+BUGWK86592 LINUX : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT PASS
+
+BUGWK86592 LINUX : fast/loader/text-document-wrapping.html = TIMEOUT PASS
+BUGWK86592 LINUX : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html = TIMEOUT PASS
