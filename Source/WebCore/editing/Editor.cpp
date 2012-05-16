@@ -945,9 +945,11 @@ bool Editor::insertLineBreak()
     if (!shouldInsertText("\n", m_frame->selection()->toNormalizedRange().get(), EditorInsertActionTyped))
         return true;
 
+    VisiblePosition caret = m_frame->selection()->selection().visibleStart();
+    bool alignToEdge = isEndOfDocument(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
     TypingCommand::insertLineBreak(m_frame->document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
-    revealSelectionAfterEditingOperation();
+    revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);
 
     return true;
 }
@@ -963,9 +965,11 @@ bool Editor::insertParagraphSeparator()
     if (!shouldInsertText("\n", m_frame->selection()->toNormalizedRange().get(), EditorInsertActionTyped))
         return true;
 
+    VisiblePosition caret = m_frame->selection()->selection().visibleStart();
+    bool alignToEdge = isEndOfDocument(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
     TypingCommand::insertParagraphSeparator(m_frame->document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
-    revealSelectionAfterEditingOperation();
+    revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);
 
     return true;
 }
@@ -2283,12 +2287,12 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
     return avoidIntersectionWithNode(selection.toNormalizedRange().get(), m_deleteButtonController->containerElement());
 }
 
-void Editor::revealSelectionAfterEditingOperation()
+void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignment)
 {
     if (m_ignoreCompositionSelectionChange)
         return;
 
-    m_frame->selection()->revealSelection(ScrollAlignment::alignCenterIfNeeded);
+    m_frame->selection()->revealSelection(alignment);
 }
 
 void Editor::setIgnoreCompositionSelectionChange(bool ignore)

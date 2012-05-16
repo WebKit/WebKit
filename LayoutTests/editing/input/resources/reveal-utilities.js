@@ -64,3 +64,27 @@ function performVerticalScrollingPasteTest()
         document.execCommand("paste");
     }
 }
+
+function performJumpAtTheEdgeTest(useCtrlKeyModifier)
+{
+    var textArea = document.getElementById("input");
+    textArea.focus();
+    if (window.eventSender) {
+        var previousScrollTop = 0, currentScrollTop = 0;
+        var jumpDetected = false;
+        for (var i = 0; i < 120; ++i) {
+            previousScrollTop = document.body.scrollTop;
+            eventSender.keyDown("\r", useCtrlKeyModifier ? ["ctrlKey"] : []);
+            currentScrollTop = document.body.scrollTop;
+            // Smooth scrolls are allowed.
+            if (Math.abs(previousScrollTop - currentScrollTop) > 24) {
+                jumpDetected = true;
+                break;
+            }
+        }
+        if (!jumpDetected)
+            document.write("PASS");
+        else
+            document.write("FAIL<br>Jump scroll from " + previousScrollTop + " to " + currentScrollTop);
+    }
+}

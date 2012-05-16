@@ -1,3 +1,23 @@
+2012-05-16  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Avoid jumpscroll when entering new text in a multi-line editor.
+        https://bugs.webkit.org/show_bug.cgi?id=82875
+
+        Reviewed by Ryosuke Niwa.
+
+        Scroll caret to the edge of the viewport in case if a line break or a paragraph
+        separator is inserted at the end of a multi-line editor.  This avoids
+        undesirable jumpscroll in cases when there is content under the editor.
+
+        * editing/input/resources/reveal-utilities.js:
+        (performJumpAtTheEdgeTest):
+        * editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Added.
+        * editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable.html: Added.
+        * editing/input/scroll-to-edge-if-line-break-at-end-of-document-textarea-expected.txt: Added.
+        * editing/input/scroll-to-edge-if-line-break-at-end-of-document-textarea.html: Added.
+        * editing/input/scroll-to-edge-if-paragraph-separator-at-end-of-document-contenteditable-expected.txt: Added.
+        * editing/input/scroll-to-edge-if-paragraph-separator-at-end-of-document-contenteditable.html: Added.
+
 2012-05-16  Abhishek Arya  <inferno@chromium.org>
 
         Missing RenderApplet cast check in HTMLAppletElement::renderWidgetForJSBindings.
