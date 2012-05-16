@@ -29,42 +29,6 @@
  */
 
 /**
- * @constructor
- * @param {WebInspector.UISourceCode} uiSourceCode
- * @param {number} lineNumber
- * @param {number} columnNumber
- */
-WebInspector.UILocation = function(uiSourceCode, lineNumber, columnNumber)
-{
-    this.uiSourceCode = uiSourceCode;
-    this.lineNumber = lineNumber;
-    this.columnNumber = columnNumber;
-}
-
-WebInspector.UILocation.prototype = {
-    /**
-     * @return {DebuggerAgent.Location}
-     */
-    uiLocationToRawLocation: function()
-    {
-        return this.uiSourceCode.uiLocationToRawLocation(this.lineNumber, this.columnNumber);
-    }
-}
-
-/**
- * @interface
- */
-WebInspector.LiveLocation = function()
-{
-}
-
-WebInspector.LiveLocation.prototype = {
-    update: function(rawLocation) { },
-
-    dispose: function() { }
-}
-
-/**
  * @interface
  */
 WebInspector.SourceMapping = function()
@@ -86,41 +50,3 @@ WebInspector.SourceMapping.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber) { }
 }
-
-/**
- * @constructor
- * @extends {WebInspector.Object}
- * @implements {WebInspector.SourceMapping}
- */
-WebInspector.ScriptMapping = function()
-{
-}
-
-WebInspector.ScriptMapping.Events = {
-    UISourceCodeAdded: "UISourceCodeAdded",
-    UISourceCodeReplaced: "UISourceCodeReplaced",
-    UISourceCodeRemoved: "UISourceCodeRemoved"
-}
-
-WebInspector.ScriptMapping.prototype = {
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     * @return {WebInspector.UILocation}
-     */
-    rawLocationToUILocation: function(rawLocation) {},
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
-     */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber) {},
-
-    /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    uiSourceCodeList: function() {}
-}
-
-WebInspector.ScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;

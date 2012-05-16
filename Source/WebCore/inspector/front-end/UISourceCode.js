@@ -223,7 +223,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {WebInspector.LiveLocation} liveLocation
+     * @param {WebInspector.Script.Location} liveLocation
      */
     addLiveLocation: function(liveLocation)
     {
@@ -231,7 +231,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {WebInspector.LiveLocation} liveLocation
+     * @param {WebInspector.Script.Location} liveLocation
      */
     removeLiveLocation: function(liveLocation)
     {
@@ -292,11 +292,42 @@ WebInspector.UISourceCode.prototype.__proto__ = WebInspector.Object.prototype;
 /**
  * @interface
  */
-WebInspector.UISourceCodeProject = function()
+WebInspector.UISourceCodeProvider = function()
 {
 }
 
-WebInspector.UISourceCodeProject.prototype = {
-    /** @return {Array.<WebInspector.UISourceCode>} */ 
-    uiSourceCodes: function() { }
+WebInspector.UISourceCodeProvider.Events = {
+    UISourceCodeAdded: "UISourceCodeAdded",
+    UISourceCodeReplaced: "UISourceCodeReplaced",
+    UISourceCodeRemoved: "UISourceCodeRemoved"
+}
+
+WebInspector.UISourceCodeProvider.prototype = {
+    /**
+     * @return {Array.<WebInspector.UISourceCode>}
+     */
+    uiSourceCodes: function() {}
+}
+
+/**
+ * @constructor
+ * @param {WebInspector.UISourceCode} uiSourceCode
+ * @param {number} lineNumber
+ * @param {number} columnNumber
+ */
+WebInspector.UILocation = function(uiSourceCode, lineNumber, columnNumber)
+{
+    this.uiSourceCode = uiSourceCode;
+    this.lineNumber = lineNumber;
+    this.columnNumber = columnNumber;
+}
+
+WebInspector.UILocation.prototype = {
+    /**
+     * @return {DebuggerAgent.Location}
+     */
+    uiLocationToRawLocation: function()
+    {
+        return this.uiSourceCode.uiLocationToRawLocation(this.lineNumber, this.columnNumber);
+    }
 }

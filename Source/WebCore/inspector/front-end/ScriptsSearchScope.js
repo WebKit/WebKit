@@ -29,14 +29,14 @@
 /**
  * @constructor
  * @implements {WebInspector.SearchScope}
- * @param {WebInspector.UISourceCodeProject} uiSourceCodeProject
+ * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
  */
-WebInspector.ScriptsSearchScope = function(uiSourceCodeProject)
+WebInspector.ScriptsSearchScope = function(uiSourceCodeProvider)
 {
     // FIXME: Add title once it is used by search controller.
     WebInspector.SearchScope.call(this)
     this._searchId = 0;
-    this._uiSourceCodeProject = uiSourceCodeProject;
+    this._uiSourceCodeProvider = uiSourceCodeProvider;
 }
 
 WebInspector.ScriptsSearchScope.prototype = {
@@ -115,7 +115,7 @@ WebInspector.ScriptsSearchScope.prototype = {
             return a.url.localeCompare(b.url);   
         }
         
-        var uiSourceCodes = this._uiSourceCodeProject.uiSourceCodes();
+        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
         
         uiSourceCodes = uiSourceCodes.filter(filterOutAnonymous);
         uiSourceCodes.sort(comparator);

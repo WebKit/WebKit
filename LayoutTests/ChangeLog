@@ -1,3 +1,13 @@
+2012-05-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: split ScriptMapping into UISourceCodeProvider and SourceMapping.
+        https://bugs.webkit.org/show_bug.cgi?id=86616
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/compiler-script-mapping.html:
+        * inspector/debugger/scripts-panel.html:
+
 2012-05-16  Dinu Jacob  <dinu.jacob@nokia.com>
 
         Add didFinishProgress BundleUIClient callback

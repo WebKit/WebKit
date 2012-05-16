@@ -172,7 +172,7 @@ WebInspector.ScriptSnippetModel.prototype = {
     /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
-    _uiSourceCodeList: function()
+    _uiSourceCodes: function()
     {
         var result = this._uiSourceCodeForSnippet.values();
         result = result.concat(this._releasedUISourceCodes());
@@ -295,8 +295,10 @@ WebInspector.ScriptSnippetModel.prototype.__proto__ = WebInspector.Object.protot
 
 /**
  * @constructor
+ * @extends {WebInspector.Object}
+ * @implements {WebInspector.SourceMapping}
+ * @implements {WebInspector.UISourceCodeProvider}
  * @param {WebInspector.ScriptSnippetModel} scriptSnippetModel
- * @extends {WebInspector.ScriptMapping}
  */
 WebInspector.SnippetScriptMapping = function(scriptSnippetModel)
 {
@@ -327,9 +329,9 @@ WebInspector.SnippetScriptMapping.prototype = {
     /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
-    uiSourceCodeList: function()
+    uiSourceCodes: function()
     {
-        return this._scriptSnippetModel._uiSourceCodeList();
+        return this._scriptSnippetModel._uiSourceCodes();
     },
 
     /**
@@ -354,7 +356,7 @@ WebInspector.SnippetScriptMapping.prototype = {
      */
     _fireUISourceCodeAdded: function(uiSourceCode)
     {
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
     },
 
     /**
@@ -362,7 +364,7 @@ WebInspector.SnippetScriptMapping.prototype = {
      */
     _fireUISourceCodeRemoved: function(uiSourceCode)
     {
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, uiSourceCode);
     },
 
     reset: function()
@@ -371,7 +373,7 @@ WebInspector.SnippetScriptMapping.prototype = {
     }
 }
 
-WebInspector.SnippetScriptMapping.prototype.__proto__ = WebInspector.ScriptMapping.prototype;
+WebInspector.SnippetScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor

@@ -29,7 +29,7 @@ function test()
         model._addUISourceCode = function(uiSourceCode)
         {
             uiSourceCodes.push(uiSourceCode);
-            this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCode);
+            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
         }
         model._reset = function(preservedItems)
         {
@@ -41,7 +41,7 @@ function test()
             uiSourceCodes.remove(oldUISourceCode);
             uiSourceCodes.push(uiSourceCode);
             var data = { oldUISourceCode: oldUISourceCode, uiSourceCode: uiSourceCode };
-            this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, data);
+            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, data);
         }
         return model;
     }

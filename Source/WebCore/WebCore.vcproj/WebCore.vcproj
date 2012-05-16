@@ -74697,10 +74697,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\ScriptMapping.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\ScriptsNavigator.js"
 					>
 				</File>
@@ -74778,6 +74774,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\SourceJavaScriptTokenizer.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\SourceMapping.js"
 					>
 				</File>
 				<File

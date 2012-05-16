@@ -131,7 +131,6 @@
     <file>Script.js</file>
     <file>ScriptFormatter.js</file>
     <file>ScriptFormatterWorker.js</file>
-    <file>ScriptMapping.js</file>
     <file>ScriptSnippetModel.js</file>
     <file>ScriptsPanel.js</file>
     <file>ScriptsNavigator.js</file>
@@ -151,6 +150,7 @@
     <file>SourceFrame.js</file>
     <file>SourceHTMLTokenizer.js</file>
     <file>SourceJavaScriptTokenizer.js</file>
+    <file>SourceMapping.js</file>
     <file>SourceTokenizer.js</file>
     <file>Spectrum.js</file>
     <file>SplitView.js</file>

@@ -172,9 +172,9 @@ WebInspector.ScriptsPanel = function(scriptMappingForTest)
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._reset.bind(this, false));
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
-    this._scriptMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-    this._scriptMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
-    this._scriptMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    this._scriptMapping.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
+    this._scriptMapping.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
+    this._scriptMapping.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
 
     var enableDebugger = !Capabilities.debuggerCausesRecompilation || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)

@@ -518,7 +518,7 @@ WebInspector.DebuggerModel.prototype = {
     /**
      * @param {DebuggerAgent.Location} location
      * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
-     * @return {WebInspector.LiveLocation}
+     * @return {WebInspector.Script.Location}
      */
     createLiveLocation: function(location, updateDelegate)
     {

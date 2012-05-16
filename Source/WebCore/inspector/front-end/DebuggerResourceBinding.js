@@ -31,11 +31,11 @@
 /**
  * @constructor
  * @implements {WebInspector.ResourceDomainModelBinding}
- * @param {WebInspector.UISourceCodeProject} uiSourceCodeProject
+ * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
  */
-WebInspector.DebuggerResourceBinding = function(uiSourceCodeProject)
+WebInspector.DebuggerResourceBinding = function(uiSourceCodeProvider)
 {
-    this._uiSourceCodeProject = uiSourceCodeProject;
+    this._uiSourceCodeProvider = uiSourceCodeProvider;
     WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Script, this);
 }
 
@@ -105,7 +105,7 @@ WebInspector.DebuggerResourceBinding.prototype = {
      */
     _uiSourceCodeForResource: function(resource)
     {
-        var uiSourceCodes = this._uiSourceCodeProject.uiSourceCodes();
+        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             if (uiSourceCodes[i].url === resource.url)
                 return uiSourceCodes[i];

@@ -130,7 +130,7 @@ function test()
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
             mapping.addScript(script);
 
-            var uiSourceCodeList = mapping.uiSourceCodeList();
+            var uiSourceCodeList = mapping.uiSourceCodes();
             InspectorTest.assertEquals(2, uiSourceCodeList.length);
             InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source1.js", uiSourceCodeList[0].url);
             InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source2.js", uiSourceCodeList[1].url);
@@ -172,7 +172,7 @@ function test()
             script.sourceMapURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
             mapping.addScript(script);
 
-            var uiSourceCodeList = mapping.uiSourceCodeList();
+            var uiSourceCodeList = mapping.uiSourceCodes();
             InspectorTest.assertEquals(1, uiSourceCodeList.length);
             InspectorTest.assertEquals("source.js", uiSourceCodeList[0].url);
 
@@ -193,7 +193,7 @@ function test()
             WebInspector.settings.sourceMapsEnabled.set(true);
             WebInspector.debuggerModel._reset();
             var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping();
-            debuggerScriptMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCodeAdded);
+            debuggerScriptMapping.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
 
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json_";

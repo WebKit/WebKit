@@ -30,7 +30,9 @@
 
 /**
  * @constructor
- * @extends {WebInspector.ScriptMapping}
+ * @extends {WebInspector.Object}
+ * @implements {WebInspector.SourceMapping}
+ * @implements {WebInspector.UISourceCodeProvider}
  */
 WebInspector.ResourceScriptMapping = function()
 {
@@ -67,7 +69,7 @@ WebInspector.ResourceScriptMapping.prototype = {
     /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
-    uiSourceCodeList: function()
+    uiSourceCodes: function()
     {
         var result = [];
         for (var i = 0; i < this._rawSourceCodes.length; ++i) {
@@ -144,7 +146,7 @@ WebInspector.ResourceScriptMapping.prototype = {
     _uiSourceCodeAdded: function(rawSourceCode, uiSourceCode)
     {
         this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
     },
 
     /**
@@ -161,7 +163,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             rawSourceCode._scripts[i].setSourceMapping(this);
 
         var data = { oldUISourceCode: oldUISourceCode, uiSourceCode: uiSourceCode };
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, data);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, data);
     },
 
     /**
@@ -171,7 +173,7 @@ WebInspector.ResourceScriptMapping.prototype = {
     _uiSourceCodeRemoved: function(rawSourceCode, uiSourceCode)
     {
         this._rawSourceCodeForUISourceCode.remove(uiSourceCode);
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, uiSourceCode);
     },
 
     /**
@@ -200,4 +202,4 @@ WebInspector.ResourceScriptMapping.prototype = {
     }
 }
 
-WebInspector.ResourceScriptMapping.prototype.__proto__ = WebInspector.ScriptMapping.prototype;
+WebInspector.ResourceScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;

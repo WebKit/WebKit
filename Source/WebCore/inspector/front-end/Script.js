@@ -188,7 +188,6 @@ WebInspector.Script.prototype = {
 
 /**
  * @constructor
- * @implements {WebInspector.LiveLocation}
  * @param {WebInspector.Script} script
  * @param {DebuggerAgent.Location} rawLocation
  * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate

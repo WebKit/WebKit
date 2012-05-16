@@ -31,7 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
- * @implements {WebInspector.UISourceCodeProject}
+ * @implements {WebInspector.UISourceCodeProvider}
  */
 WebInspector.DebuggerScriptMapping = function()
 {
@@ -44,9 +44,9 @@ WebInspector.DebuggerScriptMapping = function()
     this._snippetMapping = WebInspector.scriptSnippetModel.scriptMapping;
     this._mappings.push(this._snippetMapping);
     for (var i = 0; i < this._mappings.length; ++i) {
-        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, this._handleUISourceCodeReplaced, this);
-        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, this._handleUISourceCodeRemoved, this);
+        this._mappings[i].addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
+        this._mappings[i].addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._handleUISourceCodeReplaced, this);
+        this._mappings[i].addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._handleUISourceCodeRemoved, this);
     }
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
@@ -72,7 +72,7 @@ WebInspector.DebuggerScriptMapping.prototype = {
     {
         var result = [];
         for (var i = 0; i < this._mappings.length; ++i) {
-            var uiSourceCodeList = this._mappings[i].uiSourceCodeList();
+            var uiSourceCodeList = this._mappings[i].uiSourceCodes();
             for (var j = 0; j < uiSourceCodeList.length; ++j)
                 result.push(uiSourceCodeList[j]);
         }
@@ -84,7 +84,7 @@ WebInspector.DebuggerScriptMapping.prototype = {
      */
     _handleUISourceCodeAdded: function(event)
     {
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeAdded, event.data);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, event.data);
     },
 
     /**
@@ -92,7 +92,7 @@ WebInspector.DebuggerScriptMapping.prototype = {
      */
     _handleUISourceCodeReplaced: function(event)
     {
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeReplaced, event.data);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, event.data);
     },
 
     /**
@@ -100,12 +100,12 @@ WebInspector.DebuggerScriptMapping.prototype = {
      */
     _handleUISourceCodeRemoved: function(event)
     {
-        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeRemoved, event.data);
+        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, event.data);
     },
 
     /**
      * @param {WebInspector.Script} script
-     * @return {WebInspector.ScriptMapping}
+     * @return {WebInspector.SourceMapping}
      */
     _mappingForScript: function(script)
     {
