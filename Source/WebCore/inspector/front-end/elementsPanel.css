@@ -331,6 +331,14 @@
     cursor: auto;
 }
 
+.styles-section.computed-style.expanded .properties > li {
+    padding-left: 0;
+}
+
+.styles-section.computed-style.expanded .properties > li .webkit-css-property {
+    margin-left: 0;
+}
+
 .styles-section .properties li .webkit-css-property {
     margin-left: -22px; /* outdent the first line of longhand properties (in an expanded shorthand) to compensate for the "padding-left" shift in .styles-section .properties li */
 }
