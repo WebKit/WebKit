@@ -1982,6 +1982,9 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     #ifndef NDEBUG
             m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
     #endif
+    #if PLATFORM(MAC) && USE(CA)
+            m_layerForHorizontalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
+    #endif
             m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
 
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -2001,6 +2004,9 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     #ifndef NDEBUG
             m_layerForVerticalScrollbar->setName("vertical scrollbar");
     #endif
+    #if PLATFORM(MAC) && USE(CA)
+            m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
+    #endif
             m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
 
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -2019,6 +2025,9 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForScrollCorner = GraphicsLayer::create(this);
     #ifndef NDEBUG
             m_layerForScrollCorner->setName("scroll corner");
+    #endif
+    #if PLATFORM(MAC) && USE(CA)
+            m_layerForScrollCorner->setAcceleratesDrawing(acceleratedDrawingEnabled());
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForScrollCorner.get());
         }
