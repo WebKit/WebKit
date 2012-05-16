@@ -64,7 +64,7 @@ bool ContentSelectorQuery::matches(Node* node) const
     if (!node)
         return false;
 
-    ASSERT(node->parentNode() == m_insertionPoint->shadowTreeRootNode()->shadowHost());
+    ASSERT(node->parentNode() == m_insertionPoint->shadowRoot()->shadowHost());
 
     if (m_insertionPoint->select().isNull() || m_insertionPoint->select().isEmpty())
         return true;

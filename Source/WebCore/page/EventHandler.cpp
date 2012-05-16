@@ -2092,7 +2092,7 @@ static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* 
     if (!referenceNode || !referenceNode->isSVGElement())
         return 0;
 
-    Node* shadowTreeElement = referenceNode->shadowTreeRootNode();
+    Node* shadowTreeElement = referenceNode->shadowRoot();
     if (!shadowTreeElement)
         return 0;
 

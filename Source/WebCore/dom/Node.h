@@ -221,8 +221,7 @@ public:
     bool isFrameOwnerElement() const { return getFlag(IsFrameOwnerElementFlag); }
 
     Node* shadowAncestorNode() const;
-    // Returns 0, a ShadowRoot, or a legacy shadow root.
-    ShadowRoot* shadowTreeRootNode() const;
+    ShadowRoot* shadowRoot() const;
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
     bool isInShadowTree() const;

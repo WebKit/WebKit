@@ -664,7 +664,7 @@ bool TextIterator::handleReplacedElement()
 
     if (m_entersTextControls && renderer->isTextControl()) {
         if (HTMLElement* innerTextElement = toRenderTextControl(renderer)->textFormControlElement()->innerTextElement()) {
-            m_node = innerTextElement->shadowTreeRootNode();
+            m_node = innerTextElement->shadowRoot();
             pushFullyClippedState(m_fullyClippedStack, m_node);
             m_offset = 0;
             return false;

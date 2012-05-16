@@ -2519,12 +2519,12 @@ PassRefPtr<Range> Editor::nextVisibleRange(Range* currentRange, const String& ta
         else
             searchRange->setEndBefore(resultRange->startContainer(), ec);
 
-        Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
-        if (searchRange->collapsed(ec) && shadowTreeRoot) {
+        ShadowRoot* shadowRoot = searchRange->shadowRoot();
+        if (searchRange->collapsed(ec) && shadowRoot) {
             if (forward)
-                searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), ec);
+                searchRange->setEnd(shadowRoot, shadowRoot->childNodeCount(), ec);
             else
-                searchRange->setStartBefore(shadowTreeRoot, ec);
+                searchRange->setStartBefore(shadowRoot, ec);
         }
         
         if (searchRange->startContainer()->isDocumentNode() && searchRange->endContainer()->isDocumentNode())
@@ -2882,7 +2882,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         // text nodes. 
         searchRange->setStart(resultRange->endContainer(exception), resultRange->endOffset(exception), exception);
 
-        Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
+        Node* shadowTreeRoot = searchRange->shadowRoot();
         if (searchRange->collapsed(exception) && shadowTreeRoot)
             searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), exception);
     } while (true);

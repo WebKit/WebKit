@@ -89,7 +89,7 @@ void HTMLContentElement::setSelect(const AtomicString& selectValue)
 void HTMLContentElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == selectAttr) {
-        if (ShadowRoot* root = shadowTreeRootNode())
+        if (ShadowRoot* root = shadowRoot())
             root->owner()->setNeedsRedistributing();
     } else
         InsertionPoint::parseAttribute(attribute);

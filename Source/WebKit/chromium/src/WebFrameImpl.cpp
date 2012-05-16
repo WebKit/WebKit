@@ -1784,7 +1784,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         // text nodes.
         searchRange->setStart(resultRange->endContainer(ec), resultRange->endOffset(ec), ec);
 
-        Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
+        Node* shadowTreeRoot = searchRange->shadowRoot();
         if (searchRange->collapsed(ec) && shadowTreeRoot)
             searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), ec);
 

@@ -1651,9 +1651,9 @@ Node* Range::firstNode() const
     return m_start.container()->traverseNextSibling();
 }
 
-ShadowRoot* Range::shadowTreeRootNode() const
+ShadowRoot* Range::shadowRoot() const
 {
-    return startContainer() ? startContainer()->shadowTreeRootNode() : 0;
+    return startContainer() ? startContainer()->shadowRoot() : 0;
 }
 
 Node* Range::pastLastNode() const

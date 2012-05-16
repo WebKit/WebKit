@@ -727,7 +727,7 @@ void Node::inspect()
 
 bool Node::rendererIsEditable(EditableLevel editableLevel) const
 {
-    if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !shadowTreeRootNode())
+    if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !shadowRoot())
         return true;
 
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
@@ -1495,13 +1495,13 @@ Node* Node::shadowAncestorNode() const
         return const_cast<Node*>(this);
 #endif
 
-    if (ShadowRoot* root = shadowTreeRootNode())
+    if (ShadowRoot* root = shadowRoot())
         return root->host();
 
     return const_cast<Node*>(this);
 }
 
-ShadowRoot* Node::shadowTreeRootNode() const
+ShadowRoot* Node::shadowRoot() const
 {
     Node* root = const_cast<Node*>(this);
     while (root) {
