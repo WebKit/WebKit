@@ -174,8 +174,7 @@ WebInspector.JavaScriptSource.prototype = {
 
     commitWorkingCopy: function(callback)
     {  
-        if (this.isDirty())
-            WebInspector.DebuggerResourceBinding.setScriptSource(this, this.workingCopy(), callback);
+        WebInspector.DebuggerResourceBinding.setScriptSource(this, this.workingCopy(), callback);
     }
 }
 

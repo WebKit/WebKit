@@ -111,6 +111,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     commitEditing: function(text)
     {
         this._editingContent = true;
+        if (!this._uiSourceCode.isDirty())
+            return;
         this._uiSourceCode.commitWorkingCopy(this._didEditContent.bind(this, text));
     },
 

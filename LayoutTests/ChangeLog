@@ -1,3 +1,12 @@
+2012-05-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Support script snippets saving.
+        https://bugs.webkit.org/show_bug.cgi?id=86632
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/script-snippet-model.html:
+
 2012-05-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] New failing and flakey tests with newer Qt 5

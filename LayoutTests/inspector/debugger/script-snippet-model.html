@@ -21,28 +21,28 @@ function test()
         {
             resetSnippetsSettings();
 
-            var uiSourceCode1 = WebInspector.scriptSnippetModel.createScriptSnippet();
-            WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode1, "Snippet1");
+            var snippetJavaScriptSource1 = WebInspector.scriptSnippetModel.createScriptSnippet();
+            WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource1, "Snippet1");
             var content = "";
             content += "// This snippet does nothing.\n";
             content += "var i = 2+2;\n";
-            WebInspector.scriptSnippetModel.setScriptSnippetContent(uiSourceCode1, content);
+            WebInspector.scriptSnippetModel.setScriptSnippetContent(snippetJavaScriptSource1, content);
 
-            var uiSourceCode2 = WebInspector.scriptSnippetModel.createScriptSnippet();
-            WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode1, "Snippet2");
+            var snippetJavaScriptSource2 = WebInspector.scriptSnippetModel.createScriptSnippet();
+            WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource2, "Snippet2");
             content = "";
             content += "// This snippet creates a function that does nothing.\n";
             content += "function doesNothing()\n";
             content += "{\n";
             content += "    var  i = 2+2;\n";
             content += "}\n";
-            WebInspector.scriptSnippetModel.setScriptSnippetContent(uiSourceCode2, content);
+            WebInspector.scriptSnippetModel.setScriptSnippetContent(snippetJavaScriptSource2, content);
 
-            function evaluateSnippetAndDumpEvaluationDetails(uiSourceCode, callback)
+            function evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource, callback)
             {
                 InspectorTest.addSniffer(WebInspector.SnippetScriptMapping.prototype, "addScript", dumpScript);
-                WebInspector.scriptSnippetModel.evaluateScriptSnippet(uiSourceCode);
-                var snippet = WebInspector.scriptSnippetModel._snippetForUISourceCode.get(uiSourceCode);
+                WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
+                var snippet = WebInspector.scriptSnippetModel._snippetStorage.snippetForId(snippetJavaScriptSource.snippetId);
                 InspectorTest.addResult("Last evaluation source url for snippet: " + snippet._lastEvaluationSourceURL);
                 InspectorTest.assertEquals(snippet, WebInspector.scriptSnippetModel._snippetForSourceURL(snippet._lastEvaluationSourceURL), "Snippet can not be identified by its evaluation sourceURL.");
 
@@ -53,16 +53,16 @@ function test()
                 }
             }
 
-            evaluateSnippetAndDumpEvaluationDetails(uiSourceCode1, step2);
+            evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource1, step2);
 
             function step2()
             {
-                evaluateSnippetAndDumpEvaluationDetails(uiSourceCode2, step3);
+                evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource2, step3);
             }
 
             function step3()
             {
-                evaluateSnippetAndDumpEvaluationDetails(uiSourceCode1, next);
+                evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource1, next);
             }
         }
     ]);

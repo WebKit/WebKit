@@ -970,28 +970,29 @@ WebInspector.ScriptsPanel.prototype = {
 
     _fileRenamed: function(event)
     {
-       var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
         var name = /** @type {string} */ event.data.name;
         if (!uiSourceCode.isSnippet)
             return;
-        WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, name);
+        var snippetJavaScriptSource = /** @type {WebInspector.SnippetJavaScriptSource} */ uiSourceCode;
+        WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource, name);
     },
         
     _snippetCreationRequested: function()
     {
-        var uiSourceCode = WebInspector.scriptSnippetModel.createScriptSnippet();
-        this._showSourceLine(uiSourceCode);
+        var snippetJavaScriptSource = WebInspector.scriptSnippetModel.createScriptSnippet();
+        this._showSourceLine(snippetJavaScriptSource);
         
         var shouldHideNavigator = !this._navigatorController.isNavigatorPinned();
         if (this._navigatorController.isNavigatorHidden())
             this._navigatorController.showNavigatorOverlay();
-        this._navigator.rename(uiSourceCode, callback.bind(this));
+        this._navigator.rename(snippetJavaScriptSource, callback.bind(this));
     
         function callback()
         {
             if (shouldHideNavigator)
                 this._navigatorController.hideNavigatorOverlay();
-            this._showSourceLine(uiSourceCode);
+            this._showSourceLine(snippetJavaScriptSource);
         }
     }
 }

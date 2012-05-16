@@ -143,16 +143,9 @@ WebInspector.StylesPanel.prototype = {
         var sourceFrame = this._sourceFramesForResource.get(uiSourceCode);
         if (!sourceFrame) {
             sourceFrame = new WebInspector.EditableResourceSourceFrame(uiSourceCode);
-            sourceFrame.addEventListener(WebInspector.EditableResourceSourceFrame.Events.TextEdited, this._textEdited, this);
             this._sourceFramesForResource.put(uiSourceCode, sourceFrame);
         }
         return sourceFrame;
-    },
-
-    _textEdited: function(event)
-    {
-        var sourceFrame = /** @type {WebInspector.EditableResourceSourceFrame} */ event.data;
-        this._editorContainer.setFileIsDirty(sourceFrame.resource, sourceFrame.isDirty());
     },
 
     _itemSelected: function(event)
