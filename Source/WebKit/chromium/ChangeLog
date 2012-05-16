@@ -1,3 +1,13 @@
+2012-05-16  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: WebKit API for IDBObjectStore.autoIncrement property
+        https://bugs.webkit.org/show_bug.cgi?id=86661
+
+        Reviewed by Dimitri Glazkov.
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::autoIncrement):
+
 2012-05-16  Varun Jain  <varunjain@google.com>
 
         [chromium] No modifier flags (shift/ctrl/alt) in drag&drop events on chromium linux

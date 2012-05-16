@@ -63,6 +63,11 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebDOMStringList();
     }
+    virtual bool autoIncrement() const
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return false;
+    }
 
     virtual void get(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
 
